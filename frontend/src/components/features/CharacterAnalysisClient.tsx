@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { TrendingUp, TrendingDown, Minus, BarChart2 } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, BarChart2, Search } from "lucide-react"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { TierBadge } from "./TierBadge"
 import { cn } from "@/lib/utils"
@@ -96,6 +96,16 @@ export function CharacterAnalysisClient() {
   const [selectedCode, setSelectedCode] = React.useState<number>(1)
   const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.DIAMOND)
   const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>(null)
+  const [searchQuery, setSearchQuery] = React.useState("")
+
+  const filteredCodes = React.useMemo(() => {
+    const sorted = [...CHARACTER_CODES].sort((a, b) =>
+      getCharacterName(a).localeCompare(getCharacterName(b), "ko")
+    )
+    const q = searchQuery.trim()
+    if (!q) return sorted
+    return sorted.filter((code) => getCharacterName(code).includes(q))
+  }, [searchQuery])
 
   const [patches, setPatches] = React.useState<string[]>([])
   const [stats, setStats] = React.useState<CharacterStatsResponse | null>(null)
@@ -156,12 +166,28 @@ export function CharacterAnalysisClient() {
           </select>
         </div>
 
-        <p className="mb-2 px-1 text-xs text-[var(--color-muted-foreground)]">캐릭터 선택</p>
+        {/* 검색 */}
+        <div className="relative mb-2">
+          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)] pointer-events-none" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="캐릭터 검색"
+            className="w-full rounded bg-[var(--color-surface-2)] pl-7 pr-2 py-1.5 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] placeholder:text-[var(--color-muted-foreground)] outline-none focus:border-[var(--color-primary)]"
+          />
+        </div>
+
         <div className="grid grid-cols-3 gap-1 max-h-[620px] overflow-y-auto pr-0.5">
-          {CHARACTER_CODES.map((code) => (
+          {filteredCodes.length === 0 ? (
+            <p className="col-span-3 py-4 text-center text-xs text-[var(--color-muted-foreground)]">
+              검색 결과 없음
+            </p>
+          ) : null}
+          {filteredCodes.map((code) => (
             <button
               key={code}
-              onClick={() => setSelectedCode(code)}
+              onClick={() => { setSelectedCode(code); setSearchQuery("") }}
               className={cn(
                 "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors",
                 selectedCode === code
