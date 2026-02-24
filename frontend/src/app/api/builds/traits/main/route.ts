@@ -21,6 +21,55 @@ export interface TraitCoreGroup {
   sub4Options: TraitSubOption[]
 }
 
+type TraitGroupRow = {
+  sub1: number | null
+  sub2: number | null
+  sub3: number | null
+  sub4: number | null
+  totalGames: number
+  totalWins: number
+}
+
+type TraitSubKey = "sub1" | "sub2" | "sub3" | "sub4"
+
+function aggregateSubOptions(
+  rows: TraitGroupRow[],
+  subKey: TraitSubKey,
+  groupTotalGames: number,
+  options: { excludeNull?: boolean; limit?: number } = {}
+): TraitSubOption[] {
+  const { excludeNull = false, limit = 5 } = options
+  const subMap = new Map<string, { code: number | null; games: number; wins: number }>()
+
+  for (const row of rows) {
+    const code = row[subKey]
+
+    if (excludeNull && code == null) {
+      continue
+    }
+
+    const key = String(code ?? "null")
+    const existing = subMap.get(key)
+
+    if (existing) {
+      existing.games += row.totalGames
+      existing.wins += row.totalWins
+    } else {
+      subMap.set(key, { code, games: row.totalGames, wins: row.totalWins })
+    }
+  }
+
+  return [...subMap.values()]
+    .sort((a, b) => b.games - a.games)
+    .slice(0, limit)
+    .map((o) => ({
+      code: o.code,
+      totalGames: o.games,
+      pickRate: groupTotalGames > 0 ? (o.games / groupTotalGames) * 100 : 0,
+      winRate: o.games > 0 ? (o.wins / o.games) * 100 : 0,
+    }))
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const characterCode = Number(searchParams.get("characterCode"))
@@ -67,14 +116,7 @@ export async function GET(request: NextRequest) {
     // mainCore 기준 그룹화
     const coreMap = new Map<string, {
       mainCore: number | null
-      rows: Array<{
-        sub1: number | null
-        sub2: number | null
-        sub3: number | null
-        sub4: number | null
-        totalGames: number
-        totalWins: number
-      }>
+      rows: TraitGroupRow[]
     }>()
 
     for (const r of data as Record<string, unknown>[]) {
@@ -101,95 +143,10 @@ export async function GET(request: NextRequest) {
       const groupTotalGames = group.rows.reduce((s, r) => s + r.totalGames, 0)
       const groupTotalWins = group.rows.reduce((s, r) => s + r.totalWins, 0)
 
-      // sub1 옵션 집계
-      const sub1Map = new Map<string, { code: number | null; games: number; wins: number }>()
-      for (const r of group.rows) {
-        const key = String(r.sub1 ?? "null")
-        const existing = sub1Map.get(key)
-        if (existing) {
-          existing.games += r.totalGames
-          existing.wins += r.totalWins
-        } else {
-          sub1Map.set(key, { code: r.sub1, games: r.totalGames, wins: r.totalWins })
-        }
-      }
-      const sub1Options: TraitSubOption[] = [...sub1Map.values()]
-        .sort((a, b) => b.games - a.games)
-        .slice(0, 5)
-        .map((o) => ({
-          code: o.code,
-          totalGames: o.games,
-          pickRate: groupTotalGames > 0 ? (o.games / groupTotalGames) * 100 : 0,
-          winRate: o.games > 0 ? (o.wins / o.games) * 100 : 0,
-        }))
-
-      // sub2 옵션 집계
-      const sub2Map = new Map<string, { code: number | null; games: number; wins: number }>()
-      for (const r of group.rows) {
-        const key = String(r.sub2 ?? "null")
-        const existing = sub2Map.get(key)
-        if (existing) {
-          existing.games += r.totalGames
-          existing.wins += r.totalWins
-        } else {
-          sub2Map.set(key, { code: r.sub2, games: r.totalGames, wins: r.totalWins })
-        }
-      }
-      const sub2Options: TraitSubOption[] = [...sub2Map.values()]
-        .sort((a, b) => b.games - a.games)
-        .slice(0, 5)
-        .map((o) => ({
-          code: o.code,
-          totalGames: o.games,
-          pickRate: groupTotalGames > 0 ? (o.games / groupTotalGames) * 100 : 0,
-          winRate: o.games > 0 ? (o.wins / o.games) * 100 : 0,
-        }))
-
-      // sub3 옵션 집계
-      const sub3Map = new Map<string, { code: number | null; games: number; wins: number }>()
-      for (const r of group.rows) {
-        const key = String(r.sub3 ?? "null")
-        const existing = sub3Map.get(key)
-        if (existing) {
-          existing.games += r.totalGames
-          existing.wins += r.totalWins
-        } else {
-          sub3Map.set(key, { code: r.sub3, games: r.totalGames, wins: r.totalWins })
-        }
-      }
-      const sub3Options: TraitSubOption[] = [...sub3Map.values()]
-        .filter((o) => o.code != null)
-        .sort((a, b) => b.games - a.games)
-        .slice(0, 5)
-        .map((o) => ({
-          code: o.code,
-          totalGames: o.games,
-          pickRate: groupTotalGames > 0 ? (o.games / groupTotalGames) * 100 : 0,
-          winRate: o.games > 0 ? (o.wins / o.games) * 100 : 0,
-        }))
-
-      // sub4 옵션 집계
-      const sub4Map = new Map<string, { code: number | null; games: number; wins: number }>()
-      for (const r of group.rows) {
-        const key = String(r.sub4 ?? "null")
-        const existing = sub4Map.get(key)
-        if (existing) {
-          existing.games += r.totalGames
-          existing.wins += r.totalWins
-        } else {
-          sub4Map.set(key, { code: r.sub4, games: r.totalGames, wins: r.totalWins })
-        }
-      }
-      const sub4Options: TraitSubOption[] = [...sub4Map.values()]
-        .filter((o) => o.code != null)
-        .sort((a, b) => b.games - a.games)
-        .slice(0, 5)
-        .map((o) => ({
-          code: o.code,
-          totalGames: o.games,
-          pickRate: groupTotalGames > 0 ? (o.games / groupTotalGames) * 100 : 0,
-          winRate: o.games > 0 ? (o.wins / o.games) * 100 : 0,
-        }))
+      const sub1Options = aggregateSubOptions(group.rows, "sub1", groupTotalGames)
+      const sub2Options = aggregateSubOptions(group.rows, "sub2", groupTotalGames)
+      const sub3Options = aggregateSubOptions(group.rows, "sub3", groupTotalGames, { excludeNull: true })
+      const sub4Options = aggregateSubOptions(group.rows, "sub4", groupTotalGames, { excludeNull: true })
 
       builds.push({
         mainCore: group.mainCore,
