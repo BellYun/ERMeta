@@ -36,7 +36,7 @@ export function CharacterCard({ name, imageUrl, rateChange, className }: Charact
           )}
         >
           {isUp ? "+" : ""}
-          {rateChange.toFixed(1)}%
+          {rateChange.toFixed(1)} RP
         </span>
       </div>
     </div>
