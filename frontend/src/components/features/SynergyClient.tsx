@@ -30,7 +30,8 @@ type SortBy = "averageRP" | "winRate" | "totalGames"
 const FALLBACK_MAP = buildFallbackMap()
 
 const ALL_CHARACTER_CODES: number[] = Array.from(FALLBACK_MAP.keys()).sort(
-  (a, b) => a - b
+  (a, b) =>
+    (FALLBACK_MAP.get(a) ?? "").localeCompare(FALLBACK_MAP.get(b) ?? "", "ko")
 )
 
 const SORT_OPTIONS: { value: SortBy; label: string }[] = [
@@ -198,8 +199,15 @@ function ComboCard({
         </div>
         <div className="flex flex-col">
           <span className="text-[10px] text-[var(--color-muted-foreground)]">평균 RP</span>
-          <span className="text-sm text-[var(--color-muted-foreground)]">
-            {rec.averageRP.toFixed(1)}
+          <span className={cn(
+            "text-sm font-semibold",
+            rec.averageRP > 0
+              ? "text-[var(--color-accent-gold)]"
+              : rec.averageRP < 0
+              ? "text-[var(--color-danger)]"
+              : "text-[var(--color-muted-foreground)]"
+          )}>
+            {rec.averageRP > 0 ? "+" : ""}{rec.averageRP.toFixed(1)}
           </span>
         </div>
         <div className="flex flex-col">
