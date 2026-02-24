@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { TrendingUp, TrendingDown, Minus, BarChart2, Zap } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, BarChart2 } from "lucide-react"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { TierBadge } from "./TierBadge"
 import { cn } from "@/lib/utils"
@@ -239,9 +239,6 @@ export function CharacterAnalysisClient() {
             <TabsTrigger value="comparison">
               <BarChart2 className="mr-1.5 h-3.5 w-3.5" />패치 비교
             </TabsTrigger>
-            <TabsTrigger value="builds">
-              <Zap className="mr-1.5 h-3.5 w-3.5" />특성 빌드
-            </TabsTrigger>
           </TabsList>
 
           {/* 무기별 통계 */}
@@ -310,6 +307,21 @@ export function CharacterAnalysisClient() {
             ) : (
               <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
                 데이터가 없습니다.
+              </div>
+            )}
+
+            {/* 특성 빌드 — 무기 선택 시 인라인 표시 */}
+            {selectedWeapon !== null && (
+              <div className="mt-4">
+                <p className="mb-2 text-xs font-medium text-[var(--color-muted-foreground)]">
+                  {resolveWeaponName(selectedWeapon)} 특성 빌드
+                </p>
+                <CharacterTraitBuildAnalyzer
+                  characterCode={selectedCode}
+                  tier={selectedTier}
+                  patchVersion={currentPatch}
+                  bestWeapon={selectedWeapon}
+                />
               </div>
             )}
           </TabsContent>
@@ -398,15 +410,6 @@ export function CharacterAnalysisClient() {
             )}
           </TabsContent>
 
-          {/* 특성 빌드 */}
-          <TabsContent value="builds">
-            <CharacterTraitBuildAnalyzer
-              characterCode={selectedCode}
-              tier={selectedTier}
-              patchVersion={currentPatch}
-              bestWeapon={selectedWeapon}
-            />
-          </TabsContent>
         </Tabs>
       </div>
     </div>
