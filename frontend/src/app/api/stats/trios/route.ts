@@ -12,6 +12,7 @@ const DIAMOND_PLUS_TIERS: TierGroup[] = [
   TierGroup.IN1000,
 ];
 const TRIO_MEMBER_COUNT = 3;
+const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]); // Dr. 하나, 나쟈
 
 type SortBy = "averageRP" | "winRate" | "totalGames";
 
@@ -112,6 +113,14 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  // 제외 캐릭터 선택 시 빈 결과
+  if (
+    (char1 !== null && EXCLUDED_CHARACTER_CODES.has(char1)) ||
+    (char2 !== null && EXCLUDED_CHARACTER_CODES.has(char2))
+  ) {
+    return NextResponse.json({ results: [] });
+  }
+
   // limit 보정 (1~200, 기본 100)
   let limit = limitParam ? parseInt(limitParam, 10) : 100;
   if (isNaN(limit) || limit < 1) limit = 1;
@@ -145,8 +154,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    const filteredRows = ((data ?? []) as TrioRow[]).filter(
+      (row) =>
+        !EXCLUDED_CHARACTER_CODES.has(row.character1) &&
+        !EXCLUDED_CHARACTER_CODES.has(row.character2) &&
+        !EXCLUDED_CHARACTER_CODES.has(row.character3)
+    );
+
     // 티어 간 집계 (가중 평균)
-    const aggregated = aggregateByTrio((data ?? []) as TrioRow[]);
+    const aggregated = aggregateByTrio(filteredRows);
 
     // 집계 후 정렬
     aggregated.sort((a, b) => {

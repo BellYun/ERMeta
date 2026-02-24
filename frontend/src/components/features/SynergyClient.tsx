@@ -28,11 +28,13 @@ type SortBy = "averageRP" | "winRate" | "totalGames"
 // ─── 상수 ─────────────────────────────────────────────────────────────────────
 
 const FALLBACK_MAP = buildFallbackMap()
+const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]) // Dr. 하나, 나쟈
 
-const ALL_CHARACTER_CODES: number[] = Array.from(FALLBACK_MAP.keys()).sort(
-  (a, b) =>
+const ALL_CHARACTER_CODES: number[] = Array.from(FALLBACK_MAP.keys())
+  .filter((code) => !EXCLUDED_CHARACTER_CODES.has(code))
+  .sort((a, b) =>
     (FALLBACK_MAP.get(a) ?? "").localeCompare(FALLBACK_MAP.get(b) ?? "", "ko")
-)
+  )
 
 const SORT_OPTIONS: { value: SortBy; label: string }[] = [
   { value: "averageRP", label: "평균 RP" },
@@ -139,12 +141,10 @@ function SlotFilled({
 function ComboCard({
   rec,
   rank,
-  sortBy,
   getCharName,
 }: {
   rec: TrioResult
   rank: number
-  sortBy: SortBy
   getCharName: (code: number) => string
 }) {
   const chars = [rec.character1, rec.character2, rec.character3]
@@ -449,7 +449,6 @@ export function SynergyClient() {
                 key={`${rec.character1}-${rec.character2}-${rec.character3}`}
                 rec={rec}
                 rank={i + 1}
-                sortBy={sortBy}
                 getCharName={getCharName}
               />
             ))}
