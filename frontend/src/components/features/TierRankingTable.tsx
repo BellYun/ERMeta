@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { TierBadge } from "./TierBadge"
 import { cn } from "@/lib/utils"
 import { resolveCharacterName, buildFallbackMap, getCharacterImageUrl } from "@/lib/characterMap"
+import { resolveWeaponName } from "@/lib/weaponMap"
 import { useL10n } from "@/components/L10nProvider"
 import type { Tier } from "@/lib/design-tokens"
 import type { CharacterRankingData } from "@/app/api/character/mithril-rp-ranking/route"
@@ -18,7 +19,9 @@ const fallbackMap = buildFallbackMap()
 interface DisplayRow {
   rank: number
   code: number
+  weaponCode: number
   name: string
+  weaponName: string
   imageUrl: string
   tier: Tier
   pickRate: number
@@ -60,11 +63,14 @@ export function TierRankingTable() {
         const total = rankings.length
         const display: DisplayRow[] = rankings.map((r) => {
           const name = resolveCharacterName(r.characterNum, l10n, fallbackMap)
+          const weaponName = resolveWeaponName(r.bestWeapon)
           const imageUrl = getCharacterImageUrl(r.characterNum)
           return {
             rank: r.rank,
             code: r.characterNum,
+            weaponCode: r.bestWeapon,
             name,
+            weaponName,
             imageUrl,
             tier: assignTier(r.rank, total),
             pickRate: r.pickRate,
@@ -127,7 +133,7 @@ export function TierRankingTable() {
                 </TableRow>
               ))
             : filtered.map((char) => (
-                <TableRow key={char.code}>
+                <TableRow key={`${char.code}-${char.weaponCode}`}>
                   <TableCell className="text-[var(--color-muted-foreground)] font-medium">
                     {char.rank}
                   </TableCell>
@@ -142,7 +148,10 @@ export function TierRankingTable() {
                           sizes="32px"
                         />
                       </div>
-                      <span className="text-sm font-medium">{char.name}</span>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-sm font-medium truncate">{char.name}</span>
+                        <span className="text-xs text-[var(--color-muted-foreground)] truncate">{char.weaponName}</span>
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell className="text-center">
