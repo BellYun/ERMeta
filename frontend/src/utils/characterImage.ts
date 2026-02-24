@@ -1,4 +1,4 @@
-import itemImageMap from '@/const/itemImageMap.json';
+import itemImageMap from "../../const/itemImageMap.json";
 
 
 /**
@@ -41,4 +41,3 @@ export function getItemImagePath(itemCode: number | null | undefined): string | 
   // console.log(`[getItemImagePath] 매핑되지 않은 itemCode: ${itemCode}`);
   return null;
 }
-

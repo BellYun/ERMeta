@@ -1,0 +1,735 @@
+{
+  "1": [
+    {
+      "weaponCode": 16,
+      "label": "양손검",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 15,
+      "label": "단검",
+      "isDefault": false
+    },
+    {
+      "weaponCode": 14,
+      "label": "도끼",
+      "isDefault": false
+    },
+    {
+      "weaponCode": 18,
+      "label": "쌍검",
+      "isDefault": false
+    }
+  ],
+  "2": [
+    {
+      "weaponCode": 9,
+      "label": "권총",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 10,
+      "label": "돌격 소총",
+      "isDefault": false
+    },
+    {
+      "weaponCode": 11,
+      "label": "저격총",
+      "isDefault": false
+    }
+  ],
+  "3": [
+    {
+      "weaponCode": 16,
+      "label": "양손검",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 19,
+      "label": "창",
+      "isDefault": false
+    },
+    {
+      "weaponCode": 21,
+      "label": "레이피어",
+      "isDefault": false
+    }
+  ],
+  "4": [
+    {
+      "weaponCode": 3,
+      "label": "방망이",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 13,
+      "label": "망치",
+      "isDefault": false
+    }
+  ],
+  "5": [
+    {
+      "weaponCode": 5,
+      "label": "투척",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 6,
+      "label": "암기",
+      "isDefault": false
+    }
+  ],
+  "6": [
+    {
+      "weaponCode": 7,
+      "label": "활",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 8,
+      "label": "대표 무기",
+      "isDefault": false
+    }
+  ],
+  "7": [
+    {
+      "weaponCode": 1,
+      "label": "글러브",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 2,
+      "label": "톤파",
+      "isDefault": false
+    }
+  ],
+  "8": [
+    {
+      "weaponCode": 22,
+      "label": "기타",
+      "isDefault": true
+    }
+  ],
+  "9": [
+    {
+      "weaponCode": 9,
+      "label": "권총",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 10,
+      "label": "돌격 소총",
+      "isDefault": false
+    }
+  ],
+  "10": [
+    {
+      "weaponCode": 1,
+      "label": "글러브",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 20,
+      "label": "쌍절곤",
+      "isDefault": false
+    }
+  ],
+  "11": [
+    {
+      "weaponCode": 16,
+      "label": "양손검",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 18,
+      "label": "쌍검",
+      "isDefault": false
+    }
+  ],
+  "12": [
+    {
+      "weaponCode": 6,
+      "label": "암기",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 7,
+      "label": "활",
+      "isDefault": false
+    }
+  ],
+  "13": [
+    {
+      "weaponCode": 15,
+      "label": "단검",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 19,
+      "label": "창",
+      "isDefault": false
+    }
+  ],  
+  "14": [
+    {
+      "weaponCode": 21,
+      "label": "레이피어",
+      "isDefault": true
+    }
+  ],
+  "15": [
+    {
+      "weaponCode": 5,
+      "label": "투척",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 6,
+      "label": "암기",
+      "isDefault": false
+    }
+  ],
+  "16": [
+    {
+      "weaponCode": 9,
+      "label": "권총",
+      "isDefault": true
+    }
+  ],
+  "17": [
+    {
+      "weaponCode": 5,
+      "label": "투척",
+      "isDefault": true
+    }
+  ],
+  "18": [
+    {
+      "weaponCode": 15,
+      "label": "단검",
+      "isDefault": true
+    },{}
+  ],
+  "19": [
+    {
+      "weaponCode": 6,
+      "label": "암기",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 24,
+      "label": "아르카나",
+      "isDefault": false
+    }
+  ],
+  "20": [
+    {
+      "weaponCode": 4,
+      "label": "채찍",
+      "isDefault": true
+    }
+  ],
+  "21": [
+    {
+      "weaponCode": 9,
+      "label": "권총",
+      "isDefault": true
+    }
+  ],
+  "22": [
+    {
+      "weaponCode": 3,
+      "label": "방망이",
+      "isDefault": true
+    }
+  ],
+  "23": [
+    {
+      "weaponCode": 15,
+      "label": "단검",
+      "isDefault": true
+    }
+  ],
+  "24": [
+    {
+      "weaponCode": 21,
+      "label": "레이피어",
+      "isDefault": true
+    }
+  ],
+  "25": [
+    {
+      "weaponCode": 11,
+      "label": "저격총",
+      "isDefault": true
+    }
+  ],
+  "26": [
+    {
+      "weaponCode": 9,
+      "label": "권총",
+      "isDefault": true
+    }
+  ],
+  "27": [
+    {
+      "weaponCode": 2,
+      "label": "대표 무기",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 6,
+      "label": "암기",
+      "isDefault": false
+    },
+    {
+      "weaponCode": 9,
+      "label": "권총",
+      "isDefault": false
+    },
+    {
+      "weaponCode": 16,
+      "label": "양손검",
+      "isDefault": false
+    }
+  ],
+  "28": [
+    {
+      "weaponCode": 3,
+      "label": "방망이",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 13,
+      "label": "망치",
+      "isDefault": false
+    }
+  ],
+  "29": [
+    {
+      "weaponCode": 1,
+      "label": "글러브",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 2,
+      "label": "톤파",
+      "isDefault": false
+    }
+  ],
+  "30": [
+    {
+      "weaponCode": 13,
+      "label": "망치",
+      "isDefault": true
+    }
+  ],
+  "31": [
+    {
+      "weaponCode": 7,
+      "label": "활",
+      "isDefault": true
+    }
+  ],
+  "32": [
+    {
+      "weaponCode": 5,
+      "label": "투척",
+      "isDefault": true
+    }
+  ],
+  "33": [
+    {
+      "weaponCode": 1,
+      "label": "글러브",
+      "isDefault": true
+    }
+  ],
+  "34": [
+    {
+      "weaponCode": 23,
+      "label": "카메라",
+      "isDefault": true
+    }
+  ],
+  "35": [
+    {
+      "weaponCode": 1,
+      "label": "글러브",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 2,
+      "label": "톤파",
+      "isDefault": false
+    }
+  ],
+  "36": [
+    {
+      "weaponCode": 5,
+      "label": "투척",
+      "isDefault": true
+    }
+  ],
+  "37": [
+    {
+      "weaponCode": 15,
+      "label": "단검",
+      "isDefault": true
+    }
+  ],
+  "38": [
+    {
+      "weaponCode": 9,
+      "label": "권총",
+      "isDefault": true 
+    }
+  ],
+  "39": [
+    {
+      "weaponCode": 18,
+      "label": "쌍검",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 21,
+      "label": "레이피어",
+      "isDefault": false
+    }
+  ],
+  "40": [
+    {
+      "weaponCode": 6,
+      "label": "암기",
+      "isDefault": true
+    }
+  ],
+  "41": [
+    {
+      "weaponCode": 24,
+      "label": "아르카나",
+      "isDefault": true
+    }
+  ],
+  "42": [
+    {
+      "weaponCode": 24,
+      "label": "아르카나",
+      "isDefault": true
+    }
+  ],
+  "43": [
+    {
+      "weaponCode": 5,
+      "label": "투척",
+      "isDefault": true
+    }
+  ],
+  "44": [
+    {
+      "weaponCode": 25,
+      "label": "VF 의수",
+      "isDefault": true
+    }
+  ],
+  "45": [
+    {
+      "weaponCode": 4,
+      "label": "채찍",
+      "isDefault": true
+    }
+  ],
+  "46": [
+    {
+      "weaponCode": 16,
+      "label": "양손검",
+      "isDefault": true
+    }
+  ],
+  "47": [
+    {
+      "weaponCode": 4,
+      "label": "채찍",
+      "isDefault": true
+    }
+  ],
+  "48": [
+    {
+      "weaponCode": 3,
+      "label": "방망이",
+      "isDefault": true
+    }
+  ],
+  "49": [
+    {
+      "weaponCode": 19,
+      "label": "창",
+      "isDefault": true
+    }
+  ],
+  "50": [
+    {
+      "weaponCode": 21,
+      "label": "레이피어",
+      "isDefault": true
+    }
+  ],
+  "51": [
+    {
+      "weaponCode": 22,
+      "label": "기타",
+      "isDefault": true
+    }
+  ],
+  "52": [
+    {
+      "weaponCode": 24,
+      "label": "아르카나",
+      "isDefault": true
+    }
+  ],  
+  "53": [
+    {
+      "weaponCode": 13,
+      "label": "망치",
+      "isDefault": true
+    },
+    {
+      "weaponCode": 14,
+      "label": "도끼",
+      "isDefault": false
+    }
+  ],
+  "54": [
+    {
+      "weaponCode": 8,
+      "label": "대표 무기",
+      "isDefault": true
+    }
+  ],
+  "55": [
+    {
+      "weaponCode": 14,
+      "label": "도끼",
+      "isDefault": true
+    }
+  ],
+  "56": [
+    {
+      "weaponCode": 20,
+      "label": "쌍절곤",
+      "isDefault": true
+    }
+  ],
+  "57": [
+    {
+      "weaponCode": 23,
+      "label": "카메라",
+      "isDefault": true
+    }
+  ],
+  "58": [
+    {
+      "weaponCode": 10,
+      "label": "돌격 소총",
+      "isDefault": true
+    }
+  ],
+  "59": [
+    {
+      "weaponCode": 2,
+      "label": "톤파",
+      "isDefault": true
+    }
+  ],
+  "60": [
+    {
+      "weaponCode": 6,
+      "label": "암기",
+      "isDefault": true
+    }
+  ],
+  "61": [
+    {
+      "weaponCode": 5,
+      "label": "투척",
+      "isDefault": true
+    }
+  ],
+  "62": [
+    {
+      "weaponCode": 11,
+      "label": "저격총",
+      "isDefault": true
+    }
+  ],
+  "63": [
+    {
+      "weaponCode": 15,
+      "label": "단검",
+      "isDefault": true
+    }
+  ],
+  "64": [
+    {
+      "weaponCode": 24,
+      "label": "아르카나",
+      "isDefault": true
+    }
+  ],
+  "65": [
+    {
+      "weaponCode": 16,
+      "label": "양손검",
+      "isDefault": true
+    }
+  ],
+  "66": [
+    {
+      "weaponCode": 24,
+      "label": "아르카나",
+      "isDefault": true
+    }
+  ],
+  "67": [
+    {
+      "weaponCode": 14,
+      "label": "도끼",
+      "isDefault": true
+    }
+  ],
+  "68": [
+    {
+      "weaponCode": 1,
+      "label": "글러브",
+      "isDefault": true
+    }
+  ],
+  "69": [
+    {
+      "weaponCode": 9,
+      "label": "권총",
+      "isDefault": true
+    }
+  ],
+  "70": [
+    {
+      "weaponCode": 6,
+      "label": "암기",
+      "isDefault": true
+    }
+  ],
+  "71": [
+    {
+      "weaponCode": 14,
+      "label": "도끼",
+      "isDefault": true
+    }
+  ],
+  "72": [
+    {
+      "weaponCode": 11,
+      "label": "저격총",
+      "isDefault": true
+    }
+  ],
+  "73": [
+    {
+      "weaponCode": 24,
+      "label": "아르카나",
+      "isDefault": true
+    }
+  ],
+  "74": [
+    {
+      "weaponCode": 3,
+      "label": "방망이",
+      "isDefault": true
+    }
+  ],
+  "75": [
+    {
+      "weaponCode": 22,
+      "label": "기타",
+      "isDefault": true
+    }
+  ],
+  "76": [
+    {
+      "weaponCode": 3,
+      "label": "방망이",
+      "isDefault": true
+    }
+  ],
+  "77": [
+    {
+      "weaponCode": 24,
+      "label": "아르카나",
+      "isDefault": true
+    }
+  ],
+  "78": [
+    {
+      "weaponCode": 16,
+      "label": "양손검",
+      "isDefault": true
+    }
+  ],
+  "79": [
+    {
+      "weaponCode": 8,
+      "label": "대표 무기",
+      "isDefault": true
+    }
+  ],
+  "80": [
+    {
+      "weaponCode": 19,
+      "label": "창",
+      "isDefault": true
+    }
+  ],
+  "81": [
+    {
+      "weaponCode": 9,
+      "label": "권총",
+      "isDefault": true
+    }
+  ],
+  "82": [
+    {
+      "weaponCode": 21,
+      "label": "레이피어",
+      "isDefault": true
+    }
+  ],
+  "83": [
+    {
+      "weaponCode": 6,
+      "label": "암기",
+      "isDefault": true
+    }
+  ],
+  "84": [
+    {
+      "weaponCode": 18,
+      "label": "쌍검",
+      "isDefault": true
+    }
+  ],
+  "85": [
+    {
+      "weaponCode": 13,
+      "label": "망치",
+      "isDefault": true
+    }
+  ],
+  "86": [
+    {
+      "weaponCode": 16,
+      "label": "양손검",
+      "isDefault": true
+    }
+  ]
+}
+
