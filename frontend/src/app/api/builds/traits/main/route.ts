@@ -40,7 +40,12 @@ export async function GET(request: NextRequest) {
 
     const { data, error } = await query
 
-    if (error || !data || data.length === 0) {
+    if (error) {
+      console.error("[builds/traits/main] DB error:", error)
+      return NextResponse.json({ builds: [] })
+    }
+
+    if (!data || data.length === 0) {
       return NextResponse.json({ builds: [] })
     }
 
@@ -48,8 +53,10 @@ export async function GET(request: NextRequest) {
 
     const builds: TraitBuildItem[] = data.map((r: Record<string, unknown>) => {
       const traits: number[] = []
-      for (let i = 1; i <= 6; i++) {
-        const code = r[`mainTrait${i}`] as number | null | undefined
+      const mainCore = r.mainCore as number | null | undefined
+      if (mainCore) traits.push(mainCore)
+      for (let i = 1; i <= 4; i++) {
+        const code = r[`sub${i}`] as number | null | undefined
         if (code) traits.push(code)
       }
       const totalGames = (r.totalGames as number) ?? 0
