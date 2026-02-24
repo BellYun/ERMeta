@@ -11,6 +11,7 @@ const DIAMOND_PLUS_TIERS: TierGroup[] = [
   TierGroup.MITHRIL,
   TierGroup.IN1000,
 ];
+const TRIO_MEMBER_COUNT = 3;
 
 type SortBy = "averageRP" | "winRate" | "totalGames";
 
@@ -75,7 +76,10 @@ function aggregateByTrio(rows: TrioRow[]): AggregatedTrio[] {
     character3: v.c3,
     totalGames: v.totalGames,
     winRate: v.totalGames > 0 ? v.winRateWeighted / v.totalGames : 0,
-    averageRP: v.totalGames > 0 ? v.avgRPWeighted / v.totalGames : 0,
+    averageRP:
+      v.totalGames > 0
+        ? v.avgRPWeighted / v.totalGames / TRIO_MEMBER_COUNT
+        : 0,
     averageRank: v.totalGames > 0 ? v.avgRankWeighted / v.totalGames : 0,
   }));
 }
