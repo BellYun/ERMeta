@@ -137,9 +137,15 @@ export async function GET(request: NextRequest) {
       .limit(5000); // 집계 전 최대 수집 행수
 
     if (char1 !== null && char2 !== null) {
-      // 2명 선택: 오름차순 정렬 후 character1/character2 고정 조회
+      // 2명 선택: 두 캐릭터를 포함하는 모든 3인 조합 조회
       const [low, high] = [char1, char2].sort((a, b) => a - b);
-      query = query.eq("character1", low).eq("character2", high);
+      query = query.or(
+        [
+          `and(character1.eq.${low},character2.eq.${high})`,
+          `and(character1.eq.${low},character3.eq.${high})`,
+          `and(character2.eq.${low},character3.eq.${high})`,
+        ].join(",")
+      );
     } else if (char1 !== null) {
       // 1명 선택: 3개 컬럼 OR 조회
       query = query.or(
