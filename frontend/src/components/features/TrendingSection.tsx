@@ -2,6 +2,7 @@ import { CharacterCard } from "./CharacterCard"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { getCharacterName, getCharacterImageUrl } from "@/lib/characterMap"
 import type { CharacterTrend } from "@/app/api/meta/trending/route"
+import { getCharacterPatchNote } from "@/data/patch-notes"
 
 interface TrendingSectionProps {
   patch?: string;
@@ -71,6 +72,7 @@ export async function TrendingSection({ patch, tier = "DIAMOND" }: TrendingSecti
     imageUrl: getCharacterImageUrl(c.characterNum),
     rateChange: c.trendScore,
     code: c.characterNum,
+    patchChanges: getCharacterPatchNote(c.characterNum, currentPatch)?.changes,
   }));
 
   const fallingCards = falling.map((c) => ({
@@ -78,6 +80,7 @@ export async function TrendingSection({ patch, tier = "DIAMOND" }: TrendingSecti
     imageUrl: getCharacterImageUrl(c.characterNum),
     rateChange: c.trendScore,
     code: c.characterNum,
+    patchChanges: getCharacterPatchNote(c.characterNum, currentPatch)?.changes,
   }));
 
   return (
