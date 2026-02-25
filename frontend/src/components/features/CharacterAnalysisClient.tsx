@@ -2,7 +2,18 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { TrendingUp, TrendingDown, Minus, BarChart2, Search } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, BarChart2, Search, RefreshCw, FileText } from "lucide-react"
+import { getCharacterPatchNote } from "@/data/patch-notes"
+import type { ChangeType } from "@/data/patch-notes"
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { TierBadge } from "./TierBadge"
 import { cn } from "@/lib/utils"
@@ -30,10 +41,16 @@ const CHARACTER_CODES: number[] = [
 const TIER_LABELS: Record<TierGroup, string> = {
   [TierGroup.DIAMOND]: "다이아",
   [TierGroup.METEORITE]: "메테오라이트",
-  [TierGroup.MITHRIL]: "미스릴",
+  [TierGroup.MITHRIL]: "미스릴 이상",
   [TierGroup.IN1000]: "1000위 이내",
   [TierGroup.DIAMOND_BELOW]: "다이아 이하",
 }
+
+const CHANGE_TYPE_CONFIG = {
+  buff:   { label: "버프", colorClass: "text-[var(--color-accent-gold)]", bgClass: "bg-[var(--color-accent-gold)]/15 border-[var(--color-accent-gold)]/30", Icon: TrendingUp },
+  nerf:   { label: "너프", colorClass: "text-[var(--color-danger)]",      bgClass: "bg-[var(--color-danger)]/15 border-[var(--color-danger)]/30",           Icon: TrendingDown },
+  rework: { label: "변경", colorClass: "text-[var(--color-primary)]",     bgClass: "bg-[var(--color-primary)]/15 border-[var(--color-primary)]/30",          Icon: RefreshCw },
+} satisfies Record<ChangeType, { label: string; colorClass: string; bgClass: string; Icon: React.FC<{ className?: string }> }>
 
 // ─── 유틸 ─────────────────────────────────────────────────────────────────────
 
@@ -63,12 +80,35 @@ async function fetchStats(
 
 // ─── 서브 컴포넌트 ────────────────────────────────────────────────────────────
 
-function StatCard({ label, value, sub }: { label: string; value: string; sub?: string }) {
+function StatCard({
+  label,
+  value,
+  sub,
+  delta,
+  deltaLabel,
+  deltaInverted,
+}: {
+  label: string
+  value: string
+  sub?: string
+  delta?: number
+  deltaLabel?: string
+  deltaInverted?: boolean
+}) {
   return (
     <div className="flex flex-col gap-0.5 rounded-lg bg-[var(--color-surface-2)] px-4 py-3">
       <span className="text-xs text-[var(--color-muted-foreground)]">{label}</span>
       <span className="text-lg font-bold text-[var(--color-foreground)]">{value}</span>
-      {sub && <span className="text-xs text-[var(--color-muted-foreground)]">{sub}</span>}
+      {delta !== undefined ? (
+        <div className="flex items-center gap-0.5">
+          <DeltaBadge delta={delta} inverted={deltaInverted} />
+          {deltaLabel && (
+            <span className="text-xs text-[var(--color-muted-foreground)]">{deltaLabel}</span>
+          )}
+        </div>
+      ) : sub ? (
+        <span className="text-xs text-[var(--color-muted-foreground)]">{sub}</span>
+      ) : null}
     </div>
   )
 }
@@ -86,6 +126,72 @@ function DeltaBadge({ delta, inverted = false }: { delta: number; inverted?: boo
   )
 }
 
+function ChangeTypeBadge({ type }: { type: ChangeType }) {
+  const config = CHANGE_TYPE_CONFIG[type]
+  return (
+    <span className={cn("inline-flex items-center gap-1 rounded border px-2 py-0.5 text-xs font-semibold shrink-0", config.bgClass, config.colorClass)}>
+      <config.Icon className="h-3 w-3" />
+      {config.label}
+    </span>
+  )
+}
+
+function PatchTooltip({
+  active,
+  payload,
+  label,
+  selectedCode,
+  metricLabel,
+  format,
+}: {
+  active?: boolean
+  payload?: ReadonlyArray<{ value?: number | string | null }>
+  label?: string | number
+  selectedCode: number
+  metricLabel: string
+  format: (v: number) => string
+}) {
+  if (!active || !payload?.length) return null
+  const rawValue = payload[0]?.value
+  const value = typeof rawValue === "number" ? rawValue : undefined
+  const patchLabel = label != null ? String(label) : ""
+  const note = patchLabel ? getCharacterPatchNote(selectedCode, patchLabel) : undefined
+
+  return (
+    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3 text-xs shadow-lg max-w-[220px]">
+      <p className="mb-1 font-semibold text-[var(--color-foreground)]">{patchLabel || "-"}</p>
+      <p className="text-[var(--color-muted-foreground)]">
+        {metricLabel}:{" "}
+        <span className="font-medium text-[var(--color-foreground)]">
+          {value != null ? format(value) : "-"}
+        </span>
+      </p>
+      {note && note.changes.length > 0 && (
+        <div className="mt-2 border-t border-[var(--color-border)] pt-2 space-y-1">
+          {note.changes.map((change, i) => {
+            const config = CHANGE_TYPE_CONFIG[change.changeType]
+            return (
+              <div key={i} className="flex items-start gap-1.5">
+                <span className={cn("shrink-0 font-bold", config.colorClass)}>
+                  [{config.label}]
+                </span>
+                <span className="text-[var(--color-muted-foreground)] leading-tight">
+                  {change.target}
+                  {change.valueSummary && (
+                    <span className={cn("ml-1 font-mono", config.colorClass)}>
+                      {change.valueSummary}
+                    </span>
+                  )}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function SkeletonCard() {
   return <div className="h-16 rounded-lg bg-[var(--color-surface-2)] animate-pulse" />
 }
@@ -94,7 +200,7 @@ function SkeletonCard() {
 
 export function CharacterAnalysisClient() {
   const [selectedCode, setSelectedCode] = React.useState<number>(1)
-  const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.DIAMOND)
+  const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.MITHRIL)
   const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>(null)
   const [searchQuery, setSearchQuery] = React.useState("")
 
@@ -108,13 +214,14 @@ export function CharacterAnalysisClient() {
   }, [searchQuery])
 
   const [patches, setPatches] = React.useState<string[]>([])
+  const [allPatchStats, setAllPatchStats] = React.useState<(CharacterStatsResponse | null)[]>([])
   const [stats, setStats] = React.useState<CharacterStatsResponse | null>(null)
   const [previousStats, setPreviousStats] = React.useState<CharacterStatsResponse | null>(null)
   const [loading, setLoading] = React.useState(false)
 
   // 패치 목록 로드 (최초 1회)
   React.useEffect(() => {
-    fetch("/api/patches/history?limit=5")
+    fetch("/api/patches/history?limit=10&includeInactive=true")
       .then((r) => r.json())
       .then((d) => setPatches(d.patches ?? []))
       .catch(() => {})
@@ -125,47 +232,50 @@ export function CharacterAnalysisClient() {
     setSelectedWeapon(null)
   }, [selectedCode])
 
-  // 통계 로드
+  // 통계 로드 — 전체 패치 병렬 fetch
   React.useEffect(() => {
     if (!patches.length) return
-    const currentPatch = patches[0]
-    const previousPatch = patches[1] ?? null
 
     setLoading(true)
     setStats(null)
     setPreviousStats(null)
+    setAllPatchStats([])
 
-    Promise.all([
-      fetchStats(selectedCode, currentPatch, selectedTier),
-      previousPatch ? fetchStats(selectedCode, previousPatch, selectedTier) : Promise.resolve(null),
-    ]).then(([cur, prev]) => {
-      setStats(cur)
-      setPreviousStats(prev)
+    Promise.all(
+      patches.map((p) => fetchStats(selectedCode, p, selectedTier))
+    ).then((results) => {
+      setAllPatchStats(results)
+      setStats(results[0] ?? null)
+      setPreviousStats(results[1] ?? null)
       setLoading(false)
     })
   }, [selectedCode, selectedTier, patches])
 
   const currentPatch = patches[0] ?? null
-  const previousPatch = patches[1] ?? null
   const charTier = stats && stats.totalGames > 0 ? assignCharTier(stats.winRate) : null
+
+  // 패치 비교 탭용 차트 데이터 (오래된 → 최신 순)
+  const chartData = React.useMemo(() => {
+    return patches
+      .map((patch, i) => {
+        const s = allPatchStats[i]
+        if (!s || s.totalGames === 0) return null
+        return {
+          patch,
+          winRate: parseFloat(s.winRate.toFixed(2)),
+          averageRP: parseFloat(s.averageRP.toFixed(0)),
+        }
+      })
+      .filter((d): d is { patch: string; winRate: number; averageRP: number } => d !== null)
+      .reverse()
+  }, [patches, allPatchStats])
+
+  const hasPreviousData = previousStats !== null && previousStats.totalGames > 0
 
   return (
     <div className="flex gap-4 items-start">
       {/* 좌측 캐릭터 그리드 */}
       <div className="w-[228px] shrink-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
-        {/* 티어 선택 */}
-        <div className="mb-2">
-          <select
-            value={selectedTier}
-            onChange={(e) => setSelectedTier(e.target.value as TierGroup)}
-            className="w-full rounded bg-[var(--color-surface-2)] px-2 py-1.5 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] cursor-pointer"
-          >
-            {METRICS_TIER_GROUPS.map((tg) => (
-              <option key={tg} value={tg}>{TIER_LABELS[tg]}</option>
-            ))}
-          </select>
-        </div>
-
         {/* 검색 */}
         <div className="relative mb-2">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)] pointer-events-none" />
@@ -228,7 +338,7 @@ export function CharacterAnalysisClient() {
             />
           </div>
           <div className="flex flex-1 flex-col gap-3 min-w-0">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-xl font-bold text-[var(--color-foreground)]">
                 {getCharacterName(selectedCode)}
               </h1>
@@ -238,6 +348,15 @@ export function CharacterAnalysisClient() {
                   {currentPatch}
                 </span>
               )}
+              <select
+                value={selectedTier}
+                onChange={(e) => setSelectedTier(e.target.value as TierGroup)}
+                className="ml-auto rounded bg-[var(--color-surface-2)] px-2 py-1 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] cursor-pointer"
+              >
+                {METRICS_TIER_GROUPS.map((tg) => (
+                  <option key={tg} value={tg}>{TIER_LABELS[tg]}</option>
+                ))}
+              </select>
             </div>
             {loading ? (
               <div className="grid grid-cols-4 gap-2">
@@ -245,10 +364,29 @@ export function CharacterAnalysisClient() {
               </div>
             ) : stats && stats.totalGames > 0 ? (
               <div className="grid grid-cols-4 gap-2">
-                <StatCard label="픽률" value={`${stats.pickRate.toFixed(1)}%`} />
-                <StatCard label="승률" value={`${stats.winRate.toFixed(1)}%`} />
-                <StatCard label="평균 순위" value={`#${stats.averageRank.toFixed(1)}`} />
-                <StatCard label="평균 RP" value={stats.averageRP.toFixed(0)} />
+                <StatCard
+                  label="픽률"
+                  value={`${stats.pickRate.toFixed(1)}%`}
+                  delta={hasPreviousData ? stats.pickRate - previousStats!.pickRate : undefined}
+                  deltaLabel="%p"
+                />
+                <StatCard
+                  label="승률"
+                  value={`${stats.winRate.toFixed(1)}%`}
+                  delta={hasPreviousData ? stats.winRate - previousStats!.winRate : undefined}
+                  deltaLabel="%p"
+                />
+                <StatCard
+                  label="평균 순위"
+                  value={`#${stats.averageRank.toFixed(1)}`}
+                  delta={hasPreviousData ? stats.averageRank - previousStats!.averageRank : undefined}
+                  deltaInverted
+                />
+                <StatCard
+                  label="평균 RP"
+                  value={stats.averageRP.toFixed(0)}
+                  delta={hasPreviousData ? stats.averageRP - previousStats!.averageRP : undefined}
+                />
               </div>
             ) : (
               <p className="text-sm text-[var(--color-muted-foreground)]">
@@ -264,6 +402,9 @@ export function CharacterAnalysisClient() {
             <TabsTrigger value="weapons">무기별 통계</TabsTrigger>
             <TabsTrigger value="comparison">
               <BarChart2 className="mr-1.5 h-3.5 w-3.5" />패치 비교
+            </TabsTrigger>
+            <TabsTrigger value="patchlog">
+              <FileText className="mr-1.5 h-3.5 w-3.5" />패치 내역
             </TabsTrigger>
           </TabsList>
 
@@ -357,81 +498,153 @@ export function CharacterAnalysisClient() {
             {loading ? (
               <div className="h-40 rounded-lg bg-[var(--color-surface)] animate-pulse" />
             ) : stats && stats.totalGames > 0 ? (
-              <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-                <div className="mb-4 flex items-center gap-2">
-                  {currentPatch && (
-                    <span className="rounded bg-[var(--color-primary)]/20 px-2 py-0.5 text-xs text-[var(--color-primary)]">
-                      현재: {currentPatch}
-                    </span>
-                  )}
-                  {previousPatch && (
-                    <span className="rounded bg-[var(--color-surface-2)] px-2 py-0.5 text-xs text-[var(--color-muted-foreground)]">
-                      이전: {previousPatch}
-                    </span>
-                  )}
-                  {!previousStats && previousPatch && (
-                    <span className="text-xs text-[var(--color-muted-foreground)]">
-                      (이전 패치 데이터 없음)
-                    </span>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  {/* 픽률 */}
-                  <div className="rounded-lg bg-[var(--color-surface-2)] p-3">
-                    <p className="mb-1 text-xs text-[var(--color-muted-foreground)]">픽률</p>
-                    <p className="text-lg font-bold text-[var(--color-foreground)]">
-                      {stats.pickRate.toFixed(1)}%
+              <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5 space-y-4">
+                {/* 멀티 패치 트렌드 차트 */}
+                {chartData.length >= 2 && (
+                  <div className="space-y-4">
+                    <p className="text-xs font-medium text-[var(--color-muted-foreground)]">
+                      패치별 트렌드
                     </p>
-                    {previousStats && previousStats.totalGames > 0 && (
-                      <div className="mt-1">
-                        <DeltaBadge delta={stats.pickRate - previousStats.pickRate} />
-                        <span className="ml-1 text-xs text-[var(--color-muted-foreground)]">%p</span>
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* 승률 트렌드 */}
+                      <div>
+                        <p className="mb-2 text-xs text-[var(--color-muted-foreground)]">승률 (%)</p>
+                        <ResponsiveContainer width="100%" height={160}>
+                          <LineChart data={chartData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                            <XAxis
+                              dataKey="patch"
+                              tick={{ fill: "var(--color-muted-foreground)", fontSize: 10 }}
+                              tickLine={false}
+                              axisLine={false}
+                            />
+                            <YAxis
+                              domain={["auto", "auto"]}
+                              tick={{ fill: "var(--color-muted-foreground)", fontSize: 10 }}
+                              tickLine={false}
+                              axisLine={false}
+                              unit="%"
+                            />
+                            <Tooltip
+                              content={(props) => (
+                                <PatchTooltip
+                                  {...props}
+                                  selectedCode={selectedCode}
+                                  metricLabel="승률"
+                                  format={(v) => `${v.toFixed(2)}%`}
+                                />
+                              )}
+                            />
+                            <Line
+                              dataKey="winRate"
+                              stroke="var(--color-primary)"
+                              strokeWidth={2}
+                              dot={{ r: 3, fill: "var(--color-primary)" }}
+                              activeDot={{ r: 5 }}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
                       </div>
-                    )}
-                  </div>
-                  {/* 승률 */}
-                  <div className="rounded-lg bg-[var(--color-surface-2)] p-3">
-                    <p className="mb-1 text-xs text-[var(--color-muted-foreground)]">승률</p>
-                    <p className="text-lg font-bold text-[var(--color-foreground)]">
-                      {stats.winRate.toFixed(1)}%
-                    </p>
-                    {previousStats && previousStats.totalGames > 0 && (
-                      <div className="mt-1">
-                        <DeltaBadge delta={stats.winRate - previousStats.winRate} />
-                        <span className="ml-1 text-xs text-[var(--color-muted-foreground)]">%p</span>
+
+                      {/* 평균 RP 트렌드 */}
+                      <div>
+                        <p className="mb-2 text-xs text-[var(--color-muted-foreground)]">평균 RP</p>
+                        <ResponsiveContainer width="100%" height={160}>
+                          <LineChart data={chartData} margin={{ top: 4, right: 8, left: -8, bottom: 0 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                            <XAxis
+                              dataKey="patch"
+                              tick={{ fill: "var(--color-muted-foreground)", fontSize: 10 }}
+                              tickLine={false}
+                              axisLine={false}
+                            />
+                            <YAxis
+                              domain={["auto", "auto"]}
+                              tick={{ fill: "var(--color-muted-foreground)", fontSize: 10 }}
+                              tickLine={false}
+                              axisLine={false}
+                            />
+                            <Tooltip
+                              content={(props) => (
+                                <PatchTooltip
+                                  {...props}
+                                  selectedCode={selectedCode}
+                                  metricLabel="평균 RP"
+                                  format={(v) => v.toFixed(0)}
+                                />
+                              )}
+                            />
+                            <Line
+                              dataKey="averageRP"
+                              stroke="var(--color-accent-gold)"
+                              strokeWidth={2}
+                              dot={{ r: 3, fill: "var(--color-accent-gold)" }}
+                              activeDot={{ r: 5 }}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
                       </div>
-                    )}
+                    </div>
                   </div>
-                  {/* 평균 순위 */}
-                  <div className="rounded-lg bg-[var(--color-surface-2)] p-3">
-                    <p className="mb-1 text-xs text-[var(--color-muted-foreground)]">평균 순위</p>
-                    <p className="text-lg font-bold text-[var(--color-foreground)]">
-                      #{stats.averageRank.toFixed(1)}
-                    </p>
-                    {previousStats && previousStats.totalGames > 0 && (
-                      <div className="mt-1">
-                        {/* 낮을수록 좋으므로 inverted */}
-                        <DeltaBadge delta={stats.averageRank - previousStats.averageRank} inverted />
-                      </div>
-                    )}
-                  </div>
-                  {/* 평균 RP */}
-                  <div className="rounded-lg bg-[var(--color-surface-2)] p-3">
-                    <p className="mb-1 text-xs text-[var(--color-muted-foreground)]">평균 RP</p>
-                    <p className="text-lg font-bold text-[var(--color-foreground)]">
-                      {stats.averageRP.toFixed(0)}
-                    </p>
-                    {previousStats && previousStats.totalGames > 0 && (
-                      <div className="mt-1">
-                        <DeltaBadge delta={stats.averageRP - previousStats.averageRP} />
-                      </div>
-                    )}
-                  </div>
-                </div>
+                )}
               </div>
             ) : (
               <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
                 데이터가 없습니다.
+              </div>
+            )}
+          </TabsContent>
+
+          {/* 패치 내역 */}
+          <TabsContent value="patchlog">
+            {patches.length === 0 ? (
+              <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
+                패치 정보를 불러오는 중...
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {patches.slice(0, 5).map((patch, i) => {
+                  const note = getCharacterPatchNote(selectedCode, patch)
+                  return (
+                    <div key={patch} className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+                      {/* 패치 버전 헤더 */}
+                      <div className="flex items-center gap-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
+                        <span className="text-xs font-semibold text-[var(--color-foreground)]">{patch}</span>
+                        {i === 0 && (
+                          <span className="rounded bg-[var(--color-primary)]/20 px-1.5 py-0.5 text-[10px] text-[var(--color-primary)]">현재</span>
+                        )}
+                      </div>
+                      {/* 변경 내역 */}
+                      {!note || note.changes.length === 0 ? (
+                        <div className="px-4 py-3 text-xs text-[var(--color-muted-foreground)]">변경 사항 없음</div>
+                      ) : (
+                        <div className="divide-y divide-[var(--color-border)]">
+                          {note.changes.map((change, idx) => {
+                            const config = CHANGE_TYPE_CONFIG[change.changeType]
+                            return (
+                              <div key={idx} className="flex gap-3 px-4 py-3 hover:bg-[var(--color-surface-2)] transition-colors">
+                                <div className="pt-0.5"><ChangeTypeBadge type={change.changeType} /></div>
+                                <div className="flex flex-1 flex-col gap-1 min-w-0">
+                                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                                    <span className="text-sm font-medium text-[var(--color-foreground)]">{change.target}</span>
+                                    {change.valueSummary && (
+                                      <span className={cn("text-xs font-mono shrink-0", config.colorClass)}>{change.valueSummary}</span>
+                                    )}
+                                  </div>
+                                  <ul className="space-y-0.5">
+                                    {change.description.map((desc, di) => (
+                                      <li key={di} className="text-xs text-[var(--color-muted-foreground)] before:content-['•'] before:mr-1.5">{desc}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
             )}
           </TabsContent>
