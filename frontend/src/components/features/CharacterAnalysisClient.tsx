@@ -14,6 +14,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts"
+import type { TooltipProps } from "recharts"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { TierBadge } from "./TierBadge"
 import { cn } from "@/lib/utils"
@@ -136,6 +137,57 @@ function ChangeTypeBadge({ type }: { type: ChangeType }) {
   )
 }
 
+function PatchTooltip({
+  active,
+  payload,
+  label,
+  selectedCode,
+  metricLabel,
+  format,
+}: TooltipProps<number, string> & {
+  selectedCode: number
+  metricLabel: string
+  format: (v: number) => string
+}) {
+  if (!active || !payload?.length) return null
+  const value = payload[0]?.value as number | undefined
+  const note = getCharacterPatchNote(selectedCode, label as string)
+
+  return (
+    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3 text-xs shadow-lg max-w-[220px]">
+      <p className="mb-1 font-semibold text-[var(--color-foreground)]">{label}</p>
+      <p className="text-[var(--color-muted-foreground)]">
+        {metricLabel}:{" "}
+        <span className="font-medium text-[var(--color-foreground)]">
+          {value != null ? format(value) : "-"}
+        </span>
+      </p>
+      {note && note.changes.length > 0 && (
+        <div className="mt-2 border-t border-[var(--color-border)] pt-2 space-y-1">
+          {note.changes.map((change, i) => {
+            const config = CHANGE_TYPE_CONFIG[change.changeType]
+            return (
+              <div key={i} className="flex items-start gap-1.5">
+                <span className={cn("shrink-0 font-bold", config.colorClass)}>
+                  [{config.label}]
+                </span>
+                <span className="text-[var(--color-muted-foreground)] leading-tight">
+                  {change.target}
+                  {change.valueSummary && (
+                    <span className={cn("ml-1 font-mono", config.colorClass)}>
+                      {change.valueSummary}
+                    </span>
+                  )}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function SkeletonCard() {
   return <div className="h-16 rounded-lg bg-[var(--color-surface-2)] animate-pulse" />
 }
@@ -162,7 +214,6 @@ export function CharacterAnalysisClient() {
   const [stats, setStats] = React.useState<CharacterStatsResponse | null>(null)
   const [previousStats, setPreviousStats] = React.useState<CharacterStatsResponse | null>(null)
   const [loading, setLoading] = React.useState(false)
-  const [selectedHistoryPatch, setSelectedHistoryPatch] = React.useState<string | null>(null)
 
   // 패치 목록 로드 (최초 1회)
   React.useEffect(() => {
@@ -171,13 +222,6 @@ export function CharacterAnalysisClient() {
       .then((d) => setPatches(d.patches ?? []))
       .catch(() => {})
   }, [])
-
-  // selectedHistoryPatch 초기화 — 패치 목록 로드 후
-  React.useEffect(() => {
-    if (patches.length > 0 && selectedHistoryPatch === null) {
-      setSelectedHistoryPatch(patches[0])
-    }
-  }, [patches])
 
   // 캐릭터 변경 시 무기 선택 초기화
   React.useEffect(() => {
@@ -204,7 +248,6 @@ export function CharacterAnalysisClient() {
   }, [selectedCode, selectedTier, patches])
 
   const currentPatch = patches[0] ?? null
-  const previousPatch = patches[1] ?? null
   const charTier = stats && stats.totalGames > 0 ? assignCharTier(stats.winRate) : null
 
   // 패치 비교 탭용 차트 데이터 (오래된 → 최신 순)
@@ -451,80 +494,7 @@ export function CharacterAnalysisClient() {
             {loading ? (
               <div className="h-40 rounded-lg bg-[var(--color-surface)] animate-pulse" />
             ) : stats && stats.totalGames > 0 ? (
-              <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5 space-y-6">
-                {/* 현재/이전 패치 레이블 */}
-                <div className="flex items-center gap-2">
-                  {currentPatch && (
-                    <span className="rounded bg-[var(--color-primary)]/20 px-2 py-0.5 text-xs text-[var(--color-primary)]">
-                      현재: {currentPatch}
-                    </span>
-                  )}
-                  {previousPatch && (
-                    <span className="rounded bg-[var(--color-surface-2)] px-2 py-0.5 text-xs text-[var(--color-muted-foreground)]">
-                      이전: {previousPatch}
-                    </span>
-                  )}
-                  {!previousStats && previousPatch && (
-                    <span className="text-xs text-[var(--color-muted-foreground)]">
-                      (이전 패치 데이터 없음)
-                    </span>
-                  )}
-                </div>
-
-                {/* 수치 비교 박스 */}
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  {/* 픽률 */}
-                  <div className="rounded-lg bg-[var(--color-surface-2)] p-3">
-                    <p className="mb-1 text-xs text-[var(--color-muted-foreground)]">픽률</p>
-                    <p className="text-lg font-bold text-[var(--color-foreground)]">
-                      {stats.pickRate.toFixed(1)}%
-                    </p>
-                    {hasPreviousData && (
-                      <div className="mt-1 flex items-center gap-0.5">
-                        <DeltaBadge delta={stats.pickRate - previousStats!.pickRate} />
-                        <span className="text-xs text-[var(--color-muted-foreground)]">%p</span>
-                      </div>
-                    )}
-                  </div>
-                  {/* 승률 */}
-                  <div className="rounded-lg bg-[var(--color-surface-2)] p-3">
-                    <p className="mb-1 text-xs text-[var(--color-muted-foreground)]">승률</p>
-                    <p className="text-lg font-bold text-[var(--color-foreground)]">
-                      {stats.winRate.toFixed(1)}%
-                    </p>
-                    {hasPreviousData && (
-                      <div className="mt-1 flex items-center gap-0.5">
-                        <DeltaBadge delta={stats.winRate - previousStats!.winRate} />
-                        <span className="text-xs text-[var(--color-muted-foreground)]">%p</span>
-                      </div>
-                    )}
-                  </div>
-                  {/* 평균 순위 */}
-                  <div className="rounded-lg bg-[var(--color-surface-2)] p-3">
-                    <p className="mb-1 text-xs text-[var(--color-muted-foreground)]">평균 순위</p>
-                    <p className="text-lg font-bold text-[var(--color-foreground)]">
-                      #{stats.averageRank.toFixed(1)}
-                    </p>
-                    {hasPreviousData && (
-                      <div className="mt-1">
-                        <DeltaBadge delta={stats.averageRank - previousStats!.averageRank} inverted />
-                      </div>
-                    )}
-                  </div>
-                  {/* 평균 RP */}
-                  <div className="rounded-lg bg-[var(--color-surface-2)] p-3">
-                    <p className="mb-1 text-xs text-[var(--color-muted-foreground)]">평균 RP</p>
-                    <p className="text-lg font-bold text-[var(--color-foreground)]">
-                      {stats.averageRP.toFixed(0)}
-                    </p>
-                    {hasPreviousData && (
-                      <div className="mt-1">
-                        <DeltaBadge delta={stats.averageRP - previousStats!.averageRP} />
-                      </div>
-                    )}
-                  </div>
-                </div>
-
+              <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5 space-y-4">
                 {/* 멀티 패치 트렌드 차트 */}
                 {chartData.length >= 2 && (
                   <div className="space-y-4">
@@ -552,14 +522,14 @@ export function CharacterAnalysisClient() {
                               unit="%"
                             />
                             <Tooltip
-                              contentStyle={{
-                                background: "var(--color-surface)",
-                                border: "1px solid var(--color-border)",
-                                borderRadius: "6px",
-                                fontSize: 12,
-                                color: "var(--color-foreground)",
-                              }}
-                              formatter={(value: number | undefined) => [value != null ? `${value.toFixed(2)}%` : "-", "승률"]}
+                              content={(props) => (
+                                <PatchTooltip
+                                  {...props}
+                                  selectedCode={selectedCode}
+                                  metricLabel="승률"
+                                  format={(v) => `${v.toFixed(2)}%`}
+                                />
+                              )}
                             />
                             <Line
                               dataKey="winRate"
@@ -591,14 +561,14 @@ export function CharacterAnalysisClient() {
                               axisLine={false}
                             />
                             <Tooltip
-                              contentStyle={{
-                                background: "var(--color-surface)",
-                                border: "1px solid var(--color-border)",
-                                borderRadius: "6px",
-                                fontSize: 12,
-                                color: "var(--color-foreground)",
-                              }}
-                              formatter={(value: number | undefined) => [value != null ? value.toFixed(0) : "-", "평균 RP"]}
+                              content={(props) => (
+                                <PatchTooltip
+                                  {...props}
+                                  selectedCode={selectedCode}
+                                  metricLabel="평균 RP"
+                                  format={(v) => v.toFixed(0)}
+                                />
+                              )}
                             />
                             <Line
                               dataKey="averageRP"
@@ -623,62 +593,56 @@ export function CharacterAnalysisClient() {
 
           {/* 패치 내역 */}
           <TabsContent value="patchlog">
-            {/* 패치 선택 드롭다운 */}
-            <div className="mb-4 flex items-center gap-2">
-              <span className="text-xs text-[var(--color-muted-foreground)]">패치 버전</span>
-              <select
-                value={selectedHistoryPatch ?? ""}
-                onChange={(e) => setSelectedHistoryPatch(e.target.value)}
-                className="rounded bg-[var(--color-surface-2)] px-2 py-1 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] cursor-pointer"
-              >
-                {patches.map((p, i) => (
-                  <option key={p} value={p}>{p}{i === 0 ? " (현재)" : ""}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* 패치 변경 내역 */}
-            {(() => {
-              if (!selectedHistoryPatch)
-                return (
-                  <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
-                    패치 정보를 불러오는 중...
-                  </div>
-                )
-              const note = getCharacterPatchNote(selectedCode, selectedHistoryPatch)
-              if (!note || note.changes.length === 0)
-                return (
-                  <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
-                    이 패치에서 변경 사항이 없습니다.
-                  </div>
-                )
-
-              return (
-                <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] divide-y divide-[var(--color-border)]">
-                  {note.changes.map((change, idx) => {
-                    const config = CHANGE_TYPE_CONFIG[change.changeType]
-                    return (
-                      <div key={idx} className="flex gap-3 px-4 py-3 hover:bg-[var(--color-surface-2)] transition-colors">
-                        <div className="pt-0.5"><ChangeTypeBadge type={change.changeType} /></div>
-                        <div className="flex flex-1 flex-col gap-1 min-w-0">
-                          <div className="flex items-center justify-between gap-2 flex-wrap">
-                            <span className="text-sm font-medium text-[var(--color-foreground)]">{change.target}</span>
-                            {change.valueSummary && (
-                              <span className={cn("text-xs font-mono shrink-0", config.colorClass)}>{change.valueSummary}</span>
-                            )}
-                          </div>
-                          <ul className="space-y-0.5">
-                            {change.description.map((desc, di) => (
-                              <li key={di} className="text-xs text-[var(--color-muted-foreground)] before:content-['•'] before:mr-1.5">{desc}</li>
-                            ))}
-                          </ul>
-                        </div>
+            {patches.length === 0 ? (
+              <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
+                패치 정보를 불러오는 중...
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {patches.slice(0, 5).map((patch, i) => {
+                  const note = getCharacterPatchNote(selectedCode, patch)
+                  return (
+                    <div key={patch} className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+                      {/* 패치 버전 헤더 */}
+                      <div className="flex items-center gap-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
+                        <span className="text-xs font-semibold text-[var(--color-foreground)]">{patch}</span>
+                        {i === 0 && (
+                          <span className="rounded bg-[var(--color-primary)]/20 px-1.5 py-0.5 text-[10px] text-[var(--color-primary)]">현재</span>
+                        )}
                       </div>
-                    )
-                  })}
-                </div>
-              )
-            })()}
+                      {/* 변경 내역 */}
+                      {!note || note.changes.length === 0 ? (
+                        <div className="px-4 py-3 text-xs text-[var(--color-muted-foreground)]">변경 사항 없음</div>
+                      ) : (
+                        <div className="divide-y divide-[var(--color-border)]">
+                          {note.changes.map((change, idx) => {
+                            const config = CHANGE_TYPE_CONFIG[change.changeType]
+                            return (
+                              <div key={idx} className="flex gap-3 px-4 py-3 hover:bg-[var(--color-surface-2)] transition-colors">
+                                <div className="pt-0.5"><ChangeTypeBadge type={change.changeType} /></div>
+                                <div className="flex flex-1 flex-col gap-1 min-w-0">
+                                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                                    <span className="text-sm font-medium text-[var(--color-foreground)]">{change.target}</span>
+                                    {change.valueSummary && (
+                                      <span className={cn("text-xs font-mono shrink-0", config.colorClass)}>{change.valueSummary}</span>
+                                    )}
+                                  </div>
+                                  <ul className="space-y-0.5">
+                                    {change.description.map((desc, di) => (
+                                      <li key={di} className="text-xs text-[var(--color-muted-foreground)] before:content-['•'] before:mr-1.5">{desc}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </TabsContent>
 
         </Tabs>
