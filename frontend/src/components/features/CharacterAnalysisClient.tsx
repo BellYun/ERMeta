@@ -2,7 +2,9 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { TrendingUp, TrendingDown, Minus, BarChart2, Search } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, BarChart2, Search, RefreshCw, FileText } from "lucide-react"
+import { getCharacterPatchNote } from "@/data/patch-notes"
+import type { ChangeType } from "@/data/patch-notes"
 import {
   LineChart,
   Line,
@@ -39,10 +41,16 @@ const CHARACTER_CODES: number[] = [
 const TIER_LABELS: Record<TierGroup, string> = {
   [TierGroup.DIAMOND]: "다이아",
   [TierGroup.METEORITE]: "메테오라이트",
-  [TierGroup.MITHRIL]: "미스릴",
+  [TierGroup.MITHRIL]: "미스릴 이상",
   [TierGroup.IN1000]: "1000위 이내",
   [TierGroup.DIAMOND_BELOW]: "다이아 이하",
 }
+
+const CHANGE_TYPE_CONFIG = {
+  buff:   { label: "버프", colorClass: "text-[var(--color-accent-gold)]", bgClass: "bg-[var(--color-accent-gold)]/15 border-[var(--color-accent-gold)]/30", Icon: TrendingUp },
+  nerf:   { label: "너프", colorClass: "text-[var(--color-danger)]",      bgClass: "bg-[var(--color-danger)]/15 border-[var(--color-danger)]/30",           Icon: TrendingDown },
+  rework: { label: "변경", colorClass: "text-[var(--color-primary)]",     bgClass: "bg-[var(--color-primary)]/15 border-[var(--color-primary)]/30",          Icon: RefreshCw },
+} satisfies Record<ChangeType, { label: string; colorClass: string; bgClass: string; Icon: React.FC<{ className?: string }> }>
 
 // ─── 유틸 ─────────────────────────────────────────────────────────────────────
 
@@ -118,6 +126,16 @@ function DeltaBadge({ delta, inverted = false }: { delta: number; inverted?: boo
   )
 }
 
+function ChangeTypeBadge({ type }: { type: ChangeType }) {
+  const config = CHANGE_TYPE_CONFIG[type]
+  return (
+    <span className={cn("inline-flex items-center gap-1 rounded border px-2 py-0.5 text-xs font-semibold shrink-0", config.bgClass, config.colorClass)}>
+      <config.Icon className="h-3 w-3" />
+      {config.label}
+    </span>
+  )
+}
+
 function SkeletonCard() {
   return <div className="h-16 rounded-lg bg-[var(--color-surface-2)] animate-pulse" />
 }
@@ -126,7 +144,7 @@ function SkeletonCard() {
 
 export function CharacterAnalysisClient() {
   const [selectedCode, setSelectedCode] = React.useState<number>(1)
-  const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.DIAMOND)
+  const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.MITHRIL)
   const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>(null)
   const [searchQuery, setSearchQuery] = React.useState("")
 
@@ -144,6 +162,7 @@ export function CharacterAnalysisClient() {
   const [stats, setStats] = React.useState<CharacterStatsResponse | null>(null)
   const [previousStats, setPreviousStats] = React.useState<CharacterStatsResponse | null>(null)
   const [loading, setLoading] = React.useState(false)
+  const [selectedHistoryPatch, setSelectedHistoryPatch] = React.useState<string | null>(null)
 
   // 패치 목록 로드 (최초 1회)
   React.useEffect(() => {
@@ -152,6 +171,13 @@ export function CharacterAnalysisClient() {
       .then((d) => setPatches(d.patches ?? []))
       .catch(() => {})
   }, [])
+
+  // selectedHistoryPatch 초기화 — 패치 목록 로드 후
+  React.useEffect(() => {
+    if (patches.length > 0 && selectedHistoryPatch === null) {
+      setSelectedHistoryPatch(patches[0])
+    }
+  }, [patches])
 
   // 캐릭터 변경 시 무기 선택 초기화
   React.useEffect(() => {
@@ -203,19 +229,6 @@ export function CharacterAnalysisClient() {
     <div className="flex gap-4 items-start">
       {/* 좌측 캐릭터 그리드 */}
       <div className="w-[228px] shrink-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
-        {/* 티어 선택 */}
-        <div className="mb-2">
-          <select
-            value={selectedTier}
-            onChange={(e) => setSelectedTier(e.target.value as TierGroup)}
-            className="w-full rounded bg-[var(--color-surface-2)] px-2 py-1.5 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] cursor-pointer"
-          >
-            {METRICS_TIER_GROUPS.map((tg) => (
-              <option key={tg} value={tg}>{TIER_LABELS[tg]}</option>
-            ))}
-          </select>
-        </div>
-
         {/* 검색 */}
         <div className="relative mb-2">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)] pointer-events-none" />
@@ -278,7 +291,7 @@ export function CharacterAnalysisClient() {
             />
           </div>
           <div className="flex flex-1 flex-col gap-3 min-w-0">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-xl font-bold text-[var(--color-foreground)]">
                 {getCharacterName(selectedCode)}
               </h1>
@@ -288,6 +301,15 @@ export function CharacterAnalysisClient() {
                   {currentPatch}
                 </span>
               )}
+              <select
+                value={selectedTier}
+                onChange={(e) => setSelectedTier(e.target.value as TierGroup)}
+                className="ml-auto rounded bg-[var(--color-surface-2)] px-2 py-1 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] cursor-pointer"
+              >
+                {METRICS_TIER_GROUPS.map((tg) => (
+                  <option key={tg} value={tg}>{TIER_LABELS[tg]}</option>
+                ))}
+              </select>
             </div>
             {loading ? (
               <div className="grid grid-cols-4 gap-2">
@@ -333,6 +355,9 @@ export function CharacterAnalysisClient() {
             <TabsTrigger value="weapons">무기별 통계</TabsTrigger>
             <TabsTrigger value="comparison">
               <BarChart2 className="mr-1.5 h-3.5 w-3.5" />패치 비교
+            </TabsTrigger>
+            <TabsTrigger value="patchlog">
+              <FileText className="mr-1.5 h-3.5 w-3.5" />패치 내역
             </TabsTrigger>
           </TabsList>
 
@@ -594,6 +619,66 @@ export function CharacterAnalysisClient() {
                 데이터가 없습니다.
               </div>
             )}
+          </TabsContent>
+
+          {/* 패치 내역 */}
+          <TabsContent value="patchlog">
+            {/* 패치 선택 드롭다운 */}
+            <div className="mb-4 flex items-center gap-2">
+              <span className="text-xs text-[var(--color-muted-foreground)]">패치 버전</span>
+              <select
+                value={selectedHistoryPatch ?? ""}
+                onChange={(e) => setSelectedHistoryPatch(e.target.value)}
+                className="rounded bg-[var(--color-surface-2)] px-2 py-1 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] cursor-pointer"
+              >
+                {patches.map((p, i) => (
+                  <option key={p} value={p}>{p}{i === 0 ? " (현재)" : ""}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* 패치 변경 내역 */}
+            {(() => {
+              if (!selectedHistoryPatch)
+                return (
+                  <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
+                    패치 정보를 불러오는 중...
+                  </div>
+                )
+              const note = getCharacterPatchNote(selectedCode, selectedHistoryPatch)
+              if (!note || note.changes.length === 0)
+                return (
+                  <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
+                    이 패치에서 변경 사항이 없습니다.
+                  </div>
+                )
+
+              return (
+                <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] divide-y divide-[var(--color-border)]">
+                  {note.changes.map((change, idx) => {
+                    const config = CHANGE_TYPE_CONFIG[change.changeType]
+                    return (
+                      <div key={idx} className="flex gap-3 px-4 py-3 hover:bg-[var(--color-surface-2)] transition-colors">
+                        <div className="pt-0.5"><ChangeTypeBadge type={change.changeType} /></div>
+                        <div className="flex flex-1 flex-col gap-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2 flex-wrap">
+                            <span className="text-sm font-medium text-[var(--color-foreground)]">{change.target}</span>
+                            {change.valueSummary && (
+                              <span className={cn("text-xs font-mono shrink-0", config.colorClass)}>{change.valueSummary}</span>
+                            )}
+                          </div>
+                          <ul className="space-y-0.5">
+                            {change.description.map((desc, di) => (
+                              <li key={di} className="text-xs text-[var(--color-muted-foreground)] before:content-['•'] before:mr-1.5">{desc}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )
+            })()}
           </TabsContent>
 
         </Tabs>
