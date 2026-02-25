@@ -14,7 +14,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts"
-import type { TooltipProps } from "recharts"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { TierBadge } from "./TierBadge"
 import { cn } from "@/lib/utils"
@@ -144,18 +143,23 @@ function PatchTooltip({
   selectedCode,
   metricLabel,
   format,
-}: TooltipProps<number, string> & {
+}: {
+  active?: boolean
+  payload?: ReadonlyArray<{ value?: number | string | null }>
+  label?: string | number
   selectedCode: number
   metricLabel: string
   format: (v: number) => string
 }) {
   if (!active || !payload?.length) return null
-  const value = payload[0]?.value as number | undefined
-  const note = getCharacterPatchNote(selectedCode, label as string)
+  const rawValue = payload[0]?.value
+  const value = typeof rawValue === "number" ? rawValue : undefined
+  const patchLabel = label != null ? String(label) : ""
+  const note = patchLabel ? getCharacterPatchNote(selectedCode, patchLabel) : undefined
 
   return (
     <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3 text-xs shadow-lg max-w-[220px]">
-      <p className="mb-1 font-semibold text-[var(--color-foreground)]">{label}</p>
+      <p className="mb-1 font-semibold text-[var(--color-foreground)]">{patchLabel || "-"}</p>
       <p className="text-[var(--color-muted-foreground)]">
         {metricLabel}:{" "}
         <span className="font-medium text-[var(--color-foreground)]">
