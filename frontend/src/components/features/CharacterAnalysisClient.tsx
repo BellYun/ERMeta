@@ -3,6 +3,15 @@
 import * as React from "react"
 import Image from "next/image"
 import { TrendingUp, TrendingDown, Minus, BarChart2, Search } from "lucide-react"
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { TierBadge } from "./TierBadge"
 import { cn } from "@/lib/utils"
@@ -63,12 +72,35 @@ async function fetchStats(
 
 // ─── 서브 컴포넌트 ────────────────────────────────────────────────────────────
 
-function StatCard({ label, value, sub }: { label: string; value: string; sub?: string }) {
+function StatCard({
+  label,
+  value,
+  sub,
+  delta,
+  deltaLabel,
+  deltaInverted,
+}: {
+  label: string
+  value: string
+  sub?: string
+  delta?: number
+  deltaLabel?: string
+  deltaInverted?: boolean
+}) {
   return (
     <div className="flex flex-col gap-0.5 rounded-lg bg-[var(--color-surface-2)] px-4 py-3">
       <span className="text-xs text-[var(--color-muted-foreground)]">{label}</span>
       <span className="text-lg font-bold text-[var(--color-foreground)]">{value}</span>
-      {sub && <span className="text-xs text-[var(--color-muted-foreground)]">{sub}</span>}
+      {delta !== undefined ? (
+        <div className="flex items-center gap-0.5">
+          <DeltaBadge delta={delta} inverted={deltaInverted} />
+          {deltaLabel && (
+            <span className="text-xs text-[var(--color-muted-foreground)]">{deltaLabel}</span>
+          )}
+        </div>
+      ) : sub ? (
+        <span className="text-xs text-[var(--color-muted-foreground)]">{sub}</span>
+      ) : null}
     </div>
   )
 }
@@ -108,13 +140,14 @@ export function CharacterAnalysisClient() {
   }, [searchQuery])
 
   const [patches, setPatches] = React.useState<string[]>([])
+  const [allPatchStats, setAllPatchStats] = React.useState<(CharacterStatsResponse | null)[]>([])
   const [stats, setStats] = React.useState<CharacterStatsResponse | null>(null)
   const [previousStats, setPreviousStats] = React.useState<CharacterStatsResponse | null>(null)
   const [loading, setLoading] = React.useState(false)
 
   // 패치 목록 로드 (최초 1회)
   React.useEffect(() => {
-    fetch("/api/patches/history?limit=5")
+    fetch("/api/patches/history?limit=10&includeInactive=true")
       .then((r) => r.json())
       .then((d) => setPatches(d.patches ?? []))
       .catch(() => {})
@@ -125,22 +158,21 @@ export function CharacterAnalysisClient() {
     setSelectedWeapon(null)
   }, [selectedCode])
 
-  // 통계 로드
+  // 통계 로드 — 전체 패치 병렬 fetch
   React.useEffect(() => {
     if (!patches.length) return
-    const currentPatch = patches[0]
-    const previousPatch = patches[1] ?? null
 
     setLoading(true)
     setStats(null)
     setPreviousStats(null)
+    setAllPatchStats([])
 
-    Promise.all([
-      fetchStats(selectedCode, currentPatch, selectedTier),
-      previousPatch ? fetchStats(selectedCode, previousPatch, selectedTier) : Promise.resolve(null),
-    ]).then(([cur, prev]) => {
-      setStats(cur)
-      setPreviousStats(prev)
+    Promise.all(
+      patches.map((p) => fetchStats(selectedCode, p, selectedTier))
+    ).then((results) => {
+      setAllPatchStats(results)
+      setStats(results[0] ?? null)
+      setPreviousStats(results[1] ?? null)
       setLoading(false)
     })
   }, [selectedCode, selectedTier, patches])
@@ -148,6 +180,24 @@ export function CharacterAnalysisClient() {
   const currentPatch = patches[0] ?? null
   const previousPatch = patches[1] ?? null
   const charTier = stats && stats.totalGames > 0 ? assignCharTier(stats.winRate) : null
+
+  // 패치 비교 탭용 차트 데이터 (오래된 → 최신 순)
+  const chartData = React.useMemo(() => {
+    return patches
+      .map((patch, i) => {
+        const s = allPatchStats[i]
+        if (!s || s.totalGames === 0) return null
+        return {
+          patch,
+          winRate: parseFloat(s.winRate.toFixed(2)),
+          averageRP: parseFloat(s.averageRP.toFixed(0)),
+        }
+      })
+      .filter((d): d is { patch: string; winRate: number; averageRP: number } => d !== null)
+      .reverse()
+  }, [patches, allPatchStats])
+
+  const hasPreviousData = previousStats !== null && previousStats.totalGames > 0
 
   return (
     <div className="flex gap-4 items-start">
@@ -245,10 +295,29 @@ export function CharacterAnalysisClient() {
               </div>
             ) : stats && stats.totalGames > 0 ? (
               <div className="grid grid-cols-4 gap-2">
-                <StatCard label="픽률" value={`${stats.pickRate.toFixed(1)}%`} />
-                <StatCard label="승률" value={`${stats.winRate.toFixed(1)}%`} />
-                <StatCard label="평균 순위" value={`#${stats.averageRank.toFixed(1)}`} />
-                <StatCard label="평균 RP" value={stats.averageRP.toFixed(0)} />
+                <StatCard
+                  label="픽률"
+                  value={`${stats.pickRate.toFixed(1)}%`}
+                  delta={hasPreviousData ? stats.pickRate - previousStats!.pickRate : undefined}
+                  deltaLabel="%p"
+                />
+                <StatCard
+                  label="승률"
+                  value={`${stats.winRate.toFixed(1)}%`}
+                  delta={hasPreviousData ? stats.winRate - previousStats!.winRate : undefined}
+                  deltaLabel="%p"
+                />
+                <StatCard
+                  label="평균 순위"
+                  value={`#${stats.averageRank.toFixed(1)}`}
+                  delta={hasPreviousData ? stats.averageRank - previousStats!.averageRank : undefined}
+                  deltaInverted
+                />
+                <StatCard
+                  label="평균 RP"
+                  value={stats.averageRP.toFixed(0)}
+                  delta={hasPreviousData ? stats.averageRP - previousStats!.averageRP : undefined}
+                />
               </div>
             ) : (
               <p className="text-sm text-[var(--color-muted-foreground)]">
@@ -357,8 +426,9 @@ export function CharacterAnalysisClient() {
             {loading ? (
               <div className="h-40 rounded-lg bg-[var(--color-surface)] animate-pulse" />
             ) : stats && stats.totalGames > 0 ? (
-              <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-                <div className="mb-4 flex items-center gap-2">
+              <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5 space-y-6">
+                {/* 현재/이전 패치 레이블 */}
+                <div className="flex items-center gap-2">
                   {currentPatch && (
                     <span className="rounded bg-[var(--color-primary)]/20 px-2 py-0.5 text-xs text-[var(--color-primary)]">
                       현재: {currentPatch}
@@ -375,6 +445,8 @@ export function CharacterAnalysisClient() {
                     </span>
                   )}
                 </div>
+
+                {/* 수치 비교 박스 */}
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                   {/* 픽률 */}
                   <div className="rounded-lg bg-[var(--color-surface-2)] p-3">
@@ -382,10 +454,10 @@ export function CharacterAnalysisClient() {
                     <p className="text-lg font-bold text-[var(--color-foreground)]">
                       {stats.pickRate.toFixed(1)}%
                     </p>
-                    {previousStats && previousStats.totalGames > 0 && (
-                      <div className="mt-1">
-                        <DeltaBadge delta={stats.pickRate - previousStats.pickRate} />
-                        <span className="ml-1 text-xs text-[var(--color-muted-foreground)]">%p</span>
+                    {hasPreviousData && (
+                      <div className="mt-1 flex items-center gap-0.5">
+                        <DeltaBadge delta={stats.pickRate - previousStats!.pickRate} />
+                        <span className="text-xs text-[var(--color-muted-foreground)]">%p</span>
                       </div>
                     )}
                   </div>
@@ -395,10 +467,10 @@ export function CharacterAnalysisClient() {
                     <p className="text-lg font-bold text-[var(--color-foreground)]">
                       {stats.winRate.toFixed(1)}%
                     </p>
-                    {previousStats && previousStats.totalGames > 0 && (
-                      <div className="mt-1">
-                        <DeltaBadge delta={stats.winRate - previousStats.winRate} />
-                        <span className="ml-1 text-xs text-[var(--color-muted-foreground)]">%p</span>
+                    {hasPreviousData && (
+                      <div className="mt-1 flex items-center gap-0.5">
+                        <DeltaBadge delta={stats.winRate - previousStats!.winRate} />
+                        <span className="text-xs text-[var(--color-muted-foreground)]">%p</span>
                       </div>
                     )}
                   </div>
@@ -408,10 +480,9 @@ export function CharacterAnalysisClient() {
                     <p className="text-lg font-bold text-[var(--color-foreground)]">
                       #{stats.averageRank.toFixed(1)}
                     </p>
-                    {previousStats && previousStats.totalGames > 0 && (
+                    {hasPreviousData && (
                       <div className="mt-1">
-                        {/* 낮을수록 좋으므로 inverted */}
-                        <DeltaBadge delta={stats.averageRank - previousStats.averageRank} inverted />
+                        <DeltaBadge delta={stats.averageRank - previousStats!.averageRank} inverted />
                       </div>
                     )}
                   </div>
@@ -421,13 +492,102 @@ export function CharacterAnalysisClient() {
                     <p className="text-lg font-bold text-[var(--color-foreground)]">
                       {stats.averageRP.toFixed(0)}
                     </p>
-                    {previousStats && previousStats.totalGames > 0 && (
+                    {hasPreviousData && (
                       <div className="mt-1">
-                        <DeltaBadge delta={stats.averageRP - previousStats.averageRP} />
+                        <DeltaBadge delta={stats.averageRP - previousStats!.averageRP} />
                       </div>
                     )}
                   </div>
                 </div>
+
+                {/* 멀티 패치 트렌드 차트 */}
+                {chartData.length >= 2 && (
+                  <div className="space-y-4">
+                    <p className="text-xs font-medium text-[var(--color-muted-foreground)]">
+                      패치별 트렌드
+                    </p>
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* 승률 트렌드 */}
+                      <div>
+                        <p className="mb-2 text-xs text-[var(--color-muted-foreground)]">승률 (%)</p>
+                        <ResponsiveContainer width="100%" height={160}>
+                          <LineChart data={chartData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                            <XAxis
+                              dataKey="patch"
+                              tick={{ fill: "var(--color-muted-foreground)", fontSize: 10 }}
+                              tickLine={false}
+                              axisLine={false}
+                            />
+                            <YAxis
+                              domain={["auto", "auto"]}
+                              tick={{ fill: "var(--color-muted-foreground)", fontSize: 10 }}
+                              tickLine={false}
+                              axisLine={false}
+                              unit="%"
+                            />
+                            <Tooltip
+                              contentStyle={{
+                                background: "var(--color-surface)",
+                                border: "1px solid var(--color-border)",
+                                borderRadius: "6px",
+                                fontSize: 12,
+                                color: "var(--color-foreground)",
+                              }}
+                              formatter={(value: number | undefined) => [value != null ? `${value.toFixed(2)}%` : "-", "승률"]}
+                            />
+                            <Line
+                              dataKey="winRate"
+                              stroke="var(--color-primary)"
+                              strokeWidth={2}
+                              dot={{ r: 3, fill: "var(--color-primary)" }}
+                              activeDot={{ r: 5 }}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+
+                      {/* 평균 RP 트렌드 */}
+                      <div>
+                        <p className="mb-2 text-xs text-[var(--color-muted-foreground)]">평균 RP</p>
+                        <ResponsiveContainer width="100%" height={160}>
+                          <LineChart data={chartData} margin={{ top: 4, right: 8, left: -8, bottom: 0 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                            <XAxis
+                              dataKey="patch"
+                              tick={{ fill: "var(--color-muted-foreground)", fontSize: 10 }}
+                              tickLine={false}
+                              axisLine={false}
+                            />
+                            <YAxis
+                              domain={["auto", "auto"]}
+                              tick={{ fill: "var(--color-muted-foreground)", fontSize: 10 }}
+                              tickLine={false}
+                              axisLine={false}
+                            />
+                            <Tooltip
+                              contentStyle={{
+                                background: "var(--color-surface)",
+                                border: "1px solid var(--color-border)",
+                                borderRadius: "6px",
+                                fontSize: 12,
+                                color: "var(--color-foreground)",
+                              }}
+                              formatter={(value: number | undefined) => [value != null ? value.toFixed(0) : "-", "평균 RP"]}
+                            />
+                            <Line
+                              dataKey="averageRP"
+                              stroke="var(--color-accent-gold)"
+                              strokeWidth={2}
+                              dot={{ r: 3, fill: "var(--color-accent-gold)" }}
+                              activeDot={{ r: 5 }}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
