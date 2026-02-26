@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
+import weaponItemTypeMap from "@/../const/weaponItemTypeMap.json"
+
+const WEAPON_ITEM_TYPE = weaponItemTypeMap as Record<string, number>
 
 export const dynamic = "force-dynamic"
 
@@ -54,7 +57,6 @@ type EquipmentRow = {
   totalWins: number
   rankSum: number
   totalRP: number
-  bestWeapon: number | null
 }
 
 function aggregateSlot(
@@ -107,14 +109,10 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from("CharacterEquipmentBuildStats")
-      .select("mainCore, weapon, chest, head, arm, leg, totalGames, totalWins, rankSum, totalRP, bestWeapon")
+      .select("mainCore, weapon, chest, head, arm, leg, totalGames, totalWins, rankSum, totalRP")
       .eq("characterNum", characterCode)
       .eq("tier", tier)
       .eq("patchVersion", patchVersion)
-
-    if (bestWeaponParam != null) {
-      query = query.eq("bestWeapon", Number(bestWeaponParam)) as typeof query
-    }
 
     if (mainCoreParam != null) {
       if (mainCoreParam === "null") {
@@ -145,7 +143,25 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    const rows = data as EquipmentRow[]
+    let rows = data as EquipmentRow[]
+
+    // bestWeapon 파라미터가 있으면 weapon 아이템 코드 → 무기 타입 매핑으로 필터
+    if (bestWeaponParam != null) {
+      const targetType = Number(bestWeaponParam)
+      rows = rows.filter((r) => {
+        if (r.weapon == null) return false
+        return WEAPON_ITEM_TYPE[String(r.weapon)] === targetType
+      })
+    }
+
+    if (rows.length === 0) {
+      return NextResponse.json<EquipmentBuildResult>({
+        topBuilds: [],
+        slotPopularity: { weapon: [], chest: [], head: [], arm: [], leg: [] },
+        coreItems: [],
+      })
+    }
+
     const grandTotal = rows.reduce((s, r) => s + r.totalGames, 0)
 
     // ① topBuilds — mainCore+weapon+chest+head+arm+leg 조합 그룹화
