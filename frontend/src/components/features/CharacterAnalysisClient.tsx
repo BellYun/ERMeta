@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { TrendingUp, TrendingDown, Minus, BarChart2, Search, RefreshCw, FileText } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, BarChart2, Search, RefreshCw, FileText, Package } from "lucide-react"
 import { getCharacterPatchNote } from "@/data/patch-notes"
 import type { ChangeType } from "@/data/patch-notes"
 import {
@@ -22,6 +22,7 @@ import { getCharacterName, getCharacterImageUrl } from "@/lib/characterMap"
 import { resolveWeaponName } from "@/lib/weaponMap"
 import { METRICS_TIER_GROUPS, TierGroup } from "@/utils/tier"
 import { CharacterTraitBuildAnalyzer } from "@/components/character/CharacterTraitBuildAnalyzer"
+import { CharacterEquipmentAnalyzer } from "@/components/character/CharacterEquipmentAnalyzer"
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route"
 
 // ─── 상수 ────────────────────────────────────────────────────────────────────
@@ -406,6 +407,9 @@ export function CharacterAnalysisClient() {
             <TabsTrigger value="patchlog">
               <FileText className="mr-1.5 h-3.5 w-3.5" />패치 내역
             </TabsTrigger>
+            <TabsTrigger value="equipment">
+              <Package className="mr-1.5 h-3.5 w-3.5" />아이템 통계
+            </TabsTrigger>
           </TabsList>
 
           {/* 무기별 통계 */}
@@ -647,6 +651,15 @@ export function CharacterAnalysisClient() {
                 })}
               </div>
             )}
+          </TabsContent>
+
+          {/* 아이템 통계 */}
+          <TabsContent value="equipment">
+            <CharacterEquipmentAnalyzer
+              characterCode={selectedCode}
+              tier={selectedTier}
+              patchVersion={currentPatch}
+            />
           </TabsContent>
 
         </Tabs>
