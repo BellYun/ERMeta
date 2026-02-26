@@ -90,6 +90,7 @@ export async function GET(request: NextRequest) {
   const characterCode = Number(searchParams.get("characterCode"))
   const tier = searchParams.get("tier") ?? "DIAMOND"
   const patchVersion = searchParams.get("patchVersion") ?? ""
+  const mainCoreParam = searchParams.get("mainCore")
 
   if (!characterCode || isNaN(characterCode)) {
     return NextResponse.json<EquipmentBuildResult>({
@@ -102,12 +103,22 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = createServerClient()
 
-    const { data, error } = await supabase
+    let query = supabase
       .from("CharacterEquipmentBuildStats")
       .select("mainCore, weapon, chest, head, arm, leg, totalGames, totalWins, rankSum, totalRP")
       .eq("characterNum", characterCode)
       .eq("tier", tier)
       .eq("patchVersion", patchVersion)
+
+    if (mainCoreParam != null) {
+      if (mainCoreParam === "null") {
+        query = query.is("mainCore", null) as typeof query
+      } else {
+        query = query.eq("mainCore", Number(mainCoreParam)) as typeof query
+      }
+    }
+
+    const { data, error } = await query
       .order("totalGames", { ascending: false })
       .limit(200)
 
