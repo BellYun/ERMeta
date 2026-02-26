@@ -54,6 +54,7 @@ type EquipmentRow = {
   totalWins: number
   rankSum: number
   totalRP: number
+  bestWeapon: number | null
 }
 
 function aggregateSlot(
@@ -91,6 +92,7 @@ export async function GET(request: NextRequest) {
   const tier = searchParams.get("tier") ?? "DIAMOND"
   const patchVersion = searchParams.get("patchVersion") ?? ""
   const mainCoreParam = searchParams.get("mainCore")
+  const bestWeaponParam = searchParams.get("bestWeapon")
 
   if (!characterCode || isNaN(characterCode)) {
     return NextResponse.json<EquipmentBuildResult>({
@@ -105,10 +107,14 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from("CharacterEquipmentBuildStats")
-      .select("mainCore, weapon, chest, head, arm, leg, totalGames, totalWins, rankSum, totalRP")
+      .select("mainCore, weapon, chest, head, arm, leg, totalGames, totalWins, rankSum, totalRP, bestWeapon")
       .eq("characterNum", characterCode)
       .eq("tier", tier)
       .eq("patchVersion", patchVersion)
+
+    if (bestWeaponParam != null) {
+      query = query.eq("bestWeapon", Number(bestWeaponParam)) as typeof query
+    }
 
     if (mainCoreParam != null) {
       if (mainCoreParam === "null") {

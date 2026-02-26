@@ -31,6 +31,7 @@ interface Props {
   characterCode: number
   tier: TierGroup
   patchVersion: string | null
+  bestWeapon: number | null
 }
 
 // ─── 상수 ──────────────────────────────────────────────────────────────────────
@@ -289,7 +290,7 @@ function SlotPopularityGrid({
 
 // ─── 메인 컴포넌트 ─────────────────────────────────────────────────────────────
 
-export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion }: Props) {
+export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, bestWeapon }: Props) {
   const [traitBuilds, setTraitBuilds] = React.useState<TraitCoreGroup[]>([])
   const [selectedMainCore, setSelectedMainCore] = React.useState<number | null | "NONE">("NONE")
   const [equipData, setEquipData] = React.useState<EquipmentBuildResult | null>(null)
@@ -324,6 +325,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion }:
       characterCode: String(characterCode),
       tier,
       patchVersion,
+      ...(bestWeapon != null ? { bestWeapon: String(bestWeapon) } : {}),
     })
 
     fetch(`/api/builds/traits/main?${params}`)
@@ -337,7 +339,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion }:
       })
       .catch(() => setTraitBuilds([]))
       .finally(() => setTraitLoading(false))
-  }, [characterCode, tier, patchVersion])
+  }, [characterCode, tier, patchVersion, bestWeapon])
 
   // 장비 빌드 로드 (mainCore 선택 시)
   React.useEffect(() => {
@@ -351,6 +353,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion }:
       tier,
       patchVersion,
       mainCore: selectedMainCore == null ? "null" : String(selectedMainCore),
+      ...(bestWeapon != null ? { bestWeapon: String(bestWeapon) } : {}),
     })
 
     fetch(`/api/builds/equipment?${params}`)
@@ -358,7 +361,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion }:
       .then((d) => setEquipData(d))
       .catch(() => setEquipData(null))
       .finally(() => setEquipLoading(false))
-  }, [selectedMainCore, characterCode, tier, patchVersion])
+  }, [selectedMainCore, characterCode, tier, patchVersion, bestWeapon])
 
   const selectedGroup =
     selectedMainCore !== "NONE"

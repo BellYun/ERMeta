@@ -11,6 +11,7 @@ interface Props {
   characterCode: number
   tier: TierGroup
   patchVersion: string | null
+  bestWeapon?: number | null
 }
 
 const SLOT_LABELS: Record<string, string> = {
@@ -259,7 +260,7 @@ function CoreItemsList({
   )
 }
 
-export function CharacterEquipmentAnalyzer({ characterCode, tier, patchVersion }: Props) {
+export function CharacterEquipmentAnalyzer({ characterCode, tier, patchVersion, bestWeapon }: Props) {
   const [data, setData] = React.useState<EquipmentBuildResult | null>(null)
   const [itemNames, setItemNames] = React.useState<Record<number, string>>({})
   const [traitNames, setTraitNames] = React.useState<Record<number, string>>({})
@@ -289,6 +290,7 @@ export function CharacterEquipmentAnalyzer({ characterCode, tier, patchVersion }
       characterCode: String(characterCode),
       tier,
       patchVersion,
+      ...(bestWeapon != null ? { bestWeapon: String(bestWeapon) } : {}),
     })
 
     fetch(`/api/builds/equipment?${params}`)
@@ -296,7 +298,7 @@ export function CharacterEquipmentAnalyzer({ characterCode, tier, patchVersion }
       .then((d) => setData(d))
       .catch(() => setData(null))
       .finally(() => setLoading(false))
-  }, [characterCode, tier, patchVersion])
+  }, [characterCode, tier, patchVersion, bestWeapon])
 
   if (loading) {
     return (
