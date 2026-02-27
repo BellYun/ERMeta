@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { TrendingUp, TrendingDown, Minus, BarChart2, Search, RefreshCw, FileText } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, BarChart2, Search, RefreshCw, FileText, Package, Layers } from "lucide-react"
 import { getCharacterPatchNote } from "@/data/patch-notes"
 import type { ChangeType } from "@/data/patch-notes"
 import {
@@ -21,7 +21,8 @@ import type { Tier } from "@/lib/design-tokens"
 import { getCharacterName, getCharacterImageUrl } from "@/lib/characterMap"
 import { resolveWeaponName } from "@/lib/weaponMap"
 import { METRICS_TIER_GROUPS, TierGroup } from "@/utils/tier"
-import { CharacterTraitBuildAnalyzer } from "@/components/character/CharacterTraitBuildAnalyzer"
+import { CharacterEquipmentAnalyzer } from "@/components/character/CharacterEquipmentAnalyzer"
+import { CharacterDetailedAnalyzer } from "@/components/character/CharacterDetailedAnalyzer"
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route"
 
 // ─── 상수 ────────────────────────────────────────────────────────────────────
@@ -227,11 +228,6 @@ export function CharacterAnalysisClient() {
       .catch(() => {})
   }, [])
 
-  // 캐릭터 변경 시 무기 선택 초기화
-  React.useEffect(() => {
-    setSelectedWeapon(null)
-  }, [selectedCode])
-
   // 통계 로드 — 전체 패치 병렬 fetch
   React.useEffect(() => {
     if (!patches.length) return
@@ -240,37 +236,71 @@ export function CharacterAnalysisClient() {
     setStats(null)
     setPreviousStats(null)
     setAllPatchStats([])
+    setSelectedWeapon(null)
 
     Promise.all(
       patches.map((p) => fetchStats(selectedCode, p, selectedTier))
     ).then((results) => {
       setAllPatchStats(results)
-      setStats(results[0] ?? null)
+      const current = results[0] ?? null
+      setStats(current)
       setPreviousStats(results[1] ?? null)
+      // 첫 번째 무기 자동 선택
+      if (current?.weapons && current.weapons.length > 0) {
+        setSelectedWeapon(current.weapons[0].bestWeapon ?? null)
+      }
       setLoading(false)
     })
   }, [selectedCode, selectedTier, patches])
 
   const currentPatch = patches[0] ?? null
-  const charTier = stats && stats.totalGames > 0 ? assignCharTier(stats.winRate) : null
 
-  // 패치 비교 탭용 차트 데이터 (오래된 → 최신 순)
+  // 선택된 무기의 통계
+  const selectedWeaponStat = React.useMemo(() => {
+    if (!stats?.weapons || selectedWeapon === null) return null
+    return stats.weapons.find((w) => w.bestWeapon === selectedWeapon) ?? null
+  }, [stats, selectedWeapon])
+
+  const prevSelectedWeaponStat = React.useMemo(() => {
+    if (!previousStats?.weapons || selectedWeapon === null) return null
+    return previousStats.weapons.find((w) => w.bestWeapon === selectedWeapon) ?? null
+  }, [previousStats, selectedWeapon])
+
+  // 표시할 통계 (무기 선택 시 무기별, 아니면 전체)
+  const displayStat = selectedWeaponStat ?? stats
+  const displayPrevStat = prevSelectedWeaponStat ?? previousStats
+
+  const charTier = displayStat && displayStat.totalGames > 0 ? assignCharTier(displayStat.winRate) : null
+
+  // 패치 비교 탭용 차트 데이터 (선택 무기 기준, 오래된 → 최신 순)
   const chartData = React.useMemo(() => {
     return patches
       .map((patch, i) => {
         const s = allPatchStats[i]
-        if (!s || s.totalGames === 0) return null
+        if (!s) return null
+        let winRate: number
+        let averageRP: number
+        if (selectedWeapon != null && s.weapons) {
+          const w = s.weapons.find((ws) => ws.bestWeapon === selectedWeapon)
+          if (!w || w.totalGames === 0) return null
+          winRate = w.winRate
+          averageRP = w.averageRP
+        } else {
+          if (s.totalGames === 0) return null
+          winRate = s.winRate
+          averageRP = s.averageRP
+        }
         return {
           patch,
-          winRate: parseFloat(s.winRate.toFixed(2)),
-          averageRP: parseFloat(s.averageRP.toFixed(0)),
+          winRate: parseFloat(winRate.toFixed(2)),
+          averageRP: parseFloat(averageRP.toFixed(0)),
         }
       })
       .filter((d): d is { patch: string; winRate: number; averageRP: number } => d !== null)
       .reverse()
-  }, [patches, allPatchStats])
+  }, [patches, allPatchStats, selectedWeapon])
 
-  const hasPreviousData = previousStats !== null && previousStats.totalGames > 0
+  const hasPreviousData = displayPrevStat !== null && (displayPrevStat.totalGames ?? 0) > 0
 
   return (
     <div className="flex gap-4 items-start">
@@ -326,7 +356,7 @@ export function CharacterAnalysisClient() {
       {/* 우측 분석 콘텐츠 */}
       <div className="flex flex-1 flex-col gap-4 min-w-0">
         {/* 캐릭터 헤더 */}
-        <div className="flex gap-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5 items-center">
+        <div className="flex gap-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5 items-start">
           <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[var(--color-border)]">
             <Image
               src={getCharacterImageUrl(selectedCode)}
@@ -358,34 +388,68 @@ export function CharacterAnalysisClient() {
                 ))}
               </select>
             </div>
+
+            {/* 무기 군 선택 */}
+            {!loading && stats?.weapons && stats.weapons.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {stats.weapons.map((w) => {
+                  const isSelected = selectedWeapon === w.bestWeapon
+                  return (
+                    <button
+                      key={w.bestWeapon ?? "none"}
+                      onClick={() => setSelectedWeapon(w.bestWeapon ?? null)}
+                      className={cn(
+                        "flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs transition-colors",
+                        isSelected
+                          ? "border-[var(--color-primary)] bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
+                          : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/50"
+                      )}
+                    >
+                      <span className="font-medium">{resolveWeaponName(w.bestWeapon ?? undefined)}</span>
+                      <span
+                        className={cn(
+                          "text-[10px]",
+                          isSelected
+                            ? "text-[var(--color-primary)]/80"
+                            : "text-[var(--color-muted-foreground)]"
+                        )}
+                      >
+                        {w.pickRate.toFixed(1)}%
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+
             {loading ? (
               <div className="grid grid-cols-4 gap-2">
                 {[...Array(4)].map((_, i) => <SkeletonCard key={i} />)}
               </div>
-            ) : stats && stats.totalGames > 0 ? (
+            ) : displayStat && displayStat.totalGames > 0 ? (
               <div className="grid grid-cols-4 gap-2">
                 <StatCard
                   label="픽률"
-                  value={`${stats.pickRate.toFixed(1)}%`}
-                  delta={hasPreviousData ? stats.pickRate - previousStats!.pickRate : undefined}
+                  value={`${displayStat.pickRate.toFixed(1)}%`}
+                  delta={hasPreviousData ? displayStat.pickRate - displayPrevStat!.pickRate : undefined}
                   deltaLabel="%p"
                 />
                 <StatCard
                   label="승률"
-                  value={`${stats.winRate.toFixed(1)}%`}
-                  delta={hasPreviousData ? stats.winRate - previousStats!.winRate : undefined}
+                  value={`${displayStat.winRate.toFixed(1)}%`}
+                  delta={hasPreviousData ? displayStat.winRate - displayPrevStat!.winRate : undefined}
                   deltaLabel="%p"
                 />
                 <StatCard
                   label="평균 순위"
-                  value={`#${stats.averageRank.toFixed(1)}`}
-                  delta={hasPreviousData ? stats.averageRank - previousStats!.averageRank : undefined}
+                  value={`#${displayStat.averageRank.toFixed(1)}`}
+                  delta={hasPreviousData ? displayStat.averageRank - displayPrevStat!.averageRank : undefined}
                   deltaInverted
                 />
                 <StatCard
                   label="평균 RP"
-                  value={stats.averageRP.toFixed(0)}
-                  delta={hasPreviousData ? stats.averageRP - previousStats!.averageRP : undefined}
+                  value={displayStat.averageRP.toFixed(0)}
+                  delta={hasPreviousData ? displayStat.averageRP - displayPrevStat!.averageRP : undefined}
                 />
               </div>
             ) : (
@@ -397,101 +461,21 @@ export function CharacterAnalysisClient() {
         </div>
 
         {/* 탭 분석 */}
-        <Tabs defaultValue="weapons">
+        <Tabs defaultValue="equipment">
           <TabsList>
-            <TabsTrigger value="weapons">무기별 통계</TabsTrigger>
             <TabsTrigger value="comparison">
               <BarChart2 className="mr-1.5 h-3.5 w-3.5" />패치 비교
             </TabsTrigger>
             <TabsTrigger value="patchlog">
               <FileText className="mr-1.5 h-3.5 w-3.5" />패치 내역
             </TabsTrigger>
+            <TabsTrigger value="equipment">
+              <Package className="mr-1.5 h-3.5 w-3.5" />아이템 통계
+            </TabsTrigger>
+            <TabsTrigger value="detailed">
+              <Layers className="mr-1.5 h-3.5 w-3.5" />상세분석
+            </TabsTrigger>
           </TabsList>
-
-          {/* 무기별 통계 */}
-          <TabsContent value="weapons">
-            {loading ? (
-              <div className="space-y-2">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="h-12 rounded-lg bg-[var(--color-surface)] animate-pulse" />
-                ))}
-              </div>
-            ) : stats?.weapons && stats.weapons.length > 0 ? (
-              <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-[var(--color-border)] text-[var(--color-muted-foreground)] text-xs">
-                      <th className="px-4 py-3 text-left font-medium">무기</th>
-                      <th className="px-4 py-3 text-right font-medium w-20">픽률</th>
-                      <th className="px-4 py-3 text-right font-medium w-20">승률</th>
-                      <th className="px-4 py-3 text-right font-medium w-24">평균 순위</th>
-                      <th className="px-4 py-3 text-right font-medium w-24">평균 RP</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {stats.weapons.map((w) => {
-                      const isSelected = selectedWeapon === w.bestWeapon
-                      return (
-                        <tr
-                          key={w.bestWeapon ?? "total"}
-                          onClick={() =>
-                            setSelectedWeapon(isSelected ? null : (w.bestWeapon ?? null))
-                          }
-                          className="border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-surface-2)] transition-colors cursor-pointer"
-                        >
-                          <td className="px-4 py-3 font-medium">
-                            <span className={cn(isSelected && "text-[var(--color-primary)]")}>
-                              {resolveWeaponName(w.bestWeapon ?? undefined)}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-right text-[var(--color-muted-foreground)]">
-                            {w.pickRate.toFixed(1)}%
-                          </td>
-                          <td className="px-4 py-3 text-right">
-                            <span
-                              className={cn(
-                                "font-medium",
-                                w.winRate >= 55
-                                  ? "text-[var(--color-accent-gold)]"
-                                  : "text-[var(--color-muted-foreground)]"
-                              )}
-                            >
-                              {w.winRate.toFixed(1)}%
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-right text-[var(--color-muted-foreground)]">
-                            #{w.averageRank.toFixed(1)}
-                          </td>
-                          <td className="px-4 py-3 text-right text-[var(--color-muted-foreground)]">
-                            {w.averageRP.toFixed(0)}
-                          </td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
-                데이터가 없습니다.
-              </div>
-            )}
-
-            {/* 특성 빌드 — 무기 선택 시 인라인 표시 */}
-            {selectedWeapon !== null && (
-              <div className="mt-4">
-                <p className="mb-2 text-xs font-medium text-[var(--color-muted-foreground)]">
-                  {resolveWeaponName(selectedWeapon)} 특성 빌드
-                </p>
-                <CharacterTraitBuildAnalyzer
-                  characterCode={selectedCode}
-                  tier={selectedTier}
-                  patchVersion={currentPatch}
-                  bestWeapon={selectedWeapon}
-                />
-              </div>
-            )}
-          </TabsContent>
 
           {/* 패치 비교 */}
           <TabsContent value="comparison">
@@ -647,6 +631,26 @@ export function CharacterAnalysisClient() {
                 })}
               </div>
             )}
+          </TabsContent>
+
+          {/* 아이템 통계 */}
+          <TabsContent value="equipment">
+            <CharacterEquipmentAnalyzer
+              characterCode={selectedCode}
+              tier={selectedTier}
+              patchVersion={currentPatch}
+              bestWeapon={selectedWeapon}
+            />
+          </TabsContent>
+
+          {/* 상세분석 */}
+          <TabsContent value="detailed">
+            <CharacterDetailedAnalyzer
+              characterCode={selectedCode}
+              tier={selectedTier}
+              patchVersion={currentPatch}
+              bestWeapon={selectedWeapon}
+            />
           </TabsContent>
 
         </Tabs>
