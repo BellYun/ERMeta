@@ -1,5 +1,22 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Desktop auth API
+
+Electron 데스크톱 로그인 연동용 Steam OpenID 엔드포인트:
+
+- `GET /api/auth/steam/start`
+- `GET /api/auth/steam/callback`
+- `GET /api/auth/me`
+
+필수 환경 변수:
+
+- `STEAM_WEB_API_KEY`
+- `STEAM_AUTH_TOKEN_SECRET` (없으면 `CRON_SECRET` 사용)
+- `STEAM_APP_TOKEN_TTL_SEC` (선택, 기본 86400초)
+- `ENABLE_DESKTOP_AUTH` (선택, `false`면 desktop auth API 비활성화)
+
+기존 웹 페이지/기능 서빙에는 영향을 주지 않는 부가 API입니다.
+
 ## Getting Started
 
 First, run the development server:
