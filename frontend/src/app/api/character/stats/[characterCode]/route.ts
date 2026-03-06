@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 300
 
 interface StatRow {
   characterNum: number
@@ -66,11 +66,10 @@ export async function GET(
   try {
     const supabase = createServerClient()
 
-    // 해당 캐릭터의 무기별 행 조회
+    // 해당 패치+티어 전체 조회 후 JS에서 필터 (N+1 → 단일 쿼리)
     const { data, error } = await supabase
       .from("CharacterStats")
       .select("characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank")
-      .eq("characterNum", characterCode)
       .eq("patchVersion", patchVersion)
       .eq("tier", tier)
 
@@ -78,16 +77,13 @@ export async function GET(
       return NextResponse.json(emptyResponse)
     }
 
-    const rows = data as StatRow[]
+    const allRows = data as StatRow[]
+    const grandTotal = allRows.reduce((sum, r) => sum + (r.totalGames ?? 0), 0)
+    const rows = allRows.filter((r) => r.characterNum === characterCode)
 
-    // 전체 픽률 계산용: 해당 패치+티어의 grandTotal
-    const { data: allRows } = await supabase
-      .from("CharacterStats")
-      .select("totalGames")
-      .eq("patchVersion", patchVersion)
-      .eq("tier", tier)
-
-    const grandTotal = (allRows ?? []).reduce((sum, r) => sum + (r.totalGames ?? 0), 0)
+    if (rows.length === 0) {
+      return NextResponse.json(emptyResponse)
+    }
 
     // 캐릭터 집계
     const totalGames = rows.reduce((sum, r) => sum + (r.totalGames ?? 0), 0)

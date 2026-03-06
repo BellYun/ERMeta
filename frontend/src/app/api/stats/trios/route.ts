@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { TierGroup } from "@/utils/tier";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 // 다이아 이상 티어 전체
 const DIAMOND_PLUS_TIERS: TierGroup[] = [
@@ -129,11 +129,14 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = createServerClient();
 
+    const TWO_WEEKS_AGO = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
+
     // 다이아 이상 전 티어를 한 번에 조회 (집계 후 정렬을 위해 DB 정렬/limit 미적용)
     let query = supabase
       .from("CharacterTrio")
       .select("character1,character2,character3,winRate,averageRP,totalGames,averageRank")
       .in("tier", DIAMOND_PLUS_TIERS)
+      .gte("lastUpdated", TWO_WEEKS_AGO) // TTL 필터: 2주 이내 데이터만
       .limit(5000); // 집계 전 최대 수집 행수
 
     if (char1 !== null && char2 !== null) {

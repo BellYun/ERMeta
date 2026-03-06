@@ -1,53 +1,17 @@
-// l10n 데이터를 백엔드에서 가져와서 Map으로 변환
+// l10n 데이터를 정적 파일에서 가져와서 Map으로 변환
+// public/l10n/{language}.json 은 npm run fetch-l10n 으로 생성
 export async function fetchAndParseL10n(language: string = 'Korean'): Promise<Map<string, string>> {
   try {
-    const response = await fetch(`/api/bser/l10n/${language}`);
+    const response = await fetch(`/l10n/${language}.json`);
     if (!response.ok) {
       throw new Error('l10n 데이터를 불러올 수 없습니다.');
     }
-    
-    const data = await response.json();
-    
-    // 백엔드에서 이미 파싱된 l10n 데이터 사용
-    if (data.parsedL10n) {
-      return new Map(Object.entries(data.parsedL10n));
-    }
-    
-    // fallback: 기존 방식 (l10n 파일 직접 가져오기)
-    const l10nUrl = data.data?.l10Path;
-    if (!l10nUrl) {
-      throw new Error('l10n 파일 경로를 찾을 수 없습니다.');
-    }
-    
-    const l10nResponse = await fetch(l10nUrl);
-    if (!l10nResponse.ok) {
-      throw new Error('l10n 파일을 불러올 수 없습니다.');
-    }
-    
-    const l10nText = await l10nResponse.text();
-    return parseL10nText(l10nText);
+    const data = await response.json() as Record<string, string>;
+    return new Map(Object.entries(data));
   } catch (error) {
     console.error('l10n 데이터 로딩 실패:', error);
     return new Map();
   }
-}
-
-// l10n 텍스트를 파싱하여 Map으로 변환
-function parseL10nText(text: string): Map<string, string> {
-  const l10nMap = new Map<string, string>();
-  
-  const lines = text.split('\n');
-  for (const line of lines) {
-    const trimmedLine = line.trim();
-    if (trimmedLine && !trimmedLine.startsWith('#')) {
-      const [key, ...valueParts] = trimmedLine.split('\t');
-      if (key && valueParts.length > 0) {
-        l10nMap.set(key, valueParts.join('\t'));
-      }
-    }
-  }
-  
-  return l10nMap;
 }
 
 // 아이템 이름 가져오기
