@@ -42,7 +42,7 @@ function sign(payloadBase64: string): string {
     .digest("base64url");
 }
 
-function createSignedToken(payload: Record<string, unknown>): string {
+function createSignedToken(payload: object): string {
   const payloadBase64 = toBase64Url(JSON.stringify(payload));
   const signature = sign(payloadBase64);
   return `${payloadBase64}.${signature}`;
