@@ -9,6 +9,7 @@ ERMeta는 Next.js(App Router) 기반 프론트엔드 저장소입니다.
 ERMeta/
 ├── README.md
 ├── PAGE_STRUCTURE.md
+├── desktop/
 └── frontend/
     ├── package.json
     └── src/
@@ -20,6 +21,24 @@ ERMeta/
         │       └── db/test/route.ts
         └── lib/
             └── env.ts
+```
+
+## Desktop 앱 (Electron)
+
+Windows EXE 배포용 데스크톱 앱은 `desktop/` 폴더에 있습니다.
+웹 서비스(`frontend`)는 그대로 메인 서빙을 유지하고, 데스크톱은 부가 기능 클라이언트로 동작합니다.
+
+```bash
+cd desktop
+npm install
+npm run dev
+```
+
+EXE 빌드:
+
+```bash
+cd desktop
+npm run dist:win
 ```
 
 ## 요구 사항
@@ -49,6 +68,12 @@ NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 # 또는
 # SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+STEAM_WEB_API_KEY=your_steam_web_api_key
+STEAM_AUTH_TOKEN_SECRET=replace_with_long_random_secret
+# 선택
+# STEAM_APP_TOKEN_TTL_SEC=86400
+# 선택: 웹만 운영 시 desktop auth API 비활성화
+# ENABLE_DESKTOP_AUTH=false
 ```
 
 필수 규칙:
