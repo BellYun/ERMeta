@@ -45,3 +45,20 @@ npm run dist:win
 ```
 
 결과물은 `desktop/dist` 하위에 생성됩니다.
+
+## 테스트용 무결성 체크 우회 실행
+
+NSIS 무결성 오류를 테스트 목적으로만 우회하려면:
+
+```bash
+cd desktop
+npm run installer:ncrc
+```
+
+빌드 후 바로 우회 실행:
+
+```bash
+npm run dist:win:test
+```
+
+`/NCRC`는 테스트 전용이며, 실제 배포에는 사용하지 않는 것을 권장합니다.

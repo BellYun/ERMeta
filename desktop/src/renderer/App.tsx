@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { AuthUpdateEvent, LogSnapshot, SortBy, TrioRecommendation } from "../shared/types";
 
 const SORT_OPTIONS: Array<{ label: string; value: SortBy }> = [
@@ -14,6 +14,14 @@ function formatExpiration(expUnixSeconds: number): string {
 function formatPercentage(value: number): string {
   return `${value.toFixed(1)}%`;
 }
+
+function winRateClass(value: number): string {
+  if (value >= 50) return "wr-good";
+  if (value >= 40) return "wr-mid";
+  return "wr-bad";
+}
+
+const RANK_MEDALS = ["🥇", "🥈", "🥉"];
 
 function deriveKnownCharacters(snapshot: LogSnapshot | null): number[] {
   if (!snapshot) return [];
@@ -144,16 +152,16 @@ export default function App() {
 
         <div className="auth-box">
           {authUser ? (
-            <>
+            <div className="auth-user-card">
               <strong>{authUser.personaName}</strong>
               <span>{authUser.steamId}</span>
               <span>만료: {formatExpiration(authUser.expiresAt)}</span>
               <button onClick={handleLogout}>로그아웃</button>
-            </>
+            </div>
           ) : (
             <>
               <span>Steam 계정으로 로그인 필요</span>
-              <button onClick={handleLogin}>Steam 로그인</button>
+              <button className="primary" onClick={handleLogin}>Steam 로그인</button>
             </>
           )}
         </div>
@@ -176,7 +184,10 @@ export default function App() {
           </div>
           <div>
             <label>매치 상태</label>
-            <strong>{snapshot?.matchState ?? "idle"}</strong>
+            <span className={`status-badge badge-${snapshot?.matchState ?? "idle"}`}>
+              <span className="status-dot" />
+              {snapshot?.matchState ?? "idle"}
+            </span>
           </div>
           <div>
             <label>내 캐릭터 코드</label>
@@ -196,26 +207,33 @@ export default function App() {
       <section className="panel">
         <div className="panel-title-row">
           <h2>조합 추천</h2>
-          <label className="sort-select">
-            정렬
-            <select
-              value={sortBy}
-              onChange={(event) => setSortBy(event.target.value as SortBy)}
-            >
-              {SORT_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
+          <div className="pill-tabs">
+            {SORT_OPTIONS.map((option) => (
+              <button
+                key={option.value}
+                className={sortBy === option.value ? "active" : ""}
+                onClick={() => setSortBy(option.value)}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="known-allies">
           <label>현재 추천 기준 캐릭터</label>
-          <strong>
-            {knownCharacters.length > 0 ? knownCharacters.join(" + ") : "감지 대기 중"}
-          </strong>
+          {knownCharacters.length > 0 ? (
+            <div className="char-chips">
+              {knownCharacters.map((code, i) => (
+                <Fragment key={code}>
+                  {i > 0 && <span className="char-plus">+</span>}
+                  <span className="char-chip">{code}</span>
+                </Fragment>
+              ))}
+            </div>
+          ) : (
+            <span className="waiting-pulse">감지 대기 중...</span>
+          )}
         </div>
 
         {loading ? (
@@ -238,11 +256,21 @@ export default function App() {
               <tbody>
                 {recommendations.map((item, index) => (
                   <tr key={`${item.character1}-${item.character2}-${item.character3}-${index}`}>
-                    <td>{index + 1}</td>
+                    <td>
+                      {index < 3 ? (
+                        <span className="rank-medal">{RANK_MEDALS[index]}</span>
+                      ) : (
+                        <span className="rank-num">{index + 1}</span>
+                      )}
+                    </td>
                     <td>
                       {item.character1} + {item.character2} + {item.character3}
                     </td>
-                    <td>{formatPercentage(item.winRate)}</td>
+                    <td>
+                      <span className={winRateClass(item.winRate)}>
+                        {formatPercentage(item.winRate)}
+                      </span>
+                    </td>
                     <td>{item.averageRP.toFixed(1)}</td>
                     <td>{item.totalGames.toLocaleString()}</td>
                     <td>{item.averageRank.toFixed(2)}</td>

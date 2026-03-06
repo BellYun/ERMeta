@@ -314,12 +314,11 @@ async function createMainWindow(): Promise<void> {
     },
   });
 
-  if (app.isPackaged) {
-    await mainWindow.loadFile(path.join(__dirname, "../../dist/index.html"));
-  } else {
-    const rendererUrl = process.env.ERMETA_RENDERER_URL ?? "http://localhost:5173";
-    await mainWindow.loadURL(rendererUrl);
+  if (process.env.ERMETA_RENDERER_URL) {
+    await mainWindow.loadURL(process.env.ERMETA_RENDERER_URL);
     mainWindow.webContents.openDevTools({ mode: "detach" });
+  } else {
+    await mainWindow.loadFile(path.join(__dirname, "../../dist/index.html"));
   }
 
   mainWindow.on("closed", () => {

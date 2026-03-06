@@ -8,6 +8,12 @@
   --muted: #9ba8c7;
   --accent: #5cc8ff;
   --danger: #f97373;
+  --gold: #f5c842;
+  --silver: #c0c8d8;
+  --bronze: #c87a3a;
+  --win-good: #4ade80;
+  --win-mid: #facc15;
+  --win-bad: #f97373;
 }
 
 * {
@@ -39,31 +45,54 @@ body,
   align-items: flex-start;
   background: linear-gradient(135deg, #0f1f3f, #102448 50%, #17366b);
   border: 1px solid #3f5d97;
+  border-left: 4px solid var(--accent);
   border-radius: 14px;
-  padding: 18px;
+  padding: 18px 20px;
 }
 
 .header h1 {
   margin: 0;
   font-size: 26px;
+  background: linear-gradient(90deg, #fff 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .header p {
   margin: 8px 0 0;
   color: #b6c9f7;
+  font-size: 13px;
 }
 
 .auth-box {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 4px;
+  gap: 6px;
   min-width: 260px;
 }
 
 .auth-box span {
   font-size: 12px;
   color: var(--muted);
+}
+
+.auth-box strong {
+  font-size: 15px;
+  color: var(--text);
+}
+
+.auth-user-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  width: 100%;
 }
 
 button,
@@ -74,10 +103,25 @@ select {
   border-radius: 10px;
   padding: 8px 12px;
   font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
 }
 
 button:hover,
 select:hover {
+  border-color: var(--accent);
+}
+
+button.primary {
+  background: linear-gradient(135deg, #1a5aba, #2b7dff);
+  border-color: #4a9fff;
+  color: #fff;
+  font-weight: 600;
+  padding: 9px 16px;
+}
+
+button.primary:hover {
+  background: linear-gradient(135deg, #1e6fd4, #3d8fff);
   border-color: var(--accent);
 }
 
@@ -146,8 +190,128 @@ select:hover {
   margin: 12px 0 0;
 }
 
+/* ── 매치 상태 배지 ── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.badge-idle {
+  background: rgba(155,168,199,0.12);
+  color: var(--muted);
+  border: 1px solid rgba(155,168,199,0.25);
+}
+.badge-idle .status-dot { background: var(--muted); }
+
+.badge-searching {
+  background: rgba(250,204,21,0.12);
+  color: #facc15;
+  border: 1px solid rgba(250,204,21,0.3);
+}
+.badge-searching .status-dot {
+  background: #facc15;
+  animation: pulse-dot 1.2s ease-in-out infinite;
+}
+
+.badge-found {
+  background: rgba(74,222,128,0.12);
+  color: #4ade80;
+  border: 1px solid rgba(74,222,128,0.3);
+}
+.badge-found .status-dot { background: #4ade80; }
+
+.badge-in_match {
+  background: rgba(92,200,255,0.12);
+  color: var(--accent);
+  border: 1px solid rgba(92,200,255,0.3);
+}
+.badge-in_match .status-dot { background: var(--accent); }
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.7); }
+}
+
+/* ── 정렬 pill 탭 ── */
+.pill-tabs {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.pill-tabs button {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.pill-tabs button:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.pill-tabs button.active {
+  background: rgba(92,200,255,0.15);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ── 캐릭터 chip ── */
+.char-chips {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.char-chip {
+  background: rgba(92,200,255,0.12);
+  border: 1px solid rgba(92,200,255,0.35);
+  color: var(--accent);
+  border-radius: 8px;
+  padding: 3px 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.char-plus {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 300;
+}
+
+.waiting-pulse {
+  animation: opacity-pulse 1.8s ease-in-out infinite;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+@keyframes opacity-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* ── 테이블 ── */
 .table-wrap {
   overflow-x: auto;
+  margin-top: 8px;
 }
 
 table {
@@ -158,7 +322,7 @@ table {
 th,
 td {
   text-align: left;
-  padding: 10px;
+  padding: 10px 12px;
   border-bottom: 1px solid #273451;
   font-size: 13px;
 }
@@ -166,7 +330,34 @@ td {
 th {
   color: var(--muted);
   font-weight: 500;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
+
+tbody tr {
+  transition: background 0.12s;
+}
+
+tbody tr:hover {
+  background: rgba(92,200,255,0.05);
+}
+
+/* 순위 메달 */
+.rank-medal {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.rank-num {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* 승률 색상 */
+.wr-good { color: var(--win-good); font-weight: 600; }
+.wr-mid  { color: var(--win-mid);  font-weight: 600; }
+.wr-bad  { color: var(--win-bad);  font-weight: 600; }
 
 @media (max-width: 900px) {
   .page {
