@@ -47,6 +47,11 @@ export async function captureNicknames(): Promise<OcrSnapshot> {
   const worker = await getWorker();
   const buf: Buffer = await screenshot({ format: "png" });
 
+  // 스크린샷 실제 크기 확인 (PNG 헤더에서 읽기)
+  const ssWidth = buf.readUInt32BE(16);
+  const ssHeight = buf.readUInt32BE(20);
+  console.log(`[OCR] screenshot size: ${ssWidth}x${ssHeight}`);
+
   // 동일 워커로 순차 처리 — 병렬 WASM 스폰 없음
   const texts: string[] = [];
   for (const rect of CROP_NICKNAME_REGIONS) {
