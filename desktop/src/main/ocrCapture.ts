@@ -1,6 +1,4 @@
-import path from "path";
 import screenshot from "screenshot-desktop";
-import { app } from "electron";
 import { OcrSnapshot } from "../shared/types";
 
 // ocr/image.png 기준 crop region
@@ -33,14 +31,11 @@ export async function captureNicknames(): Promise<OcrSnapshot> {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const Tesseract = await import("tesseract.js");
 
-  const langCachePath = path.join(app.getPath("userData"), "tessdata");
-
   const buf: Buffer = await screenshot({ format: "png" });
 
+  // langPath 미설정 시 tesseract.js가 CDN에서 자동 다운로드
   const { data } = await Tesseract.recognize(buf, "kor+eng", {
     rectangle: CROP_REGION,
-    langPath: langCachePath,
-    cacheMethod: "readWrite",
   } as Parameters<typeof Tesseract.recognize>[2]);
 
   const nicknames = extractNicknames(data.text);
