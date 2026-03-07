@@ -1,15 +1,13 @@
 import screenshot from "screenshot-desktop";
 import { OcrSnapshot } from "../shared/types";
 
-// ocr/image.png 기준 crop region
-// 좌측 캐릭터 그리드(전체 너비 ~40%, 헤더 제외)
-// 해상도별 튜닝 필요 — 임시 고정값
-const CROP_REGION = {
-  left: 5,
-  top: 120,
-  width: 730,
-  height: 860,
-};
+// 1600x900 기준 — 하단 닉네임 3개 영역 (실측)
+// y: 776~790, 패딩 추가해 770~800
+const CROP_NICKNAME_REGIONS = [
+  { left: 888,  top: 770, width: 124, height: 30 }, // 1번 플레이어
+  { left: 1125, top: 770, width: 124, height: 30 }, // 2번 플레이어
+  { left: 1362, top: 770, width: 124, height: 30 }, // 3번 플레이어
+];
 
 // 닉네임으로 판단할 최소/최대 글자 길이
 const MIN_LEN = 2;
@@ -33,16 +31,21 @@ export async function captureNicknames(): Promise<OcrSnapshot> {
 
   const buf: Buffer = await screenshot({ format: "png" });
 
-  // langPath 미설정 시 tesseract.js가 CDN에서 자동 다운로드
-  const { data } = await Tesseract.recognize(buf, "kor+eng", {
-    rectangle: CROP_REGION,
-  } as Parameters<typeof Tesseract.recognize>[2]);
+  // 3개 닉네임 영역 병렬 OCR
+  const results = await Promise.all(
+    CROP_NICKNAME_REGIONS.map((rect) =>
+      Tesseract.recognize(buf, "kor+eng", {
+        rectangle: rect,
+      } as Parameters<typeof Tesseract.recognize>[2])
+    )
+  );
 
-  const nicknames = extractNicknames(data.text);
+  const rawText = results.map((r) => r.data.text).join("\n");
+  const nicknames = extractNicknames(rawText);
 
   return {
     nicknames,
-    rawText: data.text,
+    rawText,
     capturedAt: Date.now(),
   };
 }
