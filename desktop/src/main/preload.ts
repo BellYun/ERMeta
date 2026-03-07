@@ -53,6 +53,10 @@ const ermetaApi = {
       };
     },
   },
+  matching: {
+    start: () => ipcRenderer.invoke("matching:start") as Promise<{ ok: boolean }>,
+    stop: () => ipcRenderer.invoke("matching:stop") as Promise<{ ok: boolean }>,
+  },
   ocr: {
     capture: () =>
       ipcRenderer.invoke("ocr:capture") as Promise<OcrSnapshot>,

@@ -35,6 +35,7 @@ const deepLinkQueue: string[] = [];
 let mainWindow: BrowserWindow | null = null;
 let currentSession: SessionRecord | null = null;
 let ocrPollTimer: NodeJS.Timeout | null = null;
+let isMatchingReady = false;
 
 const logPath = process.env.ERMETA_PLAYER_LOG_PATH;
 const logTailer = logPath
@@ -227,13 +228,14 @@ function attachTailerEvents(): void {
     recommendationCache.clear();
     broadcast(LOG_SNAPSHOT_CHANNEL, snapshot);
 
-    if (snapshot.matchState === "found") {
+    if (snapshot.matchState === "found" && isMatchingReady) {
       startOcrPolling();
     } else if (
       snapshot.matchState === "in_match" ||
       snapshot.matchState === "idle"
     ) {
       stopOcrPolling();
+      isMatchingReady = false;
     }
   });
 
@@ -279,6 +281,17 @@ function registerIpcHandlers(): void {
 
   ipcMain.handle("ocr:capture", async () => {
     return captureNicknames();
+  });
+
+  ipcMain.handle("matching:start", () => {
+    isMatchingReady = true;
+    return { ok: true };
+  });
+
+  ipcMain.handle("matching:stop", () => {
+    isMatchingReady = false;
+    stopOcrPolling();
+    return { ok: true };
   });
 
   ipcMain.handle(
