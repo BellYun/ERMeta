@@ -19,10 +19,13 @@ const partySinglePatterns: RegExp[] = [
 ];
 
 const statePatterns: Array<{ state: MatchState; regex: RegExp }> = [
-  { state: "found", regex: /(match\s*found|queue\s*pop|ready\s*check)/i },
+  {
+    state: "found",
+    regex: /(MatchingComplete|MatchingPadding,\s*Matched|match\s*found|queue\s*pop|ready\s*check)/i,
+  },
   {
     state: "searching",
-    regex: /(queue\s*start|start\s*matchmaking|searching\s*for\s*match)/i,
+    regex: /(MatchingPadding|queue\s*start|start\s*matchmaking|searching\s*for\s*match)/i,
   },
   {
     state: "in_match",
