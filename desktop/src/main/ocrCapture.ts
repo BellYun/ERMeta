@@ -1,5 +1,23 @@
 import screenshot from "screenshot-desktop";
+import type { Worker as TesseractWorker } from "tesseract.js";
 import { OcrSnapshot } from "../shared/types";
+
+let _worker: TesseractWorker | null = null;
+
+async function getWorker(): Promise<TesseractWorker> {
+  if (!_worker) {
+    const { createWorker } = await import("tesseract.js");
+    _worker = await createWorker("kor+eng");
+  }
+  return _worker;
+}
+
+export async function terminateOcrWorker(): Promise<void> {
+  if (_worker) {
+    await _worker.terminate();
+    _worker = null;
+  }
+}
 
 // 1600x900 기준 — 하단 닉네임 3개 영역 (실측)
 // y: 776~790, 패딩 추가해 770~800
@@ -26,21 +44,17 @@ function extractNicknames(text: string): string[] {
 }
 
 export async function captureNicknames(): Promise<OcrSnapshot> {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const Tesseract = await import("tesseract.js");
-
+  const worker = await getWorker();
   const buf: Buffer = await screenshot({ format: "png" });
 
-  // 3개 닉네임 영역 병렬 OCR
-  const results = await Promise.all(
-    CROP_NICKNAME_REGIONS.map((rect) =>
-      Tesseract.recognize(buf, "kor+eng", {
-        rectangle: rect,
-      } as Parameters<typeof Tesseract.recognize>[2])
-    )
-  );
+  // 동일 워커로 순차 처리 — 병렬 WASM 스폰 없음
+  const texts: string[] = [];
+  for (const rect of CROP_NICKNAME_REGIONS) {
+    const { data } = await worker.recognize(buf, { rectangle: rect } as Parameters<typeof worker.recognize>[1]);
+    texts.push(data.text);
+  }
 
-  const rawText = results.map((r) => r.data.text).join("\n");
+  const rawText = texts.join("\n");
   const nicknames = extractNicknames(rawText);
 
   return {

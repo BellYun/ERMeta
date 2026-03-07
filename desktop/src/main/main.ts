@@ -10,7 +10,7 @@ import {
 } from "../shared/types";
 import { clearSession, loadSession, saveSession } from "./authStore";
 import { PlayerLogTailer } from "./logTailer";
-import { captureNicknames } from "./ocrCapture";
+import { captureNicknames, terminateOcrWorker } from "./ocrCapture";
 
 type SessionRecord = AuthUser & { token: string };
 
@@ -411,6 +411,7 @@ function setupAppEvents(): void {
   });
 
   app.on("window-all-closed", () => {
+    void terminateOcrWorker();
     if (process.platform !== "darwin") {
       app.quit();
     }
