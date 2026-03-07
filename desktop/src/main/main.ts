@@ -10,12 +10,16 @@ import {
 } from "../shared/types";
 import { clearSession, loadSession, saveSession } from "./authStore";
 import { PlayerLogTailer } from "./logTailer";
+import { captureNicknames } from "./ocrCapture";
 
 type SessionRecord = AuthUser & { token: string };
 
 const AUTH_UPDATE_CHANNEL = "auth:update";
 const LOG_SNAPSHOT_CHANNEL = "log:snapshot";
 const LOG_ERROR_CHANNEL = "log:error";
+const OCR_SNAPSHOT_CHANNEL = "ocr:snapshot";
+
+const OCR_POLL_INTERVAL_MS = 5000;
 
 const RECOMMENDATION_CACHE_TTL_MS = 5 * 60 * 1000;
 
@@ -30,6 +34,7 @@ const recommendationCache = new Map<
 const deepLinkQueue: string[] = [];
 let mainWindow: BrowserWindow | null = null;
 let currentSession: SessionRecord | null = null;
+let ocrPollTimer: NodeJS.Timeout | null = null;
 
 const logPath = process.env.ERMETA_PLAYER_LOG_PATH;
 const logTailer = logPath
@@ -196,10 +201,40 @@ async function processDeepLink(deepLink: string): Promise<void> {
   await handleAuthCallback(deepLink);
 }
 
+function stopOcrPolling(): void {
+  if (ocrPollTimer) {
+    clearInterval(ocrPollTimer);
+    ocrPollTimer = null;
+  }
+}
+
+function startOcrPolling(): void {
+  stopOcrPolling();
+  const runOcr = () => {
+    captureNicknames()
+      .then((snap) => broadcast(OCR_SNAPSHOT_CHANNEL, snap))
+      .catch((err: unknown) => {
+        const msg = err instanceof Error ? err.message : "OCR 실패";
+        broadcast(LOG_ERROR_CHANNEL, `[OCR] ${msg}`);
+      });
+  };
+  runOcr();
+  ocrPollTimer = setInterval(runOcr, OCR_POLL_INTERVAL_MS);
+}
+
 function attachTailerEvents(): void {
   logTailer.on("snapshot", (snapshot: LogSnapshot) => {
     recommendationCache.clear();
     broadcast(LOG_SNAPSHOT_CHANNEL, snapshot);
+
+    if (snapshot.matchState === "found") {
+      startOcrPolling();
+    } else if (
+      snapshot.matchState === "in_match" ||
+      snapshot.matchState === "idle"
+    ) {
+      stopOcrPolling();
+    }
   });
 
   logTailer.on("error", (message) => {
@@ -240,6 +275,10 @@ function registerIpcHandlers(): void {
   ipcMain.handle("log:stop", async () => {
     logTailer.stop();
     return { ok: true };
+  });
+
+  ipcMain.handle("ocr:capture", async () => {
+    return captureNicknames();
   });
 
   ipcMain.handle(

@@ -41,6 +41,12 @@ export interface AuthUpdateEvent {
   error?: string;
 }
 
+export interface OcrSnapshot {
+  nicknames: string[];
+  rawText: string;
+  capturedAt: number;
+}
+
 export interface ApiAuthMeResponse {
   ok: boolean;
   user?: {
