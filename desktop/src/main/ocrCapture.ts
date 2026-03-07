@@ -1,6 +1,39 @@
+import { execFile } from "child_process";
 import screenshot from "screenshot-desktop";
 import type { Worker as TesseractWorker } from "tesseract.js";
 import { OcrSnapshot } from "../shared/types";
+
+interface WindowRect {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+}
+
+// PowerShell로 이터널 리턴 창 위치 탐지 (Windows 전용)
+function findGameWindow(): Promise<WindowRect | null> {
+  const ps = `
+Add-Type -Name WinAPI -Namespace "" -MemberDefinition '
+  [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
+  [StructLayout(LayoutKind.Sequential)] public struct RECT { public int Left; public int Top; public int Right; public int Bottom; }
+' -ErrorAction SilentlyContinue
+$proc = Get-Process | Where-Object { $_.MainWindowTitle -like "*Eternal Return*" } | Select-Object -First 1
+if ($proc) {
+  $r = New-Object WinAPI+RECT
+  [WinAPI]::GetWindowRect($proc.MainWindowHandle, [ref]$r) | Out-Null
+  Write-Output "$($r.Left),$($r.Top),$($r.Right),$($r.Bottom)"
+}
+`.trim();
+
+  return new Promise((resolve) => {
+    execFile("powershell", ["-NoProfile", "-Command", ps], { timeout: 3000 }, (err, stdout) => {
+      if (err || !stdout.trim()) return resolve(null);
+      const [left, top, right, bottom] = stdout.trim().split(",").map(Number);
+      if ([left, top, right, bottom].some(isNaN)) return resolve(null);
+      resolve({ left, top, right, bottom });
+    });
+  });
+}
 
 let _worker: TesseractWorker | null = null;
 
@@ -47,15 +80,22 @@ export async function captureNicknames(): Promise<OcrSnapshot> {
   const worker = await getWorker();
   const buf: Buffer = await screenshot({ format: "png" });
 
-  // 스크린샷 실제 크기 확인 (PNG 헤더에서 읽기)
-  const ssWidth = buf.readUInt32BE(16);
-  const ssHeight = buf.readUInt32BE(20);
-  console.log(`[OCR] screenshot size: ${ssWidth}x${ssHeight}`);
+  // 게임 창 위치 탐지 → 좌표 보정
+  const gameWin = await findGameWindow();
+  const offsetX = gameWin?.left ?? 0;
+  const offsetY = gameWin?.top ?? 0;
+  console.log(`[OCR] game window offset: ${offsetX},${offsetY}`);
 
   // 동일 워커로 순차 처리 — 병렬 WASM 스폰 없음
   const texts: string[] = [];
   for (const rect of CROP_NICKNAME_REGIONS) {
-    const { data } = await worker.recognize(buf, { rectangle: rect } as Parameters<typeof worker.recognize>[1]);
+    const absRect = {
+      left: rect.left + offsetX,
+      top: rect.top + offsetY,
+      width: rect.width,
+      height: rect.height,
+    };
+    const { data } = await worker.recognize(buf, { rectangle: absRect } as Parameters<typeof worker.recognize>[1]);
     texts.push(data.text);
   }
 
