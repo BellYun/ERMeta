@@ -1,6 +1,7 @@
 import {
   AuthUpdateEvent,
   LogSnapshot,
+  OcrSnapshot,
   RecommendationRequest,
   TrioRecommendation,
 } from "../shared/types";
@@ -23,6 +24,14 @@ declare global {
         stop: () => Promise<{ ok: boolean }>;
         onSnapshot: (listener: (snapshot: LogSnapshot) => void) => () => void;
         onError: (listener: (message: string) => void) => () => void;
+      };
+      matching: {
+        start: () => Promise<{ ok: boolean }>;
+        stop: () => Promise<{ ok: boolean }>;
+      };
+      ocr: {
+        capture: () => Promise<OcrSnapshot>;
+        onSnapshot: (listener: (snapshot: OcrSnapshot) => void) => () => void;
       };
       recommendation: {
         get: (input: RecommendationRequest) => Promise<TrioRecommendation[]>;

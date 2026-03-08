@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { GlobalFilter } from "@/components/features/GlobalFilter";
 import { TrendingSection } from "@/components/features/TrendingSection";
 import { TierRankingTable } from "@/components/features/TierRankingTable";
+import { SynergyClient } from "@/components/features/SynergyClient";
 
 interface SearchParams {
   patch?: string;
@@ -24,6 +25,10 @@ export default async function Home({
       <Suspense>
         <TierRankingTable />
       </Suspense>
+      <div>
+        <h2 className="mb-3 text-sm font-semibold text-[var(--color-foreground)]">3인 조합</h2>
+        <SynergyClient />
+      </div>
     </div>
   );
 }

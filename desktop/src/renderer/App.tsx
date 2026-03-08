@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
-import { AuthUpdateEvent, LogSnapshot, SortBy, TrioRecommendation } from "../shared/types";
+import { AuthUpdateEvent, LogSnapshot, OcrSnapshot, SortBy, TrioRecommendation } from "../shared/types";
 
 const SORT_OPTIONS: Array<{ label: string; value: SortBy }> = [
   { label: "게임 수", value: "totalGames" },
@@ -52,6 +52,9 @@ export default function App() {
   const [snapshot, setSnapshot] = useState<LogSnapshot | null>(null);
   const [logError, setLogError] = useState<string | null>(null);
 
+  const [isMatchingReady, setIsMatchingReady] = useState(false);
+  const [ocrSnapshot, setOcrSnapshot] = useState<OcrSnapshot | null>(null);
+
   const [sortBy, setSortBy] = useState<SortBy>("totalGames");
   const [loading, setLoading] = useState(false);
   const [recommendations, setRecommendations] = useState<TrioRecommendation[]>([]);
@@ -80,6 +83,10 @@ export default function App() {
       setLogError(message);
     });
 
+    const unsubscribeOcr = window.ermeta.ocr.onSnapshot((snap) => {
+      setOcrSnapshot(snap);
+    });
+
     void window.ermeta.auth.me().then((user) => {
       setAuthUser(user);
     });
@@ -92,17 +99,12 @@ export default function App() {
       unsubscribeAuth();
       unsubscribeSnapshot();
       unsubscribeLogError();
+      unsubscribeOcr();
       void window.ermeta.logs.stop();
     };
   }, []);
 
   useEffect(() => {
-    if (!authUser) {
-      setRecommendations([]);
-      setRecommendationError("Steam 로그인 후 추천을 조회할 수 있습니다.");
-      return;
-    }
-
     if (knownCharacters.length === 0) {
       setRecommendations([]);
       setRecommendationError("로그에서 캐릭터/파티 정보를 감지하면 추천이 표시됩니다.");
@@ -132,6 +134,17 @@ export default function App() {
       .finally(() => setLoading(false));
   }, [authUser, knownCharacters, sortBy]);
 
+  const handleMatchingToggle = async () => {
+    if (isMatchingReady) {
+      await window.ermeta.matching.stop();
+      setIsMatchingReady(false);
+      setOcrSnapshot(null);
+    } else {
+      await window.ermeta.matching.start();
+      setIsMatchingReady(true);
+    }
+  };
+
   const handleLogin = async () => {
     setAuthError(null);
     await window.ermeta.auth.login();
@@ -150,21 +163,24 @@ export default function App() {
           <p>Steam 로그인 + 실시간 로그 기반 조합 추천</p>
         </div>
 
-        <div className="auth-box">
-          {authUser ? (
-            <div className="auth-user-card">
-              <strong>{authUser.personaName}</strong>
-              <span>{authUser.steamId}</span>
-              <span>만료: {formatExpiration(authUser.expiresAt)}</span>
-              <button onClick={handleLogout}>로그아웃</button>
-            </div>
-          ) : (
-            <>
-              <span>Steam 계정으로 로그인 필요</span>
-              <button className="primary" onClick={handleLogin}>Steam 로그인</button>
-            </>
-          )}
-        </div>
+        {/* Steam 로그인 — 임시 비활성화 */}
+        {false && (
+          <div className="auth-box">
+            {authUser ? (
+              <div className="auth-user-card">
+                <strong>{authUser?.personaName}</strong>
+                <span>{authUser?.steamId}</span>
+                <span>만료: {formatExpiration(authUser?.expiresAt ?? 0)}</span>
+                <button onClick={handleLogout}>로그아웃</button>
+              </div>
+            ) : (
+              <>
+                <span>Steam 계정으로 로그인 필요</span>
+                <button className="primary" onClick={handleLogin}>Steam 로그인</button>
+              </>
+            )}
+          </div>
+        )}
       </header>
 
       {(authError || logError || recommendationError) && (
@@ -190,6 +206,15 @@ export default function App() {
             </span>
           </div>
           <div>
+            <label>매칭 감지</label>
+            <button
+              className={isMatchingReady ? "active" : ""}
+              onClick={handleMatchingToggle}
+            >
+              {isMatchingReady ? "⏹ 매칭 중단" : "▶ 매칭 시작"}
+            </button>
+          </div>
+          <div>
             <label>내 캐릭터 코드</label>
             <strong>{snapshot?.myCharacterCode ?? "-"}</strong>
           </div>
@@ -203,6 +228,17 @@ export default function App() {
           </div>
         </div>
       </section>
+
+      {ocrSnapshot && (
+        <section className="panel">
+          <h2>매칭 상대 닉네임 ({ocrSnapshot.nicknames.length}명)</h2>
+          <div className="char-chips">
+            {ocrSnapshot.nicknames.map((name) => (
+              <span key={name} className="char-chip">{name}</span>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="panel">
         <div className="panel-title-row">

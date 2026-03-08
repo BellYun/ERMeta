@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
-import { AuthUpdateEvent, LogSnapshot, RecommendationRequest } from "../shared/types";
+import { AuthUpdateEvent, LogSnapshot, OcrSnapshot, RecommendationRequest } from "../shared/types";
 
 const ermetaApi = {
   auth: {
@@ -50,6 +50,26 @@ const ermetaApi = {
       ipcRenderer.on("log:error", wrapped);
       return () => {
         ipcRenderer.removeListener("log:error", wrapped);
+      };
+    },
+  },
+  matching: {
+    start: () => ipcRenderer.invoke("matching:start") as Promise<{ ok: boolean }>,
+    stop: () => ipcRenderer.invoke("matching:stop") as Promise<{ ok: boolean }>,
+  },
+  ocr: {
+    capture: () =>
+      ipcRenderer.invoke("ocr:capture") as Promise<OcrSnapshot>,
+    onSnapshot: (listener: (snapshot: OcrSnapshot) => void) => {
+      const wrapped = (
+        _event: Electron.IpcRendererEvent,
+        payload: OcrSnapshot
+      ) => {
+        listener(payload);
+      };
+      ipcRenderer.on("ocr:snapshot", wrapped);
+      return () => {
+        ipcRenderer.removeListener("ocr:snapshot", wrapped);
       };
     },
   },

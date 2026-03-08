@@ -158,51 +158,54 @@ function ComboCard({
   rec,
   rank,
   getCharName,
+  compact = false,
 }: {
   rec: TrioResult
   rank: number
   getCharName: (code: number) => string
+  compact?: boolean
 }) {
   const chars = [rec.character1, rec.character2, rec.character3]
   return (
-    <div className="flex items-center gap-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 hover:bg-[var(--color-surface-2)] transition-colors">
+    <div className="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 hover:bg-[var(--color-surface-2)] transition-colors">
       {/* 순위 */}
-      <span className="w-6 shrink-0 text-center text-sm font-medium text-[var(--color-muted-foreground)]">
+      <span className="w-5 shrink-0 text-center text-xs font-medium text-[var(--color-muted-foreground)]">
         {rank}
       </span>
 
       {/* 3캐릭터 */}
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1">
         {chars.map((code, i) => (
           <React.Fragment key={code}>
-            <div className="flex flex-col items-center gap-1">
-              <div className="relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]">
+            <div className="flex flex-col items-center gap-0.5">
+              <div className="relative h-8 w-8 overflow-hidden rounded-md bg-[var(--color-border)]">
                 <Image
                   src={getCharacterImageUrl(code)}
                   alt={getCharName(code)}
                   fill
                   className="object-cover"
-                  sizes="40px"
+                  sizes="32px"
                 />
               </div>
-              <span className="w-12 truncate text-center text-[10px] text-[var(--color-muted-foreground)]">
-                {getCharName(code)}
-              </span>
+              {!compact && (
+                <span className="w-10 truncate text-center text-[9px] text-[var(--color-muted-foreground)]">
+                  {getCharName(code)}
+                </span>
+              )}
             </div>
             {i < 2 && (
-              <span className="mb-3 text-xs text-[var(--color-border)]">+</span>
+              <span className="text-[10px] text-[var(--color-border)]">+</span>
             )}
           </React.Fragment>
         ))}
       </div>
 
       {/* 스탯 */}
-      <div className="ml-auto flex items-center gap-6 text-right">
-        <div className="flex flex-col">
-          <span className="text-[10px] text-[var(--color-muted-foreground)]">승률</span>
+      {compact ? (
+        <div className="ml-auto flex flex-col items-end gap-0.5">
           <span
             className={cn(
-              "text-sm font-semibold",
+              "text-xs font-semibold",
               rec.winRate >= 60
                 ? "text-[var(--color-accent-gold)]"
                 : rec.winRate >= 55
@@ -212,40 +215,68 @@ function ComboCard({
           >
             {rec.winRate.toFixed(1)}%
           </span>
-        </div>
-        <div className="flex flex-col">
-          <span className="text-[10px] text-[var(--color-muted-foreground)]">평균 RP</span>
           <span className={cn(
-            "text-sm font-semibold",
+            "text-[10px]",
             rec.averageRP > 0
               ? "text-[var(--color-accent-gold)]"
               : rec.averageRP < 0
               ? "text-[var(--color-danger)]"
               : "text-[var(--color-muted-foreground)]"
           )}>
-            {rec.averageRP > 0 ? "+" : ""}{rec.averageRP.toFixed(1)}
+            {rec.averageRP > 0 ? "+" : ""}{rec.averageRP.toFixed(1)} RP
           </span>
         </div>
-        <div className="flex flex-col">
-          <span className="text-[10px] text-[var(--color-muted-foreground)]">게임 수</span>
-          <span className="text-sm text-[var(--color-muted-foreground)]">
-            {rec.totalGames.toLocaleString()}
-          </span>
+      ) : (
+        <div className="ml-auto flex items-center gap-6 text-right">
+          <div className="flex flex-col">
+            <span className="text-[10px] text-[var(--color-muted-foreground)]">승률</span>
+            <span
+              className={cn(
+                "text-sm font-semibold",
+                rec.winRate >= 60
+                  ? "text-[var(--color-accent-gold)]"
+                  : rec.winRate >= 55
+                  ? "text-[var(--color-foreground)]"
+                  : "text-[var(--color-muted-foreground)]"
+              )}
+            >
+              {rec.winRate.toFixed(1)}%
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[10px] text-[var(--color-muted-foreground)]">평균 RP</span>
+            <span className={cn(
+              "text-sm font-semibold",
+              rec.averageRP > 0
+                ? "text-[var(--color-accent-gold)]"
+                : rec.averageRP < 0
+                ? "text-[var(--color-danger)]"
+                : "text-[var(--color-muted-foreground)]"
+            )}>
+              {rec.averageRP > 0 ? "+" : ""}{rec.averageRP.toFixed(1)}
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[10px] text-[var(--color-muted-foreground)]">게임 수</span>
+            <span className="text-sm text-[var(--color-muted-foreground)]">
+              {rec.totalGames.toLocaleString()}
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[10px] text-[var(--color-muted-foreground)]">평균 순위</span>
+            <span className="text-sm text-[var(--color-muted-foreground)]">
+              #{rec.averageRank.toFixed(1)}
+            </span>
+          </div>
         </div>
-        <div className="flex flex-col">
-          <span className="text-[10px] text-[var(--color-muted-foreground)]">평균 순위</span>
-          <span className="text-sm text-[var(--color-muted-foreground)]">
-            #{rec.averageRank.toFixed(1)}
-          </span>
-        </div>
-      </div>
+      )}
     </div>
   )
 }
 
 // ─── 메인 컴포넌트 ────────────────────────────────────────────────────────────
 
-export function SynergyClient() {
+export function SynergyClient({ compact = false }: { compact?: boolean }) {
   const { l10n } = useL10n()
 
   const [selectedAllies, setSelectedAllies] = React.useState<number[]>([])
@@ -354,9 +385,9 @@ export function SynergyClient() {
   }, [trioResults, selectedAllies, focusCharacters, isFocusFilterEnabled, sortBy])
 
   return (
-    <div className="flex gap-4 items-start">
-      {/* 좌측: 아군/관심 캐릭터 선택 */}
-      <div className="w-[240px] shrink-0 flex flex-col gap-3">
+    <div className={cn(compact ? "flex flex-col gap-4" : "flex gap-4 items-start")}>
+      {/* 좌측(또는 상단): 아군/관심 캐릭터 선택 */}
+      <div className={cn(compact ? "w-full" : "w-[240px] shrink-0", "flex flex-col gap-3")}>
         <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
           <p className="mb-2 px-1 text-xs text-[var(--color-muted-foreground)]">
             아군 선택 (최대 2명)
@@ -372,7 +403,7 @@ export function SynergyClient() {
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-1 max-h-[300px] overflow-y-auto">
+          <div className={cn("grid gap-1 max-h-[300px] overflow-y-auto", compact ? "grid-cols-4" : "grid-cols-3")}>
             {filteredAllyCodes.map((code) => {
               const isSelected = selectedAllies.includes(code)
               const isDisabled = !isSelected && selectedAllies.length >= 2
@@ -436,7 +467,7 @@ export function SynergyClient() {
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-1 max-h-[300px] overflow-y-auto">
+            <div className={cn("grid gap-1 max-h-[300px] overflow-y-auto", compact ? "grid-cols-4" : "grid-cols-3")}>
               {filteredFocusCodes.map((code) => {
                 const isSelected = focusCharacters.includes(code)
                 const name = getCharName(code)
@@ -640,6 +671,7 @@ export function SynergyClient() {
                 rec={rec}
                 rank={i + 1}
                 getCharName={getCharName}
+                compact={compact}
               />
             ))}
           </div>
