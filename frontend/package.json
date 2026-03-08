@@ -9,7 +9,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "fetch-l10n": "node --env-file=.env.local scripts/fetch-l10n.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.97.0",

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 const TIER_FALLBACK_ORDER = ["DIAMOND", "METEORITE", "MITHRIL", "IN1000"];
 
@@ -24,29 +24,6 @@ export interface CharacterRankingData {
   winRate: number;
   averageRP: number;
   top3Rate: number;
-}
-
-async function fetchRankingStats(
-  supabase: ReturnType<typeof import("@/lib/supabase").createServerClient>,
-  patchVersion: string,
-  tier: string
-): Promise<StatRow[]> {
-  console.log(`[mithril-rp-ranking] CharacterStats 조회: patchVersion=${patchVersion}, tier=${tier}`);
-
-  const { data, error } = await supabase
-    .from("CharacterStats")
-    .select("characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank")
-    .eq("patchVersion", patchVersion)
-    .eq("tier", tier);
-
-  console.log(`[mithril-rp-ranking] 결과 (patch=${patchVersion}, tier=${tier}):`, {
-    rowCount: data?.length ?? 0,
-    error,
-    sample: data?.slice(0, 3),
-  });
-
-  if (error || !data) return [];
-  return data as StatRow[];
 }
 
 function buildRankings(rows: StatRow[]): CharacterRankingData[] {
@@ -77,6 +54,17 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = createServerClient();
 
+    // 모든 tier를 단일 쿼리로 조회 후 JS에서 우선순위 선택 (최대 4회 → 1회)
+    const { data, error } = await supabase
+      .from("CharacterStats")
+      .select("characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank,tier")
+      .eq("patchVersion", patchVersion)
+      .in("tier", TIER_FALLBACK_ORDER);
+
+    if (error || !data) {
+      return NextResponse.json({ rankings: [], patchVersion, tier: requestedTier });
+    }
+
     const tierOrder = [
       requestedTier,
       ...TIER_FALLBACK_ORDER.filter((t) => t !== requestedTier),
@@ -86,14 +74,12 @@ export async function GET(request: NextRequest) {
     let usedTier = requestedTier;
 
     for (const tier of tierOrder) {
-      const rows = await fetchRankingStats(supabase, patchVersion, tier);
+      const rows = (data as (StatRow & { tier: string })[]).filter((r) => r.tier === tier);
       if (rows.length > 0) {
         rankings = buildRankings(rows);
         usedTier = tier;
-        console.log(`[mithril-rp-ranking] 데이터 확인 (tier=${tier}), 조합 수:`, rankings.length);
         break;
       }
-      console.log(`[mithril-rp-ranking] tier=${tier} 데이터 없음, 다음 fallback 시도`);
     }
 
     console.log("[mithril-rp-ranking] 최종 응답:", {

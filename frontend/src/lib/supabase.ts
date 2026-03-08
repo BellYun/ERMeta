@@ -1,6 +1,12 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
-export function createServerClient() {
+const globalForSupabase = globalThis as unknown as {
+  supabase: SupabaseClient | undefined;
+};
+
+export function createServerClient(): SupabaseClient {
+  if (globalForSupabase.supabase) return globalForSupabase.supabase;
+
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key =
     process.env.SUPABASE_SERVICE_ROLE_KEY ??
@@ -10,7 +16,11 @@ export function createServerClient() {
     throw new Error("Supabase environment variables are missing");
   }
 
-  return createClient(url, key, {
+  const client = createClient(url, key, {
     auth: { persistSession: false },
   });
+
+  if (process.env.NODE_ENV !== "production") globalForSupabase.supabase = client;
+
+  return client;
 }

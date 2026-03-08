@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
