@@ -100,7 +100,12 @@ export async function captureNicknames(): Promise<OcrSnapshot> {
   }
 
   const rawText = texts.join("\n");
+  console.log("[OCR] rawText:", JSON.stringify(rawText));
+  // 디버그: 필터 없이 전체 줄 확인
+  const allLines = rawText.split("\n").map((l) => l.trim()).filter((l) => l.length > 0);
+  console.log("[OCR] allLines:", allLines);
   const nicknames = extractNicknames(rawText);
+  console.log("[OCR] nicknames:", nicknames);
 
   return {
     nicknames,
