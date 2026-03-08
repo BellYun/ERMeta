@@ -245,7 +245,7 @@ function ComboCard({
 
 // ─── 메인 컴포넌트 ────────────────────────────────────────────────────────────
 
-export function SynergyClient() {
+export function SynergyClient({ compact = false }: { compact?: boolean }) {
   const { l10n } = useL10n()
 
   const [selectedAllies, setSelectedAllies] = React.useState<number[]>([])
@@ -354,9 +354,9 @@ export function SynergyClient() {
   }, [trioResults, selectedAllies, focusCharacters, isFocusFilterEnabled, sortBy])
 
   return (
-    <div className="flex gap-4 items-start">
-      {/* 좌측: 아군/관심 캐릭터 선택 */}
-      <div className="w-[240px] shrink-0 flex flex-col gap-3">
+    <div className={cn(compact ? "flex flex-col gap-4" : "flex gap-4 items-start")}>
+      {/* 좌측(또는 상단): 아군/관심 캐릭터 선택 */}
+      <div className={cn(compact ? "w-full" : "w-[240px] shrink-0", "flex flex-col gap-3")}>
         <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
           <p className="mb-2 px-1 text-xs text-[var(--color-muted-foreground)]">
             아군 선택 (최대 2명)
@@ -372,7 +372,7 @@ export function SynergyClient() {
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-1 max-h-[300px] overflow-y-auto">
+          <div className={cn("grid gap-1 max-h-[300px] overflow-y-auto", compact ? "grid-cols-4" : "grid-cols-3")}>
             {filteredAllyCodes.map((code) => {
               const isSelected = selectedAllies.includes(code)
               const isDisabled = !isSelected && selectedAllies.length >= 2
@@ -436,7 +436,7 @@ export function SynergyClient() {
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-1 max-h-[300px] overflow-y-auto">
+            <div className={cn("grid gap-1 max-h-[300px] overflow-y-auto", compact ? "grid-cols-4" : "grid-cols-3")}>
               {filteredFocusCodes.map((code) => {
                 const isSelected = focusCharacters.includes(code)
                 const name = getCharName(code)
