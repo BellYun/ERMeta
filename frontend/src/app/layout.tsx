@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { L10nProvider } from "@/components/L10nProvider";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,6 +27,7 @@ export default function RootLayout({
           <Header />
           <main className="max-w-6xl mx-auto px-4 py-6">{children}</main>
         </L10nProvider>
+        <Analytics />
       </body>
     </html>
   );
