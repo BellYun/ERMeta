@@ -137,6 +137,7 @@ export async function GET(request: NextRequest) {
       .select("character1,character2,character3,winRate,averageRP,totalGames,averageRank")
       .in("tier", DIAMOND_PLUS_TIERS)
       .gte("lastUpdated", TWO_WEEKS_AGO) // TTL 필터: 2주 이내 데이터만
+      .order("totalGames", { ascending: false }) // 일관된 행 선택을 위해 정렬
       .limit(5000); // 집계 전 최대 수집 행수
 
     if (char1 !== null && char2 !== null) {
