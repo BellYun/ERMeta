@@ -36,7 +36,7 @@ export default async function Home({
     <div className="flex flex-col gap-6">
       <section>
         <h2 className="mb-3 text-sm font-semibold text-[var(--color-foreground)]">
-          RP 상위 3인 조합 Top 10
+          RP 상위 3인 조합 Top 5
         </h2>
         <TopTriosPreview />
       </section>
