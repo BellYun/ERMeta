@@ -388,11 +388,17 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
     }
 
     const deduped = deduplicateResults(scopedResults, selectedAllies, sortBy)
-    // 평균 RP 음수인 조합은 후순위
-    const sorted = [
-      ...deduped.filter((r) => r.averageRP >= 0),
-      ...deduped.filter((r) => r.averageRP < 0),
-    ]
+    // 추천순: 10판 이하 & 평균 RP 음수 조합은 후순위
+    const sorted = sortBy === "recommended"
+      ? [
+          ...deduped.filter((r) => r.totalGames > 10 && r.averageRP >= 0),
+          ...deduped.filter((r) => r.totalGames > 10 && r.averageRP < 0),
+          ...deduped.filter((r) => r.totalGames <= 10),
+        ]
+      : [
+          ...deduped.filter((r) => r.averageRP >= 0),
+          ...deduped.filter((r) => r.averageRP < 0),
+        ]
     return sorted.slice(0, 20)
   }, [trioResults, selectedAllies, focusCharacters, isFocusFilterEnabled, sortBy])
 

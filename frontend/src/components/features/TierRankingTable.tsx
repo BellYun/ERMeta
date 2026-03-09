@@ -92,9 +92,6 @@ export function TierRankingTable() {
         const rankings = data.rankings ?? []
         const scores = computeMetaScores(rankings)
         const sorted = [...rankings].sort((a, b) => {
-          const lowA = a.totalGames <= 10
-          const lowB = b.totalGames <= 10
-          if (lowA !== lowB) return lowA ? 1 : -1
           const sa = scores.get(a.characterNum * 1000 + a.bestWeapon) ?? 0
           const sb = scores.get(b.characterNum * 1000 + b.bestWeapon) ?? 0
           return sb - sa
