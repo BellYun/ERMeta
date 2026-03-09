@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import { Suspense } from "react";
 import { GlobalFilter } from "@/components/features/GlobalFilter";
-import { TrendingSection } from "@/components/features/TrendingSection";
 import { TierRankingTable } from "@/components/features/TierRankingTable";
 import { TopTriosPreview } from "@/components/features/TopTriosPreview";
 
@@ -44,7 +43,6 @@ export default async function Home({
       <Suspense>
         <GlobalFilter />
       </Suspense>
-      <TrendingSection patch={patch} tier={tier} />
       <Suspense>
         <TierRankingTable />
       </Suspense>

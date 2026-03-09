@@ -48,7 +48,7 @@ export async function GET(
 
   const { searchParams } = new URL(request.url)
   const tier = searchParams.get("tier") ?? "DIAMOND"
-  const patchVersion = searchParams.get("patchVersion") ?? "10.3"
+  const patchVersion = searchParams.get("patchVersion") ?? "10.4"
 
   const emptyResponse: CharacterStatsResponse = {
     characterNum: characterCode,

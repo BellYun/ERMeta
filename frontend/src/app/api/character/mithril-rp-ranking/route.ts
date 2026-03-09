@@ -46,7 +46,7 @@ function buildRankings(rows: StatRow[]): CharacterRankingData[] {
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const patchVersion = searchParams.get("patchVersion") ?? "10.3";
+  const patchVersion = searchParams.get("patchVersion") ?? "10.4";
   const requestedTier = searchParams.get("tier") ?? "DIAMOND";
 
   console.log("[mithril-rp-ranking] params:", { patchVersion, requestedTier });
