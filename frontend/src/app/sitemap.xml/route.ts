@@ -1,4 +1,4 @@
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://lumiastats.vercel.app";
+const BASE_URL = (process.env.NEXT_PUBLIC_BASE_URL ?? "https://lumiastats.vercel.app").replace(/\/$/, "");
 
 const urls = [
   { loc: BASE_URL, changefreq: "daily", priority: "1.0" },
