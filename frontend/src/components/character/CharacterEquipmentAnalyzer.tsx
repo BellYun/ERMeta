@@ -58,7 +58,7 @@ function ItemIcon({ code, size = 32 }: { code: number | null; size?: number }) {
   )
 }
 
-function WinRateSpan({ winRate }: { winRate: number }) {
+function WinRateSpan({ winRate, label }: { winRate: number; label?: string }) {
   return (
     <span
       className={cn(
@@ -66,7 +66,7 @@ function WinRateSpan({ winRate }: { winRate: number }) {
         winRate >= 55 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
       )}
     >
-      {winRate.toFixed(1)}%
+      {label}{winRate.toFixed(1)}%
     </span>
   )
 }
@@ -203,8 +203,8 @@ function SlotPopularityGrid({
                       <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-full truncate w-full leading-tight">
                         {itemNames[item.code] ?? item.code}
                       </span>
-                      <span className="text-[9px] text-[var(--color-primary)]">{item.pickRate.toFixed(1)}%</span>
-                      <WinRateSpan winRate={item.winRate} />
+                      <span className="text-[9px] text-[var(--color-primary)]">픽률 {item.pickRate.toFixed(1)}%</span>
+                      <WinRateSpan winRate={item.winRate} label="승률 " />
                     </div>
                   ))}
                 </div>
@@ -249,7 +249,7 @@ function CoreItemsList({
               {itemNames[item.code] ?? item.code}
             </span>
             <span className="text-xs text-[var(--color-primary)]">픽률 {item.pickRate.toFixed(1)}%</span>
-            <WinRateSpan winRate={item.winRate} />
+            <WinRateSpan winRate={item.winRate} label="승률 " />
             <span className="text-xs text-[var(--color-muted-foreground)] w-16 text-right">
               {item.totalGames.toLocaleString()}판
             </span>

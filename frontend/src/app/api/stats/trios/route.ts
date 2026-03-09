@@ -14,7 +14,51 @@ const DIAMOND_PLUS_TIERS: TierGroup[] = [
 const TRIO_MEMBER_COUNT = 3;
 const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]); // Dr. 하나, 나쟈
 
-type SortBy = "averageRP" | "winRate" | "totalGames";
+type SortBy = "averageRP" | "winRate" | "totalGames" | "recommended";
+
+// ─── 추천 점수 계산 ────────────────────────────────────────────────────────────
+// 이터널리턴 트리오: 24인 8팀, 순위 1~8
+// RP 손익 분기점: ~4~5등 (그 이하 음수 RP)
+
+const BAYESIAN_K = 50; // prior 강도: 샘플 50판 수준의 전체 평균으로 수렴
+
+/** 베이지안 RP: 샘플 부족 시 전체 평균으로 수렴 */
+function bayesianRP(averageRP: number, totalGames: number, globalAvgRP: number): number {
+  return (totalGames * averageRP + BAYESIAN_K * globalAvgRP) / (totalGames + BAYESIAN_K);
+}
+
+/** Wilson score 하한 (90% 신뢰구간) — 승률의 보수적 추정치 */
+function wilsonLower(winRatePct: number, totalGames: number): number {
+  if (totalGames === 0) return 0;
+  const p = winRatePct / 100;
+  const z = 1.645;
+  const n = totalGames;
+  const numerator = p + (z * z) / (2 * n) - z * Math.sqrt((p * (1 - p)) / n + (z * z) / (4 * n * n));
+  const denominator = 1 + (z * z) / n;
+  return Math.max(0, numerator / denominator);
+}
+
+/** 순위 점수: 1등=1.0, 8등=0.0 (선형) */
+function rankScore(averageRank: number): number {
+  // averageRank 범위: 1(최고) ~ 8(최저)
+  return Math.max(0, Math.min(1, (8 - averageRank) / 7));
+}
+
+/** 추천 종합 점수 계산 */
+function recommendedScore(
+  rec: AggregatedTrio,
+  globalAvgRP: number,
+  rpRange: { min: number; max: number }
+): number {
+  const bRP = bayesianRP(rec.averageRP, rec.totalGames, globalAvgRP);
+  const span = rpRange.max - rpRange.min || 1;
+  const normalizedRP = Math.max(0, Math.min(1, (bRP - rpRange.min) / span));
+
+  const wilson = wilsonLower(rec.winRate, rec.totalGames);
+  const rScore = rankScore(rec.averageRank);
+
+  return 0.60 * normalizedRP + 0.30 * wilson + 0.10 * rScore;
+}
 
 interface TrioRow {
   character1: number;
@@ -88,7 +132,7 @@ function aggregateByTrio(rows: TrioRow[]): AggregatedTrio[] {
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
-  const sortByParam = (searchParams.get("sortBy") ?? "totalGames") as SortBy;
+  const sortByParam = (searchParams.get("sortBy") ?? "recommended") as SortBy;
   const limitParam = searchParams.get("limit");
   const char1Param = searchParams.get("character1");
   const char2Param = searchParams.get("character2");
@@ -137,6 +181,7 @@ export async function GET(request: NextRequest) {
       .select("character1,character2,character3,winRate,averageRP,totalGames,averageRank")
       .in("tier", DIAMOND_PLUS_TIERS)
       .gte("lastUpdated", TWO_WEEKS_AGO) // TTL 필터: 2주 이내 데이터만
+      .order("totalGames", { ascending: false }) // 일관된 행 선택을 위해 정렬
       .limit(5000); // 집계 전 최대 수집 행수
 
     if (char1 !== null && char2 !== null) {
@@ -174,11 +219,28 @@ export async function GET(request: NextRequest) {
     const aggregated = aggregateByTrio(filteredRows);
 
     // 집계 후 정렬
-    aggregated.sort((a, b) => {
-      if (sortByParam === "averageRP") return b.averageRP - a.averageRP;
-      if (sortByParam === "winRate") return b.winRate - a.winRate;
-      return b.totalGames - a.totalGames; // totalGames (기본)
-    });
+    if (sortByParam === "recommended") {
+      const globalAvgRP =
+        aggregated.length > 0
+          ? aggregated.reduce((sum, r) => sum + r.averageRP, 0) / aggregated.length
+          : 0;
+      const rpValues = aggregated.map((r) => r.averageRP);
+      const rpRange = {
+        min: Math.min(...rpValues),
+        max: Math.max(...rpValues),
+      };
+      aggregated.sort(
+        (a, b) =>
+          recommendedScore(b, globalAvgRP, rpRange) -
+          recommendedScore(a, globalAvgRP, rpRange)
+      );
+    } else {
+      aggregated.sort((a, b) => {
+        if (sortByParam === "averageRP") return b.averageRP - a.averageRP;
+        if (sortByParam === "winRate") return b.winRate - a.winRate;
+        return b.totalGames - a.totalGames;
+      });
+    }
 
     return NextResponse.json({ results: aggregated.slice(0, limit) });
   } catch (err) {

@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils"
 
 const navLinks = [
   { href: "/", label: "메타 분석" },
+  { href: "/synergy", label: "조합 추천" },
   { href: "/character-analysis", label: "캐릭터 분석" },
-  { href: "/synergy", label: "조합 시너지" },
 ]
 
 export function Navigation() {
@@ -20,7 +20,7 @@ export function Navigation() {
           key={href}
           href={href}
           className={cn(
-            "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+            "px-2 py-1.5 sm:px-3 rounded-md text-sm font-medium transition-colors",
             pathname === href
               ? "bg-[var(--color-surface-2)] text-[var(--color-foreground)]"
               : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]"

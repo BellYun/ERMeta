@@ -10,6 +10,7 @@ import {
   getCharacterImageUrl,
   resolveCharacterName,
 } from "@/lib/characterMap"
+import { analytics } from "@/lib/analytics"
 
 // ─── 타입 ────────────────────────────────────────────────────────────────────
 
@@ -23,7 +24,7 @@ interface TrioResult {
   averageRank: number
 }
 
-type SortBy = "averageRP" | "winRate" | "totalGames"
+type SortBy = "averageRP" | "winRate" | "totalGames" | "recommended"
 
 // ─── 상수 ─────────────────────────────────────────────────────────────────────
 
@@ -37,6 +38,7 @@ const ALL_CHARACTER_CODES: number[] = Array.from(FALLBACK_MAP.keys())
   )
 
 const SORT_OPTIONS: { value: SortBy; label: string }[] = [
+  { value: "recommended", label: "추천순" },
   { value: "averageRP", label: "평균 RP" },
   { value: "winRate", label: "승률" },
   { value: "totalGames", label: "게임 수" },
@@ -44,9 +46,10 @@ const SORT_OPTIONS: { value: SortBy; label: string }[] = [
 
 // ─── 헬퍼 ─────────────────────────────────────────────────────────────────────
 
-function getSortValue(rec: TrioResult, sortBy: SortBy): number {
+function getSortValue(rec: TrioResult, sortBy: SortBy, serverIndex?: number): number {
   if (sortBy === "averageRP") return rec.averageRP
   if (sortBy === "winRate") return rec.winRate
+  if (sortBy === "recommended") return serverIndex !== undefined ? -serverIndex : rec.averageRP
   return rec.totalGames
 }
 
@@ -68,39 +71,41 @@ function deduplicateResults(
 ): TrioResult[] {
   if (selectedAllies.length === 2) {
     const [allyA, allyB] = selectedAllies
-    // 2명 고정 시 3번째 캐릭터 기준으로 중복 제거
-    const map = new Map<number, TrioResult>()
-    for (const rec of results) {
+    // 2명 고정 시 3번째 캐릭터 기준으로 중복 제거 (서버 인덱스 기준 최우선)
+    const map = new Map<number, { rec: TrioResult; idx: number }>()
+    for (let i = 0; i < results.length; i++) {
+      const rec = results[i]
       const key = getThirdCharacter(rec, allyA, allyB)
       if (key === null) continue
       const existing = map.get(key)
-      if (!existing || getSortValue(rec, sortBy) > getSortValue(existing, sortBy)) {
-        map.set(key, rec)
+      if (!existing || getSortValue(rec, sortBy, i) > getSortValue(existing.rec, sortBy, existing.idx)) {
+        map.set(key, { rec, idx: i })
       }
     }
-    return Array.from(map.values()).sort(
-      (a, b) => getSortValue(b, sortBy) - getSortValue(a, sortBy)
-    )
+    return Array.from(map.values())
+      .sort((a, b) => getSortValue(b.rec, sortBy, b.idx) - getSortValue(a.rec, sortBy, a.idx))
+      .map((v) => v.rec)
   }
 
   if (selectedAllies.length === 1) {
     const selected = selectedAllies[0]
-    // 나머지 두 캐릭터 쌍(min-max) 기준 중복 제거
-    const map = new Map<string, TrioResult>()
-    for (const rec of results) {
+    // 나머지 두 캐릭터 쌍(min-max) 기준 중복 제거 (서버 인덱스 기준 최우선)
+    const map = new Map<string, { rec: TrioResult; idx: number }>()
+    for (let i = 0; i < results.length; i++) {
+      const rec = results[i]
       const others = [rec.character1, rec.character2, rec.character3].filter(
         (c) => c !== selected
       )
       if (others.length !== 2) continue
       const key = `${Math.min(...others)}-${Math.max(...others)}`
       const existing = map.get(key)
-      if (!existing || getSortValue(rec, sortBy) > getSortValue(existing, sortBy)) {
-        map.set(key, rec)
+      if (!existing || getSortValue(rec, sortBy, i) > getSortValue(existing.rec, sortBy, existing.idx)) {
+        map.set(key, { rec, idx: i })
       }
     }
-    return Array.from(map.values()).sort(
-      (a, b) => getSortValue(b, sortBy) - getSortValue(a, sortBy)
-    )
+    return Array.from(map.values())
+      .sort((a, b) => getSortValue(b.rec, sortBy, b.idx) - getSortValue(a.rec, sortBy, a.idx))
+      .map((v) => v.rec)
   }
 
   return results
@@ -227,7 +232,7 @@ function ComboCard({
           </span>
         </div>
       ) : (
-        <div className="ml-auto flex items-center gap-6 text-right">
+        <div className="ml-auto flex items-center gap-3 sm:gap-6 text-right">
           <div className="flex flex-col">
             <span className="text-[10px] text-[var(--color-muted-foreground)]">승률</span>
             <span
@@ -256,13 +261,13 @@ function ComboCard({
               {rec.averageRP > 0 ? "+" : ""}{rec.averageRP.toFixed(1)}
             </span>
           </div>
-          <div className="flex flex-col">
+          <div className="hidden sm:flex flex-col">
             <span className="text-[10px] text-[var(--color-muted-foreground)]">게임 수</span>
             <span className="text-sm text-[var(--color-muted-foreground)]">
               {rec.totalGames.toLocaleString()}
             </span>
           </div>
-          <div className="flex flex-col">
+          <div className="hidden sm:flex flex-col">
             <span className="text-[10px] text-[var(--color-muted-foreground)]">평균 순위</span>
             <span className="text-sm text-[var(--color-muted-foreground)]">
               #{rec.averageRank.toFixed(1)}
@@ -282,7 +287,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
   const [selectedAllies, setSelectedAllies] = React.useState<number[]>([])
   const [focusCharacters, setFocusCharacters] = React.useState<number[]>([])
   const [isFocusFilterEnabled, setIsFocusFilterEnabled] = React.useState(false)
-  const [sortBy, setSortBy] = React.useState<SortBy>("totalGames")
+  const [sortBy, setSortBy] = React.useState<SortBy>("recommended")
   const [allySearch, setAllySearch] = React.useState("")
   const [focusSearch, setFocusSearch] = React.useState("")
 
@@ -350,6 +355,8 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
     setSelectedAllies((prev) => {
       if (prev.includes(code)) return prev.filter((c) => c !== code)
       if (prev.length >= 2) return prev
+      const slot = prev.length === 0 ? "A" : "B"
+      analytics.synergyAllySelected(slot, code, getCharName(code))
       return [...prev, code]
     })
   }
@@ -381,13 +388,18 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
     }
 
     const deduped = deduplicateResults(scopedResults, selectedAllies, sortBy)
-    return deduped.slice(0, 20)
+    // 평균 RP 음수인 조합은 후순위
+    const sorted = [
+      ...deduped.filter((r) => r.averageRP >= 0),
+      ...deduped.filter((r) => r.averageRP < 0),
+    ]
+    return sorted.slice(0, 20)
   }, [trioResults, selectedAllies, focusCharacters, isFocusFilterEnabled, sortBy])
 
   return (
-    <div className={cn(compact ? "flex flex-col gap-4" : "flex gap-4 items-start")}>
-      {/* 좌측(또는 상단): 아군/관심 캐릭터 선택 */}
-      <div className={cn(compact ? "w-full" : "w-[240px] shrink-0", "flex flex-col gap-3")}>
+    <div className={cn(compact ? "flex flex-col gap-4" : "flex flex-col lg:flex-row gap-4 items-start")}>
+      {/* 상단(모바일) / 좌측(데스크탑): 아군/관심 캐릭터 선택 */}
+      <div className={cn(compact ? "w-full" : "w-full lg:w-[240px] lg:shrink-0", "flex flex-col gap-3")}>
         <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
           <p className="mb-2 px-1 text-xs text-[var(--color-muted-foreground)]">
             아군 선택 (최대 2명)
@@ -403,7 +415,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
             />
           </div>
 
-          <div className={cn("grid gap-1 max-h-[300px] overflow-y-auto", compact ? "grid-cols-4" : "grid-cols-3")}>
+          <div className={cn("grid gap-1 max-h-[200px] lg:max-h-[300px] overflow-y-auto", compact ? "grid-cols-5 sm:grid-cols-6" : "grid-cols-5 sm:grid-cols-6 lg:grid-cols-3")}>
             {filteredAllyCodes.map((code) => {
               const isSelected = selectedAllies.includes(code)
               const isDisabled = !isSelected && selectedAllies.length >= 2
@@ -467,7 +479,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
               />
             </div>
 
-            <div className={cn("grid gap-1 max-h-[300px] overflow-y-auto", compact ? "grid-cols-4" : "grid-cols-3")}>
+            <div className={cn("grid gap-1 max-h-[200px] lg:max-h-[300px] overflow-y-auto", compact ? "grid-cols-5 sm:grid-cols-6" : "grid-cols-5 sm:grid-cols-6 lg:grid-cols-3")}>
               {filteredFocusCodes.map((code) => {
                 const isSelected = focusCharacters.includes(code)
                 const name = getCharName(code)
@@ -608,7 +620,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
           {SORT_OPTIONS.map(({ value, label }) => (
             <button
               key={value}
-              onClick={() => setSortBy(value)}
+              onClick={() => { setSortBy(value); analytics.synergySortChanged(value) }}
               className={cn(
                 "px-2.5 py-1 rounded-md text-xs font-medium transition-colors",
                 sortBy === value

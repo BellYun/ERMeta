@@ -5,6 +5,7 @@ import Image from "next/image"
 import { TrendingUp, TrendingDown, Minus, BarChart2, Search, RefreshCw, FileText, Package, Layers } from "lucide-react"
 import { getCharacterPatchNote } from "@/data/patch-notes"
 import type { ChangeType } from "@/data/patch-notes"
+import { useSearchParams } from "next/navigation"
 import {
   LineChart,
   Line,
@@ -19,6 +20,7 @@ import { TierBadge } from "./TierBadge"
 import { cn } from "@/lib/utils"
 import type { Tier } from "@/lib/design-tokens"
 import { getCharacterName, getCharacterImageUrl } from "@/lib/characterMap"
+import { analytics } from "@/lib/analytics"
 import { resolveWeaponName } from "@/lib/weaponMap"
 import { METRICS_TIER_GROUPS, TierGroup } from "@/utils/tier"
 import { CharacterEquipmentAnalyzer } from "@/components/character/CharacterEquipmentAnalyzer"
@@ -55,11 +57,33 @@ const CHANGE_TYPE_CONFIG = {
 
 // ─── 유틸 ─────────────────────────────────────────────────────────────────────
 
-function assignCharTier(winRate: number): Tier {
-  if (winRate >= 55) return "S"
-  if (winRate >= 52) return "A"
-  if (winRate >= 50) return "B"
-  if (winRate >= 47) return "C"
+function assignCharTier(stat: {
+  winRate: number
+  top3Rate?: number
+  averageRank: number
+  averageRP: number
+}): Tier {
+  // 1~8등 배틀로얄 기댓값 기준 정규화
+  //   기대 승률      = 1/8 = 12.5%  (σ ≈ 3.5%p)
+  //   기대 상위3위율 = 3/8 = 37.5%  (σ ≈ 7%p)
+  //   기대 평균순위  = 4.5           (σ ≈ 1.5)
+  const zWin = (stat.winRate - 12.5) / 3.5
+
+  // top3Rate 우선, 없으면(무기별 통계) averageRank로 대체 (낮을수록 좋으므로 부호 반전)
+  const zSurvival =
+    stat.top3Rate !== undefined
+      ? (stat.top3Rate - 37.5) / 7.0
+      : (4.5 - stat.averageRank) / 1.5
+
+  const zRP = stat.averageRP / 15.0
+
+  // 승률 40%, 생존력(상위3위율·평균순위) 35%, 평균RP 25%
+  const score = zWin * 0.40 + zSurvival * 0.35 + zRP * 0.25
+
+  if (score >= 1.0)  return "S"
+  if (score >= 0.3)  return "A"
+  if (score >= -0.3) return "B"
+  if (score >= -1.0) return "C"
   return "D"
 }
 
@@ -200,10 +224,18 @@ function SkeletonCard() {
 // ─── 메인 컴포넌트 ────────────────────────────────────────────────────────────
 
 export function CharacterAnalysisClient() {
-  const [selectedCode, setSelectedCode] = React.useState<number>(1)
+  const searchParams = useSearchParams()
+  const initialCode = (() => {
+    const p = searchParams.get("character")
+    if (!p) return 1
+    const n = parseInt(p, 10)
+    return CHARACTER_CODES.includes(n) ? n : 1
+  })()
+  const [selectedCode, setSelectedCode] = React.useState<number>(initialCode)
   const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.MITHRIL)
   const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>(null)
   const [searchQuery, setSearchQuery] = React.useState("")
+  const searchTimerRef = React.useRef<ReturnType<typeof setTimeout>>(null)
 
   const filteredCodes = React.useMemo(() => {
     const sorted = [...CHARACTER_CODES].sort((a, b) =>
@@ -270,7 +302,7 @@ export function CharacterAnalysisClient() {
   const displayStat = selectedWeaponStat ?? stats
   const displayPrevStat = prevSelectedWeaponStat ?? previousStats
 
-  const charTier = displayStat && displayStat.totalGames > 0 ? assignCharTier(displayStat.winRate) : null
+  const charTier = displayStat && displayStat.totalGames > 0 ? assignCharTier(displayStat) : null
 
   // 패치 비교 탭용 차트 데이터 (선택 무기 기준, 오래된 → 최신 순)
   const chartData = React.useMemo(() => {
@@ -303,31 +335,39 @@ export function CharacterAnalysisClient() {
   const hasPreviousData = displayPrevStat !== null && (displayPrevStat.totalGames ?? 0) > 0
 
   return (
-    <div className="flex gap-4 items-start">
-      {/* 좌측 캐릭터 그리드 */}
-      <div className="w-[228px] shrink-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
+    <div className="flex flex-col lg:flex-row gap-4 items-start">
+      {/* 캐릭터 그리드 (모바일: 상단 수평 스크롤, 데스크탑: 좌측 사이드바) */}
+      <div className="w-full lg:w-[228px] lg:shrink-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
         {/* 검색 */}
         <div className="relative mb-2">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)] pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+                setSearchQuery(e.target.value)
+                if (searchTimerRef.current) clearTimeout(searchTimerRef.current)
+                if (e.target.value.trim()) {
+                  searchTimerRef.current = setTimeout(() => {
+                    analytics.characterSearched(e.target.value.trim())
+                  }, 800)
+                }
+              }}
             placeholder="캐릭터 검색"
             className="w-full rounded bg-[var(--color-surface-2)] pl-7 pr-2 py-1.5 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] placeholder:text-[var(--color-muted-foreground)] outline-none focus:border-[var(--color-primary)]"
           />
         </div>
 
-        <div className="grid grid-cols-3 gap-1 max-h-[620px] overflow-y-auto pr-0.5">
+        <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-3 gap-1 max-h-[200px] lg:max-h-[620px] overflow-y-auto pr-0.5">
           {filteredCodes.length === 0 ? (
-            <p className="col-span-3 py-4 text-center text-xs text-[var(--color-muted-foreground)]">
+            <p className="col-span-5 sm:col-span-6 lg:col-span-3 py-4 text-center text-xs text-[var(--color-muted-foreground)]">
               검색 결과 없음
             </p>
           ) : null}
           {filteredCodes.map((code) => (
             <button
               key={code}
-              onClick={() => { setSelectedCode(code); setSearchQuery("") }}
+              onClick={() => { setSelectedCode(code); setSearchQuery(""); analytics.characterViewed(code, getCharacterName(code)) }}
               className={cn(
                 "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors",
                 selectedCode === code
@@ -380,7 +420,7 @@ export function CharacterAnalysisClient() {
               )}
               <select
                 value={selectedTier}
-                onChange={(e) => setSelectedTier(e.target.value as TierGroup)}
+                onChange={(e) => { setSelectedTier(e.target.value as TierGroup); analytics.analysisTierChanged(e.target.value) }}
                 className="ml-auto rounded bg-[var(--color-surface-2)] px-2 py-1 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] cursor-pointer"
               >
                 {METRICS_TIER_GROUPS.map((tg) => (
@@ -397,7 +437,10 @@ export function CharacterAnalysisClient() {
                   return (
                     <button
                       key={w.bestWeapon ?? "none"}
-                      onClick={() => setSelectedWeapon(w.bestWeapon ?? null)}
+                      onClick={() => {
+                        setSelectedWeapon(w.bestWeapon ?? null)
+                        analytics.weaponSelected(selectedCode, w.bestWeapon ?? 0, resolveWeaponName(w.bestWeapon ?? undefined))
+                      }}
                       className={cn(
                         "flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs transition-colors",
                         isSelected
@@ -423,11 +466,11 @@ export function CharacterAnalysisClient() {
             )}
 
             {loading ? (
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {[...Array(4)].map((_, i) => <SkeletonCard key={i} />)}
               </div>
             ) : displayStat && displayStat.totalGames > 0 ? (
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <StatCard
                   label="픽률"
                   value={`${displayStat.pickRate.toFixed(1)}%`}
@@ -448,7 +491,7 @@ export function CharacterAnalysisClient() {
                 />
                 <StatCard
                   label="평균 RP"
-                  value={displayStat.averageRP.toFixed(0)}
+                  value={displayStat.averageRP.toFixed(1)}
                   delta={hasPreviousData ? displayStat.averageRP - displayPrevStat!.averageRP : undefined}
                 />
               </div>
@@ -461,8 +504,8 @@ export function CharacterAnalysisClient() {
         </div>
 
         {/* 탭 분석 */}
-        <Tabs defaultValue="equipment">
-          <TabsList>
+        <Tabs defaultValue="equipment" onValueChange={(v) => analytics.analysisTabChanged(v)}>
+          <TabsList className="flex-wrap h-auto">
             <TabsTrigger value="comparison">
               <BarChart2 className="mr-1.5 h-3.5 w-3.5" />패치 비교
             </TabsTrigger>
@@ -489,7 +532,7 @@ export function CharacterAnalysisClient() {
                     <p className="text-xs font-medium text-[var(--color-muted-foreground)]">
                       패치별 트렌드
                     </p>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {/* 승률 트렌드 */}
                       <div>
                         <p className="mb-2 text-xs text-[var(--color-muted-foreground)]">승률 (%)</p>

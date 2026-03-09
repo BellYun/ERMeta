@@ -8,6 +8,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@
 import { Skeleton } from "@/components/ui/skeleton"
 import { TierBadge } from "./TierBadge"
 import { cn } from "@/lib/utils"
+import { analytics } from "@/lib/analytics"
 import { resolveCharacterName, buildFallbackMap, getCharacterImageUrl } from "@/lib/characterMap"
 import { resolveWeaponName } from "@/lib/weaponMap"
 import { useL10n } from "@/components/L10nProvider"
@@ -29,12 +30,40 @@ interface DisplayRow {
   averageRP: number
 }
 
-function assignTier(rank: number, total: number): Tier {
-  const pct = rank / total
-  if (pct <= 0.1) return "S"
-  if (pct <= 0.25) return "A"
-  if (pct <= 0.45) return "B"
-  if (pct <= 0.65) return "C"
+function computeMetaScores(rankings: CharacterRankingData[]): Map<number, number> {
+  const n = rankings.length
+  if (n === 0) return new Map()
+
+  const vals = (fn: (r: CharacterRankingData) => number) => rankings.map(fn)
+
+  const mean = (arr: number[]) => arr.reduce((s, v) => s + v, 0) / arr.length
+  const std = (arr: number[], m: number) =>
+    Math.sqrt(arr.reduce((s, v) => s + (v - m) ** 2, 0) / arr.length)
+
+  const winRates = vals((r) => r.winRate)
+  const top3Rates = vals((r) => r.top3Rate)
+  const avgRPs = vals((r) => r.averageRP)
+
+  const winMean = mean(winRates),   winStd = std(winRates, winMean)
+  const top3Mean = mean(top3Rates), top3Std = std(top3Rates, top3Mean)
+  const rpMean = mean(avgRPs),      rpStd = std(avgRPs, rpMean)
+
+  const scores = new Map<number, number>()
+  for (const r of rankings) {
+    const zWin  = winStd  > 0 ? (r.winRate    - winMean)  / winStd  : 0
+    const zTop3 = top3Std > 0 ? (r.top3Rate   - top3Mean) / top3Std : 0
+    const zRP   = rpStd   > 0 ? (r.averageRP  - rpMean)   / rpStd   : 0
+    // 승률 40%, 상위3위율 35%, 평균RP 25%
+    scores.set(r.characterNum * 1000 + r.bestWeapon, zWin * 0.40 + zTop3 * 0.35 + zRP * 0.25)
+  }
+  return scores
+}
+
+function assignTier(score: number): Tier {
+  if (score >= 1.0)  return "S"
+  if (score >= 0.3)  return "A"
+  if (score >= -0.3) return "B"
+  if (score >= -1.0) return "C"
   return "D"
 }
 
@@ -48,7 +77,7 @@ export function TierRankingTable() {
   const { l10n } = useL10n()
 
   const patch = searchParams.get("patch")
-  const tier = searchParams.get("tier") ?? "DIAMOND"
+  const tier = searchParams.get("tier") ?? "MITHRIL"
 
   React.useEffect(() => {
     setIsLoading(true)
@@ -60,19 +89,25 @@ export function TierRankingTable() {
       .then((res) => res.json())
       .then((data: { rankings?: CharacterRankingData[] }) => {
         const rankings = data.rankings ?? []
-        const total = rankings.length
-        const display: DisplayRow[] = rankings.map((r) => {
+        const scores = computeMetaScores(rankings)
+        const sorted = [...rankings].sort((a, b) => {
+          const sa = scores.get(a.characterNum * 1000 + a.bestWeapon) ?? 0
+          const sb = scores.get(b.characterNum * 1000 + b.bestWeapon) ?? 0
+          return sb - sa
+        })
+        const display: DisplayRow[] = sorted.map((r, i) => {
           const name = resolveCharacterName(r.characterNum, l10n, fallbackMap)
           const weaponName = resolveWeaponName(r.bestWeapon)
           const imageUrl = getCharacterImageUrl(r.characterNum)
+          const score = scores.get(r.characterNum * 1000 + r.bestWeapon) ?? 0
           return {
-            rank: r.rank,
+            rank: i + 1,
             code: r.characterNum,
             weaponCode: r.bestWeapon,
             name,
             weaponName,
             imageUrl,
-            tier: assignTier(r.rank, total),
+            tier: assignTier(score),
             pickRate: r.pickRate,
             winRate: r.winRate,
             averageRP: r.averageRP,
@@ -91,9 +126,9 @@ export function TierRankingTable() {
 
   return (
     <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
-      <div className="flex items-center justify-between p-4 border-b border-[var(--color-border)]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 sm:p-4 border-b border-[var(--color-border)]">
         <h2 className="text-sm font-semibold text-[var(--color-foreground)]">티어 순위</h2>
-        <Tabs value={activeTier} onValueChange={setActiveTier}>
+        <Tabs value={activeTier} onValueChange={(v) => { setActiveTier(v); analytics.rankingTierTabChanged(v) }}>
           <TabsList>
             {tierTabs.map((t) => (
               <TabsTrigger key={t} value={t}>
@@ -104,13 +139,14 @@ export function TierRankingTable() {
         </Tabs>
       </div>
 
+      <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-12">순위</TableHead>
             <TableHead>캐릭터</TableHead>
             <TableHead className="w-16 text-center">티어</TableHead>
-            <TableHead className="w-20 text-right">픽률</TableHead>
+            <TableHead className="w-20 text-right hidden sm:table-cell">픽률</TableHead>
             <TableHead className="w-20 text-right">승률</TableHead>
             <TableHead className="w-24 text-right">평균 RP</TableHead>
           </TableRow>
@@ -127,7 +163,7 @@ export function TierRankingTable() {
                     </div>
                   </TableCell>
                   <TableCell className="text-center"><Skeleton className="h-5 w-8 mx-auto" /></TableCell>
-                  <TableCell className="text-right"><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
+                  <TableCell className="text-right hidden sm:table-cell"><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
                   <TableCell className="text-right"><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
                   <TableCell className="text-right"><Skeleton className="h-4 w-14 ml-auto" /></TableCell>
                 </TableRow>
@@ -157,7 +193,7 @@ export function TierRankingTable() {
                   <TableCell className="text-center">
                     <TierBadge tier={char.tier} />
                   </TableCell>
-                  <TableCell className="text-right text-sm text-[var(--color-muted-foreground)]">
+                  <TableCell className="text-right text-sm text-[var(--color-muted-foreground)] hidden sm:table-cell">
                     {char.pickRate.toFixed(1)}%
                   </TableCell>
                   <TableCell className="text-right text-sm text-[var(--color-muted-foreground)]">
@@ -187,6 +223,7 @@ export function TierRankingTable() {
           )}
         </TableBody>
       </Table>
+      </div>
     </div>
   )
 }

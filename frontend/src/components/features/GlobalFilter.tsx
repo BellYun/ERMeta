@@ -4,6 +4,7 @@ import * as React from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Select, SelectItem } from "@/components/ui/select"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { analytics } from "@/lib/analytics"
 
 const TIER_OPTIONS = [
   { value: "DIAMOND", label: "다이아" },
@@ -20,7 +21,7 @@ export function GlobalFilter() {
   const [isLoading, setIsLoading] = React.useState(true)
 
   const patch = searchParams.get("patch") ?? ""
-  const tier = searchParams.get("tier") ?? "DIAMOND"
+  const tier = searchParams.get("tier") ?? "MITHRIL"
 
   React.useEffect(() => {
     setIsLoading(true)
@@ -33,7 +34,7 @@ export function GlobalFilter() {
         if (!searchParams.get("patch") && list.length > 0) {
           const params = new URLSearchParams(searchParams.toString())
           params.set("patch", list[0])
-          if (!params.get("tier")) params.set("tier", "DIAMOND")
+          if (!params.get("tier")) params.set("tier", "MITHRIL")
           router.replace(`?${params.toString()}`)
         }
       })
@@ -46,6 +47,8 @@ export function GlobalFilter() {
     const params = new URLSearchParams(searchParams.toString())
     params.set(key, value)
     router.push(`?${params.toString()}`)
+    if (key === "tier") analytics.tierGroupSelected(value)
+    if (key === "patch") analytics.patchSelected(value)
   }
 
   return (
@@ -73,7 +76,7 @@ export function GlobalFilter() {
       <div className="flex items-center gap-2">
         <span className="text-xs text-[var(--color-muted-foreground)]">티어</span>
         <Tabs value={tier} onValueChange={(v) => updateParam("tier", v)}>
-          <TabsList>
+          <TabsList className="flex-wrap h-auto">
             {TIER_OPTIONS.map(({ value, label }) => (
               <TabsTrigger key={value} value={value}>
                 {label}
