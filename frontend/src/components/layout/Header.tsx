@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Navigation } from "./Navigation"
 
-const CURRENT_PATCH = "10.3"
+const CURRENT_PATCH = "10.4"
 
 export function Header() {
   return (
