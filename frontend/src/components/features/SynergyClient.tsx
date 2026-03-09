@@ -547,9 +547,14 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
 
         <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
           <div className="flex items-center justify-between">
-            <p className="text-xs text-[var(--color-muted-foreground)]">
-              관심 캐릭터 기능
-            </p>
+            <div>
+              <p className="text-xs font-medium text-[var(--color-foreground)]">
+                관심 캐릭터 필터
+              </p>
+              <p className="text-[11px] text-[var(--color-muted-foreground)]">
+                내가 플레이 가능한 캐릭터를 선택해 최선의 조합을 찾아보세요
+              </p>
+            </div>
             <div className="flex items-center gap-2">
               {isFocusFilterEnabled && focusCharacters.length > 0 && (
                 <span className="text-[10px] text-[var(--color-muted-foreground)]">
@@ -570,8 +575,8 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
             </div>
           </div>
           {!isFocusFilterEnabled && (
-            <p className="mt-2 text-xs text-[var(--color-muted-foreground)]">
-              ON으로 전환하면 관심 캐릭터 선택 UI가 표시됩니다.
+            <p className="mt-1.5 text-[11px] text-[var(--color-muted-foreground)]">
+              ON으로 전환하면 플레이 가능한 캐릭터를 선택해 그 캐릭터가 포함된 조합만 볼 수 있습니다.
             </p>
           )}
         </div>
@@ -614,8 +619,8 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
                 ))}
               </div>
             ) : (
-              <p className="mt-2 text-xs text-[var(--color-muted-foreground)]">
-                아군 2명 선택 시, 좌측에서 선택한 관심 캐릭터를 3번째 멤버로 갖는 조합만 표시됩니다.
+              <p className="mt-2 text-[11px] text-[var(--color-muted-foreground)]">
+                좌측에서 내가 플레이 가능한 캐릭터를 선택하세요. 아군 2명 확정 시 선택한 캐릭터가 3번째 멤버인 조합만 표시됩니다.
               </p>
             )}
           </div>
