@@ -1,8 +1,17 @@
+import { headers } from "next/headers"
 import { CharacterCard } from "./CharacterCard"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { getCharacterName, getCharacterImageUrl } from "@/lib/characterMap"
 import type { CharacterTrend } from "@/app/api/meta/trending/route"
 import { getCharacterPatchNote } from "@/data/patch-notes"
+
+async function getBaseUrl(): Promise<string> {
+  if (process.env.NEXT_PUBLIC_BASE_URL) return process.env.NEXT_PUBLIC_BASE_URL
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
+  const headersList = await headers()
+  const host = headersList.get("host") ?? "localhost:3000"
+  return `http://${host}`
+}
 
 interface TrendingSectionProps {
   patch?: string;
@@ -11,12 +20,7 @@ interface TrendingSectionProps {
 
 async function fetchPatches(): Promise<string[]> {
   try {
-    const baseUrl =
-      process.env.NEXT_PUBLIC_BASE_URL ??
-      (process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000");
-
+    const baseUrl = await getBaseUrl()
     const res = await fetch(`${baseUrl}/api/patches/history?limit=10`, {
       cache: "no-store",
     });
@@ -34,12 +38,7 @@ async function fetchTrending(
   tier: string
 ): Promise<{ rising: CharacterTrend[]; falling: CharacterTrend[] }> {
   try {
-    const baseUrl =
-      process.env.NEXT_PUBLIC_BASE_URL ??
-      (process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000");
-
+    const baseUrl = await getBaseUrl()
     const params = new URLSearchParams({
       currentPatch,
       previousPatch,

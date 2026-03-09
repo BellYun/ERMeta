@@ -1,3 +1,4 @@
+import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import type { PatchChange } from "@/data/patch-notes"
@@ -6,6 +7,7 @@ interface CharacterCardProps {
   name: string
   imageUrl: string
   rateChange: number
+  code?: number
   patchChanges?: PatchChange[]
   className?: string
 }
@@ -16,12 +18,15 @@ const CHANGE_LABEL: Record<PatchChange["changeType"], { label: string; className
   rework: { label: "변경", className: "text-blue-400" },
 }
 
-export function CharacterCard({ name, imageUrl, rateChange, patchChanges, className }: CharacterCardProps) {
+export function CharacterCard({ name, imageUrl, rateChange, code, patchChanges, className }: CharacterCardProps) {
   const isUp = rateChange >= 0
   const hasChanges = patchChanges && patchChanges.length > 0
+  const Wrapper = code != null ? Link : "div"
+  const wrapperProps = code != null ? { href: `/character-analysis?character=${code}` } : {}
 
   return (
-    <div
+    <Wrapper
+      {...(wrapperProps as object)}
       className={cn(
         "group relative flex items-center gap-3 rounded-lg bg-[var(--color-surface-2)] px-3 py-2.5 hover:bg-[var(--color-border)] transition-colors",
         className
@@ -71,6 +76,6 @@ export function CharacterCard({ name, imageUrl, rateChange, patchChanges, classN
           </div>
         </div>
       )}
-    </div>
+    </Wrapper>
   )
 }

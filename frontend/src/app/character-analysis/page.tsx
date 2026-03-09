@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Suspense } from "react"
 import { CharacterAnalysisClient } from "@/components/features/CharacterAnalysisClient"
 
 export const metadata: Metadata = {
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 }
 
 export default function CharacterAnalysisPage() {
-  return <CharacterAnalysisClient />
+  return (
+    <Suspense>
+      <CharacterAnalysisClient />
+    </Suspense>
+  )
 }

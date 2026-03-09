@@ -5,6 +5,7 @@ import Image from "next/image"
 import { TrendingUp, TrendingDown, Minus, BarChart2, Search, RefreshCw, FileText, Package, Layers } from "lucide-react"
 import { getCharacterPatchNote } from "@/data/patch-notes"
 import type { ChangeType } from "@/data/patch-notes"
+import { useSearchParams } from "next/navigation"
 import {
   LineChart,
   Line,
@@ -200,7 +201,14 @@ function SkeletonCard() {
 // ─── 메인 컴포넌트 ────────────────────────────────────────────────────────────
 
 export function CharacterAnalysisClient() {
-  const [selectedCode, setSelectedCode] = React.useState<number>(1)
+  const searchParams = useSearchParams()
+  const initialCode = (() => {
+    const p = searchParams.get("character")
+    if (!p) return 1
+    const n = parseInt(p, 10)
+    return CHARACTER_CODES.includes(n) ? n : 1
+  })()
+  const [selectedCode, setSelectedCode] = React.useState<number>(initialCode)
   const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.MITHRIL)
   const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>(null)
   const [searchQuery, setSearchQuery] = React.useState("")
