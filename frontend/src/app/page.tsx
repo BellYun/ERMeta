@@ -6,8 +6,19 @@ import { TierRankingTable } from "@/components/features/TierRankingTable";
 import { TopTriosPreview } from "@/components/features/TopTriosPreview";
 
 export const metadata: Metadata = {
-  title: "메타 분석 | ERMeta",
-  description: "이터널리턴 캐릭터 티어, 픽률, 승률 통계 분석.",
+  title: "메타 분석",
+  description: "이터널리턴 최신 패치 기준 캐릭터 티어, 픽률, 승률, 평균 RP 통계. 다이아~상위 1000위 데이터 기반 실시간 메타 분석.",
+  keywords: ["이터널리턴 티어표", "이터널리턴 메타", "이터널리턴 캐릭터 순위", "이터널리턴 승률", "이터널리턴 픽률"],
+  openGraph: {
+    title: "메타 분석 | LumiaStats",
+    description: "이터널리턴 최신 패치 기준 캐릭터 티어, 픽률, 승률, 평균 RP 통계.",
+    url: "/",
+  },
+  twitter: {
+    title: "메타 분석 | LumiaStats",
+    description: "이터널리턴 최신 패치 기준 캐릭터 티어, 픽률, 승률, 평균 RP 통계.",
+  },
+  alternates: { canonical: "/" },
 }
 
 interface SearchParams {
