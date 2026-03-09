@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -76,6 +76,7 @@ export function TierRankingTable() {
   const [isLoading, setIsLoading] = React.useState(true)
   const { l10n } = useL10n()
 
+  const router = useRouter()
   const patch = searchParams.get("patch")
   const tier = searchParams.get("tier") ?? "MITHRIL"
 
@@ -169,7 +170,11 @@ export function TierRankingTable() {
                 </TableRow>
               ))
             : filtered.map((char) => (
-                <TableRow key={`${char.code}-${char.weaponCode}`}>
+                <TableRow
+                  key={`${char.code}-${char.weaponCode}`}
+                  className="cursor-pointer"
+                  onClick={() => router.push(`/character-analysis?character=${char.code}`)}
+                >
                   <TableCell className="text-[var(--color-muted-foreground)] font-medium">
                     {char.rank}
                   </TableCell>
