@@ -8,6 +8,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@
 import { Skeleton } from "@/components/ui/skeleton"
 import { TierBadge } from "./TierBadge"
 import { cn } from "@/lib/utils"
+import { analytics } from "@/lib/analytics"
 import { resolveCharacterName, buildFallbackMap, getCharacterImageUrl } from "@/lib/characterMap"
 import { resolveWeaponName } from "@/lib/weaponMap"
 import { useL10n } from "@/components/L10nProvider"
@@ -127,7 +128,7 @@ export function TierRankingTable() {
     <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 sm:p-4 border-b border-[var(--color-border)]">
         <h2 className="text-sm font-semibold text-[var(--color-foreground)]">티어 순위</h2>
-        <Tabs value={activeTier} onValueChange={setActiveTier}>
+        <Tabs value={activeTier} onValueChange={(v) => { setActiveTier(v); analytics.rankingTierTabChanged(v) }}>
           <TabsList>
             {tierTabs.map((t) => (
               <TabsTrigger key={t} value={t}>

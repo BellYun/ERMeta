@@ -10,6 +10,7 @@ import {
   getCharacterImageUrl,
   resolveCharacterName,
 } from "@/lib/characterMap"
+import { analytics } from "@/lib/analytics"
 
 // ─── 타입 ────────────────────────────────────────────────────────────────────
 
@@ -354,6 +355,8 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
     setSelectedAllies((prev) => {
       if (prev.includes(code)) return prev.filter((c) => c !== code)
       if (prev.length >= 2) return prev
+      const slot = prev.length === 0 ? "A" : "B"
+      analytics.synergyAllySelected(slot, code, getCharName(code))
       return [...prev, code]
     })
   }
@@ -617,7 +620,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
           {SORT_OPTIONS.map(({ value, label }) => (
             <button
               key={value}
-              onClick={() => setSortBy(value)}
+              onClick={() => { setSortBy(value); analytics.synergySortChanged(value) }}
               className={cn(
                 "px-2.5 py-1 rounded-md text-xs font-medium transition-colors",
                 sortBy === value

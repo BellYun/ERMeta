@@ -4,6 +4,7 @@ import * as React from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Select, SelectItem } from "@/components/ui/select"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { analytics } from "@/lib/analytics"
 
 const TIER_OPTIONS = [
   { value: "DIAMOND", label: "다이아" },
@@ -46,6 +47,8 @@ export function GlobalFilter() {
     const params = new URLSearchParams(searchParams.toString())
     params.set(key, value)
     router.push(`?${params.toString()}`)
+    if (key === "tier") analytics.tierGroupSelected(value)
+    if (key === "patch") analytics.patchSelected(value)
   }
 
   return (

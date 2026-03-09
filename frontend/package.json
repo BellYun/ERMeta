@@ -13,6 +13,7 @@
     "fetch-l10n": "node --env-file=.env.local scripts/fetch-l10n.mjs"
   },
   "dependencies": {
+    "@amplitude/unified": "^1.0.2",
     "@supabase/supabase-js": "^2.97.0",
     "@tailwindcss/postcss": "^4.2.1",
     "@vercel/analytics": "^1.6.1",

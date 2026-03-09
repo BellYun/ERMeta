@@ -20,6 +20,7 @@ import { TierBadge } from "./TierBadge"
 import { cn } from "@/lib/utils"
 import type { Tier } from "@/lib/design-tokens"
 import { getCharacterName, getCharacterImageUrl } from "@/lib/characterMap"
+import { analytics } from "@/lib/analytics"
 import { resolveWeaponName } from "@/lib/weaponMap"
 import { METRICS_TIER_GROUPS, TierGroup } from "@/utils/tier"
 import { CharacterEquipmentAnalyzer } from "@/components/character/CharacterEquipmentAnalyzer"
@@ -234,6 +235,7 @@ export function CharacterAnalysisClient() {
   const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.MITHRIL)
   const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>(null)
   const [searchQuery, setSearchQuery] = React.useState("")
+  const searchTimerRef = React.useRef<ReturnType<typeof setTimeout>>(null)
 
   const filteredCodes = React.useMemo(() => {
     const sorted = [...CHARACTER_CODES].sort((a, b) =>
@@ -342,7 +344,15 @@ export function CharacterAnalysisClient() {
           <input
             type="text"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+                setSearchQuery(e.target.value)
+                if (searchTimerRef.current) clearTimeout(searchTimerRef.current)
+                if (e.target.value.trim()) {
+                  searchTimerRef.current = setTimeout(() => {
+                    analytics.characterSearched(e.target.value.trim())
+                  }, 800)
+                }
+              }}
             placeholder="캐릭터 검색"
             className="w-full rounded bg-[var(--color-surface-2)] pl-7 pr-2 py-1.5 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] placeholder:text-[var(--color-muted-foreground)] outline-none focus:border-[var(--color-primary)]"
           />
@@ -357,7 +367,7 @@ export function CharacterAnalysisClient() {
           {filteredCodes.map((code) => (
             <button
               key={code}
-              onClick={() => { setSelectedCode(code); setSearchQuery("") }}
+              onClick={() => { setSelectedCode(code); setSearchQuery(""); analytics.characterViewed(code, getCharacterName(code)) }}
               className={cn(
                 "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors",
                 selectedCode === code
@@ -410,7 +420,7 @@ export function CharacterAnalysisClient() {
               )}
               <select
                 value={selectedTier}
-                onChange={(e) => setSelectedTier(e.target.value as TierGroup)}
+                onChange={(e) => { setSelectedTier(e.target.value as TierGroup); analytics.analysisTierChanged(e.target.value) }}
                 className="ml-auto rounded bg-[var(--color-surface-2)] px-2 py-1 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] cursor-pointer"
               >
                 {METRICS_TIER_GROUPS.map((tg) => (
@@ -427,7 +437,10 @@ export function CharacterAnalysisClient() {
                   return (
                     <button
                       key={w.bestWeapon ?? "none"}
-                      onClick={() => setSelectedWeapon(w.bestWeapon ?? null)}
+                      onClick={() => {
+                        setSelectedWeapon(w.bestWeapon ?? null)
+                        analytics.weaponSelected(selectedCode, w.bestWeapon ?? 0, resolveWeaponName(w.bestWeapon ?? undefined))
+                      }}
                       className={cn(
                         "flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs transition-colors",
                         isSelected
@@ -491,7 +504,7 @@ export function CharacterAnalysisClient() {
         </div>
 
         {/* 탭 분석 */}
-        <Tabs defaultValue="equipment">
+        <Tabs defaultValue="equipment" onValueChange={(v) => analytics.analysisTabChanged(v)}>
           <TabsList className="flex-wrap h-auto">
             <TabsTrigger value="comparison">
               <BarChart2 className="mr-1.5 h-3.5 w-3.5" />패치 비교
