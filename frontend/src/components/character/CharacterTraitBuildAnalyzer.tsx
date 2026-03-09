@@ -56,13 +56,13 @@ function SubOptionChip({
     <div className="flex flex-col items-center gap-0.5">
       <TraitChip code={option.code} name={name} variant="sub" />
       <span className="text-[10px] whitespace-nowrap flex gap-1">
-        <span className="text-[var(--color-primary)]">{option.pickRate.toFixed(1)}%</span>
+        <span className="text-[var(--color-primary)]">픽률 {option.pickRate.toFixed(1)}%</span>
         <span
           className={cn(
             option.winRate >= 55 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
           )}
         >
-          {option.winRate.toFixed(1)}%
+          승률 {option.winRate.toFixed(1)}%
         </span>
       </span>
     </div>

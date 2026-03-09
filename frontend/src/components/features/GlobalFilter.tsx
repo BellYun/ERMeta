@@ -20,7 +20,7 @@ export function GlobalFilter() {
   const [isLoading, setIsLoading] = React.useState(true)
 
   const patch = searchParams.get("patch") ?? ""
-  const tier = searchParams.get("tier") ?? "DIAMOND"
+  const tier = searchParams.get("tier") ?? "MITHRIL"
 
   React.useEffect(() => {
     setIsLoading(true)
@@ -33,7 +33,7 @@ export function GlobalFilter() {
         if (!searchParams.get("patch") && list.length > 0) {
           const params = new URLSearchParams(searchParams.toString())
           params.set("patch", list[0])
-          if (!params.get("tier")) params.set("tier", "DIAMOND")
+          if (!params.get("tier")) params.set("tier", "MITHRIL")
           router.replace(`?${params.toString()}`)
         }
       })

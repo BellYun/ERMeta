@@ -45,9 +45,10 @@ const SORT_OPTIONS: { value: SortBy; label: string }[] = [
 
 // ─── 헬퍼 ─────────────────────────────────────────────────────────────────────
 
-function getSortValue(rec: TrioResult, sortBy: SortBy): number {
+function getSortValue(rec: TrioResult, sortBy: SortBy, serverIndex?: number): number {
   if (sortBy === "averageRP") return rec.averageRP
   if (sortBy === "winRate") return rec.winRate
+  if (sortBy === "recommended") return serverIndex !== undefined ? -serverIndex : rec.averageRP
   return rec.totalGames
 }
 
@@ -69,39 +70,41 @@ function deduplicateResults(
 ): TrioResult[] {
   if (selectedAllies.length === 2) {
     const [allyA, allyB] = selectedAllies
-    // 2명 고정 시 3번째 캐릭터 기준으로 중복 제거
-    const map = new Map<number, TrioResult>()
-    for (const rec of results) {
+    // 2명 고정 시 3번째 캐릭터 기준으로 중복 제거 (서버 인덱스 기준 최우선)
+    const map = new Map<number, { rec: TrioResult; idx: number }>()
+    for (let i = 0; i < results.length; i++) {
+      const rec = results[i]
       const key = getThirdCharacter(rec, allyA, allyB)
       if (key === null) continue
       const existing = map.get(key)
-      if (!existing || getSortValue(rec, sortBy) > getSortValue(existing, sortBy)) {
-        map.set(key, rec)
+      if (!existing || getSortValue(rec, sortBy, i) > getSortValue(existing.rec, sortBy, existing.idx)) {
+        map.set(key, { rec, idx: i })
       }
     }
-    return Array.from(map.values()).sort(
-      (a, b) => getSortValue(b, sortBy) - getSortValue(a, sortBy)
-    )
+    return Array.from(map.values())
+      .sort((a, b) => getSortValue(b.rec, sortBy, b.idx) - getSortValue(a.rec, sortBy, a.idx))
+      .map((v) => v.rec)
   }
 
   if (selectedAllies.length === 1) {
     const selected = selectedAllies[0]
-    // 나머지 두 캐릭터 쌍(min-max) 기준 중복 제거
-    const map = new Map<string, TrioResult>()
-    for (const rec of results) {
+    // 나머지 두 캐릭터 쌍(min-max) 기준 중복 제거 (서버 인덱스 기준 최우선)
+    const map = new Map<string, { rec: TrioResult; idx: number }>()
+    for (let i = 0; i < results.length; i++) {
+      const rec = results[i]
       const others = [rec.character1, rec.character2, rec.character3].filter(
         (c) => c !== selected
       )
       if (others.length !== 2) continue
       const key = `${Math.min(...others)}-${Math.max(...others)}`
       const existing = map.get(key)
-      if (!existing || getSortValue(rec, sortBy) > getSortValue(existing, sortBy)) {
-        map.set(key, rec)
+      if (!existing || getSortValue(rec, sortBy, i) > getSortValue(existing.rec, sortBy, existing.idx)) {
+        map.set(key, { rec, idx: i })
       }
     }
-    return Array.from(map.values()).sort(
-      (a, b) => getSortValue(b, sortBy) - getSortValue(a, sortBy)
-    )
+    return Array.from(map.values())
+      .sort((a, b) => getSortValue(b.rec, sortBy, b.idx) - getSortValue(a.rec, sortBy, a.idx))
+      .map((v) => v.rec)
   }
 
   return results
