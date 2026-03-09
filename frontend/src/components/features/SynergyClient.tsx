@@ -23,7 +23,7 @@ interface TrioResult {
   averageRank: number
 }
 
-type SortBy = "averageRP" | "winRate" | "totalGames"
+type SortBy = "averageRP" | "winRate" | "totalGames" | "recommended"
 
 // ─── 상수 ─────────────────────────────────────────────────────────────────────
 
@@ -37,6 +37,7 @@ const ALL_CHARACTER_CODES: number[] = Array.from(FALLBACK_MAP.keys())
   )
 
 const SORT_OPTIONS: { value: SortBy; label: string }[] = [
+  { value: "recommended", label: "추천순" },
   { value: "averageRP", label: "평균 RP" },
   { value: "winRate", label: "승률" },
   { value: "totalGames", label: "게임 수" },
@@ -282,7 +283,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
   const [selectedAllies, setSelectedAllies] = React.useState<number[]>([])
   const [focusCharacters, setFocusCharacters] = React.useState<number[]>([])
   const [isFocusFilterEnabled, setIsFocusFilterEnabled] = React.useState(false)
-  const [sortBy, setSortBy] = React.useState<SortBy>("totalGames")
+  const [sortBy, setSortBy] = React.useState<SortBy>("recommended")
   const [allySearch, setAllySearch] = React.useState("")
   const [focusSearch, setFocusSearch] = React.useState("")
 

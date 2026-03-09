@@ -35,14 +35,13 @@ export function TopTriosPreview() {
   )
 
   React.useEffect(() => {
-    fetch("/api/stats/trios?sortBy=totalGames&limit=200")
+    fetch("/api/stats/trios?sortBy=recommended&limit=200")
       .then(async (res) => {
         const data = await res.json()
         if (!res.ok) throw new Error(data.error ?? "API 오류")
         setResults(
           (data.results ?? [])
             .filter((r: TrioResult) => r.averageRP >= 0 && r.totalGames >= 20)
-            .sort((a: TrioResult, b: TrioResult) => b.averageRP - a.averageRP)
             .slice(0, 5)
         )
       })
