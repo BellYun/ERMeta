@@ -227,7 +227,7 @@ function ComboCard({
           </span>
         </div>
       ) : (
-        <div className="ml-auto flex items-center gap-6 text-right">
+        <div className="ml-auto flex items-center gap-3 sm:gap-6 text-right">
           <div className="flex flex-col">
             <span className="text-[10px] text-[var(--color-muted-foreground)]">승률</span>
             <span
@@ -256,13 +256,13 @@ function ComboCard({
               {rec.averageRP > 0 ? "+" : ""}{rec.averageRP.toFixed(1)}
             </span>
           </div>
-          <div className="flex flex-col">
+          <div className="hidden sm:flex flex-col">
             <span className="text-[10px] text-[var(--color-muted-foreground)]">게임 수</span>
             <span className="text-sm text-[var(--color-muted-foreground)]">
               {rec.totalGames.toLocaleString()}
             </span>
           </div>
-          <div className="flex flex-col">
+          <div className="hidden sm:flex flex-col">
             <span className="text-[10px] text-[var(--color-muted-foreground)]">평균 순위</span>
             <span className="text-sm text-[var(--color-muted-foreground)]">
               #{rec.averageRank.toFixed(1)}
@@ -390,9 +390,9 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
   }, [trioResults, selectedAllies, focusCharacters, isFocusFilterEnabled, sortBy])
 
   return (
-    <div className={cn(compact ? "flex flex-col gap-4" : "flex gap-4 items-start")}>
-      {/* 좌측(또는 상단): 아군/관심 캐릭터 선택 */}
-      <div className={cn(compact ? "w-full" : "w-[240px] shrink-0", "flex flex-col gap-3")}>
+    <div className={cn(compact ? "flex flex-col gap-4" : "flex flex-col lg:flex-row gap-4 items-start")}>
+      {/* 상단(모바일) / 좌측(데스크탑): 아군/관심 캐릭터 선택 */}
+      <div className={cn(compact ? "w-full" : "w-full lg:w-[240px] lg:shrink-0", "flex flex-col gap-3")}>
         <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
           <p className="mb-2 px-1 text-xs text-[var(--color-muted-foreground)]">
             아군 선택 (최대 2명)
@@ -408,7 +408,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
             />
           </div>
 
-          <div className={cn("grid gap-1 max-h-[300px] overflow-y-auto", compact ? "grid-cols-4" : "grid-cols-3")}>
+          <div className={cn("grid gap-1 max-h-[200px] lg:max-h-[300px] overflow-y-auto", compact ? "grid-cols-5 sm:grid-cols-6" : "grid-cols-5 sm:grid-cols-6 lg:grid-cols-3")}>
             {filteredAllyCodes.map((code) => {
               const isSelected = selectedAllies.includes(code)
               const isDisabled = !isSelected && selectedAllies.length >= 2
@@ -472,7 +472,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
               />
             </div>
 
-            <div className={cn("grid gap-1 max-h-[300px] overflow-y-auto", compact ? "grid-cols-4" : "grid-cols-3")}>
+            <div className={cn("grid gap-1 max-h-[200px] lg:max-h-[300px] overflow-y-auto", compact ? "grid-cols-5 sm:grid-cols-6" : "grid-cols-5 sm:grid-cols-6 lg:grid-cols-3")}>
               {filteredFocusCodes.map((code) => {
                 const isSelected = focusCharacters.includes(code)
                 const name = getCharName(code)

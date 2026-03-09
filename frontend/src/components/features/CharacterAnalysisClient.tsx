@@ -311,9 +311,9 @@ export function CharacterAnalysisClient() {
   const hasPreviousData = displayPrevStat !== null && (displayPrevStat.totalGames ?? 0) > 0
 
   return (
-    <div className="flex gap-4 items-start">
-      {/* 좌측 캐릭터 그리드 */}
-      <div className="w-[228px] shrink-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
+    <div className="flex flex-col lg:flex-row gap-4 items-start">
+      {/* 캐릭터 그리드 (모바일: 상단 수평 스크롤, 데스크탑: 좌측 사이드바) */}
+      <div className="w-full lg:w-[228px] lg:shrink-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
         {/* 검색 */}
         <div className="relative mb-2">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)] pointer-events-none" />
@@ -326,9 +326,9 @@ export function CharacterAnalysisClient() {
           />
         </div>
 
-        <div className="grid grid-cols-3 gap-1 max-h-[620px] overflow-y-auto pr-0.5">
+        <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-3 gap-1 max-h-[200px] lg:max-h-[620px] overflow-y-auto pr-0.5">
           {filteredCodes.length === 0 ? (
-            <p className="col-span-3 py-4 text-center text-xs text-[var(--color-muted-foreground)]">
+            <p className="col-span-5 sm:col-span-6 lg:col-span-3 py-4 text-center text-xs text-[var(--color-muted-foreground)]">
               검색 결과 없음
             </p>
           ) : null}
@@ -431,11 +431,11 @@ export function CharacterAnalysisClient() {
             )}
 
             {loading ? (
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {[...Array(4)].map((_, i) => <SkeletonCard key={i} />)}
               </div>
             ) : displayStat && displayStat.totalGames > 0 ? (
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <StatCard
                   label="픽률"
                   value={`${displayStat.pickRate.toFixed(1)}%`}
@@ -470,7 +470,7 @@ export function CharacterAnalysisClient() {
 
         {/* 탭 분석 */}
         <Tabs defaultValue="equipment">
-          <TabsList>
+          <TabsList className="flex-wrap h-auto">
             <TabsTrigger value="comparison">
               <BarChart2 className="mr-1.5 h-3.5 w-3.5" />패치 비교
             </TabsTrigger>
@@ -497,7 +497,7 @@ export function CharacterAnalysisClient() {
                     <p className="text-xs font-medium text-[var(--color-muted-foreground)]">
                       패치별 트렌드
                     </p>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {/* 승률 트렌드 */}
                       <div>
                         <p className="mb-2 text-xs text-[var(--color-muted-foreground)]">승률 (%)</p>

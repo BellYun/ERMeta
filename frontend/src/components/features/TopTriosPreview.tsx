@@ -97,7 +97,7 @@ export function TopTriosPreview() {
                 </React.Fragment>
               ))}
             </div>
-            <div className="ml-auto flex items-center gap-4 text-right">
+            <div className="ml-auto flex items-center gap-2 sm:gap-4 text-right">
               <div className="flex flex-col">
                 <span className="text-[10px] text-[var(--color-muted-foreground)]">평균 RP</span>
                 <span className="text-sm font-semibold text-[var(--color-accent-gold)]">
@@ -117,7 +117,7 @@ export function TopTriosPreview() {
                   {rec.winRate.toFixed(1)}%
                 </span>
               </div>
-              <div className="flex flex-col">
+              <div className="hidden sm:flex flex-col">
                 <span className="text-[10px] text-[var(--color-muted-foreground)]">게임 수</span>
                 <span className="text-sm text-[var(--color-muted-foreground)]">
                   {rec.totalGames.toLocaleString()}

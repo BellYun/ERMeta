@@ -73,7 +73,7 @@ export function GlobalFilter() {
       <div className="flex items-center gap-2">
         <span className="text-xs text-[var(--color-muted-foreground)]">티어</span>
         <Tabs value={tier} onValueChange={(v) => updateParam("tier", v)}>
-          <TabsList>
+          <TabsList className="flex-wrap h-auto">
             {TIER_OPTIONS.map(({ value, label }) => (
               <TabsTrigger key={value} value={value}>
                 {label}

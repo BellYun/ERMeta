@@ -91,7 +91,7 @@ export function TierRankingTable() {
 
   return (
     <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
-      <div className="flex items-center justify-between p-4 border-b border-[var(--color-border)]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 sm:p-4 border-b border-[var(--color-border)]">
         <h2 className="text-sm font-semibold text-[var(--color-foreground)]">티어 순위</h2>
         <Tabs value={activeTier} onValueChange={setActiveTier}>
           <TabsList>
@@ -104,13 +104,14 @@ export function TierRankingTable() {
         </Tabs>
       </div>
 
+      <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-12">순위</TableHead>
             <TableHead>캐릭터</TableHead>
             <TableHead className="w-16 text-center">티어</TableHead>
-            <TableHead className="w-20 text-right">픽률</TableHead>
+            <TableHead className="w-20 text-right hidden sm:table-cell">픽률</TableHead>
             <TableHead className="w-20 text-right">승률</TableHead>
             <TableHead className="w-24 text-right">평균 RP</TableHead>
           </TableRow>
@@ -127,7 +128,7 @@ export function TierRankingTable() {
                     </div>
                   </TableCell>
                   <TableCell className="text-center"><Skeleton className="h-5 w-8 mx-auto" /></TableCell>
-                  <TableCell className="text-right"><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
+                  <TableCell className="text-right hidden sm:table-cell"><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
                   <TableCell className="text-right"><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
                   <TableCell className="text-right"><Skeleton className="h-4 w-14 ml-auto" /></TableCell>
                 </TableRow>
@@ -157,7 +158,7 @@ export function TierRankingTable() {
                   <TableCell className="text-center">
                     <TierBadge tier={char.tier} />
                   </TableCell>
-                  <TableCell className="text-right text-sm text-[var(--color-muted-foreground)]">
+                  <TableCell className="text-right text-sm text-[var(--color-muted-foreground)] hidden sm:table-cell">
                     {char.pickRate.toFixed(1)}%
                   </TableCell>
                   <TableCell className="text-right text-sm text-[var(--color-muted-foreground)]">
@@ -187,6 +188,7 @@ export function TierRankingTable() {
           )}
         </TableBody>
       </Table>
+      </div>
     </div>
   )
 }

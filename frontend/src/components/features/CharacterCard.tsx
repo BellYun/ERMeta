@@ -18,37 +18,20 @@ const CHANGE_LABEL: Record<PatchChange["changeType"], { label: string; className
   rework: { label: "변경", className: "text-blue-400" },
 }
 
-export function CharacterCard({ name, imageUrl, rateChange, code, patchChanges, className }: CharacterCardProps) {
+const baseClass = "group relative flex items-center gap-3 rounded-lg bg-[var(--color-surface-2)] px-3 py-2.5 hover:bg-[var(--color-border)] transition-colors"
+
+function CardContent({ name, imageUrl, rateChange, patchChanges }: Omit<CharacterCardProps, "code">) {
   const isUp = rateChange >= 0
   const hasChanges = patchChanges && patchChanges.length > 0
-  const Wrapper = code != null ? Link : "div"
-  const wrapperProps = code != null ? { href: `/character-analysis?character=${code}` } : {}
 
   return (
-    <Wrapper
-      {...(wrapperProps as object)}
-      className={cn(
-        "group relative flex items-center gap-3 rounded-lg bg-[var(--color-surface-2)] px-3 py-2.5 hover:bg-[var(--color-border)] transition-colors",
-        className
-      )}
-    >
+    <>
       <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-[var(--color-border)]">
-        <Image
-          src={imageUrl}
-          alt={name}
-          fill
-          className="object-cover"
-          sizes="48px"
-        />
+        <Image src={imageUrl} alt={name} fill className="object-cover" sizes="48px" />
       </div>
       <div className="flex flex-col min-w-0">
         <span className="text-sm font-medium text-[var(--color-foreground)] truncate">{name}</span>
-        <span
-          className={cn(
-            "text-xs font-semibold",
-            isUp ? "text-[var(--color-accent-gold)]" : "text-[var(--color-danger)]"
-          )}
-        >
+        <span className={cn("text-xs font-semibold", isUp ? "text-[var(--color-accent-gold)]" : "text-[var(--color-danger)]")}>
           {isUp ? "+" : ""}
           {rateChange.toFixed(1)} RP
         </span>
@@ -76,6 +59,22 @@ export function CharacterCard({ name, imageUrl, rateChange, code, patchChanges, 
           </div>
         </div>
       )}
-    </Wrapper>
+    </>
+  )
+}
+
+export function CharacterCard({ name, imageUrl, rateChange, code, patchChanges, className }: CharacterCardProps) {
+  if (code != null) {
+    return (
+      <Link href={`/character-analysis?character=${code}`} className={cn(baseClass, className)}>
+        <CardContent name={name} imageUrl={imageUrl} rateChange={rateChange} patchChanges={patchChanges} />
+      </Link>
+    )
+  }
+
+  return (
+    <div className={cn(baseClass, className)}>
+      <CardContent name={name} imageUrl={imageUrl} rateChange={rateChange} patchChanges={patchChanges} />
+    </div>
   )
 }
