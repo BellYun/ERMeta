@@ -6,7 +6,7 @@ import { L10nProvider } from "@/components/L10nProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { AmplitudeProvider } from "@/components/AmplitudeProvider";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://ermeta.vercel.app";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://lumiastats.vercel.app";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

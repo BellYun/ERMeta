@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next"
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = process.env.NEXT_PUBLIC_BASE_URL ?? "https://ermeta.vercel.app"
+  const base = process.env.NEXT_PUBLIC_BASE_URL ?? "https://lumiastats.vercel.app"
   const now = new Date()
 
   return [
