@@ -1,2 +1,6 @@
 # OMC
 .omc/
+
+*.md
+!README.md
+!**/README.md
