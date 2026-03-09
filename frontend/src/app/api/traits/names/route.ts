@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server"
 
-export const revalidate = 3600 // 1시간 캐시
 
 export async function GET() {
   const apiKey = process.env.BSER_API_KEY

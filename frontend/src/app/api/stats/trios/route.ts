@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { TierGroup } from "@/utils/tier";
 
-export const revalidate = 300;
 
 // 다이아 이상 티어 전체
 const DIAMOND_PLUS_TIERS: TierGroup[] = [
