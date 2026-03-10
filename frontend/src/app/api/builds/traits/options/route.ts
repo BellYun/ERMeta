@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
 
 export const dynamic = "force-dynamic"
-<<<<<<< Updated upstream
-=======
 export const revalidate = 1800 // L1: 30분 서버 캐시
->>>>>>> Stashed changes
 
 export interface TraitOptionItem {
   traits: number[]

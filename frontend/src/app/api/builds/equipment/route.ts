@@ -5,10 +5,7 @@ import weaponItemTypeMap from "@/../const/weaponItemTypeMap.json"
 const WEAPON_ITEM_TYPE = weaponItemTypeMap as Record<string, number>
 
 export const dynamic = "force-dynamic"
-<<<<<<< Updated upstream
-=======
 export const revalidate = 1800 // L1: 30분 서버 캐시
->>>>>>> Stashed changes
 
 export interface BuildSummary {
   mainCore: number | null
