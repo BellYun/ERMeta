@@ -2,10 +2,10 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { TrendingUp, TrendingDown, Minus, BarChart2, Search, RefreshCw, FileText, Package, Layers } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, BarChart2, Search, RefreshCw, FileText, Package, Layers, X } from "lucide-react"
 import { getCharacterPatchNote } from "@/data/patch-notes"
 import type { ChangeType } from "@/data/patch-notes"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import {
   LineChart,
   Line,
@@ -14,6 +14,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  ReferenceLine,
 } from "recharts"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { TierBadge } from "./TierBadge"
@@ -121,7 +122,7 @@ function StatCard({
   deltaInverted?: boolean
 }) {
   return (
-    <div className="flex flex-col gap-0.5 rounded-lg bg-[var(--color-surface-2)] px-4 py-3">
+    <div className="flex flex-col gap-0.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3">
       <span className="text-xs text-[var(--color-muted-foreground)]">{label}</span>
       <span className="text-lg font-bold text-[var(--color-foreground)]">{value}</span>
       {delta !== undefined ? (
@@ -225,6 +226,8 @@ function SkeletonCard() {
 
 export function CharacterAnalysisClient() {
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
   const initialCode = (() => {
     const p = searchParams.get("character")
     if (!p) return 1
@@ -236,6 +239,7 @@ export function CharacterAnalysisClient() {
   const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>(null)
   const [searchQuery, setSearchQuery] = React.useState("")
   const searchTimerRef = React.useRef<ReturnType<typeof setTimeout>>(null)
+  const selectedRef = React.useRef<HTMLButtonElement>(null)
 
   const filteredCodes = React.useMemo(() => {
     const sorted = [...CHARACTER_CODES].sort((a, b) =>
@@ -251,6 +255,11 @@ export function CharacterAnalysisClient() {
   const [stats, setStats] = React.useState<CharacterStatsResponse | null>(null)
   const [previousStats, setPreviousStats] = React.useState<CharacterStatsResponse | null>(null)
   const [loading, setLoading] = React.useState(false)
+
+  // 선택 캐릭터 자동 스크롤
+  React.useEffect(() => {
+    selectedRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" })
+  }, [selectedCode])
 
   // 패치 목록 로드 (최초 1회)
   React.useEffect(() => {
@@ -325,7 +334,7 @@ export function CharacterAnalysisClient() {
         return {
           patch,
           winRate: parseFloat(winRate.toFixed(2)),
-          averageRP: parseFloat(averageRP.toFixed(0)),
+          averageRP: parseFloat(averageRP.toFixed(1)),
         }
       })
       .filter((d): d is { patch: string; winRate: number; averageRP: number } => d !== null)
@@ -337,7 +346,7 @@ export function CharacterAnalysisClient() {
   return (
     <div className="flex flex-col lg:flex-row gap-4 items-start">
       {/* 캐릭터 그리드 (모바일: 상단 수평 스크롤, 데스크탑: 좌측 사이드바) */}
-      <div className="w-full lg:w-[228px] lg:shrink-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
+      <div className="w-full lg:w-[260px] lg:shrink-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
         {/* 검색 */}
         <div className="relative mb-2">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)] pointer-events-none" />
@@ -354,11 +363,19 @@ export function CharacterAnalysisClient() {
                 }
               }}
             placeholder="캐릭터 검색"
-            className="w-full rounded bg-[var(--color-surface-2)] pl-7 pr-2 py-1.5 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] placeholder:text-[var(--color-muted-foreground)] outline-none focus:border-[var(--color-primary)]"
+            className="w-full rounded bg-[var(--color-surface-2)] pl-7 pr-7 py-1.5 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] placeholder:text-[var(--color-muted-foreground)] outline-none focus:border-[var(--color-primary)]"
           />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
 
-        <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-3 gap-1 max-h-[200px] lg:max-h-[620px] overflow-y-auto pr-0.5">
+        <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-3 gap-1 max-h-[320px] lg:max-h-[620px] overflow-y-auto pr-0.5">
           {filteredCodes.length === 0 ? (
             <p className="col-span-5 sm:col-span-6 lg:col-span-3 py-4 text-center text-xs text-[var(--color-muted-foreground)]">
               검색 결과 없음
@@ -367,7 +384,15 @@ export function CharacterAnalysisClient() {
           {filteredCodes.map((code) => (
             <button
               key={code}
-              onClick={() => { setSelectedCode(code); setSearchQuery(""); analytics.characterViewed(code, getCharacterName(code)) }}
+              ref={selectedCode === code ? selectedRef : undefined}
+              onClick={() => {
+                setSelectedCode(code)
+                setSearchQuery("")
+                const params = new URLSearchParams(searchParams.toString())
+                params.set("character", String(code))
+                router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+                analytics.characterViewed(code, getCharacterName(code))
+              }}
               className={cn(
                 "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors",
                 selectedCode === code
@@ -409,15 +434,22 @@ export function CharacterAnalysisClient() {
           </div>
           <div className="flex flex-1 flex-col gap-3 min-w-0">
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-xl font-bold text-[var(--color-foreground)]">
+              <h1 className="text-2xl font-bold text-[var(--color-foreground)]">
                 {getCharacterName(selectedCode)}
               </h1>
               {charTier && <TierBadge tier={charTier} />}
-              {currentPatch && (
-                <span className="text-xs text-[var(--color-muted-foreground)]">
-                  {currentPatch}
-                </span>
-              )}
+              <div className="flex items-center gap-2">
+                {currentPatch && (
+                  <span className="rounded bg-[var(--color-surface-2)] px-2 py-0.5 text-xs text-[var(--color-muted-foreground)] border border-[var(--color-border)]">
+                    {currentPatch}
+                  </span>
+                )}
+                {displayStat && displayStat.totalGames > 0 && (
+                  <span className="rounded bg-[var(--color-surface-2)] px-2 py-0.5 text-xs text-[var(--color-muted-foreground)] border border-[var(--color-border)]">
+                    총 {displayStat.totalGames.toLocaleString()}판
+                  </span>
+                )}
+              </div>
               <select
                 value={selectedTier}
                 onChange={(e) => { setSelectedTier(e.target.value as TierGroup); analytics.analysisTierChanged(e.target.value) }}
@@ -432,6 +464,17 @@ export function CharacterAnalysisClient() {
             {/* 무기 군 선택 */}
             {!loading && stats?.weapons && stats.weapons.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
+                <button
+                  onClick={() => setSelectedWeapon(null)}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs transition-colors",
+                    selectedWeapon === null
+                      ? "border-[var(--color-primary)] bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
+                      : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/50"
+                  )}
+                >
+                  <span className="font-medium">전체</span>
+                </button>
                 {stats.weapons.map((w) => {
                   const isSelected = selectedWeapon === w.bestWeapon
                   return (
@@ -504,18 +547,18 @@ export function CharacterAnalysisClient() {
         </div>
 
         {/* 탭 분석 */}
-        <Tabs defaultValue="equipment" onValueChange={(v) => analytics.analysisTabChanged(v)}>
-          <TabsList className="flex-wrap h-auto">
-            <TabsTrigger value="comparison">
+        <Tabs defaultValue="comparison" onValueChange={(v) => analytics.analysisTabChanged(v)}>
+          <TabsList className="w-full flex-wrap h-auto">
+            <TabsTrigger value="comparison" className="flex-1">
               <BarChart2 className="mr-1.5 h-3.5 w-3.5" />패치 비교
             </TabsTrigger>
-            <TabsTrigger value="patchlog">
+            <TabsTrigger value="patchlog" className="flex-1">
               <FileText className="mr-1.5 h-3.5 w-3.5" />패치 내역
             </TabsTrigger>
-            <TabsTrigger value="equipment">
+            <TabsTrigger value="equipment" className="flex-1">
               <Package className="mr-1.5 h-3.5 w-3.5" />아이템 통계
             </TabsTrigger>
-            <TabsTrigger value="detailed">
+            <TabsTrigger value="detailed" className="flex-1">
               <Layers className="mr-1.5 h-3.5 w-3.5" />상세분석
             </TabsTrigger>
           </TabsList>
@@ -527,7 +570,13 @@ export function CharacterAnalysisClient() {
             ) : stats && stats.totalGames > 0 ? (
               <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5 space-y-4">
                 {/* 멀티 패치 트렌드 차트 */}
-                {chartData.length >= 2 && (
+                {chartData.length < 2 ? (
+                  <div className="flex flex-col items-center gap-2 py-8 text-[var(--color-muted-foreground)]">
+                    <BarChart2 className="h-8 w-8 opacity-40" />
+                    <p className="text-sm">비교할 패치 데이터가 부족합니다.</p>
+                    <p className="text-xs">최소 2개 패치의 데이터가 필요합니다.</p>
+                  </div>
+                ) : (
                   <div className="space-y-4">
                     <p className="text-xs font-medium text-[var(--color-muted-foreground)]">
                       패치별 트렌드
@@ -536,7 +585,7 @@ export function CharacterAnalysisClient() {
                       {/* 승률 트렌드 */}
                       <div>
                         <p className="mb-2 text-xs text-[var(--color-muted-foreground)]">승률 (%)</p>
-                        <ResponsiveContainer width="100%" height={160}>
+                        <ResponsiveContainer width="100%" height={220}>
                           <LineChart data={chartData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
                             <XAxis
@@ -562,6 +611,13 @@ export function CharacterAnalysisClient() {
                                 />
                               )}
                             />
+                            <ReferenceLine
+                              y={12.5}
+                              stroke="var(--color-muted-foreground)"
+                              strokeDasharray="4 4"
+                              strokeOpacity={0.5}
+                              label={{ value: "기대값", position: "right", fill: "var(--color-muted-foreground)", fontSize: 9 }}
+                            />
                             <Line
                               dataKey="winRate"
                               stroke="var(--color-primary)"
@@ -576,7 +632,7 @@ export function CharacterAnalysisClient() {
                       {/* 평균 RP 트렌드 */}
                       <div>
                         <p className="mb-2 text-xs text-[var(--color-muted-foreground)]">평균 RP</p>
-                        <ResponsiveContainer width="100%" height={160}>
+                        <ResponsiveContainer width="100%" height={220}>
                           <LineChart data={chartData} margin={{ top: 4, right: 8, left: -8, bottom: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
                             <XAxis
@@ -597,7 +653,7 @@ export function CharacterAnalysisClient() {
                                   {...props}
                                   selectedCode={selectedCode}
                                   metricLabel="평균 RP"
-                                  format={(v) => v.toFixed(0)}
+                                  format={(v) => v.toFixed(1)}
                                 />
                               )}
                             />
@@ -616,8 +672,9 @@ export function CharacterAnalysisClient() {
                 )}
               </div>
             ) : (
-              <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
-                데이터가 없습니다.
+              <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 flex flex-col items-center gap-2 text-[var(--color-muted-foreground)]">
+                <BarChart2 className="h-8 w-8 opacity-40" />
+                <p className="text-sm">데이터가 없습니다.</p>
               </div>
             )}
           </TabsContent>

@@ -163,7 +163,8 @@ function TopBuildsTableFiltered({
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
         <span className="text-xs font-semibold text-[var(--color-foreground)]">TOP BUILDS</span>
       </div>
-      <table className="w-full text-sm">
+      <div className="overflow-x-auto">
+      <table className="w-full text-sm min-w-[640px]">
         <thead>
           <tr className="border-b border-[var(--color-border)] text-[var(--color-muted-foreground)] text-xs">
             <th className="px-3 py-2 text-left font-medium w-8">#</th>
@@ -230,6 +231,7 @@ function TopBuildsTableFiltered({
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }
@@ -248,7 +250,7 @@ function SlotPopularityGrid({
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
         <span className="text-xs font-semibold text-[var(--color-foreground)]">슬롯별 인기 아이템</span>
       </div>
-      <div className="grid grid-cols-5 divide-x divide-[var(--color-border)]">
+      <div className="grid grid-cols-3 sm:grid-cols-5 divide-x divide-[var(--color-border)]">
         {SLOTS.map((slot) => {
           const items = slotPopularity[slot]
           return (
