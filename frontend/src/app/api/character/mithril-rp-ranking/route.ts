@@ -43,6 +43,25 @@ function buildRankings(rows: StatRow[]): CharacterRankingData[] {
   return rankings.map((c, i) => ({ rank: i + 1, ...c }));
 }
 
+function selectRankings(
+  data: (StatRow & { tier: string })[],
+  requestedTier: string
+): { rankings: CharacterRankingData[]; usedTier: string } {
+  const tierOrder = [
+    requestedTier,
+    ...TIER_FALLBACK_ORDER.filter((t) => t !== requestedTier),
+  ];
+
+  for (const tier of tierOrder) {
+    const rows = data.filter((r) => r.tier === tier);
+    if (rows.length > 0) {
+      return { rankings: buildRankings(rows), usedTier: tier };
+    }
+  }
+
+  return { rankings: [], usedTier: requestedTier };
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const patchVersion = searchParams.get("patchVersion") ?? "10.4";
@@ -53,42 +72,60 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = createServerClient();
 
-    // 모든 tier를 단일 쿼리로 조회 후 JS에서 우선순위 선택 (최대 4회 → 1회)
+    // 이전 패치 버전 조회
+    const { data: patches } = await supabase
+      .from("PatchVersion")
+      .select("version")
+      .order("startDate", { ascending: false })
+      .limit(50);
+
+    const patchList = (patches ?? []).map((p: { version: string }) => p.version);
+    const currentIndex = patchList.indexOf(patchVersion);
+    const previousPatch = currentIndex >= 0 && currentIndex + 1 < patchList.length
+      ? patchList[currentIndex + 1]
+      : null;
+
+    // 현재 + 이전 패치 데이터를 한번에 조회
+    const patchVersions = previousPatch
+      ? [patchVersion, previousPatch]
+      : [patchVersion];
+
     const { data, error } = await supabase
       .from("CharacterStats")
-      .select("characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank,tier")
-      .eq("patchVersion", patchVersion)
+      .select("characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank,tier,patchVersion")
+      .in("patchVersion", patchVersions)
       .in("tier", TIER_FALLBACK_ORDER);
 
     if (error || !data) {
-      return NextResponse.json({ rankings: [], patchVersion, tier: requestedTier });
+      return NextResponse.json({ rankings: [], previousRankings: [], patchVersion, previousPatch: null, tier: requestedTier });
     }
 
-    const tierOrder = [
-      requestedTier,
-      ...TIER_FALLBACK_ORDER.filter((t) => t !== requestedTier),
-    ];
+    const typedData = data as (StatRow & { tier: string; patchVersion: string })[];
+    const currentData = typedData.filter((r) => r.patchVersion === patchVersion);
+    const prevData = previousPatch
+      ? typedData.filter((r) => r.patchVersion === previousPatch)
+      : [];
 
-    let rankings: CharacterRankingData[] = [];
-    let usedTier = requestedTier;
-
-    for (const tier of tierOrder) {
-      const rows = (data as (StatRow & { tier: string })[]).filter((r) => r.tier === tier);
-      if (rows.length > 0) {
-        rankings = buildRankings(rows);
-        usedTier = tier;
-        break;
-      }
-    }
+    const { rankings, usedTier } = selectRankings(currentData, requestedTier);
+    const { rankings: previousRankings } = prevData.length > 0
+      ? selectRankings(prevData, usedTier)
+      : { rankings: [] };
 
     console.log("[mithril-rp-ranking] 최종 응답:", {
       usedTier,
       patchVersion,
+      previousPatch,
       rankingCount: rankings.length,
-      top3: rankings.slice(0, 3),
+      previousRankingCount: previousRankings.length,
     });
 
-    return NextResponse.json({ rankings, patchVersion, tier: usedTier });
+    return NextResponse.json({
+      rankings,
+      previousRankings,
+      patchVersion,
+      previousPatch,
+      tier: usedTier,
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("[mithril-rp-ranking] 예외:", message);
