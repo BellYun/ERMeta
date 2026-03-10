@@ -163,14 +163,29 @@ function ComboCard({
   rec,
   rank,
   getCharName,
+  selectedAllies,
   compact = false,
 }: {
   rec: TrioResult
   rank: number
   getCharName: (code: number) => string
+  selectedAllies: number[]
   compact?: boolean
 }) {
-  const chars = [rec.character1, rec.character2, rec.character3]
+  // 선택한 아군을 앞에, 추천 캐릭터를 마지막에 표시
+  const allChars = [rec.character1, rec.character2, rec.character3]
+  const allies: number[] = []
+  const rest: number[] = []
+  for (const code of allChars) {
+    if (selectedAllies.includes(code) && allies.length < selectedAllies.length) {
+      allies.push(code)
+    } else {
+      rest.push(code)
+    }
+  }
+  // 선택 순서 유지
+  allies.sort((a, b) => selectedAllies.indexOf(a) - selectedAllies.indexOf(b))
+  const chars = [...allies, ...rest]
   return (
     <div className="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 hover:bg-[var(--color-surface-2)] transition-colors">
       {/* 순위 */}
@@ -300,44 +315,51 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
     [l10n]
   )
 
-  // API 호출: 아군 선택 / 정렬 변경 시
+  // API 호출: 아군 선택 / 정렬 변경 시 (300ms 디바운스 + AbortController)
   React.useEffect(() => {
     if (selectedAllies.length === 0) {
       setTrioResults([])
+      setLoading(false)
       return
     }
 
     const controller = new AbortController()
 
-    const params = new URLSearchParams({
-      sortBy,
-      limit: "100",
-    })
-    if (selectedAllies[0] !== undefined) {
-      params.set("character1", String(selectedAllies[0]))
-    }
-    if (selectedAllies[1] !== undefined) {
-      params.set("character2", String(selectedAllies[1]))
-    }
+    const timerId = setTimeout(() => {
+      const params = new URLSearchParams({
+        sortBy,
+        limit: "100",
+      })
+      if (selectedAllies[0] !== undefined) {
+        params.set("character1", String(selectedAllies[0]))
+      }
+      if (selectedAllies[1] !== undefined) {
+        params.set("character2", String(selectedAllies[1]))
+      }
+
+      setError(null)
+
+      fetch(`/api/stats/trios?${params.toString()}`, { signal: controller.signal })
+        .then(async (res) => {
+          const data = await res.json()
+          if (!res.ok) throw new Error(data.error ?? "API 오류")
+          setTrioResults(data.results ?? [])
+        })
+        .catch((err) => {
+          if (err instanceof DOMException && err.name === "AbortError") return
+          setError(err instanceof Error ? err.message : "오류가 발생했습니다.")
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setLoading(false)
+        })
+    }, 300)
 
     setLoading(true)
-    setError(null)
 
-    fetch(`/api/stats/trios?${params.toString()}`, { signal: controller.signal })
-      .then(async (res) => {
-        const data = await res.json()
-        if (!res.ok) throw new Error(data.error ?? "API 오류")
-        setTrioResults(data.results ?? [])
-      })
-      .catch((err) => {
-        if (err instanceof DOMException && err.name === "AbortError") return
-        setError(err instanceof Error ? err.message : "오류가 발생했습니다.")
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setLoading(false)
-      })
-
-    return () => controller.abort()
+    return () => {
+      clearTimeout(timerId)
+      controller.abort()
+    }
   }, [selectedAllies, sortBy])
 
   // 아군 검색 필터
@@ -701,6 +723,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
                 rec={rec}
                 rank={i + 1}
                 getCharName={getCharName}
+                selectedAllies={selectedAllies}
                 compact={compact}
               />
             ))}
