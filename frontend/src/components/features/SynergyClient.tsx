@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { X, Users, Loader2, Search } from "lucide-react"
+import { X, Users, Loader2, Search, ChevronDown, ChevronUp, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useL10n } from "@/components/L10nProvider"
 import {
@@ -43,6 +43,37 @@ const SORT_OPTIONS: { value: SortBy; label: string }[] = [
   { value: "winRate", label: "승률" },
   { value: "totalGames", label: "게임 수" },
 ]
+
+// ─── 초성 검색 ──────────────────────────────────────────────────────────────────
+
+const CHOSUNG = [
+  "ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ",
+  "ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ",
+]
+
+function getChosung(char: string): string | null {
+  const code = char.charCodeAt(0)
+  if (code < 0xAC00 || code > 0xD7A3) return null
+  return CHOSUNG[Math.floor((code - 0xAC00) / (21 * 28))]
+}
+
+function isChosung(char: string): boolean {
+  return CHOSUNG.includes(char)
+}
+
+function matchesChosungSearch(name: string, query: string): boolean {
+  const q = query.toLowerCase()
+  // 일반 검색 먼저
+  if (name.toLowerCase().includes(q)) return true
+  // 초성 검색: 쿼리가 모두 초성인 경우
+  if ([...q].every(isChosung)) {
+    const nameChosungs = [...name].map((c) => getChosung(c) ?? c)
+    for (let i = 0; i <= nameChosungs.length - q.length; i++) {
+      if ([...q].every((ch, j) => nameChosungs[i + j] === ch)) return true
+    }
+  }
+  return false
+}
 
 // ─── 헬퍼 ─────────────────────────────────────────────────────────────────────
 
@@ -163,14 +194,31 @@ function ComboCard({
   rec,
   rank,
   getCharName,
+  selectedAllies,
   compact = false,
 }: {
   rec: TrioResult
   rank: number
   getCharName: (code: number) => string
+  selectedAllies: number[]
   compact?: boolean
 }) {
-  const chars = [rec.character1, rec.character2, rec.character3]
+  // 선택한 아군을 앞에, 추천 캐릭터를 마지막에 표시
+  const allChars = [rec.character1, rec.character2, rec.character3]
+  const allies: number[] = []
+  const rest: number[] = []
+  for (const code of allChars) {
+    if (selectedAllies.includes(code) && allies.length < selectedAllies.length) {
+      allies.push(code)
+    } else {
+      rest.push(code)
+    }
+  }
+  // 선택 순서 유지
+  allies.sort((a, b) => selectedAllies.indexOf(a) - selectedAllies.indexOf(b))
+  const chars = [...allies, ...rest]
+  const isSmallSample = rec.totalGames <= 10
+
   return (
     <div className="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 hover:bg-[var(--color-surface-2)] transition-colors">
       {/* 순위 */}
@@ -180,30 +228,45 @@ function ComboCard({
 
       {/* 3캐릭터 */}
       <div className="flex items-center gap-1">
-        {chars.map((code, i) => (
-          <React.Fragment key={code}>
-            <div className="flex flex-col items-center gap-0.5">
-              <div className="relative h-8 w-8 overflow-hidden rounded-md bg-[var(--color-border)]">
-                <Image
-                  src={getCharacterImageUrl(code)}
-                  alt={getCharName(code)}
-                  fill
-                  className="object-cover"
-                  sizes="32px"
-                />
+        {chars.map((code, i) => {
+          const isRecommended = !selectedAllies.includes(code)
+          return (
+            <React.Fragment key={code}>
+              <div className="flex flex-col items-center gap-0.5">
+                <div
+                  className={cn(
+                    "relative h-8 w-8 overflow-hidden rounded-md bg-[var(--color-border)]",
+                    isRecommended && "ring-2 ring-[var(--color-accent-gold)]"
+                  )}
+                >
+                  <Image
+                    src={getCharacterImageUrl(code)}
+                    alt={getCharName(code)}
+                    fill
+                    className="object-cover"
+                    sizes="32px"
+                  />
+                </div>
+                {!compact && (
+                  <span className="w-10 truncate text-center text-[9px] text-[var(--color-muted-foreground)]">
+                    {getCharName(code)}
+                  </span>
+                )}
               </div>
-              {!compact && (
-                <span className="w-10 truncate text-center text-[9px] text-[var(--color-muted-foreground)]">
-                  {getCharName(code)}
-                </span>
+              {i < 2 && (
+                <span className="text-[10px] text-[var(--color-border)]">+</span>
               )}
-            </div>
-            {i < 2 && (
-              <span className="text-[10px] text-[var(--color-border)]">+</span>
-            )}
-          </React.Fragment>
-        ))}
+            </React.Fragment>
+          )
+        })}
       </div>
+
+      {/* 소표본 배지 */}
+      {isSmallSample && (
+        <span className="text-[9px] bg-[var(--color-surface-2)] text-[var(--color-muted-foreground)] px-1.5 py-0.5 rounded shrink-0">
+          소표본
+        </span>
+      )}
 
       {/* 스탯 */}
       {compact ? (
@@ -286,7 +349,8 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
 
   const [selectedAllies, setSelectedAllies] = React.useState<number[]>([])
   const [focusCharacters, setFocusCharacters] = React.useState<number[]>([])
-  const [isFocusFilterEnabled, setIsFocusFilterEnabled] = React.useState(false)
+  // isFocusExpanded: 관심 캐릭터 그리드 접기/펼치기 (true = 펼침)
+  const [isFocusExpanded, setIsFocusExpanded] = React.useState(false)
   const [sortBy, setSortBy] = React.useState<SortBy>("recommended")
   const [allySearch, setAllySearch] = React.useState("")
   const [focusSearch, setFocusSearch] = React.useState("")
@@ -300,54 +364,68 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
     [l10n]
   )
 
-  // API 호출: 아군 선택 / 정렬 변경 시
+  // API 호출: 아군 선택 / 정렬 변경 시 (300ms 디바운스 + AbortController)
   React.useEffect(() => {
     if (selectedAllies.length === 0) {
       setTrioResults([])
+      setLoading(false)
       return
     }
 
-    const params = new URLSearchParams({
-      sortBy,
-      limit: "100",
-    })
-    if (selectedAllies[0] !== undefined) {
-      params.set("character1", String(selectedAllies[0]))
-    }
-    if (selectedAllies[1] !== undefined) {
-      params.set("character2", String(selectedAllies[1]))
-    }
+    const controller = new AbortController()
+
+    const timerId = setTimeout(() => {
+      const params = new URLSearchParams({
+        sortBy,
+        limit: "100",
+      })
+      if (selectedAllies[0] !== undefined) {
+        params.set("character1", String(selectedAllies[0]))
+      }
+      if (selectedAllies[1] !== undefined) {
+        params.set("character2", String(selectedAllies[1]))
+      }
+
+      setError(null)
+
+      fetch(`/api/stats/trios?${params.toString()}`, { signal: controller.signal })
+        .then(async (res) => {
+          const data = await res.json()
+          if (!res.ok) throw new Error(data.error ?? "API 오류")
+          setTrioResults(data.results ?? [])
+        })
+        .catch((err) => {
+          if (err instanceof DOMException && err.name === "AbortError") return
+          setError(err instanceof Error ? err.message : "오류가 발생했습니다.")
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setLoading(false)
+        })
+    }, 300)
 
     setLoading(true)
-    setError(null)
 
-    fetch(`/api/stats/trios?${params.toString()}`)
-      .then(async (res) => {
-        const data = await res.json()
-        if (!res.ok) throw new Error(data.error ?? "API 오류")
-        setTrioResults(data.results ?? [])
-      })
-      .catch((err) =>
-        setError(err instanceof Error ? err.message : "오류가 발생했습니다.")
-      )
-      .finally(() => setLoading(false))
+    return () => {
+      clearTimeout(timerId)
+      controller.abort()
+    }
   }, [selectedAllies, sortBy])
 
-  // 아군 검색 필터
+  // 아군 검색 필터 (초성 검색 지원)
   const filteredAllyCodes = React.useMemo(() => {
     if (!allySearch.trim()) return ALL_CHARACTER_CODES
-    const q = allySearch.trim().toLowerCase()
+    const q = allySearch.trim()
     return ALL_CHARACTER_CODES.filter((code) =>
-      getCharName(code).toLowerCase().includes(q)
+      matchesChosungSearch(getCharName(code), q)
     )
   }, [allySearch, getCharName])
 
-  // 관심 캐릭터 검색 필터
+  // 관심 캐릭터 검색 필터 (초성 검색 지원)
   const filteredFocusCodes = React.useMemo(() => {
     if (!focusSearch.trim()) return ALL_CHARACTER_CODES
-    const q = focusSearch.trim().toLowerCase()
+    const q = focusSearch.trim()
     return ALL_CHARACTER_CODES.filter((code) =>
-      getCharName(code).toLowerCase().includes(q)
+      matchesChosungSearch(getCharName(code), q)
     )
   }, [focusSearch, getCharName])
 
@@ -374,17 +452,25 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
     if (selectedAllies.length === 0) return []
 
     let scopedResults = trioResults
-    if (
-      selectedAllies.length === 2 &&
-      isFocusFilterEnabled &&
-      focusCharacters.length > 0
-    ) {
-      const [allyA, allyB] = selectedAllies
+    if (focusCharacters.length > 0) {
       const focusSet = new Set(focusCharacters)
-      scopedResults = trioResults.filter((rec) => {
-        const third = getThirdCharacter(rec, allyA, allyB)
-        return third !== null && focusSet.has(third)
-      })
+      if (selectedAllies.length === 2) {
+        // 2명 선택: 3번째 캐릭터가 관심 캐릭터인 조합만
+        const [allyA, allyB] = selectedAllies
+        scopedResults = trioResults.filter((rec) => {
+          const third = getThirdCharacter(rec, allyA, allyB)
+          return third !== null && focusSet.has(third)
+        })
+      } else if (selectedAllies.length === 1) {
+        // 1명 선택: 나머지 2명 중 하나 이상이 관심 캐릭터인 조합만
+        const selected = selectedAllies[0]
+        scopedResults = trioResults.filter((rec) => {
+          const others = [rec.character1, rec.character2, rec.character3].filter(
+            (c) => c !== selected
+          )
+          return others.some((c) => focusSet.has(c))
+        })
+      }
     }
 
     const deduped = deduplicateResults(scopedResults, selectedAllies, sortBy)
@@ -400,28 +486,192 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
           ...deduped.filter((r) => r.averageRP < 0),
         ]
     return sorted.slice(0, 20)
-  }, [trioResults, selectedAllies, focusCharacters, isFocusFilterEnabled, sortBy])
+  }, [trioResults, selectedAllies, focusCharacters, sortBy])
 
   return (
-    <div className={cn(compact ? "flex flex-col gap-4" : "flex flex-col lg:flex-row gap-4 items-start")}>
-      {/* 상단(모바일) / 좌측(데스크탑): 아군/관심 캐릭터 선택 */}
-      <div className={cn(compact ? "w-full" : "w-full lg:w-[240px] lg:shrink-0", "flex flex-col gap-3")}>
-        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
-          <p className="mb-2 px-1 text-xs text-[var(--color-muted-foreground)]">
-            아군 선택 (최대 2명)
-          </p>
-
-          <div className="relative mb-2">
-            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)]" />
-            <input
-              value={allySearch}
-              onChange={(e) => setAllySearch(e.target.value)}
-              placeholder="아군 검색"
-              className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-2 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
-            />
+    <div className="flex flex-col gap-4">
+      {/* STEP 1: 관심 캐릭터 설정 (내가 플레이 가능한 캐릭터 풀) */}
+      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+        {/* 접이식 헤더 */}
+        <button
+          onClick={() => setIsFocusExpanded((prev) => !prev)}
+          aria-expanded={isFocusExpanded}
+          className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-[var(--color-surface-2)] transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-[var(--color-foreground)]">
+              내 캐릭터 풀
+            </span>
+            {focusCharacters.length > 0 && (
+              <span className="rounded-full bg-[var(--color-primary)]/20 px-1.5 py-0.5 text-[10px] font-medium text-[var(--color-primary)]">
+                {focusCharacters.length}명
+              </span>
+            )}
+            {focusCharacters.length === 0 && (
+              <span className="text-[10px] text-[var(--color-muted-foreground)]">
+                내가 플레이 가능한 캐릭터를 미리 설정하세요
+              </span>
+            )}
           </div>
+          <div className="flex items-center gap-2">
+            {focusCharacters.length > 0 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setFocusCharacters([])
+                }}
+                className="text-[10px] text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors px-1.5 py-0.5 rounded hover:bg-[var(--color-surface-2)]"
+              >
+                초기화
+              </button>
+            )}
+            {isFocusExpanded ? (
+              <ChevronUp className="h-4 w-4 text-[var(--color-muted-foreground)]" />
+            ) : (
+              <ChevronDown className="h-4 w-4 text-[var(--color-muted-foreground)]" />
+            )}
+          </div>
+        </button>
 
-          <div className={cn("grid gap-1 max-h-[200px] lg:max-h-[300px] overflow-y-auto", compact ? "grid-cols-5 sm:grid-cols-6" : "grid-cols-5 sm:grid-cols-6 lg:grid-cols-3")}>
+        {/* 접힌 상태: 선택된 캐릭터 칩 표시 */}
+        {!isFocusExpanded && focusCharacters.length > 0 && (
+          <div className="px-3 pb-2.5 flex flex-wrap gap-1.5">
+            {focusCharacters.map((code) => (
+              <button
+                key={`focus-chip-${code}`}
+                onClick={() => toggleFocus(code)}
+                className="inline-flex items-center gap-1 rounded-md border border-[var(--color-primary)]/40 bg-[var(--color-primary)]/10 px-2 py-1 text-[10px] text-[var(--color-foreground)] hover:bg-[var(--color-primary)]/20 transition-colors"
+              >
+                <span className="relative h-4 w-4 shrink-0 overflow-hidden rounded">
+                  <Image
+                    src={getCharacterImageUrl(code)}
+                    alt={getCharName(code)}
+                    fill
+                    className="object-cover"
+                    sizes="16px"
+                  />
+                </span>
+                <span className="max-w-16 truncate">{getCharName(code)}</span>
+                <X className="h-2.5 w-2.5" />
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* 펼친 상태: 검색 + 그리드 */}
+        {isFocusExpanded && (
+          <div className="border-t border-[var(--color-border)] p-2">
+            <div className="relative mb-2">
+              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)]" />
+              <input
+                value={focusSearch}
+                onChange={(e) => setFocusSearch(e.target.value)}
+                placeholder="캐릭터 검색 (초성 가능: ㅎㅇ)"
+                className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
+              />
+              {focusSearch && (
+                <button
+                  onClick={() => setFocusSearch("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+
+            {filteredFocusCodes.length === 0 ? (
+              <p className="py-4 text-center text-xs text-[var(--color-muted-foreground)]">
+                검색 결과 없음
+              </p>
+            ) : (
+              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-1 max-h-[240px] sm:max-h-[300px] overflow-y-auto">
+                {filteredFocusCodes.map((code) => {
+                  const isSelected = focusCharacters.includes(code)
+                  const name = getCharName(code)
+                  return (
+                    <button
+                      key={`focus-${code}`}
+                      onClick={() => toggleFocus(code)}
+                      title={name}
+                      className={cn(
+                        "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors",
+                        isSelected
+                          ? "bg-[var(--color-primary)]/20 ring-1 ring-[var(--color-primary)]"
+                          : "hover:bg-[var(--color-surface-2)]"
+                      )}
+                    >
+                      <div className="relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]">
+                        <Image
+                          src={getCharacterImageUrl(code)}
+                          alt={name}
+                          fill
+                          className="object-cover"
+                          sizes="40px"
+                        />
+                      </div>
+                      <span className="w-full truncate text-center text-[11px] font-medium text-[var(--color-foreground)]">
+                        {name}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* STEP 2: 아군 선택 */}
+      <div className="flex gap-3">
+        {selectedAllies[0] !== undefined ? (
+          <SlotFilled
+            code={selectedAllies[0]}
+            name={getCharName(selectedAllies[0])}
+            onRemove={() => removeAlly(selectedAllies[0])}
+          />
+        ) : (
+          <SlotEmpty index={0} />
+        )}
+        {selectedAllies[1] !== undefined ? (
+          <SlotFilled
+            code={selectedAllies[1]}
+            name={getCharName(selectedAllies[1])}
+            onRemove={() => removeAlly(selectedAllies[1])}
+          />
+        ) : (
+          <SlotEmpty index={1} />
+        )}
+      </div>
+
+      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
+        <p className="mb-2 px-1 text-xs text-[var(--color-muted-foreground)]">
+          아군 선택 (최대 2명)
+        </p>
+
+        <div className="relative mb-2">
+          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)]" />
+          <input
+            value={allySearch}
+            onChange={(e) => setAllySearch(e.target.value)}
+            placeholder="아군 검색 (초성 가능: ㅎㅇ)"
+            className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
+          />
+          {allySearch && (
+            <button
+              onClick={() => setAllySearch("")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
+
+        {filteredAllyCodes.length === 0 ? (
+          <p className="py-4 text-center text-xs text-[var(--color-muted-foreground)]">
+            검색 결과 없음
+          </p>
+        ) : (
+          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-1 max-h-[240px] sm:max-h-[300px] overflow-y-auto">
             {filteredAllyCodes.map((code) => {
               const isSelected = selectedAllies.includes(code)
               const isDisabled = !isSelected && selectedAllies.length >= 2
@@ -457,177 +707,12 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
               )
             })}
           </div>
-        </div>
-
-        {isFocusFilterEnabled && (
-          <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
-            <div className="mb-2 flex items-center justify-between px-1">
-              <p className="text-xs text-[var(--color-muted-foreground)]">
-                관심 캐릭터 필터 (다중)
-              </p>
-              {focusCharacters.length > 0 && (
-                <button
-                  onClick={() => setFocusCharacters([])}
-                  className="text-[10px] text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
-                >
-                  초기화
-                </button>
-              )}
-            </div>
-
-            <div className="relative mb-2">
-              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)]" />
-              <input
-                value={focusSearch}
-                onChange={(e) => setFocusSearch(e.target.value)}
-                placeholder="관심 캐릭터 검색"
-                className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-2 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
-              />
-            </div>
-
-            <div className={cn("grid gap-1 max-h-[200px] lg:max-h-[300px] overflow-y-auto", compact ? "grid-cols-5 sm:grid-cols-6" : "grid-cols-5 sm:grid-cols-6 lg:grid-cols-3")}>
-              {filteredFocusCodes.map((code) => {
-                const isSelected = focusCharacters.includes(code)
-                const name = getCharName(code)
-                return (
-                  <button
-                    key={`focus-${code}`}
-                    onClick={() => toggleFocus(code)}
-                    title={name}
-                    className={cn(
-                      "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors",
-                      isSelected
-                        ? "bg-[var(--color-primary)]/20 ring-1 ring-[var(--color-primary)]"
-                        : "hover:bg-[var(--color-surface-2)]"
-                    )}
-                  >
-                    <div className="relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]">
-                      <Image
-                        src={getCharacterImageUrl(code)}
-                        alt={name}
-                        fill
-                        className="object-cover"
-                        sizes="40px"
-                      />
-                    </div>
-                    <span className="w-full truncate text-center text-[11px] font-medium text-[var(--color-foreground)]">
-                      {name}
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
         )}
       </div>
 
-      {/* 우측: 선택 슬롯 + 필터 + 결과 */}
-      <div className="flex flex-1 flex-col gap-4 min-w-0">
-        {/* 선택 슬롯 */}
-        <div className="flex gap-3">
-          {selectedAllies[0] !== undefined ? (
-            <SlotFilled
-              code={selectedAllies[0]}
-              name={getCharName(selectedAllies[0])}
-              onRemove={() => removeAlly(selectedAllies[0])}
-            />
-          ) : (
-            <SlotEmpty index={0} />
-          )}
-          {selectedAllies[1] !== undefined ? (
-            <SlotFilled
-              code={selectedAllies[1]}
-              name={getCharName(selectedAllies[1])}
-              onRemove={() => removeAlly(selectedAllies[1])}
-            />
-          ) : (
-            <SlotEmpty index={1} />
-          )}
-        </div>
-
-        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-medium text-[var(--color-foreground)]">
-                관심 캐릭터 필터
-              </p>
-              <p className="text-[11px] text-[var(--color-muted-foreground)]">
-                내가 플레이 가능한 캐릭터를 선택해 최선의 조합을 찾아보세요
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              {isFocusFilterEnabled && focusCharacters.length > 0 && (
-                <span className="text-[10px] text-[var(--color-muted-foreground)]">
-                  {focusCharacters.length}명 선택됨
-                </span>
-              )}
-              <button
-                onClick={() => setIsFocusFilterEnabled((prev) => !prev)}
-                className={cn(
-                  "rounded-md border px-2 py-0.5 text-[10px] font-medium transition-colors",
-                  isFocusFilterEnabled
-                    ? "border-[var(--color-primary)]/50 bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
-                    : "border-[var(--color-border)] text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
-                )}
-              >
-                {isFocusFilterEnabled ? "ON" : "OFF"}
-              </button>
-            </div>
-          </div>
-          {!isFocusFilterEnabled && (
-            <p className="mt-1.5 text-[11px] text-[var(--color-muted-foreground)]">
-              ON으로 전환하면 플레이 가능한 캐릭터를 선택해 그 캐릭터가 포함된 조합만 볼 수 있습니다.
-            </p>
-          )}
-        </div>
-
-        {isFocusFilterEnabled && (
-          <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
-            <div className="flex items-center justify-between">
-              <p className="text-xs text-[var(--color-muted-foreground)]">
-                관심 캐릭터 필터
-              </p>
-              {focusCharacters.length > 0 && (
-                <button
-                  onClick={() => setFocusCharacters([])}
-                  className="text-[10px] text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
-                >
-                  초기화
-                </button>
-              )}
-            </div>
-            {focusCharacters.length > 0 ? (
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {focusCharacters.map((code) => (
-                  <button
-                    key={`focus-chip-${code}`}
-                    onClick={() => toggleFocus(code)}
-                    className="inline-flex items-center gap-1 rounded-md border border-[var(--color-primary)]/40 bg-[var(--color-primary)]/10 px-2 py-1 text-[10px] text-[var(--color-foreground)] hover:bg-[var(--color-primary)]/20 transition-colors"
-                  >
-                    <span className="relative h-5 w-5 shrink-0 overflow-hidden rounded">
-                      <Image
-                        src={getCharacterImageUrl(code)}
-                        alt={getCharName(code)}
-                        fill
-                        className="object-cover"
-                        sizes="20px"
-                      />
-                    </span>
-                    <span className="max-w-24 truncate">{getCharName(code)}</span>
-                    <X className="h-3 w-3" />
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <p className="mt-2 text-[11px] text-[var(--color-muted-foreground)]">
-                좌측에서 내가 플레이 가능한 캐릭터를 선택하세요. 아군 2명 확정 시 선택한 캐릭터가 3번째 멤버인 조합만 표시됩니다.
-              </p>
-            )}
-          </div>
-        )}
-
-        {/* 정렬 기준 */}
-        <div className="flex items-center gap-1 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-1 self-start">
+      {/* STEP 3: 정렬 기준 + 결과 */}
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <div className="flex items-center gap-1 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-1">
           {SORT_OPTIONS.map(({ value, label }) => (
             <button
               key={value}
@@ -644,75 +729,87 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
           ))}
         </div>
 
-        {/* 결과 헤더 */}
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
-            {selectedAllies.length === 0
-              ? "캐릭터를 선택하면 조합이 표시됩니다"
-              : selectedAllies.length === 1
-              ? `${getCharName(selectedAllies[0])} 포함 추천 조합`
-              : `${getCharName(selectedAllies[0])} + ${getCharName(selectedAllies[1])} 조합${
-                  isFocusFilterEnabled && focusCharacters.length > 0
-                    ? ` (관심 캐릭터 ${focusCharacters.length}명 필터 적용)`
-                    : ""
-                }`}
-          </h2>
+        <div className="flex items-center gap-3">
           {selectedAllies.length > 0 && (
-            <button
-              onClick={() => setSelectedAllies([])}
-              className="text-xs text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
-            >
-              아군 초기화
-            </button>
+            <>
+              <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
+                {selectedAllies.length === 1
+                  ? `${getCharName(selectedAllies[0])} 포함 추천 조합`
+                  : `${getCharName(selectedAllies[0])} + ${getCharName(selectedAllies[1])} 조합`}
+                {focusCharacters.length > 0
+                  ? ` (내 풀 ${focusCharacters.length}명 필터)`
+                  : ""}
+              </h2>
+              <button
+                onClick={() => setSelectedAllies([])}
+                className="text-xs text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors shrink-0"
+              >
+                초기화
+              </button>
+            </>
           )}
         </div>
-
-        {/* 결과 목록 */}
-        {selectedAllies.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] py-16 text-center">
-            <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
-            <p className="text-sm text-[var(--color-muted-foreground)]">
-              캐릭터를 1~2명 선택하세요
-            </p>
-          </div>
-        ) : loading ? (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] py-16">
-            <Loader2 className="mb-2 h-8 w-8 animate-spin text-[var(--color-primary)]" />
-            <p className="text-sm text-[var(--color-muted-foreground)]">
-              조합 데이터 로딩 중...
-            </p>
-          </div>
-        ) : error ? (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] py-16">
-            <p className="text-sm text-[var(--color-danger)]">{error}</p>
-          </div>
-        ) : recommendations.length > 0 ? (
-          <div className="flex flex-col gap-2">
-            {recommendations.map((rec, i) => (
-              <ComboCard
-                key={`${rec.character1}-${rec.character2}-${rec.character3}`}
-                rec={rec}
-                rank={i + 1}
-                getCharName={getCharName}
-                compact={compact}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] py-16 text-center">
-            <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
-            <p className="text-sm text-[var(--color-muted-foreground)]">
-              해당 조합 데이터가 없습니다
-            </p>
-            <button
-              onClick={() => setSelectedAllies([])}
-              className="mt-3 text-xs text-[var(--color-primary)] hover:underline"
-            >
-              아군 초기화하기
-            </button>
-          </div>
-        )}
       </div>
+
+      {/* 결과 목록 */}
+      {selectedAllies.length === 0 ? (
+        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] py-16 text-center">
+          <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
+          <p className="text-sm text-[var(--color-muted-foreground)]">
+            아군의 픽에 맞춰 최선의 조합을 찾아보세요
+          </p>
+          <div className="flex flex-col gap-1 mt-3 text-xs text-[var(--color-muted-foreground)]">
+            <span>1. 내 캐릭터 풀을 설정하세요 (선택사항)</span>
+            <span>2. 아군의 캐릭터를 1~2명 선택하세요</span>
+            <span>3. 내가 할 수 있는 것 중 최선의 조합을 추천합니다</span>
+          </div>
+        </div>
+      ) : loading ? (
+        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] py-16">
+          <Loader2 className="mb-2 h-8 w-8 animate-spin text-[var(--color-primary)]" />
+          <p className="text-sm text-[var(--color-muted-foreground)]">
+            조합 데이터 로딩 중...
+          </p>
+        </div>
+      ) : error ? (
+        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] py-16">
+          <p className="text-sm text-[var(--color-danger)]">{error}</p>
+        </div>
+      ) : recommendations.length > 0 ? (
+        <div className="flex flex-col gap-2">
+          {selectedAllies.length === 1 && (
+            <p className="flex items-center gap-1.5 text-[11px] text-[var(--color-muted-foreground)] bg-[var(--color-surface-2)] px-3 py-2 rounded-lg">
+              <Info className="h-3.5 w-3.5 shrink-0" />
+              1명 더 선택하면 더 정확한 추천을 받을 수 있어요
+            </p>
+          )}
+          {recommendations.map((rec, i) => (
+            <ComboCard
+              key={`${rec.character1}-${rec.character2}-${rec.character3}`}
+              rec={rec}
+              rank={i + 1}
+              getCharName={getCharName}
+              selectedAllies={selectedAllies}
+              compact={compact}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] py-16 text-center">
+          <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
+          <p className="text-sm text-[var(--color-muted-foreground)]">
+            {focusCharacters.length > 0
+              ? "내 캐릭터 풀에 해당하는 조합이 없습니다. 캐릭터 풀을 넓혀보세요."
+              : "해당 조합 데이터가 없습니다"}
+          </p>
+          <button
+            onClick={() => setSelectedAllies([])}
+            className="mt-3 text-xs text-[var(--color-primary)] hover:underline"
+          >
+            아군 초기화하기
+          </button>
+        </div>
+      )}
     </div>
   )
 }

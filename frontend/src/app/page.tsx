@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { GlobalFilter } from "@/components/features/GlobalFilter";
 import { TierRankingTable } from "@/components/features/TierRankingTable";
 import { TopTriosPreview } from "@/components/features/TopTriosPreview";
+import { HoneyPicksSection } from "@/components/features/HoneyPicksSection";
 
 export const metadata: Metadata = {
   title: "메타 분석",
@@ -34,12 +35,22 @@ export default async function Home({
 
   return (
     <div className="flex flex-col gap-6">
-      <section>
-        <h2 className="mb-3 text-sm font-semibold text-[var(--color-foreground)]">
-          RP 상위 3인 조합 Top 5
-        </h2>
-        <TopTriosPreview />
-      </section>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <section className="flex flex-col">
+          <h2 className="mb-2 text-sm font-semibold text-[var(--color-foreground)]">
+            RP 상위 3인 조합 Top 5
+          </h2>
+          <TopTriosPreview />
+        </section>
+        <section className="flex flex-col">
+          <h2 className="mb-2 text-sm font-semibold text-[var(--color-foreground)]">
+            이번 패치 꿀챔 Top 5
+          </h2>
+          <Suspense>
+            <HoneyPicksSection />
+          </Suspense>
+        </section>
+      </div>
       <Suspense>
         <GlobalFilter />
       </Suspense>
