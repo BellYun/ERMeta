@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import Image from "next/image"
+import { Layers } from "lucide-react"
 import { TierGroup } from "@/utils/tier"
 import { cn } from "@/lib/utils"
 import itemImageMap from "@/../const/itemImageMap.json"
@@ -116,29 +117,37 @@ function SubSlotRow({
   traitNames: Record<number, string>
 }) {
   if (options.length === 0) return null
+  const _maxPick = 100 // 픽률은 전체 대비 %이므로 100 기준
   return (
-    <div className="flex items-start gap-3 px-4 py-2">
+    <div className="flex items-start gap-3 px-4 py-2.5">
       <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-10">
         {label}
       </span>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-2 flex-1">
         {options.map((opt, i) => {
           if (opt.code == null) return null
+          const barWidth = opt.pickRate // 픽률 자체가 % 값
           return (
-            <div key={i} className="flex flex-col items-center gap-0.5">
-              <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-[var(--color-surface-2)] text-[var(--color-foreground)]">
+            <div key={i} className="flex flex-col gap-0.5 min-w-[72px]">
+              <span className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium bg-[var(--color-surface-2)] text-[var(--color-foreground)] border border-[var(--color-border)]">
                 {traitNames[opt.code] ?? opt.code}
               </span>
-              <span className="text-[10px] whitespace-nowrap flex gap-1">
-                <span className="text-[var(--color-primary)]">{opt.pickRate.toFixed(1)}%</span>
+              <div className="h-1 w-full rounded-full bg-[var(--color-border)]">
+                <div
+                  className="h-full rounded-full bg-[var(--color-primary)] transition-all"
+                  style={{ width: `${barWidth}%` }}
+                />
+              </div>
+              <span className="text-[10px] whitespace-nowrap flex gap-1.5">
+                <span className="text-[var(--color-primary)]">픽 {opt.pickRate.toFixed(1)}%</span>
                 <span
                   className={cn(
-                    opt.winRate >= 55
+                    opt.winRate >= 12.5
                       ? "text-[var(--color-accent-gold)]"
-                      : "text-[var(--color-muted-foreground)]"
+                      : "text-[var(--color-danger)]"
                   )}
                 >
-                  {opt.winRate.toFixed(1)}%
+                  승 {opt.winRate.toFixed(1)}%
                 </span>
               </span>
             </div>
@@ -163,7 +172,8 @@ function TopBuildsTableFiltered({
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
         <span className="text-xs font-semibold text-[var(--color-foreground)]">TOP BUILDS</span>
       </div>
-      <table className="w-full text-sm">
+      <div className="overflow-x-auto">
+      <table className="w-full text-sm min-w-[640px]">
         <thead>
           <tr className="border-b border-[var(--color-border)] text-[var(--color-muted-foreground)] text-xs">
             <th className="px-3 py-2 text-left font-medium w-8">#</th>
@@ -230,6 +240,7 @@ function TopBuildsTableFiltered({
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }
@@ -248,7 +259,7 @@ function SlotPopularityGrid({
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
         <span className="text-xs font-semibold text-[var(--color-foreground)]">슬롯별 인기 아이템</span>
       </div>
-      <div className="grid grid-cols-5 divide-x divide-[var(--color-border)]">
+      <div className="grid grid-cols-3 sm:grid-cols-5 divide-x divide-[var(--color-border)]">
         {SLOTS.map((slot) => {
           const items = slotPopularity[slot]
           return (
@@ -382,8 +393,9 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
   // ── 데이터 없음 ──────────────────────────────────────────────────────────────
   if (traitBuilds.length === 0) {
     return (
-      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
-        상세분석 데이터가 없습니다.
+      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 flex flex-col items-center gap-2 text-[var(--color-muted-foreground)]">
+        <Layers className="h-8 w-8 opacity-40" />
+        <p className="text-sm">상세분석 데이터가 없습니다.</p>
       </div>
     )
   }
@@ -403,42 +415,90 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
   return (
     <div className="space-y-4">
       {/* 메인 특성 선택 */}
-      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-        <p className="mb-3 text-xs font-semibold text-[var(--color-muted-foreground)]">메인 특성</p>
-        <div className="flex flex-wrap gap-2">
-          {traitBuilds.map((group, i) => {
-            const isSelected = selectedMainCore === group.mainCore
-            const name =
-              group.mainCore != null
-                ? (traitNames[group.mainCore] ?? String(group.mainCore))
-                : "특성 없음"
-            return (
-              <button
-                key={i}
-                onClick={() => setSelectedMainCore(group.mainCore)}
-                className={cn(
-                  "flex flex-col items-center rounded-lg border px-3 py-2 text-xs transition-colors",
-                  isSelected
-                    ? "border-[var(--color-primary)] bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
-                    : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/50"
-                )}
-              >
-                <span className="font-medium">{name}</span>
-                <span
+      {(() => {
+        const _maxTraitPick = 100 // 픽률은 전체 대비 %이므로 100 기준
+        return (
+        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+          <p className="mb-3 text-xs font-semibold text-[var(--color-muted-foreground)]">메인 특성</p>
+          <div className="flex flex-wrap gap-2">
+            {traitBuilds.map((group, i) => {
+              const isSelected = selectedMainCore === group.mainCore
+              const name =
+                group.mainCore != null
+                  ? (traitNames[group.mainCore] ?? String(group.mainCore))
+                  : "특성 없음"
+              const barWidth = group.groupPickRate // 픽률 자체가 % 값
+              return (
+                <button
+                  key={i}
+                  onClick={() => setSelectedMainCore(group.mainCore)}
                   className={cn(
-                    "text-[10px] mt-0.5",
+                    "flex flex-col rounded-lg border px-3 py-2 text-xs transition-colors min-w-[90px]",
                     isSelected
-                      ? "text-[var(--color-primary)]/80"
-                      : "text-[var(--color-muted-foreground)]"
+                      ? "border-[var(--color-primary)] bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
+                      : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/50"
                   )}
                 >
-                  픽률 {group.groupPickRate.toFixed(1)}%
+                  <span className="font-medium">{name}</span>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span
+                      className={cn(
+                        "text-[10px]",
+                        isSelected ? "text-[var(--color-primary)]/80" : "text-[var(--color-muted-foreground)]"
+                      )}
+                    >
+                      픽률 {group.groupPickRate.toFixed(1)}%
+                    </span>
+                    <span
+                      className={cn(
+                        "text-[10px]",
+                        group.groupWinRate >= 12.5 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-danger)]"
+                      )}
+                    >
+                      승률 {group.groupWinRate.toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="mt-1 h-1 w-full rounded-full bg-[var(--color-border)]">
+                    <div
+                      className={cn(
+                        "h-full rounded-full transition-all",
+                        isSelected ? "bg-[var(--color-primary)]" : "bg-[var(--color-muted-foreground)]"
+                      )}
+                      style={{ width: `${barWidth}%` }}
+                    />
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+
+          {/* 선택된 특성 요약 */}
+          {selectedGroup && (
+            <div className="mt-3 flex items-center gap-4 rounded-md bg-[var(--color-surface-2)] border border-[var(--color-border)] px-4 py-2.5">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-[var(--color-muted-foreground)]">총</span>
+                <span className="text-xs font-bold text-[var(--color-foreground)]">{selectedGroup.totalGames.toLocaleString()}판</span>
+              </div>
+              <div className="h-3 w-px bg-[var(--color-border)]" />
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-[var(--color-muted-foreground)]">픽률</span>
+                <span className="text-xs font-bold text-[var(--color-primary)]">{selectedGroup.groupPickRate.toFixed(1)}%</span>
+              </div>
+              <div className="h-3 w-px bg-[var(--color-border)]" />
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-[var(--color-muted-foreground)]">승률</span>
+                <span className={cn(
+                  "text-xs font-bold",
+                  selectedGroup.groupWinRate >= 12.5 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-danger)]"
+                )}>
+                  {selectedGroup.groupWinRate.toFixed(1)}%
                 </span>
-              </button>
-            )
-          })}
+              </div>
+            </div>
+          )}
         </div>
-      </div>
+        )
+      })()}
 
       {/* 선택된 특성 상세 */}
       {selectedMainCore !== "NONE" && (
