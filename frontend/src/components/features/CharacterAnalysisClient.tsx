@@ -113,6 +113,7 @@ function StatCard({
   delta,
   deltaLabel,
   deltaInverted,
+  gauge,
 }: {
   label: string
   value: string
@@ -120,6 +121,7 @@ function StatCard({
   delta?: number
   deltaLabel?: string
   deltaInverted?: boolean
+  gauge?: { current: number; expected: number; max: number; inverted?: boolean }
 }) {
   return (
     <div className="flex flex-col gap-0.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3">
@@ -135,6 +137,24 @@ function StatCard({
       ) : sub ? (
         <span className="text-xs text-[var(--color-muted-foreground)]">{sub}</span>
       ) : null}
+      {gauge && (
+        <div className="relative mt-1 h-1.5 w-full rounded-full bg-[var(--color-border)]">
+          <div
+            className={cn(
+              "h-full rounded-full transition-all",
+              (gauge.inverted ? gauge.current < gauge.expected : gauge.current > gauge.expected)
+                ? "bg-[var(--color-accent-gold)]"
+                : "bg-[var(--color-danger)]"
+            )}
+            style={{ width: `${Math.min((gauge.current / gauge.max) * 100, 100)}%` }}
+          />
+          <div
+            className="absolute top-0 h-full w-px bg-[var(--color-foreground)]/40"
+            style={{ left: `${(gauge.expected / gauge.max) * 100}%` }}
+            title={`기대값: ${gauge.expected}`}
+          />
+        </div>
+      )}
     </div>
   )
 }
@@ -462,7 +482,9 @@ export function CharacterAnalysisClient() {
             </div>
 
             {/* 무기 군 선택 */}
-            {!loading && stats?.weapons && stats.weapons.length > 0 && (
+            {!loading && stats?.weapons && stats.weapons.length > 0 && (() => {
+              const maxPickRate = Math.max(...stats.weapons.map((w) => w.pickRate))
+              return (
               <div className="flex flex-wrap gap-1.5">
                 <button
                   onClick={() => setSelectedWeapon(null)}
@@ -477,6 +499,7 @@ export function CharacterAnalysisClient() {
                 </button>
                 {stats.weapons.map((w) => {
                   const isSelected = selectedWeapon === w.bestWeapon
+                  const barWidth = maxPickRate > 0 ? (w.pickRate / maxPickRate) * 100 : 0
                   return (
                     <button
                       key={w.bestWeapon ?? "none"}
@@ -485,28 +508,40 @@ export function CharacterAnalysisClient() {
                         analytics.weaponSelected(selectedCode, w.bestWeapon ?? 0, resolveWeaponName(w.bestWeapon ?? undefined))
                       }}
                       className={cn(
-                        "flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs transition-colors",
+                        "flex flex-col rounded-md border px-2.5 py-1 text-xs transition-colors min-w-[80px]",
                         isSelected
                           ? "border-[var(--color-primary)] bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
                           : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/50"
                       )}
                     >
-                      <span className="font-medium">{resolveWeaponName(w.bestWeapon ?? undefined)}</span>
-                      <span
-                        className={cn(
-                          "text-[10px]",
-                          isSelected
-                            ? "text-[var(--color-primary)]/80"
-                            : "text-[var(--color-muted-foreground)]"
-                        )}
-                      >
-                        {w.pickRate.toFixed(1)}%
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-medium">{resolveWeaponName(w.bestWeapon ?? undefined)}</span>
+                        <span
+                          className={cn(
+                            "text-[10px]",
+                            isSelected
+                              ? "text-[var(--color-primary)]/80"
+                              : "text-[var(--color-muted-foreground)]"
+                          )}
+                        >
+                          {w.pickRate.toFixed(1)}%
+                        </span>
+                      </div>
+                      <div className="mt-1 h-1 w-full rounded-full bg-[var(--color-border)]">
+                        <div
+                          className={cn(
+                            "h-full rounded-full transition-all",
+                            isSelected ? "bg-[var(--color-primary)]" : "bg-[var(--color-muted-foreground)]"
+                          )}
+                          style={{ width: `${barWidth}%` }}
+                        />
+                      </div>
                     </button>
                   )
                 })}
               </div>
-            )}
+              )
+            })()}
 
             {loading ? (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -525,12 +560,14 @@ export function CharacterAnalysisClient() {
                   value={`${displayStat.winRate.toFixed(1)}%`}
                   delta={hasPreviousData ? displayStat.winRate - displayPrevStat!.winRate : undefined}
                   deltaLabel="%p"
+                  gauge={{ current: displayStat.winRate, expected: 12.5, max: 25 }}
                 />
                 <StatCard
                   label="평균 순위"
                   value={`#${displayStat.averageRank.toFixed(1)}`}
                   delta={hasPreviousData ? displayStat.averageRank - displayPrevStat!.averageRank : undefined}
                   deltaInverted
+                  gauge={{ current: displayStat.averageRank, expected: 4.5, max: 8, inverted: true }}
                 />
                 <StatCard
                   label="평균 RP"
@@ -668,6 +705,51 @@ export function CharacterAnalysisClient() {
                         </ResponsiveContainer>
                       </div>
                     </div>
+                  </div>
+                )}
+
+                {/* 패치별 수치 테이블 */}
+                {chartData.length >= 2 && (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="border-b border-[var(--color-border)] text-[var(--color-muted-foreground)]">
+                          <th className="px-3 py-2 text-left font-medium">패치</th>
+                          <th className="px-3 py-2 text-right font-medium">승률</th>
+                          <th className="px-3 py-2 text-right font-medium">평균 RP</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[...chartData].reverse().map((d, i) => {
+                          const isCurrent = i === 0
+                          return (
+                            <tr
+                              key={d.patch}
+                              className={cn(
+                                "border-b border-[var(--color-border)]/50 last:border-0",
+                                isCurrent && "bg-[var(--color-primary)]/5"
+                              )}
+                            >
+                              <td className="px-3 py-1.5 text-left text-[var(--color-foreground)]">
+                                {d.patch}
+                                {isCurrent && (
+                                  <span className="ml-1.5 rounded bg-[var(--color-primary)]/20 px-1 py-0.5 text-[9px] text-[var(--color-primary)]">현재</span>
+                                )}
+                              </td>
+                              <td className={cn(
+                                "px-3 py-1.5 text-right font-medium",
+                                d.winRate > 12.5 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-danger)]"
+                              )}>
+                                {d.winRate.toFixed(2)}%
+                              </td>
+                              <td className="px-3 py-1.5 text-right text-[var(--color-foreground)]">
+                                {d.averageRP.toFixed(1)}
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 )}
               </div>
