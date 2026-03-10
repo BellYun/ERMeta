@@ -434,7 +434,8 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
       if (prev.includes(code)) return prev.filter((c) => c !== code)
       if (prev.length >= 2) return prev
       const slot = prev.length === 0 ? "A" : "B"
-      analytics.synergyAllySelected(slot, code, getCharName(code))
+      // analytics를 setState 밖에서 호출 (React updater는 순수 함수여야 함)
+      queueMicrotask(() => analytics.synergyAllySelected(slot, code, getCharName(code)))
       return [...prev, code]
     })
   }
@@ -584,7 +585,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
                 검색 결과 없음
               </p>
             ) : (
-              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-1 max-h-[240px] sm:max-h-[300px] overflow-y-auto">
+              <div data-sr-block className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-1 max-h-[240px] sm:max-h-[300px] overflow-y-auto">
                 {filteredFocusCodes.map((code) => {
                   const isSelected = focusCharacters.includes(code)
                   const name = getCharName(code)
@@ -671,7 +672,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
             검색 결과 없음
           </p>
         ) : (
-          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-1 max-h-[240px] sm:max-h-[300px] overflow-y-auto">
+          <div data-sr-block className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-1 max-h-[240px] sm:max-h-[300px] overflow-y-auto">
             {filteredAllyCodes.map((code) => {
               const isSelected = selectedAllies.includes(code)
               const isDisabled = !isSelected && selectedAllies.length >= 2
@@ -776,7 +777,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
           <p className="text-sm text-[var(--color-danger)]">{error}</p>
         </div>
       ) : recommendations.length > 0 ? (
-        <div className="flex flex-col gap-2">
+        <div data-sr-block className="flex flex-col gap-2">
           {selectedAllies.length === 1 && (
             <p className="flex items-center gap-1.5 text-[11px] text-[var(--color-muted-foreground)] bg-[var(--color-surface-2)] px-3 py-2 rounded-lg">
               <Info className="h-3.5 w-3.5 shrink-0" />
