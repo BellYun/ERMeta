@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
+import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
 
+export const revalidate = 1800; // L1: 30분 서버 캐시
 
 const TIER_FALLBACK_ORDER = ["DIAMOND", "METEORITE", "MITHRIL", "IN1000"];
 
@@ -125,10 +127,10 @@ export async function GET(request: NextRequest) {
       patchVersion,
       previousPatch,
       tier: usedTier,
-    });
+    }, { headers: getCacheHeaders("daily") });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("[mithril-rp-ranking] 예외:", message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: message }, { status: 500, headers: NO_CACHE_HEADERS });
   }
 }

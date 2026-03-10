@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
+import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
 
+export const revalidate = 3600; // L1: 1시간 서버 캐시
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -30,7 +32,7 @@ export async function GET(request: NextRequest) {
     if (!error && data && data.length > 0) {
       const patches = data.map((p) => p.version);
       console.log("[patches/history] 응답 (PatchVersion):", patches);
-      return NextResponse.json({ patches });
+      return NextResponse.json({ patches }, { headers: getCacheHeaders("slow") });
     }
 
     // 2차 fallback: CharacterStats에서 distinct patchVersion
@@ -57,10 +59,10 @@ export async function GET(request: NextRequest) {
       .slice(0, limit);
 
     console.log("[patches/history] 응답 (fallback):", patches);
-    return NextResponse.json({ patches });
+    return NextResponse.json({ patches }, { headers: getCacheHeaders("slow") });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("[patches/history] 예외:", message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: message }, { status: 500, headers: NO_CACHE_HEADERS });
   }
 }

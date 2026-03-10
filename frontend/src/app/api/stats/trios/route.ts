@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { TierGroup } from "@/utils/tier";
+import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
 
+export const revalidate = 3600; // L1: 1시간 서버 캐시
 
 // 다이아 이상 티어 전체
 const DIAMOND_PLUS_TIERS: TierGroup[] = [
@@ -241,10 +243,10 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    return NextResponse.json({ results: aggregated.slice(0, limit) });
+    return NextResponse.json({ results: aggregated.slice(0, limit) }, { headers: getCacheHeaders("frequent") });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("[stats/trios] 예외:", message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: message }, { status: 500, headers: NO_CACHE_HEADERS });
   }
 }

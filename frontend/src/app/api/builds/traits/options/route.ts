@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
+import { getCacheHeaders } from "@/lib/cache"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 1800 // L1: 30분 서버 캐시
@@ -62,7 +63,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    return NextResponse.json({ options })
+    return NextResponse.json({ options }, { headers: getCacheHeaders("daily") })
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error"
     console.error("[builds/traits/options] 예외:", message)
