@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
 import { getCacheHeaders } from "@/lib/cache"
 
-export const dynamic = "force-dynamic"
 export const revalidate = 1800 // L1: 30분 서버 캐시
 
 export interface TraitSubOption {
