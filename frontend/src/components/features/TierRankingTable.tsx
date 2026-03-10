@@ -333,9 +333,9 @@ export function TierRankingTable() {
                             : "text-[var(--color-muted-foreground)]"
                         )}
                       >
-                        {char.averageRP.toFixed(0)}
+                        {char.averageRP.toFixed(1)}
                       </span>
-                      <DeltaIndicator current={char.averageRP} previous={char.prev?.averageRP} precision={0} />
+                      <DeltaIndicator current={char.averageRP} previous={char.prev?.averageRP} precision={1} />
                     </div>
                   </TableCell>
                 </TableRow>

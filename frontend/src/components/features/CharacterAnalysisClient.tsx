@@ -483,7 +483,7 @@ export function CharacterAnalysisClient() {
 
             {/* 무기 군 선택 */}
             {!loading && stats?.weapons && stats.weapons.length > 0 && (() => {
-              const maxPickRate = Math.max(...stats.weapons.map((w) => w.pickRate))
+              const _maxPickRate = 100 // 픽률은 전체 대비 %이므로 100 기준
               return (
               <div className="flex flex-wrap gap-1.5">
                 <button
@@ -499,7 +499,7 @@ export function CharacterAnalysisClient() {
                 </button>
                 {stats.weapons.map((w) => {
                   const isSelected = selectedWeapon === w.bestWeapon
-                  const barWidth = maxPickRate > 0 ? (w.pickRate / maxPickRate) * 100 : 0
+                  const barWidth = w.pickRate // 픽률 자체가 % 값
                   return (
                     <button
                       key={w.bestWeapon ?? "none"}
