@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
+import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache"
 
+export const revalidate = 86400 // L1: 24시간 서버 캐시
 
 export async function GET() {
   const apiKey = process.env.BSER_API_KEY
@@ -11,6 +13,7 @@ export async function GET() {
     // 1단계: l10n 파일 URL 조회
     const metaRes = await fetch("https://open-api.bser.io/v1/l10n/Korean", {
       headers: { "x-api-key": apiKey },
+      next: { revalidate: 86400 }, // 24시간 fetch 캐시
     })
     if (!metaRes.ok) {
       return NextResponse.json({ error: `BSER API error: ${metaRes.status}` }, { status: metaRes.status })
@@ -44,9 +47,9 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json({ names })
+    return NextResponse.json({ names }, { headers: getCacheHeaders("slow") })
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error"
-    return NextResponse.json({ error: message }, { status: 500 })
+    return NextResponse.json({ error: message }, { status: 500, headers: NO_CACHE_HEADERS })
   }
 }
