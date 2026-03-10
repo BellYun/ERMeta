@@ -307,6 +307,8 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
       return
     }
 
+    const controller = new AbortController()
+
     const params = new URLSearchParams({
       sortBy,
       limit: "100",
@@ -321,16 +323,21 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
     setLoading(true)
     setError(null)
 
-    fetch(`/api/stats/trios?${params.toString()}`)
+    fetch(`/api/stats/trios?${params.toString()}`, { signal: controller.signal })
       .then(async (res) => {
         const data = await res.json()
         if (!res.ok) throw new Error(data.error ?? "API 오류")
         setTrioResults(data.results ?? [])
       })
-      .catch((err) =>
+      .catch((err) => {
+        if (err instanceof DOMException && err.name === "AbortError") return
         setError(err instanceof Error ? err.message : "오류가 발생했습니다.")
-      )
-      .finally(() => setLoading(false))
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false)
+      })
+
+    return () => controller.abort()
   }, [selectedAllies, sortBy])
 
   // 아군 검색 필터
