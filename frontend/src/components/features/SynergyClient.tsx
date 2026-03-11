@@ -146,7 +146,7 @@ function deduplicateResults(
 
 function SlotEmpty({ index }: { index: number }) {
   return (
-    <div className="flex flex-1 items-center gap-3 rounded-lg border border-dashed border-[var(--color-border)] px-4 py-3">
+    <div className="flex flex-1 items-center gap-3 rounded-xl border border-dashed border-[var(--color-border)] px-4 py-3">
       <div className="flex h-10 w-10 items-center justify-center rounded-md bg-[var(--color-surface-2)] text-[var(--color-border)]">
         <Users className="h-5 w-5" />
       </div>
@@ -220,9 +220,9 @@ function ComboCard({
   const isSmallSample = rec.totalGames <= 10
 
   return (
-    <div className="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 hover:bg-[var(--color-surface-2)] transition-colors">
+    <div className="group flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 px-3 py-2.5 hover:bg-[var(--color-primary)]/[0.04] hover:border-[var(--color-primary)]/20 transition-all duration-200">
       {/* 순위 */}
-      <span className="w-5 shrink-0 text-center text-xs font-medium text-[var(--color-muted-foreground)]">
+      <span className="w-5 shrink-0 text-center text-xs font-bold text-[var(--color-muted-foreground)] group-hover:text-[var(--color-primary)]">
         {rank}
       </span>
 
@@ -492,7 +492,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
   return (
     <div className="flex flex-col gap-4">
       {/* STEP 1: 관심 캐릭터 설정 (내가 플레이 가능한 캐릭터 풀) */}
-      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm overflow-hidden">
         {/* 접이식 헤더 */}
         <button
           onClick={() => setIsFocusExpanded((prev) => !prev)}
@@ -644,7 +644,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
         )}
       </div>
 
-      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
+      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-2">
         <p className="mb-2 px-1 text-xs text-[var(--color-muted-foreground)]">
           아군 선택 (최대 2명)
         </p>
@@ -713,7 +713,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
 
       {/* STEP 3: 정렬 기준 + 결과 */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <div className="flex items-center gap-1 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-1">
+        <div className="flex items-center gap-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-1">
           {SORT_OPTIONS.map(({ value, label }) => (
             <button
               key={value}
@@ -754,7 +754,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
 
       {/* 결과 목록 */}
       {selectedAllies.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] py-16 text-center">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
           <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
           <p className="text-sm text-[var(--color-muted-foreground)]">
             아군의 픽에 맞춰 최선의 조합을 찾아보세요
@@ -766,14 +766,14 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
           </div>
         </div>
       ) : loading ? (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] py-16">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16">
           <Loader2 className="mb-2 h-8 w-8 animate-spin text-[var(--color-primary)]" />
           <p className="text-sm text-[var(--color-muted-foreground)]">
             조합 데이터 로딩 중...
           </p>
         </div>
       ) : error ? (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] py-16">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16">
           <p className="text-sm text-[var(--color-danger)]">{error}</p>
         </div>
       ) : recommendations.length > 0 ? (
@@ -796,7 +796,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] py-16 text-center">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
           <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
           <p className="text-sm text-[var(--color-muted-foreground)]">
             {focusCharacters.length > 0

@@ -89,7 +89,7 @@ function TopBuildsTable({
   traitNames: Record<number, string>
 }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
       <SectionHeader title="TOP BUILDS" />
       <div className="overflow-x-auto">
       <table className="w-full text-sm min-w-[640px]">
@@ -179,7 +179,7 @@ function SlotPopularityGrid({
   itemNames: Record<number, string>
 }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
       <SectionHeader title="슬롯별 인기 아이템" />
       <div className="grid grid-cols-3 sm:grid-cols-5 divide-x divide-[var(--color-border)]">
         {SLOTS.map((slot) => {
@@ -227,7 +227,7 @@ function CoreItemsList({
   itemNames: Record<number, string>
 }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
       <SectionHeader title="코어 아이템" />
       <div className="divide-y divide-[var(--color-border)]">
         {coreItems.map((item, i) => (
@@ -320,7 +320,7 @@ export function CharacterEquipmentAnalyzer({ characterCode, tier, patchVersion, 
 
   if (isEmpty) {
     return (
-      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
+      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-8 text-center text-sm text-[var(--color-muted-foreground)]">
         아이템 빌드 데이터가 없습니다.
       </div>
     )

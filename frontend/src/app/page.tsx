@@ -35,22 +35,31 @@ export default async function Home({
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Top Sections */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <section className="flex flex-col">
-          <h2 className="mb-2 text-sm font-semibold text-[var(--color-foreground)]">
-            RP 상위 3인 조합 Top 5
-          </h2>
+        <section className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="h-4 w-1 rounded-full bg-[var(--color-primary)]" />
+            <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
+              RP 상위 3인 조합 Top 5
+            </h2>
+          </div>
           <TopTriosPreview />
         </section>
-        <section className="flex flex-col">
-          <h2 className="mb-2 text-sm font-semibold text-[var(--color-foreground)]">
-            이번 패치 꿀챔 Top 5
-          </h2>
+        <section className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="h-4 w-1 rounded-full bg-[var(--color-accent-gold)]" />
+            <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
+              이번 패치 꿀챔 Top 5
+            </h2>
+          </div>
           <Suspense>
             <HoneyPicksSection />
           </Suspense>
         </section>
       </div>
+
+      {/* Filter + Table */}
       <Suspense>
         <GlobalFilter />
       </Suspense>

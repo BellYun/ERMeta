@@ -52,9 +52,9 @@ export function GlobalFilter() {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
+    <div className="flex flex-wrap items-center gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-3">
       <div className="flex items-center gap-2">
-        <span className="text-xs text-[var(--color-muted-foreground)]">패치</span>
+        <span className="text-xs font-medium text-[var(--color-muted-foreground)]">패치</span>
         <Select
           value={patch || patches[0] || ""}
           onChange={(e) => updateParam("patch", e.target.value)}
@@ -73,8 +73,10 @@ export function GlobalFilter() {
         </Select>
       </div>
 
+      <div className="h-5 w-px bg-[var(--color-border)]" />
+
       <div className="flex items-center gap-2">
-        <span className="text-xs text-[var(--color-muted-foreground)]">티어</span>
+        <span className="text-xs font-medium text-[var(--color-muted-foreground)]">티어</span>
         <Tabs value={tier} onValueChange={(v) => updateParam("tier", v)}>
           <TabsList className="flex-wrap h-auto">
             {TIER_OPTIONS.map(({ value, label }) => (

@@ -27,9 +27,9 @@ function getOverallChangeType(patchNote: CharacterPatchNote): "buff" | "nerf" | 
 }
 
 const CHANGE_LABEL: Record<string, { text: string; color: string }> = {
-  buff: { text: "BUFF", color: "text-green-400 bg-green-400/10" },
-  nerf: { text: "NERF", color: "text-red-400 bg-red-400/10" },
-  rework: { text: "ADJUST", color: "text-blue-400 bg-blue-400/10" },
+  buff: { text: "BUFF", color: "text-green-400 bg-green-400/10 border-green-400/20" },
+  nerf: { text: "NERF", color: "text-red-400 bg-red-400/10 border-red-400/20" },
+  rework: { text: "ADJUST", color: "text-blue-400 bg-blue-400/10 border-blue-400/20" },
 }
 
 function HoneyTooltip({ pick, name, weaponName, patchNote }: {
@@ -39,24 +39,24 @@ function HoneyTooltip({ pick, name, weaponName, patchNote }: {
   patchNote: CharacterPatchNote | null
 }) {
   return (
-    <div className="absolute z-50 left-0 top-full mt-1 w-80 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3 shadow-xl pointer-events-none">
+    <div className="absolute z-50 left-0 top-full mt-1 w-80 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3 shadow-2xl shadow-black/40 pointer-events-none">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-sm font-semibold text-[var(--color-foreground)]">{name}</span>
         <span className="text-xs text-[var(--color-muted-foreground)]">{weaponName}</span>
       </div>
 
       <div className="grid grid-cols-3 gap-2 mb-3 text-center">
-        <div className="rounded bg-[var(--color-surface-2)] px-2 py-1">
+        <div className="rounded-lg bg-[var(--color-surface-2)] px-2 py-1.5 border border-[var(--color-border)]/50">
           <p className="text-[10px] text-[var(--color-muted-foreground)]">승률</p>
           <p className="text-sm font-semibold text-[var(--color-foreground)]">{pick.winRate.toFixed(1)}%</p>
           <p className="text-[10px] font-medium text-green-400">+{pick.winRateDelta.toFixed(2)}%</p>
         </div>
-        <div className="rounded bg-[var(--color-surface-2)] px-2 py-1">
+        <div className="rounded-lg bg-[var(--color-surface-2)] px-2 py-1.5 border border-[var(--color-border)]/50">
           <p className="text-[10px] text-[var(--color-muted-foreground)]">픽률</p>
           <p className="text-sm font-semibold text-[var(--color-foreground)]">{pick.pickRate.toFixed(1)}%</p>
           <p className="text-[10px] font-medium text-green-400">+{pick.pickRateDelta.toFixed(2)}%</p>
         </div>
-        <div className="rounded bg-[var(--color-surface-2)] px-2 py-1">
+        <div className="rounded-lg bg-[var(--color-surface-2)] px-2 py-1.5 border border-[var(--color-border)]/50">
           <p className="text-[10px] text-[var(--color-muted-foreground)]">평균 RP</p>
           <p className={cn("text-sm font-semibold", pick.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]")}>
             {pick.averageRP >= 0 ? "+" : ""}{pick.averageRP.toFixed(1)}
@@ -78,7 +78,7 @@ function HoneyTooltip({ pick, name, weaponName, patchNote }: {
               return (
                 <div key={ci} className="flex flex-col gap-0.5">
                   <div className="flex items-center gap-1.5">
-                    <span className={cn("rounded px-1 py-0.5 text-[9px] font-bold", label.color)}>
+                    <span className={cn("rounded px-1 py-0.5 text-[9px] font-bold border", label.color)}>
                       {label.text}
                     </span>
                     <span className="text-[11px] font-medium text-[var(--color-foreground)]">
@@ -178,19 +178,19 @@ export function HoneyPicksSection() {
         return (
           <div
             key={key}
-            className="relative flex items-center gap-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 hover:bg-[var(--color-surface-2)] transition-colors cursor-pointer"
+            className="group relative flex items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 px-3 py-2.5 hover:bg-[var(--color-primary)]/[0.04] hover:border-[var(--color-primary)]/20 transition-all duration-200 cursor-pointer"
             onClick={() =>
               router.push(`/character-analysis?character=${pick.characterNum}`)
             }
             onMouseEnter={() => setHoveredKey(key)}
             onMouseLeave={() => setHoveredKey(null)}
           >
-            <span className="w-5 shrink-0 text-center text-xs font-medium text-[var(--color-muted-foreground)]">
+            <span className="w-5 shrink-0 text-center text-xs font-bold text-[var(--color-muted-foreground)] group-hover:text-[var(--color-primary)]">
               {i + 1}
             </span>
             <div className="flex items-center gap-1">
               <div className="flex flex-col items-center gap-0.5">
-                <div className="relative h-8 w-8 overflow-hidden rounded-md bg-[var(--color-border)]">
+                <div className="relative h-8 w-8 overflow-hidden rounded-lg bg-[var(--color-surface-2)] ring-1 ring-[var(--color-border)]">
                   <Image
                     src={imageUrl}
                     alt={name}
@@ -199,7 +199,7 @@ export function HoneyPicksSection() {
                     sizes="32px"
                   />
                   {patchNote && (
-                    <div className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-[var(--color-primary)]" />
+                    <div className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-[var(--color-primary)] shadow-[0_0_4px_var(--color-primary)]" />
                   )}
                 </div>
                 <span className="w-10 truncate text-center text-[9px] text-[var(--color-muted-foreground)]">
@@ -212,7 +212,7 @@ export function HoneyPicksSection() {
                 {weaponName}
               </span>
               {changeLabel && (
-                <span className={cn("w-fit rounded px-1 py-0.5 text-[9px] font-bold mt-0.5", changeLabel.color)}>
+                <span className={cn("w-fit rounded px-1 py-0.5 text-[9px] font-bold mt-0.5 border", changeLabel.color)}>
                   {changeLabel.text}
                 </span>
               )}

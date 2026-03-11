@@ -168,7 +168,7 @@ function TopBuildsTableFiltered({
   itemNames: Record<number, string>
 }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
         <span className="text-xs font-semibold text-[var(--color-foreground)]">TOP BUILDS</span>
       </div>
@@ -255,7 +255,7 @@ function SlotPopularityGrid({
   itemNames: Record<number, string>
 }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
         <span className="text-xs font-semibold text-[var(--color-foreground)]">슬롯별 인기 아이템</span>
       </div>
@@ -393,7 +393,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
   // ── 데이터 없음 ──────────────────────────────────────────────────────────────
   if (traitBuilds.length === 0) {
     return (
-      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 flex flex-col items-center gap-2 text-[var(--color-muted-foreground)]">
+      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-8 flex flex-col items-center gap-2 text-[var(--color-muted-foreground)]">
         <Layers className="h-8 w-8 opacity-40" />
         <p className="text-sm">상세분석 데이터가 없습니다.</p>
       </div>
@@ -418,7 +418,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
       {(() => {
         const _maxTraitPick = 100 // 픽률은 전체 대비 %이므로 100 기준
         return (
-        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-4">
           <p className="mb-3 text-xs font-semibold text-[var(--color-muted-foreground)]">메인 특성</p>
           <div className="flex flex-wrap gap-2">
             {traitBuilds.map((group, i) => {
@@ -505,7 +505,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
         <>
           {/* 서브 특성 순위 */}
           {hasSubOptions && (
-            <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+            <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
               <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
                 <span className="text-xs font-semibold text-[var(--color-foreground)]">서브 특성 순위</span>
               </div>
@@ -557,7 +557,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
               )}
             </div>
           ) : (
-            <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center text-sm text-[var(--color-muted-foreground)]">
+            <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-6 text-center text-sm text-[var(--color-muted-foreground)]">
               이 특성의 아이템 빌드 데이터가 없습니다.
             </div>
           )}

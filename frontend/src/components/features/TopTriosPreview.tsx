@@ -68,16 +68,16 @@ export function TopTriosPreview() {
         return (
           <div
             key={`${rec.character1}-${rec.character2}-${rec.character3}`}
-            className="flex items-center gap-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 hover:bg-[var(--color-surface-2)] transition-colors"
+            className="group flex items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 px-3 py-2.5 hover:bg-[var(--color-primary)]/[0.04] hover:border-[var(--color-primary)]/20 transition-all duration-200"
           >
-            <span className="w-5 shrink-0 text-center text-xs font-medium text-[var(--color-muted-foreground)]">
+            <span className="w-5 shrink-0 text-center text-xs font-bold text-[var(--color-muted-foreground)] group-hover:text-[var(--color-primary)]">
               {i + 1}
             </span>
             <div className="flex items-center gap-1">
               {chars.map((code, ci) => (
                 <React.Fragment key={code}>
                   <div className="flex flex-col items-center gap-0.5">
-                    <div className="relative h-8 w-8 overflow-hidden rounded-md bg-[var(--color-border)]">
+                    <div className="relative h-8 w-8 overflow-hidden rounded-lg bg-[var(--color-surface-2)] ring-1 ring-[var(--color-border)]">
                       <Image
                         src={getCharacterImageUrl(code)}
                         alt={getCharName(code)}
@@ -91,7 +91,7 @@ export function TopTriosPreview() {
                     </span>
                   </div>
                   {ci < 2 && (
-                    <span className="text-[10px] text-[var(--color-border)]">+</span>
+                    <span className="text-[10px] text-[var(--color-border-light)] mx-0.5">+</span>
                   )}
                 </React.Fragment>
               ))}

@@ -124,7 +124,7 @@ function StatCard({
   gauge?: { current: number; expected: number; max: number; inverted?: boolean }
 }) {
   return (
-    <div className="flex flex-col gap-0.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3">
+    <div className="flex flex-col gap-0.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)]/80 px-4 py-3">
       <span className="text-xs text-[var(--color-muted-foreground)]">{label}</span>
       <span className="text-lg font-bold text-[var(--color-foreground)]">{value}</span>
       {delta !== undefined ? (
@@ -204,7 +204,7 @@ function PatchTooltip({
   const note = patchLabel ? getCharacterPatchNote(selectedCode, patchLabel) : undefined
 
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3 text-xs shadow-lg max-w-[220px]">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-3 text-xs shadow-lg max-w-[220px]">
       <p className="mb-1 font-semibold text-[var(--color-foreground)]">{patchLabel || "-"}</p>
       <p className="text-[var(--color-muted-foreground)]">
         {metricLabel}:{" "}
@@ -366,7 +366,7 @@ export function CharacterAnalysisClient() {
   return (
     <div className="flex flex-col lg:flex-row gap-4 items-start">
       {/* 캐릭터 그리드 (모바일: 상단 수평 스크롤, 데스크탑: 좌측 사이드바) */}
-      <div className="w-full lg:w-[260px] lg:shrink-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
+      <div className="w-full lg:w-[260px] lg:shrink-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-2">
         {/* 검색 */}
         <div className="relative mb-2">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)] pointer-events-none" />
@@ -441,7 +441,7 @@ export function CharacterAnalysisClient() {
       {/* 우측 분석 콘텐츠 */}
       <div className="flex flex-1 flex-col gap-4 min-w-0">
         {/* 캐릭터 헤더 */}
-        <div className="flex gap-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5 items-start">
+        <div className="flex gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-5 items-start">
           <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[var(--color-border)]">
             <Image
               src={getCharacterImageUrl(selectedCode)}
@@ -605,7 +605,7 @@ export function CharacterAnalysisClient() {
             {loading ? (
               <div className="h-40 rounded-lg bg-[var(--color-surface)] animate-pulse" />
             ) : stats && stats.totalGames > 0 ? (
-              <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5 space-y-4">
+              <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-5 space-y-4">
                 {/* 멀티 패치 트렌드 차트 */}
                 {chartData.length < 2 ? (
                   <div className="flex flex-col items-center gap-2 py-8 text-[var(--color-muted-foreground)]">
@@ -754,7 +754,7 @@ export function CharacterAnalysisClient() {
                 )}
               </div>
             ) : (
-              <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 flex flex-col items-center gap-2 text-[var(--color-muted-foreground)]">
+              <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-8 flex flex-col items-center gap-2 text-[var(--color-muted-foreground)]">
                 <BarChart2 className="h-8 w-8 opacity-40" />
                 <p className="text-sm">데이터가 없습니다.</p>
               </div>
@@ -764,7 +764,7 @@ export function CharacterAnalysisClient() {
           {/* 패치 내역 */}
           <TabsContent value="patchlog">
             {patches.length === 0 ? (
-              <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
+              <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-8 text-center text-sm text-[var(--color-muted-foreground)]">
                 패치 정보를 불러오는 중...
               </div>
             ) : (
@@ -772,7 +772,7 @@ export function CharacterAnalysisClient() {
                 {patches.slice(0, 5).map((patch, i) => {
                   const note = getCharacterPatchNote(selectedCode, patch)
                   return (
-                    <div key={patch} className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+                    <div key={patch} className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
                       {/* 패치 버전 헤더 */}
                       <div className="flex items-center gap-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
                         <span className="text-xs font-semibold text-[var(--color-foreground)]">{patch}</span>
