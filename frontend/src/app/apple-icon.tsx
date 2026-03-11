@@ -18,7 +18,7 @@ export default function AppleIcon() {
           borderRadius: "40px",
         }}
       >
-        {/* L 레터마크 */}
+        {/* ER&GG 레터마크 */}
         <div
           style={{
             fontSize: "100px",
@@ -28,7 +28,7 @@ export default function AppleIcon() {
             lineHeight: 1,
           }}
         >
-          L
+          E
         </div>
         {/* 골드 바 3개 */}
         <div

@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next"
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "LumiaStats - 이터널리턴 메타 분석",
-    short_name: "LumiaStats",
+    name: "이리와지지 ER&GG - 이터널리턴 메타 분석",
+    short_name: "ER&GG",
     description: "이터널리턴 캐릭터 티어, 3인 조합 추천, 빌드 통계 분석 서비스",
     start_url: "/",
     display: "standalone",
