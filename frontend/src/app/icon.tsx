@@ -28,7 +28,7 @@ export default function Icon() {
             background: "radial-gradient(circle, #6366f120 0%, transparent 70%)",
           }}
         />
-        {/* L 레터마크 */}
+        {/* ER&GG 레터마크 */}
         <div
           style={{
             fontSize: "20px",
@@ -39,7 +39,7 @@ export default function Icon() {
             marginBottom: "4px",
           }}
         >
-          L
+          E
         </div>
         {/* 하단 골드 도트 */}
         <div

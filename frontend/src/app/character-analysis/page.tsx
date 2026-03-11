@@ -24,16 +24,16 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
         `${name} 빌드`,
         `${name} 승률`,
         `${name} 통계`,
-        "루미아 스탯",
+        "이리와지지", "ERGG",
         "이터널리턴 캐릭터 분석",
       ],
       openGraph: {
-        title: `${title} | 루미아 스탯 LumiaStats`,
+        title: `${title} | 이리와지지 ER&GG`,
         description,
         url: `/character-analysis?character=${code}`,
       },
       twitter: {
-        title: `${title} | LumiaStats`,
+        title: `${title} | ER&GG`,
         description,
       },
       alternates: { canonical: `/character-analysis?character=${code}` },
@@ -43,14 +43,14 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   return {
     title: "캐릭터 분석",
     description: "이터널리턴 캐릭터별 승률, 픽률, 평균 RP, 최적 빌드 통계. 패치별 트렌드와 무기 조합을 분석해드립니다.",
-    keywords: ["루미아 스탯", "이터널리턴 캐릭터 분석", "이터널리턴 캐릭터 빌드", "이터널리턴 캐릭터 통계", "이터널리턴 무기 추천"],
+    keywords: ["이리와지지", "ERGG", "이터널리턴 캐릭터 분석", "이터널리턴 캐릭터 빌드", "이터널리턴 캐릭터 통계", "이터널리턴 무기 추천"],
     openGraph: {
-      title: "캐릭터 분석 | 루미아 스탯 LumiaStats",
+      title: "캐릭터 분석 | 이리와지지 ER&GG",
       description: "이터널리턴 캐릭터별 승률, 픽률, 평균 RP, 최적 빌드 통계.",
       url: "/character-analysis",
     },
     twitter: {
-      title: "캐릭터 분석 | LumiaStats",
+      title: "캐릭터 분석 | ER&GG",
       description: "이터널리턴 캐릭터별 승률, 픽률, 평균 RP, 최적 빌드 통계.",
     },
     alternates: { canonical: "/character-analysis" },

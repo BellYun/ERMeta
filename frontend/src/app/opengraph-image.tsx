@@ -32,10 +32,10 @@ export default function OGImage() {
             {/* 브랜드 */}
             <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
               <div style={{ background: "#6366f1", borderRadius: "12px", width: "56px", height: "56px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "32px", fontWeight: 800, color: "white" }}>
-                L
+                E
               </div>
               <span style={{ fontSize: "40px", fontWeight: 800, color: "#e2e8f0", letterSpacing: "-1px" }}>
-                LumiaStats
+                ER&GG
               </span>
             </div>
 
