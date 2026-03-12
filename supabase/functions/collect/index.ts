@@ -4,7 +4,10 @@
  * pg_cron으로 3분마다 호출.
  * 듀얼 워커: forward (신규 게임 → old + v2_) / backfill (과거 → v2_ only)
  *
- * v2: 게임당 1회 process_game_batch RPC 호출 (CPU time 최적화)
+ * v2.1: DISK IO 최적화
+ *   - process_game_batch → process_game_v2 + process_game_old 분리
+ *   - 단일 거대 트랜잭션 → 2개 소형 트랜잭션 (peak IO 반감)
+ *   - SAVEPOINT 제거 (BEGIN...EXCEPTION → 사전 검증)
  */
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
@@ -307,25 +310,40 @@ async function processGame(
     });
   }
 
-  // ── 단일 RPC 호출 ──
-  const { data: batchResult, error } = await supabase.rpc("process_game_batch", {
-    p_data: {
-      patch_version: patchVersion,
-      is_forward: isForward,
-      started_at: startDate.toISOString(),
-      participants: pData,
-      trios,
-    },
+  // ── v2_ 테이블 RPC (메인 트랜잭션) ──
+  const rpcPayload = {
+    patch_version: patchVersion,
+    is_forward: isForward,
+    started_at: startDate.toISOString(),
+    participants: pData,
+    trios,
+  };
+
+  const { data: v2Result, error: v2Error } = await supabase.rpc("process_game_v2", {
+    p_data: rpcPayload,
   });
 
-  if (error) {
-    console.error("[Batch] RPC error:", error.message);
+  if (v2Error) {
+    console.error("[v2] RPC error:", v2Error.message);
     return false;
   }
 
-  // 부분 실패 로깅
-  if (batchResult?.fail > 0) {
-    console.warn(`[Batch] partial failure: ok=${batchResult.ok}, fail=${batchResult.fail}, errors=`, batchResult.errors);
+  if (v2Result?.fail > 0) {
+    console.warn(`[v2] partial failure: ok=${v2Result.ok}, fail=${v2Result.fail}, errors=`, v2Result.errors);
+  }
+
+  // ── old 테이블 RPC (별도 트랜잭션, forward only) ──
+  if (isForward) {
+    const { data: oldResult, error: oldError } = await supabase.rpc("process_game_old", {
+      p_data: rpcPayload,
+    });
+
+    if (oldError) {
+      // old 테이블 실패는 경고만 — v2_ 성공이 우선
+      console.warn("[old] RPC error (non-fatal):", oldError.message);
+    } else if (oldResult?.fail > 0) {
+      console.warn(`[old] partial failure: ok=${oldResult.ok}, fail=${oldResult.fail}, errors=`, oldResult.errors);
+    }
   }
 
   return true;
