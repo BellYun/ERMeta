@@ -1,13 +1,13 @@
 /**
  * ER&GG v2.0 수집 Edge Function
  *
- * pg_cron으로 5분마다 호출.
+ * pg_cron으로 3분마다 호출.
  * 듀얼 워커: forward (신규 게임 → old + v2_) / backfill (과거 → v2_ only)
  *
- * 시간 배분 (5분 = 300초):
+ * 시간 배분 (Edge Function 150초 제한):
  *   - 초기화/rank: ~5초
- *   - forward: ~140초 (~140 게임)
- *   - backfill: ~140초 (~140 게임)
+ *   - forward: ~60초 (~60 게임)
+ *   - backfill: ~60초 (~60 게임)
  *   - flush/상태 저장: ~15초
  */
 
@@ -23,10 +23,10 @@ import { getCollectableTiers, TierGroup } from "../_shared/tier-utils.ts";
 // ── 상수 ──────────────────────────────────────────────────
 const SEASON_ID = 37;
 const TEAM_MODE = 3; // 스쿼드
-const FORWARD_BUDGET_MS = 140_000;
-const BACKFILL_BUDGET_MS = 140_000;
+const FORWARD_BUDGET_MS = 60_000;
+const BACKFILL_BUDGET_MS = 60_000;
 const BATCH_LIMIT = 150;
-const STABLE_DELAY_MS = 12 * 60 * 60 * 1000; // 최근 12시간 이내 게임은 중단 → 백필 전환
+const STABLE_DELAY_MS = 1 * 60 * 60 * 1000; // 최근 1시간 이내 게임은 중단 → 백필 전환
 
 // ── 타입 ──────────────────────────────────────────────────
 interface Participant {
@@ -70,8 +70,54 @@ function parseBserDate(value: unknown): Date | null {
   return isNaN(d.getTime()) ? null : d;
 }
 
+/**
+ * equipment 필드를 배열/객체/개별필드에서 슬롯별 아이템코드로 정규화
+ */
+function normalizeEquipmentSlots(raw: any): [number, number, number, number, number] {
+  // 1. equipment 배열/객체
+  const eq = raw.equipment ?? raw.items;
+  if (eq) {
+    const slots = Array.isArray(eq)
+      ? eq
+      : typeof eq === "object"
+        ? [eq["0"], eq["1"], eq["2"], eq["3"], eq["4"]]
+        : [];
+
+    const normalize = (v: unknown): number => {
+      if (v === null || v === undefined) return 0;
+      if (typeof v === "object") {
+        const r = v as Record<string, unknown>;
+        return Number(r.itemCode ?? r.code ?? r.item ?? r.id ?? 0) || 0;
+      }
+      return Number(v) || 0;
+    };
+
+    const result: [number, number, number, number, number] = [
+      normalize(slots[0]),
+      normalize(slots[1]),
+      normalize(slots[2]),
+      normalize(slots[3]),
+      normalize(slots[4]),
+    ];
+
+    if (result.some((v) => v > 0)) return result;
+  }
+
+  // 2. 개별 필드 폴백 (equipment0~4 또는 weapon/chest/head/arm/leg)
+  return [
+    Number(raw.equipment0 ?? raw.weapon ?? raw.bestWeapon ?? 0) || 0,
+    Number(raw.equipment1 ?? raw.chest ?? 0) || 0,
+    Number(raw.equipment2 ?? raw.head ?? 0) || 0,
+    Number(raw.equipment3 ?? raw.arm ?? 0) || 0,
+    Number(raw.equipment4 ?? raw.leg ?? 0) || 0,
+  ];
+}
+
 function extractParticipant(raw: any): Participant | null {
   if (!raw || !raw.characterNum) return null;
+
+  const equip = normalizeEquipmentSlots(raw);
+
   return {
     gameId: raw.gameId,
     teamNumber: raw.teamNumber ?? raw.teamId ?? 0,
@@ -81,11 +127,11 @@ function extractParticipant(raw: any): Participant | null {
     playerKill: raw.playerKill ?? 0,
     playerAssistant: raw.playerAssistant ?? 0,
     characterLevel: raw.characterLevel ?? 0,
-    equipment0: raw.equipment0 ?? 0,
-    equipment1: raw.equipment1 ?? 0,
-    equipment2: raw.equipment2 ?? 0,
-    equipment3: raw.equipment3 ?? 0,
-    equipment4: raw.equipment4 ?? 0,
+    equipment0: equip[0],
+    equipment1: equip[1],
+    equipment2: equip[2],
+    equipment3: equip[3],
+    equipment4: equip[4],
     equipmentGrade: raw.equipmentGrade ?? {},
     craftLegend: raw.craftLegend ?? 0,
     traitFirstCore: raw.traitFirstCore ?? 0,
@@ -289,6 +335,8 @@ async function upsertSkillOrder(
 
   const isWin = p.gameRank === 1;
 
+  const rp = p.mmrAfter - p.mmrBefore;
+
   const { error } = await supabase.rpc("upsert_v2_character_skill_order", {
     p_character_num: p.characterNum,
     p_best_weapon: p.bestWeapon,
@@ -298,6 +346,7 @@ async function upsertSkillOrder(
     p_patch_version: patchVersion,
     p_games: 1,
     p_wins: isWin ? 1 : 0,
+    p_rp: rp,
   });
   if (error) console.error("[Skill] upsert error:", error.message);
 }
@@ -315,6 +364,8 @@ async function upsertStartRoute(
 
   const isWin = p.gameRank === 1;
 
+  const rp = p.mmrAfter - p.mmrBefore;
+
   const { error } = await supabase.rpc("upsert_v2_character_start_route", {
     p_character_num: p.characterNum,
     p_best_weapon: p.bestWeapon,
@@ -325,6 +376,7 @@ async function upsertStartRoute(
     p_games: 1,
     p_wins: isWin ? 1 : 0,
     p_rank: p.gameRank,
+    p_rp: rp,
   });
   if (error) console.error("[Route] upsert error:", error.message);
 }
@@ -361,6 +413,8 @@ async function upsertItemPriority(
 
   const routeId = p.routeIdOfStart || null;
 
+  const rp = p.mmrAfter - p.mmrBefore;
+
   for (const { slot, itemCode } of legendarySlots) {
     // 전체 통합 (route_id = NULL)
     const { error: e1 } = await supabase.rpc("upsert_v2_character_item_priority", {
@@ -372,6 +426,8 @@ async function upsertItemPriority(
       p_item_code: itemCode,
       p_tier: tier,
       p_patch_version: patchVersion,
+      p_games: 1,
+      p_rp: rp,
     });
     if (e1) console.error("[ItemPri] upsert error (all):", e1.message);
 
@@ -386,6 +442,8 @@ async function upsertItemPriority(
         p_item_code: itemCode,
         p_tier: tier,
         p_patch_version: patchVersion,
+        p_games: 1,
+        p_rp: rp,
       });
       if (e2) console.error("[ItemPri] upsert error (route):", e2.message);
     }
@@ -436,6 +494,7 @@ async function upsertTraitBuild(
   if (!p.traitFirstCore) return;
 
   const isWin = p.gameRank === 1;
+  const rp = p.mmrAfter - p.mmrBefore;
 
   const sub = p.traitFirstSub;
   const sec = p.traitSecondSub;
@@ -456,6 +515,7 @@ async function upsertTraitBuild(
     p_patch_version: patchVersion,
     p_games: 1,
     p_wins: isWin ? 1 : 0,
+    p_rp: rp,
   });
   if (error) console.error("[Trait] upsert error:", error.message);
 }
@@ -595,6 +655,8 @@ async function upsertOldEquipmentBuild(
   patchVersion: string
 ) {
   if (!p.traitFirstCore) return;
+  // 장비가 하나라도 없으면 스킵 (old 테이블은 NOT NULL)
+  if (!p.equipment0 || !p.equipment1 || !p.equipment2 || !p.equipment3 || !p.equipment4) return;
 
   const isWin = p.gameRank === 1;
   const isTop3 = p.gameRank <= 3;
@@ -603,11 +665,11 @@ async function upsertOldEquipmentBuild(
   const { error } = await supabase.rpc("upsert_old_character_equipment_build", {
     p_character_num: p.characterNum,
     p_main_core: p.traitFirstCore,
-    p_weapon: p.equipment0 || null,
-    p_chest: p.equipment1 || null,
-    p_head: p.equipment2 || null,
-    p_arm: p.equipment3 || null,
-    p_leg: p.equipment4 || null,
+    p_weapon: p.equipment0,
+    p_chest: p.equipment1,
+    p_head: p.equipment2,
+    p_arm: p.equipment3,
+    p_leg: p.equipment4,
     p_tier: tier,
     p_patch_version: patchVersion,
     p_games: 1,

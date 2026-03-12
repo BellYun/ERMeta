@@ -7,19 +7,30 @@ BEGIN;
 
 -- 1. 컬럼 추가
 ALTER TABLE "v2_CharacterTrio"
-  ADD COLUMN IF NOT EXISTS "mainCore1" INTEGER,
-  ADD COLUMN IF NOT EXISTS "mainCore2" INTEGER,
-  ADD COLUMN IF NOT EXISTS "mainCore3" INTEGER;
+  ADD COLUMN IF NOT EXISTS "mainCore1" INTEGER DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS "mainCore2" INTEGER DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS "mainCore3" INTEGER DEFAULT 0;
 
--- 2. 기존 UNIQUE 제약 제거 후 mainCore 포함 재생성
-ALTER TABLE "v2_CharacterTrio"
-  DROP CONSTRAINT IF EXISTS "v2_CharacterTrio_character1_character2_character3_tier_patc_key";
+-- 2. 기존 UNIQUE 제약 찾아서 제거 (이름 모를 수 있으니 전부 시도)
+DO $$
+DECLARE
+  r RECORD;
+BEGIN
+  FOR r IN
+    SELECT conname FROM pg_constraint
+    WHERE conrelid = '"v2_CharacterTrio"'::regclass
+      AND contype = 'u'
+  LOOP
+    EXECUTE format('ALTER TABLE "v2_CharacterTrio" DROP CONSTRAINT %I', r.conname);
+  END LOOP;
+END $$;
 
+-- 3. mainCore 포함 새 UNIQUE 제약 생성
 ALTER TABLE "v2_CharacterTrio"
   ADD CONSTRAINT "v2_CharacterTrio_unique"
   UNIQUE ("character1", "character2", "character3", "mainCore1", "mainCore2", "mainCore3", "tier", "patchVersion");
 
--- 3. RPC 함수 업데이트
+-- 4. RPC 함수 업데이트
 CREATE OR REPLACE FUNCTION upsert_v2_character_trio(
   p_char1 INTEGER,
   p_char2 INTEGER,

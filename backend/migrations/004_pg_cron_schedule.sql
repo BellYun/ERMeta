@@ -8,11 +8,11 @@
 -- ============================================================
 
 -- ────────────────────────────────────────────────────────────
--- 1. collect Edge Function 5분마다 호출
+-- 1. collect Edge Function 3분마다 호출
 -- ────────────────────────────────────────────────────────────
 SELECT cron.schedule(
-  'invoke-collect-every-5min',
-  '*/5 * * * *',
+  'invoke-collect-every-3min',
+  '*/3 * * * *',
   $$
   SELECT net.http_post(
     url := 'https://<PROJECT_REF>.supabase.co/functions/v1/collect',
@@ -42,6 +42,6 @@ SELECT cron.schedule(
 
 -- ============================================================
 -- 삭제 명령어 (필요시):
--- SELECT cron.unschedule('invoke-collect-every-5min');
+-- SELECT cron.unschedule('invoke-collect-every-3min');
 -- SELECT cron.unschedule('cleanup-v2-player-records');
 -- ============================================================
