@@ -125,6 +125,9 @@ export async function GET(
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error"
     console.error("[character/stats] 예외:", message)
-    return NextResponse.json({ error: message }, { status: 500, headers: NO_CACHE_HEADERS })
+    return NextResponse.json(
+      { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
+      { status: 500, headers: NO_CACHE_HEADERS }
+    )
   }
 }
