@@ -3,7 +3,8 @@
 import * as React from "react"
 import Image from "next/image"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
-import { X, Users, Loader2, Search, ChevronDown, ChevronUp, Info, Share2, Check } from "lucide-react"
+import { X, Users, Loader2, Search, ChevronDown, ChevronUp, Info, Share2, Check, ImageDown, Download } from "lucide-react"
+import html2canvas from "html2canvas"
 import { cn } from "@/lib/utils"
 import { ResultErrorBoundary } from "@/components/features/ResultErrorBoundary"
 import { useL10n } from "@/components/L10nProvider"
@@ -406,6 +407,8 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
   const [focusSearch, setFocusSearch] = React.useState("")
   const [copied, setCopied] = React.useState(false)
   const [showShareModal, setShowShareModal] = React.useState(false)
+  const [generatingImage, setGeneratingImage] = React.useState(false)
+  const shareCardRef = React.useRef<HTMLDivElement>(null)
 
   // 아군 선택 변경 시 URL 쿼리 파라미터 동기화
   React.useEffect(() => {
@@ -827,15 +830,16 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
                   }
                   setShowShareModal(true)
                 }}
-                className="inline-flex items-center gap-1 text-xs text-[var(--color-muted-foreground)] hover:text-[var(--color-primary)] transition-colors shrink-0"
+                className="inline-flex items-center gap-1 shrink-0 rounded-md border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 hover:border-[var(--color-primary)]/50 transition-colors"
               >
                 <Share2 className="h-3 w-3" />
                 공유
               </button>
               <button
                 onClick={() => setSelectedAllies([])}
-                className="text-xs text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors shrink-0"
+                className="inline-flex items-center gap-1 shrink-0 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 py-1 text-xs font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:border-[var(--color-border-light)] transition-colors"
               >
+                <X className="h-3 w-3" />
                 초기화
               </button>
             </>
@@ -906,7 +910,141 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
         )}
       </ResultErrorBoundary>
 
-      {/* 공유 모달 (데스크탑 폴백) */}
+      {/* 이미지 캡처용 히든 카드 */}
+      <div style={{ position: "fixed", top: 0, left: 0, opacity: 0, pointerEvents: "none", zIndex: -1 }} aria-hidden="true">
+        <div
+          ref={shareCardRef}
+          style={{
+            width: 420,
+            minHeight: 100,
+            padding: 24,
+            background: "linear-gradient(145deg, #0a0e1a 0%, #111827 50%, #1a2236 100%)",
+            fontFamily: "system-ui, -apple-system, sans-serif",
+            lineHeight: 1.4,
+          }}
+        >
+          {/* 헤더 */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+            <div>
+              <div style={{ color: "#38bdf8", fontSize: 20, fontWeight: 800, letterSpacing: "-0.02em" }}>ER&GG</div>
+              <div style={{ color: "#8a9bb8", fontSize: 11, marginTop: 3 }}>이리와지지 · 조합 추천</div>
+            </div>
+            <div style={{ color: "#8a9bb8", fontSize: 10 }}>erwagg.com</div>
+          </div>
+
+          {/* 조합 타이틀 */}
+          <div style={{
+            background: "rgba(56,189,248,0.08)",
+            border: "1px solid rgba(56,189,248,0.2)",
+            borderRadius: 10,
+            padding: "12px 16px",
+            marginBottom: 16,
+          }}>
+            <div style={{ color: "#e8edf5", fontSize: 14, fontWeight: 700 }}>
+              {selectedAllies.length === 2
+                ? `${getCharName(selectedAllies[0])} + ${getCharName(selectedAllies[1])} 추천 조합 TOP 5`
+                : selectedAllies.length === 1
+                ? `${getCharName(selectedAllies[0])} 포함 추천 조합 TOP 5`
+                : "추천 조합 TOP 5"}
+            </div>
+          </div>
+
+          {/* TOP 5 결과 */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            {recommendations.slice(0, 5).map((rec, i) => {
+              const allC = [rec.character1, rec.character2, rec.character3]
+              const a: number[] = []
+              const r: number[] = []
+              for (const c of allC) {
+                if (selectedAllies.includes(c) && a.length < selectedAllies.length) a.push(c)
+                else r.push(c)
+              }
+              a.sort((x, y) => selectedAllies.indexOf(x) - selectedAllies.indexOf(y))
+              const ordered = [...a, ...r]
+              return (
+                <div
+                  key={`share-${rec.character1}-${rec.character2}-${rec.character3}`}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    background: i === 0 ? "rgba(251,191,36,0.06)" : "rgba(255,255,255,0.03)",
+                    border: i === 0 ? "1px solid rgba(251,191,36,0.15)" : "1px solid #243044",
+                    borderRadius: 10,
+                  }}
+                >
+                  <span style={{
+                    width: 22, textAlign: "center", fontSize: 14, fontWeight: 800,
+                    color: i === 0 ? "#fbbf24" : i < 3 ? "#e8edf5" : "#8a9bb8",
+                    marginLeft: 10,
+                  }}>
+                    {i + 1}
+                  </span>
+                  <div style={{ display: "flex", alignItems: "center", margin: "6px 0 6px 8px" }}>
+                    {ordered.map((code, ci) => {
+                      const isRec = !selectedAllies.includes(code)
+                      return (
+                        <React.Fragment key={code}>
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 3px" }}>
+                            <div style={{
+                              width: 28, height: 28, minWidth: 28, minHeight: 28,
+                              borderRadius: 6, overflow: "hidden",
+                              border: isRec ? "2px solid #fbbf24" : "1px solid #243044",
+                            }}>
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={getCharacterImageUrl(code)}
+                                alt={getCharName(code)}
+                                width={28}
+                                height={28}
+                                style={{ objectFit: "cover", display: "block", width: 28, height: 28 }}
+                              />
+                            </div>
+                            <span style={{
+                              fontSize: 7, lineHeight: "9px", color: isRec ? "#fbbf24" : "#8a9bb8",
+                              textAlign: "center", whiteSpace: "nowrap",
+                              marginTop: 1,
+                            }}>
+                              {getCharName(code)}
+                            </span>
+                          </div>
+                          {ci < 2 && <span style={{ fontSize: 11, color: "#243044", fontWeight: 700, margin: "0 1px" }}>+</span>}
+                        </React.Fragment>
+                      )
+                    })}
+                  </div>
+                  <div style={{ marginLeft: "auto", marginRight: 10, display: "flex", gap: 16, textAlign: "right" }}>
+                    <div>
+                      <div style={{ fontSize: 10, color: "#8a9bb8" }}>승률</div>
+                      <div style={{
+                        fontSize: 13, fontWeight: 700,
+                        color: rec.winRate >= 60 ? "#fbbf24" : rec.winRate >= 55 ? "#e8edf5" : "#8a9bb8",
+                      }}>
+                        {rec.winRate.toFixed(1)}%
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 10, color: "#8a9bb8" }}>평균 RP</div>
+                      <div style={{
+                        fontSize: 13, fontWeight: 700,
+                        color: rec.averageRP > 0 ? "#fbbf24" : rec.averageRP < 0 ? "#f87171" : "#8a9bb8",
+                      }}>
+                        {rec.averageRP > 0 ? "+" : ""}{rec.averageRP.toFixed(1)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* 푸터 */}
+          <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid #243044", textAlign: "center", color: "#8a9bb8", fontSize: 11 }}>
+            erwagg.com · 이터널리턴 통계 분석
+          </div>
+        </div>
+      </div>
+
+      {/* 공유 모달 */}
       {showShareModal && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
@@ -926,7 +1064,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
               </button>
             </div>
 
-            <p className="mb-3 text-xs text-[var(--color-muted-foreground)]">
+            <p className="mb-4 text-xs text-[var(--color-muted-foreground)]">
               {selectedAllies.length === 2
                 ? `${getCharName(selectedAllies[0])} + ${getCharName(selectedAllies[1])} 조합`
                 : selectedAllies.length === 1
@@ -934,6 +1072,66 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
                 : "조합 추천"}
             </p>
 
+            {/* 이미지로 공유 */}
+            <button
+              disabled={generatingImage || recommendations.length === 0}
+              onClick={async () => {
+                if (!shareCardRef.current) return
+                setGeneratingImage(true)
+                try {
+                  const canvas = await html2canvas(shareCardRef.current, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: null,
+                  })
+                  const blob = await new Promise<Blob | null>((resolve) =>
+                    canvas.toBlob(resolve, "image/png")
+                  )
+                  if (!blob) return
+
+                  const allyLabel = selectedAllies.length === 2
+                    ? `${getCharName(selectedAllies[0])}_${getCharName(selectedAllies[1])}`
+                    : getCharName(selectedAllies[0])
+                  const fileName = `ERGG_${allyLabel}_조합.png`
+
+                  if (typeof navigator.share === "function") {
+                    const file = new File([blob], fileName, { type: "image/png" })
+                    try {
+                      await navigator.share({
+                        title: `${allyLabel} 추천 조합 TOP 5`,
+                        text: "이리와지지 ER&GG 조합 추천",
+                        files: [file],
+                      })
+                      setShowShareModal(false)
+                      return
+                    } catch { /* 사용자 취소 → 다운로드 폴백 */ }
+                  }
+                  // 데스크탑 폴백: 다운로드
+                  const url = URL.createObjectURL(blob)
+                  const a = document.createElement("a")
+                  a.href = url
+                  a.download = fileName
+                  a.click()
+                  URL.revokeObjectURL(url)
+                } finally {
+                  setGeneratingImage(false)
+                }
+              }}
+              className={cn(
+                "w-full flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-colors mb-3",
+                recommendations.length === 0
+                  ? "bg-[var(--color-surface-2)] text-[var(--color-muted-foreground)] cursor-not-allowed"
+                  : "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)]/80"
+              )}
+            >
+              {generatingImage ? (
+                <><Loader2 className="h-4 w-4 animate-spin" />이미지 생성 중...</>
+              ) : (
+                <><ImageDown className="h-4 w-4" />이미지로 공유 (TOP 5)</>
+              )}
+            </button>
+
+            {/* URL 복사 */}
             <div className="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] p-2">
               <input
                 readOnly
