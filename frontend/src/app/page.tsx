@@ -2,7 +2,6 @@ import type { Metadata } from "next"
 import { Suspense } from "react";
 import { GlobalFilter } from "@/components/features/GlobalFilter";
 import { TierRankingTable } from "@/components/features/TierRankingTable";
-import { TopTriosPreview } from "@/components/features/TopTriosPreview";
 import { HoneyPicksSection } from "@/components/features/HoneyPicksSection";
 
 export const metadata: Metadata = {
@@ -35,29 +34,18 @@ export default async function Home({
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Top Sections */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <section className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <div className="h-4 w-1 rounded-full bg-[var(--color-primary)]" />
-            <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
-              RP 상위 3인 조합 Top 5
-            </h2>
-          </div>
-          <TopTriosPreview />
-        </section>
-        <section className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <div className="h-4 w-1 rounded-full bg-[var(--color-accent-gold)]" />
-            <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
-              이번 패치 떡상 TOP 5
-            </h2>
-          </div>
-          <Suspense>
-            <HoneyPicksSection />
-          </Suspense>
-        </section>
-      </div>
+      {/* 이번 패치 떡상 TOP 5 */}
+      <section className="flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <div className="h-4 w-1 rounded-full bg-[var(--color-accent-gold)]" />
+          <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
+            이번 패치 떡상 TOP 5
+          </h2>
+        </div>
+        <Suspense>
+          <HoneyPicksSection />
+        </Suspense>
+      </section>
 
       {/* Filter + Table */}
       <Suspense>
