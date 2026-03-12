@@ -50,7 +50,7 @@ export default async function Home({
           <div className="flex items-center gap-2">
             <div className="h-4 w-1 rounded-full bg-[var(--color-accent-gold)]" />
             <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
-              이번 패치 꿀챔 Top 5
+              이번 패치 떡상 TOP 5
             </h2>
           </div>
           <Suspense>

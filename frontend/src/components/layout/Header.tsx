@@ -14,9 +14,14 @@ export function Header() {
             <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-purple)] flex items-center justify-center text-[11px] font-black text-white shadow-[0_0_12px_var(--color-primary-glow)]">
               ER
             </div>
-            <span className="text-lg font-bold bg-gradient-to-r from-[var(--color-foreground)] to-[var(--color-muted-foreground)] bg-clip-text text-transparent group-hover:from-[var(--color-primary)] group-hover:to-[var(--color-foreground)] transition-all duration-300">
-              ER&GG
-            </span>
+            <div className="flex flex-col leading-tight">
+              <span className="text-lg font-bold bg-gradient-to-r from-[var(--color-foreground)] to-[var(--color-muted-foreground)] bg-clip-text text-transparent group-hover:from-[var(--color-primary)] group-hover:to-[var(--color-foreground)] transition-all duration-300">
+                ER&GG
+              </span>
+              <span className="text-[9px] font-medium text-[var(--color-muted-foreground)] -mt-0.5">
+                이리와지지
+              </span>
+            </div>
           </div>
         </Link>
 
