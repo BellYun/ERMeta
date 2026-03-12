@@ -3,13 +3,14 @@
 import * as React from "react"
 import Image from "next/image"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Select, SelectItem } from "@/components/ui/select"
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TierBadge } from "./TierBadge"
 import { cn } from "@/lib/utils"
 import { analytics } from "@/lib/analytics"
-import { resolveCharacterName, buildFallbackMap, getCharacterImageUrl } from "@/lib/characterMap"
+import { resolveCharacterName, buildFallbackMap, getCharacterImageUrl, getComboRoles } from "@/lib/characterMap"
+import type { CharacterRole } from "@/lib/characterMap"
 import { resolveWeaponName } from "@/lib/weaponMap"
 import { useL10n } from "@/components/L10nProvider"
 import { getCharacterPatchNote } from "@/data/patch-notes"
@@ -28,6 +29,7 @@ interface PrevStats {
 interface DisplayRow {
   rank: number
   code: number
+  roles: CharacterRole[]
   weaponCode: number
   name: string
   weaponName: string
@@ -137,11 +139,11 @@ function PatchNoteTooltip({ patchNote }: { patchNote: CharacterPatchNote }) {
   )
 }
 
-const tierTabs = ["전체", "S", "A", "B", "C", "D"] as const
+const roleTabs = ["전체", "탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"] as const
 
 export function TierRankingTable() {
   const searchParams = useSearchParams()
-  const [activeTier, setActiveTier] = React.useState<string>("전체")
+  const [activeRole, setActiveRole] = React.useState<string>("전체")
   const [rows, setRows] = React.useState<DisplayRow[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [hoveredKey, setHoveredKey] = React.useState<string | null>(null)
@@ -197,6 +199,7 @@ export function TierRankingTable() {
           return {
             rank: i + 1,
             code: r.characterNum,
+            roles: getComboRoles(r.characterNum, r.bestWeapon),
             weaponCode: r.bestWeapon,
             name,
             weaponName,
@@ -216,26 +219,27 @@ export function TierRankingTable() {
   }, [patch, tier, l10n])
 
   const filtered =
-    activeTier === "전체"
+    activeRole === "전체"
       ? rows
-      : rows.filter((c) => c.tier === activeTier)
+      : rows.filter((c) => c.roles.includes(activeRole as CharacterRole))
 
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm overflow-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 sm:p-4 border-b border-[var(--color-border)]">
         <div className="flex items-center gap-2">
           <div className="h-4 w-1 rounded-full bg-[var(--color-primary)]" />
-          <h2 className="text-sm font-semibold text-[var(--color-foreground)]">티어 순위</h2>
+          <h2 className="text-sm font-semibold text-[var(--color-foreground)]">캐릭터 순위</h2>
         </div>
-        <Tabs value={activeTier} onValueChange={(v) => { setActiveTier(v); analytics.rankingTierTabChanged(v) }}>
-          <TabsList>
-            {tierTabs.map((t) => (
-              <TabsTrigger key={t} value={t}>
-                {t}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+        <Select
+          value={activeRole}
+          onChange={(e) => { setActiveRole(e.target.value); analytics.rankingTierTabChanged(e.target.value) }}
+        >
+          {roleTabs.map((t) => (
+            <SelectItem key={t} value={t}>
+              {t}
+            </SelectItem>
+          ))}
+        </Select>
       </div>
 
       <div className="overflow-x-auto">
