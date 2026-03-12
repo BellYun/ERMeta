@@ -3,7 +3,7 @@
 import * as React from "react"
 import Image from "next/image"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
-import { X, Users, Loader2, Search, ChevronDown, ChevronUp, Info } from "lucide-react"
+import { X, Users, Loader2, Search, ChevronDown, ChevronUp, Info, Share2, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ResultErrorBoundary } from "@/components/features/ResultErrorBoundary"
 import { useL10n } from "@/components/L10nProvider"
@@ -404,6 +404,8 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
   const [sortBy, setSortBy] = React.useState<SortBy>("recommended")
   const [allySearch, setAllySearch] = React.useState("")
   const [focusSearch, setFocusSearch] = React.useState("")
+  const [copied, setCopied] = React.useState(false)
+  const [showShareModal, setShowShareModal] = React.useState(false)
 
   // 아군 선택 변경 시 URL 쿼리 파라미터 동기화
   React.useEffect(() => {
@@ -812,6 +814,25 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
                   : ""}
               </h2>
               <button
+                onClick={async () => {
+                  const url = window.location.href
+                  const title = selectedAllies.length === 2
+                    ? `${getCharName(selectedAllies[0])} + ${getCharName(selectedAllies[1])} 조합 추천`
+                    : `${getCharName(selectedAllies[0])} 포함 추천 조합`
+                  if (typeof navigator.share === "function") {
+                    try {
+                      await navigator.share({ title, text: `${title} - 이리와지지 ER&GG`, url })
+                      return
+                    } catch { /* 사용자 취소 or 미지원 → 모달 폴백 */ }
+                  }
+                  setShowShareModal(true)
+                }}
+                className="inline-flex items-center gap-1 text-xs text-[var(--color-muted-foreground)] hover:text-[var(--color-primary)] transition-colors shrink-0"
+              >
+                <Share2 className="h-3 w-3" />
+                공유
+              </button>
+              <button
                 onClick={() => setSelectedAllies([])}
                 className="text-xs text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors shrink-0"
               >
@@ -884,6 +905,65 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
           </div>
         )}
       </ResultErrorBoundary>
+
+      {/* 공유 모달 (데스크탑 폴백) */}
+      {showShareModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => { setShowShareModal(false); setCopied(false) }}
+        >
+          <div
+            className="mx-4 w-full max-w-sm rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-[var(--color-foreground)]">조합 공유</h3>
+              <button
+                onClick={() => { setShowShareModal(false); setCopied(false) }}
+                className="rounded-md p-1 text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)] transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <p className="mb-3 text-xs text-[var(--color-muted-foreground)]">
+              {selectedAllies.length === 2
+                ? `${getCharName(selectedAllies[0])} + ${getCharName(selectedAllies[1])} 조합`
+                : selectedAllies.length === 1
+                ? `${getCharName(selectedAllies[0])} 포함 추천 조합`
+                : "조합 추천"}
+            </p>
+
+            <div className="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] p-2">
+              <input
+                readOnly
+                value={typeof window !== "undefined" ? window.location.href : ""}
+                className="flex-1 bg-transparent text-xs text-[var(--color-foreground)] outline-none truncate"
+                onFocus={(e) => e.target.select()}
+              />
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href)
+                  setCopied(true)
+                  setTimeout(() => setCopied(false), 2000)
+                }}
+                className={cn(
+                  "shrink-0 rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+                  copied
+                    ? "bg-green-500/20 text-green-400"
+                    : "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)]/80"
+                )}
+              >
+                {copied ? (
+                  <span className="inline-flex items-center gap-1"><Check className="h-3 w-3" />복사됨</span>
+                ) : (
+                  "URL 복사"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
