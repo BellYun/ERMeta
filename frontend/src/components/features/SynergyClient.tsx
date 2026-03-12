@@ -388,18 +388,26 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
 
       setError(null)
 
-      fetch(`/api/stats/trios?${params.toString()}`, { signal: controller.signal })
+      // 10초 타임아웃 + AbortController 병합
+      const timeout = AbortSignal.timeout(10_000)
+      const signal = AbortSignal.any([controller.signal, timeout])
+
+      fetch(`/api/stats/trios?${params.toString()}`, { signal })
         .then(async (res) => {
           const data = await res.json()
           if (!res.ok) throw new Error(data.error ?? "API 오류")
           setTrioResults(data.results ?? [])
         })
         .catch((err) => {
-          if (err instanceof DOMException && err.name === "AbortError") return
+          if (err instanceof Error && err.name === "AbortError") return
+          if (err instanceof Error && err.name === "TimeoutError") {
+            setError("요청 시간이 초과되었습니다. 다시 시도해주세요.")
+            return
+          }
           setError(err instanceof Error ? err.message : "오류가 발생했습니다.")
         })
         .finally(() => {
-          if (!controller.signal.aborted) setLoading(false)
+          setLoading(false)
         })
     }, 300)
 
