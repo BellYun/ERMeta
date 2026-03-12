@@ -20,11 +20,16 @@ interface SteamStatePayload {
 }
 
 function getDesktopAuthSecret(): string {
-  return (
-    process.env.STEAM_AUTH_TOKEN_SECRET ??
-    process.env.CRON_SECRET ??
-    "development-only-secret-change-me"
-  );
+  const secret =
+    process.env.STEAM_AUTH_TOKEN_SECRET ?? process.env.CRON_SECRET;
+
+  if (!secret) {
+    throw new Error(
+      "STEAM_AUTH_TOKEN_SECRET 또는 CRON_SECRET 환경 변수가 설정되어야 합니다."
+    );
+  }
+
+  return secret;
 }
 
 function toBase64Url(value: string): string {
