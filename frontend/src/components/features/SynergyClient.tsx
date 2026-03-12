@@ -4,6 +4,7 @@ import * as React from "react"
 import Image from "next/image"
 import { X, Users, Loader2, Search, ChevronDown, ChevronUp, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { ResultErrorBoundary } from "@/components/features/ResultErrorBoundary"
 import { useL10n } from "@/components/L10nProvider"
 import {
   buildFallbackMap,
@@ -339,6 +340,19 @@ function ComboCard({
         </div>
       )}
     </div>
+  )
+}
+
+function ErrorTrigger() {
+  const [shouldThrow, setShouldThrow] = React.useState(false)
+  if (shouldThrow) throw new Error("테스트용 에러: 에러 바운더리 확인")
+  return (
+    <button
+      onClick={() => setShouldThrow(true)}
+      className="mb-2 rounded-lg border border-[var(--color-danger)] px-3 py-1.5 text-xs text-[var(--color-danger)] hover:bg-[var(--color-danger)]/10 transition-colors"
+    >
+      [DEV] 에러 바운더리 테스트
+    </button>
   )
 }
 
@@ -761,64 +775,67 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
       </div>
 
       {/* 결과 목록 */}
-      {selectedAllies.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
-          <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
-          <p className="text-sm text-[var(--color-muted-foreground)]">
-            아군의 픽에 맞춰 최선의 조합을 찾아보세요
-          </p>
-          <div className="flex flex-col gap-1 mt-3 text-xs text-[var(--color-muted-foreground)]">
-            <span>1. 내 캐릭터 풀을 설정하세요 (선택사항)</span>
-            <span>2. 아군의 캐릭터를 1~2명 선택하세요</span>
-            <span>3. 내가 할 수 있는 것 중 최선의 조합을 추천합니다</span>
-          </div>
-        </div>
-      ) : loading ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16">
-          <Loader2 className="mb-2 h-8 w-8 animate-spin text-[var(--color-primary)]" />
-          <p className="text-sm text-[var(--color-muted-foreground)]">
-            조합 데이터 로딩 중...
-          </p>
-        </div>
-      ) : error ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16">
-          <p className="text-sm text-[var(--color-danger)]">{error}</p>
-        </div>
-      ) : recommendations.length > 0 ? (
-        <div data-sr-block className="flex flex-col gap-2">
-          {selectedAllies.length === 1 && (
-            <p className="flex items-center gap-1.5 text-[11px] text-[var(--color-muted-foreground)] bg-[var(--color-surface-2)] px-3 py-2 rounded-lg">
-              <Info className="h-3.5 w-3.5 shrink-0" />
-              1명 더 선택하면 더 정확한 추천을 받을 수 있어요
+      <ResultErrorBoundary>
+        <ErrorTrigger />
+        {selectedAllies.length === 0 ? (
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
+            <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
+            <p className="text-sm text-[var(--color-muted-foreground)]">
+              아군의 픽에 맞춰 최선의 조합을 찾아보세요
             </p>
-          )}
-          {recommendations.map((rec, i) => (
-            <ComboCard
-              key={`${rec.character1}-${rec.character2}-${rec.character3}`}
-              rec={rec}
-              rank={i + 1}
-              getCharName={getCharName}
-              selectedAllies={selectedAllies}
-              compact={compact}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
-          <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
-          <p className="text-sm text-[var(--color-muted-foreground)]">
-            {focusCharacters.length > 0
-              ? "내 캐릭터 풀에 해당하는 조합이 없습니다. 캐릭터 풀을 넓혀보세요."
-              : "해당 조합 데이터가 없습니다"}
-          </p>
-          <button
-            onClick={() => setSelectedAllies([])}
-            className="mt-3 text-xs text-[var(--color-primary)] hover:underline"
-          >
-            아군 초기화하기
-          </button>
-        </div>
-      )}
+            <div className="flex flex-col gap-1 mt-3 text-xs text-[var(--color-muted-foreground)]">
+              <span>1. 내 캐릭터 풀을 설정하세요 (선택사항)</span>
+              <span>2. 아군의 캐릭터를 1~2명 선택하세요</span>
+              <span>3. 내가 할 수 있는 것 중 최선의 조합을 추천합니다</span>
+            </div>
+          </div>
+        ) : loading ? (
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16">
+            <Loader2 className="mb-2 h-8 w-8 animate-spin text-[var(--color-primary)]" />
+            <p className="text-sm text-[var(--color-muted-foreground)]">
+              조합 데이터 로딩 중...
+            </p>
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16">
+            <p className="text-sm text-[var(--color-danger)]">{error}</p>
+          </div>
+        ) : recommendations.length > 0 ? (
+          <div data-sr-block className="flex flex-col gap-2">
+            {selectedAllies.length === 1 && (
+              <p className="flex items-center gap-1.5 text-[11px] text-[var(--color-muted-foreground)] bg-[var(--color-surface-2)] px-3 py-2 rounded-lg">
+                <Info className="h-3.5 w-3.5 shrink-0" />
+                1명 더 선택하면 더 정확한 추천을 받을 수 있어요
+              </p>
+            )}
+            {recommendations.map((rec, i) => (
+              <ComboCard
+                key={`${rec.character1}-${rec.character2}-${rec.character3}`}
+                rec={rec}
+                rank={i + 1}
+                getCharName={getCharName}
+                selectedAllies={selectedAllies}
+                compact={compact}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
+            <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
+            <p className="text-sm text-[var(--color-muted-foreground)]">
+              {focusCharacters.length > 0
+                ? "내 캐릭터 풀에 해당하는 조합이 없습니다. 캐릭터 풀을 넓혀보세요."
+                : "해당 조합 데이터가 없습니다"}
+            </p>
+            <button
+              onClick={() => setSelectedAllies([])}
+              className="mt-3 text-xs text-[var(--color-primary)] hover:underline"
+            >
+              아군 초기화하기
+            </button>
+          </div>
+        )}
+      </ResultErrorBoundary>
     </div>
   )
 }
