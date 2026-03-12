@@ -441,7 +441,7 @@ export function CharacterAnalysisClient() {
       {/* 우측 분석 콘텐츠 */}
       <div className="flex flex-1 flex-col gap-4 min-w-0">
         {/* 캐릭터 헤더 */}
-        <div className="flex gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-5 items-start">
+        <div className="flex gap-3 sm:gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-3 sm:p-5 items-start overflow-hidden">
           <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[var(--color-border)]">
             <Image
               src={getCharacterImageUrl(selectedCode)}
@@ -487,60 +487,62 @@ export function CharacterAnalysisClient() {
             {!loading && stats?.weapons && stats.weapons.length > 0 && (() => {
               const _maxPickRate = 100 // 픽률은 전체 대비 %이므로 100 기준
               return (
-              <div className="flex flex-wrap gap-1.5">
-                <button
-                  onClick={() => setSelectedWeapon(null)}
-                  className={cn(
-                    "flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs transition-colors",
-                    selectedWeapon === null
-                      ? "border-[var(--color-primary)] bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
-                      : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/50"
-                  )}
-                >
-                  <span className="font-medium">전체</span>
-                </button>
-                {stats.weapons.map((w) => {
-                  const isSelected = selectedWeapon === w.bestWeapon
-                  const barWidth = w.pickRate // 픽률 자체가 % 값
-                  return (
-                    <button
-                      key={w.bestWeapon ?? "none"}
-                      onClick={() => {
-                        setSelectedWeapon(w.bestWeapon ?? null)
-                        analytics.weaponSelected(selectedCode, w.bestWeapon ?? 0, resolveWeaponName(w.bestWeapon ?? undefined))
-                      }}
-                      className={cn(
-                        "flex flex-col rounded-md border px-2.5 py-1 text-xs transition-colors min-w-[80px]",
-                        isSelected
-                          ? "border-[var(--color-primary)] bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
-                          : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/50"
-                      )}
-                    >
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-medium">{resolveWeaponName(w.bestWeapon ?? undefined)}</span>
-                        <span
-                          className={cn(
-                            "text-[10px]",
-                            isSelected
-                              ? "text-[var(--color-primary)]/80"
-                              : "text-[var(--color-muted-foreground)]"
-                          )}
-                        >
-                          {w.pickRate.toFixed(1)}%
-                        </span>
-                      </div>
-                      <div className="mt-1 h-1 w-full rounded-full bg-[var(--color-border)]">
-                        <div
-                          className={cn(
-                            "h-full rounded-full transition-all",
-                            isSelected ? "bg-[var(--color-primary)]" : "bg-[var(--color-muted-foreground)]"
-                          )}
-                          style={{ width: `${barWidth}%` }}
-                        />
-                      </div>
-                    </button>
-                  )
-                })}
+              <div className="overflow-x-auto -mx-1 px-1 pb-1">
+                <div className="flex gap-1.5 sm:flex-wrap">
+                  <button
+                    onClick={() => setSelectedWeapon(null)}
+                    className={cn(
+                      "flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs transition-colors shrink-0",
+                      selectedWeapon === null
+                        ? "border-[var(--color-primary)] bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
+                        : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/50"
+                    )}
+                  >
+                    <span className="font-medium">전체</span>
+                  </button>
+                  {stats.weapons.map((w) => {
+                    const isSelected = selectedWeapon === w.bestWeapon
+                    const barWidth = w.pickRate
+                    return (
+                      <button
+                        key={w.bestWeapon ?? "none"}
+                        onClick={() => {
+                          setSelectedWeapon(w.bestWeapon ?? null)
+                          analytics.weaponSelected(selectedCode, w.bestWeapon ?? 0, resolveWeaponName(w.bestWeapon ?? undefined))
+                        }}
+                        className={cn(
+                          "flex flex-col rounded-md border px-2.5 py-1 text-xs transition-colors min-w-[80px] shrink-0",
+                          isSelected
+                            ? "border-[var(--color-primary)] bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
+                            : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/50"
+                        )}
+                      >
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-medium">{resolveWeaponName(w.bestWeapon ?? undefined)}</span>
+                          <span
+                            className={cn(
+                              "text-[10px]",
+                              isSelected
+                                ? "text-[var(--color-primary)]/80"
+                                : "text-[var(--color-muted-foreground)]"
+                            )}
+                          >
+                            {w.pickRate.toFixed(1)}%
+                          </span>
+                        </div>
+                        <div className="mt-1 h-1 w-full rounded-full bg-[var(--color-border)]">
+                          <div
+                            className={cn(
+                              "h-full rounded-full transition-all",
+                              isSelected ? "bg-[var(--color-primary)]" : "bg-[var(--color-muted-foreground)]"
+                            )}
+                            style={{ width: `${barWidth}%` }}
+                          />
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
               </div>
               )
             })()}
