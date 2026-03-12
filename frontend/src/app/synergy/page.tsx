@@ -25,6 +25,8 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
     params.set("ally1", String(code1))
     if (code2) params.set("ally2", String(code2))
 
+    const base = process.env.NEXT_PUBLIC_BASE_URL ?? "https://erwagg.com"
+    const ogImageUrl = `${base}/api/og/synergy?${params.toString()}`
     return {
       title,
       description,
@@ -39,10 +41,13 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
         title: `${title} | 이리와지지 ER&GG`,
         description,
         url: `/synergy?${params.toString()}`,
+        images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `${allyNames} 추천 조합` }],
       },
       twitter: {
         title: `${title} | ER&GG`,
         description,
+        card: "summary_large_image",
+        images: [ogImageUrl],
       },
       alternates: { canonical: `/synergy?${params.toString()}` },
     }
@@ -56,10 +61,13 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
       title: "3인 조합 추천 | 이리와지지 ER&GG",
       description: "이터널리턴 최강 3인 조합 추천. 승률·평균 RP 기반 최적 팀 조합.",
       url: "/synergy",
+      images: [{ url: `${process.env.NEXT_PUBLIC_BASE_URL ?? "https://erwagg.com"}/api/og/synergy`, width: 1200, height: 630, alt: "ER&GG 3인 조합 추천" }],
     },
     twitter: {
       title: "3인 조합 추천 | 이리와지지 ER&GG",
       description: "이터널리턴 최강 3인 조합 추천. 승률·평균 RP 기반 최적 팀 조합.",
+      card: "summary_large_image",
+      images: [`${process.env.NEXT_PUBLIC_BASE_URL ?? "https://erwagg.com"}/api/og/synergy`],
     },
     alternates: { canonical: "/synergy" },
   }
