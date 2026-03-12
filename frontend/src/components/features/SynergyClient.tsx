@@ -3,8 +3,7 @@
 import * as React from "react"
 import Image from "next/image"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
-import { X, Users, Loader2, Search, ChevronDown, ChevronUp, Info, Share2, Check, ImageDown, Download } from "lucide-react"
-import html2canvas from "html2canvas"
+import { X, Users, Loader2, Search, ChevronDown, ChevronUp, Info, Share2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ResultErrorBoundary } from "@/components/features/ResultErrorBoundary"
 import { useL10n } from "@/components/L10nProvider"
@@ -406,10 +405,6 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
   const [allySearch, setAllySearch] = React.useState("")
   const [focusSearch, setFocusSearch] = React.useState("")
   const [copied, setCopied] = React.useState(false)
-  const [showShareModal, setShowShareModal] = React.useState(false)
-  const [generatingImage, setGeneratingImage] = React.useState(false)
-  const [pendingImageShare, setPendingImageShare] = React.useState(false)
-  const shareCardRef = React.useRef<HTMLDivElement>(null)
 
   // 아군 선택 변경 시 URL 쿼리 파라미터 동기화
   React.useEffect(() => {
@@ -564,57 +559,6 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
         ]
     return sorted.slice(0, 20)
   }, [trioResults, selectedAllies, focusCharacters, sortBy])
-
-  // 이미지 공유 실행 함수
-  const executeImageShare = React.useCallback(async () => {
-    if (!shareCardRef.current || recommendations.length === 0) return
-    setGeneratingImage(true)
-    try {
-      const canvas = await html2canvas(shareCardRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: null,
-      })
-      const blob = await new Promise<Blob | null>((resolve) =>
-        canvas.toBlob(resolve, "image/png")
-      )
-      if (!blob) return
-
-      const allyLabel = selectedAllies.length === 2
-        ? `${getCharName(selectedAllies[0])}_${getCharName(selectedAllies[1])}`
-        : getCharName(selectedAllies[0])
-      const fileName = `ERGG_${allyLabel}_조합.png`
-
-      if (typeof navigator.share === "function") {
-        const file = new File([blob], fileName, { type: "image/png" })
-        try {
-          await navigator.share({
-            title: `${allyLabel} 추천 조합 TOP 5`,
-            text: "이리와지지 ER&GG 조합 추천",
-            files: [file],
-          })
-          setShowShareModal(false)
-          return
-        } catch { /* 사용자 취소 → 다운로드 폴백 */ }
-      }
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement("a")
-      a.href = url
-      a.download = fileName
-      a.click()
-      URL.revokeObjectURL(url)
-    } finally {
-      setGeneratingImage(false)
-    }
-  }, [recommendations, selectedAllies, getCharName])
-
-  // 데이터 로딩 완료 후 대기 중인 이미지 공유 자동 실행
-  React.useEffect(() => {
-    if (pendingImageShare && !loading && recommendations.length > 0) {
-      setPendingImageShare(false)
-      executeImageShare()
-    }
-  }, [pendingImageShare, loading, recommendations, executeImageShare])
 
   return (
     <div className="flex flex-col gap-4">
@@ -876,17 +820,18 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
                     ? `${getCharName(selectedAllies[0])} + ${getCharName(selectedAllies[1])} 조합 추천`
                     : `${getCharName(selectedAllies[0])} 포함 추천 조합`
                   if (typeof navigator.share === "function") {
-                    navigator.share({ title, text: `${title} - 이리와지지 ER&GG`, url }).catch(() => {
-                      setShowShareModal(true)
-                    })
+                    navigator.share({ title, text: `${title} - 이리와지지 ER&GG`, url }).catch(() => {})
                     return
                   }
-                  setShowShareModal(true)
+                  navigator.clipboard.writeText(url).then(() => {
+                    setCopied(true)
+                    setTimeout(() => setCopied(false), 2000)
+                  })
                 }}
                 className="inline-flex items-center gap-1 shrink-0 rounded-md border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 hover:border-[var(--color-primary)]/50 transition-colors"
               >
                 <Share2 className="h-3 w-3" />
-                공유
+                {copied ? "복사됨!" : "공유"}
               </button>
               <button
                 type="button"
@@ -964,224 +909,6 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
         )}
       </ResultErrorBoundary>
 
-      {/* 이미지 캡처용 히든 카드 */}
-      <div style={{ position: "fixed", top: 0, left: 0, opacity: 0, pointerEvents: "none", zIndex: -1 }} aria-hidden="true">
-        <div
-          ref={shareCardRef}
-          style={{
-            width: 420,
-            minHeight: 100,
-            padding: 24,
-            background: "linear-gradient(145deg, #0a0e1a 0%, #111827 50%, #1a2236 100%)",
-            fontFamily: "system-ui, -apple-system, sans-serif",
-            lineHeight: 1.4,
-          }}
-        >
-          {/* 헤더 */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-            <div>
-              <div style={{ color: "#38bdf8", fontSize: 20, fontWeight: 800, letterSpacing: "-0.02em" }}>ER&GG</div>
-              <div style={{ color: "#8a9bb8", fontSize: 11, marginTop: 3 }}>이리와지지 · 조합 추천</div>
-            </div>
-            <div style={{ color: "#8a9bb8", fontSize: 10 }}>erwagg.com</div>
-          </div>
-
-          {/* 조합 타이틀 */}
-          <div style={{
-            background: "rgba(56,189,248,0.08)",
-            border: "1px solid rgba(56,189,248,0.2)",
-            borderRadius: 10,
-            padding: "12px 16px",
-            marginBottom: 16,
-          }}>
-            <div style={{ color: "#e8edf5", fontSize: 14, fontWeight: 700 }}>
-              {selectedAllies.length === 2
-                ? `${getCharName(selectedAllies[0])} + ${getCharName(selectedAllies[1])} 추천 조합 TOP 5`
-                : selectedAllies.length === 1
-                ? `${getCharName(selectedAllies[0])} 포함 추천 조합 TOP 5`
-                : "추천 조합 TOP 5"}
-            </div>
-          </div>
-
-          {/* TOP 5 결과 */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            {recommendations.slice(0, 5).map((rec, i) => {
-              const allC = [rec.character1, rec.character2, rec.character3]
-              const a: number[] = []
-              const r: number[] = []
-              for (const c of allC) {
-                if (selectedAllies.includes(c) && a.length < selectedAllies.length) a.push(c)
-                else r.push(c)
-              }
-              a.sort((x, y) => selectedAllies.indexOf(x) - selectedAllies.indexOf(y))
-              const ordered = [...a, ...r]
-              return (
-                <div
-                  key={`share-${rec.character1}-${rec.character2}-${rec.character3}`}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    background: i === 0 ? "rgba(251,191,36,0.06)" : "rgba(255,255,255,0.03)",
-                    border: i === 0 ? "1px solid rgba(251,191,36,0.15)" : "1px solid #243044",
-                    borderRadius: 10,
-                  }}
-                >
-                  <span style={{
-                    width: 22, textAlign: "center", fontSize: 14, fontWeight: 800,
-                    color: i === 0 ? "#fbbf24" : i < 3 ? "#e8edf5" : "#8a9bb8",
-                    marginLeft: 10,
-                  }}>
-                    {i + 1}
-                  </span>
-                  <div style={{ display: "flex", alignItems: "center", margin: "6px 0 6px 8px" }}>
-                    {ordered.map((code, ci) => {
-                      const isRec = !selectedAllies.includes(code)
-                      return (
-                        <React.Fragment key={code}>
-                          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 3px" }}>
-                            <div style={{
-                              width: 28, height: 28, minWidth: 28, minHeight: 28,
-                              borderRadius: 6, overflow: "hidden",
-                              border: isRec ? "2px solid #fbbf24" : "1px solid #243044",
-                            }}>
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                src={getCharacterImageUrl(code)}
-                                alt={getCharName(code)}
-                                width={28}
-                                height={28}
-                                style={{ objectFit: "cover", display: "block", width: 28, height: 28 }}
-                              />
-                            </div>
-                            <span style={{
-                              fontSize: 7, lineHeight: "9px", color: isRec ? "#fbbf24" : "#8a9bb8",
-                              textAlign: "center", whiteSpace: "nowrap",
-                              marginTop: 1,
-                            }}>
-                              {getCharName(code)}
-                            </span>
-                          </div>
-                          {ci < 2 && <span style={{ fontSize: 11, color: "#243044", fontWeight: 700, margin: "0 1px" }}>+</span>}
-                        </React.Fragment>
-                      )
-                    })}
-                  </div>
-                  <div style={{ marginLeft: "auto", marginRight: 10, display: "flex", gap: 16, textAlign: "right" }}>
-                    <div>
-                      <div style={{ fontSize: 10, color: "#8a9bb8" }}>승률</div>
-                      <div style={{
-                        fontSize: 13, fontWeight: 700,
-                        color: rec.winRate >= 60 ? "#fbbf24" : rec.winRate >= 55 ? "#e8edf5" : "#8a9bb8",
-                      }}>
-                        {rec.winRate.toFixed(1)}%
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: 10, color: "#8a9bb8" }}>평균 RP</div>
-                      <div style={{
-                        fontSize: 13, fontWeight: 700,
-                        color: rec.averageRP > 0 ? "#fbbf24" : rec.averageRP < 0 ? "#f87171" : "#8a9bb8",
-                      }}>
-                        {rec.averageRP > 0 ? "+" : ""}{rec.averageRP.toFixed(1)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-
-          {/* 푸터 */}
-          <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid #243044", textAlign: "center", color: "#8a9bb8", fontSize: 11 }}>
-            erwagg.com · 이터널리턴 통계 분석
-          </div>
-        </div>
-      </div>
-
-      {/* 공유 모달 */}
-      {showShareModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-          onClick={() => { setShowShareModal(false); setCopied(false) }}
-        >
-          <div
-            className="mx-4 w-full max-w-sm rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-[var(--color-foreground)]">조합 공유</h3>
-              <button
-                onClick={() => { setShowShareModal(false); setCopied(false) }}
-                className="rounded-md p-1 text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)] transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            <p className="mb-4 text-xs text-[var(--color-muted-foreground)]">
-              {selectedAllies.length === 2
-                ? `${getCharName(selectedAllies[0])} + ${getCharName(selectedAllies[1])} 조합`
-                : selectedAllies.length === 1
-                ? `${getCharName(selectedAllies[0])} 포함 추천 조합`
-                : "조합 추천"}
-            </p>
-
-            {/* 이미지로 공유 */}
-            <button
-              disabled={generatingImage || pendingImageShare}
-              onClick={() => {
-                if (loading || recommendations.length === 0) {
-                  // 데이터 로딩 중이면 대기 플래그 세팅 → 로딩 완료 시 자동 실행
-                  setPendingImageShare(true)
-                  return
-                }
-                executeImageShare()
-              }}
-              className={cn(
-                "w-full flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-colors mb-3",
-                "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)]/80"
-              )}
-            >
-              {generatingImage ? (
-                <><Loader2 className="h-4 w-4 animate-spin" />이미지 생성 중...</>
-              ) : pendingImageShare || loading ? (
-                <><Loader2 className="h-4 w-4 animate-spin" />조합 데이터 준비 중...</>
-              ) : (
-                <><ImageDown className="h-4 w-4" />이미지로 공유 (TOP 5)</>
-              )}
-            </button>
-
-            {/* URL 복사 */}
-            <div className="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] p-2">
-              <input
-                readOnly
-                value={typeof window !== "undefined" ? window.location.href : ""}
-                className="flex-1 bg-transparent text-xs text-[var(--color-foreground)] outline-none truncate"
-                onFocus={(e) => e.target.select()}
-              />
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(window.location.href)
-                  setCopied(true)
-                  setTimeout(() => setCopied(false), 2000)
-                }}
-                className={cn(
-                  "shrink-0 rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
-                  copied
-                    ? "bg-green-500/20 text-green-400"
-                    : "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)]/80"
-                )}
-              >
-                {copied ? (
-                  <span className="inline-flex items-center gap-1"><Check className="h-3 w-3" />복사됨</span>
-                ) : (
-                  "URL 복사"
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

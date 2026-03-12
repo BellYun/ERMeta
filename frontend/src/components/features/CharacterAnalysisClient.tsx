@@ -453,27 +453,29 @@ export function CharacterAnalysisClient() {
             />
           </div>
           <div className="flex flex-1 flex-col gap-3 min-w-0">
-            <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-2xl font-bold text-[var(--color-foreground)]">
-                {getCharacterName(selectedCode)}
-              </h1>
-              {charTier && <TierBadge tier={charTier} />}
-              <div className="flex items-center gap-2">
-                {currentPatch && (
-                  <span className="rounded bg-[var(--color-surface-2)] px-2 py-0.5 text-xs text-[var(--color-muted-foreground)] border border-[var(--color-border)]">
-                    {currentPatch}
-                  </span>
-                )}
-                {displayStat && displayStat.totalGames > 0 && (
-                  <span className="rounded bg-[var(--color-surface-2)] px-2 py-0.5 text-xs text-[var(--color-muted-foreground)] border border-[var(--color-border)]">
-                    총 {displayStat.totalGames.toLocaleString()}판
-                  </span>
-                )}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 sm:flex-wrap">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-xl sm:text-2xl font-bold text-[var(--color-foreground)]">
+                  {getCharacterName(selectedCode)}
+                </h1>
+                {charTier && <TierBadge tier={charTier} />}
+                <div className="flex items-center gap-2">
+                  {currentPatch && (
+                    <span className="rounded bg-[var(--color-surface-2)] px-2 py-0.5 text-xs text-[var(--color-muted-foreground)] border border-[var(--color-border)]">
+                      {currentPatch}
+                    </span>
+                  )}
+                  {displayStat && displayStat.totalGames > 0 && (
+                    <span className="rounded bg-[var(--color-surface-2)] px-2 py-0.5 text-xs text-[var(--color-muted-foreground)] border border-[var(--color-border)]">
+                      총 {displayStat.totalGames.toLocaleString()}판
+                    </span>
+                  )}
+                </div>
               </div>
               <select
                 value={selectedTier}
                 onChange={(e) => { setSelectedTier(e.target.value as TierGroup); analytics.analysisTierChanged(e.target.value) }}
-                className="ml-auto rounded bg-[var(--color-surface-2)] px-2 py-1 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] cursor-pointer"
+                className="w-full sm:w-auto sm:ml-auto rounded bg-[var(--color-surface-2)] px-2 py-1 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] cursor-pointer"
               >
                 {METRICS_TIER_GROUPS.map((tg) => (
                   <option key={tg} value={tg}>{TIER_LABELS[tg]}</option>
@@ -585,18 +587,18 @@ export function CharacterAnalysisClient() {
 
         {/* 탭 분석 */}
         <Tabs defaultValue="comparison" onValueChange={(v) => analytics.analysisTabChanged(v)}>
-          <TabsList className="w-full flex-wrap h-auto">
-            <TabsTrigger value="comparison" className="flex-1">
-              <BarChart2 className="mr-1.5 h-3.5 w-3.5" />패치 비교
+          <TabsList className="w-full grid grid-cols-4 h-auto">
+            <TabsTrigger value="comparison" className="text-[11px] sm:text-sm px-1 sm:px-3 py-2">
+              <BarChart2 className="mr-1 sm:mr-1.5 h-3.5 w-3.5 shrink-0" /><span className="truncate">패치 비교</span>
             </TabsTrigger>
-            <TabsTrigger value="patchlog" className="flex-1">
-              <FileText className="mr-1.5 h-3.5 w-3.5" />패치 내역
+            <TabsTrigger value="patchlog" className="text-[11px] sm:text-sm px-1 sm:px-3 py-2">
+              <FileText className="mr-1 sm:mr-1.5 h-3.5 w-3.5 shrink-0" /><span className="truncate">패치 내역</span>
             </TabsTrigger>
-            <TabsTrigger value="equipment" className="flex-1">
-              <Package className="mr-1.5 h-3.5 w-3.5" />아이템 통계
+            <TabsTrigger value="equipment" className="text-[11px] sm:text-sm px-1 sm:px-3 py-2">
+              <Package className="mr-1 sm:mr-1.5 h-3.5 w-3.5 shrink-0" /><span className="truncate">아이템</span>
             </TabsTrigger>
-            <TabsTrigger value="detailed" className="flex-1">
-              <Layers className="mr-1.5 h-3.5 w-3.5" />상세분석
+            <TabsTrigger value="detailed" className="text-[11px] sm:text-sm px-1 sm:px-3 py-2">
+              <Layers className="mr-1 sm:mr-1.5 h-3.5 w-3.5 shrink-0" /><span className="truncate">상세분석</span>
             </TabsTrigger>
           </TabsList>
 

@@ -120,7 +120,7 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
       {/* 테이블 헤더 */}
-      <div className="grid grid-cols-[1fr_5rem_5rem_5rem] border-b border-[var(--color-border)] px-4 py-2 text-xs font-medium text-[var(--color-muted-foreground)]">
+      <div className="grid grid-cols-[1fr_3.5rem_3.5rem_3.5rem] sm:grid-cols-[1fr_5rem_5rem_5rem] border-b border-[var(--color-border)] px-3 sm:px-4 py-2 text-xs font-medium text-[var(--color-muted-foreground)]">
         <span>메인 특성</span>
         <span className="text-right">픽률</span>
         <span className="text-right">승률</span>
@@ -137,7 +137,7 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
           )}
         >
           {/* mainCore 헤더 행 */}
-          <div className="grid grid-cols-[1fr_5rem_5rem_5rem] items-center px-4 py-3 gap-2 bg-[var(--color-surface-2)]/60">
+          <div className="grid grid-cols-[1fr_3.5rem_3.5rem_3.5rem] sm:grid-cols-[1fr_5rem_5rem_5rem] items-center px-3 sm:px-4 py-3 gap-1 sm:gap-2 bg-[var(--color-surface-2)]/60">
             <div className="flex items-center gap-2">
               {gi === 0 && (
                 <span className="text-xs font-bold text-[var(--color-accent-gold)]">#1</span>
@@ -172,7 +172,7 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
 
           {/* sub1 옵션 행 */}
           {group.sub1Options.length > 0 && (
-            <div className="flex items-start gap-3 px-4 py-2.5 border-t border-[var(--color-border)]/40 pl-8">
+            <div className="flex items-start gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 border-t border-[var(--color-border)]/40 pl-4 sm:pl-8">
               <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-10">
                 서브1
               </span>
@@ -190,7 +190,7 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
 
           {/* sub2 옵션 행 */}
           {group.sub2Options.length > 0 && (
-            <div className="flex items-start gap-3 px-4 py-2.5 border-t border-[var(--color-border)]/40 pl-8">
+            <div className="flex items-start gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 border-t border-[var(--color-border)]/40 pl-4 sm:pl-8">
               <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-10">
                 서브2
               </span>
@@ -208,7 +208,7 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
 
           {/* sub3 옵션 행 */}
           {group.sub3Options.length > 0 && (
-            <div className="flex items-start gap-3 px-4 py-2.5 border-t border-[var(--color-border)]/40 pl-8">
+            <div className="flex items-start gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 border-t border-[var(--color-border)]/40 pl-4 sm:pl-8">
               <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-10">
                 서브3
               </span>
@@ -226,7 +226,7 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
 
           {/* sub4 옵션 행 */}
           {group.sub4Options.length > 0 && (
-            <div className="flex items-start gap-3 px-4 py-2.5 border-t border-[var(--color-border)]/40 pl-8">
+            <div className="flex items-start gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 border-t border-[var(--color-border)]/40 pl-4 sm:pl-8">
               <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-10">
                 서브4
               </span>
