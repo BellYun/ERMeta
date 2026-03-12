@@ -2,7 +2,9 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { X, Users, Loader2, Search, ChevronDown, ChevronUp, Info } from "lucide-react"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
+import { X, Users, Loader2, Search, ChevronDown, ChevronUp, Info, Share2, Check, ImageDown, Download } from "lucide-react"
+import html2canvas from "html2canvas"
 import { cn } from "@/lib/utils"
 import { ResultErrorBoundary } from "@/components/features/ResultErrorBoundary"
 import { useL10n } from "@/components/L10nProvider"
@@ -197,12 +199,14 @@ function ComboCard({
   getCharName,
   selectedAllies,
   compact = false,
+  onNavigateAnalysis,
 }: {
   rec: TrioResult
   rank: number
   getCharName: (code: number) => string
   selectedAllies: number[]
   compact?: boolean
+  onNavigateAnalysis?: (code: number) => void
 }) {
   // 선택한 아군을 앞에, 추천 캐릭터를 마지막에 표시
   const allChars = [rec.character1, rec.character2, rec.character3]
@@ -231,29 +235,54 @@ function ComboCard({
       <div className="flex items-center gap-1">
         {chars.map((code, i) => {
           const isRecommended = !selectedAllies.includes(code)
+          const charContent = (
+            <div className="flex flex-col items-center gap-0.5">
+              <div
+                className={cn(
+                  "relative h-8 w-8 overflow-hidden rounded-md bg-[var(--color-border)]",
+                  isRecommended && "ring-2 ring-[var(--color-accent-gold)]",
+                  isRecommended && "group-hover/char:ring-[var(--color-primary)] transition-all"
+                )}
+              >
+                <Image
+                  src={getCharacterImageUrl(code)}
+                  alt={getCharName(code)}
+                  fill
+                  className="object-cover"
+                  sizes="32px"
+                />
+              </div>
+              {!compact && (
+                <span className={cn(
+                  "w-10 truncate text-center text-[9px]",
+                  isRecommended
+                    ? "text-[var(--color-accent-gold)] group-hover/char:text-[var(--color-primary)]"
+                    : "text-[var(--color-muted-foreground)]"
+                )}>
+                  {getCharName(code)}
+                </span>
+              )}
+            </div>
+          )
           return (
             <React.Fragment key={code}>
-              <div className="flex flex-col items-center gap-0.5">
-                <div
-                  className={cn(
-                    "relative h-8 w-8 overflow-hidden rounded-md bg-[var(--color-border)]",
-                    isRecommended && "ring-2 ring-[var(--color-accent-gold)]"
-                  )}
+              {isRecommended && onNavigateAnalysis ? (
+                <button
+                  type="button"
+                  onClick={() => onNavigateAnalysis(code)}
+                  className="group/char relative z-10 cursor-pointer flex items-center gap-1"
+                  title={`${getCharName(code)} 분석 보기`}
                 >
-                  <Image
-                    src={getCharacterImageUrl(code)}
-                    alt={getCharName(code)}
-                    fill
-                    className="object-cover"
-                    sizes="32px"
-                  />
-                </div>
-                {!compact && (
-                  <span className="w-10 truncate text-center text-[9px] text-[var(--color-muted-foreground)]">
-                    {getCharName(code)}
-                  </span>
-                )}
-              </div>
+                  {charContent}
+                  {rest.length === 1 && (
+                    <span className="rounded-md border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-1.5 py-0.5 text-[9px] font-medium text-[var(--color-primary)] group-hover/char:bg-[var(--color-primary)]/20 group-hover/char:border-[var(--color-primary)]/50 transition-colors whitespace-nowrap">
+                      분석보기
+                    </span>
+                  )}
+                </button>
+              ) : (
+                charContent
+              )}
               {i < 2 && (
                 <span className="text-[10px] text-[var(--color-border)]">+</span>
               )}
@@ -325,7 +354,7 @@ function ComboCard({
               {rec.averageRP > 0 ? "+" : ""}{rec.averageRP.toFixed(1)}
             </span>
           </div>
-          <div className="hidden sm:flex flex-col">
+          <div className="flex flex-col">
             <span className="text-[10px] text-[var(--color-muted-foreground)]">게임 수</span>
             <span className="text-sm text-[var(--color-muted-foreground)]">
               {rec.totalGames.toLocaleString()}
@@ -339,6 +368,7 @@ function ComboCard({
           </div>
         </div>
       )}
+
     </div>
   )
 }
@@ -347,14 +377,49 @@ function ComboCard({
 
 export function SynergyClient({ compact = false }: { compact?: boolean }) {
   const { l10n } = useL10n()
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
 
-  const [selectedAllies, setSelectedAllies] = React.useState<number[]>([])
+  // URL 쿼리 파라미터에서 초기 아군 읽기
+  const initialAllies = React.useMemo(() => {
+    const allies: number[] = []
+    const a1 = searchParams.get("ally1")
+    const a2 = searchParams.get("ally2")
+    if (a1) {
+      const code = parseInt(a1, 10)
+      if (!isNaN(code) && ALL_CHARACTER_CODES.includes(code)) allies.push(code)
+    }
+    if (a2) {
+      const code = parseInt(a2, 10)
+      if (!isNaN(code) && ALL_CHARACTER_CODES.includes(code) && !allies.includes(code)) allies.push(code)
+    }
+    return allies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const [selectedAllies, setSelectedAllies] = React.useState<number[]>(initialAllies)
   const [focusCharacters, setFocusCharacters] = React.useState<number[]>([])
   // isFocusExpanded: 관심 캐릭터 그리드 접기/펼치기 (true = 펼침)
   const [isFocusExpanded, setIsFocusExpanded] = React.useState(false)
   const [sortBy, setSortBy] = React.useState<SortBy>("recommended")
   const [allySearch, setAllySearch] = React.useState("")
   const [focusSearch, setFocusSearch] = React.useState("")
+  const [copied, setCopied] = React.useState(false)
+  const [showShareModal, setShowShareModal] = React.useState(false)
+  const [generatingImage, setGeneratingImage] = React.useState(false)
+  const shareCardRef = React.useRef<HTMLDivElement>(null)
+
+  // 아군 선택 변경 시 URL 쿼리 파라미터 동기화
+  React.useEffect(() => {
+    const params = new URLSearchParams()
+    if (selectedAllies[0] !== undefined) params.set("ally1", String(selectedAllies[0]))
+    if (selectedAllies[1] !== undefined) params.set("ally2", String(selectedAllies[1]))
+
+    const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
+    router.replace(newUrl, { scroll: false })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedAllies, pathname, router])
 
   const [trioResults, setTrioResults] = React.useState<TrioResult[]>([])
   const [loading, setLoading] = React.useState(false)
@@ -417,6 +482,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
     return () => {
       clearTimeout(timerId)
       controller.abort()
+      setLoading(false)
     }
   }, [selectedAllies, sortBy])
 
@@ -751,9 +817,29 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
                   : ""}
               </h2>
               <button
-                onClick={() => setSelectedAllies([])}
-                className="text-xs text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors shrink-0"
+                onClick={async () => {
+                  const url = window.location.href
+                  const title = selectedAllies.length === 2
+                    ? `${getCharName(selectedAllies[0])} + ${getCharName(selectedAllies[1])} 조합 추천`
+                    : `${getCharName(selectedAllies[0])} 포함 추천 조합`
+                  if (typeof navigator.share === "function") {
+                    try {
+                      await navigator.share({ title, text: `${title} - 이리와지지 ER&GG`, url })
+                      return
+                    } catch { /* 사용자 취소 or 미지원 → 모달 폴백 */ }
+                  }
+                  setShowShareModal(true)
+                }}
+                className="inline-flex items-center gap-1 shrink-0 rounded-md border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 hover:border-[var(--color-primary)]/50 transition-colors"
               >
+                <Share2 className="h-3 w-3" />
+                공유
+              </button>
+              <button
+                onClick={() => setSelectedAllies([])}
+                className="inline-flex items-center gap-1 shrink-0 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 py-1 text-xs font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:border-[var(--color-border-light)] transition-colors"
+              >
+                <X className="h-3 w-3" />
                 초기화
               </button>
             </>
@@ -802,6 +888,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
                 getCharName={getCharName}
                 selectedAllies={selectedAllies}
                 compact={compact}
+                onNavigateAnalysis={(code) => router.push(`/character-analysis?character=${code}`)}
               />
             ))}
           </div>
@@ -822,6 +909,259 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
           </div>
         )}
       </ResultErrorBoundary>
+
+      {/* 이미지 캡처용 히든 카드 */}
+      <div style={{ position: "fixed", top: 0, left: 0, opacity: 0, pointerEvents: "none", zIndex: -1 }} aria-hidden="true">
+        <div
+          ref={shareCardRef}
+          style={{
+            width: 420,
+            minHeight: 100,
+            padding: 24,
+            background: "linear-gradient(145deg, #0a0e1a 0%, #111827 50%, #1a2236 100%)",
+            fontFamily: "system-ui, -apple-system, sans-serif",
+            lineHeight: 1.4,
+          }}
+        >
+          {/* 헤더 */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+            <div>
+              <div style={{ color: "#38bdf8", fontSize: 20, fontWeight: 800, letterSpacing: "-0.02em" }}>ER&GG</div>
+              <div style={{ color: "#8a9bb8", fontSize: 11, marginTop: 3 }}>이리와지지 · 조합 추천</div>
+            </div>
+            <div style={{ color: "#8a9bb8", fontSize: 10 }}>erwagg.com</div>
+          </div>
+
+          {/* 조합 타이틀 */}
+          <div style={{
+            background: "rgba(56,189,248,0.08)",
+            border: "1px solid rgba(56,189,248,0.2)",
+            borderRadius: 10,
+            padding: "12px 16px",
+            marginBottom: 16,
+          }}>
+            <div style={{ color: "#e8edf5", fontSize: 14, fontWeight: 700 }}>
+              {selectedAllies.length === 2
+                ? `${getCharName(selectedAllies[0])} + ${getCharName(selectedAllies[1])} 추천 조합 TOP 5`
+                : selectedAllies.length === 1
+                ? `${getCharName(selectedAllies[0])} 포함 추천 조합 TOP 5`
+                : "추천 조합 TOP 5"}
+            </div>
+          </div>
+
+          {/* TOP 5 결과 */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            {recommendations.slice(0, 5).map((rec, i) => {
+              const allC = [rec.character1, rec.character2, rec.character3]
+              const a: number[] = []
+              const r: number[] = []
+              for (const c of allC) {
+                if (selectedAllies.includes(c) && a.length < selectedAllies.length) a.push(c)
+                else r.push(c)
+              }
+              a.sort((x, y) => selectedAllies.indexOf(x) - selectedAllies.indexOf(y))
+              const ordered = [...a, ...r]
+              return (
+                <div
+                  key={`share-${rec.character1}-${rec.character2}-${rec.character3}`}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    background: i === 0 ? "rgba(251,191,36,0.06)" : "rgba(255,255,255,0.03)",
+                    border: i === 0 ? "1px solid rgba(251,191,36,0.15)" : "1px solid #243044",
+                    borderRadius: 10,
+                  }}
+                >
+                  <span style={{
+                    width: 22, textAlign: "center", fontSize: 14, fontWeight: 800,
+                    color: i === 0 ? "#fbbf24" : i < 3 ? "#e8edf5" : "#8a9bb8",
+                    marginLeft: 10,
+                  }}>
+                    {i + 1}
+                  </span>
+                  <div style={{ display: "flex", alignItems: "center", margin: "6px 0 6px 8px" }}>
+                    {ordered.map((code, ci) => {
+                      const isRec = !selectedAllies.includes(code)
+                      return (
+                        <React.Fragment key={code}>
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", margin: "0 3px" }}>
+                            <div style={{
+                              width: 28, height: 28, minWidth: 28, minHeight: 28,
+                              borderRadius: 6, overflow: "hidden",
+                              border: isRec ? "2px solid #fbbf24" : "1px solid #243044",
+                            }}>
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={getCharacterImageUrl(code)}
+                                alt={getCharName(code)}
+                                width={28}
+                                height={28}
+                                style={{ objectFit: "cover", display: "block", width: 28, height: 28 }}
+                              />
+                            </div>
+                            <span style={{
+                              fontSize: 7, lineHeight: "9px", color: isRec ? "#fbbf24" : "#8a9bb8",
+                              textAlign: "center", whiteSpace: "nowrap",
+                              marginTop: 1,
+                            }}>
+                              {getCharName(code)}
+                            </span>
+                          </div>
+                          {ci < 2 && <span style={{ fontSize: 11, color: "#243044", fontWeight: 700, margin: "0 1px" }}>+</span>}
+                        </React.Fragment>
+                      )
+                    })}
+                  </div>
+                  <div style={{ marginLeft: "auto", marginRight: 10, display: "flex", gap: 16, textAlign: "right" }}>
+                    <div>
+                      <div style={{ fontSize: 10, color: "#8a9bb8" }}>승률</div>
+                      <div style={{
+                        fontSize: 13, fontWeight: 700,
+                        color: rec.winRate >= 60 ? "#fbbf24" : rec.winRate >= 55 ? "#e8edf5" : "#8a9bb8",
+                      }}>
+                        {rec.winRate.toFixed(1)}%
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 10, color: "#8a9bb8" }}>평균 RP</div>
+                      <div style={{
+                        fontSize: 13, fontWeight: 700,
+                        color: rec.averageRP > 0 ? "#fbbf24" : rec.averageRP < 0 ? "#f87171" : "#8a9bb8",
+                      }}>
+                        {rec.averageRP > 0 ? "+" : ""}{rec.averageRP.toFixed(1)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* 푸터 */}
+          <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid #243044", textAlign: "center", color: "#8a9bb8", fontSize: 11 }}>
+            erwagg.com · 이터널리턴 통계 분석
+          </div>
+        </div>
+      </div>
+
+      {/* 공유 모달 */}
+      {showShareModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => { setShowShareModal(false); setCopied(false) }}
+        >
+          <div
+            className="mx-4 w-full max-w-sm rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-[var(--color-foreground)]">조합 공유</h3>
+              <button
+                onClick={() => { setShowShareModal(false); setCopied(false) }}
+                className="rounded-md p-1 text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)] transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <p className="mb-4 text-xs text-[var(--color-muted-foreground)]">
+              {selectedAllies.length === 2
+                ? `${getCharName(selectedAllies[0])} + ${getCharName(selectedAllies[1])} 조합`
+                : selectedAllies.length === 1
+                ? `${getCharName(selectedAllies[0])} 포함 추천 조합`
+                : "조합 추천"}
+            </p>
+
+            {/* 이미지로 공유 */}
+            <button
+              disabled={generatingImage || recommendations.length === 0}
+              onClick={async () => {
+                if (!shareCardRef.current) return
+                setGeneratingImage(true)
+                try {
+                  const canvas = await html2canvas(shareCardRef.current, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: null,
+                  })
+                  const blob = await new Promise<Blob | null>((resolve) =>
+                    canvas.toBlob(resolve, "image/png")
+                  )
+                  if (!blob) return
+
+                  const allyLabel = selectedAllies.length === 2
+                    ? `${getCharName(selectedAllies[0])}_${getCharName(selectedAllies[1])}`
+                    : getCharName(selectedAllies[0])
+                  const fileName = `ERGG_${allyLabel}_조합.png`
+
+                  if (typeof navigator.share === "function") {
+                    const file = new File([blob], fileName, { type: "image/png" })
+                    try {
+                      await navigator.share({
+                        title: `${allyLabel} 추천 조합 TOP 5`,
+                        text: "이리와지지 ER&GG 조합 추천",
+                        files: [file],
+                      })
+                      setShowShareModal(false)
+                      return
+                    } catch { /* 사용자 취소 → 다운로드 폴백 */ }
+                  }
+                  // 데스크탑 폴백: 다운로드
+                  const url = URL.createObjectURL(blob)
+                  const a = document.createElement("a")
+                  a.href = url
+                  a.download = fileName
+                  a.click()
+                  URL.revokeObjectURL(url)
+                } finally {
+                  setGeneratingImage(false)
+                }
+              }}
+              className={cn(
+                "w-full flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-colors mb-3",
+                recommendations.length === 0
+                  ? "bg-[var(--color-surface-2)] text-[var(--color-muted-foreground)] cursor-not-allowed"
+                  : "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)]/80"
+              )}
+            >
+              {generatingImage ? (
+                <><Loader2 className="h-4 w-4 animate-spin" />이미지 생성 중...</>
+              ) : (
+                <><ImageDown className="h-4 w-4" />이미지로 공유 (TOP 5)</>
+              )}
+            </button>
+
+            {/* URL 복사 */}
+            <div className="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] p-2">
+              <input
+                readOnly
+                value={typeof window !== "undefined" ? window.location.href : ""}
+                className="flex-1 bg-transparent text-xs text-[var(--color-foreground)] outline-none truncate"
+                onFocus={(e) => e.target.select()}
+              />
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href)
+                  setCopied(true)
+                  setTimeout(() => setCopied(false), 2000)
+                }}
+                className={cn(
+                  "shrink-0 rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+                  copied
+                    ? "bg-green-500/20 text-green-400"
+                    : "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)]/80"
+                )}
+              >
+                {copied ? (
+                  <span className="inline-flex items-center gap-1"><Check className="h-3 w-3" />복사됨</span>
+                ) : (
+                  "URL 복사"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
