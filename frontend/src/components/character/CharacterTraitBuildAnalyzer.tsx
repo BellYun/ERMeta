@@ -111,14 +111,14 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
 
   if (builds.length === 0) {
     return (
-      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center text-sm text-[var(--color-muted-foreground)]">
+      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-6 text-center text-sm text-[var(--color-muted-foreground)]">
         특성 빌드 데이터가 없습니다.
       </div>
     )
   }
 
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
       {/* 테이블 헤더 */}
       <div className="grid grid-cols-[1fr_5rem_5rem_5rem] border-b border-[var(--color-border)] px-4 py-2 text-xs font-medium text-[var(--color-muted-foreground)]">
         <span>메인 특성</span>

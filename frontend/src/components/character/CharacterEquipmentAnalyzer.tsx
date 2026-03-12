@@ -5,7 +5,25 @@ import Image from "next/image"
 import { TierGroup } from "@/utils/tier"
 import { cn } from "@/lib/utils"
 import itemImageMap from "@/../const/itemImageMap.json"
+import itemGradeMap from "@/../const/itemGradeMap.json"
+import itemNameMap from "@/../const/itemNameMap.json"
 import type { EquipmentBuildResult, BuildSummary, SlotItem, CoreItem } from "@/app/api/builds/equipment/route"
+
+type ItemGrade = "Common" | "Uncommon" | "Rare" | "Epic" | "Legend" | "Mythic"
+
+const GRADE_BORDER: Record<ItemGrade, string> = {
+  Mythic: "ring-2 ring-red-400/70 shadow-[0_0_6px_rgba(248,113,113,0.3)]",
+  Legend: "ring-2 ring-amber-400/70 shadow-[0_0_6px_rgba(251,191,36,0.3)]",
+  Epic:   "ring-2 ring-purple-400/60",
+  Rare:   "ring-1 ring-blue-400/50",
+  Uncommon: "ring-1 ring-green-400/40",
+  Common: "",
+}
+
+function getItemGrade(code: number | null): ItemGrade | null {
+  if (code == null) return null
+  return (itemGradeMap as Record<string, string>)[String(code)] as ItemGrade | undefined ?? null
+}
 
 interface Props {
   characterCode: number
@@ -24,21 +42,27 @@ const SLOT_LABELS: Record<string, string> = {
 
 const SLOTS = ["weapon", "chest", "head", "arm", "leg"] as const
 
-function ItemIcon({ code, size = 32 }: { code: number | null; size?: number }) {
+function ItemIcon({ code, size = 36 }: { code: number | null; size?: number }) {
   if (code == null) {
     return (
       <div
-        className="rounded bg-[var(--color-surface-2)] border border-[var(--color-border)]"
+        className="rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)]"
         style={{ width: size, height: size }}
       />
     )
   }
 
   const imgPath = (itemImageMap as Record<string, string>)[String(code)]
+  const grade = getItemGrade(code)
+  const gradeBorder = grade ? GRADE_BORDER[grade] : "ring-1 ring-[var(--color-border)]"
+
   if (!imgPath) {
     return (
       <div
-        className="rounded bg-[var(--color-surface-2)] border border-[var(--color-border)] flex items-center justify-center"
+        className={cn(
+          "rounded-lg bg-[var(--color-surface-2)] flex items-center justify-center",
+          gradeBorder
+        )}
         style={{ width: size, height: size }}
       >
         <span className="text-[8px] text-[var(--color-muted-foreground)]">?</span>
@@ -47,14 +71,19 @@ function ItemIcon({ code, size = 32 }: { code: number | null; size?: number }) {
   }
 
   return (
-    <Image
-      src={imgPath}
-      alt={String(code)}
-      width={size}
-      height={size}
-      className="rounded object-contain"
-      unoptimized
-    />
+    <div
+      className={cn("relative rounded-lg bg-[var(--color-surface-2)]", gradeBorder)}
+      style={{ width: size, height: size }}
+    >
+      <Image
+        src={imgPath}
+        alt={String(code)}
+        fill
+        className="rounded-lg object-cover"
+        sizes={`${size}px`}
+        unoptimized
+      />
+    </div>
   )
 }
 
@@ -89,7 +118,7 @@ function TopBuildsTable({
   traitNames: Record<number, string>
 }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
       <SectionHeader title="TOP BUILDS" />
       <div className="overflow-x-auto">
       <table className="w-full text-sm min-w-[640px]">
@@ -140,7 +169,7 @@ function TopBuildsTable({
                 return (
                   <td key={s} className="px-2 py-2 text-center">
                     <div className="flex flex-col items-center gap-0.5">
-                      <ItemIcon code={code} size={32} />
+                      <ItemIcon code={code} size={36} />
                       {code != null && (
                         <span className="text-[9px] text-[var(--color-muted-foreground)] max-w-[48px] truncate">
                           {itemNames[code] ?? code}
@@ -179,7 +208,7 @@ function SlotPopularityGrid({
   itemNames: Record<number, string>
 }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
       <SectionHeader title="슬롯별 인기 아이템" />
       <div className="grid grid-cols-3 sm:grid-cols-5 divide-x divide-[var(--color-border)]">
         {SLOTS.map((slot) => {
@@ -201,7 +230,7 @@ function SlotPopularityGrid({
                         i === 0 && "bg-[var(--color-accent-gold)]/5"
                       )}
                     >
-                      <ItemIcon code={item.code} size={28} />
+                      <ItemIcon code={item.code} size={34} />
                       <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-full truncate w-full leading-tight">
                         {itemNames[item.code] ?? item.code}
                       </span>
@@ -227,7 +256,7 @@ function CoreItemsList({
   itemNames: Record<number, string>
 }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
       <SectionHeader title="코어 아이템" />
       <div className="divide-y divide-[var(--color-border)]">
         {coreItems.map((item, i) => (
@@ -246,7 +275,7 @@ function CoreItemsList({
             >
               {i + 1}
             </span>
-            <ItemIcon code={item.code} size={32} />
+            <ItemIcon code={item.code} size={36} />
             <span className="flex-1 text-sm text-[var(--color-foreground)] truncate">
               {itemNames[item.code] ?? item.code}
             </span>
@@ -264,17 +293,12 @@ function CoreItemsList({
 
 export function CharacterEquipmentAnalyzer({ characterCode, tier, patchVersion, bestWeapon }: Props) {
   const [data, setData] = React.useState<EquipmentBuildResult | null>(null)
-  const [itemNames, setItemNames] = React.useState<Record<number, string>>({})
+  const itemNames = itemNameMap as Record<number, string>
   const [traitNames, setTraitNames] = React.useState<Record<number, string>>({})
   const [loading, setLoading] = React.useState(false)
 
-  // 이름 사전 로드 (최초 1회, 병렬)
+  // 특성 이름 사전 로드 (최초 1회)
   React.useEffect(() => {
-    fetch("/api/items/names")
-      .then((r) => r.json())
-      .then((d) => setItemNames(d.names ?? {}))
-      .catch(() => {})
-
     fetch("/api/traits/names")
       .then((r) => r.json())
       .then((d) => setTraitNames(d.names ?? {}))
@@ -320,7 +344,7 @@ export function CharacterEquipmentAnalyzer({ characterCode, tier, patchVersion, 
 
   if (isEmpty) {
     return (
-      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
+      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-8 text-center text-sm text-[var(--color-muted-foreground)]">
         아이템 빌드 데이터가 없습니다.
       </div>
     )

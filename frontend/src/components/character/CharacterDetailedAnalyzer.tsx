@@ -6,7 +6,25 @@ import { Layers } from "lucide-react"
 import { TierGroup } from "@/utils/tier"
 import { cn } from "@/lib/utils"
 import itemImageMap from "@/../const/itemImageMap.json"
+import itemGradeMap from "@/../const/itemGradeMap.json"
+import itemNameMap from "@/../const/itemNameMap.json"
 import type { EquipmentBuildResult, BuildSummary } from "@/app/api/builds/equipment/route"
+
+type ItemGrade = "Common" | "Uncommon" | "Rare" | "Epic" | "Legend" | "Mythic"
+
+const GRADE_BORDER: Record<ItemGrade, string> = {
+  Mythic: "ring-2 ring-red-400/70 shadow-[0_0_6px_rgba(248,113,113,0.3)]",
+  Legend: "ring-2 ring-amber-400/70 shadow-[0_0_6px_rgba(251,191,36,0.3)]",
+  Epic:   "ring-2 ring-purple-400/60",
+  Rare:   "ring-1 ring-blue-400/50",
+  Uncommon: "ring-1 ring-green-400/40",
+  Common: "",
+}
+
+function getItemGrade(code: number | null): ItemGrade | null {
+  if (code == null) return null
+  return (itemGradeMap as Record<string, string>)[String(code)] as ItemGrade | undefined ?? null
+}
 
 // ─── 타입 ──────────────────────────────────────────────────────────────────────
 
@@ -49,21 +67,27 @@ const SLOT_LABELS: Record<string, string> = {
 
 // ─── 헬퍼 컴포넌트 ─────────────────────────────────────────────────────────────
 
-function ItemIcon({ code, size = 32 }: { code: number | null; size?: number }) {
+function ItemIcon({ code, size = 36 }: { code: number | null; size?: number }) {
   if (code == null) {
     return (
       <div
-        className="rounded bg-[var(--color-surface-2)] border border-[var(--color-border)]"
+        className="rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)]"
         style={{ width: size, height: size }}
       />
     )
   }
 
   const imgPath = (itemImageMap as Record<string, string>)[String(code)]
+  const grade = getItemGrade(code)
+  const gradeBorder = grade ? GRADE_BORDER[grade] : "ring-1 ring-[var(--color-border)]"
+
   if (!imgPath) {
     return (
       <div
-        className="rounded bg-[var(--color-surface-2)] border border-[var(--color-border)] flex items-center justify-center"
+        className={cn(
+          "rounded-lg bg-[var(--color-surface-2)] flex items-center justify-center",
+          gradeBorder
+        )}
         style={{ width: size, height: size }}
       >
         <span className="text-[8px] text-[var(--color-muted-foreground)]">?</span>
@@ -72,14 +96,19 @@ function ItemIcon({ code, size = 32 }: { code: number | null; size?: number }) {
   }
 
   return (
-    <Image
-      src={imgPath}
-      alt={String(code)}
-      width={size}
-      height={size}
-      className="rounded object-contain"
-      unoptimized
-    />
+    <div
+      className={cn("relative rounded-lg bg-[var(--color-surface-2)]", gradeBorder)}
+      style={{ width: size, height: size }}
+    >
+      <Image
+        src={imgPath}
+        alt={String(code)}
+        fill
+        className="rounded-lg object-cover"
+        sizes={`${size}px`}
+        unoptimized
+      />
+    </div>
   )
 }
 
@@ -168,7 +197,7 @@ function TopBuildsTableFiltered({
   itemNames: Record<number, string>
 }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
         <span className="text-xs font-semibold text-[var(--color-foreground)]">TOP BUILDS</span>
       </div>
@@ -214,9 +243,9 @@ function TopBuildsTableFiltered({
                 return (
                   <td key={s} className="px-2 py-2 text-center">
                     <div className="flex flex-col items-center gap-0.5">
-                      <ItemIcon code={code} size={32} />
+                      <ItemIcon code={code} size={36} />
                       {code != null && (
-                        <span className="text-[9px] text-[var(--color-muted-foreground)] max-w-[48px] truncate">
+                        <span className="text-[9px] text-[var(--color-muted-foreground)] max-w-[52px] truncate">
                           {itemNames[code] ?? code}
                         </span>
                       )}
@@ -255,7 +284,7 @@ function SlotPopularityGrid({
   itemNames: Record<number, string>
 }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
         <span className="text-xs font-semibold text-[var(--color-foreground)]">슬롯별 인기 아이템</span>
       </div>
@@ -279,7 +308,7 @@ function SlotPopularityGrid({
                         i === 0 && "bg-[var(--color-accent-gold)]/5"
                       )}
                     >
-                      <ItemIcon code={item.code} size={28} />
+                      <ItemIcon code={item.code} size={34} />
                       <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-full truncate w-full leading-tight">
                         {itemNames[item.code] ?? item.code}
                       </span>
@@ -308,18 +337,13 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
   const [traitLoading, setTraitLoading] = React.useState(false)
   const [equipLoading, setEquipLoading] = React.useState(false)
   const [traitNames, setTraitNames] = React.useState<Record<number, string>>({})
-  const [itemNames, setItemNames] = React.useState<Record<number, string>>({})
+  const itemNames = itemNameMap as Record<number, string>
 
-  // 이름 사전 로드 (최초 1회, 병렬)
+  // 특성 이름 사전 로드 (최초 1회)
   React.useEffect(() => {
     fetch("/api/traits/names")
       .then((r) => r.json())
       .then((d) => setTraitNames(d.names ?? {}))
-      .catch(() => {})
-
-    fetch("/api/items/names")
-      .then((r) => r.json())
-      .then((d) => setItemNames(d.names ?? {}))
       .catch(() => {})
   }, [])
 
@@ -393,7 +417,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
   // ── 데이터 없음 ──────────────────────────────────────────────────────────────
   if (traitBuilds.length === 0) {
     return (
-      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-8 flex flex-col items-center gap-2 text-[var(--color-muted-foreground)]">
+      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-8 flex flex-col items-center gap-2 text-[var(--color-muted-foreground)]">
         <Layers className="h-8 w-8 opacity-40" />
         <p className="text-sm">상세분석 데이터가 없습니다.</p>
       </div>
@@ -418,7 +442,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
       {(() => {
         const _maxTraitPick = 100 // 픽률은 전체 대비 %이므로 100 기준
         return (
-        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-4">
           <p className="mb-3 text-xs font-semibold text-[var(--color-muted-foreground)]">메인 특성</p>
           <div className="flex flex-wrap gap-2">
             {traitBuilds.map((group, i) => {
@@ -505,7 +529,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
         <>
           {/* 서브 특성 순위 */}
           {hasSubOptions && (
-            <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+            <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
               <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
                 <span className="text-xs font-semibold text-[var(--color-foreground)]">서브 특성 순위</span>
               </div>
@@ -557,7 +581,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
               )}
             </div>
           ) : (
-            <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center text-sm text-[var(--color-muted-foreground)]">
+            <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-6 text-center text-sm text-[var(--color-muted-foreground)]">
               이 특성의 아이템 빌드 데이터가 없습니다.
             </div>
           )}

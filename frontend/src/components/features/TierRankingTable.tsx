@@ -3,13 +3,14 @@
 import * as React from "react"
 import Image from "next/image"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Select, SelectItem } from "@/components/ui/select"
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TierBadge } from "./TierBadge"
 import { cn } from "@/lib/utils"
 import { analytics } from "@/lib/analytics"
-import { resolveCharacterName, buildFallbackMap, getCharacterImageUrl } from "@/lib/characterMap"
+import { resolveCharacterName, buildFallbackMap, getCharacterImageUrl, getComboRoles } from "@/lib/characterMap"
+import type { CharacterRole } from "@/lib/characterMap"
 import { resolveWeaponName } from "@/lib/weaponMap"
 import { useL10n } from "@/components/L10nProvider"
 import { getCharacterPatchNote } from "@/data/patch-notes"
@@ -28,6 +29,7 @@ interface PrevStats {
 interface DisplayRow {
   rank: number
   code: number
+  roles: CharacterRole[]
   weaponCode: number
   name: string
   weaponName: string
@@ -76,8 +78,6 @@ function assignTier(score: number): Tier {
   return "D"
 }
 
-// ─── 변동 표시 컴포넌트 ────────────────────────────────────────────────────────
-
 function DeltaIndicator({ current, previous, suffix = "", precision = 1 }: {
   current: number
   previous: number | undefined
@@ -101,17 +101,15 @@ function DeltaIndicator({ current, previous, suffix = "", precision = 1 }: {
   )
 }
 
-// ─── 패치노트 툴팁 ─────────────────────────────────────────────────────────────
-
 function PatchNoteTooltip({ patchNote }: { patchNote: CharacterPatchNote }) {
   const changeTypeLabel = (type: string) => {
-    if (type === "buff") return { text: "BUFF", color: "text-green-400 bg-green-400/10" }
-    if (type === "nerf") return { text: "NERF", color: "text-red-400 bg-red-400/10" }
-    return { text: "REWORK", color: "text-blue-400 bg-blue-400/10" }
+    if (type === "buff") return { text: "BUFF", color: "text-green-400 bg-green-400/10 border-green-400/20" }
+    if (type === "nerf") return { text: "NERF", color: "text-red-400 bg-red-400/10 border-red-400/20" }
+    return { text: "REWORK", color: "text-blue-400 bg-blue-400/10 border-blue-400/20" }
   }
 
   return (
-    <div className="absolute z-50 left-0 top-full mt-1 w-96 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-xl pointer-events-none">
+    <div className="absolute z-50 left-0 top-full mt-1 w-96 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-2xl shadow-black/40 pointer-events-none">
       <p className="text-xs font-medium text-[var(--color-muted-foreground)] mb-3">
         패치 {patchNote.patch} 변경사항
       </p>
@@ -121,7 +119,7 @@ function PatchNoteTooltip({ patchNote }: { patchNote: CharacterPatchNote }) {
           return (
             <div key={i} className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <span className={cn("rounded px-1.5 py-0.5 text-[10px] font-bold", color)}>
+                <span className={cn("rounded px-1.5 py-0.5 text-[10px] font-bold border", color)}>
                   {text}
                 </span>
                 <span className="text-xs font-medium text-[var(--color-foreground)]">
@@ -141,13 +139,11 @@ function PatchNoteTooltip({ patchNote }: { patchNote: CharacterPatchNote }) {
   )
 }
 
-// ─── 메인 컴포넌트 ──────────────────────────────────────────────────────────────
-
-const tierTabs = ["전체", "S", "A", "B", "C", "D"] as const
+const roleTabs = ["전체", "탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"] as const
 
 export function TierRankingTable() {
   const searchParams = useSearchParams()
-  const [activeTier, setActiveTier] = React.useState<string>("전체")
+  const [activeRole, setActiveRole] = React.useState<string>("전체")
   const [rows, setRows] = React.useState<DisplayRow[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [hoveredKey, setHoveredKey] = React.useState<string | null>(null)
@@ -175,7 +171,6 @@ export function TierRankingTable() {
         const previousRankings = data.previousRankings ?? []
         const currentPatch = data.patchVersion ?? patch ?? ""
 
-        // 이전 패치 데이터를 캐릭터별 Map으로
         const prevMap = new Map<number, PrevStats>()
         if (previousRankings.length > 0) {
           const prevGrandTotal = previousRankings.reduce((s, r) => s + r.totalGames, 0)
@@ -204,6 +199,7 @@ export function TierRankingTable() {
           return {
             rank: i + 1,
             code: r.characterNum,
+            roles: getComboRoles(r.characterNum, r.bestWeapon),
             weaponCode: r.bestWeapon,
             name,
             weaponName,
@@ -223,23 +219,27 @@ export function TierRankingTable() {
   }, [patch, tier, l10n])
 
   const filtered =
-    activeTier === "전체"
+    activeRole === "전체"
       ? rows
-      : rows.filter((c) => c.tier === activeTier)
+      : rows.filter((c) => c.roles.includes(activeRole as CharacterRole))
 
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm overflow-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 sm:p-4 border-b border-[var(--color-border)]">
-        <h2 className="text-sm font-semibold text-[var(--color-foreground)]">티어 순위</h2>
-        <Tabs value={activeTier} onValueChange={(v) => { setActiveTier(v); analytics.rankingTierTabChanged(v) }}>
-          <TabsList>
-            {tierTabs.map((t) => (
-              <TabsTrigger key={t} value={t}>
-                {t}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+        <div className="flex items-center gap-2">
+          <div className="h-4 w-1 rounded-full bg-[var(--color-primary)]" />
+          <h2 className="text-sm font-semibold text-[var(--color-foreground)]">캐릭터 순위</h2>
+        </div>
+        <Select
+          value={activeRole}
+          onChange={(e) => { setActiveRole(e.target.value); analytics.rankingTierTabChanged(e.target.value) }}
+        >
+          {roleTabs.map((t) => (
+            <SelectItem key={t} value={t}>
+              {t}
+            </SelectItem>
+          ))}
+        </Select>
       </div>
 
       <div className="overflow-x-auto">
@@ -262,7 +262,7 @@ export function TierRankingTable() {
                   <TableCell className="text-center"><Skeleton className="h-5 w-8 mx-auto" /></TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Skeleton className="h-8 w-8 rounded-md" />
+                      <Skeleton className="h-8 w-8 rounded-lg" />
                       <Skeleton className="h-4 w-20" />
                     </div>
                   </TableCell>
@@ -274,34 +274,37 @@ export function TierRankingTable() {
             : filtered.map((char) => (
                 <TableRow
                   key={`${char.code}-${char.weaponCode}`}
-                  className="cursor-pointer"
+                  className="cursor-pointer group"
                   onClick={() => router.push(`/character-analysis?character=${char.code}`)}
                   onMouseEnter={() => setHoveredKey(`${char.code}-${char.weaponCode}`)}
                   onMouseLeave={() => setHoveredKey(null)}
                 >
-                  <TableCell className="text-[var(--color-muted-foreground)] font-medium">
+                  <TableCell className="text-[var(--color-muted-foreground)] font-semibold group-hover:text-[var(--color-primary)]">
                     {char.rank}
                   </TableCell>
                   <TableCell className="text-center">
                     <TierBadge tier={char.tier} />
                   </TableCell>
                   <TableCell>
-                    <div className="relative flex items-center gap-2">
-                      <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-md bg-[var(--color-border)]">
+                    <div className="relative flex items-center gap-2.5">
+                      <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)] ring-1 ring-[var(--color-border)]">
                         <Image
                           src={char.imageUrl}
                           alt={char.name}
                           fill
                           className="object-cover"
-                          sizes="32px"
+                          sizes="36px"
                         />
                         {char.patchNote && (
-                          <div className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-[var(--color-primary)]" />
+                          <div className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-[var(--color-primary)] shadow-[0_0_4px_var(--color-primary)]" />
                         )}
                       </div>
-                      <span className="text-base font-semibold truncate">
-                        <span className="text-[var(--color-muted-foreground)]">{char.weaponName}</span>{" "}{char.name}
-                      </span>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-semibold text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors">
+                          {char.name}
+                        </span>
+                        <span className="text-[11px] text-[var(--color-muted-foreground)]">{char.weaponName}</span>
+                      </div>
                       {char.patchNote && hoveredKey === `${char.code}-${char.weaponCode}` && (
                         <PatchNoteTooltip patchNote={char.patchNote} />
                       )}
@@ -317,7 +320,10 @@ export function TierRankingTable() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex flex-col items-end">
-                      <span className="text-sm text-[var(--color-muted-foreground)]">
+                      <span className={cn(
+                        "text-sm font-medium",
+                        char.winRate >= 55 ? "text-[var(--color-foreground)]" : "text-[var(--color-muted-foreground)]"
+                      )}>
                         {char.winRate.toFixed(1)}%
                       </span>
                       <DeltaIndicator current={char.winRate} previous={char.prev?.winRate} suffix="%" />
@@ -327,13 +333,13 @@ export function TierRankingTable() {
                     <div className="flex flex-col items-end">
                       <span
                         className={cn(
-                          "text-sm font-medium",
+                          "text-sm font-semibold",
                           char.averageRP >= 0
                             ? "text-[var(--color-accent-gold)]"
                             : "text-[var(--color-muted-foreground)]"
                         )}
                       >
-                        {char.averageRP.toFixed(1)}
+                        {char.averageRP >= 0 ? "+" : ""}{char.averageRP.toFixed(1)}
                       </span>
                       <DeltaIndicator current={char.averageRP} previous={char.prev?.averageRP} precision={1} />
                     </div>

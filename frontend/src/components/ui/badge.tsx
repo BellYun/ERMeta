@@ -7,10 +7,10 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-[var(--color-primary)] text-white",
-        secondary: "bg-[var(--color-surface-2)] text-[var(--color-muted-foreground)]",
+        default: "bg-[var(--color-primary)]/15 text-[var(--color-primary)] border border-[var(--color-primary)]/30",
+        secondary: "bg-[var(--color-surface-2)] text-[var(--color-muted-foreground)] border border-[var(--color-border)]",
         outline: "border border-[var(--color-border)] text-[var(--color-foreground)]",
-        gold: "bg-[var(--color-accent-gold)]/20 text-[var(--color-accent-gold)]",
+        gold: "bg-[var(--color-accent-gold)]/15 text-[var(--color-accent-gold)] border border-[var(--color-accent-gold)]/30",
       },
     },
     defaultVariants: {

@@ -14,16 +14,16 @@ export function Navigation() {
   const pathname = usePathname()
 
   return (
-    <nav className="flex items-center gap-1">
+    <nav className="flex items-center gap-0.5 rounded-lg bg-[var(--color-surface-2)]/60 p-1">
       {navLinks.map(({ href, label }) => (
         <Link
           key={href}
           href={href}
           className={cn(
-            "px-2 py-1.5 sm:px-3 rounded-md text-sm font-medium transition-colors",
+            "px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200",
             pathname === href
-              ? "bg-[var(--color-surface-2)] text-[var(--color-foreground)]"
-              : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]"
+              ? "bg-[var(--color-primary)]/15 text-[var(--color-primary)] shadow-[0_0_8px_var(--color-primary-glow)]"
+              : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-3)]"
           )}
         >
           {label}
