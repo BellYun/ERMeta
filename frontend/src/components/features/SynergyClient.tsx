@@ -343,19 +343,6 @@ function ComboCard({
   )
 }
 
-function ErrorTrigger() {
-  const [shouldThrow, setShouldThrow] = React.useState(false)
-  if (shouldThrow) throw new Error("테스트용 에러: 에러 바운더리 확인")
-  return (
-    <button
-      onClick={() => setShouldThrow(true)}
-      className="mb-2 rounded-lg border border-[var(--color-danger)] px-3 py-1.5 text-xs text-[var(--color-danger)] hover:bg-[var(--color-danger)]/10 transition-colors"
-    >
-      [DEV] 에러 바운더리 테스트
-    </button>
-  )
-}
-
 // ─── 메인 컴포넌트 ────────────────────────────────────────────────────────────
 
 export function SynergyClient({ compact = false }: { compact?: boolean }) {
@@ -776,7 +763,6 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
 
       {/* 결과 목록 */}
       <ResultErrorBoundary>
-        <ErrorTrigger />
         {selectedAllies.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
             <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />

@@ -4,11 +4,7 @@
  * pg_cron으로 3분마다 호출.
  * 듀얼 워커: forward (신규 게임 → old + v2_) / backfill (과거 → v2_ only)
  *
- * 시간 배분 (Edge Function 150초 제한):
- *   - 초기화/rank: ~5초
- *   - forward: ~60초 (~60 게임)
- *   - backfill: ~60초 (~60 게임)
- *   - flush/상태 저장: ~15초
+ * v2: 게임당 1회 process_game_batch RPC 호출 (CPU time 최적화)
  */
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
@@ -70,11 +66,7 @@ function parseBserDate(value: unknown): Date | null {
   return isNaN(d.getTime()) ? null : d;
 }
 
-/**
- * equipment 필드를 배열/객체/개별필드에서 슬롯별 아이템코드로 정규화
- */
 function normalizeEquipmentSlots(raw: any): [number, number, number, number, number] {
-  // 1. equipment 배열/객체
   const eq = raw.equipment ?? raw.items;
   if (eq) {
     const slots = Array.isArray(eq)
@@ -103,7 +95,6 @@ function normalizeEquipmentSlots(raw: any): [number, number, number, number, num
     if (result.some((v) => v > 0)) return result;
   }
 
-  // 2. 개별 필드 폴백 (equipment0~4 또는 weapon/chest/head/arm/leg)
   return [
     Number(raw.equipment0 ?? raw.weapon ?? raw.bestWeapon ?? 0) || 0,
     Number(raw.equipment1 ?? raw.chest ?? 0) || 0,
@@ -153,7 +144,6 @@ function extractParticipant(raw: any): Participant | null {
 
 /**
  * skillOrderInfo를 정렬된 스킬 순서 배열로 변환
- * { "1": 1001, "2": 1002, "3": 1003, ... } → [1001, 1002, 1003, ...]
  */
 function skillOrderToArray(info: Record<string, number>): number[] {
   return Object.entries(info)
@@ -164,11 +154,10 @@ function skillOrderToArray(info: Record<string, number>): number[] {
 /**
  * 패치 버전 결정: startDtm → PatchVersion 테이블에서 매칭
  */
-async function resolvePatchVersion(
-  supabase: any,
+function resolvePatchVersion(
   startDate: Date,
   patchCache: any[]
-): Promise<string | null> {
+): string | null {
   for (const p of patchCache) {
     const start = new Date(p.startDate);
     const end = p.endDate ? new Date(p.endDate) : new Date("2099-12-31");
@@ -177,519 +166,36 @@ async function resolvePatchVersion(
   return null;
 }
 
-// ── DB Upsert 함수들 ──────────────────────────────────────
-
 /**
- * v2_PlayerGameRecord 삽입 (forward only)
+ * 전설 등급(grade === 5) 슬롯 추출
  */
-async function insertPlayerGameRecord(
-  supabase: any,
-  p: Participant,
-  patchVersion: string,
-  matchTier: string,
-  startedAt: Date
-) {
-  const { error } = await supabase.from("v2_PlayerGameRecord").upsert(
-    {
-      game_id: p.gameId,
-      team_number: p.teamNumber,
-      character_num: p.characterNum,
-      best_weapon: p.bestWeapon,
-      game_rank: p.gameRank,
-      player_kill: p.playerKill,
-      player_assistant: p.playerAssistant,
-      character_level: p.characterLevel,
-      equipment_0: p.equipment0,
-      equipment_1: p.equipment1,
-      equipment_2: p.equipment2,
-      equipment_3: p.equipment3,
-      equipment_4: p.equipment4,
-      equipment_grade: p.equipmentGrade,
-      craft_legend: p.craftLegend,
-      trait_first_core: p.traitFirstCore,
-      trait_first_sub: p.traitFirstSub,
-      trait_second_sub: p.traitSecondSub,
-      skill_order: p.skillOrderInfo,
-      skill_level_info: p.skillLevelInfo,
-      route_id_of_start: p.routeIdOfStart,
-      place_of_start: p.placeOfStart,
-      mmr_before: p.mmrBefore,
-      mmr_after: p.mmrAfter,
-      rank_point: p.rankPoint,
-      victory: p.victory,
-      duration: p.duration,
-      patch_version: patchVersion,
-      match_tier: matchTier,
-      started_at: startedAt.toISOString(),
-    },
-    { onConflict: "game_id,character_num", ignoreDuplicates: true }
-  );
-  if (error) console.error("[PGR] upsert error:", error.message);
-}
+function extractLegendarySlots(
+  p: Participant
+): { s: number; c: number }[] {
+  if (p.craftLegend <= 0) return [];
 
-/**
- * v2_CharacterStats upsert (increment)
- */
-async function upsertCharacterStats(
-  supabase: any,
-  p: Participant,
-  tier: string,
-  patchVersion: string
-) {
-  const isWin = p.gameRank === 1;
-  const isTop3 = p.gameRank <= 3;
-  const rp = p.mmrAfter - p.mmrBefore;
-
-  // RPC로 upsert + increment (경합 방지)
-  const { error } = await supabase.rpc("upsert_v2_character_stats", {
-    p_character_num: p.characterNum,
-    p_best_weapon: p.bestWeapon,
-    p_tier: tier,
-    p_patch_version: patchVersion,
-    p_games: 1,
-    p_wins: isWin ? 1 : 0,
-    p_top3: isTop3 ? 1 : 0,
-    p_rp: rp,
-    p_rank: p.gameRank,
-  });
-  if (error) console.error("[CS] upsert error:", error.message);
-}
-
-/**
- * v2_CharacterTrio upsert
- */
-async function upsertCharacterTrio(
-  supabase: any,
-  team: { char: number; mainCore: number }[],
-  gameRank: number,
-  tier: string,
-  patchVersion: string,
-  avgMMRGain: number
-) {
-  const sorted = [...team].sort((a, b) => a.char - b.char);
-  const isWin = gameRank === 1;
-
-  const { error } = await supabase.rpc("upsert_v2_character_trio", {
-    p_char1: sorted[0].char,
-    p_char2: sorted[1].char,
-    p_char3: sorted[2].char,
-    p_core1: sorted[0].mainCore,
-    p_core2: sorted[1].mainCore,
-    p_core3: sorted[2].mainCore,
-    p_tier: tier,
-    p_patch_version: patchVersion,
-    p_games: 1,
-    p_wins: isWin ? 1 : 0,
-    p_rp: avgMMRGain,
-    p_rank: gameRank,
-  });
-  if (error) console.error("[Trio] upsert error:", error.message);
-}
-
-/**
- * v2_CharacterTrioWeapon upsert
- */
-async function upsertTrioWeapon(
-  supabase: any,
-  team: { char: number; weapon: number; mainCore: number }[],
-  gameRank: number,
-  tier: string,
-  patchVersion: string,
-  avgRP: number
-) {
-  // 캐릭터 번호 기준 정렬
-  const sorted = [...team].sort((a, b) => a.char - b.char);
-  const isWin = gameRank === 1;
-
-  const { error } = await supabase.rpc("upsert_v2_character_trio_weapon", {
-    p_char1: sorted[0].char,
-    p_weapon1: sorted[0].weapon,
-    p_core1: sorted[0].mainCore,
-    p_char2: sorted[1].char,
-    p_weapon2: sorted[1].weapon,
-    p_core2: sorted[1].mainCore,
-    p_char3: sorted[2].char,
-    p_weapon3: sorted[2].weapon,
-    p_core3: sorted[2].mainCore,
-    p_tier: tier,
-    p_patch_version: patchVersion,
-    p_games: 1,
-    p_wins: isWin ? 1 : 0,
-    p_rp: avgRP,
-    p_rank: gameRank,
-  });
-  if (error) console.error("[TrioWeapon] upsert error:", error.message);
-}
-
-/**
- * v2_CharacterSkillOrder upsert
- */
-async function upsertSkillOrder(
-  supabase: any,
-  p: Participant,
-  tier: string,
-  patchVersion: string
-) {
-  const order = skillOrderToArray(p.skillOrderInfo);
-  if (order.length === 0) return;
-
-  const isWin = p.gameRank === 1;
-
-  const rp = p.mmrAfter - p.mmrBefore;
-
-  const { error } = await supabase.rpc("upsert_v2_character_skill_order", {
-    p_character_num: p.characterNum,
-    p_best_weapon: p.bestWeapon,
-    p_main_core: p.traitFirstCore || null,
-    p_skill_order: order,
-    p_tier: tier,
-    p_patch_version: patchVersion,
-    p_games: 1,
-    p_wins: isWin ? 1 : 0,
-    p_rp: rp,
-  });
-  if (error) console.error("[Skill] upsert error:", error.message);
-}
-
-/**
- * v2_CharacterStartRoute upsert
- */
-async function upsertStartRoute(
-  supabase: any,
-  p: Participant,
-  tier: string,
-  patchVersion: string
-) {
-  if (!p.routeIdOfStart || !p.placeOfStart) return;
-
-  const isWin = p.gameRank === 1;
-
-  const rp = p.mmrAfter - p.mmrBefore;
-
-  const { error } = await supabase.rpc("upsert_v2_character_start_route", {
-    p_character_num: p.characterNum,
-    p_best_weapon: p.bestWeapon,
-    p_route_id: p.routeIdOfStart,
-    p_place_of_start: p.placeOfStart,
-    p_tier: tier,
-    p_patch_version: patchVersion,
-    p_games: 1,
-    p_wins: isWin ? 1 : 0,
-    p_rank: p.gameRank,
-    p_rp: rp,
-  });
-  if (error) console.error("[Route] upsert error:", error.message);
-}
-
-/**
- * v2_CharacterItemPriority upsert (역산 로직)
- */
-async function upsertItemPriority(
-  supabase: any,
-  p: Participant,
-  tier: string,
-  patchVersion: string
-) {
-  if (p.craftLegend <= 0) return;
-
-  const grades = p.equipmentGrade;
   const equipment: Record<number, number> = {
-    0: p.equipment0,
-    1: p.equipment1,
-    2: p.equipment2,
-    3: p.equipment3,
-    4: p.equipment4,
+    0: p.equipment0, 1: p.equipment1, 2: p.equipment2,
+    3: p.equipment3, 4: p.equipment4,
   };
 
-  // 전설 등급(grade === 5) 슬롯 추출
-  const legendarySlots: { slot: number; itemCode: number }[] = [];
-  for (const [slot, grade] of Object.entries(grades)) {
+  const slots: { s: number; c: number }[] = [];
+  for (const [slot, grade] of Object.entries(p.equipmentGrade)) {
     if (grade === 5 && equipment[Number(slot)]) {
-      legendarySlots.push({ slot: Number(slot), itemCode: equipment[Number(slot)] });
+      slots.push({ s: Number(slot), c: equipment[Number(slot)] });
     }
   }
-
-  if (legendarySlots.length === 0) return;
-
-  const routeId = p.routeIdOfStart || null;
-
-  const rp = p.mmrAfter - p.mmrBefore;
-
-  for (const { slot, itemCode } of legendarySlots) {
-    // 전체 통합 (route_id = NULL)
-    const { error: e1 } = await supabase.rpc("upsert_v2_character_item_priority", {
-      p_character_num: p.characterNum,
-      p_best_weapon: p.bestWeapon,
-      p_route_id: null,
-      p_craft_legend: p.craftLegend,
-      p_slot: slot,
-      p_item_code: itemCode,
-      p_tier: tier,
-      p_patch_version: patchVersion,
-      p_games: 1,
-      p_rp: rp,
-    });
-    if (e1) console.error("[ItemPri] upsert error (all):", e1.message);
-
-    // 루트별 통계
-    if (routeId) {
-      const { error: e2 } = await supabase.rpc("upsert_v2_character_item_priority", {
-        p_character_num: p.characterNum,
-        p_best_weapon: p.bestWeapon,
-        p_route_id: routeId,
-        p_craft_legend: p.craftLegend,
-        p_slot: slot,
-        p_item_code: itemCode,
-        p_tier: tier,
-        p_patch_version: patchVersion,
-        p_games: 1,
-        p_rp: rp,
-      });
-      if (e2) console.error("[ItemPri] upsert error (route):", e2.message);
-    }
-  }
+  return slots;
 }
 
-/**
- * v2_CharacterEquipmentBuildStats upsert
- */
-async function upsertEquipmentBuild(
-  supabase: any,
-  p: Participant,
-  tier: string,
-  patchVersion: string
-) {
-  if (!p.traitFirstCore) return;
-
-  const isWin = p.gameRank === 1;
-  const rp = p.mmrAfter - p.mmrBefore;
-
-  const { error } = await supabase.rpc("upsert_v2_character_equipment_build", {
-    p_character_num: p.characterNum,
-    p_main_core: p.traitFirstCore,
-    p_weapon: p.equipment0 || null,
-    p_chest: p.equipment1 || null,
-    p_head: p.equipment2 || null,
-    p_arm: p.equipment3 || null,
-    p_leg: p.equipment4 || null,
-    p_tier: tier,
-    p_patch_version: patchVersion,
-    p_games: 1,
-    p_wins: isWin ? 1 : 0,
-    p_rp: rp,
-    p_rank: p.gameRank,
-  });
-  if (error) console.error("[Equip] upsert error:", error.message);
-}
-
-/**
- * v2_CharacterTraitBuildStats upsert
- */
-async function upsertTraitBuild(
-  supabase: any,
-  p: Participant,
-  tier: string,
-  patchVersion: string
-) {
-  if (!p.traitFirstCore) return;
-
-  const isWin = p.gameRank === 1;
-  const rp = p.mmrAfter - p.mmrBefore;
-
-  const sub = p.traitFirstSub;
-  const sec = p.traitSecondSub;
-
-  const { error } = await supabase.rpc("upsert_v2_character_trait_build", {
-    p_character_num: p.characterNum,
-    p_main_core: p.traitFirstCore,
-    p_sub1: sub[0] || null,
-    p_sub2: sub[1] || null,
-    p_sub3: sub[2] || null,
-    p_sub4: sub[3] || null,
-    p_option1: sec[0] || null,
-    p_option2: sec[1] || null,
-    p_option3: sec[2] || null,
-    p_option4: sec[3] || null,
-    p_best_weapon: p.bestWeapon,
-    p_tier: tier,
-    p_patch_version: patchVersion,
-    p_games: 1,
-    p_wins: isWin ? 1 : 0,
-    p_rp: rp,
-  });
-  if (error) console.error("[Trait] upsert error:", error.message);
-}
-
-// ── Old 테이블 Upsert (Forward only) ────────────────────────
-
-/**
- * old CharacterStats upsert
- */
-async function upsertOldCharacterStats(
-  supabase: any,
-  p: Participant,
-  tier: string,
-  patchVersion: string
-) {
-  const isWin = p.gameRank === 1;
-  const isTop3 = p.gameRank <= 3;
-  const rp = p.mmrAfter - p.mmrBefore;
-
-  const { error } = await supabase.rpc("upsert_old_character_stats", {
-    p_character_num: p.characterNum,
-    p_best_weapon: p.bestWeapon,
-    p_tier: tier,
-    p_patch_version: patchVersion,
-    p_games: 1,
-    p_wins: isWin ? 1 : 0,
-    p_top3: isTop3 ? 1 : 0,
-    p_rp: rp,
-    p_rank: p.gameRank,
-    p_damage: 0,
-    p_tk: 0,
-    p_player_kill: p.playerKill,
-    p_player_assist: p.playerAssistant,
-    p_monster_kill: 0,
-  });
-  if (error) console.error("[OldCS] upsert error:", error.message);
-}
-
-/**
- * old CharacterTrio upsert (patchVersion 없음)
- */
-async function upsertOldCharacterTrio(
-  supabase: any,
-  chars: [number, number, number],
-  gameRank: number,
-  tier: string,
-  avgRP: number
-) {
-  const sorted = [...chars].sort((a, b) => a - b) as [number, number, number];
-  const isWin = gameRank === 1;
-
-  const { error } = await supabase.rpc("upsert_old_character_trio", {
-    p_char1: sorted[0],
-    p_char2: sorted[1],
-    p_char3: sorted[2],
-    p_tier: tier,
-    p_games: 1,
-    p_wins: isWin ? 1 : 0,
-    p_rp: Math.round(avgRP),
-    p_rank: gameRank,
-  });
-  if (error) console.error("[OldTrio] upsert error:", error.message);
-}
-
-/**
- * old CharacterTrioByWeapon upsert
- */
-async function upsertOldTrioByWeapon(
-  supabase: any,
-  team: { char: number; weapon: number }[],
-  gameRank: number,
-  tier: string,
-  avgRP: number
-) {
-  const sorted = [...team].sort((a, b) => a.char - b.char);
-  const isWin = gameRank === 1;
-
-  const { error } = await supabase.rpc("upsert_old_character_trio_by_weapon", {
-    p_char1: sorted[0].char,
-    p_weapon1: sorted[0].weapon,
-    p_char2: sorted[1].char,
-    p_weapon2: sorted[1].weapon,
-    p_char3: sorted[2].char,
-    p_weapon3: sorted[2].weapon,
-    p_tier: tier,
-    p_games: 1,
-    p_wins: isWin ? 1 : 0,
-    p_rp: Math.round(avgRP),
-    p_rank: gameRank,
-  });
-  if (error) console.error("[OldTrioW] upsert error:", error.message);
-}
-
-/**
- * old CharacterTraitBuildStats upsert
- */
-async function upsertOldTraitBuild(
-  supabase: any,
-  p: Participant,
-  tier: string,
-  patchVersion: string
-) {
-  if (!p.traitFirstCore) return;
-
-  const isWin = p.gameRank === 1;
-  const isTop3 = p.gameRank <= 3;
-  const rp = p.mmrAfter - p.mmrBefore;
-  const sub = p.traitFirstSub;
-
-  const { error } = await supabase.rpc("upsert_old_character_trait_build", {
-    p_character_num: p.characterNum,
-    p_main_core: p.traitFirstCore,
-    p_sub1: sub[0] || 0,
-    p_sub2: sub[1] || 0,
-    p_sub3: sub[2] || 0,
-    p_sub4: sub[3] || 0,
-    p_best_weapon: p.bestWeapon,
-    p_tier: tier,
-    p_patch_version: patchVersion,
-    p_games: 1,
-    p_wins: isWin ? 1 : 0,
-    p_top3: isTop3 ? 1 : 0,
-    p_rp: rp,
-    p_rank: p.gameRank,
-    p_positive_rp: rp > 0 ? 1 : 0,
-  });
-  if (error) console.error("[OldTrait] upsert error:", error.message);
-}
-
-/**
- * old CharacterEquipmentBuildStats upsert
- */
-async function upsertOldEquipmentBuild(
-  supabase: any,
-  p: Participant,
-  tier: string,
-  patchVersion: string
-) {
-  if (!p.traitFirstCore) return;
-  // 장비가 하나라도 없으면 스킵 (old 테이블은 NOT NULL)
-  if (!p.equipment0 || !p.equipment1 || !p.equipment2 || !p.equipment3 || !p.equipment4) return;
-
-  const isWin = p.gameRank === 1;
-  const isTop3 = p.gameRank <= 3;
-  const rp = p.mmrAfter - p.mmrBefore;
-
-  const { error } = await supabase.rpc("upsert_old_character_equipment_build", {
-    p_character_num: p.characterNum,
-    p_main_core: p.traitFirstCore,
-    p_weapon: p.equipment0,
-    p_chest: p.equipment1,
-    p_head: p.equipment2,
-    p_arm: p.equipment3,
-    p_leg: p.equipment4,
-    p_tier: tier,
-    p_patch_version: patchVersion,
-    p_games: 1,
-    p_wins: isWin ? 1 : 0,
-    p_top3: isTop3 ? 1 : 0,
-    p_rp: rp,
-    p_rank: p.gameRank,
-    p_positive_rp: rp > 0 ? 1 : 0,
-  });
-  if (error) console.error("[OldEquip] upsert error:", error.message);
-}
-
-// ── 게임 1건 처리 ──────────────────────────────────────────
+// ── 게임 1건 처리 (배치 RPC) ─────────────────────────────
 
 async function processGame(
   supabase: any,
   gameDetail: any,
   patchCache: any[],
   rank1000MMR: number | null,
-  isForward: boolean // true: old + v2_ / false: v2_ only
+  isForward: boolean
 ): Promise<boolean> {
   const userGames = gameDetail?.userGames;
   if (!Array.isArray(userGames) || userGames.length === 0) return false;
@@ -697,17 +203,16 @@ async function processGame(
   const first = userGames[0];
   if (first.matchingMode !== 3) return false; // 랭크만
 
-  // 패치 버전 결정
   const startDtm = first.startDtm || gameDetail.startDtm;
   const startDate = parseBserDate(startDtm);
   if (!startDate) return false;
 
-  // 최근 1시간 이내 게임 → forward 중단 시그널 (남은 시간을 백필에 사용)
+  // 최근 1시간 이내 게임 → forward 중단 시그널
   if (isForward && Date.now() - startDate.getTime() < STABLE_DELAY_MS) {
-    return "RECENT" as any; // 호출부에서 감지해서 forward 중단 → backfill 전환
+    return "RECENT" as any;
   }
 
-  const patchVersion = await resolvePatchVersion(supabase, startDate, patchCache);
+  const patchVersion = resolvePatchVersion(startDate, patchCache);
   if (!patchVersion) return false;
 
   // 참가자 파싱
@@ -717,7 +222,51 @@ async function processGame(
 
   if (participants.length === 0) return false;
 
-  // 팀별 그룹핑 (조합 계산용)
+  // ── JSONB 페이로드 구성 ──
+
+  // 참가자 데이터 (축약 키로 전송량 최소화)
+  const pData = participants.map((p) => {
+    const tiers = getCollectableTiers(p.mmrBefore, rank1000MMR);
+    if (tiers.length === 0) return null;
+
+    return {
+      gid: p.gameId,
+      tn: p.teamNumber,
+      cn: p.characterNum,
+      bw: p.bestWeapon,
+      gr: p.gameRank,
+      pk: p.playerKill,
+      pa: p.playerAssistant,
+      cl: p.characterLevel,
+      eq0: p.equipment0,
+      eq1: p.equipment1,
+      eq2: p.equipment2,
+      eq3: p.equipment3,
+      eq4: p.equipment4,
+      eg: p.equipmentGrade,
+      cfl: p.craftLegend,
+      tfc: p.traitFirstCore,
+      fs: p.traitFirstSub,
+      ss: p.traitSecondSub,
+      so: skillOrderToArray(p.skillOrderInfo),
+      soi: p.skillOrderInfo,
+      sli: p.skillLevelInfo,
+      rid: p.routeIdOfStart || null,
+      pos: p.placeOfStart || null,
+      mb: p.mmrBefore,
+      ma: p.mmrAfter,
+      rkp: p.rankPoint,
+      vic: p.victory,
+      dur: p.duration,
+      tiers,
+      mt: tiers[tiers.length - 1], // main tier (가장 높은 티어)
+      ls: extractLegendarySlots(p),
+    };
+  }).filter(Boolean);
+
+  if (pData.length === 0) return false;
+
+  // 팀별 3인 조합 구성
   const teams = new Map<number, Participant[]>();
   for (const p of participants) {
     const team = teams.get(p.teamNumber) || [];
@@ -725,52 +274,9 @@ async function processGame(
     teams.set(p.teamNumber, team);
   }
 
-  // 각 참가자별 upsert (Promise.all로 병렬화)
-  const participantPromises = participants.map(async (p) => {
-    const tiers = getCollectableTiers(p.mmrBefore, rank1000MMR);
-    if (tiers.length === 0) return;
-
-    const tierPromises = tiers.flatMap((tier) => {
-      // v2_ 집계 테이블 (forward + backfill 공통)
-      const v2Calls = [
-        upsertCharacterStats(supabase, p, tier, patchVersion),
-        upsertEquipmentBuild(supabase, p, tier, patchVersion),
-        upsertTraitBuild(supabase, p, tier, patchVersion),
-        upsertSkillOrder(supabase, p, tier, patchVersion),
-        upsertStartRoute(supabase, p, tier, patchVersion),
-        upsertItemPriority(supabase, p, tier, patchVersion),
-      ];
-
-      // forward only: old 테이블
-      const oldCalls = isForward
-        ? [
-            upsertOldCharacterStats(supabase, p, tier, patchVersion),
-            upsertOldTraitBuild(supabase, p, tier, patchVersion),
-            upsertOldEquipmentBuild(supabase, p, tier, patchVersion),
-          ]
-        : [];
-
-      return [...v2Calls, ...oldCalls];
-    });
-
-    // PlayerGameRecord (forward only, 티어 무관 1회)
-    if (isForward) {
-      const mainTier = tiers[tiers.length - 1];
-      tierPromises.push(insertPlayerGameRecord(supabase, p, patchVersion, mainTier, startDate));
-    }
-
-    await Promise.all(tierPromises);
-  });
-
-  await Promise.all(participantPromises);
-
-  // 3인 조합 (팀 단위, 병렬화)
-  const trioPromises: Promise<void>[] = [];
-
+  const trios: any[] = [];
   for (const [, teamMembers] of teams) {
     if (teamMembers.length !== 3) continue;
-
-    const gameRank = teamMembers[0].gameRank;
 
     const tierSets = teamMembers.map((m) =>
       getCollectableTiers(m.mmrBefore, rank1000MMR)
@@ -778,69 +284,49 @@ async function processGame(
     const commonTiers = tierSets[0].filter(
       (t) => tierSets[1].includes(t) && tierSets[2].includes(t)
     );
-
     if (commonTiers.length === 0) continue;
 
-    const avgRP =
-      teamMembers.reduce((s, m) => s + (m.mmrAfter - m.mmrBefore), 0) / 3;
+    const sorted = [...teamMembers].sort((a, b) => a.characterNum - b.characterNum);
+    const avgRP = teamMembers.reduce((s, m) => s + (m.mmrAfter - m.mmrBefore), 0) / 3;
+    const hasWeapons = teamMembers.every((m) => m.bestWeapon > 0);
 
-    const trioTeam = teamMembers.map((m) => ({
-      char: m.characterNum,
-      mainCore: m.traitFirstCore || 0,
-    }));
-
-    for (const tier of commonTiers) {
-      // v2_CharacterTrio
-      trioPromises.push(
-        upsertCharacterTrio(supabase, trioTeam, gameRank, tier, patchVersion, avgRP)
-      );
-
-      // v2_CharacterTrioWeapon
-      if (teamMembers.every((m) => m.bestWeapon > 0)) {
-        trioPromises.push(
-          upsertTrioWeapon(
-            supabase,
-            teamMembers.map((m) => ({
-              char: m.characterNum,
-              weapon: m.bestWeapon,
-              mainCore: m.traitFirstCore || 0,
-            })),
-            gameRank,
-            tier,
-            patchVersion,
-            avgRP
-          )
-        );
-      }
-
-      // forward only: old trio
-      if (isForward) {
-        trioPromises.push(
-          upsertOldCharacterTrio(
-            supabase,
-            [teamMembers[0].characterNum, teamMembers[1].characterNum, teamMembers[2].characterNum],
-            gameRank,
-            tier,
-            avgRP
-          )
-        );
-
-        if (teamMembers.every((m) => m.bestWeapon > 0)) {
-          trioPromises.push(
-            upsertOldTrioByWeapon(
-              supabase,
-              teamMembers.map((m) => ({ char: m.characterNum, weapon: m.bestWeapon })),
-              gameRank,
-              tier,
-              avgRP
-            )
-          );
-        }
-      }
-    }
+    trios.push({
+      c1: sorted[0].characterNum,
+      c2: sorted[1].characterNum,
+      c3: sorted[2].characterNum,
+      k1: sorted[0].traitFirstCore || 0,
+      k2: sorted[1].traitFirstCore || 0,
+      k3: sorted[2].traitFirstCore || 0,
+      w1: sorted[0].bestWeapon,
+      w2: sorted[1].bestWeapon,
+      w3: sorted[2].bestWeapon,
+      gr: sorted[0].gameRank,
+      rp: avgRP,
+      hw: hasWeapons,
+      tiers: commonTiers,
+    });
   }
 
-  await Promise.all(trioPromises);
+  // ── 단일 RPC 호출 ──
+  const { data: batchResult, error } = await supabase.rpc("process_game_batch", {
+    p_data: {
+      patch_version: patchVersion,
+      is_forward: isForward,
+      started_at: startDate.toISOString(),
+      participants: pData,
+      trios,
+    },
+  });
+
+  if (error) {
+    console.error("[Batch] RPC error:", error.message);
+    return false;
+  }
+
+  // 부분 실패 로깅
+  if (batchResult?.fail > 0) {
+    console.warn(`[Batch] partial failure: ok=${batchResult.ok}, fail=${batchResult.fail}, errors=`, batchResult.errors);
+  }
 
   return true;
 }
@@ -909,7 +395,6 @@ serve(async (req: Request) => {
 
     // forward 워커 초기화
     if (!forwardStatus) {
-      // ermangho DataCollectionStatus에서 마지막 게임 번호 읽기
       let pivotGameNumber = 0;
       const { data: oldStatus } = await supabase
         .from("DataCollectionStatus")
@@ -959,7 +444,7 @@ serve(async (req: Request) => {
     let forwardCollected = 0;
     let forwardSkipped = 0;
     let forwardFailed = 0;
-    let forwardHitRecent = false; // 최근 게임 도달 → 남은 시간 백필에 사용
+    let forwardHitRecent = false;
     let forwardRemainingMs = 0;
 
     if (forwardStatus?.status === "active") {
@@ -1012,7 +497,6 @@ serve(async (req: Request) => {
     let backfillSkipped = 0;
     let backfillFailed = 0;
 
-    // forward에서 최근 게임 도달 시 남은 시간을 백필에 추가
     const backfillTotalBudgetMs = BACKFILL_BUDGET_MS + (forwardHitRecent ? Math.max(0, forwardRemainingMs) : 0);
 
     if (backfillStatus?.status === "active") {
@@ -1020,7 +504,6 @@ serve(async (req: Request) => {
       console.log(`[Backfill] 시작: beforeGameNumber=${beforeGame}, budget=${Math.round(backfillTotalBudgetMs / 1000)}초`);
 
       if (beforeGame <= 1) {
-        // 백필 완료
         await supabase
           .from("v2_CollectionStatus")
           .update({ status: "completed", updated_at: new Date().toISOString() })

@@ -72,6 +72,13 @@ export default function RootLayout({
           <Header />
           <main className="max-w-6xl mx-auto px-4 py-6">{children}</main>
         </L10nProvider>
+        <footer className="border-t border-[var(--color-border)] mt-12">
+          <div className="max-w-6xl mx-auto px-4 py-6 flex flex-col gap-2 text-[11px] text-[var(--color-muted-foreground)] leading-relaxed">
+            <p>본 서비스는 님블뉴런의 Open API를 활용하여 제작되었습니다. 게임 관련 이미지 및 데이터의 저작권은 (주)님블뉴런에 있습니다.</p>
+            <p>본 사이트는 님블뉴런의 공식 서비스가 아니며, 이용 중 발생하는 문제에 대해 회사는 책임지지 않습니다.</p>
+            <p className="text-[var(--color-muted-foreground)]/60">&copy; {new Date().getFullYear()} 이리와지지 ER&GG</p>
+          </div>
+        </footer>
         <FeedbackWidget />
         <Analytics />
         <AmplitudeProvider />
