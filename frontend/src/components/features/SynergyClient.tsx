@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import Image from "next/image"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { X, Users, Loader2, Search, ChevronDown, ChevronUp, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ResultErrorBoundary } from "@/components/features/ResultErrorBoundary"
@@ -197,12 +198,14 @@ function ComboCard({
   getCharName,
   selectedAllies,
   compact = false,
+  onNavigateAnalysis,
 }: {
   rec: TrioResult
   rank: number
   getCharName: (code: number) => string
   selectedAllies: number[]
   compact?: boolean
+  onNavigateAnalysis?: (code: number) => void
 }) {
   // 선택한 아군을 앞에, 추천 캐릭터를 마지막에 표시
   const allChars = [rec.character1, rec.character2, rec.character3]
@@ -231,29 +234,54 @@ function ComboCard({
       <div className="flex items-center gap-1">
         {chars.map((code, i) => {
           const isRecommended = !selectedAllies.includes(code)
+          const charContent = (
+            <div className="flex flex-col items-center gap-0.5">
+              <div
+                className={cn(
+                  "relative h-8 w-8 overflow-hidden rounded-md bg-[var(--color-border)]",
+                  isRecommended && "ring-2 ring-[var(--color-accent-gold)]",
+                  isRecommended && "group-hover/char:ring-[var(--color-primary)] transition-all"
+                )}
+              >
+                <Image
+                  src={getCharacterImageUrl(code)}
+                  alt={getCharName(code)}
+                  fill
+                  className="object-cover"
+                  sizes="32px"
+                />
+              </div>
+              {!compact && (
+                <span className={cn(
+                  "w-10 truncate text-center text-[9px]",
+                  isRecommended
+                    ? "text-[var(--color-accent-gold)] group-hover/char:text-[var(--color-primary)]"
+                    : "text-[var(--color-muted-foreground)]"
+                )}>
+                  {getCharName(code)}
+                </span>
+              )}
+            </div>
+          )
           return (
             <React.Fragment key={code}>
-              <div className="flex flex-col items-center gap-0.5">
-                <div
-                  className={cn(
-                    "relative h-8 w-8 overflow-hidden rounded-md bg-[var(--color-border)]",
-                    isRecommended && "ring-2 ring-[var(--color-accent-gold)]"
-                  )}
+              {isRecommended && onNavigateAnalysis ? (
+                <button
+                  type="button"
+                  onClick={() => onNavigateAnalysis(code)}
+                  className="group/char relative z-10 cursor-pointer flex items-center gap-1"
+                  title={`${getCharName(code)} 분석 보기`}
                 >
-                  <Image
-                    src={getCharacterImageUrl(code)}
-                    alt={getCharName(code)}
-                    fill
-                    className="object-cover"
-                    sizes="32px"
-                  />
-                </div>
-                {!compact && (
-                  <span className="w-10 truncate text-center text-[9px] text-[var(--color-muted-foreground)]">
-                    {getCharName(code)}
-                  </span>
-                )}
-              </div>
+                  {charContent}
+                  {rest.length === 1 && (
+                    <span className="rounded-md border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-1.5 py-0.5 text-[9px] font-medium text-[var(--color-primary)] group-hover/char:bg-[var(--color-primary)]/20 group-hover/char:border-[var(--color-primary)]/50 transition-colors whitespace-nowrap">
+                      분석보기
+                    </span>
+                  )}
+                </button>
+              ) : (
+                charContent
+              )}
               {i < 2 && (
                 <span className="text-[10px] text-[var(--color-border)]">+</span>
               )}
@@ -325,7 +353,7 @@ function ComboCard({
               {rec.averageRP > 0 ? "+" : ""}{rec.averageRP.toFixed(1)}
             </span>
           </div>
-          <div className="hidden sm:flex flex-col">
+          <div className="flex flex-col">
             <span className="text-[10px] text-[var(--color-muted-foreground)]">게임 수</span>
             <span className="text-sm text-[var(--color-muted-foreground)]">
               {rec.totalGames.toLocaleString()}
@@ -339,6 +367,7 @@ function ComboCard({
           </div>
         </div>
       )}
+
     </div>
   )
 }
@@ -347,14 +376,45 @@ function ComboCard({
 
 export function SynergyClient({ compact = false }: { compact?: boolean }) {
   const { l10n } = useL10n()
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
 
-  const [selectedAllies, setSelectedAllies] = React.useState<number[]>([])
+  // URL 쿼리 파라미터에서 초기 아군 읽기
+  const initialAllies = React.useMemo(() => {
+    const allies: number[] = []
+    const a1 = searchParams.get("ally1")
+    const a2 = searchParams.get("ally2")
+    if (a1) {
+      const code = parseInt(a1, 10)
+      if (!isNaN(code) && ALL_CHARACTER_CODES.includes(code)) allies.push(code)
+    }
+    if (a2) {
+      const code = parseInt(a2, 10)
+      if (!isNaN(code) && ALL_CHARACTER_CODES.includes(code) && !allies.includes(code)) allies.push(code)
+    }
+    return allies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const [selectedAllies, setSelectedAllies] = React.useState<number[]>(initialAllies)
   const [focusCharacters, setFocusCharacters] = React.useState<number[]>([])
   // isFocusExpanded: 관심 캐릭터 그리드 접기/펼치기 (true = 펼침)
   const [isFocusExpanded, setIsFocusExpanded] = React.useState(false)
   const [sortBy, setSortBy] = React.useState<SortBy>("recommended")
   const [allySearch, setAllySearch] = React.useState("")
   const [focusSearch, setFocusSearch] = React.useState("")
+
+  // 아군 선택 변경 시 URL 쿼리 파라미터 동기화
+  React.useEffect(() => {
+    const params = new URLSearchParams()
+    if (selectedAllies[0] !== undefined) params.set("ally1", String(selectedAllies[0]))
+    if (selectedAllies[1] !== undefined) params.set("ally2", String(selectedAllies[1]))
+
+    const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
+    router.replace(newUrl, { scroll: false })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedAllies, pathname, router])
 
   const [trioResults, setTrioResults] = React.useState<TrioResult[]>([])
   const [loading, setLoading] = React.useState(false)
@@ -417,6 +477,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
     return () => {
       clearTimeout(timerId)
       controller.abort()
+      setLoading(false)
     }
   }, [selectedAllies, sortBy])
 
@@ -802,6 +863,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
                 getCharName={getCharName}
                 selectedAllies={selectedAllies}
                 compact={compact}
+                onNavigateAnalysis={(code) => router.push(`/character-analysis?character=${code}`)}
               />
             ))}
           </div>
