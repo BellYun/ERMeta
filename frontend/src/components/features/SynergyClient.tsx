@@ -408,6 +408,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
   const [copied, setCopied] = React.useState(false)
   const [showShareModal, setShowShareModal] = React.useState(false)
   const [generatingImage, setGeneratingImage] = React.useState(false)
+  const [pendingImageShare, setPendingImageShare] = React.useState(false)
   const shareCardRef = React.useRef<HTMLDivElement>(null)
 
   // 아군 선택 변경 시 URL 쿼리 파라미터 동기화
@@ -563,6 +564,57 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
         ]
     return sorted.slice(0, 20)
   }, [trioResults, selectedAllies, focusCharacters, sortBy])
+
+  // 이미지 공유 실행 함수
+  const executeImageShare = React.useCallback(async () => {
+    if (!shareCardRef.current || recommendations.length === 0) return
+    setGeneratingImage(true)
+    try {
+      const canvas = await html2canvas(shareCardRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: null,
+      })
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, "image/png")
+      )
+      if (!blob) return
+
+      const allyLabel = selectedAllies.length === 2
+        ? `${getCharName(selectedAllies[0])}_${getCharName(selectedAllies[1])}`
+        : getCharName(selectedAllies[0])
+      const fileName = `ERGG_${allyLabel}_조합.png`
+
+      if (typeof navigator.share === "function") {
+        const file = new File([blob], fileName, { type: "image/png" })
+        try {
+          await navigator.share({
+            title: `${allyLabel} 추천 조합 TOP 5`,
+            text: "이리와지지 ER&GG 조합 추천",
+            files: [file],
+          })
+          setShowShareModal(false)
+          return
+        } catch { /* 사용자 취소 → 다운로드 폴백 */ }
+      }
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = fileName
+      a.click()
+      URL.revokeObjectURL(url)
+    } finally {
+      setGeneratingImage(false)
+    }
+  }, [recommendations, selectedAllies, getCharName])
+
+  // 데이터 로딩 완료 후 대기 중인 이미지 공유 자동 실행
+  React.useEffect(() => {
+    if (pendingImageShare && !loading && recommendations.length > 0) {
+      setPendingImageShare(false)
+      executeImageShare()
+    }
+  }, [pendingImageShare, loading, recommendations, executeImageShare])
 
   return (
     <div className="flex flex-col gap-4">
@@ -817,16 +869,17 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
                   : ""}
               </h2>
               <button
-                onClick={async () => {
+                type="button"
+                onClick={() => {
                   const url = window.location.href
                   const title = selectedAllies.length === 2
                     ? `${getCharName(selectedAllies[0])} + ${getCharName(selectedAllies[1])} 조합 추천`
                     : `${getCharName(selectedAllies[0])} 포함 추천 조합`
                   if (typeof navigator.share === "function") {
-                    try {
-                      await navigator.share({ title, text: `${title} - 이리와지지 ER&GG`, url })
-                      return
-                    } catch { /* 사용자 취소 or 미지원 → 모달 폴백 */ }
+                    navigator.share({ title, text: `${title} - 이리와지지 ER&GG`, url }).catch(() => {
+                      setShowShareModal(true)
+                    })
+                    return
                   }
                   setShowShareModal(true)
                 }}
@@ -836,6 +889,7 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
                 공유
               </button>
               <button
+                type="button"
                 onClick={() => setSelectedAllies([])}
                 className="inline-flex items-center gap-1 shrink-0 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 py-1 text-xs font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:border-[var(--color-border-light)] transition-colors"
               >
@@ -1074,58 +1128,24 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
 
             {/* 이미지로 공유 */}
             <button
-              disabled={generatingImage || recommendations.length === 0}
-              onClick={async () => {
-                if (!shareCardRef.current) return
-                setGeneratingImage(true)
-                try {
-                  const canvas = await html2canvas(shareCardRef.current, {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: null,
-                  })
-                  const blob = await new Promise<Blob | null>((resolve) =>
-                    canvas.toBlob(resolve, "image/png")
-                  )
-                  if (!blob) return
-
-                  const allyLabel = selectedAllies.length === 2
-                    ? `${getCharName(selectedAllies[0])}_${getCharName(selectedAllies[1])}`
-                    : getCharName(selectedAllies[0])
-                  const fileName = `ERGG_${allyLabel}_조합.png`
-
-                  if (typeof navigator.share === "function") {
-                    const file = new File([blob], fileName, { type: "image/png" })
-                    try {
-                      await navigator.share({
-                        title: `${allyLabel} 추천 조합 TOP 5`,
-                        text: "이리와지지 ER&GG 조합 추천",
-                        files: [file],
-                      })
-                      setShowShareModal(false)
-                      return
-                    } catch { /* 사용자 취소 → 다운로드 폴백 */ }
-                  }
-                  // 데스크탑 폴백: 다운로드
-                  const url = URL.createObjectURL(blob)
-                  const a = document.createElement("a")
-                  a.href = url
-                  a.download = fileName
-                  a.click()
-                  URL.revokeObjectURL(url)
-                } finally {
-                  setGeneratingImage(false)
+              disabled={generatingImage || pendingImageShare}
+              onClick={() => {
+                if (loading || recommendations.length === 0) {
+                  // 데이터 로딩 중이면 대기 플래그 세팅 → 로딩 완료 시 자동 실행
+                  setPendingImageShare(true)
+                  return
                 }
+                executeImageShare()
               }}
               className={cn(
                 "w-full flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-colors mb-3",
-                recommendations.length === 0
-                  ? "bg-[var(--color-surface-2)] text-[var(--color-muted-foreground)] cursor-not-allowed"
-                  : "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)]/80"
+                "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)]/80"
               )}
             >
               {generatingImage ? (
                 <><Loader2 className="h-4 w-4 animate-spin" />이미지 생성 중...</>
+              ) : pendingImageShare || loading ? (
+                <><Loader2 className="h-4 w-4 animate-spin" />조합 데이터 준비 중...</>
               ) : (
                 <><ImageDown className="h-4 w-4" />이미지로 공유 (TOP 5)</>
               )}
