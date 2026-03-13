@@ -9,9 +9,9 @@ import { CHANGE_TYPE_CONFIG } from "./constants"
 export function ChangeTypeBadge({ type }: { type: ChangeType }) {
   const config = CHANGE_TYPE_CONFIG[type]
   return (
-    <span className={cn("inline-flex items-center gap-1 rounded border px-2 py-0.5 text-xs font-semibold shrink-0", config.bgClass, config.colorClass)}>
+    <span className={cn("inline-flex items-center gap-1 rounded border px-1.5 sm:px-2 py-0.5 text-xs font-semibold shrink-0", config.bgClass, config.colorClass)}>
       <config.Icon className="h-3 w-3" />
-      {config.label}
+      <span className="hidden sm:inline">{config.label}</span>
     </span>
   )
 }
