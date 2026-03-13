@@ -75,8 +75,18 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 
 export default function SynergyPage() {
   return (
-    <Suspense>
-      <SynergyClient />
-    </Suspense>
+    <>
+      <section className="text-center py-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-foreground)]">
+          3인 조합 추천
+        </h1>
+        <p className="mt-1.5 text-sm text-[var(--color-muted-foreground)]">
+          이터널리턴 승률 + 평균 RP 기반 최적 팀 조합 분석
+        </p>
+      </section>
+      <Suspense>
+        <SynergyClient />
+      </Suspense>
+    </>
   )
 }
