@@ -12,8 +12,14 @@ import type { CharacterStatsResponse } from "@/app/api/character/stats/[characte
 
 import { CHARACTER_CODES } from "./constants"
 import { assignCharTier, fetchStats } from "./utils"
-import { CharacterGrid } from "./CharacterGrid"
-import { CharacterHeader } from "./CharacterHeader"
+import { CharacterGridSkeleton, CharacterHeaderSkeleton } from "./AnalysisSkeleton"
+
+const CharacterGrid = React.lazy(() =>
+  import("./CharacterGrid").then((m) => ({ default: m.CharacterGrid }))
+)
+const CharacterHeader = React.lazy(() =>
+  import("./CharacterHeader").then((m) => ({ default: m.CharacterHeader }))
+)
 
 // 탭 콘텐츠 lazy import → 코드 스플릿 + Suspense 폴백 활성화
 const PatchComparisonTab = React.lazy(() =>
@@ -177,33 +183,37 @@ export function CharacterAnalysisClient() {
   return (
     <div className="flex flex-col lg:flex-row gap-4 items-start">
       {/* 캐릭터 그리드 (모바일: 상단 수평 스크롤, 데스크탑: 좌측 사이드바) */}
-      <CharacterGrid
-        selectedCode={selectedCode}
-        onSelect={setSelectedCode}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        filteredCodes={filteredCodes}
-        selectedRef={selectedRef}
-        searchTimerRef={searchTimerRef}
-      />
+      <Suspense fallback={<CharacterGridSkeleton />}>
+        <CharacterGrid
+          selectedCode={selectedCode}
+          onSelect={setSelectedCode}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          filteredCodes={filteredCodes}
+          selectedRef={selectedRef}
+          searchTimerRef={searchTimerRef}
+        />
+      </Suspense>
 
       {/* 우측 분석 콘텐츠 */}
       <div className="flex flex-1 flex-col gap-4 min-w-0">
         {/* 캐릭터 헤더 */}
-        <CharacterHeader
-          selectedCode={selectedCode}
-          selectedTier={selectedTier}
-          setSelectedTier={setSelectedTier}
-          selectedWeapon={selectedWeapon}
-          setSelectedWeapon={setSelectedWeapon}
-          stats={stats}
-          displayStat={displayStat}
-          displayPrevStat={displayPrevStat}
-          charTier={charTier}
-          currentPatch={currentPatch}
-          loading={loading}
-          hasPreviousData={hasPreviousData}
-        />
+        <Suspense fallback={<CharacterHeaderSkeleton />}>
+          <CharacterHeader
+            selectedCode={selectedCode}
+            selectedTier={selectedTier}
+            setSelectedTier={setSelectedTier}
+            selectedWeapon={selectedWeapon}
+            setSelectedWeapon={setSelectedWeapon}
+            stats={stats}
+            displayStat={displayStat}
+            displayPrevStat={displayPrevStat}
+            charTier={charTier}
+            currentPatch={currentPatch}
+            loading={loading}
+            hasPreviousData={hasPreviousData}
+          />
+        </Suspense>
 
         {/* 탭 분석 */}
         <Tabs defaultValue="comparison" onValueChange={(v) => analytics.analysisTabChanged(v)}>

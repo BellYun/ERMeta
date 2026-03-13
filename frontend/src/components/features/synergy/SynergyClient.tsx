@@ -11,9 +11,21 @@ import { analytics } from "@/lib/analytics"
 import type { TrioResult, SortBy } from "./types"
 import { ALL_CHARACTER_CODES, FALLBACK_MAP, SORT_OPTIONS } from "./constants"
 import { matchesChosungSearch, getSortValue, getThirdCharacter, deduplicateResults } from "./utils"
-import { FocusCharacterPool } from "./FocusCharacterPool"
-import { AllySelector } from "./AllySelector"
-import { ComboCard } from "./ComboCard"
+import {
+  FocusPoolSkeleton,
+  AllySelectorSkeleton,
+  ResultSkeleton,
+} from "./SynergySkeleton"
+
+const FocusCharacterPool = React.lazy(() =>
+  import("./FocusCharacterPool").then((m) => ({ default: m.FocusCharacterPool }))
+)
+const AllySelector = React.lazy(() =>
+  import("./AllySelector").then((m) => ({ default: m.AllySelector }))
+)
+const ComboCard = React.lazy(() =>
+  import("./ComboCard").then((m) => ({ default: m.ComboCard }))
+)
 
 export function SynergyClient({ compact = false }: { compact?: boolean }) {
   const { l10n } = useL10n()
@@ -204,28 +216,32 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
   return (
     <div className="flex flex-col gap-4">
       {/* STEP 1: 관심 캐릭터 설정 (내가 플레이 가능한 캐릭터 풀) */}
-      <FocusCharacterPool
-        focusCharacters={focusCharacters}
-        toggleFocus={toggleFocus}
-        setFocusCharacters={setFocusCharacters}
-        getCharName={getCharName}
-        filteredFocusCodes={filteredFocusCodes}
-        focusSearch={focusSearch}
-        setFocusSearch={setFocusSearch}
-        isFocusExpanded={isFocusExpanded}
-        setIsFocusExpanded={setIsFocusExpanded}
-      />
+      <React.Suspense fallback={<FocusPoolSkeleton />}>
+        <FocusCharacterPool
+          focusCharacters={focusCharacters}
+          toggleFocus={toggleFocus}
+          setFocusCharacters={setFocusCharacters}
+          getCharName={getCharName}
+          filteredFocusCodes={filteredFocusCodes}
+          focusSearch={focusSearch}
+          setFocusSearch={setFocusSearch}
+          isFocusExpanded={isFocusExpanded}
+          setIsFocusExpanded={setIsFocusExpanded}
+        />
+      </React.Suspense>
 
       {/* STEP 2: 아군 선택 */}
-      <AllySelector
-        selectedAllies={selectedAllies}
-        getCharName={getCharName}
-        removeAlly={removeAlly}
-        toggleAlly={toggleAlly}
-        filteredAllyCodes={filteredAllyCodes}
-        allySearch={allySearch}
-        setAllySearch={setAllySearch}
-      />
+      <React.Suspense fallback={<AllySelectorSkeleton />}>
+        <AllySelector
+          selectedAllies={selectedAllies}
+          getCharName={getCharName}
+          removeAlly={removeAlly}
+          toggleAlly={toggleAlly}
+          filteredAllyCodes={filteredAllyCodes}
+          allySearch={allySearch}
+          setAllySearch={setAllySearch}
+        />
+      </React.Suspense>
 
       {/* STEP 3: 정렬 기준 + 결과 */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -324,17 +340,19 @@ export function SynergyClient({ compact = false }: { compact?: boolean }) {
                 1명 더 선택하면 더 정확한 추천을 받을 수 있어요
               </p>
             )}
-            {recommendations.map((rec, i) => (
-              <ComboCard
-                key={`${rec.character1}-${rec.character2}-${rec.character3}`}
-                rec={rec}
-                rank={i + 1}
-                getCharName={getCharName}
-                selectedAllies={selectedAllies}
-                compact={compact}
-                onNavigateAnalysis={(code) => router.push(`/character-analysis?character=${code}`)}
-              />
-            ))}
+            <React.Suspense fallback={<ResultSkeleton />}>
+              {recommendations.map((rec, i) => (
+                <ComboCard
+                  key={`${rec.character1}-${rec.character2}-${rec.character3}`}
+                  rec={rec}
+                  rank={i + 1}
+                  getCharName={getCharName}
+                  selectedAllies={selectedAllies}
+                  compact={compact}
+                  onNavigateAnalysis={(code) => router.push(`/character-analysis?character=${code}`)}
+                />
+              ))}
+            </React.Suspense>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
