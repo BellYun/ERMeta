@@ -6,37 +6,23 @@ interface FilterState {
   patch: string
   tier: string
   patches: string[]
-  isLoading: boolean
   setPatch: (patch: string) => void
   setTier: (tier: string) => void
 }
 
 const FilterContext = React.createContext<FilterState | null>(null)
 
-export function FilterProvider({ children }: { children: React.ReactNode }) {
-  const [patches, setPatches] = React.useState<string[]>([])
-  const [patch, setPatch] = React.useState("")
-  const [tier, setTier] = React.useState("MITHRIL")
-  const [isLoading, setIsLoading] = React.useState(true)
+interface FilterProviderProps {
+  initialPatches: string[]
+  children: React.ReactNode
+}
 
-  React.useEffect(() => {
-    setIsLoading(true)
-    fetch("/api/patches/history?limit=10")
-      .then((res) => res.json())
-      .then((data: { patches?: string[] }) => {
-        const list = data.patches ?? []
-        setPatches(list)
-        if (list.length > 0 && !patch) {
-          setPatch(list[0])
-        }
-      })
-      .catch(() => setPatches([]))
-      .finally(() => setIsLoading(false))
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+export function FilterProvider({ initialPatches, children }: FilterProviderProps) {
+  const [patch, setPatch] = React.useState(initialPatches[0] ?? "")
+  const [tier, setTier] = React.useState("MITHRIL")
 
   return (
-    <FilterContext.Provider value={{ patch, tier, patches, isLoading, setPatch, setTier }}>
+    <FilterContext.Provider value={{ patch, tier, patches: initialPatches, setPatch, setTier }}>
       {children}
     </FilterContext.Provider>
   )

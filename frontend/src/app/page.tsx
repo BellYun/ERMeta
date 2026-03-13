@@ -4,6 +4,8 @@ import { GlobalFilter } from "@/components/features/GlobalFilter";
 import { TierRankingTable } from "@/components/features/TierRankingTable";
 import { HoneyPicksSection } from "@/components/features/HoneyPicksSection";
 import { FilterProvider } from "@/components/features/FilterContext";
+import { createServerClient } from "@/lib/supabase";
+import { fetchRankingData } from "@/lib/ranking";
 
 export const metadata: Metadata = {
   title: { absolute: "메타분석 | 이리와지지" },
@@ -21,9 +23,38 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 }
 
-export default function Home() {
+async function fetchPatches(): Promise<string[]> {
+  try {
+    const supabase = createServerClient()
+    const { data, error } = await supabase
+      .from("PatchVersion")
+      .select("version")
+      .eq("isActive", true)
+      .order("startDate", { ascending: false })
+      .limit(10)
+
+    if (!error && data && data.length > 0) {
+      return data.map((p) => p.version)
+    }
+    return []
+  } catch {
+    return []
+  }
+}
+
+export default async function Home() {
+  const patches = await fetchPatches()
+  const defaultPatch = patches[0] ?? ""
+  const defaultTier = "MITHRIL"
+
+  // 패치 데이터와 랭킹 데이터를 병렬로 가져오면 더 좋지만,
+  // 랭킹은 패치 버전에 의존하므로 순차 실행
+  const initialRanking = defaultPatch
+    ? await fetchRankingData(defaultPatch, defaultTier)
+    : undefined
+
   return (
-    <FilterProvider>
+    <FilterProvider initialPatches={patches}>
       <div className="flex flex-col gap-6">
         {/* 이번 패치 떡상 TOP 5 */}
         <section className="flex flex-col gap-2">
@@ -43,7 +74,7 @@ export default function Home() {
           <GlobalFilter />
         </Suspense>
         <Suspense>
-          <TierRankingTable />
+          <TierRankingTable initialData={initialRanking} />
         </Suspense>
       </div>
     </FilterProvider>

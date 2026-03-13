@@ -23,38 +23,40 @@ export function useL10n() {
   return context;
 }
 
-export function L10nProvider({ children }: { children: React.ReactNode }) {
+interface L10nProviderProps {
+  initialL10n?: Record<string, string>;
+  children: React.ReactNode;
+}
+
+export function L10nProvider({ initialL10n, children }: L10nProviderProps) {
   const [language, setLanguageState] = useState<string>('Korean');
-  const [l10n, setL10n] = useState<Map<string, string>>(new Map());
-  const [loading, setLoading] = useState(true);
+  const [l10n, setL10n] = useState<Map<string, string>>(
+    () => initialL10n ? new Map(Object.entries(initialL10n)) : new Map()
+  );
+  const [loading, setLoading] = useState(!initialL10n);
   const [error, setError] = useState<string | null>(null);
 
-  // localStorage에서 언어 초기화 (hydration 이후)
+  // localStorage에서 언어 확인 — Korean이 아닐 때만 refetch
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) setLanguageState(stored);
-  }, []);
+    if (stored && stored !== language) {
+      setLanguageState(stored);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // 언어 변경 시 l10n 로드
+  // 언어 변경 시에만 l10n 재로드 (초기 Korean + initialL10n이면 스킵)
   useEffect(() => {
+    if (language === 'Korean' && initialL10n) return;
+
     setLoading(true);
     setError(null);
-    console.log(`[L10nProvider] l10n 로드 시작: language=${language}`);
     fetchAndParseL10n(language)
-      .then((map) => {
-        console.log(`[L10nProvider] 로드 완료: ${map.size}개 키, 샘플:`, {
-          'Character/Name/1': map.get('Character/Name/1'),
-          'Character/Name/2': map.get('Character/Name/2'),
-          'Character/Name/3': map.get('Character/Name/3'),
-        });
-        setL10n(map);
-      })
+      .then((map) => setL10n(map))
       .catch((err) => {
-        console.error('[L10nProvider] 로드 실패:', err);
         setError(err instanceof Error ? err.message : 'l10n 로딩 실패');
       })
       .finally(() => setLoading(false));
-  }, [language]);
+  }, [language, initialL10n]);
 
   const setLanguage = (lang: string) => {
     localStorage.setItem(STORAGE_KEY, lang);
