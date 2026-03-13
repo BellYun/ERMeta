@@ -5,9 +5,13 @@ import { useSyncExternalStore, useCallback } from "react"
 const STORAGE_KEY = "ergg-focus-characters"
 const EVENT_NAME = "focus-characters-changed"
 
+// 참조 안정성 보장: JSON 문자열이 동일하면 같은 배열 참조 반환
+let cachedRaw: string | null = null
+let cachedParsed: number[] = []
+const EMPTY: number[] = []
+
 function subscribe(callback: () => void) {
   window.addEventListener(EVENT_NAME, callback)
-  // localStorage 변경은 다른 탭에서도 감지
   window.addEventListener("storage", callback)
   return () => {
     window.removeEventListener(EVENT_NAME, callback)
@@ -17,18 +21,26 @@ function subscribe(callback: () => void) {
 
 function getSnapshot(): number[] {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]")
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (raw === cachedRaw) return cachedParsed
+    cachedRaw = raw
+    cachedParsed = raw ? JSON.parse(raw) : []
+    return cachedParsed
   } catch {
-    return []
+    return EMPTY
   }
 }
 
 function getServerSnapshot(): number[] {
-  return []
+  return EMPTY
 }
 
 function writeFocusCharacters(chars: number[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(chars))
+  const raw = JSON.stringify(chars)
+  localStorage.setItem(STORAGE_KEY, raw)
+  // 캐시 즉시 갱신 (subscribe 콜백 전에 getSnapshot이 호출될 수 있음)
+  cachedRaw = raw
+  cachedParsed = chars
   window.dispatchEvent(new Event(EVENT_NAME))
 }
 
