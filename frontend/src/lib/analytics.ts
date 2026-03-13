@@ -4,7 +4,7 @@ const isDev = process.env.NODE_ENV === "development"
 
 function track(event: string, properties?: Record<string, unknown>) {
   if (isDev) return
-  track(event, properties)
+  amplitude.track(event, properties)
 }
 
 export const analytics = {

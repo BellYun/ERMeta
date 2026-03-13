@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
+import { MaintenanceBanner } from "@/components/layout/MaintenanceBanner";
 import { L10nProvider } from "@/components/L10nProvider";
 import FeedbackWidget from "@/components/features/FeedbackWidget";
 import { Analytics } from "@vercel/analytics/next";
@@ -71,6 +72,7 @@ export default function RootLayout({
       <body>
         <L10nProvider>
           <Header />
+          <MaintenanceBanner />
           <main className="max-w-6xl mx-auto px-4 py-6">{children}</main>
         </L10nProvider>
         <footer className="border-t border-[var(--color-border)] mt-12">
