@@ -1,0 +1,204 @@
+"use client"
+
+import * as React from "react"
+import { useRouter } from "next/navigation"
+import { Loader2 } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { useL10n } from "@/components/L10nProvider"
+import {
+  buildFallbackMap,
+  getCharacterHalfImageUrl,
+  resolveCharacterName,
+} from "@/lib/characterMap"
+import { useFilter } from "../FilterContext"
+import { resolveWeaponName } from "@/lib/weaponMap"
+import { getCharacterPatchNote } from "@/data/patch-notes"
+import type { HoneyPickData } from "@/app/api/meta/honey-picks/route"
+import type { CharacterPatchNote } from "@/data/patch-notes"
+import { useCarousel } from "./useCarousel"
+import { HoneyPickCard, CHANGE_LABEL, getOverallChangeType } from "./HoneyPickCard"
+import { PatchNoteBottomSheet } from "./PatchNoteBottomSheet"
+
+const FALLBACK_MAP = buildFallbackMap()
+
+export function HoneyPicksSection() {
+  const { l10n } = useL10n()
+  const { patch, tier } = useFilter()
+  const router = useRouter()
+  const [picks, setPicks] = React.useState<HoneyPickData[]>([])
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState<string | null>(null)
+  const [currentPatch, setCurrentPatch] = React.useState<string>("")
+  const [mobileSheet, setMobileSheet] = React.useState<{ pick: HoneyPickData; patchNote: CharacterPatchNote; changeLabel: { text: string; color: string } | null } | null>(null)
+
+  const getCharName = React.useCallback(
+    (code: number) => resolveCharacterName(code, l10n, FALLBACK_MAP),
+    [l10n]
+  )
+
+  React.useEffect(() => {
+    setLoading(true)
+    setError(null)
+    const params = new URLSearchParams()
+    if (patch) params.set("patchVersion", patch)
+    params.set("tier", tier)
+
+    fetch(`/api/meta/honey-picks?${params}`)
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error ?? "API 오류")
+        setPicks(data.picks ?? [])
+        setCurrentPatch(data.patchVersion ?? patch ?? "")
+      })
+      .catch((err) =>
+        setError(err instanceof Error ? err.message : "오류가 발생했습니다.")
+      )
+      .finally(() => setLoading(false))
+  }, [patch, tier])
+
+  const {
+    currentIndex,
+    setCurrentIndex,
+    isTransitioning,
+    setIsTransitioning,
+    extendedPicks,
+    activeRealIndex,
+    translateX,
+    cardWidth,
+    cloneCount,
+    dragOffset,
+    isDragging,
+    handleDragStart,
+    handleDragMove,
+    handleDragEnd,
+    stopAutoSlide,
+    startAutoSlide,
+  } = useCarousel(picks)
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-6">
+        <Loader2 className="h-5 w-5 animate-spin text-[var(--color-primary)]" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return <p className="py-3 text-sm text-[var(--color-danger)]">{error}</p>
+  }
+
+  if (picks.length === 0) {
+    return (
+      <p className="py-3 text-center text-xs text-[var(--color-muted-foreground)]">
+        이번 패치에서 꿀챔 데이터가 없습니다.
+      </p>
+    )
+  }
+
+  return (
+    <div
+      className="relative select-none"
+      onMouseEnter={stopAutoSlide}
+      onMouseLeave={startAutoSlide}
+    >
+      {/* 슬라이더 트랙 */}
+      <div
+        className="rounded-xl"
+        onMouseDown={(e) => handleDragStart(e.clientX)}
+        onMouseMove={(e) => handleDragMove(e.clientX)}
+        onMouseUp={handleDragEnd}
+        onMouseLeave={() => isDragging && handleDragEnd()}
+        onTouchStart={(e) => handleDragStart(e.touches[0].clientX)}
+        onTouchMove={(e) => handleDragMove(e.touches[0].clientX)}
+        onTouchEnd={handleDragEnd}
+      >
+        <div
+          className={cn(
+            "flex",
+            isTransitioning && "transition-transform duration-500 ease-in-out"
+          )}
+          style={{
+            transform: `translateX(calc(${translateX}% + ${dragOffset}px))`,
+          }}
+        >
+          {extendedPicks.map((pick, i) => {
+            const name = getCharName(pick.characterNum)
+            const weaponName = resolveWeaponName(pick.bestWeapon)
+            const halfUrl = getCharacterHalfImageUrl(pick.characterNum)
+            const patchNote = getCharacterPatchNote(pick.characterNum, currentPatch) ?? null
+            const overallChange = patchNote ? getOverallChangeType(patchNote) : null
+            const changeLabel = overallChange ? CHANGE_LABEL[overallChange] : null
+            const isCenter = i === currentIndex
+            const rank = ((i - cloneCount) % picks.length + picks.length) % picks.length + 1
+
+            return (
+              <HoneyPickCard
+                key={`${pick.characterNum}-${i}`}
+                pick={pick}
+                name={name}
+                weaponName={weaponName}
+                halfUrl={halfUrl}
+                patchNote={patchNote}
+                changeLabel={changeLabel}
+                isCenter={isCenter}
+                rank={rank}
+                cardWidth={cardWidth}
+                onCardClick={() => {
+                  if (isCenter) {
+                    if (patchNote && window.innerWidth < 640) {
+                      setMobileSheet({ pick, patchNote, changeLabel })
+                    } else {
+                      router.push(`/character-analysis?character=${pick.characterNum}`)
+                    }
+                  } else {
+                    stopAutoSlide()
+                    setIsTransitioning(true)
+                    setCurrentIndex(i)
+                    startAutoSlide()
+                  }
+                }}
+              />
+            )
+          })}
+        </div>
+      </div>
+
+      {/* 인디케이터 */}
+      <div className="flex justify-center gap-1.5 mt-3">
+        {picks.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => {
+              stopAutoSlide()
+              setIsTransitioning(true)
+              setCurrentIndex(i + cloneCount)
+              startAutoSlide()
+            }}
+            className={cn(
+              "h-1.5 rounded-full transition-all duration-300",
+              i === activeRealIndex
+                ? "w-4 bg-[var(--color-accent-gold)]"
+                : "w-1.5 bg-[var(--color-border)] hover:bg-[var(--color-muted-foreground)]"
+            )}
+            aria-label={`슬라이드 ${i + 1}`}
+          />
+        ))}
+      </div>
+
+      {/* 모바일 패치내역 바텀시트 */}
+      {mobileSheet && (
+        <PatchNoteBottomSheet
+          pick={mobileSheet.pick}
+          patchNote={mobileSheet.patchNote}
+          changeLabel={mobileSheet.changeLabel}
+          characterName={getCharName(mobileSheet.pick.characterNum)}
+          onClose={() => setMobileSheet(null)}
+          onNavigate={() => {
+            setMobileSheet(null)
+            router.push(`/character-analysis?character=${mobileSheet.pick.characterNum}`)
+          }}
+        />
+      )}
+    </div>
+  )
+}
