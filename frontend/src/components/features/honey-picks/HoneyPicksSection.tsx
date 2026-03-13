@@ -21,14 +21,21 @@ import { PatchNoteBottomSheet } from "./PatchNoteBottomSheet"
 
 const FALLBACK_MAP = buildFallbackMap()
 
-export function HoneyPicksSection() {
+interface HoneyPicksSectionProps {
+  /** 서버에서 프리페치한 초기 데이터 */
+  initialData?: HoneyPickData[]
+  /** 서버에서 프리페치한 패치 버전 */
+  initialPatchVersion?: string
+}
+
+export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPicksSectionProps) {
   const { l10n } = useL10n()
   const { patch, tier } = useFilter()
   const router = useRouter()
-  const [picks, setPicks] = React.useState<HoneyPickData[]>([])
-  const [loading, setLoading] = React.useState(true)
+  const [picks, setPicks] = React.useState<HoneyPickData[]>(initialData ?? [])
+  const [loading, setLoading] = React.useState(!initialData || initialData.length === 0)
   const [error, setError] = React.useState<string | null>(null)
-  const [currentPatch, setCurrentPatch] = React.useState<string>("")
+  const [currentPatch, setCurrentPatch] = React.useState<string>(initialPatchVersion ?? "")
   const [mobileSheet, setMobileSheet] = React.useState<{ pick: HoneyPickData; patchNote: CharacterPatchNote; changeLabel: { text: string; color: string } | null } | null>(null)
 
   const getCharName = React.useCallback(
@@ -36,7 +43,17 @@ export function HoneyPicksSection() {
     [l10n]
   )
 
+  // 서버 프리페치 데이터가 있으면 초기 fetch 스킵, 필터 변경 시에만 fetch
+  const isInitialRender = React.useRef(true)
   React.useEffect(() => {
+    // 초기 렌더에서 서버 데이터가 있으면 스킵
+    if (isInitialRender.current && initialData && initialData.length > 0) {
+      isInitialRender.current = false
+      setLoading(false)
+      return
+    }
+    isInitialRender.current = false
+
     setLoading(true)
     setError(null)
     const params = new URLSearchParams()
@@ -54,7 +71,7 @@ export function HoneyPicksSection() {
         setError(err instanceof Error ? err.message : "오류가 발생했습니다.")
       )
       .finally(() => setLoading(false))
-  }, [patch, tier])
+  }, [patch, tier, initialData])
 
   const {
     currentIndex,

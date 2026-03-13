@@ -1,10 +1,22 @@
-import * as amplitude from "@amplitude/analytics-browser"
+type AmplitudeModule = typeof import("@amplitude/analytics-browser")
 
 const isDev = process.env.NODE_ENV === "development"
 
+// 동적 import 캐시: 첫 track 호출 시 로드, 이후 재사용
+let amplitudePromise: Promise<AmplitudeModule> | null = null
+
+function getAmplitude(): Promise<AmplitudeModule> {
+  if (!amplitudePromise) {
+    amplitudePromise = import("@amplitude/analytics-browser")
+  }
+  return amplitudePromise
+}
+
 function track(event: string, properties?: Record<string, unknown>) {
   if (isDev) return
-  amplitude.track(event, properties)
+  getAmplitude()
+    .then((amplitude) => amplitude.track(event, properties))
+    .catch(() => {})
 }
 
 export const analytics = {

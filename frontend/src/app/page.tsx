@@ -6,6 +6,7 @@ import { HoneyPicksSection } from "@/components/features/HoneyPicksSection";
 import { FilterProvider } from "@/components/features/FilterContext";
 import { createServerClient } from "@/lib/supabase";
 import { fetchRankingData } from "@/lib/ranking";
+import type { HoneyPickData } from "@/app/api/meta/honey-picks/route";
 
 export const metadata: Metadata = {
   title: { absolute: "메타분석 | 이리와지지" },
@@ -42,16 +43,34 @@ async function fetchPatches(): Promise<string[]> {
   }
 }
 
+async function fetchHoneyPicks(
+  patch: string,
+  tier: string
+): Promise<{ picks: HoneyPickData[]; patchVersion: string }> {
+  try {
+    const base = process.env.NEXT_PUBLIC_BASE_URL ?? "https://erwagg.com"
+    const params = new URLSearchParams({ patchVersion: patch, tier })
+    const res = await fetch(`${base}/api/meta/honey-picks?${params}`, {
+      next: { revalidate: 1800 },
+    })
+    if (!res.ok) return { picks: [], patchVersion: patch }
+    const data = await res.json()
+    return { picks: data.picks ?? [], patchVersion: data.patchVersion ?? patch }
+  } catch {
+    return { picks: [], patchVersion: patch }
+  }
+}
+
 export default async function Home() {
   const patches = await fetchPatches()
   const defaultPatch = patches[0] ?? ""
   const defaultTier = "MITHRIL"
 
-  // 패치 데이터와 랭킹 데이터를 병렬로 가져오면 더 좋지만,
-  // 랭킹은 패치 버전에 의존하므로 순차 실행
-  const initialRanking = defaultPatch
-    ? await fetchRankingData(defaultPatch, defaultTier)
-    : undefined
+  // 랭킹 + 꿀챔 데이터 병렬 프리페치 (SSR fetch 워터폴 제거)
+  const [initialRanking, initialHoneyPicks] = await Promise.all([
+    defaultPatch ? fetchRankingData(defaultPatch, defaultTier) : undefined,
+    defaultPatch ? fetchHoneyPicks(defaultPatch, defaultTier) : { picks: [], patchVersion: "" },
+  ])
 
   return (
     <FilterProvider initialPatches={patches}>
@@ -75,7 +94,10 @@ export default async function Home() {
             </h2>
           </div>
           <Suspense>
-            <HoneyPicksSection />
+            <HoneyPicksSection
+              initialData={initialHoneyPicks.picks}
+              initialPatchVersion={initialHoneyPicks.patchVersion}
+            />
           </Suspense>
         </section>
 
