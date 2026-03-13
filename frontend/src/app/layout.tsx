@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { readFileSync } from "fs";
+import { join } from "path";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { MaintenanceBanner } from "@/components/layout/MaintenanceBanner";
@@ -8,6 +10,16 @@ import FeedbackWidget from "@/components/features/FeedbackWidget";
 import { Analytics } from "@vercel/analytics/next";
 import { AmplitudeProvider } from "@/components/AmplitudeProvider";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+
+function loadL10n(): Record<string, string> | undefined {
+  try {
+    const filePath = join(process.cwd(), "public/l10n/Korean.json");
+    const raw = readFileSync(filePath, "utf-8");
+    return JSON.parse(raw);
+  } catch {
+    return undefined;
+  }
+}
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://erwagg.com";
 
@@ -67,10 +79,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const initialL10n = loadL10n();
+
   return (
     <html lang="ko" className={geistSans.variable}>
       <body>
-        <L10nProvider>
+        <L10nProvider initialL10n={initialL10n}>
           <Header />
           <MaintenanceBanner />
           <main className="max-w-6xl mx-auto px-4 py-6">{children}</main>
