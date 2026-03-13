@@ -1,12 +1,11 @@
 "use client"
 
 import * as React from "react"
-import Image from "next/image"
 import { Search, X } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { getCharacterName, getCharacterImageUrl } from "@/lib/characterMap"
+import { getCharacterName } from "@/lib/characterMap"
 import { analytics } from "@/lib/analytics"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
+import { VirtualCharacterGrid } from "@/components/ui/VirtualCharacterGrid"
 
 interface CharacterGridProps {
   selectedCode: number
@@ -30,6 +29,28 @@ export function CharacterGrid({
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
+
+  const handleSelect = React.useCallback(
+    (code: number) => {
+      onSelect(code)
+      setSearchQuery("")
+      const params = new URLSearchParams(searchParams.toString())
+      params.set("character", String(code))
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+      analytics.characterViewed(code, getCharacterName(code))
+    },
+    [onSelect, setSearchQuery, searchParams, router, pathname]
+  )
+
+  const isSelected = React.useCallback(
+    (code: number) => selectedCode === code,
+    [selectedCode]
+  )
+
+  const getName = React.useCallback(
+    (code: number) => getCharacterName(code),
+    []
+  )
 
   return (
     <div className="w-full lg:w-[260px] lg:shrink-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-2">
@@ -61,47 +82,14 @@ export function CharacterGrid({
         )}
       </div>
 
-      <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-3 gap-1 max-h-[320px] lg:max-h-[620px] overflow-y-auto pr-0.5">
-        {filteredCodes.length === 0 ? (
-          <p className="col-span-5 sm:col-span-6 lg:col-span-3 py-4 text-center text-xs text-[var(--color-muted-foreground)]">
-            검색 결과 없음
-          </p>
-        ) : null}
-        {filteredCodes.map((code) => (
-          <button
-            key={code}
-            ref={selectedCode === code ? selectedRef : undefined}
-            onClick={() => {
-              onSelect(code)
-              setSearchQuery("")
-              const params = new URLSearchParams(searchParams.toString())
-              params.set("character", String(code))
-              router.replace(`${pathname}?${params.toString()}`, { scroll: false })
-              analytics.characterViewed(code, getCharacterName(code))
-            }}
-            className={cn(
-              "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors",
-              selectedCode === code
-                ? "bg-[var(--color-primary)]/20 ring-1 ring-[var(--color-primary)]"
-                : "hover:bg-[var(--color-surface-2)]"
-            )}
-          >
-            <div className="relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]">
-              <Image
-                src={getCharacterImageUrl(code)}
-                alt={getCharacterName(code)}
-                fill
-                className="object-cover"
-                sizes="40px"
-                unoptimized
-              />
-            </div>
-            <span className="w-full truncate text-center text-[11px] font-medium text-[var(--color-foreground)]">
-              {getCharacterName(code)}
-            </span>
-          </button>
-        ))}
-      </div>
+      <VirtualCharacterGrid
+        codes={filteredCodes}
+        getCharName={getName}
+        isSelected={isSelected}
+        onSelect={handleSelect}
+        maxHeight="620px"
+        scrollToCode={selectedCode}
+      />
     </div>
   )
 }

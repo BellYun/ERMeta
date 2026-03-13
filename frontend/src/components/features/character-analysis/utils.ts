@@ -35,15 +35,31 @@ export function assignCharTier(stat: {
 export async function fetchStats(
   characterCode: number,
   patchVersion: string,
-  tier: TierGroup
+  tier: TierGroup,
+  baseUrl?: string
 ): Promise<CharacterStatsResponse | null> {
   try {
+    const base = baseUrl ?? ""
     const res = await fetch(
-      `/api/character/stats/${characterCode}?tier=${tier}&patchVersion=${encodeURIComponent(patchVersion)}`
+      `${base}/api/character/stats/${characterCode}?tier=${tier}&patchVersion=${encodeURIComponent(patchVersion)}`
     )
     if (!res.ok) return null
     return res.json()
   } catch {
     return null
+  }
+}
+
+export async function fetchPatches(baseUrl?: string): Promise<string[]> {
+  try {
+    const base = baseUrl ?? ""
+    const res = await fetch(
+      `${base}/api/patches/history?limit=10&includeInactive=true`
+    )
+    if (!res.ok) return []
+    const data = await res.json()
+    return data.patches ?? []
+  } catch {
+    return []
   }
 }

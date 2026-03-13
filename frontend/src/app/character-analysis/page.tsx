@@ -1,7 +1,9 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
-import { CharacterAnalysisClient } from "@/components/features/CharacterAnalysisClient"
 import { getCharacterName } from "@/lib/characterMap"
+import { CharacterAnalysisClient } from "@/components/features/CharacterAnalysisClient"
+import { fetchPatches, fetchStats } from "@/components/features/character-analysis/utils"
+import { TierGroup } from "@/utils/tier"
 
 interface Props {
   searchParams: Promise<{ character?: string }>
@@ -57,7 +59,26 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   }
 }
 
-export default function CharacterAnalysisPage() {
+/**
+ * 캐릭터 분석 페이지 — Server-side 데이터 프리페치
+ *
+ * Server Component에서 patches + 초기 캐릭터 통계를 미리 fetch하여
+ * Client Component에 props로 전달 → 하이드레이션 후 즉시 데이터 표시 (fetch 워터폴 제거)
+ */
+export default async function CharacterAnalysisPage({ searchParams }: Props) {
+  const { character } = await searchParams
+  const initialCode = character ? parseInt(character, 10) : 1
+  const validCode = !isNaN(initialCode) ? initialCode : 1
+
+  const base = process.env.NEXT_PUBLIC_BASE_URL ?? "https://erwagg.com"
+
+  // 서버에서 패치 목록 → 초기 캐릭터 통계 프리페치 (fetch 워터폴 제거)
+  const patches = await fetchPatches(base)
+  const [initialStats, initialPrevStats] = await Promise.all([
+    patches[0] ? fetchStats(validCode, patches[0], TierGroup.MITHRIL, base) : null,
+    patches[1] ? fetchStats(validCode, patches[1], TierGroup.MITHRIL, base) : null,
+  ])
+
   return (
     <>
       <section className="text-center py-4">
@@ -69,7 +90,12 @@ export default function CharacterAnalysisPage() {
         </p>
       </section>
       <Suspense>
-        <CharacterAnalysisClient />
+        <CharacterAnalysisClient
+          initialPatches={patches}
+          initialStats={initialStats}
+          initialPrevStats={initialPrevStats}
+          initialCode={validCode}
+        />
       </Suspense>
     </>
   )
