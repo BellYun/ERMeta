@@ -1,10 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { useRouter, useSearchParams } from "next/navigation"
 import { Select, SelectItem } from "@/components/ui/select"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { analytics } from "@/lib/analytics"
+import { useFilter } from "./FilterContext"
 
 const TIER_OPTIONS = [
   { value: "DIAMOND", label: "다이아" },
@@ -14,42 +14,7 @@ const TIER_OPTIONS = [
 ]
 
 export function GlobalFilter() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-
-  const [patches, setPatches] = React.useState<string[]>([])
-  const [isLoading, setIsLoading] = React.useState(true)
-
-  const patch = searchParams.get("patch") ?? ""
-  const tier = searchParams.get("tier") ?? "MITHRIL"
-
-  React.useEffect(() => {
-    setIsLoading(true)
-    fetch("/api/patches/history?limit=10")
-      .then((res) => res.json())
-      .then((data: { patches?: string[] }) => {
-        const list = data.patches ?? []
-        setPatches(list)
-        // URL에 patch가 없으면 가장 최신 패치로 초기화
-        if (!searchParams.get("patch") && list.length > 0) {
-          const params = new URLSearchParams(searchParams.toString())
-          params.set("patch", list[0])
-          if (!params.get("tier")) params.set("tier", "MITHRIL")
-          router.replace(`?${params.toString()}`)
-        }
-      })
-      .catch(() => setPatches([]))
-      .finally(() => setIsLoading(false))
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  function updateParam(key: string, value: string) {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set(key, value)
-    router.push(`?${params.toString()}`)
-    if (key === "tier") analytics.tierGroupSelected(value)
-    if (key === "patch") analytics.patchSelected(value)
-  }
+  const { patch, tier, patches, isLoading, setPatch, setTier } = useFilter()
 
   return (
     <div className="flex flex-wrap items-center gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-3">
@@ -57,7 +22,7 @@ export function GlobalFilter() {
         <span className="text-xs font-medium text-[var(--color-muted-foreground)]">패치</span>
         <Select
           value={patch || patches[0] || ""}
-          onChange={(e) => updateParam("patch", e.target.value)}
+          onChange={(e) => { setPatch(e.target.value); analytics.patchSelected(e.target.value) }}
           disabled={isLoading}
         >
           {patches.map((p) => (
@@ -77,7 +42,7 @@ export function GlobalFilter() {
 
       <div className="flex items-center gap-2">
         <span className="text-xs font-medium text-[var(--color-muted-foreground)]">티어</span>
-        <Tabs value={tier} onValueChange={(v) => updateParam("tier", v)}>
+        <Tabs value={tier} onValueChange={(v) => { setTier(v); analytics.tierGroupSelected(v) }}>
           <TabsList className="flex-wrap h-auto">
             {TIER_OPTIONS.map(({ value, label }) => (
               <TabsTrigger key={value} value={value}>

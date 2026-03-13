@@ -2,13 +2,14 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { Select, SelectItem } from "@/components/ui/select"
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TierBadge } from "./TierBadge"
 import { cn } from "@/lib/utils"
 import { analytics } from "@/lib/analytics"
+import { useFilter } from "./FilterContext"
 import { resolveCharacterName, buildFallbackMap, getCharacterImageUrl, getComboRoles } from "@/lib/characterMap"
 import type { CharacterRole } from "@/lib/characterMap"
 import { resolveWeaponName } from "@/lib/weaponMap"
@@ -142,7 +143,7 @@ function PatchNoteTooltip({ patchNote }: { patchNote: CharacterPatchNote }) {
 const roleTabs = ["전체", "탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"] as const
 
 export function TierRankingTable() {
-  const searchParams = useSearchParams()
+  const { patch, tier } = useFilter()
   const [activeRole, setActiveRole] = React.useState<string>("전체")
   const [rows, setRows] = React.useState<DisplayRow[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
@@ -150,8 +151,6 @@ export function TierRankingTable() {
   const { l10n } = useL10n()
 
   const router = useRouter()
-  const patch = searchParams.get("patch")
-  const tier = searchParams.get("tier") ?? "MITHRIL"
 
   React.useEffect(() => {
     setIsLoading(true)

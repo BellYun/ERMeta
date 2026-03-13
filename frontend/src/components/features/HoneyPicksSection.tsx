@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useL10n } from "@/components/L10nProvider"
@@ -11,6 +11,7 @@ import {
   getCharacterHalfImageUrl,
   resolveCharacterName,
 } from "@/lib/characterMap"
+import { useFilter } from "./FilterContext"
 import { resolveWeaponName } from "@/lib/weaponMap"
 import { getCharacterPatchNote } from "@/data/patch-notes"
 import type { HoneyPickData } from "@/app/api/meta/honey-picks/route"
@@ -52,7 +53,7 @@ function useCardWidthPercent() {
 
 export function HoneyPicksSection() {
   const { l10n } = useL10n()
-  const searchParams = useSearchParams()
+  const { patch, tier } = useFilter()
   const router = useRouter()
   const cardWidth = useCardWidthPercent()
   const [picks, setPicks] = React.useState<HoneyPickData[]>([])
@@ -67,8 +68,7 @@ export function HoneyPicksSection() {
   const [mobileSheet, setMobileSheet] = React.useState<{ pick: HoneyPickData; patchNote: CharacterPatchNote; changeLabel: { text: string; color: string } | null } | null>(null)
   const autoSlideRef = React.useRef<ReturnType<typeof setInterval> | null>(null)
 
-  const patch = searchParams.get("patch")
-  const tier = searchParams.get("tier") ?? "MITHRIL"
+  // patch, tier는 useFilter()에서 가져옴
 
   const getCharName = React.useCallback(
     (code: number) => resolveCharacterName(code, l10n, FALLBACK_MAP),
