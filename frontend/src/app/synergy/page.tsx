@@ -1,7 +1,14 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
-import { SynergyClient } from "@/components/features/SynergyClient"
 import { getCharacterName } from "@/lib/characterMap"
+import { FocusCharacterPool } from "@/components/features/synergy/FocusCharacterPool"
+import { AllySelector } from "@/components/features/synergy/AllySelector"
+import { SynergyResults } from "@/components/features/synergy/SynergyResults"
+import {
+  FocusPoolSkeleton,
+  AllySelectorSkeleton,
+  ResultSkeleton,
+} from "@/components/features/synergy/SynergySkeleton"
 
 interface Props {
   searchParams: Promise<{ ally1?: string; ally2?: string }>
@@ -73,6 +80,17 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   }
 }
 
+/**
+ * 시너지 페이지 — Islands Architecture
+ *
+ * 각 섹션이 독립 Client Island로 분리되어 개별 하이드레이션:
+ * - FocusCharacterPool: localStorage 기반 (useFocusCharacters)
+ * - AllySelector: URL searchParams 기반
+ * - SynergyResults: URL + localStorage 읽기 → API fetch → 결과 렌더링
+ *
+ * Server Component(이 파일)는 정적 헤더만 렌더링 → 즉시 FCP
+ * 각 Island의 Suspense fallback으로 CLS 없이 점진 하이드레이션
+ */
 export default function SynergyPage() {
   return (
     <>
@@ -84,9 +102,23 @@ export default function SynergyPage() {
           시즌 10 누적 1,200,000+판 · 승률 + 평균 RP 기반 최적 팀 조합 분석
         </p>
       </section>
-      <Suspense>
-        <SynergyClient />
-      </Suspense>
+
+      <div className="flex flex-col gap-4">
+        {/* Island 1: 내 캐릭터 풀 (localStorage) */}
+        <Suspense fallback={<FocusPoolSkeleton />}>
+          <FocusCharacterPool />
+        </Suspense>
+
+        {/* Island 2: 아군 선택 (URL params) */}
+        <Suspense fallback={<AllySelectorSkeleton />}>
+          <AllySelector />
+        </Suspense>
+
+        {/* Island 3: 결과 (URL + localStorage → API) */}
+        <Suspense fallback={<ResultSkeleton />}>
+          <SynergyResults />
+        </Suspense>
+      </div>
     </>
   )
 }

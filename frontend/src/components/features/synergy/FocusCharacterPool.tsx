@@ -1,33 +1,46 @@
 "use client"
 
+import * as React from "react"
 import Image from "next/image"
 import { X, Search, ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { getCharacterImageUrl } from "@/lib/characterMap"
+import { getCharacterImageUrl, resolveCharacterName } from "@/lib/characterMap"
+import { useL10n } from "@/components/L10nProvider"
+import { VirtualCharacterGrid } from "@/components/ui/VirtualCharacterGrid"
+import { useFocusCharacters } from "@/hooks/useFocusCharacters"
+import { ALL_CHARACTER_CODES, FALLBACK_MAP } from "./constants"
+import { matchesChosungSearch } from "./utils"
 
-interface FocusCharacterPoolProps {
-  focusCharacters: number[]
-  toggleFocus: (code: number) => void
-  setFocusCharacters: (chars: number[]) => void
-  getCharName: (code: number) => string
-  filteredFocusCodes: number[]
-  focusSearch: string
-  setFocusSearch: (s: string) => void
-  isFocusExpanded: boolean
-  setIsFocusExpanded: (v: boolean | ((prev: boolean) => boolean)) => void
-}
+/**
+ * 내 캐릭터 풀 Island — localStorage 기반 독립 Client Component
+ * 다른 Island(SynergyResults)과 useFocusCharacters 훅으로 상태 공유
+ */
+export function FocusCharacterPool() {
+  const { l10n } = useL10n()
+  const { focusCharacters, setFocusCharacters, toggleFocus } = useFocusCharacters()
+  const [isFocusExpanded, setIsFocusExpanded] = React.useState(false)
+  const [focusSearch, setFocusSearch] = React.useState("")
 
-export function FocusCharacterPool({
-  focusCharacters,
-  toggleFocus,
-  setFocusCharacters,
-  getCharName,
-  filteredFocusCodes,
-  focusSearch,
-  setFocusSearch,
-  isFocusExpanded,
-  setIsFocusExpanded,
-}: FocusCharacterPoolProps) {
+  const getCharName = React.useCallback(
+    (code: number) => resolveCharacterName(code, l10n, FALLBACK_MAP),
+    [l10n]
+  )
+
+  const deferredSearch = React.useDeferredValue(focusSearch)
+
+  const filteredFocusCodes = React.useMemo(() => {
+    if (!deferredSearch.trim()) return ALL_CHARACTER_CODES
+    const q = deferredSearch.trim()
+    return ALL_CHARACTER_CODES.filter((code) =>
+      matchesChosungSearch(getCharName(code), q)
+    )
+  }, [deferredSearch, getCharName])
+
+  const isSelected = React.useCallback(
+    (code: number) => focusCharacters.includes(code),
+    [focusCharacters]
+  )
+
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm overflow-hidden">
       {/* 접이식 헤더 */}
@@ -96,7 +109,7 @@ export function FocusCharacterPool({
         </div>
       )}
 
-      {/* 펼친 상태: 검색 + 그리드 */}
+      {/* 펼친 상태: 검색 + 가상화 그리드 */}
       {isFocusExpanded && (
         <div className="border-t border-[var(--color-border)] p-2">
           <div className="relative mb-2">
@@ -117,44 +130,13 @@ export function FocusCharacterPool({
             )}
           </div>
 
-          {filteredFocusCodes.length === 0 ? (
-            <p className="py-4 text-center text-xs text-[var(--color-muted-foreground)]">
-              검색 결과 없음
-            </p>
-          ) : (
-            <div data-sr-block className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-1 max-h-[240px] sm:max-h-[300px] overflow-y-auto">
-              {filteredFocusCodes.map((code) => {
-                const isSelected = focusCharacters.includes(code)
-                const name = getCharName(code)
-                return (
-                  <button
-                    key={`focus-${code}`}
-                    onClick={() => toggleFocus(code)}
-                    title={name}
-                    className={cn(
-                      "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors",
-                      isSelected
-                        ? "bg-[var(--color-primary)]/20 ring-1 ring-[var(--color-primary)]"
-                        : "hover:bg-[var(--color-surface-2)]"
-                    )}
-                  >
-                    <div className="relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]">
-                      <Image
-                        src={getCharacterImageUrl(code)}
-                        alt={name}
-                        fill
-                        className="object-cover"
-                        sizes="40px"
-                      />
-                    </div>
-                    <span className="w-full truncate text-center text-[11px] font-medium text-[var(--color-foreground)]">
-                      {name}
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-          )}
+          <VirtualCharacterGrid
+            codes={filteredFocusCodes}
+            getCharName={getCharName}
+            isSelected={isSelected}
+            onSelect={toggleFocus}
+            maxHeight="300px"
+          />
         </div>
       )}
     </div>
