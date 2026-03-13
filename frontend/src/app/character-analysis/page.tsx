@@ -59,8 +59,18 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 
 export default function CharacterAnalysisPage() {
   return (
-    <Suspense>
-      <CharacterAnalysisClient />
-    </Suspense>
+    <>
+      <section className="text-center py-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-foreground)]">
+          캐릭터 분석
+        </h1>
+        <p className="mt-1.5 text-sm text-[var(--color-muted-foreground)]">
+          이터널리턴 캐릭터별 승률 · 빌드 · 패치 트렌드 분석
+        </p>
+      </section>
+      <Suspense>
+        <CharacterAnalysisClient />
+      </Suspense>
+    </>
   )
 }
