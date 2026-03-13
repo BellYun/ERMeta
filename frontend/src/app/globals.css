@@ -52,6 +52,19 @@
     text-decoration: none;
   }
 
+  /* 모바일 터치 최적화 */
+  body {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button,
+  a,
+  select,
+  input,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+
   /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 6px;

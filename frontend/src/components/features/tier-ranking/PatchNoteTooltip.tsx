@@ -9,7 +9,7 @@ export function PatchNoteTooltip({ patchNote }: { patchNote: CharacterPatchNote 
   }
 
   return (
-    <div className="absolute z-50 left-0 top-full mt-1 w-96 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-2xl shadow-black/40 pointer-events-none">
+    <div className="absolute z-50 left-0 sm:left-0 right-0 sm:right-auto top-full mt-1 w-auto sm:w-96 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3 sm:p-4 shadow-2xl shadow-black/40 pointer-events-auto sm:pointer-events-none">
       <p className="text-xs font-medium text-[var(--color-muted-foreground)] mb-3">
         패치 {patchNote.patch} 변경사항
       </p>

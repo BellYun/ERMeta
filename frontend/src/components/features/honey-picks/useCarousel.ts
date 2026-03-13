@@ -92,20 +92,38 @@ export function useCarousel(picks: HoneyPickData[]) {
     }
   }, [isTransitioning])
 
-  const handleDragStart = (clientX: number) => {
+  const dragStartY = React.useRef(0)
+  const isHorizontalDrag = React.useRef(false)
+  const dragDetermined = React.useRef(false)
+
+  const handleDragStart = (clientX: number, clientY?: number) => {
     stopAutoSlide()
     setIsDragging(true)
     setDragStartX(clientX)
+    dragStartY.current = clientY ?? 0
+    isHorizontalDrag.current = false
+    dragDetermined.current = false
     setDragOffset(0)
   }
 
-  const handleDragMove = (clientX: number) => {
+  const handleDragMove = (clientX: number, clientY?: number) => {
     if (!isDragging) return
-    setDragOffset(clientX - dragStartX)
+    const dx = clientX - dragStartX
+    const dy = (clientY ?? 0) - dragStartY.current
+
+    // 방향 판별: 수평이면 캐러셀, 수직이면 스크롤
+    if (!dragDetermined.current && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+      dragDetermined.current = true
+      isHorizontalDrag.current = Math.abs(dx) > Math.abs(dy)
+    }
+
+    if (!isHorizontalDrag.current) return
+    setDragOffset(dx)
   }
 
   const handleDragEnd = () => {
     if (!isDragging) return
+    const wasDragging = Math.abs(dragOffset) > 5
     setIsDragging(false)
     const threshold = 50
     if (dragOffset < -threshold) {
@@ -116,7 +134,10 @@ export function useCarousel(picks: HoneyPickData[]) {
       setCurrentIndex((prev) => prev - 1)
     }
     setDragOffset(0)
+    dragDetermined.current = false
+    isHorizontalDrag.current = false
     startAutoSlide()
+    return wasDragging
   }
 
   const activeRealIndex = ((currentIndex - cloneCount) % picks.length + picks.length) % picks.length
@@ -134,6 +155,7 @@ export function useCarousel(picks: HoneyPickData[]) {
     cloneCount,
     dragOffset,
     isDragging,
+    isHorizontalDrag,
     handleDragStart,
     handleDragMove,
     handleDragEnd,

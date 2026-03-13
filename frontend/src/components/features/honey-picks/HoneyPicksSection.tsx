@@ -85,12 +85,15 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
     cloneCount,
     dragOffset,
     isDragging,
+    isHorizontalDrag,
     handleDragStart,
     handleDragMove,
     handleDragEnd,
     stopAutoSlide,
     startAutoSlide,
   } = useCarousel(picks)
+
+  const dragDidMove = React.useRef(false)
 
   if (loading) {
     return (
@@ -121,13 +124,20 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
       {/* 슬라이더 트랙 */}
       <div
         className="rounded-xl"
-        onMouseDown={(e) => handleDragStart(e.clientX)}
-        onMouseMove={(e) => handleDragMove(e.clientX)}
-        onMouseUp={handleDragEnd}
+        style={{ touchAction: "pan-y" }}
+        onMouseDown={(e) => { dragDidMove.current = false; handleDragStart(e.clientX, e.clientY) }}
+        onMouseMove={(e) => { handleDragMove(e.clientX, e.clientY); if (isDragging) dragDidMove.current = true }}
+        onMouseUp={() => { handleDragEnd(); }}
         onMouseLeave={() => isDragging && handleDragEnd()}
-        onTouchStart={(e) => handleDragStart(e.touches[0].clientX)}
-        onTouchMove={(e) => handleDragMove(e.touches[0].clientX)}
-        onTouchEnd={handleDragEnd}
+        onTouchStart={(e) => { dragDidMove.current = false; handleDragStart(e.touches[0].clientX, e.touches[0].clientY) }}
+        onTouchMove={(e) => {
+          handleDragMove(e.touches[0].clientX, e.touches[0].clientY)
+          if (isHorizontalDrag.current) {
+            e.preventDefault()
+            dragDidMove.current = true
+          }
+        }}
+        onTouchEnd={() => { handleDragEnd(); }}
       >
         <div
           className={cn(
@@ -161,6 +171,8 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                 rank={rank}
                 cardWidth={cardWidth}
                 onCardClick={() => {
+                  // 드래그 후 클릭 방지
+                  if (dragDidMove.current) return
                   if (isCenter) {
                     if (patchNote && window.innerWidth < 640) {
                       setMobileSheet({ pick, patchNote, changeLabel })
@@ -192,13 +204,17 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
               startAutoSlide()
             }}
             className={cn(
-              "h-1.5 rounded-full transition-all duration-300",
-              i === activeRealIndex
-                ? "w-4 bg-[var(--color-accent-gold)]"
-                : "w-1.5 bg-[var(--color-border)] hover:bg-[var(--color-muted-foreground)]"
+              "flex items-center justify-center min-w-[44px] min-h-[44px] touch-manipulation",
             )}
             aria-label={`슬라이드 ${i + 1}`}
-          />
+          >
+            <span className={cn(
+              "block h-1.5 rounded-full transition-all duration-300",
+              i === activeRealIndex
+                ? "w-4 bg-[var(--color-accent-gold)]"
+                : "w-1.5 bg-[var(--color-border)]"
+            )} />
+          </button>
         ))}
       </div>
 
