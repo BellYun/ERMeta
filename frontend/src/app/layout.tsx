@@ -4,7 +4,6 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
-import { MaintenanceBanner } from "@/components/layout/MaintenanceBanner";
 import { L10nProvider } from "@/components/L10nProvider";
 import FeedbackWidget from "@/components/features/FeedbackWidget";
 import { Analytics } from "@vercel/analytics/next";
@@ -86,7 +85,6 @@ export default function RootLayout({
       <body>
         <L10nProvider initialL10n={initialL10n}>
           <Header />
-          <MaintenanceBanner />
           <main className="max-w-6xl mx-auto px-4 py-6">{children}</main>
         </L10nProvider>
         <footer className="border-t border-[var(--color-border)] mt-12">
