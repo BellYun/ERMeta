@@ -15,7 +15,8 @@ interface VirtualCharacterGridProps {
   isSelected: (code: number) => boolean
   isDisabled?: (code: number) => boolean
   onSelect: (code: number) => void
-  maxHeight: string
+  maxHeight?: string
+  className?: string
   emptyMessage?: string
   scrollToCode?: number
 }
@@ -70,6 +71,7 @@ export function VirtualCharacterGrid({
   isDisabled,
   onSelect,
   maxHeight,
+  className,
   emptyMessage = "검색 결과 없음",
   scrollToCode,
 }: VirtualCharacterGridProps) {
@@ -118,8 +120,8 @@ export function VirtualCharacterGrid({
   return (
     <div
       ref={parentRef}
-      className="overflow-y-auto pr-0.5"
-      style={{ maxHeight }}
+      className={cn("overflow-y-auto pr-0.5", className)}
+      style={maxHeight ? { maxHeight } : undefined}
     >
       <div
         style={{
