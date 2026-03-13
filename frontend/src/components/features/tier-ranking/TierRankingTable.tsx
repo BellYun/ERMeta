@@ -15,7 +15,7 @@ import type { CharacterRole } from "@/lib/characterMap"
 import { resolveWeaponName } from "@/lib/weaponMap"
 import { useL10n } from "@/components/L10nProvider"
 import { getCharacterPatchNote } from "@/data/patch-notes"
-import type { CharacterRankingData } from "@/app/api/character/mithril-rp-ranking/route"
+import type { CharacterRankingData, RankingResponse } from "@/lib/ranking"
 import { computeMetaScores, assignTier } from "./utils"
 import { DeltaIndicator } from "./DeltaIndicator"
 import { PatchNoteTooltip } from "./PatchNoteTooltip"
@@ -25,17 +25,70 @@ const fallbackMap = buildFallbackMap()
 
 const roleTabs = ["전체", "탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"] as const
 
-export function TierRankingTable() {
+function buildDisplayRows(
+  rankings: CharacterRankingData[],
+  previousRankings: CharacterRankingData[],
+  currentPatch: string,
+  l10n: Map<string, string>
+): DisplayRow[] {
+  const prevMap = new Map<number, PrevStats>()
+  if (previousRankings.length > 0) {
+    const prevGrandTotal = previousRankings.reduce((s, r) => s + r.totalGames, 0)
+    for (const r of previousRankings) {
+      prevMap.set(r.characterNum, {
+        pickRate: prevGrandTotal > 0 ? (r.totalGames / prevGrandTotal) * 100 : 0,
+        winRate: r.winRate,
+        averageRP: r.averageRP,
+      })
+    }
+  }
+
+  const scores = computeMetaScores(rankings)
+  const sorted = [...rankings].sort((a, b) => {
+    const sa = scores.get(a.characterNum * 1000 + a.bestWeapon) ?? 0
+    const sb = scores.get(b.characterNum * 1000 + b.bestWeapon) ?? 0
+    return sb - sa
+  })
+
+  return sorted.map((r, i) => ({
+    rank: i + 1,
+    code: r.characterNum,
+    roles: getComboRoles(r.characterNum, r.bestWeapon),
+    weaponCode: r.bestWeapon,
+    name: resolveCharacterName(r.characterNum, l10n, fallbackMap),
+    weaponName: resolveWeaponName(r.bestWeapon),
+    imageUrl: getCharacterImageUrl(r.characterNum),
+    tier: assignTier(scores.get(r.characterNum * 1000 + r.bestWeapon) ?? 0),
+    pickRate: r.pickRate,
+    winRate: r.winRate,
+    averageRP: r.averageRP,
+    prev: prevMap.get(r.characterNum) ?? null,
+    patchNote: getCharacterPatchNote(r.characterNum, currentPatch) ?? null,
+  }))
+}
+
+interface TierRankingTableProps {
+  initialData?: RankingResponse
+}
+
+export function TierRankingTable({ initialData }: TierRankingTableProps) {
   const { patch, tier } = useFilter()
   const [activeRole, setActiveRole] = React.useState<string>("전체")
-  const [rows, setRows] = React.useState<DisplayRow[]>([])
-  const [isLoading, setIsLoading] = React.useState(true)
+  const [rankingData, setRankingData] = React.useState<RankingResponse | null>(initialData ?? null)
+  const [isLoading, setIsLoading] = React.useState(!initialData)
   const [hoveredKey, setHoveredKey] = React.useState<string | null>(null)
   const { l10n } = useL10n()
+  const isInitialRender = React.useRef(true)
 
   const router = useRouter()
 
   React.useEffect(() => {
+    // 첫 렌더 시 initialData가 있으면 fetch 스킵
+    if (isInitialRender.current) {
+      isInitialRender.current = false
+      if (initialData) return
+    }
+
     setIsLoading(true)
     const params = new URLSearchParams()
     if (patch) params.set("patchVersion", patch)
@@ -43,62 +96,20 @@ export function TierRankingTable() {
 
     fetch(`/api/character/mithril-rp-ranking?${params}`)
       .then((res) => res.json())
-      .then((data: {
-        rankings?: CharacterRankingData[]
-        previousRankings?: CharacterRankingData[]
-        patchVersion?: string
-        previousPatch?: string | null
-      }) => {
-        const rankings = data.rankings ?? []
-        const previousRankings = data.previousRankings ?? []
-        const currentPatch = data.patchVersion ?? patch ?? ""
-
-        const prevMap = new Map<number, PrevStats>()
-        if (previousRankings.length > 0) {
-          const prevGrandTotal = previousRankings.reduce((s, r) => s + r.totalGames, 0)
-          for (const r of previousRankings) {
-            prevMap.set(r.characterNum, {
-              pickRate: prevGrandTotal > 0 ? (r.totalGames / prevGrandTotal) * 100 : 0,
-              winRate: r.winRate,
-              averageRP: r.averageRP,
-            })
-          }
-        }
-
-        const scores = computeMetaScores(rankings)
-        const sorted = [...rankings].sort((a, b) => {
-          const sa = scores.get(a.characterNum * 1000 + a.bestWeapon) ?? 0
-          const sb = scores.get(b.characterNum * 1000 + b.bestWeapon) ?? 0
-          return sb - sa
-        })
-        const display: DisplayRow[] = sorted.map((r, i) => {
-          const name = resolveCharacterName(r.characterNum, l10n, fallbackMap)
-          const weaponName = resolveWeaponName(r.bestWeapon)
-          const imageUrl = getCharacterImageUrl(r.characterNum)
-          const score = scores.get(r.characterNum * 1000 + r.bestWeapon) ?? 0
-          const prev = prevMap.get(r.characterNum) ?? null
-          const patchNote = getCharacterPatchNote(r.characterNum, currentPatch) ?? null
-          return {
-            rank: i + 1,
-            code: r.characterNum,
-            roles: getComboRoles(r.characterNum, r.bestWeapon),
-            weaponCode: r.bestWeapon,
-            name,
-            weaponName,
-            imageUrl,
-            tier: assignTier(score),
-            pickRate: r.pickRate,
-            winRate: r.winRate,
-            averageRP: r.averageRP,
-            prev,
-            patchNote,
-          }
-        })
-        setRows(display)
-      })
-      .catch(() => setRows([]))
+      .then((data: RankingResponse) => setRankingData(data))
+      .catch(() => setRankingData(null))
       .finally(() => setIsLoading(false))
-  }, [patch, tier, l10n])
+  }, [patch, tier]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const rows = React.useMemo(() => {
+    if (!rankingData) return []
+    return buildDisplayRows(
+      rankingData.rankings,
+      rankingData.previousRankings,
+      rankingData.patchVersion ?? patch ?? "",
+      l10n
+    )
+  }, [rankingData, l10n, patch])
 
   const filtered =
     activeRole === "전체"

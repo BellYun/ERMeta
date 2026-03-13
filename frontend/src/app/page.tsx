@@ -5,6 +5,7 @@ import { TierRankingTable } from "@/components/features/TierRankingTable";
 import { HoneyPicksSection } from "@/components/features/HoneyPicksSection";
 import { FilterProvider } from "@/components/features/FilterContext";
 import { createServerClient } from "@/lib/supabase";
+import { fetchRankingData } from "@/lib/ranking";
 
 export const metadata: Metadata = {
   title: { absolute: "메타분석 | 이리와지지" },
@@ -43,6 +44,14 @@ async function fetchPatches(): Promise<string[]> {
 
 export default async function Home() {
   const patches = await fetchPatches()
+  const defaultPatch = patches[0] ?? ""
+  const defaultTier = "MITHRIL"
+
+  // 패치 데이터와 랭킹 데이터를 병렬로 가져오면 더 좋지만,
+  // 랭킹은 패치 버전에 의존하므로 순차 실행
+  const initialRanking = defaultPatch
+    ? await fetchRankingData(defaultPatch, defaultTier)
+    : undefined
 
   return (
     <FilterProvider initialPatches={patches}>
@@ -65,7 +74,7 @@ export default async function Home() {
           <GlobalFilter />
         </Suspense>
         <Suspense>
-          <TierRankingTable />
+          <TierRankingTable initialData={initialRanking} />
         </Suspense>
       </div>
     </FilterProvider>
