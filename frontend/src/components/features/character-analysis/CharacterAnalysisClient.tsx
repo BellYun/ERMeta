@@ -82,7 +82,7 @@ export function CharacterAnalysisClient() {
       .catch(() => {})
   }, [])
 
-  // 통계 로드 — 전체 패치 병렬 fetch
+  // 통계 로드 — 현재+이전 패치만 먼저, 나머지는 백그라운드
   React.useEffect(() => {
     if (!patches.length) return
 
@@ -92,18 +92,36 @@ export function CharacterAnalysisClient() {
     setAllPatchStats([])
     setSelectedWeapon(null)
 
+    // Phase 1: 현재 + 이전 패치만 우선 fetch → 즉시 인터랙션 가능
+    const priorityPatches = patches.slice(0, 2)
     Promise.all(
-      patches.map((p) => fetchStats(selectedCode, p, selectedTier))
-    ).then((results) => {
-      setAllPatchStats(results)
-      const current = results[0] ?? null
+      priorityPatches.map((p) => fetchStats(selectedCode, p, selectedTier))
+    ).then((priorityResults) => {
+      const current = priorityResults[0] ?? null
       setStats(current)
-      setPreviousStats(results[1] ?? null)
-      // 첫 번째 무기 자동 선택
+      setPreviousStats(priorityResults[1] ?? null)
       if (current?.weapons && current.weapons.length > 0) {
         setSelectedWeapon(current.weapons[0].bestWeapon ?? null)
       }
+      // 초기 allPatchStats: 우선 패치만 채우고 나머지는 null
+      const initial: (CharacterStatsResponse | null)[] = Array(patches.length).fill(null)
+      priorityResults.forEach((r, i) => { initial[i] = r })
+      setAllPatchStats(initial)
       setLoading(false)
+
+      // Phase 2: 나머지 패치 백그라운드 fetch (차트 데이터용)
+      const remainingPatches = patches.slice(2)
+      if (remainingPatches.length > 0) {
+        Promise.all(
+          remainingPatches.map((p) => fetchStats(selectedCode, p, selectedTier))
+        ).then((restResults) => {
+          setAllPatchStats((prev) => {
+            const merged = [...prev]
+            restResults.forEach((r, i) => { merged[i + 2] = r })
+            return merged
+          })
+        })
+      }
     })
   }, [selectedCode, selectedTier, patches])
 
