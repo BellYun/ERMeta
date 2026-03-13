@@ -76,7 +76,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
   const [activeRole, setActiveRole] = React.useState<string>("전체")
   const [rankingData, setRankingData] = React.useState<RankingResponse | null>(initialData ?? null)
   const [isLoading, setIsLoading] = React.useState(!initialData)
-  const [hoveredKey, setHoveredKey] = React.useState<string | null>(null)
+  const [activeKey, setActiveKey] = React.useState<string | null>(null)
   const { l10n } = useL10n()
   const isInitialRender = React.useRef(true)
 
@@ -167,12 +167,25 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
             : filtered.map((char) => (
                 <TableRow
                   key={`${char.code}-${char.weaponCode}`}
-                  className="cursor-pointer group"
-                  onClick={() => router.push(`/character-analysis?character=${char.code}`)}
-                  onMouseEnter={() => setHoveredKey(`${char.code}-${char.weaponCode}`)}
-                  onMouseLeave={() => setHoveredKey(null)}
+                  className="cursor-pointer group active:bg-[var(--color-surface-2)]/50 touch-manipulation"
+                  onClick={() => {
+                    const key = `${char.code}-${char.weaponCode}`
+                    // 모바일: 패치노트 있으면 첫 탭은 툴팁 토글, 두번째 탭은 이동
+                    if (char.patchNote && "ontouchstart" in window) {
+                      if (activeKey === key) {
+                        setActiveKey(null)
+                        router.push(`/character-analysis?character=${char.code}`)
+                      } else {
+                        setActiveKey(key)
+                      }
+                    } else {
+                      router.push(`/character-analysis?character=${char.code}`)
+                    }
+                  }}
+                  onMouseEnter={() => setActiveKey(`${char.code}-${char.weaponCode}`)}
+                  onMouseLeave={() => setActiveKey(null)}
                 >
-                  <TableCell className="text-[var(--color-muted-foreground)] font-semibold group-hover:text-[var(--color-primary)]">
+                  <TableCell className="text-[var(--color-muted-foreground)] font-semibold group-hover:text-[var(--color-primary)] group-active:text-[var(--color-primary)]">
                     {char.rank}
                   </TableCell>
                   <TableCell className="text-center">
@@ -193,12 +206,12 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                         )}
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-sm font-semibold text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors">
+                        <span className="text-sm font-semibold text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] group-active:text-[var(--color-primary)] transition-colors">
                           {char.name}
                         </span>
                         <span className="text-[11px] text-[var(--color-muted-foreground)]">{char.weaponName}</span>
                       </div>
-                      {char.patchNote && hoveredKey === `${char.code}-${char.weaponCode}` && (
+                      {char.patchNote && activeKey === `${char.code}-${char.weaponCode}` && (
                         <PatchNoteTooltip patchNote={char.patchNote} />
                       )}
                     </div>
