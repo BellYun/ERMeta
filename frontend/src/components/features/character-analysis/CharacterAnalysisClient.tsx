@@ -258,16 +258,16 @@ export function CharacterAnalysisClient({
         {/* 탭 분석 (lazy load) */}
         <Tabs defaultValue="comparison" onValueChange={(v) => analytics.analysisTabChanged(v)}>
           <TabsList className="w-full grid grid-cols-4 h-auto">
-            <TabsTrigger value="comparison" className="text-[11px] sm:text-sm px-1 sm:px-3 py-2">
+            <TabsTrigger value="comparison" className="text-[11px] sm:text-sm px-1.5 sm:px-3">
               <BarChart2 className="mr-1 sm:mr-1.5 h-3.5 w-3.5 shrink-0" /><span className="truncate">패치 비교</span>
             </TabsTrigger>
-            <TabsTrigger value="patchlog" className="text-[11px] sm:text-sm px-1 sm:px-3 py-2">
+            <TabsTrigger value="patchlog" className="text-[11px] sm:text-sm px-1.5 sm:px-3">
               <FileText className="mr-1 sm:mr-1.5 h-3.5 w-3.5 shrink-0" /><span className="truncate">패치 내역</span>
             </TabsTrigger>
-            <TabsTrigger value="equipment" className="text-[11px] sm:text-sm px-1 sm:px-3 py-2">
+            <TabsTrigger value="equipment" className="text-[11px] sm:text-sm px-1.5 sm:px-3">
               <Package className="mr-1 sm:mr-1.5 h-3.5 w-3.5 shrink-0" /><span className="truncate">아이템</span>
             </TabsTrigger>
-            <TabsTrigger value="detailed" className="text-[11px] sm:text-sm px-1 sm:px-3 py-2">
+            <TabsTrigger value="detailed" className="text-[11px] sm:text-sm px-1.5 sm:px-3">
               <Layers className="mr-1 sm:mr-1.5 h-3.5 w-3.5 shrink-0" /><span className="truncate">상세분석</span>
             </TabsTrigger>
           </TabsList>
