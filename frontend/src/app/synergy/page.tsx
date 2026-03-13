@@ -81,7 +81,7 @@ export default function SynergyPage() {
           3인 조합 추천
         </h1>
         <p className="mt-1.5 text-sm text-[var(--color-muted-foreground)]">
-          이터널리턴 승률 + 평균 RP 기반 최적 팀 조합 분석
+          시즌 10 누적 1,200,000+판 · 승률 + 평균 RP 기반 최적 팀 조합 분석
         </p>
       </section>
       <Suspense>

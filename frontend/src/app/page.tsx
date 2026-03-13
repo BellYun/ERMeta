@@ -62,7 +62,7 @@ export default async function Home() {
             이터널리턴 실시간 메타 분석
           </h1>
           <p className="mt-1.5 text-sm text-[var(--color-muted-foreground)]">
-            패치 {defaultPatch} 기준 · 다이아 이상 10,000+판 분석
+            패치 {defaultPatch} 기준 · 다이아 이상 400,000+판 분석
           </p>
         </section>
 
