@@ -1,13 +1,13 @@
 /**
- * ER&GG v2.0 수집 Edge Function
+ * ER&GG v2.2 수집 Edge Function
  *
  * pg_cron으로 3분마다 호출.
  * 듀얼 워커: forward (신규 게임 → old + v2_) / backfill (과거 → v2_ only)
  *
- * v2.1: DISK IO 최적화
- *   - process_game_batch → process_game_v2 + process_game_old 분리
- *   - 단일 거대 트랜잭션 → 2개 소형 트랜잭션 (peak IO 반감)
- *   - SAVEPOINT 제거 (BEGIN...EXCEPTION → 사전 검증)
+ * v2.2: BULK RPC 최적화
+ *   - 게임당 1 RPC → 사이클당 1~2 RPC (패치버전별 그룹)
+ *   - WAL fsync 120~180회 → 1~4회 (트랜잭션 수 98% 감소)
+ *   - parseGameData() 순수 함수 분리 → 축적 후 배치 RPC
  */
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
@@ -58,6 +58,12 @@ interface Participant {
   matchingMode: number;
   duration: number;
   startDtm: string;
+}
+
+interface ParsedGame {
+  patchVersion: string;
+  participants: any[];
+  trios: any[];
 }
 
 // ── 유틸 ──────────────────────────────────────────────────
@@ -191,43 +197,40 @@ function extractLegendarySlots(
   return slots;
 }
 
-// ── 게임 1건 처리 (배치 RPC) ─────────────────────────────
+// ── 게임 1건 파싱 (순수 함수, DB 호출 없음) ─────────────
 
-async function processGame(
-  supabase: any,
+function parseGameData(
   gameDetail: any,
   patchCache: any[],
   rank1000MMR: number | null,
   isForward: boolean
-): Promise<boolean> {
+): ParsedGame | null | "RECENT" {
   const userGames = gameDetail?.userGames;
-  if (!Array.isArray(userGames) || userGames.length === 0) return false;
+  if (!Array.isArray(userGames) || userGames.length === 0) return null;
 
   const first = userGames[0];
-  if (first.matchingMode !== 3) return false; // 랭크만
+  if (first.matchingMode !== 3) return null; // 랭크만
 
   const startDtm = first.startDtm || gameDetail.startDtm;
   const startDate = parseBserDate(startDtm);
-  if (!startDate) return false;
+  if (!startDate) return null;
 
   // 최근 1시간 이내 게임 → forward 중단 시그널
   if (isForward && Date.now() - startDate.getTime() < STABLE_DELAY_MS) {
-    return "RECENT" as any;
+    return "RECENT";
   }
 
   const patchVersion = resolvePatchVersion(startDate, patchCache);
-  if (!patchVersion) return false;
+  if (!patchVersion) return null;
 
   // 참가자 파싱
   const participants = userGames
     .map(extractParticipant)
     .filter((p): p is Participant => p !== null);
 
-  if (participants.length === 0) return false;
+  if (participants.length === 0) return null;
 
-  // ── JSONB 페이로드 구성 ──
-
-  // 참가자 데이터 (축약 키로 전송량 최소화)
+  // ── 참가자 JSONB 페이로드 ──
   const pData = participants.map((p) => {
     const tiers = getCollectableTiers(p.mmrBefore, rank1000MMR);
     if (tiers.length === 0) return null;
@@ -262,14 +265,15 @@ async function processGame(
       vic: p.victory,
       dur: p.duration,
       tiers,
-      mt: tiers[tiers.length - 1], // main tier (가장 높은 티어)
+      mt: tiers[tiers.length - 1],
       ls: extractLegendarySlots(p),
+      sa: startDate.toISOString(), // v2.2: 참가자별 started_at
     };
   }).filter(Boolean);
 
-  if (pData.length === 0) return false;
+  if (pData.length === 0) return null;
 
-  // 팀별 3인 조합 구성
+  // ── 팀별 3인 조합 구성 ──
   const teams = new Map<number, Participant[]>();
   for (const p of participants) {
     const team = teams.get(p.teamNumber) || [];
@@ -310,43 +314,58 @@ async function processGame(
     });
   }
 
-  // ── v2_ 테이블 RPC (메인 트랜잭션) ──
-  const rpcPayload = {
-    patch_version: patchVersion,
-    is_forward: isForward,
-    started_at: startDate.toISOString(),
-    participants: pData,
-    trios,
-  };
+  return { patchVersion, participants: pData, trios };
+}
 
-  const { data: v2Result, error: v2Error } = await supabase.rpc("process_game_v2", {
-    p_data: rpcPayload,
-  });
+// ── 배치 RPC 호출 ────────────────────────────────────────
 
-  if (v2Error) {
-    console.error("[v2] RPC error:", v2Error.message);
-    return false;
-  }
+async function flushBatchRPC(
+  supabase: any,
+  byPatch: Map<string, { participants: any[]; trios: any[] }>,
+  isForward: boolean
+): Promise<{ ok: number; fail: number }> {
+  let totalOk = 0;
+  let totalFail = 0;
 
-  if (v2Result?.fail > 0) {
-    console.warn(`[v2] partial failure: ok=${v2Result.ok}, fail=${v2Result.fail}, errors=`, v2Result.errors);
-  }
+  for (const [patchVersion, data] of byPatch) {
+    const rpcPayload = {
+      patch_version: patchVersion,
+      is_forward: isForward,
+      participants: data.participants,
+      trios: data.trios,
+    };
 
-  // ── old 테이블 RPC (별도 트랜잭션, forward only) ──
-  if (isForward) {
-    const { data: oldResult, error: oldError } = await supabase.rpc("process_game_old", {
+    // v2_ 테이블 (메인)
+    const { data: v2Result, error: v2Error } = await supabase.rpc("process_game_v2", {
       p_data: rpcPayload,
     });
 
-    if (oldError) {
-      // old 테이블 실패는 경고만 — v2_ 성공이 우선
-      console.warn("[old] RPC error (non-fatal):", oldError.message);
-    } else if (oldResult?.fail > 0) {
-      console.warn(`[old] partial failure: ok=${oldResult.ok}, fail=${oldResult.fail}, errors=`, oldResult.errors);
+    if (v2Error) {
+      console.error(`[Bulk v2] RPC error (patch=${patchVersion}):`, v2Error.message);
+      totalFail += data.participants.length;
+    } else {
+      totalOk += v2Result?.ok ?? 0;
+      totalFail += v2Result?.fail ?? 0;
+      if (v2Result?.fail > 0) {
+        console.warn(`[Bulk v2] partial: ok=${v2Result.ok}, fail=${v2Result.fail}`, v2Result.errors);
+      }
+    }
+
+    // old 테이블 (forward only)
+    if (isForward) {
+      const { data: oldResult, error: oldError } = await supabase.rpc("process_game_old", {
+        p_data: rpcPayload,
+      });
+
+      if (oldError) {
+        console.warn(`[Bulk old] RPC error (non-fatal, patch=${patchVersion}):`, oldError.message);
+      } else if (oldResult?.fail > 0) {
+        console.warn(`[Bulk old] partial: ok=${oldResult.ok}, fail=${oldResult.fail}`, oldResult.errors);
+      }
     }
   }
 
-  return true;
+  return { ok: totalOk, fail: totalFail };
 }
 
 // ── 메인 핸들러 ────────────────────────────────────────────
@@ -476,21 +495,38 @@ serve(async (req: Request) => {
         FORWARD_BUDGET_MS
       );
 
+      // v2.2: 파싱 축적 → 배치 RPC
+      const byPatch = new Map<string, { participants: any[]; trios: any[] }>();
+
       for (const game of games) {
         try {
-          const result = await processGame(supabase, game, patchCache, rank1000MMR, true);
-          if (result === ("RECENT" as any)) {
+          const parsed = parseGameData(game, patchCache, rank1000MMR, true);
+          if (parsed === "RECENT") {
             forwardHitRecent = true;
             forwardRemainingMs = FORWARD_BUDGET_MS - (Date.now() - forwardStartMs);
             console.log(`[Forward] 최근 1시간 이내 게임 도달, 남은 ${Math.round(forwardRemainingMs / 1000)}초를 백필에 전환`);
             break;
           }
-          if (result) forwardCollected++;
-          else forwardSkipped++;
+          if (parsed) {
+            const group = byPatch.get(parsed.patchVersion) || { participants: [], trios: [] };
+            group.participants.push(...parsed.participants);
+            group.trios.push(...parsed.trios);
+            byPatch.set(parsed.patchVersion, group);
+            forwardCollected++;
+          } else {
+            forwardSkipped++;
+          }
         } catch (e) {
           forwardFailed++;
-          console.error("[Forward] processGame error:", e);
+          console.error("[Forward] parseGameData error:", e);
         }
+      }
+
+      // 배치 RPC 실행 (패치별 1회, 보통 1~2회)
+      if (byPatch.size > 0) {
+        console.log(`[Forward] 배치 RPC: ${byPatch.size}개 패치, 총 ${[...byPatch.values()].reduce((s, g) => s + g.participants.length, 0)}명 참가자`);
+        const { fail } = await flushBatchRPC(supabase, byPatch, true);
+        forwardFailed += fail;
       }
 
       // 상태 업데이트
@@ -534,15 +570,32 @@ serve(async (req: Request) => {
           backfillTotalBudgetMs
         );
 
+        // v2.2: 파싱 축적 → 배치 RPC
+        const byPatch = new Map<string, { participants: any[]; trios: any[] }>();
+
         for (const game of games) {
           try {
-            const saved = await processGame(supabase, game, patchCache, rank1000MMR, false);
-            if (saved) backfillCollected++;
-            else backfillSkipped++;
+            const parsed = parseGameData(game, patchCache, rank1000MMR, false);
+            if (parsed) {
+              const group = byPatch.get(parsed.patchVersion) || { participants: [], trios: [] };
+              group.participants.push(...parsed.participants);
+              group.trios.push(...parsed.trios);
+              byPatch.set(parsed.patchVersion, group);
+              backfillCollected++;
+            } else {
+              backfillSkipped++;
+            }
           } catch (e) {
             backfillFailed++;
-            console.error("[Backfill] processGame error:", e);
+            console.error("[Backfill] parseGameData error:", e);
           }
+        }
+
+        // 배치 RPC 실행 (v2_ only, old 쓰기 없음)
+        if (byPatch.size > 0) {
+          console.log(`[Backfill] 배치 RPC: ${byPatch.size}개 패치, 총 ${[...byPatch.values()].reduce((s, g) => s + g.participants.length, 0)}명 참가자`);
+          const { fail } = await flushBatchRPC(supabase, byPatch, false);
+          backfillFailed += fail;
         }
 
         // 상태 업데이트

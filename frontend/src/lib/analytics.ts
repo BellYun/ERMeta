@@ -1,4 +1,4 @@
-import * as amplitude from "@amplitude/unified"
+import * as amplitude from "@amplitude/analytics-browser"
 
 const isDev = process.env.NODE_ENV === "development"
 
