@@ -4,6 +4,7 @@ import { GlobalFilter } from "@/components/features/GlobalFilter";
 import { TierRankingTable } from "@/components/features/TierRankingTable";
 import { HoneyPicksSection } from "@/components/features/HoneyPicksSection";
 import { FilterProvider } from "@/components/features/FilterContext";
+import { createServerClient } from "@/lib/supabase";
 
 export const metadata: Metadata = {
   title: { absolute: "메타분석 | 이리와지지" },
@@ -21,9 +22,30 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 }
 
-export default function Home() {
+async function fetchPatches(): Promise<string[]> {
+  try {
+    const supabase = createServerClient()
+    const { data, error } = await supabase
+      .from("PatchVersion")
+      .select("version")
+      .eq("isActive", true)
+      .order("startDate", { ascending: false })
+      .limit(10)
+
+    if (!error && data && data.length > 0) {
+      return data.map((p) => p.version)
+    }
+    return []
+  } catch {
+    return []
+  }
+}
+
+export default async function Home() {
+  const patches = await fetchPatches()
+
   return (
-    <FilterProvider>
+    <FilterProvider initialPatches={patches}>
       <div className="flex flex-col gap-6">
         {/* 이번 패치 떡상 TOP 5 */}
         <section className="flex flex-col gap-2">

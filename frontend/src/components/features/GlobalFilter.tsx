@@ -14,7 +14,7 @@ const TIER_OPTIONS = [
 ]
 
 export function GlobalFilter() {
-  const { patch, tier, patches, isLoading, setPatch, setTier } = useFilter()
+  const { patch, tier, patches, setPatch, setTier } = useFilter()
 
   return (
     <div className="flex flex-wrap items-center gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-3">
@@ -23,7 +23,6 @@ export function GlobalFilter() {
         <Select
           value={patch || patches[0] || ""}
           onChange={(e) => { setPatch(e.target.value); analytics.patchSelected(e.target.value) }}
-          disabled={isLoading}
         >
           {patches.map((p) => (
             <SelectItem key={p} value={p}>
@@ -32,7 +31,7 @@ export function GlobalFilter() {
           ))}
           {patches.length === 0 && (
             <SelectItem value="" disabled>
-              {isLoading ? "로딩 중..." : "패치 없음"}
+              패치 없음
             </SelectItem>
           )}
         </Select>
