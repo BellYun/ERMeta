@@ -120,7 +120,7 @@ function TopBuildsTableFiltered({
           <div
             key={i}
             className={cn(
-              "px-3 py-3 space-y-2",
+              "px-3 py-2 space-y-1.5",
               i === 0 && "bg-[var(--color-accent-gold)]/5"
             )}
           >

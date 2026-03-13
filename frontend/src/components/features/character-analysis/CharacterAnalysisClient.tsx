@@ -1,22 +1,41 @@
 "use client"
 
 import * as React from "react"
-import { BarChart2, FileText, Package, Layers } from "lucide-react"
+import { Suspense } from "react"
+import { BarChart2, FileText, Package, Layers, Loader2 } from "lucide-react"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { analytics } from "@/lib/analytics"
 import { getCharacterName } from "@/lib/characterMap"
 import { TierGroup } from "@/utils/tier"
-import { CharacterEquipmentAnalyzer } from "@/components/character/CharacterEquipmentAnalyzer"
-import { CharacterDetailedAnalyzer } from "@/components/character/CharacterDetailedAnalyzer"
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route"
 
 import { CHARACTER_CODES } from "./constants"
 import { assignCharTier, fetchStats } from "./utils"
 import { CharacterGrid } from "./CharacterGrid"
 import { CharacterHeader } from "./CharacterHeader"
-import { PatchComparisonTab } from "./PatchComparisonTab"
-import { PatchLogTab } from "./PatchLogTab"
+
+// 탭 콘텐츠 lazy import → 코드 스플릿 + Suspense 폴백 활성화
+const PatchComparisonTab = React.lazy(() =>
+  import("./PatchComparisonTab").then((m) => ({ default: m.PatchComparisonTab }))
+)
+const PatchLogTab = React.lazy(() =>
+  import("./PatchLogTab").then((m) => ({ default: m.PatchLogTab }))
+)
+const CharacterEquipmentAnalyzer = React.lazy(() =>
+  import("@/components/character/CharacterEquipmentAnalyzer").then((m) => ({ default: m.CharacterEquipmentAnalyzer }))
+)
+const CharacterDetailedAnalyzer = React.lazy(() =>
+  import("@/components/character/CharacterDetailedAnalyzer").then((m) => ({ default: m.CharacterDetailedAnalyzer }))
+)
+
+function TabFallback() {
+  return (
+    <div className="flex items-center justify-center py-16">
+      <Loader2 className="h-6 w-6 animate-spin text-[var(--color-primary)]" />
+    </div>
+  )
+}
 
 export function CharacterAnalysisClient() {
   const searchParams = useSearchParams()
@@ -187,37 +206,45 @@ export function CharacterAnalysisClient() {
 
           {/* 패치 비교 */}
           <TabsContent value="comparison">
-            <PatchComparisonTab
-              chartData={chartData}
-              stats={stats}
-              loading={loading}
-              selectedCode={selectedCode}
-            />
+            <Suspense fallback={<TabFallback />}>
+              <PatchComparisonTab
+                chartData={chartData}
+                stats={stats}
+                loading={loading}
+                selectedCode={selectedCode}
+              />
+            </Suspense>
           </TabsContent>
 
           {/* 패치 내역 */}
           <TabsContent value="patchlog">
-            <PatchLogTab patches={patches} selectedCode={selectedCode} />
+            <Suspense fallback={<TabFallback />}>
+              <PatchLogTab patches={patches} selectedCode={selectedCode} />
+            </Suspense>
           </TabsContent>
 
           {/* 아이템 통계 */}
           <TabsContent value="equipment">
-            <CharacterEquipmentAnalyzer
-              characterCode={selectedCode}
-              tier={selectedTier}
-              patchVersion={currentPatch}
-              bestWeapon={selectedWeapon}
-            />
+            <Suspense fallback={<TabFallback />}>
+              <CharacterEquipmentAnalyzer
+                characterCode={selectedCode}
+                tier={selectedTier}
+                patchVersion={currentPatch}
+                bestWeapon={selectedWeapon}
+              />
+            </Suspense>
           </TabsContent>
 
           {/* 상세분석 */}
           <TabsContent value="detailed">
-            <CharacterDetailedAnalyzer
-              characterCode={selectedCode}
-              tier={selectedTier}
-              patchVersion={currentPatch}
-              bestWeapon={selectedWeapon}
-            />
+            <Suspense fallback={<TabFallback />}>
+              <CharacterDetailedAnalyzer
+                characterCode={selectedCode}
+                tier={selectedTier}
+                patchVersion={currentPatch}
+                bestWeapon={selectedWeapon}
+              />
+            </Suspense>
           </TabsContent>
 
         </Tabs>

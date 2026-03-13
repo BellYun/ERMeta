@@ -35,13 +35,13 @@ function TopBuildsTable({
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
       <SectionHeader title="TOP BUILDS" />
 
-      {/* 모바일 카드 레이아웃 */}
+      {/* 모바일 카드 레이아웃 (<640px) */}
       <div className="sm:hidden divide-y divide-[var(--color-border)]">
         {builds.map((b, i) => (
           <div
             key={i}
             className={cn(
-              "px-3 py-3 space-y-2",
+              "px-3 py-2 space-y-1.5",
               i === 0 && "bg-[var(--color-accent-gold)]/5"
             )}
           >
@@ -84,8 +84,67 @@ function TopBuildsTable({
         ))}
       </div>
 
-      {/* 데스크탑 테이블 레이아웃 */}
-      <div className="hidden sm:block overflow-x-auto">
+      {/* 태블릿 컴팩트 테이블 (640px~1024px) */}
+      <div className="hidden sm:block lg:hidden overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="border-b border-[var(--color-border)] text-[var(--color-muted-foreground)]">
+              <th className="px-2 py-2 text-left font-medium w-6">#</th>
+              <th className="px-1.5 py-2 text-center font-medium">특성</th>
+              {SLOTS.map((s) => (
+                <th key={s} className="px-1 py-2 text-center font-medium">{SLOT_LABELS[s]}</th>
+              ))}
+              <th className="px-2 py-2 text-right font-medium">픽률</th>
+              <th className="px-2 py-2 text-right font-medium">승률</th>
+            </tr>
+          </thead>
+          <tbody>
+            {builds.map((b, i) => (
+              <tr
+                key={i}
+                className={cn(
+                  "border-b border-[var(--color-border)] last:border-0 transition-colors hover:bg-[var(--color-surface-2)]",
+                  i === 0 && "bg-[var(--color-accent-gold)]/5"
+                )}
+              >
+                <td className="px-2 py-1.5 text-left">
+                  <span className={cn("font-bold", i === 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]")}>
+                    {i + 1}
+                  </span>
+                </td>
+                <td className="px-1.5 py-1.5 text-center">
+                  {b.mainCore != null ? (
+                    <span className="inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-medium bg-[var(--color-primary)]/20 text-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/40 whitespace-nowrap">
+                      {traitNames[b.mainCore] ?? b.mainCore}
+                    </span>
+                  ) : (
+                    <span className="text-[var(--color-muted-foreground)]">—</span>
+                  )}
+                </td>
+                {SLOTS.map((s) => {
+                  const code = b[s]
+                  return (
+                    <td key={s} className="px-1 py-1.5 text-center">
+                      <div className="flex flex-col items-center gap-0.5">
+                        <ItemIcon code={code} size={28} />
+                      </div>
+                    </td>
+                  )
+                })}
+                <td className="px-2 py-1.5 text-right text-[var(--color-muted-foreground)]">
+                  {b.pickRate.toFixed(1)}%
+                </td>
+                <td className="px-2 py-1.5 text-right">
+                  <WinRateSpan winRate={b.winRate} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* 데스크탑 풀 테이블 (≥1024px) */}
+      <div className="hidden lg:block overflow-x-auto">
       <table className="w-full text-sm min-w-[640px]">
         <thead>
           <tr className="border-b border-[var(--color-border)] text-[var(--color-muted-foreground)] text-xs">
@@ -175,12 +234,52 @@ function SlotPopularityGrid({
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
       <SectionHeader title="슬롯별 인기 아이템" />
-      <div className="overflow-x-auto sm:overflow-visible">
-        <div className="flex sm:grid sm:grid-cols-5 divide-x divide-[var(--color-border)] min-w-[500px] sm:min-w-0">
+
+      {/* 모바일: 슬롯별 가로 리스트 (스크롤 없음) */}
+      <div className="md:hidden divide-y divide-[var(--color-border)]">
+        {SLOTS.map((slot) => {
+          const items = slotPopularity[slot]
+          if (items.length === 0) return null
+          return (
+            <div key={slot} className="px-3 py-2.5">
+              <p className="text-[10px] font-medium text-[var(--color-muted-foreground)] mb-2">
+                {SLOT_LABELS[slot]}
+              </p>
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {items.map((item, i) => (
+                  <div
+                    key={item.code}
+                    className={cn(
+                      "flex flex-col items-center gap-0.5 rounded-lg px-2 py-1.5 min-w-[56px] shrink-0",
+                      i === 0 && "bg-[var(--color-accent-gold)]/5 ring-1 ring-[var(--color-accent-gold)]/20"
+                    )}
+                  >
+                    <ItemIcon code={item.code} size={30} />
+                    <span className="text-[8px] text-[var(--color-foreground)] text-center max-w-[52px] truncate leading-tight">
+                      {itemNames[item.code] ?? item.code}
+                    </span>
+                    <span className="text-[8px] text-[var(--color-primary)]">{item.pickRate.toFixed(1)}%</span>
+                    <span className={cn(
+                      "text-[8px]",
+                      item.winRate >= 55 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
+                    )}>
+                      {item.winRate.toFixed(1)}%
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* 태블릿+: 5열 그리드 */}
+      <div className="hidden md:block">
+        <div className="grid grid-cols-5 divide-x divide-[var(--color-border)]">
           {SLOTS.map((slot) => {
             const items = slotPopularity[slot]
             return (
-              <div key={slot} className="flex flex-col min-w-[100px] flex-1">
+              <div key={slot} className="flex flex-col">
                 <div className="px-3 py-2 text-center text-xs font-medium text-[var(--color-muted-foreground)] border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60">
                   {SLOT_LABELS[slot]}
                 </div>
@@ -230,12 +329,43 @@ function CoreItemsList({
           <div
             key={item.code}
             className={cn(
-              "px-3 sm:px-4 py-2.5 hover:bg-[var(--color-surface-2)] transition-colors",
+              "px-3 md:px-4 py-2.5 hover:bg-[var(--color-surface-2)] transition-colors",
               i === 0 && "bg-[var(--color-accent-gold)]/5"
             )}
           >
-            {/* 데스크탑: 한 줄 */}
-            <div className="hidden sm:flex items-center gap-3">
+            {/* 모바일: 컴팩트 2줄 (<640px) */}
+            <div className="sm:hidden flex flex-col gap-1.5">
+              <div className="flex items-center gap-2">
+                <span className={cn("w-5 shrink-0 text-xs font-bold text-center", i === 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]")}>
+                  {i + 1}
+                </span>
+                <ItemIcon code={item.code} size={28} />
+                <span className="flex-1 text-sm text-[var(--color-foreground)] truncate">
+                  {itemNames[item.code] ?? item.code}
+                </span>
+              </div>
+              <div className="flex items-center gap-3 pl-7 text-[10px]">
+                <span className="text-[var(--color-primary)]">픽 {item.pickRate.toFixed(1)}%</span>
+                <WinRateSpan winRate={item.winRate} label="승 " />
+                <span className="text-[var(--color-muted-foreground)]">
+                  {item.totalGames.toLocaleString()}판
+                </span>
+              </div>
+            </div>
+            {/* 태블릿: 한 줄, 판수 숨김 (640px~1024px) */}
+            <div className="hidden sm:flex lg:hidden items-center gap-2">
+              <span className={cn("w-5 shrink-0 text-xs font-bold text-center", i === 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]")}>
+                {i + 1}
+              </span>
+              <ItemIcon code={item.code} size={32} />
+              <span className="flex-1 text-sm text-[var(--color-foreground)] truncate">
+                {itemNames[item.code] ?? item.code}
+              </span>
+              <span className="text-xs text-[var(--color-primary)]">{item.pickRate.toFixed(1)}%</span>
+              <WinRateSpan winRate={item.winRate} />
+            </div>
+            {/* 데스크탑: 풀 한 줄 (≥1024px) */}
+            <div className="hidden lg:flex items-center gap-3">
               <span className={cn("w-5 shrink-0 text-xs font-bold text-center", i === 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]")}>
                 {i + 1}
               </span>
@@ -248,25 +378,6 @@ function CoreItemsList({
               <span className="text-xs text-[var(--color-muted-foreground)] w-16 text-right">
                 {item.totalGames.toLocaleString()}판
               </span>
-            </div>
-            {/* 모바일: 2줄 */}
-            <div className="sm:hidden flex flex-col gap-1.5">
-              <div className="flex items-center gap-2">
-                <span className={cn("w-5 shrink-0 text-xs font-bold text-center", i === 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]")}>
-                  {i + 1}
-                </span>
-                <ItemIcon code={item.code} size={32} />
-                <span className="flex-1 text-sm text-[var(--color-foreground)] truncate">
-                  {itemNames[item.code] ?? item.code}
-                </span>
-              </div>
-              <div className="flex items-center gap-3 pl-7 text-[10px]">
-                <span className="text-[var(--color-primary)]">픽 {item.pickRate.toFixed(1)}%</span>
-                <WinRateSpan winRate={item.winRate} label="승 " />
-                <span className="text-[var(--color-muted-foreground)]">
-                  {item.totalGames.toLocaleString()}판
-                </span>
-              </div>
             </div>
           </div>
         ))}
