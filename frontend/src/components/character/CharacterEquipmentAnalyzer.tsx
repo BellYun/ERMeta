@@ -1,103 +1,17 @@
 "use client"
 
 import * as React from "react"
-import Image from "next/image"
 import { TierGroup } from "@/utils/tier"
 import { cn } from "@/lib/utils"
-import itemImageMap from "@/../const/itemImageMap.json"
-import itemGradeMap from "@/../const/itemGradeMap.json"
 import itemNameMap from "@/../const/itemNameMap.json"
 import type { EquipmentBuildResult, BuildSummary, SlotItem, CoreItem } from "@/app/api/builds/equipment/route"
-
-type ItemGrade = "Common" | "Uncommon" | "Rare" | "Epic" | "Legend" | "Mythic"
-
-const GRADE_BORDER: Record<ItemGrade, string> = {
-  Mythic: "ring-2 ring-red-400/70 shadow-[0_0_6px_rgba(248,113,113,0.3)]",
-  Legend: "ring-2 ring-amber-400/70 shadow-[0_0_6px_rgba(251,191,36,0.3)]",
-  Epic:   "ring-2 ring-purple-400/60",
-  Rare:   "ring-1 ring-blue-400/50",
-  Uncommon: "ring-1 ring-green-400/40",
-  Common: "",
-}
-
-function getItemGrade(code: number | null): ItemGrade | null {
-  if (code == null) return null
-  return (itemGradeMap as Record<string, string>)[String(code)] as ItemGrade | undefined ?? null
-}
+import { ItemIcon, WinRateSpan, SLOTS, SLOT_LABELS } from "./shared"
 
 interface Props {
   characterCode: number
   tier: TierGroup
   patchVersion: string | null
   bestWeapon?: number | null
-}
-
-const SLOT_LABELS: Record<string, string> = {
-  weapon: "무기",
-  chest: "갑옷",
-  head: "머리",
-  arm: "팔",
-  leg: "다리",
-}
-
-const SLOTS = ["weapon", "chest", "head", "arm", "leg"] as const
-
-function ItemIcon({ code, size = 36 }: { code: number | null; size?: number }) {
-  if (code == null) {
-    return (
-      <div
-        className="rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)]"
-        style={{ width: size, height: size }}
-      />
-    )
-  }
-
-  const imgPath = (itemImageMap as Record<string, string>)[String(code)]
-  const grade = getItemGrade(code)
-  const gradeBorder = grade ? GRADE_BORDER[grade] : "ring-1 ring-[var(--color-border)]"
-
-  if (!imgPath) {
-    return (
-      <div
-        className={cn(
-          "rounded-lg bg-[var(--color-surface-2)] flex items-center justify-center",
-          gradeBorder
-        )}
-        style={{ width: size, height: size }}
-      >
-        <span className="text-[8px] text-[var(--color-muted-foreground)]">?</span>
-      </div>
-    )
-  }
-
-  return (
-    <div
-      className={cn("relative rounded-lg bg-[var(--color-surface-2)]", gradeBorder)}
-      style={{ width: size, height: size }}
-    >
-      <Image
-        src={imgPath}
-        alt={String(code)}
-        fill
-        className="rounded-lg object-cover"
-        sizes={`${size}px`}
-        unoptimized
-      />
-    </div>
-  )
-}
-
-function WinRateSpan({ winRate, label }: { winRate: number; label?: string }) {
-  return (
-    <span
-      className={cn(
-        "font-medium",
-        winRate >= 55 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
-      )}
-    >
-      {label}{winRate.toFixed(1)}%
-    </span>
-  )
 }
 
 function SectionHeader({ title }: { title: string }) {
