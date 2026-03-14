@@ -257,22 +257,20 @@ export function CharacterAnalysisClient({
 
         {/* 탭 분석 (lazy load) */}
         <Tabs defaultValue="comparison" onValueChange={(v) => analytics.analysisTabChanged(v)}>
-          <div className="overflow-x-auto scrollbar-thin -mx-0.5 px-0.5">
-            <TabsList className="w-full grid grid-cols-4 h-auto min-w-[300px]">
-              <TabsTrigger value="comparison" className="text-[11px] sm:text-sm px-1 sm:px-3 gap-1 sm:gap-1.5">
-                <BarChart2 className="h-3.5 w-3.5 shrink-0" /><span className="truncate">패치 비교</span>
-              </TabsTrigger>
-              <TabsTrigger value="patchlog" className="text-[11px] sm:text-sm px-1 sm:px-3 gap-1 sm:gap-1.5">
-                <FileText className="h-3.5 w-3.5 shrink-0" /><span className="truncate">패치 내역</span>
-              </TabsTrigger>
-              <TabsTrigger value="equipment" className="text-[11px] sm:text-sm px-1 sm:px-3 gap-1 sm:gap-1.5">
-                <Package className="h-3.5 w-3.5 shrink-0" /><span className="truncate">아이템</span>
-              </TabsTrigger>
-              <TabsTrigger value="detailed" className="text-[11px] sm:text-sm px-1 sm:px-3 gap-1 sm:gap-1.5">
-                <Layers className="h-3.5 w-3.5 shrink-0" /><span className="truncate">상세분석</span>
-              </TabsTrigger>
-            </TabsList>
-          </div>
+          <TabsList className="w-full grid grid-cols-4 h-auto">
+            <TabsTrigger value="comparison" className="gap-1 sm:gap-1.5">
+              <BarChart2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" /><span className="truncate">패치 비교</span>
+            </TabsTrigger>
+            <TabsTrigger value="patchlog" className="gap-1 sm:gap-1.5">
+              <FileText className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" /><span className="truncate">패치 내역</span>
+            </TabsTrigger>
+            <TabsTrigger value="equipment" className="gap-1 sm:gap-1.5">
+              <Package className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" /><span className="truncate">아이템</span>
+            </TabsTrigger>
+            <TabsTrigger value="detailed" className="gap-1 sm:gap-1.5">
+              <Layers className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" /><span className="truncate">상세분석</span>
+            </TabsTrigger>
+          </TabsList>
 
           <TabsContent value="comparison">
             <Suspense fallback={<TabFallback />}>

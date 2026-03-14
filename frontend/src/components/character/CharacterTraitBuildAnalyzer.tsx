@@ -33,11 +33,12 @@ function TraitChip({ code, name, variant = "sub" }: { code: number; name?: strin
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium",
+        "inline-flex items-center rounded-md px-1.5 sm:px-2 py-0.5 text-[11px] sm:text-xs font-medium max-w-[100px] sm:max-w-[140px] truncate",
         variant === "core"
           ? "bg-[var(--color-primary)]/20 text-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/40"
           : "bg-[var(--color-surface-2)] text-[var(--color-foreground)]"
       )}
+      title={String(name ?? code)}
     >
       {name ?? code}
     </span>
@@ -53,16 +54,16 @@ function SubOptionChip({
 }) {
   if (option.code == null) return null
   return (
-    <div className="flex flex-col items-center gap-0.5">
+    <div className="flex flex-col items-center gap-0.5 max-w-[120px]">
       <TraitChip code={option.code} name={name} variant="sub" />
-      <span className="text-[10px] whitespace-nowrap flex gap-1">
-        <span className="text-[var(--color-primary)]">픽률 {option.pickRate.toFixed(1)}%</span>
+      <span className="text-[9px] sm:text-[10px] whitespace-nowrap flex gap-0.5 sm:gap-1">
+        <span className="text-[var(--color-primary)]">픽 {option.pickRate.toFixed(1)}%</span>
         <span
           className={cn(
             option.winRate >= 55 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
           )}
         >
-          승률 {option.winRate.toFixed(1)}%
+          승 {option.winRate.toFixed(1)}%
         </span>
       </span>
     </div>
@@ -120,7 +121,7 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
       {/* 테이블 헤더 */}
-      <div className="grid grid-cols-[1fr_3.5rem_3.5rem_3.5rem] sm:grid-cols-[1fr_5rem_5rem_5rem] border-b border-[var(--color-border)] px-3 sm:px-4 py-2 text-xs font-medium text-[var(--color-muted-foreground)]">
+      <div className="grid grid-cols-[1fr_2.8rem_2.8rem_2.8rem] sm:grid-cols-[1fr_5rem_5rem_5rem] border-b border-[var(--color-border)] px-2 sm:px-4 py-2 text-[10px] sm:text-xs font-medium text-[var(--color-muted-foreground)]">
         <span>메인 특성</span>
         <span className="text-right">픽률</span>
         <span className="text-right">승률</span>
@@ -137,7 +138,7 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
           )}
         >
           {/* mainCore 헤더 행 */}
-          <div className="grid grid-cols-[1fr_3.5rem_3.5rem_3.5rem] sm:grid-cols-[1fr_5rem_5rem_5rem] items-center px-3 sm:px-4 py-3 gap-1 sm:gap-2 bg-[var(--color-surface-2)]/60">
+          <div className="grid grid-cols-[1fr_2.8rem_2.8rem_2.8rem] sm:grid-cols-[1fr_5rem_5rem_5rem] items-center px-2 sm:px-4 py-2.5 sm:py-3 gap-1 sm:gap-2 bg-[var(--color-surface-2)]/60">
             <div className="flex items-center gap-2">
               {gi === 0 && (
                 <span className="text-xs font-bold text-[var(--color-accent-gold)]">#1</span>
@@ -172,11 +173,11 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
 
           {/* sub1 옵션 행 */}
           {group.sub1Options.length > 0 && (
-            <div className="flex items-start gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 border-t border-[var(--color-border)]/40 pl-4 sm:pl-8">
-              <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-10">
+            <div className="flex items-start gap-1.5 sm:gap-3 px-2 sm:px-4 py-2 sm:py-2.5 border-t border-[var(--color-border)]/40 pl-3 sm:pl-8">
+              <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-8 sm:w-10">
                 서브1
               </span>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-1.5 sm:gap-3">
                 {group.sub1Options.map((opt, oi) => (
                   <SubOptionChip
                     key={oi}
@@ -190,11 +191,11 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
 
           {/* sub2 옵션 행 */}
           {group.sub2Options.length > 0 && (
-            <div className="flex items-start gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 border-t border-[var(--color-border)]/40 pl-4 sm:pl-8">
-              <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-10">
+            <div className="flex items-start gap-1.5 sm:gap-3 px-2 sm:px-4 py-2 sm:py-2.5 border-t border-[var(--color-border)]/40 pl-3 sm:pl-8">
+              <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-8 sm:w-10">
                 서브2
               </span>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-1.5 sm:gap-3">
                 {group.sub2Options.map((opt, oi) => (
                   <SubOptionChip
                     key={oi}
@@ -208,11 +209,11 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
 
           {/* sub3 옵션 행 */}
           {group.sub3Options.length > 0 && (
-            <div className="flex items-start gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 border-t border-[var(--color-border)]/40 pl-4 sm:pl-8">
-              <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-10">
+            <div className="flex items-start gap-1.5 sm:gap-3 px-2 sm:px-4 py-2 sm:py-2.5 border-t border-[var(--color-border)]/40 pl-3 sm:pl-8">
+              <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-8 sm:w-10">
                 서브3
               </span>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-1.5 sm:gap-3">
                 {group.sub3Options.map((opt, oi) => (
                   <SubOptionChip
                     key={oi}
@@ -226,11 +227,11 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
 
           {/* sub4 옵션 행 */}
           {group.sub4Options.length > 0 && (
-            <div className="flex items-start gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 border-t border-[var(--color-border)]/40 pl-4 sm:pl-8">
-              <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-10">
+            <div className="flex items-start gap-1.5 sm:gap-3 px-2 sm:px-4 py-2 sm:py-2.5 border-t border-[var(--color-border)]/40 pl-3 sm:pl-8">
+              <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-8 sm:w-10">
                 서브4
               </span>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-1.5 sm:gap-3">
                 {group.sub4Options.map((opt, oi) => (
                   <SubOptionChip
                     key={oi}

@@ -45,47 +45,49 @@ export function CharacterHeader({
   hasPreviousData,
 }: CharacterHeaderProps) {
   return (
-    <div className="flex gap-3 sm:gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-3 sm:p-5 items-start overflow-hidden min-w-0">
-      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[var(--color-border)]">
-        <Image
-          src={getCharacterImageUrl(selectedCode)}
-          alt={getCharacterName(selectedCode)}
-          fill
-          className="object-cover"
-          sizes="80px"
-          unoptimized
-        />
-      </div>
-      <div className="flex flex-1 flex-col gap-3 min-w-0">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 sm:flex-wrap">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-xl sm:text-2xl font-bold text-[var(--color-foreground)]">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-3 sm:p-5 overflow-hidden min-w-0">
+      <div className="flex gap-3 sm:gap-4 items-start">
+        <div className="relative h-16 w-16 sm:h-20 sm:w-20 shrink-0 overflow-hidden rounded-xl bg-[var(--color-border)]">
+          <Image
+            src={getCharacterImageUrl(selectedCode)}
+            alt={getCharacterName(selectedCode)}
+            fill
+            className="object-cover"
+            sizes="80px"
+            unoptimized
+          />
+        </div>
+        <div className="flex flex-1 flex-col gap-1.5 sm:gap-2 min-w-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+            <h1 className="text-lg sm:text-2xl font-bold text-[var(--color-foreground)] truncate max-w-[140px] sm:max-w-none">
               {getCharacterName(selectedCode)}
             </h1>
             {charTier && <TierBadge tier={charTier} />}
-            <div className="flex items-center gap-2">
-              {currentPatch && (
-                <span className="rounded bg-[var(--color-surface-2)] px-2 py-0.5 text-xs text-[var(--color-muted-foreground)] border border-[var(--color-border)]">
-                  {currentPatch}
-                </span>
-              )}
-              {displayStat && displayStat.totalGames > 0 && (
-                <span className="rounded bg-[var(--color-surface-2)] px-2 py-0.5 text-xs text-[var(--color-muted-foreground)] border border-[var(--color-border)]">
-                  총 {displayStat.totalGames.toLocaleString()}판
-                </span>
-              )}
-            </div>
           </div>
-          <select
-            value={selectedTier}
-            onChange={(e) => { setSelectedTier(e.target.value as TierGroup); analytics.analysisTierChanged(e.target.value) }}
-            className="w-full sm:w-auto sm:ml-auto rounded bg-[var(--color-surface-2)] px-2 py-1 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] cursor-pointer"
-          >
-            {METRICS_TIER_GROUPS.map((tg) => (
-              <option key={tg} value={tg}>{TIER_LABELS[tg]}</option>
-            ))}
-          </select>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {currentPatch && (
+              <span className="rounded bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[10px] sm:text-xs text-[var(--color-muted-foreground)] border border-[var(--color-border)]">
+                {currentPatch}
+              </span>
+            )}
+            {displayStat && displayStat.totalGames > 0 && (
+              <span className="rounded bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[10px] sm:text-xs text-[var(--color-muted-foreground)] border border-[var(--color-border)]">
+                총 {displayStat.totalGames.toLocaleString()}판
+              </span>
+            )}
+          </div>
         </div>
+      </div>
+      <div className="flex flex-col gap-2.5 sm:gap-3 mt-2.5 sm:mt-3">
+        <select
+          value={selectedTier}
+          onChange={(e) => { setSelectedTier(e.target.value as TierGroup); analytics.analysisTierChanged(e.target.value) }}
+          className="w-full rounded bg-[var(--color-surface-2)] px-2 py-1.5 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] cursor-pointer"
+        >
+          {METRICS_TIER_GROUPS.map((tg) => (
+            <option key={tg} value={tg}>{TIER_LABELS[tg]}</option>
+          ))}
+        </select>
 
         {/* 무기 군 선택 */}
         {!loading && stats?.weapons && stats.weapons.length > 0 && (() => {
@@ -152,11 +154,11 @@ export function CharacterHeader({
         })()}
 
         {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2">
             {[...Array(4)].map((_, i) => <SkeletonCard key={i} />)}
           </div>
         ) : displayStat && displayStat.totalGames > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2">
             <StatCard
               label="픽률"
               value={`${displayStat.pickRate.toFixed(1)}%`}

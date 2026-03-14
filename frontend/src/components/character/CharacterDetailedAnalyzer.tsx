@@ -60,16 +60,16 @@ function SubSlotRow({
   if (options.length === 0) return null
   const _maxPick = 100 // 픽률은 전체 대비 %이므로 100 기준
   return (
-    <div className="flex items-start gap-2 sm:gap-3 px-3 sm:px-4 py-2">
-      <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-8 sm:w-10">
+    <div className="flex items-start gap-1.5 sm:gap-3 px-2 sm:px-4 py-2">
+      <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-7 sm:w-10">
         {label}
       </span>
-      <div className="flex flex-wrap gap-1.5 sm:gap-2 flex-1">
+      <div className="flex flex-wrap gap-1.5 sm:gap-2 flex-1 min-w-0">
         {options.map((opt, i) => {
           if (opt.code == null) return null
           const barWidth = opt.pickRate
           return (
-            <div key={i} className="flex flex-col gap-0.5 min-w-[60px] sm:min-w-[72px]">
+            <div key={i} className="flex flex-col gap-0.5 min-w-[52px] sm:min-w-[72px]">
               <span className="inline-flex items-center rounded-md px-1.5 sm:px-2 py-0.5 text-[11px] sm:text-xs font-medium bg-[var(--color-surface-2)] text-[var(--color-foreground)] border border-[var(--color-border)]">
                 {traitNames[opt.code] ?? opt.code}
               </span>
@@ -244,12 +244,12 @@ function SlotPopularityGrid({
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
         <span className="text-xs font-semibold text-[var(--color-foreground)]">슬롯별 인기 아이템</span>
       </div>
-      <div className="overflow-x-auto sm:overflow-visible">
-        <div className="flex sm:grid sm:grid-cols-5 divide-x divide-[var(--color-border)] min-w-[500px] sm:min-w-0">
+      <div className="overflow-x-auto scrollbar-thin">
+        <div className="flex sm:grid sm:grid-cols-5 divide-x divide-[var(--color-border)] min-w-[420px] sm:min-w-0">
           {SLOTS.map((slot) => {
             const items = slotPopularity[slot]
             return (
-              <div key={slot} className="flex flex-col min-w-[100px] flex-1">
+              <div key={slot} className="flex flex-col min-w-[84px] flex-1">
                 <div className="px-3 py-2 text-center text-xs font-medium text-[var(--color-muted-foreground)] border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60">
                   {SLOT_LABELS[slot]}
                 </div>

@@ -87,7 +87,7 @@ export function CharacterGrid({
         getCharName={getName}
         isSelected={isSelected}
         onSelect={handleSelect}
-        className="max-h-[320px] lg:max-h-[620px]"
+        className="max-h-[200px] sm:max-h-[320px] lg:max-h-[620px]"
         scrollToCode={selectedCode}
       />
     </div>

@@ -91,7 +91,7 @@ export function PatchComparisonTab({ chartData, stats, loading, selectedCode }: 
                     stroke="var(--color-muted-foreground)"
                     strokeDasharray="4 4"
                     strokeOpacity={0.5}
-                    label={{ value: "기대값", position: "right", fill: "var(--color-muted-foreground)", fontSize: 9 }}
+                    label={{ value: "기대값", position: "insideTopRight", fill: "var(--color-muted-foreground)", fontSize: 9 }}
                   />
                   <Line
                     dataKey="winRate"
