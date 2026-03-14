@@ -239,7 +239,7 @@ export function CharacterAnalysisClient({
       />
 
       {/* 우측 분석 콘텐츠 */}
-      <div className="flex flex-1 flex-col gap-4 min-w-0 overflow-hidden">
+      <div className="flex flex-1 flex-col gap-4 min-w-0 overflow-x-auto">
         <CharacterHeader
           selectedCode={selectedCode}
           selectedTier={selectedTier}

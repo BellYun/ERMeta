@@ -80,7 +80,7 @@ export default async function CharacterAnalysisPage({ searchParams }: Props) {
   ])
 
   return (
-    <>
+    <div className="overflow-x-auto">
       <section className="text-center py-4">
         <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-foreground)]">
           캐릭터 분석
@@ -97,6 +97,6 @@ export default async function CharacterAnalysisPage({ searchParams }: Props) {
           initialCode={validCode}
         />
       </Suspense>
-    </>
+    </div>
   )
 }
