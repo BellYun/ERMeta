@@ -38,7 +38,7 @@ export function PatchComparisonTab({ chartData, stats, loading, selectedCode }: 
   }
 
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-3 sm:p-5 space-y-3 sm:space-y-4">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-3 sm:p-5 space-y-3 sm:space-y-4 overflow-hidden">
       {/* 멀티 패치 트렌드 차트 */}
       {chartData.length < 2 ? (
         <div className="flex flex-col items-center gap-2 py-6 sm:py-8 text-[var(--color-muted-foreground)]">
@@ -53,11 +53,11 @@ export function PatchComparisonTab({ chartData, stats, loading, selectedCode }: 
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {/* 승률 트렌드 */}
-            <div>
+            <div className="min-w-0">
               <p className="mb-1.5 sm:mb-2 text-xs text-[var(--color-muted-foreground)]">승률 (%)</p>
-              <div className="h-[160px] sm:h-[220px]">
+              <div className="h-[160px] sm:h-[220px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 4, right: 4, left: -20, bottom: 16 }}>
+                <LineChart data={chartData} margin={{ top: 4, right: 8, left: -16, bottom: 16 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
                   <XAxis
                     dataKey="patch"
@@ -74,7 +74,7 @@ export function PatchComparisonTab({ chartData, stats, loading, selectedCode }: 
                     tickLine={false}
                     axisLine={false}
                     unit="%"
-                    width={40}
+                    width={36}
                   />
                   <Tooltip
                     content={(props) => (
@@ -106,11 +106,11 @@ export function PatchComparisonTab({ chartData, stats, loading, selectedCode }: 
             </div>
 
             {/* 평균 RP 트렌드 */}
-            <div>
+            <div className="min-w-0">
               <p className="mb-1.5 sm:mb-2 text-xs text-[var(--color-muted-foreground)]">평균 RP</p>
-              <div className="h-[160px] sm:h-[220px]">
+              <div className="h-[160px] sm:h-[220px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 4, right: 4, left: -12, bottom: 16 }}>
+                <LineChart data={chartData} margin={{ top: 4, right: 8, left: -12, bottom: 16 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
                   <XAxis
                     dataKey="patch"
@@ -126,7 +126,7 @@ export function PatchComparisonTab({ chartData, stats, loading, selectedCode }: 
                     tick={{ fill: "var(--color-muted-foreground)", fontSize: 9 }}
                     tickLine={false}
                     axisLine={false}
-                    width={40}
+                    width={36}
                   />
                   <Tooltip
                     content={(props) => (
@@ -155,8 +155,8 @@ export function PatchComparisonTab({ chartData, stats, loading, selectedCode }: 
 
       {/* 패치별 수치 테이블 */}
       {chartData.length >= 2 && (
-        <div className="overflow-x-auto -mx-1">
-          <table className="w-full text-xs">
+        <div className="overflow-x-auto -mx-1 scrollbar-thin">
+          <table className="w-full text-xs min-w-[280px]">
             <thead>
               <tr className="border-b border-[var(--color-border)] text-[var(--color-muted-foreground)]">
                 <th className="px-2 sm:px-3 py-1.5 sm:py-2 text-left font-medium">패치</th>

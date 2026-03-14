@@ -25,7 +25,7 @@ export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
       {patches.slice(0, 5).map((patch, i) => {
         const note = getCharacterPatchNote(selectedCode, patch)
         return (
-          <div key={patch} className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
+          <div key={patch} className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden min-w-0">
             {/* 패치 버전 헤더 */}
             <div className="flex items-center gap-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 sm:px-4 py-2">
               <span className="text-xs font-semibold text-[var(--color-foreground)]">{patch}</span>
@@ -41,18 +41,18 @@ export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
                 {note.changes.map((change, idx) => {
                   const config = CHANGE_TYPE_CONFIG[change.changeType]
                   return (
-                    <div key={idx} className="flex gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 hover:bg-[var(--color-surface-2)] transition-colors">
-                      <div className="pt-0.5"><ChangeTypeBadge type={change.changeType} /></div>
-                      <div className="flex flex-1 flex-col gap-0.5 sm:gap-1 min-w-0">
-                        <div className="flex items-center justify-between gap-1.5 sm:gap-2 flex-wrap">
-                          <span className="text-[13px] sm:text-sm font-medium text-[var(--color-foreground)]">{change.target}</span>
+                    <div key={idx} className="flex gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 hover:bg-[var(--color-surface-2)] transition-colors overflow-hidden">
+                      <div className="pt-0.5 shrink-0"><ChangeTypeBadge type={change.changeType} /></div>
+                      <div className="flex flex-1 flex-col gap-0.5 sm:gap-1 min-w-0 overflow-hidden">
+                        <div className="flex items-start justify-between gap-1.5 sm:gap-2 flex-wrap min-w-0">
+                          <span className="text-[13px] sm:text-sm font-medium text-[var(--color-foreground)] break-words min-w-0">{change.target}</span>
                           {change.valueSummary && (
                             <span className={cn("text-[11px] sm:text-xs font-mono shrink-0", config.colorClass)}>{change.valueSummary}</span>
                           )}
                         </div>
-                        <ul className="space-y-0.5">
+                        <ul className="space-y-0.5 min-w-0">
                           {change.description.map((desc, di) => (
-                            <li key={di} className="text-[11px] sm:text-xs text-[var(--color-muted-foreground)] before:content-['•'] before:mr-1 sm:before:mr-1.5">{desc}</li>
+                            <li key={di} className="text-[11px] sm:text-xs text-[var(--color-muted-foreground)] before:content-['•'] before:mr-1 sm:before:mr-1.5 break-words">{desc}</li>
                           ))}
                         </ul>
                       </div>

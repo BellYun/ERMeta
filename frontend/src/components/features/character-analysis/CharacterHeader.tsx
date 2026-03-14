@@ -45,7 +45,7 @@ export function CharacterHeader({
   hasPreviousData,
 }: CharacterHeaderProps) {
   return (
-    <div className="flex gap-3 sm:gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-3 sm:p-5 items-start overflow-hidden">
+    <div className="flex gap-3 sm:gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-3 sm:p-5 items-start overflow-hidden min-w-0">
       <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[var(--color-border)]">
         <Image
           src={getCharacterImageUrl(selectedCode)}
