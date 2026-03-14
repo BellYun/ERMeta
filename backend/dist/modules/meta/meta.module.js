@@ -8,10 +8,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MetaModule = void 0;
 const common_1 = require("@nestjs/common");
+const meta_controller_1 = require("./meta.controller");
+const meta_service_1 = require("./meta.service");
 let MetaModule = class MetaModule {
 };
 exports.MetaModule = MetaModule;
 exports.MetaModule = MetaModule = __decorate([
-    (0, common_1.Module)({})
+    (0, common_1.Module)({
+        controllers: [meta_controller_1.MetaController],
+        providers: [meta_service_1.MetaService],
+    })
 ], MetaModule);
 //# sourceMappingURL=meta.module.js.map

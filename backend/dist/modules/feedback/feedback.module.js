@@ -8,10 +8,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FeedbackModule = void 0;
 const common_1 = require("@nestjs/common");
+const feedback_controller_1 = require("./feedback.controller");
+const feedback_service_1 = require("./feedback.service");
 let FeedbackModule = class FeedbackModule {
 };
 exports.FeedbackModule = FeedbackModule;
 exports.FeedbackModule = FeedbackModule = __decorate([
-    (0, common_1.Module)({})
+    (0, common_1.Module)({
+        controllers: [feedback_controller_1.FeedbackController],
+        providers: [feedback_service_1.FeedbackService],
+    })
 ], FeedbackModule);
 //# sourceMappingURL=feedback.module.js.map
