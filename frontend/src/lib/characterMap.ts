@@ -206,6 +206,7 @@ const CHARACTER_MINI_IMAGES: Record<number, string> = {
   83: "/CharactER/083.%20Henry/02.%20Default/Mini.png",
   84: "/CharactER/084.%20Blair/02.%20Default/Mini.png",
   85: "/CharactER/085.%20Mirka/02.%20Default/Mini.png",
+  86: "/CharactER/086.%20Fenrir/02.%20Default/Mini.png",
 };
 
 /** characterNum으로 Mini 이미지 경로 반환. 없으면 placeholder. */
@@ -358,13 +359,9 @@ export function getComboRoles(characterCode: number, weaponCode: number): Charac
   return COMBO_ROLES[key] ?? WEAPON_ROLES_FALLBACK[weaponCode] ?? [];
 }
 
-/** Half 이미지가 없는 캐릭터 코드 (Mini fallback) */
-const NO_HALF_IMAGE = new Set([18, 20, 29, 64, 75, 76]);
-
 /** Half 이미지 경로. Mini 경로에서 Mini.png → Half.png 치환. 없는 캐릭터는 Mini fallback. */
 export function getCharacterHalfImageUrl(code: number): string {
   const miniPath = CHARACTER_MINI_IMAGES[code];
   if (!miniPath) return `/characters/placeholder.png`;
-  if (NO_HALF_IMAGE.has(code)) return miniPath;
   return miniPath.replace(/Mini\.png$/, "Half.png");
 }
