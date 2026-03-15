@@ -3,16 +3,6 @@ import { SupabaseService } from '../../common/database/supabase.service';
 
 const TIER_FALLBACK_ORDER = ['DIAMOND', 'METEORITE', 'MITHRIL', 'IN1000'];
 
-interface StatRow {
-  characterNum: number;
-  bestWeapon: number;
-  totalGames: number;
-  totalWins: number;
-  totalRP: number;
-  totalTop3: number;
-  averageRank: number;
-}
-
 export interface CharacterRankingData {
   rank: number;
   characterNum: number;
@@ -24,25 +14,42 @@ export interface CharacterRankingData {
   top3Rate: number;
 }
 
-function buildRankings(rows: StatRow[]): CharacterRankingData[] {
-  const grandTotal = rows.reduce((sum, r) => sum + (r.totalGames ?? 0), 0);
-  const rankings = rows.map((r) => ({
-    characterNum: r.characterNum,
-    bestWeapon: r.bestWeapon,
-    totalGames: r.totalGames ?? 0,
-    pickRate: grandTotal > 0 ? ((r.totalGames ?? 0) / grandTotal) * 100 : 0,
-    winRate:
-      r.totalGames > 0 ? ((r.totalWins ?? 0) / r.totalGames) * 100 : 0,
-    averageRP: r.totalGames > 0 ? (r.totalRP ?? 0) / r.totalGames : 0,
-    top3Rate:
-      r.totalGames > 0 ? ((r.totalTop3 ?? 0) / r.totalGames) * 100 : 0,
-  }));
-  rankings.sort((a, b) => b.averageRP - a.averageRP);
-  return rankings.map((c, i) => ({ rank: i + 1, ...c }));
+// View 조회 결과 타입
+interface RankingViewRow {
+  characterNum: number;
+  bestWeapon: number;
+  totalGames: number;
+  pickRate: number;
+  winRate: number;
+  averageRPPerGame: number;
+  top3Rate: number;
+  rank: number;
+  tier: string;
+  patchVersion: string;
 }
 
-function selectRankings(
-  data: (StatRow & { tier: string })[],
+/**
+ * View 결과를 API 응답 형식으로 변환
+ * View에서 이미 pickRate, winRate, rank가 계산되어 있으므로 매핑만 수행
+ */
+function viewToRankingData(rows: RankingViewRow[]): CharacterRankingData[] {
+  return rows.map((r) => ({
+    rank: r.rank,
+    characterNum: r.characterNum,
+    bestWeapon: r.bestWeapon,
+    totalGames: r.totalGames,
+    pickRate: r.pickRate,
+    winRate: r.winRate,
+    averageRP: r.averageRPPerGame,
+    top3Rate: r.top3Rate,
+  }));
+}
+
+/**
+ * 요청된 티어에 데이터가 없으면 폴백 순서대로 시도
+ */
+function selectTierData(
+  rows: RankingViewRow[],
   requestedTier: string,
 ): { rankings: CharacterRankingData[]; usedTier: string } {
   const tierOrder = [
@@ -50,8 +57,10 @@ function selectRankings(
     ...TIER_FALLBACK_ORDER.filter((t) => t !== requestedTier),
   ];
   for (const tier of tierOrder) {
-    const rows = data.filter((r) => r.tier === tier);
-    if (rows.length > 0) return { rankings: buildRankings(rows), usedTier: tier };
+    const tierRows = rows.filter((r) => r.tier === tier);
+    if (tierRows.length > 0) {
+      return { rankings: viewToRankingData(tierRows), usedTier: tier };
+    }
   }
   return { rankings: [], usedTier: requestedTier };
 }
@@ -63,6 +72,7 @@ export class CharacterService {
   async fetchRankingData(patchVersion: string, requestedTier: string) {
     const client = this.supabase.getClient();
 
+    // 패치 목록 조회
     const { data: patches } = await client
       .from('PatchVersion')
       .select('version')
@@ -72,25 +82,21 @@ export class CharacterService {
     const patchList = (patches ?? []).map(
       (p: { version: string }) => p.version,
     );
-
-    // patchVersion이 없으면 최신 패치 사용
     const effectivePatch = patchVersion || patchList[0] || '10.4';
-
     const currentIndex = patchList.indexOf(effectivePatch);
     const previousPatch =
       currentIndex >= 0 && currentIndex + 1 < patchList.length
         ? patchList[currentIndex + 1]
         : null;
 
+    // character_rankings View에서 조회 (pickRate, winRate, rank가 이미 계산됨)
     const patchVersions = previousPatch
       ? [effectivePatch, previousPatch]
       : [effectivePatch];
 
     const { data, error } = await client
-      .from('CharacterStats')
-      .select(
-        'characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank,tier,patchVersion',
-      )
+      .from('character_rankings')
+      .select('*')
       .in('patchVersion', patchVersions)
       .in('tier', TIER_FALLBACK_ORDER);
 
@@ -104,16 +110,16 @@ export class CharacterService {
       };
     }
 
-    const typedData = data as (StatRow & { tier: string; patchVersion: string })[];
-    const currentData = typedData.filter((r) => r.patchVersion === effectivePatch);
-    const prevData = previousPatch
-      ? typedData.filter((r) => r.patchVersion === previousPatch)
+    const viewRows = data as RankingViewRow[];
+    const currentRows = viewRows.filter((r) => r.patchVersion === effectivePatch);
+    const prevRows = previousPatch
+      ? viewRows.filter((r) => r.patchVersion === previousPatch)
       : [];
 
-    const { rankings, usedTier } = selectRankings(currentData, requestedTier);
+    const { rankings, usedTier } = selectTierData(currentRows, requestedTier);
     const { rankings: previousRankings } =
-      prevData.length > 0
-        ? selectRankings(prevData, usedTier)
+      prevRows.length > 0
+        ? selectTierData(prevRows, usedTier)
         : { rankings: [] as CharacterRankingData[] };
 
     return {
@@ -147,55 +153,58 @@ export class CharacterService {
 
     const client = this.supabase.getClient();
 
+    // character_rankings View에서 해당 패치+티어 전체 조회
     const { data, error } = await client
-      .from('CharacterStats')
-      .select(
-        'characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank',
-      )
+      .from('character_rankings')
+      .select('*')
       .eq('patchVersion', patchVersion)
       .eq('tier', tier);
 
     if (error || !data || data.length === 0) return emptyResponse;
 
-    const allRows = data as StatRow[];
-    const grandTotal = allRows.reduce((sum, r) => sum + (r.totalGames ?? 0), 0);
-    const rows = allRows.filter((r) => r.characterNum === characterCode);
+    const viewRows = data as RankingViewRow[];
+    const rows = viewRows.filter((r) => r.characterNum === characterCode);
 
     if (rows.length === 0) return emptyResponse;
 
-    const totalGames = rows.reduce((sum, r) => sum + (r.totalGames ?? 0), 0);
-    const totalWins = rows.reduce((sum, r) => sum + (r.totalWins ?? 0), 0);
-    const totalRP = rows.reduce((sum, r) => sum + (r.totalRP ?? 0), 0);
-    const totalTop3 = rows.reduce((sum, r) => sum + (r.totalTop3 ?? 0), 0);
-    const weightedAvgRank =
-      totalGames > 0
-        ? rows.reduce(
-            (sum, r) => sum + (r.averageRank ?? 0) * (r.totalGames ?? 0),
-            0,
-          ) / totalGames
-        : 0;
-
+    // 캐릭터별 무기 통계 (View에서 이미 계산된 값 사용)
+    const totalGames = rows.reduce((sum, r) => sum + r.totalGames, 0);
     const weapons = rows
       .map((r) => ({
         bestWeapon: r.bestWeapon,
-        totalGames: r.totalGames ?? 0,
-        pickRate: totalGames > 0 ? ((r.totalGames ?? 0) / totalGames) * 100 : 0,
-        winRate: r.totalGames > 0 ? ((r.totalWins ?? 0) / r.totalGames) * 100 : 0,
-        averageRank: r.averageRank ?? 0,
-        averageRP: r.totalGames > 0 ? (r.totalRP ?? 0) / r.totalGames : 0,
+        totalGames: r.totalGames,
+        pickRate: totalGames > 0 ? (r.totalGames / totalGames) * 100 : 0,
+        winRate: r.winRate,
+        averageRank: 0, // View에 averageRank가 있지만 무기별은 별도
+        averageRP: r.averageRPPerGame,
       }))
       .sort((a, b) => b.totalGames - a.totalGames);
+
+    // 전체 pickRate는 View에서 이미 계산됨 — 합산
+    const totalPickRate = rows.reduce((sum, r) => sum + r.pickRate, 0);
+    const weightedWinRate =
+      totalGames > 0
+        ? rows.reduce((sum, r) => sum + r.winRate * r.totalGames, 0) / totalGames
+        : 0;
+    const weightedRP =
+      totalGames > 0
+        ? rows.reduce((sum, r) => sum + r.averageRPPerGame * r.totalGames, 0) / totalGames
+        : 0;
+    const weightedTop3 =
+      totalGames > 0
+        ? rows.reduce((sum, r) => sum + r.top3Rate * r.totalGames, 0) / totalGames
+        : 0;
 
     return {
       characterNum: characterCode,
       patchVersion,
       tier,
       totalGames,
-      pickRate: grandTotal > 0 ? (totalGames / grandTotal) * 100 : 0,
-      winRate: totalGames > 0 ? (totalWins / totalGames) * 100 : 0,
-      averageRank: weightedAvgRank,
-      averageRP: totalGames > 0 ? totalRP / totalGames : 0,
-      top3Rate: totalGames > 0 ? (totalTop3 / totalGames) * 100 : 0,
+      pickRate: totalPickRate,
+      winRate: weightedWinRate,
+      averageRank: 0,
+      averageRP: weightedRP,
+      top3Rate: weightedTop3,
       weapons,
     };
   }

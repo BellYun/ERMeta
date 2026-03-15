@@ -13,29 +13,28 @@ exports.CharacterService = void 0;
 const common_1 = require("@nestjs/common");
 const supabase_service_1 = require("../../common/database/supabase.service");
 const TIER_FALLBACK_ORDER = ['DIAMOND', 'METEORITE', 'MITHRIL', 'IN1000'];
-function buildRankings(rows) {
-    const grandTotal = rows.reduce((sum, r) => sum + (r.totalGames ?? 0), 0);
-    const rankings = rows.map((r) => ({
+function viewToRankingData(rows) {
+    return rows.map((r) => ({
+        rank: r.rank,
         characterNum: r.characterNum,
         bestWeapon: r.bestWeapon,
-        totalGames: r.totalGames ?? 0,
-        pickRate: grandTotal > 0 ? ((r.totalGames ?? 0) / grandTotal) * 100 : 0,
-        winRate: r.totalGames > 0 ? ((r.totalWins ?? 0) / r.totalGames) * 100 : 0,
-        averageRP: r.totalGames > 0 ? (r.totalRP ?? 0) / r.totalGames : 0,
-        top3Rate: r.totalGames > 0 ? ((r.totalTop3 ?? 0) / r.totalGames) * 100 : 0,
+        totalGames: r.totalGames,
+        pickRate: r.pickRate,
+        winRate: r.winRate,
+        averageRP: r.averageRPPerGame,
+        top3Rate: r.top3Rate,
     }));
-    rankings.sort((a, b) => b.averageRP - a.averageRP);
-    return rankings.map((c, i) => ({ rank: i + 1, ...c }));
 }
-function selectRankings(data, requestedTier) {
+function selectTierData(rows, requestedTier) {
     const tierOrder = [
         requestedTier,
         ...TIER_FALLBACK_ORDER.filter((t) => t !== requestedTier),
     ];
     for (const tier of tierOrder) {
-        const rows = data.filter((r) => r.tier === tier);
-        if (rows.length > 0)
-            return { rankings: buildRankings(rows), usedTier: tier };
+        const tierRows = rows.filter((r) => r.tier === tier);
+        if (tierRows.length > 0) {
+            return { rankings: viewToRankingData(tierRows), usedTier: tier };
+        }
     }
     return { rankings: [], usedTier: requestedTier };
 }
@@ -60,8 +59,8 @@ let CharacterService = class CharacterService {
             ? [effectivePatch, previousPatch]
             : [effectivePatch];
         const { data, error } = await client
-            .from('CharacterStats')
-            .select('characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank,tier,patchVersion')
+            .from('character_rankings')
+            .select('*')
             .in('patchVersion', patchVersions)
             .in('tier', TIER_FALLBACK_ORDER);
         if (error || !data) {
@@ -73,14 +72,14 @@ let CharacterService = class CharacterService {
                 tier: requestedTier,
             };
         }
-        const typedData = data;
-        const currentData = typedData.filter((r) => r.patchVersion === effectivePatch);
-        const prevData = previousPatch
-            ? typedData.filter((r) => r.patchVersion === previousPatch)
+        const viewRows = data;
+        const currentRows = viewRows.filter((r) => r.patchVersion === effectivePatch);
+        const prevRows = previousPatch
+            ? viewRows.filter((r) => r.patchVersion === previousPatch)
             : [];
-        const { rankings, usedTier } = selectRankings(currentData, requestedTier);
-        const { rankings: previousRankings } = prevData.length > 0
-            ? selectRankings(prevData, usedTier)
+        const { rankings, usedTier } = selectTierData(currentRows, requestedTier);
+        const { rankings: previousRankings } = prevRows.length > 0
+            ? selectTierData(prevRows, usedTier)
             : { rankings: [] };
         return {
             rankings,
@@ -107,44 +106,47 @@ let CharacterService = class CharacterService {
             return emptyResponse;
         const client = this.supabase.getClient();
         const { data, error } = await client
-            .from('CharacterStats')
-            .select('characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank')
+            .from('character_rankings')
+            .select('*')
             .eq('patchVersion', patchVersion)
             .eq('tier', tier);
         if (error || !data || data.length === 0)
             return emptyResponse;
-        const allRows = data;
-        const grandTotal = allRows.reduce((sum, r) => sum + (r.totalGames ?? 0), 0);
-        const rows = allRows.filter((r) => r.characterNum === characterCode);
+        const viewRows = data;
+        const rows = viewRows.filter((r) => r.characterNum === characterCode);
         if (rows.length === 0)
             return emptyResponse;
-        const totalGames = rows.reduce((sum, r) => sum + (r.totalGames ?? 0), 0);
-        const totalWins = rows.reduce((sum, r) => sum + (r.totalWins ?? 0), 0);
-        const totalRP = rows.reduce((sum, r) => sum + (r.totalRP ?? 0), 0);
-        const totalTop3 = rows.reduce((sum, r) => sum + (r.totalTop3 ?? 0), 0);
-        const weightedAvgRank = totalGames > 0
-            ? rows.reduce((sum, r) => sum + (r.averageRank ?? 0) * (r.totalGames ?? 0), 0) / totalGames
-            : 0;
+        const totalGames = rows.reduce((sum, r) => sum + r.totalGames, 0);
         const weapons = rows
             .map((r) => ({
             bestWeapon: r.bestWeapon,
-            totalGames: r.totalGames ?? 0,
-            pickRate: totalGames > 0 ? ((r.totalGames ?? 0) / totalGames) * 100 : 0,
-            winRate: r.totalGames > 0 ? ((r.totalWins ?? 0) / r.totalGames) * 100 : 0,
-            averageRank: r.averageRank ?? 0,
-            averageRP: r.totalGames > 0 ? (r.totalRP ?? 0) / r.totalGames : 0,
+            totalGames: r.totalGames,
+            pickRate: totalGames > 0 ? (r.totalGames / totalGames) * 100 : 0,
+            winRate: r.winRate,
+            averageRank: 0,
+            averageRP: r.averageRPPerGame,
         }))
             .sort((a, b) => b.totalGames - a.totalGames);
+        const totalPickRate = rows.reduce((sum, r) => sum + r.pickRate, 0);
+        const weightedWinRate = totalGames > 0
+            ? rows.reduce((sum, r) => sum + r.winRate * r.totalGames, 0) / totalGames
+            : 0;
+        const weightedRP = totalGames > 0
+            ? rows.reduce((sum, r) => sum + r.averageRPPerGame * r.totalGames, 0) / totalGames
+            : 0;
+        const weightedTop3 = totalGames > 0
+            ? rows.reduce((sum, r) => sum + r.top3Rate * r.totalGames, 0) / totalGames
+            : 0;
         return {
             characterNum: characterCode,
             patchVersion,
             tier,
             totalGames,
-            pickRate: grandTotal > 0 ? (totalGames / grandTotal) * 100 : 0,
-            winRate: totalGames > 0 ? (totalWins / totalGames) * 100 : 0,
-            averageRank: weightedAvgRank,
-            averageRP: totalGames > 0 ? totalRP / totalGames : 0,
-            top3Rate: totalGames > 0 ? (totalTop3 / totalGames) * 100 : 0,
+            pickRate: totalPickRate,
+            winRate: weightedWinRate,
+            averageRank: 0,
+            averageRP: weightedRP,
+            top3Rate: weightedTop3,
             weapons,
         };
     }
