@@ -94,6 +94,8 @@ export default function RootLayout({
               <span className="text-[var(--color-border)]">|</span>
               <a href="/privacy" className="hover:text-[var(--color-foreground)] transition-colors">개인정보처리방침</a>
               <span className="text-[var(--color-border)]">|</span>
+              <a href="/updates" className="hover:text-[var(--color-foreground)] transition-colors">업데이트 내역</a>
+              <span className="text-[var(--color-border)]">|</span>
               <a href="/sitemap.xml" className="hover:text-[var(--color-foreground)] transition-colors">사이트맵</a>
             </div>
             <p>본 서비스는 님블뉴런의 Open API를 활용하여 제작되었습니다. 게임 관련 이미지 및 데이터의 저작권은 (주)님블뉴런에 있습니다.</p>

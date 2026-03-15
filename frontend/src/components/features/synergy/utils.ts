@@ -18,12 +18,13 @@ export function isChosung(char: string): boolean {
 }
 
 export function matchesChosungSearch(name: string, query: string): boolean {
-  const q = query.toLowerCase()
+  const q = query.replace(/\s/g, "").toLowerCase()
+  const n = name.replace(/\s/g, "")
   // 일반 검색 먼저
-  if (name.toLowerCase().includes(q)) return true
+  if (n.toLowerCase().includes(q)) return true
   // 초성 검색: 쿼리가 모두 초성인 경우
   if ([...q].every(isChosung)) {
-    const nameChosungs = [...name].map((c) => getChosung(c) ?? c)
+    const nameChosungs = [...n].map((c) => getChosung(c) ?? c)
     for (let i = 0; i <= nameChosungs.length - q.length; i++) {
       if ([...q].every((ch, j) => nameChosungs[i + j] === ch)) return true
     }
