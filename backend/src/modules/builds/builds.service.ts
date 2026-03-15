@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SupabaseService } from '../../common/database/supabase.service';
+import { RedisService } from '../../common/redis/redis.service';
 
 type EquipmentRow = {
   mainCore: number | null;
@@ -91,7 +92,10 @@ function aggregateSubOptions(
 
 @Injectable()
 export class BuildsService {
-  constructor(private readonly supabase: SupabaseService) {}
+  constructor(
+    private readonly supabase: SupabaseService,
+    private readonly redis: RedisService,
+  ) {}
 
   async getEquipmentBuilds(
     characterCode: number,
@@ -107,6 +111,25 @@ export class BuildsService {
     };
 
     if (!characterCode || isNaN(characterCode)) return empty;
+
+    const cacheKey = `builds:equip:${characterCode}:${tier}:${patchVersion}:${mainCoreParam ?? 'all'}:${bestWeaponParam ?? 'all'}`;
+    return this.redis.getOrSet(cacheKey, 1800, () =>
+      this._getEquipmentBuilds(characterCode, tier, patchVersion, mainCoreParam, bestWeaponParam),
+    );
+  }
+
+  private async _getEquipmentBuilds(
+    characterCode: number,
+    tier: string,
+    patchVersion: string,
+    mainCoreParam?: string,
+    bestWeaponParam?: string,
+  ) {
+    const empty = {
+      topBuilds: [],
+      slotPopularity: { weapon: [], chest: [], head: [], arm: [], leg: [] },
+      coreItems: [],
+    };
 
     const client = this.supabase.getClient();
 
@@ -217,6 +240,18 @@ export class BuildsService {
   ) {
     if (!characterCode || isNaN(characterCode)) return { builds: [] };
 
+    const cacheKey = `builds:trait:${characterCode}:${tier}:${patchVersion}:${bestWeapon ?? 'all'}`;
+    return this.redis.getOrSet(cacheKey, 1800, () =>
+      this._getTraitsMain(characterCode, tier, patchVersion, bestWeapon),
+    );
+  }
+
+  private async _getTraitsMain(
+    characterCode: number,
+    tier: string,
+    patchVersion: string,
+    bestWeapon?: string,
+  ) {
     const client = this.supabase.getClient();
 
     let query = client
@@ -289,6 +324,19 @@ export class BuildsService {
   ) {
     if (!characterCode || isNaN(characterCode)) return { options: [] };
 
+    const cacheKey = `builds:trait-opt:${characterCode}:${tier}:${patchVersion}:${bestWeapon ?? 'all'}:${mainCore ?? 'all'}`;
+    return this.redis.getOrSet(cacheKey, 1800, () =>
+      this._getTraitsOptions(characterCode, tier, patchVersion, bestWeapon, mainCore),
+    );
+  }
+
+  private async _getTraitsOptions(
+    characterCode: number,
+    tier: string,
+    patchVersion: string,
+    bestWeapon?: string,
+    mainCore?: string,
+  ) {
     const client = this.supabase.getClient();
 
     let query = client

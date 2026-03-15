@@ -1,5 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { SupabaseService } from '../../common/database/supabase.service';
+import { RedisService } from '../../common/redis/redis.service';
 
 const DIAMOND_PLUS_TIERS = ['DIAMOND', 'METEORITE', 'MITHRIL', 'IN1000'];
 const TRIO_MEMBER_COUNT = 3;
@@ -73,7 +74,10 @@ function aggregateByTrio(rows: TrioRow[]): AggregatedTrio[] {
 
 @Injectable()
 export class StatsService {
-  constructor(private readonly supabase: SupabaseService) {}
+  constructor(
+    private readonly supabase: SupabaseService,
+    private readonly redis: RedisService,
+  ) {}
 
   async getTrios(
     sortBy: 'averageRP' | 'winRate' | 'totalGames' | 'recommended',
@@ -90,6 +94,16 @@ export class StatsService {
     if (isNaN(limit) || limit < 1) limit = 1;
     if (limit > 200) limit = 200;
 
+    const cacheKey = `trios:${sortBy}:${limit}:${char1 ?? 'all'}:${char2 ?? 'all'}`;
+    return this.redis.getOrSet(cacheKey, 1800, () =>
+      this._fetchTrios(sortBy, limit, char1, char2),
+    );
+  }
+
+  private async _fetchTrios(
+    sortBy: 'averageRP' | 'winRate' | 'totalGames' | 'recommended',
+    limit: number, char1: number | null, char2: number | null,
+  ) {
     const client = this.supabase.getClient();
     const TWO_WEEKS_AGO = new Date(Date.now() - 14 * 86400000).toISOString();
 

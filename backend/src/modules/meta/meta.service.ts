@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SupabaseService } from '../../common/database/supabase.service';
+import { RedisService } from '../../common/redis/redis.service';
 
 const TIER_FALLBACK_ORDER = ['DIAMOND', 'METEORITE', 'MITHRIL', 'IN1000'];
 
@@ -36,9 +37,19 @@ function selectTierRows(data: StatRow[], requestedTier: string) {
 
 @Injectable()
 export class MetaService {
-  constructor(private readonly supabase: SupabaseService) {}
+  constructor(
+    private readonly supabase: SupabaseService,
+    private readonly redis: RedisService,
+  ) {}
 
   async getHoneyPicks(patchVersion: string, requestedTier: string) {
+    const cacheKey = `honey:${patchVersion}:${requestedTier}`;
+    return this.redis.getOrSet(cacheKey, 1800, () =>
+      this._getHoneyPicks(patchVersion, requestedTier),
+    );
+  }
+
+  private async _getHoneyPicks(patchVersion: string, requestedTier: string) {
     const client = this.supabase.getClient();
 
     const { data: patches } = await client

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SupabaseService } from '../../common/database/supabase.service';
+import { RedisService } from '../../common/redis/redis.service';
 
 const TIER_FALLBACK_ORDER = ['DIAMOND', 'METEORITE', 'MITHRIL', 'IN1000'];
 
@@ -67,9 +68,19 @@ function selectTierData(
 
 @Injectable()
 export class CharacterService {
-  constructor(private readonly supabase: SupabaseService) {}
+  constructor(
+    private readonly supabase: SupabaseService,
+    private readonly redis: RedisService,
+  ) {}
 
   async fetchRankingData(patchVersion: string, requestedTier: string) {
+    const cacheKey = `ranking:${patchVersion || 'latest'}:${requestedTier}`;
+    return this.redis.getOrSet(cacheKey, 1800, () =>
+      this._fetchRankingData(patchVersion, requestedTier),
+    );
+  }
+
+  private async _fetchRankingData(patchVersion: string, requestedTier: string) {
     const client = this.supabase.getClient();
 
     // 패치 목록 조회
@@ -136,6 +147,32 @@ export class CharacterService {
     patchVersion: string,
     tier: string,
   ) {
+    if (!characterCode || isNaN(characterCode)) {
+      return {
+        characterNum: characterCode,
+        patchVersion,
+        tier,
+        totalGames: 0,
+        pickRate: 0,
+        winRate: 0,
+        averageRank: 0,
+        averageRP: 0,
+        top3Rate: 0,
+        weapons: [],
+      };
+    }
+
+    const cacheKey = `char-stats:${characterCode}:${patchVersion}:${tier}`;
+    return this.redis.getOrSet(cacheKey, 1800, () =>
+      this._getCharacterStats(characterCode, patchVersion, tier),
+    );
+  }
+
+  private async _getCharacterStats(
+    characterCode: number,
+    patchVersion: string,
+    tier: string,
+  ) {
     const emptyResponse = {
       characterNum: characterCode,
       patchVersion,
@@ -148,8 +185,6 @@ export class CharacterService {
       top3Rate: 0,
       weapons: [],
     };
-
-    if (!characterCode || isNaN(characterCode)) return emptyResponse;
 
     const client = this.supabase.getClient();
 
