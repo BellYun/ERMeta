@@ -10,6 +10,7 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const supabase_module_1 = require("./common/database/supabase.module");
+const redis_module_1 = require("./common/redis/redis.module");
 const http_exception_filter_1 = require("./common/filters/http-exception.filter");
 const logging_interceptor_1 = require("./common/interceptors/logging.interceptor");
 const core_1 = require("@nestjs/core");
@@ -32,6 +33,7 @@ exports.AppModule = AppModule = __decorate([
                 envFilePath: ['.env', '../frontend/.env'],
             }),
             supabase_module_1.SupabaseModule,
+            redis_module_1.RedisModule,
             patches_module_1.PatchesModule,
             character_module_1.CharacterModule,
             builds_module_1.BuildsModule,

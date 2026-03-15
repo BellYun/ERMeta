@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { SupabaseModule } from './common/database/supabase.module';
+import { RedisModule } from './common/redis/redis.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
@@ -20,6 +21,7 @@ import { FeedbackModule } from './modules/feedback/feedback.module';
       envFilePath: ['.env', '../frontend/.env'],
     }),
     SupabaseModule,
+    RedisModule,
     PatchesModule,
     CharacterModule,
     BuildsModule,
