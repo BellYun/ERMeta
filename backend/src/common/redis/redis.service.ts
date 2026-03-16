@@ -1,11 +1,31 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
+import { CircuitBreaker } from './circuit-breaker';
+
+interface L1Entry<T = unknown> {
+  data: T;
+  expiresAt: number;
+}
+
+const L1_TTL_MS = 30_000; // 30초
 
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
   private client: Redis;
   private readonly logger = new Logger(RedisService.name);
+
+  /** L1: In-Memory 캐시 (프로세스 내 30초 TTL) */
+  private readonly local = new Map<string, L1Entry>();
+
+  /** Singleflight: 동일 키 동시 요청 병합 */
+  private readonly inflight = new Map<string, Promise<unknown>>();
+
+  /** Circuit Breaker: Supabase 연속 실패 시 stale 캐시 폴백 */
+  private readonly circuitBreaker = new CircuitBreaker({
+    failureThreshold: 5,
+    recoveryTimeMs: 30_000,
+  });
 
   constructor(private config: ConfigService) {}
 
@@ -107,28 +127,79 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
-   * 캐시 우선 조회 — 미스 시 factory 실행 후 저장
-   * Redis 장애 시에도 factory를 실행하여 정상 응답 보장
+   * 3계층 캐시 조회: L1(In-Memory) → L2(Redis) → Singleflight → factory
+   * - L1: 프로세스 내 30초 TTL, 네트워크 왕복 0
+   * - L2: Redis TTL (파라미터), 프로세스 간 공유
+   * - Singleflight: 동일 키 동시 요청 시 factory 1회만 실행
+   * - Redis 장애 시에도 factory를 실행하여 정상 응답 보장
    */
   async getOrSet<T>(
     key: string,
     ttl: number,
     factory: () => Promise<T>,
   ): Promise<T> {
-    // 1. Redis 히트
+    // 1. L1 히트 (In-Memory, 0ms)
+    const l1 = this.local.get(key);
+    if (l1 && Date.now() < l1.expiresAt) {
+      this.logger.debug(`L1 HIT [${key}]`);
+      return l1.data as T;
+    }
+
+    // 2. L2 히트 (Redis)
     const cached = await this.get<T>(key);
     if (cached !== null) {
-      this.logger.debug(`Cache HIT [${key}]`);
+      this.logger.debug(`L2 HIT [${key}]`);
+      this.local.set(key, { data: cached, expiresAt: Date.now() + L1_TTL_MS });
       return cached;
     }
 
-    // 2. 미스 → factory 실행
-    this.logger.debug(`Cache MISS [${key}]`);
-    const result = await factory();
+    // 3. Circuit Breaker OPEN → stale 캐시 반환
+    if (!this.circuitBreaker.canExecute()) {
+      this.logger.warn(`Circuit OPEN [${key}] → stale 캐시 시도`);
+      const stale = await this.get<T>(`stale:${key}`);
+      if (stale !== null) return stale;
+      // stale도 없으면 강제 시도 (아래로 진행)
+    }
 
-    // 3. 결과 저장 (비동기, 실패해도 무시)
-    this.set(key, result, ttl).catch(() => {});
+    // 4. Singleflight — 동일 키 요청이 이미 진행 중이면 그 Promise를 공유
+    const existing = this.inflight.get(key);
+    if (existing) {
+      this.logger.debug(`Singleflight JOIN [${key}]`);
+      return existing as Promise<T>;
+    }
 
-    return result;
+    // 5. factory 실행 (1회만)
+    this.logger.debug(`Cache MISS [${key}] → factory`);
+    const promise = factory()
+      .then((result) => {
+        this.circuitBreaker.onSuccess();
+        // L1 + L2 + stale 백업 저장
+        this.local.set(key, { data: result, expiresAt: Date.now() + L1_TTL_MS });
+        this.set(key, result, ttl).catch(() => {});
+        this.set(`stale:${key}`, result, ttl * 2).catch(() => {}); // stale은 TTL 2배
+        return result;
+      })
+      .catch(async (err) => {
+        this.circuitBreaker.onFailure();
+        this.logger.warn(`Factory 실패 [${key}]: ${(err as Error).message}`);
+        // stale 캐시 폴백
+        const stale = await this.get<T>(`stale:${key}`);
+        if (stale !== null) {
+          this.logger.warn(`Stale 폴백 [${key}]`);
+          return stale;
+        }
+        throw err;
+      })
+      .finally(() => {
+        this.inflight.delete(key);
+      });
+
+    this.inflight.set(key, promise);
+    return promise;
+  }
+
+  /** L1 캐시 수동 초기화 (테스트/워밍 용도) */
+  clearLocal(): void {
+    this.local.clear();
   }
 }
