@@ -4,3 +4,7 @@
 *.md
 !README.md
 !**/README.md
+
+# Backend
+backend/dist/
+backend/node_modules/

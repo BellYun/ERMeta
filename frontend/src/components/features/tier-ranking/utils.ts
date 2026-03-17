@@ -24,7 +24,7 @@ export function computeMetaScores(rankings: CharacterRankingData[]): Map<number,
     const zWin  = winStd  > 0 ? (r.winRate    - winMean)  / winStd  : 0
     const zTop3 = top3Std > 0 ? (r.top3Rate   - top3Mean) / top3Std : 0
     const zRP   = rpStd   > 0 ? (r.averageRP  - rpMean)   / rpStd   : 0
-    scores.set(r.characterNum * 1000 + r.bestWeapon, zWin * 0.40 + zTop3 * 0.35 + zRP * 0.25)
+    scores.set(r.characterNum * 1000 + r.bestWeapon, zRP * 0.45 + zTop3 * 0.30 + zWin * 0.25)
   }
   return scores
 }
