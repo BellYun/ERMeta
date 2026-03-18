@@ -4,14 +4,14 @@ export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
 const BARS = [
-  { h: 180, color: "#6366f1", op: 0.4 },
-  { h: 280, color: "#6366f1", op: 0.6 },
-  { h: 220, color: "#f59e0b", op: 0.7 },
-  { h: 360, color: "#6366f1", op: 0.9 },
-  { h: 300, color: "#f59e0b", op: 1.0 },
-  { h: 240, color: "#6366f1", op: 0.7 },
-  { h: 400, color: "#f59e0b", op: 1.0 },
-  { h: 320, color: "#6366f1", op: 0.8 },
+  { h: 180, color: "#38bdf8", op: 0.4 },
+  { h: 280, color: "#a78bfa", op: 0.6 },
+  { h: 220, color: "#38bdf8", op: 0.7 },
+  { h: 360, color: "#a78bfa", op: 0.9 },
+  { h: 300, color: "#38bdf8", op: 1.0 },
+  { h: 240, color: "#a78bfa", op: 0.7 },
+  { h: 400, color: "#38bdf8", op: 1.0 },
+  { h: 320, color: "#a78bfa", op: 0.8 },
 ]
 
 const BADGES = ["다이아", "운석", "미스릴", "상위 1000위"]
@@ -20,8 +20,8 @@ export default function OGImage() {
   return new ImageResponse(
     (
       <div style={{ background: "#0f0f14", width: "100%", height: "100%", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}>
-        {/* 상단 골드 라인 */}
-        <div style={{ width: "100%", height: "4px", background: "#f59e0b", flexShrink: 0, display: "flex" }} />
+        {/* 상단 그라디언트 라인 */}
+        <div style={{ width: "100%", height: "4px", background: "linear-gradient(90deg, #38bdf8, #a78bfa)", flexShrink: 0, display: "flex" }} />
 
         {/* 메인 콘텐츠 */}
         <div style={{ display: "flex", flex: 1, padding: "60px 80px", alignItems: "center", justifyContent: "space-between" }}>
@@ -31,8 +31,8 @@ export default function OGImage() {
 
             {/* 브랜드 */}
             <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ background: "#6366f1", borderRadius: "12px", width: "56px", height: "56px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "32px", fontWeight: 800, color: "white" }}>
-                E
+              <div style={{ background: "linear-gradient(135deg, #38bdf8, #a78bfa)", borderRadius: "12px", width: "56px", height: "56px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px", fontWeight: 900, color: "white" }}>
+                ER
               </div>
               <span style={{ fontSize: "40px", fontWeight: 800, color: "#e2e8f0", letterSpacing: "-1px" }}>
                 ER&GG
@@ -44,7 +44,7 @@ export default function OGImage() {
               <div style={{ display: "flex", fontSize: "64px", fontWeight: 800, color: "#e2e8f0", lineHeight: 1.1, letterSpacing: "-2px" }}>
                 이터널리턴
               </div>
-              <div style={{ display: "flex", fontSize: "64px", fontWeight: 800, color: "#6366f1", lineHeight: 1.1, letterSpacing: "-2px" }}>
+              <div style={{ display: "flex", fontSize: "64px", fontWeight: 800, color: "#38bdf8", lineHeight: 1.1, letterSpacing: "-2px" }}>
                 메타 분석
               </div>
             </div>
@@ -73,7 +73,7 @@ export default function OGImage() {
         </div>
 
         {/* 하단 그라디언트 라인 */}
-        <div style={{ display: "flex", height: "3px", background: "linear-gradient(90deg, #6366f1 0%, #f59e0b 100%)", flexShrink: 0 }} />
+        <div style={{ display: "flex", height: "3px", background: "linear-gradient(90deg, #38bdf8, #a78bfa)", flexShrink: 0 }} />
       </div>
     ),
     { ...size }
