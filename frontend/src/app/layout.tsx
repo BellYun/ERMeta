@@ -65,6 +65,13 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
     },
   },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon", type: "image/png", sizes: "48x48" },
+    ],
+    apple: "/apple-icon",
+  },
   alternates: {
     canonical: BASE_URL,
   },
