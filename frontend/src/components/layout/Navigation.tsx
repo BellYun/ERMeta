@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 const navLinks = [
   { href: "/", label: "메타 분석" },
   { href: "/synergy", label: "조합 추천" },
+  { href: "/synergy-detail", label: "상세 조합" },
   { href: "/character-analysis", label: "캐릭터 분석" },
 ]
 
