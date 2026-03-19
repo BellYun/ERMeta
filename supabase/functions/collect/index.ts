@@ -351,18 +351,7 @@ async function flushBatchRPC(
       }
     }
 
-    // old 테이블 (forward only)
-    if (isForward) {
-      const { data: oldResult, error: oldError } = await supabase.rpc("process_game_old", {
-        p_data: rpcPayload,
-      });
-
-      if (oldError) {
-        console.warn(`[Bulk old] RPC error (non-fatal, patch=${patchVersion}):`, oldError.message);
-      } else if (oldResult?.fail > 0) {
-        console.warn(`[Bulk old] partial: ok=${oldResult.ok}, fail=${oldResult.fail}`, oldResult.errors);
-      }
-    }
+    // old 테이블 쓰기 제거 — 프론트엔드가 v2_ 테이블만 사용
   }
 
   return { ok: totalOk, fail: totalFail };
