@@ -6,6 +6,7 @@ import { ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getCharacterImageUrl } from "@/lib/characterMap"
 import { resolveWeaponName } from "@/lib/weaponMap"
+import { TraitIcon } from "./TraitIcon"
 import type { TrioWeaponResult } from "./types"
 
 /** Level 1 (접힘): 캐릭터+무기 조합 (mainCore 집계) */
@@ -168,15 +169,17 @@ export function ComboWeaponCard({
                     : v.mainCore3
                   return (
                     <React.Fragment key={`${m.char}-trait`}>
-                      <div className="flex flex-col items-center">
-                        <span className="text-[9px] text-[var(--color-muted-foreground)] truncate w-12 text-center">
+                      <div className="flex flex-col items-center gap-0.5">
+                        <span className="text-[9px] text-[var(--color-muted-foreground)] truncate w-14 text-center">
                           {getCharName(m.char)}
                         </span>
-                        <span className="text-[10px] text-[var(--color-primary)] font-medium truncate w-14 text-center">
-                          {core && core > 0 ? (getTraitName(core) ?? `특성${core}`) : "-"}
-                        </span>
+                        {core && core > 0 ? (
+                          <TraitIcon code={core} name={getTraitName(core)} size="sm" />
+                        ) : (
+                          <span className="text-[9px] text-[var(--color-muted-foreground)]">-</span>
+                        )}
                       </div>
-                      {mi < 2 && <span className="text-[9px] text-[var(--color-border)]">·</span>}
+                      {mi < 2 && <span className="text-[9px] text-[var(--color-border)] mt-2">·</span>}
                     </React.Fragment>
                   )
                 })}
