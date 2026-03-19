@@ -34,31 +34,24 @@ export function TraitIcon({
   const config = GROUP_CONFIG[group]
   const isSm = size === "sm"
 
+  const displayName = name ?? config.label
+
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-1 rounded-md ring-1",
+        "inline-flex items-center rounded-md ring-1",
         config.bg, config.ring,
-        isSm ? "px-1 py-0.5" : "px-1.5 py-0.5"
+        isSm ? "px-1.5 py-0.5" : "px-2 py-0.5"
       )}
-      title={name ?? config.label}
+      title={displayName}
     >
       <span className={cn(
-        "font-bold shrink-0",
+        "truncate font-medium",
         config.text,
-        isSm ? "text-[9px]" : "text-[10px]"
+        isSm ? "text-[9px] max-w-[56px]" : "text-[10px] max-w-[72px]"
       )}>
-        {config.letter}
+        {displayName}
       </span>
-      {name && (
-        <span className={cn(
-          "truncate",
-          config.text,
-          isSm ? "text-[8px] max-w-[48px]" : "text-[10px] max-w-[64px]"
-        )}>
-          {name}
-        </span>
-      )}
     </div>
   )
 }
