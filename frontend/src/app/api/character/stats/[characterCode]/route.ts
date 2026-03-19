@@ -69,7 +69,7 @@ export async function GET(
 
     // 해당 패치+티어 전체 조회 후 JS에서 필터 (N+1 → 단일 쿼리)
     const { data, error } = await supabase
-      .from("CharacterStats")
+      .from("v2_CharacterStats")
       .select("characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank")
       .eq("patchVersion", patchVersion)
       .eq("tier", tier)

@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     // 2차 fallback: CharacterStats에서 distinct patchVersion
     console.log("[patches/history] PatchVersion 결과 없음 → CharacterStats fallback");
     const { data: statsData, error: statsError } = await supabase
-      .from("CharacterStats")
+      .from("v2_CharacterStats")
       .select("patchVersion");
 
     console.log("[patches/history] CharacterStats fallback 결과:", {

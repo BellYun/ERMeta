@@ -124,6 +124,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
           <h2 className="text-sm font-semibold text-[var(--color-foreground)]">캐릭터 순위</h2>
         </div>
         <Select
+          wrapperClassName="w-full sm:w-auto"
           value={activeRole}
           onChange={(e) => { setActiveRole(e.target.value); analytics.rankingTierTabChanged(e.target.value) }}
         >
@@ -135,7 +136,111 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
         </Select>
       </div>
 
-      <div className="overflow-x-auto">
+      {/* Mobile card layout (below sm) */}
+      <div className="sm:hidden">
+        {isLoading
+          ? Array.from({ length: 8 }).map((_, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-3 px-3 py-3 border-b border-[var(--color-border)] last:border-b-0"
+              >
+                <Skeleton className="h-4 w-5 shrink-0" />
+                <Skeleton className="h-6 w-6 rounded-md shrink-0" />
+                <Skeleton className="h-10 w-10 rounded-lg shrink-0" />
+                <div className="flex-1 min-w-0 flex flex-col gap-1">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-3 w-16" />
+                </div>
+                <div className="flex flex-col items-end gap-1 shrink-0">
+                  <Skeleton className="h-4 w-12" />
+                  <Skeleton className="h-3 w-10" />
+                </div>
+              </div>
+            ))
+          : filtered.length === 0
+            ? (
+              <div className="text-center text-sm text-[var(--color-muted-foreground)] py-8">
+                데이터 없음
+              </div>
+            )
+            : filtered.map((char) => {
+                const key = `${char.code}-${char.weaponCode}`
+                return (
+                  <div
+                    key={key}
+                    className="relative flex items-center gap-3 px-3 py-3 border-b border-[var(--color-border)] last:border-b-0 cursor-pointer active:bg-[var(--color-surface-2)]/60 touch-manipulation transition-colors"
+                    onClick={() => {
+                      if (char.patchNote && "ontouchstart" in window) {
+                        if (activeKey === key) {
+                          setActiveKey(null)
+                          router.push(`/character-analysis?character=${char.code}`)
+                        } else {
+                          setActiveKey(key)
+                        }
+                      } else {
+                        router.push(`/character-analysis?character=${char.code}`)
+                      }
+                    }}
+                  >
+                    {/* Rank */}
+                    <span className="text-xs font-semibold text-[var(--color-muted-foreground)] w-5 text-center shrink-0">
+                      {char.rank}
+                    </span>
+                    {/* Tier badge */}
+                    <TierBadge tier={char.tier} />
+                    {/* Character image */}
+                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)] ring-1 ring-[var(--color-border)]">
+                      <Image
+                        src={char.imageUrl}
+                        alt={char.name}
+                        fill
+                        className="object-cover"
+                        sizes="40px"
+                      />
+                      {char.patchNote && (
+                        <div className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-[var(--color-primary)] shadow-[0_0_4px_var(--color-primary)]" />
+                      )}
+                    </div>
+                    {/* Name + weapon */}
+                    <div className="flex-1 min-w-0 flex flex-col">
+                      <span className="text-sm font-semibold text-[var(--color-foreground)] truncate">
+                        {char.name}
+                      </span>
+                      <span className="text-xs text-[var(--color-muted-foreground)] truncate">{char.weaponName}</span>
+                    </div>
+                    {/* Stats: win rate + avg RP */}
+                    <div className="flex flex-col items-end shrink-0 gap-0.5">
+                      <div className="flex flex-col items-end">
+                        <span className={cn(
+                          "text-xs font-medium",
+                          char.winRate >= 55 ? "text-[var(--color-foreground)]" : "text-[var(--color-muted-foreground)]"
+                        )}>
+                          {char.winRate.toFixed(1)}%
+                        </span>
+                        <DeltaIndicator current={char.winRate} previous={char.prev?.winRate} suffix="%" />
+                      </div>
+                      <div className="flex flex-col items-end">
+                        <span className={cn(
+                          "text-xs font-semibold",
+                          char.averageRP >= 0
+                            ? "text-[var(--color-accent-gold)]"
+                            : "text-[var(--color-muted-foreground)]"
+                        )}>
+                          {char.averageRP >= 0 ? "+" : ""}{char.averageRP.toFixed(1)} RP
+                        </span>
+                      </div>
+                    </div>
+                    {char.patchNote && activeKey === key && (
+                      <PatchNoteTooltip patchNote={char.patchNote} />
+                    )}
+                  </div>
+                )
+              })
+        }
+      </div>
+
+      {/* Desktop table layout (sm and above) */}
+      <div className="hidden sm:block overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
@@ -209,7 +314,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                         <span className="text-sm font-semibold text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] group-active:text-[var(--color-primary)] transition-colors">
                           {char.name}
                         </span>
-                        <span className="text-[11px] text-[var(--color-muted-foreground)]">{char.weaponName}</span>
+                        <span className="text-xs text-[var(--color-muted-foreground)]">{char.weaponName}</span>
                       </div>
                       {char.patchNote && activeKey === `${char.code}-${char.weaponCode}` && (
                         <PatchNoteTooltip patchNote={char.patchNote} />

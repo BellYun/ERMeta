@@ -64,13 +64,13 @@ function SubSlotRow({
       <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-7 sm:w-10">
         {label}
       </span>
-      <div className="flex flex-wrap gap-1.5 sm:gap-2 flex-1 min-w-0">
+      <div className="flex gap-1.5 sm:gap-2 flex-1 min-w-0 overflow-x-auto pb-1 sm:pb-0 sm:flex-wrap scrollbar-hide">
         {options.map((opt, i) => {
           if (opt.code == null) return null
           const barWidth = opt.pickRate
           return (
-            <div key={i} className="flex flex-col gap-0.5 min-w-[52px] sm:min-w-[72px]">
-              <span className="inline-flex items-center rounded-md px-1.5 sm:px-2 py-0.5 text-[11px] sm:text-xs font-medium bg-[var(--color-surface-2)] text-[var(--color-foreground)] border border-[var(--color-border)]">
+            <div key={i} className="flex flex-col gap-0.5 min-w-[56px] sm:min-w-[72px] shrink-0 sm:shrink">
+              <span className="inline-flex items-center rounded-md px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-medium bg-[var(--color-surface-2)] text-[var(--color-foreground)] border border-[var(--color-border)] truncate max-w-[72px] sm:max-w-none">
                 {traitNames[opt.code] ?? opt.code}
               </span>
               <div className="h-1 w-full rounded-full bg-[var(--color-border)]">
@@ -79,7 +79,7 @@ function SubSlotRow({
                   style={{ width: `${barWidth}%` }}
                 />
               </div>
-              <span className="text-[9px] sm:text-[10px] whitespace-nowrap flex gap-1 sm:gap-1.5">
+              <span className="text-[10px] sm:text-xs whitespace-nowrap flex gap-0.5 sm:gap-1.5">
                 <span className="text-[var(--color-primary)]">픽 {opt.pickRate.toFixed(1)}%</span>
                 <span
                   className={cn(
@@ -120,7 +120,7 @@ function TopBuildsTableFiltered({
           <div
             key={i}
             className={cn(
-              "px-3 py-2 space-y-1.5",
+              "px-2.5 py-2 space-y-1.5",
               i === 0 && "bg-[var(--color-accent-gold)]/5"
             )}
           >
@@ -128,19 +128,19 @@ function TopBuildsTableFiltered({
               <span className={cn("text-xs font-bold", i === 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]")}>
                 #{i + 1}
               </span>
-              <div className="flex items-center gap-3 text-[10px]">
+              <div className="flex items-center gap-2 text-[11px]">
                 <span className="text-[var(--color-muted-foreground)]">픽 {b.pickRate.toFixed(1)}%</span>
                 <WinRateSpan winRate={b.winRate} />
               </div>
             </div>
-            <div className="flex items-center gap-1.5 justify-center">
+            <div className="flex items-center gap-1 justify-center overflow-x-auto pb-0.5 scrollbar-hide">
               {SLOTS.map((s) => {
                 const code = b[s]
                 return (
-                  <div key={s} className="flex flex-col items-center gap-0.5">
-                    <ItemIcon code={code} size={32} />
+                  <div key={s} className="flex flex-col items-center gap-0.5 shrink-0 min-w-0">
+                    <ItemIcon code={code} size={28} />
                     {code != null && (
-                      <span className="text-[8px] text-[var(--color-muted-foreground)] max-w-[44px] truncate">
+                      <span className="text-[9px] text-[var(--color-muted-foreground)] max-w-[40px] truncate text-center">
                         {itemNames[code] ?? code}
                       </span>
                     )}
@@ -148,7 +148,7 @@ function TopBuildsTableFiltered({
                 )
               })}
             </div>
-            <div className="flex items-center justify-center gap-3 text-[10px] text-[var(--color-muted-foreground)]">
+            <div className="flex items-center justify-center gap-2.5 text-[11px] text-[var(--color-muted-foreground)]">
               <span>순위 #{b.averageRank.toFixed(1)}</span>
               <span>RP {b.averageRP.toFixed(0)}</span>
             </div>
@@ -244,8 +244,120 @@ function SlotPopularityGrid({
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
         <span className="text-xs font-semibold text-[var(--color-foreground)]">슬롯별 인기 아이템</span>
       </div>
-      <div className="overflow-x-auto scrollbar-thin">
-        <div className="flex sm:grid sm:grid-cols-5 divide-x divide-[var(--color-border)] min-w-[420px] sm:min-w-0">
+
+      {/* 모바일: 슬롯별 가로 스크롤 카드 */}
+      <div className="sm:hidden divide-y divide-[var(--color-border)]">
+        {SLOTS.map((slot) => {
+          const items = slotPopularity[slot]
+          if (items.length === 0) return null
+          return (
+            <div key={slot} className="px-2.5 py-2">
+              <p className="text-[11px] font-medium text-[var(--color-muted-foreground)] mb-1.5">
+                {SLOT_LABELS[slot]}
+              </p>
+              <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+                {items.map((item, i) => (
+                  <div
+                    key={item.code}
+                    className={cn(
+                      "flex flex-col items-center gap-0.5 rounded-lg px-1.5 py-1.5 min-w-[52px] shrink-0",
+                      i === 0 && "bg-[var(--color-accent-gold)]/5 ring-1 ring-[var(--color-accent-gold)]/20"
+                    )}
+                  >
+                    <ItemIcon code={item.code} size={26} />
+                    <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-[48px] truncate leading-tight">
+                      {itemNames[item.code] ?? item.code}
+                    </span>
+                    <span className="text-[9px] text-[var(--color-primary)]">{item.pickRate.toFixed(1)}%</span>
+                    <span className={cn(
+                      "text-[9px]",
+                      item.winRate >= 55 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
+                    )}>
+                      {item.winRate.toFixed(1)}%
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* 태블릿: 3열 + 2열 그리드 (sm~md) */}
+      <div className="hidden sm:block md:hidden">
+        <div className="grid grid-cols-3 divide-x divide-[var(--color-border)]">
+          {SLOTS.slice(0, 3).map((slot) => {
+            const items = slotPopularity[slot]
+            return (
+              <div key={slot} className="flex flex-col">
+                <div className="px-2 py-1.5 text-center text-[11px] font-medium text-[var(--color-muted-foreground)] border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60">
+                  {SLOT_LABELS[slot]}
+                </div>
+                {items.length === 0 ? (
+                  <div className="py-4 text-center text-xs text-[var(--color-muted-foreground)]">-</div>
+                ) : (
+                  <div className="divide-y divide-[var(--color-border)]/50">
+                    {items.map((item, i) => (
+                      <div
+                        key={item.code}
+                        className={cn(
+                          "flex flex-col items-center gap-0.5 px-1.5 py-1.5 transition-colors hover:bg-[var(--color-surface-2)]",
+                          i === 0 && "bg-[var(--color-accent-gold)]/5"
+                        )}
+                      >
+                        <ItemIcon code={item.code} size={30} />
+                        <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-full truncate w-full leading-tight">
+                          {itemNames[item.code] ?? item.code}
+                        </span>
+                        <span className="text-[9px] text-[var(--color-primary)]">{item.pickRate.toFixed(1)}%</span>
+                        <WinRateSpan winRate={item.winRate} />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+        <div className="grid grid-cols-2 divide-x divide-[var(--color-border)] border-t border-[var(--color-border)]">
+          {SLOTS.slice(3).map((slot) => {
+            const items = slotPopularity[slot]
+            return (
+              <div key={slot} className="flex flex-col">
+                <div className="px-2 py-1.5 text-center text-[11px] font-medium text-[var(--color-muted-foreground)] border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60">
+                  {SLOT_LABELS[slot]}
+                </div>
+                {items.length === 0 ? (
+                  <div className="py-4 text-center text-xs text-[var(--color-muted-foreground)]">-</div>
+                ) : (
+                  <div className="divide-y divide-[var(--color-border)]/50">
+                    {items.map((item, i) => (
+                      <div
+                        key={item.code}
+                        className={cn(
+                          "flex flex-col items-center gap-0.5 px-1.5 py-1.5 transition-colors hover:bg-[var(--color-surface-2)]",
+                          i === 0 && "bg-[var(--color-accent-gold)]/5"
+                        )}
+                      >
+                        <ItemIcon code={item.code} size={30} />
+                        <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-full truncate w-full leading-tight">
+                          {itemNames[item.code] ?? item.code}
+                        </span>
+                        <span className="text-[9px] text-[var(--color-primary)]">{item.pickRate.toFixed(1)}%</span>
+                        <WinRateSpan winRate={item.winRate} />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* 데스크탑: 5열 그리드 (md+) */}
+      <div className="hidden md:block">
+        <div className="grid grid-cols-5 divide-x divide-[var(--color-border)]">
           {SLOTS.map((slot) => {
             const items = slotPopularity[slot]
             return (
@@ -400,9 +512,11 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
       {(() => {
         const _maxTraitPick = 100 // 픽률은 전체 대비 %이므로 100 기준
         return (
-        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-3 sm:p-4">
-          <p className="mb-2 sm:mb-3 text-xs font-semibold text-[var(--color-muted-foreground)]">메인 특성</p>
-          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-1.5 sm:gap-2">
+        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-2.5 sm:p-4">
+          <p className="mb-1.5 sm:mb-3 text-[11px] sm:text-xs font-semibold text-[var(--color-muted-foreground)]">메인 특성</p>
+
+          {/* 모바일: 가로 스크롤 */}
+          <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide sm:hidden">
             {traitBuilds.map((group, i) => {
               const isSelected = selectedMainCore === group.mainCore
               const name =
@@ -415,14 +529,67 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
                   key={i}
                   onClick={() => setSelectedMainCore(group.mainCore)}
                   className={cn(
-                    "flex flex-col rounded-lg border px-2.5 sm:px-3 py-2 text-xs transition-colors sm:min-w-[90px]",
+                    "flex flex-col rounded-lg border px-2 py-1.5 text-[11px] transition-colors min-w-[80px] shrink-0 touch-manipulation",
+                    isSelected
+                      ? "border-[var(--color-primary)] bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
+                      : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] active:border-[var(--color-primary)]/50"
+                  )}
+                >
+                  <span className="font-medium truncate max-w-[72px]">{name}</span>
+                  <div className="flex items-center gap-1 mt-0.5">
+                    <span
+                      className={cn(
+                        "text-[9px]",
+                        isSelected ? "text-[var(--color-primary)]/80" : "text-[var(--color-muted-foreground)]"
+                      )}
+                    >
+                      픽 {group.groupPickRate.toFixed(1)}%
+                    </span>
+                    <span
+                      className={cn(
+                        "text-[9px]",
+                        group.groupWinRate >= 12.5 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-danger)]"
+                      )}
+                    >
+                      승 {group.groupWinRate.toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="mt-0.5 h-0.5 w-full rounded-full bg-[var(--color-border)]">
+                    <div
+                      className={cn(
+                        "h-full rounded-full transition-all",
+                        isSelected ? "bg-[var(--color-primary)]" : "bg-[var(--color-muted-foreground)]"
+                      )}
+                      style={{ width: `${barWidth}%` }}
+                    />
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+
+          {/* 데스크탑: flex-wrap */}
+          <div className="hidden sm:flex sm:flex-wrap gap-2">
+            {traitBuilds.map((group, i) => {
+              const isSelected = selectedMainCore === group.mainCore
+              const name =
+                group.mainCore != null
+                  ? (traitNames[group.mainCore] ?? String(group.mainCore))
+                  : "특성 없음"
+              const barWidth = group.groupPickRate
+              return (
+                <button
+                  key={i}
+                  onClick={() => setSelectedMainCore(group.mainCore)}
+                  className={cn(
+                    "flex flex-col rounded-lg border px-3 py-2 text-xs transition-colors min-w-[90px]",
                     isSelected
                       ? "border-[var(--color-primary)] bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
                       : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/50"
                   )}
                 >
                   <span className="font-medium truncate">{name}</span>
-                  <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5">
+                  <div className="flex items-center gap-2 mt-0.5">
                     <span
                       className={cn(
                         "text-[10px]",
@@ -456,21 +623,21 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
 
           {/* 선택된 특성 요약 */}
           {selectedGroup && (
-            <div className="mt-3 flex flex-wrap items-center gap-2 sm:gap-4 rounded-md bg-[var(--color-surface-2)] border border-[var(--color-border)] px-3 sm:px-4 py-2.5">
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs text-[var(--color-muted-foreground)]">총</span>
-                <span className="text-xs font-bold text-[var(--color-foreground)]">{selectedGroup.totalGames.toLocaleString()}판</span>
+            <div className="mt-2 sm:mt-3 flex items-center justify-between sm:justify-start gap-2 sm:gap-4 rounded-md bg-[var(--color-surface-2)] border border-[var(--color-border)] px-2.5 sm:px-4 py-2">
+              <div className="flex items-center gap-1">
+                <span className="text-[10px] sm:text-xs text-[var(--color-muted-foreground)]">총</span>
+                <span className="text-[10px] sm:text-xs font-bold text-[var(--color-foreground)]">{selectedGroup.totalGames.toLocaleString()}판</span>
               </div>
-              <div className="h-3 w-px bg-[var(--color-border)] hidden sm:block" />
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs text-[var(--color-muted-foreground)]">픽률</span>
-                <span className="text-xs font-bold text-[var(--color-primary)]">{selectedGroup.groupPickRate.toFixed(1)}%</span>
+              <div className="h-3 w-px bg-[var(--color-border)]" />
+              <div className="flex items-center gap-1">
+                <span className="text-[10px] sm:text-xs text-[var(--color-muted-foreground)]">픽률</span>
+                <span className="text-[10px] sm:text-xs font-bold text-[var(--color-primary)]">{selectedGroup.groupPickRate.toFixed(1)}%</span>
               </div>
-              <div className="h-3 w-px bg-[var(--color-border)] hidden sm:block" />
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs text-[var(--color-muted-foreground)]">승률</span>
+              <div className="h-3 w-px bg-[var(--color-border)]" />
+              <div className="flex items-center gap-1">
+                <span className="text-[10px] sm:text-xs text-[var(--color-muted-foreground)]">승률</span>
                 <span className={cn(
-                  "text-xs font-bold",
+                  "text-[10px] sm:text-xs font-bold",
                   selectedGroup.groupWinRate >= 12.5 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-danger)]"
                 )}>
                   {selectedGroup.groupWinRate.toFixed(1)}%

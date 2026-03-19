@@ -40,7 +40,7 @@ export function StatCard({
 }) {
   return (
     <div className="flex flex-col gap-0.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)]/80 px-2.5 sm:px-4 py-2.5 sm:py-3 overflow-hidden">
-      <span className="text-[10px] sm:text-xs text-[var(--color-muted-foreground)]">{label}</span>
+      <span className="text-xs text-[var(--color-muted-foreground)]">{label}</span>
       <span className="text-base sm:text-lg font-bold text-[var(--color-foreground)] truncate">{value}</span>
       {delta !== undefined ? (
         <div className="flex items-center gap-0.5">

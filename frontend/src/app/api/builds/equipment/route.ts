@@ -109,7 +109,7 @@ export async function GET(request: NextRequest) {
     const supabase = createServerClient()
 
     let query = supabase
-      .from("CharacterEquipmentBuildStats")
+      .from("v2_CharacterEquipmentBuildStats")
       .select("mainCore, weapon, chest, head, arm, leg, totalGames, totalWins, rankSum, totalRP")
       .eq("characterNum", characterCode)
       .eq("tier", tier)

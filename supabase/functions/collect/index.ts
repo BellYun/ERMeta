@@ -22,8 +22,9 @@ import { getCollectableTiers, TierGroup } from "../_shared/tier-utils.ts";
 // ── 상수 ──────────────────────────────────────────────────
 const SEASON_ID = 37;
 const TEAM_MODE = 3; // 스쿼드
-const FORWARD_BUDGET_MS = 60_000;
-const BACKFILL_BUDGET_MS = 60_000;
+const FORWARD2_BUDGET_MS = 90_000;
+const BACKFILL_BUDGET_MS = 30_000;
+const FORWARD2_START_GAME = 58540099;
 const BATCH_LIMIT = 150;
 const STABLE_DELAY_MS = 1 * 60 * 60 * 1000; // 최근 1시간 이내 게임은 중단 → 백필 전환
 
@@ -351,18 +352,7 @@ async function flushBatchRPC(
       }
     }
 
-    // old 테이블 (forward only)
-    if (isForward) {
-      const { data: oldResult, error: oldError } = await supabase.rpc("process_game_old", {
-        p_data: rpcPayload,
-      });
-
-      if (oldError) {
-        console.warn(`[Bulk old] RPC error (non-fatal, patch=${patchVersion}):`, oldError.message);
-      } else if (oldResult?.fail > 0) {
-        console.warn(`[Bulk old] partial: ok=${oldResult.ok}, fail=${oldResult.fail}`, oldResult.errors);
-      }
-    }
+    // old 테이블 쓰기 제거 — 프론트엔드가 v2_ 테이블만 사용
   }
 
   return { ok: totalOk, fail: totalFail };
@@ -427,84 +417,76 @@ serve(async (req: Request) => {
       .from("v2_CollectionStatus")
       .select("*");
 
-    let forwardStatus = statuses?.find((s: any) => s.worker_type === "forward");
+    const oldForwardStatus = statuses?.find((s: any) => s.worker_type === "forward");
+    let forward2Status = statuses?.find((s: any) => s.worker_type === "forward2");
+    let gapBackfillStatus = statuses?.find((s: any) => s.worker_type === "gap_backfill");
     let backfillStatus = statuses?.find((s: any) => s.worker_type === "backfill");
 
-    // forward 워커 초기화
-    if (!forwardStatus) {
-      let pivotGameNumber = 0;
-      const { data: oldStatus } = await supabase
-        .from("DataCollectionStatus")
-        .select("lastGameNumber")
-        .eq("collectionType", "periodic")
-        .single();
-      pivotGameNumber = oldStatus?.lastGameNumber ?? 0;
+    // 기존 forward의 마지막 위치 (gap_backfill 목표선)
+    const oldForwardGameNumber = oldForwardStatus?.last_game_number ?? 0;
+    if (oldForwardGameNumber > 0) {
+      console.log(`[Collect] 기존 forward 위치: ${oldForwardGameNumber} (gap_backfill 목표선)`);
+    }
 
-      if (pivotGameNumber <= 0) {
-        console.error("[Collect] DataCollectionStatus에서 lastGameNumber를 찾을 수 없음");
-        return new Response(JSON.stringify({ error: "pivotGameNumber 없음" }), { status: 500 });
-      }
-
+    // forward2 워커 초기화
+    if (!forward2Status) {
       const { data } = await supabase
         .from("v2_CollectionStatus")
         .insert({
-          worker_type: "forward",
-          last_game_number: pivotGameNumber,
+          worker_type: "forward2",
+          last_game_number: FORWARD2_START_GAME,
           current_patch_version: currentPatch,
           status: "active",
         })
         .select()
         .single();
-      forwardStatus = data;
-      console.log(`[Collect] forward 워커 초기화: gameNumber=${pivotGameNumber} (DataCollectionStatus에서 읽음)`);
+      forward2Status = data;
+      console.log(`[Collect] forward2 워커 초기화: gameNumber=${FORWARD2_START_GAME}`);
     }
 
-    // backfill 워커 초기화
-    if (!backfillStatus) {
-      const pivotGameNumber = forwardStatus?.last_game_number ?? 0;
-
+    // gap_backfill 워커 초기화 (58540099 → 기존 forward 위치까지 역방향)
+    if (!gapBackfillStatus) {
       const { data } = await supabase
         .from("v2_CollectionStatus")
         .insert({
-          worker_type: "backfill",
-          last_game_number: pivotGameNumber,
+          worker_type: "gap_backfill",
+          last_game_number: FORWARD2_START_GAME,
           current_patch_version: currentPatch,
-          status: "active",
+          status: oldForwardGameNumber > 0 ? "active" : "completed",
         })
         .select()
         .single();
-      backfillStatus = data;
-      console.log(`[Collect] backfill 워커 초기화: gameNumber=${pivotGameNumber}`);
+      gapBackfillStatus = data;
+      console.log(`[Collect] gap_backfill 워커 초기화: gameNumber=${FORWARD2_START_GAME}, 목표=${oldForwardGameNumber}`);
     }
 
-    // ── 4. Forward 워커 (신규 게임 → old + v2_) ────────
-    let forwardCollected = 0;
-    let forwardSkipped = 0;
-    let forwardFailed = 0;
-    let forwardHitRecent = false;
-    let forwardRemainingMs = 0;
+    // ── 4b. Forward2 워커 (58540099부터 → v2_, 메인) ────
+    let forward2Collected = 0;
+    let forward2Skipped = 0;
+    let forward2Failed = 0;
+    let forward2HitRecent = false;
+    let forward2RemainingMs = 0;
 
-    if (forwardStatus?.status === "active") {
-      const forwardStartMs = Date.now();
-      const fromGame = (forwardStatus.last_game_number ?? 0) + 1;
-      console.log(`[Forward] 시작: gameNumber=${fromGame}`);
+    if (forward2Status?.status === "active") {
+      const forward2StartMs = Date.now();
+      const fromGame = (forward2Status.last_game_number ?? FORWARD2_START_GAME) + 1;
+      console.log(`[Forward2] 시작: gameNumber=${fromGame}`);
 
       const { games, lastGameNumber } = await fetchGamesForward(
         fromGame,
         BATCH_LIMIT,
-        FORWARD_BUDGET_MS
+        FORWARD2_BUDGET_MS
       );
 
-      // v2.2: 파싱 축적 → 배치 RPC
       const byPatch = new Map<string, { participants: any[]; trios: any[] }>();
 
       for (const game of games) {
         try {
           const parsed = parseGameData(game, patchCache, rank1000MMR, true);
           if (parsed === "RECENT") {
-            forwardHitRecent = true;
-            forwardRemainingMs = FORWARD_BUDGET_MS - (Date.now() - forwardStartMs);
-            console.log(`[Forward] 최근 1시간 이내 게임 도달, 남은 ${Math.round(forwardRemainingMs / 1000)}초를 백필에 전환`);
+            forward2HitRecent = true;
+            forward2RemainingMs = FORWARD2_BUDGET_MS - (Date.now() - forward2StartMs);
+            console.log(`[Forward2] 최근 1시간 이내 게임 도달, 남은 ${Math.round(forward2RemainingMs / 1000)}초를 백필에 전환`);
             break;
           }
           if (parsed) {
@@ -512,107 +494,172 @@ serve(async (req: Request) => {
             group.participants.push(...parsed.participants);
             group.trios.push(...parsed.trios);
             byPatch.set(parsed.patchVersion, group);
-            forwardCollected++;
+            forward2Collected++;
           } else {
-            forwardSkipped++;
+            forward2Skipped++;
           }
         } catch (e) {
-          forwardFailed++;
-          console.error("[Forward] parseGameData error:", e);
+          forward2Failed++;
+          console.error("[Forward2] parseGameData error:", e);
         }
       }
 
-      // 배치 RPC 실행 (패치별 1회, 보통 1~2회)
       if (byPatch.size > 0) {
-        console.log(`[Forward] 배치 RPC: ${byPatch.size}개 패치, 총 ${[...byPatch.values()].reduce((s, g) => s + g.participants.length, 0)}명 참가자`);
+        console.log(`[Forward2] 배치 RPC: ${byPatch.size}개 패치, 총 ${[...byPatch.values()].reduce((s, g) => s + g.participants.length, 0)}명 참가자`);
         const { fail } = await flushBatchRPC(supabase, byPatch, true);
-        forwardFailed += fail;
+        forward2Failed += fail;
       }
 
-      // 상태 업데이트
       await supabase
         .from("v2_CollectionStatus")
         .update({
           last_game_number: lastGameNumber,
           last_game_id: String(lastGameNumber),
           current_patch_version: currentPatch,
-          total_collected: (forwardStatus.total_collected ?? 0) + forwardCollected,
-          total_skipped: (forwardStatus.total_skipped ?? 0) + forwardSkipped,
-          consecutive_failures: forwardFailed > 0 ? (forwardStatus.consecutive_failures ?? 0) + forwardFailed : 0,
+          total_collected: (forward2Status.total_collected ?? 0) + forward2Collected,
+          total_skipped: (forward2Status.total_skipped ?? 0) + forward2Skipped,
+          consecutive_failures: forward2Failed > 0 ? (forward2Status.consecutive_failures ?? 0) + forward2Failed : 0,
           updated_at: new Date().toISOString(),
         })
-        .eq("worker_type", "forward");
+        .eq("worker_type", "forward2");
 
-      console.log(`[Forward] 완료: collected=${forwardCollected}, skipped=${forwardSkipped}, failed=${forwardFailed}, lastGame=${lastGameNumber}, hitRecent=${forwardHitRecent}`);
+      console.log(`[Forward2] 완료: collected=${forward2Collected}, skipped=${forward2Skipped}, failed=${forward2Failed}, lastGame=${lastGameNumber}, hitRecent=${forward2HitRecent}`);
     }
 
-    // ── 5. Backfill 워커 (과거 게임 → v2_ only) ────────
+    // ── 5. Backfill (forward2 잔여 시간에만 실행) ──────
     let backfillCollected = 0;
     let backfillSkipped = 0;
     let backfillFailed = 0;
+    let backfillPhase = "";
 
-    const backfillTotalBudgetMs = BACKFILL_BUDGET_MS + (forwardHitRecent ? Math.max(0, forwardRemainingMs) : 0);
+    const backfillTotalBudgetMs = forward2HitRecent
+      ? BACKFILL_BUDGET_MS + Math.max(0, forward2RemainingMs)
+      : 0;
 
-    if (backfillStatus?.status === "active") {
-      const beforeGame = backfillStatus.last_game_number ?? 0;
-      console.log(`[Backfill] 시작: beforeGameNumber=${beforeGame}, budget=${Math.round(backfillTotalBudgetMs / 1000)}초`);
+    if (backfillTotalBudgetMs > 0) {
+      // Phase 1: gap_backfill (58540099 → 기존 forward 위치)
+      if (gapBackfillStatus?.status === "active" && oldForwardGameNumber > 0) {
+        backfillPhase = "gap";
+        const beforeGame = gapBackfillStatus.last_game_number ?? FORWARD2_START_GAME;
+        console.log(`[GapBackfill] 시작: ${beforeGame} → 목표 ${oldForwardGameNumber}, budget=${Math.round(backfillTotalBudgetMs / 1000)}초`);
 
-      if (beforeGame <= 1) {
-        await supabase
-          .from("v2_CollectionStatus")
-          .update({ status: "completed", updated_at: new Date().toISOString() })
-          .eq("worker_type", "backfill");
-        console.log("[Backfill] 완료: 더 이상 과거 데이터 없음");
-      } else {
-        const { games, lastGameNumber } = await fetchGamesBackward(
-          beforeGame,
-          BATCH_LIMIT,
-          backfillTotalBudgetMs
-        );
+        if (beforeGame <= oldForwardGameNumber) {
+          // 갭 채우기 완료
+          await supabase
+            .from("v2_CollectionStatus")
+            .update({ status: "completed", updated_at: new Date().toISOString() })
+            .eq("worker_type", "gap_backfill");
+          console.log("[GapBackfill] 완료: 기존 forward 위치 도달");
+        } else {
+          const { games, lastGameNumber } = await fetchGamesBackward(
+            beforeGame,
+            BATCH_LIMIT,
+            backfillTotalBudgetMs
+          );
 
-        // v2.2: 파싱 축적 → 배치 RPC
-        const byPatch = new Map<string, { participants: any[]; trios: any[] }>();
-
-        for (const game of games) {
-          try {
-            const parsed = parseGameData(game, patchCache, rank1000MMR, false);
-            if (parsed) {
-              const group = byPatch.get(parsed.patchVersion) || { participants: [], trios: [] };
-              group.participants.push(...parsed.participants);
-              group.trios.push(...parsed.trios);
-              byPatch.set(parsed.patchVersion, group);
-              backfillCollected++;
-            } else {
-              backfillSkipped++;
+          const byPatch = new Map<string, { participants: any[]; trios: any[] }>();
+          for (const game of games) {
+            try {
+              const parsed = parseGameData(game, patchCache, rank1000MMR, false);
+              if (parsed) {
+                const group = byPatch.get(parsed.patchVersion) || { participants: [], trios: [] };
+                group.participants.push(...parsed.participants);
+                group.trios.push(...parsed.trios);
+                byPatch.set(parsed.patchVersion, group);
+                backfillCollected++;
+              } else {
+                backfillSkipped++;
+              }
+            } catch (e) {
+              backfillFailed++;
+              console.error("[GapBackfill] parseGameData error:", e);
             }
-          } catch (e) {
-            backfillFailed++;
-            console.error("[Backfill] parseGameData error:", e);
           }
+
+          if (byPatch.size > 0) {
+            console.log(`[GapBackfill] 배치 RPC: ${byPatch.size}개 패치, 총 ${[...byPatch.values()].reduce((s, g) => s + g.participants.length, 0)}명 참가자`);
+            const { fail } = await flushBatchRPC(supabase, byPatch, false);
+            backfillFailed += fail;
+          }
+
+          // 목표 도달 체크
+          const reachedTarget = lastGameNumber <= oldForwardGameNumber;
+          await supabase
+            .from("v2_CollectionStatus")
+            .update({
+              last_game_number: lastGameNumber,
+              last_game_id: String(lastGameNumber),
+              current_patch_version: currentPatch,
+              total_collected: (gapBackfillStatus.total_collected ?? 0) + backfillCollected,
+              total_skipped: (gapBackfillStatus.total_skipped ?? 0) + backfillSkipped,
+              consecutive_failures: backfillFailed > 0 ? (gapBackfillStatus.consecutive_failures ?? 0) + backfillFailed : 0,
+              status: reachedTarget ? "completed" : "active",
+              updated_at: new Date().toISOString(),
+            })
+            .eq("worker_type", "gap_backfill");
+
+          console.log(`[GapBackfill] 완료: collected=${backfillCollected}, lastGame=${lastGameNumber}, 목표도달=${reachedTarget}`);
         }
+      }
+      // Phase 2: 기존 backfill (gap 완료 후, 기존 위치에서 계속 역방향)
+      else if (backfillStatus?.status === "active") {
+        backfillPhase = "deep";
+        const beforeGame = backfillStatus.last_game_number ?? 0;
+        console.log(`[Backfill] Deep 시작: beforeGameNumber=${beforeGame}, budget=${Math.round(backfillTotalBudgetMs / 1000)}초`);
 
-        // 배치 RPC 실행 (v2_ only, old 쓰기 없음)
-        if (byPatch.size > 0) {
-          console.log(`[Backfill] 배치 RPC: ${byPatch.size}개 패치, 총 ${[...byPatch.values()].reduce((s, g) => s + g.participants.length, 0)}명 참가자`);
-          const { fail } = await flushBatchRPC(supabase, byPatch, false);
-          backfillFailed += fail;
+        if (beforeGame <= 1) {
+          await supabase
+            .from("v2_CollectionStatus")
+            .update({ status: "completed", updated_at: new Date().toISOString() })
+            .eq("worker_type", "backfill");
+          console.log("[Backfill] 완료: 더 이상 과거 데이터 없음");
+        } else {
+          const { games, lastGameNumber } = await fetchGamesBackward(
+            beforeGame,
+            BATCH_LIMIT,
+            backfillTotalBudgetMs
+          );
+
+          const byPatch = new Map<string, { participants: any[]; trios: any[] }>();
+          for (const game of games) {
+            try {
+              const parsed = parseGameData(game, patchCache, rank1000MMR, false);
+              if (parsed) {
+                const group = byPatch.get(parsed.patchVersion) || { participants: [], trios: [] };
+                group.participants.push(...parsed.participants);
+                group.trios.push(...parsed.trios);
+                byPatch.set(parsed.patchVersion, group);
+                backfillCollected++;
+              } else {
+                backfillSkipped++;
+              }
+            } catch (e) {
+              backfillFailed++;
+              console.error("[Backfill] parseGameData error:", e);
+            }
+          }
+
+          if (byPatch.size > 0) {
+            console.log(`[Backfill] 배치 RPC: ${byPatch.size}개 패치, 총 ${[...byPatch.values()].reduce((s, g) => s + g.participants.length, 0)}명 참가자`);
+            const { fail } = await flushBatchRPC(supabase, byPatch, false);
+            backfillFailed += fail;
+          }
+
+          await supabase
+            .from("v2_CollectionStatus")
+            .update({
+              last_game_number: lastGameNumber,
+              last_game_id: String(lastGameNumber),
+              current_patch_version: currentPatch,
+              total_collected: (backfillStatus.total_collected ?? 0) + backfillCollected,
+              total_skipped: (backfillStatus.total_skipped ?? 0) + backfillSkipped,
+              consecutive_failures: backfillFailed > 0 ? (backfillStatus.consecutive_failures ?? 0) + backfillFailed : 0,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("worker_type", "backfill");
+
+          console.log(`[Backfill] Deep 완료: collected=${backfillCollected}, lastGame=${lastGameNumber}`);
         }
-
-        // 상태 업데이트
-        await supabase
-          .from("v2_CollectionStatus")
-          .update({
-            last_game_number: lastGameNumber,
-            last_game_id: String(lastGameNumber),
-            current_patch_version: currentPatch,
-            total_collected: (backfillStatus.total_collected ?? 0) + backfillCollected,
-            total_skipped: (backfillStatus.total_skipped ?? 0) + backfillSkipped,
-            consecutive_failures: backfillFailed > 0 ? (backfillStatus.consecutive_failures ?? 0) + backfillFailed : 0,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("worker_type", "backfill");
-
-        console.log(`[Backfill] 완료: collected=${backfillCollected}, skipped=${backfillSkipped}, failed=${backfillFailed}, lastGame=${lastGameNumber}`);
       }
     }
 
@@ -623,16 +670,16 @@ serve(async (req: Request) => {
       totalTime: `${totalTime}s`,
       currentPatch,
       rank1000MMR,
-      forward: {
-        collected: forwardCollected,
-        skipped: forwardSkipped,
-        failed: forwardFailed,
+      forward2: {
+        collected: forward2Collected,
+        skipped: forward2Skipped,
+        failed: forward2Failed,
       },
       backfill: {
+        phase: backfillPhase || "skipped",
         collected: backfillCollected,
         skipped: backfillSkipped,
         failed: backfillFailed,
-        status: backfillStatus?.status,
       },
     };
 

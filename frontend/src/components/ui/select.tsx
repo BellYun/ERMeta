@@ -6,15 +6,16 @@ import { cn } from "@/lib/utils"
 
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   placeholder?: string
+  wrapperClassName?: string
 }
 
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
-  ({ className, children, placeholder, ...props }, ref) => (
-    <div className="relative inline-flex items-center">
+  ({ className, wrapperClassName, children, placeholder, ...props }, ref) => (
+    <div className={cn("relative inline-flex items-center", wrapperClassName)}>
       <select
         ref={ref}
         className={cn(
-          "h-9 appearance-none rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 pr-8 text-sm text-[var(--color-foreground)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary-glow)] cursor-pointer transition-colors",
+          "h-9 w-full appearance-none rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 pr-8 text-sm text-[var(--color-foreground)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary-glow)] cursor-pointer transition-colors",
           className
         )}
         {...props}

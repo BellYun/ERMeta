@@ -87,7 +87,7 @@
     },
     {
       "weaponCode": 8,
-      "label": "대표 무기",
+      "label": "석궁",
       "isDefault": false
     }
   ],
@@ -169,7 +169,7 @@
       "label": "창",
       "isDefault": false
     }
-  ],  
+  ],
   "14": [
     {
       "weaponCode": 21,
@@ -208,7 +208,8 @@
       "weaponCode": 15,
       "label": "단검",
       "isDefault": true
-    },{}
+    },
+    {}
   ],
   "19": [
     {
@@ -274,7 +275,7 @@
   "27": [
     {
       "weaponCode": 2,
-      "label": "대표 무기",
+      "label": "톤파",
       "isDefault": true
     },
     {
@@ -382,7 +383,7 @@
     {
       "weaponCode": 9,
       "label": "권총",
-      "isDefault": true 
+      "isDefault": true
     }
   ],
   "39": [
@@ -487,7 +488,7 @@
       "label": "아르카나",
       "isDefault": true
     }
-  ],  
+  ],
   "53": [
     {
       "weaponCode": 13,
@@ -503,7 +504,7 @@
   "54": [
     {
       "weaponCode": 8,
-      "label": "대표 무기",
+      "label": "석궁",
       "isDefault": true
     }
   ],
@@ -678,7 +679,7 @@
   "79": [
     {
       "weaponCode": 8,
-      "label": "대표 무기",
+      "label": "석궁",
       "isDefault": true
     }
   ],
@@ -732,4 +733,3 @@
     }
   ]
 }
-

@@ -91,7 +91,7 @@ export async function fetchRankingData(
     : [patchVersion]
 
   const { data, error } = await supabase
-    .from("CharacterStats")
+    .from("v2_CharacterStats")
     .select(
       "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank,tier,patchVersion"
     )

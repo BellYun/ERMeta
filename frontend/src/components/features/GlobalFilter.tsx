@@ -17,10 +17,11 @@ export function GlobalFilter() {
   const { patch, tier, patches, setPatch, setTier } = useFilter()
 
   return (
-    <div className="flex flex-wrap items-center gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-3">
-      <div className="flex items-center gap-2">
-        <span className="text-xs font-medium text-[var(--color-muted-foreground)]">패치</span>
+    <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-3">
+      <div className="flex items-center gap-2 sm:w-auto">
+        <span className="text-xs font-medium text-[var(--color-muted-foreground)] shrink-0">패치</span>
         <Select
+          wrapperClassName="flex-1 sm:flex-none min-w-0"
           value={patch || patches[0] || ""}
           onChange={(e) => { setPatch(e.target.value); analytics.patchSelected(e.target.value) }}
         >
@@ -37,12 +38,12 @@ export function GlobalFilter() {
         </Select>
       </div>
 
-      <div className="h-5 w-px bg-[var(--color-border)]" />
+      <div className="hidden sm:block h-5 w-px bg-[var(--color-border)]" />
 
       <div className="flex items-center gap-2">
-        <span className="text-xs font-medium text-[var(--color-muted-foreground)]">티어</span>
+        <span className="text-xs font-medium text-[var(--color-muted-foreground)] shrink-0">티어</span>
         <Tabs value={tier} onValueChange={(v) => { setTier(v); analytics.tierGroupSelected(v) }}>
-          <TabsList className="flex-wrap h-auto">
+          <TabsList className="w-full sm:w-auto h-auto">
             {TIER_OPTIONS.map(({ value, label }) => (
               <TabsTrigger key={value} value={value}>
                 {label}

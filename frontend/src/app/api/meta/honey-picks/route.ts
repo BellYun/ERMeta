@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
 
     // 현재 + 이전 패치 데이터 조회
     const { data, error } = await supabase
-      .from("CharacterStats")
+      .from("v2_CharacterStats")
       .select(
         "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,tier,patchVersion"
       )

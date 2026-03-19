@@ -56,7 +56,7 @@ function TopBuildsTable({
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-3 text-[10px]">
+              <div className="flex items-center gap-3 text-xs">
                 <span className="text-[var(--color-muted-foreground)]">픽 {b.pickRate.toFixed(1)}%</span>
                 <WinRateSpan winRate={b.winRate} />
               </div>
@@ -68,7 +68,7 @@ function TopBuildsTable({
                   <div key={s} className="flex flex-col items-center gap-0.5">
                     <ItemIcon code={code} size={32} />
                     {code != null && (
-                      <span className="text-[8px] text-[var(--color-muted-foreground)] max-w-[44px] truncate">
+                      <span className="text-[10px] text-[var(--color-muted-foreground)] max-w-[44px] truncate">
                         {itemNames[code] ?? code}
                       </span>
                     )}
@@ -76,7 +76,7 @@ function TopBuildsTable({
                 )
               })}
             </div>
-            <div className="flex items-center justify-center gap-3 text-[10px] text-[var(--color-muted-foreground)]">
+            <div className="flex items-center justify-center gap-3 text-xs text-[var(--color-muted-foreground)]">
               <span>순위 #{b.averageRank.toFixed(1)}</span>
               <span>RP {b.averageRP.toFixed(0)}</span>
             </div>
@@ -242,7 +242,7 @@ function SlotPopularityGrid({
           if (items.length === 0) return null
           return (
             <div key={slot} className="px-3 py-2.5">
-              <p className="text-[10px] font-medium text-[var(--color-muted-foreground)] mb-2">
+              <p className="text-xs font-medium text-[var(--color-muted-foreground)] mb-2">
                 {SLOT_LABELS[slot]}
               </p>
               <div className="flex gap-2 overflow-x-auto pb-1">
@@ -255,12 +255,12 @@ function SlotPopularityGrid({
                     )}
                   >
                     <ItemIcon code={item.code} size={30} />
-                    <span className="text-[8px] text-[var(--color-foreground)] text-center max-w-[52px] truncate leading-tight">
+                    <span className="text-[10px] text-[var(--color-foreground)] text-center max-w-[52px] truncate leading-tight">
                       {itemNames[item.code] ?? item.code}
                     </span>
-                    <span className="text-[8px] text-[var(--color-primary)]">{item.pickRate.toFixed(1)}%</span>
+                    <span className="text-[10px] text-[var(--color-primary)]">{item.pickRate.toFixed(1)}%</span>
                     <span className={cn(
-                      "text-[8px]",
+                      "text-[10px]",
                       item.winRate >= 55 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
                     )}>
                       {item.winRate.toFixed(1)}%
@@ -344,7 +344,7 @@ function CoreItemsList({
                   {itemNames[item.code] ?? item.code}
                 </span>
               </div>
-              <div className="flex items-center gap-3 pl-7 text-[10px]">
+              <div className="flex items-center gap-3 pl-7 text-xs">
                 <span className="text-[var(--color-primary)]">픽 {item.pickRate.toFixed(1)}%</span>
                 <WinRateSpan winRate={item.winRate} label="승 " />
                 <span className="text-[var(--color-muted-foreground)]">
