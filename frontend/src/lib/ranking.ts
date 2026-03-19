@@ -90,13 +90,27 @@ export async function fetchRankingData(
     ? [patchVersion, previousPatch]
     : [patchVersion]
 
-  const { data, error } = await supabase
+  const selectCols = "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank,tier,patchVersion"
+  let { data, error } = await supabase
     .from("v2_CharacterStats")
-    .select(
-      "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank,tier,patchVersion"
-    )
+    .select(selectCols)
     .in("patchVersion", patchVersions)
     .in("tier", TIER_FALLBACK_ORDER)
+
+  // v2에 이전 패치 데이터 없으면 old 테이블 fallback 병합
+  if (previousPatch && data) {
+    const hasV2Prev = data.some((r: any) => r.patchVersion === previousPatch)
+    if (!hasV2Prev) {
+      const { data: oldData } = await supabase
+        .from("CharacterStats")
+        .select(selectCols)
+        .eq("patchVersion", previousPatch)
+        .in("tier", TIER_FALLBACK_ORDER)
+      if (oldData && oldData.length > 0) {
+        data = [...data, ...oldData]
+      }
+    }
+  }
 
   if (error || !data) {
     return {

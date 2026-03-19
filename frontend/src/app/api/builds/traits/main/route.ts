@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const characterCode = Number(searchParams.get("characterCode"))
   const tier = searchParams.get("tier") ?? "DIAMOND"
-  const patchVersion = searchParams.get("patchVersion") ?? "10.4"
+  const patchVersion = searchParams.get("patchVersion") ?? "10.5"
   const bestWeapon = searchParams.get("bestWeapon")
 
   if (!characterCode || isNaN(characterCode)) {

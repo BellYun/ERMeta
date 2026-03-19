@@ -8,7 +8,7 @@ export const revalidate = 1800; // L1: 30분 서버 캐시
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const patchVersion = searchParams.get("patchVersion") ?? "10.4";
+  const patchVersion = searchParams.get("patchVersion") ?? "10.5";
   const requestedTier = searchParams.get("tier") ?? "DIAMOND";
 
   console.log("[mithril-rp-ranking] params:", { patchVersion, requestedTier });

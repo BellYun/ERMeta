@@ -49,7 +49,7 @@ export async function GET(
 
   const { searchParams } = new URL(request.url)
   const tier = searchParams.get("tier") ?? "DIAMOND"
-  const patchVersion = searchParams.get("patchVersion") ?? "10.4"
+  const patchVersion = searchParams.get("patchVersion") ?? "10.5"
 
   const emptyResponse: CharacterStatsResponse = {
     characterNum: characterCode,
@@ -67,12 +67,23 @@ export async function GET(
   try {
     const supabase = createServerClient()
 
-    // 해당 패치+티어 전체 조회 후 JS에서 필터 (N+1 → 단일 쿼리)
-    const { data, error } = await supabase
+    // v2 테이블 먼저 조회, 데이터 없으면 old 테이블 fallback (이전 패치 비교용)
+    const selectCols = "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank"
+    let { data, error } = await supabase
       .from("v2_CharacterStats")
-      .select("characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank")
+      .select(selectCols)
       .eq("patchVersion", patchVersion)
       .eq("tier", tier)
+
+    if ((!data || data.length === 0) && !error) {
+      const fallback = await supabase
+        .from("CharacterStats")
+        .select(selectCols)
+        .eq("patchVersion", patchVersion)
+        .eq("tier", tier)
+      data = fallback.data
+      error = fallback.error
+    }
 
     if (error || !data || data.length === 0) {
       return NextResponse.json(emptyResponse)

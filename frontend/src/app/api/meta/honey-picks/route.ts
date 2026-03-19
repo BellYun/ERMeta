@@ -58,7 +58,7 @@ function selectTierRows(
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const patchVersion = searchParams.get("patchVersion") ?? "10.4";
+  const patchVersion = searchParams.get("patchVersion") ?? "10.5";
   const requestedTier = searchParams.get("tier") ?? "MITHRIL";
 
   try {
@@ -87,14 +87,28 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // 현재 + 이전 패치 데이터 조회
-    const { data, error } = await supabase
+    // 현재 + 이전 패치 데이터 조회 (v2 → old fallback)
+    const selectCols = "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,tier,patchVersion"
+    let { data, error } = await supabase
       .from("v2_CharacterStats")
-      .select(
-        "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,tier,patchVersion"
-      )
+      .select(selectCols)
       .in("patchVersion", [patchVersion, previousPatch])
       .in("tier", TIER_FALLBACK_ORDER);
+
+    // v2에 이전 패치 데이터 없으면 old 테이블 fallback
+    if (data && previousPatch) {
+      const hasV2Prev = data.some((r: any) => r.patchVersion === previousPatch)
+      if (!hasV2Prev) {
+        const { data: oldData } = await supabase
+          .from("CharacterStats")
+          .select(selectCols)
+          .eq("patchVersion", previousPatch)
+          .in("tier", TIER_FALLBACK_ORDER);
+        if (oldData && oldData.length > 0) {
+          data = [...data, ...oldData];
+        }
+      }
+    }
 
     if (error || !data) {
       return NextResponse.json({
