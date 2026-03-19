@@ -22,8 +22,8 @@ import { getCollectableTiers, TierGroup } from "../_shared/tier-utils.ts";
 // ── 상수 ──────────────────────────────────────────────────
 const SEASON_ID = 37;
 const TEAM_MODE = 3; // 스쿼드
-const FORWARD2_BUDGET_MS = 90_000;
-const BACKFILL_BUDGET_MS = 30_000;
+const FORWARD2_BUDGET_MS = 120_000;
+const BACKFILL_BUDGET_MS = 0;
 const FORWARD2_START_GAME = 58540099;
 const BATCH_LIMIT = 150;
 const STABLE_DELAY_MS = 1 * 60 * 60 * 1000; // 최근 1시간 이내 게임은 중단 → 백필 전환

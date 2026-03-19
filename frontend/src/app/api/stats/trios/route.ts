@@ -176,43 +176,67 @@ export async function GET(request: NextRequest) {
 
     const TWO_WEEKS_AGO = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
 
-    // 다이아 이상 전 티어를 한 번에 조회 (집계 후 정렬을 위해 DB 정렬/limit 미적용)
-    let query = supabase
+    // 캐릭터 필터 조건 (old / v2 공용)
+    const charFilterOr =
+      char1 !== null && char2 !== null
+        ? (() => {
+            const [low, high] = [char1, char2].sort((a, b) => a - b);
+            return [
+              `and(character1.eq.${low},character2.eq.${high})`,
+              `and(character1.eq.${low},character3.eq.${high})`,
+              `and(character2.eq.${low},character3.eq.${high})`,
+            ].join(",");
+          })()
+        : char1 !== null
+          ? `character1.eq.${char1},character2.eq.${char1},character3.eq.${char1}`
+          : null;
+
+    // ── v2 테이블 조회 ──
+    let v2Query = supabase
       .from("v2_CharacterTrio")
       .select("character1,character2,character3,winRate,averageRP,totalGames,averageRank")
       .in("tier", DIAMOND_PLUS_TIERS)
-      .gte("lastUpdated", TWO_WEEKS_AGO) // TTL 필터: 2주 이내 데이터만
-      .order("totalGames", { ascending: false }) // 일관된 행 선택을 위해 정렬
-      .limit(5000); // 집계 전 최대 수집 행수
+      .gte("lastUpdated", TWO_WEEKS_AGO)
+      .order("totalGames", { ascending: false })
+      .limit(5000);
 
-    if (char1 !== null && char2 !== null) {
-      // 2명 선택: 두 캐릭터를 포함하는 모든 3인 조합 조회
-      const [low, high] = [char1, char2].sort((a, b) => a - b);
-      query = query.or(
-        [
-          `and(character1.eq.${low},character2.eq.${high})`,
-          `and(character1.eq.${low},character3.eq.${high})`,
-          `and(character2.eq.${low},character3.eq.${high})`,
-        ].join(",")
-      );
-    } else if (char1 !== null) {
-      // 1명 선택: 3개 컬럼 OR 조회
-      query = query.or(
-        `character1.eq.${char1},character2.eq.${char1},character3.eq.${char1}`
-      );
+    if (charFilterOr) v2Query = v2Query.or(charFilterOr);
+
+    // ── old 테이블 조회 (patchVersion 없음, Prisma enum tier) ──
+    let oldQuery = supabase
+      .from("CharacterTrio")
+      .select("character1,character2,character3,winRate,averageRP,totalGames,averageRank")
+      .in("tier", DIAMOND_PLUS_TIERS)
+      .gte("lastUpdated", TWO_WEEKS_AGO)
+      .order("totalGames", { ascending: false })
+      .limit(5000);
+
+    if (charFilterOr) oldQuery = oldQuery.or(charFilterOr);
+
+    // 병렬 조회
+    const [v2Result, oldResult] = await Promise.all([v2Query, oldQuery]);
+
+    if (v2Result.error) {
+      console.error("[stats/trios] v2 Supabase error:", v2Result.error);
+    }
+    if (oldResult.error) {
+      console.error("[stats/trios] old Supabase error:", oldResult.error);
     }
 
-    const { data, error } = await query;
-
-    if (error) {
-      console.error("[stats/trios] Supabase error:", error);
+    // 둘 다 실패하면 에러 반환
+    if (v2Result.error && oldResult.error) {
       return NextResponse.json(
         { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
         { status: 500, headers: NO_CACHE_HEADERS }
       );
     }
 
-    const filteredRows = ((data ?? []) as TrioRow[]).filter(
+    const combinedRows = [
+      ...((v2Result.data ?? []) as TrioRow[]),
+      ...((oldResult.data ?? []) as TrioRow[]),
+    ];
+
+    const filteredRows = combinedRows.filter(
       (row) =>
         !EXCLUDED_CHARACTER_CODES.has(row.character1) &&
         !EXCLUDED_CHARACTER_CODES.has(row.character2) &&
