@@ -67,7 +67,7 @@ async function fetchTop3(char1: number | null, char2: number | null): Promise<Ag
   const ttl = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
 
   let query = supabase
-    .from("CharacterTrio")
+    .from("v2_CharacterTrio")
     .select("character1,character2,character3,winRate,averageRP,totalGames,averageRank")
     .in("tier", DIAMOND_PLUS_TIERS)
     .gte("lastUpdated", ttl)

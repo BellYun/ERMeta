@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     const supabase = createServerClient()
 
     let query = supabase
-      .from("CharacterTraitBuildStats")
+      .from("v2_CharacterTraitBuildStats")
       .select("*")
       .eq("characterNum", characterCode)
       .eq("patchVersion", patchVersion)
