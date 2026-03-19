@@ -59,19 +59,19 @@ export function CharacterHeader({
         </div>
         <div className="flex flex-1 flex-col gap-1.5 sm:gap-2 min-w-0">
           <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-            <h1 className="text-lg sm:text-2xl font-bold text-[var(--color-foreground)] truncate max-w-[140px] sm:max-w-none">
+            <h1 className="text-lg sm:text-2xl font-bold text-[var(--color-foreground)] truncate max-w-[180px] sm:max-w-none">
               {getCharacterName(selectedCode)}
             </h1>
             {charTier && <TierBadge tier={charTier} />}
           </div>
           <div className="flex items-center gap-1.5 flex-wrap">
             {currentPatch && (
-              <span className="rounded bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[10px] sm:text-xs text-[var(--color-muted-foreground)] border border-[var(--color-border)]">
+              <span className="rounded bg-[var(--color-surface-2)] px-1.5 py-0.5 text-xs text-[var(--color-muted-foreground)] border border-[var(--color-border)]">
                 {currentPatch}
               </span>
             )}
             {displayStat && displayStat.totalGames > 0 && (
-              <span className="rounded bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[10px] sm:text-xs text-[var(--color-muted-foreground)] border border-[var(--color-border)]">
+              <span className="rounded bg-[var(--color-surface-2)] px-1.5 py-0.5 text-xs text-[var(--color-muted-foreground)] border border-[var(--color-border)]">
                 총 {displayStat.totalGames.toLocaleString()}판
               </span>
             )}
@@ -127,7 +127,7 @@ export function CharacterHeader({
                       <span className="font-medium">{resolveWeaponName(w.bestWeapon ?? undefined)}</span>
                       <span
                         className={cn(
-                          "text-[10px]",
+                          "text-xs",
                           isSelected
                             ? "text-[var(--color-primary)]/80"
                             : "text-[var(--color-muted-foreground)]"

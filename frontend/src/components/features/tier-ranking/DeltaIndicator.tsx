@@ -14,7 +14,7 @@ export function DeltaIndicator({ current, previous, suffix = "", precision = 1 }
   return (
     <span
       className={cn(
-        "text-[10px] font-medium",
+        "text-xs font-medium",
         isPositive ? "text-green-400" : "text-red-400"
       )}
     >

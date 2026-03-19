@@ -257,7 +257,7 @@ export function CharacterAnalysisClient({
 
         {/* 탭 분석 (lazy load) */}
         <Tabs defaultValue="comparison" onValueChange={(v) => analytics.analysisTabChanged(v)}>
-          <TabsList className="w-full grid grid-cols-4 h-auto">
+          <TabsList className="w-full grid grid-cols-4 h-auto min-h-[44px]">
             <TabsTrigger value="comparison" className="gap-1 sm:gap-1.5">
               <BarChart2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" /><span className="truncate">패치 비교</span>
             </TabsTrigger>

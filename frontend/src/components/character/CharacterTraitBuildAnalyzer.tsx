@@ -56,7 +56,7 @@ function SubOptionChip({
   return (
     <div className="flex flex-col items-center gap-0.5 max-w-[120px]">
       <TraitChip code={option.code} name={name} variant="sub" />
-      <span className="text-[9px] sm:text-[10px] whitespace-nowrap flex gap-0.5 sm:gap-1">
+      <span className="text-[10px] sm:text-xs whitespace-nowrap flex gap-0.5 sm:gap-1">
         <span className="text-[var(--color-primary)]">픽 {option.pickRate.toFixed(1)}%</span>
         <span
           className={cn(
@@ -121,7 +121,7 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
       {/* 테이블 헤더 */}
-      <div className="grid grid-cols-[1fr_2.8rem_2.8rem_2.8rem] sm:grid-cols-[1fr_5rem_5rem_5rem] border-b border-[var(--color-border)] px-2 sm:px-4 py-2 text-[10px] sm:text-xs font-medium text-[var(--color-muted-foreground)]">
+      <div className="grid grid-cols-[1fr_3.2rem_3.2rem_3.2rem] sm:grid-cols-[1fr_5rem_5rem_5rem] border-b border-[var(--color-border)] px-2 sm:px-4 py-2 text-[10px] sm:text-xs font-medium text-[var(--color-muted-foreground)]">
         <span>메인 특성</span>
         <span className="text-right">픽률</span>
         <span className="text-right">승률</span>
@@ -138,7 +138,7 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
           )}
         >
           {/* mainCore 헤더 행 */}
-          <div className="grid grid-cols-[1fr_2.8rem_2.8rem_2.8rem] sm:grid-cols-[1fr_5rem_5rem_5rem] items-center px-2 sm:px-4 py-2.5 sm:py-3 gap-1 sm:gap-2 bg-[var(--color-surface-2)]/60">
+          <div className="grid grid-cols-[1fr_3.2rem_3.2rem_3.2rem] sm:grid-cols-[1fr_5rem_5rem_5rem] items-center px-2 sm:px-4 py-2.5 sm:py-3 gap-1 sm:gap-2 bg-[var(--color-surface-2)]/60">
             <div className="flex items-center gap-2">
               {gi === 0 && (
                 <span className="text-xs font-bold text-[var(--color-accent-gold)]">#1</span>
