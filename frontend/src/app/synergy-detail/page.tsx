@@ -33,6 +33,12 @@ export default function SynergyDetailPage() {
         </p>
       </section>
 
+      <div className="rounded-lg border border-[var(--color-accent-gold)]/30 bg-[var(--color-accent-gold)]/5 px-4 py-3 text-center">
+        <p className="text-xs font-medium text-[var(--color-accent-gold)]">
+          BETA · 데이터 수집 중입니다. 표본이 쌓일수록 추천 정확도가 올라갑니다.
+        </p>
+      </div>
+
       <div className="flex flex-col gap-4">
         {/* Island 1: 내 캐릭터 풀 (localStorage) */}
         <Suspense fallback={<FocusPoolSkeleton />}>
