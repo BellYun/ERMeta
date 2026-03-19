@@ -22,6 +22,36 @@ export interface GroupedCombo {
   traitVariants: TrioWeaponResult[]
 }
 
+interface OrderedMember {
+  char: number
+  weapon: number
+}
+
+function getOrderedMembers(group: GroupedCombo, selectedCharCodes: number[]): OrderedMember[] {
+  const members: OrderedMember[] = [
+    { char: group.character1, weapon: group.weaponType1 },
+    { char: group.character2, weapon: group.weaponType2 },
+    { char: group.character3, weapon: group.weaponType3 },
+  ]
+  const allies: OrderedMember[] = []
+  const rest: OrderedMember[] = []
+  for (const m of members) {
+    if (selectedCharCodes.includes(m.char) && allies.length < selectedCharCodes.length) {
+      allies.push(m)
+    } else {
+      rest.push(m)
+    }
+  }
+  allies.sort((a, b) => selectedCharCodes.indexOf(a.char) - selectedCharCodes.indexOf(b.char))
+  return [...allies, ...rest]
+}
+
+function getCoreForMember(m: OrderedMember, v: TrioWeaponResult): number | null {
+  if (m.char === v.character1) return v.mainCore1
+  if (m.char === v.character2) return v.mainCore2
+  return v.mainCore3
+}
+
 export function ComboWeaponCard({
   group,
   rank,
@@ -35,43 +65,18 @@ export function ComboWeaponCard({
   getTraitName: (code: number) => string | null
   selectedCharCodes: number[]
 }) {
-  const [expanded, setExpanded] = React.useState(false)
-
-  const members = [
-    { char: group.character1, weapon: group.weaponType1 },
-    { char: group.character2, weapon: group.weaponType2 },
-    { char: group.character3, weapon: group.weaponType3 },
-  ]
-
-  // 선택한 아군을 앞에, 추천 캐릭터를 마지막에 표시
-  const allies: typeof members = []
-  const rest: typeof members = []
-  for (const m of members) {
-    if (selectedCharCodes.includes(m.char) && allies.length < selectedCharCodes.length) {
-      allies.push(m)
-    } else {
-      rest.push(m)
-    }
-  }
-  allies.sort((a, b) => selectedCharCodes.indexOf(a.char) - selectedCharCodes.indexOf(b.char))
-  const ordered = [...allies, ...rest]
-
+  const [showTraits, setShowTraits] = React.useState(false)
+  const ordered = React.useMemo(() => getOrderedMembers(group, selectedCharCodes), [group, selectedCharCodes])
   const isSmallSample = group.totalGames <= 10
-  const hasVariants = group.traitVariants.length > 1
+  const sortedVariants = React.useMemo(
+    () => [...group.traitVariants].sort((a, b) => b.averageRP - a.averageRP).slice(0, 10),
+    [group.traitVariants]
+  )
 
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 transition-all duration-200 hover:border-[var(--color-primary)]/20">
-      {/* Level 1: 메인 행 */}
-      <button
-        type="button"
-        onClick={() => hasVariants && setExpanded((prev) => !prev)}
-        className={cn(
-          "w-full flex items-center gap-2 px-3 py-2.5 text-left transition-colors",
-          hasVariants && "cursor-pointer hover:bg-[var(--color-primary)]/[0.04]",
-          !hasVariants && "cursor-default",
-          expanded && "border-b border-[var(--color-border)]"
-        )}
-      >
+      {/* 메인 행 */}
+      <div className="flex items-center gap-2 px-3 py-2.5">
         {/* 순위 */}
         <span className="w-5 shrink-0 text-center text-xs font-bold text-[var(--color-muted-foreground)]">
           {rank}
@@ -137,38 +142,40 @@ export function ComboWeaponCard({
             <span className="text-sm text-[var(--color-muted-foreground)]">#{group.averageRank.toFixed(1)}</span>
           </div>
 
-          {/* 펼침 화살표 */}
-          {hasVariants && (
+          {/* 특성 토글 */}
+          <button
+            type="button"
+            onClick={() => setShowTraits((prev) => !prev)}
+            className={cn(
+              "inline-flex items-center gap-1 px-2 py-1 rounded-lg border text-[10px] font-medium transition-colors shrink-0",
+              showTraits
+                ? "border-[var(--color-primary)]/50 bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
+                : "border-[var(--color-border)] text-[var(--color-muted-foreground)] hover:border-[var(--color-primary)]/30 hover:text-[var(--color-primary)]"
+            )}
+          >
+            특성
             <ChevronDown className={cn(
-              "h-4 w-4 text-[var(--color-muted-foreground)] transition-transform duration-200 shrink-0",
-              expanded && "rotate-180"
+              "h-3 w-3 transition-transform duration-200",
+              showTraits && "rotate-180"
             )} />
-          )}
+          </button>
         </div>
-      </button>
+      </div>
 
-      {/* Level 2: 특성 브레이크다운 */}
-      {expanded && (
-        <div className="px-3 py-2 flex flex-col gap-1.5 bg-[var(--color-surface-2)]/40">
-          <p className="text-[10px] text-[var(--color-muted-foreground)] font-medium px-1 mb-0.5">
-            메인 특성 조합별 성능
-          </p>
-          {group.traitVariants
-            .sort((a, b) => b.totalGames - a.totalGames)
-            .slice(0, 10)
-            .map((v, vi) => (
+      {/* 특성 브레이크다운 */}
+      {showTraits && (
+        <div className="px-3 py-2 flex flex-col gap-1.5 bg-[var(--color-surface-2)]/40 border-t border-[var(--color-border)]">
+          {sortedVariants.map((v, vi) => (
             <div
               key={`${v.mainCore1}-${v.mainCore2}-${v.mainCore3}-${vi}`}
               className="flex items-center gap-2 rounded-lg bg-[var(--color-surface)]/60 px-3 py-2 border border-[var(--color-border)]/50"
             >
-              {/* 특성 3개 */}
+              {/* 특성 3개 — 캐릭터 순서와 동일 */}
               <div className="flex items-center gap-1.5 min-w-0">
                 {ordered.map((m, mi) => {
-                  const core = m.char === v.character1 ? v.mainCore1
-                    : m.char === v.character2 ? v.mainCore2
-                    : v.mainCore3
+                  const core = getCoreForMember(m, v)
                   return (
-                    <React.Fragment key={`${m.char}-trait`}>
+                    <React.Fragment key={`${m.char}-trait-${vi}`}>
                       <div className="flex flex-col items-center gap-0.5">
                         <span className="text-[9px] text-[var(--color-muted-foreground)] truncate w-14 text-center">
                           {getCharName(m.char)}
