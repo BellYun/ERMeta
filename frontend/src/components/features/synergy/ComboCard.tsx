@@ -12,6 +12,7 @@ export function ComboCard({
   getCharName,
   selectedAllies,
   compact = false,
+  priorityImages = false,
   onNavigateAnalysis,
 }: {
   rec: TrioResult
@@ -19,6 +20,8 @@ export function ComboCard({
   getCharName: (code: number) => string
   selectedAllies: number[]
   compact?: boolean
+  /** true면 이미지를 priority로 즉시 로드 (상위 카드용) */
+  priorityImages?: boolean
   onNavigateAnalysis?: (code: number) => void
 }) {
   // 선택한 아군을 앞에, 추천 캐릭터를 마지막에 표시
@@ -63,6 +66,8 @@ export function ComboCard({
                   fill
                   className="object-cover"
                   sizes="32px"
+                  loading={priorityImages ? "eager" : "lazy"}
+                  priority={priorityImages}
                 />
               </div>
               {!compact && (
