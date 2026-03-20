@@ -118,13 +118,13 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
 
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm overflow-hidden">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 sm:p-4 border-b border-[var(--color-border)]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2.5 sm:p-4 border-b border-[var(--color-border)]">
         <div className="flex items-center gap-2">
           <div className="h-4 w-1 rounded-full bg-[var(--color-primary)]" />
           <h2 className="text-sm font-semibold text-[var(--color-foreground)]">캐릭터 순위</h2>
         </div>
         <Select
-          wrapperClassName="w-full sm:w-auto"
+          wrapperClassName="w-full sm:w-auto min-h-[44px] sm:min-h-0"
           value={activeRole}
           onChange={(e) => { setActiveRole(e.target.value); analytics.rankingTierTabChanged(e.target.value) }}
         >
@@ -168,7 +168,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                 return (
                   <div
                     key={key}
-                    className="relative flex items-center gap-3 px-3 py-3 border-b border-[var(--color-border)] last:border-b-0 cursor-pointer active:bg-[var(--color-surface-2)]/60 touch-manipulation transition-colors"
+                    className="relative flex items-center gap-3 px-3 py-3 min-h-[52px] border-b border-[var(--color-border)] last:border-b-0 cursor-pointer active:bg-[var(--color-surface-2)]/60 touch-manipulation transition-colors"
                     onClick={() => {
                       if (char.patchNote && "ontouchstart" in window) {
                         if (activeKey === key) {

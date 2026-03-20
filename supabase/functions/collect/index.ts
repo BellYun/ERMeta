@@ -13,17 +13,20 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createSupabaseClient } from "../_shared/supabase.ts";
 import {
+  fetchGame,
   fetchGamesForward,
   fetchGamesBackward,
   fetchTopRanks,
 } from "../_shared/bser-api.ts";
 import { getCollectableTiers, TierGroup } from "../_shared/tier-utils.ts";
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 // ── 상수 ──────────────────────────────────────────────────
 const SEASON_ID = 37;
 const TEAM_MODE = 3; // 스쿼드
-const FORWARD2_BUDGET_MS = 120_000;
-const BACKFILL_BUDGET_MS = 0;
+const TOTAL_BUDGET_MS = 135_000; // Edge Function 총 예산 135초 (2분 15초)
+const FORWARD2_BUDGET_MS = 135_000; // forward2 최대 (RECENT 도달 시 즉시 중단)
 const FORWARD2_START_GAME = 58540099;
 const BATCH_LIMIT = 150;
 const STABLE_DELAY_MS = 1 * 60 * 60 * 1000; // 최근 1시간 이내 게임은 중단 → 백필 전환
@@ -469,39 +472,44 @@ serve(async (req: Request) => {
 
     if (forward2Status?.status === "active") {
       const forward2StartMs = Date.now();
-      const fromGame = (forward2Status.last_game_number ?? FORWARD2_START_GAME) + 1;
-      console.log(`[Forward2] 시작: gameNumber=${fromGame}`);
-
-      const { games, lastGameNumber } = await fetchGamesForward(
-        fromGame,
-        BATCH_LIMIT,
-        FORWARD2_BUDGET_MS
-      );
+      let currentGame = (forward2Status.last_game_number ?? FORWARD2_START_GAME) + 1;
+      console.log(`[Forward2] 시작: gameNumber=${currentGame}`);
 
       const byPatch = new Map<string, { participants: any[]; trios: any[] }>();
+      let lastGameNumber = currentGame - 1;
 
-      for (const game of games) {
+      for (let i = 0; i < BATCH_LIMIT; i++) {
+        if (Date.now() - forward2StartMs >= FORWARD2_BUDGET_MS) break;
+
         try {
-          const parsed = parseGameData(game, patchCache, rank1000MMR, true);
-          if (parsed === "RECENT") {
-            forward2HitRecent = true;
-            forward2RemainingMs = FORWARD2_BUDGET_MS - (Date.now() - forward2StartMs);
-            console.log(`[Forward2] 최근 1시간 이내 게임 도달, 남은 ${Math.round(forward2RemainingMs / 1000)}초를 백필에 전환`);
-            break;
-          }
-          if (parsed) {
-            const group = byPatch.get(parsed.patchVersion) || { participants: [], trios: [] };
-            group.participants.push(...parsed.participants);
-            group.trios.push(...parsed.trios);
-            byPatch.set(parsed.patchVersion, group);
-            forward2Collected++;
-          } else {
-            forward2Skipped++;
+          const game = await fetchGame(currentGame);
+          if (game !== null) {
+            const parsed = parseGameData(game, patchCache, rank1000MMR, true);
+            if (parsed === "RECENT") {
+              forward2HitRecent = true;
+              forward2RemainingMs = FORWARD2_BUDGET_MS - (Date.now() - forward2StartMs);
+              console.log(`[Forward2] 최근 1시간 이내 게임 도달, 남은 ${Math.round(forward2RemainingMs / 1000)}초를 백필에 전환`);
+              lastGameNumber = currentGame;
+              break;
+            }
+            if (parsed) {
+              const group = byPatch.get(parsed.patchVersion) || { participants: [], trios: [] };
+              group.participants.push(...parsed.participants);
+              group.trios.push(...parsed.trios);
+              byPatch.set(parsed.patchVersion, group);
+              forward2Collected++;
+            } else {
+              forward2Skipped++;
+            }
           }
         } catch (e) {
           forward2Failed++;
           console.error("[Forward2] parseGameData error:", e);
         }
+
+        lastGameNumber = currentGame;
+        currentGame++;
+        await sleep(1000); // rate limit 1req/s
       }
 
       if (byPatch.size > 0) {
@@ -532,8 +540,9 @@ serve(async (req: Request) => {
     let backfillFailed = 0;
     let backfillPhase = "";
 
+    const elapsedMs = Date.now() - startTime;
     const backfillTotalBudgetMs = forward2HitRecent
-      ? BACKFILL_BUDGET_MS + Math.max(0, forward2RemainingMs)
+      ? Math.max(0, TOTAL_BUDGET_MS - elapsedMs - 5_000) // 총 예산 - forward2 소모 - 5초 여유
       : 0;
 
     if (backfillTotalBudgetMs > 0) {

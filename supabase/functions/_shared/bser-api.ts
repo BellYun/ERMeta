@@ -60,13 +60,12 @@ export async function fetchGamesForward(
       if (game !== null) {
         games.push(game);
       }
-      // 404는 무시하고 계속 진행
     } catch (e) {
       console.error(`[BSER] fetchForward error game ${current}:`, e);
     }
 
     current++;
-    await sleep(1000); // rate limit
+    await sleep(1000); // rate limit 1req/s
   }
 
   return { games, lastGameNumber: current - 1 };
@@ -97,7 +96,7 @@ export async function fetchGamesBackward(
     }
 
     current--;
-    await sleep(1000); // rate limit
+    await sleep(1000); // rate limit 1req/s
   }
 
   return { games, lastGameNumber: current + 1 };
