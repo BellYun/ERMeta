@@ -349,17 +349,8 @@ async function main() {
     Author: {
       rich_text: [{ text: { content: PR_AUTHOR || "" } }],
     },
-    "PR URL": {
-      url: PR_URL || null,
-    },
     Date: {
       date: { start: now },
-    },
-    Types: {
-      number: allTypes.length,
-    },
-    APIs: {
-      number: allAPIs.length,
     },
   };
 
