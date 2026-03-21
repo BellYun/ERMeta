@@ -17,7 +17,7 @@ export function GlobalFilter() {
   const { patch, tier, patches, setPatch, setTier } = useFilter()
 
   return (
-    <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-3">
+    <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2.5 sm:gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-2.5 sm:p-3">
       <div className="flex items-center gap-2 sm:w-auto">
         <span className="text-xs font-medium text-[var(--color-muted-foreground)] shrink-0">패치</span>
         <Select

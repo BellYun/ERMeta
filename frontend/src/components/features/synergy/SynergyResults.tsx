@@ -245,6 +245,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                 getCharName={getCharName}
                 selectedAllies={selectedAllies}
                 compact={compact}
+                priorityImages={i < 5}
                 onNavigateAnalysis={(code) => router.push(`/character-analysis?character=${code}`)}
               />
             ))}

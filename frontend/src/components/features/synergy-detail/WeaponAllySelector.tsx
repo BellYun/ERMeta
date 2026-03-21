@@ -6,7 +6,7 @@ import { X, Search } from "lucide-react"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { useL10n } from "@/components/L10nProvider"
-import { resolveCharacterName, getCharacterImageUrl } from "@/lib/characterMap"
+import { resolveCharacterName, getCharacterMiniWebpUrl } from "@/lib/characterMap"
 import { cn } from "@/lib/utils"
 import { FALLBACK_MAP, EXCLUDED_CHARACTER_CODES } from "../synergy/constants"
 import { matchesChosungSearch } from "../synergy/utils"
@@ -111,7 +111,7 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
     >
       <div className="relative h-9 w-9 overflow-hidden rounded-md bg-[var(--color-border)]">
         <Image
-          src={getCharacterImageUrl(item.charCode)}
+          src={getCharacterMiniWebpUrl(item.charCode)}
           alt={charName}
           fill
           className="object-cover"
@@ -374,7 +374,7 @@ function SlotWeaponFilled({
     <div className="flex flex-1 items-center gap-3 rounded-lg border border-[var(--color-primary)]/50 bg-[var(--color-primary)]/10 px-4 py-3">
       <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-[var(--color-border)]">
         <Image
-          src={getCharacterImageUrl(code)}
+          src={getCharacterMiniWebpUrl(code)}
           alt={name}
           fill
           className="object-cover"

@@ -214,6 +214,12 @@ export function getCharacterImageUrl(code: number): string {
   return CHARACTER_MINI_IMAGES[code] ?? `/characters/placeholder.png`;
 }
 
+/** 48x48 WebP 최적화 이미지 (32~40px 표시용). 없으면 원본 Mini fallback. */
+export function getCharacterMiniWebpUrl(code: number): string {
+  if (CHARACTER_MINI_IMAGES[code]) return `/characters/mini/${code}.webp`;
+  return `/characters/placeholder.png`;
+}
+
 // 직업군 타입
 export type CharacterRole = "탱커" | "전사" | "암살자" | "스킬딜러" | "원거리 딜러" | "지원가";
 

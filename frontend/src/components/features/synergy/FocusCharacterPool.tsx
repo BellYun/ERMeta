@@ -4,7 +4,7 @@ import * as React from "react"
 import Image from "next/image"
 import { X, Search, ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { getCharacterImageUrl, resolveCharacterName } from "@/lib/characterMap"
+import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMap"
 import { useL10n } from "@/components/L10nProvider"
 import { VirtualCharacterGrid } from "@/components/ui/VirtualCharacterGrid"
 import { useFocusCharacters } from "@/hooks/useFocusCharacters"
@@ -95,7 +95,7 @@ export function FocusCharacterPool() {
             >
               <span className="relative h-4 w-4 shrink-0 overflow-hidden rounded">
                 <Image
-                  src={getCharacterImageUrl(code)}
+                  src={getCharacterMiniWebpUrl(code)}
                   alt={getCharName(code)}
                   fill
                   className="object-cover"

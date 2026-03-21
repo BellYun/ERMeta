@@ -8,7 +8,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full bg-[var(--color-surface)]/90 backdrop-blur-md">
       <div className="h-[1px] bg-gradient-to-r from-transparent via-[var(--color-primary)] to-transparent" />
-      <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between gap-2">
+      <div className="max-w-6xl mx-auto px-4 sm:px-4 h-12 sm:h-14 flex items-center justify-between gap-2">
         <Link href="/" className="flex items-center gap-2 shrink-0 group">
           <div className="flex items-center gap-1.5">
             <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-purple)] flex items-center justify-center text-[11px] font-black text-white shadow-[0_0_12px_var(--color-primary-glow)]">
@@ -25,12 +25,14 @@ export function Header() {
           </div>
         </Link>
 
-        <div className="flex-1 flex justify-center">
+        {/* Desktop: center navigation */}
+        <div className="flex-1 hidden sm:flex justify-center">
           <Navigation />
         </div>
 
-        <div className="shrink-0 hidden sm:block">
-          <Badge variant="gold">패치 {CURRENT_PATCH}</Badge>
+        {/* Mobile: push badge to right, Desktop: show badge */}
+        <div className="shrink-0 ml-auto sm:ml-0">
+          <Badge variant="gold" className="text-[10px] sm:text-xs">패치 {CURRENT_PATCH}</Badge>
         </div>
       </div>
       <div className="h-[1px] bg-[var(--color-border)]" />

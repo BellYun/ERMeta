@@ -4,7 +4,7 @@ import * as React from "react"
 import Image from "next/image"
 import { ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { getCharacterImageUrl } from "@/lib/characterMap"
+import { getCharacterMiniWebpUrl } from "@/lib/characterMap"
 import { resolveWeaponName } from "@/lib/weaponMap"
 import { TraitIcon } from "./TraitIcon"
 import type { TrioWeaponResult } from "./types"
@@ -96,7 +96,7 @@ export function ComboWeaponCard({
                     )}
                   >
                     <Image
-                      src={getCharacterImageUrl(m.char)}
+                      src={getCharacterMiniWebpUrl(m.char)}
                       alt={getCharName(m.char)}
                       fill
                       className="object-cover"

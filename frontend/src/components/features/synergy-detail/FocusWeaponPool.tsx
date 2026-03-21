@@ -5,7 +5,7 @@ import Image from "next/image"
 import { X, Search, ChevronDown, ChevronUp } from "lucide-react"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { cn } from "@/lib/utils"
-import { getCharacterImageUrl, resolveCharacterName } from "@/lib/characterMap"
+import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMap"
 import { useL10n } from "@/components/L10nProvider"
 import { useFocusCharWeapons } from "@/hooks/useFocusCharWeapons"
 import { FALLBACK_MAP } from "../synergy/constants"
@@ -39,7 +39,7 @@ const FocusCell = React.memo(function FocusCell({
     >
       <div className="relative h-9 w-9 overflow-hidden rounded-md bg-[var(--color-border)]">
         <Image
-          src={getCharacterImageUrl(item.charCode)}
+          src={getCharacterMiniWebpUrl(item.charCode)}
           alt={charName}
           fill
           className="object-cover"
@@ -172,7 +172,7 @@ export function FocusWeaponPool() {
             >
               <span className="relative h-4 w-4 shrink-0 overflow-hidden rounded">
                 <Image
-                  src={getCharacterImageUrl(f.charCode)}
+                  src={getCharacterMiniWebpUrl(f.charCode)}
                   alt={getCharName(f.charCode)}
                   fill
                   className="object-cover"

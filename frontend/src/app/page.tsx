@@ -74,13 +74,13 @@ export default async function Home() {
 
   return (
     <FilterProvider initialPatches={patches}>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4 sm:gap-6">
         {/* 히어로 섹션 */}
-        <section className="text-center py-4">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-foreground)]">
+        <section className="text-center py-2 sm:py-4">
+          <h1 className="text-xl sm:text-3xl font-bold text-[var(--color-foreground)]">
             이터널리턴 실시간 메타 분석
           </h1>
-          <p className="mt-1.5 text-sm text-[var(--color-muted-foreground)]">
+          <p className="mt-1 sm:mt-1.5 text-xs sm:text-sm text-[var(--color-muted-foreground)]">
             패치 {defaultPatch} 기준 · 다이아 이상 400,000+판 분석
           </p>
         </section>

@@ -4,7 +4,7 @@ import * as React from "react"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
-import { getCharacterImageUrl } from "@/lib/characterMap"
+import { getCharacterMiniWebpUrl } from "@/lib/characterMap"
 
 const CELL_MIN_WIDTH = 72
 const ROW_HEIGHT = 72
@@ -50,7 +50,7 @@ const CharacterCell = React.memo(function CharacterCell({
     >
       <div className="relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]">
         <Image
-          src={getCharacterImageUrl(code)}
+          src={getCharacterMiniWebpUrl(code)}
           alt={name}
           fill
           className="object-cover"

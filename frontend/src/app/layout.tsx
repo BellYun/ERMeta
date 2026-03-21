@@ -4,6 +4,7 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
+import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { L10nProvider } from "@/components/L10nProvider";
 import FeedbackWidget from "@/components/features/FeedbackWidget";
 import { Analytics } from "@vercel/analytics/next";
@@ -92,18 +93,19 @@ export default function RootLayout({
       <body>
         <L10nProvider initialL10n={initialL10n}>
           <Header />
-          <main className="max-w-6xl mx-auto px-4 py-6">{children}</main>
+          <main className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 pb-20 sm:pb-6">{children}</main>
+          <MobileTabBar />
         </L10nProvider>
         <footer className="border-t border-[var(--color-border)] mt-12">
           <div className="max-w-6xl mx-auto px-4 py-6 flex flex-col gap-3 text-[11px] text-[var(--color-muted-foreground)] leading-relaxed">
-            <div className="flex flex-wrap items-center gap-3">
-              <a href="/terms" className="hover:text-[var(--color-foreground)] transition-colors">이용약관</a>
+            <div className="flex flex-wrap items-center gap-1 sm:gap-3">
+              <a href="/terms" className="min-h-[44px] sm:min-h-0 flex items-center px-1 hover:text-[var(--color-foreground)] transition-colors touch-manipulation">이용약관</a>
               <span className="text-[var(--color-border)]">|</span>
-              <a href="/privacy" className="hover:text-[var(--color-foreground)] transition-colors">개인정보처리방침</a>
+              <a href="/privacy" className="min-h-[44px] sm:min-h-0 flex items-center px-1 hover:text-[var(--color-foreground)] transition-colors touch-manipulation">개인정보처리방침</a>
               <span className="text-[var(--color-border)]">|</span>
-              <a href="/updates" className="hover:text-[var(--color-foreground)] transition-colors">업데이트 내역</a>
+              <a href="/updates" className="min-h-[44px] sm:min-h-0 flex items-center px-1 hover:text-[var(--color-foreground)] transition-colors touch-manipulation">업데이트 내역</a>
               <span className="text-[var(--color-border)]">|</span>
-              <a href="/sitemap.xml" className="hover:text-[var(--color-foreground)] transition-colors">사이트맵</a>
+              <a href="/sitemap.xml" className="min-h-[44px] sm:min-h-0 flex items-center px-1 hover:text-[var(--color-foreground)] transition-colors touch-manipulation">사이트맵</a>
             </div>
             <p>본 서비스는 님블뉴런의 Open API를 활용하여 제작되었습니다. 게임 관련 이미지 및 데이터의 저작권은 (주)님블뉴런에 있습니다.</p>
             <p>본 사이트는 님블뉴런의 공식 서비스가 아니며, 이용 중 발생하는 문제에 대해 회사는 책임지지 않습니다.</p>
