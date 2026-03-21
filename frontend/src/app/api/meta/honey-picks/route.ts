@@ -29,7 +29,16 @@ export interface HoneyPickData {
   honeyScore: number;
 }
 
-function computeRates(rows: StatRow[]) {
+interface ComputedRate {
+  characterNum: number;
+  bestWeapon: number;
+  totalGames: number;
+  pickRate: number;
+  winRate: number;
+  averageRP: number;
+}
+
+function computeRates(rows: StatRow[]): ComputedRate[] {
   const grandTotal = rows.reduce((sum, r) => sum + (r.totalGames ?? 0), 0);
   return rows.map((r) => ({
     characterNum: r.characterNum,
@@ -97,7 +106,7 @@ export async function GET(request: NextRequest) {
 
     // v2에 이전 패치 데이터 없으면 old 테이블 fallback
     if (data && previousPatch) {
-      const hasV2Prev = data.some((r: any) => r.patchVersion === previousPatch)
+      const hasV2Prev = data.some((r: { patchVersion: string }) => r.patchVersion === previousPatch)
       if (!hasV2Prev) {
         const { data: oldData } = await supabase
           .from("CharacterStats")

@@ -99,7 +99,7 @@ export async function fetchRankingData(
 
   // v2에 이전 패치 데이터 없으면 old 테이블 fallback 병합
   if (previousPatch && data) {
-    const hasV2Prev = data.some((r: any) => r.patchVersion === previousPatch)
+    const hasV2Prev = data.some((r: { patchVersion: string }) => r.patchVersion === previousPatch)
     if (!hasV2Prev) {
       const { data: oldData } = await supabase
         .from("CharacterStats")
