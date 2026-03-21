@@ -3,7 +3,7 @@
 import * as React from "react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
-import { getCharacterImageUrl } from "@/lib/characterMap"
+import { getCharacterMiniWebpUrl } from "@/lib/characterMap"
 import type { TrioResult } from "./types"
 
 export function ComboCard({
@@ -61,7 +61,7 @@ export function ComboCard({
                 )}
               >
                 <Image
-                  src={getCharacterImageUrl(code)}
+                  src={getCharacterMiniWebpUrl(code)}
                   alt={getCharName(code)}
                   fill
                   className="object-cover"

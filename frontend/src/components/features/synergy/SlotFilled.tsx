@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import { X } from "lucide-react"
-import { getCharacterImageUrl } from "@/lib/characterMap"
+import { getCharacterMiniWebpUrl } from "@/lib/characterMap"
 
 export function SlotFilled({
   code,
@@ -17,7 +17,7 @@ export function SlotFilled({
     <div className="flex flex-1 items-center gap-3 rounded-lg border border-[var(--color-primary)]/50 bg-[var(--color-primary)]/10 px-4 py-3">
       <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-[var(--color-border)]">
         <Image
-          src={getCharacterImageUrl(code)}
+          src={getCharacterMiniWebpUrl(code)}
           alt={name}
           fill
           className="object-cover"
