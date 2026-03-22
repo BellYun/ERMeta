@@ -5,10 +5,10 @@ export function computeMetaScores(rankings: CharacterRankingData[]): Map<number,
   const n = rankings.length
   if (n === 0) return new Map()
 
-  const vals = (fn: (r: CharacterRankingData) => number) => rankings.map(fn)
+  const vals = (fn: (r: CharacterRankingData) => number): number[] => rankings.map(fn)
 
-  const mean = (arr: number[]) => arr.reduce((s, v) => s + v, 0) / arr.length
-  const std = (arr: number[], m: number) =>
+  const mean = (arr: number[]): number => arr.reduce((s, v) => s + v, 0) / arr.length
+  const std = (arr: number[], m: number): number =>
     Math.sqrt(arr.reduce((s, v) => s + (v - m) ** 2, 0) / arr.length)
 
   const winRates = vals((r) => r.winRate)

@@ -96,7 +96,7 @@ export function useCarousel(picks: HoneyPickData[]) {
   const isHorizontalDrag = React.useRef(false)
   const dragDetermined = React.useRef(false)
 
-  const handleDragStart = (clientX: number, clientY?: number) => {
+  const handleDragStart = (clientX: number, clientY?: number): void => {
     stopAutoSlide()
     setIsDragging(true)
     setDragStartX(clientX)
@@ -106,7 +106,7 @@ export function useCarousel(picks: HoneyPickData[]) {
     setDragOffset(0)
   }
 
-  const handleDragMove = (clientX: number, clientY?: number) => {
+  const handleDragMove = (clientX: number, clientY?: number): void => {
     if (!isDragging) return
     const dx = clientX - dragStartX
     const dy = (clientY ?? 0) - dragStartY.current
@@ -121,8 +121,8 @@ export function useCarousel(picks: HoneyPickData[]) {
     setDragOffset(dx)
   }
 
-  const handleDragEnd = () => {
-    if (!isDragging) return
+  const handleDragEnd = (): boolean => {
+    if (!isDragging) return false
     const wasDragging = Math.abs(dragOffset) > 5
     setIsDragging(false)
     const threshold = 50
