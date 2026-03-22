@@ -10,7 +10,7 @@ import { resolveCharacterName } from "@/lib/characterMap"
 import { analytics } from "@/lib/analytics"
 import { useFocusCharWeapons } from "@/hooks/useFocusCharWeapons"
 import type { TrioWeaponResult, SortBy } from "./types"
-import { ALL_CHARACTER_CODES, FALLBACK_MAP, SORT_OPTIONS } from "../synergy/constants"
+import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "../synergy/constants"
 import { ComboWeaponCard, type GroupedCombo } from "./ComboWeaponCard"
 
 /** mainCore 무시하고 캐릭터+무기 기준으로 그룹화 */
@@ -72,7 +72,7 @@ export function SynergyDetailResults() {
     const w1 = searchParams.get("w1")
     if (a1) {
       const code = parseInt(a1, 10)
-      if (!isNaN(code) && ALL_CHARACTER_CODES.includes(code)) {
+      if (!isNaN(code) && getAllCharacterCodes().includes(code)) {
         allies.push({ charCode: code, weaponCode: w1 ? parseInt(w1, 10) || null : null })
       }
     }
@@ -80,7 +80,7 @@ export function SynergyDetailResults() {
     const w2 = searchParams.get("w2")
     if (a2) {
       const code = parseInt(a2, 10)
-      if (!isNaN(code) && ALL_CHARACTER_CODES.includes(code) && !allies.some((a) => a.charCode === code)) {
+      if (!isNaN(code) && getAllCharacterCodes().includes(code) && !allies.some((a) => a.charCode === code)) {
         allies.push({ charCode: code, weaponCode: w2 ? parseInt(w2, 10) || null : null })
       }
     }
@@ -97,7 +97,7 @@ export function SynergyDetailResults() {
   const [traitNames, setTraitNames] = React.useState<Record<number, string>>({})
 
   const getCharName = React.useCallback(
-    (code: number) => resolveCharacterName(code, l10n, FALLBACK_MAP),
+    (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
     [l10n]
   )
   const getTraitName = React.useCallback(

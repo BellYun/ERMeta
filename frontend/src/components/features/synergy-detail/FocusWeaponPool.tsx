@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMap"
 import { useL10n } from "@/components/L10nProvider"
 import { useFocusCharWeapons } from "@/hooks/useFocusCharWeapons"
-import { FALLBACK_MAP } from "../synergy/constants"
+import { getFallbackMap } from "../synergy/constants"
 import { matchesChosungSearch } from "../synergy/utils"
 import { ALL_CHAR_WEAPON_ITEMS, type CharWeaponItem } from "./WeaponAllySelector"
 
@@ -67,7 +67,7 @@ export function FocusWeaponPool() {
   const [columns, setColumns] = React.useState(4)
 
   const getCharName = React.useCallback(
-    (code: number) => resolveCharacterName(code, l10n, FALLBACK_MAP),
+    (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
     [l10n]
   )
 

@@ -6,9 +6,11 @@ import { X, Search, ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMap"
 import { useL10n } from "@/components/L10nProvider"
-import { VirtualCharacterGrid } from "@/components/ui/VirtualCharacterGrid"
+const VirtualCharacterGrid = React.lazy(() =>
+  import("@/components/ui/VirtualCharacterGrid").then((m) => ({ default: m.VirtualCharacterGrid }))
+)
 import { useFocusCharacters } from "@/hooks/useFocusCharacters"
-import { ALL_CHARACTER_CODES, FALLBACK_MAP } from "./constants"
+import { getAllCharacterCodes, getFallbackMap } from "./constants"
 import { matchesChosungSearch } from "./utils"
 
 /**
@@ -22,16 +24,16 @@ export function FocusCharacterPool() {
   const [focusSearch, setFocusSearch] = React.useState("")
 
   const getCharName = React.useCallback(
-    (code: number) => resolveCharacterName(code, l10n, FALLBACK_MAP),
+    (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
     [l10n]
   )
 
   const deferredSearch = React.useDeferredValue(focusSearch)
 
   const filteredFocusCodes = React.useMemo(() => {
-    if (!deferredSearch.trim()) return ALL_CHARACTER_CODES
+    if (!deferredSearch.trim()) return getAllCharacterCodes()
     const q = deferredSearch.trim()
-    return ALL_CHARACTER_CODES.filter((code) =>
+    return getAllCharacterCodes().filter((code) =>
       matchesChosungSearch(getCharName(code), q)
     )
   }, [deferredSearch, getCharName])
@@ -130,13 +132,15 @@ export function FocusCharacterPool() {
             )}
           </div>
 
-          <VirtualCharacterGrid
-            codes={filteredFocusCodes}
-            getCharName={getCharName}
-            isSelected={isSelected}
-            onSelect={toggleFocus}
-            maxHeight="300px"
-          />
+          <React.Suspense fallback={<div className="h-[300px] rounded-lg bg-[var(--color-surface-2)] animate-pulse" />}>
+            <VirtualCharacterGrid
+              codes={filteredFocusCodes}
+              getCharName={getCharName}
+              isSelected={isSelected}
+              onSelect={toggleFocus}
+              maxHeight="300px"
+            />
+          </React.Suspense>
         </div>
       )}
     </div>
