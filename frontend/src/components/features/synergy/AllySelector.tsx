@@ -23,6 +23,15 @@ export function AllySelector() {
   const pathname = usePathname()
   const [allySearch, setAllySearch] = React.useState("")
 
+  // 유휴 시간에 미리 초기화 → 첫 터치 시 이미 준비 완료
+  React.useEffect(() => {
+    const id = requestIdleCallback(() => {
+      getFallbackMap()
+      getAllCharacterCodes()
+    })
+    return () => cancelIdleCallback(id)
+  }, [])
+
   const getCharName = React.useCallback(
     (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
     [l10n]
