@@ -12,7 +12,9 @@ import { useFocusCharacters } from "@/hooks/useFocusCharacters"
 import type { TrioResult, SortBy } from "./types"
 import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "./constants"
 import { getSortValue, getThirdCharacter, deduplicateResults } from "./utils"
-import { ComboCard } from "./ComboCard"
+const ComboCard = React.lazy(() =>
+  import("./ComboCard").then((m) => ({ default: m.ComboCard }))
+)
 
 /**
  * 시너지 결과 Island — URL params(ally1,ally2) + localStorage(focusCharacters) 기반
@@ -237,18 +239,20 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                 1명 더 선택하면 더 정확한 추천을 받을 수 있어요
               </p>
             )}
-            {recommendations.map((rec, i) => (
-              <ComboCard
-                key={`${rec.character1}-${rec.character2}-${rec.character3}`}
-                rec={rec}
-                rank={i + 1}
-                getCharName={getCharName}
-                selectedAllies={selectedAllies}
-                compact={compact}
-                priorityImages={i < 5}
-                onNavigateAnalysis={(code) => router.push(`/character-analysis?character=${code}`)}
-              />
-            ))}
+            <React.Suspense fallback={<div className="h-64 rounded-xl bg-[var(--color-surface-2)] animate-pulse" />}>
+              {recommendations.map((rec, i) => (
+                <ComboCard
+                  key={`${rec.character1}-${rec.character2}-${rec.character3}`}
+                  rec={rec}
+                  rank={i + 1}
+                  getCharName={getCharName}
+                  selectedAllies={selectedAllies}
+                  compact={compact}
+                  priorityImages={i < 5}
+                  onNavigateAnalysis={(code) => router.push(`/character-analysis?character=${code}`)}
+                />
+              ))}
+            </React.Suspense>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
