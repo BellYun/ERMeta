@@ -6,7 +6,9 @@ import { X, Search, ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMap"
 import { useL10n } from "@/components/L10nProvider"
-import { VirtualCharacterGrid } from "@/components/ui/VirtualCharacterGrid"
+const VirtualCharacterGrid = React.lazy(() =>
+  import("@/components/ui/VirtualCharacterGrid").then((m) => ({ default: m.VirtualCharacterGrid }))
+)
 import { useFocusCharacters } from "@/hooks/useFocusCharacters"
 import { getAllCharacterCodes, getFallbackMap } from "./constants"
 import { matchesChosungSearch } from "./utils"
@@ -130,13 +132,15 @@ export function FocusCharacterPool() {
             )}
           </div>
 
-          <VirtualCharacterGrid
-            codes={filteredFocusCodes}
-            getCharName={getCharName}
-            isSelected={isSelected}
-            onSelect={toggleFocus}
-            maxHeight="300px"
-          />
+          <React.Suspense fallback={<div className="h-[300px] rounded-lg bg-[var(--color-surface-2)] animate-pulse" />}>
+            <VirtualCharacterGrid
+              codes={filteredFocusCodes}
+              getCharName={getCharName}
+              isSelected={isSelected}
+              onSelect={toggleFocus}
+              maxHeight="300px"
+            />
+          </React.Suspense>
         </div>
       )}
     </div>
