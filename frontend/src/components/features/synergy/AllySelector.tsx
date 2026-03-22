@@ -7,7 +7,7 @@ import { useL10n } from "@/components/L10nProvider"
 import { resolveCharacterName } from "@/lib/characterMap"
 import { VirtualCharacterGrid } from "@/components/ui/VirtualCharacterGrid"
 import { analytics } from "@/lib/analytics"
-import { ALL_CHARACTER_CODES, FALLBACK_MAP } from "./constants"
+import { getAllCharacterCodes, getFallbackMap } from "./constants"
 import { matchesChosungSearch } from "./utils"
 import { SlotEmpty } from "./SlotEmpty"
 import { SlotFilled } from "./SlotFilled"
@@ -24,7 +24,7 @@ export function AllySelector() {
   const [allySearch, setAllySearch] = React.useState("")
 
   const getCharName = React.useCallback(
-    (code: number) => resolveCharacterName(code, l10n, FALLBACK_MAP),
+    (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
     [l10n]
   )
 
@@ -35,11 +35,11 @@ export function AllySelector() {
     const a2 = searchParams.get("ally2")
     if (a1) {
       const code = parseInt(a1, 10)
-      if (!isNaN(code) && ALL_CHARACTER_CODES.includes(code)) allies.push(code)
+      if (!isNaN(code) && getAllCharacterCodes().includes(code)) allies.push(code)
     }
     if (a2) {
       const code = parseInt(a2, 10)
-      if (!isNaN(code) && ALL_CHARACTER_CODES.includes(code) && !allies.includes(code)) allies.push(code)
+      if (!isNaN(code) && getAllCharacterCodes().includes(code) && !allies.includes(code)) allies.push(code)
     }
     return allies
   }, [searchParams])
@@ -77,9 +77,9 @@ export function AllySelector() {
   const deferredSearch = React.useDeferredValue(allySearch)
 
   const filteredAllyCodes = React.useMemo(() => {
-    if (!deferredSearch.trim()) return ALL_CHARACTER_CODES
+    if (!deferredSearch.trim()) return getAllCharacterCodes()
     const q = deferredSearch.trim()
-    return ALL_CHARACTER_CODES.filter((code) =>
+    return getAllCharacterCodes().filter((code) =>
       matchesChosungSearch(getCharName(code), q)
     )
   }, [deferredSearch, getCharName])

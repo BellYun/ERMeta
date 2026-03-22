@@ -8,7 +8,7 @@ import { useVirtualizer } from "@tanstack/react-virtual"
 import { useL10n } from "@/components/L10nProvider"
 import { resolveCharacterName, getCharacterMiniWebpUrl } from "@/lib/characterMap"
 import { cn } from "@/lib/utils"
-import { FALLBACK_MAP, EXCLUDED_CHARACTER_CODES } from "../synergy/constants"
+import { getFallbackMap, EXCLUDED_CHARACTER_CODES } from "../synergy/constants"
 import { matchesChosungSearch } from "../synergy/utils"
 import { SlotEmpty } from "../synergy/SlotEmpty"
 import characterBestWeapons from "@/../const/characterBestWeapons.json"
@@ -32,10 +32,10 @@ const SINGLE_ENTRY_CHARS = new Set([27])
 /** 캐릭터+무기 플랫 리스트 (가나다순, 기본무기 우선) */
 export const ALL_CHAR_WEAPON_ITEMS: CharWeaponItem[] = (() => {
   const items: CharWeaponItem[] = []
-  const sortedCodes = Array.from(FALLBACK_MAP.keys())
+  const sortedCodes = Array.from(getFallbackMap().keys())
     .filter((code) => !EXCLUDED_CHARACTER_CODES.has(code))
     .sort((a, b) =>
-      (FALLBACK_MAP.get(a) ?? "").localeCompare(FALLBACK_MAP.get(b) ?? "", "ko")
+      (getFallbackMap().get(a) ?? "").localeCompare(getFallbackMap().get(b) ?? "", "ko")
     )
 
   for (const charCode of sortedCodes) {
@@ -142,7 +142,7 @@ export function WeaponAllySelector() {
   const [columns, setColumns] = React.useState(4)
 
   const getCharName = React.useCallback(
-    (code: number) => resolveCharacterName(code, l10n, FALLBACK_MAP),
+    (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
     [l10n]
   )
 

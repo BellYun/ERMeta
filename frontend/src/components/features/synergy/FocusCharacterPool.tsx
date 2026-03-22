@@ -8,7 +8,7 @@ import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMa
 import { useL10n } from "@/components/L10nProvider"
 import { VirtualCharacterGrid } from "@/components/ui/VirtualCharacterGrid"
 import { useFocusCharacters } from "@/hooks/useFocusCharacters"
-import { ALL_CHARACTER_CODES, FALLBACK_MAP } from "./constants"
+import { getAllCharacterCodes, getFallbackMap } from "./constants"
 import { matchesChosungSearch } from "./utils"
 
 /**
@@ -22,16 +22,16 @@ export function FocusCharacterPool() {
   const [focusSearch, setFocusSearch] = React.useState("")
 
   const getCharName = React.useCallback(
-    (code: number) => resolveCharacterName(code, l10n, FALLBACK_MAP),
+    (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
     [l10n]
   )
 
   const deferredSearch = React.useDeferredValue(focusSearch)
 
   const filteredFocusCodes = React.useMemo(() => {
-    if (!deferredSearch.trim()) return ALL_CHARACTER_CODES
+    if (!deferredSearch.trim()) return getAllCharacterCodes()
     const q = deferredSearch.trim()
-    return ALL_CHARACTER_CODES.filter((code) =>
+    return getAllCharacterCodes().filter((code) =>
       matchesChosungSearch(getCharName(code), q)
     )
   }, [deferredSearch, getCharName])

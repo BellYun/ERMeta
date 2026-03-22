@@ -10,7 +10,7 @@ import { resolveCharacterName } from "@/lib/characterMap"
 import { analytics } from "@/lib/analytics"
 import { useFocusCharacters } from "@/hooks/useFocusCharacters"
 import type { TrioResult, SortBy } from "./types"
-import { ALL_CHARACTER_CODES, FALLBACK_MAP, SORT_OPTIONS } from "./constants"
+import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "./constants"
 import { getSortValue, getThirdCharacter, deduplicateResults } from "./utils"
 import { ComboCard } from "./ComboCard"
 
@@ -31,11 +31,11 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
     const a2 = searchParams.get("ally2")
     if (a1) {
       const code = parseInt(a1, 10)
-      if (!isNaN(code) && ALL_CHARACTER_CODES.includes(code)) allies.push(code)
+      if (!isNaN(code) && getAllCharacterCodes().includes(code)) allies.push(code)
     }
     if (a2) {
       const code = parseInt(a2, 10)
-      if (!isNaN(code) && ALL_CHARACTER_CODES.includes(code) && !allies.includes(code)) allies.push(code)
+      if (!isNaN(code) && getAllCharacterCodes().includes(code) && !allies.includes(code)) allies.push(code)
     }
     return allies
   }, [searchParams])
@@ -47,7 +47,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
   const [copied, setCopied] = React.useState(false)
 
   const getCharName = React.useCallback(
-    (code: number) => resolveCharacterName(code, l10n, FALLBACK_MAP),
+    (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
     [l10n]
   )
 
