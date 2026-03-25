@@ -58,7 +58,6 @@ function SubSlotRow({
   traitNames: Record<number, string>
 }) {
   if (options.length === 0) return null
-  const _maxPick = 100 // 픽률은 전체 대비 %이므로 100 기준
   return (
     <div className="flex items-start gap-1.5 sm:gap-3 px-2 sm:px-4 py-2">
       <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-7 sm:w-10">
@@ -510,7 +509,6 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
     <div className="space-y-4">
       {/* 메인 특성 선택 */}
       {(() => {
-        const _maxTraitPick = 100 // 픽률은 전체 대비 %이므로 100 기준
         return (
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-2.5 sm:p-4">
           <p className="mb-1.5 sm:mb-3 text-[11px] sm:text-xs font-semibold text-[var(--color-muted-foreground)]">메인 특성</p>
