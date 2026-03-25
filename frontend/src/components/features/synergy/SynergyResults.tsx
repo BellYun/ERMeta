@@ -223,9 +223,28 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
             </div>
           </div>
         ) : loading ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16">
-            <Loader2 className="mb-2 h-8 w-8 animate-spin text-[var(--color-primary)]" />
-            <p className="text-sm text-[var(--color-muted-foreground)]">조합 데이터 로딩 중...</p>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2 py-2">
+              <Loader2 className="h-4 w-4 animate-spin text-[var(--color-primary)]" />
+              <p className="text-sm text-[var(--color-muted-foreground)]">조합 데이터 로딩 중...</p>
+            </div>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-3 animate-pulse"
+              >
+                <div className="h-6 w-6 rounded-full bg-[var(--color-surface-2)]" />
+                <div className="flex gap-2">
+                  {[0, 1, 2].map((j) => (
+                    <div key={j} className="h-10 w-10 rounded-md bg-[var(--color-surface-2)]" />
+                  ))}
+                </div>
+                <div className="ml-auto flex gap-4">
+                  <div className="h-4 w-16 rounded bg-[var(--color-surface-2)]" />
+                  <div className="h-4 w-16 rounded bg-[var(--color-surface-2)]" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16">

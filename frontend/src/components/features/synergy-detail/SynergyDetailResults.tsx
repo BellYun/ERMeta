@@ -94,6 +94,7 @@ export function SynergyDetailResults() {
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const [copied, setCopied] = React.useState(false)
+  const [visibleCount, setVisibleCount] = React.useState(30)
   const [traitNames, setTraitNames] = React.useState<Record<number, string>>({})
 
   const getCharName = React.useCallback(
@@ -109,7 +110,10 @@ export function SynergyDetailResults() {
   React.useEffect(() => {
     fetch("/api/traits/names")
       .then((res) => res.json())
-      .then((d) => setTraitNames(d.names ?? {}))
+      .then((d) => {
+        console.log("[SynergyDetailResults] traitNames:", d.names)
+        setTraitNames(d.names ?? {})
+      })
       .catch(() => {})
   }, [])
 
@@ -143,6 +147,7 @@ export function SynergyDetailResults() {
         .then(async (res) => {
           const data = await res.json()
           if (!res.ok) throw new Error(data.error ?? "API 오류")
+          console.log("[SynergyDetailResults] API response:", data.results)
           setResults(data.results ?? [])
         })
         .catch((err) => {
@@ -157,6 +162,7 @@ export function SynergyDetailResults() {
     }, 300)
 
     setLoading(true)
+    setVisibleCount(30)
     return () => {
       clearTimeout(timerId)
       controller.abort()
@@ -222,7 +228,7 @@ export function SynergyDetailResults() {
       grouped.sort((a, b) => b.totalGames - a.totalGames)
     }
 
-    return grouped.slice(0, 30)
+    return grouped
   }, [results, selectedAllies, selectedCharCodes, focusCharWeapons, sortBy])
 
   const clearAllies = React.useCallback(() => {
@@ -312,9 +318,28 @@ export function SynergyDetailResults() {
             </div>
           </div>
         ) : loading ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16">
-            <Loader2 className="mb-2 h-8 w-8 animate-spin text-[var(--color-primary)]" />
-            <p className="text-sm text-[var(--color-muted-foreground)]">조합 데이터 로딩 중...</p>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2 py-2">
+              <Loader2 className="h-4 w-4 animate-spin text-[var(--color-primary)]" />
+              <p className="text-sm text-[var(--color-muted-foreground)]">조합 데이터 로딩 중...</p>
+            </div>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-3 animate-pulse"
+              >
+                <div className="h-6 w-6 rounded-full bg-[var(--color-surface-2)]" />
+                <div className="flex gap-2">
+                  {[0, 1, 2].map((j) => (
+                    <div key={j} className="h-10 w-10 rounded-md bg-[var(--color-surface-2)]" />
+                  ))}
+                </div>
+                <div className="ml-auto flex gap-4">
+                  <div className="h-4 w-16 rounded bg-[var(--color-surface-2)]" />
+                  <div className="h-4 w-16 rounded bg-[var(--color-surface-2)]" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16">
@@ -334,7 +359,7 @@ export function SynergyDetailResults() {
                 조합을 클릭하면 특성별 브레이크다운을 볼 수 있어요
               </p>
             )}
-            {recommendations.map((group, i) => (
+            {recommendations.slice(0, visibleCount).map((group, i) => (
               <ComboWeaponCard
                 key={`${group.character1}-${group.weaponType1}-${group.character2}-${group.weaponType2}-${group.character3}-${group.weaponType3}`}
                 group={group}
@@ -344,6 +369,15 @@ export function SynergyDetailResults() {
                 selectedCharCodes={selectedCharCodes}
               />
             ))}
+            {recommendations.length > visibleCount && (
+              <button
+                type="button"
+                onClick={() => setVisibleCount((prev) => prev + 30)}
+                className="w-full py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 text-sm font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)] transition-colors"
+              >
+                더보기 ({visibleCount}/{recommendations.length})
+              </button>
+            )}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">

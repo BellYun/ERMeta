@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { ChevronDown } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap"
 import { resolveWeaponName } from "@/lib/weaponMap"
@@ -74,9 +74,13 @@ export function ComboWeaponCard({
   )
 
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 transition-all duration-200 hover:border-[var(--color-primary)]/20">
-      {/* 메인 행 */}
-      <div className="flex items-center gap-2 px-3 py-2.5">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 transition-all duration-200">
+      {/* 메인 행 — 클릭으로 특성 토글 */}
+      <button
+        type="button"
+        onClick={() => setShowTraits((prev) => !prev)}
+        className="w-full flex items-center gap-2 px-3 py-2.5 text-left cursor-pointer rounded-xl hover:bg-[var(--color-surface-2)]/60 transition-colors"
+      >
         {/* 순위 */}
         <span className="w-5 shrink-0 text-center text-xs font-bold text-[var(--color-muted-foreground)]">
           {rank}
@@ -91,7 +95,7 @@ export function ComboWeaponCard({
                 <div className="flex flex-col items-center gap-0.5">
                   <div
                     className={cn(
-                      "relative h-8 w-8 overflow-hidden rounded-md bg-[var(--color-border)]",
+                      "relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
                       isRecommended && "ring-2 ring-[var(--color-accent-gold)]"
                     )}
                   >
@@ -100,16 +104,16 @@ export function ComboWeaponCard({
                       alt={getCharName(m.char)}
                       fill
                       className="object-cover"
-                      sizes="32px"
+                      sizes="40px"
                     />
                   </div>
                   <span className={cn(
-                    "w-12 truncate text-center text-[9px]",
+                    "w-14 truncate text-center text-[11px] font-medium",
                     isRecommended ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
                   )}>
                     {getCharName(m.char)}
                   </span>
-                  <span className="text-[8px] text-[var(--color-muted-foreground)] truncate w-12 text-center">
+                  <span className="text-[10px] text-[var(--color-muted-foreground)] truncate w-14 text-center">
                     {resolveWeaponName(m.weapon)}
                   </span>
                 </div>
@@ -142,25 +146,12 @@ export function ComboWeaponCard({
             <span className="text-sm text-[var(--color-muted-foreground)]">#{group.averageRank.toFixed(1)}</span>
           </div>
 
-          {/* 특성 토글 */}
-          <button
-            type="button"
-            onClick={() => setShowTraits((prev) => !prev)}
-            className={cn(
-              "inline-flex items-center gap-1 px-2 py-1 rounded-lg border text-[10px] font-medium transition-colors shrink-0",
-              showTraits
-                ? "border-[var(--color-primary)]/50 bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
-                : "border-[var(--color-border)] text-[var(--color-muted-foreground)] hover:border-[var(--color-primary)]/30 hover:text-[var(--color-primary)]"
-            )}
-          >
-            특성
-            <ChevronDown className={cn(
-              "h-3 w-3 transition-transform duration-200",
-              showTraits && "rotate-180"
-            )} />
-          </button>
+          <ChevronRight className={cn(
+            "h-4 w-4 shrink-0 text-[var(--color-muted-foreground)] transition-transform duration-200",
+            showTraits && "rotate-90"
+          )} />
         </div>
-      </div>
+      </button>
 
       {/* 특성 브레이크다운 */}
       {showTraits && (
@@ -170,23 +161,22 @@ export function ComboWeaponCard({
               key={`${v.mainCore1}-${v.mainCore2}-${v.mainCore3}-${vi}`}
               className="flex items-center gap-2 rounded-lg bg-[var(--color-surface)]/60 px-3 py-2 border border-[var(--color-border)]/50"
             >
-              {/* 특성 3개 — 캐릭터 순서와 동일 */}
-              <div className="flex items-center gap-1.5 min-w-0">
+              {/* 순위 열과 동일한 오프셋 */}
+              <span className="w-2 shrink-0" />
+              {/* 특성 아이콘 — 캐릭터 열과 동일 gap/너비 */}
+              <div className="flex items-center gap-1">
                 {ordered.map((m, mi) => {
                   const core = getCoreForMember(m, v)
                   return (
                     <React.Fragment key={`${m.char}-trait-${vi}`}>
-                      <div className="flex flex-col items-center gap-0.5">
-                        <span className="text-[9px] text-[var(--color-muted-foreground)] truncate w-14 text-center">
-                          {getCharName(m.char)}
-                        </span>
+                      <div className="flex flex-col items-center w-14">
                         {core && core > 0 ? (
                           <TraitIcon code={core} name={getTraitName(core)} size="sm" />
                         ) : (
                           <span className="text-[9px] text-[var(--color-muted-foreground)]">-</span>
                         )}
                       </div>
-                      {mi < 2 && <span className="text-[9px] text-[var(--color-border)] mt-2">·</span>}
+                      {mi < 2 && <span className="text-[10px] text-[var(--color-border)] self-start mt-3">+</span>}
                     </React.Fragment>
                   )
                 })}

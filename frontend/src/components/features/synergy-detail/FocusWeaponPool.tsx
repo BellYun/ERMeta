@@ -12,8 +12,8 @@ import { getFallbackMap } from "../synergy/constants"
 import { matchesChosungSearch } from "../synergy/utils"
 import { ALL_CHAR_WEAPON_ITEMS, type CharWeaponItem } from "./WeaponAllySelector"
 
-const CELL_MIN_WIDTH = 80
-const ROW_HEIGHT = 88
+const CELL_MIN_WIDTH = 72
+const ROW_HEIGHT = 72
 
 const FocusCell = React.memo(function FocusCell({
   item,
@@ -31,26 +31,26 @@ const FocusCell = React.memo(function FocusCell({
       onClick={() => onSelect(item.charCode, item.weaponCode)}
       title={item.weaponLabel ? `${charName} (${item.weaponLabel})` : charName}
       className={cn(
-        "flex flex-col items-center gap-0.5 rounded-lg px-1 py-1.5 transition-colors",
+        "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors",
         selected
           ? "bg-[var(--color-primary)]/20 ring-1 ring-[var(--color-primary)]"
           : "hover:bg-[var(--color-surface-2)]"
       )}
     >
-      <div className="relative h-9 w-9 overflow-hidden rounded-md bg-[var(--color-border)]">
+      <div className="relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]">
         <Image
           src={getCharacterMiniWebpUrl(item.charCode)}
           alt={charName}
           fill
           className="object-cover"
-          sizes="36px"
+          sizes="40px"
         />
       </div>
-      <span className="w-full truncate text-center text-[10px] font-medium text-[var(--color-foreground)]">
+      <span className="w-full truncate text-center text-[11px] font-medium text-[var(--color-foreground)]">
         {charName}
       </span>
       {item.weaponLabel && (
-        <span className="w-full truncate text-center text-[9px] text-[var(--color-muted-foreground)]">
+        <span className="w-full truncate text-center text-[10px] text-[var(--color-muted-foreground)]">
           {item.weaponLabel}
         </span>
       )}
@@ -90,17 +90,20 @@ export function FocusWeaponPool() {
   )
 
   React.useEffect(() => {
+    if (!isExpanded) return
     const el = parentRef.current
     if (!el) return
+
     const update = () => {
       const width = el.clientWidth
       setColumns(Math.max(1, Math.floor(width / CELL_MIN_WIDTH)))
     }
+
     update()
     const observer = new ResizeObserver(() => update())
     observer.observe(el)
     return () => observer.disconnect()
-  }, [])
+  }, [isExpanded])
 
   const rowCount = Math.ceil(filteredItems.length / columns)
   const virtualizer = useVirtualizer({
