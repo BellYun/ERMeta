@@ -103,21 +103,24 @@ export default function SynergyPage() {
         </p>
       </section>
 
-      <div className="flex flex-col gap-4">
-        {/* Island 1: 내 캐릭터 풀 (localStorage) */}
-        <Suspense fallback={<FocusPoolSkeleton />}>
-          <FocusCharacterPool />
-        </Suspense>
+      {/* 내 캐릭터 풀 (상단 유지) */}
+      <Suspense fallback={<FocusPoolSkeleton />}>
+        <FocusCharacterPool />
+      </Suspense>
 
-        {/* Island 2: 아군 선택 (URL params) */}
-        <Suspense fallback={<AllySelectorSkeleton />}>
-          <AllySelector />
-        </Suspense>
+      {/* 아군 선택(좌) + 추천 조합(우) */}
+      <div className="flex flex-col lg:flex-row gap-4 mt-4">
+        <div className="w-full lg:w-[340px] shrink-0">
+          <Suspense fallback={<AllySelectorSkeleton />}>
+            <AllySelector />
+          </Suspense>
+        </div>
 
-        {/* Island 3: 결과 (URL + localStorage → API) */}
-        <Suspense fallback={<ResultSkeleton />}>
-          <SynergyResults />
-        </Suspense>
+        <div className="flex-1 min-w-0">
+          <Suspense fallback={<ResultSkeleton />}>
+            <SynergyResults />
+          </Suspense>
+        </div>
       </div>
     </>
   )
