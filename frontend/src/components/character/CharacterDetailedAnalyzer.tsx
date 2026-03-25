@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import { Layers } from "lucide-react"
 import { TierGroup } from "@/utils/tier"
 import { cn } from "@/lib/utils"
@@ -33,6 +34,55 @@ interface Props {
   tier: TierGroup
   patchVersion: string | null
   bestWeapon: number | null
+}
+
+// ─── 특성 아이콘 헬퍼 ────────────────────────────────────────────────────────────
+
+type TraitGroup = "havoc" | "fortification" | "support" | "cobalt" | "unknown"
+
+const GROUP_CONFIG: Record<TraitGroup, { letter: string; bg: string; text: string }> = {
+  havoc:         { letter: "포", bg: "bg-red-500/20",     text: "text-red-400" },
+  fortification: { letter: "요", bg: "bg-blue-500/20",    text: "text-blue-400" },
+  support:       { letter: "지", bg: "bg-emerald-500/20", text: "text-emerald-400" },
+  cobalt:        { letter: "코", bg: "bg-purple-500/20",  text: "text-purple-400" },
+  unknown:       { letter: "?",  bg: "bg-[var(--color-surface-2)]", text: "text-[var(--color-muted-foreground)]" },
+}
+
+function getTraitGroup(code: number): TraitGroup {
+  const prefix = Math.floor(code / 100000)
+  if (prefix === 70) return "havoc"
+  if (prefix === 71) return "fortification"
+  if (prefix === 72) return "support"
+  if (prefix === 73) return "cobalt"
+  return "unknown"
+}
+
+function TraitIconSmall({ code, size = 24 }: { code: number; size?: number }) {
+  const [imgError, setImgError] = React.useState(false)
+  const group = getTraitGroup(code)
+  const config = GROUP_CONFIG[group]
+
+  if (imgError) {
+    return (
+      <span
+        className={cn("inline-flex items-center justify-center rounded-sm shrink-0 font-bold text-[10px]", config.bg, config.text)}
+        style={{ width: size, height: size }}
+      >
+        {config.letter}
+      </span>
+    )
+  }
+
+  return (
+    <Image
+      src={`/TraitSkill/TraitSkillIcon_${code}.png`}
+      alt={String(code)}
+      width={size}
+      height={size}
+      className="shrink-0 rounded-sm"
+      onError={() => setImgError(true)}
+    />
+  )
 }
 
 // ─── 헬퍼 컴포넌트 ─────────────────────────────────────────────────────────────
@@ -508,144 +558,93 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
   return (
     <div className="space-y-4">
       {/* 메인 특성 선택 */}
-      {(() => {
-        return (
-        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-2.5 sm:p-4">
-          <p className="mb-1.5 sm:mb-3 text-[11px] sm:text-xs font-semibold text-[var(--color-muted-foreground)]">메인 특성</p>
+      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-2.5 sm:p-4">
+        <p className="mb-1.5 sm:mb-3 text-[11px] sm:text-xs font-semibold text-[var(--color-muted-foreground)]">메인 특성</p>
 
-          {/* 모바일: 가로 스크롤 */}
-          <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide sm:hidden">
-            {traitBuilds.map((group, i) => {
-              const isSelected = selectedMainCore === group.mainCore
-              const name =
-                group.mainCore != null
-                  ? (traitNames[group.mainCore] ?? String(group.mainCore))
-                  : "특성 없음"
-              const barWidth = group.groupPickRate
-              return (
-                <button
-                  key={i}
-                  onClick={() => setSelectedMainCore(group.mainCore)}
-                  className={cn(
-                    "flex flex-col rounded-lg border px-2 py-1.5 text-[11px] transition-colors min-w-[80px] shrink-0 touch-manipulation",
-                    isSelected
-                      ? "border-[var(--color-primary)] bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
-                      : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] active:border-[var(--color-primary)]/50"
+        {/* 모바일: 가로 스크롤 → sm+: flex-wrap */}
+        <div className="flex gap-1.5 sm:gap-2 overflow-x-auto sm:overflow-x-visible pb-1 sm:pb-0 scrollbar-hide sm:flex-wrap">
+          {traitBuilds.map((group, i) => {
+            const isSelected = selectedMainCore === group.mainCore
+            const name =
+              group.mainCore != null
+                ? (traitNames[group.mainCore] ?? String(group.mainCore))
+                : "특성 없음"
+            const barWidth = group.groupPickRate
+            return (
+              <button
+                key={i}
+                onClick={() => setSelectedMainCore(group.mainCore)}
+                className={cn(
+                  "flex flex-col rounded-lg border px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs transition-colors min-w-[90px] sm:min-w-[100px] shrink-0 sm:shrink touch-manipulation",
+                  isSelected
+                    ? "border-[var(--color-primary)] bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
+                    : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] active:border-[var(--color-primary)]/50 sm:hover:border-[var(--color-primary)]/50"
+                )}
+              >
+                {/* 아이콘 + 이름 */}
+                <div className="flex items-center gap-1.5">
+                  {group.mainCore != null && (
+                    <TraitIconSmall code={group.mainCore} size={22} />
                   )}
-                >
-                  <span className="font-medium truncate max-w-[72px]">{name}</span>
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <span
-                      className={cn(
-                        "text-[9px]",
-                        isSelected ? "text-[var(--color-primary)]/80" : "text-[var(--color-muted-foreground)]"
-                      )}
-                    >
-                      픽 {group.groupPickRate.toFixed(1)}%
-                    </span>
-                    <span
-                      className={cn(
-                        "text-[9px]",
-                        group.groupWinRate >= 12.5 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-danger)]"
-                      )}
-                    >
-                      승 {group.groupWinRate.toFixed(1)}%
-                    </span>
-                  </div>
-                  <div className="mt-0.5 h-0.5 w-full rounded-full bg-[var(--color-border)]">
-                    <div
-                      className={cn(
-                        "h-full rounded-full transition-all",
-                        isSelected ? "bg-[var(--color-primary)]" : "bg-[var(--color-muted-foreground)]"
-                      )}
-                      style={{ width: `${barWidth}%` }}
-                    />
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-
-          {/* 데스크탑: flex-wrap */}
-          <div className="hidden sm:flex sm:flex-wrap gap-2">
-            {traitBuilds.map((group, i) => {
-              const isSelected = selectedMainCore === group.mainCore
-              const name =
-                group.mainCore != null
-                  ? (traitNames[group.mainCore] ?? String(group.mainCore))
-                  : "특성 없음"
-              const barWidth = group.groupPickRate
-              return (
-                <button
-                  key={i}
-                  onClick={() => setSelectedMainCore(group.mainCore)}
-                  className={cn(
-                    "flex flex-col rounded-lg border px-3 py-2 text-xs transition-colors min-w-[90px]",
-                    isSelected
-                      ? "border-[var(--color-primary)] bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
-                      : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/50"
-                  )}
-                >
-                  <span className="font-medium truncate">{name}</span>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span
-                      className={cn(
-                        "text-[10px]",
-                        isSelected ? "text-[var(--color-primary)]/80" : "text-[var(--color-muted-foreground)]"
-                      )}
-                    >
-                      픽 {group.groupPickRate.toFixed(1)}%
-                    </span>
-                    <span
-                      className={cn(
-                        "text-[10px]",
-                        group.groupWinRate >= 12.5 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-danger)]"
-                      )}
-                    >
-                      승 {group.groupWinRate.toFixed(1)}%
-                    </span>
-                  </div>
-                  <div className="mt-1 h-1 w-full rounded-full bg-[var(--color-border)]">
-                    <div
-                      className={cn(
-                        "h-full rounded-full transition-all",
-                        isSelected ? "bg-[var(--color-primary)]" : "bg-[var(--color-muted-foreground)]"
-                      )}
-                      style={{ width: `${barWidth}%` }}
-                    />
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-
-          {/* 선택된 특성 요약 */}
-          {selectedGroup && (
-            <div className="mt-2 sm:mt-3 flex items-center justify-between sm:justify-start gap-2 sm:gap-4 rounded-md bg-[var(--color-surface-2)] border border-[var(--color-border)] px-2.5 sm:px-4 py-2">
-              <div className="flex items-center gap-1">
-                <span className="text-[10px] sm:text-xs text-[var(--color-muted-foreground)]">총</span>
-                <span className="text-[10px] sm:text-xs font-bold text-[var(--color-foreground)]">{selectedGroup.totalGames.toLocaleString()}판</span>
-              </div>
-              <div className="h-3 w-px bg-[var(--color-border)]" />
-              <div className="flex items-center gap-1">
-                <span className="text-[10px] sm:text-xs text-[var(--color-muted-foreground)]">픽률</span>
-                <span className="text-[10px] sm:text-xs font-bold text-[var(--color-primary)]">{selectedGroup.groupPickRate.toFixed(1)}%</span>
-              </div>
-              <div className="h-3 w-px bg-[var(--color-border)]" />
-              <div className="flex items-center gap-1">
-                <span className="text-[10px] sm:text-xs text-[var(--color-muted-foreground)]">승률</span>
-                <span className={cn(
-                  "text-[10px] sm:text-xs font-bold",
-                  selectedGroup.groupWinRate >= 12.5 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-danger)]"
-                )}>
-                  {selectedGroup.groupWinRate.toFixed(1)}%
-                </span>
-              </div>
-            </div>
-          )}
+                  <span className="font-medium truncate max-w-[60px] sm:max-w-[80px]">{name}</span>
+                </div>
+                <div className="flex items-center gap-1 sm:gap-2 mt-0.5">
+                  <span
+                    className={cn(
+                      "text-[9px] sm:text-[10px]",
+                      isSelected ? "text-[var(--color-primary)]/80" : "text-[var(--color-muted-foreground)]"
+                    )}
+                  >
+                    픽 {group.groupPickRate.toFixed(1)}%
+                  </span>
+                  <span
+                    className={cn(
+                      "text-[9px] sm:text-[10px]",
+                      group.groupWinRate >= 12.5 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-danger)]"
+                    )}
+                  >
+                    승 {group.groupWinRate.toFixed(1)}%
+                  </span>
+                </div>
+                <div className="mt-0.5 sm:mt-1 h-0.5 sm:h-1 w-full rounded-full bg-[var(--color-border)]">
+                  <div
+                    className={cn(
+                      "h-full rounded-full transition-all",
+                      isSelected ? "bg-[var(--color-primary)]" : "bg-[var(--color-muted-foreground)]"
+                    )}
+                    style={{ width: `${barWidth}%` }}
+                  />
+                </div>
+              </button>
+            )
+          })}
         </div>
-        )
-      })()}
+
+        {/* 선택된 특성 요약 */}
+        {selectedGroup && (
+          <div className="mt-2 sm:mt-3 flex items-center justify-between sm:justify-start gap-2 sm:gap-4 rounded-md bg-[var(--color-surface-2)] border border-[var(--color-border)] px-2.5 sm:px-4 py-2">
+            <div className="flex items-center gap-1">
+              <span className="text-[10px] sm:text-xs text-[var(--color-muted-foreground)]">총</span>
+              <span className="text-[10px] sm:text-xs font-bold text-[var(--color-foreground)]">{selectedGroup.totalGames.toLocaleString()}판</span>
+            </div>
+            <div className="h-3 w-px bg-[var(--color-border)]" />
+            <div className="flex items-center gap-1">
+              <span className="text-[10px] sm:text-xs text-[var(--color-muted-foreground)]">픽률</span>
+              <span className="text-[10px] sm:text-xs font-bold text-[var(--color-primary)]">{selectedGroup.groupPickRate.toFixed(1)}%</span>
+            </div>
+            <div className="h-3 w-px bg-[var(--color-border)]" />
+            <div className="flex items-center gap-1">
+              <span className="text-[10px] sm:text-xs text-[var(--color-muted-foreground)]">승률</span>
+              <span className={cn(
+                "text-[10px] sm:text-xs font-bold",
+                selectedGroup.groupWinRate >= 12.5 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-danger)]"
+              )}>
+                {selectedGroup.groupWinRate.toFixed(1)}%
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* 선택된 특성 상세 */}
       {selectedMainCore !== "NONE" && (
