@@ -12,8 +12,8 @@ import { getFallbackMap } from "../synergy/constants"
 import { matchesChosungSearch } from "../synergy/utils"
 import { ALL_CHAR_WEAPON_ITEMS, type CharWeaponItem } from "./WeaponAllySelector"
 
-const CELL_MIN_WIDTH = 80
-const ROW_HEIGHT = 88
+const CELL_MIN_WIDTH = 72
+const ROW_HEIGHT = 72
 
 const FocusCell = React.memo(function FocusCell({
   item,

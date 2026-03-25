@@ -1,5 +1,7 @@
 "use client"
 
+import * as React from "react"
+import Image from "next/image"
 import { cn } from "@/lib/utils"
 
 type TraitGroup = "havoc" | "fortification" | "support" | "cobalt" | "unknown"
@@ -21,6 +23,10 @@ function getTraitGroup(code: number): TraitGroup {
   return "unknown"
 }
 
+function getTraitIconUrl(code: number): string {
+  return `/TraitSkill/TraitSkillIcon_${code}.png`
+}
+
 export function TraitIcon({
   code,
   name,
@@ -30,25 +36,42 @@ export function TraitIcon({
   name?: string | null
   size?: "sm" | "md"
 }) {
+  const [imgError, setImgError] = React.useState(false)
   const group = getTraitGroup(code)
   const config = GROUP_CONFIG[group]
   const isSm = size === "sm"
+  const iconSize = isSm ? 32 : 36
 
   const displayName = name ?? config.label
 
   return (
     <div
-      className={cn(
-        "inline-flex items-center rounded-md ring-1",
-        config.bg, config.ring,
-        isSm ? "px-1.5 py-0.5" : "px-2 py-0.5"
-      )}
+      className="inline-flex flex-col items-center gap-0.5"
       title={displayName}
     >
+      <div className={cn(
+        "inline-flex items-center justify-center",
+        isSm ? "h-8 w-8" : "h-9 w-9"
+      )}>
+        {!imgError ? (
+          <Image
+            src={getTraitIconUrl(code)}
+            alt={displayName}
+            width={iconSize}
+            height={iconSize}
+            className="shrink-0 rounded-sm"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <span className={cn("shrink-0 font-bold", config.text, isSm ? "text-[10px]" : "text-xs")}>
+            {config.letter}
+          </span>
+        )}
+      </div>
       <span className={cn(
-        "truncate font-medium",
+        "w-14 truncate text-center font-medium",
         config.text,
-        isSm ? "text-[9px] max-w-[56px]" : "text-[10px] max-w-[72px]"
+        isSm ? "text-[9px]" : "text-[10px]"
       )}>
         {displayName}
       </span>

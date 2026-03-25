@@ -79,8 +79,8 @@ function parseAllyFromParams(
 
 // ─── 셀 ──────────────────────────────────────────────────────────────────
 
-const CELL_MIN_WIDTH = 80
-const ROW_HEIGHT = 88
+const CELL_MIN_WIDTH = 72
+const ROW_HEIGHT = 72
 
 const CharWeaponCell = React.memo(function CharWeaponCell({
   item,
