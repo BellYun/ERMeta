@@ -125,6 +125,8 @@ export const CHARACTER_JOB_GROUP_MAP: Record<number, JobGroupKey> = {
   83: JOB_GROUP.RANGED_DEALER,
   84: JOB_GROUP.SUPPORT,
   85: JOB_GROUP.WARRIOR,
+  86: JOB_GROUP.WARRIOR,
+  87: JOB_GROUP.SKILL_DEALER,
 };
 
 export function getJobGroupForCharacter(characterCode: number): JobGroupKey | undefined {
