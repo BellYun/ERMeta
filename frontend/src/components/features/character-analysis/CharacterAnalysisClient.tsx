@@ -235,7 +235,7 @@ export function CharacterAnalysisClient({
       />
 
       {/* ── Analysis Content (Right) ── */}
-      <div className="flex flex-1 flex-col gap-4 sm:gap-5 min-w-0">
+      <div className="flex flex-1 flex-col gap-4 sm:gap-5 min-w-0 overflow-x-auto">
         <CharacterHeader
           selectedCode={selectedCode}
           selectedTier={selectedTier}

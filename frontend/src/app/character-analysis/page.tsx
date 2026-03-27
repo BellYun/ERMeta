@@ -116,7 +116,7 @@ export default async function CharacterAnalysisPage({ searchParams }: Props) {
         <div className="absolute bottom-0 inset-x-0 section-divider" />
       </section>
 
-      <div className="reveal reveal-d2 mt-5 sm:mt-7">
+      <div className="reveal reveal-d2 mt-5 sm:mt-7 overflow-x-auto">
         <Suspense>
           <CharacterAnalysisClient
             initialPatches={patches}
