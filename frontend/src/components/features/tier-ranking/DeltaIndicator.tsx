@@ -14,8 +14,8 @@ export function DeltaIndicator({ current, previous, suffix = "", precision = 1 }
   return (
     <span
       className={cn(
-        "text-xs font-medium",
-        isPositive ? "text-green-400" : "text-red-400"
+        "text-[11px] tabular-nums",
+        isPositive ? "text-[var(--color-stat-up)]" : "text-[var(--color-stat-down)]"
       )}
     >
       {isPositive ? "+" : ""}{diff.toFixed(precision)}{suffix}

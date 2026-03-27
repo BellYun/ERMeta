@@ -44,7 +44,7 @@ function TabsList({ className, children }: { className?: string; children: React
   return (
     <div
       className={cn(
-        "flex items-center rounded-lg bg-[var(--color-surface-2)] p-1 gap-0.5 border border-[var(--color-border)]/50",
+        "flex items-center rounded-lg bg-[var(--color-surface-2)] p-0.5 gap-0.5",
         "overflow-x-auto scrollbar-hide flex-nowrap",
         "sm:inline-flex",
         "[scroll-snap-type:x_mandatory]",
@@ -70,10 +70,10 @@ function TabsTrigger({ value, className, children }: TabsTriggerProps) {
     <button
       onClick={() => onValueChange(value)}
       className={cn(
-        "inline-flex items-center justify-center rounded-md px-2.5 sm:px-3 py-2 sm:py-1.5 text-xs sm:text-sm font-medium transition-all duration-200 min-h-[44px] sm:min-h-0 touch-manipulation shrink-0 [scroll-snap-align:start]",
+        "inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors min-h-[36px] sm:min-h-0 touch-manipulation shrink-0 [scroll-snap-align:start]",
         isActive
-          ? "bg-[var(--color-primary)]/15 text-[var(--color-primary)] shadow-[0_0_8px_var(--color-primary-glow)]"
-          : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-3)]",
+          ? "bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
+          : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]",
         className
       )}
     >

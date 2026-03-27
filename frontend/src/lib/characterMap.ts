@@ -87,6 +87,7 @@ const CHARACTER_NAMES: Record<number, string> = {
   84: "블레어",
   85: "미르카",
   86: "펜리르",
+  87: "코렐라인",
   9998: "Dr. 하나",
   9999: "나쟈",
 };
@@ -207,6 +208,7 @@ const CHARACTER_MINI_IMAGES: Record<number, string> = {
   84: "/CharactER/084.%20Blair/02.%20Default/Mini.png",
   85: "/CharactER/085.%20Mirka/02.%20Default/Mini.png",
   86: "/CharactER/086.%20Fenrir/02.%20Default/Mini.png",
+  87: "/CharactER/087.%20Coraline/02.%20Default/Mini.png",
 };
 
 /** characterNum으로 Mini 이미지 경로 반환. 없으면 placeholder. */
@@ -269,6 +271,7 @@ const COMBO_ROLES: Record<string, CharacterRole[]> = {
   "74_3":  ["전사"],               // 다르코+방망이
   "22_3":  ["전사"],               // 루크+방망이
   "86_1":  ["전사"],               // 펜리르+글러브
+  "87_24": ["스킬딜러"],           // 코렐라인+아르카나
   "11_18": ["전사"],               // 유키+쌍검
   "14_21": ["전사"],               // 키아라+레이피어
   "1_15":  ["전사"],               // 재키+단검

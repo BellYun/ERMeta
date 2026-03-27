@@ -731,5 +731,12 @@
       "label": "양손검",
       "isDefault": true
     }
+  ],
+  "87": [
+    {
+      "weaponCode": 24,
+      "label": "아르카나",
+      "isDefault": true
+    }
   ]
 }

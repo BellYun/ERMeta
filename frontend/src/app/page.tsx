@@ -24,51 +24,30 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 }
 
-/* ─── Skeleton Fallbacks ─── */
+/* ─── Skeletons ─── */
 
 function HoneyPicksSkeleton() {
   return (
-    <div className="flex gap-3 overflow-hidden">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <div
-          key={i}
-          className="flex-shrink-0 w-36 sm:w-44 h-48 sm:h-56 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] animate-pulse"
-        />
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-[1fr_1fr_1fr_1fr_1fr] gap-3">
+      <div className="col-span-2 sm:col-span-1 md:col-span-2 md:row-span-2 aspect-[3/4] md:aspect-auto rounded-2xl bg-[var(--color-surface)] animate-pulse" />
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="aspect-[4/5] rounded-xl bg-[var(--color-surface)] animate-pulse" />
       ))}
     </div>
   )
 }
 
-function TierRankingSkeleton() {
+function RankingSkeleton() {
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
-      {/* 테이블 헤더 */}
-      <div className="flex items-center gap-4 px-4 py-3 border-b border-[var(--color-border)]">
-        <div className="h-4 w-8 rounded bg-[var(--color-surface-2)] animate-pulse" />
-        <div className="h-4 w-24 rounded bg-[var(--color-surface-2)] animate-pulse" />
-        <div className="h-4 w-16 rounded bg-[var(--color-surface-2)] animate-pulse ml-auto" />
-        <div className="h-4 w-16 rounded bg-[var(--color-surface-2)] animate-pulse" />
-        <div className="h-4 w-16 rounded bg-[var(--color-surface-2)] animate-pulse" />
-      </div>
-      {/* 테이블 행 */}
-      {Array.from({ length: 10 }).map((_, i) => (
-        <div
-          key={i}
-          className="flex items-center gap-4 px-4 py-3 border-b border-[var(--color-border)] last:border-b-0"
-        >
-          <div className="h-4 w-6 rounded bg-[var(--color-surface-2)] animate-pulse" />
-          <div className="h-8 w-8 rounded-full bg-[var(--color-surface-2)] animate-pulse" />
-          <div className="h-4 w-20 rounded bg-[var(--color-surface-2)] animate-pulse" />
-          <div className="h-5 w-10 rounded-full bg-[var(--color-surface-2)] animate-pulse ml-auto" />
-          <div className="h-4 w-14 rounded bg-[var(--color-surface-2)] animate-pulse" />
-          <div className="h-4 w-14 rounded bg-[var(--color-surface-2)] animate-pulse" />
-        </div>
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+      {Array.from({ length: 15 }).map((_, i) => (
+        <div key={i} className="aspect-[3/4] rounded-xl bg-[var(--color-surface)] animate-pulse" />
       ))}
     </div>
   )
 }
 
-/* ─── 독립 Async Server Components (각자 fetch → 준비되는 즉시 스트리밍) ─── */
+/* ─── Async Streams ─── */
 
 async function HoneyPicksStream({ patch, tier }: { patch: string; tier: string }) {
   if (!patch) return null
@@ -90,47 +69,92 @@ async function TierRankingStream({ patch, tier }: { patch: string; tier: string 
 /* ─── Page ─── */
 
 export default async function Home() {
-  // 패치 목록만 await (경량 쿼리, ~100ms)
-  // React.cache()로 래핑되어 하위 SC에서 재호출해도 중복 없음
   const patches = await getPatches()
   const defaultPatch = patches[0] ?? ""
   const defaultTier = "MITHRIL"
 
   return (
     <FilterProvider initialPatches={patches}>
-      <div className="flex flex-col gap-4 sm:gap-6">
-        {/* 히어로 섹션 — 즉시 렌더링 (정적) */}
-        <section className="text-center py-2 sm:py-4">
-          <h1 className="text-xl sm:text-3xl font-bold text-[var(--color-foreground)]">
-            이터널리턴 실시간 메타 분석
-          </h1>
-          <p className="mt-1 sm:mt-1.5 text-xs sm:text-sm text-[var(--color-muted-foreground)]">
-            패치 {defaultPatch} 기준 · 다이아 이상 400,000+판 분석
-          </p>
-        </section>
+      {/* ── Hero Zone ── */}
+      <section className="hero-gradient -mx-3 sm:-mx-4 -mt-4 sm:-mt-5 px-3 sm:px-4 pt-5 sm:pt-8 pb-6 sm:pb-8 relative">
+        <div className="max-w-6xl mx-auto">
+          {/* Title + Live badge */}
+          <div className="reveal flex flex-col gap-4 sm:gap-6">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-success)] opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-success)]" />
+                  </span>
+                  <span className="text-[10px] sm:text-[11px] font-semibold text-[var(--color-success)] uppercase tracking-[0.15em]">
+                    Live
+                  </span>
+                  <span className="text-[10px] sm:text-[11px] text-[var(--color-muted-foreground)]">
+                    패치 {defaultPatch}
+                  </span>
+                </div>
+                <h1 className="text-[28px] sm:text-4xl font-black tracking-tight text-[var(--color-foreground)] leading-none">
+                  메타 분석
+                </h1>
+                <p className="text-xs sm:text-sm text-[var(--color-muted-foreground)] mt-1.5">
+                  <span className="text-[var(--color-accent-gold)] font-semibold">400,000+</span>판
+                  데이터 기반 실시간 분석
+                </p>
+              </div>
 
-        {/* 꿀챔 TOP 5 — 독립 스트리밍 (Supabase 직접 쿼리, API 홉 제거) */}
-        <section className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <div className="h-4 w-1 rounded-full bg-[var(--color-accent-gold)]" />
-            <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
-              이번 패치 떡상 TOP 5
-            </h2>
+              <div className="reveal reveal-d2">
+                <Suspense>
+                  <GlobalFilter />
+                </Suspense>
+              </div>
+            </div>
           </div>
+        </div>
+
+        {/* Bottom edge */}
+        <div className="absolute bottom-0 inset-x-0 section-divider" />
+      </section>
+
+      <div className="flex flex-col gap-10 sm:gap-14 mt-6 sm:mt-10">
+        {/* ── Honey Picks ── */}
+        <section className="reveal reveal-d3">
+          <div className="flex items-center gap-3 mb-4 sm:mb-5">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">&#x1F4C8;</span>
+              <h2 className="text-base sm:text-lg font-bold text-[var(--color-foreground)]">
+                이번 패치 떡상
+              </h2>
+            </div>
+            <span className="text-[11px] text-[var(--color-muted-foreground)] hidden sm:inline">
+              버프 후 픽률 &amp; 승률 동반 상승 캐릭터
+            </span>
+            <div className="flex-1" />
+          </div>
+
           <Suspense fallback={<HoneyPicksSkeleton />}>
             <HoneyPicksStream patch={defaultPatch} tier={defaultTier} />
           </Suspense>
         </section>
 
-        {/* 필터 — 즉시 렌더링 (Client Component) */}
-        <Suspense>
-          <GlobalFilter />
-        </Suspense>
+        {/* ── Divider ── */}
+        <div className="section-divider" />
 
-        {/* 티어 랭킹 — 독립 스트리밍 (준비되는 즉시 표시) */}
-        <Suspense fallback={<TierRankingSkeleton />}>
-          <TierRankingStream patch={defaultPatch} tier={defaultTier} />
-        </Suspense>
+        {/* ── Tier Rankings ── */}
+        <section className="reveal reveal-d5">
+          <div className="flex items-center gap-3 mb-4 sm:mb-5">
+            <h2 className="text-base sm:text-lg font-bold text-[var(--color-foreground)]">
+              캐릭터 순위
+            </h2>
+            <span className="text-[11px] text-[var(--color-muted-foreground)] hidden sm:inline">
+              메타 스코어 기반 종합 순위
+            </span>
+          </div>
+
+          <Suspense fallback={<RankingSkeleton />}>
+            <TierRankingStream patch={defaultPatch} tier={defaultTier} />
+          </Suspense>
+        </section>
       </div>
     </FilterProvider>
   )

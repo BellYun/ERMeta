@@ -134,16 +134,12 @@ export function ComboWeaponCard({
 
         {/* 스탯 */}
         <div className="ml-auto flex items-center gap-3 sm:gap-6 text-right">
-          <StatCol label="승률" value={`${group.winRate.toFixed(1)}%`} color={
-            group.winRate >= 60 ? "gold" : group.winRate >= 55 ? "foreground" : "muted"
-          } />
-          <StatCol label="평균 RP" value={`${group.averageRP > 0 ? "+" : ""}${group.averageRP.toFixed(1)}`} color={
-            group.averageRP > 0 ? "gold" : group.averageRP < 0 ? "danger" : "muted"
-          } />
-          <StatCol label="게임 수" value={group.totalGames.toLocaleString()} color="muted" />
+          <StatCol label="승률" value={`${group.winRate.toFixed(1)}%`} />
+          <StatCol label="평균 RP" value={`${group.averageRP > 0 ? "+" : ""}${group.averageRP.toFixed(1)}`} highlight={group.averageRP >= 0 ? "gold" : "muted"} />
+          <StatCol label="게임 수" value={group.totalGames.toLocaleString()} />
           <div className="hidden sm:flex flex-col">
             <span className="text-[10px] text-[var(--color-muted-foreground)]">평균 순위</span>
-            <span className="text-sm text-[var(--color-muted-foreground)]">#{group.averageRank.toFixed(1)}</span>
+            <span className="text-sm font-semibold text-[var(--color-foreground)]">#{group.averageRank.toFixed(1)}</span>
           </div>
 
           <ChevronRight className={cn(
@@ -184,13 +180,9 @@ export function ComboWeaponCard({
 
               {/* 스탯 */}
               <div className="ml-auto flex items-center gap-3 sm:gap-5 text-right">
-                <StatCol label="승률" value={`${v.winRate.toFixed(1)}%`} color={
-                  v.winRate >= 60 ? "gold" : v.winRate >= 55 ? "foreground" : "muted"
-                } small />
-                <StatCol label="평균 RP" value={`${v.averageRP > 0 ? "+" : ""}${v.averageRP.toFixed(1)}`} color={
-                  v.averageRP > 0 ? "gold" : v.averageRP < 0 ? "danger" : "muted"
-                } small />
-                <StatCol label="게임 수" value={v.totalGames.toLocaleString()} color="muted" small />
+                <StatCol label="승률" value={`${v.winRate.toFixed(1)}%`} small />
+                <StatCol label="평균 RP" value={`${v.averageRP > 0 ? "+" : ""}${v.averageRP.toFixed(1)}`} highlight={v.averageRP >= 0 ? "gold" : "muted"} small />
+                <StatCol label="게임 수" value={v.totalGames.toLocaleString()} small />
               </div>
             </div>
           ))}
@@ -200,20 +192,19 @@ export function ComboWeaponCard({
   )
 }
 
-function StatCol({ label, value, color, small }: {
-  label: string; value: string; color: "gold" | "foreground" | "muted" | "danger"; small?: boolean
+function StatCol({ label, value, highlight, small }: {
+  label: string; value: string; color?: string; highlight?: "gold" | "muted"; small?: boolean
 }) {
-  const colorClass = {
-    gold: "text-[var(--color-accent-gold)]",
-    foreground: "text-[var(--color-foreground)]",
-    muted: "text-[var(--color-muted-foreground)]",
-    danger: "text-[var(--color-danger)]",
-  }[color]
+  const textColor = highlight === "gold"
+    ? "text-[var(--color-accent-gold)]"
+    : highlight === "muted"
+    ? "text-[var(--color-muted-foreground)]"
+    : "text-[var(--color-foreground)]"
 
   return (
     <div className="flex flex-col">
       <span className={cn("text-[var(--color-muted-foreground)]", small ? "text-[9px]" : "text-[10px]")}>{label}</span>
-      <span className={cn("font-semibold", colorClass, small ? "text-xs" : "text-sm")}>{value}</span>
+      <span className={cn("font-semibold", textColor, small ? "text-xs" : "text-sm")}>{value}</span>
     </div>
   )
 }

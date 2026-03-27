@@ -48,7 +48,7 @@ export function MobileTabBar() {
   const pathname = usePathname()
 
   return (
-    <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--color-surface)]/95 backdrop-blur-md border-t border-[var(--color-border)]">
+    <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--color-surface)]/95 backdrop-blur-sm border-t border-[var(--color-border)]">
       <div className="flex items-stretch">
         {tabs.map(({ href, label, icon }) => {
           const isActive = pathname === href
@@ -57,21 +57,16 @@ export function MobileTabBar() {
               key={href}
               href={href}
               className={cn(
-                "flex-1 flex flex-col items-center justify-center gap-0.5 py-2 min-h-[56px] touch-manipulation transition-colors",
+                "flex-1 flex flex-col items-center justify-center gap-0.5 py-2 min-h-[52px] touch-manipulation transition-colors",
                 isActive
                   ? "text-[var(--color-primary)]"
                   : "text-[var(--color-muted-foreground)] active:text-[var(--color-foreground)]"
               )}
             >
+              {icon}
               <span className={cn(
-                "transition-transform",
-                isActive && "scale-110"
-              )}>
-                {icon}
-              </span>
-              <span className={cn(
-                "text-[10px] font-medium leading-none",
-                isActive && "font-semibold"
+                "text-[10px] leading-none",
+                isActive ? "font-semibold" : "font-medium"
               )}>
                 {label}
               </span>
@@ -79,7 +74,6 @@ export function MobileTabBar() {
           )
         })}
       </div>
-      {/* Safe area for iOS home indicator */}
       <div className="h-[env(safe-area-inset-bottom)]" />
     </nav>
   )

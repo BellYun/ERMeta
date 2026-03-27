@@ -150,7 +150,7 @@ export async function GET(request: NextRequest) {
     // 이전 패치 데이터를 characterNum 기준 Map
     const prevMap = new Map(prevRates.map((r) => [r.characterNum, r]));
 
-    // 꿀챔 필터: 픽률 ↑ AND 승률 ↑
+    // 꿀챔 필터: 승률 ↑ 필수 (픽률은 무관)
     const honeyPicks: HoneyPickData[] = [];
     for (const curr of currentRates) {
       const prev = prevMap.get(curr.characterNum);
@@ -159,10 +159,10 @@ export async function GET(request: NextRequest) {
       const pickRateDelta = curr.pickRate - prev.pickRate;
       const winRateDelta = curr.winRate - prev.winRate;
 
-      // 픽률과 승률 모두 상승한 캐릭터만
-      if (pickRateDelta > 0 && winRateDelta > 0) {
-        // 꿀챔 점수: 픽률 상승폭 × 승률 상승폭 + 평균 RP 보너스
+      if (winRateDelta > 0) {
         const rpBonus = curr.averageRP > 0 ? 1 + curr.averageRP / 100 : 1;
+        // 픽률 상승 시 가산, 하락 시 승률 변화만으로 스코어 산정
+        const pickFactor = pickRateDelta > 0 ? 1 + pickRateDelta : 1;
         honeyPicks.push({
           characterNum: curr.characterNum,
           bestWeapon: curr.bestWeapon,
@@ -172,14 +172,14 @@ export async function GET(request: NextRequest) {
           pickRateDelta,
           winRateDelta,
           averageRPDelta: curr.averageRP - prev.averageRP,
-          honeyScore: pickRateDelta * winRateDelta * rpBonus,
+          honeyScore: winRateDelta * pickFactor * rpBonus,
         });
       }
     }
 
     // honeyScore 내림차순 정렬, 상위 5개
     honeyPicks.sort((a, b) => b.honeyScore - a.honeyScore);
-    const top5 = honeyPicks.slice(0, 5);
+    const top5 = honeyPicks.slice(0, 10);
 
     return NextResponse.json({
       picks: top5,
