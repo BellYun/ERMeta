@@ -3,8 +3,6 @@
 import * as React from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { Select, SelectItem } from "@/components/ui/select"
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TierBadge } from "../TierBadge"
 import { cn } from "@/lib/utils"
@@ -24,6 +22,9 @@ import type { PrevStats, DisplayRow } from "./types"
 const fallbackMap = buildFallbackMap()
 
 const roleTabs = ["전체", "탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"] as const
+
+type SortKey = "rank" | "pickRate" | "winRate" | "averageRP"
+type SortDir = "asc" | "desc"
 
 function buildDisplayRows(
   rankings: CharacterRankingData[],
@@ -77,9 +78,10 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
   const [rankingData, setRankingData] = React.useState<RankingResponse | null>(initialData ?? null)
   const [isLoading, setIsLoading] = React.useState(!initialData)
   const [activeKey, setActiveKey] = React.useState<string | null>(null)
+  const [sortKey, setSortKey] = React.useState<SortKey>("rank")
+  const [sortDir, setSortDir] = React.useState<SortDir>("asc")
   const { l10n } = useL10n()
   const isInitialRender = React.useRef(true)
-
   const router = useRouter()
 
   React.useEffect(() => {
@@ -110,255 +112,360 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
     )
   }, [rankingData, l10n, patch])
 
-  const filtered =
-    activeRole === "전체"
-      ? rows
-      : rows.filter((c) => c.roles.includes(activeRole as CharacterRole))
+  const filtered = React.useMemo(() => {
+    const base =
+      activeRole === "전체"
+        ? rows
+        : rows.filter((c) => c.roles.includes(activeRole as CharacterRole))
+
+    if (sortKey === "rank") {
+      return sortDir === "asc" ? base : [...base].reverse()
+    }
+
+    return [...base].sort((a, b) => {
+      const va = a[sortKey]
+      const vb = b[sortKey]
+      return sortDir === "asc" ? va - vb : vb - va
+    })
+  }, [rows, activeRole, sortKey, sortDir])
+
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"))
+    } else {
+      setSortKey(key)
+      setSortDir(key === "rank" ? "asc" : "desc")
+    }
+  }
 
   return (
-    <section className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
-      {/* Section header */}
-      <div className="flex items-center justify-between gap-2 px-3 sm:px-4 py-2.5 border-b border-[var(--color-border)]">
-        <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
-          캐릭터 순위
-        </h2>
-        <Select
-          wrapperClassName="w-auto"
-          value={activeRole}
-          onChange={(e) => { setActiveRole(e.target.value); analytics.rankingTierTabChanged(e.target.value) }}
-        >
-          {roleTabs.map((t) => (
-            <SelectItem key={t} value={t}>
-              {t}
-            </SelectItem>
-          ))}
-        </Select>
+    <div className="flex flex-col gap-3">
+      {/* ── Role Filter ── */}
+      <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
+        {roleTabs.map((tab) => (
+          <button
+            key={tab}
+            className="role-pill shrink-0"
+            data-active={activeRole === tab}
+            onClick={() => {
+              setActiveRole(tab)
+              analytics.rankingTierTabChanged(tab)
+            }}
+          >
+            {tab}
+          </button>
+        ))}
       </div>
 
-      {/* Mobile card layout */}
-      <div className="sm:hidden divide-y divide-[var(--color-border)]/40">
-        {isLoading
-          ? Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-3 px-3 py-2.5">
-                <Skeleton className="h-4 w-5 shrink-0" />
-                <Skeleton className="h-5 w-5 rounded shrink-0" />
-                <Skeleton className="h-9 w-9 rounded-lg shrink-0" />
-                <div className="flex-1 min-w-0 flex flex-col gap-1">
-                  <Skeleton className="h-3.5 w-20" />
-                  <Skeleton className="h-3 w-14" />
-                </div>
-                <div className="flex flex-col items-end gap-1 shrink-0">
-                  <Skeleton className="h-3.5 w-10" />
-                  <Skeleton className="h-3 w-12" />
-                </div>
-              </div>
-            ))
-          : filtered.length === 0
-            ? (
-              <div className="text-center text-sm text-[var(--color-muted-foreground)] py-10">
-                데이터 없음
-              </div>
-            )
-            : filtered.map((char) => {
-                const key = `${char.code}-${char.weaponCode}`
-                return (
-                  <div
-                    key={key}
-                    className="relative flex items-center gap-2.5 px-3 py-2.5 cursor-pointer active:bg-[var(--color-surface-2)] touch-manipulation transition-colors"
-                    onClick={() => {
-                      if (char.patchNote && "ontouchstart" in window) {
-                        if (activeKey === key) {
-                          setActiveKey(null)
-                          router.push(`/character-analysis?character=${char.code}`)
-                        } else {
-                          setActiveKey(key)
-                        }
-                      } else {
-                        router.push(`/character-analysis?character=${char.code}`)
-                      }
-                    }}
-                  >
-                    {/* Rank */}
-                    <span className={cn(
-                      "text-xs font-semibold w-5 text-center shrink-0 tabular-nums",
-                      char.rank <= 3 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
-                    )}>
-                      {char.rank}
-                    </span>
-                    {/* Tier */}
-                    <TierBadge tier={char.tier} />
-                    {/* Character image */}
-                    <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
-                      <Image
-                        src={char.imageUrl}
-                        alt={char.name}
-                        fill
-                        className="object-cover"
-                        sizes="36px"
-                      />
-                      {char.patchNote && (
-                        <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]" />
-                      )}
+      {/* ── Table ── */}
+      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+        {/* Desktop Table */}
+        <div className="hidden sm:block overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/50">
+                <SortableHead label="#" sortKey="rank" currentKey={sortKey} dir={sortDir} onSort={handleSort} className="w-14 text-center" />
+                <th className="px-2 py-2.5 text-left text-xs font-medium text-[var(--color-muted-foreground)] w-12">티어</th>
+                <th className="px-2 py-2.5 text-left text-xs font-medium text-[var(--color-muted-foreground)]">캐릭터</th>
+                <SortableHead label="픽률" sortKey="pickRate" currentKey={sortKey} dir={sortDir} onSort={handleSort} className="w-28 text-right" />
+                <SortableHead label="승률" sortKey="winRate" currentKey={sortKey} dir={sortDir} onSort={handleSort} className="w-28 text-right" />
+                <SortableHead label="평균 RP" sortKey="averageRP" currentKey={sortKey} dir={sortDir} onSort={handleSort} className="w-32 text-right" />
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading
+                ? Array.from({ length: 10 }).map((_, i) => (
+                    <tr key={i} className="border-b border-[var(--color-border)]/30">
+                      <td className="px-3 py-2.5 text-center"><Skeleton className="h-4 w-5 mx-auto" /></td>
+                      <td className="px-2 py-2.5"><Skeleton className="h-6 w-6 rounded" /></td>
+                      <td className="px-2 py-2.5"><div className="flex items-center gap-2.5"><Skeleton className="h-8 w-8 rounded-lg shrink-0" /><Skeleton className="h-4 w-24" /></div></td>
+                      <td className="px-3 py-2.5 text-right"><Skeleton className="h-4 w-12 ml-auto" /></td>
+                      <td className="px-3 py-2.5 text-right"><Skeleton className="h-4 w-12 ml-auto" /></td>
+                      <td className="px-3 py-2.5 text-right"><Skeleton className="h-4 w-14 ml-auto" /></td>
+                    </tr>
+                  ))
+                : filtered.map((char) => {
+                    const key = `${char.code}-${char.weaponCode}`
+                    return (
+                      <tr
+                        key={key}
+                        className={cn(
+                          "border-b border-[var(--color-border)]/30 last:border-b-0 cursor-pointer group transition-colors",
+                          "hover:bg-[var(--color-surface-2)]"
+                        )}
+                        onClick={() => {
+                          if (char.patchNote && "ontouchstart" in window) {
+                            if (activeKey === key) {
+                              setActiveKey(null)
+                              router.push(`/character-analysis?character=${char.code}`)
+                            } else {
+                              setActiveKey(key)
+                            }
+                          } else {
+                            router.push(`/character-analysis?character=${char.code}`)
+                          }
+                        }}
+                        onMouseEnter={() => setActiveKey(key)}
+                        onMouseLeave={() => setActiveKey(null)}
+                      >
+                        {/* Rank */}
+                        <td className="px-3 py-2 text-center">
+                          <span className={cn(
+                            "text-sm font-bold tabular-nums",
+                            char.rank <= 3 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
+                          )}>
+                            {char.rank}
+                          </span>
+                        </td>
+                        {/* Tier */}
+                        <td className="px-2 py-2">
+                          <TierBadge tier={char.tier} />
+                        </td>
+                        {/* Character */}
+                        <td className="px-2 py-2">
+                          <div className="relative flex items-center gap-2.5">
+                            <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
+                              <Image
+                                src={char.imageUrl}
+                                alt={char.name}
+                                fill
+                                className="object-cover"
+                                sizes="32px"
+                              />
+                              {char.patchNote && (
+                                <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]" />
+                              )}
+                            </div>
+                            <div className="min-w-0">
+                              <span className="text-sm font-medium text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors truncate block">
+                                {char.name}
+                              </span>
+                              <span className="text-[11px] text-[var(--color-muted-foreground)] truncate block">{char.weaponName}</span>
+                            </div>
+                            {char.patchNote && activeKey === key && (
+                              <PatchNoteTooltip patchNote={char.patchNote} />
+                            )}
+                          </div>
+                        </td>
+                        {/* Pick Rate */}
+                        <td className="px-3 py-2 text-right">
+                          <div className="flex flex-col items-end">
+                            <span className="text-sm tabular-nums text-[var(--color-foreground)]">
+                              {char.pickRate.toFixed(1)}%
+                            </span>
+                            <DeltaIndicator current={char.pickRate} previous={char.prev?.pickRate} suffix="%" />
+                          </div>
+                        </td>
+                        {/* Win Rate */}
+                        <td className="px-3 py-2 text-right">
+                          <div className="flex flex-col items-end">
+                            <span className="text-sm font-medium tabular-nums text-[var(--color-foreground)]">
+                              {char.winRate.toFixed(1)}%
+                            </span>
+                            <DeltaIndicator current={char.winRate} previous={char.prev?.winRate} suffix="%" />
+                          </div>
+                        </td>
+                        {/* Average RP */}
+                        <td className="px-3 py-2 text-right">
+                          <div className="flex flex-col items-end">
+                            <span className={cn(
+                              "text-sm font-semibold tabular-nums",
+                              char.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
+                            )}>
+                              {char.averageRP >= 0 ? "+" : ""}{char.averageRP.toFixed(1)}
+                            </span>
+                            <DeltaIndicator current={char.averageRP} previous={char.prev?.averageRP} precision={1} />
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
+              {!isLoading && filtered.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="text-center text-sm text-[var(--color-muted-foreground)] py-16">
+                    데이터 없음
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile List */}
+        <div className="sm:hidden">
+          {/* Mobile sort bar */}
+          <div className="flex items-center gap-1.5 px-3 py-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/50 overflow-x-auto scrollbar-hide">
+            <span className="text-[10px] text-[var(--color-muted-foreground)] shrink-0 mr-1">정렬</span>
+            {([
+              { key: "rank" as SortKey, label: "순위" },
+              { key: "winRate" as SortKey, label: "승률" },
+              { key: "pickRate" as SortKey, label: "픽률" },
+              { key: "averageRP" as SortKey, label: "RP" },
+            ]).map(({ key, label }) => (
+              <button
+                key={key}
+                onClick={() => handleSort(key)}
+                className={cn(
+                  "shrink-0 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all touch-manipulation",
+                  sortKey === key
+                    ? "bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
+                    : "text-[var(--color-muted-foreground)]"
+                )}
+              >
+                {label}
+                {sortKey === key && (
+                  <span className="ml-0.5">{sortDir === "desc" ? "↓" : "↑"}</span>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Mobile rows */}
+          <div className="divide-y divide-[var(--color-border)]/30">
+            {isLoading
+              ? Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-2.5 px-3 py-2.5">
+                    <Skeleton className="h-4 w-5 shrink-0" />
+                    <Skeleton className="h-5 w-5 rounded shrink-0" />
+                    <Skeleton className="h-9 w-9 rounded-lg shrink-0" />
+                    <div className="flex-1 min-w-0 flex flex-col gap-1">
+                      <Skeleton className="h-3.5 w-20" />
+                      <Skeleton className="h-3 w-14" />
                     </div>
-                    {/* Name + weapon */}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-[var(--color-foreground)] truncate leading-tight">
-                        {char.name}
-                      </p>
-                      <p className="text-[11px] text-[var(--color-muted-foreground)] truncate">{char.weaponName}</p>
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                      <Skeleton className="h-3.5 w-10" />
+                      <Skeleton className="h-3 w-12" />
                     </div>
-                    {/* Stats */}
-                    <div className="flex flex-col items-end shrink-0 gap-0.5">
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-xs font-medium tabular-nums text-[var(--color-foreground)]">
-                          {char.winRate.toFixed(1)}%
-                        </span>
-                        <DeltaIndicator current={char.winRate} previous={char.prev?.winRate} suffix="%" />
-                      </div>
-                      <span className={cn(
-                        "text-[11px] font-semibold tabular-nums",
-                        char.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
-                      )}>
-                        {char.averageRP >= 0 ? "+" : ""}{char.averageRP.toFixed(1)} RP
-                      </span>
-                    </div>
-                    {char.patchNote && activeKey === key && (
-                      <PatchNoteTooltip patchNote={char.patchNote} />
-                    )}
+                  </div>
+                ))
+              : filtered.length === 0
+                ? (
+                  <div className="text-center text-sm text-[var(--color-muted-foreground)] py-12">
+                    데이터 없음
                   </div>
                 )
-              })
-        }
-      </div>
-
-      {/* Desktop table */}
-      <div className="hidden sm:block overflow-x-auto">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-12 text-center">#</TableHead>
-            <TableHead className="w-12 text-center">티어</TableHead>
-            <TableHead>캐릭터</TableHead>
-            <TableHead className="w-20 text-right">픽률</TableHead>
-            <TableHead className="w-20 text-right">승률</TableHead>
-            <TableHead className="w-24 text-right">평균 RP</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {isLoading
-            ? Array.from({ length: 8 }).map((_, i) => (
-                <TableRow key={i}>
-                  <TableCell className="text-center"><Skeleton className="h-4 w-5 mx-auto" /></TableCell>
-                  <TableCell className="text-center"><Skeleton className="h-5 w-5 mx-auto rounded" /></TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Skeleton className="h-8 w-8 rounded-lg" />
-                      <Skeleton className="h-4 w-20" />
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right"><Skeleton className="h-4 w-10 ml-auto" /></TableCell>
-                  <TableCell className="text-right"><Skeleton className="h-4 w-10 ml-auto" /></TableCell>
-                  <TableCell className="text-right"><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
-                </TableRow>
-              ))
-            : filtered.map((char) => (
-                <TableRow
-                  key={`${char.code}-${char.weaponCode}`}
-                  className="cursor-pointer group"
-                  onClick={() => {
+                : filtered.map((char) => {
                     const key = `${char.code}-${char.weaponCode}`
-                    if (char.patchNote && "ontouchstart" in window) {
-                      if (activeKey === key) {
-                        setActiveKey(null)
-                        router.push(`/character-analysis?character=${char.code}`)
-                      } else {
-                        setActiveKey(key)
-                      }
-                    } else {
-                      router.push(`/character-analysis?character=${char.code}`)
-                    }
-                  }}
-                  onMouseEnter={() => setActiveKey(`${char.code}-${char.weaponCode}`)}
-                  onMouseLeave={() => setActiveKey(null)}
-                >
-                  <TableCell className="text-center">
-                    <span className={cn(
-                      "text-sm font-semibold tabular-nums",
-                      char.rank <= 3 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
-                    )}>
-                      {char.rank}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <TierBadge tier={char.tier} />
-                  </TableCell>
-                  <TableCell>
-                    <div className="relative flex items-center gap-2.5">
-                      <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
-                        <Image
-                          src={char.imageUrl}
-                          alt={char.name}
-                          fill
-                          className="object-cover"
-                          sizes="32px"
-                        />
-                        {char.patchNote && (
-                          <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]" />
+                    return (
+                      <div
+                        key={key}
+                        className="relative flex items-center gap-2.5 px-3 py-2.5 cursor-pointer active:bg-[var(--color-surface-2)] touch-manipulation transition-colors"
+                        onClick={() => {
+                          if (char.patchNote && "ontouchstart" in window) {
+                            if (activeKey === key) {
+                              setActiveKey(null)
+                              router.push(`/character-analysis?character=${char.code}`)
+                            } else {
+                              setActiveKey(key)
+                            }
+                          } else {
+                            router.push(`/character-analysis?character=${char.code}`)
+                          }
+                        }}
+                      >
+                        {/* Rank */}
+                        <span className={cn(
+                          "text-xs font-bold w-5 text-center shrink-0 tabular-nums",
+                          char.rank <= 3 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
+                        )}>
+                          {char.rank}
+                        </span>
+                        {/* Tier */}
+                        <TierBadge tier={char.tier} />
+                        {/* Image */}
+                        <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
+                          <Image src={char.imageUrl} alt={char.name} fill className="object-cover" sizes="36px" />
+                          {char.patchNote && (
+                            <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]" />
+                          )}
+                        </div>
+                        {/* Name + Weapon */}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-[var(--color-foreground)] truncate leading-tight">
+                            {char.name}
+                          </p>
+                          <p className="text-[11px] text-[var(--color-muted-foreground)] truncate">{char.weaponName}</p>
+                        </div>
+                        {/* Stats */}
+                        <div className="flex flex-col items-end shrink-0 gap-0.5">
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-xs font-medium tabular-nums text-[var(--color-foreground)]">
+                              {char.winRate.toFixed(1)}%
+                            </span>
+                            <DeltaIndicator current={char.winRate} previous={char.prev?.winRate} suffix="%" />
+                          </div>
+                          <span className={cn(
+                            "text-[11px] font-semibold tabular-nums",
+                            char.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
+                          )}>
+                            {char.averageRP >= 0 ? "+" : ""}{char.averageRP.toFixed(1)} RP
+                          </span>
+                        </div>
+                        {char.patchNote && activeKey === key && (
+                          <PatchNoteTooltip patchNote={char.patchNote} />
                         )}
                       </div>
-                      <div>
-                        <span className="text-sm font-medium text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors">
-                          {char.name}
-                        </span>
-                        <p className="text-[11px] text-[var(--color-muted-foreground)]">{char.weaponName}</p>
-                      </div>
-                      {char.patchNote && activeKey === `${char.code}-${char.weaponCode}` && (
-                        <PatchNoteTooltip patchNote={char.patchNote} />
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex flex-col items-end">
-                      <span className="text-sm tabular-nums text-[var(--color-foreground)]">
-                        {char.pickRate.toFixed(1)}%
-                      </span>
-                      <DeltaIndicator current={char.pickRate} previous={char.prev?.pickRate} suffix="%" />
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex flex-col items-end">
-                      <span className="text-sm font-medium tabular-nums text-[var(--color-foreground)]">
-                        {char.winRate.toFixed(1)}%
-                      </span>
-                      <DeltaIndicator current={char.winRate} previous={char.prev?.winRate} suffix="%" />
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex flex-col items-end">
-                      <span className={cn(
-                        "text-sm font-semibold tabular-nums",
-                        char.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
-                      )}>
-                        {char.averageRP >= 0 ? "+" : ""}{char.averageRP.toFixed(1)}
-                      </span>
-                      <DeltaIndicator current={char.averageRP} previous={char.prev?.averageRP} precision={1} />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-          {!isLoading && filtered.length === 0 && (
-            <TableRow>
-              <TableCell
-                colSpan={6}
-                className="text-center text-sm text-[var(--color-muted-foreground)] py-10"
-              >
-                데이터 없음
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+                    )
+                  })
+            }
+          </div>
+        </div>
       </div>
-    </section>
+    </div>
+  )
+}
+
+/* ─── Sortable Table Header ─── */
+
+function SortableHead({
+  label,
+  sortKey,
+  currentKey,
+  dir,
+  onSort,
+  className,
+}: {
+  label: string
+  sortKey: SortKey
+  currentKey: SortKey
+  dir: SortDir
+  onSort: (key: SortKey) => void
+  className?: string
+}) {
+  const isActive = currentKey === sortKey
+  return (
+    <th
+      className={cn(
+        "px-3 py-2.5 text-xs font-medium select-none cursor-pointer transition-colors group/th",
+        isActive ? "text-[var(--color-primary)]" : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]",
+        className
+      )}
+      onClick={() => onSort(sortKey)}
+    >
+      <span className="inline-flex items-center gap-1">
+        {label}
+        <SortIcon active={isActive} dir={dir} />
+      </span>
+    </th>
+  )
+}
+
+function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
+  return (
+    <svg
+      className={cn(
+        "w-3 h-3 transition-all",
+        active ? "opacity-100" : "opacity-0 group-hover/th:opacity-40"
+      )}
+      viewBox="0 0 12 12"
+      fill="currentColor"
+    >
+      {(!active || dir === "asc") && (
+        <path d="M6 2L9 5.5H3L6 2Z" opacity={active && dir === "asc" ? 1 : 0.3} />
+      )}
+      {(!active || dir === "desc") && (
+        <path d="M6 10L3 6.5H9L6 10Z" opacity={active && dir === "desc" ? 1 : 0.3} />
+      )}
+    </svg>
   )
 }

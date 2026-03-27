@@ -24,46 +24,30 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 }
 
-/* ─── Skeleton Fallbacks ─── */
+/* ─── Skeletons ─── */
 
 function HoneyPicksSkeleton() {
   return (
-    <div className="flex gap-2 overflow-hidden">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <div
-          key={i}
-          className="flex-shrink-0 w-36 sm:w-44 aspect-[4/5] rounded-xl bg-[var(--color-surface)] animate-pulse"
-        />
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-[1fr_1fr_1fr_1fr_1fr] gap-3">
+      <div className="col-span-2 sm:col-span-1 md:col-span-2 md:row-span-2 aspect-[3/4] md:aspect-auto rounded-2xl bg-[var(--color-surface)] animate-pulse" />
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="aspect-[4/5] rounded-xl bg-[var(--color-surface)] animate-pulse" />
       ))}
     </div>
   )
 }
 
-function TierRankingSkeleton() {
+function RankingSkeleton() {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--color-border)]">
-        <div className="h-4 w-20 rounded bg-[var(--color-surface-3)] animate-pulse" />
-        <div className="h-8 w-20 rounded-lg bg-[var(--color-surface-3)] animate-pulse" />
-      </div>
-      {Array.from({ length: 10 }).map((_, i) => (
-        <div
-          key={i}
-          className="flex items-center gap-3 px-4 py-2.5 border-b border-[var(--color-border)]/40 last:border-b-0"
-        >
-          <div className="h-4 w-5 rounded bg-[var(--color-surface-3)] animate-pulse" />
-          <div className="h-5 w-5 rounded bg-[var(--color-surface-3)] animate-pulse" />
-          <div className="h-8 w-8 rounded-lg bg-[var(--color-surface-3)] animate-pulse" />
-          <div className="h-4 w-20 rounded bg-[var(--color-surface-3)] animate-pulse" />
-          <div className="h-4 w-12 rounded bg-[var(--color-surface-3)] animate-pulse ml-auto" />
-          <div className="h-4 w-12 rounded bg-[var(--color-surface-3)] animate-pulse" />
-        </div>
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+      {Array.from({ length: 15 }).map((_, i) => (
+        <div key={i} className="aspect-[3/4] rounded-xl bg-[var(--color-surface)] animate-pulse" />
       ))}
     </div>
   )
 }
 
-/* ─── Async Server Components ─── */
+/* ─── Async Streams ─── */
 
 async function HoneyPicksStream({ patch, tier }: { patch: string; tier: string }) {
   if (!patch) return null
@@ -91,38 +75,86 @@ export default async function Home() {
 
   return (
     <FilterProvider initialPatches={patches}>
-      <div className="flex flex-col gap-5 sm:gap-6">
-        {/* Honey Picks TOP 5 */}
-        <section className="flex flex-col gap-2">
-          <h2 className="text-sm font-semibold text-[var(--color-foreground)] flex items-center gap-2">
-            <span className="inline-block h-3.5 w-0.5 rounded-full bg-[var(--color-accent-gold)]" />
-            이번 패치 떡상 TOP 5
-          </h2>
+      {/* ── Hero Zone ── */}
+      <section className="hero-gradient -mx-3 sm:-mx-4 -mt-4 sm:-mt-5 px-3 sm:px-4 pt-5 sm:pt-8 pb-6 sm:pb-8 relative">
+        <div className="max-w-6xl mx-auto">
+          {/* Title + Live badge */}
+          <div className="reveal flex flex-col gap-4 sm:gap-6">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-success)] opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-success)]" />
+                  </span>
+                  <span className="text-[10px] sm:text-[11px] font-semibold text-[var(--color-success)] uppercase tracking-[0.15em]">
+                    Live
+                  </span>
+                  <span className="text-[10px] sm:text-[11px] text-[var(--color-muted-foreground)]">
+                    패치 {defaultPatch}
+                  </span>
+                </div>
+                <h1 className="text-[28px] sm:text-4xl font-black tracking-tight text-[var(--color-foreground)] leading-none">
+                  메타 분석
+                </h1>
+                <p className="text-xs sm:text-sm text-[var(--color-muted-foreground)] mt-1.5">
+                  <span className="text-[var(--color-accent-gold)] font-semibold">400,000+</span>판
+                  데이터 기반 실시간 분석
+                </p>
+              </div>
+
+              <div className="reveal reveal-d2">
+                <Suspense>
+                  <GlobalFilter />
+                </Suspense>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom edge */}
+        <div className="absolute bottom-0 inset-x-0 section-divider" />
+      </section>
+
+      <div className="flex flex-col gap-10 sm:gap-14 mt-6 sm:mt-10">
+        {/* ── Honey Picks ── */}
+        <section className="reveal reveal-d3">
+          <div className="flex items-center gap-3 mb-4 sm:mb-5">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">&#x1F36F;</span>
+              <h2 className="text-base sm:text-lg font-bold text-[var(--color-foreground)]">
+                이번 패치 꿀챔
+              </h2>
+            </div>
+            <span className="text-[11px] text-[var(--color-muted-foreground)] hidden sm:inline">
+              픽률 &amp; 승률 동반 상승 TOP 5
+            </span>
+            <div className="flex-1" />
+          </div>
+
           <Suspense fallback={<HoneyPicksSkeleton />}>
             <HoneyPicksStream patch={defaultPatch} tier={defaultTier} />
           </Suspense>
         </section>
 
-        {/* Title + Filter + Tier Ranking */}
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
-            <div>
-              <h1 className="text-lg sm:text-xl font-bold text-[var(--color-foreground)]">
-                메타 분석
-              </h1>
-              <p className="text-xs text-[var(--color-muted-foreground)] mt-0.5">
-                패치 {defaultPatch} · 400,000+판 데이터 기반
-              </p>
-            </div>
-            <Suspense>
-              <GlobalFilter />
-            </Suspense>
+        {/* ── Divider ── */}
+        <div className="section-divider" />
+
+        {/* ── Tier Rankings ── */}
+        <section className="reveal reveal-d5">
+          <div className="flex items-center gap-3 mb-4 sm:mb-5">
+            <h2 className="text-base sm:text-lg font-bold text-[var(--color-foreground)]">
+              캐릭터 순위
+            </h2>
+            <span className="text-[11px] text-[var(--color-muted-foreground)] hidden sm:inline">
+              메타 스코어 기반 종합 순위
+            </span>
           </div>
 
-          <Suspense fallback={<TierRankingSkeleton />}>
+          <Suspense fallback={<RankingSkeleton />}>
             <TierRankingStream patch={defaultPatch} tier={defaultTier} />
           </Suspense>
-        </div>
+        </section>
       </div>
     </FilterProvider>
   )
