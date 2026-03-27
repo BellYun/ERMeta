@@ -1,25 +1,44 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #0a0e1a;
-  --color-surface: #111827;
-  --color-surface-2: #1a2236;
-  --color-surface-3: #1e2a42;
-  --color-border: #243044;
-  --color-border-light: #2d3d56;
-  --color-foreground: #e8edf5;
-  --color-muted-foreground: #8a9bb8;
-  --color-primary: #38bdf8;
-  --color-primary-hover: #0ea5e9;
-  --color-primary-glow: #38bdf820;
-  --color-accent-gold: #fbbf24;
-  --color-accent-purple: #a78bfa;
-  --color-danger: #f87171;
-  --color-tier-s: #f87171;
-  --color-tier-a: #fb923c;
-  --color-tier-b: #facc15;
-  --color-tier-c: #34d399;
-  --color-tier-d: #8a9bb8;
+  /* ── Background Layers ── */
+  --color-background: #0d1117;
+  --color-surface: #161b22;
+  --color-surface-2: #1c2128;
+  --color-surface-3: #242a33;
+
+  /* ── Borders ── */
+  --color-border: #30363d;
+  --color-border-light: #3d444d;
+
+  /* ── Text ── */
+  --color-foreground: #c9d1d9;
+  --color-muted-foreground: #7d8590;
+
+  /* ── Interactive ── */
+  --color-primary: #58a6ff;
+  --color-primary-hover: #79c0ff;
+  --color-primary-glow: #58a6ff20;
+
+  /* ── Accent ── */
+  --color-accent-gold: #f0b132;
+  --color-accent-purple: #bc8cff;
+
+  /* ── Semantic ── */
+  --color-danger: #f85149;
+  --color-success: #3fb950;
+  --color-warning: #d29922;
+
+  /* ── Tier Colors ── */
+  --color-tier-s: #ff6b6b;
+  --color-tier-a: #ff922b;
+  --color-tier-b: #ffd43b;
+  --color-tier-c: #51cf66;
+  --color-tier-d: #7d8590;
+
+  /* ── Stat Colors ── */
+  --color-stat-up: #3fb950;
+  --color-stat-down: #f85149;
 }
 
 @layer base {
@@ -38,13 +57,11 @@
 
   body {
     background-color: var(--color-background);
-    background-image:
-      radial-gradient(ellipse 80% 50% at 50% -20%, #1e3a5f30 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 80% 0%, #38bdf808 0%, transparent 50%);
     color: var(--color-foreground);
     font-family: var(--font-geist-sans), system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "tnum";
   }
 
   a {
@@ -52,7 +69,7 @@
     text-decoration: none;
   }
 
-  /* 모바일 터치 최적화 */
+  /* Touch optimization */
   body {
     -webkit-tap-highlight-color: transparent;
   }
@@ -71,7 +88,7 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: var(--color-background);
+    background: transparent;
   }
   ::-webkit-scrollbar-thumb {
     background: var(--color-border);
@@ -98,4 +115,9 @@
 @keyframes slideUp {
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }

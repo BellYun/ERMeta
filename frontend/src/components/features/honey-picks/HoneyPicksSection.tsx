@@ -22,9 +22,7 @@ import { PatchNoteBottomSheet } from "./PatchNoteBottomSheet"
 const FALLBACK_MAP = buildFallbackMap()
 
 interface HoneyPicksSectionProps {
-  /** 서버에서 프리페치한 초기 데이터 */
   initialData?: HoneyPickData[]
-  /** 서버에서 프리페치한 패치 버전 */
   initialPatchVersion?: string
 }
 
@@ -43,10 +41,8 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
     [l10n]
   )
 
-  // 서버 프리페치 데이터가 있으면 초기 fetch 스킵, 필터 변경 시에만 fetch
   const isInitialRender = React.useRef(true)
   React.useEffect(() => {
-    // 초기 렌더에서 서버 데이터가 있으면 스킵
     if (isInitialRender.current && initialData && initialData.length > 0) {
       isInitialRender.current = false
       setLoading(false)
@@ -97,8 +93,8 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-6">
-        <Loader2 className="h-5 w-5 animate-spin text-[var(--color-primary)]" />
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="h-5 w-5 animate-spin text-[var(--color-muted-foreground)]" />
       </div>
     )
   }
@@ -109,7 +105,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
 
   if (picks.length === 0) {
     return (
-      <p className="py-3 text-center text-xs text-[var(--color-muted-foreground)]">
+      <p className="py-4 text-center text-xs text-[var(--color-muted-foreground)]">
         이번 패치에서 꿀챔 데이터가 없습니다.
       </p>
     )
@@ -121,7 +117,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
       onMouseEnter={stopAutoSlide}
       onMouseLeave={startAutoSlide}
     >
-      {/* 슬라이더 트랙 */}
+      {/* Slider track */}
       <div
         className="rounded-xl"
         style={{ touchAction: "pan-y" }}
@@ -171,7 +167,6 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                 rank={rank}
                 cardWidth={cardWidth}
                 onCardClick={() => {
-                  // 드래그 후 클릭 방지
                   if (dragDidMove.current) return
                   if (isCenter) {
                     if (patchNote && window.innerWidth < 640) {
@@ -192,8 +187,8 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
         </div>
       </div>
 
-      {/* 인디케이터 */}
-      <div className="flex justify-center gap-1.5 mt-3">
+      {/* Indicators */}
+      <div className="flex justify-center gap-1.5 mt-2.5">
         {picks.map((_, i) => (
           <button
             key={i}
@@ -203,22 +198,20 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
               setCurrentIndex(i + cloneCount)
               startAutoSlide()
             }}
-            className={cn(
-              "flex items-center justify-center min-w-[44px] min-h-[44px] touch-manipulation",
-            )}
+            className="flex items-center justify-center min-w-[44px] min-h-[44px] touch-manipulation"
             aria-label={`슬라이드 ${i + 1}`}
           >
             <span className={cn(
-              "block h-1.5 rounded-full transition-all duration-300",
+              "block h-1 rounded-full transition-all duration-300",
               i === activeRealIndex
-                ? "w-4 bg-[var(--color-accent-gold)]"
-                : "w-1.5 bg-[var(--color-border)]"
+                ? "w-4 bg-[var(--color-primary)]"
+                : "w-1.5 bg-[var(--color-border-light)]"
             )} />
           </button>
         ))}
       </div>
 
-      {/* 모바일 패치내역 바텀시트 */}
+      {/* Mobile patch note bottom sheet */}
       {mobileSheet && (
         <PatchNoteBottomSheet
           pick={mobileSheet.pick}

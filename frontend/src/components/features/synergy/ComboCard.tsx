@@ -119,25 +119,12 @@ export function ComboCard({
       {/* 스탯 */}
       {compact ? (
         <div className="ml-auto flex flex-col items-end gap-0.5">
-          <span
-            className={cn(
-              "text-xs font-semibold",
-              rec.winRate >= 60
-                ? "text-[var(--color-accent-gold)]"
-                : rec.winRate >= 55
-                ? "text-[var(--color-foreground)]"
-                : "text-[var(--color-muted-foreground)]"
-            )}
-          >
+          <span className="text-xs font-semibold text-[var(--color-foreground)]">
             {rec.winRate.toFixed(1)}%
           </span>
           <span className={cn(
             "text-[10px]",
-            rec.averageRP > 0
-              ? "text-[var(--color-accent-gold)]"
-              : rec.averageRP < 0
-              ? "text-[var(--color-danger)]"
-              : "text-[var(--color-muted-foreground)]"
+            rec.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
           )}>
             {rec.averageRP > 0 ? "+" : ""}{rec.averageRP.toFixed(1)} RP
           </span>
@@ -146,16 +133,7 @@ export function ComboCard({
         <div className="ml-auto flex items-center gap-3 sm:gap-6 text-right">
           <div className="flex flex-col">
             <span className="text-[10px] text-[var(--color-muted-foreground)]">승률</span>
-            <span
-              className={cn(
-                "text-sm font-semibold",
-                rec.winRate >= 60
-                  ? "text-[var(--color-accent-gold)]"
-                  : rec.winRate >= 55
-                  ? "text-[var(--color-foreground)]"
-                  : "text-[var(--color-muted-foreground)]"
-              )}
-            >
+            <span className="text-sm font-semibold text-[var(--color-foreground)]">
               {rec.winRate.toFixed(1)}%
             </span>
           </div>
@@ -163,24 +141,20 @@ export function ComboCard({
             <span className="text-[10px] text-[var(--color-muted-foreground)]">평균 RP</span>
             <span className={cn(
               "text-sm font-semibold",
-              rec.averageRP > 0
-                ? "text-[var(--color-accent-gold)]"
-                : rec.averageRP < 0
-                ? "text-[var(--color-danger)]"
-                : "text-[var(--color-muted-foreground)]"
+              rec.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
             )}>
               {rec.averageRP > 0 ? "+" : ""}{rec.averageRP.toFixed(1)}
             </span>
           </div>
           <div className="flex flex-col">
             <span className="text-[10px] text-[var(--color-muted-foreground)]">게임 수</span>
-            <span className="text-sm text-[var(--color-muted-foreground)]">
+            <span className="text-sm text-[var(--color-foreground)]">
               {rec.totalGames.toLocaleString()}
             </span>
           </div>
           <div className="hidden sm:flex flex-col">
             <span className="text-[10px] text-[var(--color-muted-foreground)]">평균 순위</span>
-            <span className="text-sm text-[var(--color-muted-foreground)]">
+            <span className="text-sm text-[var(--color-foreground)]">
               #{rec.averageRank.toFixed(1)}
             </span>
           </div>

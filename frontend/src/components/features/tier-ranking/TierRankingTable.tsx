@@ -83,7 +83,6 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
   const router = useRouter()
 
   React.useEffect(() => {
-    // 첫 렌더 시 initialData가 있으면 fetch 스킵
     if (isInitialRender.current) {
       isInitialRender.current = false
       if (initialData) return
@@ -117,14 +116,14 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
       : rows.filter((c) => c.roles.includes(activeRole as CharacterRole))
 
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm overflow-hidden">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2.5 sm:p-4 border-b border-[var(--color-border)]">
-        <div className="flex items-center gap-2">
-          <div className="h-4 w-1 rounded-full bg-[var(--color-primary)]" />
-          <h2 className="text-sm font-semibold text-[var(--color-foreground)]">캐릭터 순위</h2>
-        </div>
+    <section className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+      {/* Section header */}
+      <div className="flex items-center justify-between gap-2 px-3 sm:px-4 py-2.5 border-b border-[var(--color-border)]">
+        <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
+          캐릭터 순위
+        </h2>
         <Select
-          wrapperClassName="w-full sm:w-auto min-h-[44px] sm:min-h-0"
+          wrapperClassName="w-auto"
           value={activeRole}
           onChange={(e) => { setActiveRole(e.target.value); analytics.rankingTierTabChanged(e.target.value) }}
         >
@@ -136,30 +135,27 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
         </Select>
       </div>
 
-      {/* Mobile card layout (below sm) */}
-      <div className="sm:hidden">
+      {/* Mobile card layout */}
+      <div className="sm:hidden divide-y divide-[var(--color-border)]/40">
         {isLoading
           ? Array.from({ length: 8 }).map((_, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 px-3 py-3 border-b border-[var(--color-border)] last:border-b-0"
-              >
+              <div key={i} className="flex items-center gap-3 px-3 py-2.5">
                 <Skeleton className="h-4 w-5 shrink-0" />
-                <Skeleton className="h-6 w-6 rounded-md shrink-0" />
-                <Skeleton className="h-10 w-10 rounded-lg shrink-0" />
+                <Skeleton className="h-5 w-5 rounded shrink-0" />
+                <Skeleton className="h-9 w-9 rounded-lg shrink-0" />
                 <div className="flex-1 min-w-0 flex flex-col gap-1">
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="h-3 w-16" />
+                  <Skeleton className="h-3.5 w-20" />
+                  <Skeleton className="h-3 w-14" />
                 </div>
                 <div className="flex flex-col items-end gap-1 shrink-0">
-                  <Skeleton className="h-4 w-12" />
-                  <Skeleton className="h-3 w-10" />
+                  <Skeleton className="h-3.5 w-10" />
+                  <Skeleton className="h-3 w-12" />
                 </div>
               </div>
             ))
           : filtered.length === 0
             ? (
-              <div className="text-center text-sm text-[var(--color-muted-foreground)] py-8">
+              <div className="text-center text-sm text-[var(--color-muted-foreground)] py-10">
                 데이터 없음
               </div>
             )
@@ -168,7 +164,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                 return (
                   <div
                     key={key}
-                    className="relative flex items-center gap-3 px-3 py-3 min-h-[52px] border-b border-[var(--color-border)] last:border-b-0 cursor-pointer active:bg-[var(--color-surface-2)]/60 touch-manipulation transition-colors"
+                    className="relative flex items-center gap-2.5 px-3 py-2.5 cursor-pointer active:bg-[var(--color-surface-2)] touch-manipulation transition-colors"
                     onClick={() => {
                       if (char.patchNote && "ontouchstart" in window) {
                         if (activeKey === key) {
@@ -183,52 +179,48 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                     }}
                   >
                     {/* Rank */}
-                    <span className="text-xs font-semibold text-[var(--color-muted-foreground)] w-5 text-center shrink-0">
+                    <span className={cn(
+                      "text-xs font-semibold w-5 text-center shrink-0 tabular-nums",
+                      char.rank <= 3 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
+                    )}>
                       {char.rank}
                     </span>
-                    {/* Tier badge */}
+                    {/* Tier */}
                     <TierBadge tier={char.tier} />
                     {/* Character image */}
-                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)] ring-1 ring-[var(--color-border)]">
+                    <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
                       <Image
                         src={char.imageUrl}
                         alt={char.name}
                         fill
                         className="object-cover"
-                        sizes="40px"
+                        sizes="36px"
                       />
                       {char.patchNote && (
-                        <div className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-[var(--color-primary)] shadow-[0_0_4px_var(--color-primary)]" />
+                        <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]" />
                       )}
                     </div>
                     {/* Name + weapon */}
-                    <div className="flex-1 min-w-0 flex flex-col">
-                      <span className="text-sm font-semibold text-[var(--color-foreground)] truncate">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-[var(--color-foreground)] truncate leading-tight">
                         {char.name}
-                      </span>
-                      <span className="text-xs text-[var(--color-muted-foreground)] truncate">{char.weaponName}</span>
+                      </p>
+                      <p className="text-[11px] text-[var(--color-muted-foreground)] truncate">{char.weaponName}</p>
                     </div>
-                    {/* Stats: win rate + avg RP */}
+                    {/* Stats */}
                     <div className="flex flex-col items-end shrink-0 gap-0.5">
-                      <div className="flex flex-col items-end">
-                        <span className={cn(
-                          "text-xs font-medium",
-                          char.winRate >= 55 ? "text-[var(--color-foreground)]" : "text-[var(--color-muted-foreground)]"
-                        )}>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-xs font-medium tabular-nums text-[var(--color-foreground)]">
                           {char.winRate.toFixed(1)}%
                         </span>
                         <DeltaIndicator current={char.winRate} previous={char.prev?.winRate} suffix="%" />
                       </div>
-                      <div className="flex flex-col items-end">
-                        <span className={cn(
-                          "text-xs font-semibold",
-                          char.averageRP >= 0
-                            ? "text-[var(--color-accent-gold)]"
-                            : "text-[var(--color-muted-foreground)]"
-                        )}>
-                          {char.averageRP >= 0 ? "+" : ""}{char.averageRP.toFixed(1)} RP
-                        </span>
-                      </div>
+                      <span className={cn(
+                        "text-[11px] font-semibold tabular-nums",
+                        char.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
+                      )}>
+                        {char.averageRP >= 0 ? "+" : ""}{char.averageRP.toFixed(1)} RP
+                      </span>
                     </div>
                     {char.patchNote && activeKey === key && (
                       <PatchNoteTooltip patchNote={char.patchNote} />
@@ -239,43 +231,42 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
         }
       </div>
 
-      {/* Desktop table layout (sm and above) */}
+      {/* Desktop table */}
       <div className="hidden sm:block overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-12">순위</TableHead>
-            <TableHead className="w-16 text-center">티어</TableHead>
+            <TableHead className="w-12 text-center">#</TableHead>
+            <TableHead className="w-12 text-center">티어</TableHead>
             <TableHead>캐릭터</TableHead>
-            <TableHead className="w-24 text-right hidden sm:table-cell">픽률</TableHead>
-            <TableHead className="w-24 text-right">승률</TableHead>
-            <TableHead className="w-28 text-right">평균 RP</TableHead>
+            <TableHead className="w-20 text-right">픽률</TableHead>
+            <TableHead className="w-20 text-right">승률</TableHead>
+            <TableHead className="w-24 text-right">평균 RP</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {isLoading
             ? Array.from({ length: 8 }).map((_, i) => (
                 <TableRow key={i}>
-                  <TableCell><Skeleton className="h-4 w-6" /></TableCell>
-                  <TableCell className="text-center"><Skeleton className="h-5 w-8 mx-auto" /></TableCell>
+                  <TableCell className="text-center"><Skeleton className="h-4 w-5 mx-auto" /></TableCell>
+                  <TableCell className="text-center"><Skeleton className="h-5 w-5 mx-auto rounded" /></TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Skeleton className="h-8 w-8 rounded-lg" />
                       <Skeleton className="h-4 w-20" />
                     </div>
                   </TableCell>
-                  <TableCell className="text-right hidden sm:table-cell"><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
+                  <TableCell className="text-right"><Skeleton className="h-4 w-10 ml-auto" /></TableCell>
+                  <TableCell className="text-right"><Skeleton className="h-4 w-10 ml-auto" /></TableCell>
                   <TableCell className="text-right"><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
-                  <TableCell className="text-right"><Skeleton className="h-4 w-14 ml-auto" /></TableCell>
                 </TableRow>
               ))
             : filtered.map((char) => (
                 <TableRow
                   key={`${char.code}-${char.weaponCode}`}
-                  className="cursor-pointer group active:bg-[var(--color-surface-2)]/50 touch-manipulation"
+                  className="cursor-pointer group"
                   onClick={() => {
                     const key = `${char.code}-${char.weaponCode}`
-                    // 모바일: 패치노트 있으면 첫 탭은 툴팁 토글, 두번째 탭은 이동
                     if (char.patchNote && "ontouchstart" in window) {
                       if (activeKey === key) {
                         setActiveKey(null)
@@ -290,40 +281,45 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                   onMouseEnter={() => setActiveKey(`${char.code}-${char.weaponCode}`)}
                   onMouseLeave={() => setActiveKey(null)}
                 >
-                  <TableCell className="text-[var(--color-muted-foreground)] font-semibold group-hover:text-[var(--color-primary)] group-active:text-[var(--color-primary)]">
-                    {char.rank}
+                  <TableCell className="text-center">
+                    <span className={cn(
+                      "text-sm font-semibold tabular-nums",
+                      char.rank <= 3 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
+                    )}>
+                      {char.rank}
+                    </span>
                   </TableCell>
                   <TableCell className="text-center">
                     <TierBadge tier={char.tier} />
                   </TableCell>
                   <TableCell>
                     <div className="relative flex items-center gap-2.5">
-                      <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)] ring-1 ring-[var(--color-border)]">
+                      <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
                         <Image
                           src={char.imageUrl}
                           alt={char.name}
                           fill
                           className="object-cover"
-                          sizes="36px"
+                          sizes="32px"
                         />
                         {char.patchNote && (
-                          <div className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-[var(--color-primary)] shadow-[0_0_4px_var(--color-primary)]" />
+                          <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]" />
                         )}
                       </div>
-                      <div className="flex flex-col">
-                        <span className="text-sm font-semibold text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] group-active:text-[var(--color-primary)] transition-colors">
+                      <div>
+                        <span className="text-sm font-medium text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors">
                           {char.name}
                         </span>
-                        <span className="text-xs text-[var(--color-muted-foreground)]">{char.weaponName}</span>
+                        <p className="text-[11px] text-[var(--color-muted-foreground)]">{char.weaponName}</p>
                       </div>
                       {char.patchNote && activeKey === `${char.code}-${char.weaponCode}` && (
                         <PatchNoteTooltip patchNote={char.patchNote} />
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="text-right hidden sm:table-cell">
+                  <TableCell className="text-right">
                     <div className="flex flex-col items-end">
-                      <span className="text-sm text-[var(--color-muted-foreground)]">
+                      <span className="text-sm tabular-nums text-[var(--color-foreground)]">
                         {char.pickRate.toFixed(1)}%
                       </span>
                       <DeltaIndicator current={char.pickRate} previous={char.prev?.pickRate} suffix="%" />
@@ -331,10 +327,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex flex-col items-end">
-                      <span className={cn(
-                        "text-sm font-medium",
-                        char.winRate >= 55 ? "text-[var(--color-foreground)]" : "text-[var(--color-muted-foreground)]"
-                      )}>
+                      <span className="text-sm font-medium tabular-nums text-[var(--color-foreground)]">
                         {char.winRate.toFixed(1)}%
                       </span>
                       <DeltaIndicator current={char.winRate} previous={char.prev?.winRate} suffix="%" />
@@ -342,14 +335,10 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex flex-col items-end">
-                      <span
-                        className={cn(
-                          "text-sm font-semibold",
-                          char.averageRP >= 0
-                            ? "text-[var(--color-accent-gold)]"
-                            : "text-[var(--color-muted-foreground)]"
-                        )}
-                      >
+                      <span className={cn(
+                        "text-sm font-semibold tabular-nums",
+                        char.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
+                      )}>
                         {char.averageRP >= 0 ? "+" : ""}{char.averageRP.toFixed(1)}
                       </span>
                       <DeltaIndicator current={char.averageRP} previous={char.prev?.averageRP} precision={1} />
@@ -361,7 +350,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
             <TableRow>
               <TableCell
                 colSpan={6}
-                className="text-center text-sm text-[var(--color-muted-foreground)] py-8"
+                className="text-center text-sm text-[var(--color-muted-foreground)] py-10"
               >
                 데이터 없음
               </TableCell>
@@ -370,6 +359,6 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
         </TableBody>
       </Table>
       </div>
-    </div>
+    </section>
   )
 }

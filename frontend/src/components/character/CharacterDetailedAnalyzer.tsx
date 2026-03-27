@@ -178,7 +178,7 @@ function TopBuildsTableFiltered({
                 #{i + 1}
               </span>
               <div className="flex items-center gap-2 text-[11px]">
-                <span className="text-[var(--color-muted-foreground)]">픽 {b.pickRate.toFixed(1)}%</span>
+                <span className="text-[var(--color-foreground)]">픽 {b.pickRate.toFixed(1)}%</span>
                 <WinRateSpan winRate={b.winRate} />
               </div>
             </div>
@@ -197,7 +197,7 @@ function TopBuildsTableFiltered({
                 )
               })}
             </div>
-            <div className="flex items-center justify-center gap-2.5 text-[11px] text-[var(--color-muted-foreground)]">
+            <div className="flex items-center justify-center gap-2.5 text-[11px] text-[var(--color-foreground)]">
               <span>순위 #{b.averageRank.toFixed(1)}</span>
               <span>RP {b.averageRP.toFixed(0)}</span>
             </div>
@@ -258,16 +258,16 @@ function TopBuildsTableFiltered({
                   </td>
                 )
               })}
-              <td className="px-3 py-2 text-right text-xs text-[var(--color-muted-foreground)]">
+              <td className="px-3 py-2 text-right text-xs text-[var(--color-foreground)]">
                 {b.pickRate.toFixed(1)}%
               </td>
               <td className="px-3 py-2 text-right text-xs">
                 <WinRateSpan winRate={b.winRate} />
               </td>
-              <td className="px-3 py-2 text-right text-xs text-[var(--color-muted-foreground)]">
+              <td className="px-3 py-2 text-right text-xs text-[var(--color-foreground)]">
                 #{b.averageRank.toFixed(1)}
               </td>
-              <td className="px-3 py-2 text-right text-xs text-[var(--color-muted-foreground)]">
+              <td className="px-3 py-2 text-right text-xs text-[var(--color-foreground)]">
                 {b.averageRP.toFixed(0)}
               </td>
             </tr>
@@ -318,10 +318,7 @@ function SlotPopularityGrid({
                       {itemNames[item.code] ?? item.code}
                     </span>
                     <span className="text-[9px] text-[var(--color-primary)]">{item.pickRate.toFixed(1)}%</span>
-                    <span className={cn(
-                      "text-[9px]",
-                      item.winRate >= 55 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
-                    )}>
+                    <span className="text-[9px] text-[var(--color-foreground)]">
                       {item.winRate.toFixed(1)}%
                     </span>
                   </div>
