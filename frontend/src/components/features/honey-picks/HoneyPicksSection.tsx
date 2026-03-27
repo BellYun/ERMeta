@@ -20,17 +20,32 @@ import { PatchNoteBottomSheet } from "./PatchNoteBottomSheet"
 
 const FALLBACK_MAP = buildFallbackMap()
 
-function getOverallChangeType(patchNote: CharacterPatchNote): "buff" | "nerf" | "rework" {
+export function getOverallChangeType(patchNote: CharacterPatchNote): "buff" | "nerf" | "rework" {
   const types = patchNote.changes.map((c) => c.changeType)
   if (types.every((t) => t === "buff")) return "buff"
   if (types.every((t) => t === "nerf")) return "nerf"
   return "rework"
 }
 
-const CHANGE_LABEL: Record<string, { text: string; color: string; bg: string }> = {
+export const CHANGE_LABEL: Record<string, { text: string; color: string; bg: string }> = {
   buff: { text: "BUFF", color: "text-[var(--color-stat-up)]", bg: "bg-[var(--color-stat-up)]/10" },
   nerf: { text: "NERF", color: "text-[var(--color-stat-down)]", bg: "bg-[var(--color-stat-down)]/10" },
   rework: { text: "ADJUST", color: "text-[var(--color-primary)]", bg: "bg-[var(--color-primary)]/10" },
+}
+
+const RANK_STYLE: Record<number, string> = {
+  1: "from-[#FFD700] to-[#FFA500] text-black",
+  2: "from-[#C0C0C0] to-[#A0A0A0] text-black",
+  3: "from-[#CD7F32] to-[#A0522D] text-white",
+}
+
+interface ResolvedPick {
+  pick: HoneyPickData
+  name: string
+  weaponName: string
+  halfUrl: string
+  patchNote: CharacterPatchNote | null
+  changeType: "buff" | "nerf" | "rework" | null
 }
 
 interface HoneyPicksSectionProps {
@@ -46,6 +61,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
   const [loading, setLoading] = React.useState(!initialData || initialData.length === 0)
   const [error, setError] = React.useState<string | null>(null)
   const [currentPatch, setCurrentPatch] = React.useState<string>(initialPatchVersion ?? "")
+  const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null)
   const [mobileSheet, setMobileSheet] = React.useState<{
     pick: HoneyPickData
     patchNote: CharacterPatchNote
@@ -85,20 +101,30 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
       .finally(() => setLoading(false))
   }, [patch, tier, initialData])
 
-  const handleCardClick = React.useCallback(
-    (pick: HoneyPickData, patchNote: CharacterPatchNote | null) => {
-      if (patchNote && window.innerWidth < 640) {
-        const overallChange = getOverallChangeType(patchNote)
-        const changeLabel = CHANGE_LABEL[overallChange]
-          ? { text: CHANGE_LABEL[overallChange].text, color: `${CHANGE_LABEL[overallChange].color} ${CHANGE_LABEL[overallChange].bg}` }
-          : null
-        setMobileSheet({ pick, patchNote, changeLabel })
-      } else {
-        router.push(`/character-analysis?character=${pick.characterNum}`)
+  // Resolve picks with patch notes, buff/rework 우선 + 최소 4개 보장
+  const resolved = React.useMemo<ResolvedPick[]>(() => {
+    const all = picks.map((pick) => {
+      const patchNote = getCharacterPatchNote(pick.characterNum, currentPatch) ?? null
+      const changeType = patchNote ? getOverallChangeType(patchNote) : null
+      return {
+        pick,
+        name: getCharName(pick.characterNum),
+        weaponName: resolveWeaponName(pick.bestWeapon),
+        halfUrl: getCharacterHalfImageUrl(pick.characterNum),
+        patchNote,
+        changeType,
       }
-    },
-    [router]
-  )
+    })
+
+    const buffed = all.filter((r) => r.changeType === "buff" || r.changeType === "rework")
+
+    // 버프/조정 캐릭터가 4개 미만이면 나머지를 승률 상승 캐릭터로 채움
+    if (buffed.length >= 4) return buffed.slice(0, 5)
+
+    const buffedNums = new Set(buffed.map((r) => r.pick.characterNum))
+    const rest = all.filter((r) => !buffedNums.has(r.pick.characterNum))
+    return [...buffed, ...rest].slice(0, 5)
+  }, [picks, currentPatch, getCharName])
 
   if (loading) {
     return (
@@ -112,55 +138,305 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
     return <p className="py-4 text-sm text-[var(--color-danger)]">{error}</p>
   }
 
-  if (picks.length === 0) {
+  if (resolved.length === 0) {
     return (
       <p className="py-6 text-center text-xs text-[var(--color-muted-foreground)]">
-        이번 패치에서 꿀챔 데이터가 없습니다.
+        이번 패치에서 버프 후 떡상한 캐릭터가 없습니다.
       </p>
     )
   }
 
-  const featured = picks[0]
-  const rest = picks.slice(1)
-
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-[2fr_1fr_1fr] gap-3">
-        {/* ── Featured #1 Card ── */}
-        <div className="col-span-2 md:col-span-1 md:row-span-2">
-          <FeaturedCard
-            pick={featured}
-            name={getCharName(featured.characterNum)}
-            weaponName={resolveWeaponName(featured.bestWeapon)}
-            halfUrl={getCharacterHalfImageUrl(featured.characterNum)}
-            patchNote={getCharacterPatchNote(featured.characterNum, currentPatch) ?? null}
-            onClick={() =>
-              handleCardClick(
-                featured,
-                getCharacterPatchNote(featured.characterNum, currentPatch) ?? null
-              )
-            }
-          />
-        </div>
+      {/* ── Desktop: Flex row with side-panel push ── */}
+      <div className="hidden sm:flex gap-3 items-stretch" style={{ minHeight: 340 }}>
+        {resolved.map((r, i) => {
+          const isActive = hoveredIndex === i
+          const hasPatchNote = !!r.patchNote
+          const changeLabel = r.changeType ? CHANGE_LABEL[r.changeType] : null
 
-        {/* ── Cards #2-5 ── */}
-        {rest.map((pick, i) => {
-          const patchNote = getCharacterPatchNote(pick.characterNum, currentPatch) ?? null
           return (
-            <SmallCard
-              key={pick.characterNum}
-              pick={pick}
-              rank={i + 2}
-              name={getCharName(pick.characterNum)}
-              weaponName={resolveWeaponName(pick.bestWeapon)}
-              halfUrl={getCharacterHalfImageUrl(pick.characterNum)}
-              patchNote={patchNote}
-              onClick={() => handleCardClick(pick, patchNote)}
-            />
+            <div
+              key={r.pick.characterNum}
+              className="relative rounded-2xl overflow-hidden transition-[flex] duration-500 ease-out"
+              style={{
+                flex: isActive && hasPatchNote ? "0 0 420px" : "1 1 0%",
+                minWidth: 0,
+              }}
+              onMouseEnter={() => setHoveredIndex(i)}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              <div className="flex h-full">
+                {/* ── Card (image side) ── */}
+                <div
+                  className="relative flex-1 min-w-0 cursor-pointer overflow-hidden"
+                  onClick={() =>
+                    router.push(`/character-analysis?character=${r.pick.characterNum}`)
+                  }
+                >
+                  <Image
+                    src={r.halfUrl}
+                    alt={r.name}
+                    fill
+                    className={cn(
+                      "object-cover object-top transition-transform duration-700",
+                      isActive && "scale-110"
+                    )}
+                    sizes="25vw"
+                    priority={i < 3}
+                  />
+
+                  {/* Gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/5" />
+
+                  {/* Hover glow ring */}
+                  <div
+                    className={cn(
+                      "absolute inset-0 ring-2 ring-inset rounded-l-2xl pointer-events-none transition-all duration-300",
+                      isActive
+                        ? "ring-[var(--color-stat-up)]/40 shadow-[inset_0_0_40px_rgba(63,185,80,0.06)]"
+                        : "ring-transparent"
+                    )}
+                  />
+
+                  {/* Rank medal */}
+                  <div className="absolute top-3 left-3 flex items-center gap-2">
+                    <span
+                      className={cn(
+                        "flex h-7 w-7 items-center justify-center rounded-full text-xs font-black shadow-lg bg-gradient-to-br",
+                        RANK_STYLE[i + 1] ??
+                          "from-[var(--color-surface-3)] to-[var(--color-surface-2)] text-[var(--color-muted-foreground)]"
+                      )}
+                    >
+                      {i + 1}
+                    </span>
+                    {changeLabel && (
+                      <span
+                        className={cn(
+                          "rounded-md px-1.5 py-0.5 text-[9px] font-bold backdrop-blur-md shadow-sm",
+                          changeLabel.color,
+                          changeLabel.bg
+                        )}
+                      >
+                        {changeLabel.text}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Bottom info */}
+                  <div className="absolute bottom-0 inset-x-0 p-3.5">
+                    <p className="text-sm font-black text-white leading-tight truncate">
+                      {r.name}
+                    </p>
+                    <p className="text-[10px] text-white/50 mt-0.5 truncate">
+                      {r.weaponName}
+                    </p>
+
+                    {/* Stats - always visible */}
+                    <div className="grid grid-cols-3 gap-1.5 mt-2.5">
+                      <MiniStat
+                        label="승률"
+                        value={`${r.pick.winRate.toFixed(1)}%`}
+                        delta={r.pick.winRateDelta}
+                        highlight={r.pick.winRate >= 55}
+                      />
+                      <MiniStat
+                        label="픽률"
+                        value={`${r.pick.pickRate.toFixed(1)}%`}
+                        delta={r.pick.pickRateDelta}
+                      />
+                      <MiniStat
+                        label="RP"
+                        value={`${r.pick.averageRP >= 0 ? "+" : ""}${r.pick.averageRP.toFixed(0)}`}
+                        delta={r.pick.averageRPDelta}
+                        gold={r.pick.averageRP >= 0}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* ── Side Panel (buff details) ── */}
+                <div
+                  className={cn(
+                    "shrink-0 overflow-hidden transition-all duration-500 ease-out border-l border-[var(--color-border)]",
+                    isActive && hasPatchNote ? "w-52 opacity-100" : "w-0 opacity-0"
+                  )}
+                >
+                  <div className="w-52 h-full bg-[var(--color-surface)] p-3 flex flex-col">
+                    {/* Panel header */}
+                    <div className="flex items-center gap-1.5 mb-2.5 pb-2 border-b border-[var(--color-border)]/50">
+                      {changeLabel && (
+                        <span
+                          className={cn(
+                            "rounded px-1.5 py-0.5 text-[9px] font-bold",
+                            changeLabel.color,
+                            changeLabel.bg
+                          )}
+                        >
+                          {changeLabel.text}
+                        </span>
+                      )}
+                      <span className="text-[10px] text-[var(--color-muted-foreground)]">
+                        패치 {r.patchNote?.patch}
+                      </span>
+                    </div>
+
+                    {/* Changes list */}
+                    <div className="flex-1 overflow-y-auto flex flex-col gap-2 scrollbar-hide">
+                      {r.patchNote?.changes.map((change, ci) => {
+                        const cLabel = CHANGE_LABEL[change.changeType]
+                        return (
+                          <div key={ci} className="flex flex-col gap-0.5">
+                            <div className="flex items-center gap-1">
+                              <span
+                                className={cn(
+                                  "rounded px-1 py-0.5 text-[8px] font-bold",
+                                  cLabel.color,
+                                  cLabel.bg
+                                )}
+                              >
+                                {cLabel.text}
+                              </span>
+                              <span className="text-[10px] font-medium text-[var(--color-foreground)] truncate">
+                                {change.target}
+                              </span>
+                            </div>
+                            {change.valueSummary && (
+                              <p className="text-[9px] text-[var(--color-muted-foreground)] pl-1 leading-snug break-words">
+                                {change.valueSummary}
+                              </p>
+                            )}
+                          </div>
+                        )
+                      })}
+                    </div>
+
+                    {/* Bottom delta summary */}
+                    <div className="mt-auto pt-2.5 border-t border-[var(--color-border)]/50 flex flex-col gap-1">
+                      <div className="flex items-center justify-between text-[10px]">
+                        <span className="text-[var(--color-muted-foreground)]">승률 변화</span>
+                        <span className="font-semibold text-[var(--color-stat-up)] tabular-nums">
+                          +{r.pick.winRateDelta.toFixed(1)}%
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-[10px]">
+                        <span className="text-[var(--color-muted-foreground)]">RP 변화</span>
+                        <span
+                          className={cn(
+                            "font-semibold tabular-nums",
+                            r.pick.averageRPDelta >= 0
+                              ? "text-[var(--color-stat-up)]"
+                              : "text-[var(--color-stat-down)]"
+                          )}
+                        >
+                          {r.pick.averageRPDelta >= 0 ? "+" : ""}
+                          {r.pick.averageRPDelta.toFixed(1)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           )
         })}
       </div>
 
+      {/* ── Mobile: Card grid ── */}
+      <div className="sm:hidden grid grid-cols-2 gap-2.5">
+        {resolved.map((r, i) => {
+          const changeLabel = r.changeType ? CHANGE_LABEL[r.changeType] : null
+          return (
+            <div
+              key={r.pick.characterNum}
+              className={cn(
+                "relative rounded-xl overflow-hidden cursor-pointer active:scale-[0.97] transition-transform touch-manipulation",
+                i === 0 && "col-span-2"
+              )}
+              style={{ aspectRatio: i === 0 ? "16/9" : "3/4" }}
+              onClick={() => {
+                if (r.patchNote) {
+                  setMobileSheet({
+                    pick: r.pick,
+                    patchNote: r.patchNote,
+                    changeLabel: changeLabel
+                      ? {
+                          text: changeLabel.text,
+                          color: `${changeLabel.color} ${changeLabel.bg}`,
+                        }
+                      : null,
+                  })
+                } else {
+                  router.push(
+                    `/character-analysis?character=${r.pick.characterNum}`
+                  )
+                }
+              }}
+            >
+              <Image
+                src={r.halfUrl}
+                alt={r.name}
+                fill
+                className="object-cover object-top"
+                sizes="50vw"
+                priority={i < 2}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+
+              {/* Rank + badge */}
+              <div className="absolute top-2 left-2 flex items-center gap-1.5">
+                <span
+                  className={cn(
+                    "flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-black shadow bg-gradient-to-br",
+                    RANK_STYLE[i + 1] ??
+                      "from-[var(--color-surface-3)] to-[var(--color-surface-2)] text-[var(--color-muted-foreground)]"
+                  )}
+                >
+                  {i + 1}
+                </span>
+                {changeLabel && (
+                  <span
+                    className={cn(
+                      "rounded px-1.5 py-0.5 text-[8px] font-bold backdrop-blur-sm",
+                      changeLabel.color,
+                      changeLabel.bg
+                    )}
+                  >
+                    {changeLabel.text}
+                  </span>
+                )}
+              </div>
+
+              {/* Info */}
+              <div className="absolute bottom-0 inset-x-0 p-2.5">
+                <p
+                  className={cn(
+                    "font-bold text-white truncate",
+                    i === 0 ? "text-base" : "text-sm"
+                  )}
+                >
+                  {r.name}
+                </p>
+                <p className="text-[10px] text-white/50 truncate">{r.weaponName}</p>
+                <div className="flex items-center gap-2 mt-1.5 text-[10px]">
+                  <span className="font-semibold tabular-nums text-white">
+                    {r.pick.winRate.toFixed(1)}%
+                  </span>
+                  <span className="text-[var(--color-stat-up)] tabular-nums font-medium">
+                    +{r.pick.winRateDelta.toFixed(1)}
+                  </span>
+                  <span className="ml-auto text-[var(--color-accent-gold)] tabular-nums font-semibold">
+                    {r.pick.averageRP >= 0 ? "+" : ""}
+                    {r.pick.averageRP.toFixed(0)} RP
+                  </span>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Mobile bottom sheet */}
       {mobileSheet && (
         <PatchNoteBottomSheet
           pick={mobileSheet.pick}
@@ -170,7 +446,9 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
           onClose={() => setMobileSheet(null)}
           onNavigate={() => {
             setMobileSheet(null)
-            router.push(`/character-analysis?character=${mobileSheet.pick.characterNum}`)
+            router.push(
+              `/character-analysis?character=${mobileSheet.pick.characterNum}`
+            )
           }}
         />
       )}
@@ -178,189 +456,30 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
   )
 }
 
-/* ─── Featured Card (Rank 1) ─── */
+/* ─── Mini Stat ─── */
 
-function FeaturedCard({
-  pick,
-  name,
-  weaponName,
-  halfUrl,
-  patchNote,
-  onClick,
-}: {
-  pick: HoneyPickData
-  name: string
-  weaponName: string
-  halfUrl: string
-  patchNote: CharacterPatchNote | null
-  onClick: () => void
-}) {
-  const overallChange = patchNote ? getOverallChangeType(patchNote) : null
-  const changeLabel = overallChange ? CHANGE_LABEL[overallChange] : null
-
-  return (
-    <div
-      className="spotlight-card group cursor-pointer h-full min-h-[280px] sm:min-h-[340px] flex flex-col"
-      onClick={onClick}
-    >
-      {/* Image area */}
-      <div className="relative flex-1 overflow-hidden">
-        <Image
-          src={halfUrl}
-          alt={name}
-          fill
-          className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
-          sizes="(max-width: 768px) 100vw, 40vw"
-          priority
-        />
-
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-
-        {/* Rank badge */}
-        <div className="absolute top-3 left-3 flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-accent-gold)]/20 backdrop-blur-sm text-sm font-black text-[var(--color-accent-gold)] ring-1 ring-[var(--color-accent-gold)]/30">
-            1
-          </span>
-          {changeLabel && (
-            <span className={cn("rounded-md px-2 py-0.5 text-[10px] font-bold backdrop-blur-sm", changeLabel.color, changeLabel.bg)}>
-              {changeLabel.text}
-            </span>
-          )}
-        </div>
-
-        {/* Bottom info */}
-        <div className="absolute bottom-0 inset-x-0 p-4">
-          <p className="text-xl sm:text-2xl font-black text-white leading-tight truncate">
-            {name}
-          </p>
-          <p className="text-xs text-white/50 mt-0.5">{weaponName}</p>
-
-          {/* Stats row */}
-          <div className="flex items-center gap-2 mt-3">
-            <StatPill
-              label="승률"
-              value={`${pick.winRate.toFixed(1)}%`}
-              delta={`+${pick.winRateDelta.toFixed(1)}`}
-              highlight={pick.winRate >= 55}
-            />
-            <StatPill
-              label="픽률"
-              value={`${pick.pickRate.toFixed(1)}%`}
-              delta={`+${pick.pickRateDelta.toFixed(1)}`}
-            />
-            <StatPill
-              label="RP"
-              value={`${pick.averageRP >= 0 ? "+" : ""}${pick.averageRP.toFixed(0)}`}
-              delta={`${pick.averageRPDelta >= 0 ? "+" : ""}${pick.averageRPDelta.toFixed(1)}`}
-              highlight={pick.averageRP >= 10}
-              highlightGold
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-/* ─── Small Card (Rank 2-5) ─── */
-
-function SmallCard({
-  pick,
-  rank,
-  name,
-  weaponName,
-  halfUrl,
-  patchNote,
-  onClick,
-}: {
-  pick: HoneyPickData
-  rank: number
-  name: string
-  weaponName: string
-  halfUrl: string
-  patchNote: CharacterPatchNote | null
-  onClick: () => void
-}) {
-  const overallChange = patchNote ? getOverallChangeType(patchNote) : null
-  const changeLabel = overallChange ? CHANGE_LABEL[overallChange] : null
-
-  return (
-    <div
-      className="glass-card group cursor-pointer overflow-hidden flex flex-col"
-      onClick={onClick}
-    >
-      {/* Image */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-[var(--color-surface-2)]">
-        <Image
-          src={halfUrl}
-          alt={name}
-          fill
-          className="object-cover object-top transition-transform duration-500 group-hover:scale-110"
-          sizes="(max-width: 640px) 50vw, 20vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-surface)] via-transparent to-transparent" />
-
-        {/* Rank */}
-        <div className="absolute top-2 left-2 flex items-center gap-1.5">
-          <span className="flex h-6 w-6 items-center justify-center rounded-md bg-black/50 backdrop-blur-sm text-[11px] font-bold text-[var(--color-muted-foreground)]">
-            {rank}
-          </span>
-          {changeLabel && (
-            <span className={cn("rounded px-1.5 py-0.5 text-[8px] font-bold backdrop-blur-sm", changeLabel.color, changeLabel.bg)}>
-              {changeLabel.text}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Info */}
-      <div className="p-2.5 sm:p-3 flex flex-col gap-1.5 flex-1">
-        <div className="min-w-0">
-          <p className="text-sm font-bold text-[var(--color-foreground)] truncate group-hover:text-[var(--color-primary)] transition-colors">
-            {name}
-          </p>
-          <p className="text-[10px] text-[var(--color-muted-foreground)] truncate">{weaponName}</p>
-        </div>
-
-        <div className="flex items-center gap-2 text-[11px] mt-auto">
-          <span className="font-semibold tabular-nums text-[var(--color-foreground)]">
-            {pick.winRate.toFixed(1)}%
-          </span>
-          <span className="text-[var(--color-stat-up)] tabular-nums font-medium">
-            +{pick.winRateDelta.toFixed(1)}
-          </span>
-          <span className="ml-auto text-[var(--color-muted-foreground)] tabular-nums">
-            {pick.averageRP >= 0 ? "+" : ""}{pick.averageRP.toFixed(0)} RP
-          </span>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-/* ─── Stat Pill ─── */
-
-function StatPill({
+function MiniStat({
   label,
   value,
   delta,
   highlight,
-  highlightGold,
+  gold,
 }: {
   label: string
   value: string
-  delta: string
+  delta: number
   highlight?: boolean
-  highlightGold?: boolean
+  gold?: boolean
 }) {
   return (
-    <div className="flex-1 min-w-0 rounded-lg bg-black/40 backdrop-blur-sm px-2 py-1.5 text-center">
-      <p className="text-[8px] text-white/40 uppercase tracking-wider">{label}</p>
+    <div className="rounded-md bg-black/40 backdrop-blur-sm px-1.5 py-1.5 text-center">
+      <p className="text-[7px] text-white/40 uppercase tracking-wider leading-none">
+        {label}
+      </p>
       <p
         className={cn(
-          "text-[13px] font-bold tabular-nums leading-tight mt-0.5",
-          highlight && highlightGold
+          "text-[12px] font-bold tabular-nums leading-tight mt-1",
+          gold
             ? "text-[var(--color-accent-gold)]"
             : highlight
               ? "text-white"
@@ -369,8 +488,16 @@ function StatPill({
       >
         {value}
       </p>
-      <p className="text-[9px] font-medium text-[var(--color-stat-up)] mt-0.5 tabular-nums">
-        {delta}
+      <p
+        className={cn(
+          "text-[8px] font-semibold mt-0.5 tabular-nums leading-none",
+          delta >= 0
+            ? "text-[var(--color-stat-up)]"
+            : "text-[var(--color-stat-down)]"
+        )}
+      >
+        {delta >= 0 ? "+" : ""}
+        {delta.toFixed(1)}
       </p>
     </div>
   )

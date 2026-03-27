@@ -9,7 +9,6 @@ const TIER_OPTIONS = [
   { value: "DIAMOND", label: "다이아" },
   { value: "METEORITE", label: "운석" },
   { value: "MITHRIL", label: "미스릴" },
-  { value: "IN1000", label: "TOP 1000" },
 ]
 
 export function GlobalFilter() {

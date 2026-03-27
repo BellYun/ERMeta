@@ -121,13 +121,13 @@ export default async function Home() {
         <section className="reveal reveal-d3">
           <div className="flex items-center gap-3 mb-4 sm:mb-5">
             <div className="flex items-center gap-2">
-              <span className="text-lg">&#x1F36F;</span>
+              <span className="text-lg">&#x1F4C8;</span>
               <h2 className="text-base sm:text-lg font-bold text-[var(--color-foreground)]">
-                이번 패치 꿀챔
+                이번 패치 떡상
               </h2>
             </div>
             <span className="text-[11px] text-[var(--color-muted-foreground)] hidden sm:inline">
-              픽률 &amp; 승률 동반 상승 TOP 5
+              버프 후 픽률 &amp; 승률 동반 상승 캐릭터
             </span>
             <div className="flex-1" />
           </div>

@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { CHANGE_LABEL } from "./HoneyPickCard"
+import { CHANGE_LABEL } from "./HoneyPicksSection"
 import type { HoneyPickData } from "@/app/api/meta/honey-picks/route"
 import type { CharacterPatchNote } from "@/data/patch-notes"
 

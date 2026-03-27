@@ -137,7 +137,7 @@ export async function fetchHoneyPicksServer(
     const prevRates = computeRates(prevRows)
     const prevMap = new Map(prevRates.map((r) => [r.characterNum, r]))
 
-    // 꿀챔 필터: 픽률 ↑ AND 승률 ↑
+    // 꿀챔 필터: 승률 ↑ 필수 (픽률은 무관)
     const honeyPicks: HoneyPickData[] = []
     for (const curr of currentRates) {
       const prev = prevMap.get(curr.characterNum)
@@ -146,8 +146,10 @@ export async function fetchHoneyPicksServer(
       const pickRateDelta = curr.pickRate - prev.pickRate
       const winRateDelta = curr.winRate - prev.winRate
 
-      if (pickRateDelta > 0 && winRateDelta > 0) {
+      if (winRateDelta > 0) {
         const rpBonus = curr.averageRP > 0 ? 1 + curr.averageRP / 100 : 1
+        // 픽률 상승 시 가산, 하락 시 승률 변화만으로 스코어 산정
+        const pickFactor = pickRateDelta > 0 ? 1 + pickRateDelta : 1
         honeyPicks.push({
           characterNum: curr.characterNum,
           bestWeapon: curr.bestWeapon,
@@ -157,7 +159,7 @@ export async function fetchHoneyPicksServer(
           pickRateDelta,
           winRateDelta,
           averageRPDelta: curr.averageRP - prev.averageRP,
-          honeyScore: pickRateDelta * winRateDelta * rpBonus,
+          honeyScore: winRateDelta * pickFactor * rpBonus,
         })
       }
     }
@@ -165,7 +167,7 @@ export async function fetchHoneyPicksServer(
     honeyPicks.sort((a, b) => b.honeyScore - a.honeyScore)
 
     return {
-      picks: honeyPicks.slice(0, 5),
+      picks: honeyPicks.slice(0, 10),
       patchVersion,
       previousPatch,
       tier: usedTier,
