@@ -1,3 +1,3 @@
 export { ItemIcon } from "./ItemIcon"
 export { WinRateSpan } from "./WinRateSpan"
-export { type ItemGrade, GRADE_BORDER, getItemGrade, SLOTS, SLOT_LABELS } from "./item-utils"
+export { type ItemGrade, GRADE_BORDER, GRADE_BG, getItemGrade, SLOTS, SLOT_LABELS } from "./item-utils"

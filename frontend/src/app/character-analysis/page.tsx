@@ -61,9 +61,6 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 
 /**
  * 캐릭터 분석 페이지 — Server-side 데이터 프리페치
- *
- * Server Component에서 patches + 초기 캐릭터 통계를 미리 fetch하여
- * Client Component에 props로 전달 → 하이드레이션 후 즉시 데이터 표시 (fetch 워터폴 제거)
  */
 export default async function CharacterAnalysisPage({ searchParams }: Props) {
   const { character } = await searchParams
@@ -72,7 +69,6 @@ export default async function CharacterAnalysisPage({ searchParams }: Props) {
 
   const base = process.env.NEXT_PUBLIC_BASE_URL ?? "https://erwagg.com"
 
-  // 서버에서 패치 목록 → 초기 캐릭터 통계 프리페치 (fetch 워터폴 제거)
   const patches = await fetchPatches(base)
   const [initialStats, initialPrevStats] = await Promise.all([
     patches[0] ? fetchStats(validCode, patches[0], TierGroup.MITHRIL, base) : null,
@@ -80,23 +76,56 @@ export default async function CharacterAnalysisPage({ searchParams }: Props) {
   ])
 
   return (
-    <div className="overflow-x-auto">
-      <section className="text-center py-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-foreground)]">
-          캐릭터 분석
-        </h1>
-        <p className="mt-1.5 text-sm text-[var(--color-muted-foreground)]">
-          이터널리턴 캐릭터별 승률 · 빌드 · 패치 트렌드 분석
-        </p>
+    <>
+      {/* ── Hero Zone ── */}
+      <section className="analysis-hero -mx-3 sm:-mx-4 -mt-4 sm:-mt-5 px-3 sm:px-4 pt-5 sm:pt-8 pb-6 sm:pb-8 relative">
+        <div className="max-w-6xl mx-auto">
+          <div className="reveal flex flex-col gap-3">
+            {/* Badge */}
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 px-2.5 py-1">
+                <svg className="h-3 w-3 text-[var(--color-primary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z" />
+                </svg>
+                <span className="text-[10px] sm:text-[11px] font-semibold text-[var(--color-primary)] uppercase tracking-[0.1em]">
+                  Analytics
+                </span>
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-[var(--color-warning)]/10 border border-[var(--color-warning)]/20 px-2 py-0.5">
+                <span className="text-[9px] font-bold text-[var(--color-warning)] uppercase">BETA</span>
+              </span>
+              <span className="text-[10px] sm:text-[11px] text-[var(--color-muted-foreground)]">
+                개발 중 · 패치 {patches[0] ?? "—"} 기준
+              </span>
+            </div>
+
+            {/* Title */}
+            <h1 className="text-[28px] sm:text-4xl font-black tracking-tight text-[var(--color-foreground)] leading-none">
+              캐릭터 분석
+            </h1>
+            <p className="text-xs sm:text-sm text-[var(--color-muted-foreground)] max-w-lg">
+              캐릭터별 승률 · 빌드 · 패치 트렌드 · 장비 통계 심층 분석
+            </p>
+            <p className="text-[11px] text-[var(--color-warning)]/80 mt-0.5">
+              일부 아이템 이미지가 누락되거나 잘못 표시될 수 있습니다
+            </p>
+          </div>
+        </div>
+
+        {/* Bottom edge */}
+        <div className="absolute bottom-0 inset-x-0 section-divider" />
       </section>
-      <Suspense>
-        <CharacterAnalysisClient
-          initialPatches={patches}
-          initialStats={initialStats}
-          initialPrevStats={initialPrevStats}
-          initialCode={validCode}
-        />
-      </Suspense>
-    </div>
+
+      <div className="reveal reveal-d2 mt-5 sm:mt-7">
+        <Suspense>
+          <CharacterAnalysisClient
+            initialPatches={patches}
+            initialStats={initialStats}
+            initialPrevStats={initialPrevStats}
+            initialCode={validCode}
+          />
+        </Suspense>
+      </div>
+    </>
   )
 }

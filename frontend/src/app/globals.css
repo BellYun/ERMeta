@@ -316,3 +316,21 @@
 .char-card:active {
   transform: translateY(-1px);
 }
+
+/* ── Synergy Hero ── */
+.synergy-hero {
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 40%, #bc8cff0c 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 60%, #58a6ff08 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 50% 80%, #f0b13204 0%, transparent 50%),
+    var(--color-background);
+}
+
+/* ── Analysis Hero ── */
+.analysis-hero {
+  background:
+    radial-gradient(ellipse 55% 50% at 25% 35%, #58a6ff0c 0%, transparent 70%),
+    radial-gradient(ellipse 45% 55% at 75% 55%, #f0b13208 0%, transparent 60%),
+    radial-gradient(ellipse 50% 35% at 50% 85%, #3fb95006 0%, transparent 50%),
+    var(--color-background);
+}

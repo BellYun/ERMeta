@@ -11,6 +11,15 @@ export const GRADE_BORDER: Record<ItemGrade, string> = {
   Common: "",
 }
 
+export const GRADE_BG: Record<ItemGrade, string> = {
+  Mythic: "bg-[#5c1a1a]",
+  Legend: "bg-[#5c4a0a]",
+  Epic:   "bg-[#3b1a5c]",
+  Rare:   "bg-[#0f2e5c]",
+  Uncommon: "bg-[#1a3d1a]",
+  Common: "bg-[var(--color-surface-2)]",
+}
+
 export function getItemGrade(code: number | null): ItemGrade | null {
   if (code == null) return null
   return (itemGradeMap as Record<string, string>)[String(code)] as ItemGrade | undefined ?? null

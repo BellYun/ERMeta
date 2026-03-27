@@ -15,7 +15,7 @@ import { useL10n } from "@/components/L10nProvider"
 import { getCharacterPatchNote } from "@/data/patch-notes"
 import type { CharacterRankingData, RankingResponse } from "@/lib/ranking"
 import { computeMetaScores, assignTier } from "./utils"
-import { DeltaIndicator } from "./DeltaIndicator"
+
 import { PatchNoteTooltip } from "./PatchNoteTooltip"
 import type { PrevStats, DisplayRow } from "./types"
 
@@ -249,33 +249,24 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                         </td>
                         {/* Pick Rate */}
                         <td className="px-3 py-2 text-right">
-                          <div className="flex flex-col items-end">
-                            <span className="text-sm tabular-nums text-[var(--color-foreground)]">
-                              {char.pickRate.toFixed(1)}%
-                            </span>
-                            <DeltaIndicator current={char.pickRate} previous={char.prev?.pickRate} suffix="%" />
-                          </div>
+                          <span className="text-sm tabular-nums text-[var(--color-foreground)]">
+                            {char.pickRate.toFixed(1)}%
+                          </span>
                         </td>
                         {/* Win Rate */}
                         <td className="px-3 py-2 text-right">
-                          <div className="flex flex-col items-end">
-                            <span className="text-sm font-medium tabular-nums text-[var(--color-foreground)]">
-                              {char.winRate.toFixed(1)}%
-                            </span>
-                            <DeltaIndicator current={char.winRate} previous={char.prev?.winRate} suffix="%" />
-                          </div>
+                          <span className="text-sm font-medium tabular-nums text-[var(--color-foreground)]">
+                            {char.winRate.toFixed(1)}%
+                          </span>
                         </td>
                         {/* Average RP */}
                         <td className="px-3 py-2 text-right">
-                          <div className="flex flex-col items-end">
-                            <span className={cn(
-                              "text-sm font-semibold tabular-nums",
-                              char.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
-                            )}>
-                              {char.averageRP >= 0 ? "+" : ""}{char.averageRP.toFixed(1)}
-                            </span>
-                            <DeltaIndicator current={char.averageRP} previous={char.prev?.averageRP} precision={1} />
-                          </div>
+                          <span className={cn(
+                            "text-sm font-semibold tabular-nums",
+                            char.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
+                          )}>
+                            {char.averageRP >= 0 ? "+" : ""}{char.averageRP.toFixed(1)}
+                          </span>
                         </td>
                       </tr>
                     )
@@ -388,12 +379,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                         </div>
                         {/* Stats */}
                         <div className="flex flex-col items-end shrink-0 gap-0.5">
-                          <div className="flex items-baseline gap-1">
-                            <span className="text-xs font-medium tabular-nums text-[var(--color-foreground)]">
-                              {char.winRate.toFixed(1)}%
-                            </span>
-                            <DeltaIndicator current={char.winRate} previous={char.prev?.winRate} suffix="%" />
-                          </div>
+                          <span className="text-xs font-medium tabular-nums text-[var(--color-foreground)]">
+                            {char.winRate.toFixed(1)}%
+                          </span>
                           <span className={cn(
                             "text-[11px] font-semibold tabular-nums",
                             char.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"

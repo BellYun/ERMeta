@@ -24,40 +24,116 @@ export const metadata: Metadata = {
 export default function SynergyDetailPage() {
   return (
     <>
-      <section className="text-center py-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-foreground)]">
-          상세 조합 추천
-        </h1>
-        <p className="mt-1.5 text-sm text-[var(--color-muted-foreground)]">
-          무기 + 메인 특성 포함 · 조합 클릭 시 특성별 브레이크다운 확인
-        </p>
-      </section>
+      {/* ── Hero Zone ── */}
+      <section className="synergy-hero -mx-3 sm:-mx-4 -mt-4 sm:-mt-5 px-3 sm:px-4 pt-5 sm:pt-8 pb-6 sm:pb-8 relative">
+        <div className="max-w-6xl mx-auto">
+          <div className="reveal flex flex-col gap-3">
+            {/* Badge */}
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-accent-gold)]/10 border border-[var(--color-accent-gold)]/20 px-2.5 py-1">
+                <svg className="h-3 w-3 text-[var(--color-accent-gold)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z" />
+                </svg>
+                <span className="text-[10px] sm:text-[11px] font-semibold text-[var(--color-accent-gold)] uppercase tracking-[0.1em]">
+                  Advanced
+                </span>
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-[var(--color-warning)]/10 border border-[var(--color-warning)]/20 px-2 py-0.5">
+                <span className="text-[9px] font-bold text-[var(--color-warning)] uppercase">BETA</span>
+              </span>
+              <span className="text-[10px] sm:text-[11px] text-[var(--color-muted-foreground)]">
+                데이터 수집 중 · 표본 증가 시 정확도 향상
+              </span>
+            </div>
 
-      <div className="rounded-lg border border-[var(--color-accent-gold)]/30 bg-[var(--color-accent-gold)]/5 px-4 py-3 text-center">
-        <p className="text-xs font-medium text-[var(--color-accent-gold)]">
-          BETA · 데이터 수집 중입니다. 표본이 쌓일수록 추천 정확도가 올라갑니다.
-        </p>
-      </div>
+            {/* Title */}
+            <h1 className="text-[28px] sm:text-4xl font-black tracking-tight text-[var(--color-foreground)] leading-none">
+              상세 조합 추천
+            </h1>
+            <p className="text-xs sm:text-sm text-[var(--color-muted-foreground)] max-w-lg">
+              무기 + 메인 특성까지 포함한 심층 분석 · 조합 클릭 시 특성별 브레이크다운 확인
+            </p>
 
-      {/* 내 캐릭터 풀 (상단 유지) */}
-      <Suspense fallback={<FocusPoolSkeleton />}>
-        <FocusWeaponPool />
-      </Suspense>
-
-      {/* 아군 선택(좌) + 추천 조합(우) */}
-      <div className="flex flex-col lg:flex-row gap-4 mt-4">
-        <div className="w-full lg:w-[340px] shrink-0">
-          <Suspense fallback={<AllySelectorSkeleton />}>
-            <WeaponAllySelector />
-          </Suspense>
+            {/* Flow Steps */}
+            <div className="flex items-center gap-2 mt-2">
+              <StepIndicator step={1} label="풀 설정" sublabel="캐릭터+무기" color="purple" />
+              <StepConnector />
+              <StepIndicator step={2} label="아군 선택" sublabel="캐릭터+무기" color="blue" />
+              <StepConnector />
+              <StepIndicator step={3} label="상세 분석" sublabel="특성별 비교" color="gold" />
+            </div>
+          </div>
         </div>
 
-        <div className="flex-1 min-w-0">
-          <Suspense fallback={<ResultSkeleton />}>
-            <SynergyDetailResults />
+        {/* Bottom edge */}
+        <div className="absolute bottom-0 inset-x-0 section-divider" />
+      </section>
+
+      <div className="flex flex-col gap-5 sm:gap-6 mt-5 sm:mt-7">
+        {/* ── Step 1: Weapon Pool ── */}
+        <section className="reveal reveal-d1">
+          <div className="flex items-center gap-2 mb-2.5">
+            <span className="flex items-center justify-center h-5 w-5 rounded-md bg-[var(--color-accent-purple)]/15 text-[10px] font-bold text-[var(--color-accent-purple)]">1</span>
+            <h2 className="text-sm font-bold text-[var(--color-foreground)]">내 캐릭터 풀</h2>
+            <span className="text-[10px] text-[var(--color-muted-foreground)]">선택사항 · 캐릭터+무기 단위 필터링</span>
+          </div>
+          <Suspense fallback={<FocusPoolSkeleton />}>
+            <FocusWeaponPool />
           </Suspense>
+        </section>
+
+        {/* ── Step 2 & 3: Selector + Results ── */}
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
+          {/* Left: Weapon Ally Selector */}
+          <section className="reveal reveal-d2 w-full lg:w-[340px] shrink-0">
+            <div className="flex items-center gap-2 mb-2.5">
+              <span className="flex items-center justify-center h-5 w-5 rounded-md bg-[var(--color-primary)]/15 text-[10px] font-bold text-[var(--color-primary)]">2</span>
+              <h2 className="text-sm font-bold text-[var(--color-foreground)]">아군 선택</h2>
+            </div>
+            <Suspense fallback={<AllySelectorSkeleton />}>
+              <WeaponAllySelector />
+            </Suspense>
+          </section>
+
+          {/* Right: Results */}
+          <section className="reveal reveal-d3 flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-2.5">
+              <span className="flex items-center justify-center h-5 w-5 rounded-md bg-[var(--color-accent-gold)]/15 text-[10px] font-bold text-[var(--color-accent-gold)]">3</span>
+              <h2 className="text-sm font-bold text-[var(--color-foreground)]">추천 조합</h2>
+            </div>
+            <Suspense fallback={<ResultSkeleton />}>
+              <SynergyDetailResults />
+            </Suspense>
+          </section>
         </div>
       </div>
     </>
+  )
+}
+
+/* ── Step Flow Components ── */
+
+function StepIndicator({ step, label, sublabel, color }: { step: number; label: string; sublabel: string; color: "purple" | "blue" | "gold" }) {
+  const colorMap = {
+    purple: { bg: "bg-[var(--color-accent-purple)]/10", border: "border-[var(--color-accent-purple)]/30", text: "text-[var(--color-accent-purple)]" },
+    blue: { bg: "bg-[var(--color-primary)]/10", border: "border-[var(--color-primary)]/30", text: "text-[var(--color-primary)]" },
+    gold: { bg: "bg-[var(--color-accent-gold)]/10", border: "border-[var(--color-accent-gold)]/30", text: "text-[var(--color-accent-gold)]" },
+  }
+  const c = colorMap[color]
+
+  return (
+    <div className={`flex items-center gap-2 rounded-lg ${c.bg} border ${c.border} px-2.5 py-1.5`}>
+      <span className={`text-xs font-bold ${c.text}`}>{step}</span>
+      <div className="flex flex-col">
+        <span className={`text-[11px] font-semibold ${c.text}`}>{label}</span>
+        <span className="text-[9px] text-[var(--color-muted-foreground)] hidden sm:block">{sublabel}</span>
+      </div>
+    </div>
+  )
+}
+
+function StepConnector() {
+  return (
+    <div className="flex-shrink-0 w-4 sm:w-6 h-px bg-gradient-to-r from-[var(--color-border)] to-[var(--color-border-light)]" />
   )
 }

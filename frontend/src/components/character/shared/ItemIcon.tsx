@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import itemImageMap from "@/../const/itemImageMap.json"
-import { getItemGrade, GRADE_BORDER } from "./item-utils"
+import { getItemGrade, GRADE_BG } from "./item-utils"
 
 export function ItemIcon({ code, size = 36 }: { code: number | null; size?: number }) {
   if (code == null) {
@@ -17,14 +17,14 @@ export function ItemIcon({ code, size = 36 }: { code: number | null; size?: numb
 
   const imgPath = (itemImageMap as Record<string, string>)[String(code)]
   const grade = getItemGrade(code)
-  const gradeBorder = grade ? GRADE_BORDER[grade] : "ring-1 ring-[var(--color-border)]"
+  const gradeBg = grade ? GRADE_BG[grade] : "bg-[var(--color-surface-2)]"
 
   if (!imgPath) {
     return (
       <div
         className={cn(
-          "rounded-lg bg-[var(--color-surface-2)] flex items-center justify-center",
-          gradeBorder
+          "rounded-lg flex items-center justify-center",
+          gradeBg
         )}
         style={{ width: size, height: size }}
       >
@@ -35,7 +35,7 @@ export function ItemIcon({ code, size = 36 }: { code: number | null; size?: numb
 
   return (
     <div
-      className={cn("relative rounded-lg bg-[var(--color-surface-2)]", gradeBorder)}
+      className={cn("relative rounded-lg overflow-hidden", gradeBg)}
       style={{ width: size, height: size }}
     >
       <Image
