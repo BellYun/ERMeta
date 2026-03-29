@@ -3,6 +3,7 @@ import { Suspense } from "react"
 import { FocusWeaponPool } from "@/components/features/synergy-detail/FocusWeaponPool"
 import { WeaponAllySelector } from "@/components/features/synergy-detail/WeaponAllySelector"
 import { SynergyDetailResults } from "@/components/features/synergy-detail/SynergyDetailResults"
+import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary"
 import {
   FocusPoolSkeleton,
   AllySelectorSkeleton,
@@ -77,9 +78,11 @@ export default function SynergyDetailPage() {
             <h2 className="text-sm font-bold text-[var(--color-foreground)]">내 캐릭터 풀</h2>
             <span className="text-[10px] text-[var(--color-muted-foreground)]">선택사항 · 캐릭터+무기 단위 필터링</span>
           </div>
-          <Suspense fallback={<FocusPoolSkeleton />}>
-            <FocusWeaponPool />
-          </Suspense>
+          <SectionErrorBoundary sectionName="캐릭터 풀">
+            <Suspense fallback={<FocusPoolSkeleton />}>
+              <FocusWeaponPool />
+            </Suspense>
+          </SectionErrorBoundary>
         </section>
 
         {/* ── Step 2 & 3: Selector + Results ── */}
@@ -90,9 +93,11 @@ export default function SynergyDetailPage() {
               <span className="flex items-center justify-center h-5 w-5 rounded-md bg-[var(--color-primary)]/15 text-[10px] font-bold text-[var(--color-primary)]">2</span>
               <h2 className="text-sm font-bold text-[var(--color-foreground)]">아군 선택</h2>
             </div>
-            <Suspense fallback={<AllySelectorSkeleton />}>
-              <WeaponAllySelector />
-            </Suspense>
+            <SectionErrorBoundary sectionName="아군 선택">
+              <Suspense fallback={<AllySelectorSkeleton />}>
+                <WeaponAllySelector />
+              </Suspense>
+            </SectionErrorBoundary>
           </section>
 
           {/* Right: Results */}
@@ -101,9 +106,11 @@ export default function SynergyDetailPage() {
               <span className="flex items-center justify-center h-5 w-5 rounded-md bg-[var(--color-accent-gold)]/15 text-[10px] font-bold text-[var(--color-accent-gold)]">3</span>
               <h2 className="text-sm font-bold text-[var(--color-foreground)]">추천 조합</h2>
             </div>
-            <Suspense fallback={<ResultSkeleton />}>
-              <SynergyDetailResults />
-            </Suspense>
+            <SectionErrorBoundary sectionName="추천 조합">
+              <Suspense fallback={<ResultSkeleton />}>
+                <SynergyDetailResults />
+              </Suspense>
+            </SectionErrorBoundary>
           </section>
         </div>
       </div>

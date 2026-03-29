@@ -4,7 +4,7 @@ import * as React from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { X, Users, Loader2, Info, Share2 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { ResultErrorBoundary } from "@/components/features/ResultErrorBoundary"
+import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary"
 import { useL10n } from "@/components/L10nProvider"
 import { resolveCharacterName } from "@/lib/characterMap"
 import { analytics } from "@/lib/analytics"
@@ -209,7 +209,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
       </div>
 
       {/* 결과 목록 */}
-      <ResultErrorBoundary>
+      <SectionErrorBoundary sectionName="조합 결과">
         {selectedAllies.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
             <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
@@ -286,7 +286,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
             </button>
           </div>
         )}
-      </ResultErrorBoundary>
+      </SectionErrorBoundary>
     </>
   )
 }

@@ -1,6 +1,9 @@
 # OMC
 .omc/
 
+# Next.js
+.next/
+
 *.md
 !README.md
 !**/README.md

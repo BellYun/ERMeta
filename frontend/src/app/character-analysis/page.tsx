@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Suspense } from "react"
 import { getCharacterName } from "@/lib/characterMap"
 import { CharacterAnalysisClient } from "@/components/features/CharacterAnalysisClient"
+import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary"
 import { fetchPatches, fetchStats } from "@/components/features/character-analysis/utils"
 import { TierGroup } from "@/utils/tier"
 
@@ -117,14 +118,16 @@ export default async function CharacterAnalysisPage({ searchParams }: Props) {
       </section>
 
       <div className="reveal reveal-d2 mt-5 sm:mt-7 overflow-x-auto">
-        <Suspense>
-          <CharacterAnalysisClient
-            initialPatches={patches}
-            initialStats={initialStats}
-            initialPrevStats={initialPrevStats}
-            initialCode={validCode}
-          />
-        </Suspense>
+        <SectionErrorBoundary sectionName="캐릭터 분석">
+          <Suspense>
+            <CharacterAnalysisClient
+              initialPatches={patches}
+              initialStats={initialStats}
+              initialPrevStats={initialPrevStats}
+              initialCode={validCode}
+            />
+          </Suspense>
+        </SectionErrorBoundary>
       </div>
     </>
   )
