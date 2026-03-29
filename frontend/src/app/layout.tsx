@@ -128,7 +128,7 @@ export default function RootLayout({
               inLanguage: "ko-KR",
               potentialAction: {
                 "@type": "SearchAction",
-                target: `${BASE_URL}/character-analysis?character={character_code}`,
+                target: `${BASE_URL}/character/{character_code}`,
                 "query-input": "required name=character_code",
               },
             }),

@@ -49,7 +49,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ]
 
   const characterPages: MetadataRoute.Sitemap = CHARACTER_CODES.map((code) => ({
-    url: `${base}/character-analysis?character=${code}`,
+    url: `${base}/character/${code}`,
     lastModified: new Date(),
     changeFrequency: "daily" as const,
     priority: 0.7,
