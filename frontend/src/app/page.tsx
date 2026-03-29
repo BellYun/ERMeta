@@ -4,6 +4,7 @@ import { GlobalFilter } from "@/components/features/GlobalFilter"
 import { TierRankingTable } from "@/components/features/TierRankingTable"
 import { HoneyPicksSection } from "@/components/features/HoneyPicksSection"
 import { FilterProvider } from "@/components/features/FilterContext"
+import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary"
 import { getPatches } from "@/lib/getPatches"
 import { fetchRankingData } from "@/lib/ranking"
 import { fetchHoneyPicksServer } from "@/lib/honeyPicks"
@@ -132,9 +133,11 @@ export default async function Home() {
             <div className="flex-1" />
           </div>
 
-          <Suspense fallback={<HoneyPicksSkeleton />}>
-            <HoneyPicksStream patch={defaultPatch} tier={defaultTier} />
-          </Suspense>
+          <SectionErrorBoundary sectionName="이번 패치 떡상">
+            <Suspense fallback={<HoneyPicksSkeleton />}>
+              <HoneyPicksStream patch={defaultPatch} tier={defaultTier} />
+            </Suspense>
+          </SectionErrorBoundary>
         </section>
 
         {/* ── Divider ── */}
@@ -151,9 +154,11 @@ export default async function Home() {
             </span>
           </div>
 
-          <Suspense fallback={<RankingSkeleton />}>
-            <TierRankingStream patch={defaultPatch} tier={defaultTier} />
-          </Suspense>
+          <SectionErrorBoundary sectionName="캐릭터 순위">
+            <Suspense fallback={<RankingSkeleton />}>
+              <TierRankingStream patch={defaultPatch} tier={defaultTier} />
+            </Suspense>
+          </SectionErrorBoundary>
         </section>
       </div>
     </FilterProvider>
