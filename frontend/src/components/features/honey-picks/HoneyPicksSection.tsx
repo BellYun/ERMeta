@@ -171,7 +171,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                 <div
                   className="relative flex-1 min-w-0 cursor-pointer overflow-hidden"
                   onClick={() =>
-                    router.push(`/character-analysis?character=${r.pick.characterNum}`)
+                    router.push(`/character/${r.pick.characterNum}`)
                   }
                 >
                   <Image
@@ -368,7 +368,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                   })
                 } else {
                   router.push(
-                    `/character-analysis?character=${r.pick.characterNum}`
+                    `/character/${r.pick.characterNum}`
                   )
                 }
               }}
@@ -447,7 +447,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
           onNavigate={() => {
             setMobileSheet(null)
             router.push(
-              `/character-analysis?character=${mobileSheet.pick.characterNum}`
+              `/character/${mobileSheet.pick.characterNum}`
             )
           }}
         />

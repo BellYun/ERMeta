@@ -4,7 +4,7 @@ import * as React from "react"
 import { Search, X } from "lucide-react"
 import { getCharacterName } from "@/lib/characterMap"
 import { analytics } from "@/lib/analytics"
-import { useSearchParams, useRouter, usePathname } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { VirtualCharacterGrid } from "@/components/ui/VirtualCharacterGrid"
 
 interface CharacterGridProps {
@@ -26,20 +26,16 @@ export function CharacterGrid({
   selectedRef,
   searchTimerRef,
 }: CharacterGridProps) {
-  const searchParams = useSearchParams()
   const router = useRouter()
-  const pathname = usePathname()
 
   const handleSelect = React.useCallback(
     (code: number) => {
       onSelect(code)
       setSearchQuery("")
-      const params = new URLSearchParams(searchParams.toString())
-      params.set("character", String(code))
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+      router.push(`/character/${code}`, { scroll: false })
       analytics.characterViewed(code, getCharacterName(code))
     },
-    [onSelect, setSearchQuery, searchParams, router, pathname]
+    [onSelect, setSearchQuery, router]
   )
 
   const isSelected = React.useCallback(

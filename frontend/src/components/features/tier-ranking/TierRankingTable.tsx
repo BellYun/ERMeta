@@ -197,12 +197,12 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           if (char.patchNote && "ontouchstart" in window) {
                             if (activeKey === key) {
                               setActiveKey(null)
-                              router.push(`/character-analysis?character=${char.code}`)
+                              router.push(`/character/${char.code}`)
                             } else {
                               setActiveKey(key)
                             }
                           } else {
-                            router.push(`/character-analysis?character=${char.code}`)
+                            router.push(`/character/${char.code}`)
                           }
                         }}
                         onMouseEnter={() => setActiveKey(key)}
@@ -345,12 +345,12 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           if (char.patchNote && "ontouchstart" in window) {
                             if (activeKey === key) {
                               setActiveKey(null)
-                              router.push(`/character-analysis?character=${char.code}`)
+                              router.push(`/character/${char.code}`)
                             } else {
                               setActiveKey(key)
                             }
                           } else {
-                            router.push(`/character-analysis?character=${char.code}`)
+                            router.push(`/character/${char.code}`)
                           }
                         }}
                       >

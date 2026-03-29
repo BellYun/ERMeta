@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Suspense } from "react"
 import { BarChart2, FileText, Package, Layers, Loader2 } from "lucide-react"
-import { useSearchParams, useRouter, usePathname } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { analytics } from "@/lib/analytics"
 import { getCharacterName } from "@/lib/characterMap"
 import { cn } from "@/lib/utils"
@@ -57,16 +57,9 @@ export function CharacterAnalysisClient({
   initialPrevStats,
   initialCode,
 }: CharacterAnalysisClientProps) {
-  const searchParams = useSearchParams()
   const router = useRouter()
-  const pathname = usePathname()
 
-  const startCode = initialCode ?? (() => {
-    const p = searchParams.get("character")
-    if (!p) return 1
-    const n = parseInt(p, 10)
-    return CHARACTER_CODES.includes(n) ? n : 1
-  })()
+  const startCode = initialCode ?? 1
 
   const [selectedCode, setSelectedCode] = React.useState<number>(startCode)
   const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.MITHRIL)

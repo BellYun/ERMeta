@@ -3,7 +3,7 @@ const BASE_URL = (process.env.NEXT_PUBLIC_BASE_URL ?? "https://erwagg.com").repl
 const urls = [
   { loc: BASE_URL, changefreq: "daily", priority: "1.0" },
   { loc: `${BASE_URL}/synergy`, changefreq: "daily", priority: "0.9" },
-  { loc: `${BASE_URL}/character-analysis`, changefreq: "daily", priority: "0.9" },
+  { loc: `${BASE_URL}/character/1`, changefreq: "daily", priority: "0.9" },
 ];
 
 export async function GET() {
