@@ -140,15 +140,22 @@ export function CharacterAnalysisClient({
 
       const remainingPatches = patches.slice(2)
       if (remainingPatches.length > 0) {
-        Promise.all(
-          remainingPatches.map((p) => fetchStats(selectedCode, p, selectedTier))
-        ).then((restResults) => {
-          setAllPatchStats((prev) => {
-            const merged = [...prev]
-            restResults.forEach((r, i) => { merged[i + 2] = r })
-            return merged
+        const fetchRemaining = () =>
+          Promise.all(
+            remainingPatches.map((p) => fetchStats(selectedCode, p, selectedTier))
+          ).then((restResults) => {
+            setAllPatchStats((prev) => {
+              const merged = [...prev]
+              restResults.forEach((r, i) => { merged[i + 2] = r })
+              return merged
+            })
           })
-        })
+        // 메인 스레드 idle 시점까지 지연 → TTI 개선
+        if (typeof requestIdleCallback !== "undefined") {
+          requestIdleCallback(() => { fetchRemaining() })
+        } else {
+          setTimeout(fetchRemaining, 200)
+        }
       }
       return
     }
@@ -177,15 +184,21 @@ export function CharacterAnalysisClient({
 
       const remainingPatches = patches.slice(2)
       if (remainingPatches.length > 0) {
-        Promise.all(
-          remainingPatches.map((p) => fetchStats(selectedCode, p, selectedTier))
-        ).then((restResults) => {
-          setAllPatchStats((prev) => {
-            const merged = [...prev]
-            restResults.forEach((r, i) => { merged[i + 2] = r })
-            return merged
+        const fetchRemaining = () =>
+          Promise.all(
+            remainingPatches.map((p) => fetchStats(selectedCode, p, selectedTier))
+          ).then((restResults) => {
+            setAllPatchStats((prev) => {
+              const merged = [...prev]
+              restResults.forEach((r, i) => { merged[i + 2] = r })
+              return merged
+            })
           })
-        })
+        if (typeof requestIdleCallback !== "undefined") {
+          requestIdleCallback(() => { fetchRemaining() })
+        } else {
+          setTimeout(fetchRemaining, 200)
+        }
       }
     })
   }, [selectedCode, selectedTier, patches, initialStats, startCode])
