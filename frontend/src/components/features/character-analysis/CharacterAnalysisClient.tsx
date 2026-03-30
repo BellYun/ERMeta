@@ -10,12 +10,33 @@ import { cn } from "@/lib/utils"
 import { TierGroup } from "@/utils/tier"
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route"
 
+import dynamic from "next/dynamic"
 import { CHARACTER_CODES } from "./constants"
 import { assignCharTier, fetchStats } from "./utils"
-import { CharacterGrid } from "./CharacterGrid"
 import { CharacterHeader } from "./CharacterHeader"
 
-// 탭 콘텐츠만 lazy import (초기 뷰포트 밖 → 코드 스플릿 효과 큼)
+// CharacterGrid: 사이드바는 LCP 경로 밖 → SSR 스킵하여 초기 JS 번들 축소
+const CharacterGrid = dynamic(
+  () => import("./CharacterGrid").then((m) => ({ default: m.CharacterGrid })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full lg:w-[260px] lg:shrink-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-2">
+        <div className="h-8 w-full rounded bg-[var(--color-surface-2)] animate-pulse mb-2" />
+        <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-3 gap-1 max-h-[320px] lg:max-h-[620px] overflow-hidden">
+          {Array.from({ length: 18 }).map((_, i) => (
+            <div key={i} className="flex flex-col items-center gap-1 py-2">
+              <div className="h-10 w-10 rounded-md bg-[var(--color-surface-2)] animate-pulse" />
+              <div className="h-3 w-8 rounded bg-[var(--color-surface-2)] animate-pulse" />
+            </div>
+          ))}
+        </div>
+      </div>
+    ),
+  }
+)
+
+// 탭 콘텐츠: lazy import (코드 스플릿)
 const PatchComparisonTab = React.lazy(() =>
   import("./PatchComparisonTab").then((m) => ({ default: m.PatchComparisonTab }))
 )
