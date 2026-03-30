@@ -74,6 +74,7 @@ export function CharacterHeader({
                 fill
                 className="object-cover"
                 sizes="96px"
+                priority
                 unoptimized
               />
             </div>
