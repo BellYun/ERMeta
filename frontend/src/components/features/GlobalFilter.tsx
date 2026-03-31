@@ -7,7 +7,7 @@ import { useFilter } from "./FilterContext"
 
 const TIER_OPTIONS = [
   { value: "DIAMOND", label: "다이아" },
-  { value: "METEORITE", label: "운석" },
+  { value: "METEORITE", label: "메테오라이트" },
   { value: "MITHRIL", label: "미스릴" },
 ]
 
