@@ -29,12 +29,21 @@ export const metadata: Metadata = {
 
 function HoneyPicksSkeleton() {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-[1fr_1fr_1fr_1fr_1fr] gap-3">
-      <div className="col-span-2 sm:col-span-1 md:col-span-2 md:row-span-2 aspect-[3/4] md:aspect-auto rounded-2xl bg-[var(--color-surface)] animate-pulse" />
-      {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="aspect-[4/5] rounded-xl bg-[var(--color-surface)] animate-pulse" />
-      ))}
-    </div>
+    <>
+      {/* Desktop */}
+      <div className="hidden sm:flex gap-3 items-stretch" style={{ minHeight: 340 }}>
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="flex-1 rounded-2xl bg-[var(--color-surface)] animate-pulse" />
+        ))}
+      </div>
+      {/* Mobile */}
+      <div className="sm:hidden grid grid-cols-2 gap-2.5">
+        <div className="col-span-2 rounded-xl bg-[var(--color-surface)] animate-pulse" style={{ aspectRatio: "16/9" }} />
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="rounded-xl bg-[var(--color-surface)] animate-pulse" style={{ aspectRatio: "3/4" }} />
+        ))}
+      </div>
+    </>
   )
 }
 
