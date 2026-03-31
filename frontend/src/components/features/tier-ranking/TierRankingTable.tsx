@@ -197,12 +197,12 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           if (char.patchNote && "ontouchstart" in window) {
                             if (activeKey === key) {
                               setActiveKey(null)
-                              router.push(`/character/${char.code}`)
+                              router.push(`/character/${char.code}?weapon=${char.weaponCode}`)
                             } else {
                               setActiveKey(key)
                             }
                           } else {
-                            router.push(`/character/${char.code}`)
+                            router.push(`/character/${char.code}?weapon=${char.weaponCode}`)
                           }
                         }}
                         onMouseEnter={() => setActiveKey(key)}
@@ -345,12 +345,12 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           if (char.patchNote && "ontouchstart" in window) {
                             if (activeKey === key) {
                               setActiveKey(null)
-                              router.push(`/character/${char.code}`)
+                              router.push(`/character/${char.code}?weapon=${char.weaponCode}`)
                             } else {
                               setActiveKey(key)
                             }
                           } else {
-                            router.push(`/character/${char.code}`)
+                            router.push(`/character/${char.code}?weapon=${char.weaponCode}`)
                           }
                         }}
                       >

@@ -70,6 +70,7 @@ interface CharacterAnalysisClientProps {
   initialStats?: CharacterStatsResponse | null
   initialPrevStats?: CharacterStatsResponse | null
   initialCode?: number
+  initialWeapon?: number | null
 }
 
 export function CharacterAnalysisClient({
@@ -77,6 +78,7 @@ export function CharacterAnalysisClient({
   initialStats,
   initialPrevStats,
   initialCode,
+  initialWeapon,
 }: CharacterAnalysisClientProps) {
   const router = useRouter()
 
@@ -85,6 +87,8 @@ export function CharacterAnalysisClient({
   const [selectedCode, setSelectedCode] = React.useState<number>(startCode)
   const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.MITHRIL)
   const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>(() => {
+    // URL의 weapon 파라미터 우선
+    if (initialWeapon != null) return initialWeapon
     if (initialStats?.weapons && initialStats.weapons.length > 0) {
       return initialStats.weapons[0].bestWeapon ?? null
     }
@@ -94,6 +98,18 @@ export function CharacterAnalysisClient({
   const searchTimerRef = React.useRef<ReturnType<typeof setTimeout>>(null)
   const selectedRef = React.useRef<HTMLButtonElement>(null)
   const [activeTab, setActiveTab] = React.useState("comparison")
+
+  // 무기 변경 시 URL 파라미터 동기화 (Next.js 리렌더 방지를 위해 history API 직접 사용)
+  const handleWeaponChange = React.useCallback((weapon: number | null) => {
+    setSelectedWeapon(weapon)
+    const url = new URL(window.location.href)
+    if (weapon != null) {
+      url.searchParams.set("weapon", String(weapon))
+    } else {
+      url.searchParams.delete("weapon")
+    }
+    window.history.replaceState(null, "", url.pathname + url.search)
+  }, [])
 
   const deferredSearch = React.useDeferredValue(searchQuery)
 
@@ -132,6 +148,7 @@ export function CharacterAnalysisClient({
   }, [selectedCode])
 
   const isInitialLoad = React.useRef(true)
+  const initialWeaponApplied = React.useRef(false)
   React.useEffect(() => {
     if (!patches.length) return
 
@@ -174,7 +191,12 @@ export function CharacterAnalysisClient({
       const current = priorityResults[0] ?? null
       setStats(current)
       setPreviousStats(priorityResults[1] ?? null)
-      if (current?.weapons && current.weapons.length > 0) {
+      // initialWeapon이 있고 아직 적용 전이면 URL 값 유지, 아니면 첫 번째 무기 선택
+      if (!initialWeaponApplied.current && initialWeapon != null) {
+        initialWeaponApplied.current = true
+        const hasWeapon = current?.weapons?.some((w) => w.bestWeapon === initialWeapon)
+        setSelectedWeapon(hasWeapon ? initialWeapon : current?.weapons?.[0]?.bestWeapon ?? null)
+      } else if (current?.weapons && current.weapons.length > 0) {
         setSelectedWeapon(current.weapons[0].bestWeapon ?? null)
       }
       const initial: (CharacterStatsResponse | null)[] = Array(patches.length).fill(null)
@@ -268,7 +290,7 @@ export function CharacterAnalysisClient({
           selectedTier={selectedTier}
           setSelectedTier={setSelectedTier}
           selectedWeapon={selectedWeapon}
-          setSelectedWeapon={setSelectedWeapon}
+          setSelectedWeapon={handleWeaponChange}
           stats={stats}
           displayStat={displayStat}
           displayPrevStat={displayPrevStat}
