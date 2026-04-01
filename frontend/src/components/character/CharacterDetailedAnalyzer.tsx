@@ -688,7 +688,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
               <SectionDivider title="아이템 빌드" />
               {equipData!.topBuilds.length > 0 && (
                 <TopBuildsTableFiltered
-                  builds={equipData!.topBuilds}
+                  builds={[...equipData!.topBuilds].sort((a, b) => b.averageRP - a.averageRP)}
                   itemNames={itemNames}
                 />
               )}

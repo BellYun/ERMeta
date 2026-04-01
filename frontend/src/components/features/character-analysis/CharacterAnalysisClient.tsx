@@ -2,10 +2,9 @@
 
 import * as React from "react"
 import { Suspense } from "react"
-import { BarChart2, ChevronLeft, ChevronRight, FileText, Loader2, Users, Zap } from "lucide-react"
+import { BarChart2, ChevronRight, FileText, Loader2, Users, Zap } from "lucide-react"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
-import { getCharacterName, getCharacterMiniWebpUrl } from "@/lib/characterMap"
+import { getCharacterName } from "@/lib/characterMap"
 import { resolveWeaponName } from "@/lib/weaponMap"
 import { cn } from "@/lib/utils"
 import { TierGroup } from "@/utils/tier"
@@ -43,9 +42,6 @@ const PatchComparisonTab = React.lazy(() =>
 )
 const PatchLogTab = React.lazy(() =>
   import("./PatchLogTab").then((m) => ({ default: m.PatchLogTab }))
-)
-const CharacterEquipmentAnalyzer = React.lazy(() =>
-  import("@/components/character/CharacterEquipmentAnalyzer").then((m) => ({ default: m.CharacterEquipmentAnalyzer }))
 )
 const CharacterDetailedAnalyzer = React.lazy(() =>
   import("@/components/character/CharacterDetailedAnalyzer").then((m) => ({ default: m.CharacterDetailedAnalyzer }))
@@ -294,7 +290,12 @@ export function CharacterAnalysisClient({
         filteredCodes={filteredCodes}
         selectedRef={selectedRef}
         searchTimerRef={searchTimerRef}
-        statsMap={rankingStatsMap}
+        statsMap={React.useMemo(() => {
+          if (!displayStat || displayStat.totalGames === 0 || !charTier) return rankingStatsMap
+          const merged = new Map(rankingStatsMap)
+          merged.set(selectedCode, { tier: charTier, winRate: displayStat.winRate })
+          return merged
+        }, [rankingStatsMap, selectedCode, displayStat, charTier])}
       />
 
       {/* ── Analysis Content (Right) ── */}
@@ -313,83 +314,6 @@ export function CharacterAnalysisClient({
           loading={loading}
           hasPreviousData={hasPreviousData}
         />
-
-        {/* ── Character Navigator ── */}
-        <div className="flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 px-3 py-2">
-          <button
-            onClick={() => {
-              const idx = filteredCodes.indexOf(selectedCode)
-              if (idx > 0) {
-                const prevCode = filteredCodes[idx - 1]
-                setSelectedCode(prevCode)
-                router.push(`/character/${prevCode}`, { scroll: false })
-              }
-            }}
-            disabled={filteredCodes.indexOf(selectedCode) <= 0}
-            className={cn(
-              "flex items-center justify-center h-8 w-8 rounded-lg transition-colors",
-              filteredCodes.indexOf(selectedCode) <= 0
-                ? "text-[var(--color-muted-foreground)]/40 cursor-not-allowed"
-                : "text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]"
-            )}
-            aria-label="이전 캐릭터"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-
-          {/* Scrollable character strip */}
-          <div className="flex-1 overflow-x-auto scrollbar-hide">
-            <div className="flex gap-1 justify-center">
-              {filteredCodes.slice(
-                Math.max(0, filteredCodes.indexOf(selectedCode) - 4),
-                Math.min(filteredCodes.length, filteredCodes.indexOf(selectedCode) + 5)
-              ).map((code) => (
-                <button
-                  key={code}
-                  onClick={() => {
-                    setSelectedCode(code)
-                    router.push(`/character/${code}`, { scroll: false })
-                  }}
-                  className={cn(
-                    "relative shrink-0 h-9 w-9 rounded-lg overflow-hidden transition-all",
-                    code === selectedCode
-                      ? "ring-2 ring-[var(--color-primary)] scale-110"
-                      : "opacity-60 hover:opacity-100 hover:bg-[var(--color-surface-2)]"
-                  )}
-                >
-                  <Image
-                    src={getCharacterMiniWebpUrl(code)}
-                    alt={getCharacterName(code)}
-                    fill
-                    className="object-cover"
-                    sizes="36px"
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <button
-            onClick={() => {
-              const idx = filteredCodes.indexOf(selectedCode)
-              if (idx < filteredCodes.length - 1) {
-                const nextCode = filteredCodes[idx + 1]
-                setSelectedCode(nextCode)
-                router.push(`/character/${nextCode}`, { scroll: false })
-              }
-            }}
-            disabled={filteredCodes.indexOf(selectedCode) >= filteredCodes.length - 1}
-            className={cn(
-              "flex items-center justify-center h-8 w-8 rounded-lg transition-colors",
-              filteredCodes.indexOf(selectedCode) >= filteredCodes.length - 1
-                ? "text-[var(--color-muted-foreground)]/40 cursor-not-allowed"
-                : "text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]"
-            )}
-            aria-label="다음 캐릭터"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
 
         {/* ── Quick Summary ── */}
         {!loading && displayStat && displayStat.totalGames > 0 && (
@@ -438,7 +362,7 @@ export function CharacterAnalysisClient({
             {/* CTA: 이 캐릭터로 조합 찾기 */}
             <div className="mt-3 flex justify-end">
               <a
-                href={`/synergy-detail?ally1=${selectedCode}`}
+                href={`/synergy-detail?ally1=${selectedCode}${selectedWeapon != null ? `&w1=${selectedWeapon}` : ""}`}
                 className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/30 px-3.5 py-2 text-xs font-semibold text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 transition-colors"
               >
                 <Users className="h-3.5 w-3.5" />
@@ -485,31 +409,22 @@ export function CharacterAnalysisClient({
               </Suspense>
             </section>
 
-            {/* ── 통계 ── */}
+            {/* ── 통계 (특성 빌드) ── */}
             <section>
               <div className="flex items-center gap-2 mb-4">
                 <BarChart2 className="h-4 w-4 text-[var(--color-accent-gold)]" />
                 <h2 className="text-sm font-bold text-[var(--color-foreground)]">통계</h2>
               </div>
-              <div className="flex flex-col gap-5">
-                <Suspense fallback={<TabFallback />}>
-                  <CharacterEquipmentAnalyzer
-                    characterCode={selectedCode}
-                    tier={selectedTier}
-                    patchVersion={currentPatch}
-                    bestWeapon={selectedWeapon}
-                  />
-                </Suspense>
-                <Suspense fallback={<TabFallback />}>
-                  <CharacterDetailedAnalyzer
-                    characterCode={selectedCode}
-                    tier={selectedTier}
-                    patchVersion={currentPatch}
-                    bestWeapon={selectedWeapon}
-                  />
-                </Suspense>
-              </div>
+              <Suspense fallback={<TabFallback />}>
+                <CharacterDetailedAnalyzer
+                  characterCode={selectedCode}
+                  tier={selectedTier}
+                  patchVersion={currentPatch}
+                  bestWeapon={selectedWeapon}
+                />
+              </Suspense>
             </section>
+
           </div>
         </div>
       </div>
