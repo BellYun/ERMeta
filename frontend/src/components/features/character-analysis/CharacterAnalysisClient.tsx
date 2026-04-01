@@ -2,9 +2,12 @@
 
 import * as React from "react"
 import { Suspense } from "react"
-import { BarChart2, FileText, Loader2 } from "lucide-react"
+import { BarChart2, ChevronLeft, ChevronRight, FileText, Loader2, Users, Zap } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { getCharacterName } from "@/lib/characterMap"
+import Image from "next/image"
+import { getCharacterName, getCharacterMiniWebpUrl } from "@/lib/characterMap"
+import { resolveWeaponName } from "@/lib/weaponMap"
+import { cn } from "@/lib/utils"
 import { TierGroup } from "@/utils/tier"
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route"
 
@@ -124,6 +127,25 @@ export function CharacterAnalysisClient({
   const [stats, setStats] = React.useState<CharacterStatsResponse | null>(initialStats ?? null)
   const [previousStats, setPreviousStats] = React.useState<CharacterStatsResponse | null>(initialPrevStats ?? null)
   const [loading, setLoading] = React.useState(false)
+
+  // Ranking stats for character grid overlay (tier badge + win rate)
+  const [rankingStatsMap, setRankingStatsMap] = React.useState<Map<number, { tier: string; winRate: number }>>(new Map())
+
+  React.useEffect(() => {
+    const patch = patches[0]
+    if (!patch) return
+    fetch(`/api/character/mithril-rp-ranking?patchVersion=${encodeURIComponent(patch)}&tier=MITHRIL`)
+      .then((r) => r.json())
+      .then((data) => {
+        const map = new Map<number, { tier: string; winRate: number }>()
+        for (const r of data.rankings ?? []) {
+          const tier = assignCharTier({ winRate: r.winRate, top3Rate: r.top3Rate, averageRank: 4.5, averageRP: r.averageRP })
+          map.set(r.characterNum, { tier, winRate: r.winRate })
+        }
+        setRankingStatsMap(map)
+      })
+      .catch(() => {})
+  }, [patches])
 
   React.useEffect(() => {
     if (initialPatches && initialPatches.length > 0) return
@@ -272,6 +294,7 @@ export function CharacterAnalysisClient({
         filteredCodes={filteredCodes}
         selectedRef={selectedRef}
         searchTimerRef={searchTimerRef}
+        statsMap={rankingStatsMap}
       />
 
       {/* ── Analysis Content (Right) ── */}
@@ -291,58 +314,204 @@ export function CharacterAnalysisClient({
           hasPreviousData={hasPreviousData}
         />
 
-        {/* ── 패치 비교 ── */}
-        <section>
-          <div className="flex items-center gap-2 mb-3">
-            <BarChart2 className="h-4 w-4 text-[var(--color-primary)]" />
-            <h2 className="text-sm font-bold text-[var(--color-foreground)]">패치 비교</h2>
-          </div>
-          <Suspense fallback={<TabFallback />}>
-            <PatchComparisonTab
-              chartData={chartData}
-              stats={stats}
-              loading={loading}
-              selectedCode={selectedCode}
-            />
-          </Suspense>
-        </section>
+        {/* ── Character Navigator ── */}
+        <div className="flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 px-3 py-2">
+          <button
+            onClick={() => {
+              const idx = filteredCodes.indexOf(selectedCode)
+              if (idx > 0) {
+                const prevCode = filteredCodes[idx - 1]
+                setSelectedCode(prevCode)
+                router.push(`/character/${prevCode}`, { scroll: false })
+              }
+            }}
+            disabled={filteredCodes.indexOf(selectedCode) <= 0}
+            className={cn(
+              "flex items-center justify-center h-8 w-8 rounded-lg transition-colors",
+              filteredCodes.indexOf(selectedCode) <= 0
+                ? "text-[var(--color-muted-foreground)]/40 cursor-not-allowed"
+                : "text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]"
+            )}
+            aria-label="이전 캐릭터"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
 
-        {/* ── 패치 내역 ── */}
-        <section>
-          <div className="flex items-center gap-2 mb-3">
-            <FileText className="h-4 w-4 text-[var(--color-primary)]" />
-            <h2 className="text-sm font-bold text-[var(--color-foreground)]">패치 내역</h2>
+          {/* Scrollable character strip */}
+          <div className="flex-1 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-1 justify-center">
+              {filteredCodes.slice(
+                Math.max(0, filteredCodes.indexOf(selectedCode) - 4),
+                Math.min(filteredCodes.length, filteredCodes.indexOf(selectedCode) + 5)
+              ).map((code) => (
+                <button
+                  key={code}
+                  onClick={() => {
+                    setSelectedCode(code)
+                    router.push(`/character/${code}`, { scroll: false })
+                  }}
+                  className={cn(
+                    "relative shrink-0 h-9 w-9 rounded-lg overflow-hidden transition-all",
+                    code === selectedCode
+                      ? "ring-2 ring-[var(--color-primary)] scale-110"
+                      : "opacity-60 hover:opacity-100 hover:bg-[var(--color-surface-2)]"
+                  )}
+                >
+                  <Image
+                    src={getCharacterMiniWebpUrl(code)}
+                    alt={getCharacterName(code)}
+                    fill
+                    className="object-cover"
+                    sizes="36px"
+                  />
+                </button>
+              ))}
+            </div>
           </div>
-          <Suspense fallback={<TabFallback />}>
-            <PatchLogTab patches={patches} selectedCode={selectedCode} />
-          </Suspense>
-        </section>
 
-        {/* ── 통계 ── */}
-        <section>
+          <button
+            onClick={() => {
+              const idx = filteredCodes.indexOf(selectedCode)
+              if (idx < filteredCodes.length - 1) {
+                const nextCode = filteredCodes[idx + 1]
+                setSelectedCode(nextCode)
+                router.push(`/character/${nextCode}`, { scroll: false })
+              }
+            }}
+            disabled={filteredCodes.indexOf(selectedCode) >= filteredCodes.length - 1}
+            className={cn(
+              "flex items-center justify-center h-8 w-8 rounded-lg transition-colors",
+              filteredCodes.indexOf(selectedCode) >= filteredCodes.length - 1
+                ? "text-[var(--color-muted-foreground)]/40 cursor-not-allowed"
+                : "text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]"
+            )}
+            aria-label="다음 캐릭터"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+
+        {/* ── Quick Summary ── */}
+        {!loading && displayStat && displayStat.totalGames > 0 && (
+          <section className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-4 sm:p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Zap className="h-4 w-4 text-[var(--color-primary)]" />
+              <h2 className="text-sm font-bold text-[var(--color-foreground)]">한눈에 보기</h2>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {/* Tier */}
+              <div className="flex flex-col items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] p-3">
+                <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">티어</span>
+                {charTier && (
+                  <span className={cn(
+                    "text-2xl font-black",
+                    charTier === "S" ? "text-[var(--color-tier-s)]" :
+                    charTier === "A" ? "text-[var(--color-tier-a)]" :
+                    charTier === "B" ? "text-[var(--color-tier-b)]" :
+                    charTier === "C" ? "text-[var(--color-tier-c)]" :
+                    "text-[var(--color-tier-d)]"
+                  )}>{charTier}</span>
+                )}
+              </div>
+              {/* Win Rate */}
+              <div className="flex flex-col items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] p-3">
+                <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">승률</span>
+                <span className={cn(
+                  "text-2xl font-black tabular-nums",
+                  displayStat.winRate > 12.5 ? "text-[var(--color-stat-up)]" : "text-[var(--color-stat-down)]"
+                )}>{displayStat.winRate.toFixed(1)}%</span>
+              </div>
+              {/* Best Weapon */}
+              <div className="flex flex-col items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] p-3">
+                <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">추천 무기</span>
+                <span className="text-sm font-bold text-[var(--color-foreground)]">
+                  {stats?.weapons?.[0] ? resolveWeaponName(stats.weapons[0].bestWeapon ?? undefined) : "\u2014"}
+                </span>
+              </div>
+              {/* Pick Rate */}
+              <div className="flex flex-col items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] p-3">
+                <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">픽률</span>
+                <span className="text-2xl font-black tabular-nums text-[var(--color-foreground)]">{displayStat.pickRate.toFixed(1)}%</span>
+              </div>
+            </div>
+
+            {/* CTA: 이 캐릭터로 조합 찾기 */}
+            <div className="mt-3 flex justify-end">
+              <a
+                href={`/synergy-detail?ally1=${selectedCode}`}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/30 px-3.5 py-2 text-xs font-semibold text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 transition-colors"
+              >
+                <Users className="h-3.5 w-3.5" />
+                이 캐릭터로 조합 찾기
+                <ChevronRight className="h-3 w-3" />
+              </a>
+            </div>
+          </section>
+        )}
+
+        {/* ── Deep Dive ── */}
+        <div className="pt-2">
           <div className="flex items-center gap-2 mb-4">
-            <BarChart2 className="h-4 w-4 text-[var(--color-accent-gold)]" />
-            <h2 className="text-sm font-bold text-[var(--color-foreground)]">통계</h2>
+            <div className="h-px flex-1 bg-[var(--color-border)]" />
+            <span className="text-[11px] font-semibold text-[var(--color-muted-foreground)] uppercase tracking-widest">상세 분석</span>
+            <div className="h-px flex-1 bg-[var(--color-border)]" />
           </div>
-          <div className="flex flex-col gap-5">
-            <Suspense fallback={<TabFallback />}>
-              <CharacterEquipmentAnalyzer
-                characterCode={selectedCode}
-                tier={selectedTier}
-                patchVersion={currentPatch}
-                bestWeapon={selectedWeapon}
-              />
-            </Suspense>
-            <Suspense fallback={<TabFallback />}>
-              <CharacterDetailedAnalyzer
-                characterCode={selectedCode}
-                tier={selectedTier}
-                patchVersion={currentPatch}
-                bestWeapon={selectedWeapon}
-              />
-            </Suspense>
+
+          <div className="flex flex-col gap-4 sm:gap-5">
+            {/* ── 패치 비교 ── */}
+            <section>
+              <div className="flex items-center gap-2 mb-3">
+                <BarChart2 className="h-4 w-4 text-[var(--color-primary)]" />
+                <h2 className="text-sm font-bold text-[var(--color-foreground)]">패치 비교</h2>
+              </div>
+              <Suspense fallback={<TabFallback />}>
+                <PatchComparisonTab
+                  chartData={chartData}
+                  stats={stats}
+                  loading={loading}
+                  selectedCode={selectedCode}
+                />
+              </Suspense>
+            </section>
+
+            {/* ── 패치 내역 ── */}
+            <section>
+              <div className="flex items-center gap-2 mb-3">
+                <FileText className="h-4 w-4 text-[var(--color-primary)]" />
+                <h2 className="text-sm font-bold text-[var(--color-foreground)]">패치 내역</h2>
+              </div>
+              <Suspense fallback={<TabFallback />}>
+                <PatchLogTab patches={patches} selectedCode={selectedCode} />
+              </Suspense>
+            </section>
+
+            {/* ── 통계 ── */}
+            <section>
+              <div className="flex items-center gap-2 mb-4">
+                <BarChart2 className="h-4 w-4 text-[var(--color-accent-gold)]" />
+                <h2 className="text-sm font-bold text-[var(--color-foreground)]">통계</h2>
+              </div>
+              <div className="flex flex-col gap-5">
+                <Suspense fallback={<TabFallback />}>
+                  <CharacterEquipmentAnalyzer
+                    characterCode={selectedCode}
+                    tier={selectedTier}
+                    patchVersion={currentPatch}
+                    bestWeapon={selectedWeapon}
+                  />
+                </Suspense>
+                <Suspense fallback={<TabFallback />}>
+                  <CharacterDetailedAnalyzer
+                    characterCode={selectedCode}
+                    tier={selectedTier}
+                    patchVersion={currentPatch}
+                    bestWeapon={selectedWeapon}
+                  />
+                </Suspense>
+              </div>
+            </section>
           </div>
-        </section>
+        </div>
       </div>
     </div>
   )

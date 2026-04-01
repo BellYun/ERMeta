@@ -7,7 +7,12 @@ import { cn } from "@/lib/utils"
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap"
 
 const CELL_MIN_WIDTH = 72
-const ROW_HEIGHT = 72
+const ROW_HEIGHT = 82
+
+export interface CharacterCellStats {
+  tier: string
+  winRate: number
+}
 
 interface VirtualCharacterGridProps {
   codes: number[]
@@ -19,6 +24,15 @@ interface VirtualCharacterGridProps {
   className?: string
   emptyMessage?: string
   scrollToCode?: number
+  statsMap?: Map<number, CharacterCellStats>
+}
+
+const TIER_COLOR_MAP: Record<string, string> = {
+  S: "var(--color-tier-s)",
+  A: "var(--color-tier-a)",
+  B: "var(--color-tier-b)",
+  C: "var(--color-tier-c)",
+  D: "var(--color-tier-d)",
 }
 
 const CharacterCell = React.memo(function CharacterCell({
@@ -27,12 +41,14 @@ const CharacterCell = React.memo(function CharacterCell({
   selected,
   disabled,
   onSelect,
+  cellStats,
 }: {
   code: number
   name: string
   selected: boolean
   disabled: boolean
   onSelect: (code: number) => void
+  cellStats?: CharacterCellStats
 }) {
   return (
     <button
@@ -40,7 +56,7 @@ const CharacterCell = React.memo(function CharacterCell({
       disabled={disabled}
       title={name}
       className={cn(
-        "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors",
+        "flex flex-col items-center gap-0.5 rounded-lg px-1 py-1.5 transition-colors",
         selected
           ? "bg-[var(--color-primary)]/20 ring-1 ring-[var(--color-primary)]"
           : disabled
@@ -56,10 +72,34 @@ const CharacterCell = React.memo(function CharacterCell({
           className="object-cover"
           sizes="40px"
         />
+        {cellStats && (
+          <span
+            className="absolute top-0 right-0 flex items-center justify-center rounded-bl-sm rounded-tr-md text-white font-bold leading-none"
+            style={{
+              width: 14,
+              height: 14,
+              fontSize: 8,
+              backgroundColor: `color-mix(in srgb, ${TIER_COLOR_MAP[cellStats.tier] ?? "var(--color-tier-d)"} 80%, transparent)`,
+            }}
+          >
+            {cellStats.tier}
+          </span>
+        )}
       </div>
       <span className="w-full truncate text-center text-[11px] font-medium text-[var(--color-foreground)]">
         {name}
       </span>
+      {cellStats && (
+        <span
+          className="w-full truncate text-center font-medium leading-none"
+          style={{
+            fontSize: 9,
+            color: cellStats.winRate > 12.5 ? "var(--color-stat-up)" : "var(--color-stat-down)",
+          }}
+        >
+          {cellStats.winRate.toFixed(1)}%
+        </span>
+      )}
     </button>
   )
 })
@@ -74,6 +114,7 @@ export function VirtualCharacterGrid({
   className,
   emptyMessage = "검색 결과 없음",
   scrollToCode,
+  statsMap,
 }: VirtualCharacterGridProps) {
   const parentRef = React.useRef<HTMLDivElement>(null)
   const [columns, setColumns] = React.useState(4)
@@ -156,6 +197,7 @@ export function VirtualCharacterGrid({
                   selected={isSelected(code)}
                   disabled={isDisabled?.(code) ?? false}
                   onSelect={onSelect}
+                  cellStats={statsMap?.get(code)}
                 />
               ))}
             </div>

@@ -5,7 +5,7 @@ import { Search, X } from "lucide-react"
 import { getCharacterName } from "@/lib/characterMap"
 import { analytics } from "@/lib/analytics"
 import { useRouter } from "next/navigation"
-import { VirtualCharacterGrid } from "@/components/ui/VirtualCharacterGrid"
+import { VirtualCharacterGrid, type CharacterCellStats } from "@/components/ui/VirtualCharacterGrid"
 
 interface CharacterGridProps {
   selectedCode: number
@@ -15,6 +15,7 @@ interface CharacterGridProps {
   filteredCodes: number[]
   selectedRef: React.RefObject<HTMLButtonElement | null>
   searchTimerRef: React.RefObject<ReturnType<typeof setTimeout> | null>
+  statsMap?: Map<number, CharacterCellStats>
 }
 
 export function CharacterGrid({
@@ -25,6 +26,7 @@ export function CharacterGrid({
   filteredCodes,
   selectedRef,
   searchTimerRef,
+  statsMap,
 }: CharacterGridProps) {
   const router = useRouter()
 
@@ -97,6 +99,7 @@ export function CharacterGrid({
           onSelect={handleSelect}
           className="max-h-[280px] sm:max-h-[320px] lg:max-h-[620px]"
           scrollToCode={selectedCode}
+          statsMap={statsMap}
         />
       </div>
     </div>
