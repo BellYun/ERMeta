@@ -17,7 +17,6 @@ import { getCharacterPatchNote } from "@/data/patch-notes"
 import type { HoneyPickData } from "@/app/api/meta/honey-picks/route"
 import type { CharacterPatchNote } from "@/data/patch-notes"
 import { PatchNoteBottomSheet } from "./PatchNoteBottomSheet"
-import { MiniStat } from "./MiniStat"
 
 const FALLBACK_MAP = buildFallbackMap()
 
@@ -78,7 +77,6 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
   const [loading, setLoading] = React.useState(!initialData || initialData.length === 0)
   const [error, setError] = React.useState<string | null>(null)
   const [currentPatch, setCurrentPatch] = React.useState<string>(initialPatchVersion ?? "")
-  const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null)
   const [mobileSheet, setMobileSheet] = React.useState<{
     pick: HoneyPickData
     patchNote: CharacterPatchNote
@@ -159,193 +157,108 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
 
   return (
     <>
-      {/* ── Desktop: Flex row with side-panel push ── */}
-      <div className="hidden sm:flex gap-3 items-stretch" style={{ minHeight: 340 }}>
+      {/* ── Desktop: Compact 2-column grid ── */}
+      <div className="hidden sm:grid grid-cols-2 gap-2.5">
         {resolved.map((r, i) => {
-          const isActive = hoveredIndex === i
-          const hasPatchNote = !!r.patchNote
           const changeLabel = r.changeType ? CHANGE_LABEL[r.changeType] : null
 
           return (
             <div
               key={r.pick.characterNum}
-              className="relative rounded-2xl overflow-hidden transition-[flex] duration-500 ease-out"
-              style={{
-                flex: isActive && hasPatchNote ? "0 0 420px" : "1 1 0%",
-                minWidth: 0,
-              }}
-              onMouseEnter={() => setHoveredIndex(i)}
-              onMouseLeave={() => setHoveredIndex(null)}
+              className={cn(
+                "relative flex items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-3 cursor-pointer group transition-colors hover:bg-[var(--color-surface-2)]",
+                i === 0 && "col-span-2"
+              )}
+              onClick={() =>
+                router.push(`/character/${r.pick.characterNum}?weapon=${r.pick.bestWeapon}`)
+              }
             >
-              <div className="flex h-full">
-                {/* ── Card (image side) ── */}
-                <div
-                  className="relative flex-1 min-w-0 cursor-pointer overflow-hidden"
-                  onClick={() =>
-                    router.push(`/character/${r.pick.characterNum}?weapon=${r.pick.bestWeapon}`)
-                  }
-                >
-                  <Image
-                    src={r.halfUrl}
-                    alt={r.name}
-                    fill
-                    className={cn(
-                      "object-cover object-top transition-transform duration-700",
-                      isActive && "scale-110"
-                    )}
-                    sizes="25vw"
-                    priority={i < 3}
-                  />
+              {/* Rank */}
+              <span
+                className={cn(
+                  "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-black bg-gradient-to-br",
+                  RANK_STYLE[i + 1] ??
+                    "from-[var(--color-surface-3)] to-[var(--color-surface-2)] text-[var(--color-muted-foreground)]"
+                )}
+              >
+                {i + 1}
+              </span>
 
-                  {/* Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/5" />
+              {/* Character image */}
+              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
+                <Image
+                  src={r.halfUrl}
+                  alt={r.name}
+                  fill
+                  className="object-cover object-top"
+                  sizes="48px"
+                  priority={i < 3}
+                />
+              </div>
 
-                  {/* Hover glow ring */}
-                  <div
-                    className={cn(
-                      "absolute inset-0 ring-2 ring-inset rounded-l-2xl pointer-events-none transition-all duration-300",
-                      isActive
-                        ? "ring-[var(--color-stat-up)]/40 shadow-[inset_0_0_40px_rgba(63,185,80,0.06)]"
-                        : "ring-transparent"
-                    )}
-                  />
-
-                  {/* Rank medal */}
-                  <div className="absolute top-3 left-3 flex items-center gap-2">
+              {/* Name + weapon + badge */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <p className="text-sm font-bold text-[var(--color-foreground)] truncate group-hover:text-[var(--color-primary)] transition-colors">
+                    {r.name}
+                  </p>
+                  {changeLabel && (
                     <span
                       className={cn(
-                        "flex h-7 w-7 items-center justify-center rounded-full text-xs font-black shadow-lg bg-gradient-to-br",
-                        RANK_STYLE[i + 1] ??
-                          "from-[var(--color-surface-3)] to-[var(--color-surface-2)] text-[var(--color-muted-foreground)]"
+                        "rounded px-1.5 py-0.5 text-[8px] font-bold shrink-0",
+                        changeLabel.color,
+                        changeLabel.bg
                       )}
                     >
-                      {i + 1}
+                      {changeLabel.text}
                     </span>
-                    {changeLabel && (
-                      <span
-                        className={cn(
-                          "rounded-md px-1.5 py-0.5 text-[9px] font-bold backdrop-blur-md shadow-sm",
-                          changeLabel.color,
-                          changeLabel.bg
-                        )}
-                      >
-                        {changeLabel.text}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Bottom info */}
-                  <div className="absolute bottom-0 inset-x-0 p-3.5">
-                    <p className="text-sm font-black text-white leading-tight truncate">
-                      {r.name}
-                    </p>
-                    <p className="text-[10px] text-white/50 mt-0.5 truncate">
-                      {r.weaponName}
-                    </p>
-
-                    {/* Stats - always visible */}
-                    <div className="grid grid-cols-3 gap-1.5 mt-2.5">
-                      <MiniStat
-                        label="승률"
-                        value={`${r.pick.winRate.toFixed(1)}%`}
-                        delta={r.pick.winRateDelta}
-                        highlight={r.pick.winRate >= 55}
-                      />
-                      <MiniStat
-                        label="픽률"
-                        value={`${r.pick.pickRate.toFixed(1)}%`}
-                        delta={r.pick.pickRateDelta}
-                      />
-                      <MiniStat
-                        label="RP"
-                        value={`${r.pick.averageRP >= 0 ? "+" : ""}${r.pick.averageRP.toFixed(0)}`}
-                        delta={r.pick.averageRPDelta}
-                        gold={r.pick.averageRP >= 0}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* ── Side Panel (buff details) ── */}
-                <div
-                  className={cn(
-                    "shrink-0 overflow-hidden transition-all duration-500 ease-out border-l border-[var(--color-border)]",
-                    isActive && hasPatchNote ? "w-52 opacity-100" : "w-0 opacity-0"
                   )}
-                >
-                  <div className="w-52 h-full bg-[var(--color-surface)] p-3 flex flex-col">
-                    {/* Panel header */}
-                    <div className="flex items-center gap-1.5 mb-2.5 pb-2 border-b border-[var(--color-border)]/50">
-                      {changeLabel && (
-                        <span
-                          className={cn(
-                            "rounded px-1.5 py-0.5 text-[9px] font-bold",
-                            changeLabel.color,
-                            changeLabel.bg
-                          )}
-                        >
-                          {changeLabel.text}
-                        </span>
-                      )}
-                      <span className="text-[10px] text-[var(--color-muted-foreground)]">
-                        패치 {r.patchNote?.patch}
-                      </span>
-                    </div>
+                </div>
+                <p className="text-[11px] text-[var(--color-muted-foreground)] truncate">
+                  {r.weaponName}
+                </p>
+              </div>
 
-                    {/* Changes list */}
-                    <div className="flex-1 overflow-y-auto flex flex-col gap-2 scrollbar-hide">
-                      {r.patchNote?.changes.map((change, ci) => {
-                        const cLabel = CHANGE_LABEL[change.changeType]
-                        return (
-                          <div key={ci} className="flex flex-col gap-0.5">
-                            <div className="flex items-center gap-1">
-                              <span
-                                className={cn(
-                                  "rounded px-1 py-0.5 text-[8px] font-bold",
-                                  cLabel.color,
-                                  cLabel.bg
-                                )}
-                              >
-                                {cLabel.text}
-                              </span>
-                              <span className="text-[10px] font-medium text-[var(--color-foreground)] truncate">
-                                {change.target}
-                              </span>
-                            </div>
-                            {change.valueSummary && (
-                              <p className="text-[9px] text-[var(--color-muted-foreground)] pl-1 leading-snug break-words">
-                                {change.valueSummary}
-                              </p>
-                            )}
-                          </div>
-                        )
-                      })}
-                    </div>
-
-                    {/* Bottom delta summary */}
-                    <div className="mt-auto pt-2.5 border-t border-[var(--color-border)]/50 flex flex-col gap-1">
-                      <div className="flex items-center justify-between text-[10px]">
-                        <span className="text-[var(--color-muted-foreground)]">승률 변화</span>
-                        <span className="font-semibold text-[var(--color-stat-up)] tabular-nums">
-                          +{r.pick.winRateDelta.toFixed(1)}%
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between text-[10px]">
-                        <span className="text-[var(--color-muted-foreground)]">RP 변화</span>
-                        <span
-                          className={cn(
-                            "font-semibold tabular-nums",
-                            r.pick.averageRPDelta >= 0
-                              ? "text-[var(--color-stat-up)]"
-                              : "text-[var(--color-stat-down)]"
-                          )}
-                        >
-                          {r.pick.averageRPDelta >= 0 ? "+" : ""}
-                          {r.pick.averageRPDelta.toFixed(1)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+              {/* Stats */}
+              <div className="flex items-center gap-3 shrink-0">
+                <div className="text-center">
+                  <p className="text-[9px] text-[var(--color-muted-foreground)] uppercase">승률</p>
+                  <p className="text-sm font-bold tabular-nums text-[var(--color-foreground)]">
+                    {r.pick.winRate.toFixed(1)}%
+                  </p>
+                  <p className={cn(
+                    "text-[10px] font-semibold tabular-nums",
+                    r.pick.winRateDelta >= 0 ? "text-[var(--color-stat-up)]" : "text-[var(--color-stat-down)]"
+                  )}>
+                    {r.pick.winRateDelta >= 0 ? "+" : ""}{r.pick.winRateDelta.toFixed(1)}
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-[9px] text-[var(--color-muted-foreground)] uppercase">픽률</p>
+                  <p className="text-sm font-bold tabular-nums text-[var(--color-foreground)]">
+                    {r.pick.pickRate.toFixed(1)}%
+                  </p>
+                  <p className={cn(
+                    "text-[10px] font-semibold tabular-nums",
+                    r.pick.pickRateDelta >= 0 ? "text-[var(--color-stat-up)]" : "text-[var(--color-stat-down)]"
+                  )}>
+                    {r.pick.pickRateDelta >= 0 ? "+" : ""}{r.pick.pickRateDelta.toFixed(1)}
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-[9px] text-[var(--color-muted-foreground)] uppercase">RP</p>
+                  <p className={cn(
+                    "text-sm font-bold tabular-nums",
+                    r.pick.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
+                  )}>
+                    {r.pick.averageRP >= 0 ? "+" : ""}{r.pick.averageRP.toFixed(0)}
+                  </p>
+                  <p className={cn(
+                    "text-[10px] font-semibold tabular-nums",
+                    r.pick.averageRPDelta >= 0 ? "text-[var(--color-stat-up)]" : "text-[var(--color-stat-down)]"
+                  )}>
+                    {r.pick.averageRPDelta >= 0 ? "+" : ""}{r.pick.averageRPDelta.toFixed(1)}
+                  </p>
                 </div>
               </div>
             </div>

@@ -2,9 +2,10 @@ export function HoneyPicksSkeleton() {
   return (
     <>
       {/* Desktop */}
-      <div className="hidden sm:flex gap-3 items-stretch" style={{ minHeight: 340 }}>
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="flex-1 rounded-2xl bg-[var(--color-surface)] animate-pulse" />
+      <div className="hidden sm:grid grid-cols-2 gap-2.5">
+        <div className="col-span-2 h-[72px] rounded-xl bg-[var(--color-surface)] animate-pulse" />
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="h-[72px] rounded-xl bg-[var(--color-surface)] animate-pulse" />
         ))}
       </div>
       {/* Mobile */}

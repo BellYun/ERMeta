@@ -2,11 +2,9 @@
 
 import * as React from "react"
 import { Suspense } from "react"
-import { BarChart2, FileText, Package, Layers, Loader2 } from "lucide-react"
+import { BarChart2, FileText, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { analytics } from "@/lib/analytics"
 import { getCharacterName } from "@/lib/characterMap"
-import { cn } from "@/lib/utils"
 import { TierGroup } from "@/utils/tier"
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route"
 
@@ -58,12 +56,6 @@ function TabFallback() {
   )
 }
 
-const TAB_ITEMS = [
-  { value: "comparison", label: "패치 비교", icon: BarChart2 },
-  { value: "patchlog", label: "패치 내역", icon: FileText },
-  { value: "equipment", label: "아이템", icon: Package },
-  { value: "detailed", label: "상세분석", icon: Layers },
-] as const
 
 interface CharacterAnalysisClientProps {
   initialPatches?: string[]
@@ -97,7 +89,6 @@ export function CharacterAnalysisClient({
   const [searchQuery, setSearchQuery] = React.useState("")
   const searchTimerRef = React.useRef<ReturnType<typeof setTimeout>>(null)
   const selectedRef = React.useRef<HTMLButtonElement>(null)
-  const [activeTab, setActiveTab] = React.useState("comparison")
 
   // 무기 변경 시 URL 파라미터 동기화 (Next.js 리렌더 방지를 위해 history API 직접 사용)
   const handleWeaponChange = React.useCallback((weapon: number | null) => {
@@ -300,69 +291,58 @@ export function CharacterAnalysisClient({
           hasPreviousData={hasPreviousData}
         />
 
-        {/* ── Tab Navigation ── */}
-        <div className="flex flex-col gap-0">
-          {/* Tab Bar */}
-          <div className="flex items-center gap-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-1 overflow-x-auto scrollbar-hide">
-            {TAB_ITEMS.map(({ value, label, icon: Icon }) => (
-              <button
-                key={value}
-                onClick={() => { setActiveTab(value); analytics.analysisTabChanged(value) }}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-all shrink-0 min-h-[36px] touch-manipulation",
-                  activeTab === value
-                    ? "bg-[var(--color-primary)]/12 text-[var(--color-primary)] shadow-sm"
-                    : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]"
-                )}
-              >
-                <Icon className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate">{label}</span>
-              </button>
-            ))}
+        {/* ── 패치 비교 ── */}
+        <section>
+          <div className="flex items-center gap-2 mb-3">
+            <BarChart2 className="h-4 w-4 text-[var(--color-primary)]" />
+            <h2 className="text-sm font-bold text-[var(--color-foreground)]">패치 비교</h2>
           </div>
+          <Suspense fallback={<TabFallback />}>
+            <PatchComparisonTab
+              chartData={chartData}
+              stats={stats}
+              loading={loading}
+              selectedCode={selectedCode}
+            />
+          </Suspense>
+        </section>
 
-          {/* Tab Content */}
-          <div className="mt-3 sm:mt-4">
-            {activeTab === "comparison" && (
-              <Suspense fallback={<TabFallback />}>
-                <PatchComparisonTab
-                  chartData={chartData}
-                  stats={stats}
-                  loading={loading}
-                  selectedCode={selectedCode}
-                />
-              </Suspense>
-            )}
-
-            {activeTab === "patchlog" && (
-              <Suspense fallback={<TabFallback />}>
-                <PatchLogTab patches={patches} selectedCode={selectedCode} />
-              </Suspense>
-            )}
-
-            {activeTab === "equipment" && (
-              <Suspense fallback={<TabFallback />}>
-                <CharacterEquipmentAnalyzer
-                  characterCode={selectedCode}
-                  tier={selectedTier}
-                  patchVersion={currentPatch}
-                  bestWeapon={selectedWeapon}
-                />
-              </Suspense>
-            )}
-
-            {activeTab === "detailed" && (
-              <Suspense fallback={<TabFallback />}>
-                <CharacterDetailedAnalyzer
-                  characterCode={selectedCode}
-                  tier={selectedTier}
-                  patchVersion={currentPatch}
-                  bestWeapon={selectedWeapon}
-                />
-              </Suspense>
-            )}
+        {/* ── 패치 내역 ── */}
+        <section>
+          <div className="flex items-center gap-2 mb-3">
+            <FileText className="h-4 w-4 text-[var(--color-primary)]" />
+            <h2 className="text-sm font-bold text-[var(--color-foreground)]">패치 내역</h2>
           </div>
-        </div>
+          <Suspense fallback={<TabFallback />}>
+            <PatchLogTab patches={patches} selectedCode={selectedCode} />
+          </Suspense>
+        </section>
+
+        {/* ── 통계 ── */}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <BarChart2 className="h-4 w-4 text-[var(--color-accent-gold)]" />
+            <h2 className="text-sm font-bold text-[var(--color-foreground)]">통계</h2>
+          </div>
+          <div className="flex flex-col gap-5">
+            <Suspense fallback={<TabFallback />}>
+              <CharacterEquipmentAnalyzer
+                characterCode={selectedCode}
+                tier={selectedTier}
+                patchVersion={currentPatch}
+                bestWeapon={selectedWeapon}
+              />
+            </Suspense>
+            <Suspense fallback={<TabFallback />}>
+              <CharacterDetailedAnalyzer
+                characterCode={selectedCode}
+                tier={selectedTier}
+                patchVersion={currentPatch}
+                bestWeapon={selectedWeapon}
+              />
+            </Suspense>
+          </div>
+        </section>
       </div>
     </div>
   )
