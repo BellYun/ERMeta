@@ -17,6 +17,7 @@ import { getCharacterPatchNote } from "@/data/patch-notes"
 import type { HoneyPickData } from "@/app/api/meta/honey-picks/route"
 import type { CharacterPatchNote } from "@/data/patch-notes"
 import { PatchNoteBottomSheet } from "./PatchNoteBottomSheet"
+import { MiniStat } from "./MiniStat"
 
 const FALLBACK_MAP = buildFallbackMap()
 
@@ -37,6 +38,22 @@ const RANK_STYLE: Record<number, string> = {
   1: "from-[#FFD700] to-[#FFA500] text-black",
   2: "from-[#C0C0C0] to-[#A0A0A0] text-black",
   3: "from-[#CD7F32] to-[#A0522D] text-white",
+}
+
+async function fetchHoneyPicks(
+  patch: string | undefined,
+  tier: string
+): Promise<{ picks: HoneyPickData[]; patchVersion: string }> {
+  const params = new URLSearchParams()
+  if (patch) params.set("patchVersion", patch)
+  params.set("tier", tier)
+  const res = await fetch(`/api/meta/honey-picks?${params}`)
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error ?? "API 오류")
+  return {
+    picks: data.picks ?? [],
+    patchVersion: data.patchVersion ?? patch ?? "",
+  }
 }
 
 interface ResolvedPick {
@@ -84,16 +101,10 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
 
     setLoading(true)
     setError(null)
-    const params = new URLSearchParams()
-    if (patch) params.set("patchVersion", patch)
-    params.set("tier", tier)
-
-    fetch(`/api/meta/honey-picks?${params}`)
-      .then(async (res) => {
-        const data = await res.json()
-        if (!res.ok) throw new Error(data.error ?? "API 오류")
-        setPicks(data.picks ?? [])
-        setCurrentPatch(data.patchVersion ?? patch ?? "")
+    fetchHoneyPicks(patch, tier)
+      .then(({ picks: nextPicks, patchVersion }) => {
+        setPicks(nextPicks)
+        setCurrentPatch(patchVersion)
       })
       .catch((err) =>
         setError(err instanceof Error ? err.message : "오류가 발생했습니다.")
@@ -456,49 +467,3 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
   )
 }
 
-/* ─── Mini Stat ─── */
-
-function MiniStat({
-  label,
-  value,
-  delta,
-  highlight,
-  gold,
-}: {
-  label: string
-  value: string
-  delta: number
-  highlight?: boolean
-  gold?: boolean
-}) {
-  return (
-    <div className="rounded-md bg-black/40 backdrop-blur-sm px-1.5 py-1.5 text-center">
-      <p className="text-[7px] text-white/40 uppercase tracking-wider leading-none">
-        {label}
-      </p>
-      <p
-        className={cn(
-          "text-[12px] font-bold tabular-nums leading-tight mt-1",
-          gold
-            ? "text-[var(--color-accent-gold)]"
-            : highlight
-              ? "text-white"
-              : "text-white/90"
-        )}
-      >
-        {value}
-      </p>
-      <p
-        className={cn(
-          "text-[8px] font-semibold mt-0.5 tabular-nums leading-none",
-          delta >= 0
-            ? "text-[var(--color-stat-up)]"
-            : "text-[var(--color-stat-down)]"
-        )}
-      >
-        {delta >= 0 ? "+" : ""}
-        {delta.toFixed(1)}
-      </p>
-    </div>
-  )
-}
