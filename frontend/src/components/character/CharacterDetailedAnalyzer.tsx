@@ -557,6 +557,11 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
       .finally(() => setEquipLoading(false))
   }, [selectedComboIdx, selectedMainCore, characterCode, tier, patchVersion, bestWeapon])
 
+  const sortedTopBuilds = React.useMemo(() => {
+    if (!equipData?.topBuilds) return []
+    return [...equipData.topBuilds].sort((a, b) => b.averageRP - a.averageRP)
+  }, [equipData])
+
   // ── 로딩 ─────────────────────────────────────────────────────────────────────
   if (traitLoading) {
     return (
@@ -585,11 +590,6 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
   const hasSecondaryTraits =
     selectedGroup &&
     selectedGroup.secondaries.length > 0
-
-  const sortedTopBuilds = React.useMemo(() => {
-    if (!equipData?.topBuilds) return []
-    return [...equipData.topBuilds].sort((a, b) => b.averageRP - a.averageRP)
-  }, [equipData])
 
   const hasEquipData =
     equipData &&
