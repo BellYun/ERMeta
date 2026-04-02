@@ -67,7 +67,7 @@ function selectTierRows(
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const patchVersion = searchParams.get("patchVersion") ?? "10.5";
+  const patchVersion = searchParams.get("patchVersion") ?? "10.6";
   const requestedTier = searchParams.get("tier") ?? "MITHRIL";
 
   try {

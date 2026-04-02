@@ -51,7 +51,7 @@ export function CharacterGrid({
   )
 
   return (
-    <div className="w-full lg:w-[260px] lg:shrink-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm overflow-hidden">
+    <div className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm overflow-hidden">
       {/* Header */}
       <div className="px-3 py-2.5 border-b border-[var(--color-border)]/60">
         <div className="flex items-center gap-2">
@@ -97,7 +97,7 @@ export function CharacterGrid({
           getCharName={getName}
           isSelected={isSelected}
           onSelect={handleSelect}
-          className="max-h-[280px] sm:max-h-[320px] lg:max-h-[620px]"
+          className="max-h-[280px] sm:max-h-[360px]"
           scrollToCode={selectedCode}
           statsMap={statsMap}
         />

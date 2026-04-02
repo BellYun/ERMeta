@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Suspense } from "react"
-import { BarChart2, ChevronRight, FileText, Loader2, Search, Users, Zap } from "lucide-react"
+import { BarChart2, ChevronRight, FileText, Loader2, Search, Users, X, Zap } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { getCharacterName } from "@/lib/characterMap"
 import { resolveWeaponName } from "@/lib/weaponMap"
@@ -304,18 +304,27 @@ export function CharacterAnalysisClient({
   return (
     <div className="flex flex-col gap-4 sm:gap-5">
       {/* ── 캐릭터 검색 바 ── */}
-      <div ref={pickerRef} className="relative">
+      <div ref={pickerRef} className="relative w-full sm:w-[480px]">
         <button
           onClick={() => setShowCharPicker(!showCharPicker)}
-          className="w-full flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 px-4 py-2.5 text-sm text-left hover:border-[var(--color-primary)]/50 transition-colors"
+          className={cn(
+            "w-full flex items-center gap-3 rounded-xl border px-4 py-2.5 text-sm text-left transition-all",
+            showCharPicker
+              ? "border-[var(--color-primary)] bg-[var(--color-primary)]/10 rounded-b-none"
+              : "border-[var(--color-border)] bg-[var(--color-surface)]/80 hover:border-[var(--color-primary)]/50"
+          )}
         >
-          <Search className="h-4 w-4 text-[var(--color-muted-foreground)]" />
+          <Search className="h-4 w-4 shrink-0 text-[var(--color-muted-foreground)]" />
           <span className="text-[var(--color-foreground)] font-medium">{getCharacterName(selectedCode)}</span>
-          <span className="text-[var(--color-muted-foreground)] text-xs ml-auto">캐릭터 변경</span>
+          {showCharPicker ? (
+            <X className="h-4 w-4 ml-auto shrink-0 text-[var(--color-muted-foreground)]" />
+          ) : (
+            <ChevronRight className="h-4 w-4 ml-auto shrink-0 text-[var(--color-muted-foreground)] rotate-90" />
+          )}
         </button>
 
         {showCharPicker && (
-          <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xl overflow-hidden">
+          <div className="absolute z-50 top-full left-0 w-full rounded-b-xl border border-t-0 border-[var(--color-primary)] bg-[var(--color-surface)] shadow-2xl overflow-hidden">
             <CharacterGrid
               selectedCode={selectedCode}
               onSelect={(code) => {
