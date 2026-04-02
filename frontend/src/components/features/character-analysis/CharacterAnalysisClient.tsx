@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Suspense } from "react"
 import { BarChart2, ChevronRight, FileText, Loader2, Search, Users, X, Zap } from "lucide-react"
-import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { getCharacterName } from "@/lib/characterMap"
 import { resolveWeaponName } from "@/lib/weaponMap"
 import { cn } from "@/lib/utils"
@@ -71,8 +71,6 @@ export function CharacterAnalysisClient({
   initialCode,
   initialWeapon,
 }: CharacterAnalysisClientProps) {
-  const router = useRouter()
-
   const startCode = initialCode ?? 1
 
   const [selectedCode, setSelectedCode] = React.useState<number>(startCode)
@@ -406,14 +404,14 @@ export function CharacterAnalysisClient({
 
             {/* CTA: 이 캐릭터로 조합 찾기 */}
             <div className="mt-3 flex justify-end">
-              <a
+              <Link
                 href={`/synergy-detail?ally1=${selectedCode}${selectedWeapon != null ? `&w1=${selectedWeapon}` : ""}`}
                 className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/30 px-3.5 py-2 text-xs font-semibold text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 transition-colors"
               >
                 <Users className="h-3.5 w-3.5" />
                 이 캐릭터로 조합 찾기
                 <ChevronRight className="h-3 w-3" />
-              </a>
+              </Link>
             </div>
           </section>
         )}

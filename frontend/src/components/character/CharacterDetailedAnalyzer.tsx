@@ -586,6 +586,11 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
     selectedGroup &&
     selectedGroup.secondaries.length > 0
 
+  const sortedTopBuilds = React.useMemo(() => {
+    if (!equipData?.topBuilds) return []
+    return [...equipData.topBuilds].sort((a, b) => b.averageRP - a.averageRP)
+  }, [equipData])
+
   const hasEquipData =
     equipData &&
     (equipData.topBuilds.length > 0 ||
@@ -770,7 +775,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
               <SectionDivider title="아이템 빌드" />
               {equipData!.topBuilds.length > 0 && (
                 <TopBuildsTableFiltered
-                  builds={[...equipData!.topBuilds].sort((a, b) => b.averageRP - a.averageRP)}
+                  builds={sortedTopBuilds}
                   itemNames={itemNames}
                 />
               )}
