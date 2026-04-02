@@ -22,6 +22,7 @@ interface CharacterHeaderProps {
   selectedWeapon: number | null
   setSelectedWeapon: (weapon: number | null) => void
   stats: CharacterStatsResponse | null
+  previousStats: CharacterStatsResponse | null
   displayStat: DisplayStat | null
   displayPrevStat: DisplayStat | null
   charTier: Tier | null
@@ -42,6 +43,7 @@ export function CharacterHeader({
   selectedWeapon,
   setSelectedWeapon,
   stats,
+  previousStats,
   displayStat,
   displayPrevStat,
   charTier,
@@ -195,8 +197,9 @@ export function CharacterHeader({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
           <StatCard
             label="픽률"
-            value={`${displayStat.pickRate.toFixed(1)}%`}
-            delta={hasPreviousData ? displayStat.pickRate - displayPrevStat!.pickRate : undefined}
+            value={`${(stats?.pickRate ?? displayStat.pickRate).toFixed(1)}%`}
+            sub={selectedWeapon != null && displayStat.pickRate !== (stats?.pickRate ?? displayStat.pickRate) ? `무기 ${displayStat.pickRate.toFixed(1)}%` : undefined}
+            delta={hasPreviousData ? (stats?.pickRate ?? displayStat.pickRate) - (previousStats?.pickRate ?? displayPrevStat!.pickRate) : undefined}
             deltaLabel="%p"
             accent="blue"
           />

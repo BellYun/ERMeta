@@ -1,8 +1,23 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import { TierGroup } from "@/utils/tier"
 import { cn } from "@/lib/utils"
+
+// ─── 특성 그룹 분류 ───────────────────────────────────────────────────────────
+
+type TraitGroup = "havoc" | "fortification" | "support" | "chaos" | "unknown"
+
+const GROUP_CONFIG: Record<TraitGroup, { label: string; letter: string; bg: string; text: string; ring: string }> = {
+  havoc:         { label: "파괴", letter: "파", bg: "bg-red-500/20",     text: "text-red-400",     ring: "ring-red-500/40" },
+  fortification: { label: "저항", letter: "저", bg: "bg-blue-500/20",    text: "text-blue-400",    ring: "ring-blue-500/40" },
+  support:       { label: "지원", letter: "지", bg: "bg-emerald-500/20", text: "text-emerald-400", ring: "ring-emerald-500/40" },
+  chaos:         { label: "혼돈", letter: "혼", bg: "bg-purple-500/20",  text: "text-purple-400",  ring: "ring-purple-500/40" },
+  unknown:       { label: "?",   letter: "?",  bg: "bg-[var(--color-surface-2)]", text: "text-[var(--color-muted-foreground)]", ring: "ring-[var(--color-border)]" },
+}
+
+// ─── 타입 ─────────────────────────────────────────────────────────────────────
 
 interface TraitSubOption {
   code: number | null
@@ -11,15 +26,24 @@ interface TraitSubOption {
   winRate: number
 }
 
-interface TraitCoreGroup {
-  mainCore: number | null
+interface TraitSecondaryInfo {
+  secGroup: TraitGroup
+  totalGames: number
+  pickRate: number
+  winRate: number
+  optionTrait1Options: TraitSubOption[]
+  optionTrait2Options: TraitSubOption[]
+}
+
+interface TraitMainGroup {
+  mainGroup: TraitGroup
   totalGames: number
   groupPickRate: number
   groupWinRate: number
+  mainCoreOptions: TraitSubOption[]
   sub1Options: TraitSubOption[]
   sub2Options: TraitSubOption[]
-  sub3Options: TraitSubOption[]
-  sub4Options: TraitSubOption[]
+  secondaries: TraitSecondaryInfo[]
 }
 
 interface Props {
@@ -29,49 +53,87 @@ interface Props {
   bestWeapon: number | null
 }
 
-function TraitChip({ code, name, variant = "sub" }: { code: number; name?: string; variant?: "core" | "sub" }) {
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-md px-1.5 sm:px-2 py-0.5 text-[11px] sm:text-xs font-medium max-w-[100px] sm:max-w-[140px] truncate",
-        variant === "core"
-          ? "bg-[var(--color-primary)]/20 text-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/40"
-          : "bg-[var(--color-surface-2)] text-[var(--color-foreground)]"
-      )}
-      title={String(name ?? code)}
-    >
-      {name ?? code}
-    </span>
-  )
-}
+// ─── 서브 컴포넌트 ────────────────────────────────────────────────────────────
 
-function SubOptionChip({
-  option,
-  name,
-}: {
-  option: TraitSubOption
+function TraitIcon({ code, name, pickRate, winRate, size = 28 }: {
+  code: number
   name?: string
+  pickRate: number
+  winRate: number
+  size?: number
 }) {
-  if (option.code == null) return null
+  const [imgError, setImgError] = React.useState(false)
+  const isEmpty = pickRate === 0
+
   return (
-    <div className="flex flex-col items-center gap-0.5 max-w-[120px]">
-      <TraitChip code={option.code} name={name} variant="sub" />
-      <span className="text-[10px] sm:text-xs whitespace-nowrap flex gap-0.5 sm:gap-1">
-        <span className="text-[var(--color-primary)]">픽 {option.pickRate.toFixed(1)}%</span>
-        <span
-          className={cn(
-            option.winRate >= 55 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
-          )}
-        >
-          승 {option.winRate.toFixed(1)}%
-        </span>
+    <div className={cn("flex flex-col items-center gap-0.5", isEmpty && "opacity-30")}>
+      <div className={cn(
+        "relative rounded-md p-0.5",
+        !isEmpty && pickRate >= 30 ? "ring-1 ring-[var(--color-accent-gold)]/60" : ""
+      )}>
+        {!imgError ? (
+          <Image
+            src={`/TraitSkill/TraitSkillIcon_${code}.png`}
+            alt={name ?? String(code)}
+            width={size}
+            height={size}
+            className="rounded-sm"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <span className="inline-flex items-center justify-center rounded-sm bg-[var(--color-surface-2)] text-[9px] font-bold text-[var(--color-muted-foreground)]"
+            style={{ width: size, height: size }}>
+            {code}
+          </span>
+        )}
+      </div>
+      <span className="text-[9px] text-[var(--color-foreground)] truncate max-w-[48px] text-center">
+        {name ?? code}
+      </span>
+      <span className={cn(
+        "text-[8px]",
+        isEmpty ? "text-[var(--color-muted-foreground)]" :
+        pickRate >= 30 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-primary)]"
+      )}>
+        {pickRate.toFixed(1)}%
       </span>
     </div>
   )
 }
 
+function SlotRow({ label, options, traitNames, config }: {
+  label: string
+  options: TraitSubOption[]
+  traitNames: Record<number, string>
+  config: (typeof GROUP_CONFIG)[TraitGroup]
+}) {
+  if (options.length === 0) return null
+  return (
+    <div className="flex items-start gap-2 py-2">
+      <span className={cn("shrink-0 text-[10px] font-semibold pt-2 w-10", config.text)}>
+        {label}
+      </span>
+      <div className="flex flex-wrap gap-2">
+        {options.map((opt) => (
+          opt.code != null && (
+            <TraitIcon
+              key={opt.code}
+              code={opt.code}
+              name={traitNames[opt.code]}
+              pickRate={opt.pickRate}
+              winRate={opt.winRate}
+            />
+          )
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── 메인 컴포넌트 ────────────────────────────────────────────────────────────
+
 export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion, bestWeapon }: Props) {
-  const [builds, setBuilds] = React.useState<TraitCoreGroup[]>([])
+  const [builds, setBuilds] = React.useState<TraitMainGroup[]>([])
   const [traitNames, setTraitNames] = React.useState<Record<number, string>>({})
   const [loading, setLoading] = React.useState(false)
 
@@ -103,8 +165,8 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
   if (loading) {
     return (
       <div className="space-y-2">
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-24 rounded-lg bg-[var(--color-surface)] animate-pulse" />
+        {[...Array(2)].map((_, i) => (
+          <div key={i} className="h-32 rounded-lg bg-[var(--color-surface)] animate-pulse" />
         ))}
       </div>
     )
@@ -119,131 +181,109 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
   }
 
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
-      {/* 테이블 헤더 */}
-      <div className="grid grid-cols-[1fr_3.2rem_3.2rem_3.2rem] sm:grid-cols-[1fr_5rem_5rem_5rem] border-b border-[var(--color-border)] px-2 sm:px-4 py-2 text-[10px] sm:text-xs font-medium text-[var(--color-muted-foreground)]">
-        <span>메인 특성</span>
-        <span className="text-right">픽률</span>
-        <span className="text-right">승률</span>
-        <span className="text-right">표본</span>
-      </div>
+    <div className="space-y-4">
+      {builds.map((group, gi) => {
+        const mainConfig = GROUP_CONFIG[group.mainGroup]
 
-      {/* 그룹 목록 */}
-      {builds.map((group, gi) => (
-        <div
-          key={gi}
-          className={cn(
-            "border-b border-[var(--color-border)] last:border-0",
-            gi === 0 && "bg-[var(--color-accent-gold)]/5"
-          )}
-        >
-          {/* mainCore 헤더 행 */}
-          <div className="grid grid-cols-[1fr_3.2rem_3.2rem_3.2rem] sm:grid-cols-[1fr_5rem_5rem_5rem] items-center px-2 sm:px-4 py-2.5 sm:py-3 gap-1 sm:gap-2 bg-[var(--color-surface-2)]/60">
-            <div className="flex items-center gap-2">
-              {gi === 0 && (
-                <span className="text-xs font-bold text-[var(--color-accent-gold)]">#1</span>
-              )}
-              {group.mainCore != null ? (
-                <TraitChip
-                  code={group.mainCore}
-                  name={traitNames[group.mainCore]}
-                  variant="core"
-                />
-              ) : (
-                <span className="text-xs text-[var(--color-muted-foreground)]">—</span>
-              )}
+        return (
+          <div
+            key={gi}
+            className={cn(
+              "rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden",
+              gi === 0 && "ring-1 ring-[var(--color-accent-gold)]/30"
+            )}
+          >
+            {/* 주특성 헤더 */}
+            <div className={cn("flex items-center justify-between px-3 sm:px-4 py-2.5 border-b border-[var(--color-border)]", mainConfig.bg)}>
+              <div className="flex items-center gap-2">
+                {gi === 0 && <span className="text-xs font-bold text-[var(--color-accent-gold)]">#1</span>}
+                <span className={cn("text-sm font-bold", mainConfig.text)}>{mainConfig.label}</span>
+                <span className="text-[10px] text-[var(--color-muted-foreground)]">
+                  {group.totalGames.toLocaleString()}판
+                </span>
+              </div>
+              <div className="flex items-center gap-3 text-xs">
+                <span className="text-[var(--color-muted-foreground)]">
+                  픽 <span className="font-semibold text-[var(--color-foreground)]">{group.groupPickRate.toFixed(1)}%</span>
+                </span>
+                <span className={cn("font-semibold", group.groupWinRate >= 55 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-foreground)]")}>
+                  승 {group.groupWinRate.toFixed(1)}%
+                </span>
+              </div>
             </div>
-            <span className="text-right text-xs text-[var(--color-muted-foreground)]">
-              {group.groupPickRate.toFixed(1)}%
-            </span>
-            <span
-              className={cn(
-                "text-right text-xs font-medium",
-                group.groupWinRate >= 55
-                  ? "text-[var(--color-accent-gold)]"
-                  : "text-[var(--color-foreground)]"
-              )}
-            >
-              {group.groupWinRate.toFixed(1)}%
-            </span>
-            <span className="text-right text-xs text-[var(--color-muted-foreground)]">
-              {group.totalGames.toLocaleString()}
-            </span>
+
+            {/* 주특성: 코어 + 슬롯1 + 슬롯2 */}
+            <div className="px-3 sm:px-4 py-1 border-b border-[var(--color-border)]/50 divide-y divide-[var(--color-border)]/20">
+              <SlotRow label="코어" options={group.mainCoreOptions} traitNames={traitNames} config={mainConfig} />
+              <SlotRow label="슬롯1" options={group.sub1Options} traitNames={traitNames} config={mainConfig} />
+              <SlotRow label="슬롯2" options={group.sub2Options} traitNames={traitNames} config={mainConfig} />
+            </div>
+
+            {/* 부특성 3열 */}
+            {group.secondaries.length > 0 && (
+              <div>
+                <div className="px-3 sm:px-4 py-1.5 bg-[var(--color-surface-2)]/40 border-b border-[var(--color-border)]/50">
+                  <span className="text-[10px] sm:text-xs font-semibold text-[var(--color-muted-foreground)]">부특성</span>
+                </div>
+                <div className={cn(
+                  "grid gap-px bg-[var(--color-border)]/20",
+                  group.secondaries.length === 1 && "grid-cols-1",
+                  group.secondaries.length === 2 && "grid-cols-2",
+                  group.secondaries.length >= 3 && "grid-cols-1 sm:grid-cols-3",
+                )}>
+                  {group.secondaries.map((sec, si) => {
+                    const secConfig = GROUP_CONFIG[sec.secGroup]
+                    const isEmpty = sec.totalGames === 0
+                    return (
+                      <div key={si} className={cn("bg-[var(--color-surface)]/80 p-3", isEmpty && "opacity-40")}>
+                        {/* 부특성 그룹 헤더 */}
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-1.5">
+                            <div className={cn("flex items-center justify-center rounded-full h-5 w-5", secConfig.bg)}>
+                              <span className={cn("text-[10px] font-black", secConfig.text)}>{secConfig.letter}</span>
+                            </div>
+                            <span className={cn("text-xs font-bold", secConfig.text)}>{secConfig.label}</span>
+                          </div>
+                          <div className="flex gap-1.5 text-[9px]">
+                            <span className="text-[var(--color-muted-foreground)]">{sec.pickRate.toFixed(0)}%</span>
+                            {!isEmpty && (
+                              <span className={cn(sec.winRate >= 55 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]")}>
+                                승 {sec.winRate.toFixed(1)}%
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* 슬롯1 + 슬롯2 아이콘 */}
+                        {!isEmpty ? (
+                          <div className="space-y-2">
+                            <div className="flex flex-wrap gap-1.5">
+                              {sec.optionTrait1Options.map((opt) => (
+                                opt.code != null && (
+                                  <TraitIcon key={opt.code} code={opt.code} name={traitNames[opt.code]} pickRate={opt.pickRate} winRate={opt.winRate} size={24} />
+                                )
+                              ))}
+                            </div>
+                            <div className="flex flex-wrap gap-1.5">
+                              {sec.optionTrait2Options.map((opt) => (
+                                opt.code != null && (
+                                  <TraitIcon key={opt.code} code={opt.code} name={traitNames[opt.code]} pickRate={opt.pickRate} winRate={opt.winRate} size={24} />
+                                )
+                              ))}
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-[10px] text-[var(--color-muted-foreground)] text-center py-2">데이터 없음</p>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </div>
-
-          {/* sub1 옵션 행 */}
-          {group.sub1Options.length > 0 && (
-            <div className="flex items-start gap-1.5 sm:gap-3 px-2 sm:px-4 py-2 sm:py-2.5 border-t border-[var(--color-border)]/40 pl-3 sm:pl-8">
-              <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-8 sm:w-10">
-                서브1
-              </span>
-              <div className="flex flex-wrap gap-1.5 sm:gap-3">
-                {group.sub1Options.map((opt, oi) => (
-                  <SubOptionChip
-                    key={oi}
-                    option={opt}
-                    name={opt.code != null ? traitNames[opt.code] : undefined}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* sub2 옵션 행 */}
-          {group.sub2Options.length > 0 && (
-            <div className="flex items-start gap-1.5 sm:gap-3 px-2 sm:px-4 py-2 sm:py-2.5 border-t border-[var(--color-border)]/40 pl-3 sm:pl-8">
-              <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-8 sm:w-10">
-                서브2
-              </span>
-              <div className="flex flex-wrap gap-1.5 sm:gap-3">
-                {group.sub2Options.map((opt, oi) => (
-                  <SubOptionChip
-                    key={oi}
-                    option={opt}
-                    name={opt.code != null ? traitNames[opt.code] : undefined}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* sub3 옵션 행 */}
-          {group.sub3Options.length > 0 && (
-            <div className="flex items-start gap-1.5 sm:gap-3 px-2 sm:px-4 py-2 sm:py-2.5 border-t border-[var(--color-border)]/40 pl-3 sm:pl-8">
-              <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-8 sm:w-10">
-                서브3
-              </span>
-              <div className="flex flex-wrap gap-1.5 sm:gap-3">
-                {group.sub3Options.map((opt, oi) => (
-                  <SubOptionChip
-                    key={oi}
-                    option={opt}
-                    name={opt.code != null ? traitNames[opt.code] : undefined}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* sub4 옵션 행 */}
-          {group.sub4Options.length > 0 && (
-            <div className="flex items-start gap-1.5 sm:gap-3 px-2 sm:px-4 py-2 sm:py-2.5 border-t border-[var(--color-border)]/40 pl-3 sm:pl-8">
-              <span className="shrink-0 text-[10px] font-medium text-[var(--color-muted-foreground)] pt-1 w-8 sm:w-10">
-                서브4
-              </span>
-              <div className="flex flex-wrap gap-1.5 sm:gap-3">
-                {group.sub4Options.map((opt, oi) => (
-                  <SubOptionChip
-                    key={oi}
-                    option={opt}
-                    name={opt.code != null ? traitNames[opt.code] : undefined}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }

@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
 
     const options: TraitOptionItem[] = data.map((r: Record<string, unknown>) => {
       const traits: number[] = []
-      for (let i = 1; i <= 4; i++) {
+      for (let i = 1; i <= 2; i++) {
         const code = r[`optionTrait${i}`] as number | null | undefined
         if (code) traits.push(code)
       }

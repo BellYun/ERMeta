@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Suspense } from "react"
-import { BarChart2, ChevronRight, FileText, Loader2, Users, Zap } from "lucide-react"
+import { BarChart2, ChevronRight, FileText, Loader2, Search, Users, Zap } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { getCharacterName } from "@/lib/characterMap"
 import { resolveWeaponName } from "@/lib/weaponMap"
@@ -279,27 +279,62 @@ export function CharacterAnalysisClient({
 
   const hasPreviousData = displayPrevStat !== null && (displayPrevStat.totalGames ?? 0) > 0
 
-  return (
-    <div className="flex flex-col lg:flex-row gap-4 lg:gap-5 items-start">
-      {/* ── Character Grid (Left) ── */}
-      <CharacterGrid
-        selectedCode={selectedCode}
-        onSelect={setSelectedCode}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        filteredCodes={filteredCodes}
-        selectedRef={selectedRef}
-        searchTimerRef={searchTimerRef}
-        statsMap={React.useMemo(() => {
-          if (!displayStat || displayStat.totalGames === 0 || !charTier) return rankingStatsMap
-          const merged = new Map(rankingStatsMap)
-          merged.set(selectedCode, { tier: charTier, winRate: displayStat.winRate })
-          return merged
-        }, [rankingStatsMap, selectedCode, displayStat, charTier])}
-      />
+  const [showCharPicker, setShowCharPicker] = React.useState(false)
+  const pickerRef = React.useRef<HTMLDivElement>(null)
 
-      {/* ── Analysis Content (Right) ── */}
-      <div className="flex flex-1 flex-col gap-4 sm:gap-5 min-w-0 overflow-x-auto">
+  // 외부 클릭 시 닫기
+  React.useEffect(() => {
+    if (!showCharPicker) return
+    const handler = (e: MouseEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
+        setShowCharPicker(false)
+      }
+    }
+    document.addEventListener("mousedown", handler)
+    return () => document.removeEventListener("mousedown", handler)
+  }, [showCharPicker])
+
+  const gridStatsMap = React.useMemo(() => {
+    if (!displayStat || displayStat.totalGames === 0 || !charTier) return rankingStatsMap
+    const merged = new Map(rankingStatsMap)
+    merged.set(selectedCode, { tier: charTier, winRate: displayStat.winRate })
+    return merged
+  }, [rankingStatsMap, selectedCode, displayStat, charTier])
+
+  return (
+    <div className="flex flex-col gap-4 sm:gap-5">
+      {/* ── 캐릭터 검색 바 ── */}
+      <div ref={pickerRef} className="relative">
+        <button
+          onClick={() => setShowCharPicker(!showCharPicker)}
+          className="w-full flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 px-4 py-2.5 text-sm text-left hover:border-[var(--color-primary)]/50 transition-colors"
+        >
+          <Search className="h-4 w-4 text-[var(--color-muted-foreground)]" />
+          <span className="text-[var(--color-foreground)] font-medium">{getCharacterName(selectedCode)}</span>
+          <span className="text-[var(--color-muted-foreground)] text-xs ml-auto">캐릭터 변경</span>
+        </button>
+
+        {showCharPicker && (
+          <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xl overflow-hidden">
+            <CharacterGrid
+              selectedCode={selectedCode}
+              onSelect={(code) => {
+                setSelectedCode(code)
+                setShowCharPicker(false)
+              }}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              filteredCodes={filteredCodes}
+              selectedRef={selectedRef}
+              searchTimerRef={searchTimerRef}
+              statsMap={gridStatsMap}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* ── Analysis Content (Full Width) ── */}
+      <div className="flex flex-col gap-4 sm:gap-5 min-w-0">
         <CharacterHeader
           selectedCode={selectedCode}
           selectedTier={selectedTier}
@@ -307,6 +342,7 @@ export function CharacterAnalysisClient({
           selectedWeapon={selectedWeapon}
           setSelectedWeapon={handleWeaponChange}
           stats={stats}
+          previousStats={previousStats}
           displayStat={displayStat}
           displayPrevStat={displayPrevStat}
           charTier={charTier}
@@ -355,7 +391,7 @@ export function CharacterAnalysisClient({
               {/* Pick Rate */}
               <div className="flex flex-col items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] p-3">
                 <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">픽률</span>
-                <span className="text-2xl font-black tabular-nums text-[var(--color-foreground)]">{displayStat.pickRate.toFixed(1)}%</span>
+                <span className="text-2xl font-black tabular-nums text-[var(--color-foreground)]">{(stats?.pickRate ?? displayStat.pickRate).toFixed(1)}%</span>
               </div>
             </div>
 

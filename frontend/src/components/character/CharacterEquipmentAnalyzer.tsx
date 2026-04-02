@@ -10,22 +10,26 @@ import { ItemIcon, WinRateSpan, SLOTS, SLOT_LABELS } from "./shared"
 
 // ─── 특성 아이콘 헬퍼 ────────────────────────────────────────────────────────────
 
-type TraitGroup = "havoc" | "fortification" | "support" | "cobalt" | "unknown"
+type TraitGroup = "havoc" | "fortification" | "support" | "chaos" | "unknown"
 
 const GROUP_CONFIG: Record<TraitGroup, { letter: string; bg: string; text: string }> = {
-  havoc:         { letter: "포", bg: "bg-red-500/20",     text: "text-red-400" },
-  fortification: { letter: "요", bg: "bg-blue-500/20",    text: "text-blue-400" },
+  havoc:         { letter: "파", bg: "bg-red-500/20",     text: "text-red-400" },
+  fortification: { letter: "저", bg: "bg-blue-500/20",    text: "text-blue-400" },
   support:       { letter: "지", bg: "bg-emerald-500/20", text: "text-emerald-400" },
-  cobalt:        { letter: "코", bg: "bg-purple-500/20",  text: "text-purple-400" },
+  chaos:         { letter: "혼", bg: "bg-purple-500/20",  text: "text-purple-400" },
   unknown:       { letter: "?",  bg: "bg-[var(--color-surface-2)]", text: "text-[var(--color-muted-foreground)]" },
 }
 
 function getTraitGroup(code: number): TraitGroup {
+  const sub = Math.floor(code / 100)
+  if (sub === 70107) return "chaos"
+  if (sub === 71108) return "support"
+
   const prefix = Math.floor(code / 100000)
   if (prefix === 70) return "havoc"
   if (prefix === 71) return "fortification"
   if (prefix === 72) return "support"
-  if (prefix === 73) return "cobalt"
+  if (prefix === 73) return "chaos"
   return "unknown"
 }
 
