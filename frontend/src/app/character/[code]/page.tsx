@@ -13,6 +13,7 @@ export const revalidate = 3600
 
 interface Props {
   params: Promise<{ code: string }>
+  searchParams: Promise<{ weapon?: string }>
 }
 
 /** 87개 캐릭터 페이지를 빌드 타임에 정적 생성 */
@@ -74,9 +75,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  * 캐릭터 분석 페이지 — SSG + ISR
  * 87개 캐릭터를 빌드 타임에 정적 생성, 30분 주기로 재검증
  */
-export default async function CharacterPage({ params }: Props) {
+export default async function CharacterPage({ params, searchParams }: Props) {
   const { code: rawCode } = await params
+  const { weapon: rawWeapon } = await searchParams
   const code = parseInt(rawCode, 10)
+  const weaponCode = rawWeapon ? parseInt(rawWeapon, 10) : null
+  const initialWeapon = weaponCode && !isNaN(weaponCode) ? weaponCode : null
 
   if (isNaN(code) || !CHARACTER_CODES.includes(code)) {
     notFound()
@@ -139,6 +143,7 @@ export default async function CharacterPage({ params }: Props) {
               initialStats={initialStats}
               initialPrevStats={initialPrevStats}
               initialCode={code}
+              initialWeapon={initialWeapon}
             />
           </Suspense>
         </SectionErrorBoundary>

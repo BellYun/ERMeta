@@ -1,81 +1,98 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
 import { getCacheHeaders } from "@/lib/cache"
+import { getTraitGroup, TRAIT_CORES, TRAIT_SUBS_SLOT1, TRAIT_SUBS_SLOT2, type TraitGroup } from "@/utils/traitCodes"
 
 export const revalidate = 1800 // L1: 30분 서버 캐시
+
+// ─── 타입 ─────────────────────────────────────────────────────────────────────
 
 export interface TraitSubOption {
   code: number | null
   totalGames: number
-  pickRate: number  // mainCore 그룹 내 비율
+  pickRate: number
   winRate: number
 }
 
-export interface TraitCoreGroup {
-  mainCore: number | null
+export interface TraitSecondaryInfo {
+  secGroup: TraitGroup
   totalGames: number
-  groupPickRate: number  // 전체 대비
-  groupWinRate: number
-  sub1Options: TraitSubOption[]
-  sub2Options: TraitSubOption[]
-  sub3Options: TraitSubOption[]
-  sub4Options: TraitSubOption[]
+  pickRate: number   // 주특성 그룹 내 비율
+  winRate: number
+  optionTrait1Options: TraitSubOption[]
+  optionTrait2Options: TraitSubOption[]
 }
 
-type TraitGroupRow = {
+export interface TraitMainGroup {
+  mainGroup: TraitGroup
+  totalGames: number
+  groupPickRate: number   // 전체 대비
+  groupWinRate: number
+  mainCoreOptions: TraitSubOption[]
+  sub1Options: TraitSubOption[]
+  sub2Options: TraitSubOption[]
+  secondaries: TraitSecondaryInfo[]
+}
+
+type RawRow = {
+  mainCore: number | null
   sub1: number | null
   sub2: number | null
-  sub3: number | null
-  sub4: number | null
+  optionTrait1: number | null
+  optionTrait2: number | null
   totalGames: number
   totalWins: number
 }
 
-type TraitSubKey = "sub1" | "sub2" | "sub3" | "sub4"
+type AggKey = keyof Pick<RawRow, "mainCore" | "sub1" | "sub2" | "optionTrait1" | "optionTrait2">
 
-function aggregateSubOptions(
-  rows: TraitGroupRow[],
-  subKey: TraitSubKey,
-  groupTotalGames: number,
-  options: { excludeNull?: boolean; limit?: number } = {}
+function aggregateOptions(
+  rows: RawRow[],
+  key: AggKey,
+  groupTotal: number,
+  options: { excludeNull?: boolean; allCodes?: number[] } = {}
 ): TraitSubOption[] {
-  const { excludeNull = false, limit = 5 } = options
-  const subMap = new Map<string, { code: number | null; games: number; wins: number }>()
+  const { excludeNull = false, allCodes } = options
+  const map = new Map<string, { code: number | null; games: number; wins: number }>()
+
+  // 전체 코드 목록이 주어지면 0으로 초기화
+  if (allCodes) {
+    for (const code of allCodes) {
+      map.set(String(code), { code, games: 0, wins: 0 })
+    }
+  }
 
   for (const row of rows) {
-    const code = row[subKey]
+    const code = row[key]
+    if (excludeNull && code == null) continue
 
-    if (excludeNull && code == null) {
-      continue
-    }
-
-    const key = String(code ?? "null")
-    const existing = subMap.get(key)
-
+    const k = String(code ?? "null")
+    const existing = map.get(k)
     if (existing) {
       existing.games += row.totalGames
       existing.wins += row.totalWins
     } else {
-      subMap.set(key, { code, games: row.totalGames, wins: row.totalWins })
+      map.set(k, { code, games: row.totalGames, wins: row.totalWins })
     }
   }
 
-  return [...subMap.values()]
+  return [...map.values()]
     .sort((a, b) => b.games - a.games)
-    .slice(0, limit)
     .map((o) => ({
       code: o.code,
       totalGames: o.games,
-      pickRate: groupTotalGames > 0 ? (o.games / groupTotalGames) * 100 : 0,
+      pickRate: groupTotal > 0 ? (o.games / groupTotal) * 100 : 0,
       winRate: o.games > 0 ? (o.wins / o.games) * 100 : 0,
     }))
 }
+
+// ─── 핸들러 ───────────────────────────────────────────────────────────────────
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const characterCode = Number(searchParams.get("characterCode"))
   const tier = searchParams.get("tier") ?? "DIAMOND"
-  const patchVersion = searchParams.get("patchVersion") ?? "10.5"
+  const patchVersion = searchParams.get("patchVersion") ?? "10.6"
   const bestWeapon = searchParams.get("bestWeapon")
 
   if (!characterCode || isNaN(characterCode)) {
@@ -92,7 +109,6 @@ export async function GET(request: NextRequest) {
       .eq("patchVersion", patchVersion)
       .eq("tier", tier)
       .order("totalGames", { ascending: false })
-      .limit(50)
 
     if (bestWeapon) {
       query = query.eq("bestWeapon", Number(bestWeapon))
@@ -114,54 +130,85 @@ export async function GET(request: NextRequest) {
       0
     )
 
-    // mainCore 기준 그룹화
-    const coreMap = new Map<string, {
-      mainCore: number | null
-      rows: TraitGroupRow[]
-    }>()
+    // 1차: 주특성 그룹별로 모으기
+    const mainMap = new Map<TraitGroup, RawRow[]>()
 
     for (const r of data as Record<string, unknown>[]) {
-      const mainCore = (r.mainCore as number | null | undefined) ?? null
-      const sub1 = (r.sub1 as number | null | undefined) ?? null
-      const sub2 = (r.sub2 as number | null | undefined) ?? null
-      const sub3 = (r.sub3 as number | null | undefined) ?? null
-      const sub4 = (r.sub4 as number | null | undefined) ?? null
-      const totalGames = (r.totalGames as number) ?? 0
-      const totalWins = (r.totalWins as number) ?? 0
-
-      const key = String(mainCore ?? "null")
-      const existing = coreMap.get(key)
-      if (existing) {
-        existing.rows.push({ sub1, sub2, sub3, sub4, totalGames, totalWins })
-      } else {
-        coreMap.set(key, { mainCore, rows: [{ sub1, sub2, sub3, sub4, totalGames, totalWins }] })
+      const row: RawRow = {
+        mainCore: (r.mainCore as number | null) ?? null,
+        sub1: (r.sub1 as number | null) ?? null,
+        sub2: (r.sub2 as number | null) ?? null,
+        optionTrait1: (r.optionTrait1 as number | null) ?? null,
+        optionTrait2: (r.optionTrait2 as number | null) ?? null,
+        totalGames: (r.totalGames as number) ?? 0,
+        totalWins: (r.totalWins as number) ?? 0,
       }
+
+      const mg = getTraitGroup(row.mainCore)
+      const existing = mainMap.get(mg)
+      if (existing) existing.push(row)
+      else mainMap.set(mg, [row])
     }
 
-    const builds: TraitCoreGroup[] = []
+    // 2차: 각 주특성 내에서 부특성 그룹별 세부 집계
+    const builds: TraitMainGroup[] = []
 
-    for (const group of coreMap.values()) {
-      const groupTotalGames = group.rows.reduce((s, r) => s + r.totalGames, 0)
-      const groupTotalWins = group.rows.reduce((s, r) => s + r.totalWins, 0)
+    for (const [mainGroup, rows] of mainMap) {
+      const mainTotal = rows.reduce((s, r) => s + r.totalGames, 0)
+      const mainWins = rows.reduce((s, r) => s + r.totalWins, 0)
 
-      const sub1Options = aggregateSubOptions(group.rows, "sub1", groupTotalGames)
-      const sub2Options = aggregateSubOptions(group.rows, "sub2", groupTotalGames)
-      const sub3Options = aggregateSubOptions(group.rows, "sub3", groupTotalGames, { excludeNull: true })
-      const sub4Options = aggregateSubOptions(group.rows, "sub4", groupTotalGames, { excludeNull: true })
+      // 부특성별 분류
+      const secMap = new Map<TraitGroup, RawRow[]>()
+      for (const row of rows) {
+        const sg = getTraitGroup(row.optionTrait1)
+        const existing = secMap.get(sg)
+        if (existing) existing.push(row)
+        else secMap.set(sg, [row])
+      }
+
+      // 모든 부특성 그룹을 포함 (데이터 없어도 빈 항목)
+      const ALL_GROUPS: TraitGroup[] = (["havoc", "fortification", "support", "chaos"] as TraitGroup[]).filter(g => g !== mainGroup)
+      const secondaries: TraitSecondaryInfo[] = []
+
+      for (const secGroup of ALL_GROUPS) {
+        const secRows = secMap.get(secGroup)
+        if (secRows && secRows.length > 0) {
+          const secTotal = secRows.reduce((s, r) => s + r.totalGames, 0)
+          const secWins = secRows.reduce((s, r) => s + r.totalWins, 0)
+          secondaries.push({
+            secGroup,
+            totalGames: secTotal,
+            pickRate: mainTotal > 0 ? (secTotal / mainTotal) * 100 : 0,
+            winRate: secTotal > 0 ? (secWins / secTotal) * 100 : 0,
+            optionTrait1Options: aggregateOptions(secRows, "optionTrait1", secTotal, { excludeNull: true, allCodes: TRAIT_SUBS_SLOT1[secGroup] }),
+            optionTrait2Options: aggregateOptions(secRows, "optionTrait2", secTotal, { excludeNull: true, allCodes: TRAIT_SUBS_SLOT2[secGroup] }),
+          })
+        } else {
+          secondaries.push({
+            secGroup,
+            totalGames: 0,
+            pickRate: 0,
+            winRate: 0,
+            optionTrait1Options: [],
+            optionTrait2Options: [],
+          })
+        }
+      }
+
+      secondaries.sort((a, b) => b.totalGames - a.totalGames)
 
       builds.push({
-        mainCore: group.mainCore,
-        totalGames: groupTotalGames,
-        groupPickRate: grandTotal > 0 ? (groupTotalGames / grandTotal) * 100 : 0,
-        groupWinRate: groupTotalGames > 0 ? (groupTotalWins / groupTotalGames) * 100 : 0,
-        sub1Options,
-        sub2Options,
-        sub3Options,
-        sub4Options,
+        mainGroup,
+        totalGames: mainTotal,
+        groupPickRate: grandTotal > 0 ? (mainTotal / grandTotal) * 100 : 0,
+        groupWinRate: mainTotal > 0 ? (mainWins / mainTotal) * 100 : 0,
+        mainCoreOptions: aggregateOptions(rows, "mainCore", mainTotal, { allCodes: TRAIT_CORES[mainGroup] }),
+        sub1Options: aggregateOptions(rows, "sub1", mainTotal, { allCodes: TRAIT_SUBS_SLOT1[mainGroup] }),
+        sub2Options: aggregateOptions(rows, "sub2", mainTotal, { allCodes: TRAIT_SUBS_SLOT2[mainGroup] }),
+        secondaries,
       })
     }
 
-    // totalGames 내림차순, max 5
     builds.sort((a, b) => b.totalGames - a.totalGames)
     return NextResponse.json({ builds: builds.slice(0, 5) }, { headers: getCacheHeaders("daily") })
   } catch (err) {

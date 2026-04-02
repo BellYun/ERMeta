@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const characterCode = Number(searchParams.get("characterCode"))
   const tier = searchParams.get("tier") ?? "DIAMOND"
-  const patchVersion = searchParams.get("patchVersion") ?? "10.5"
+  const patchVersion = searchParams.get("patchVersion") ?? "10.6"
   const bestWeapon = searchParams.get("bestWeapon")
 
   if (!characterCode || isNaN(characterCode)) {
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
 
     const options: TraitOptionItem[] = data.map((r: Record<string, unknown>) => {
       const traits: number[] = []
-      for (let i = 1; i <= 4; i++) {
+      for (let i = 1; i <= 2; i++) {
         const code = r[`optionTrait${i}`] as number | null | undefined
         if (code) traits.push(code)
       }

@@ -5,6 +5,8 @@ import { TierRankingTable } from "@/components/features/TierRankingTable"
 import { HoneyPicksSection } from "@/components/features/HoneyPicksSection"
 import { FilterProvider } from "@/components/features/FilterContext"
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary"
+import { HoneyPicksSkeleton } from "@/components/skeleton/HoneyPicksSkeleton"
+import { RankingSkeleton } from "@/components/skeleton/RankingSkeleton"
 import { getPatches } from "@/lib/getPatches"
 import { fetchRankingData } from "@/lib/ranking"
 import { fetchHoneyPicksServer } from "@/lib/honeyPicks"
@@ -23,29 +25,6 @@ export const metadata: Metadata = {
     description: "이터널리턴 최신 패치 기준 캐릭터 티어, 픽률, 승률, 평균 RP 통계.",
   },
   alternates: { canonical: "/" },
-}
-
-/* ─── Skeletons ─── */
-
-function HoneyPicksSkeleton() {
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-[1fr_1fr_1fr_1fr_1fr] gap-3">
-      <div className="col-span-2 sm:col-span-1 md:col-span-2 md:row-span-2 aspect-[3/4] md:aspect-auto rounded-2xl bg-[var(--color-surface)] animate-pulse" />
-      {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="aspect-[4/5] rounded-xl bg-[var(--color-surface)] animate-pulse" />
-      ))}
-    </div>
-  )
-}
-
-function RankingSkeleton() {
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-      {Array.from({ length: 15 }).map((_, i) => (
-        <div key={i} className="aspect-[3/4] rounded-xl bg-[var(--color-surface)] animate-pulse" />
-      ))}
-    </div>
-  )
 }
 
 /* ─── Async Streams ─── */
@@ -104,11 +83,6 @@ export default async function Home() {
                 </p>
               </div>
 
-              <div className="reveal reveal-d2">
-                <Suspense>
-                  <GlobalFilter />
-                </Suspense>
-              </div>
             </div>
           </div>
         </div>
@@ -116,6 +90,15 @@ export default async function Home() {
         {/* Bottom edge */}
         <div className="absolute bottom-0 inset-x-0 section-divider" />
       </section>
+
+      {/* ── Sticky Filter Bar ── */}
+      <div className="sticky top-12 z-30 -mx-3 sm:-mx-4 px-3 sm:px-4 py-2.5 bg-[var(--color-background)]/80 backdrop-blur-md border-b border-[var(--color-border)]/50">
+        <div className="max-w-6xl mx-auto flex justify-end">
+          <Suspense>
+            <GlobalFilter />
+          </Suspense>
+        </div>
+      </div>
 
       <div className="flex flex-col gap-10 sm:gap-14 mt-6 sm:mt-10">
         {/* ── Honey Picks ── */}

@@ -49,13 +49,13 @@ function aggregateSlot(
 type TraitGroupRow = {
   sub1: number | null;
   sub2: number | null;
-  sub3: number | null;
-  sub4: number | null;
+  optionTrait1: number | null;
+  optionTrait2: number | null;
   totalGames: number;
   totalWins: number;
 };
 
-type TraitSubKey = 'sub1' | 'sub2' | 'sub3' | 'sub4';
+type TraitSubKey = 'sub1' | 'sub2' | 'optionTrait1' | 'optionTrait2';
 
 function aggregateSubOptions(
   rows: TraitGroupRow[],
@@ -279,8 +279,8 @@ export class BuildsService {
       const row: TraitGroupRow = {
         sub1: (r.sub1 as number | null) ?? null,
         sub2: (r.sub2 as number | null) ?? null,
-        sub3: (r.sub3 as number | null) ?? null,
-        sub4: (r.sub4 as number | null) ?? null,
+        optionTrait1: (r.optionTrait1 as number | null) ?? null,
+        optionTrait2: (r.optionTrait2 as number | null) ?? null,
         totalGames: (r.totalGames as number) ?? 0,
         totalWins: (r.totalWins as number) ?? 0,
       };
@@ -306,8 +306,8 @@ export class BuildsService {
         groupWinRate: groupTotalGames > 0 ? (groupTotalWins / groupTotalGames) * 100 : 0,
         sub1Options: aggregateSubOptions(group.rows, 'sub1', groupTotalGames),
         sub2Options: aggregateSubOptions(group.rows, 'sub2', groupTotalGames),
-        sub3Options: aggregateSubOptions(group.rows, 'sub3', groupTotalGames, { excludeNull: true }),
-        sub4Options: aggregateSubOptions(group.rows, 'sub4', groupTotalGames, { excludeNull: true }),
+        sub3Options: aggregateSubOptions(group.rows, 'optionTrait1', groupTotalGames, { excludeNull: true }),
+        sub4Options: aggregateSubOptions(group.rows, 'optionTrait2', groupTotalGames, { excludeNull: true }),
       });
     }
 
@@ -367,8 +367,8 @@ export class BuildsService {
       options: {
         sub1: aggregateSubOptions(rows, 'sub1', groupTotalGames),
         sub2: aggregateSubOptions(rows, 'sub2', groupTotalGames),
-        sub3: aggregateSubOptions(rows, 'sub3', groupTotalGames, { excludeNull: true }),
-        sub4: aggregateSubOptions(rows, 'sub4', groupTotalGames, { excludeNull: true }),
+        sub3: aggregateSubOptions(rows, 'optionTrait1', groupTotalGames, { excludeNull: true }),
+        sub4: aggregateSubOptions(rows, 'optionTrait2', groupTotalGames, { excludeNull: true }),
       },
     };
   }

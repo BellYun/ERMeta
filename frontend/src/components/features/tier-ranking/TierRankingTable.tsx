@@ -80,6 +80,8 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
   const [activeKey, setActiveKey] = React.useState<string | null>(null)
   const [sortKey, setSortKey] = React.useState<SortKey>("rank")
   const [sortDir, setSortDir] = React.useState<SortDir>("asc")
+  const [showAll, setShowAll] = React.useState(false)
+  const DEFAULT_VISIBLE = 20
   const { l10n } = useL10n()
   const isInitialRender = React.useRef(true)
   const router = useRouter()
@@ -129,6 +131,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
     })
   }, [rows, activeRole, sortKey, sortDir])
 
+  const visible = showAll ? filtered : filtered.slice(0, DEFAULT_VISIBLE)
+  const hasMore = filtered.length > DEFAULT_VISIBLE
+
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
       setSortDir((d) => (d === "asc" ? "desc" : "asc"))
@@ -158,7 +163,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
       </div>
 
       {/* ── Table ── */}
-      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
+      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]">
         {/* Desktop Table */}
         <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-sm">
@@ -167,9 +172,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                 <SortableHead label="#" sortKey="rank" currentKey={sortKey} dir={sortDir} onSort={handleSort} className="w-14 text-center" />
                 <th className="px-2 py-2.5 text-left text-xs font-medium text-[var(--color-muted-foreground)] w-12">티어</th>
                 <th className="px-2 py-2.5 text-left text-xs font-medium text-[var(--color-muted-foreground)]">캐릭터</th>
-                <SortableHead label="픽률" sortKey="pickRate" currentKey={sortKey} dir={sortDir} onSort={handleSort} className="w-28 text-right" />
-                <SortableHead label="승률" sortKey="winRate" currentKey={sortKey} dir={sortDir} onSort={handleSort} className="w-28 text-right" />
-                <SortableHead label="평균 RP" sortKey="averageRP" currentKey={sortKey} dir={sortDir} onSort={handleSort} className="w-32 text-right" />
+                <SortableHead label="픽률" sortKey="pickRate" currentKey={sortKey} dir={sortDir} onSort={handleSort} className="w-28 text-right" tooltip="전체 게임 중 해당 캐릭터가 선택된 비율" />
+                <SortableHead label="승률" sortKey="winRate" currentKey={sortKey} dir={sortDir} onSort={handleSort} className="w-28 text-right" tooltip="해당 캐릭터의 1위 달성 비율 (기대값 12.5%)" />
+                <SortableHead label="평균 RP" sortKey="averageRP" currentKey={sortKey} dir={sortDir} onSort={handleSort} className="w-32 text-right" tooltip="게임당 평균 획득 랭크 포인트. 양수일수록 랭크 상승에 유리" />
               </tr>
             </thead>
             <tbody>
@@ -184,7 +189,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                       <td className="px-3 py-2.5 text-right"><Skeleton className="h-4 w-14 ml-auto" /></td>
                     </tr>
                   ))
-                : filtered.map((char) => {
+                : visible.map((char) => {
                     const key = `${char.code}-${char.weaponCode}`
                     return (
                       <tr
@@ -197,12 +202,12 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           if (char.patchNote && "ontouchstart" in window) {
                             if (activeKey === key) {
                               setActiveKey(null)
-                              router.push(`/character/${char.code}`)
+                              router.push(`/character/${char.code}?weapon=${char.weaponCode}`)
                             } else {
                               setActiveKey(key)
                             }
                           } else {
-                            router.push(`/character/${char.code}`)
+                            router.push(`/character/${char.code}?weapon=${char.weaponCode}`)
                           }
                         }}
                         onMouseEnter={() => setActiveKey(key)}
@@ -271,7 +276,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                       </tr>
                     )
                   })}
-              {!isLoading && filtered.length === 0 && (
+              {!isLoading && visible.length === 0 && (
                 <tr>
                   <td colSpan={6} className="text-center text-sm text-[var(--color-muted-foreground)] py-16">
                     데이터 없음
@@ -329,13 +334,13 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                     </div>
                   </div>
                 ))
-              : filtered.length === 0
+              : visible.length === 0
                 ? (
                   <div className="text-center text-sm text-[var(--color-muted-foreground)] py-12">
                     데이터 없음
                   </div>
                 )
-                : filtered.map((char) => {
+                : visible.map((char) => {
                     const key = `${char.code}-${char.weaponCode}`
                     return (
                       <div
@@ -345,12 +350,12 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           if (char.patchNote && "ontouchstart" in window) {
                             if (activeKey === key) {
                               setActiveKey(null)
-                              router.push(`/character/${char.code}`)
+                              router.push(`/character/${char.code}?weapon=${char.weaponCode}`)
                             } else {
                               setActiveKey(key)
                             }
                           } else {
-                            router.push(`/character/${char.code}`)
+                            router.push(`/character/${char.code}?weapon=${char.weaponCode}`)
                           }
                         }}
                       >
@@ -399,6 +404,16 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
           </div>
         </div>
       </div>
+
+      {/* ── 전체 보기 토글 ── */}
+      {!isLoading && hasMore && (
+        <button
+          onClick={() => setShowAll((v) => !v)}
+          className="w-full py-2.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)] transition-colors"
+        >
+          {showAll ? "접기" : `전체 보기 (${filtered.length}캐릭터)`}
+        </button>
+      )}
     </div>
   )
 }
@@ -412,6 +427,7 @@ function SortableHead({
   dir,
   onSort,
   className,
+  tooltip,
 }: {
   label: string
   sortKey: SortKey
@@ -419,6 +435,7 @@ function SortableHead({
   dir: SortDir
   onSort: (key: SortKey) => void
   className?: string
+  tooltip?: string
 }) {
   const isActive = currentKey === sortKey
   return (
@@ -432,6 +449,16 @@ function SortableHead({
     >
       <span className="inline-flex items-center gap-1">
         {label}
+        {tooltip && (
+          <span className="relative group/tip">
+            <svg className="w-3 h-3 opacity-40 group-hover/tip:opacity-80 transition-opacity cursor-help" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2.5a1 1 0 110 2 1 1 0 010-2zM6.5 7h2v4.5h-2V7z" />
+            </svg>
+            <span className="fixed hidden group-hover/tip:block px-2.5 py-1.5 rounded-lg bg-[var(--color-surface-3)] border border-[var(--color-border)] text-[10px] text-[var(--color-foreground)] font-normal whitespace-nowrap shadow-lg z-[9999] -translate-x-1/2 mt-1">
+              {tooltip}
+            </span>
+          </span>
+        )}
         <SortIcon active={isActive} dir={dir} />
       </span>
     </th>
