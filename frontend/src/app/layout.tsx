@@ -6,9 +6,10 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { L10nProvider } from "@/components/L10nProvider";
+import Script from "next/script";
 import FeedbackWidget from "@/components/features/FeedbackWidget";
 import { Analytics } from "@vercel/analytics/next";
-import { AmplitudeProvider } from "@/components/AmplitudeProvider";
+import { AmplitudeLoader } from "@/components/AmplitudeLoader";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 
 function loadL10n(): Record<string, string> | undefined {
@@ -114,8 +115,15 @@ export default function RootLayout({
         </footer>
         <FeedbackWidget />
         <Analytics />
-        <AmplitudeProvider />
+        <AmplitudeLoader />
         <GoogleAnalytics />
+        {process.env.NEXT_PUBLIC_SENTRY_DSN && (
+          <Script
+            src={`https://js.sentry-cdn.com/${process.env.NEXT_PUBLIC_SENTRY_DSN.match(/\/\/(.+?)@/)?.[1]}.min.js`}
+            crossOrigin="anonymous"
+            strategy="afterInteractive"
+          />
+        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

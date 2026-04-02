@@ -2,7 +2,7 @@
 
 import React from "react"
 import { AlertTriangle, RefreshCw } from "lucide-react"
-import * as Sentry from "@sentry/nextjs"
+import { captureException } from "@/lib/sentry-client"
 
 interface Props {
   children: React.ReactNode
@@ -26,7 +26,7 @@ export class SectionErrorBoundary extends React.Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    Sentry.captureException(error, {
+    captureException(error, {
       extra: {
         sectionName: this.props.sectionName,
         componentStack: errorInfo.componentStack,

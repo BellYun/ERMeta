@@ -1,10 +1,2 @@
-import * as Sentry from "@sentry/nextjs"
-
-Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-  tracesSampleRate: 0.2,
-  replaysSessionSampleRate: 0,
-  replaysOnErrorSampleRate: 1.0,
-  environment: process.env.NODE_ENV,
-  enabled: process.env.NODE_ENV === "production",
-})
+// Client-side Sentry는 CDN 로더 스크립트로 대체 (layout.tsx).
+// 이 파일은 @sentry/nextjs webpack 플러그인이 참조하므로 삭제하지 않고 비워둔다.

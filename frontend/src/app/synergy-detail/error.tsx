@@ -1,7 +1,7 @@
 "use client"
 
-import * as Sentry from "@sentry/nextjs"
 import { useEffect } from "react"
+import { captureException } from "@/lib/sentry-client"
 import { AlertTriangle, RefreshCw, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
@@ -13,7 +13,7 @@ export default function SynergyDetailError({
   reset: () => void
 }) {
   useEffect(() => {
-    Sentry.captureException(error, {
+    captureException(error, {
       tags: { errorBoundary: "page", page: "synergy-detail" },
     })
   }, [error])
