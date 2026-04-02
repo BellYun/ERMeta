@@ -24,7 +24,7 @@ const tabs = [
     ),
   },
   {
-    href: "/character-analysis",
+    href: "/character/1",
     label: "캐릭터",
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
@@ -41,7 +41,7 @@ export function MobileTabBar() {
     <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--color-surface)]/95 backdrop-blur-sm border-t border-[var(--color-border)]">
       <div className="flex items-stretch">
         {tabs.map(({ href, label, icon }) => {
-          const isActive = pathname === href
+          const isActive = href.startsWith("/character/") ? pathname.startsWith("/character/") : pathname === href
           return (
             <Link
               key={href}

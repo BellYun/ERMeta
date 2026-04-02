@@ -51,7 +51,7 @@ const FEATURES = [
     title: "캐릭터 분석",
     description: "특성·장비 빌드, 코어 아이템 완성도, 게임 길이별 성과까지. 내 캐릭터를 깊이 파헤쳐 보세요.",
     badge: "딥다이브",
-    href: "/character-analysis",
+    href: "/character/1",
   },
 ]
 

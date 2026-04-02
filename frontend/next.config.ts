@@ -5,6 +5,15 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react", "recharts"],
   },
+  async redirects() {
+    return [
+      {
+        source: "/character-analysis",
+        destination: "/character/1",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default withSentryConfig(nextConfig, {
