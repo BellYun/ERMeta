@@ -48,11 +48,12 @@ type AggKey = keyof Pick<RawRow, "mainCore" | "sub1" | "sub2" | "optionTrait1" |
 
 function aggregateOptions(
   rows: RawRow[],
-  key: AggKey,
+  keys: AggKey | AggKey[],
   groupTotal: number,
   options: { excludeNull?: boolean; allCodes?: number[] } = {}
 ): TraitSubOption[] {
   const { excludeNull = false, allCodes } = options
+  const codeSet = allCodes ? new Set(allCodes.map(String)) : null
   const map = new Map<string, { code: number | null; games: number; wins: number }>()
 
   // 전체 코드 목록이 주어지면 0으로 초기화
@@ -62,28 +63,33 @@ function aggregateOptions(
     }
   }
 
-  for (const row of rows) {
-    const code = row[key]
-    if (excludeNull && code == null) continue
+  const keyList = Array.isArray(keys) ? keys : [keys]
 
-    const k = String(code ?? "null")
-    const existing = map.get(k)
-    if (existing) {
-      existing.games += row.totalGames
-      existing.wins += row.totalWins
-    } else {
-      map.set(k, { code, games: row.totalGames, wins: row.totalWins })
+  for (const row of rows) {
+    for (const key of keyList) {
+      const code = row[key]
+      if (excludeNull && code == null) continue
+
+      const k = String(code ?? "null")
+      // allCodes가 있으면 해당 슬롯 코드만 집계
+      if (codeSet && !codeSet.has(k)) continue
+
+      const existing = map.get(k)
+      if (existing) {
+        existing.games += row.totalGames
+        existing.wins += row.totalWins
+      } else if (!codeSet) {
+        map.set(k, { code, games: row.totalGames, wins: row.totalWins })
+      }
     }
   }
 
-  return [...map.values()]
-    .sort((a, b) => b.games - a.games)
-    .map((o) => ({
-      code: o.code,
-      totalGames: o.games,
-      pickRate: groupTotal > 0 ? (o.games / groupTotal) * 100 : 0,
-      winRate: o.games > 0 ? (o.wins / o.games) * 100 : 0,
-    }))
+  return [...map.values()].map((o) => ({
+    code: o.code,
+    totalGames: o.games,
+    pickRate: groupTotal > 0 ? (o.games / groupTotal) * 100 : 0,
+    winRate: o.games > 0 ? (o.wins / o.games) * 100 : 0,
+  }))
 }
 
 // ─── 핸들러 ───────────────────────────────────────────────────────────────────
@@ -180,8 +186,8 @@ export async function GET(request: NextRequest) {
             totalGames: secTotal,
             pickRate: mainTotal > 0 ? (secTotal / mainTotal) * 100 : 0,
             winRate: secTotal > 0 ? (secWins / secTotal) * 100 : 0,
-            optionTrait1Options: aggregateOptions(secRows, "optionTrait1", secTotal, { excludeNull: true, allCodes: TRAIT_SUBS_SLOT1[secGroup] }),
-            optionTrait2Options: aggregateOptions(secRows, "optionTrait2", secTotal, { excludeNull: true, allCodes: TRAIT_SUBS_SLOT2[secGroup] }),
+            optionTrait1Options: aggregateOptions(secRows, ["optionTrait1", "optionTrait2"], secTotal, { excludeNull: true, allCodes: TRAIT_SUBS_SLOT1[secGroup] }),
+            optionTrait2Options: aggregateOptions(secRows, ["optionTrait1", "optionTrait2"], secTotal, { excludeNull: true, allCodes: TRAIT_SUBS_SLOT2[secGroup] }),
           })
         } else {
           secondaries.push({
@@ -195,21 +201,18 @@ export async function GET(request: NextRequest) {
         }
       }
 
-      secondaries.sort((a, b) => b.totalGames - a.totalGames)
-
       builds.push({
         mainGroup,
         totalGames: mainTotal,
         groupPickRate: grandTotal > 0 ? (mainTotal / grandTotal) * 100 : 0,
         groupWinRate: mainTotal > 0 ? (mainWins / mainTotal) * 100 : 0,
         mainCoreOptions: aggregateOptions(rows, "mainCore", mainTotal, { allCodes: TRAIT_CORES[mainGroup] }),
-        sub1Options: aggregateOptions(rows, "sub1", mainTotal, { allCodes: TRAIT_SUBS_SLOT1[mainGroup] }),
-        sub2Options: aggregateOptions(rows, "sub2", mainTotal, { allCodes: TRAIT_SUBS_SLOT2[mainGroup] }),
+        sub1Options: aggregateOptions(rows, ["sub1", "sub2"], mainTotal, { allCodes: TRAIT_SUBS_SLOT1[mainGroup] }),
+        sub2Options: aggregateOptions(rows, ["sub1", "sub2"], mainTotal, { allCodes: TRAIT_SUBS_SLOT2[mainGroup] }),
         secondaries,
       })
     }
 
-    builds.sort((a, b) => b.totalGames - a.totalGames)
     return NextResponse.json({ builds: builds.slice(0, 5) }, { headers: getCacheHeaders("daily") })
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error"

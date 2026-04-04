@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Suspense } from "react"
-import { BarChart2, ChevronRight, FileText, Loader2, Search, Users, X, Zap } from "lucide-react"
+import { BarChart2, ChevronRight, FileText, Loader2, Users, Zap } from "lucide-react"
 import Link from "next/link"
 import { getCharacterName } from "@/lib/characterMap"
 import { resolveWeaponName } from "@/lib/weaponMap"
@@ -10,31 +10,8 @@ import { cn } from "@/lib/utils"
 import { TierGroup } from "@/utils/tier"
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route"
 
-import dynamic from "next/dynamic"
-import { CHARACTER_CODES } from "./constants"
 import { assignCharTier, fetchStats } from "./utils"
 import { CharacterHeader } from "./CharacterHeader"
-
-// CharacterGrid: 사이드바는 LCP 경로 밖 → SSR 스킵하여 초기 JS 번들 축소
-const CharacterGrid = dynamic(
-  () => import("./CharacterGrid").then((m) => ({ default: m.CharacterGrid })),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="w-full lg:w-[260px] lg:shrink-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-2">
-        <div className="h-8 w-full rounded bg-[var(--color-surface-2)] animate-pulse mb-2" />
-        <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-3 gap-1 max-h-[320px] lg:max-h-[620px] overflow-hidden">
-          {Array.from({ length: 18 }).map((_, i) => (
-            <div key={i} className="flex flex-col items-center gap-1 py-2">
-              <div className="h-10 w-10 rounded-md bg-[var(--color-surface-2)] animate-pulse" />
-              <div className="h-3 w-8 rounded bg-[var(--color-surface-2)] animate-pulse" />
-            </div>
-          ))}
-        </div>
-      </div>
-    ),
-  }
-)
 
 // 탭 콘텐츠: lazy import (코드 스플릿)
 const PatchComparisonTab = React.lazy(() =>
@@ -60,7 +37,7 @@ interface CharacterAnalysisClientProps {
   initialPatches?: string[]
   initialStats?: CharacterStatsResponse | null
   initialPrevStats?: CharacterStatsResponse | null
-  initialCode?: number
+  code: number
   initialWeapon?: number | null
 }
 
@@ -68,26 +45,21 @@ export function CharacterAnalysisClient({
   initialPatches,
   initialStats,
   initialPrevStats,
-  initialCode,
+  code,
   initialWeapon,
 }: CharacterAnalysisClientProps) {
-  const startCode = initialCode ?? 1
+  const patches = initialPatches ?? []
 
-  const [selectedCode, setSelectedCode] = React.useState<number>(startCode)
   const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.MITHRIL)
   const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>(() => {
-    // URL의 weapon 파라미터 우선
     if (initialWeapon != null) return initialWeapon
     if (initialStats?.weapons && initialStats.weapons.length > 0) {
       return initialStats.weapons[0].bestWeapon ?? null
     }
     return null
   })
-  const [searchQuery, setSearchQuery] = React.useState("")
-  const searchTimerRef = React.useRef<ReturnType<typeof setTimeout>>(null)
-  const selectedRef = React.useRef<HTMLButtonElement>(null)
 
-  // 무기 변경 시 URL 파라미터 동기화 (Next.js 리렌더 방지를 위해 history API 직접 사용)
+  // 무기 변경 시 URL 파라미터 동기화
   const handleWeaponChange = React.useCallback((weapon: number | null) => {
     setSelectedWeapon(weapon)
     const url = new URL(window.location.href)
@@ -99,21 +71,9 @@ export function CharacterAnalysisClient({
     window.history.replaceState(null, "", url.pathname + url.search)
   }, [])
 
-  const deferredSearch = React.useDeferredValue(searchQuery)
-
-  const filteredCodes = React.useMemo(() => {
-    const sorted = [...CHARACTER_CODES].sort((a, b) =>
-      getCharacterName(a).localeCompare(getCharacterName(b), "ko")
-    )
-    const q = deferredSearch.trim()
-    if (!q) return sorted
-    return sorted.filter((code) => getCharacterName(code).includes(q))
-  }, [deferredSearch])
-
-  const [patches, setPatches] = React.useState<string[]>(initialPatches ?? [])
   const [allPatchStats, setAllPatchStats] = React.useState<(CharacterStatsResponse | null)[]>(() => {
-    if (!initialPatches?.length) return []
-    const initial: (CharacterStatsResponse | null)[] = Array(initialPatches.length).fill(null)
+    if (!patches.length) return []
+    const initial: (CharacterStatsResponse | null)[] = Array(patches.length).fill(null)
     if (initialStats) initial[0] = initialStats
     if (initialPrevStats) initial[1] = initialPrevStats
     return initial
@@ -122,68 +82,42 @@ export function CharacterAnalysisClient({
   const [previousStats, setPreviousStats] = React.useState<CharacterStatsResponse | null>(initialPrevStats ?? null)
   const [loading, setLoading] = React.useState(false)
 
-  // Ranking stats for character grid overlay (tier badge + win rate)
-  const [rankingStatsMap, setRankingStatsMap] = React.useState<Map<number, { tier: string; winRate: number }>>(new Map())
-
+  // 나머지 패치 데이터 로드 (idle 시)
   React.useEffect(() => {
-    const patch = patches[0]
-    if (!patch) return
-    fetch(`/api/character/mithril-rp-ranking?patchVersion=${encodeURIComponent(patch)}&tier=MITHRIL`)
-      .then((r) => r.json())
-      .then((data) => {
-        const map = new Map<number, { tier: string; winRate: number }>()
-        for (const r of data.rankings ?? []) {
-          const tier = assignCharTier({ winRate: r.winRate, top3Rate: r.top3Rate, averageRank: 4.5, averageRP: r.averageRP })
-          map.set(r.characterNum, { tier, winRate: r.winRate })
-        }
-        setRankingStatsMap(map)
+    if (patches.length <= 2) return
+    const remainingPatches = patches.slice(2)
+    const fetchRemaining = () =>
+      Promise.all(
+        remainingPatches.map((p) => fetchStats(code, p, selectedTier))
+      ).then((restResults) => {
+        setAllPatchStats((prev) => {
+          const merged = [...prev]
+          restResults.forEach((r, i) => { merged[i + 2] = r })
+          return merged
+        })
       })
-      .catch(() => {})
-  }, [patches])
+    if (typeof requestIdleCallback !== "undefined") {
+      requestIdleCallback(() => { fetchRemaining() })
+    } else {
+      setTimeout(fetchRemaining, 200)
+    }
+  }, [patches, code, selectedTier])
 
+  // 티어 변경 시 데이터 리페치
   React.useEffect(() => {
-    if (initialPatches && initialPatches.length > 0) return
-    fetch("/api/patches/history?limit=10&includeInactive=true")
-      .then((r) => r.json())
-      .then((d) => setPatches(d.patches ?? []))
-      .catch(() => {})
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  React.useEffect(() => {
-    selectedRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" })
-  }, [selectedCode])
-
-  const isInitialLoad = React.useRef(true)
-  const initialWeaponApplied = React.useRef(false)
-  React.useEffect(() => {
-    if (!patches.length) return
-
-    if (isInitialLoad.current && initialStats && selectedCode === startCode && selectedTier === TierGroup.MITHRIL) {
-      isInitialLoad.current = false
-
-      const remainingPatches = patches.slice(2)
-      if (remainingPatches.length > 0) {
-        const fetchRemaining = () =>
-          Promise.all(
-            remainingPatches.map((p) => fetchStats(selectedCode, p, selectedTier))
-          ).then((restResults) => {
-            setAllPatchStats((prev) => {
-              const merged = [...prev]
-              restResults.forEach((r, i) => { merged[i + 2] = r })
-              return merged
-            })
-          })
-        // 메인 스레드 idle 시점까지 지연 → TTI 개선
-        if (typeof requestIdleCallback !== "undefined") {
-          requestIdleCallback(() => { fetchRemaining() })
-        } else {
-          setTimeout(fetchRemaining, 200)
-        }
-      }
+    if (selectedTier === TierGroup.MITHRIL) {
+      // 서버에서 받은 초기 데이터로 복원
+      setStats(initialStats ?? null)
+      setPreviousStats(initialPrevStats ?? null)
+      setAllPatchStats(() => {
+        const initial: (CharacterStatsResponse | null)[] = Array(patches.length).fill(null)
+        if (initialStats) initial[0] = initialStats
+        if (initialPrevStats) initial[1] = initialPrevStats
+        return initial
+      })
+      setSelectedWeapon(initialStats?.weapons?.[0]?.bestWeapon ?? null)
       return
     }
-    isInitialLoad.current = false
 
     setLoading(true)
     setStats(null)
@@ -193,44 +127,21 @@ export function CharacterAnalysisClient({
 
     const priorityPatches = patches.slice(0, 2)
     Promise.all(
-      priorityPatches.map((p) => fetchStats(selectedCode, p, selectedTier))
+      priorityPatches.map((p) => fetchStats(code, p, selectedTier))
     ).then((priorityResults) => {
       const current = priorityResults[0] ?? null
       setStats(current)
       setPreviousStats(priorityResults[1] ?? null)
-      // initialWeapon이 있고 아직 적용 전이면 URL 값 유지, 아니면 첫 번째 무기 선택
-      if (!initialWeaponApplied.current && initialWeapon != null) {
-        initialWeaponApplied.current = true
-        const hasWeapon = current?.weapons?.some((w) => w.bestWeapon === initialWeapon)
-        setSelectedWeapon(hasWeapon ? initialWeapon : current?.weapons?.[0]?.bestWeapon ?? null)
-      } else if (current?.weapons && current.weapons.length > 0) {
+      if (current?.weapons && current.weapons.length > 0) {
         setSelectedWeapon(current.weapons[0].bestWeapon ?? null)
       }
       const initial: (CharacterStatsResponse | null)[] = Array(patches.length).fill(null)
       priorityResults.forEach((r, i) => { initial[i] = r })
       setAllPatchStats(initial)
       setLoading(false)
-
-      const remainingPatches = patches.slice(2)
-      if (remainingPatches.length > 0) {
-        const fetchRemaining = () =>
-          Promise.all(
-            remainingPatches.map((p) => fetchStats(selectedCode, p, selectedTier))
-          ).then((restResults) => {
-            setAllPatchStats((prev) => {
-              const merged = [...prev]
-              restResults.forEach((r, i) => { merged[i + 2] = r })
-              return merged
-            })
-          })
-        if (typeof requestIdleCallback !== "undefined") {
-          requestIdleCallback(() => { fetchRemaining() })
-        } else {
-          setTimeout(fetchRemaining, 200)
-        }
-      }
     })
-  }, [selectedCode, selectedTier, patches, initialStats, startCode])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTier])
 
   const currentPatch = patches[0] ?? null
 
@@ -277,73 +188,12 @@ export function CharacterAnalysisClient({
 
   const hasPreviousData = displayPrevStat !== null && (displayPrevStat.totalGames ?? 0) > 0
 
-  const [showCharPicker, setShowCharPicker] = React.useState(false)
-  const pickerRef = React.useRef<HTMLDivElement>(null)
-
-  // 외부 클릭 시 닫기
-  React.useEffect(() => {
-    if (!showCharPicker) return
-    const handler = (e: MouseEvent) => {
-      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
-        setShowCharPicker(false)
-      }
-    }
-    document.addEventListener("mousedown", handler)
-    return () => document.removeEventListener("mousedown", handler)
-  }, [showCharPicker])
-
-  const gridStatsMap = React.useMemo(() => {
-    if (!displayStat || displayStat.totalGames === 0 || !charTier) return rankingStatsMap
-    const merged = new Map(rankingStatsMap)
-    merged.set(selectedCode, { tier: charTier, winRate: displayStat.winRate })
-    return merged
-  }, [rankingStatsMap, selectedCode, displayStat, charTier])
-
   return (
     <div className="flex flex-col gap-4 sm:gap-5">
-      {/* ── 캐릭터 검색 바 ── */}
-      <div ref={pickerRef} className="relative w-full sm:w-[480px]">
-        <button
-          onClick={() => setShowCharPicker(!showCharPicker)}
-          className={cn(
-            "w-full flex items-center gap-3 rounded-xl border px-4 py-2.5 text-sm text-left transition-all",
-            showCharPicker
-              ? "border-[var(--color-primary)] bg-[var(--color-primary)]/10 rounded-b-none"
-              : "border-[var(--color-border)] bg-[var(--color-surface)]/80 hover:border-[var(--color-primary)]/50"
-          )}
-        >
-          <Search className="h-4 w-4 shrink-0 text-[var(--color-muted-foreground)]" />
-          <span className="text-[var(--color-foreground)] font-medium">{getCharacterName(selectedCode)}</span>
-          {showCharPicker ? (
-            <X className="h-4 w-4 ml-auto shrink-0 text-[var(--color-muted-foreground)]" />
-          ) : (
-            <ChevronRight className="h-4 w-4 ml-auto shrink-0 text-[var(--color-muted-foreground)] rotate-90" />
-          )}
-        </button>
-
-        {showCharPicker && (
-          <div className="absolute z-50 top-full left-0 w-full rounded-b-xl border border-t-0 border-[var(--color-primary)] bg-[var(--color-surface)] shadow-2xl overflow-hidden">
-            <CharacterGrid
-              selectedCode={selectedCode}
-              onSelect={(code) => {
-                setSelectedCode(code)
-                setShowCharPicker(false)
-              }}
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              filteredCodes={filteredCodes}
-              selectedRef={selectedRef}
-              searchTimerRef={searchTimerRef}
-              statsMap={gridStatsMap}
-            />
-          </div>
-        )}
-      </div>
-
-      {/* ── Analysis Content (Full Width) ── */}
+      {/* ── Analysis Content ── */}
       <div className="flex flex-col gap-4 sm:gap-5 min-w-0">
         <CharacterHeader
-          selectedCode={selectedCode}
+          selectedCode={code}
           selectedTier={selectedTier}
           setSelectedTier={setSelectedTier}
           selectedWeapon={selectedWeapon}
@@ -402,10 +252,10 @@ export function CharacterAnalysisClient({
               </div>
             </div>
 
-            {/* CTA: 이 캐릭터로 조합 찾기 */}
+            {/* CTA */}
             <div className="mt-3 flex justify-end">
               <Link
-                href={`/synergy-detail?ally1=${selectedCode}${selectedWeapon != null ? `&w1=${selectedWeapon}` : ""}`}
+                href={`/synergy-detail?ally1=${code}${selectedWeapon != null ? `&w1=${selectedWeapon}` : ""}`}
                 className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/30 px-3.5 py-2 text-xs font-semibold text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 transition-colors"
               >
                 <Users className="h-3.5 w-3.5" />
@@ -436,7 +286,7 @@ export function CharacterAnalysisClient({
                   chartData={chartData}
                   stats={stats}
                   loading={loading}
-                  selectedCode={selectedCode}
+                  selectedCode={code}
                 />
               </Suspense>
             </section>
@@ -448,11 +298,11 @@ export function CharacterAnalysisClient({
                 <h2 className="text-sm font-bold text-[var(--color-foreground)]">패치 내역</h2>
               </div>
               <Suspense fallback={<TabFallback />}>
-                <PatchLogTab patches={patches} selectedCode={selectedCode} />
+                <PatchLogTab patches={patches} selectedCode={code} />
               </Suspense>
             </section>
 
-            {/* ── 통계 (특성 빌드) ── */}
+            {/* ── 통계 ── */}
             <section>
               <div className="flex items-center gap-2 mb-4">
                 <BarChart2 className="h-4 w-4 text-[var(--color-accent-gold)]" />
@@ -460,7 +310,7 @@ export function CharacterAnalysisClient({
               </div>
               <Suspense fallback={<TabFallback />}>
                 <CharacterDetailedAnalyzer
-                  characterCode={selectedCode}
+                  characterCode={code}
                   tier={selectedTier}
                   patchVersion={currentPatch}
                   bestWeapon={selectedWeapon}

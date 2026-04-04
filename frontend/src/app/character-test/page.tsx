@@ -42,7 +42,7 @@ export default function CharacterTestCSR() {
       <div className="reveal reveal-d2 mt-5 sm:mt-7 overflow-x-auto">
         <SectionErrorBoundary sectionName="캐릭터 분석">
           <Suspense>
-            <CharacterAnalysisClient initialCode={1} />
+            <CharacterAnalysisClient code={1} />
           </Suspense>
         </SectionErrorBoundary>
       </div>
