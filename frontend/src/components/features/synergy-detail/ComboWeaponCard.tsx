@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap"
@@ -92,7 +93,11 @@ export function ComboWeaponCard({
             const isRecommended = !selectedCharCodes.includes(m.char)
             return (
               <React.Fragment key={`${m.char}-${m.weapon}`}>
-                <div className="flex flex-col items-center gap-0.5">
+                <Link
+                  href={`/character/${m.char}?weapon=${m.weapon}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex flex-col items-center gap-0.5 hover:opacity-80 transition-opacity"
+                >
                   <div
                     className={cn(
                       "relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
@@ -116,7 +121,7 @@ export function ComboWeaponCard({
                   <span className="text-[10px] text-[var(--color-muted-foreground)] truncate w-14 text-center">
                     {resolveWeaponName(m.weapon)}
                   </span>
-                </div>
+                </Link>
                 {i < 2 && (
                   <span className="text-[10px] text-[var(--color-border)] self-start mt-3">+</span>
                 )}
