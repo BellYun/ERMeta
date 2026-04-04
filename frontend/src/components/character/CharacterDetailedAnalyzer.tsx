@@ -58,6 +58,7 @@ const GROUP_CONFIG: Record<TraitGroup, { letter: string; name: string; bg: strin
 }
 
 function getTraitGroup(code: number): TraitGroup {
+  if (code === 7000501) return "chaos"   // 벽력: 혼돈 메인 특성
   const sub = Math.floor(code / 100)
   if (sub === 70107) return "chaos"
   if (sub === 71108) return "support"
@@ -121,11 +122,12 @@ function TreeRow({
   groupConfig: (typeof GROUP_CONFIG)[TraitGroup]
 }) {
   if (options.length === 0) return null
+  const maxPick = Math.max(...options.map((o) => o.pickRate))
   return (
     <div className="flex items-center justify-center gap-2 sm:gap-3">
       {options.map((opt, i) => {
         if (opt.code == null) return null
-        const isTop = i === 0
+        const isTop = opt.pickRate === maxPick
         return (
           <div key={i} className="flex flex-col items-center shrink-0 gap-1">
             <div className={cn(
@@ -534,7 +536,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
 
   // 장비 빌드 로드 (조합 선택 시 — 가장 인기 있는 mainCore 기준)
   const selectedGroup = selectedComboIdx >= 0 ? traitBuilds[selectedComboIdx] ?? null : null
-  const selectedMainCore = selectedGroup?.mainCoreOptions[0]?.code ?? null
+  const selectedMainCore = selectedGroup?.mainCoreOptions.reduce<TraitSubOption | null>((best, o) => !best || o.pickRate > best.pickRate ? o : best, null)?.code ?? null
 
   React.useEffect(() => {
     if (selectedComboIdx < 0 || !patchVersion || selectedMainCore == null) return
@@ -606,7 +608,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
           {traitBuilds.map((group, i) => {
             const isSelected = selectedComboIdx === i
             const mConfig = GROUP_CONFIG[group.mainGroup]
-            const topCore = group.mainCoreOptions[0]?.code
+            const topCore = group.mainCoreOptions.reduce<TraitSubOption | null>((best, o) => !best || o.pickRate > best.pickRate ? o : best, null)?.code
             const barWidth = group.groupPickRate
             return (
               <button
@@ -674,7 +676,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
           {/* 특성 트리 + 요약 */}
           {(hasPrimaryTraits || hasSecondaryTraits) && (() => {
             const mainConfig = GROUP_CONFIG[selectedGroup.mainGroup]
-            const topMainCore = selectedGroup.mainCoreOptions[0]?.code
+            const topMainCore = selectedGroup.mainCoreOptions.reduce<TraitSubOption | null>((best, o) => !best || o.pickRate > best.pickRate ? o : best, null)?.code
 
             return (
               <div className="space-y-4">
@@ -706,12 +708,8 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
                           </span>
                         </div>
                         <div className="py-1 divide-y divide-[var(--color-border)]/30">
-                          {selectedGroup.sub1Options[0] && (
-                            <SummaryRow option={selectedGroup.sub1Options[0]} label={`${mainConfig.name}, 핵심`} traitNames={traitNames} />
-                          )}
-                          {selectedGroup.sub2Options[0] && (
-                            <SummaryRow option={selectedGroup.sub2Options[0]} label={`${mainConfig.name}, 보조`} traitNames={traitNames} />
-                          )}
+                          {(() => { const top = [...selectedGroup.sub1Options].sort((a, b) => b.pickRate - a.pickRate)[0]; return top ? <SummaryRow option={top} label={`${mainConfig.name}, 핵심`} traitNames={traitNames} /> : null })()}
+                          {(() => { const top = [...selectedGroup.sub2Options].sort((a, b) => b.pickRate - a.pickRate)[0]; return top ? <SummaryRow option={top} label={`${mainConfig.name}, 보조`} traitNames={traitNames} /> : null })()}
                         </div>
                       </>
                     )}

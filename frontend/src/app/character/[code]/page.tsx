@@ -3,6 +3,7 @@ import { Suspense } from "react"
 import { notFound } from "next/navigation"
 import { getCharacterName } from "@/lib/characterMap"
 import { CharacterAnalysisClient } from "@/components/features/CharacterAnalysisClient"
+import { CharacterPicker } from "@/components/features/character-analysis/CharacterPicker"
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary"
 import { fetchPatches, fetchStats } from "@/components/features/character-analysis/utils"
 import { CHARACTER_CODES } from "@/components/features/character-analysis/constants"
@@ -136,17 +137,22 @@ export default async function CharacterPage({ params, searchParams }: Props) {
       </section>
 
       <div className="reveal reveal-d2 mt-5 sm:mt-7 overflow-x-auto">
-        <SectionErrorBoundary sectionName="캐릭터 분석">
-          <Suspense>
-            <CharacterAnalysisClient
-              initialPatches={patches}
-              initialStats={initialStats}
-              initialPrevStats={initialPrevStats}
-              initialCode={code}
-              initialWeapon={initialWeapon}
-            />
-          </Suspense>
-        </SectionErrorBoundary>
+        <CharacterPicker code={code} currentPatch={patches[0] ?? null} />
+
+        <div className="mt-4 sm:mt-5">
+          <SectionErrorBoundary sectionName="캐릭터 분석">
+            <Suspense>
+              <CharacterAnalysisClient
+                key={code}
+                initialPatches={patches}
+                initialStats={initialStats}
+                initialPrevStats={initialPrevStats}
+                code={code}
+                initialWeapon={initialWeapon}
+              />
+            </Suspense>
+          </SectionErrorBoundary>
+        </div>
       </div>
     </>
   )

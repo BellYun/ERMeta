@@ -21,6 +21,7 @@ const GROUP_CONFIG: Record<TraitGroup, { letter: string; bg: string; text: strin
 }
 
 function getTraitGroup(code: number): TraitGroup {
+  if (code === 7000501) return "chaos"   // 벽력: 혼돈 메인 특성
   const sub = Math.floor(code / 100)
   if (sub === 70107) return "chaos"
   if (sub === 71108) return "support"

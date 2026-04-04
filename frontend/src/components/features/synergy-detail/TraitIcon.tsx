@@ -15,6 +15,7 @@ const GROUP_CONFIG: Record<TraitGroup, { label: string; letter: string; bg: stri
 }
 
 function getTraitGroup(code: number): TraitGroup {
+  if (code === 7000501) return "chaos"   // 벽력: 혼돈 메인 특성
   // 예외: 특정 서브 특성이 다른 그룹에 속함
   const sub = Math.floor(code / 100)
   if (sub === 70107) return "chaos"    // 파괴 계열이지만 혼돈

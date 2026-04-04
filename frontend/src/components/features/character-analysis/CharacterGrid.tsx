@@ -9,7 +9,8 @@ import { VirtualCharacterGrid, type CharacterCellStats } from "@/components/ui/V
 
 interface CharacterGridProps {
   selectedCode: number
-  onSelect: (code: number) => void
+  onSelect?: (code: number) => void
+  onClose?: () => void
   searchQuery: string
   setSearchQuery: (q: string) => void
   filteredCodes: number[]
@@ -21,6 +22,7 @@ interface CharacterGridProps {
 export function CharacterGrid({
   selectedCode,
   onSelect,
+  onClose,
   searchQuery,
   setSearchQuery,
   filteredCodes,
@@ -32,12 +34,13 @@ export function CharacterGrid({
 
   const handleSelect = React.useCallback(
     (code: number) => {
-      onSelect(code)
+      onSelect?.(code)
       setSearchQuery("")
+      onClose?.()
       router.push(`/character/${code}`, { scroll: false })
       analytics.characterViewed(code, getCharacterName(code))
     },
-    [onSelect, setSearchQuery, router]
+    [onSelect, onClose, setSearchQuery, router]
   )
 
   const isSelected = React.useCallback(
