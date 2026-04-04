@@ -80,15 +80,15 @@ export function ComboWeaponCard({
       <button
         type="button"
         onClick={() => setShowTraits((prev) => !prev)}
-        className="w-full flex items-center gap-2 px-3 py-2.5 text-left cursor-pointer rounded-xl hover:bg-[var(--color-surface-2)]/60 transition-colors"
+        className="w-full flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-2 sm:py-2.5 text-left cursor-pointer rounded-xl hover:bg-[var(--color-surface-2)]/60 transition-colors"
       >
         {/* 순위 */}
-        <span className="w-5 shrink-0 text-center text-xs font-bold text-[var(--color-muted-foreground)]">
+        <span className="w-4 sm:w-5 shrink-0 text-center text-[10px] sm:text-xs font-bold text-[var(--color-muted-foreground)]">
           {rank}
         </span>
 
         {/* 3캐릭터 + 무기 */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 sm:gap-1">
           {ordered.map((m, i) => {
             const isRecommended = !selectedCharCodes.includes(m.char)
             return (
@@ -100,7 +100,7 @@ export function ComboWeaponCard({
                 >
                   <div
                     className={cn(
-                      "relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
+                      "relative h-8 w-8 sm:h-10 sm:w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
                       isRecommended && "ring-2 ring-[var(--color-accent-gold)]"
                     )}
                   >
@@ -109,21 +109,21 @@ export function ComboWeaponCard({
                       alt={getCharName(m.char)}
                       fill
                       className="object-cover"
-                      sizes="40px"
+                      sizes="(max-width: 640px) 32px, 40px"
                     />
                   </div>
                   <span className={cn(
-                    "w-14 truncate text-center text-[11px] font-medium",
+                    "w-10 sm:w-14 truncate text-center text-[9px] sm:text-[11px] font-medium",
                     isRecommended ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
                   )}>
                     {getCharName(m.char)}
                   </span>
-                  <span className="text-[10px] text-[var(--color-muted-foreground)] truncate w-14 text-center">
+                  <span className="text-[8px] sm:text-[10px] text-[var(--color-muted-foreground)] truncate w-10 sm:w-14 text-center">
                     {resolveWeaponName(m.weapon)}
                   </span>
                 </Link>
                 {i < 2 && (
-                  <span className="text-[10px] text-[var(--color-border)] self-start mt-3">+</span>
+                  <span className="text-[8px] sm:text-[10px] text-[var(--color-border)] self-start mt-2 sm:mt-3">+</span>
                 )}
               </React.Fragment>
             )
@@ -132,23 +132,25 @@ export function ComboWeaponCard({
 
         {/* 소표본 배지 */}
         {isSmallSample && (
-          <span className="text-[9px] bg-[var(--color-surface-2)] text-[var(--color-muted-foreground)] px-1.5 py-0.5 rounded shrink-0">
+          <span className="text-[8px] sm:text-[9px] bg-[var(--color-surface-2)] text-[var(--color-muted-foreground)] px-1 sm:px-1.5 py-0.5 rounded shrink-0">
             소표본
           </span>
         )}
 
         {/* 스탯 */}
-        <div className="ml-auto flex items-center gap-3 sm:gap-6 text-right">
+        <div className="ml-auto flex items-center gap-2 sm:gap-6 text-right">
           <StatCol label="승률" value={`${group.winRate.toFixed(1)}%`} />
-          <StatCol label="평균 RP" value={`${group.averageRP > 0 ? "+" : ""}${group.averageRP.toFixed(1)}`} highlight={group.averageRP >= 0 ? "gold" : "muted"} />
-          <StatCol label="게임 수" value={group.totalGames.toLocaleString()} />
+          <StatCol label="RP" value={`${group.averageRP > 0 ? "+" : ""}${group.averageRP.toFixed(1)}`} highlight={group.averageRP >= 0 ? "gold" : "muted"} />
+          <div className="hidden sm:flex">
+            <StatCol label="게임 수" value={group.totalGames.toLocaleString()} />
+          </div>
           <div className="hidden sm:flex flex-col">
             <span className="text-[10px] text-[var(--color-muted-foreground)]">평균 순위</span>
             <span className="text-sm font-semibold text-[var(--color-foreground)]">#{group.averageRank.toFixed(1)}</span>
           </div>
 
           <ChevronRight className={cn(
-            "h-4 w-4 shrink-0 text-[var(--color-muted-foreground)] transition-transform duration-200",
+            "h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-[var(--color-muted-foreground)] transition-transform duration-200",
             showTraits && "rotate-90"
           )} />
         </div>
@@ -156,38 +158,40 @@ export function ComboWeaponCard({
 
       {/* 특성 브레이크다운 */}
       {showTraits && (
-        <div className="px-3 py-2 flex flex-col gap-1.5 bg-[var(--color-surface-2)]/40 border-t border-[var(--color-border)]">
+        <div className="px-2 sm:px-3 py-2 flex flex-col gap-1.5 bg-[var(--color-surface-2)]/40 border-t border-[var(--color-border)]">
           {sortedVariants.map((v, vi) => (
             <div
               key={`${v.mainCore1}-${v.mainCore2}-${v.mainCore3}-${vi}`}
-              className="flex items-center gap-2 rounded-lg bg-[var(--color-surface)]/60 px-3 py-2 border border-[var(--color-border)]/50"
+              className="flex items-center gap-1.5 sm:gap-2 rounded-lg bg-[var(--color-surface)]/60 px-2 sm:px-3 py-1.5 sm:py-2 border border-[var(--color-border)]/50"
             >
               {/* 순위 열과 동일한 오프셋 */}
-              <span className="w-2 shrink-0" />
+              <span className="w-1 sm:w-2 shrink-0" />
               {/* 특성 아이콘 — 캐릭터 열과 동일 gap/너비 */}
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-0.5 sm:gap-1">
                 {ordered.map((m, mi) => {
                   const core = getCoreForMember(m, v)
                   return (
                     <React.Fragment key={`${m.char}-trait-${vi}`}>
-                      <div className="flex flex-col items-center w-14">
+                      <div className="flex flex-col items-center w-10 sm:w-14">
                         {core && core > 0 ? (
                           <TraitIcon code={core} name={getTraitName(core)} size="sm" />
                         ) : (
-                          <span className="text-[9px] text-[var(--color-muted-foreground)]">-</span>
+                          <span className="text-[8px] sm:text-[9px] text-[var(--color-muted-foreground)]">-</span>
                         )}
                       </div>
-                      {mi < 2 && <span className="text-[10px] text-[var(--color-border)] self-start mt-3">+</span>}
+                      {mi < 2 && <span className="text-[8px] sm:text-[10px] text-[var(--color-border)] self-start mt-2 sm:mt-3">+</span>}
                     </React.Fragment>
                   )
                 })}
               </div>
 
               {/* 스탯 */}
-              <div className="ml-auto flex items-center gap-3 sm:gap-5 text-right">
+              <div className="ml-auto flex items-center gap-2 sm:gap-5 text-right">
                 <StatCol label="승률" value={`${v.winRate.toFixed(1)}%`} small />
-                <StatCol label="평균 RP" value={`${v.averageRP > 0 ? "+" : ""}${v.averageRP.toFixed(1)}`} highlight={v.averageRP >= 0 ? "gold" : "muted"} small />
-                <StatCol label="게임 수" value={v.totalGames.toLocaleString()} small />
+                <StatCol label="RP" value={`${v.averageRP > 0 ? "+" : ""}${v.averageRP.toFixed(1)}`} highlight={v.averageRP >= 0 ? "gold" : "muted"} small />
+                <div className="hidden sm:flex">
+                  <StatCol label="게임 수" value={v.totalGames.toLocaleString()} small />
+                </div>
               </div>
             </div>
           ))}
@@ -208,8 +212,8 @@ function StatCol({ label, value, highlight, small }: {
 
   return (
     <div className="flex flex-col">
-      <span className={cn("text-[var(--color-muted-foreground)]", small ? "text-[9px]" : "text-[10px]")}>{label}</span>
-      <span className={cn("font-semibold", textColor, small ? "text-xs" : "text-sm")}>{value}</span>
+      <span className={cn("text-[var(--color-muted-foreground)]", small ? "text-[8px] sm:text-[9px]" : "text-[8px] sm:text-[10px]")}>{label}</span>
+      <span className={cn("font-semibold", textColor, small ? "text-[10px] sm:text-xs" : "text-xs sm:text-sm")}>{value}</span>
     </div>
   )
 }

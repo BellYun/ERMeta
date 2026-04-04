@@ -136,10 +136,10 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
           }}
           onFocus={() => setOpen(true)}
           onKeyDown={handleKeyDown}
-          placeholder={getCharacterName(code)}
+          placeholder="캐릭터 검색 (초성 가능)"
           className={cn(
             "w-full rounded-xl border bg-[var(--color-surface)]/80 pl-9 pr-4 py-2.5 text-sm text-[var(--color-foreground)]",
-            "placeholder:text-[var(--color-foreground)] placeholder:font-medium",
+            "placeholder:text-[var(--color-muted-foreground)]",
             "outline-none transition-all",
             open
               ? "border-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/30 rounded-b-none"
