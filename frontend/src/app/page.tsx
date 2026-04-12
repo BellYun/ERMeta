@@ -11,6 +11,8 @@ import { getPatches } from "@/lib/getPatches"
 import { fetchRankingData } from "@/lib/ranking"
 import { fetchHoneyPicksServer } from "@/lib/honeyPicks"
 
+export const revalidate = 300 // ISR: 5분 서버 캐시 (Supabase 매 요청 호출 방지)
+
 export const metadata: Metadata = {
   title: { absolute: "메타분석 | 이리와지지" },
   description: "이터널리턴 최신 패치 기준 캐릭터 티어, 픽률, 승률, 평균 RP 통계. 다이아~상위 1000위 데이터 기반 실시간 메타 분석.",
