@@ -23,7 +23,7 @@ export function FilterProvider({ initialPatches, children }: FilterProviderProps
 
   const value = React.useMemo(
     () => ({ patch, tier, patches: initialPatches, setPatch, setTier }),
-    [patch, tier, initialPatches]
+    [patch, tier, initialPatches, setPatch, setTier]
   )
 
   return (
