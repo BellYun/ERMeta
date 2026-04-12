@@ -1,38 +1,38 @@
-import { createServerClient } from "@/lib/supabase"
+import { createServerClient } from "@/lib/supabase";
 
-const TIER_FALLBACK_ORDER = ["DIAMOND", "METEORITE", "MITHRIL", "IN1000"]
+const TIER_FALLBACK_ORDER = ["DIAMOND", "METEORITE", "MITHRIL", "IN1000"];
 
 interface StatRow {
-  characterNum: number
-  bestWeapon: number
-  totalGames: number
-  totalWins: number
-  totalRP: number
-  totalTop3: number
-  averageRank: number
+  characterNum: number;
+  bestWeapon: number;
+  totalGames: number;
+  totalWins: number;
+  totalRP: number;
+  totalTop3: number;
+  averageRank: number;
 }
 
 export interface CharacterRankingData {
-  rank: number
-  characterNum: number
-  bestWeapon: number
-  totalGames: number
-  pickRate: number
-  winRate: number
-  averageRP: number
-  top3Rate: number
+  rank: number;
+  characterNum: number;
+  bestWeapon: number;
+  totalGames: number;
+  pickRate: number;
+  winRate: number;
+  averageRP: number;
+  top3Rate: number;
 }
 
 export interface RankingResponse {
-  rankings: CharacterRankingData[]
-  previousRankings: CharacterRankingData[]
-  patchVersion: string
-  previousPatch: string | null
-  tier: string
+  rankings: CharacterRankingData[];
+  previousRankings: CharacterRankingData[];
+  patchVersion: string;
+  previousPatch: string | null;
+  tier: string;
 }
 
-function buildRankings(rows: StatRow[]): CharacterRankingData[] {
-  const grandTotal = rows.reduce((sum, r) => sum + (r.totalGames ?? 0), 0)
+export function buildRankings(rows: StatRow[]): CharacterRankingData[] {
+  const grandTotal = rows.reduce((sum, r) => sum + (r.totalGames ?? 0), 0);
 
   const rankings = rows.map((r) => ({
     characterNum: r.characterNum,
@@ -42,72 +42,66 @@ function buildRankings(rows: StatRow[]): CharacterRankingData[] {
     winRate: r.totalGames > 0 ? ((r.totalWins ?? 0) / r.totalGames) * 100 : 0,
     averageRP: r.totalGames > 0 ? (r.totalRP ?? 0) / r.totalGames : 0,
     top3Rate: r.totalGames > 0 ? ((r.totalTop3 ?? 0) / r.totalGames) * 100 : 0,
-  }))
+  }));
 
-  rankings.sort((a, b) => b.averageRP - a.averageRP)
-  return rankings.map((c, i) => ({ rank: i + 1, ...c }))
+  rankings.sort((a, b) => b.averageRP - a.averageRP);
+  return rankings.map((c, i) => ({ rank: i + 1, ...c }));
 }
 
 function selectRankings(
   data: (StatRow & { tier: string })[],
   requestedTier: string
 ): { rankings: CharacterRankingData[]; usedTier: string } {
-  const tierOrder = [
-    requestedTier,
-    ...TIER_FALLBACK_ORDER.filter((t) => t !== requestedTier),
-  ]
+  const tierOrder = [requestedTier, ...TIER_FALLBACK_ORDER.filter((t) => t !== requestedTier)];
 
   for (const tier of tierOrder) {
-    const rows = data.filter((r) => r.tier === tier)
+    const rows = data.filter((r) => r.tier === tier);
     if (rows.length > 0) {
-      return { rankings: buildRankings(rows), usedTier: tier }
+      return { rankings: buildRankings(rows), usedTier: tier };
     }
   }
 
-  return { rankings: [], usedTier: requestedTier }
+  return { rankings: [], usedTier: requestedTier };
 }
 
 export async function fetchRankingData(
   patchVersion: string,
   requestedTier: string
 ): Promise<RankingResponse> {
-  const supabase = createServerClient()
+  const supabase = createServerClient();
 
   const { data: patches } = await supabase
     .from("PatchVersion")
     .select("version")
     .order("startDate", { ascending: false })
-    .limit(50)
+    .limit(50);
 
-  const patchList = (patches ?? []).map((p: { version: string }) => p.version)
-  const currentIndex = patchList.indexOf(patchVersion)
+  const patchList = (patches ?? []).map((p: { version: string }) => p.version);
+  const currentIndex = patchList.indexOf(patchVersion);
   const previousPatch =
-    currentIndex >= 0 && currentIndex + 1 < patchList.length
-      ? patchList[currentIndex + 1]
-      : null
+    currentIndex >= 0 && currentIndex + 1 < patchList.length ? patchList[currentIndex + 1] : null;
 
-  const patchVersions = previousPatch
-    ? [patchVersion, previousPatch]
-    : [patchVersion]
+  const patchVersions = previousPatch ? [patchVersion, previousPatch] : [patchVersion];
 
-  const selectCols = "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank,tier,patchVersion"
+  const selectCols =
+    "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank,tier,patchVersion";
   let { data, error } = await supabase
     .from("v2_CharacterStats")
     .select(selectCols)
     .in("patchVersion", patchVersions)
-    .in("tier", TIER_FALLBACK_ORDER)
+    .in("tier", TIER_FALLBACK_ORDER);
 
   // v2에 이전 패치 데이터 없으면 old 테이블 fallback 병합
   if (previousPatch && data) {
-    const hasV2Prev = data.some((r: { patchVersion: string }) => r.patchVersion === previousPatch)
+    const hasV2Prev = data.some((r: { patchVersion: string }) => r.patchVersion === previousPatch);
     if (!hasV2Prev) {
       const { data: oldData } = await supabase
         .from("CharacterStats")
         .select(selectCols)
         .eq("patchVersion", previousPatch)
-        .in("tier", TIER_FALLBACK_ORDER)
+        .in("tier", TIER_FALLBACK_ORDER);
       if (oldData && oldData.length > 0) {
-        data = [...data, ...oldData]
+        data = [...data, ...oldData];
       }
     }
   }
@@ -119,20 +113,18 @@ export async function fetchRankingData(
       patchVersion,
       previousPatch: null,
       tier: requestedTier,
-    }
+    };
   }
 
-  const typedData = data as (StatRow & { tier: string; patchVersion: string })[]
-  const currentData = typedData.filter((r) => r.patchVersion === patchVersion)
-  const prevData = previousPatch
-    ? typedData.filter((r) => r.patchVersion === previousPatch)
-    : []
+  const typedData = data as (StatRow & { tier: string; patchVersion: string })[];
+  const currentData = typedData.filter((r) => r.patchVersion === patchVersion);
+  const prevData = previousPatch ? typedData.filter((r) => r.patchVersion === previousPatch) : [];
 
-  const { rankings, usedTier } = selectRankings(currentData, requestedTier)
+  const { rankings, usedTier } = selectRankings(currentData, requestedTier);
   const { rankings: previousRankings } =
     prevData.length > 0
       ? selectRankings(prevData, usedTier)
-      : { rankings: [] as CharacterRankingData[] }
+      : { rankings: [] as CharacterRankingData[] };
 
   return {
     rankings,
@@ -140,5 +132,5 @@ export async function fetchRankingData(
     patchVersion,
     previousPatch,
     tier: usedTier,
-  }
+  };
 }
