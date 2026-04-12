@@ -21,8 +21,13 @@ export function FilterProvider({ initialPatches, children }: FilterProviderProps
   const [patch, setPatch] = React.useState(initialPatches[0] ?? "")
   const [tier, setTier] = React.useState("MITHRIL")
 
+  const value = React.useMemo(
+    () => ({ patch, tier, patches: initialPatches, setPatch, setTier }),
+    [patch, tier, initialPatches, setPatch, setTier]
+  )
+
   return (
-    <FilterContext.Provider value={{ patch, tier, patches: initialPatches, setPatch, setTier }}>
+    <FilterContext.Provider value={value}>
       {children}
     </FilterContext.Provider>
   )
