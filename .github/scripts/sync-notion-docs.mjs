@@ -48,15 +48,24 @@ async function findPageByPR(databaseId, prNumber) {
   return result.results[0] ?? null;
 }
 
-async function createPage(databaseId, properties, children) {
-  return notionFetch("/pages", {
+async function createPage(databaseId, properties, allChildren) {
+  const BATCH_SIZE = 100;
+  const initialChildren = allChildren.slice(0, BATCH_SIZE);
+  const remainingChildren = allChildren.slice(BATCH_SIZE);
+
+  const newPage = await notionFetch("/pages", {
     method: "POST",
     body: JSON.stringify({
       parent: { database_id: databaseId },
       properties,
-      children,
+      children: initialChildren,
     }),
   });
+
+  if (remainingChildren.length > 0) {
+    await appendBlocksInBatches(newPage.id, remainingChildren);
+  }
+  return newPage;
 }
 
 async function updatePage(pageId, properties) {
@@ -66,18 +75,28 @@ async function updatePage(pageId, properties) {
   });
 }
 
+async function appendBlocksInBatches(blockId, children) {
+  const BATCH_SIZE = 100;
+  for (let i = 0; i < children.length; i += BATCH_SIZE) {
+    const batch = children.slice(i, i + BATCH_SIZE);
+    console.log(`Appending batch of ${batch.length} blocks to ${blockId}...`);
+    await notionFetch(`/blocks/${blockId}/children`, {
+      method: "PATCH",
+      body: JSON.stringify({ children: batch }),
+    });
+  }
+}
+
+
 async function replacePageContent(pageId, children) {
   // 기존 블록 삭제
   const existing = await notionFetch(`/blocks/${pageId}/children?page_size=100`);
   for (const block of existing.results) {
     await notionFetch(`/blocks/${block.id}`, { method: "DELETE" });
   }
-  // 새 블록 추가
+  // 새 블록 추가 (배치 처리)
   if (children.length > 0) {
-    await notionFetch(`/blocks/${pageId}/children`, {
-      method: "PATCH",
-      body: JSON.stringify({ children }),
-    });
+    await appendBlocksInBatches(pageId, children);
   }
 }
 
