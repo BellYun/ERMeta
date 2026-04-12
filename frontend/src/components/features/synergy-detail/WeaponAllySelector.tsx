@@ -66,12 +66,12 @@ export function getAllCharWeaponItems(): CharWeaponItem[] {
 
 // ─── 타입 ──────────────────────────────────────────────────────────────────
 
-interface AllySelection {
+export interface AllySelection {
   charCode: number;
   weaponCode: number | null;
 }
 
-function parseAllyFromParams(
+export function parseAllyFromParams(
   params: URLSearchParams,
   allyKey: string,
   weaponKey: string
@@ -83,6 +83,36 @@ function parseAllyFromParams(
   const wStr = params.get(weaponKey);
   const weaponCode = wStr ? parseInt(wStr, 10) : null;
   return { charCode, weaponCode: weaponCode && !isNaN(weaponCode) ? weaponCode : null };
+}
+
+/**
+ * 선택 토글 로직 — 컴포넌트 외부에서 테스트 가능한 순수 함수.
+ * 입력: 현재 ally1/ally2 + 탭된 item
+ * 출력: 다음 [ally1, ally2] 또는 null(변경 없음)
+ */
+export function computeNextAllies(
+  ally1: AllySelection | null,
+  ally2: AllySelection | null,
+  item: CharWeaponItem
+): [AllySelection | null, AllySelection | null] | null {
+  const targetCode = item.weaponCode;
+  const alreadySelected =
+    (ally1?.charCode === item.charCode && (ally1.weaponCode ?? 0) === targetCode) ||
+    (ally2?.charCode === item.charCode && (ally2.weaponCode ?? 0) === targetCode);
+
+  // 이미 선택된 것이면 제거
+  if (alreadySelected) {
+    if (ally1 && ally1.charCode === item.charCode) return [ally2, null];
+    if (ally2 && ally2.charCode === item.charCode) return [ally1, null];
+    return null;
+  }
+
+  const count = (ally1 ? 1 : 0) + (ally2 ? 1 : 0);
+  if (count >= 2) return null;
+
+  const sel: AllySelection = { charCode: item.charCode, weaponCode: item.weaponCode || null };
+  if (!ally1) return [sel, null];
+  return [ally1, sel];
 }
 
 // ─── 셀 ──────────────────────────────────────────────────────────────────
