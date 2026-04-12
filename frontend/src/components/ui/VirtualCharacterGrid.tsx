@@ -116,6 +116,11 @@ export function VirtualCharacterGrid({
   scrollToCode,
   statsMap,
 }: VirtualCharacterGridProps) {
+  // `useVirtualizer` (TanStack Virtual) 훅은 React Compiler가 안전하게 메모이제이션할 수 없는
+  // 함수를 반환하며, 이는 UI를 오래된 상태로 만들 수 있습니다.
+  // React Compiler 자체가 이러한 비호환성에 대해 경고를 발행합니다.
+  // 이 지시어는 해당 경고를 해결하고 UI의 정확성을 보장하기 위해
+  // React Compiler에게 이 컴포넌트의 메모이제이션을 건너뛰도록 명시적으로 지시합니다.
   "use no memo";
   const parentRef = React.useRef<HTMLDivElement>(null)
   const [columns, setColumns] = React.useState(4)
