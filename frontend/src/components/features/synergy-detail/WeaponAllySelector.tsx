@@ -138,8 +138,9 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
       onClick={() => onSelect(item)}
       disabled={disabled}
       title={`${charName} (${item.weaponLabel})`}
+      style={{ touchAction: "manipulation" }}
       className={cn(
-        "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors",
+        "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors touch-manipulation",
         selected
           ? "bg-[var(--color-primary)]/20 ring-1 ring-[var(--color-primary)]"
           : disabled
@@ -402,7 +403,11 @@ export function WeaponAllySelector() {
             검색 결과 없음
           </p>
         ) : (
-          <div ref={parentRef} className="overflow-y-auto pr-0.5" style={{ maxHeight: "340px" }}>
+          <div
+            ref={parentRef}
+            className="overflow-y-auto pr-0.5"
+            style={{ maxHeight: "340px", touchAction: "pan-y", WebkitOverflowScrolling: "touch" }}
+          >
             <div
               style={{
                 height: virtualizer.getTotalSize(),

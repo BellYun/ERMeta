@@ -30,8 +30,9 @@ const FocusCell = React.memo(function FocusCell({
     <button
       onClick={() => onSelect(item.charCode, item.weaponCode)}
       title={item.weaponLabel ? `${charName} (${item.weaponLabel})` : charName}
+      style={{ touchAction: "manipulation" }}
       className={cn(
-        "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors",
+        "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors touch-manipulation",
         selected
           ? "bg-[var(--color-primary)]/20 ring-1 ring-[var(--color-primary)]"
           : "hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80"
@@ -222,7 +223,11 @@ export function FocusWeaponPool() {
               검색 결과 없음
             </p>
           ) : (
-            <div ref={parentRef} className="overflow-y-auto pr-0.5" style={{ maxHeight: "340px" }}>
+            <div
+              ref={parentRef}
+              className="overflow-y-auto pr-0.5"
+              style={{ maxHeight: "340px", touchAction: "pan-y", WebkitOverflowScrolling: "touch" }}
+            >
               <div
                 style={{
                   height: virtualizer.getTotalSize(),
