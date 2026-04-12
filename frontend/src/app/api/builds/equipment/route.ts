@@ -69,7 +69,7 @@ function aggregateSlot(
   const map = new Map<number, { games: number; wins: number }>()
   for (const row of rows) {
     const code = row[slot]
-    if (code == null) continue
+    if (code === null) continue
     const existing = map.get(code)
     if (existing) {
       existing.games += row.totalGames
@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
       .eq("tier", tier)
       .eq("patchVersion", patchVersion)
 
-    if (mainCoreParam != null) {
+    if (mainCoreParam !== null) {
       if (mainCoreParam === "null") {
         query = query.is("mainCore", null) as typeof query
       } else {
@@ -147,10 +147,10 @@ export async function GET(request: NextRequest) {
     let rows = data as EquipmentRow[]
 
     // bestWeapon 파라미터가 있으면 weapon 아이템 코드 → 무기 타입 매핑으로 필터
-    if (bestWeaponParam != null) {
+    if (bestWeaponParam !== null) {
       const targetType = Number(bestWeaponParam)
       rows = rows.filter((r) => {
-        if (r.weapon == null) return false
+        if (r.weapon === null) return false
         return WEAPON_ITEM_TYPE[String(r.weapon)] === targetType
       })
     }
@@ -207,7 +207,7 @@ export async function GET(request: NextRequest) {
     const slots = ["weapon", "chest", "head", "arm", "leg"] as const
     const slotPopularity = {} as EquipmentBuildResult["slotPopularity"]
     for (const slot of slots) {
-      const slotTotal = rows.reduce((s, r) => s + (r[slot] != null ? r.totalGames : 0), 0)
+      const slotTotal = rows.reduce((s, r) => s + (r[slot] !== null ? r.totalGames : 0), 0)
       slotPopularity[slot] = aggregateSlot(rows, slot, slotTotal)
     }
 
@@ -216,7 +216,7 @@ export async function GET(request: NextRequest) {
     for (const row of rows) {
       for (const slot of slots) {
         const code = row[slot]
-        if (code == null) continue
+        if (code === null) continue
         const existing = coreMap.get(code)
         if (existing) {
           existing.games += row.totalGames

@@ -116,6 +116,7 @@ export function VirtualCharacterGrid({
   scrollToCode,
   statsMap,
 }: VirtualCharacterGridProps) {
+  "use no memo";
   const parentRef = React.useRef<HTMLDivElement>(null)
   const [columns, setColumns] = React.useState(4)
 
@@ -143,7 +144,7 @@ export function VirtualCharacterGrid({
 
   // Auto-scroll to target code
   React.useEffect(() => {
-    if (scrollToCode == null) return
+    if (scrollToCode === null || scrollToCode === undefined) return
     const index = codes.indexOf(scrollToCode)
     if (index === -1) return
     const rowIndex = Math.floor(index / columns)

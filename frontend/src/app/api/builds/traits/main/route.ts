@@ -68,7 +68,7 @@ function aggregateOptions(
   for (const row of rows) {
     for (const key of keyList) {
       const code = row[key]
-      if (excludeNull && code == null) continue
+      if (excludeNull && code === null) continue
 
       const k = String(code ?? "null")
       // allCodes가 있으면 해당 슬롯 코드만 집계

@@ -21,7 +21,7 @@ export const GRADE_BG: Record<ItemGrade, string> = {
 }
 
 export function getItemGrade(code: number | null): ItemGrade | null {
-  if (code == null) return null
+  if (code === null) return null
   return (itemGradeMap as Record<string, string>)[String(code)] as ItemGrade | undefined ?? null
 }
 

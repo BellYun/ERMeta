@@ -105,7 +105,7 @@ function TopBuildsTable({
                 <span className={cn("text-xs font-bold", i === 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]")}>
                   #{i + 1}
                 </span>
-                {b.mainCore != null && (
+                {b.mainCore !== null && (
                   <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium bg-[var(--color-primary)]/20 text-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/40">
                     <TraitIconSmall code={b.mainCore} size={16} />
                     {traitNames[b.mainCore] ?? b.mainCore}
@@ -123,7 +123,7 @@ function TopBuildsTable({
                 return (
                   <div key={s} className="flex flex-col items-center gap-0.5">
                     <ItemIcon code={code} size={32} />
-                    {code != null && (
+                    {code !== null && (
                       <span className="text-[10px] text-[var(--color-muted-foreground)] max-w-[44px] truncate">
                         {itemNames[code] ?? code}
                       </span>
@@ -169,7 +169,7 @@ function TopBuildsTable({
                   </span>
                 </td>
                 <td className="px-1.5 py-1.5 text-center">
-                  {b.mainCore != null ? (
+                  {b.mainCore !== null ? (
                     <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium bg-[var(--color-primary)]/20 text-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/40 whitespace-nowrap">
                       <TraitIconSmall code={b.mainCore} size={16} />
                       {traitNames[b.mainCore] ?? b.mainCore}
@@ -237,7 +237,7 @@ function TopBuildsTable({
               </td>
               {/* 메인특성 */}
               <td className="px-2 py-2 text-center">
-                {b.mainCore != null ? (
+                {b.mainCore !== null ? (
                   <span className="inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-medium bg-[var(--color-primary)]/20 text-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/40 whitespace-nowrap">
                     <TraitIconSmall code={b.mainCore} size={20} />
                     {traitNames[b.mainCore] ?? b.mainCore}
@@ -252,7 +252,7 @@ function TopBuildsTable({
                   <td key={s} className="px-2 py-2 text-center">
                     <div className="flex flex-col items-center gap-0.5">
                       <ItemIcon code={code} size={36} />
-                      {code != null && (
+                      {code !== null && (
                         <span className="text-[9px] text-[var(--color-muted-foreground)] max-w-[48px] truncate">
                           {itemNames[code] ?? code}
                         </span>
@@ -466,7 +466,7 @@ export function CharacterEquipmentAnalyzer({ characterCode, tier, patchVersion, 
       characterCode: String(characterCode),
       tier,
       patchVersion,
-      ...(bestWeapon != null ? { bestWeapon: String(bestWeapon) } : {}),
+      ...(bestWeapon !== null ? { bestWeapon: String(bestWeapon) } : {}),
     })
 
     fetch(`/api/builds/equipment?${params}`)

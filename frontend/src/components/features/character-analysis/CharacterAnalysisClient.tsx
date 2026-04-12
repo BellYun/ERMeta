@@ -46,11 +46,12 @@ export function CharacterAnalysisClient({
   code,
   initialWeapon,
 }: CharacterAnalysisClientProps) {
-  const patches = initialPatches ?? []
+  const patches = React.useMemo(() => initialPatches ?? [], [initialPatches]);
 
   const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.MITHRIL)
-  const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>(() => {
-    if (initialWeapon != null) return initialWeapon
+   
+  const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>((): number | null => {
+    if (initialWeapon !== null) return initialWeapon
     if (initialStats?.weapons && initialStats.weapons.length > 0) {
       return initialStats.weapons[0].bestWeapon ?? null
     }
@@ -61,7 +62,7 @@ export function CharacterAnalysisClient({
   const handleWeaponChange = React.useCallback((weapon: number | null) => {
     setSelectedWeapon(weapon)
     const url = new URL(window.location.href)
-    if (weapon != null) {
+    if (weapon !== null) {
       url.searchParams.set("weapon", String(weapon))
     } else {
       url.searchParams.delete("weapon")
@@ -164,7 +165,7 @@ export function CharacterAnalysisClient({
         if (!s) return null
         let winRate: number
         let averageRP: number
-        if (selectedWeapon != null && s.weapons) {
+        if (selectedWeapon !== null && s.weapons) {
           const w = s.weapons.find((ws) => ws.bestWeapon === selectedWeapon)
           if (!w || w.totalGames === 0) return null
           winRate = w.winRate
@@ -240,7 +241,7 @@ export function CharacterAnalysisClient({
               <div className="flex flex-col items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] p-3">
                 <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">추천 무기</span>
                 <span className="text-sm font-bold text-[var(--color-foreground)]">
-                  {stats?.weapons?.[0] ? resolveWeaponName(stats.weapons[0].bestWeapon ?? undefined) : "\u2014"}
+                  {stats?.weapons?.[0] ? resolveWeaponName(stats.weapons[0].bestWeapon ?? null) : "\u2014"}
                 </span>
               </div>
               {/* Pick Rate */}
@@ -253,7 +254,7 @@ export function CharacterAnalysisClient({
             {/* CTA */}
             <div className="mt-3 flex justify-end">
               <Link
-                href={`/synergy-detail?ally1=${code}${selectedWeapon != null ? `&w1=${selectedWeapon}` : ""}`}
+                href={`/synergy-detail?ally1=${code}${selectedWeapon !== null ? `&w1=${selectedWeapon}` : ""}`}
                 className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/30 px-3.5 py-2 text-xs font-semibold text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 transition-colors"
               >
                 <Users className="h-3.5 w-3.5" />

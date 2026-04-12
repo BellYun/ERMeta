@@ -153,7 +153,7 @@ export function CharacterHeader({
                     key={w.bestWeapon ?? "none"}
                     onClick={() => {
                       setSelectedWeapon(w.bestWeapon ?? null)
-                      analytics.weaponSelected(selectedCode, w.bestWeapon ?? 0, resolveWeaponName(w.bestWeapon ?? undefined))
+                      analytics.weaponSelected(selectedCode, w.bestWeapon ?? 0, resolveWeaponName(w.bestWeapon ?? null))
                     }}
                     className={cn(
                       "flex flex-col rounded-lg border px-3 py-1.5 text-xs transition-all min-w-[88px] shrink-0",
@@ -163,7 +163,7 @@ export function CharacterHeader({
                     )}
                   >
                     <div className="flex items-center justify-between gap-2 w-full">
-                      <span className="font-medium">{resolveWeaponName(w.bestWeapon ?? undefined)}</span>
+                      <span className="font-medium">{resolveWeaponName(w.bestWeapon ?? null)}</span>
                       <span className={cn(
                         "text-[10px] tabular-nums",
                         isSelected ? "text-[var(--color-primary)]/70" : "text-[var(--color-muted-foreground)]"
@@ -198,7 +198,7 @@ export function CharacterHeader({
           <StatCard
             label="픽률"
             value={`${(stats?.pickRate ?? displayStat.pickRate).toFixed(1)}%`}
-            sub={selectedWeapon != null && displayStat.pickRate !== (stats?.pickRate ?? displayStat.pickRate) ? `무기 ${displayStat.pickRate.toFixed(1)}%` : undefined}
+            sub={selectedWeapon !== null && displayStat.pickRate !== (stats?.pickRate ?? displayStat.pickRate) ? `무기 ${displayStat.pickRate.toFixed(1)}%` : undefined}
             delta={hasPreviousData ? (stats?.pickRate ?? displayStat.pickRate) - (previousStats?.pickRate ?? displayPrevStat!.pickRate) : undefined}
             deltaLabel="%p"
             accent="blue"

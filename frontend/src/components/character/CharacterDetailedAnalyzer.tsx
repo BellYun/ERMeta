@@ -126,7 +126,7 @@ function TreeRow({
   return (
     <div className="flex items-center justify-center gap-2 sm:gap-3">
       {options.map((opt, i) => {
-        if (opt.code == null) return null
+        if (opt.code === null) return null
         const isTop = opt.pickRate === maxPick
         return (
           <div key={i} className="flex flex-col items-center shrink-0 gap-1">
@@ -170,7 +170,7 @@ function SummaryRow({
   label: string
   traitNames: Record<number, string>
 }) {
-  if (option.code == null) return null
+  if (option.code === null) return null
   return (
     <div className="flex items-center gap-2.5 px-3 py-1.5">
       <TraitIconSmall code={option.code} size={24} />
@@ -230,7 +230,7 @@ function TopBuildsTableFiltered({
                 return (
                   <div key={s} className="flex flex-col items-center gap-0.5 shrink-0 min-w-0">
                     <ItemIcon code={code} size={28} />
-                    {code != null && (
+                    {code !== null && (
                       <span className="text-[9px] text-[var(--color-muted-foreground)] max-w-[40px] truncate text-center">
                         {itemNames[code] ?? code}
                       </span>
@@ -291,7 +291,7 @@ function TopBuildsTableFiltered({
                   <td key={s} className="px-2 py-2 text-center">
                     <div className="flex flex-col items-center gap-0.5">
                       <ItemIcon code={code} size={36} />
-                      {code != null && (
+                      {code !== null && (
                         <span className="text-[9px] text-[var(--color-muted-foreground)] max-w-[52px] truncate">
                           {itemNames[code] ?? code}
                         </span>
@@ -518,7 +518,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
       characterCode: String(characterCode),
       tier,
       patchVersion,
-      ...(bestWeapon != null ? { bestWeapon: String(bestWeapon) } : {}),
+      ...(bestWeapon !== null ? { bestWeapon: String(bestWeapon) } : {}),
     })
 
     fetch(`/api/builds/traits/main?${params}`)
@@ -539,7 +539,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
   const selectedMainCore = selectedGroup?.mainCoreOptions.reduce<TraitSubOption | null>((best, o) => !best || o.pickRate > best.pickRate ? o : best, null)?.code ?? null
 
   React.useEffect(() => {
-    if (selectedComboIdx < 0 || !patchVersion || selectedMainCore == null) return
+    if (selectedComboIdx < 0 || !patchVersion || selectedMainCore === null) return
 
     setEquipLoading(true)
     setEquipData(null)
@@ -549,7 +549,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
       tier,
       patchVersion,
       mainCore: String(selectedMainCore),
-      ...(bestWeapon != null ? { bestWeapon: String(bestWeapon) } : {}),
+      ...(bestWeapon !== null ? { bestWeapon: String(bestWeapon) } : {}),
     })
 
     fetch(`/api/builds/equipment?${params}`)
@@ -622,7 +622,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
                 )}
               >
                 <div className="flex items-center gap-1.5">
-                  {topCore != null && <TraitIconSmall code={topCore} size={22} />}
+                  {topCore !== null && topCore !== undefined && <TraitIconSmall code={topCore} size={22} />}
                   <span className={cn("font-medium", mConfig.text)}>{mConfig.name}</span>
                 </div>
                 <div className="flex items-center gap-1 sm:gap-2 mt-0.5">
@@ -685,7 +685,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
                   <div className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-4 sm:p-5">
                     {hasPrimaryTraits && (
                       <div className="flex flex-col items-center gap-3">
-                        {topMainCore != null && (
+                        {topMainCore !== null && topMainCore !== undefined && (
                           <div className={cn("rounded-full p-1 ring-2", mainConfig.ring)}>
                             <TraitIconSmall code={topMainCore} size={40} />
                           </div>
@@ -702,7 +702,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
                     {hasPrimaryTraits && (
                       <>
                         <div className={cn("flex items-center gap-2 px-3 py-2 border-b border-[var(--color-border)]", mainConfig.bg)}>
-                          {topMainCore != null && <TraitIconSmall code={topMainCore} size={18} />}
+                          {topMainCore !== null && topMainCore !== undefined && <TraitIconSmall code={topMainCore} size={18} />}
                           <span className={cn("text-xs font-bold", mainConfig.text)}>
                             주 특성: {mainConfig.name}
                           </span>

@@ -191,7 +191,7 @@ export function getTrioJobGroupPair(
   const [a, b] = others;
   const jobA = getJobGroupForCharacter(a);
   const jobB = getJobGroupForCharacter(b);
-  if (jobA == null || jobB == null) return null;
+  if (jobA === undefined || jobB === undefined) return null;
   const idxA = JOB_GROUP_INDEX[jobA];
   const idxB = JOB_GROUP_INDEX[jobB];
   return idxA <= idxB ? [jobA, jobB] : [jobB, jobA];

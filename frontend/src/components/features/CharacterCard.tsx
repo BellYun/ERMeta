@@ -64,7 +64,7 @@ function CardContent({ name, imageUrl, rateChange, patchChanges }: Omit<Characte
 }
 
 export function CharacterCard({ name, imageUrl, rateChange, code, patchChanges, className }: CharacterCardProps) {
-  if (code != null) {
+  if (code !== null) {
     return (
       <Link href={`/character/${code}`} className={cn(baseClass, className)}>
         <CardContent name={name} imageUrl={imageUrl} rateChange={rateChange} patchChanges={patchChanges} />
