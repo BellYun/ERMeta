@@ -1,17 +1,17 @@
 "use client"
 
-import * as React from "react"
-import Image from "next/image"
-import { X, Search } from "lucide-react"
-import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { useVirtualizer } from "@tanstack/react-virtual"
+import { X, Search } from "lucide-react"
+import Image from "next/image"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
+import * as React from "react"
+import characterBestWeapons from "@/../const/characterBestWeapons.json"
 import { useL10n } from "@/components/L10nProvider"
 import { resolveCharacterName, getCharacterMiniWebpUrl } from "@/lib/characterMap"
 import { cn } from "@/lib/utils"
 import { getFallbackMap, EXCLUDED_CHARACTER_CODES } from "../synergy/constants"
-import { matchesChosungSearch } from "../synergy/utils"
 import { SlotEmpty } from "../synergy/SlotEmpty"
-import characterBestWeapons from "@/../const/characterBestWeapons.json"
+import { matchesChosungSearch } from "../synergy/utils"
 
 // ─── 데이터 ──────────────────────────────────────────────────────────────────
 

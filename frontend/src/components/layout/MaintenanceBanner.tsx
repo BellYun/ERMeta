@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
 import { AlertTriangle, X } from "lucide-react"
+import { useState } from "react"
 
 export function MaintenanceBanner() {
   const [dismissed, setDismissed] = useState(false)

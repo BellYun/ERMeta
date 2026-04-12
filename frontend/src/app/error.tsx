@@ -1,8 +1,8 @@
 "use client"
 
+import { AlertTriangle, RefreshCw } from "lucide-react"
 import { useEffect } from "react"
 import { captureException } from "@/lib/sentry-client"
-import { AlertTriangle, RefreshCw } from "lucide-react"
 
 export default function Error({
   error,

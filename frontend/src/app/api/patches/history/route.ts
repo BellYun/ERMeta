@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@/lib/supabase";
 import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
+import { createServerClient } from "@/lib/supabase";
 
 export const revalidate = 3600; // L1: 1시간 서버 캐시
 

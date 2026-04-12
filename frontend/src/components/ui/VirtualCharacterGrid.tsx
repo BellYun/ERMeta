@@ -1,10 +1,10 @@
 "use client"
 
-import * as React from "react"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import Image from "next/image"
-import { cn } from "@/lib/utils"
+import * as React from "react"
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap"
+import { cn } from "@/lib/utils"
 
 const CELL_MIN_WIDTH = 72
 const ROW_HEIGHT = 82

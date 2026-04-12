@@ -1,8 +1,8 @@
 "use client"
 
 import Image from "next/image"
-import { cn } from "@/lib/utils"
 import itemImageMap from "@/../const/itemImageMap.json"
+import { cn } from "@/lib/utils"
 import { getItemGrade, GRADE_BG } from "./item-utils"
 
 export function ItemIcon({ code, size = 36 }: { code: number | null; size?: number }) {

@@ -1,12 +1,12 @@
 "use client"
 
-import * as React from "react"
-import Image from "next/image"
 import { Layers } from "lucide-react"
-import { TierGroup } from "@/utils/tier"
-import { cn } from "@/lib/utils"
+import Image from "next/image"
+import * as React from "react"
 import itemNameMap from "@/../const/itemNameMap.json"
 import type { EquipmentBuildResult, BuildSummary } from "@/app/api/builds/equipment/route"
+import { cn } from "@/lib/utils"
+import { TierGroup } from "@/utils/tier"
 import { ItemIcon, WinRateSpan, SLOTS, SLOT_LABELS } from "./shared"
 
 // ─── 타입 ──────────────────────────────────────────────────────────────────────

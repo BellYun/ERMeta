@@ -1,14 +1,14 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
-import { FocusWeaponPool } from "@/components/features/synergy-detail/FocusWeaponPool"
-import { WeaponAllySelector } from "@/components/features/synergy-detail/WeaponAllySelector"
-import { SynergyDetailResults } from "@/components/features/synergy-detail/SynergyDetailResults"
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary"
 import {
   FocusPoolSkeleton,
   AllySelectorSkeleton,
   ResultSkeleton,
 } from "@/components/features/synergy/SynergySkeleton"
+import { FocusWeaponPool } from "@/components/features/synergy-detail/FocusWeaponPool"
+import { SynergyDetailResults } from "@/components/features/synergy-detail/SynergyDetailResults"
+import { WeaponAllySelector } from "@/components/features/synergy-detail/WeaponAllySelector"
 
 export const metadata: Metadata = {
   title: "상세 조합 추천 - 무기+특성 포함 | 이리와지지 ER&GG",

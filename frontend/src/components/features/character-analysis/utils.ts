@@ -1,6 +1,6 @@
+import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route"
 import type { Tier } from "@/lib/design-tokens"
 import { TierGroup } from "@/utils/tier"
-import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route"
 
 export function assignCharTier(stat: {
   winRate: number

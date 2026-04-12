@@ -1,11 +1,11 @@
 "use client"
 
-import * as React from "react"
 import Image from "next/image"
-import { TierGroup } from "@/utils/tier"
-import { cn } from "@/lib/utils"
+import * as React from "react"
 import itemNameMap from "@/../const/itemNameMap.json"
-import type { EquipmentBuildResult, BuildSummary, SlotItem, CoreItem } from "@/app/api/builds/equipment/route"
+import type { EquipmentBuildResult, BuildSummary, CoreItem } from "@/app/api/builds/equipment/route"
+import { cn } from "@/lib/utils"
+import { TierGroup } from "@/utils/tier"
 import { ItemIcon, WinRateSpan, SLOTS, SLOT_LABELS } from "./shared"
 
 // ─── 특성 아이콘 헬퍼 ────────────────────────────────────────────────────────────

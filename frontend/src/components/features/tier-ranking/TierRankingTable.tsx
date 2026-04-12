@@ -1,23 +1,22 @@
 "use client"
 
-import * as React from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { Skeleton } from "@/components/ui/skeleton"
-import { TierBadge } from "../TierBadge"
-import { cn } from "@/lib/utils"
-import { analytics } from "@/lib/analytics"
-import { useFilter } from "../FilterContext"
-import { resolveCharacterName, buildFallbackMap, getCharacterImageUrl, getComboRoles } from "@/lib/characterMap"
-import type { CharacterRole } from "@/lib/characterMap"
-import { resolveWeaponName } from "@/lib/weaponMap"
+import * as React from "react"
 import { useL10n } from "@/components/L10nProvider"
+import { Skeleton } from "@/components/ui/skeleton"
 import { getCharacterPatchNote } from "@/data/patch-notes"
+import { analytics } from "@/lib/analytics"
+import type { CharacterRole } from "@/lib/characterMap"
+import { resolveCharacterName, buildFallbackMap, getCharacterImageUrl, getComboRoles } from "@/lib/characterMap"
 import type { CharacterRankingData, RankingResponse } from "@/lib/ranking"
-import { computeMetaScores, assignTier } from "./utils"
-
+import { cn } from "@/lib/utils"
+import { resolveWeaponName } from "@/lib/weaponMap"
+import { useFilter } from "../FilterContext"
+import { TierBadge } from "../TierBadge"
 import { PatchNoteTooltip } from "./PatchNoteTooltip"
 import type { PrevStats, DisplayRow } from "./types"
+import { computeMetaScores, assignTier } from "./utils"
 
 const fallbackMap = buildFallbackMap()
 

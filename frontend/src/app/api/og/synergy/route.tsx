@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
-import { createServerClient } from "@/lib/supabase";
 import { getCharacterName } from "@/lib/characterMap";
+import { createServerClient } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 

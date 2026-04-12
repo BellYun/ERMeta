@@ -1,12 +1,12 @@
 import type { Metadata } from "next"
-import { Suspense } from "react"
 import { notFound } from "next/navigation"
-import { getCharacterName } from "@/lib/characterMap"
-import { CharacterAnalysisClient } from "@/components/features/CharacterAnalysisClient"
+import { Suspense } from "react"
 import { CharacterPicker } from "@/components/features/character-analysis/CharacterPicker"
-import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary"
-import { fetchPatches, fetchStats } from "@/components/features/character-analysis/utils"
 import { CHARACTER_CODES } from "@/components/features/character-analysis/constants"
+import { fetchPatches, fetchStats } from "@/components/features/character-analysis/utils"
+import { CharacterAnalysisClient } from "@/components/features/CharacterAnalysisClient"
+import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary"
+import { getCharacterName } from "@/lib/characterMap"
 import { TierGroup } from "@/utils/tier"
 
 /** 1시간마다 ISR 재생성 */

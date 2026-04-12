@@ -1,17 +1,17 @@
 "use client"
 
-import * as React from "react"
 import Image from "next/image"
-import { TierBadge } from "../TierBadge"
-import { StatCard, SkeletonCard } from "./StatCard"
-import { TIER_LABELS } from "./constants"
-import { cn } from "@/lib/utils"
-import { getCharacterName, getCharacterImageUrl } from "@/lib/characterMap"
+import * as React from "react"
+import type { CharacterStatsResponse, WeaponStatItem } from "@/app/api/character/stats/[characterCode]/route"
 import { analytics } from "@/lib/analytics"
+import { getCharacterName, getCharacterImageUrl } from "@/lib/characterMap"
+import type { Tier } from "@/lib/design-tokens"
+import { cn } from "@/lib/utils"
 import { resolveWeaponName } from "@/lib/weaponMap"
 import { METRICS_TIER_GROUPS, TierGroup } from "@/utils/tier"
-import type { Tier } from "@/lib/design-tokens"
-import type { CharacterStatsResponse, WeaponStatItem } from "@/app/api/character/stats/[characterCode]/route"
+import { TierBadge } from "../TierBadge"
+import { TIER_LABELS } from "./constants"
+import { StatCard, SkeletonCard } from "./StatCard"
 
 type DisplayStat = CharacterStatsResponse | WeaponStatItem
 

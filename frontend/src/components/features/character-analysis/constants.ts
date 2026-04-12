@@ -1,7 +1,7 @@
 import { TrendingUp, TrendingDown, RefreshCw } from "lucide-react"
+import * as React from "react"
 import type { ChangeType } from "@/data/patch-notes"
 import { TierGroup } from "@/utils/tier"
-import * as React from "react"
 
 export const CHARACTER_CODES: number[] = [
   1, 2, 3, 4, 5, 6, 7, 8, 9, 10,

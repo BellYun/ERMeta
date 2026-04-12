@@ -1,7 +1,7 @@
 "use client"
 
-import React from "react"
 import { AlertTriangle, RefreshCw } from "lucide-react"
+import React from "react"
 import { captureException } from "@/lib/sentry-client"
 
 interface Props {

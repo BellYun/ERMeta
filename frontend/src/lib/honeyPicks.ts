@@ -1,5 +1,5 @@
-import { createServerClient } from "@/lib/supabase"
 import type { HoneyPickData } from "@/app/api/meta/honey-picks/route"
+import { createServerClient } from "@/lib/supabase"
 
 /**
  * 꿀챔 데이터 서버 직접 fetch — API Route 경유 없이 Supabase 직접 쿼리

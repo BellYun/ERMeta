@@ -1,7 +1,7 @@
 "use client"
 
-import Image from "next/image"
 import { X } from "lucide-react"
+import Image from "next/image"
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap"
 
 export function SlotFilled({

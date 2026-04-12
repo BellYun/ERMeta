@@ -1,17 +1,15 @@
 "use client"
 
-import * as React from "react"
-import { Suspense } from "react"
 import { BarChart2, ChevronRight, FileText, Loader2, Users, Zap } from "lucide-react"
 import Link from "next/link"
-import { getCharacterName } from "@/lib/characterMap"
-import { resolveWeaponName } from "@/lib/weaponMap"
-import { cn } from "@/lib/utils"
-import { TierGroup } from "@/utils/tier"
+import * as React from "react"
+import { Suspense } from "react"
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route"
-
-import { assignCharTier, fetchStats } from "./utils"
+import { cn } from "@/lib/utils"
+import { resolveWeaponName } from "@/lib/weaponMap"
+import { TierGroup } from "@/utils/tier"
 import { CharacterHeader } from "./CharacterHeader"
+import { assignCharTier, fetchStats } from "./utils"
 
 // 탭 콘텐츠: lazy import (코드 스플릿)
 const PatchComparisonTab = React.lazy(() =>

@@ -1,11 +1,11 @@
 "use client"
 
-import * as React from "react"
 import { Search, X } from "lucide-react"
-import { getCharacterName } from "@/lib/characterMap"
-import { analytics } from "@/lib/analytics"
 import { useRouter } from "next/navigation"
+import * as React from "react"
 import { VirtualCharacterGrid, type CharacterCellStats } from "@/components/ui/VirtualCharacterGrid"
+import { analytics } from "@/lib/analytics"
+import { getCharacterName } from "@/lib/characterMap"
 
 interface CharacterGridProps {
   selectedCode: number
