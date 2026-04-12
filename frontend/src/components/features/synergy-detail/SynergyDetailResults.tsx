@@ -116,10 +116,48 @@ export function SynergyDetailResults() {
     [selectedAllies]
   );
 
+  /**
+   * 모바일 탭 지연 해소 핵심:
+   * - WeaponAllySelector에서 아군을 선택하면 URL이 바뀌고 → searchParams 재방출 →
+   *   selectedAllies가 즉시 새로워져 fetch/재렌더 체인이 urgent로 커밋되어
+   *   다음 탭 이벤트가 150~300ms 뒤로 밀렸음.
+   * - useDeferredValue로 selectedAllies를 지연값(deferredAllies)으로 분리하여
+   *   fetch와 30개 ComboWeaponCard 재조정을 concurrent 저우선순위 렌더로 밀어낸다.
+   * - WeaponAllySelector의 슬롯/셀 시각 반응은 자기 로컬 state로 처리되므로 영향 없음.
+   */
+  const deferredAllies = React.useDeferredValue(selectedAllies);
+  const deferredCharCodes = React.useMemo(
+    () => deferredAllies.map((a) => a.charCode),
+    [deferredAllies]
+  );
+
   const [sortBy, setSortBy] = React.useState<SortBy>("recommended");
   const [results, setResults] = React.useState<TrioWeaponResult[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+
+  /**
+   * 1번 탭 즉각 반응 핵심:
+   * - selectedAllies는 urgent, deferredAllies는 deferred → 탭 직후 두 값이 잠시 달라짐.
+   * - 이 갭 동안 fetch는 아직 시작되지 않았고 loading state도 false지만 사용자 시점에서는
+   *   이미 선택을 완료했으므로 empty state를 유지하면 "탭 → empty → next frame에 loading
+   *   skeleton" 이중 페인트가 발생 (= 탭 click duration 증가).
+   * - 두 값이 다르면 '선택 변경 진행 중'으로 간주하여 스켈레톤을 즉시 노출 → urgent render
+   *   한 번으로 최종 형태에 수렴.
+   */
+  const isAllyChangeInFlight = React.useMemo(() => {
+    if (selectedAllies.length === 0) return false;
+    if (selectedAllies === deferredAllies) return false;
+    if (selectedAllies.length !== deferredAllies.length) return true;
+    for (let i = 0; i < selectedAllies.length; i++) {
+      const s = selectedAllies[i];
+      const d = deferredAllies[i];
+      if (s.charCode !== d.charCode) return true;
+      if ((s.weaponCode ?? null) !== (d.weaponCode ?? null)) return true;
+    }
+    return false;
+  }, [selectedAllies, deferredAllies]);
+  const showLoading = loading || isAllyChangeInFlight;
   const [copied, setCopied] = React.useState(false);
   const [visibleCount, setVisibleCount] = React.useState(30);
   const [traitNames, setTraitNames] = React.useState<Record<number, string>>({});
@@ -141,9 +179,9 @@ export function SynergyDetailResults() {
       .catch(() => {});
   }, []);
 
-  // API 호출
+  // API 호출 — deferredAllies 기반 (아군 선택 탭 즉시성 확보)
   React.useEffect(() => {
-    if (selectedAllies.length === 0) {
+    if (deferredAllies.length === 0) {
       setResults([]);
       setLoading(false);
       return;
@@ -152,12 +190,12 @@ export function SynergyDetailResults() {
     const controller = new AbortController();
     const timerId = setTimeout(() => {
       const params = new URLSearchParams({ sortBy, limit: "200" });
-      const a1 = selectedAllies[0];
+      const a1 = deferredAllies[0];
       if (a1) {
         params.set("character1", String(a1.charCode));
         if (a1.weaponCode) params.set("weapon1", String(a1.weaponCode));
       }
-      const a2 = selectedAllies[1];
+      const a2 = deferredAllies[1];
       if (a2) {
         params.set("character2", String(a2.charCode));
         if (a2.weaponCode) params.set("weapon2", String(a2.weaponCode));
@@ -171,18 +209,23 @@ export function SynergyDetailResults() {
         .then(async (res) => {
           const data = await res.json();
           if (!res.ok) throw new Error(data.error ?? "API 오류");
-          console.log("[SynergyDetailResults] API response:", data.results);
-          setResults(data.results ?? []);
+          // setResults + setLoading(false)를 같은 startTransition 배치에 넣어
+          // "로딩 꺼짐 → 결과 렌더 전" 사이 '결과 없음' 빈 화면이 깜빡이는 것을 방지.
+          React.startTransition(() => {
+            setResults(data.results ?? []);
+            setLoading(false);
+          });
         })
         .catch((err) => {
           if (err instanceof Error && err.name === "AbortError") return;
+          // 에러 경로는 urgent 유지 — 즉시 에러 메시지 표시
+          setLoading(false);
           if (err instanceof Error && err.name === "TimeoutError") {
             setError("요청 시간이 초과되었습니다. 다시 시도해주세요.");
             return;
           }
           setError(err instanceof Error ? err.message : "오류가 발생했습니다.");
-        })
-        .finally(() => setLoading(false));
+        });
     }, 300);
 
     setLoading(true);
@@ -192,11 +235,11 @@ export function SynergyDetailResults() {
       controller.abort();
       setLoading(false);
     };
-  }, [selectedAllies, sortBy]);
+  }, [deferredAllies, sortBy]);
 
-  // Two-level aggregation + filtering
+  // Two-level aggregation + filtering — deferred 기반
   const recommendations = React.useMemo(() => {
-    if (selectedAllies.length === 0) return [];
+    if (deferredAllies.length === 0) return [];
 
     let scopedResults = results;
 
@@ -207,8 +250,8 @@ export function SynergyDetailResults() {
           (f) => f.charCode === charCode && (f.weaponCode === 0 || f.weaponCode === weaponType)
         );
 
-      if (selectedCharCodes.length === 2) {
-        const [allyA, allyB] = selectedCharCodes;
+      if (deferredCharCodes.length === 2) {
+        const [allyA, allyB] = deferredCharCodes;
         scopedResults = results.filter((rec) => {
           const members = [
             { c: rec.character1, w: rec.weaponType1 },
@@ -218,8 +261,8 @@ export function SynergyDetailResults() {
           const third = members.find((m) => m.c !== allyA && m.c !== allyB);
           return third !== undefined && matchesFocus(third.c, third.w);
         });
-      } else if (selectedCharCodes.length === 1) {
-        const selected = selectedCharCodes[0];
+      } else if (deferredCharCodes.length === 1) {
+        const selected = deferredCharCodes[0];
         scopedResults = results.filter((rec) => {
           const members = [
             { c: rec.character1, w: rec.weaponType1 },
@@ -253,7 +296,7 @@ export function SynergyDetailResults() {
     }
 
     return grouped;
-  }, [results, selectedAllies, selectedCharCodes, focusCharWeapons, sortBy]);
+  }, [results, deferredAllies, deferredCharCodes, focusCharWeapons, sortBy]);
 
   const clearAllies = React.useCallback(() => {
     router.replace(pathname, { scroll: false });
@@ -343,7 +386,7 @@ export function SynergyDetailResults() {
               <span>3. 조합을 클릭하면 특성별 성능을 확인할 수 있어요</span>
             </div>
           </div>
-        ) : loading ? (
+        ) : showLoading ? (
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2 py-2">
               <Loader2 className="h-4 w-4 animate-spin text-[var(--color-primary)]" />
@@ -393,7 +436,7 @@ export function SynergyDetailResults() {
                 rank={i + 1}
                 getCharName={getCharName}
                 getTraitName={getTraitName}
-                selectedCharCodes={selectedCharCodes}
+                selectedCharCodes={deferredCharCodes}
               />
             ))}
             {recommendations.length > visibleCount && (
