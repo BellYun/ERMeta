@@ -56,19 +56,26 @@ function getCoreForMember(m: OrderedMember, v: TrioWeaponResult): number | null 
   return v.mainCore3;
 }
 
-export function ComboWeaponCard({
-  group,
-  rank,
-  getCharName,
-  getTraitName,
-  selectedCharCodes,
-}: {
+interface ComboWeaponCardProps {
   group: GroupedCombo;
   rank: number;
   getCharName: (code: number) => string;
   getTraitName: (code: number) => string | null;
   selectedCharCodes: number[];
-}) {
+}
+
+/**
+ * 30개 이상의 카드가 렌더되므로 React.memo 필수.
+ * selectedCharCodes는 SynergyDetailResults에서 useMemo로 identity를 안정화하여 전달.
+ * 상위 re-render(필터/정렬) 시 group/rank/selectedCharCodes가 변하지 않은 카드는 skip.
+ */
+function ComboWeaponCardImpl({
+  group,
+  rank,
+  getCharName,
+  getTraitName,
+  selectedCharCodes,
+}: ComboWeaponCardProps) {
   const [showTraits, setShowTraits] = React.useState(false);
   const ordered = React.useMemo(
     () => getOrderedMembers(group, selectedCharCodes),
@@ -239,6 +246,20 @@ export function ComboWeaponCard({
     </div>
   );
 }
+
+export const ComboWeaponCard = React.memo(ComboWeaponCardImpl, (prev, next) => {
+  if (prev.rank !== next.rank) return false;
+  if (prev.group !== next.group) return false;
+  if (prev.getCharName !== next.getCharName) return false;
+  if (prev.getTraitName !== next.getTraitName) return false;
+  // selectedCharCodes는 number[]이므로 shallow 비교
+  const a = prev.selectedCharCodes;
+  const b = next.selectedCharCodes;
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  return true;
+});
 
 function StatCol({
   label,
