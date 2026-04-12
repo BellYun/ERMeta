@@ -1,17 +1,15 @@
 "use client"
 
-import * as React from "react"
-import { Suspense } from "react"
 import { BarChart2, ChevronRight, FileText, Loader2, Users, Zap } from "lucide-react"
 import Link from "next/link"
-import { getCharacterName } from "@/lib/characterMap"
-import { resolveWeaponName } from "@/lib/weaponMap"
-import { cn } from "@/lib/utils"
-import { TierGroup } from "@/utils/tier"
+import * as React from "react"
+import { Suspense } from "react"
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route"
-
-import { assignCharTier, fetchStats } from "./utils"
+import { cn } from "@/lib/utils"
+import { resolveWeaponName } from "@/lib/weaponMap"
+import { TierGroup } from "@/utils/tier"
 import { CharacterHeader } from "./CharacterHeader"
+import { assignCharTier, fetchStats } from "./utils"
 
 // 탭 콘텐츠: lazy import (코드 스플릿)
 const PatchComparisonTab = React.lazy(() =>
@@ -48,10 +46,11 @@ export function CharacterAnalysisClient({
   code,
   initialWeapon,
 }: CharacterAnalysisClientProps) {
-  const patches = initialPatches ?? []
+  const patches = React.useMemo(() => initialPatches ?? [], [initialPatches]);
 
   const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.MITHRIL)
-  const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>(() => {
+   
+  const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>((): number | null => {
     if (initialWeapon != null) return initialWeapon
     if (initialStats?.weapons && initialStats.weapons.length > 0) {
       return initialStats.weapons[0].bestWeapon ?? null
@@ -146,12 +145,12 @@ export function CharacterAnalysisClient({
   const currentPatch = patches[0] ?? null
 
   const selectedWeaponStat = React.useMemo(() => {
-    if (!stats?.weapons || selectedWeapon === null) return null
+    if (!stats?.weapons || selectedWeapon == null) return null
     return stats.weapons.find((w) => w.bestWeapon === selectedWeapon) ?? null
   }, [stats, selectedWeapon])
 
   const prevSelectedWeaponStat = React.useMemo(() => {
-    if (!previousStats?.weapons || selectedWeapon === null) return null
+    if (!previousStats?.weapons || selectedWeapon == null) return null
     return previousStats.weapons.find((w) => w.bestWeapon === selectedWeapon) ?? null
   }, [previousStats, selectedWeapon])
 
@@ -182,11 +181,11 @@ export function CharacterAnalysisClient({
           averageRP: parseFloat(averageRP.toFixed(1)),
         }
       })
-      .filter((d): d is { patch: string; winRate: number; averageRP: number } => d !== null)
+      .filter((d): d is { patch: string; winRate: number; averageRP: number } => d != null)
       .reverse()
   }, [patches, allPatchStats, selectedWeapon])
 
-  const hasPreviousData = displayPrevStat !== null && (displayPrevStat.totalGames ?? 0) > 0
+  const hasPreviousData = displayPrevStat != null && (displayPrevStat.totalGames ?? 0) > 0
 
   return (
     <div className="flex flex-col gap-4 sm:gap-5">
@@ -242,7 +241,7 @@ export function CharacterAnalysisClient({
               <div className="flex flex-col items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] p-3">
                 <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">추천 무기</span>
                 <span className="text-sm font-bold text-[var(--color-foreground)]">
-                  {stats?.weapons?.[0] ? resolveWeaponName(stats.weapons[0].bestWeapon ?? undefined) : "\u2014"}
+                  {stats?.weapons?.[0] ? resolveWeaponName(stats.weapons[0].bestWeapon ?? null) : "\u2014"}
                 </span>
               </div>
               {/* Pick Rate */}

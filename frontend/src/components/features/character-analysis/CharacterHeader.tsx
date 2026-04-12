@@ -1,17 +1,17 @@
 "use client"
 
-import * as React from "react"
 import Image from "next/image"
-import { TierBadge } from "../TierBadge"
-import { StatCard, SkeletonCard } from "./StatCard"
-import { TIER_LABELS } from "./constants"
-import { cn } from "@/lib/utils"
-import { getCharacterName, getCharacterImageUrl } from "@/lib/characterMap"
+import * as React from "react"
+import type { CharacterStatsResponse, WeaponStatItem } from "@/app/api/character/stats/[characterCode]/route"
 import { analytics } from "@/lib/analytics"
+import { getCharacterName, getCharacterImageUrl } from "@/lib/characterMap"
+import type { Tier } from "@/lib/design-tokens"
+import { cn } from "@/lib/utils"
 import { resolveWeaponName } from "@/lib/weaponMap"
 import { METRICS_TIER_GROUPS, TierGroup } from "@/utils/tier"
-import type { Tier } from "@/lib/design-tokens"
-import type { CharacterStatsResponse, WeaponStatItem } from "@/app/api/character/stats/[characterCode]/route"
+import { TierBadge } from "../TierBadge"
+import { TIER_LABELS } from "./constants"
+import { StatCard, SkeletonCard } from "./StatCard"
 
 type DisplayStat = CharacterStatsResponse | WeaponStatItem
 
@@ -139,7 +139,7 @@ export function CharacterHeader({
                 onClick={() => setSelectedWeapon(null)}
                 className={cn(
                   "flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all shrink-0",
-                  selectedWeapon === null
+                  selectedWeapon == null
                     ? "border-[var(--color-primary)]/50 bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
                     : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/30"
                 )}
@@ -153,7 +153,7 @@ export function CharacterHeader({
                     key={w.bestWeapon ?? "none"}
                     onClick={() => {
                       setSelectedWeapon(w.bestWeapon ?? null)
-                      analytics.weaponSelected(selectedCode, w.bestWeapon ?? 0, resolveWeaponName(w.bestWeapon ?? undefined))
+                      analytics.weaponSelected(selectedCode, w.bestWeapon ?? 0, resolveWeaponName(w.bestWeapon ?? null))
                     }}
                     className={cn(
                       "flex flex-col rounded-lg border px-3 py-1.5 text-xs transition-all min-w-[88px] shrink-0",
@@ -163,7 +163,7 @@ export function CharacterHeader({
                     )}
                   >
                     <div className="flex items-center justify-between gap-2 w-full">
-                      <span className="font-medium">{resolveWeaponName(w.bestWeapon ?? undefined)}</span>
+                      <span className="font-medium">{resolveWeaponName(w.bestWeapon ?? null)}</span>
                       <span className={cn(
                         "text-[10px] tabular-nums",
                         isSelected ? "text-[var(--color-primary)]/70" : "text-[var(--color-muted-foreground)]"

@@ -1,12 +1,12 @@
 "use client"
 
-import * as React from "react"
 import { Search } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import * as React from "react"
+import { analytics } from "@/lib/analytics"
 import { getCharacterName, getCharacterImageUrl } from "@/lib/characterMap"
 import { cn } from "@/lib/utils"
-import { analytics } from "@/lib/analytics"
 import { CHARACTER_CODES } from "./constants"
 
 // ── 초성 검색 유틸 ──

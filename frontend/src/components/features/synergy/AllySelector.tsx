@@ -1,16 +1,16 @@
 "use client"
 
-import * as React from "react"
 import { X, Search } from "lucide-react"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
+import * as React from "react"
 import { useL10n } from "@/components/L10nProvider"
-import { resolveCharacterName } from "@/lib/characterMap"
 import { VirtualCharacterGrid } from "@/components/ui/VirtualCharacterGrid"
 import { analytics } from "@/lib/analytics"
+import { resolveCharacterName } from "@/lib/characterMap"
 import { getAllCharacterCodes, getFallbackMap } from "./constants"
-import { matchesChosungSearch } from "./utils"
 import { SlotEmpty } from "./SlotEmpty"
 import { SlotFilled } from "./SlotFilled"
+import { matchesChosungSearch } from "./utils"
 
 /**
  * 아군 선택 Island — URL searchParams 기반 독립 Client Component

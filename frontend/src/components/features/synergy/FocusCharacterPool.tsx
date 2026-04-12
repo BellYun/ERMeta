@@ -1,9 +1,8 @@
 "use client"
 
-import * as React from "react"
-import Image from "next/image"
 import { X, Search, ChevronDown, ChevronUp } from "lucide-react"
-import { cn } from "@/lib/utils"
+import Image from "next/image"
+import * as React from "react"
 import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMap"
 import { useL10n } from "@/components/L10nProvider"
 const VirtualCharacterGrid = React.lazy(() =>

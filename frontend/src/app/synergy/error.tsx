@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect } from "react"
-import { captureException } from "@/lib/sentry-client"
 import { AlertTriangle, RefreshCw, ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import { useEffect } from "react"
+import { captureException } from "@/lib/sentry-client"
 
 export default function SynergyError({
   error,

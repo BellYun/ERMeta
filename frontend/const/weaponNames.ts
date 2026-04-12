@@ -25,8 +25,8 @@ export const WEAPON_KOR_BY_CODE: Record<number, string> = {
   25: 'VF의수',
 };
 
-export function getWeaponNameKorByCode(code: number | null | undefined): string {
-  if (code == null) return '';
+export function getWeaponNameKorByCode(code: number | null): string {
+  if (code === null) return '';
   return WEAPON_KOR_BY_CODE[code] ?? `무기 ${code}`;
 }
 

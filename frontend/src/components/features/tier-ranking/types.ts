@@ -1,6 +1,6 @@
+import type { CharacterPatchNote } from "@/data/patch-notes"
 import type { CharacterRole } from "@/lib/characterMap"
 import type { Tier } from "@/lib/design-tokens"
-import type { CharacterPatchNote } from "@/data/patch-notes"
 
 export interface PrevStats {
   pickRate: number

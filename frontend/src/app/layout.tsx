@@ -1,16 +1,16 @@
-import type { Metadata } from "next";
-import { Geist } from "next/font/google";
 import { readFileSync } from "fs";
 import { join } from "path";
+import type { Metadata } from "next";
+import { Geist } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/layout/Header";
-import { MobileTabBar } from "@/components/layout/MobileTabBar";
-import { L10nProvider } from "@/components/L10nProvider";
 import Script from "next/script";
+import { AmplitudeLoader } from "@/components/AmplitudeLoader";
 import FeedbackWidget from "@/components/features/FeedbackWidget";
 import { Analytics } from "@vercel/analytics/next";
-import { AmplitudeLoader } from "@/components/AmplitudeLoader";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { L10nProvider } from "@/components/L10nProvider";
+import { Header } from "@/components/layout/Header";
+import { MobileTabBar } from "@/components/layout/MobileTabBar";
 
 function loadL10n(): Record<string, string> | undefined {
   try {

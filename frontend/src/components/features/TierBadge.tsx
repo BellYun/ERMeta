@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils"
 import type { Tier } from "@/lib/design-tokens"
+import { cn } from "@/lib/utils"
 
 const tierStyles: Record<Tier, string> = {
   S: "bg-[var(--color-tier-s)]/15 text-[var(--color-tier-s)] ring-[var(--color-tier-s)]/25",

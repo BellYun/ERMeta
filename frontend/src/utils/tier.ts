@@ -78,7 +78,7 @@ export function normalizeTier(tier: string | null | undefined): Tier | null {
  * - MITHRIL: MMR >= 7200
  */
 export function getTierGroupFromMMR(mmrBefore: number | null | undefined): TierGroup | null {
-  if (mmrBefore === null || mmrBefore === undefined || mmrBefore < 0) {
+  if (mmrBefore == null || mmrBefore < 0) {
     return null;
   }
 
@@ -113,7 +113,7 @@ export function getAllTierGroupsFromMMR(
   mmrBefore: number | null | undefined,
   rank1000MMR: number | null | undefined = null
 ): TierGroup[] {
-  if (mmrBefore === null || mmrBefore === undefined || mmrBefore < 0) {
+  if (mmrBefore == null || mmrBefore < 0) {
     return [];
   }
 
@@ -121,7 +121,7 @@ export function getAllTierGroupsFromMMR(
   const groups: TierGroup[] = [];
 
   // IN1000: 1000등 MMR 이상인 경우 (rank1000MMR이 제공된 경우만)
-  if (rank1000MMR !== null && rank1000MMR !== undefined && mmr >= rank1000MMR) {
+  if (rank1000MMR != null && mmr >= rank1000MMR) {
     groups.push(TierGroup.IN1000);
   }
 
@@ -159,13 +159,13 @@ export function isTierGroupMatch(
   mmr: number | null | undefined,
   rank1000MMR: number | null | undefined = null
 ): boolean {
-  if (mmr === null || mmr === undefined || mmr < 0) {
+  if (mmr == null || mmr < 0) {
     return false;
   }
 
   switch (tierGroup) {
     case TierGroup.IN1000:
-      return rank1000MMR !== null && rank1000MMR !== undefined && mmr >= rank1000MMR;
+      return rank1000MMR != null && mmr >= rank1000MMR;
     case TierGroup.MITHRIL:
       return mmr >= 7200; // 7200 이상 미스릴
     case TierGroup.METEORITE:

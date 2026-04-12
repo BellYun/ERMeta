@@ -1,12 +1,12 @@
 "use client"
 
-import * as React from "react"
-import Image from "next/image"
 import { Layers } from "lucide-react"
-import { TierGroup } from "@/utils/tier"
-import { cn } from "@/lib/utils"
+import Image from "next/image"
+import * as React from "react"
 import itemNameMap from "@/../const/itemNameMap.json"
 import type { EquipmentBuildResult, BuildSummary } from "@/app/api/builds/equipment/route"
+import { cn } from "@/lib/utils"
+import { TierGroup } from "@/utils/tier"
 import { ItemIcon, WinRateSpan, SLOTS, SLOT_LABELS } from "./shared"
 
 // ─── 타입 ──────────────────────────────────────────────────────────────────────
@@ -622,7 +622,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
                 )}
               >
                 <div className="flex items-center gap-1.5">
-                  {topCore != null && <TraitIconSmall code={topCore} size={22} />}
+                  {topCore != null &&<TraitIconSmall code={topCore} size={22} />}
                   <span className={cn("font-medium", mConfig.text)}>{mConfig.name}</span>
                 </div>
                 <div className="flex items-center gap-1 sm:gap-2 mt-0.5">
@@ -685,7 +685,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
                   <div className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-4 sm:p-5">
                     {hasPrimaryTraits && (
                       <div className="flex flex-col items-center gap-3">
-                        {topMainCore != null && (
+                        {topMainCore != null &&(
                           <div className={cn("rounded-full p-1 ring-2", mainConfig.ring)}>
                             <TraitIconSmall code={topMainCore} size={40} />
                           </div>
@@ -702,7 +702,7 @@ export function CharacterDetailedAnalyzer({ characterCode, tier, patchVersion, b
                     {hasPrimaryTraits && (
                       <>
                         <div className={cn("flex items-center gap-2 px-3 py-2 border-b border-[var(--color-border)]", mainConfig.bg)}>
-                          {topMainCore != null && <TraitIconSmall code={topMainCore} size={18} />}
+                          {topMainCore != null &&<TraitIconSmall code={topMainCore} size={18} />}
                           <span className={cn("text-xs font-bold", mainConfig.text)}>
                             주 특성: {mainConfig.name}
                           </span>

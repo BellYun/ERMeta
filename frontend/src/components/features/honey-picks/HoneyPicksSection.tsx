@@ -1,21 +1,21 @@
 "use client"
 
-import * as React from "react"
+import { Loader2 } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { Loader2 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import * as React from "react"
+import type { HoneyPickData } from "@/app/api/meta/honey-picks/route"
 import { useL10n } from "@/components/L10nProvider"
+import { getCharacterPatchNote } from "@/data/patch-notes"
+import type { CharacterPatchNote } from "@/data/patch-notes"
 import {
   buildFallbackMap,
   getCharacterHalfImageUrl,
   resolveCharacterName,
 } from "@/lib/characterMap"
-import { useFilter } from "../FilterContext"
+import { cn } from "@/lib/utils"
 import { resolveWeaponName } from "@/lib/weaponMap"
-import { getCharacterPatchNote } from "@/data/patch-notes"
-import type { HoneyPickData } from "@/app/api/meta/honey-picks/route"
-import type { CharacterPatchNote } from "@/data/patch-notes"
+import { useFilter } from "../FilterContext"
 import { PatchNoteBottomSheet } from "./PatchNoteBottomSheet"
 
 const FALLBACK_MAP = buildFallbackMap()

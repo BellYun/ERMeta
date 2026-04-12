@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
 import { createServerClient } from "@/lib/supabase";
 import { TierGroup } from "@/utils/tier";
-import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
 
 export const revalidate = 3600; // L1: 1시간 서버 캐시
 
@@ -139,11 +139,11 @@ export async function GET(request: NextRequest) {
   const char2Param = searchParams.get("character2");
 
   // character 코드 파싱
-  const char1 = char1Param !== null ? parseInt(char1Param, 10) : null;
-  const char2 = char2Param !== null ? parseInt(char2Param, 10) : null;
+  const char1 = char1Param != null ? parseInt(char1Param, 10) : null;
+  const char2 = char2Param != null ? parseInt(char2Param, 10) : null;
 
   // character2만 단독 전달 금지
-  if (char2 !== null && char1 === null) {
+  if (char2 != null && char1 == null) {
     return NextResponse.json(
       { error: "character2는 character1 없이 사용할 수 없습니다." },
       { status: 400 }
@@ -151,7 +151,7 @@ export async function GET(request: NextRequest) {
   }
 
   // 동일 캐릭터 금지
-  if (char1 !== null && char2 !== null && char1 === char2) {
+  if (char1 != null && char2 != null && char1 === char2) {
     return NextResponse.json(
       { error: "character1과 character2는 달라야 합니다." },
       { status: 400 }
@@ -160,8 +160,8 @@ export async function GET(request: NextRequest) {
 
   // 제외 캐릭터 선택 시 빈 결과
   if (
-    (char1 !== null && EXCLUDED_CHARACTER_CODES.has(char1)) ||
-    (char2 !== null && EXCLUDED_CHARACTER_CODES.has(char2))
+    (char1 != null && EXCLUDED_CHARACTER_CODES.has(char1)) ||
+    (char2 != null && EXCLUDED_CHARACTER_CODES.has(char2))
   ) {
     return NextResponse.json({ results: [] });
   }
@@ -178,7 +178,7 @@ export async function GET(request: NextRequest) {
 
     // 캐릭터 필터 조건 (old / v2 공용)
     const charFilterOr =
-      char1 !== null && char2 !== null
+      char1 != null && char2 != null
         ? (() => {
             const [low, high] = [char1, char2].sort((a, b) => a - b);
             return [
@@ -187,7 +187,7 @@ export async function GET(request: NextRequest) {
               `and(character2.eq.${low},character3.eq.${high})`,
             ].join(",");
           })()
-        : char1 !== null
+        : char1 != null
           ? `character1.eq.${char1},character2.eq.${char1},character3.eq.${char1}`
           : null;
 

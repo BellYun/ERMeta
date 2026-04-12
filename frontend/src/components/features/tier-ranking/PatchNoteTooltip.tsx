@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils"
 import type { CharacterPatchNote } from "@/data/patch-notes"
+import { cn } from "@/lib/utils"
 
 export function PatchNoteTooltip({ patchNote }: { patchNote: CharacterPatchNote }) {
   const changeTypeLabel = (type: string): { text: string; color: string } => {

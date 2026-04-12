@@ -1,17 +1,17 @@
 "use client"
 
-import * as React from "react"
-import { useSearchParams, useRouter } from "next/navigation"
 import { X, Users, Loader2, Info, Share2 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useSearchParams, useRouter } from "next/navigation"
+import * as React from "react"
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary"
 import { useL10n } from "@/components/L10nProvider"
-import { resolveCharacterName } from "@/lib/characterMap"
-import { analytics } from "@/lib/analytics"
 import { useFocusCharacters } from "@/hooks/useFocusCharacters"
-import type { TrioResult, SortBy } from "./types"
+import { analytics } from "@/lib/analytics"
+import { resolveCharacterName } from "@/lib/characterMap"
+import { cn } from "@/lib/utils"
 import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "./constants"
-import { getSortValue, getThirdCharacter, deduplicateResults } from "./utils"
+import type { TrioResult, SortBy } from "./types"
+import { getThirdCharacter, deduplicateResults } from "./utils"
 const ComboCard = React.lazy(() =>
   import("./ComboCard").then((m) => ({ default: m.ComboCard }))
 )
@@ -106,7 +106,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
         const [allyA, allyB] = selectedAllies
         scopedResults = trioResults.filter((rec) => {
           const third = getThirdCharacter(rec, allyA, allyB)
-          return third !== null && focusSet.has(third)
+          return third != null && focusSet.has(third)
         })
       } else if (selectedAllies.length === 1) {
         const selected = selectedAllies[0]

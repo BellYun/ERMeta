@@ -1,9 +1,9 @@
 "use client"
 
-import * as React from "react"
 import Image from "next/image"
-import { TierGroup } from "@/utils/tier"
+import * as React from "react"
 import { cn } from "@/lib/utils"
+import { TierGroup } from "@/utils/tier"
 
 // ─── 특성 그룹 분류 ───────────────────────────────────────────────────────────
 

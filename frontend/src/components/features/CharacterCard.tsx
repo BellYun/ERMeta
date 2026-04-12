@@ -1,7 +1,7 @@
-import Link from "next/link"
 import Image from "next/image"
-import { cn } from "@/lib/utils"
+import Link from "next/link"
 import type { PatchChange } from "@/data/patch-notes"
+import { cn } from "@/lib/utils"
 
 interface CharacterCardProps {
   name: string

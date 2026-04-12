@@ -1,9 +1,9 @@
 "use client"
 
-import * as React from "react"
 import Image from "next/image"
-import { cn } from "@/lib/utils"
+import * as React from "react"
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap"
+import { cn } from "@/lib/utils"
 import type { TrioResult } from "./types"
 
 export function ComboCard({

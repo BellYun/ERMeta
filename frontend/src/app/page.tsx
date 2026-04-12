@@ -1,15 +1,15 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
-import { GlobalFilter } from "@/components/features/GlobalFilter"
-import { TierRankingTable } from "@/components/features/TierRankingTable"
-import { HoneyPicksSection } from "@/components/features/HoneyPicksSection"
 import { FilterProvider } from "@/components/features/FilterContext"
+import { GlobalFilter } from "@/components/features/GlobalFilter"
+import { HoneyPicksSection } from "@/components/features/HoneyPicksSection"
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary"
+import { TierRankingTable } from "@/components/features/TierRankingTable"
 import { HoneyPicksSkeleton } from "@/components/skeleton/HoneyPicksSkeleton"
 import { RankingSkeleton } from "@/components/skeleton/RankingSkeleton"
 import { getPatches } from "@/lib/getPatches"
-import { fetchRankingData } from "@/lib/ranking"
 import { fetchHoneyPicksServer } from "@/lib/honeyPicks"
+import { fetchRankingData } from "@/lib/ranking"
 
 export const revalidate = 300 // ISR: 5분 서버 캐시 (Supabase 매 요청 호출 방지)
 

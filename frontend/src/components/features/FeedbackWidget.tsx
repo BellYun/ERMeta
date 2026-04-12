@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { MessageCircle, X, Check } from "lucide-react";
+import { useState } from "react";
 
 type Category = "버그 신고" | "기능 제안" | "일반 문의";
 type FormState = "idle" | "submitting" | "success" | "error";

@@ -1,7 +1,7 @@
 "use client"
 
-import * as React from "react"
 import { TrendingUp, TrendingDown, Minus } from "lucide-react"
+import * as React from "react"
 import { cn } from "@/lib/utils"
 
 export function DeltaBadge({ delta, inverted = false }: { delta: number; inverted?: boolean }) {

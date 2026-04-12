@@ -1,8 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { cn } from "@/lib/utils"
 import { analytics } from "@/lib/analytics"
+import { cn } from "@/lib/utils"
 import { useFilter } from "./FilterContext"
 
 const TIER_OPTIONS = [

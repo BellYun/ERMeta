@@ -1,7 +1,7 @@
 "use client"
 
-import * as React from "react"
 import { BarChart2 } from "lucide-react"
+import * as React from "react"
 import {
   LineChart,
   Line,
@@ -12,9 +12,9 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from "recharts"
+import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route"
 import { cn } from "@/lib/utils"
 import { PatchTooltip } from "./PatchNoteComponents"
-import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route"
 
 interface PatchComparisonTabProps {
   chartData: { patch: string; winRate: number; averageRP: number }[]

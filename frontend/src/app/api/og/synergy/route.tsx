@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
-import { createServerClient } from "@/lib/supabase";
 import { getCharacterName } from "@/lib/characterMap";
+import { createServerClient } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 
@@ -74,14 +74,14 @@ async function fetchTop3(char1: number | null, char2: number | null): Promise<Ag
     .order("totalGames", { ascending: false })
     .limit(5000);
 
-  if (char1 !== null && char2 !== null) {
+  if (char1 != null && char2 != null) {
     const [lo, hi] = [char1, char2].sort((a, b) => a - b);
     query = query.or([
       `and(character1.eq.${lo},character2.eq.${hi})`,
       `and(character1.eq.${lo},character3.eq.${hi})`,
       `and(character2.eq.${lo},character3.eq.${hi})`,
     ].join(","));
-  } else if (char1 !== null) {
+  } else if (char1 != null) {
     query = query.or(`character1.eq.${char1},character2.eq.${char1},character3.eq.${char1}`);
   }
 
@@ -252,7 +252,7 @@ export async function GET(request: NextRequest) {
   const char2 = ally2Param ? parseInt(ally2Param, 10) : null;
 
   // 유효한 캐릭터가 없으면 기본 OG
-  if (char1 === null || isNaN(char1)) {
+  if (char1 == null || isNaN(char1)) {
     return new ImageResponse(renderDefaultOG(), {
       ...SIZE,
       headers: { "Cache-Control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=3600" },
@@ -261,9 +261,9 @@ export async function GET(request: NextRequest) {
 
   try {
     const allies = [char1];
-    if (char2 !== null && !isNaN(char2) && char2 !== char1) allies.push(char2);
+    if (char2 != null && !isNaN(char2) && char2 !== char1) allies.push(char2);
 
-    const trios = await fetchTop3(char1, char2 !== null && !isNaN(char2) ? char2 : null);
+    const trios = await fetchTop3(char1, char2 != null && !isNaN(char2) ? char2 : null);
 
     if (trios.length === 0) {
       return new ImageResponse(renderDefaultOG(), {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
-import { createServerClient } from "@/lib/supabase"
 import { getCacheHeaders } from "@/lib/cache"
+import { createServerClient } from "@/lib/supabase"
 import { getTraitGroup, TRAIT_CORES, TRAIT_SUBS_SLOT1, TRAIT_SUBS_SLOT2, type TraitGroup } from "@/utils/traitCodes"
 
 export const revalidate = 1800 // L1: 30분 서버 캐시
