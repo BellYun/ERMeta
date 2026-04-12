@@ -1,66 +1,74 @@
-"use client"
+"use client";
 
-import { useVirtualizer } from "@tanstack/react-virtual"
-import { X, Search } from "lucide-react"
-import Image from "next/image"
-import { useSearchParams, useRouter, usePathname } from "next/navigation"
-import * as React from "react"
-import characterBestWeapons from "@/../const/characterBestWeapons.json"
-import { useL10n } from "@/components/L10nProvider"
-import { resolveCharacterName, getCharacterMiniWebpUrl } from "@/lib/characterMap"
-import { cn } from "@/lib/utils"
-import { getFallbackMap, EXCLUDED_CHARACTER_CODES } from "../synergy/constants"
-import { SlotEmpty } from "../synergy/SlotEmpty"
-import { matchesChosungSearch } from "../synergy/utils"
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { X, Search } from "lucide-react";
+import Image from "next/image";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import * as React from "react";
+import characterBestWeapons from "@/../const/characterBestWeapons.json";
+import { useL10n } from "@/components/L10nProvider";
+import { resolveCharacterName, getCharacterMiniWebpUrl } from "@/lib/characterMap";
+import { cn } from "@/lib/utils";
+import { getFallbackMap, EXCLUDED_CHARACTER_CODES } from "../synergy/constants";
+import { SlotEmpty } from "../synergy/SlotEmpty";
+import { matchesChosungSearch } from "../synergy/utils";
 
 // ─── 데이터 ──────────────────────────────────────────────────────────────────
 
 const weaponData = characterBestWeapons as Record<
   string,
   { weaponCode: number; label: string; isDefault: boolean }[]
->
+>;
 
 export interface CharWeaponItem {
-  charCode: number
-  weaponCode: number
-  weaponLabel: string
+  charCode: number;
+  weaponCode: number;
+  weaponLabel: string;
 }
 
 /** 무기 분류하지 않는 캐릭터 (알렉스 등) */
-const SINGLE_ENTRY_CHARS = new Set([27])
+const SINGLE_ENTRY_CHARS = new Set([27]);
 
-/** 캐릭터+무기 플랫 리스트 (가나다순, 기본무기 우선) */
-export const ALL_CHAR_WEAPON_ITEMS: CharWeaponItem[] = (() => {
-  const items: CharWeaponItem[] = []
-  const sortedCodes = Array.from(getFallbackMap().keys())
-    .filter((code) => !EXCLUDED_CHARACTER_CODES.has(code))
-    .sort((a, b) =>
-      (getFallbackMap().get(a) ?? "").localeCompare(getFallbackMap().get(b) ?? "", "ko")
-    )
+/**
+ * 캐릭터+무기 플랫 리스트 (가나다순, 기본무기 우선)
+ * 지연 초기화 (lazy singleton) — 모듈 로드 시 즉시 실행하지 않고 첫 접근 시에만 생성
+ * localeCompare("ko") 정렬이 하이드레이션을 블로킹하던 문제 해소
+ */
+let _allCharWeaponItems: CharWeaponItem[] | null = null;
+export function getAllCharWeaponItems(): CharWeaponItem[] {
+  if (!_allCharWeaponItems) {
+    const items: CharWeaponItem[] = [];
+    const sortedCodes = Array.from(getFallbackMap().keys())
+      .filter((code) => !EXCLUDED_CHARACTER_CODES.has(code))
+      .sort((a, b) =>
+        (getFallbackMap().get(a) ?? "").localeCompare(getFallbackMap().get(b) ?? "", "ko")
+      );
 
-  for (const charCode of sortedCodes) {
-    const weapons = weaponData[String(charCode)]
+    for (const charCode of sortedCodes) {
+      const weapons = weaponData[String(charCode)];
 
-    // 무기 분류 안 하는 캐릭터 또는 무기 데이터 없는 경우
-    if (SINGLE_ENTRY_CHARS.has(charCode) || !weapons || weapons.length === 0) {
-      items.push({ charCode, weaponCode: 0, weaponLabel: "" })
-      continue
+      // 무기 분류 안 하는 캐릭터 또는 무기 데이터 없는 경우
+      if (SINGLE_ENTRY_CHARS.has(charCode) || !weapons || weapons.length === 0) {
+        items.push({ charCode, weaponCode: 0, weaponLabel: "" });
+        continue;
+      }
+
+      // 기본무기 우선
+      const sorted = [...weapons].sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
+      for (const w of sorted) {
+        items.push({ charCode, weaponCode: w.weaponCode, weaponLabel: w.label });
+      }
     }
-
-    // 기본무기 우선
-    const sorted = [...weapons].sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0))
-    for (const w of sorted) {
-      items.push({ charCode, weaponCode: w.weaponCode, weaponLabel: w.label })
-    }
+    _allCharWeaponItems = items;
   }
-  return items
-})()
+  return _allCharWeaponItems;
+}
 
 // ─── 타입 ──────────────────────────────────────────────────────────────────
 
 interface AllySelection {
-  charCode: number
-  weaponCode: number | null
+  charCode: number;
+  weaponCode: number | null;
 }
 
 function parseAllyFromParams(
@@ -68,19 +76,19 @@ function parseAllyFromParams(
   allyKey: string,
   weaponKey: string
 ): AllySelection | null {
-  const charStr = params.get(allyKey)
-  if (!charStr) return null
-  const charCode = parseInt(charStr, 10)
-  if (isNaN(charCode)) return null
-  const wStr = params.get(weaponKey)
-  const weaponCode = wStr ? parseInt(wStr, 10) : null
-  return { charCode, weaponCode: weaponCode && !isNaN(weaponCode) ? weaponCode : null }
+  const charStr = params.get(allyKey);
+  if (!charStr) return null;
+  const charCode = parseInt(charStr, 10);
+  if (isNaN(charCode)) return null;
+  const wStr = params.get(weaponKey);
+  const weaponCode = wStr ? parseInt(wStr, 10) : null;
+  return { charCode, weaponCode: weaponCode && !isNaN(weaponCode) ? weaponCode : null };
 }
 
 // ─── 셀 ──────────────────────────────────────────────────────────────────
 
-const CELL_MIN_WIDTH = 72
-const ROW_HEIGHT = 72
+const CELL_MIN_WIDTH = 72;
+const ROW_HEIGHT = 72;
 
 const CharWeaponCell = React.memo(function CharWeaponCell({
   item,
@@ -89,11 +97,11 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
   disabled,
   onSelect,
 }: {
-  item: CharWeaponItem
-  charName: string
-  selected: boolean
-  disabled: boolean
-  onSelect: (item: CharWeaponItem) => void
+  item: CharWeaponItem;
+  charName: string;
+  selected: boolean;
+  disabled: boolean;
+  onSelect: (item: CharWeaponItem) => void;
 }) {
   return (
     <button
@@ -105,8 +113,8 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
         selected
           ? "bg-[var(--color-primary)]/20 ring-1 ring-[var(--color-primary)]"
           : disabled
-          ? "opacity-30 cursor-not-allowed"
-          : "hover:bg-[var(--color-surface-2)]"
+            ? "opacity-30 cursor-not-allowed"
+            : "hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80"
       )}
     >
       <div className="relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]">
@@ -127,45 +135,54 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
         </span>
       )}
     </button>
-  )
-})
+  );
+});
 
 // ─── 메인 컴포넌트 ──────────────────────────────────────────────────────────
 
 export function WeaponAllySelector() {
-  const { l10n } = useL10n()
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const pathname = usePathname()
-  const [search, setSearch] = React.useState("")
-  const parentRef = React.useRef<HTMLDivElement>(null)
-  const [columns, setColumns] = React.useState(4)
+  const { l10n } = useL10n();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [search, setSearch] = React.useState("");
+  const parentRef = React.useRef<HTMLDivElement>(null);
+  const [columns, setColumns] = React.useState(4);
 
   const getCharName = React.useCallback(
     (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
     [l10n]
-  )
+  );
 
-  const ally1 = React.useMemo(() => parseAllyFromParams(searchParams, "ally1", "w1"), [searchParams])
-  const ally2 = React.useMemo(() => parseAllyFromParams(searchParams, "ally2", "w2"), [searchParams])
-  const selectedAllies = React.useMemo(() => [ally1, ally2].filter(Boolean) as AllySelection[], [ally1, ally2])
+  const ally1 = React.useMemo(
+    () => parseAllyFromParams(searchParams, "ally1", "w1"),
+    [searchParams]
+  );
+  const ally2 = React.useMemo(
+    () => parseAllyFromParams(searchParams, "ally2", "w2"),
+    [searchParams]
+  );
+  const selectedAllies = React.useMemo(
+    () => [ally1, ally2].filter(Boolean) as AllySelection[],
+    [ally1, ally2]
+  );
 
   const updateUrl = React.useCallback(
     (a1: AllySelection | null, a2: AllySelection | null) => {
-      const params = new URLSearchParams()
+      const params = new URLSearchParams();
       if (a1) {
-        params.set("ally1", String(a1.charCode))
-        if (a1.weaponCode) params.set("w1", String(a1.weaponCode))
+        params.set("ally1", String(a1.charCode));
+        if (a1.weaponCode) params.set("w1", String(a1.weaponCode));
       }
       if (a2) {
-        params.set("ally2", String(a2.charCode))
-        if (a2.weaponCode) params.set("w2", String(a2.weaponCode))
+        params.set("ally2", String(a2.charCode));
+        if (a2.weaponCode) params.set("w2", String(a2.weaponCode));
       }
-      const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
-      router.replace(newUrl, { scroll: false })
+      const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+      router.replace(newUrl, { scroll: false });
     },
     [pathname, router]
-  )
+  );
 
   const isSelected = React.useCallback(
     (item: CharWeaponItem) =>
@@ -173,85 +190,83 @@ export function WeaponAllySelector() {
         (a) => a.charCode === item.charCode && (a.weaponCode ?? 0) === item.weaponCode
       ),
     [selectedAllies]
-  )
+  );
 
   const isDisabled = React.useCallback(
     (item: CharWeaponItem) => {
-      if (isSelected(item)) return false
+      if (isSelected(item)) return false;
       // 같은 캐릭터의 다른 무기가 이미 선택되어 있으면 disabled
-      if (selectedAllies.some((a) => a.charCode === item.charCode)) return true
-      return selectedAllies.length >= 2
+      if (selectedAllies.some((a) => a.charCode === item.charCode)) return true;
+      return selectedAllies.length >= 2;
     },
     [selectedAllies, isSelected]
-  )
+  );
 
   const handleSelect = React.useCallback(
     (item: CharWeaponItem) => {
-      const sel: AllySelection = { charCode: item.charCode, weaponCode: item.weaponCode || null }
+      const sel: AllySelection = { charCode: item.charCode, weaponCode: item.weaponCode || null };
 
       // 이미 선택된 것이면 제거
       if (isSelected(item)) {
-        if (ally1 && ally1.charCode === item.charCode) updateUrl(ally2, null)
-        else if (ally2 && ally2.charCode === item.charCode) updateUrl(ally1, null)
-        return
+        if (ally1 && ally1.charCode === item.charCode) updateUrl(ally2, null);
+        else if (ally2 && ally2.charCode === item.charCode) updateUrl(ally1, null);
+        return;
       }
 
-      if (selectedAllies.length >= 2) return
+      if (selectedAllies.length >= 2) return;
 
-      if (!ally1) updateUrl(sel, null)
-      else updateUrl(ally1, sel)
+      if (!ally1) updateUrl(sel, null);
+      else updateUrl(ally1, sel);
     },
     [isSelected, ally1, ally2, selectedAllies, updateUrl]
-  )
+  );
 
   const removeAlly = React.useCallback(
     (charCode: number) => {
-      if (ally1?.charCode === charCode) updateUrl(ally2, null)
-      else if (ally2?.charCode === charCode) updateUrl(ally1, null)
+      if (ally1?.charCode === charCode) updateUrl(ally2, null);
+      else if (ally2?.charCode === charCode) updateUrl(ally1, null);
     },
     [ally1, ally2, updateUrl]
-  )
+  );
 
   // 검색 필터
-  const deferredSearch = React.useDeferredValue(search)
+  const deferredSearch = React.useDeferredValue(search);
   const filteredItems = React.useMemo(() => {
-    if (!deferredSearch.trim()) return ALL_CHAR_WEAPON_ITEMS
-    const q = deferredSearch.trim()
-    return ALL_CHAR_WEAPON_ITEMS.filter(
-      (item) => {
-        const name = getCharName(item.charCode) ?? ""
-        return matchesChosungSearch(name, q) || (item.weaponLabel ?? "").includes(q)
-      }
-    )
-  }, [deferredSearch, getCharName])
+    if (!deferredSearch.trim()) return getAllCharWeaponItems();
+    const q = deferredSearch.trim();
+    return getAllCharWeaponItems().filter((item) => {
+      const name = getCharName(item.charCode) ?? "";
+      return matchesChosungSearch(name, q) || (item.weaponLabel ?? "").includes(q);
+    });
+  }, [deferredSearch, getCharName]);
 
   // 그리드 컬럼 계산
   React.useEffect(() => {
-    const el = parentRef.current
-    if (!el) return
+    const el = parentRef.current;
+    if (!el) return;
     const update = () => {
-      const width = el.clientWidth
-      setColumns(Math.max(1, Math.floor(width / CELL_MIN_WIDTH)))
-    }
-    update()
-    const observer = new ResizeObserver(() => update())
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
+      const width = el.clientWidth;
+      setColumns(Math.max(1, Math.floor(width / CELL_MIN_WIDTH)));
+    };
+    update();
+    const observer = new ResizeObserver(() => update());
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
-  const rowCount = Math.ceil(filteredItems.length / columns)
+  const rowCount = Math.ceil(filteredItems.length / columns);
   const virtualizer = useVirtualizer({
     count: rowCount,
     getScrollElement: () => parentRef.current,
     estimateSize: () => ROW_HEIGHT,
     overscan: 3,
-  })
+  });
 
   const resolveWeaponLabel = (a: AllySelection) => {
-    const weapons = weaponData[String(a.charCode)]
-    const w = weapons?.find((w) => w.weaponCode === a.weaponCode)
-    return w?.label ?? "전체 무기"
-  }
+    const weapons = weaponData[String(a.charCode)];
+    const w = weapons?.find((w) => w.weaponCode === a.weaponCode);
+    return w?.label ?? "전체 무기";
+  };
 
   return (
     <>
@@ -296,7 +311,7 @@ export function WeaponAllySelector() {
           {search && (
             <button
               onClick={() => setSearch("")}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
+              className="absolute right-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] transition-colors"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -304,13 +319,11 @@ export function WeaponAllySelector() {
         </div>
 
         {filteredItems.length === 0 ? (
-          <p className="py-4 text-center text-xs text-[var(--color-muted-foreground)]">검색 결과 없음</p>
+          <p className="py-4 text-center text-xs text-[var(--color-muted-foreground)]">
+            검색 결과 없음
+          </p>
         ) : (
-          <div
-            ref={parentRef}
-            className="overflow-y-auto pr-0.5"
-            style={{ maxHeight: "340px" }}
-          >
+          <div ref={parentRef} className="overflow-y-auto pr-0.5" style={{ maxHeight: "340px" }}>
             <div
               style={{
                 height: virtualizer.getTotalSize(),
@@ -319,8 +332,8 @@ export function WeaponAllySelector() {
               }}
             >
               {virtualizer.getVirtualItems().map((virtualRow) => {
-                const startIndex = virtualRow.index * columns
-                const rowItems = filteredItems.slice(startIndex, startIndex + columns)
+                const startIndex = virtualRow.index * columns;
+                const rowItems = filteredItems.slice(startIndex, startIndex + columns);
                 return (
                   <div
                     key={virtualRow.key}
@@ -347,14 +360,14 @@ export function WeaponAllySelector() {
                       />
                     ))}
                   </div>
-                )
+                );
               })}
             </div>
           </div>
         )}
       </div>
     </>
-  )
+  );
 }
 
 // ─── 슬롯 (무기 포함) ─────────────────────────────────────────────────────────
@@ -365,10 +378,10 @@ function SlotWeaponFilled({
   weaponName,
   onRemove,
 }: {
-  code: number
-  name: string
-  weaponName: string
-  onRemove: () => void
+  code: number;
+  name: string;
+  weaponName: string;
+  onRemove: () => void;
 }) {
   return (
     <div className="flex flex-1 items-center gap-3 rounded-lg border border-[var(--color-primary)]/50 bg-[var(--color-primary)]/10 px-4 py-3">
@@ -387,10 +400,10 @@ function SlotWeaponFilled({
       </div>
       <button
         onClick={onRemove}
-        className="rounded-md p-0.5 text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)] transition-colors"
+        className="rounded-md min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80 hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] transition-colors"
       >
         <X className="h-4 w-4" />
       </button>
     </div>
-  )
+  );
 }
