@@ -59,11 +59,16 @@ export function calculateTrendScore(
   // 예: 평균 RP 10 증가 → 정규화 값 약 20
   const normalizedRP = (changes.averageRP.delta / 50) * 100;
 
+  // pickRate가 0이면 30% 가중치가 무효화되므로 winRate/averageRP에 재분배
+  const effectiveWeights = changes.pickRate.current > 0 || changes.pickRate.previous > 0
+    ? weights
+    : { winRate: 0.55, pickRate: 0, averageRP: 0.45 };
+
   // 가중 평균 계산
   const score =
-    normalizedWinRate * weights.winRate +
-    normalizedPickRate * weights.pickRate +
-    normalizedRP * weights.averageRP;
+    normalizedWinRate * effectiveWeights.winRate +
+    normalizedPickRate * effectiveWeights.pickRate +
+    normalizedRP * effectiveWeights.averageRP;
 
   // -100 ~ 100 범위로 제한
   return Math.max(-100, Math.min(100, score));

@@ -150,11 +150,14 @@ export async function GET(request: NextRequest) {
     // 이전 패치 데이터를 characterNum 기준 Map
     const prevMap = new Map(prevRates.map((r) => [r.characterNum, r]));
 
-    // 꿀챔 필터: 승률 ↑ 필수 (픽률은 무관)
+    // 꿀챔 필터: 승률 ↑ 필수 (픽률은 무관), 소표본 제외
+    const MIN_GAMES_CURRENT = 20;
+    const MIN_GAMES_PREV = 10;
     const honeyPicks: HoneyPickData[] = [];
     for (const curr of currentRates) {
+      if (curr.totalGames < MIN_GAMES_CURRENT) continue;
       const prev = prevMap.get(curr.characterNum);
-      if (!prev) continue;
+      if (!prev || prev.totalGames < MIN_GAMES_PREV) continue;
 
       const pickRateDelta = curr.pickRate - prev.pickRate;
       const winRateDelta = curr.winRate - prev.winRate;
