@@ -39,7 +39,7 @@ const eslintConfig = defineConfig([
 
       // ── 코드 품질 ──
       "no-console": ["warn", { allow: ["warn", "error"] }],
-      eqeqeq: ["error", "always"],
+      eqeqeq: ["error", "always", { null: "ignore" }],
       "prefer-const": "warn",
     },
   },

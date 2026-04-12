@@ -106,7 +106,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
         const [allyA, allyB] = selectedAllies
         scopedResults = trioResults.filter((rec) => {
           const third = getThirdCharacter(rec, allyA, allyB)
-          return third !== null && focusSet.has(third)
+          return third != null && focusSet.has(third)
         })
       } else if (selectedAllies.length === 1) {
         const selected = selectedAllies[0]

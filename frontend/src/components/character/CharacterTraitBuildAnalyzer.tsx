@@ -115,7 +115,7 @@ function SlotRow({ label, options, traitNames, config }: {
       </span>
       <div className="flex flex-wrap gap-2">
         {options.map((opt) => (
-          opt.code !== null && (
+          opt.code != null && (
             <TraitIcon
               key={opt.code}
               code={opt.code}
@@ -152,7 +152,7 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
       characterCode: String(characterCode),
       tier,
       patchVersion,
-      ...(bestWeapon !== null ? { bestWeapon: String(bestWeapon) } : {}),
+      ...(bestWeapon != null ? { bestWeapon: String(bestWeapon) } : {}),
     })
 
     fetch(`/api/builds/traits/main?${params}`)
@@ -259,14 +259,14 @@ export function CharacterTraitBuildAnalyzer({ characterCode, tier, patchVersion,
                           <div className="space-y-2">
                             <div className="flex flex-wrap gap-1.5">
                               {sec.optionTrait1Options.map((opt) => (
-                                opt.code !== null && (
+                                opt.code != null && (
                                   <TraitIcon key={opt.code} code={opt.code} name={traitNames[opt.code]} pickRate={opt.pickRate} winRate={opt.winRate} size={24} />
                                 )
                               ))}
                             </div>
                             <div className="flex flex-wrap gap-1.5">
                               {sec.optionTrait2Options.map((opt) => (
-                                opt.code !== null && (
+                                opt.code != null && (
                                   <TraitIcon key={opt.code} code={opt.code} name={traitNames[opt.code]} pickRate={opt.pickRate} winRate={opt.winRate} size={24} />
                                 )
                               ))}

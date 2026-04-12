@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 import { getItemGrade, GRADE_BG } from "./item-utils"
 
 export function ItemIcon({ code, size = 36 }: { code: number | null; size?: number }) {
-  if (code === null) {
+  if (code == null) {
     return (
       <div
         className="rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)]"

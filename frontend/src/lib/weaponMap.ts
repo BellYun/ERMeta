@@ -32,6 +32,6 @@ export const WEAPON_KOR_BY_CODE: Record<number, string> = {
  * → 정적 한국어 맵 우선, fallback: "무기 {code}"
  */
 export function resolveWeaponName(code: number | null): string {
-  if (code === null) return "전체 무기";
+  if (code == null) return "전체 무기";
   return WEAPON_KOR_BY_CODE[code] ?? `무기 ${code}`;
 }

@@ -34,7 +34,7 @@ export function PatchTooltip({
   if (!active || !payload?.length) return null
   const rawValue = payload[0]?.value
   const value = typeof rawValue === "number" ? rawValue : undefined
-  const patchLabel = label !== null ? String(label) : ""
+  const patchLabel = label != null ? String(label) : ""
   const note = patchLabel ? getCharacterPatchNote(selectedCode, patchLabel) : undefined
 
   return (
@@ -43,7 +43,7 @@ export function PatchTooltip({
       <p className="text-[var(--color-muted-foreground)]">
         {metricLabel}:{" "}
         <span className="font-medium text-[var(--color-foreground)]">
-          {value !== null && value !== undefined ? format(value) : "-"}
+          {value != null ? format(value) : "-"}
         </span>
       </p>
       {note && note.changes.length > 0 && (

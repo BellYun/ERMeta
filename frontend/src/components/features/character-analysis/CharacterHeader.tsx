@@ -139,7 +139,7 @@ export function CharacterHeader({
                 onClick={() => setSelectedWeapon(null)}
                 className={cn(
                   "flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all shrink-0",
-                  selectedWeapon === null
+                  selectedWeapon == null
                     ? "border-[var(--color-primary)]/50 bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
                     : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/30"
                 )}
@@ -198,7 +198,7 @@ export function CharacterHeader({
           <StatCard
             label="픽률"
             value={`${(stats?.pickRate ?? displayStat.pickRate).toFixed(1)}%`}
-            sub={selectedWeapon !== null && displayStat.pickRate !== (stats?.pickRate ?? displayStat.pickRate) ? `무기 ${displayStat.pickRate.toFixed(1)}%` : undefined}
+            sub={selectedWeapon != null && displayStat.pickRate !== (stats?.pickRate ?? displayStat.pickRate) ? `무기 ${displayStat.pickRate.toFixed(1)}%` : undefined}
             delta={hasPreviousData ? (stats?.pickRate ?? displayStat.pickRate) - (previousStats?.pickRate ?? displayPrevStat!.pickRate) : undefined}
             deltaLabel="%p"
             accent="blue"

@@ -136,18 +136,18 @@ export async function GET(request: NextRequest) {
   const weapon1Param = searchParams.get("weapon1")
   const weapon2Param = searchParams.get("weapon2")
 
-  const char1 = char1Param !== null ? parseInt(char1Param, 10) : null
-  const char2 = char2Param !== null ? parseInt(char2Param, 10) : null
-  const weapon1 = weapon1Param !== null ? parseInt(weapon1Param, 10) : null
-  const weapon2 = weapon2Param !== null ? parseInt(weapon2Param, 10) : null
+  const char1 = char1Param != null ? parseInt(char1Param, 10) : null
+  const char2 = char2Param != null ? parseInt(char2Param, 10) : null
+  const weapon1 = weapon1Param != null ? parseInt(weapon1Param, 10) : null
+  const weapon2 = weapon2Param != null ? parseInt(weapon2Param, 10) : null
 
-  if (char2 !== null && char1 === null) {
+  if (char2 != null && char1 == null) {
     return NextResponse.json({ error: "character2는 character1 없이 사용할 수 없습니다." }, { status: 400 })
   }
-  if (char1 !== null && char2 !== null && char1 === char2) {
+  if (char1 != null && char2 != null && char1 === char2) {
     return NextResponse.json({ error: "character1과 character2는 달라야 합니다." }, { status: 400 })
   }
-  if ((char1 !== null && EXCLUDED_CHARACTER_CODES.has(char1)) || (char2 !== null && EXCLUDED_CHARACTER_CODES.has(char2))) {
+  if ((char1 != null && EXCLUDED_CHARACTER_CODES.has(char1)) || (char2 != null && EXCLUDED_CHARACTER_CODES.has(char2))) {
     return NextResponse.json({ results: [] })
   }
 
@@ -167,14 +167,14 @@ export async function GET(request: NextRequest) {
       .order("total_games", { ascending: false })
       .limit(5000)
 
-    if (char1 !== null && char2 !== null) {
+    if (char1 != null && char2 != null) {
       const [low, high] = [char1, char2].sort((a, b) => a - b)
       query = query.or([
         `and(character1.eq.${low},character2.eq.${high})`,
         `and(character1.eq.${low},character3.eq.${high})`,
         `and(character2.eq.${low},character3.eq.${high})`,
       ].join(","))
-    } else if (char1 !== null) {
+    } else if (char1 != null) {
       query = query.or(`character1.eq.${char1},character2.eq.${char1},character3.eq.${char1}`)
     }
 
@@ -195,14 +195,14 @@ export async function GET(request: NextRequest) {
           EXCLUDED_CHARACTER_CODES.has(row.character3)) return false
 
       // 무기 필터링: 각 ally의 charCode가 row의 어떤 position에 매칭되는지 찾아서 weapon 비교
-      if (char1 !== null && weapon1 !== null) {
+      if (char1 != null && weapon1 != null) {
         const matched =
           (row.character1 === char1 && row.weapon_type1 === weapon1) ||
           (row.character2 === char1 && row.weapon_type2 === weapon1) ||
           (row.character3 === char1 && row.weapon_type3 === weapon1)
         if (!matched) return false
       }
-      if (char2 !== null && weapon2 !== null) {
+      if (char2 != null && weapon2 != null) {
         const matched =
           (row.character1 === char2 && row.weapon_type1 === weapon2) ||
           (row.character2 === char2 && row.weapon_type2 === weapon2) ||

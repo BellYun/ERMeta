@@ -149,7 +149,7 @@ export function VirtualCharacterGrid({
 
   // Auto-scroll to target code
   React.useEffect(() => {
-    if (scrollToCode === null || scrollToCode === undefined) return
+    if (scrollToCode == null) return
     const index = codes.indexOf(scrollToCode)
     if (index === -1) return
     const rowIndex = Math.floor(index / columns)

@@ -51,7 +51,7 @@ export function CharacterAnalysisClient({
   const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.MITHRIL)
    
   const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>((): number | null => {
-    if (initialWeapon !== null && initialWeapon !== undefined) return initialWeapon
+    if (initialWeapon != null) return initialWeapon
     if (initialStats?.weapons && initialStats.weapons.length > 0) {
       return initialStats.weapons[0].bestWeapon ?? null
     }
@@ -62,7 +62,7 @@ export function CharacterAnalysisClient({
   const handleWeaponChange = React.useCallback((weapon: number | null) => {
     setSelectedWeapon(weapon)
     const url = new URL(window.location.href)
-    if (weapon !== null) {
+    if (weapon != null) {
       url.searchParams.set("weapon", String(weapon))
     } else {
       url.searchParams.delete("weapon")
@@ -145,12 +145,12 @@ export function CharacterAnalysisClient({
   const currentPatch = patches[0] ?? null
 
   const selectedWeaponStat = React.useMemo(() => {
-    if (!stats?.weapons || selectedWeapon === null) return null
+    if (!stats?.weapons || selectedWeapon == null) return null
     return stats.weapons.find((w) => w.bestWeapon === selectedWeapon) ?? null
   }, [stats, selectedWeapon])
 
   const prevSelectedWeaponStat = React.useMemo(() => {
-    if (!previousStats?.weapons || selectedWeapon === null) return null
+    if (!previousStats?.weapons || selectedWeapon == null) return null
     return previousStats.weapons.find((w) => w.bestWeapon === selectedWeapon) ?? null
   }, [previousStats, selectedWeapon])
 
@@ -165,7 +165,7 @@ export function CharacterAnalysisClient({
         if (!s) return null
         let winRate: number
         let averageRP: number
-        if (selectedWeapon !== null && s.weapons) {
+        if (selectedWeapon != null && s.weapons) {
           const w = s.weapons.find((ws) => ws.bestWeapon === selectedWeapon)
           if (!w || w.totalGames === 0) return null
           winRate = w.winRate
@@ -181,11 +181,11 @@ export function CharacterAnalysisClient({
           averageRP: parseFloat(averageRP.toFixed(1)),
         }
       })
-      .filter((d): d is { patch: string; winRate: number; averageRP: number } => d !== null)
+      .filter((d): d is { patch: string; winRate: number; averageRP: number } => d != null)
       .reverse()
   }, [patches, allPatchStats, selectedWeapon])
 
-  const hasPreviousData = displayPrevStat !== null && (displayPrevStat.totalGames ?? 0) > 0
+  const hasPreviousData = displayPrevStat != null && (displayPrevStat.totalGames ?? 0) > 0
 
   return (
     <div className="flex flex-col gap-4 sm:gap-5">
@@ -254,7 +254,7 @@ export function CharacterAnalysisClient({
             {/* CTA */}
             <div className="mt-3 flex justify-end">
               <Link
-                href={`/synergy-detail?ally1=${code}${selectedWeapon !== null ? `&w1=${selectedWeapon}` : ""}`}
+                href={`/synergy-detail?ally1=${code}${selectedWeapon != null ? `&w1=${selectedWeapon}` : ""}`}
                 className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/30 px-3.5 py-2 text-xs font-semibold text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 transition-colors"
               >
                 <Users className="h-3.5 w-3.5" />

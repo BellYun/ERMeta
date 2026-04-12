@@ -64,7 +64,7 @@ export function deduplicateResults(
     for (let i = 0; i < results.length; i++) {
       const rec = results[i]
       const key = getThirdCharacter(rec, allyA, allyB)
-      if (key === null) continue
+      if (key == null) continue
       const existing = map.get(key)
       if (!existing || getSortValue(rec, sortBy, i) > getSortValue(existing.rec, sortBy, existing.idx)) {
         map.set(key, { rec, idx: i })
