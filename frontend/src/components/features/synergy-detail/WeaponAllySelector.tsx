@@ -222,7 +222,10 @@ export function WeaponAllySelector() {
         if (a2.weaponCode) params.set("w2", String(a2.weaponCode));
       }
       const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
-      router.replace(newUrl, { scroll: false });
+      // startTransition: URL 업데이트를 비긴급 작업으로 마킹 → 탭 응답성이 블로킹되지 않음
+      React.startTransition(() => {
+        router.replace(newUrl, { scroll: false });
+      });
     },
     [pathname, router]
   );
