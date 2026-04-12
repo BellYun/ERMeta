@@ -31,37 +31,36 @@ const SINGLE_ENTRY_CHARS = new Set([27]);
 
 /**
  * 캐릭터+무기 플랫 리스트 (가나다순, 기본무기 우선)
- * 지연 초기화 (lazy singleton) — 모듈 로드 시 즉시 실행하지 않고 첫 접근 시에만 생성
- * localeCompare("ko") 정렬이 하이드레이션을 블로킹하던 문제 해소
+ * Iter6: eager 모듈-로드 시 계산으로 전환 — 첫 렌더에서 localeCompare가 블로킹하던 문제 제거.
+ * dynamic import의 fallback(skeleton)이 이미 노출된 구간에 정렬을 끝내두므로
+ * React 첫 렌더가 빨라져 탭 interactive-ready 시점이 앞당겨진다.
  */
-let _allCharWeaponItems: CharWeaponItem[] | null = null;
-export function getAllCharWeaponItems(): CharWeaponItem[] {
-  if (!_allCharWeaponItems) {
-    const items: CharWeaponItem[] = [];
-    const sortedCodes = Array.from(getFallbackMap().keys())
-      .filter((code) => !EXCLUDED_CHARACTER_CODES.has(code))
-      .sort((a, b) =>
-        (getFallbackMap().get(a) ?? "").localeCompare(getFallbackMap().get(b) ?? "", "ko")
-      );
+function buildAllCharWeaponItems(): CharWeaponItem[] {
+  const items: CharWeaponItem[] = [];
+  const sortedCodes = Array.from(getFallbackMap().keys())
+    .filter((code) => !EXCLUDED_CHARACTER_CODES.has(code))
+    .sort((a, b) =>
+      (getFallbackMap().get(a) ?? "").localeCompare(getFallbackMap().get(b) ?? "", "ko")
+    );
 
-    for (const charCode of sortedCodes) {
-      const weapons = weaponData[String(charCode)];
-
-      // 무기 분류 안 하는 캐릭터 또는 무기 데이터 없는 경우
-      if (SINGLE_ENTRY_CHARS.has(charCode) || !weapons || weapons.length === 0) {
-        items.push({ charCode, weaponCode: 0, weaponLabel: "" });
-        continue;
-      }
-
-      // 기본무기 우선
-      const sorted = [...weapons].sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
-      for (const w of sorted) {
-        items.push({ charCode, weaponCode: w.weaponCode, weaponLabel: w.label });
-      }
+  for (const charCode of sortedCodes) {
+    const weapons = weaponData[String(charCode)];
+    if (SINGLE_ENTRY_CHARS.has(charCode) || !weapons || weapons.length === 0) {
+      items.push({ charCode, weaponCode: 0, weaponLabel: "" });
+      continue;
     }
-    _allCharWeaponItems = items;
+    const sorted = [...weapons].sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
+    for (const w of sorted) {
+      items.push({ charCode, weaponCode: w.weaponCode, weaponLabel: w.label });
+    }
   }
-  return _allCharWeaponItems;
+  return items;
+}
+
+const ALL_CHAR_WEAPON_ITEMS: CharWeaponItem[] = buildAllCharWeaponItems();
+
+export function getAllCharWeaponItems(): CharWeaponItem[] {
+  return ALL_CHAR_WEAPON_ITEMS;
 }
 
 // ─── 타입 ──────────────────────────────────────────────────────────────────
