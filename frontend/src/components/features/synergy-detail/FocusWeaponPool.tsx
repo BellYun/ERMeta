@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { useVirtualizer } from "@tanstack/react-virtual"
-import { X, Search, ChevronDown, ChevronUp } from "lucide-react"
-import Image from "next/image"
-import * as React from "react"
-import { useL10n } from "@/components/L10nProvider"
-import { useFocusCharWeapons } from "@/hooks/useFocusCharWeapons"
-import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMap"
-import { cn } from "@/lib/utils"
-import { getFallbackMap } from "../synergy/constants"
-import { matchesChosungSearch } from "../synergy/utils"
-import { ALL_CHAR_WEAPON_ITEMS, type CharWeaponItem } from "./WeaponAllySelector"
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { X, Search, ChevronDown, ChevronUp } from "lucide-react";
+import Image from "next/image";
+import * as React from "react";
+import { useL10n } from "@/components/L10nProvider";
+import { useFocusCharWeapons } from "@/hooks/useFocusCharWeapons";
+import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMap";
+import { cn } from "@/lib/utils";
+import { getFallbackMap } from "../synergy/constants";
+import { matchesChosungSearch } from "../synergy/utils";
+import { getAllCharWeaponItems, type CharWeaponItem } from "./WeaponAllySelector";
 
-const CELL_MIN_WIDTH = 72
-const ROW_HEIGHT = 72
+const CELL_MIN_WIDTH = 72;
+const ROW_HEIGHT = 72;
 
 const FocusCell = React.memo(function FocusCell({
   item,
@@ -21,10 +21,10 @@ const FocusCell = React.memo(function FocusCell({
   selected,
   onSelect,
 }: {
-  item: CharWeaponItem
-  charName: string
-  selected: boolean
-  onSelect: (charCode: number, weaponCode: number) => void
+  item: CharWeaponItem;
+  charName: string;
+  selected: boolean;
+  onSelect: (charCode: number, weaponCode: number) => void;
 }) {
   return (
     <button
@@ -34,7 +34,7 @@ const FocusCell = React.memo(function FocusCell({
         "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors",
         selected
           ? "bg-[var(--color-primary)]/20 ring-1 ring-[var(--color-primary)]"
-          : "hover:bg-[var(--color-surface-2)]"
+          : "hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80"
       )}
     >
       <div className="relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]">
@@ -55,31 +55,31 @@ const FocusCell = React.memo(function FocusCell({
         </span>
       )}
     </button>
-  )
-})
+  );
+});
 
 export function FocusWeaponPool() {
-  const { l10n } = useL10n()
-  const { focusCharWeapons, setFocusCharWeapons, toggleFocus } = useFocusCharWeapons()
-  const [isExpanded, setIsExpanded] = React.useState(false)
-  const [search, setSearch] = React.useState("")
-  const parentRef = React.useRef<HTMLDivElement>(null)
-  const [columns, setColumns] = React.useState(4)
+  const { l10n } = useL10n();
+  const { focusCharWeapons, setFocusCharWeapons, toggleFocus } = useFocusCharWeapons();
+  const [isExpanded, setIsExpanded] = React.useState(false);
+  const [search, setSearch] = React.useState("");
+  const parentRef = React.useRef<HTMLDivElement>(null);
+  const [columns, setColumns] = React.useState(4);
 
   const getCharName = React.useCallback(
     (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
     [l10n]
-  )
+  );
 
-  const deferredSearch = React.useDeferredValue(search)
+  const deferredSearch = React.useDeferredValue(search);
   const filteredItems = React.useMemo(() => {
-    if (!deferredSearch.trim()) return ALL_CHAR_WEAPON_ITEMS
-    const q = deferredSearch.trim()
-    return ALL_CHAR_WEAPON_ITEMS.filter((item) => {
-      const name = getCharName(item.charCode) ?? ""
-      return matchesChosungSearch(name, q) || (item.weaponLabel ?? "").includes(q)
-    })
-  }, [deferredSearch, getCharName])
+    if (!deferredSearch.trim()) return getAllCharWeaponItems();
+    const q = deferredSearch.trim();
+    return getAllCharWeaponItems().filter((item) => {
+      const name = getCharName(item.charCode) ?? "";
+      return matchesChosungSearch(name, q) || (item.weaponLabel ?? "").includes(q);
+    });
+  }, [deferredSearch, getCharName]);
 
   const isSelected = React.useCallback(
     (item: CharWeaponItem) =>
@@ -87,52 +87,58 @@ export function FocusWeaponPool() {
         (f) => f.charCode === item.charCode && f.weaponCode === item.weaponCode
       ),
     [focusCharWeapons]
-  )
+  );
 
   React.useEffect(() => {
-    if (!isExpanded) return
-    const el = parentRef.current
-    if (!el) return
+    if (!isExpanded) return;
+    const el = parentRef.current;
+    if (!el) return;
 
     const update = () => {
-      const width = el.clientWidth
-      setColumns(Math.max(1, Math.floor(width / CELL_MIN_WIDTH)))
-    }
+      const width = el.clientWidth;
+      setColumns(Math.max(1, Math.floor(width / CELL_MIN_WIDTH)));
+    };
 
-    update()
-    const observer = new ResizeObserver(() => update())
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [isExpanded])
+    update();
+    const observer = new ResizeObserver(() => update());
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [isExpanded]);
 
-  const rowCount = Math.ceil(filteredItems.length / columns)
+  const rowCount = Math.ceil(filteredItems.length / columns);
   const virtualizer = useVirtualizer({
     count: rowCount,
     getScrollElement: () => parentRef.current,
     estimateSize: () => ROW_HEIGHT,
     overscan: 3,
-  })
+  });
 
   const resolveLabel = (f: { charCode: number; weaponCode: number }) => {
-    const item = ALL_CHAR_WEAPON_ITEMS.find(
+    const item = getAllCharWeaponItems().find(
       (i) => i.charCode === f.charCode && i.weaponCode === f.weaponCode
-    )
-    const name = getCharName(f.charCode)
-    return item?.weaponLabel ? `${name} (${item.weaponLabel})` : name
-  }
+    );
+    const name = getCharName(f.charCode);
+    return item?.weaponLabel ? `${name} (${item.weaponLabel})` : name;
+  };
 
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm overflow-hidden">
-      {/* 접이식 헤더 */}
-      <button
+      {/* 접이식 헤더 — button 중첩 방지를 위해 div+role 사용 */}
+      <div
+        role="button"
+        tabIndex={0}
         onClick={() => setIsExpanded((prev) => !prev)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setIsExpanded((prev) => !prev);
+          }
+        }}
         aria-expanded={isExpanded}
-        className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-[var(--color-surface-2)] transition-colors"
+        className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80 transition-colors cursor-pointer"
       >
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-[var(--color-foreground)]">
-            내 캐릭터 풀
-          </span>
+          <span className="text-xs font-medium text-[var(--color-foreground)]">내 캐릭터 풀</span>
           {focusCharWeapons.length > 0 && (
             <span className="rounded-full bg-[var(--color-primary)]/20 px-1.5 py-0.5 text-[10px] font-medium text-[var(--color-primary)]">
               {focusCharWeapons.length}개
@@ -148,10 +154,11 @@ export function FocusWeaponPool() {
           {focusCharWeapons.length > 0 && (
             <button
               onClick={(e) => {
-                e.stopPropagation()
-                setFocusCharWeapons([])
+                e.stopPropagation();
+                setFocusCharWeapons([]);
               }}
-              className="text-[10px] text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors px-1.5 py-0.5 rounded hover:bg-[var(--color-surface-2)]"
+              onTouchEnd={(e) => e.stopPropagation()}
+              className="text-[10px] text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center rounded hover:bg-[var(--color-surface-2)]"
             >
               초기화
             </button>
@@ -162,7 +169,7 @@ export function FocusWeaponPool() {
             <ChevronDown className="h-4 w-4 text-[var(--color-muted-foreground)]" />
           )}
         </div>
-      </button>
+      </div>
 
       {/* 접힌 상태: 선택된 칩 표시 */}
       {!isExpanded && focusCharWeapons.length > 0 && (
@@ -171,7 +178,7 @@ export function FocusWeaponPool() {
             <button
               key={`${f.charCode}-${f.weaponCode}`}
               onClick={() => toggleFocus(f.charCode, f.weaponCode)}
-              className="inline-flex items-center gap-1 rounded-md border border-[var(--color-primary)]/40 bg-[var(--color-primary)]/10 px-2 py-1 text-[10px] text-[var(--color-foreground)] hover:bg-[var(--color-primary)]/20 transition-colors"
+              className="inline-flex items-center gap-1 rounded-md border border-[var(--color-primary)]/40 bg-[var(--color-primary)]/10 px-2 py-1.5 min-h-[44px] text-[10px] text-[var(--color-foreground)] hover:bg-[var(--color-primary)]/20 active:bg-[var(--color-primary)]/30 transition-colors"
             >
               <span className="relative h-4 w-4 shrink-0 overflow-hidden rounded">
                 <Image
@@ -203,7 +210,7 @@ export function FocusWeaponPool() {
             {search && (
               <button
                 onClick={() => setSearch("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
+                className="absolute right-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] transition-colors"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -211,13 +218,11 @@ export function FocusWeaponPool() {
           </div>
 
           {filteredItems.length === 0 ? (
-            <p className="py-4 text-center text-xs text-[var(--color-muted-foreground)]">검색 결과 없음</p>
+            <p className="py-4 text-center text-xs text-[var(--color-muted-foreground)]">
+              검색 결과 없음
+            </p>
           ) : (
-            <div
-              ref={parentRef}
-              className="overflow-y-auto pr-0.5"
-              style={{ maxHeight: "340px" }}
-            >
+            <div ref={parentRef} className="overflow-y-auto pr-0.5" style={{ maxHeight: "340px" }}>
               <div
                 style={{
                   height: virtualizer.getTotalSize(),
@@ -226,8 +231,8 @@ export function FocusWeaponPool() {
                 }}
               >
                 {virtualizer.getVirtualItems().map((virtualRow) => {
-                  const startIndex = virtualRow.index * columns
-                  const rowItems = filteredItems.slice(startIndex, startIndex + columns)
+                  const startIndex = virtualRow.index * columns;
+                  const rowItems = filteredItems.slice(startIndex, startIndex + columns);
                   return (
                     <div
                       key={virtualRow.key}
@@ -253,7 +258,7 @@ export function FocusWeaponPool() {
                         />
                       ))}
                     </div>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -261,5 +266,5 @@ export function FocusWeaponPool() {
         </div>
       )}
     </div>
-  )
+  );
 }
