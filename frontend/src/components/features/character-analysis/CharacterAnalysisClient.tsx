@@ -51,7 +51,7 @@ export function CharacterAnalysisClient({
   const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.MITHRIL)
    
   const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>((): number | null => {
-    if (initialWeapon !== null) return initialWeapon
+    if (initialWeapon !== null && initialWeapon !== undefined) return initialWeapon
     if (initialStats?.weapons && initialStats.weapons.length > 0) {
       return initialStats.weapons[0].bestWeapon ?? null
     }
