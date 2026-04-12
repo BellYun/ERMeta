@@ -197,6 +197,19 @@ export function WeaponAllySelector() {
     [ally1, ally2]
   );
 
+  /**
+   * handleSelect/removeAlly가 매 렌더마다 재생성되면 CharWeaponCell(React.memo)의
+   * onSelect prop이 바뀌어 90+ 셀이 전부 리렌더됨.
+   * 최신 ally 값을 ref로 동기화하고 콜백은 updateUrl에만 의존시켜 identity를 고정.
+   */
+  const allyRef = React.useRef<{ ally1: AllySelection | null; ally2: AllySelection | null }>({
+    ally1,
+    ally2,
+  });
+  React.useEffect(() => {
+    allyRef.current = { ally1, ally2 };
+  }, [ally1, ally2]);
+
   const updateUrl = React.useCallback(
     (a1: AllySelection | null, a2: AllySelection | null) => {
       const params = new URLSearchParams();
@@ -234,29 +247,21 @@ export function WeaponAllySelector() {
 
   const handleSelect = React.useCallback(
     (item: CharWeaponItem) => {
-      const sel: AllySelection = { charCode: item.charCode, weaponCode: item.weaponCode || null };
-
-      // 이미 선택된 것이면 제거
-      if (isSelected(item)) {
-        if (ally1 && ally1.charCode === item.charCode) updateUrl(ally2, null);
-        else if (ally2 && ally2.charCode === item.charCode) updateUrl(ally1, null);
-        return;
-      }
-
-      if (selectedAllies.length >= 2) return;
-
-      if (!ally1) updateUrl(sel, null);
-      else updateUrl(ally1, sel);
+      const { ally1: a1, ally2: a2 } = allyRef.current;
+      const next = computeNextAllies(a1, a2, item);
+      if (!next) return;
+      updateUrl(next[0], next[1]);
     },
-    [isSelected, ally1, ally2, selectedAllies, updateUrl]
+    [updateUrl]
   );
 
   const removeAlly = React.useCallback(
     (charCode: number) => {
-      if (ally1?.charCode === charCode) updateUrl(ally2, null);
-      else if (ally2?.charCode === charCode) updateUrl(ally1, null);
+      const { ally1: a1, ally2: a2 } = allyRef.current;
+      if (a1?.charCode === charCode) updateUrl(a2, null);
+      else if (a2?.charCode === charCode) updateUrl(a1, null);
     },
-    [ally1, ally2, updateUrl]
+    [updateUrl]
   );
 
   // 검색 필터
