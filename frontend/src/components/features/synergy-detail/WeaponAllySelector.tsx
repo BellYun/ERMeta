@@ -184,14 +184,39 @@ export function WeaponAllySelector() {
     [l10n]
   );
 
-  const ally1 = React.useMemo(
+  const urlAlly1 = React.useMemo(
     () => parseAllyFromParams(searchParams, "ally1", "w1"),
     [searchParams]
   );
-  const ally2 = React.useMemo(
+  const urlAlly2 = React.useMemo(
     () => parseAllyFromParams(searchParams, "ally2", "w2"),
     [searchParams]
   );
+
+  /**
+   * 1번 탭 즉시 반응 핵심:
+   * - URL을 source of truth로만 두면 탭 → router.replace → 라우트 전환 → searchParams 재방출 →
+   *   ally 재계산 → 슬롯 렌더까지 수백 ms 체감됨.
+   * - 로컬 optimistic state로 탭 즉시 슬롯 채움, URL 동기화는 백그라운드에서 처리.
+   * - 외부(뒤로가기/공유링크)로 URL이 바뀌면 skipNextSyncRef가 false라서 local로 역동기화됨.
+   */
+  const [localAlly1, setLocalAlly1] = React.useState<AllySelection | null>(urlAlly1);
+  const [localAlly2, setLocalAlly2] = React.useState<AllySelection | null>(urlAlly2);
+  const skipNextSyncRef = React.useRef(false);
+
+  React.useEffect(() => {
+    if (skipNextSyncRef.current) {
+      // 방금 우리가 푸시한 URL 반영 — local은 이미 최신
+      skipNextSyncRef.current = false;
+      return;
+    }
+    setLocalAlly1(urlAlly1);
+    setLocalAlly2(urlAlly2);
+  }, [urlAlly1, urlAlly2]);
+
+  const ally1 = localAlly1;
+  const ally2 = localAlly2;
+
   const selectedAllies = React.useMemo(
     () => [ally1, ally2].filter(Boolean) as AllySelection[],
     [ally1, ally2]
@@ -248,23 +273,39 @@ export function WeaponAllySelector() {
     [selectedAllies, isSelected]
   );
 
-  const handleSelect = React.useCallback(
-    (item: CharWeaponItem) => {
-      const { ally1: a1, ally2: a2 } = allyRef.current;
-      const next = computeNextAllies(a1, a2, item);
-      if (!next) return;
+  const commitSelection = React.useCallback(
+    (next: [AllySelection | null, AllySelection | null]) => {
+      // 0) ref를 즉시 갱신 → 빠른 연속 탭에서도 allyRef.current가 최신값을 가짐
+      //    (useEffect 기반 sync는 렌더 커밋 이후에 발생하므로 tight loop에서는 stale 가능)
+      allyRef.current = { ally1: next[0], ally2: next[1] };
+      // 1) 로컬 상태 업데이트 → 슬롯/셀 즉각 시각 반응
+      setLocalAlly1(next[0]);
+      setLocalAlly2(next[1]);
+      // 2) useEffect가 이 URL 변화를 local로 되돌리지 않도록 스킵 플래그 설정
+      skipNextSyncRef.current = true;
+      // 3) URL 동기화는 startTransition 안에서 비동기로
       updateUrl(next[0], next[1]);
     },
     [updateUrl]
   );
 
+  const handleSelect = React.useCallback(
+    (item: CharWeaponItem) => {
+      const { ally1: a1, ally2: a2 } = allyRef.current;
+      const next = computeNextAllies(a1, a2, item);
+      if (!next) return;
+      commitSelection(next);
+    },
+    [commitSelection]
+  );
+
   const removeAlly = React.useCallback(
     (charCode: number) => {
       const { ally1: a1, ally2: a2 } = allyRef.current;
-      if (a1?.charCode === charCode) updateUrl(a2, null);
-      else if (a2?.charCode === charCode) updateUrl(a1, null);
+      if (a1?.charCode === charCode) commitSelection([a2, null]);
+      else if (a2?.charCode === charCode) commitSelection([a1, null]);
     },
-    [updateUrl]
+    [commitSelection]
   );
 
   // 검색 필터
