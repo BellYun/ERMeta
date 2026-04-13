@@ -12,6 +12,9 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
+    "bench:inp": "node scripts/inp-benchmark.mjs",
+    "inp:ci": "node scripts/inp-ci.mjs",
+    "lhci": "lhci autorun --collect.startServerCommand='npm run start' --collect.startServerReadyPattern='Ready in'",
     "fetch-l10n": "node --env-file=.env.local scripts/fetch-l10n.mjs",
     "prepare": "cd .. && husky"
   },

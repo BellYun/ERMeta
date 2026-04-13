@@ -11,3 +11,11 @@
 # Backend
 backend/dist/
 node_modules/
+# Perf CI artifacts
+.lighthouseci/
+lh-*.json
+lh-*.html
+lh-csr
+lh-isr
+lighthouse-character-*
+inp-ci-result.json
