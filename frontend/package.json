@@ -12,6 +12,9 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
+    "bench:inp": "node scripts/inp-benchmark.mjs",
+    "inp:ci": "node scripts/inp-ci.mjs",
+    "lhci": "lhci autorun --collect.startServerCommand='npm run start' --collect.startServerReadyPattern='Ready in'",
     "fetch-l10n": "node --env-file=.env.local scripts/fetch-l10n.mjs",
     "prepare": "cd .. && husky"
   },
@@ -41,6 +44,7 @@
     "eslint-plugin-unused-imports": "^4.4.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
+    "playwright": "^1.59.1",
     "prettier": "3.8.2",
     "typescript": "^5"
   },
