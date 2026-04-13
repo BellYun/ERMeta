@@ -159,7 +159,13 @@ export function SynergyDetailResults() {
   }, [selectedAllies, deferredAllies]);
   const showLoading = loading || isAllyChangeInFlight;
   const [copied, setCopied] = React.useState(false);
-  const [visibleCount, setVisibleCount] = React.useState(30);
+  // 첫 paint에는 6 카드만 commit해서 click duration을 짧게 가져가고,
+  // 나머지는 requestIdleCallback로 idle frame마다 6장씩 점진 mount.
+  // "더보기" 버튼은 사용자 의도가 명확하므로 30 단위 추가.
+  const INITIAL_VISIBLE = 6;
+  const IDLE_BATCH = 6;
+  const IDLE_TARGET = 30;
+  const [visibleCount, setVisibleCount] = React.useState(INITIAL_VISIBLE);
   const [traitNames, setTraitNames] = React.useState<Record<number, string>>({});
 
   const getCharName = React.useCallback(
@@ -232,13 +238,39 @@ export function SynergyDetailResults() {
     }, 300);
 
     setLoading(true);
-    setVisibleCount(30);
+    setVisibleCount(INITIAL_VISIBLE);
     return () => {
       clearTimeout(timerId);
       controller.abort();
       setLoading(false);
     };
   }, [deferredAllies, sortBy]);
+
+  // 점진적 카드 mount — visibleCount를 idle frame마다 6씩 늘려 IDLE_TARGET까지 확장.
+  // 사용자 click의 commit이 30개가 아닌 6개만 처리하므로 INP duration이 줄어들고,
+  // 이어지는 idle frame에서 나머지 카드가 채워져 사용자가 스크롤하기 전에 mount 완료.
+  React.useEffect(() => {
+    if (visibleCount >= IDLE_TARGET) return;
+    if (results.length === 0) return;
+    type IdleId = ReturnType<typeof setTimeout> | number;
+    const ric = (cb: () => void): IdleId =>
+      typeof requestIdleCallback === "function"
+        ? requestIdleCallback(cb, { timeout: 500 })
+        : setTimeout(cb, 0);
+    const cic = (id: IdleId) => {
+      if (typeof cancelIdleCallback === "function" && typeof id === "number") {
+        cancelIdleCallback(id);
+      } else {
+        clearTimeout(id as ReturnType<typeof setTimeout>);
+      }
+    };
+    const id = ric(() => {
+      React.startTransition(() => {
+        setVisibleCount((c) => Math.min(c + IDLE_BATCH, IDLE_TARGET));
+      });
+    });
+    return () => cic(id);
+  }, [visibleCount, results.length]);
 
   // Two-level aggregation + filtering — deferred 기반
   const recommendations = React.useMemo(() => {
