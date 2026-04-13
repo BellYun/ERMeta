@@ -132,9 +132,26 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
   disabled: boolean;
   onSelect: (item: CharWeaponItem) => void;
 }) {
+  // 모바일 INP 워스트케이스 핵심:
+  // - iOS Safari/WebKit은 pointerup 이후 click을 ~100ms 늦게 fire (이중 탭 줌 잔재).
+  // - onClick에 핸들러를 두면 click duration이 그 100ms를 그대로 흡수해 INP가 부풀려진다.
+  // - onPointerUp에서 처리하면 사용자 손이 떨어지는 즉시 반응. click delay를 우회.
+  // - 키보드 접근성은 onKeyDown(Enter/Space)로 보존, focus ring/disabled 동작은 유지.
+  // - touch-action: manipulation은 더블탭 줌 비활성으로 click 자체도 조금 빨라지지만
+  //   pointerup 직접 처리 쪽이 효과가 더 크다.
+  const handleActivate = React.useCallback(() => {
+    if (disabled) return;
+    onSelect(item);
+  }, [disabled, item, onSelect]);
   return (
     <button
-      onClick={() => onSelect(item)}
+      onPointerUp={handleActivate}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleActivate();
+        }
+      }}
       disabled={disabled}
       title={`${charName} (${item.weaponLabel})`}
       style={{ touchAction: "manipulation" }}
