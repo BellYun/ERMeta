@@ -168,13 +168,16 @@ export function SynergyDetailResults() {
   );
   const getTraitName = React.useCallback((code: number) => traitNames[code] ?? null, [traitNames]);
 
-  // 특성 이름 로드
+  // 특성 이름 로드 — 페이지 mount 시 1회. setTraitNames는 큰 객체 commit이고
+  // 사용자의 탭 click과 타이밍이 겹치면 그 commit phase에 끼어 click duration이 늘어나므로
+  // startTransition으로 비긴급 처리.
   React.useEffect(() => {
     fetch("/api/traits/names")
       .then((res) => res.json())
       .then((d) => {
-        console.log("[SynergyDetailResults] traitNames:", d.names);
-        setTraitNames(d.names ?? {});
+        React.startTransition(() => {
+          setTraitNames(d.names ?? {});
+        });
       })
       .catch(() => {});
   }, []);
