@@ -1,28 +1,72 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { analytics } from "@/lib/analytics"
-import { cn } from "@/lib/utils"
-import { useFilter } from "./FilterContext"
+import * as React from "react";
+import { analytics } from "@/lib/analytics";
+import { cn } from "@/lib/utils";
+import { useFilter } from "./FilterContext";
 
 const TIER_OPTIONS = [
   { value: "DIAMOND", label: "다이아" },
   { value: "METEORITE", label: "메테오라이트" },
   { value: "MITHRIL", label: "미스릴" },
-]
+];
 
 export function GlobalFilter() {
-  const { patch, tier, patches, setPatch, setTier } = useFilter()
+  const { patch, tier, patches, setPatch, setTier } = useFilter();
+  const tierRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
+
+  const selectTier = React.useCallback(
+    (value: string) => {
+      setTier(value);
+      analytics.tierGroupSelected(value);
+    },
+    [setTier]
+  );
+
+  const focusTierAt = React.useCallback(
+    (index: number) => {
+      const normalized = (index + TIER_OPTIONS.length) % TIER_OPTIONS.length;
+      const next = TIER_OPTIONS[normalized];
+      if (!next) return;
+      tierRefs.current[normalized]?.focus();
+      selectTier(next.value);
+    },
+    [selectTier]
+  );
+
+  const handleTierKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+    switch (e.key) {
+      case "ArrowRight":
+      case "ArrowDown":
+        e.preventDefault();
+        focusTierAt(index + 1);
+        break;
+      case "ArrowLeft":
+      case "ArrowUp":
+        e.preventDefault();
+        focusTierAt(index - 1);
+        break;
+      case "Home":
+        e.preventDefault();
+        focusTierAt(0);
+        break;
+      case "End":
+        e.preventDefault();
+        focusTierAt(TIER_OPTIONS.length - 1);
+        break;
+    }
+  };
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3">
       {/* Patch selector */}
       <div className="relative">
         <select
+          aria-label="패치 선택"
           value={patch || patches[0] || ""}
           onChange={(e) => {
-            setPatch(e.target.value)
-            analytics.patchSelected(e.target.value)
+            setPatch(e.target.value);
+            analytics.patchSelected(e.target.value);
           }}
           className={cn(
             "appearance-none w-full sm:w-auto",
@@ -47,33 +91,52 @@ export function GlobalFilter() {
           )}
         </select>
         <div className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2">
-          <svg className="w-3.5 h-3.5 text-[var(--color-muted-foreground)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <svg
+            className="w-3.5 h-3.5 text-[var(--color-muted-foreground)]"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2.5}
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
           </svg>
         </div>
       </div>
 
       {/* Tier segmented control */}
-      <div className="flex rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] p-0.5">
-        {TIER_OPTIONS.map(({ value, label }) => (
-          <button
-            key={value}
-            onClick={() => {
-              setTier(value)
-              analytics.tierGroupSelected(value)
-            }}
-            className={cn(
-              "px-3 py-1.5 rounded-md text-xs sm:text-[13px] font-medium transition-all whitespace-nowrap",
-              "min-h-[32px] touch-manipulation",
-              tier === value
-                ? "bg-[var(--color-primary)]/15 text-[var(--color-primary)] shadow-sm"
-                : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
-            )}
-          >
-            {label}
-          </button>
-        ))}
+      <div
+        role="radiogroup"
+        aria-label="티어 필터"
+        className="flex rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] p-0.5"
+      >
+        {TIER_OPTIONS.map(({ value, label }, index) => {
+          const isSelected = tier === value;
+          return (
+            <button
+              key={value}
+              ref={(el) => {
+                tierRefs.current[index] = el;
+              }}
+              type="button"
+              role="radio"
+              aria-checked={isSelected}
+              tabIndex={isSelected ? 0 : -1}
+              onClick={() => selectTier(value)}
+              onKeyDown={(e) => handleTierKeyDown(e, index)}
+              className={cn(
+                "px-3 py-1.5 rounded-md text-xs sm:text-[13px] font-medium transition-all whitespace-nowrap",
+                "min-h-[32px] touch-manipulation",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
+                isSelected
+                  ? "bg-[var(--color-primary)]/15 text-[var(--color-primary)] shadow-sm"
+                  : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
+              )}
+            >
+              {label}
+            </button>
+          );
+        })}
       </div>
     </div>
-  )
+  );
 }
