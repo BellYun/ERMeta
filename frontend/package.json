@@ -17,7 +17,6 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:install": "playwright install --with-deps chromium",
-    "lhci": "lhci autorun --collect.startServerCommand='npm run start' --collect.startServerReadyPattern='Ready in'",
     "fetch-l10n": "node --env-file=.env.local scripts/fetch-l10n.mjs",
     "prepare": "cd .. && husky"
   },
