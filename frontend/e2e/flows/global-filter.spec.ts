@@ -2,7 +2,12 @@ import { expect, test } from "@playwright/test";
 
 // 사용자 여정: 홈에서 패치/티어 필터를 바꾸면 TierRankingTable이 /api/character/mithril-rp-ranking
 // 을 새 쿼리로 다시 호출한다. (FilterContext는 URL이 아니라 React state 기반이므로 검증 기준은 네트워크다.)
+// Supabase secrets 없으면 patches가 비어 FilterContext 기본값이 세팅되지 않아 refetch 자체가 안 일어난다.
+const hasSupabase = !!process.env.NEXT_PUBLIC_SUPABASE_URL;
+
 test.describe("Flow: Global Filter → 랭킹 refetch", () => {
+  test.skip(!hasSupabase, "NEXT_PUBLIC_SUPABASE_URL 미주입 (fork PR 등) → 실 DB 의존 테스트 skip");
+
   test("'다이아' 티어 버튼을 누르면 ranking API를 tier=DIAMOND 로 재호출한다", async ({ page }) => {
     await page.goto("/");
 

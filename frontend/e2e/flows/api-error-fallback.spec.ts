@@ -4,7 +4,12 @@ import { expect, test } from "@playwright/test";
 // 떨어지고(HoneyPicksSection 내부 error-state 렌더) 티어 랭킹은 정상 작동해 부분 장애 격리가 유지된다.
 // NOTE: HoneyPicksSection 초기 렌더는 서버(fetchHoneyPicksServer)를 거치므로 첫 페이로드는 정상 수신된다.
 //       page.route는 브라우저 요청만 가로채므로, 필터 변경 후 client re-fetch를 통해 에러를 주입한다.
+// Supabase secrets 없으면 초기 SSR이 이미 실패 상태라 "정상 → 에러 전환" 시나리오 자체가 성립하지 않는다.
+const hasSupabase = !!process.env.NEXT_PUBLIC_SUPABASE_URL;
+
 test.describe("Flow: API 장애 → HoneyPicks 에러 상태", () => {
+  test.skip(!hasSupabase, "NEXT_PUBLIC_SUPABASE_URL 미주입 (fork PR 등) → 실 DB 의존 테스트 skip");
+
   test("honey-picks 500 주입 + 필터 변경 시 에러 메시지가 노출되고 티어 랭킹은 유지된다", async ({
     page,
   }) => {
