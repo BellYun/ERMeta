@@ -132,9 +132,27 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
   disabled: boolean;
   onSelect: (item: CharWeaponItem) => void;
 }) {
+  // iOS Safari 의 pointerup→click ~100ms dispatch gap 을 흡수하려고 pointer 단계에서 처리.
+  // CPU 10x throttle 모바일 에뮬에서 click p95 가 pointerup p95 대비 +180~330ms 더 걸리는
+  // 패턴을 재현했음 (.omc/touch-delay-2026-04-14.md). 키보드 동작은 onKeyDown 으로 보존.
+  const activate = () => {
+    if (disabled) return;
+    onSelect(item);
+  };
   return (
     <button
-      onClick={() => onSelect(item)}
+      type="button"
+      onPointerUp={(e) => {
+        // 주 버튼(좌클릭/터치)만 활성화. 우클릭/중클릭은 무시하여 의도치 않은 활성화 방지.
+        if (e.button !== 0) return;
+        activate();
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          activate();
+        }
+      }}
       disabled={disabled}
       title={`${charName} (${item.weaponLabel})`}
       style={{ touchAction: "manipulation" }}
