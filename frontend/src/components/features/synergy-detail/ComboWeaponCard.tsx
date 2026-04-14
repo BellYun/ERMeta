@@ -87,17 +87,25 @@ function ComboWeaponCardImpl({
     [group.traitVariants]
   );
 
+  // iOS Safari 의 pointerup→click ~100ms dispatch gap 을 흡수하려고 pointer 단계에서 토글.
+  // 재현 증거: .omc/touch-delay-2026-04-14.md (click p95 232~344ms, pointerup p95 48~112ms).
+  // 내부 Link(캐릭터 상세 이동)는 자체 onTouchEnd/onClick stopPropagation 으로 이 토글을 막음.
+  const toggleTraits = () => setShowTraits((prev) => !prev);
+
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 transition-all duration-200">
-      {/* 메인 행 — 클릭으로 특성 토글 (div+role로 Link 중첩 이슈 해소) */}
+      {/* 메인 행 — 포인터 단계로 특성 토글 (div+role로 Link 중첩 이슈 해소) */}
       <div
         role="button"
         tabIndex={0}
-        onClick={() => setShowTraits((prev) => !prev)}
+        onPointerUp={(e) => {
+          if (e.button !== 0) return;
+          toggleTraits();
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            setShowTraits((prev) => !prev);
+            toggleTraits();
           }
         }}
         className="w-full flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-2 sm:py-2.5 text-left cursor-pointer rounded-xl hover:bg-[var(--color-surface-2)]/60 active:bg-[var(--color-surface-2)]/80 transition-colors"
@@ -117,6 +125,9 @@ function ComboWeaponCardImpl({
                   href={`/character/${m.char}?weapon=${m.weapon}`}
                   onClick={(e) => e.stopPropagation()}
                   onTouchEnd={(e) => e.stopPropagation()}
+                  // 외부 div[role=button]가 onPointerUp으로 토글하므로 pointer 단계에서도
+                  // 차단해야 "캐릭터 상세 이동" 탭이 실수로 브레이크다운 토글을 함께 트리거하지 않음.
+                  onPointerUp={(e) => e.stopPropagation()}
                   className="flex flex-col items-center gap-0.5 hover:opacity-80 active:opacity-60 transition-opacity"
                 >
                   <div
