@@ -29,7 +29,7 @@ test.describe("Flow: API 장애 → HoneyPicks 에러 상태", () => {
     });
 
     // 티어 변경 → HoneyPicksSection useEffect가 client fetch 재시도 → 가로챈 500 응답
-    const diamondButton = page.getByRole("button", { name: "다이아" });
+    const diamondButton = page.getByRole("radio", { name: "다이아" });
     await expect(diamondButton).toBeVisible();
     await diamondButton.click();
 

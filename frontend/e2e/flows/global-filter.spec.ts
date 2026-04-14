@@ -11,7 +11,7 @@ test.describe("Flow: Global Filter → 랭킹 refetch", () => {
   test("'다이아' 티어 버튼을 누르면 ranking API를 tier=DIAMOND 로 재호출한다", async ({ page }) => {
     await page.goto("/");
 
-    const diamondButton = page.getByRole("button", { name: "다이아" });
+    const diamondButton = page.getByRole("radio", { name: "다이아" });
     await expect(diamondButton).toBeVisible({ timeout: 15_000 });
 
     const responsePromise = page.waitForResponse(

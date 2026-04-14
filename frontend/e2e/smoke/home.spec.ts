@@ -13,10 +13,11 @@ test.describe("홈 페이지 스모크", () => {
   test("GlobalFilter가 patch select + tier 버튼 세그먼트를 노출한다", async ({ page }) => {
     await page.goto("/");
 
-    const patchSelect = page.locator("select").first();
+    const patchSelect = page.getByRole("combobox", { name: "패치 선택" });
     await expect(patchSelect).toBeVisible({ timeout: 15_000 });
 
-    const mithrilButton = page.getByRole("button", { name: "미스릴" });
+    // 티어 세그먼트는 radiogroup + role="radio"로 구현됨 (accessibility)
+    const mithrilButton = page.getByRole("radio", { name: "미스릴" });
     await expect(mithrilButton).toBeVisible();
   });
 
