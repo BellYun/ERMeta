@@ -15,6 +15,9 @@ test.describe("Flow: 홈 → 캐릭터 상세", () => {
 
     const href = await firstCharacterLink.getAttribute("href");
     expect(href).toMatch(/^\/character\/\d+/);
+    // CharacterCard는 ?weapon 없이 /character/{code} 로만 링크되므로 기본 네비만 검증한다.
+    // 꿀챔 카드 경로는 desktop HoneyPicks가 weapon 파라미터를 붙이지만 모바일은 sheet를 열어
+    // 크로스 뷰포트 안정성이 낮음 — 단위 테스트에서 별도 보장.
 
     await firstCharacterLink.click();
 

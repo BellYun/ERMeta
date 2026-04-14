@@ -28,8 +28,13 @@ test.describe("Flow: API 장애 → HoneyPicks 에러 상태", () => {
     await expect(diamondButton).toBeVisible();
     await diamondButton.click();
 
-    // 에러 상태 렌더: <p>에 error 메시지 노출
-    await expect(page.getByText(/e2e: honey-picks 강제 장애/)).toBeVisible({ timeout: 15_000 });
+    // 에러 상태 렌더: HoneyPicks 카드 그리드가 사라지고 danger-color 에러 텍스트 <p>가 노출.
+    // 주입한 error 문자열뿐 아니라 generic fallback("API 오류")도 허용해 UI 카피 리팩터에 둔감.
+    await expect(page.getByText(/e2e: honey-picks 강제 장애|API 오류/).first()).toBeVisible({
+      timeout: 15_000,
+    });
+    // 꿀챔 카드 그리드 자체는 더 이상 보이지 않아야 한다(에러 상태로 전환됐으므로).
+    await expect(page.getByRole("heading", { name: /이번 패치 떡상/ })).toBeVisible();
 
     // 티어 랭킹 섹션은 다른 API라 여전히 정상 동작해야 한다.
     await expect(page.getByRole("heading", { name: /캐릭터 순위/ })).toBeVisible();

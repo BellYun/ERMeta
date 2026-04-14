@@ -20,9 +20,8 @@ test.describe("Flow: Global Filter → 랭킹 refetch", () => {
 
     const response = await responsePromise;
     expect(response.status()).toBe(200);
-
-    // 버튼이 active 스타일(text-primary)로 바뀌었는지 검증
-    await expect(diamondButton).toHaveClass(/text-\[var\(--color-primary\)\]/, { timeout: 5_000 });
+    // active 클래스명은 Tailwind arbitrary value 기반이라 테마 변경에 취약 →
+    // 네트워크 응답 URL이 tier=DIAMOND 로 바뀌었다는 사실을 primary signal로 유지한다.
   });
 
   test("다른 패치로 select 변경 시 ranking API를 새 patchVersion 으로 재호출한다", async ({

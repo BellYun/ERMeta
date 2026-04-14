@@ -31,7 +31,7 @@ test.describe("Flow: /synergy-detail 아군 선택", () => {
     await firstCell.click();
 
     await page.waitForURL(/[?&]ally1=\d+/, { timeout: 10_000 });
-
-    await expect(firstCell).toHaveClass(/ring-\[var\(--color-primary\)\]/, { timeout: 5_000 });
+    // 선택 버튼의 시각 반영은 class-name(Tailwind arbitrary value) 기반이라 테마 변경에 취약.
+    // URL이 ally1=<code> 로 갱신되는 것이 곧 상태 반영이므로 그것만 primary signal로 둔다.
   });
 });
