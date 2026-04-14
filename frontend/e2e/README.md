@@ -10,13 +10,13 @@ Playwright 기반 크리티컬 패스 회귀 스위트. 주요 페이지/API가 
 
 ## 커버리지 맵
 
-| 스펙                | 대상                                                                      |
-| ------------------- | ------------------------------------------------------------------------- |
-| `home.spec.ts`      | `/` (메타 분석 페이지, GlobalFilter, TierRankingTable, HoneyPicksSection) |
-| `character.spec.ts` | `/character/[code]` 직접 접근 + 섹션 렌더                                 |
-| `synergy.spec.ts`   | `/synergy`, `/synergy-detail`, `/updates`, `/privacy`, `/terms`           |
-| `seo.spec.ts`       | `/robots.txt`, `/sitemap.xml`, HEAD 메타(title/og/canonical)              |
-| `api.spec.ts`       | `/api/patches/history`, `/api/meta/trending` 응답 shape                   |
+| 스펙                | 대상                                                                                            |
+| ------------------- | ----------------------------------------------------------------------------------------------- |
+| `home.spec.ts`      | `/` (메타 분석 페이지, GlobalFilter, TierRankingTable, HoneyPicksSection)                       |
+| `character.spec.ts` | `/character/[code]` 직접 접근 + 섹션 렌더                                                       |
+| `synergy.spec.ts`   | `/synergy`, `/synergy-detail`, `/updates`, `/privacy`, `/terms`                                 |
+| `seo.spec.ts`       | `/robots.txt`, `/sitemap.xml`, HEAD 메타(title/og/canonical)                                    |
+| `api.spec.ts`       | `/api/patches/history`, `/api/meta/honey-picks`, `/api/character/mithril-rp-ranking` 응답 shape |
 
 ## 로컬 실행
 
