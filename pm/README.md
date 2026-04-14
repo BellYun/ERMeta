@@ -12,6 +12,7 @@
 | [user-journey-map.md](./user-journey-map.md) | 사용자 여정 지도 — 퍼널 분석, 이탈 포인트, 개선점 |
 | [competitive-analysis.md](./competitive-analysis.md) | 경쟁 분석 — 포지셔닝, 차별화 전략 |
 | [weekly-report-template.md](./weekly-report-template.md) | 주간 PM 리포트 템플릿 |
+| [amplitude-event-design.md](./amplitude-event-design.md) | Amplitude 이벤트 설계 — KPI↔이벤트 매핑, P0/P1/P2 스펙, User/Session Properties, Rollout Roadmap |
 
 ## 기존 분석 문서 (루트)
 

@@ -117,3 +117,23 @@ export function getAllCharWeaponItems(): CharWeaponItem[] {
 2. **모듈 스코프 계산은 lazy로**: IIFE는 번들 파싱 시 메인 스레드를 차단. Lazy singleton은 실제 필요할 때만 실행.
 3. **Interactive element 중첩 금지**: `<a>` in `<button>`, `<button>` in `<button>`은 모바일 브라우저에서 터치 이벤트 전파가 불안정. `div[role=button]`으로 해소.
 4. **WCAG 44px**: 모바일 터치 타겟 최소 크기. `min-h-[44px] min-w-[44px]`로 보장.
+
+---
+
+## Addendum (2026-04-14) — `onClick` → `onPointerUp` 실제 반영
+
+VOC 지속(아군 셀 + 조합 브레이크다운 탭 지연)을 받아 `.omc/touch-delay-2026-04-14.md` 로 재현·진단·개선.
+
+- 이력서/블로그(`blog-inp-mobile-click-delay.md`)에는 "최종 fix: `onClick` → `onPointerUp`" 이 기록되어 있었으나 실제 소스에는 미반영 상태였음 (`frontend/src` 전역 grep 0 matches).
+- CPU 10x throttle 모바일 에뮬 재현 결과 (`.omc/inp-baseline-*.txt`):
+  - breakdown 토글: click p95 **344ms** vs pointerup p95 112ms → gap **232ms**
+  - ally 셀 탭: click p95 **376ms** vs pointerup p95 48ms → gap **328ms**
+- 수정 대상:
+  - `WeaponAllySelector.tsx` `CharWeaponCell` 의 `onClick` → `onPointerUp` + `onKeyDown(Enter/Space)`
+  - `ComboWeaponCard.tsx` 메인 행(`div[role=button]`)의 `onClick` → `onPointerUp` + 내부 `Link` 에 `onPointerUp stopPropagation` 추가
+- 수정 후 재측정 (`.omc/inp-after-*.txt`):
+  - breakdown: click p95 264ms, gap p95 **0ms** (-232ms)
+  - ally: click p95 368ms, gap p95 **24ms** (-304ms)
+- 회귀 방지: `frontend/e2e/flows/synergy-detail-touch.spec.ts` 추가 (chromium-mobile 전용).
+
+남은 264~368ms p95 는 React commit 비용(30 카드 재조정 등)이며 이벤트 dispatch layer 와 무관. 유저가 체감하던 "탭 → 한 박자 늦게 반응" 증상 자체는 pointer-phase 전환으로 해소.
