@@ -13,6 +13,49 @@ const TIER_OPTIONS = [
 
 export function GlobalFilter() {
   const { patch, tier, patches, setPatch, setTier } = useFilter();
+  const tierRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
+
+  const selectTier = React.useCallback(
+    (value: string) => {
+      setTier(value);
+      analytics.tierGroupSelected(value);
+    },
+    [setTier]
+  );
+
+  const focusTierAt = React.useCallback(
+    (index: number) => {
+      const normalized = (index + TIER_OPTIONS.length) % TIER_OPTIONS.length;
+      const next = TIER_OPTIONS[normalized];
+      if (!next) return;
+      tierRefs.current[normalized]?.focus();
+      selectTier(next.value);
+    },
+    [selectTier]
+  );
+
+  const handleTierKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+    switch (e.key) {
+      case "ArrowRight":
+      case "ArrowDown":
+        e.preventDefault();
+        focusTierAt(index + 1);
+        break;
+      case "ArrowLeft":
+      case "ArrowUp":
+        e.preventDefault();
+        focusTierAt(index - 1);
+        break;
+      case "Home":
+        e.preventDefault();
+        focusTierAt(0);
+        break;
+      case "End":
+        e.preventDefault();
+        focusTierAt(TIER_OPTIONS.length - 1);
+        break;
+    }
+  };
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3">
@@ -61,25 +104,38 @@ export function GlobalFilter() {
       </div>
 
       {/* Tier segmented control */}
-      <div className="flex rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] p-0.5">
-        {TIER_OPTIONS.map(({ value, label }) => (
-          <button
-            key={value}
-            onClick={() => {
-              setTier(value);
-              analytics.tierGroupSelected(value);
-            }}
-            className={cn(
-              "px-3 py-1.5 rounded-md text-xs sm:text-[13px] font-medium transition-all whitespace-nowrap",
-              "min-h-[32px] touch-manipulation",
-              tier === value
-                ? "bg-[var(--color-primary)]/15 text-[var(--color-primary)] shadow-sm"
-                : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
-            )}
-          >
-            {label}
-          </button>
-        ))}
+      <div
+        role="radiogroup"
+        aria-label="티어 필터"
+        className="flex rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] p-0.5"
+      >
+        {TIER_OPTIONS.map(({ value, label }, index) => {
+          const isSelected = tier === value;
+          return (
+            <button
+              key={value}
+              ref={(el) => {
+                tierRefs.current[index] = el;
+              }}
+              type="button"
+              role="radio"
+              aria-checked={isSelected}
+              tabIndex={isSelected ? 0 : -1}
+              onClick={() => selectTier(value)}
+              onKeyDown={(e) => handleTierKeyDown(e, index)}
+              className={cn(
+                "px-3 py-1.5 rounded-md text-xs sm:text-[13px] font-medium transition-all whitespace-nowrap",
+                "min-h-[32px] touch-manipulation",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
+                isSelected
+                  ? "bg-[var(--color-primary)]/15 text-[var(--color-primary)] shadow-sm"
+                  : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
+              )}
+            >
+              {label}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
