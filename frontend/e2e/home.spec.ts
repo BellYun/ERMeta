@@ -27,9 +27,11 @@ test.describe("홈 페이지 스모크", () => {
       timeout: 20_000,
     });
 
-    const tableLike = page
-      .locator("table, [role=table], [data-testid='tier-ranking-table']")
-      .first();
-    await expect(tableLike).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByRole("heading", { name: /캐릭터 순위/ })).toBeVisible({
+      timeout: 20_000,
+    });
+
+    const characterLink = page.locator('a[href^="/character/"]:visible').first();
+    await expect(characterLink).toBeVisible({ timeout: 20_000 });
   });
 });

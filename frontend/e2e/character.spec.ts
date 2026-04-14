@@ -9,12 +9,11 @@ test.describe("캐릭터 상세 페이지", () => {
     const response = await page.goto(`/character/${KNOWN_CHARACTER_CODE}`);
     expect(response?.status()).toBeLessThan(400);
 
-    await expect(page).toHaveTitle(/캐릭터|이리와지지/);
+    await expect(page).toHaveTitle(/캐릭터 분석/);
 
-    const analysisIndicator = page.locator(
-      "h1, h2, h3, [data-testid='character-analysis'], [data-analysis]"
-    );
-    await expect(analysisIndicator.first()).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByRole("heading", { level: 1 }).first()).toBeVisible({
+      timeout: 20_000,
+    });
   });
 
   test("캐릭터 페이지 title에 캐릭터 코드 기반 메타데이터가 반영된다", async ({ page }) => {
