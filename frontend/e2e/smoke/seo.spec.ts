@@ -28,4 +28,11 @@ test.describe("SEO 및 정적 에셋", () => {
     await expect(canonical).toHaveCount(1);
     await expect(canonical).toHaveAttribute("href", /https?:\/\//);
   });
+
+  test("캐릭터 상세 페이지 canonical 이 동적 경로로 생성된다", async ({ page }) => {
+    await page.goto("/character/1");
+    const canonical = page.locator('link[rel="canonical"]');
+    await expect(canonical).toHaveCount(1);
+    await expect(canonical).toHaveAttribute("href", /\/character\/1/);
+  });
 });
