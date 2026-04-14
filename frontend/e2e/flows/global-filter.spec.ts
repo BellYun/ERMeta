@@ -29,7 +29,7 @@ test.describe("Flow: Global Filter → 랭킹 refetch", () => {
   }) => {
     await page.goto("/");
 
-    const patchSelect = page.locator("select").first();
+    const patchSelect = page.getByRole("combobox", { name: "패치 선택" });
     await expect(patchSelect).toBeVisible({ timeout: 15_000 });
 
     const allValues = await patchSelect.evaluate((el) =>

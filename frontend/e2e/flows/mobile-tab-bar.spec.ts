@@ -33,11 +33,6 @@ test.describe("Flow: 모바일 TabBar 네비게이션", () => {
     await page.waitForURL(/\/character\/\d+/, { timeout: 10_000 });
 
     // '메타' → / 복귀 확인
-    // Next.js dev indicator(<nextjs-portal>)가 pointer 이벤트를 가로채는 경우가 있어
-    // 먼저 DOM에서 제거한 뒤 일반 클릭으로 이벤트 핸들러를 정상 발화시킨다.
-    await page.evaluate(() => {
-      document.querySelectorAll("nextjs-portal").forEach((el) => el.remove());
-    });
     await tabBar.getByRole("link", { name: /메타/ }).click();
     await page.waitForURL((url) => url.pathname === "/", { timeout: 10_000 });
   });
