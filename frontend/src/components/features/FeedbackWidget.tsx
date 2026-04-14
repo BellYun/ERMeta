@@ -2,6 +2,7 @@
 
 import { MessageCircle, X, Check } from "lucide-react";
 import { useState } from "react";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 type Category = "버그 신고" | "기능 제안" | "일반 문의";
 type FormState = "idle" | "submitting" | "success" | "error";
@@ -14,6 +15,14 @@ export default function FeedbackWidget() {
   const [message, setMessage] = useState("");
   const [contact, setContact] = useState("");
   const [formState, setFormState] = useState<FormState>("idle");
+
+  const handleClose = () => {
+    if (formState === "submitting") return;
+    setIsOpen(false);
+    setFormState("idle");
+  };
+
+  const panelRef = useFocusTrap<HTMLDivElement>({ active: isOpen, onClose: handleClose });
 
   const handleToggle = () => {
     if (formState === "submitting") return;
@@ -51,10 +60,16 @@ export default function FeedbackWidget() {
     <div className="fixed bottom-[calc(60px+env(safe-area-inset-bottom)+0.75rem)] sm:bottom-6 right-4 sm:right-6 z-40 flex flex-col items-end gap-3">
       {/* Form Panel */}
       <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="피드백 보내기"
+        aria-hidden={!isOpen}
+        tabIndex={-1}
         className={[
           "w-[calc(100vw-2rem)] max-w-sm sm:w-80",
           "rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xl",
-          "transition-all duration-200 origin-bottom-right",
+          "transition-all duration-200 origin-bottom-right focus:outline-none",
           isOpen
             ? "opacity-100 translate-y-0 pointer-events-auto"
             : "opacity-0 translate-y-4 pointer-events-none",
@@ -68,9 +83,7 @@ export default function FeedbackWidget() {
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-primary)]">
               <Check className="h-6 w-6 text-white" />
             </div>
-            <p className="text-[var(--color-foreground)] font-medium">
-              소중한 의견 감사합니다!
-            </p>
+            <p className="text-[var(--color-foreground)] font-medium">소중한 의견 감사합니다!</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="p-4 flex flex-col gap-4">
@@ -128,9 +141,7 @@ export default function FeedbackWidget() {
 
             {/* Error */}
             {formState === "error" && (
-              <p className="text-xs text-red-400">
-                전송에 실패했습니다. 다시 시도해주세요.
-              </p>
+              <p className="text-xs text-red-400">전송에 실패했습니다. 다시 시도해주세요.</p>
             )}
 
             {/* Submit */}
