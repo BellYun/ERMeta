@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { getFallbackMap, EXCLUDED_CHARACTER_CODES } from "../synergy/constants";
 import { SlotEmpty } from "../synergy/SlotEmpty";
 import { matchesChosungSearch } from "../synergy/utils";
+import { useTapGuard } from "./useTapGuard";
 
 // ─── 데이터 ──────────────────────────────────────────────────────────────────
 
@@ -132,21 +133,19 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
   disabled: boolean;
   onSelect: (item: CharWeaponItem) => void;
 }) {
-  // iOS Safari 의 pointerup→click ~100ms dispatch gap 을 흡수하려고 pointer 단계에서 처리.
-  // CPU 10x throttle 모바일 에뮬에서 click p95 가 pointerup p95 대비 +180~330ms 더 걸리는
-  // 패턴을 재현했음 (.omc/touch-delay-2026-04-14.md). 키보드 동작은 onKeyDown 으로 보존.
-  const activate = () => {
+  // pointer 단계 처리로 onClick frame 에 묶여 있던 React 커밋을 앞당김.
+  // 실측 원인은 Safari 고유 dispatch 지연(≤16ms)이 아니라 onClick 프레임으로 밀린 커밋 비용이며
+  // 격리 실험은 .omc/touch-delay-jscontention-2026-04-15.md 참조.
+  // useTapGuard: pointermove 누적 SLOP 가드 (가상화 스크롤 도중 우연 트리거 차단).
+  const activate = React.useCallback(() => {
     if (disabled) return;
     onSelect(item);
-  };
+  }, [disabled, item, onSelect]);
+  const tapGuard = useTapGuard(activate);
   return (
     <button
       type="button"
-      onPointerUp={(e) => {
-        // 주 버튼(좌클릭/터치)만 활성화. 우클릭/중클릭은 무시하여 의도치 않은 활성화 방지.
-        if (e.button !== 0) return;
-        activate();
-      }}
+      {...tapGuard}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();

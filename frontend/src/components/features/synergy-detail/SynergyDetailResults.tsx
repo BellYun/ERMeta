@@ -159,11 +159,13 @@ export function SynergyDetailResults() {
   }, [selectedAllies, deferredAllies]);
   const showLoading = loading || isAllyChangeInFlight;
   const [copied, setCopied] = React.useState(false);
-  // 첫 paint에는 6 카드만 commit해서 click duration을 짧게 가져가고,
-  // 나머지는 requestIdleCallback로 idle frame마다 6장씩 점진 mount.
+  // 첫 paint에는 3 카드만 commit해서 click duration을 짧게 가져가고,
+  // 나머지는 requestIdleCallback로 idle frame마다 4장씩 점진 mount.
   // "더보기" 버튼은 사용자 의도가 명확하므로 30 단위 추가.
-  const INITIAL_VISIBLE = 6;
-  const IDLE_BATCH = 6;
+  // (2026-04-15 INP 개선: 6→3, 6→4 로 조정. CPU 10x throttle 워스트케이스에서 두 번째 탭 click
+  //  duration 이 첫 탭의 response-commit frame 에 겹치는 것을 완화.)
+  const INITIAL_VISIBLE = 3;
+  const IDLE_BATCH = 4;
   const IDLE_TARGET = 30;
   const [visibleCount, setVisibleCount] = React.useState(INITIAL_VISIBLE);
   const [traitNames, setTraitNames] = React.useState<Record<number, string>>({});

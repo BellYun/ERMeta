@@ -10,6 +10,7 @@ import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMa
 import { cn } from "@/lib/utils";
 import { getFallbackMap } from "../synergy/constants";
 import { matchesChosungSearch } from "../synergy/utils";
+import { useTapGuard } from "./useTapGuard";
 import { getAllCharWeaponItems, type CharWeaponItem } from "./WeaponAllySelector";
 
 const CELL_MIN_WIDTH = 72;
@@ -26,9 +27,22 @@ const FocusCell = React.memo(function FocusCell({
   selected: boolean;
   onSelect: (charCode: number, weaponCode: number) => void;
 }) {
+  // 가상화 그리드 안의 셀 — onPointerUp 만 두면 스크롤 도중 우연 트리거됨.
+  const activate = React.useCallback(
+    () => onSelect(item.charCode, item.weaponCode),
+    [item.charCode, item.weaponCode, onSelect]
+  );
+  const tapGuard = useTapGuard(activate);
   return (
     <button
-      onClick={() => onSelect(item.charCode, item.weaponCode)}
+      type="button"
+      {...tapGuard}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          activate();
+        }
+      }}
       title={item.weaponLabel ? `${charName} (${item.weaponLabel})` : charName}
       style={{ touchAction: "manipulation" }}
       className={cn(
@@ -122,20 +136,26 @@ export function FocusWeaponPool() {
     return item?.weaponLabel ? `${name} (${item.weaponLabel})` : name;
   };
 
+  // div[role=button] 헤더에 페이지 스크롤 도중 우연 트리거가 일어나지 않도록 가드 적용.
+  // (.omc/touch-delay-jscontention-2026-04-15.md — 페이지 전체 스크롤에서도 동일 패턴 발생)
+  const toggleExpanded = React.useCallback(() => setIsExpanded((prev) => !prev), []);
+  const headerTapGuard = useTapGuard(toggleExpanded);
+
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm overflow-hidden">
       {/* 접이식 헤더 — button 중첩 방지를 위해 div+role 사용 */}
       <div
         role="button"
         tabIndex={0}
-        onClick={() => setIsExpanded((prev) => !prev)}
+        {...headerTapGuard}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            setIsExpanded((prev) => !prev);
+            toggleExpanded();
           }
         }}
         aria-expanded={isExpanded}
+        style={{ touchAction: "manipulation" }}
         className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80 transition-colors cursor-pointer"
       >
         <div className="flex items-center gap-2">
@@ -159,6 +179,10 @@ export function FocusWeaponPool() {
                 setFocusCharWeapons([]);
               }}
               onTouchEnd={(e) => e.stopPropagation()}
+              // 헤더 div 가 useTapGuard 로 pointer 단계에서 토글하므로 pointer 단계도 막아야
+              // "초기화" 탭이 동시에 헤더 접기/펴기를 트리거하지 않음.
+              onPointerDown={(e) => e.stopPropagation()}
+              onPointerUp={(e) => e.stopPropagation()}
               className="text-[10px] text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center rounded hover:bg-[var(--color-surface-2)]"
             >
               초기화
