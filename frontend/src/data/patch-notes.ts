@@ -1,12 +1,13 @@
-import type { CharacterPatchNote } from "./10.1"
-import { PATCH_NOTES as PATCH_10_1 } from "./10.1"
-import { PATCH_NOTES as PATCH_10_2 } from "./10.2"
-import { PATCH_NOTES as PATCH_10_3 } from "./10.3"
-import { PATCH_NOTES as PATCH_10_4 } from "./10.4"
-import { PATCH_NOTES as PATCH_10_5 } from "./10.5"
-import { PATCH_NOTES as PATCH_10_6 } from "./10.6"
+import type { CharacterPatchNote } from "./10.1";
+import { PATCH_NOTES as PATCH_10_1 } from "./10.1";
+import { PATCH_NOTES as PATCH_10_2 } from "./10.2";
+import { PATCH_NOTES as PATCH_10_3 } from "./10.3";
+import { PATCH_NOTES as PATCH_10_4 } from "./10.4";
+import { PATCH_NOTES as PATCH_10_5 } from "./10.5";
+import { PATCH_NOTES as PATCH_10_6 } from "./10.6";
+import { PATCH_NOTES as PATCH_10_7 } from "./10.7";
 
-export type { ChangeType, PatchChange, CharacterPatchNote } from "./10.1"
+export type { ChangeType, PatchChange, CharacterPatchNote } from "./10.1";
 
 export const PATCH_NOTES: CharacterPatchNote[] = [
   ...PATCH_10_1,
@@ -15,13 +16,12 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
   ...PATCH_10_4,
   ...PATCH_10_5,
   ...PATCH_10_6,
-]
+  ...PATCH_10_7,
+];
 
 export function getCharacterPatchNote(
   characterCode: number,
   patch: string
 ): CharacterPatchNote | undefined {
-  return PATCH_NOTES.find(
-    (note) => note.characterCode === characterCode && note.patch === patch
-  )
+  return PATCH_NOTES.find((note) => note.characterCode === characterCode && note.patch === patch);
 }
