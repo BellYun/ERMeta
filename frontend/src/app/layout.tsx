@@ -157,7 +157,7 @@ export default function RootLayout({
               본 사이트는 님블뉴런의 공식 서비스가 아니며, 이용 중 발생하는 문제에 대해 회사는
               책임지지 않습니다.
             </p>
-            <p className="text-[var(--color-muted-foreground)]/50">
+            <p className="text-[var(--color-foreground)]/60">
               &copy; {new Date().getFullYear()} ER&GG
             </p>
           </div>
