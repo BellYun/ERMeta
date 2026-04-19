@@ -98,11 +98,15 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
     switch (e.key) {
       case "ArrowDown":
         e.preventDefault();
-        setHighlightIndex((prev) => (prev < filtered.length - 1 ? prev + 1 : 0));
+        if (filtered.length > 0) {
+          setHighlightIndex((prev) => (prev < filtered.length - 1 ? prev + 1 : 0));
+        }
         break;
       case "ArrowUp":
         e.preventDefault();
-        setHighlightIndex((prev) => (prev > 0 ? prev - 1 : filtered.length - 1));
+        if (filtered.length > 0) {
+          setHighlightIndex((prev) => (prev > 0 ? prev - 1 : filtered.length - 1));
+        }
         break;
       case "Enter":
         e.preventDefault();
