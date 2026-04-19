@@ -1,125 +1,124 @@
-"use client"
+"use client";
 
-import { X, Users, Loader2, Info, Share2 } from "lucide-react"
-import { useSearchParams, useRouter } from "next/navigation"
-import * as React from "react"
-import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary"
-import { useL10n } from "@/components/L10nProvider"
-import { useFocusCharacters } from "@/hooks/useFocusCharacters"
-import { analytics } from "@/lib/analytics"
-import { resolveCharacterName } from "@/lib/characterMap"
-import { cn } from "@/lib/utils"
-import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "./constants"
-import type { TrioResult, SortBy } from "./types"
-import { getThirdCharacter, deduplicateResults } from "./utils"
-const ComboCard = React.lazy(() =>
-  import("./ComboCard").then((m) => ({ default: m.ComboCard }))
-)
+import { X, Users, Loader2, Info, Share2 } from "lucide-react";
+import { useSearchParams, useRouter } from "next/navigation";
+import * as React from "react";
+import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary";
+import { useL10n } from "@/components/L10nProvider";
+import { useFocusCharacters } from "@/hooks/useFocusCharacters";
+import { analytics, type SynergySortBy } from "@/lib/analytics";
+import { resolveCharacterName } from "@/lib/characterMap";
+import { cn } from "@/lib/utils";
+import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "./constants";
+import type { TrioResult, SortBy } from "./types";
+import { getThirdCharacter, deduplicateResults } from "./utils";
+const ComboCard = React.lazy(() => import("./ComboCard").then((m) => ({ default: m.ComboCard })));
 
 /**
  * 시너지 결과 Island — URL params(ally1,ally2) + localStorage(focusCharacters) 기반
  * SynergyClient에서 분리된 독립 Client Component
  */
 export function SynergyResults({ compact = false }: { compact?: boolean }) {
-  const { l10n } = useL10n()
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const { focusCharacters } = useFocusCharacters()
+  const { l10n } = useL10n();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const { focusCharacters } = useFocusCharacters();
 
   // URL에서 아군 읽기
   const selectedAllies = React.useMemo(() => {
-    const allies: number[] = []
-    const a1 = searchParams.get("ally1")
-    const a2 = searchParams.get("ally2")
+    const allies: number[] = [];
+    const a1 = searchParams.get("ally1");
+    const a2 = searchParams.get("ally2");
     if (a1) {
-      const code = parseInt(a1, 10)
-      if (!isNaN(code) && getAllCharacterCodes().includes(code)) allies.push(code)
+      const code = parseInt(a1, 10);
+      if (!isNaN(code) && getAllCharacterCodes().includes(code)) allies.push(code);
     }
     if (a2) {
-      const code = parseInt(a2, 10)
-      if (!isNaN(code) && getAllCharacterCodes().includes(code) && !allies.includes(code)) allies.push(code)
+      const code = parseInt(a2, 10);
+      if (!isNaN(code) && getAllCharacterCodes().includes(code) && !allies.includes(code))
+        allies.push(code);
     }
-    return allies
-  }, [searchParams])
+    return allies;
+  }, [searchParams]);
 
-  const [sortBy, setSortBy] = React.useState<SortBy>("recommended")
-  const [trioResults, setTrioResults] = React.useState<TrioResult[]>([])
-  const [loading, setLoading] = React.useState(false)
-  const [error, setError] = React.useState<string | null>(null)
-  const [copied, setCopied] = React.useState(false)
+  const [sortBy, setSortBy] = React.useState<SortBy>("recommended");
+  const [trioResults, setTrioResults] = React.useState<TrioResult[]>([]);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [copied, setCopied] = React.useState(false);
 
   const getCharName = React.useCallback(
     (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
     [l10n]
-  )
+  );
 
   // API 호출: 아군 선택 / 정렬 변경 시 (300ms 디바운스 + AbortController)
   React.useEffect(() => {
     if (selectedAllies.length === 0) {
-      setTrioResults([])
-      setLoading(false)
-      return
+      setTrioResults([]);
+      setLoading(false);
+      return;
     }
 
-    const controller = new AbortController()
+    const controller = new AbortController();
     const timerId = setTimeout(() => {
-      const params = new URLSearchParams({ sortBy, limit: "100" })
-      if (selectedAllies[0] !== undefined) params.set("character1", String(selectedAllies[0]))
-      if (selectedAllies[1] !== undefined) params.set("character2", String(selectedAllies[1]))
+      const params = new URLSearchParams({ sortBy, limit: "100" });
+      if (selectedAllies[0] !== undefined) params.set("character1", String(selectedAllies[0]));
+      if (selectedAllies[1] !== undefined) params.set("character2", String(selectedAllies[1]));
 
-      setError(null)
-      const timeout = AbortSignal.timeout(10_000)
-      const signal = AbortSignal.any([controller.signal, timeout])
+      setError(null);
+      const timeout = AbortSignal.timeout(10_000);
+      const signal = AbortSignal.any([controller.signal, timeout]);
 
       fetch(`/api/stats/trios?${params.toString()}`, { signal })
         .then(async (res) => {
-          const data = await res.json()
-          if (!res.ok) throw new Error(data.error ?? "API 오류")
-          setTrioResults(data.results ?? [])
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error ?? "API 오류");
+          setTrioResults(data.results ?? []);
         })
         .catch((err) => {
-          if (err instanceof Error && err.name === "AbortError") return
+          if (err instanceof Error && err.name === "AbortError") return;
           if (err instanceof Error && err.name === "TimeoutError") {
-            setError("요청 시간이 초과되었습니다. 다시 시도해주세요.")
-            return
+            setError("요청 시간이 초과되었습니다. 다시 시도해주세요.");
+            return;
           }
-          setError(err instanceof Error ? err.message : "오류가 발생했습니다.")
+          setError(err instanceof Error ? err.message : "오류가 발생했습니다.");
         })
-        .finally(() => setLoading(false))
-    }, 300)
+        .finally(() => setLoading(false));
+    }, 300);
 
-    setLoading(true)
+    setLoading(true);
     return () => {
-      clearTimeout(timerId)
-      controller.abort()
-      setLoading(false)
-    }
-  }, [selectedAllies, sortBy])
+      clearTimeout(timerId);
+      controller.abort();
+      setLoading(false);
+    };
+  }, [selectedAllies, sortBy]);
 
   const recommendations = React.useMemo(() => {
-    if (selectedAllies.length === 0) return []
+    if (selectedAllies.length === 0) return [];
 
-    let scopedResults = trioResults
+    let scopedResults = trioResults;
     if (focusCharacters.length > 0) {
-      const focusSet = new Set(focusCharacters)
+      const focusSet = new Set(focusCharacters);
       if (selectedAllies.length === 2) {
-        const [allyA, allyB] = selectedAllies
+        const [allyA, allyB] = selectedAllies;
         scopedResults = trioResults.filter((rec) => {
-          const third = getThirdCharacter(rec, allyA, allyB)
-          return third != null && focusSet.has(third)
-        })
+          const third = getThirdCharacter(rec, allyA, allyB);
+          return third != null && focusSet.has(third);
+        });
       } else if (selectedAllies.length === 1) {
-        const selected = selectedAllies[0]
+        const selected = selectedAllies[0];
         scopedResults = trioResults.filter((rec) => {
           const others = [rec.character1, rec.character2, rec.character3].filter(
             (c) => c !== selected
-          )
-          return others.some((c) => focusSet.has(c))
-        })
+          );
+          return others.some((c) => focusSet.has(c));
+        });
       }
     }
 
-    const deduped = deduplicateResults(scopedResults, selectedAllies, sortBy)
+    const deduped = deduplicateResults(scopedResults, selectedAllies, sortBy);
     const sorted =
       sortBy === "recommended"
         ? [
@@ -127,16 +126,31 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
             ...deduped.filter((r) => r.totalGames > 10 && r.averageRP < 0),
             ...deduped.filter((r) => r.totalGames <= 10),
           ]
-        : [
-            ...deduped.filter((r) => r.averageRP >= 0),
-            ...deduped.filter((r) => r.averageRP < 0),
-          ]
-    return sorted.slice(0, 20)
-  }, [trioResults, selectedAllies, focusCharacters, sortBy])
+        : [...deduped.filter((r) => r.averageRP >= 0), ...deduped.filter((r) => r.averageRP < 0)];
+    return sorted.slice(0, 20);
+  }, [trioResults, selectedAllies, focusCharacters, sortBy]);
 
   const clearAllies = React.useCallback(() => {
-    router.replace("/synergy", { scroll: false })
-  }, [router])
+    router.replace("/synergy", { scroll: false });
+  }, [router]);
+
+  // synergy_result_viewed — 같은 (ally1,ally2,sortBy) 조합은 중복 fire 금지
+  const lastViewedKeyRef = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    if (loading || selectedAllies.length === 0 || recommendations.length === 0) return;
+    const key = `${selectedAllies[0] ?? "_"}|${selectedAllies[1] ?? "_"}|${sortBy}`;
+    if (lastViewedKeyRef.current === key) return;
+    lastViewedKeyRef.current = key;
+    analytics.synergyResultViewed({
+      ally1Code: selectedAllies[0] ?? null,
+      ally2Code: selectedAllies[1] ?? null,
+      resultCount: recommendations.length,
+      sortBy: sortBy as SynergySortBy,
+      tier: "",
+      patch: "",
+      isWeaponScope: false,
+    });
+  }, [loading, selectedAllies, sortBy, recommendations]);
 
   return (
     <>
@@ -147,8 +161,8 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
             <button
               key={value}
               onClick={() => {
-                setSortBy(value)
-                analytics.synergySortChanged(value)
+                setSortBy(value);
+                analytics.synergySortChanged(value);
               }}
               className={cn(
                 "px-2.5 py-1 rounded-md text-xs font-medium transition-colors",
@@ -169,26 +183,26 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                 {selectedAllies.length === 1
                   ? `${getCharName(selectedAllies[0])} 포함 추천 조합`
                   : `${getCharName(selectedAllies[0])} + ${getCharName(selectedAllies[1])} 조합`}
-                {focusCharacters.length > 0
-                  ? ` (내 풀 ${focusCharacters.length}명 필터)`
-                  : ""}
+                {focusCharacters.length > 0 ? ` (내 풀 ${focusCharacters.length}명 필터)` : ""}
               </h2>
               <button
                 type="button"
                 onClick={() => {
-                  const url = window.location.href
+                  const url = window.location.href;
                   const title =
                     selectedAllies.length === 2
                       ? `${getCharName(selectedAllies[0])} + ${getCharName(selectedAllies[1])} 조합 추천`
-                      : `${getCharName(selectedAllies[0])} 포함 추천 조합`
+                      : `${getCharName(selectedAllies[0])} 포함 추천 조합`;
                   if (typeof navigator.share === "function") {
-                    navigator.share({ title, text: `${title} - 이리와지지 ER&GG`, url }).catch(() => {})
-                    return
+                    navigator
+                      .share({ title, text: `${title} - 이리와지지 ER&GG`, url })
+                      .catch(() => {});
+                    return;
                   }
                   navigator.clipboard.writeText(url).then(() => {
-                    setCopied(true)
-                    setTimeout(() => setCopied(false), 2000)
-                  })
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  });
                 }}
                 className="inline-flex items-center gap-1 shrink-0 rounded-md border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 hover:border-[var(--color-primary)]/50 transition-colors"
               >
@@ -258,7 +272,11 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                 1명 더 선택하면 더 정확한 추천을 받을 수 있어요
               </p>
             )}
-            <React.Suspense fallback={<div className="h-64 rounded-xl bg-[var(--color-surface-2)] animate-pulse" />}>
+            <React.Suspense
+              fallback={
+                <div className="h-64 rounded-xl bg-[var(--color-surface-2)] animate-pulse" />
+              }
+            >
               {recommendations.map((rec, i) => (
                 <ComboCard
                   key={`${rec.character1}-${rec.character2}-${rec.character3}`}
@@ -268,7 +286,16 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                   selectedAllies={selectedAllies}
                   compact={compact}
                   priorityImages={i < 5}
-                  onNavigateAnalysis={(code) => router.push(`/character/${code}`)}
+                  onNavigateAnalysis={(code) => {
+                    analytics.synergyRecommendationClicked({
+                      ally1Code: selectedAllies[0] ?? null,
+                      ally2Code: selectedAllies[1] ?? null,
+                      pickedCode: code,
+                      pickedRank: i + 1,
+                      sortBy: sortBy as SynergySortBy,
+                    });
+                    router.push(`/character/${code}`);
+                  }}
                 />
               ))}
             </React.Suspense>
@@ -281,12 +308,15 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                 ? "내 캐릭터 풀에 해당하는 조합이 없습니다. 캐릭터 풀을 넓혀보세요."
                 : "해당 조합 데이터가 없습니다"}
             </p>
-            <button onClick={clearAllies} className="mt-3 text-xs text-[var(--color-primary)] hover:underline">
+            <button
+              onClick={clearAllies}
+              className="mt-3 text-xs text-[var(--color-primary)] hover:underline"
+            >
               아군 초기화하기
             </button>
           </div>
         )}
       </SectionErrorBoundary>
     </>
-  )
+  );
 }
