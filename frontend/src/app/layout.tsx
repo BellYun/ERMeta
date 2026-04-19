@@ -1,16 +1,17 @@
 import { readFileSync } from "fs";
 import { join } from "path";
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import { AmplitudeLoader } from "@/components/AmplitudeLoader";
 import FeedbackWidget from "@/components/features/FeedbackWidget";
-import { Analytics } from "@vercel/analytics/next";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { L10nProvider } from "@/components/L10nProvider";
 import { Header } from "@/components/layout/Header";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
+import { WebVitalsReporter } from "@/components/WebVitalsReporter";
 
 function loadL10n(): Record<string, string> | undefined {
   try {
@@ -165,6 +166,7 @@ export default function RootLayout({
         <FeedbackWidget />
         <Analytics />
         <AmplitudeLoader />
+        <WebVitalsReporter />
         <GoogleAnalytics />
         {process.env.NEXT_PUBLIC_SENTRY_DSN && (
           <Script
