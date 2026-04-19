@@ -246,4 +246,40 @@ export const analytics = {
       })
       .catch(() => {});
   },
+
+  // ── RUM (Real User Monitoring) ─────────────────────────────────────────────
+
+  /**
+   * Core Web Vitals 측정치 전송.
+   * LCP/INP/CLS/TTFB/FCP 각각의 최종값이 페이지 hidden 시점에 1회 fire.
+   * Amplitude 대시보드에서 metric_name × page_path × device × connection 으로 p75 산출.
+   */
+  webVitalReported(metric: {
+    name: "LCP" | "INP" | "CLS" | "TTFB" | "FCP";
+    value: number;
+    delta: number;
+    id: string;
+    rating?: "good" | "needs-improvement" | "poor";
+    navigationType?: string;
+  }) {
+    const pagePath = typeof window !== "undefined" ? window.location.pathname : undefined;
+    const connection =
+      typeof navigator !== "undefined"
+        ? (navigator as unknown as { connection?: { effectiveType?: string } }).connection
+        : undefined;
+
+    track("web_vital_measured", {
+      metric_name: metric.name,
+      // CLS는 단위가 unitless 라 소수 3자리, 나머지는 ms 라 정수
+      value:
+        metric.name === "CLS" ? Math.round(metric.value * 1000) / 1000 : Math.round(metric.value),
+      delta:
+        metric.name === "CLS" ? Math.round(metric.delta * 1000) / 1000 : Math.round(metric.delta),
+      metric_id: metric.id,
+      rating: metric.rating,
+      navigation_type: metric.navigationType,
+      page_path: pagePath,
+      effective_connection_type: connection?.effectiveType,
+    });
+  },
 };

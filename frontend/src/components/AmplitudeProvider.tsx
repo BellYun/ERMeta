@@ -59,11 +59,17 @@ async function detectIsPatchDay(): Promise<boolean> {
   }
 }
 
+const AMPLITUDE_API_KEY = process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY;
+
 export function AmplitudeProvider() {
   useEffect(() => {
+    if (!AMPLITUDE_API_KEY) {
+      console.warn("[Amplitude] NEXT_PUBLIC_AMPLITUDE_API_KEY 미설정 — analytics 비활성화");
+      return;
+    }
     import("@amplitude/analytics-browser")
       .then((amplitude) => {
-        amplitude.init("2559c76a80449aaf8aa57b624f7b66a5", {
+        amplitude.init(AMPLITUDE_API_KEY, {
           autocapture: true,
         });
       })
