@@ -132,10 +132,13 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
           ref={inputRef}
           type="text"
           role="combobox"
+          aria-haspopup="listbox"
           aria-expanded={open}
           aria-controls="character-listbox"
           aria-activedescendant={
-            open && highlightIndex >= 0 ? `character-option-${filtered[highlightIndex]}` : undefined
+            open && highlightIndex >= 0 && filtered[highlightIndex] !== undefined
+              ? `character-option-${filtered[highlightIndex]}`
+              : undefined
           }
           aria-autocomplete="list"
           aria-label="캐릭터 검색"
