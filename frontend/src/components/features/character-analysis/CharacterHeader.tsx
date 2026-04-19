@@ -39,6 +39,24 @@ const TIER_GLOW: Record<string, string> = {
   A: "shadow-[0_0_16px_-6px] shadow-[var(--color-tier-a)]/15",
 };
 
+/** WAI-ARIA Radio Group 키보드 네비게이션 — 화살표/Home/End */
+function radioGroupKeyIndex(key: string, index: number, total: number): number | null {
+  switch (key) {
+    case "ArrowRight":
+    case "ArrowDown":
+      return (index + 1) % total;
+    case "ArrowLeft":
+    case "ArrowUp":
+      return (index - 1 + total) % total;
+    case "Home":
+      return 0;
+    case "End":
+      return total - 1;
+    default:
+      return null;
+  }
+}
+
 export function CharacterHeader({
   selectedCode,
   selectedTier,
@@ -54,6 +72,35 @@ export function CharacterHeader({
   loading,
   hasPreviousData,
 }: CharacterHeaderProps) {
+  const tierRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
+  const weaponRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
+
+  const weaponOptions: Array<number | null> = stats?.weapons
+    ? [null, ...stats.weapons.map((w) => w.bestWeapon ?? null)]
+    : [null];
+
+  const handleTierKey = (e: React.KeyboardEvent, index: number) => {
+    const next = radioGroupKeyIndex(e.key, index, METRICS_TIER_GROUPS.length);
+    if (next === null) return;
+    e.preventDefault();
+    const nextTier = METRICS_TIER_GROUPS[next];
+    setSelectedTier(nextTier);
+    analytics.analysisTierChanged(nextTier);
+    tierRefs.current[next]?.focus();
+  };
+
+  const handleWeaponKey = (e: React.KeyboardEvent, index: number) => {
+    const next = radioGroupKeyIndex(e.key, index, weaponOptions.length);
+    if (next === null) return;
+    e.preventDefault();
+    const nextWeapon = weaponOptions[next];
+    setSelectedWeapon(nextWeapon);
+    if (nextWeapon != null) {
+      analytics.weaponSelected(selectedCode, nextWeapon, resolveWeaponName(nextWeapon));
+    }
+    weaponRefs.current[next]?.focus();
+  };
+
   return (
     <div className="flex flex-col gap-4">
       {/* ── Character Identity ── */}
@@ -123,11 +170,14 @@ export function CharacterHeader({
               aria-label="분석 티어 선택"
               className="flex items-center gap-1 rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] p-0.5 w-fit"
             >
-              {METRICS_TIER_GROUPS.map((tg) => {
+              {METRICS_TIER_GROUPS.map((tg, i) => {
                 const isSelected = selectedTier === tg;
                 return (
                   <button
                     key={tg}
+                    ref={(el) => {
+                      tierRefs.current[i] = el;
+                    }}
                     type="button"
                     role="radio"
                     aria-checked={isSelected}
@@ -136,6 +186,7 @@ export function CharacterHeader({
                       setSelectedTier(tg);
                       analytics.analysisTierChanged(tg);
                     }}
+                    onKeyDown={(e) => handleTierKey(e, i)}
                     className={cn(
                       "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all whitespace-nowrap",
                       "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
@@ -164,11 +215,15 @@ export function CharacterHeader({
               className="flex gap-1.5 overflow-x-auto pb-0.5 scrollbar-hide"
             >
               <button
+                ref={(el) => {
+                  weaponRefs.current[0] = el;
+                }}
                 type="button"
                 role="radio"
                 aria-checked={selectedWeapon == null}
                 tabIndex={selectedWeapon == null ? 0 : -1}
                 onClick={() => setSelectedWeapon(null)}
+                onKeyDown={(e) => handleWeaponKey(e, 0)}
                 className={cn(
                   "flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all shrink-0",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
@@ -179,11 +234,15 @@ export function CharacterHeader({
               >
                 전체
               </button>
-              {stats.weapons.map((w) => {
+              {stats.weapons.map((w, i) => {
                 const isSelected = selectedWeapon === w.bestWeapon;
+                const weaponIndex = i + 1;
                 return (
                   <button
                     key={w.bestWeapon ?? "none"}
+                    ref={(el) => {
+                      weaponRefs.current[weaponIndex] = el;
+                    }}
                     type="button"
                     role="radio"
                     aria-checked={isSelected}
@@ -196,6 +255,7 @@ export function CharacterHeader({
                         resolveWeaponName(w.bestWeapon ?? null)
                       );
                     }}
+                    onKeyDown={(e) => handleWeaponKey(e, weaponIndex)}
                     className={cn(
                       "flex flex-col rounded-lg border px-3 py-1.5 text-xs transition-all min-w-[88px] shrink-0",
                       "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
