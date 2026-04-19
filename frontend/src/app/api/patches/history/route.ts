@@ -31,8 +31,9 @@ export async function GET(request: NextRequest) {
 
     if (!error && data && data.length > 0) {
       const patches = data.map((p) => p.version);
+      const latestStartDate = (data[0] as { startDate?: string }).startDate ?? null;
       console.log("[patches/history] 응답 (PatchVersion):", patches);
-      return NextResponse.json({ patches }, { headers: getCacheHeaders("slow") });
+      return NextResponse.json({ patches, latestStartDate }, { headers: getCacheHeaders("slow") });
     }
 
     // 2차 fallback: CharacterStats에서 distinct patchVersion
@@ -51,9 +52,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ patches: [] });
     }
 
-    const patches = [
-      ...new Set((statsData ?? []).map((r) => r.patchVersion as string)),
-    ]
+    const patches = [...new Set((statsData ?? []).map((r) => r.patchVersion as string))]
       .filter(Boolean)
       .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }))
       .slice(0, limit);

@@ -6,7 +6,7 @@ import * as React from "react";
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary";
 import { useL10n } from "@/components/L10nProvider";
 import { useFocusCharWeapons } from "@/hooks/useFocusCharWeapons";
-import { analytics } from "@/lib/analytics";
+import { analytics, type SynergySortBy } from "@/lib/analytics";
 import { resolveCharacterName } from "@/lib/characterMap";
 import { cn } from "@/lib/utils";
 import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "../synergy/constants";
@@ -339,6 +339,42 @@ export function SynergyDetailResults() {
     router.replace(pathname, { scroll: false });
   }, [router, pathname]);
 
+  // synergy_result_viewed — 같은 (ally1,ally2,sortBy) 조합은 중복 fire 금지
+  const lastViewedKeyRef = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    if (showLoading || deferredAllies.length === 0 || recommendations.length === 0) return;
+    const a1 = deferredCharCodes[0] ?? null;
+    const a2 = deferredCharCodes[1] ?? null;
+    const key = `${a1 ?? "_"}|${a2 ?? "_"}|${sortBy}`;
+    if (lastViewedKeyRef.current === key) return;
+    lastViewedKeyRef.current = key;
+    analytics.synergyResultViewed({
+      ally1Code: a1,
+      ally2Code: a2,
+      resultCount: recommendations.length,
+      sortBy: sortBy as SynergySortBy,
+      tier: "",
+      patch: "",
+      isWeaponScope: true,
+    });
+  }, [showLoading, recommendations, deferredAllies, deferredCharCodes, sortBy]);
+
+  // synergy_recommendation_clicked — ref-stable 콜백 (ComboWeaponCard memo 보존)
+  const recClickStateRef = React.useRef({ deferredCharCodes, sortBy });
+  React.useEffect(() => {
+    recClickStateRef.current = { deferredCharCodes, sortBy };
+  }, [deferredCharCodes, sortBy]);
+  const onRecommendationClick = React.useCallback((pickedCode: number, pickedRank: number) => {
+    const { deferredCharCodes: allies, sortBy: currentSortBy } = recClickStateRef.current;
+    analytics.synergyRecommendationClicked({
+      ally1Code: allies[0] ?? null,
+      ally2Code: allies[1] ?? null,
+      pickedCode,
+      pickedRank,
+      sortBy: currentSortBy as SynergySortBy,
+    });
+  }, []);
+
   return (
     <>
       {/* 정렬 기준 */}
@@ -474,6 +510,7 @@ export function SynergyDetailResults() {
                 getCharName={getCharName}
                 getTraitName={getTraitName}
                 selectedCharCodes={deferredCharCodes}
+                onRecommendationClick={onRecommendationClick}
               />
             ))}
             {recommendations.length > visibleCount && (

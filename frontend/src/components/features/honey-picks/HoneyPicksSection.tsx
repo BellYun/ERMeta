@@ -1,120 +1,137 @@
-"use client"
+"use client";
 
-import { Loader2 } from "lucide-react"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
-import * as React from "react"
-import type { HoneyPickData } from "@/app/api/meta/honey-picks/route"
-import { useL10n } from "@/components/L10nProvider"
-import { getCharacterPatchNote } from "@/data/patch-notes"
-import type { CharacterPatchNote } from "@/data/patch-notes"
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import * as React from "react";
+import type { HoneyPickData } from "@/app/api/meta/honey-picks/route";
+import { useL10n } from "@/components/L10nProvider";
+import { getCharacterPatchNote } from "@/data/patch-notes";
+import type { CharacterPatchNote } from "@/data/patch-notes";
+import { analytics } from "@/lib/analytics";
 import {
   buildFallbackMap,
   getCharacterHalfImageUrl,
   resolveCharacterName,
-} from "@/lib/characterMap"
-import { cn } from "@/lib/utils"
-import { resolveWeaponName } from "@/lib/weaponMap"
-import { useFilter } from "../FilterContext"
-import { PatchNoteBottomSheet } from "./PatchNoteBottomSheet"
+} from "@/lib/characterMap";
+import { cn } from "@/lib/utils";
+import { resolveWeaponName } from "@/lib/weaponMap";
+import { useFilter } from "../FilterContext";
+import { PatchNoteBottomSheet } from "./PatchNoteBottomSheet";
 
-const FALLBACK_MAP = buildFallbackMap()
+const FALLBACK_MAP = buildFallbackMap();
 
 export function getOverallChangeType(patchNote: CharacterPatchNote): "buff" | "nerf" | "rework" {
-  const types = patchNote.changes.map((c) => c.changeType)
-  if (types.every((t) => t === "buff")) return "buff"
-  if (types.every((t) => t === "nerf")) return "nerf"
-  return "rework"
+  const types = patchNote.changes.map((c) => c.changeType);
+  if (types.every((t) => t === "buff")) return "buff";
+  if (types.every((t) => t === "nerf")) return "nerf";
+  return "rework";
 }
 
 export const CHANGE_LABEL: Record<string, { text: string; color: string; bg: string }> = {
   buff: { text: "BUFF", color: "text-[var(--color-stat-up)]", bg: "bg-[var(--color-stat-up)]/10" },
-  nerf: { text: "NERF", color: "text-[var(--color-stat-down)]", bg: "bg-[var(--color-stat-down)]/10" },
-  rework: { text: "ADJUST", color: "text-[var(--color-primary)]", bg: "bg-[var(--color-primary)]/10" },
-}
+  nerf: {
+    text: "NERF",
+    color: "text-[var(--color-stat-down)]",
+    bg: "bg-[var(--color-stat-down)]/10",
+  },
+  rework: {
+    text: "ADJUST",
+    color: "text-[var(--color-primary)]",
+    bg: "bg-[var(--color-primary)]/10",
+  },
+};
 
 const RANK_STYLE: Record<number, string> = {
   1: "from-[#FFD700] to-[#FFA500] text-black",
   2: "from-[#C0C0C0] to-[#A0A0A0] text-black",
   3: "from-[#CD7F32] to-[#A0522D] text-white",
-}
+};
 
 async function fetchHoneyPicks(
   patch: string | undefined,
   tier: string
 ): Promise<{ picks: HoneyPickData[]; patchVersion: string }> {
-  const params = new URLSearchParams()
-  if (patch) params.set("patchVersion", patch)
-  params.set("tier", tier)
-  const res = await fetch(`/api/meta/honey-picks?${params}`)
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.error ?? "API 오류")
+  const params = new URLSearchParams();
+  if (patch) params.set("patchVersion", patch);
+  params.set("tier", tier);
+  const res = await fetch(`/api/meta/honey-picks?${params}`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error ?? "API 오류");
   return {
     picks: data.picks ?? [],
     patchVersion: data.patchVersion ?? patch ?? "",
-  }
+  };
 }
 
 interface ResolvedPick {
-  pick: HoneyPickData
-  name: string
-  weaponName: string
-  halfUrl: string
-  patchNote: CharacterPatchNote | null
-  changeType: "buff" | "nerf" | "rework" | null
+  pick: HoneyPickData;
+  name: string;
+  weaponName: string;
+  halfUrl: string;
+  patchNote: CharacterPatchNote | null;
+  changeType: "buff" | "nerf" | "rework" | null;
 }
 
 interface HoneyPicksSectionProps {
-  initialData?: HoneyPickData[]
-  initialPatchVersion?: string
+  initialData?: HoneyPickData[];
+  initialPatchVersion?: string;
 }
 
 export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPicksSectionProps) {
-  const { l10n } = useL10n()
-  const { patch, tier } = useFilter()
-  const router = useRouter()
-  const [picks, setPicks] = React.useState<HoneyPickData[]>(initialData ?? [])
-  const [loading, setLoading] = React.useState(!initialData || initialData.length === 0)
-  const [error, setError] = React.useState<string | null>(null)
-  const [currentPatch, setCurrentPatch] = React.useState<string>(initialPatchVersion ?? "")
+  const { l10n } = useL10n();
+  const { patch, tier } = useFilter();
+  const router = useRouter();
+  const [picks, setPicks] = React.useState<HoneyPickData[]>(initialData ?? []);
+  const [loading, setLoading] = React.useState(!initialData || initialData.length === 0);
+  const [error, setError] = React.useState<string | null>(null);
+  const [currentPatch, setCurrentPatch] = React.useState<string>(initialPatchVersion ?? "");
   const [mobileSheet, setMobileSheet] = React.useState<{
-    pick: HoneyPickData
-    patchNote: CharacterPatchNote
-    changeLabel: { text: string; color: string } | null
-  } | null>(null)
+    pick: HoneyPickData;
+    patchNote: CharacterPatchNote;
+    changeLabel: { text: string; color: string } | null;
+  } | null>(null);
 
   const getCharName = React.useCallback(
     (code: number) => resolveCharacterName(code, l10n, FALLBACK_MAP),
     [l10n]
-  )
+  );
 
-  const isInitialRender = React.useRef(true)
+  const trackHoneyClick = (r: ResolvedPick, rank: number) => {
+    analytics.honeyPickClicked({
+      characterCode: r.pick.characterNum,
+      characterName: r.name,
+      weaponCode: r.pick.bestWeapon,
+      score: r.pick.honeyScore,
+      rank,
+    });
+  };
+
+  const isInitialRender = React.useRef(true);
   React.useEffect(() => {
     if (isInitialRender.current && initialData && initialData.length > 0) {
-      isInitialRender.current = false
-      setLoading(false)
-      return
+      isInitialRender.current = false;
+      setLoading(false);
+      return;
     }
-    isInitialRender.current = false
+    isInitialRender.current = false;
 
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
     fetchHoneyPicks(patch, tier)
       .then(({ picks: nextPicks, patchVersion }) => {
-        setPicks(nextPicks)
-        setCurrentPatch(patchVersion)
+        setPicks(nextPicks);
+        setCurrentPatch(patchVersion);
       })
-      .catch((err) =>
-        setError(err instanceof Error ? err.message : "오류가 발생했습니다.")
-      )
-      .finally(() => setLoading(false))
-  }, [patch, tier, initialData])
+      .catch((err) => setError(err instanceof Error ? err.message : "오류가 발생했습니다."))
+      .finally(() => setLoading(false));
+  }, [patch, tier, initialData]);
 
   // Resolve picks with patch notes, buff/rework 우선 + 최소 4개 보장
   const resolved = React.useMemo<ResolvedPick[]>(() => {
     const all = picks.map((pick) => {
-      const patchNote = getCharacterPatchNote(pick.characterNum, currentPatch) ?? null
-      const changeType = patchNote ? getOverallChangeType(patchNote) : null
+      const patchNote = getCharacterPatchNote(pick.characterNum, currentPatch) ?? null;
+      const changeType = patchNote ? getOverallChangeType(patchNote) : null;
       return {
         pick,
         name: getCharName(pick.characterNum),
@@ -122,29 +139,29 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
         halfUrl: getCharacterHalfImageUrl(pick.characterNum),
         patchNote,
         changeType,
-      }
-    })
+      };
+    });
 
-    const buffed = all.filter((r) => r.changeType === "buff" || r.changeType === "rework")
+    const buffed = all.filter((r) => r.changeType === "buff" || r.changeType === "rework");
 
     // 버프/조정 캐릭터가 4개 미만이면 나머지를 승률 상승 캐릭터로 채움
-    if (buffed.length >= 4) return buffed.slice(0, 5)
+    if (buffed.length >= 4) return buffed.slice(0, 5);
 
-    const buffedNums = new Set(buffed.map((r) => r.pick.characterNum))
-    const rest = all.filter((r) => !buffedNums.has(r.pick.characterNum))
-    return [...buffed, ...rest].slice(0, 5)
-  }, [picks, currentPatch, getCharName])
+    const buffedNums = new Set(buffed.map((r) => r.pick.characterNum));
+    const rest = all.filter((r) => !buffedNums.has(r.pick.characterNum));
+    return [...buffed, ...rest].slice(0, 5);
+  }, [picks, currentPatch, getCharName]);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="h-5 w-5 animate-spin text-[var(--color-muted-foreground)]" />
       </div>
-    )
+    );
   }
 
   if (error) {
-    return <p className="py-4 text-sm text-[var(--color-danger)]">{error}</p>
+    return <p className="py-4 text-sm text-[var(--color-danger)]">{error}</p>;
   }
 
   if (resolved.length === 0) {
@@ -152,7 +169,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
       <p className="py-6 text-center text-xs text-[var(--color-muted-foreground)]">
         이번 패치에서 버프 후 떡상한 캐릭터가 없습니다.
       </p>
-    )
+    );
   }
 
   return (
@@ -160,7 +177,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
       {/* ── Desktop: Compact 2-column grid ── */}
       <div className="hidden sm:grid grid-cols-2 gap-2.5">
         {resolved.map((r, i) => {
-          const changeLabel = r.changeType ? CHANGE_LABEL[r.changeType] : null
+          const changeLabel = r.changeType ? CHANGE_LABEL[r.changeType] : null;
 
           return (
             <div
@@ -169,9 +186,10 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                 "relative flex items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-3 cursor-pointer group transition-colors hover:bg-[var(--color-surface-2)]",
                 i === 0 && "col-span-2"
               )}
-              onClick={() =>
-                router.push(`/character/${r.pick.characterNum}?weapon=${r.pick.bestWeapon}`)
-              }
+              onClick={() => {
+                trackHoneyClick(r, i + 1);
+                router.push(`/character/${r.pick.characterNum}?weapon=${r.pick.bestWeapon}`);
+              }}
             >
               {/* Rank */}
               <span
@@ -226,11 +244,16 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                   <p className="text-sm font-bold tabular-nums text-[var(--color-foreground)]">
                     {r.pick.winRate.toFixed(1)}%
                   </p>
-                  <p className={cn(
-                    "text-[10px] font-semibold tabular-nums",
-                    r.pick.winRateDelta >= 0 ? "text-[var(--color-stat-up)]" : "text-[var(--color-stat-down)]"
-                  )}>
-                    {r.pick.winRateDelta >= 0 ? "+" : ""}{r.pick.winRateDelta.toFixed(1)}
+                  <p
+                    className={cn(
+                      "text-[10px] font-semibold tabular-nums",
+                      r.pick.winRateDelta >= 0
+                        ? "text-[var(--color-stat-up)]"
+                        : "text-[var(--color-stat-down)]"
+                    )}
+                  >
+                    {r.pick.winRateDelta >= 0 ? "+" : ""}
+                    {r.pick.winRateDelta.toFixed(1)}
                   </p>
                 </div>
                 <div className="text-center">
@@ -238,38 +261,53 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                   <p className="text-sm font-bold tabular-nums text-[var(--color-foreground)]">
                     {r.pick.pickRate.toFixed(1)}%
                   </p>
-                  <p className={cn(
-                    "text-[10px] font-semibold tabular-nums",
-                    r.pick.pickRateDelta >= 0 ? "text-[var(--color-stat-up)]" : "text-[var(--color-stat-down)]"
-                  )}>
-                    {r.pick.pickRateDelta >= 0 ? "+" : ""}{r.pick.pickRateDelta.toFixed(1)}
+                  <p
+                    className={cn(
+                      "text-[10px] font-semibold tabular-nums",
+                      r.pick.pickRateDelta >= 0
+                        ? "text-[var(--color-stat-up)]"
+                        : "text-[var(--color-stat-down)]"
+                    )}
+                  >
+                    {r.pick.pickRateDelta >= 0 ? "+" : ""}
+                    {r.pick.pickRateDelta.toFixed(1)}
                   </p>
                 </div>
                 <div className="text-center">
                   <p className="text-[9px] text-[var(--color-muted-foreground)] uppercase">RP</p>
-                  <p className={cn(
-                    "text-sm font-bold tabular-nums",
-                    r.pick.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
-                  )}>
-                    {r.pick.averageRP >= 0 ? "+" : ""}{r.pick.averageRP.toFixed(0)}
+                  <p
+                    className={cn(
+                      "text-sm font-bold tabular-nums",
+                      r.pick.averageRP >= 0
+                        ? "text-[var(--color-accent-gold)]"
+                        : "text-[var(--color-muted-foreground)]"
+                    )}
+                  >
+                    {r.pick.averageRP >= 0 ? "+" : ""}
+                    {r.pick.averageRP.toFixed(0)}
                   </p>
-                  <p className={cn(
-                    "text-[10px] font-semibold tabular-nums",
-                    r.pick.averageRPDelta >= 0 ? "text-[var(--color-stat-up)]" : "text-[var(--color-stat-down)]"
-                  )}>
-                    {r.pick.averageRPDelta >= 0 ? "+" : ""}{r.pick.averageRPDelta.toFixed(1)}
+                  <p
+                    className={cn(
+                      "text-[10px] font-semibold tabular-nums",
+                      r.pick.averageRPDelta >= 0
+                        ? "text-[var(--color-stat-up)]"
+                        : "text-[var(--color-stat-down)]"
+                    )}
+                  >
+                    {r.pick.averageRPDelta >= 0 ? "+" : ""}
+                    {r.pick.averageRPDelta.toFixed(1)}
                   </p>
                 </div>
               </div>
             </div>
-          )
+          );
         })}
       </div>
 
       {/* ── Mobile: Card grid ── */}
       <div className="sm:hidden grid grid-cols-2 gap-2.5">
         {resolved.map((r, i) => {
-          const changeLabel = r.changeType ? CHANGE_LABEL[r.changeType] : null
+          const changeLabel = r.changeType ? CHANGE_LABEL[r.changeType] : null;
           return (
             <div
               key={r.pick.characterNum}
@@ -279,6 +317,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
               )}
               style={{ aspectRatio: i === 0 ? "16/9" : "3/4" }}
               onClick={() => {
+                trackHoneyClick(r, i + 1);
                 if (r.patchNote) {
                   setMobileSheet({
                     pick: r.pick,
@@ -289,11 +328,9 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                           color: `${changeLabel.color} ${changeLabel.bg}`,
                         }
                       : null,
-                  })
+                  });
                 } else {
-                  router.push(
-                    `/character/${r.pick.characterNum}`
-                  )
+                  router.push(`/character/${r.pick.characterNum}`);
                 }
               }}
             >
@@ -334,10 +371,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
               {/* Info */}
               <div className="absolute bottom-0 inset-x-0 p-2.5">
                 <p
-                  className={cn(
-                    "font-bold text-white truncate",
-                    i === 0 ? "text-base" : "text-sm"
-                  )}
+                  className={cn("font-bold text-white truncate", i === 0 ? "text-base" : "text-sm")}
                 >
                   {r.name}
                 </p>
@@ -356,7 +390,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                 </div>
               </div>
             </div>
-          )
+          );
         })}
       </div>
 
@@ -369,14 +403,13 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
           characterName={getCharName(mobileSheet.pick.characterNum)}
           onClose={() => setMobileSheet(null)}
           onNavigate={() => {
-            setMobileSheet(null)
+            setMobileSheet(null);
             router.push(
               `/character/${mobileSheet.pick.characterNum}?weapon=${mobileSheet.pick.bestWeapon}`
-            )
+            );
           }}
         />
       )}
     </>
-  )
+  );
 }
-

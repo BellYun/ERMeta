@@ -63,6 +63,8 @@ interface ComboWeaponCardProps {
   getCharName: (code: number) => string;
   getTraitName: (code: number) => string | null;
   selectedCharCodes: number[];
+  /** 추천(gold ring) 캐릭터 Link 클릭 시 호출. 부모가 analytics 발화. 메모이제이션 유지를 위해 ref-stable하게 전달할 것. */
+  onRecommendationClick?: (pickedCode: number, pickedRank: number) => void;
 }
 
 /**
@@ -76,6 +78,7 @@ function ComboWeaponCardImpl({
   getCharName,
   getTraitName,
   selectedCharCodes,
+  onRecommendationClick,
 }: ComboWeaponCardProps) {
   const [showTraits, setShowTraits] = React.useState(false);
   const [showAllVariants, setShowAllVariants] = React.useState(false);
@@ -146,7 +149,10 @@ function ComboWeaponCardImpl({
               <React.Fragment key={`${m.char}-${m.weapon}`}>
                 <Link
                   href={`/character/${m.char}?weapon=${m.weapon}`}
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (isRecommended) onRecommendationClick?.(m.char, rank);
+                  }}
                   onTouchEnd={(e) => e.stopPropagation()}
                   // 외부 div[role=button]가 onPointerUp으로 토글하므로 pointer 단계에서도
                   // 차단해야 "캐릭터 상세 이동" 탭이 실수로 브레이크다운 토글을 함께 트리거하지 않음.
