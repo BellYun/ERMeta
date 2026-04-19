@@ -1,45 +1,37 @@
 import AxeBuilder from "@axe-core/playwright";
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 
 /**
  * axe-core 기반 접근성 자동 검증 (WCAG 2.1 AA)
  *
- * 주요 페이지를 순회하며 접근성 위반을 검출한다.
  * CI에서 PR마다 실행되어 접근성 회귀를 자동 차단.
+ * Supabase subscription / analytics beacon 등으로 networkidle이 도달하지
+ * 않아 CI에서 타임아웃이 발생했던 이슈가 있어 domcontentloaded + 주요
+ * heading 가시성으로 대체.
  */
+
+async function gotoAndAnalyze(page: Page, path: string) {
+  await page.goto(path, { waitUntil: "domcontentloaded" });
+  await page.locator("h1, h2").first().waitFor({ state: "visible", timeout: 15_000 });
+
+  const results = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+    .analyze();
+
+  expect(results.violations, formatViolations(results.violations)).toHaveLength(0);
+}
 
 test.describe("접근성 (WCAG 2.1 AA)", () => {
   test("홈 페이지 — 메타 분석", async ({ page }) => {
-    await page.goto("/");
-    await page.waitForLoadState("networkidle");
-
-    const results = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
-      .analyze();
-
-    expect(results.violations, formatViolations(results.violations)).toHaveLength(0);
+    await gotoAndAnalyze(page, "/");
   });
 
   test("캐릭터 분석 페이지", async ({ page }) => {
-    await page.goto("/character/1");
-    await page.waitForLoadState("networkidle");
-
-    const results = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
-      .analyze();
-
-    expect(results.violations, formatViolations(results.violations)).toHaveLength(0);
+    await gotoAndAnalyze(page, "/character/1");
   });
 
   test("조합 추천 페이지", async ({ page }) => {
-    await page.goto("/synergy-detail");
-    await page.waitForLoadState("networkidle");
-
-    const results = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
-      .analyze();
-
-    expect(results.violations, formatViolations(results.violations)).toHaveLength(0);
+    await gotoAndAnalyze(page, "/synergy-detail");
   });
 });
 
