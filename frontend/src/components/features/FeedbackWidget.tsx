@@ -67,7 +67,7 @@ export default function FeedbackWidget() {
         role="dialog"
         aria-modal="true"
         aria-label="피드백 보내기"
-        aria-hidden={!isOpen}
+        inert={!isOpen}
         tabIndex={-1}
         className={[
           "w-[calc(100vw-2rem)] max-w-sm sm:w-80",
