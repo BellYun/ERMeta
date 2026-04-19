@@ -1,29 +1,34 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import { useRouter } from "next/navigation"
-import * as React from "react"
-import { useL10n } from "@/components/L10nProvider"
-import { Skeleton } from "@/components/ui/skeleton"
-import { getCharacterPatchNote } from "@/data/patch-notes"
-import { analytics } from "@/lib/analytics"
-import type { CharacterRole } from "@/lib/characterMap"
-import { resolveCharacterName, buildFallbackMap, getCharacterImageUrl, getComboRoles } from "@/lib/characterMap"
-import type { CharacterRankingData, RankingResponse } from "@/lib/ranking"
-import { cn } from "@/lib/utils"
-import { resolveWeaponName } from "@/lib/weaponMap"
-import { useFilter } from "../FilterContext"
-import { TierBadge } from "../TierBadge"
-import { PatchNoteTooltip } from "./PatchNoteTooltip"
-import type { PrevStats, DisplayRow } from "./types"
-import { computeMetaScores, assignTier } from "./utils"
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import * as React from "react";
+import { useL10n } from "@/components/L10nProvider";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getCharacterPatchNote } from "@/data/patch-notes";
+import { analytics, type TierGroupEnum } from "@/lib/analytics";
+import type { CharacterRole } from "@/lib/characterMap";
+import {
+  resolveCharacterName,
+  buildFallbackMap,
+  getCharacterImageUrl,
+  getComboRoles,
+} from "@/lib/characterMap";
+import type { CharacterRankingData, RankingResponse } from "@/lib/ranking";
+import { cn } from "@/lib/utils";
+import { resolveWeaponName } from "@/lib/weaponMap";
+import { useFilter } from "../FilterContext";
+import { TierBadge } from "../TierBadge";
+import { PatchNoteTooltip } from "./PatchNoteTooltip";
+import type { PrevStats, DisplayRow } from "./types";
+import { computeMetaScores, assignTier } from "./utils";
 
-const fallbackMap = buildFallbackMap()
+const fallbackMap = buildFallbackMap();
 
-const roleTabs = ["전체", "탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"] as const
+const roleTabs = ["전체", "탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"] as const;
 
-type SortKey = "rank" | "pickRate" | "winRate" | "averageRP"
-type SortDir = "asc" | "desc"
+type SortKey = "rank" | "pickRate" | "winRate" | "averageRP";
+type SortDir = "asc" | "desc";
 
 function buildDisplayRows(
   rankings: CharacterRankingData[],
@@ -31,24 +36,24 @@ function buildDisplayRows(
   currentPatch: string,
   l10n: Map<string, string>
 ): DisplayRow[] {
-  const prevMap = new Map<number, PrevStats>()
+  const prevMap = new Map<number, PrevStats>();
   if (previousRankings.length > 0) {
-    const prevGrandTotal = previousRankings.reduce((s, r) => s + r.totalGames, 0)
+    const prevGrandTotal = previousRankings.reduce((s, r) => s + r.totalGames, 0);
     for (const r of previousRankings) {
       prevMap.set(r.characterNum, {
         pickRate: prevGrandTotal > 0 ? (r.totalGames / prevGrandTotal) * 100 : 0,
         winRate: r.winRate,
         averageRP: r.averageRP,
-      })
+      });
     }
   }
 
-  const scores = computeMetaScores(rankings)
+  const scores = computeMetaScores(rankings);
   const sorted = [...rankings].sort((a, b) => {
-    const sa = scores.get(a.characterNum * 1000 + a.bestWeapon) ?? 0
-    const sb = scores.get(b.characterNum * 1000 + b.bestWeapon) ?? 0
-    return sb - sa
-  })
+    const sa = scores.get(a.characterNum * 1000 + a.bestWeapon) ?? 0;
+    const sb = scores.get(b.characterNum * 1000 + b.bestWeapon) ?? 0;
+    return sb - sa;
+  });
 
   return sorted.map((r, i) => ({
     rank: i + 1,
@@ -64,83 +69,95 @@ function buildDisplayRows(
     averageRP: r.averageRP,
     prev: prevMap.get(r.characterNum) ?? null,
     patchNote: getCharacterPatchNote(r.characterNum, currentPatch) ?? null,
-  }))
+  }));
 }
 
 interface TierRankingTableProps {
-  initialData?: RankingResponse
+  initialData?: RankingResponse;
 }
 
 export function TierRankingTable({ initialData }: TierRankingTableProps) {
-  const { patch, tier } = useFilter()
-  const [activeRole, setActiveRole] = React.useState<string>("전체")
-  const [rankingData, setRankingData] = React.useState<RankingResponse | null>(initialData ?? null)
-  const [isLoading, setIsLoading] = React.useState(!initialData)
-  const [activeKey, setActiveKey] = React.useState<string | null>(null)
-  const [sortKey, setSortKey] = React.useState<SortKey>("rank")
-  const [sortDir, setSortDir] = React.useState<SortDir>("asc")
-  const [showAll, setShowAll] = React.useState(false)
-  const DEFAULT_VISIBLE = 20
-  const { l10n } = useL10n()
-  const isInitialRender = React.useRef(true)
-  const router = useRouter()
+  const { patch, tier } = useFilter();
+  const [activeRole, setActiveRole] = React.useState<string>("전체");
+  const [rankingData, setRankingData] = React.useState<RankingResponse | null>(initialData ?? null);
+  const [isLoading, setIsLoading] = React.useState(!initialData);
+  const [activeKey, setActiveKey] = React.useState<string | null>(null);
+  const [sortKey, setSortKey] = React.useState<SortKey>("rank");
+  const [sortDir, setSortDir] = React.useState<SortDir>("asc");
+  const [showAll, setShowAll] = React.useState(false);
+  const DEFAULT_VISIBLE = 20;
+  const { l10n } = useL10n();
+  const isInitialRender = React.useRef(true);
+  const router = useRouter();
 
   React.useEffect(() => {
     if (isInitialRender.current) {
-      isInitialRender.current = false
-      if (initialData) return
+      isInitialRender.current = false;
+      if (initialData) return;
     }
 
-    setIsLoading(true)
-    const params = new URLSearchParams()
-    if (patch) params.set("patchVersion", patch)
-    params.set("tier", tier)
+    setIsLoading(true);
+    const params = new URLSearchParams();
+    if (patch) params.set("patchVersion", patch);
+    params.set("tier", tier);
 
     fetch(`/api/character/mithril-rp-ranking?${params}`)
       .then((res) => res.json())
       .then((data: RankingResponse) => setRankingData(data))
       .catch(() => setRankingData(null))
-      .finally(() => setIsLoading(false))
-  }, [patch, tier]) // eslint-disable-line react-hooks/exhaustive-deps
+      .finally(() => setIsLoading(false));
+  }, [patch, tier]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const rows = React.useMemo(() => {
-    if (!rankingData) return []
+    if (!rankingData) return [];
     return buildDisplayRows(
       rankingData.rankings,
       rankingData.previousRankings,
       rankingData.patchVersion ?? patch ?? "",
       l10n
-    )
-  }, [rankingData, l10n, patch])
+    );
+  }, [rankingData, l10n, patch]);
 
   const filtered = React.useMemo(() => {
     const base =
       activeRole === "전체"
         ? rows
-        : rows.filter((c) => c.roles.includes(activeRole as CharacterRole))
+        : rows.filter((c) => c.roles.includes(activeRole as CharacterRole));
 
     if (sortKey === "rank") {
-      return sortDir === "asc" ? base : [...base].reverse()
+      return sortDir === "asc" ? base : [...base].reverse();
     }
 
     return [...base].sort((a, b) => {
-      const va = a[sortKey]
-      const vb = b[sortKey]
-      return sortDir === "asc" ? va - vb : vb - va
-    })
-  }, [rows, activeRole, sortKey, sortDir])
+      const va = a[sortKey];
+      const vb = b[sortKey];
+      return sortDir === "asc" ? va - vb : vb - va;
+    });
+  }, [rows, activeRole, sortKey, sortDir]);
 
-  const visible = showAll ? filtered : filtered.slice(0, DEFAULT_VISIBLE)
-  const hasMore = filtered.length > DEFAULT_VISIBLE
+  const visible = showAll ? filtered : filtered.slice(0, DEFAULT_VISIBLE);
+  const hasMore = filtered.length > DEFAULT_VISIBLE;
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
-      setSortDir((d) => (d === "asc" ? "desc" : "asc"))
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     } else {
-      setSortKey(key)
-      setSortDir(key === "rank" ? "asc" : "desc")
+      setSortKey(key);
+      setSortDir(key === "rank" ? "asc" : "desc");
     }
-  }
+  };
+
+  const navigateToCharacter = (char: DisplayRow) => {
+    analytics.rankingCharacterClicked({
+      characterCode: char.code,
+      characterName: char.name,
+      rank: char.rank,
+      tier: char.tier ?? "",
+      patch: patch ?? "",
+      matchmakingTier: tier as TierGroupEnum,
+    });
+    router.push(`/character/${char.code}?weapon=${char.weaponCode}`);
+  };
 
   return (
     <div className="flex flex-col gap-3">
@@ -152,8 +169,8 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
             className="role-pill shrink-0"
             data-active={activeRole === tab}
             onClick={() => {
-              setActiveRole(tab)
-              analytics.rankingTierTabChanged(tab)
+              setActiveRole(tab);
+              analytics.rankingTierTabChanged(tab);
             }}
           >
             {tab}
@@ -168,28 +185,78 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/50">
-                <SortableHead label="#" sortKey="rank" currentKey={sortKey} dir={sortDir} onSort={handleSort} className="w-14 text-center" />
-                <th className="px-2 py-2.5 text-left text-xs font-medium text-[var(--color-muted-foreground)] w-12">티어</th>
-                <th className="px-2 py-2.5 text-left text-xs font-medium text-[var(--color-muted-foreground)]">캐릭터</th>
-                <SortableHead label="픽률" sortKey="pickRate" currentKey={sortKey} dir={sortDir} onSort={handleSort} className="w-28 text-right" tooltip="전체 게임 중 해당 캐릭터가 선택된 비율" />
-                <SortableHead label="승률" sortKey="winRate" currentKey={sortKey} dir={sortDir} onSort={handleSort} className="w-28 text-right" tooltip="해당 캐릭터의 1위 달성 비율 (기대값 12.5%)" />
-                <SortableHead label="평균 RP" sortKey="averageRP" currentKey={sortKey} dir={sortDir} onSort={handleSort} className="w-32 text-right" tooltip="게임당 평균 획득 랭크 포인트. 양수일수록 랭크 상승에 유리" />
+                <SortableHead
+                  label="#"
+                  sortKey="rank"
+                  currentKey={sortKey}
+                  dir={sortDir}
+                  onSort={handleSort}
+                  className="w-14 text-center"
+                />
+                <th className="px-2 py-2.5 text-left text-xs font-medium text-[var(--color-muted-foreground)] w-12">
+                  티어
+                </th>
+                <th className="px-2 py-2.5 text-left text-xs font-medium text-[var(--color-muted-foreground)]">
+                  캐릭터
+                </th>
+                <SortableHead
+                  label="픽률"
+                  sortKey="pickRate"
+                  currentKey={sortKey}
+                  dir={sortDir}
+                  onSort={handleSort}
+                  className="w-28 text-right"
+                  tooltip="전체 게임 중 해당 캐릭터가 선택된 비율"
+                />
+                <SortableHead
+                  label="승률"
+                  sortKey="winRate"
+                  currentKey={sortKey}
+                  dir={sortDir}
+                  onSort={handleSort}
+                  className="w-28 text-right"
+                  tooltip="해당 캐릭터의 1위 달성 비율 (기대값 12.5%)"
+                />
+                <SortableHead
+                  label="평균 RP"
+                  sortKey="averageRP"
+                  currentKey={sortKey}
+                  dir={sortDir}
+                  onSort={handleSort}
+                  className="w-32 text-right"
+                  tooltip="게임당 평균 획득 랭크 포인트. 양수일수록 랭크 상승에 유리"
+                />
               </tr>
             </thead>
             <tbody>
               {isLoading
                 ? Array.from({ length: 10 }).map((_, i) => (
                     <tr key={i} className="border-b border-[var(--color-border)]/30">
-                      <td className="px-3 py-2.5 text-center"><Skeleton className="h-4 w-5 mx-auto" /></td>
-                      <td className="px-2 py-2.5"><Skeleton className="h-6 w-6 rounded" /></td>
-                      <td className="px-2 py-2.5"><div className="flex items-center gap-2.5"><Skeleton className="h-8 w-8 rounded-lg shrink-0" /><Skeleton className="h-4 w-24" /></div></td>
-                      <td className="px-3 py-2.5 text-right"><Skeleton className="h-4 w-12 ml-auto" /></td>
-                      <td className="px-3 py-2.5 text-right"><Skeleton className="h-4 w-12 ml-auto" /></td>
-                      <td className="px-3 py-2.5 text-right"><Skeleton className="h-4 w-14 ml-auto" /></td>
+                      <td className="px-3 py-2.5 text-center">
+                        <Skeleton className="h-4 w-5 mx-auto" />
+                      </td>
+                      <td className="px-2 py-2.5">
+                        <Skeleton className="h-6 w-6 rounded" />
+                      </td>
+                      <td className="px-2 py-2.5">
+                        <div className="flex items-center gap-2.5">
+                          <Skeleton className="h-8 w-8 rounded-lg shrink-0" />
+                          <Skeleton className="h-4 w-24" />
+                        </div>
+                      </td>
+                      <td className="px-3 py-2.5 text-right">
+                        <Skeleton className="h-4 w-12 ml-auto" />
+                      </td>
+                      <td className="px-3 py-2.5 text-right">
+                        <Skeleton className="h-4 w-12 ml-auto" />
+                      </td>
+                      <td className="px-3 py-2.5 text-right">
+                        <Skeleton className="h-4 w-14 ml-auto" />
+                      </td>
                     </tr>
                   ))
                 : visible.map((char) => {
-                    const key = `${char.code}-${char.weaponCode}`
+                    const key = `${char.code}-${char.weaponCode}`;
                     return (
                       <tr
                         key={key}
@@ -200,13 +267,13 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                         onClick={() => {
                           if (char.patchNote && "ontouchstart" in window) {
                             if (activeKey === key) {
-                              setActiveKey(null)
-                              router.push(`/character/${char.code}?weapon=${char.weaponCode}`)
+                              setActiveKey(null);
+                              navigateToCharacter(char);
                             } else {
-                              setActiveKey(key)
+                              setActiveKey(key);
                             }
                           } else {
-                            router.push(`/character/${char.code}?weapon=${char.weaponCode}`)
+                            navigateToCharacter(char);
                           }
                         }}
                         onMouseEnter={() => setActiveKey(key)}
@@ -214,10 +281,14 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                       >
                         {/* Rank */}
                         <td className="px-3 py-2 text-center">
-                          <span className={cn(
-                            "text-sm font-bold tabular-nums",
-                            char.rank <= 3 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
-                          )}>
+                          <span
+                            className={cn(
+                              "text-sm font-bold tabular-nums",
+                              char.rank <= 3
+                                ? "text-[var(--color-accent-gold)]"
+                                : "text-[var(--color-muted-foreground)]"
+                            )}
+                          >
                             {char.rank}
                           </span>
                         </td>
@@ -244,7 +315,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                               <span className="text-sm font-medium text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors truncate block">
                                 {char.name}
                               </span>
-                              <span className="text-[11px] text-[var(--color-muted-foreground)] truncate block">{char.weaponName}</span>
+                              <span className="text-[11px] text-[var(--color-muted-foreground)] truncate block">
+                                {char.weaponName}
+                              </span>
                             </div>
                             {char.patchNote && activeKey === key && (
                               <PatchNoteTooltip patchNote={char.patchNote} />
@@ -265,19 +338,27 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                         </td>
                         {/* Average RP */}
                         <td className="px-3 py-2 text-right">
-                          <span className={cn(
-                            "text-sm font-semibold tabular-nums",
-                            char.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
-                          )}>
-                            {char.averageRP >= 0 ? "+" : ""}{char.averageRP.toFixed(1)}
+                          <span
+                            className={cn(
+                              "text-sm font-semibold tabular-nums",
+                              char.averageRP >= 0
+                                ? "text-[var(--color-accent-gold)]"
+                                : "text-[var(--color-muted-foreground)]"
+                            )}
+                          >
+                            {char.averageRP >= 0 ? "+" : ""}
+                            {char.averageRP.toFixed(1)}
                           </span>
                         </td>
                       </tr>
-                    )
+                    );
                   })}
               {!isLoading && visible.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="text-center text-sm text-[var(--color-muted-foreground)] py-16">
+                  <td
+                    colSpan={6}
+                    className="text-center text-sm text-[var(--color-muted-foreground)] py-16"
+                  >
                     데이터 없음
                   </td>
                 </tr>
@@ -290,13 +371,15 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
         <div className="sm:hidden">
           {/* Mobile sort bar */}
           <div className="flex items-center gap-1.5 px-3 py-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/50 overflow-x-auto scrollbar-hide">
-            <span className="text-[10px] text-[var(--color-muted-foreground)] shrink-0 mr-1">정렬</span>
-            {([
+            <span className="text-[10px] text-[var(--color-muted-foreground)] shrink-0 mr-1">
+              정렬
+            </span>
+            {[
               { key: "rank" as SortKey, label: "순위" },
               { key: "winRate" as SortKey, label: "승률" },
               { key: "pickRate" as SortKey, label: "픽률" },
               { key: "averageRP" as SortKey, label: "RP" },
-            ]).map(({ key, label }) => (
+            ].map(({ key, label }) => (
               <button
                 key={key}
                 onClick={() => handleSort(key)}
@@ -317,89 +400,105 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
 
           {/* Mobile rows */}
           <div className="divide-y divide-[var(--color-border)]/30">
-            {isLoading
-              ? Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="flex items-center gap-2.5 px-3 py-2.5">
-                    <Skeleton className="h-4 w-5 shrink-0" />
-                    <Skeleton className="h-5 w-5 rounded shrink-0" />
-                    <Skeleton className="h-9 w-9 rounded-lg shrink-0" />
-                    <div className="flex-1 min-w-0 flex flex-col gap-1">
-                      <Skeleton className="h-3.5 w-20" />
-                      <Skeleton className="h-3 w-14" />
-                    </div>
-                    <div className="flex flex-col items-end gap-1 shrink-0">
-                      <Skeleton className="h-3.5 w-10" />
-                      <Skeleton className="h-3 w-12" />
-                    </div>
+            {isLoading ? (
+              Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-2.5 px-3 py-2.5">
+                  <Skeleton className="h-4 w-5 shrink-0" />
+                  <Skeleton className="h-5 w-5 rounded shrink-0" />
+                  <Skeleton className="h-9 w-9 rounded-lg shrink-0" />
+                  <div className="flex-1 min-w-0 flex flex-col gap-1">
+                    <Skeleton className="h-3.5 w-20" />
+                    <Skeleton className="h-3 w-14" />
                   </div>
-                ))
-              : visible.length === 0
-                ? (
-                  <div className="text-center text-sm text-[var(--color-muted-foreground)] py-12">
-                    데이터 없음
+                  <div className="flex flex-col items-end gap-1 shrink-0">
+                    <Skeleton className="h-3.5 w-10" />
+                    <Skeleton className="h-3 w-12" />
                   </div>
-                )
-                : visible.map((char) => {
-                    const key = `${char.code}-${char.weaponCode}`
-                    return (
-                      <div
-                        key={key}
-                        className="relative flex items-center gap-2.5 px-3 py-2.5 cursor-pointer active:bg-[var(--color-surface-2)] touch-manipulation transition-colors"
-                        onClick={() => {
-                          if (char.patchNote && "ontouchstart" in window) {
-                            if (activeKey === key) {
-                              setActiveKey(null)
-                              router.push(`/character/${char.code}?weapon=${char.weaponCode}`)
-                            } else {
-                              setActiveKey(key)
-                            }
-                          } else {
-                            router.push(`/character/${char.code}?weapon=${char.weaponCode}`)
-                          }
-                        }}
-                      >
-                        {/* Rank */}
-                        <span className={cn(
-                          "text-xs font-bold w-5 text-center shrink-0 tabular-nums",
-                          char.rank <= 3 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
-                        )}>
-                          {char.rank}
-                        </span>
-                        {/* Tier */}
-                        <TierBadge tier={char.tier} />
-                        {/* Image */}
-                        <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
-                          <Image src={char.imageUrl} alt={char.name} fill className="object-cover" sizes="36px" />
-                          {char.patchNote && (
-                            <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]" />
-                          )}
-                        </div>
-                        {/* Name + Weapon */}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-[var(--color-foreground)] truncate leading-tight">
-                            {char.name}
-                          </p>
-                          <p className="text-[11px] text-[var(--color-muted-foreground)] truncate">{char.weaponName}</p>
-                        </div>
-                        {/* Stats */}
-                        <div className="flex flex-col items-end shrink-0 gap-0.5">
-                          <span className="text-xs font-medium tabular-nums text-[var(--color-foreground)]">
-                            {char.winRate.toFixed(1)}%
-                          </span>
-                          <span className={cn(
-                            "text-[11px] font-semibold tabular-nums",
-                            char.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
-                          )}>
-                            {char.averageRP >= 0 ? "+" : ""}{char.averageRP.toFixed(1)} RP
-                          </span>
-                        </div>
-                        {char.patchNote && activeKey === key && (
-                          <PatchNoteTooltip patchNote={char.patchNote} />
+                </div>
+              ))
+            ) : visible.length === 0 ? (
+              <div className="text-center text-sm text-[var(--color-muted-foreground)] py-12">
+                데이터 없음
+              </div>
+            ) : (
+              visible.map((char) => {
+                const key = `${char.code}-${char.weaponCode}`;
+                return (
+                  <div
+                    key={key}
+                    className="relative flex items-center gap-2.5 px-3 py-2.5 cursor-pointer active:bg-[var(--color-surface-2)] touch-manipulation transition-colors"
+                    onClick={() => {
+                      if (char.patchNote && "ontouchstart" in window) {
+                        if (activeKey === key) {
+                          setActiveKey(null);
+                          navigateToCharacter(char);
+                        } else {
+                          setActiveKey(key);
+                        }
+                      } else {
+                        navigateToCharacter(char);
+                      }
+                    }}
+                  >
+                    {/* Rank */}
+                    <span
+                      className={cn(
+                        "text-xs font-bold w-5 text-center shrink-0 tabular-nums",
+                        char.rank <= 3
+                          ? "text-[var(--color-accent-gold)]"
+                          : "text-[var(--color-muted-foreground)]"
+                      )}
+                    >
+                      {char.rank}
+                    </span>
+                    {/* Tier */}
+                    <TierBadge tier={char.tier} />
+                    {/* Image */}
+                    <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
+                      <Image
+                        src={char.imageUrl}
+                        alt={char.name}
+                        fill
+                        className="object-cover"
+                        sizes="36px"
+                      />
+                      {char.patchNote && (
+                        <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]" />
+                      )}
+                    </div>
+                    {/* Name + Weapon */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-[var(--color-foreground)] truncate leading-tight">
+                        {char.name}
+                      </p>
+                      <p className="text-[11px] text-[var(--color-muted-foreground)] truncate">
+                        {char.weaponName}
+                      </p>
+                    </div>
+                    {/* Stats */}
+                    <div className="flex flex-col items-end shrink-0 gap-0.5">
+                      <span className="text-xs font-medium tabular-nums text-[var(--color-foreground)]">
+                        {char.winRate.toFixed(1)}%
+                      </span>
+                      <span
+                        className={cn(
+                          "text-[11px] font-semibold tabular-nums",
+                          char.averageRP >= 0
+                            ? "text-[var(--color-accent-gold)]"
+                            : "text-[var(--color-muted-foreground)]"
                         )}
-                      </div>
-                    )
-                  })
-            }
+                      >
+                        {char.averageRP >= 0 ? "+" : ""}
+                        {char.averageRP.toFixed(1)} RP
+                      </span>
+                    </div>
+                    {char.patchNote && activeKey === key && (
+                      <PatchNoteTooltip patchNote={char.patchNote} />
+                    )}
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       </div>
@@ -414,7 +513,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
         </button>
       )}
     </div>
-  )
+  );
 }
 
 /* ─── Sortable Table Header ─── */
@@ -428,20 +527,22 @@ function SortableHead({
   className,
   tooltip,
 }: {
-  label: string
-  sortKey: SortKey
-  currentKey: SortKey
-  dir: SortDir
-  onSort: (key: SortKey) => void
-  className?: string
-  tooltip?: string
+  label: string;
+  sortKey: SortKey;
+  currentKey: SortKey;
+  dir: SortDir;
+  onSort: (key: SortKey) => void;
+  className?: string;
+  tooltip?: string;
 }) {
-  const isActive = currentKey === sortKey
+  const isActive = currentKey === sortKey;
   return (
     <th
       className={cn(
         "px-3 py-2.5 text-xs font-medium select-none cursor-pointer transition-colors group/th",
-        isActive ? "text-[var(--color-primary)]" : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]",
+        isActive
+          ? "text-[var(--color-primary)]"
+          : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]",
         className
       )}
       onClick={() => onSort(sortKey)}
@@ -450,7 +551,11 @@ function SortableHead({
         {label}
         {tooltip && (
           <span className="relative group/tip">
-            <svg className="w-3 h-3 opacity-40 group-hover/tip:opacity-80 transition-opacity cursor-help" viewBox="0 0 16 16" fill="currentColor">
+            <svg
+              className="w-3 h-3 opacity-40 group-hover/tip:opacity-80 transition-opacity cursor-help"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+            >
               <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2.5a1 1 0 110 2 1 1 0 010-2zM6.5 7h2v4.5h-2V7z" />
             </svg>
             <span className="fixed hidden group-hover/tip:block px-2.5 py-1.5 rounded-lg bg-[var(--color-surface-3)] border border-[var(--color-border)] text-[10px] text-[var(--color-foreground)] font-normal whitespace-nowrap shadow-lg z-[9999] -translate-x-1/2 mt-1">
@@ -461,7 +566,7 @@ function SortableHead({
         <SortIcon active={isActive} dir={dir} />
       </span>
     </th>
-  )
+  );
 }
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
@@ -481,5 +586,5 @@ function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
         <path d="M6 10L3 6.5H9L6 10Z" opacity={active && dir === "desc" ? 1 : 0.3} />
       )}
     </svg>
-  )
+  );
 }
