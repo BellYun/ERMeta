@@ -1,25 +1,75 @@
 import type { Metadata } from "next";
 import { SynergyDetailClient } from "@/components/features/synergy-detail/SynergyDetailClient";
+import { getCharacterName } from "@/lib/characterMap";
 
-export const metadata: Metadata = {
-  title: "상세 조합 추천 - 무기+특성 포함 | 이리와지지 ER&GG",
-  description:
-    "이터널리턴 무기와 메인 특성까지 포함한 상세 3인 조합 추천. 베이지안 통계 기반 최적 팀 조합 분석.",
-  keywords: [
-    "이리와지지",
-    "ERGG",
-    "이터널리턴 조합 추천",
-    "이터널리턴 무기 조합",
-    "이터널리턴 특성 조합",
-    "이터널리턴 상세 조합",
-  ],
-  openGraph: {
-    title: "상세 조합 추천 | 이리와지지 ER&GG",
-    description: "무기와 메인 특성까지 포함한 상세 3인 조합 추천.",
-    url: "/synergy-detail",
-  },
-  alternates: { canonical: "/synergy-detail" },
-};
+type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+
+function parseAllyCode(raw: string | string[] | undefined): number | null {
+  const value = Array.isArray(raw) ? raw[0] : raw;
+  if (!value) return null;
+  const code = Number.parseInt(value, 10);
+  return Number.isFinite(code) && code > 0 ? code : null;
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  const ally1 = parseAllyCode(params.ally1);
+  const ally2 = parseAllyCode(params.ally2);
+
+  const name1 = ally1 ? getCharacterName(ally1) : null;
+  const name2 = ally2 ? getCharacterName(ally2) : null;
+
+  const headline =
+    name1 && name2
+      ? `${name1} + ${name2} 조합 추천`
+      : name1
+        ? `${name1} 포함 조합 추천`
+        : "상세 조합 추천";
+
+  const description =
+    name1 && name2
+      ? `${name1} + ${name2} 조합의 최적 3번째 픽을 Bayesian 통계로 분석. 무기·특성 포함 상세 조합 추천.`
+      : name1
+        ? `${name1}과 함께할 최적 2~3번째 픽을 Bayesian 통계로 분석합니다.`
+        : "이터널리턴 무기와 메인 특성까지 포함한 상세 3인 조합 추천. 베이지안 통계 기반 최적 팀 조합 분석.";
+
+  const ogQuery = new URLSearchParams();
+  if (ally1) ogQuery.set("ally1", String(ally1));
+  if (ally2) ogQuery.set("ally2", String(ally2));
+  const ogImageUrl = `/api/og/synergy${ogQuery.size ? `?${ogQuery.toString()}` : ""}`;
+
+  return {
+    title: `${headline} - 무기+특성 포함 | 이리와지지 ER&GG`,
+    description,
+    keywords: [
+      "이리와지지",
+      "ERGG",
+      "이터널리턴 조합 추천",
+      "이터널리턴 무기 조합",
+      "이터널리턴 특성 조합",
+      "이터널리턴 상세 조합",
+      ...(name1 ? [`${name1} 조합`] : []),
+      ...(name2 ? [`${name2} 조합`] : []),
+    ],
+    openGraph: {
+      title: `${headline} | 이리와지지 ER&GG`,
+      description,
+      url: "/synergy-detail",
+      images: [{ url: ogImageUrl, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${headline} | 이리와지지 ER&GG`,
+      description,
+      images: [ogImageUrl],
+    },
+    alternates: { canonical: "/synergy-detail" },
+  };
+}
 
 export default function SynergyDetailPage() {
   return (
