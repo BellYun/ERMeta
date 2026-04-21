@@ -7,12 +7,19 @@ import { getCharacterName } from "@/lib/characterMap";
 import { createServerClient } from "@/lib/supabase";
 
 // Satori 가 WebP 디코딩을 못 하므로 미리 PNG dataURL 로 변환해서 임베드한다.
+// 캐릭터 mini 이미지는 정적 자산이라 instance 메모리에 캐시 (87 chars × ~3KB ≈ 260KB)
+const iconCache = new Map<number, string>();
+
 async function loadIconDataUrl(code: number): Promise<string | null> {
+  const cached = iconCache.get(code);
+  if (cached) return cached;
   try {
     const file = path.join(process.cwd(), "public", "characters", "mini", `${code}.webp`);
     const buf = await readFile(file);
     const png = await sharp(buf).resize(64, 64).png().toBuffer();
-    return `data:image/png;base64,${png.toString("base64")}`;
+    const dataUrl = `data:image/png;base64,${png.toString("base64")}`;
+    iconCache.set(code, dataUrl);
+    return dataUrl;
   } catch {
     return null;
   }
