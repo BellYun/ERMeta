@@ -213,6 +213,35 @@ export const analytics = {
     track("synergy_recommendation_clicked", { ...args, source: "synergy" as const });
   },
 
+  /**
+   * 시너지 결과 공유 버튼 클릭 — 바이럴 루프 측정.
+   * scope: 공유가 발생한 페이지 (/synergy vs /synergy-detail)
+   * method: native share sheet vs clipboard fallback
+   */
+  synergyShared(args: {
+    ally1Code: number | null;
+    ally2Code: number | null;
+    scope: "synergy" | "synergy_detail";
+    method: "native" | "clipboard";
+  }) {
+    track("synergy_shared", args);
+  },
+
+  /**
+   * 공유 링크로 유입된 세션 — synergyShared 의 짝.
+   * AmplitudeProvider 가 init 직후 utm_source=ergg_share 를 감지하면 1회 fire.
+   * scope/method 는 공유한 측의 utm_campaign/utm_medium 를 그대로 받음.
+   */
+  synergyLinkLanded(args: {
+    landingPath: string;
+    ally1Code: number | null;
+    ally2Code: number | null;
+    scope: "synergy" | "synergy_detail" | null;
+    method: "native" | "clipboard" | null;
+  }) {
+    track("synergy_link_landed", args);
+  },
+
   // ── Identify (User / Session Properties) ───────────────────────────────────
 
   /** Session Properties 설정 — AmplitudeProvider init 직후 1회 호출 */
