@@ -8,6 +8,7 @@ import { useL10n } from "@/components/L10nProvider";
 import { useFocusCharacters } from "@/hooks/useFocusCharacters";
 import { analytics, type SynergySortBy } from "@/lib/analytics";
 import { resolveCharacterName } from "@/lib/characterMap";
+import { isMobileDevice } from "@/lib/device";
 import { cn } from "@/lib/utils";
 import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "./constants";
 import type { TrioResult, SortBy } from "./types";
@@ -201,10 +202,9 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                     u.searchParams.set("utm_campaign", "synergy");
                     return u.toString();
                   };
-                  if (typeof navigator.share === "function") {
-                    const url = buildShareUrl("native");
+                  if (isMobileDevice() && typeof navigator.share === "function") {
                     navigator
-                      .share({ title, text: `${title} - 이리와지지 ER&GG`, url })
+                      .share({ title, url: buildShareUrl("native") })
                       .then(() => {
                         analytics.synergyShared({
                           ally1Code,
@@ -216,8 +216,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                       .catch(() => {});
                     return;
                   }
-                  const url = buildShareUrl("clipboard");
-                  navigator.clipboard.writeText(url).then(() => {
+                  navigator.clipboard.writeText(buildShareUrl("clipboard")).then(() => {
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                     analytics.synergyShared({

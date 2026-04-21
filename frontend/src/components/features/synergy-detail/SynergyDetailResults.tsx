@@ -8,6 +8,7 @@ import { useL10n } from "@/components/L10nProvider";
 import { useFocusCharWeapons } from "@/hooks/useFocusCharWeapons";
 import { analytics, type SynergySortBy } from "@/lib/analytics";
 import { resolveCharacterName } from "@/lib/characterMap";
+import { isMobileDevice } from "@/lib/device";
 import { cn } from "@/lib/utils";
 import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "../synergy/constants";
 import { ComboWeaponCard, type GroupedCombo } from "./ComboWeaponCard";
@@ -424,10 +425,9 @@ export function SynergyDetailResults() {
                     u.searchParams.set("utm_campaign", "synergy_detail");
                     return u.toString();
                   };
-                  if (typeof navigator.share === "function") {
-                    const url = buildShareUrl("native");
+                  if (isMobileDevice() && typeof navigator.share === "function") {
                     navigator
-                      .share({ title, text: `${title} - 이리와지지 ER&GG`, url })
+                      .share({ title, url: buildShareUrl("native") })
                       .then(() => {
                         analytics.synergyShared({
                           ally1Code,
@@ -439,8 +439,7 @@ export function SynergyDetailResults() {
                       .catch(() => {});
                     return;
                   }
-                  const url = buildShareUrl("clipboard");
-                  navigator.clipboard.writeText(url).then(() => {
+                  navigator.clipboard.writeText(buildShareUrl("clipboard")).then(() => {
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                     analytics.synergyShared({
