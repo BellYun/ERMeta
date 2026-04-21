@@ -59,17 +59,11 @@ async function detectIsPatchDay(): Promise<boolean> {
   }
 }
 
-const AMPLITUDE_API_KEY = process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY;
-
 export function AmplitudeProvider() {
   useEffect(() => {
-    if (!AMPLITUDE_API_KEY) {
-      console.warn("[Amplitude] NEXT_PUBLIC_AMPLITUDE_API_KEY 미설정 — analytics 비활성화");
-      return;
-    }
     import("@amplitude/analytics-browser")
       .then((amplitude) => {
-        amplitude.init(AMPLITUDE_API_KEY, {
+        amplitude.init("2559c76a80449aaf8aa57b624f7b66a5", {
           autocapture: true,
         });
       })
@@ -86,15 +80,36 @@ export function AmplitudeProvider() {
       process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA ??
       "unknown";
 
+    const params = new URLSearchParams(window.location.search);
+    const isShareLanding = params.get("utm_source") === "ergg_share";
+    const effectiveSessionSource = isShareLanding ? "internal" : sessionSource;
+
     detectIsPatchDay().then((isPatchDay) => {
       analytics.setSessionProperties({
-        session_source: sessionSource,
+        session_source: effectiveSessionSource,
         is_patch_day: isPatchDay,
         app_version: appVersion,
         entry_page_path: entryPath,
         is_mobile_viewport: isMobileViewport,
       });
     });
+
+    if (isShareLanding) {
+      const parseAlly = (raw: string | null): number | null => {
+        if (!raw) return null;
+        const n = Number.parseInt(raw, 10);
+        return Number.isFinite(n) && n > 0 ? n : null;
+      };
+      const campaign = params.get("utm_campaign");
+      const medium = params.get("utm_medium");
+      analytics.synergyLinkLanded({
+        landingPath: entryPath,
+        ally1Code: parseAlly(params.get("ally1")),
+        ally2Code: parseAlly(params.get("ally2")),
+        scope: campaign === "synergy" || campaign === "synergy_detail" ? campaign : null,
+        method: medium === "native" || medium === "clipboard" ? medium : null,
+      });
+    }
   }, []);
 
   return null;

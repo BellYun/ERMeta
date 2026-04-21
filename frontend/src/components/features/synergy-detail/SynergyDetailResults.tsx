@@ -8,6 +8,7 @@ import { useL10n } from "@/components/L10nProvider";
 import { useFocusCharWeapons } from "@/hooks/useFocusCharWeapons";
 import { analytics, type SynergySortBy } from "@/lib/analytics";
 import { resolveCharacterName } from "@/lib/characterMap";
+import { isMobileDevice } from "@/lib/device";
 import { cn } from "@/lib/utils";
 import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "../synergy/constants";
 import { ComboWeaponCard, type GroupedCombo } from "./ComboWeaponCard";
@@ -411,20 +412,42 @@ export function SynergyDetailResults() {
               <button
                 type="button"
                 onClick={() => {
-                  const url = window.location.href;
+                  const ally1Code = selectedCharCodes[0] ?? null;
+                  const ally2Code = selectedCharCodes[1] ?? null;
                   const title =
                     selectedCharCodes.length === 2
                       ? `${getCharName(selectedCharCodes[0])} + ${getCharName(selectedCharCodes[1])} 상세 조합`
                       : `${getCharName(selectedCharCodes[0])} 포함 상세 조합`;
-                  if (typeof navigator.share === "function") {
+                  const buildShareUrl = (method: "native" | "clipboard") => {
+                    const u = new URL(window.location.href);
+                    u.searchParams.set("utm_source", "ergg_share");
+                    u.searchParams.set("utm_medium", method);
+                    u.searchParams.set("utm_campaign", "synergy_detail");
+                    return u.toString();
+                  };
+                  if (isMobileDevice() && typeof navigator.share === "function") {
                     navigator
-                      .share({ title, text: `${title} - 이리와지지 ER&GG`, url })
+                      .share({ title, url: buildShareUrl("native") })
+                      .then(() => {
+                        analytics.synergyShared({
+                          ally1Code,
+                          ally2Code,
+                          scope: "synergy_detail",
+                          method: "native",
+                        });
+                      })
                       .catch(() => {});
                     return;
                   }
-                  navigator.clipboard.writeText(url).then(() => {
+                  navigator.clipboard.writeText(buildShareUrl("clipboard")).then(() => {
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
+                    analytics.synergyShared({
+                      ally1Code,
+                      ally2Code,
+                      scope: "synergy_detail",
+                      method: "clipboard",
+                    });
                   });
                 }}
                 className="inline-flex items-center gap-1 shrink-0 rounded-md border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-2.5 py-1.5 min-h-[44px] text-xs font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 active:bg-[var(--color-primary)]/30 hover:border-[var(--color-primary)]/50 transition-colors"
