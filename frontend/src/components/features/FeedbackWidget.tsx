@@ -165,10 +165,13 @@ export default function FeedbackWidget() {
       </div>
 
       {/* FAB */}
+      {/* pointer-events-auto 필수: wrapper 가 pointer-events-none 이므로 FAB 도 상속받아 hit-test 안 됨.
+          누락 시 "의견 보내기 버튼 안 눌림" 회귀. 원칙은 feedback_fixed_wrapper_pointer_events.md. */}
       <button
         onClick={handleToggle}
         aria-label={isOpen ? "피드백 닫기" : "피드백 보내기"}
         className={[
+          "pointer-events-auto",
           "flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-colors",
           "bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white",
         ].join(" ")}
