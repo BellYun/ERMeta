@@ -4,10 +4,18 @@ import { Search } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import * as React from "react";
+import { useL10n } from "@/components/L10nProvider";
 import { analytics } from "@/lib/analytics";
-import { getCharacterName, getCharacterImageUrl } from "@/lib/characterMap";
+import {
+  buildFallbackMap,
+  getCharacterImageUrl,
+  getCharacterName,
+  resolveCharacterName,
+} from "@/lib/characterMap";
 import { cn } from "@/lib/utils";
 import { CHARACTER_CODES } from "./constants";
+
+const FALLBACK_MAP = buildFallbackMap();
 
 // ── 초성 검색 유틸 ──
 const CHOSUNG = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
@@ -34,10 +42,6 @@ function matchesQuery(name: string, q: string): boolean {
   return name.includes(q);
 }
 
-const sortedCodes = [...CHARACTER_CODES].sort((a, b) =>
-  getCharacterName(a).localeCompare(getCharacterName(b), "ko")
-);
-
 interface CharacterPickerProps {
   code: number;
   currentPatch: string | null;
@@ -45,6 +49,7 @@ interface CharacterPickerProps {
 
 export function CharacterPicker({ code }: CharacterPickerProps) {
   const router = useRouter();
+  const { l10n } = useL10n();
   const [query, setQuery] = React.useState("");
   const [open, setOpen] = React.useState(false);
   const [highlightIndex, setHighlightIndex] = React.useState(-1);
@@ -52,11 +57,21 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const listRef = React.useRef<HTMLDivElement>(null);
 
+  const getDisplayName = React.useCallback(
+    (c: number) => resolveCharacterName(c, l10n, FALLBACK_MAP),
+    [l10n]
+  );
+
+  const sortedCodes = React.useMemo(
+    () => [...CHARACTER_CODES].sort((a, b) => getDisplayName(a).localeCompare(getDisplayName(b))),
+    [getDisplayName]
+  );
+
   const filtered = React.useMemo(() => {
     const q = query.trim();
     if (!q) return sortedCodes;
-    return sortedCodes.filter((c) => matchesQuery(getCharacterName(c), q));
-  }, [query]);
+    return sortedCodes.filter((c) => matchesQuery(getDisplayName(c), q));
+  }, [query, sortedCodes, getDisplayName]);
 
   const select = React.useCallback(
     (c: number) => {
@@ -205,7 +220,7 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
                 <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-md bg-[var(--color-surface-2)]">
                   <Image
                     src={getCharacterImageUrl(c)}
-                    alt={getCharacterName(c)}
+                    alt={getDisplayName(c)}
                     fill
                     className="object-cover"
                     sizes="32px"
@@ -213,7 +228,7 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
                   />
                 </div>
                 <span className={cn("font-medium", c === code && "text-[var(--color-primary)]")}>
-                  {getCharacterName(c)}
+                  {getDisplayName(c)}
                 </span>
                 {c === code && (
                   <span className="ml-auto text-[10px] text-[var(--color-primary)] font-medium">

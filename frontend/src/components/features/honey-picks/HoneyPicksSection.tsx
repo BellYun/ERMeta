@@ -135,7 +135,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
       return {
         pick,
         name: getCharName(pick.characterNum),
-        weaponName: resolveWeaponName(pick.bestWeapon),
+        weaponName: resolveWeaponName(pick.bestWeapon, l10n),
         halfUrl: getCharacterHalfImageUrl(pick.characterNum),
         patchNote,
         changeType,
@@ -150,7 +150,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
     const buffedNums = new Set(buffed.map((r) => r.pick.characterNum));
     const rest = all.filter((r) => !buffedNums.has(r.pick.characterNum));
     return [...buffed, ...rest].slice(0, 5);
-  }, [picks, currentPatch, getCharName]);
+  }, [picks, currentPatch, getCharName, l10n]);
 
   if (loading) {
     return (

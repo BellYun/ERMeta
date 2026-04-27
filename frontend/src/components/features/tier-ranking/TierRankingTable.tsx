@@ -61,7 +61,7 @@ function buildDisplayRows(
     roles: getComboRoles(r.characterNum, r.bestWeapon),
     weaponCode: r.bestWeapon,
     name: resolveCharacterName(r.characterNum, l10n, fallbackMap),
-    weaponName: resolveWeaponName(r.bestWeapon),
+    weaponName: resolveWeaponName(r.bestWeapon, l10n),
     imageUrl: getCharacterImageUrl(r.characterNum),
     tier: assignTier(scores.get(r.characterNum * 1000 + r.bestWeapon) ?? 0),
     pickRate: r.pickRate,

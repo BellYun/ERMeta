@@ -6,11 +6,14 @@ import type {
   CharacterStatsResponse,
   WeaponStatItem,
 } from "@/app/api/character/stats/[characterCode]/route";
+import { useL10n } from "@/components/L10nProvider";
 import { analytics } from "@/lib/analytics";
-import { getCharacterName, getCharacterImageUrl } from "@/lib/characterMap";
+import { buildFallbackMap, getCharacterImageUrl, resolveCharacterName } from "@/lib/characterMap";
 import type { Tier } from "@/lib/design-tokens";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
+
+const FALLBACK_MAP = buildFallbackMap();
 import { METRICS_TIER_GROUPS, TierGroup } from "@/utils/tier";
 import { TierBadge } from "../TierBadge";
 import { TIER_LABELS } from "./constants";
@@ -72,6 +75,8 @@ export function CharacterHeader({
   loading,
   hasPreviousData,
 }: CharacterHeaderProps) {
+  const { l10n } = useL10n();
+  const characterName = resolveCharacterName(selectedCode, l10n, FALLBACK_MAP);
   const tierRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
   const weaponRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
 
@@ -128,7 +133,7 @@ export function CharacterHeader({
             >
               <Image
                 src={getCharacterImageUrl(selectedCode)}
-                alt={getCharacterName(selectedCode)}
+                alt={characterName}
                 fill
                 className="object-cover"
                 sizes="96px"
@@ -148,7 +153,7 @@ export function CharacterHeader({
           <div className="flex flex-1 flex-col gap-2 min-w-0">
             <div>
               <h2 className="text-xl sm:text-2xl font-black text-[var(--color-foreground)] tracking-tight leading-tight">
-                {getCharacterName(selectedCode)}
+                {characterName}
               </h2>
               <div className="flex items-center gap-1.5 mt-1.5">
                 {currentPatch && (
@@ -252,7 +257,7 @@ export function CharacterHeader({
                       analytics.weaponSelected(
                         selectedCode,
                         w.bestWeapon ?? 0,
-                        resolveWeaponName(w.bestWeapon ?? null)
+                        resolveWeaponName(w.bestWeapon ?? null, l10n)
                       );
                     }}
                     onKeyDown={(e) => handleWeaponKey(e, weaponIndex)}
@@ -265,7 +270,9 @@ export function CharacterHeader({
                     )}
                   >
                     <div className="flex items-center justify-between gap-2 w-full">
-                      <span className="font-medium">{resolveWeaponName(w.bestWeapon ?? null)}</span>
+                      <span className="font-medium">
+                        {resolveWeaponName(w.bestWeapon ?? null, l10n)}
+                      </span>
                       <span
                         className={cn(
                           "text-[10px] tabular-nums",

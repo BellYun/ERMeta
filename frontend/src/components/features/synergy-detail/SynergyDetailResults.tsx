@@ -10,6 +10,7 @@ import { analytics, type SynergySortBy } from "@/lib/analytics";
 import { resolveCharacterName } from "@/lib/characterMap";
 import { isMobileDevice } from "@/lib/device";
 import { cn } from "@/lib/utils";
+import { resolveWeaponName } from "@/lib/weaponMap";
 import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "../synergy/constants";
 import { ComboWeaponCard, type GroupedCombo } from "./ComboWeaponCard";
 import type { TrioWeaponResult, SortBy } from "./types";
@@ -175,6 +176,7 @@ export function SynergyDetailResults() {
     (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
     [l10n]
   );
+  const getWeaponName = React.useCallback((code: number) => resolveWeaponName(code, l10n), [l10n]);
   const getTraitName = React.useCallback((code: number) => traitNames[code] ?? null, [traitNames]);
 
   // 특성 이름 로드 — 페이지 mount 시 1회. setTraitNames는 큰 객체 commit이고
@@ -531,6 +533,7 @@ export function SynergyDetailResults() {
                 group={group}
                 rank={i + 1}
                 getCharName={getCharName}
+                getWeaponName={getWeaponName}
                 getTraitName={getTraitName}
                 selectedCharCodes={deferredCharCodes}
                 onRecommendationClick={onRecommendationClick}

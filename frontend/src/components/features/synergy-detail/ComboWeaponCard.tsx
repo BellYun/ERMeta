@@ -6,7 +6,6 @@ import Link from "next/link";
 import * as React from "react";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
 import { cn } from "@/lib/utils";
-import { resolveWeaponName } from "@/lib/weaponMap";
 import { TraitIcon } from "./TraitIcon";
 import type { TrioWeaponResult } from "./types";
 import { useTapGuard } from "./useTapGuard";
@@ -61,6 +60,7 @@ interface ComboWeaponCardProps {
   group: GroupedCombo;
   rank: number;
   getCharName: (code: number) => string;
+  getWeaponName: (code: number) => string;
   getTraitName: (code: number) => string | null;
   selectedCharCodes: number[];
   /** 추천(gold ring) 캐릭터 Link 클릭 시 호출. 부모가 analytics 발화. 메모이제이션 유지를 위해 ref-stable하게 전달할 것. */
@@ -76,6 +76,7 @@ function ComboWeaponCardImpl({
   group,
   rank,
   getCharName,
+  getWeaponName,
   getTraitName,
   selectedCharCodes,
   onRecommendationClick,
@@ -187,7 +188,7 @@ function ComboWeaponCardImpl({
                     {getCharName(m.char)}
                   </span>
                   <span className="text-[8px] sm:text-[10px] text-[var(--color-muted-foreground)] truncate w-10 sm:w-14 text-center">
-                    {resolveWeaponName(m.weapon)}
+                    {getWeaponName(m.weapon)}
                   </span>
                 </Link>
                 {i < 2 && (
@@ -300,6 +301,7 @@ export const ComboWeaponCard = React.memo(ComboWeaponCardImpl, (prev, next) => {
   if (prev.rank !== next.rank) return false;
   if (prev.group !== next.group) return false;
   if (prev.getCharName !== next.getCharName) return false;
+  if (prev.getWeaponName !== next.getWeaponName) return false;
   if (prev.getTraitName !== next.getTraitName) return false;
   // selectedCharCodes는 number[]이므로 shallow 비교
   const a = prev.selectedCharCodes;
