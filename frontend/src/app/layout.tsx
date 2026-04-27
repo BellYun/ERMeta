@@ -3,7 +3,7 @@ import { join } from "path";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import "./globals.css";
 import Script from "next/script";
 import { AmplitudeLoader } from "@/components/AmplitudeLoader";
@@ -16,7 +16,7 @@ import { WebVitalsReporter } from "@/components/WebVitalsReporter";
 import {
   DEFAULT_LANGUAGE,
   LANGUAGE_COOKIE,
-  resolveLanguage,
+  SUPPORTED_LANGUAGES,
   type SupportedLanguage,
 } from "@/lib/detectLanguage";
 
@@ -131,11 +131,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // proxy.ts 미들웨어가 모든 요청에서 cookie를 보장하므로 cookie만 읽으면 충분.
+  // (proxy 매칭에서 제외된 경로는 layout 자체가 적용되지 않음)
   const cookieStore = await cookies();
-  const headerStore = await headers();
   const cookieLang = cookieStore.get(LANGUAGE_COOKIE)?.value;
-  const acceptLanguage = headerStore.get("accept-language");
-  const language = resolveLanguage(cookieLang, acceptLanguage);
+  const language: SupportedLanguage =
+    cookieLang && (SUPPORTED_LANGUAGES as readonly string[]).includes(cookieLang)
+      ? (cookieLang as SupportedLanguage)
+      : DEFAULT_LANGUAGE;
   const initialL10n = loadL10n(language);
   const htmlLang = HTML_LANG_BY_LANGUAGE[language] ?? "ko";
 
