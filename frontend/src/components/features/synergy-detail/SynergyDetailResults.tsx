@@ -6,6 +6,7 @@ import * as React from "react";
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary";
 import { useL10n } from "@/components/L10nProvider";
 import { useFocusCharWeapons } from "@/hooks/useFocusCharWeapons";
+import { useTraitNames } from "@/hooks/useTraitNames";
 import { analytics, type SynergySortBy } from "@/lib/analytics";
 import { resolveCharacterName } from "@/lib/characterMap";
 import { isMobileDevice } from "@/lib/device";
@@ -170,7 +171,7 @@ export function SynergyDetailResults() {
   const IDLE_BATCH = 4;
   const IDLE_TARGET = 30;
   const [visibleCount, setVisibleCount] = React.useState(INITIAL_VISIBLE);
-  const [traitNames, setTraitNames] = React.useState<Record<number, string>>({});
+  const traitNames = useTraitNames(l10n);
 
   const getCharName = React.useCallback(
     (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
@@ -178,20 +179,6 @@ export function SynergyDetailResults() {
   );
   const getWeaponName = React.useCallback((code: number) => resolveWeaponName(code, l10n), [l10n]);
   const getTraitName = React.useCallback((code: number) => traitNames[code] ?? null, [traitNames]);
-
-  // 특성 이름 로드 — 페이지 mount 시 1회. setTraitNames는 큰 객체 commit이고
-  // 사용자의 탭 click과 타이밍이 겹치면 그 commit phase에 끼어 click duration이 늘어나므로
-  // startTransition으로 비긴급 처리.
-  React.useEffect(() => {
-    fetch("/api/traits/names")
-      .then((res) => res.json())
-      .then((d) => {
-        React.startTransition(() => {
-          setTraitNames(d.names ?? {});
-        });
-      })
-      .catch(() => {});
-  }, []);
 
   // API 호출 — deferredAllies 기반 (아군 선택 탭 즉시성 확보)
   React.useEffect(() => {

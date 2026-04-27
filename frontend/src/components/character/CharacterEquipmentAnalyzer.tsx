@@ -1,53 +1,79 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import * as React from "react"
-import itemNameMap from "@/../const/itemNameMap.json"
-import type { EquipmentBuildResult, BuildSummary, CoreItem } from "@/app/api/builds/equipment/route"
-import { cn } from "@/lib/utils"
-import { TierGroup } from "@/utils/tier"
-import { ItemIcon, WinRateSpan, SLOTS, SLOT_LABELS } from "./shared"
+import Image from "next/image";
+import * as React from "react";
+import itemNameMap from "@/../const/itemNameMap.json";
+import type {
+  EquipmentBuildResult,
+  BuildSummary,
+  CoreItem,
+} from "@/app/api/builds/equipment/route";
+import { useL10n } from "@/components/L10nProvider";
+import { useTraitNames } from "@/hooks/useTraitNames";
+import { cn } from "@/lib/utils";
+import { TierGroup } from "@/utils/tier";
+import { ItemIcon, WinRateSpan, SLOTS, SLOT_LABELS } from "./shared";
+
+/** l10n에 `Item/Name/{code}` 가 있으면 우선, 없으면 정적 itemNameMap 폴백. 언어 변경 시만 재계산. */
+function useLocalizedItemNames(l10n: Map<string, string>): Record<number, string> {
+  return React.useMemo(() => {
+    const overlay: Record<number, string> = {};
+    for (const [code, name] of Object.entries(itemNameMap as Record<string, string>)) {
+      const localized = l10n.get(`Item/Name/${code}`);
+      overlay[Number(code)] = localized ?? name;
+    }
+    return overlay;
+  }, [l10n]);
+}
 
 // ─── 특성 아이콘 헬퍼 ────────────────────────────────────────────────────────────
 
-type TraitGroup = "havoc" | "fortification" | "support" | "chaos" | "unknown"
+type TraitGroup = "havoc" | "fortification" | "support" | "chaos" | "unknown";
 
 const GROUP_CONFIG: Record<TraitGroup, { letter: string; bg: string; text: string }> = {
-  havoc:         { letter: "파", bg: "bg-red-500/20",     text: "text-red-400" },
-  fortification: { letter: "저", bg: "bg-blue-500/20",    text: "text-blue-400" },
-  support:       { letter: "지", bg: "bg-emerald-500/20", text: "text-emerald-400" },
-  chaos:         { letter: "혼", bg: "bg-purple-500/20",  text: "text-purple-400" },
-  unknown:       { letter: "?",  bg: "bg-[var(--color-surface-2)]", text: "text-[var(--color-muted-foreground)]" },
-}
+  havoc: { letter: "파", bg: "bg-red-500/20", text: "text-red-400" },
+  fortification: { letter: "저", bg: "bg-blue-500/20", text: "text-blue-400" },
+  support: { letter: "지", bg: "bg-emerald-500/20", text: "text-emerald-400" },
+  chaos: { letter: "혼", bg: "bg-purple-500/20", text: "text-purple-400" },
+  unknown: {
+    letter: "?",
+    bg: "bg-[var(--color-surface-2)]",
+    text: "text-[var(--color-muted-foreground)]",
+  },
+};
 
 function getTraitGroup(code: number): TraitGroup {
-  if (code === 7000501) return "chaos"   // 벽력: 혼돈 메인 특성
-  const sub = Math.floor(code / 100)
-  if (sub === 70107) return "chaos"
-  if (sub === 71108) return "support"
+  if (code === 7000501) return "chaos"; // 벽력: 혼돈 메인 특성
+  const sub = Math.floor(code / 100);
+  if (sub === 70107) return "chaos";
+  if (sub === 71108) return "support";
 
-  const prefix = Math.floor(code / 100000)
-  if (prefix === 70) return "havoc"
-  if (prefix === 71) return "fortification"
-  if (prefix === 72) return "support"
-  if (prefix === 73) return "chaos"
-  return "unknown"
+  const prefix = Math.floor(code / 100000);
+  if (prefix === 70) return "havoc";
+  if (prefix === 71) return "fortification";
+  if (prefix === 72) return "support";
+  if (prefix === 73) return "chaos";
+  return "unknown";
 }
 
 function TraitIconSmall({ code, size = 20 }: { code: number; size?: number }) {
-  const [imgError, setImgError] = React.useState(false)
-  const group = getTraitGroup(code)
-  const config = GROUP_CONFIG[group]
+  const [imgError, setImgError] = React.useState(false);
+  const group = getTraitGroup(code);
+  const config = GROUP_CONFIG[group];
 
   if (imgError) {
     return (
       <span
-        className={cn("inline-flex items-center justify-center rounded-sm shrink-0 font-bold text-[10px]", config.bg, config.text)}
+        className={cn(
+          "inline-flex items-center justify-center rounded-sm shrink-0 font-bold text-[10px]",
+          config.bg,
+          config.text
+        )}
         style={{ width: size, height: size }}
       >
         {config.letter}
       </span>
-    )
+    );
   }
 
   return (
@@ -59,14 +85,14 @@ function TraitIconSmall({ code, size = 20 }: { code: number; size?: number }) {
       className="shrink-0 rounded-sm"
       onError={() => setImgError(true)}
     />
-  )
+  );
 }
 
 interface Props {
-  characterCode: number
-  tier: TierGroup
-  patchVersion: string | null
-  bestWeapon?: number | null
+  characterCode: number;
+  tier: TierGroup;
+  patchVersion: string | null;
+  bestWeapon?: number | null;
 }
 
 function SectionHeader({ title }: { title: string }) {
@@ -74,7 +100,7 @@ function SectionHeader({ title }: { title: string }) {
     <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 sm:px-4 py-2">
       <span className="text-xs font-semibold text-[var(--color-foreground)]">{title}</span>
     </div>
-  )
+  );
 }
 
 function TopBuildsTable({
@@ -82,9 +108,9 @@ function TopBuildsTable({
   itemNames,
   traitNames,
 }: {
-  builds: BuildSummary[]
-  itemNames: Record<number, string>
-  traitNames: Record<number, string>
+  builds: BuildSummary[];
+  itemNames: Record<number, string>;
+  traitNames: Record<number, string>;
 }) {
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
@@ -95,14 +121,18 @@ function TopBuildsTable({
         {builds.map((b, i) => (
           <div
             key={i}
-            className={cn(
-              "px-3 py-2 space-y-1.5",
-              i === 0 && "bg-[var(--color-accent-gold)]/5"
-            )}
+            className={cn("px-3 py-2 space-y-1.5", i === 0 && "bg-[var(--color-accent-gold)]/5")}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className={cn("text-xs font-bold", i === 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]")}>
+                <span
+                  className={cn(
+                    "text-xs font-bold",
+                    i === 0
+                      ? "text-[var(--color-accent-gold)]"
+                      : "text-[var(--color-muted-foreground)]"
+                  )}
+                >
                   #{i + 1}
                 </span>
                 {b.mainCore != null && (
@@ -119,7 +149,7 @@ function TopBuildsTable({
             </div>
             <div className="flex items-center gap-1.5 justify-center">
               {SLOTS.map((s) => {
-                const code = b[s]
+                const code = b[s];
                 return (
                   <div key={s} className="flex flex-col items-center gap-0.5">
                     <ItemIcon code={code} size={32} />
@@ -129,7 +159,7 @@ function TopBuildsTable({
                       </span>
                     )}
                   </div>
-                )
+                );
               })}
             </div>
             <div className="flex items-center justify-center gap-3 text-xs text-[var(--color-foreground)]">
@@ -148,7 +178,9 @@ function TopBuildsTable({
               <th className="px-2 py-2 text-left font-medium w-6">#</th>
               <th className="px-1.5 py-2 text-center font-medium">특성</th>
               {SLOTS.map((s) => (
-                <th key={s} className="px-1 py-2 text-center font-medium">{SLOT_LABELS[s]}</th>
+                <th key={s} className="px-1 py-2 text-center font-medium">
+                  {SLOT_LABELS[s]}
+                </th>
               ))}
               <th className="px-2 py-2 text-right font-medium">픽률</th>
               <th className="px-2 py-2 text-right font-medium">승률</th>
@@ -164,7 +196,14 @@ function TopBuildsTable({
                 )}
               >
                 <td className="px-2 py-1.5 text-left">
-                  <span className={cn("font-bold", i === 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]")}>
+                  <span
+                    className={cn(
+                      "font-bold",
+                      i === 0
+                        ? "text-[var(--color-accent-gold)]"
+                        : "text-[var(--color-muted-foreground)]"
+                    )}
+                  >
                     {i + 1}
                   </span>
                 </td>
@@ -179,14 +218,14 @@ function TopBuildsTable({
                   )}
                 </td>
                 {SLOTS.map((s) => {
-                  const code = b[s]
+                  const code = b[s];
                   return (
                     <td key={s} className="px-1 py-1.5 text-center">
                       <div className="flex flex-col items-center gap-0.5">
                         <ItemIcon code={code} size={28} />
                       </div>
                     </td>
-                  )
+                  );
                 })}
                 <td className="px-2 py-1.5 text-right text-[var(--color-foreground)]">
                   {b.pickRate.toFixed(1)}%
@@ -202,92 +241,96 @@ function TopBuildsTable({
 
       {/* 데스크탑 풀 테이블 (≥1024px) */}
       <div className="hidden lg:block overflow-x-auto">
-      <table className="w-full text-sm min-w-[640px]">
-        <thead>
-          <tr className="border-b border-[var(--color-border)] text-[var(--color-muted-foreground)] text-xs">
-            <th className="px-3 py-2 text-left font-medium w-8">#</th>
-            <th className="px-2 py-2 text-center font-medium">메인특성</th>
-            {SLOTS.map((s) => (
-              <th key={s} className="px-2 py-2 text-center font-medium">{SLOT_LABELS[s]}</th>
-            ))}
-            <th className="px-3 py-2 text-right font-medium w-16">픽률</th>
-            <th className="px-3 py-2 text-right font-medium w-16">승률</th>
-            <th className="px-3 py-2 text-right font-medium w-16">평균순위</th>
-            <th className="px-3 py-2 text-right font-medium w-16">평균RP</th>
-          </tr>
-        </thead>
-        <tbody>
-          {builds.map((b, i) => (
-            <tr
-              key={i}
-              className={cn(
-                "border-b border-[var(--color-border)] last:border-0 transition-colors hover:bg-[var(--color-surface-2)]",
-                i === 0 && "bg-[var(--color-accent-gold)]/5"
-              )}
-            >
-              <td className="px-3 py-2 text-left">
-                <span
-                  className={cn(
-                    "text-xs font-bold",
-                    i === 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
-                  )}
-                >
-                  {i + 1}
-                </span>
-              </td>
-              {/* 메인특성 */}
-              <td className="px-2 py-2 text-center">
-                {b.mainCore != null ? (
-                  <span className="inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-medium bg-[var(--color-primary)]/20 text-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/40 whitespace-nowrap">
-                    <TraitIconSmall code={b.mainCore} size={20} />
-                    {traitNames[b.mainCore] ?? b.mainCore}
-                  </span>
-                ) : (
-                  <span className="text-xs text-[var(--color-muted-foreground)]">—</span>
-                )}
-              </td>
-              {SLOTS.map((s) => {
-                const code = b[s]
-                return (
-                  <td key={s} className="px-2 py-2 text-center">
-                    <div className="flex flex-col items-center gap-0.5">
-                      <ItemIcon code={code} size={36} />
-                      {code != null && (
-                        <span className="text-[9px] text-[var(--color-muted-foreground)] max-w-[48px] truncate">
-                          {itemNames[code] ?? code}
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                )
-              })}
-              <td className="px-3 py-2 text-right text-xs text-[var(--color-foreground)]">
-                {b.pickRate.toFixed(1)}%
-              </td>
-              <td className="px-3 py-2 text-right text-xs">
-                <WinRateSpan winRate={b.winRate} />
-              </td>
-              <td className="px-3 py-2 text-right text-xs text-[var(--color-foreground)]">
-                #{b.averageRank.toFixed(1)}
-              </td>
-              <td className="px-3 py-2 text-right text-xs text-[var(--color-foreground)]">
-                {b.averageRP.toFixed(0)}
-              </td>
+        <table className="w-full text-sm min-w-[640px]">
+          <thead>
+            <tr className="border-b border-[var(--color-border)] text-[var(--color-muted-foreground)] text-xs">
+              <th className="px-3 py-2 text-left font-medium w-8">#</th>
+              <th className="px-2 py-2 text-center font-medium">메인특성</th>
+              {SLOTS.map((s) => (
+                <th key={s} className="px-2 py-2 text-center font-medium">
+                  {SLOT_LABELS[s]}
+                </th>
+              ))}
+              <th className="px-3 py-2 text-right font-medium w-16">픽률</th>
+              <th className="px-3 py-2 text-right font-medium w-16">승률</th>
+              <th className="px-3 py-2 text-right font-medium w-16">평균순위</th>
+              <th className="px-3 py-2 text-right font-medium w-16">평균RP</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {builds.map((b, i) => (
+              <tr
+                key={i}
+                className={cn(
+                  "border-b border-[var(--color-border)] last:border-0 transition-colors hover:bg-[var(--color-surface-2)]",
+                  i === 0 && "bg-[var(--color-accent-gold)]/5"
+                )}
+              >
+                <td className="px-3 py-2 text-left">
+                  <span
+                    className={cn(
+                      "text-xs font-bold",
+                      i === 0
+                        ? "text-[var(--color-accent-gold)]"
+                        : "text-[var(--color-muted-foreground)]"
+                    )}
+                  >
+                    {i + 1}
+                  </span>
+                </td>
+                {/* 메인특성 */}
+                <td className="px-2 py-2 text-center">
+                  {b.mainCore != null ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-medium bg-[var(--color-primary)]/20 text-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/40 whitespace-nowrap">
+                      <TraitIconSmall code={b.mainCore} size={20} />
+                      {traitNames[b.mainCore] ?? b.mainCore}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-[var(--color-muted-foreground)]">—</span>
+                  )}
+                </td>
+                {SLOTS.map((s) => {
+                  const code = b[s];
+                  return (
+                    <td key={s} className="px-2 py-2 text-center">
+                      <div className="flex flex-col items-center gap-0.5">
+                        <ItemIcon code={code} size={36} />
+                        {code != null && (
+                          <span className="text-[9px] text-[var(--color-muted-foreground)] max-w-[48px] truncate">
+                            {itemNames[code] ?? code}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                  );
+                })}
+                <td className="px-3 py-2 text-right text-xs text-[var(--color-foreground)]">
+                  {b.pickRate.toFixed(1)}%
+                </td>
+                <td className="px-3 py-2 text-right text-xs">
+                  <WinRateSpan winRate={b.winRate} />
+                </td>
+                <td className="px-3 py-2 text-right text-xs text-[var(--color-foreground)]">
+                  #{b.averageRank.toFixed(1)}
+                </td>
+                <td className="px-3 py-2 text-right text-xs text-[var(--color-foreground)]">
+                  {b.averageRP.toFixed(0)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
-  )
+  );
 }
 
 function SlotPopularityGrid({
   slotPopularity,
   itemNames,
 }: {
-  slotPopularity: EquipmentBuildResult["slotPopularity"]
-  itemNames: Record<number, string>
+  slotPopularity: EquipmentBuildResult["slotPopularity"];
+  itemNames: Record<number, string>;
 }) {
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
@@ -296,8 +339,8 @@ function SlotPopularityGrid({
       {/* 모바일: 슬롯별 가로 리스트 (스크롤 없음) */}
       <div className="md:hidden divide-y divide-[var(--color-border)]">
         {SLOTS.map((slot) => {
-          const items = slotPopularity[slot]
-          if (items.length === 0) return null
+          const items = slotPopularity[slot];
+          if (items.length === 0) return null;
           return (
             <div key={slot} className="px-3 py-2.5">
               <p className="text-xs font-medium text-[var(--color-muted-foreground)] mb-2">
@@ -309,14 +352,17 @@ function SlotPopularityGrid({
                     key={item.code}
                     className={cn(
                       "flex flex-col items-center gap-0.5 rounded-lg px-2 py-1.5 min-w-[56px] shrink-0",
-                      i === 0 && "bg-[var(--color-accent-gold)]/5 ring-1 ring-[var(--color-accent-gold)]/20"
+                      i === 0 &&
+                        "bg-[var(--color-accent-gold)]/5 ring-1 ring-[var(--color-accent-gold)]/20"
                     )}
                   >
                     <ItemIcon code={item.code} size={30} />
                     <span className="text-[10px] text-[var(--color-foreground)] text-center max-w-[52px] truncate leading-tight">
                       {itemNames[item.code] ?? item.code}
                     </span>
-                    <span className="text-[10px] text-[var(--color-primary)]">{item.pickRate.toFixed(1)}%</span>
+                    <span className="text-[10px] text-[var(--color-primary)]">
+                      {item.pickRate.toFixed(1)}%
+                    </span>
                     <span className="text-[10px] text-[var(--color-foreground)]">
                       {item.winRate.toFixed(1)}%
                     </span>
@@ -324,7 +370,7 @@ function SlotPopularityGrid({
                 ))}
               </div>
             </div>
-          )
+          );
         })}
       </div>
 
@@ -332,14 +378,16 @@ function SlotPopularityGrid({
       <div className="hidden md:block">
         <div className="grid grid-cols-5 divide-x divide-[var(--color-border)]">
           {SLOTS.map((slot) => {
-            const items = slotPopularity[slot]
+            const items = slotPopularity[slot];
             return (
               <div key={slot} className="flex flex-col">
                 <div className="px-3 py-2 text-center text-xs font-medium text-[var(--color-muted-foreground)] border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60">
                   {SLOT_LABELS[slot]}
                 </div>
                 {items.length === 0 ? (
-                  <div className="py-6 text-center text-xs text-[var(--color-muted-foreground)]">-</div>
+                  <div className="py-6 text-center text-xs text-[var(--color-muted-foreground)]">
+                    -
+                  </div>
                 ) : (
                   <div className="divide-y divide-[var(--color-border)]/50">
                     {items.map((item, i) => (
@@ -354,27 +402,29 @@ function SlotPopularityGrid({
                         <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-full truncate w-full leading-tight">
                           {itemNames[item.code] ?? item.code}
                         </span>
-                        <span className="text-[9px] text-[var(--color-primary)]">픽률 {item.pickRate.toFixed(1)}%</span>
+                        <span className="text-[9px] text-[var(--color-primary)]">
+                          픽률 {item.pickRate.toFixed(1)}%
+                        </span>
                         <WinRateSpan winRate={item.winRate} label="승률 " />
                       </div>
                     ))}
                   </div>
                 )}
               </div>
-            )
+            );
           })}
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function CoreItemsList({
   coreItems,
   itemNames,
 }: {
-  coreItems: CoreItem[]
-  itemNames: Record<number, string>
+  coreItems: CoreItem[];
+  itemNames: Record<number, string>;
 }) {
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
@@ -391,7 +441,14 @@ function CoreItemsList({
             {/* 모바일: 컴팩트 2줄 (<640px) */}
             <div className="sm:hidden flex flex-col gap-1.5">
               <div className="flex items-center gap-2">
-                <span className={cn("w-5 shrink-0 text-xs font-bold text-center", i === 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]")}>
+                <span
+                  className={cn(
+                    "w-5 shrink-0 text-xs font-bold text-center",
+                    i === 0
+                      ? "text-[var(--color-accent-gold)]"
+                      : "text-[var(--color-muted-foreground)]"
+                  )}
+                >
                   {i + 1}
                 </span>
                 <ItemIcon code={item.code} size={28} />
@@ -409,26 +466,44 @@ function CoreItemsList({
             </div>
             {/* 태블릿: 한 줄, 판수 숨김 (640px~1024px) */}
             <div className="hidden sm:flex lg:hidden items-center gap-2">
-              <span className={cn("w-5 shrink-0 text-xs font-bold text-center", i === 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]")}>
+              <span
+                className={cn(
+                  "w-5 shrink-0 text-xs font-bold text-center",
+                  i === 0
+                    ? "text-[var(--color-accent-gold)]"
+                    : "text-[var(--color-muted-foreground)]"
+                )}
+              >
                 {i + 1}
               </span>
               <ItemIcon code={item.code} size={32} />
               <span className="flex-1 text-sm text-[var(--color-foreground)] truncate">
                 {itemNames[item.code] ?? item.code}
               </span>
-              <span className="text-xs text-[var(--color-primary)]">{item.pickRate.toFixed(1)}%</span>
+              <span className="text-xs text-[var(--color-primary)]">
+                {item.pickRate.toFixed(1)}%
+              </span>
               <WinRateSpan winRate={item.winRate} />
             </div>
             {/* 데스크탑: 풀 한 줄 (≥1024px) */}
             <div className="hidden lg:flex items-center gap-3">
-              <span className={cn("w-5 shrink-0 text-xs font-bold text-center", i === 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]")}>
+              <span
+                className={cn(
+                  "w-5 shrink-0 text-xs font-bold text-center",
+                  i === 0
+                    ? "text-[var(--color-accent-gold)]"
+                    : "text-[var(--color-muted-foreground)]"
+                )}
+              >
                 {i + 1}
               </span>
               <ItemIcon code={item.code} size={36} />
               <span className="flex-1 text-sm text-[var(--color-foreground)] truncate">
                 {itemNames[item.code] ?? item.code}
               </span>
-              <span className="text-xs text-[var(--color-primary)]">픽률 {item.pickRate.toFixed(1)}%</span>
+              <span className="text-xs text-[var(--color-primary)]">
+                픽률 {item.pickRate.toFixed(1)}%
+              </span>
               <WinRateSpan winRate={item.winRate} label="승률 " />
               <span className="text-xs text-[var(--color-muted-foreground)] w-16 text-right">
                 {item.totalGames.toLocaleString()}판
@@ -438,43 +513,41 @@ function CoreItemsList({
         ))}
       </div>
     </div>
-  )
+  );
 }
 
-export function CharacterEquipmentAnalyzer({ characterCode, tier, patchVersion, bestWeapon }: Props) {
-  const [data, setData] = React.useState<EquipmentBuildResult | null>(null)
-  const itemNames = itemNameMap as Record<number, string>
-  const [traitNames, setTraitNames] = React.useState<Record<number, string>>({})
-  const [loading, setLoading] = React.useState(false)
-
-  // 특성 이름 사전 로드 (최초 1회)
-  React.useEffect(() => {
-    fetch("/api/traits/names")
-      .then((r) => r.json())
-      .then((d) => setTraitNames(d.names ?? {}))
-      .catch(() => {})
-  }, [])
+export function CharacterEquipmentAnalyzer({
+  characterCode,
+  tier,
+  patchVersion,
+  bestWeapon,
+}: Props) {
+  const { l10n } = useL10n();
+  const [data, setData] = React.useState<EquipmentBuildResult | null>(null);
+  const itemNames = useLocalizedItemNames(l10n);
+  const traitNames = useTraitNames(l10n);
+  const [loading, setLoading] = React.useState(false);
 
   // 장비 빌드 데이터 로드
   React.useEffect(() => {
-    if (!patchVersion) return
+    if (!patchVersion) return;
 
-    setLoading(true)
-    setData(null)
+    setLoading(true);
+    setData(null);
 
     const params = new URLSearchParams({
       characterCode: String(characterCode),
       tier,
       patchVersion,
       ...(bestWeapon != null ? { bestWeapon: String(bestWeapon) } : {}),
-    })
+    });
 
     fetch(`/api/builds/equipment?${params}`)
       .then((r) => r.json())
       .then((d) => setData(d))
       .catch(() => setData(null))
-      .finally(() => setLoading(false))
-  }, [characterCode, tier, patchVersion, bestWeapon])
+      .finally(() => setLoading(false));
+  }, [characterCode, tier, patchVersion, bestWeapon]);
 
   if (loading) {
     return (
@@ -483,21 +556,21 @@ export function CharacterEquipmentAnalyzer({ characterCode, tier, patchVersion, 
           <div key={i} className="h-40 rounded-lg bg-[var(--color-surface)] animate-pulse" />
         ))}
       </div>
-    )
+    );
   }
 
   const isEmpty =
     !data ||
     (data.topBuilds.length === 0 &&
       data.coreItems.length === 0 &&
-      SLOTS.every((s) => data.slotPopularity[s].length === 0))
+      SLOTS.every((s) => data.slotPopularity[s].length === 0));
 
   if (isEmpty) {
     return (
       <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-8 text-center text-sm text-[var(--color-muted-foreground)]">
         아이템 빌드 데이터가 없습니다.
       </div>
-    )
+    );
   }
 
   return (
@@ -512,5 +585,5 @@ export function CharacterEquipmentAnalyzer({ characterCode, tier, patchVersion, 
         <CoreItemsList coreItems={data.coreItems} itemNames={itemNames} />
       )}
     </div>
-  )
+  );
 }
