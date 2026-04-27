@@ -1,7 +1,7 @@
 "use client";
 
-import { MessageCircle, X, Check } from "lucide-react";
-import { useState } from "react";
+import { Check, MessageCircle, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 type Category = "버그 신고" | "기능 제안" | "일반 문의";
@@ -31,6 +31,16 @@ export default function FeedbackWidget() {
       setFormState("idle");
     }
   };
+
+  useEffect(() => {
+    const handleExternalOpen = () => {
+      setFormState("idle");
+      setIsOpen(true);
+    };
+
+    window.addEventListener("ergg:feedback-open", handleExternalOpen);
+    return () => window.removeEventListener("ergg:feedback-open", handleExternalOpen);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
