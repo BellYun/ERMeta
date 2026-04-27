@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { SynergyDetailClient } from "@/components/features/synergy-detail/SynergyDetailClient";
 import { getCharacterName } from "@/lib/characterMap";
 
@@ -17,6 +19,7 @@ export async function generateMetadata({
   searchParams: SearchParams;
 }): Promise<Metadata> {
   const params = await searchParams;
+  const t = await getTranslations("synergyDetailMetadata");
   const ally1 = parseAllyCode(params.ally1);
   const ally2 = parseAllyCode(params.ally2);
 
@@ -25,17 +28,17 @@ export async function generateMetadata({
 
   const headline =
     name1 && name2
-      ? `${name1} + ${name2} 조합 추천`
+      ? t("headlinePair", { name1, name2 })
       : name1
-        ? `${name1} 포함 조합 추천`
-        : "상세 조합 추천";
+        ? t("headlineSingle", { name1 })
+        : t("headlineFallback");
 
   const description =
     name1 && name2
-      ? `${name1} + ${name2} 조합의 최적 3번째 픽을 Bayesian 통계로 분석. 무기·특성 포함 상세 조합 추천.`
+      ? t("descriptionPair", { name1, name2 })
       : name1
-        ? `${name1}과 함께할 최적 2~3번째 픽을 Bayesian 통계로 분석합니다.`
-        : "이터널리턴 무기와 메인 특성까지 포함한 상세 3인 조합 추천. 베이지안 통계 기반 최적 팀 조합 분석.";
+        ? t("descriptionSingle", { name1 })
+        : t("descriptionFallback");
 
   const ogQuery = new URLSearchParams();
   if (ally1) ogQuery.set("ally1", String(ally1));
@@ -43,27 +46,27 @@ export async function generateMetadata({
   const ogImageUrl = `/api/og/synergy${ogQuery.size ? `?${ogQuery.toString()}` : ""}`;
 
   return {
-    title: `${headline} - 무기+특성 포함 | 이리와지지 ER&GG`,
+    title: t("title", { headline }),
     description,
     keywords: [
-      "이리와지지",
-      "ERGG",
-      "이터널리턴 조합 추천",
-      "이터널리턴 무기 조합",
-      "이터널리턴 특성 조합",
-      "이터널리턴 상세 조합",
-      ...(name1 ? [`${name1} 조합`] : []),
-      ...(name2 ? [`${name2} 조합`] : []),
+      t("keywords.brand"),
+      t("keywords.app"),
+      t("keywords.synergy"),
+      t("keywords.weapon"),
+      t("keywords.trait"),
+      t("keywords.detail"),
+      ...(name1 ? [t("keywords.character", { name: name1 })] : []),
+      ...(name2 ? [t("keywords.character", { name: name2 })] : []),
     ],
     openGraph: {
-      title: `${headline} | 이리와지지 ER&GG`,
+      title: t("socialTitle", { headline }),
       description,
       url: "/synergy-detail",
       images: [{ url: ogImageUrl, width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${headline} | 이리와지지 ER&GG`,
+      title: t("socialTitle", { headline }),
       description,
       images: [ogImageUrl],
     },
@@ -72,6 +75,8 @@ export async function generateMetadata({
 }
 
 export default function SynergyDetailPage() {
+  const t = useTranslations("synergyPage");
+
   return (
     <>
       {/* ── Hero Zone ── */}
@@ -95,34 +100,49 @@ export default function SynergyDetailPage() {
                   />
                 </svg>
                 <span className="text-[10px] sm:text-[11px] font-semibold text-[var(--color-accent-gold)] uppercase tracking-[0.1em]">
-                  Advanced
+                  {t("badge")}
                 </span>
               </span>
               <span className="inline-flex items-center gap-1 rounded-full bg-[var(--color-warning)]/10 border border-[var(--color-warning)]/20 px-2 py-0.5">
                 <span className="text-[9px] font-bold text-[var(--color-warning)] uppercase">
-                  BETA
+                  {t("beta")}
                 </span>
               </span>
               <span className="text-[10px] sm:text-[11px] text-[var(--color-muted-foreground)]">
-                데이터 수집 중 · 표본 증가 시 정확도 향상
+                {t("dataNotice")}
               </span>
             </div>
 
             {/* Title */}
             <h1 className="text-[28px] sm:text-4xl font-black tracking-tight text-[var(--color-foreground)] leading-none">
-              상세 조합 추천
+              {t("title")}
             </h1>
             <p className="text-xs sm:text-sm text-[var(--color-muted-foreground)] max-w-lg">
-              무기 + 메인 특성까지 포함한 심층 분석 · 조합 클릭 시 특성별 브레이크다운 확인
+              {t("subtitle")}
             </p>
 
             {/* Flow Steps */}
             <div className="flex items-center gap-2 mt-2">
-              <StepIndicator step={1} label="풀 설정" sublabel="캐릭터+무기" color="purple" />
+              <StepIndicator
+                step={1}
+                label={t("steps.pool.label")}
+                sublabel={t("steps.pool.sublabel")}
+                color="purple"
+              />
               <StepConnector />
-              <StepIndicator step={2} label="아군 선택" sublabel="캐릭터+무기" color="blue" />
+              <StepIndicator
+                step={2}
+                label={t("steps.allies.label")}
+                sublabel={t("steps.allies.sublabel")}
+                color="blue"
+              />
               <StepConnector />
-              <StepIndicator step={3} label="상세 분석" sublabel="특성별 비교" color="gold" />
+              <StepIndicator
+                step={3}
+                label={t("steps.analysis.label")}
+                sublabel={t("steps.analysis.sublabel")}
+                color="gold"
+              />
             </div>
           </div>
         </div>

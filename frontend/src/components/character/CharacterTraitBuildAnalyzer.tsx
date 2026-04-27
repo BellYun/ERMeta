@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useL10n } from "@/components/L10nProvider";
 import { useTraitNames } from "@/hooks/useTraitNames";
@@ -11,46 +12,64 @@ import { TierGroup } from "@/utils/tier";
 
 type TraitGroup = "havoc" | "fortification" | "support" | "chaos" | "unknown";
 
-const GROUP_CONFIG: Record<
-  TraitGroup,
-  { label: string; letter: string; bg: string; text: string; ring: string }
-> = {
-  havoc: {
-    label: "파괴",
-    letter: "파",
-    bg: "bg-red-500/20",
-    text: "text-red-400",
-    ring: "ring-red-500/40",
-  },
-  fortification: {
-    label: "저항",
-    letter: "저",
-    bg: "bg-blue-500/20",
-    text: "text-blue-400",
-    ring: "ring-blue-500/40",
-  },
-  support: {
-    label: "지원",
-    letter: "지",
-    bg: "bg-emerald-500/20",
-    text: "text-emerald-400",
-    ring: "ring-emerald-500/40",
-  },
-  chaos: {
-    label: "혼돈",
-    letter: "혼",
-    bg: "bg-purple-500/20",
-    text: "text-purple-400",
-    ring: "ring-purple-500/40",
-  },
-  unknown: {
-    label: "?",
-    letter: "?",
-    bg: "bg-[var(--color-surface-2)]",
-    text: "text-[var(--color-muted-foreground)]",
-    ring: "ring-[var(--color-border)]",
-  },
-};
+function createGroupConfig(t: (key: string) => string) {
+  return {
+    havoc: {
+      label: t("groups.havoc.name"),
+      letter: t("groups.havoc.letter"),
+      bg: "bg-red-500/20",
+      text: "text-red-400",
+      ring: "ring-red-500/40",
+    },
+    fortification: {
+      label: t("groups.fortification.name"),
+      letter: t("groups.fortification.letter"),
+      bg: "bg-blue-500/20",
+      text: "text-blue-400",
+      ring: "ring-blue-500/40",
+    },
+    support: {
+      label: t("groups.support.name"),
+      letter: t("groups.support.letter"),
+      bg: "bg-emerald-500/20",
+      text: "text-emerald-400",
+      ring: "ring-emerald-500/40",
+    },
+    chaos: {
+      label: t("groups.chaos.name"),
+      letter: t("groups.chaos.letter"),
+      bg: "bg-purple-500/20",
+      text: "text-purple-400",
+      ring: "ring-purple-500/40",
+    },
+    unknown: {
+      label: t("groups.unknown.name"),
+      letter: t("groups.unknown.letter"),
+      bg: "bg-[var(--color-surface-2)]",
+      text: "text-[var(--color-muted-foreground)]",
+      ring: "ring-[var(--color-border)]",
+    },
+  } satisfies Record<
+    TraitGroup,
+    { label: string; letter: string; bg: string; text: string; ring: string }
+  >;
+}
+
+type GroupConfigMap = ReturnType<typeof createGroupConfig>;
+
+function getTraitGroup(code: number): TraitGroup {
+  if (code === 7000501) return "chaos";
+  const sub = Math.floor(code / 100);
+  if (sub === 70107) return "chaos";
+  if (sub === 71108) return "support";
+
+  const prefix = Math.floor(code / 100000);
+  if (prefix === 70) return "havoc";
+  if (prefix === 71) return "fortification";
+  if (prefix === 72) return "support";
+  if (prefix === 73) return "chaos";
+  return "unknown";
+}
 
 // ─── 타입 ─────────────────────────────────────────────────────────────────────
 
@@ -94,7 +113,7 @@ function TraitIcon({
   code,
   name,
   pickRate,
-  winRate,
+  winRate: _winRate,
   size = 28,
 }: {
   code: number;
@@ -104,6 +123,9 @@ function TraitIcon({
   size?: number;
 }) {
   const [imgError, setImgError] = React.useState(false);
+  const t = useTranslations("characterTraitBuild");
+  const groupConfig = React.useMemo(() => createGroupConfig(t), [t]);
+  const config = groupConfig[getTraitGroup(code)];
   const isEmpty = pickRate === 0;
 
   return (
@@ -125,15 +147,19 @@ function TraitIcon({
           />
         ) : (
           <span
-            className="inline-flex items-center justify-center rounded-sm bg-[var(--color-surface-2)] text-[9px] font-bold text-[var(--color-muted-foreground)]"
+            className={cn(
+              "inline-flex items-center justify-center rounded-sm text-[9px] font-bold",
+              config.bg,
+              config.text
+            )}
             style={{ width: size, height: size }}
           >
-            {code}
+            {config.letter}
           </span>
         )}
       </div>
       <span className="text-[9px] text-[var(--color-foreground)] truncate max-w-[48px] text-center">
-        {name ?? code}
+        {name ?? config.label}
       </span>
       <span
         className={cn(
@@ -160,7 +186,7 @@ function SlotRow({
   label: string;
   options: TraitSubOption[];
   traitNames: Record<number, string>;
-  config: (typeof GROUP_CONFIG)[TraitGroup];
+  config: GroupConfigMap[TraitGroup];
 }) {
   if (options.length === 0) return null;
   return (
@@ -195,9 +221,11 @@ export function CharacterTraitBuildAnalyzer({
   bestWeapon,
 }: Props) {
   const { l10n } = useL10n();
+  const t = useTranslations("characterTraitBuild");
   const [builds, setBuilds] = React.useState<TraitMainGroup[]>([]);
   const traitNames = useTraitNames(l10n);
   const [loading, setLoading] = React.useState(false);
+  const groupConfig = React.useMemo(() => createGroupConfig(t), [t]);
 
   React.useEffect(() => {
     if (!patchVersion) return;
@@ -230,7 +258,7 @@ export function CharacterTraitBuildAnalyzer({
   if (builds.length === 0) {
     return (
       <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-6 text-center text-sm text-[var(--color-muted-foreground)]">
-        특성 빌드 데이터가 없습니다.
+        {t("empty.builds")}
       </div>
     );
   }
@@ -238,7 +266,7 @@ export function CharacterTraitBuildAnalyzer({
   return (
     <div className="space-y-4">
       {builds.map((group, gi) => {
-        const mainConfig = GROUP_CONFIG[group.mainGroup];
+        const mainConfig = groupConfig[group.mainGroup];
 
         return (
           <div
@@ -261,14 +289,13 @@ export function CharacterTraitBuildAnalyzer({
                 )}
                 <span className={cn("text-sm font-bold", mainConfig.text)}>{mainConfig.label}</span>
                 <span className="text-[10px] text-[var(--color-muted-foreground)]">
-                  {group.totalGames.toLocaleString()}판
+                  {t("labels.matches", { count: group.totalGames.toLocaleString() })}
                 </span>
               </div>
               <div className="flex items-center gap-3 text-xs">
                 <span className="text-[var(--color-muted-foreground)]">
-                  픽{" "}
                   <span className="font-semibold text-[var(--color-foreground)]">
-                    {group.groupPickRate.toFixed(1)}%
+                    {t("labels.pick", { value: group.groupPickRate.toFixed(1) })}
                   </span>
                 </span>
                 <span
@@ -279,7 +306,7 @@ export function CharacterTraitBuildAnalyzer({
                       : "text-[var(--color-foreground)]"
                   )}
                 >
-                  승 {group.groupWinRate.toFixed(1)}%
+                  {t("labels.win", { value: group.groupWinRate.toFixed(1) })}
                 </span>
               </div>
             </div>
@@ -287,19 +314,19 @@ export function CharacterTraitBuildAnalyzer({
             {/* 주특성: 코어 + 슬롯1 + 슬롯2 */}
             <div className="px-3 sm:px-4 py-1 border-b border-[var(--color-border)]/50 divide-y divide-[var(--color-border)]/20">
               <SlotRow
-                label="코어"
+                label={t("labels.core")}
                 options={group.mainCoreOptions}
                 traitNames={traitNames}
                 config={mainConfig}
               />
               <SlotRow
-                label="슬롯1"
+                label={t("labels.slot1")}
                 options={group.sub1Options}
                 traitNames={traitNames}
                 config={mainConfig}
               />
               <SlotRow
-                label="슬롯2"
+                label={t("labels.slot2")}
                 options={group.sub2Options}
                 traitNames={traitNames}
                 config={mainConfig}
@@ -311,7 +338,7 @@ export function CharacterTraitBuildAnalyzer({
               <div>
                 <div className="px-3 sm:px-4 py-1.5 bg-[var(--color-surface-2)]/40 border-b border-[var(--color-border)]/50">
                   <span className="text-[10px] sm:text-xs font-semibold text-[var(--color-muted-foreground)]">
-                    부특성
+                    {t("labels.secondary")}
                   </span>
                 </div>
                 <div
@@ -323,7 +350,7 @@ export function CharacterTraitBuildAnalyzer({
                   )}
                 >
                   {group.secondaries.map((sec, si) => {
-                    const secConfig = GROUP_CONFIG[sec.secGroup];
+                    const secConfig = groupConfig[sec.secGroup];
                     const isEmpty = sec.totalGames === 0;
                     return (
                       <div
@@ -349,7 +376,7 @@ export function CharacterTraitBuildAnalyzer({
                           </div>
                           <div className="flex gap-1.5 text-[9px]">
                             <span className="text-[var(--color-muted-foreground)]">
-                              {sec.pickRate.toFixed(0)}%
+                              {t("labels.pick", { value: sec.pickRate.toFixed(0) })}
                             </span>
                             {!isEmpty && (
                               <span
@@ -359,7 +386,7 @@ export function CharacterTraitBuildAnalyzer({
                                     : "text-[var(--color-muted-foreground)]"
                                 )}
                               >
-                                승 {sec.winRate.toFixed(1)}%
+                                {t("labels.win", { value: sec.winRate.toFixed(1) })}
                               </span>
                             )}
                           </div>
@@ -401,7 +428,7 @@ export function CharacterTraitBuildAnalyzer({
                           </div>
                         ) : (
                           <p className="text-[10px] text-[var(--color-muted-foreground)] text-center py-2">
-                            데이터 없음
+                            {t("empty.cell")}
                           </p>
                         )}
                       </div>

@@ -2,6 +2,7 @@
 
 import { Layers } from "lucide-react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import itemNameMap from "@/../const/itemNameMap.json";
 import type { EquipmentBuildResult, BuildSummary } from "@/app/api/builds/equipment/route";
@@ -9,7 +10,7 @@ import { useL10n } from "@/components/L10nProvider";
 import { useTraitNames } from "@/hooks/useTraitNames";
 import { cn } from "@/lib/utils";
 import { TierGroup } from "@/utils/tier";
-import { ItemIcon, WinRateSpan, SLOTS, SLOT_LABELS } from "./shared";
+import { ItemIcon, WinRateSpan, SLOTS } from "./shared";
 
 /** l10n에 `Item/Name/{code}` 가 있으면 우선, 없으면 정적 itemNameMap 폴백. */
 function useLocalizedItemNames(l10n: Map<string, string>): Record<number, string> {
@@ -63,46 +64,60 @@ interface Props {
 
 type TraitGroup = "havoc" | "fortification" | "support" | "chaos" | "unknown";
 
-const GROUP_CONFIG: Record<
-  TraitGroup,
-  { letter: string; name: string; bg: string; text: string; ring: string }
-> = {
-  havoc: {
-    letter: "파",
-    name: "파괴",
-    bg: "bg-red-500/20",
-    text: "text-red-400",
-    ring: "ring-red-400/50",
-  },
-  fortification: {
-    letter: "저",
-    name: "저항",
-    bg: "bg-blue-500/20",
-    text: "text-blue-400",
-    ring: "ring-blue-400/50",
-  },
-  support: {
-    letter: "지",
-    name: "지원",
-    bg: "bg-emerald-500/20",
-    text: "text-emerald-400",
-    ring: "ring-emerald-400/50",
-  },
-  chaos: {
-    letter: "혼",
-    name: "혼돈",
-    bg: "bg-purple-500/20",
-    text: "text-purple-400",
-    ring: "ring-purple-400/50",
-  },
-  unknown: {
-    letter: "?",
-    name: "기타",
-    bg: "bg-[var(--color-surface-2)]",
-    text: "text-[var(--color-muted-foreground)]",
-    ring: "ring-[var(--color-border)]",
-  },
-};
+function createGroupConfig(t: (key: string) => string) {
+  return {
+    havoc: {
+      letter: t("groups.havoc.letter"),
+      name: t("groups.havoc.name"),
+      bg: "bg-red-500/20",
+      text: "text-red-400",
+      ring: "ring-red-400/50",
+    },
+    fortification: {
+      letter: t("groups.fortification.letter"),
+      name: t("groups.fortification.name"),
+      bg: "bg-blue-500/20",
+      text: "text-blue-400",
+      ring: "ring-blue-400/50",
+    },
+    support: {
+      letter: t("groups.support.letter"),
+      name: t("groups.support.name"),
+      bg: "bg-emerald-500/20",
+      text: "text-emerald-400",
+      ring: "ring-emerald-400/50",
+    },
+    chaos: {
+      letter: t("groups.chaos.letter"),
+      name: t("groups.chaos.name"),
+      bg: "bg-purple-500/20",
+      text: "text-purple-400",
+      ring: "ring-purple-400/50",
+    },
+    unknown: {
+      letter: t("groups.unknown.letter"),
+      name: t("groups.unknown.name"),
+      bg: "bg-[var(--color-surface-2)]",
+      text: "text-[var(--color-muted-foreground)]",
+      ring: "ring-[var(--color-border)]",
+    },
+  } satisfies Record<
+    TraitGroup,
+    { letter: string; name: string; bg: string; text: string; ring: string }
+  >;
+}
+
+function createSlotLabels(t: (key: string) => string): Record<(typeof SLOTS)[number], string> {
+  return {
+    weapon: t("slots.weapon"),
+    chest: t("slots.chest"),
+    head: t("slots.head"),
+    arm: t("slots.arm"),
+    leg: t("slots.leg"),
+  };
+}
+
+type GroupConfigMap = ReturnType<typeof createGroupConfig>;
 
 function getTraitGroup(code: number): TraitGroup {
   if (code === 7000501) return "chaos"; // 벽력: 혼돈 메인 특성
@@ -119,9 +134,11 @@ function getTraitGroup(code: number): TraitGroup {
 }
 
 function TraitIconSmall({ code, size = 24 }: { code: number; size?: number }) {
+  const t = useTranslations("characterDetailed");
   const [imgError, setImgError] = React.useState(false);
   const group = getTraitGroup(code);
-  const config = GROUP_CONFIG[group];
+  const groupConfig = React.useMemo(() => createGroupConfig(t), [t]);
+  const config = groupConfig[group];
 
   if (imgError) {
     return (
@@ -170,7 +187,7 @@ function TreeRow({
 }: {
   options: TraitSubOption[];
   traitNames: Record<number, string>;
-  groupConfig: (typeof GROUP_CONFIG)[TraitGroup];
+  groupConfig: GroupConfigMap[TraitGroup];
 }) {
   if (options.length === 0) return null;
   const maxPick = Math.max(...options.map((o) => o.pickRate));
@@ -273,10 +290,14 @@ function TopBuildsTableFiltered({
   builds: BuildSummary[];
   itemNames: Record<number, string>;
 }) {
+  const t = useTranslations("characterDetailed");
+  const slotLabels = React.useMemo(() => createSlotLabels(t), [t]);
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
-        <span className="text-xs font-semibold text-[var(--color-foreground)]">TOP BUILDS</span>
+        <span className="text-xs font-semibold text-[var(--color-foreground)]">
+          {t("sections.topBuilds")}
+        </span>
       </div>
 
       {/* 모바일 카드 레이아웃 */}
@@ -298,7 +319,9 @@ function TopBuildsTableFiltered({
                 #{i + 1}
               </span>
               <div className="flex items-center gap-2 text-[11px]">
-                <span className="text-[var(--color-foreground)]">픽 {b.pickRate.toFixed(1)}%</span>
+                <span className="text-[var(--color-foreground)]">
+                  {t("labels.pickShort", { value: b.pickRate.toFixed(1) })}
+                </span>
                 <WinRateSpan winRate={b.winRate} />
               </div>
             </div>
@@ -318,8 +341,8 @@ function TopBuildsTableFiltered({
               })}
             </div>
             <div className="flex items-center justify-center gap-2.5 text-[11px] text-[var(--color-foreground)]">
-              <span>순위 #{b.averageRank.toFixed(1)}</span>
-              <span>RP {b.averageRP.toFixed(0)}</span>
+              <span>{t("labels.rankValue", { value: b.averageRank.toFixed(1) })}</span>
+              <span>{t("labels.rpValue", { value: b.averageRP.toFixed(0) })}</span>
             </div>
           </div>
         ))}
@@ -333,13 +356,13 @@ function TopBuildsTableFiltered({
               <th className="px-3 py-2 text-left font-medium w-8">#</th>
               {SLOTS.map((s) => (
                 <th key={s} className="px-2 py-2 text-center font-medium">
-                  {SLOT_LABELS[s]}
+                  {slotLabels[s]}
                 </th>
               ))}
-              <th className="px-3 py-2 text-right font-medium w-16">픽률</th>
-              <th className="px-3 py-2 text-right font-medium w-16">승률</th>
-              <th className="px-3 py-2 text-right font-medium w-16">평균순위</th>
-              <th className="px-3 py-2 text-right font-medium w-16">평균RP</th>
+              <th className="px-3 py-2 text-right font-medium w-16">{t("stats.pickRate")}</th>
+              <th className="px-3 py-2 text-right font-medium w-16">{t("stats.winRate")}</th>
+              <th className="px-3 py-2 text-right font-medium w-16">{t("stats.averageRank")}</th>
+              <th className="px-3 py-2 text-right font-medium w-16">{t("stats.averageRp")}</th>
             </tr>
           </thead>
           <tbody>
@@ -408,11 +431,13 @@ function SlotPopularityGrid({
   slotPopularity: EquipmentBuildResult["slotPopularity"];
   itemNames: Record<number, string>;
 }) {
+  const t = useTranslations("characterDetailed");
+  const slotLabels = React.useMemo(() => createSlotLabels(t), [t]);
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
         <span className="text-xs font-semibold text-[var(--color-foreground)]">
-          슬롯별 인기 아이템
+          {t("sections.slotPopularity")}
         </span>
       </div>
 
@@ -424,7 +449,7 @@ function SlotPopularityGrid({
           return (
             <div key={slot} className="px-2.5 py-2">
               <p className="text-[11px] font-medium text-[var(--color-muted-foreground)] mb-1.5">
-                {SLOT_LABELS[slot]}
+                {slotLabels[slot]}
               </p>
               <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
                 {items.map((item, i) => (
@@ -462,7 +487,7 @@ function SlotPopularityGrid({
             return (
               <div key={slot} className="flex flex-col">
                 <div className="px-2 py-1.5 text-center text-[11px] font-medium text-[var(--color-muted-foreground)] border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60">
-                  {SLOT_LABELS[slot]}
+                  {slotLabels[slot]}
                 </div>
                 {items.length === 0 ? (
                   <div className="py-4 text-center text-xs text-[var(--color-muted-foreground)]">
@@ -500,7 +525,7 @@ function SlotPopularityGrid({
             return (
               <div key={slot} className="flex flex-col">
                 <div className="px-2 py-1.5 text-center text-[11px] font-medium text-[var(--color-muted-foreground)] border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60">
-                  {SLOT_LABELS[slot]}
+                  {slotLabels[slot]}
                 </div>
                 {items.length === 0 ? (
                   <div className="py-4 text-center text-xs text-[var(--color-muted-foreground)]">
@@ -542,7 +567,7 @@ function SlotPopularityGrid({
             return (
               <div key={slot} className="flex flex-col min-w-[84px] flex-1">
                 <div className="px-3 py-2 text-center text-xs font-medium text-[var(--color-muted-foreground)] border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60">
-                  {SLOT_LABELS[slot]}
+                  {slotLabels[slot]}
                 </div>
                 {items.length === 0 ? (
                   <div className="py-6 text-center text-xs text-[var(--color-muted-foreground)]">
@@ -588,6 +613,7 @@ export function CharacterDetailedAnalyzer({
   bestWeapon,
 }: Props) {
   const { l10n } = useL10n();
+  const t = useTranslations("characterDetailed");
   const [traitBuilds, setTraitBuilds] = React.useState<TraitMainGroupData[]>([]);
   const [selectedComboIdx, setSelectedComboIdx] = React.useState<number>(-1);
   const [equipData, setEquipData] = React.useState<EquipmentBuildResult | null>(null);
@@ -595,6 +621,7 @@ export function CharacterDetailedAnalyzer({
   const [equipLoading, setEquipLoading] = React.useState(false);
   const traitNames = useTraitNames(l10n);
   const itemNames = useLocalizedItemNames(l10n);
+  const groupConfig = React.useMemo(() => createGroupConfig(t), [t]);
 
   // 메인 특성 그룹 로드
   React.useEffect(() => {
@@ -675,7 +702,7 @@ export function CharacterDetailedAnalyzer({
     return (
       <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-8 flex flex-col items-center gap-2 text-[var(--color-muted-foreground)]">
         <Layers className="h-8 w-8 opacity-40" />
-        <p className="text-sm">상세분석 데이터가 없습니다.</p>
+        <p className="text-sm">{t("empty.detailed")}</p>
       </div>
     );
   }
@@ -694,13 +721,13 @@ export function CharacterDetailedAnalyzer({
       {/* 주특성 그룹 선택 */}
       <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-2.5 sm:p-4">
         <p className="mb-1.5 sm:mb-3 text-[11px] sm:text-xs font-semibold text-[var(--color-muted-foreground)]">
-          주특성
+          {t("stats.primaryTrait")}
         </p>
 
         <div className="flex gap-1.5 sm:gap-2 overflow-x-auto sm:overflow-x-visible pb-1 sm:pb-0 scrollbar-hide sm:flex-wrap">
           {traitBuilds.map((group, i) => {
             const isSelected = selectedComboIdx === i;
-            const mConfig = GROUP_CONFIG[group.mainGroup];
+            const mConfig = groupConfig[group.mainGroup];
             const topCore = group.mainCoreOptions.reduce<TraitSubOption | null>(
               (best, o) => (!best || o.pickRate > best.pickRate ? o : best),
               null
@@ -730,7 +757,7 @@ export function CharacterDetailedAnalyzer({
                         : "text-[var(--color-muted-foreground)]"
                     )}
                   >
-                    픽 {group.groupPickRate.toFixed(1)}%
+                    {t("labels.pickShort", { value: group.groupPickRate.toFixed(1) })}
                   </span>
                   <span
                     className={cn(
@@ -740,7 +767,7 @@ export function CharacterDetailedAnalyzer({
                         : "text-[var(--color-danger)]"
                     )}
                   >
-                    승 {group.groupWinRate.toFixed(1)}%
+                    {t("labels.winShort", { value: group.groupWinRate.toFixed(1) })}
                   </span>
                 </div>
                 <div className="mt-0.5 sm:mt-1 h-0.5 sm:h-1 w-full rounded-full bg-[var(--color-border)]">
@@ -764,16 +791,16 @@ export function CharacterDetailedAnalyzer({
           <div className="mt-2 sm:mt-3 flex items-center justify-between sm:justify-start gap-2 sm:gap-4 rounded-md bg-[var(--color-surface-2)] border border-[var(--color-border)] px-2.5 sm:px-4 py-2">
             <div className="flex items-center gap-1">
               <span className="text-[10px] sm:text-xs text-[var(--color-muted-foreground)]">
-                총
+                {t("stats.total")}
               </span>
               <span className="text-[10px] sm:text-xs font-bold text-[var(--color-foreground)]">
-                {selectedGroup.totalGames.toLocaleString()}판
+                {t("labels.matches", { count: selectedGroup.totalGames.toLocaleString() })}
               </span>
             </div>
             <div className="h-3 w-px bg-[var(--color-border)]" />
             <div className="flex items-center gap-1">
               <span className="text-[10px] sm:text-xs text-[var(--color-muted-foreground)]">
-                픽률
+                {t("stats.pickRate")}
               </span>
               <span className="text-[10px] sm:text-xs font-bold text-[var(--color-primary)]">
                 {selectedGroup.groupPickRate.toFixed(1)}%
@@ -782,7 +809,7 @@ export function CharacterDetailedAnalyzer({
             <div className="h-3 w-px bg-[var(--color-border)]" />
             <div className="flex items-center gap-1">
               <span className="text-[10px] sm:text-xs text-[var(--color-muted-foreground)]">
-                승률
+                {t("stats.winRate")}
               </span>
               <span
                 className={cn(
@@ -805,7 +832,7 @@ export function CharacterDetailedAnalyzer({
           {/* 특성 트리 + 요약 */}
           {(hasPrimaryTraits || hasSecondaryTraits) &&
             (() => {
-              const mainConfig = GROUP_CONFIG[selectedGroup.mainGroup];
+              const mainConfig = groupConfig[selectedGroup.mainGroup];
               const topMainCore = selectedGroup.mainCoreOptions.reduce<TraitSubOption | null>(
                 (best, o) => (!best || o.pickRate > best.pickRate ? o : best),
                 null
@@ -854,7 +881,7 @@ export function CharacterDetailedAnalyzer({
                           >
                             {topMainCore != null && <TraitIconSmall code={topMainCore} size={18} />}
                             <span className={cn("text-xs font-bold", mainConfig.text)}>
-                              주 특성: {mainConfig.name}
+                              {t("summaries.mainTrait", { name: mainConfig.name })}
                             </span>
                           </div>
                           <div className="py-1 divide-y divide-[var(--color-border)]/30">
@@ -865,7 +892,7 @@ export function CharacterDetailedAnalyzer({
                               return top ? (
                                 <SummaryRow
                                   option={top}
-                                  label={`${mainConfig.name}, 핵심`}
+                                  label={t("summaries.core", { name: mainConfig.name })}
                                   traitNames={traitNames}
                                 />
                               ) : null;
@@ -877,7 +904,7 @@ export function CharacterDetailedAnalyzer({
                               return top ? (
                                 <SummaryRow
                                   option={top}
-                                  label={`${mainConfig.name}, 보조`}
+                                  label={t("summaries.secondary", { name: mainConfig.name })}
                                   traitNames={traitNames}
                                 />
                               ) : null;
@@ -893,7 +920,7 @@ export function CharacterDetailedAnalyzer({
                     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
                       <div className="px-3 sm:px-4 py-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60">
                         <span className="text-[11px] sm:text-xs font-semibold text-[var(--color-muted-foreground)]">
-                          부특성 조합
+                          {t("sections.secondaryTraits")}
                         </span>
                       </div>
                       <div
@@ -905,7 +932,7 @@ export function CharacterDetailedAnalyzer({
                         )}
                       >
                         {selectedGroup.secondaries.map((sec, si) => {
-                          const secConfig = GROUP_CONFIG[sec.secGroup];
+                          const secConfig = groupConfig[sec.secGroup];
                           return (
                             <div key={si} className="bg-[var(--color-surface)]/80 p-3 sm:p-4">
                               {/* 부특성 그룹 헤더 */}
@@ -927,7 +954,7 @@ export function CharacterDetailedAnalyzer({
                                 </div>
                                 <div className="flex gap-2 text-[10px]">
                                   <span className="text-[var(--color-muted-foreground)]">
-                                    픽 {sec.pickRate.toFixed(0)}%
+                                    {t("labels.pickShort", { value: sec.pickRate.toFixed(0) })}
                                   </span>
                                   <span
                                     className={cn(
@@ -936,7 +963,7 @@ export function CharacterDetailedAnalyzer({
                                         : "text-[var(--color-danger)]"
                                     )}
                                   >
-                                    승 {sec.winRate.toFixed(1)}%
+                                    {t("labels.winShort", { value: sec.winRate.toFixed(1) })}
                                   </span>
                                 </div>
                               </div>
@@ -971,7 +998,7 @@ export function CharacterDetailedAnalyzer({
             </div>
           ) : hasEquipData ? (
             <div className="space-y-4">
-              <SectionDivider title="아이템 빌드" />
+              <SectionDivider title={t("sections.itemBuilds")} />
               {equipData!.topBuilds.length > 0 && (
                 <TopBuildsTableFiltered builds={sortedTopBuilds} itemNames={itemNames} />
               )}
@@ -984,7 +1011,7 @@ export function CharacterDetailedAnalyzer({
             </div>
           ) : (
             <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-6 text-center text-sm text-[var(--color-muted-foreground)]">
-              이 특성의 아이템 빌드 데이터가 없습니다.
+              {t("empty.itemBuilds")}
             </div>
           )}
         </>

@@ -2,6 +2,7 @@
 
 import { Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useL10n } from "@/components/L10nProvider";
 import {
@@ -32,12 +33,13 @@ export function CharacterGrid({
   searchQuery,
   setSearchQuery,
   filteredCodes,
-  selectedRef,
+  selectedRef: _selectedRef,
   searchTimerRef,
   statsMap,
 }: CharacterGridProps) {
   const router = useRouter();
   const { l10n } = useL10n();
+  const t = useTranslations("characterGrid");
 
   const handleSelect = React.useCallback(
     (code: number) => {
@@ -75,9 +77,9 @@ export function CharacterGrid({
               d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
             />
           </svg>
-          <span className="text-xs font-semibold text-[var(--color-foreground)]">캐릭터 선택</span>
+          <span className="text-xs font-semibold text-[var(--color-foreground)]">{t("title")}</span>
           <span className="ml-auto text-[10px] text-[var(--color-muted-foreground)]">
-            {filteredCodes.length}명
+            {t("count", { count: filteredCodes.length })}
           </span>
         </div>
       </div>
@@ -98,7 +100,7 @@ export function CharacterGrid({
                 }, 800);
               }
             }}
-            placeholder="캐릭터 검색"
+            placeholder={t("placeholder")}
             className="w-full rounded-lg bg-[var(--color-surface-2)] pl-8 pr-8 py-2 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] placeholder:text-[var(--color-muted-foreground)] outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]/30 transition-all"
           />
           {searchQuery && (

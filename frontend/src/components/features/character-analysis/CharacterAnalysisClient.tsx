@@ -2,6 +2,7 @@
 
 import { BarChart2, ChevronRight, FileText, Loader2, Users, Zap } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { Suspense } from "react";
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route";
@@ -49,6 +50,7 @@ export function CharacterAnalysisClient({
   initialWeapon,
 }: CharacterAnalysisClientProps) {
   const { l10n } = useL10n();
+  const t = useTranslations("characterAnalysis");
   const patches = React.useMemo(() => initialPatches ?? [], [initialPatches]);
 
   const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.MITHRIL);
@@ -225,13 +227,15 @@ export function CharacterAnalysisClient({
           <section className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-4 sm:p-5">
             <div className="flex items-center gap-2 mb-3">
               <Zap className="h-4 w-4 text-[var(--color-primary)]" />
-              <h2 className="text-sm font-bold text-[var(--color-foreground)]">한눈에 보기</h2>
+              <h2 className="text-sm font-bold text-[var(--color-foreground)]">
+                {t("quickSummary")}
+              </h2>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {/* Tier */}
               <div className="flex flex-col items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] p-3">
                 <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
-                  티어
+                  {t("summary.tier")}
                 </span>
                 {charTier && (
                   <span
@@ -255,7 +259,7 @@ export function CharacterAnalysisClient({
               {/* Win Rate */}
               <div className="flex flex-col items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] p-3">
                 <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
-                  승률
+                  {t("summary.winRate")}
                 </span>
                 <span
                   className={cn(
@@ -271,7 +275,7 @@ export function CharacterAnalysisClient({
               {/* Best Weapon */}
               <div className="flex flex-col items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] p-3">
                 <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
-                  추천 무기
+                  {t("summary.recommendedWeapon")}
                 </span>
                 <span className="text-sm font-bold text-[var(--color-foreground)]">
                   {stats?.weapons?.[0]
@@ -282,7 +286,7 @@ export function CharacterAnalysisClient({
               {/* Pick Rate */}
               <div className="flex flex-col items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] p-3">
                 <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
-                  픽률
+                  {t("summary.pickRate")}
                 </span>
                 <span className="text-2xl font-black tabular-nums text-[var(--color-foreground)]">
                   {(stats?.pickRate ?? displayStat.pickRate).toFixed(1)}%
@@ -297,7 +301,7 @@ export function CharacterAnalysisClient({
                 className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/30 px-3.5 py-2 text-xs font-semibold text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 transition-colors"
               >
                 <Users className="h-3.5 w-3.5" />
-                이 캐릭터로 조합 찾기
+                {t("synergyCta")}
                 <ChevronRight className="h-3 w-3" />
               </Link>
             </div>
@@ -309,7 +313,7 @@ export function CharacterAnalysisClient({
           <div className="flex items-center gap-2 mb-4">
             <div className="h-px flex-1 bg-[var(--color-border)]" />
             <span className="text-[11px] font-semibold text-[var(--color-muted-foreground)] uppercase tracking-widest">
-              상세 분석
+              {t("deepDive")}
             </span>
             <div className="h-px flex-1 bg-[var(--color-border)]" />
           </div>
@@ -319,7 +323,9 @@ export function CharacterAnalysisClient({
             <section>
               <div className="flex items-center gap-2 mb-3">
                 <BarChart2 className="h-4 w-4 text-[var(--color-primary)]" />
-                <h2 className="text-sm font-bold text-[var(--color-foreground)]">패치 비교</h2>
+                <h2 className="text-sm font-bold text-[var(--color-foreground)]">
+                  {t("patchComparison")}
+                </h2>
               </div>
               <Suspense fallback={<TabFallback />}>
                 <PatchComparisonTab
@@ -335,7 +341,9 @@ export function CharacterAnalysisClient({
             <section>
               <div className="flex items-center gap-2 mb-3">
                 <FileText className="h-4 w-4 text-[var(--color-primary)]" />
-                <h2 className="text-sm font-bold text-[var(--color-foreground)]">패치 내역</h2>
+                <h2 className="text-sm font-bold text-[var(--color-foreground)]">
+                  {t("patchNotes")}
+                </h2>
               </div>
               <Suspense fallback={<TabFallback />}>
                 <PatchLogTab patches={patches} selectedCode={code} />
@@ -346,7 +354,7 @@ export function CharacterAnalysisClient({
             <section>
               <div className="flex items-center gap-2 mb-4">
                 <BarChart2 className="h-4 w-4 text-[var(--color-accent-gold)]" />
-                <h2 className="text-sm font-bold text-[var(--color-foreground)]">통계</h2>
+                <h2 className="text-sm font-bold text-[var(--color-foreground)]">{t("stats")}</h2>
               </div>
               <Suspense fallback={<TabFallback />}>
                 <CharacterDetailedAnalyzer

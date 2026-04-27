@@ -3,6 +3,7 @@
 import { Search } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useL10n } from "@/components/L10nProvider";
 import { analytics } from "@/lib/analytics";
@@ -50,6 +51,7 @@ interface CharacterPickerProps {
 export function CharacterPicker({ code }: CharacterPickerProps) {
   const router = useRouter();
   const { l10n } = useL10n();
+  const t = useTranslations("characterPicker");
   const [query, setQuery] = React.useState("");
   const [open, setOpen] = React.useState(false);
   const [highlightIndex, setHighlightIndex] = React.useState(-1);
@@ -160,7 +162,7 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
               : undefined
           }
           aria-autocomplete="list"
-          aria-label="캐릭터 검색"
+          aria-label={t("searchAria")}
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
@@ -169,7 +171,7 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
           }}
           onFocus={() => setOpen(true)}
           onKeyDown={handleKeyDown}
-          placeholder="캐릭터 검색 (초성 가능)"
+          placeholder={t("placeholder")}
           className={cn(
             "w-full rounded-xl border bg-[var(--color-surface)]/80 pl-9 pr-4 py-2.5 text-sm text-[var(--color-foreground)]",
             "placeholder:text-[var(--color-muted-foreground)]",
@@ -187,7 +189,7 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
           ref={listRef}
           id="character-listbox"
           role="listbox"
-          aria-label="캐릭터 목록"
+          aria-label={t("listAria")}
           className="absolute z-50 top-full right-0 w-full max-h-[280px] overflow-y-auto rounded-b-xl border border-t-0 border-[var(--color-primary)] bg-[var(--color-surface)] shadow-2xl"
         >
           {filtered.length === 0 ? (
@@ -195,7 +197,7 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
               className="px-4 py-6 text-center text-xs text-[var(--color-muted-foreground)]"
               role="status"
             >
-              일치하는 캐릭터가 없습니다
+              {t("noResults")}
             </div>
           ) : (
             filtered.map((c, i) => (
@@ -232,7 +234,7 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
                 </span>
                 {c === code && (
                   <span className="ml-auto text-[10px] text-[var(--color-primary)] font-medium">
-                    현재
+                    {t("current")}
                   </span>
                 )}
               </button>

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import type {
   CharacterStatsResponse,
@@ -12,12 +13,11 @@ import { buildFallbackMap, getCharacterImageUrl, resolveCharacterName } from "@/
 import type { Tier } from "@/lib/design-tokens";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
-
-const FALLBACK_MAP = buildFallbackMap();
 import { METRICS_TIER_GROUPS, TierGroup } from "@/utils/tier";
 import { TierBadge } from "../TierBadge";
-import { TIER_LABELS } from "./constants";
 import { StatCard, SkeletonCard } from "./StatCard";
+
+const FALLBACK_MAP = buildFallbackMap();
 
 type DisplayStat = CharacterStatsResponse | WeaponStatItem;
 
@@ -76,6 +76,7 @@ export function CharacterHeader({
   hasPreviousData,
 }: CharacterHeaderProps) {
   const { l10n } = useL10n();
+  const t = useTranslations("characterHeader");
   const characterName = resolveCharacterName(selectedCode, l10n, FALLBACK_MAP);
   const tierRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
   const weaponRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
@@ -158,12 +159,12 @@ export function CharacterHeader({
               <div className="flex items-center gap-1.5 mt-1.5">
                 {currentPatch && (
                   <span className="rounded-md bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 px-2 py-0.5 text-[10px] font-medium text-[var(--color-primary)]">
-                    패치 {currentPatch}
+                    {t("patch", { patch: currentPatch })}
                   </span>
                 )}
                 {displayStat && displayStat.totalGames > 0 && (
                   <span className="rounded-md bg-[var(--color-surface-3)] px-2 py-0.5 text-[10px] text-[var(--color-muted-foreground)]">
-                    {displayStat.totalGames.toLocaleString()}판
+                    {t("games", { count: displayStat.totalGames.toLocaleString() })}
                   </span>
                 )}
               </div>
@@ -172,7 +173,7 @@ export function CharacterHeader({
             {/* Tier selector — WAI-ARIA radiogroup */}
             <div
               role="radiogroup"
-              aria-label="분석 티어 선택"
+              aria-label={t("tierSelectorAria")}
               className="flex items-center gap-1 rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] p-0.5 w-fit"
             >
               {METRICS_TIER_GROUPS.map((tg, i) => {
@@ -200,7 +201,7 @@ export function CharacterHeader({
                         : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
                     )}
                   >
-                    {TIER_LABELS[tg]}
+                    {t(`tiers.${tg}`)}
                   </button>
                 );
               })}
@@ -212,11 +213,11 @@ export function CharacterHeader({
         {!loading && stats?.weapons && stats.weapons.length > 0 && (
           <div className="relative mt-4 pt-3.5 border-t border-[var(--color-border)]/60">
             <span className="absolute -top-2.5 left-3 bg-[var(--color-surface)] px-2 text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
-              Weapon
+              {t("weapon")}
             </span>
             <div
               role="radiogroup"
-              aria-label="무기 선택"
+              aria-label={t("weaponSelectorAria")}
               className="flex gap-1.5 overflow-x-auto pb-0.5 scrollbar-hide"
             >
               <button
@@ -237,7 +238,7 @@ export function CharacterHeader({
                     : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/30"
                 )}
               >
-                전체
+                {t("all")}
               </button>
               {stats.weapons.map((w, i) => {
                 const isSelected = selectedWeapon === w.bestWeapon;
@@ -316,12 +317,12 @@ export function CharacterHeader({
       ) : displayStat && displayStat.totalGames > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
           <StatCard
-            label="픽률"
+            label={t("pickRate")}
             value={`${(stats?.pickRate ?? displayStat.pickRate).toFixed(1)}%`}
             sub={
               selectedWeapon != null &&
               displayStat.pickRate !== (stats?.pickRate ?? displayStat.pickRate)
-                ? `무기 ${displayStat.pickRate.toFixed(1)}%`
+                ? t("weaponSub", { value: displayStat.pickRate.toFixed(1) })
                 : undefined
             }
             delta={
@@ -334,7 +335,7 @@ export function CharacterHeader({
             accent="blue"
           />
           <StatCard
-            label="승률"
+            label={t("winRate")}
             value={`${displayStat.winRate.toFixed(1)}%`}
             delta={hasPreviousData ? displayStat.winRate - displayPrevStat!.winRate : undefined}
             deltaLabel="%p"
@@ -342,7 +343,7 @@ export function CharacterHeader({
             accent="gold"
           />
           <StatCard
-            label="평균 순위"
+            label={t("averageRank")}
             value={`#${displayStat.averageRank.toFixed(1)}`}
             delta={
               hasPreviousData ? displayStat.averageRank - displayPrevStat!.averageRank : undefined
@@ -352,7 +353,7 @@ export function CharacterHeader({
             accent="purple"
           />
           <StatCard
-            label="평균 RP"
+            label={t("averageRp")}
             value={displayStat.averageRP.toFixed(1)}
             delta={hasPreviousData ? displayStat.averageRP - displayPrevStat!.averageRP : undefined}
             accent="green"
@@ -361,7 +362,7 @@ export function CharacterHeader({
       ) : (
         <div className="rounded-xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface)]/40 px-4 py-8 text-center">
           <p className="text-sm text-[var(--color-muted-foreground)]">
-            {currentPatch ? "이 패치에서 데이터가 없습니다." : "패치 정보를 불러오는 중..."}
+            {currentPatch ? t("emptyPatchData") : t("loadingPatchInfo")}
           </p>
         </div>
       )}
