@@ -1,8 +1,9 @@
-import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
-import { Navigation } from "./Navigation"
+import Link from "next/link";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { Badge } from "@/components/ui/badge";
+import { Navigation } from "./Navigation";
 
-const CURRENT_PATCH = "10.6"
+const CURRENT_PATCH = "10.6";
 
 export function Header() {
   return (
@@ -22,10 +23,13 @@ export function Header() {
           <Navigation />
         </div>
 
-        <div className="shrink-0 ml-auto sm:ml-0">
-          <Badge variant="outline" className="text-[10px]">v{CURRENT_PATCH}</Badge>
+        <div className="shrink-0 ml-auto sm:ml-0 flex items-center gap-2">
+          <LanguageSwitcher />
+          <Badge variant="outline" className="text-[10px]">
+            v{CURRENT_PATCH}
+          </Badge>
         </div>
       </div>
     </header>
-  )
+  );
 }

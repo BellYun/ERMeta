@@ -3,6 +3,7 @@ import { join } from "path";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { cookies, headers } from "next/headers";
 import "./globals.css";
 import Script from "next/script";
 import { AmplitudeLoader } from "@/components/AmplitudeLoader";
@@ -12,18 +13,47 @@ import { L10nProvider } from "@/components/L10nProvider";
 import { Header } from "@/components/layout/Header";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { WebVitalsReporter } from "@/components/WebVitalsReporter";
+import {
+  DEFAULT_LANGUAGE,
+  LANGUAGE_COOKIE,
+  resolveLanguage,
+  type SupportedLanguage,
+} from "@/lib/detectLanguage";
 
-function loadL10n(): Record<string, string> | undefined {
+function loadL10n(language: SupportedLanguage): Record<string, string> | undefined {
   try {
-    const filePath = join(process.cwd(), "public/l10n/Korean.json");
+    const filePath = join(process.cwd(), `public/l10n/${language}.json`);
     const raw = readFileSync(filePath, "utf-8");
     return JSON.parse(raw);
   } catch {
+    if (language !== DEFAULT_LANGUAGE) {
+      // 결정된 언어 파일이 없으면 한국어로 폴백
+      try {
+        const fallback = join(process.cwd(), `public/l10n/${DEFAULT_LANGUAGE}.json`);
+        return JSON.parse(readFileSync(fallback, "utf-8"));
+      } catch {
+        return undefined;
+      }
+    }
     return undefined;
   }
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://erwagg.com";
+
+const HTML_LANG_BY_LANGUAGE: Record<SupportedLanguage, string> = {
+  Korean: "ko",
+  English: "en",
+  Japanese: "ja",
+  ChineseSimplified: "zh-Hans",
+  ChineseTraditional: "zh-Hant",
+  Spanish: "es",
+  French: "fr",
+  German: "de",
+  Russian: "ru",
+  Vietnamese: "vi",
+  Thai: "th",
+};
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -96,15 +126,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const initialL10n = loadL10n();
+  const cookieStore = await cookies();
+  const headerStore = await headers();
+  const cookieLang = cookieStore.get(LANGUAGE_COOKIE)?.value;
+  const acceptLanguage = headerStore.get("accept-language");
+  const language = resolveLanguage(cookieLang, acceptLanguage);
+  const initialL10n = loadL10n(language);
+  const htmlLang = HTML_LANG_BY_LANGUAGE[language] ?? "ko";
 
   return (
-    <html lang="ko" className={geistSans.variable}>
+    <html lang={htmlLang} className={geistSans.variable}>
       <body>
         <a
           href="#main"
@@ -112,7 +148,7 @@ export default function RootLayout({
         >
           본문으로 건너뛰기
         </a>
-        <L10nProvider initialL10n={initialL10n}>
+        <L10nProvider initialL10n={initialL10n} initialLanguage={language}>
           <Header />
           <main id="main" className="max-w-6xl mx-auto px-3 sm:px-4 pt-4 sm:pt-5 pb-20 sm:pb-6">
             {children}
