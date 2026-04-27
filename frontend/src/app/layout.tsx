@@ -6,6 +6,8 @@ import { Geist } from "next/font/google";
 import { cookies } from "next/headers";
 import "./globals.css";
 import Script from "next/script";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import { AmplitudeLoader } from "@/components/AmplitudeLoader";
 import FeedbackWidget from "@/components/features/FeedbackWidget";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
@@ -141,6 +143,8 @@ export default async function RootLayout({
       : DEFAULT_LANGUAGE;
   const initialL10n = loadL10n(language);
   const htmlLang = HTML_LANG_BY_LANGUAGE[language] ?? "ko";
+  const locale = await getLocale();
+  const messages = await getMessages();
 
   return (
     <html lang={htmlLang} className={geistSans.variable}>
@@ -151,13 +155,15 @@ export default async function RootLayout({
         >
           본문으로 건너뛰기
         </a>
-        <L10nProvider initialL10n={initialL10n} initialLanguage={language}>
-          <Header />
-          <main id="main" className="max-w-6xl mx-auto px-3 sm:px-4 pt-4 sm:pt-5 pb-20 sm:pb-6">
-            {children}
-          </main>
-          <MobileTabBar />
-        </L10nProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <L10nProvider initialL10n={initialL10n} initialLanguage={language}>
+            <Header />
+            <main id="main" className="max-w-6xl mx-auto px-3 sm:px-4 pt-4 sm:pt-5 pb-20 sm:pb-6">
+              {children}
+            </main>
+            <MobileTabBar />
+          </L10nProvider>
+        </NextIntlClientProvider>
         <footer className="border-t border-[var(--color-border)] bg-[var(--color-surface)]">
           <div className="max-w-6xl mx-auto px-4 py-5 flex flex-col gap-2.5 text-[11px] text-[var(--color-muted-foreground)] leading-relaxed">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">

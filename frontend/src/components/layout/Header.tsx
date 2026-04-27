@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Badge } from "@/components/ui/badge";
 import { Navigation } from "./Navigation";
@@ -6,6 +7,7 @@ import { Navigation } from "./Navigation";
 const CURRENT_PATCH = "10.6";
 
 export function Header() {
+  const t = useTranslations("header");
   return (
     <header className="sticky top-0 z-50 w-full bg-[var(--color-surface)]/95 backdrop-blur-sm border-b border-[var(--color-border)]">
       <div className="max-w-6xl mx-auto px-4 h-12 flex items-center justify-between gap-3">
@@ -14,7 +16,7 @@ export function Header() {
             ER
           </div>
           <span className="text-base font-bold text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors">
-            ER&GG
+            {t("logoTitle")}
           </span>
         </Link>
 
@@ -26,7 +28,8 @@ export function Header() {
         <div className="shrink-0 ml-auto sm:ml-0 flex items-center gap-2">
           <LanguageSwitcher />
           <Badge variant="outline" className="text-[10px]">
-            v{CURRENT_PATCH}
+            {t("patchPrefix")}
+            {CURRENT_PATCH}
           </Badge>
         </div>
       </div>
