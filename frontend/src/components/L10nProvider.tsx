@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { DEFAULT_LANGUAGE, LANGUAGE_COOKIE, type SupportedLanguage } from "@/lib/detectLanguage";
 import { fetchAndParseL10n } from "@/utils/l10n";
@@ -61,6 +62,7 @@ interface L10nProviderProps {
 }
 
 export function L10nProvider({ initialL10n, initialLanguage, children }: L10nProviderProps) {
+  const router = useRouter();
   const serverLanguage = initialLanguage ?? DEFAULT_LANGUAGE;
   // SSR 일치 보장: 서버 결정 언어로 시작 → 마운트 후 localStorage 우선값 적용
   const [language, setLanguageState] = useState<string>(serverLanguage);
@@ -109,8 +111,10 @@ export function L10nProvider({ initialL10n, initialLanguage, children }: L10nPro
   }, [language, serverLanguage, initialL10n]);
 
   const setLanguage = (lang: string) => {
+    if (lang === language) return;
     setLanguageCookie(lang);
     setLanguageState(lang);
+    router.refresh();
   };
 
   return (

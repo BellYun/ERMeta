@@ -7,7 +7,7 @@ import { cookies } from "next/headers";
 import "./globals.css";
 import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getMessages } from "next-intl/server";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { AmplitudeLoader } from "@/components/AmplitudeLoader";
 import FeedbackWidget from "@/components/features/FeedbackWidget";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
@@ -43,6 +43,20 @@ function loadL10n(language: SupportedLanguage): Record<string, string> | undefin
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://erwagg.com";
 
+const OG_LOCALE_BY_LANGUAGE: Record<SupportedLanguage, string> = {
+  Korean: "ko_KR",
+  English: "en_US",
+  Japanese: "ja_JP",
+  ChineseSimplified: "zh_CN",
+  ChineseTraditional: "zh_TW",
+  Spanish: "es_ES",
+  French: "fr_FR",
+  German: "de_DE",
+  Russian: "ru_RU",
+  Vietnamese: "vi_VN",
+  Thai: "th_TH",
+};
+
 const HTML_LANG_BY_LANGUAGE: Record<SupportedLanguage, string> = {
   Korean: "ko",
   English: "en",
@@ -57,94 +71,119 @@ const HTML_LANG_BY_LANGUAGE: Record<SupportedLanguage, string> = {
   Thai: "th",
 };
 
+const STRUCTURED_DATA_LANGUAGE_BY_LANGUAGE: Record<SupportedLanguage, string> = {
+  Korean: "ko-KR",
+  English: "en-US",
+  Japanese: "ja-JP",
+  ChineseSimplified: "zh-CN",
+  ChineseTraditional: "zh-TW",
+  Spanish: "es-ES",
+  French: "fr-FR",
+  German: "de-DE",
+  Russian: "ru-RU",
+  Vietnamese: "vi-VN",
+  Thai: "th-TH",
+};
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(BASE_URL),
-  title: {
-    default: "이리와지지 | 이터널리턴 메타 분석 - ER&GG",
-    template: "%s | 이리와지지 ER&GG",
-  },
-  description:
-    "이리와지지(ER&GG) - 이터널리턴(Eternal Return) 캐릭터 티어, 3인 조합 추천, 승률·픽률·평균 RP 통계 분석 서비스. 다이아~상위 1000위 데이터 기반.",
-  keywords: [
-    "이리와지지",
-    "이리와GG",
-    "ERGG",
-    "ER&GG",
-    "이터널리턴",
-    "Eternal Return",
-    "이터널리턴 티어표",
-    "이터널리턴 메타",
-    "이터널리턴 조합 추천",
-    "이터널리턴 캐릭터 분석",
-    "이터널리턴 승률",
-    "이터널리턴 픽률",
-    "이터널리턴 RP",
-    "이터널리턴 통계",
-  ],
-  authors: [{ name: "이리와지지 ER&GG" }],
-  creator: "ER&GG",
-  openGraph: {
-    type: "website",
-    locale: "ko_KR",
-    url: BASE_URL,
-    siteName: "이리와지지 ER&GG",
-    title: "이리와지지 | 이터널리턴 메타 분석 - ER&GG",
-    description:
-      "이리와지지(ER&GG) - 이터널리턴 캐릭터 티어, 3인 조합 추천, 승률·픽률·평균 RP 통계 분석 서비스.",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "이리와지지 | 이터널리턴 메타 분석 - ER&GG",
-    description:
-      "이리와지지(ER&GG) - 이터널리턴 캐릭터 티어, 3인 조합 추천, 승률·픽률·평균 RP 통계 분석 서비스.",
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+async function getRequestLanguage(): Promise<SupportedLanguage> {
+  const cookieStore = await cookies();
+  const cookieLang = cookieStore.get(LANGUAGE_COOKIE)?.value;
+
+  return cookieLang && (SUPPORTED_LANGUAGES as readonly string[]).includes(cookieLang)
+    ? (cookieLang as SupportedLanguage)
+    : DEFAULT_LANGUAGE;
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const language = await getRequestLanguage();
+  const t = await getTranslations("rootMetadata");
+  const titleDefault = t("defaultTitle");
+  const description = t("description");
+  const siteName = t("siteName");
+  const author = t("author");
+  const creator = t("creator");
+
+  return {
+    metadataBase: new URL(BASE_URL),
+    title: {
+      default: titleDefault,
+      template: t("titleTemplate"),
+    },
+    description,
+    keywords: [
+      t("keywords.brand"),
+      t("keywords.brandAlt"),
+      t("keywords.app"),
+      t("keywords.appSymbol"),
+      t("keywords.gameKo"),
+      t("keywords.gameEn"),
+      t("keywords.tierList"),
+      t("keywords.meta"),
+      t("keywords.synergy"),
+      t("keywords.characterAnalysis"),
+      t("keywords.winRate"),
+      t("keywords.pickRate"),
+      t("keywords.rp"),
+      t("keywords.stats"),
+    ],
+    authors: [{ name: author }],
+    creator,
+    openGraph: {
+      type: "website",
+      locale: OG_LOCALE_BY_LANGUAGE[language] ?? "en_US",
+      url: BASE_URL,
+      siteName,
+      title: titleDefault,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: titleDefault,
+      description,
+    },
+    robots: {
       index: true,
       follow: true,
-      "max-snippet": -1,
-      "max-image-preview": "large",
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-snippet": -1,
+        "max-image-preview": "large",
+      },
     },
-  },
-  icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/icon", type: "image/png", sizes: "48x48" },
-    ],
-    apple: "/apple-icon",
-  },
-  alternates: {
-    canonical: BASE_URL,
-  },
-  verification: {
-    google: "LvphMHW2n7maCTUH68mpsXDmFexrs_KFI0hz10hxAVI",
-  },
-};
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "any" },
+        { url: "/icon", type: "image/png", sizes: "48x48" },
+      ],
+      apple: "/apple-icon",
+    },
+    alternates: {
+      canonical: BASE_URL,
+    },
+    verification: {
+      google: "LvphMHW2n7maCTUH68mpsXDmFexrs_KFI0hz10hxAVI",
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // proxy.ts 미들웨어가 모든 요청에서 cookie를 보장하므로 cookie만 읽으면 충분.
-  // (proxy 매칭에서 제외된 경로는 layout 자체가 적용되지 않음)
-  const cookieStore = await cookies();
-  const cookieLang = cookieStore.get(LANGUAGE_COOKIE)?.value;
-  const language: SupportedLanguage =
-    cookieLang && (SUPPORTED_LANGUAGES as readonly string[]).includes(cookieLang)
-      ? (cookieLang as SupportedLanguage)
-      : DEFAULT_LANGUAGE;
+  const language = await getRequestLanguage();
   const initialL10n = loadL10n(language);
   const htmlLang = HTML_LANG_BY_LANGUAGE[language] ?? "ko";
   const locale = await getLocale();
   const messages = await getMessages();
+  const t = await getTranslations("layout");
+  const metadataT = await getTranslations("rootMetadata");
 
   return (
     <html lang={htmlLang} className={geistSans.variable}>
@@ -153,7 +192,7 @@ export default async function RootLayout({
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-3 focus:py-2 focus:rounded-md focus:bg-[var(--color-primary)] focus:text-white focus:shadow-lg focus:outline-none"
         >
-          본문으로 건너뛰기
+          {t("skipToMain")}
         </a>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <L10nProvider initialL10n={initialL10n} initialLanguage={language}>
@@ -171,40 +210,34 @@ export default async function RootLayout({
                 href="/terms"
                 className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
               >
-                이용약관
+                {t("terms")}
               </a>
               <span className="text-[var(--color-border)]">&middot;</span>
               <a
                 href="/privacy"
                 className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
               >
-                개인정보처리방침
+                {t("privacy")}
               </a>
               <span className="text-[var(--color-border)]">&middot;</span>
               <a
                 href="/updates"
                 className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
               >
-                업데이트 내역
+                {t("updates")}
               </a>
               <span className="text-[var(--color-border)]">&middot;</span>
               <a
                 href="/sitemap.xml"
                 className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
               >
-                사이트맵
+                {t("sitemap")}
               </a>
             </div>
-            <p>
-              본 서비스는 님블뉴런의 Open API를 활용하여 제작되었습니다. 게임 관련 이미지 및
-              데이터의 저작권은 (주)님블뉴런에 있습니다.
-            </p>
-            <p>
-              본 사이트는 님블뉴런의 공식 서비스가 아니며, 이용 중 발생하는 문제에 대해 회사는
-              책임지지 않습니다.
-            </p>
+            <p>{t("apiAttribution")}</p>
+            <p>{t("disclaimer")}</p>
             <p className="text-[var(--color-foreground)]/60">
-              &copy; {new Date().getFullYear()} ER&GG
+              {t("copyright", { year: new Date().getFullYear() })}
             </p>
           </div>
         </footer>
@@ -226,11 +259,10 @@ export default async function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebSite",
-              name: "이리와지지 ER&GG",
+              name: metadataT("siteName"),
               url: BASE_URL,
-              description:
-                "이터널리턴(Eternal Return) 캐릭터 티어, 3인 조합 추천, 통계 분석 서비스",
-              inLanguage: "ko-KR",
+              description: metadataT("structuredDescription"),
+              inLanguage: STRUCTURED_DATA_LANGUAGE_BY_LANGUAGE[language] ?? "en-US",
               potentialAction: {
                 "@type": "SearchAction",
                 target: `${BASE_URL}/character/{character_code}`,
