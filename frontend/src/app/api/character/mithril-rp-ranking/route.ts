@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
 import { getPatches } from "@/lib/getPatches";
-import { DEFAULT_HOME_TIER } from "@/lib/homeFilters";
 import { fetchRankingData } from "@/lib/ranking";
 
 export type { CharacterRankingData } from "@/lib/ranking";
@@ -12,7 +11,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const latestPatch = (await getPatches())[0] ?? "";
   const patchVersion = searchParams.get("patchVersion") ?? latestPatch;
-  const requestedTier = searchParams.get("tier") ?? DEFAULT_HOME_TIER;
+  const requestedTier = searchParams.get("tier") ?? "MITHRIL";
 
   if (!patchVersion) {
     return NextResponse.json(
