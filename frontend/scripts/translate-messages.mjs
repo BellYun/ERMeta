@@ -9,7 +9,7 @@
  *   ANTHROPIC_API_KEY=... node scripts/translate-messages.mjs --only en # 단일 locale만
  *
  * source: messages/ko.json
- * targets: messages/{en,ja,zh-Hans,zh-Hant,es,fr,de,ru,vi,th}.json
+ * targets: messages/{en,ja,zh-Hans,zh-Hant,es,fr,de,id,it,pl,pt,ru,vi,th}.json
  */
 
 import { readFileSync, writeFileSync, existsSync } from "fs";
@@ -28,6 +28,10 @@ const TARGETS = [
   { locale: "es", lang: "Spanish (Español)" },
   { locale: "fr", lang: "French (Français)" },
   { locale: "de", lang: "German (Deutsch)" },
+  { locale: "id", lang: "Indonesian (Bahasa Indonesia)" },
+  { locale: "it", lang: "Italian (Italiano)" },
+  { locale: "pl", lang: "Polish (Polski)" },
+  { locale: "pt", lang: "Portuguese (Português)" },
   { locale: "ru", lang: "Russian (Русский)" },
   { locale: "vi", lang: "Vietnamese (Tiếng Việt)" },
   { locale: "th", lang: "Thai (ไทย)" },

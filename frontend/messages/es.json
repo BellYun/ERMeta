@@ -1,0 +1,485 @@
+{
+  "header": {
+    "languageSelectAria": "Seleccionar idioma",
+    "logoTitle": "ER&GG",
+    "logoSubtitle": "Meta de Eternal Return",
+    "patchPrefix": "v"
+  },
+  "navigation": {
+    "ariaMain": "Navegación principal",
+    "metaAnalysis": "Análisis del Meta",
+    "synergyRecommendation": "Recomendador de Equipos",
+    "characterAnalysis": "Análisis de Personajes"
+  },
+  "mobileTab": {
+    "meta": "Meta",
+    "synergy": "Equipos",
+    "character": "Personajes"
+  },
+  "layout": {
+    "skipToMain": "Ir al contenido principal",
+    "terms": "Términos",
+    "privacy": "Privacidad",
+    "updates": "Actualizaciones",
+    "sitemap": "Mapa del sitio",
+    "apiAttribution": "Este servicio se ha creado con la Open API de Nimble Neuron. Los derechos de autor de las imágenes y los datos del juego pertenecen a Nimble Neuron Co., Ltd.",
+    "disclaimer": "Este sitio no es un servicio oficial de Nimble Neuron y la empresa no se hace responsable de los problemas derivados de su uso.",
+    "copyright": "© {year} ER&GG"
+  },
+  "rootMetadata": {
+    "defaultTitle": "ER&GG | Analítica Meta de Eternal Return",
+    "description": "ER&GG ofrece tiers de personajes, recomendaciones de equipos de tres y estadísticas de win rate, pick rate y RP medio de Eternal Return, basadas en partidas de alto rango.",
+    "structuredDescription": "Servicio de análisis de tiers, equipos de tres y estadísticas de Eternal Return",
+    "titleTemplate": "%s | ER&GG",
+    "siteName": "ER&GG",
+    "author": "ER&GG",
+    "creator": "ER&GG",
+    "keywords": {
+      "brand": "ER&GG",
+      "brandAlt": "ERGG",
+      "app": "ERWAGG",
+      "appSymbol": "ER&GG",
+      "gameKo": "Eternal Return",
+      "gameEn": "Eternal Return",
+      "tierList": "tier list de Eternal Return",
+      "meta": "meta de Eternal Return",
+      "synergy": "recomendaciones de equipo de Eternal Return",
+      "characterAnalysis": "análisis de personajes de Eternal Return",
+      "winRate": "win rate de Eternal Return",
+      "pickRate": "pick rate de Eternal Return",
+      "rp": "RP de Eternal Return",
+      "stats": "estadísticas de Eternal Return"
+    }
+  },
+  "home": {
+    "title": "Análisis del Meta",
+    "subtitle": "Análisis en tiempo real basado en {count} partidas",
+    "honeyPicksTitle": "Subidas del parche",
+    "honeyPicksDescription": "Personajes que subieron en pick rate y win rate tras recibir buffs",
+    "honeySectionName": "Subidas del parche",
+    "rankingTitle": "Ranking de Personajes",
+    "rankingDescription": "Ranking general basado en la puntuación meta",
+    "rankingSectionName": "Ranking de Personajes",
+    "live": "LIVE",
+    "patch": "Parche {patch}"
+  },
+  "globalFilter": {
+    "patchAria": "Seleccionar parche",
+    "tierAria": "Seleccionar tier",
+    "patchOption": "Parche {patch}",
+    "noPatch": "Sin datos de parche",
+    "tiers": {
+      "DIAMOND": "Diamante",
+      "METEORITE": "Meteorito",
+      "MITHRIL": "Mitril"
+    }
+  },
+  "synergyMain": {
+    "title": "Las recomendaciones de equipos se han mejorado",
+    "subtitle": "Pasa a las recomendaciones detalladas con armas y rasgos principales para obtener composiciones más precisas.",
+    "cta": "Abrir recomendaciones detalladas"
+  },
+  "pageError": {
+    "description": "Puede tratarse de un problema temporal del servidor o de conexión. El problema se ha reportado automáticamente.",
+    "retry": "Reintentar",
+    "home": "Inicio",
+    "characterLoadFailed": "No se pudieron cargar los datos del análisis de personajes",
+    "synergyLoadFailed": "No se pudieron cargar los datos de recomendación de equipos",
+    "synergyDetailLoadFailed": "No se pudieron cargar los datos detallados de equipos"
+  },
+  "characterPage": {
+    "title": "Análisis de Personajes",
+    "subtitle": "Profundiza en win rate, builds, tendencias de parche y estadísticas de equipamiento por personaje",
+    "badge": "Análisis",
+    "beta": "BETA",
+    "patchBase": "En desarrollo · basado en el parche {patch}",
+    "imageNotice": "Es posible que algunas imágenes de objetos falten o se muestren incorrectamente.",
+    "sectionName": "Análisis de personaje"
+  },
+  "synergyPage": {
+    "dataNotice": "Recopilando datos · la precisión mejora a medida que crece la muestra",
+    "title": "Recomendador Detallado de Equipos",
+    "subtitle": "Análisis profundo de equipos con armas y rasgos principales · haz clic en una composición para ver el desglose de rasgos",
+    "badge": "Avanzado",
+    "beta": "BETA",
+    "steps": {
+      "pool": {
+        "label": "Configurar pool",
+        "sublabel": "Personaje + arma"
+      },
+      "allies": {
+        "label": "Elegir aliados",
+        "sublabel": "Personaje + arma"
+      },
+      "analysis": {
+        "label": "Análisis detallado",
+        "sublabel": "Comparación de rasgos"
+      }
+    }
+  },
+  "synergyInteractive": {
+    "poolTitle": "Mi grupo de personajes",
+    "alliesTitle": "Seleccionar aliados",
+    "resultsTitle": "Composiciones recomendadas",
+    "poolHint": "Opcional · filtrar por personaje + arma",
+    "poolSection": "Pool de personajes",
+    "alliesSection": "Aliados",
+    "resultsSection": "Recomendaciones"
+  },
+  "sectionErrorBoundary": {
+    "loadFailed": "No se pudieron cargar los datos de {section}",
+    "temporaryIssue": "Puede ser un problema temporal.",
+    "retry": "Reintentar"
+  },
+  "tierRanking": {
+    "roles": {
+      "all": "Todos",
+      "tank": "Tanque",
+      "fighter": "Luchador",
+      "assassin": "Asesino",
+      "skillAmp": "Skill Amp",
+      "ranged": "Daño a distancia",
+      "support": "Soporte"
+    },
+    "columns": {
+      "tier": "Tier",
+      "character": "Personaje",
+      "pickRate": "Pick Rate",
+      "winRate": "Win Rate",
+      "averageRp": "RP medio"
+    },
+    "tooltips": {
+      "pickRate": "Porcentaje de partidas en las que se eligió este personaje.",
+      "winRate": "Porcentaje de veces que este personaje terminó en 1.º. La base esperada es 12.5%.",
+      "averageRp": "Puntos de rango medios ganados por partida. Un valor positivo indica progreso."
+    },
+    "empty": "Sin datos",
+    "mobileSort": "Ordenar",
+    "sort": {
+      "rank": "Rango",
+      "winRate": "Win Rate",
+      "pickRate": "Pick Rate",
+      "averageRP": "RP"
+    },
+    "showAll": "Mostrar todos ({count} personajes)",
+    "collapse": "Contraer",
+    "rpSuffix": "RP"
+  },
+  "honeyPicks": {
+    "apiError": "Error de API",
+    "errorFallback": "Algo salió mal.",
+    "empty": "No se encontraron personajes mejorados en alza para este parche.",
+    "patch": "Parche {patch}",
+    "stats": {
+      "winRate": "Win Rate",
+      "pickRate": "Pick Rate",
+      "rp": "RP"
+    },
+    "close": "Cerrar",
+    "detailAnalysis": "Abrir análisis detallado"
+  },
+  "characterPicker": {
+    "searchAria": "Buscar personajes",
+    "placeholder": "Buscar personajes",
+    "listAria": "Lista de personajes",
+    "noResults": "No se encontraron personajes coincidentes.",
+    "current": "Actual"
+  },
+  "characterHeader": {
+    "patch": "Parche {patch}",
+    "games": "{count} partidas",
+    "tierSelectorAria": "Seleccionar tier de análisis",
+    "weaponSelectorAria": "Seleccionar arma",
+    "weapon": "Arma",
+    "all": "Todos",
+    "pickRate": "Pick Rate",
+    "winRate": "Win Rate",
+    "averageRank": "Puesto medio",
+    "averageRp": "RP medio",
+    "weaponSub": "Arma {value}%",
+    "emptyPatchData": "No hay datos para este parche.",
+    "loadingPatchInfo": "Cargando datos del parche...",
+    "tiers": {
+      "DIAMOND": "Diamante",
+      "METEORITE": "Meteorito",
+      "MITHRIL": "Mithril+",
+      "IN1000": "Top 1000",
+      "DIAMOND_BELOW": "Diamante e inferior"
+    }
+  },
+  "characterGrid": {
+    "title": "Seleccionar personaje",
+    "count": "{count} personajes",
+    "placeholder": "Buscar personajes"
+  },
+  "focusWeaponPool": {
+    "title": "Mi grupo de personajes",
+    "count": "{count} selecciones",
+    "hint": "Preselecciona las combinaciones de personaje y arma que realmente puedes jugar.",
+    "reset": "Restablecer",
+    "searchPlaceholder": "Buscar personajes o armas",
+    "noResults": "Sin resultados",
+    "allWeapons": "Todas las armas"
+  },
+  "weaponAllySelector": {
+    "heading": "Seleccionar aliados (hasta 2 · personaje + grupo de arma)",
+    "searchPlaceholder": "Buscar personajes o armas",
+    "noResults": "Sin resultados",
+    "allWeapons": "Todas las armas"
+  },
+  "focusCharacterPool": {
+    "title": "Mi grupo de personajes",
+    "count": "{count} personajes",
+    "hint": "Preselecciona los personajes que realmente puedes jugar.",
+    "reset": "Restablecer",
+    "searchPlaceholder": "Buscar personajes"
+  },
+  "slotEmpty": {
+    "allyCharacter": "Seleccionar personaje aliado {index}"
+  },
+  "synergyResults": {
+    "sort": {
+      "recommended": "Recomendado",
+      "averageRP": "RP medio",
+      "winRate": "Win Rate",
+      "totalGames": "Partidas"
+    },
+    "titleSingle": "Compos detalladas con {ally}",
+    "titlePair": "Compos detalladas para {ally1} + {ally2}",
+    "focusFilter": "Filtrado a {count} selecciones de tu pool",
+    "copied": "¡Copiado!",
+    "share": "Compartir",
+    "reset": "Restablecer",
+    "sectionName": "Resultados detallados",
+    "empty": {
+      "prompt": "Encuentra composiciones con armas según las elecciones de tus aliados",
+      "step1": "1. Define primero tu grupo de personajes (opcional)",
+      "step2": "2. Selecciona los personajes y armas de tus aliados",
+      "step3": "3. Haz clic en una composición para ver el rendimiento por traits"
+    },
+    "loading": "Cargando datos del equipo...",
+    "infoSingle": "Añade un aliado más para recomendaciones más precisas · haz clic en una composición para ver el desglose de traits",
+    "infoPair": "Haz clic en una composición para ver el desglose de traits",
+    "more": "Mostrar más ({visible}/{total})",
+    "emptyFiltered": "No hay composiciones para tu grupo actual. Prueba ampliándolo.",
+    "emptyNoData": "No hay datos disponibles para esta composición.",
+    "clearAllies": "Borrar aliados",
+    "timeout": "La solicitud superó el tiempo límite. Inténtalo de nuevo.",
+    "genericError": "Algo salió mal."
+  },
+  "synergyMainResults": {
+    "sort": {
+      "recommended": "Recomendado",
+      "averageRP": "RP medio",
+      "winRate": "Win Rate",
+      "totalGames": "Partidas"
+    },
+    "titleSingle": "Compos recomendadas con {ally}",
+    "titlePair": "Composición para {ally1} + {ally2}",
+    "focusFilter": "Filtrado a {count} selecciones de tu pool",
+    "copied": "¡Copiado!",
+    "share": "Compartir",
+    "reset": "Restablecer",
+    "sectionName": "Resultados del equipo",
+    "empty": {
+      "prompt": "Encuentra la mejor composición para las elecciones de tus aliados",
+      "step1": "1. Define primero tu grupo de personajes (opcional)",
+      "step2": "2. Selecciona de 1 a 2 personajes aliados",
+      "step3": "3. Te recomendamos la mejor composición que puedes jugar"
+    },
+    "loading": "Cargando datos del equipo...",
+    "infoSingle": "Añade un aliado más para recomendaciones más precisas",
+    "emptyFiltered": "No hay composiciones para tu grupo de personajes. Prueba ampliándolo.",
+    "emptyNoData": "No hay datos disponibles para esta composición.",
+    "clearAllies": "Borrar aliados",
+    "timeout": "La solicitud superó el tiempo límite. Inténtalo de nuevo.",
+    "genericError": "Algo salió mal."
+  },
+  "synergyComboCard": {
+    "smallSample": "Muestra pequeña",
+    "winRate": "Win Rate",
+    "rp": "RP",
+    "games": "Partidas",
+    "averageRank": "Puesto medio",
+    "moreTraits": "Mostrar {count} traits más"
+  },
+  "characterAnalysis": {
+    "quickSummary": "Resumen rápido",
+    "summary": {
+      "tier": "Tier",
+      "winRate": "Win Rate",
+      "recommendedWeapon": "Mejor arma",
+      "pickRate": "Pick Rate"
+    },
+    "synergyCta": "Buscar composiciones con este personaje",
+    "deepDive": "Análisis profundo",
+    "patchComparison": "Comparación de parches",
+    "patchNotes": "Notas del parche",
+    "stats": "Estadísticas"
+  },
+  "characterPatch": {
+    "types": {
+      "buff": "Buff",
+      "nerf": "Nerf",
+      "rework": "Ajuste"
+    },
+    "loadingPatches": "Cargando datos del parche...",
+    "current": "Actual",
+    "noChanges": "Sin cambios",
+    "noData": "No hay datos disponibles.",
+    "notEnoughData": "No hay suficientes datos de parches para comparar.",
+    "minTwoPatches": "Se requieren al menos dos parches.",
+    "patchTrend": "Tendencia del parche",
+    "winRate": "Win Rate",
+    "averageRp": "RP medio",
+    "expected": "Esperado",
+    "patch": "Parche"
+  },
+  "characterMetadata": {
+    "titleWithName": "Análisis de {name}",
+    "titleFallback": "Análisis de Personajes",
+    "descriptionWithName": "Analiza el win rate, pick rate, RP promedio y las builds óptimas de {name} en Eternal Return. Revisa también las tendencias por parche y las combinaciones de armas de {name}.",
+    "descriptionFallback": "Analiza los personajes de Eternal Return por win rate, pick rate, RP promedio y builds óptimas. Revisa también las tendencias por parche y las combinaciones de armas.",
+    "keywords": {
+      "character": "Eternal Return {name}",
+      "build": "build de {name}",
+      "winRate": "win rate de {name}",
+      "stats": "estadísticas de {name}",
+      "brand": "ER&GG",
+      "app": "ERGG",
+      "analysis": "análisis de personajes de Eternal Return",
+      "fallbackBuild": "builds de personajes de Eternal Return",
+      "fallbackStats": "estadísticas de personajes de Eternal Return",
+      "fallbackWeapon": "recomendaciones de armas de Eternal Return"
+    },
+    "openGraphTitle": "{title} | ER&GG",
+    "twitterTitle": "{title} | ER&GG",
+    "socialDescription": "Estadísticas de win rate, pick rate, RP promedio y build óptima para personajes de Eternal Return."
+  },
+  "synergyMetadata": {
+    "headlinePair": "Recomendaciones para {name1} + {name2}",
+    "headlineSingle": "Recomendaciones con {name1}",
+    "headlineFallback": "Recomendaciones de equipos",
+    "descriptionPair": "Analiza la mejor tercera elección para {name1} + {name2} con estadísticas bayesianas de equipo.",
+    "descriptionSingle": "Analiza las mejores segundas y terceras elecciones para acompañar a {name1} con estadísticas bayesianas de equipo.",
+    "descriptionFallback": "Explora recomendaciones de tríos de Eternal Return y continúa hacia el análisis detallado con armas y rasgos.",
+    "socialTitle": "{headline} | ER&GG"
+  },
+  "synergyDetailMetadata": {
+    "headlinePair": "Recomendaciones para {name1} + {name2}",
+    "headlineSingle": "Recomendaciones con {name1}",
+    "headlineFallback": "Recomendaciones detalladas",
+    "title": "{headline} - Con armas y traits | ER&GG",
+    "descriptionPair": "Analiza la mejor tercera elección para {name1} + {name2} con estadísticas bayesianas que incluyen armas y rasgos.",
+    "descriptionSingle": "Analiza las mejores segundas y terceras elecciones para acompañar a {name1} con estadísticas bayesianas de equipo.",
+    "descriptionFallback": "Explora recomendaciones detalladas de tríos de Eternal Return con armas y rasgos principales mediante análisis bayesiano de equipo.",
+    "socialTitle": "{headline} | ER&GG",
+    "keywords": {
+      "brand": "ER&GG",
+      "app": "ERGG",
+      "synergy": "recomendaciones de equipo de Eternal Return",
+      "weapon": "combinaciones de armas de Eternal Return",
+      "trait": "combinaciones de rasgos de Eternal Return",
+      "detail": "análisis detallado de equipo de Eternal Return",
+      "character": "composición de {name}"
+    }
+  },
+  "characterDetailed": {
+    "groups": {
+      "havoc": {
+        "name": "Devastación",
+        "letter": "D"
+      },
+      "fortification": {
+        "name": "Fortaleza",
+        "letter": "F"
+      },
+      "support": {
+        "name": "Apoyo",
+        "letter": "A"
+      },
+      "chaos": {
+        "name": "Caos",
+        "letter": "C"
+      },
+      "unknown": {
+        "name": "Otro",
+        "letter": "O"
+      }
+    },
+    "slots": {
+      "weapon": "Arma",
+      "chest": "Pecho",
+      "head": "Cabeza",
+      "arm": "Brazo",
+      "leg": "Pierna"
+    },
+    "sections": {
+      "topBuilds": "MEJORES BUILDS",
+      "slotPopularity": "Objetos populares por slot",
+      "itemBuilds": "Builds de objetos",
+      "secondaryTraits": "Combinaciones de traits secundarios"
+    },
+    "stats": {
+      "pickRate": "Pick Rate",
+      "winRate": "Win Rate",
+      "averageRank": "Puesto medio",
+      "averageRp": "RP medio",
+      "total": "Total",
+      "primaryTrait": "Trait principal"
+    },
+    "labels": {
+      "pickShort": "Pick {value}%",
+      "winShort": "Win {value}%",
+      "rankValue": "Puesto #{value}",
+      "rpValue": "RP {value}",
+      "matches": "{count} partidas"
+    },
+    "summaries": {
+      "mainTrait": "Trait principal: {name}",
+      "core": "{name}, Núcleo",
+      "secondary": "{name}, Secundario"
+    },
+    "empty": {
+      "detailed": "No hay datos de análisis detallado disponibles.",
+      "itemBuilds": "No hay datos de build de objetos para esta configuración de trait."
+    }
+  },
+  "characterTraitBuild": {
+    "groups": {
+      "havoc": {
+        "name": "Devastación",
+        "letter": "D"
+      },
+      "fortification": {
+        "name": "Fortaleza",
+        "letter": "F"
+      },
+      "support": {
+        "name": "Apoyo",
+        "letter": "A"
+      },
+      "chaos": {
+        "name": "Caos",
+        "letter": "C"
+      },
+      "unknown": {
+        "name": "Otro",
+        "letter": "O"
+      }
+    },
+    "labels": {
+      "core": "Núcleo",
+      "slot1": "Slot 1",
+      "slot2": "Slot 2",
+      "secondary": "Traits secundarios",
+      "matches": "{count} partidas",
+      "pick": "Pick {value}%",
+      "win": "Win {value}%"
+    },
+    "empty": {
+      "builds": "No hay datos de build de traits disponibles.",
+      "cell": "Sin datos"
+    }
+  }
+}

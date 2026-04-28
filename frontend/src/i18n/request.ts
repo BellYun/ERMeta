@@ -20,10 +20,36 @@ export const NEXT_INTL_LOCALE_BY_LANGUAGE: Record<SupportedLanguage, string> = {
   Spanish: "es",
   French: "fr",
   German: "de",
+  Indonesian: "id",
+  Italian: "it",
+  Polish: "pl",
+  Portuguese: "pt",
   Russian: "ru",
   Vietnamese: "vi",
   Thai: "th",
 };
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function mergeMessages(
+  base: Record<string, unknown>,
+  overlay: Record<string, unknown>
+): Record<string, unknown> {
+  const merged: Record<string, unknown> = { ...base };
+
+  for (const [key, value] of Object.entries(overlay)) {
+    const current = merged[key];
+    if (isPlainObject(current) && isPlainObject(value)) {
+      merged[key] = mergeMessages(current, value);
+      continue;
+    }
+    merged[key] = value;
+  }
+
+  return merged;
+}
 
 export default getRequestConfig(async () => {
   const cookieStore = await cookies();
@@ -35,12 +61,19 @@ export default getRequestConfig(async () => {
 
   const locale = NEXT_INTL_LOCALE_BY_LANGUAGE[language];
 
-  // ko / en 는 항상 존재. 그 외는 누락 시 영어 fallback.
-  let messages: Record<string, unknown>;
-  try {
-    messages = (await import(`../../messages/${locale}.json`)).default;
-  } catch {
-    messages = (await import("../../messages/en.json")).default;
+  const baseMessages = (await import("../../messages/en.json")).default as Record<string, unknown>;
+  let messages = baseMessages;
+
+  if (locale !== "en") {
+    try {
+      const localeMessages = (await import(`../../messages/${locale}.json`)).default as Record<
+        string,
+        unknown
+      >;
+      messages = mergeMessages(baseMessages, localeMessages);
+    } catch {
+      messages = baseMessages;
+    }
   }
 
   return { locale, messages };

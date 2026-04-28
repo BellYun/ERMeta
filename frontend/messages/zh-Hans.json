@@ -1,0 +1,485 @@
+{
+  "header": {
+    "languageSelectAria": "选择语言",
+    "logoTitle": "ER&GG",
+    "logoSubtitle": "永恒轮回 Meta",
+    "patchPrefix": "v"
+  },
+  "navigation": {
+    "ariaMain": "主导航",
+    "metaAnalysis": "Meta分析",
+    "synergyRecommendation": "阵容推荐",
+    "characterAnalysis": "角色分析"
+  },
+  "mobileTab": {
+    "meta": "Meta",
+    "synergy": "阵容",
+    "character": "角色"
+  },
+  "layout": {
+    "skipToMain": "跳转到主要内容",
+    "terms": "使用条款",
+    "privacy": "隐私政策",
+    "updates": "更新记录",
+    "sitemap": "网站地图",
+    "apiAttribution": "本服务基于 Nimble Neuron 的 Open API 构建。游戏图片和数据版权归 Nimble Neuron Co., Ltd. 所有。",
+    "disclaimer": "本网站并非 Nimble Neuron 官方服务，使用过程中产生的问题由用户自行承担，Nimble Neuron 不承担责任。",
+    "copyright": "© {year} ER&GG"
+  },
+  "rootMetadata": {
+    "defaultTitle": "ER&GG | Eternal Return Meta分析",
+    "description": "ER&GG 提供基于高分段对局数据的 Eternal Return 角色梯度、三人阵容推荐，以及胜率、选取率、平均 RP 统计分析。",
+    "structuredDescription": "Eternal Return 角色梯度、三人阵容推荐与统计分析服务",
+    "titleTemplate": "%s | ER&GG",
+    "siteName": "ER&GG",
+    "author": "ER&GG",
+    "creator": "ER&GG",
+    "keywords": {
+      "brand": "ER&GG",
+      "brandAlt": "ERGG",
+      "app": "ERWAGG",
+      "appSymbol": "ER&GG",
+      "gameKo": "永恒轮回",
+      "gameEn": "Eternal Return",
+      "tierList": "永恒轮回 强度榜",
+      "meta": "永恒轮回 meta",
+      "synergy": "永恒轮回 阵容推荐",
+      "characterAnalysis": "永恒轮回 角色分析",
+      "winRate": "永恒轮回 胜率",
+      "pickRate": "永恒轮回 选取率",
+      "rp": "永恒轮回 RP",
+      "stats": "永恒轮回 数据"
+    }
+  },
+  "home": {
+    "title": "Meta分析",
+    "subtitle": "基于 {count} 场对局的实时分析",
+    "honeyPicksTitle": "本版本上升",
+    "honeyPicksDescription": "增强后选取率和胜率同步上升的角色",
+    "honeySectionName": "本版本上升",
+    "rankingTitle": "角色排名",
+    "rankingDescription": "基于 Meta 评分的综合排名",
+    "rankingSectionName": "角色排名",
+    "live": "LIVE",
+    "patch": "版本 {patch}"
+  },
+  "globalFilter": {
+    "patchAria": "选择版本",
+    "tierAria": "选择段位",
+    "patchOption": "版本 {patch}",
+    "noPatch": "暂无版本数据",
+    "tiers": {
+      "DIAMOND": "钻石",
+      "METEORITE": "陨石",
+      "MITHRIL": "秘银"
+    }
+  },
+  "synergyMain": {
+    "title": "阵容推荐已升级",
+    "subtitle": "现在可查看包含武器和主特性的详细推荐，获得更准确的队伍组合建议。",
+    "cta": "前往详细阵容推荐"
+  },
+  "pageError": {
+    "description": "可能是临时的服务器或连接问题。该问题已自动上报。",
+    "retry": "重试",
+    "home": "首页",
+    "characterLoadFailed": "无法加载角色分析数据",
+    "synergyLoadFailed": "无法加载阵容推荐数据",
+    "synergyDetailLoadFailed": "无法加载详细阵容数据"
+  },
+  "characterPage": {
+    "title": "角色分析",
+    "subtitle": "深入查看各角色的胜率、出装、版本趋势和装备数据",
+    "badge": "分析",
+    "beta": "BETA",
+    "patchBase": "开发中 · 基于 {patch} 版本",
+    "imageNotice": "部分道具图片可能缺失或显示不正确。",
+    "sectionName": "角色分析"
+  },
+  "synergyPage": {
+    "dataNotice": "数据持续积累中 · 样本越大结果越准确",
+    "title": "详细阵容推荐",
+    "subtitle": "包含武器和主特性的深度阵容分析 · 点击阵容可查看特性拆解",
+    "badge": "进阶",
+    "beta": "BETA",
+    "steps": {
+      "pool": {
+        "label": "设置池子",
+        "sublabel": "角色 + 武器"
+      },
+      "allies": {
+        "label": "选择队友",
+        "sublabel": "角色 + 武器"
+      },
+      "analysis": {
+        "label": "深度分析",
+        "sublabel": "特性对比"
+      }
+    }
+  },
+  "synergyInteractive": {
+    "poolTitle": "我的角色池",
+    "alliesTitle": "选择队友",
+    "resultsTitle": "推荐阵容",
+    "poolHint": "可选 · 按角色 + 武器筛选",
+    "poolSection": "角色池",
+    "alliesSection": "队友",
+    "resultsSection": "推荐阵容"
+  },
+  "sectionErrorBoundary": {
+    "loadFailed": "无法加载 {section} 数据",
+    "temporaryIssue": "这可能是临时性问题。",
+    "retry": "重试"
+  },
+  "tierRanking": {
+    "roles": {
+      "all": "全部",
+      "tank": "坦克",
+      "fighter": "战士",
+      "assassin": "刺客",
+      "skillAmp": "技能增幅",
+      "ranged": "远程输出",
+      "support": "辅助"
+    },
+    "columns": {
+      "tier": "梯度",
+      "character": "角色",
+      "pickRate": "选取率",
+      "winRate": "胜率",
+      "averageRp": "平均 RP"
+    },
+    "tooltips": {
+      "pickRate": "该角色在全部对局中的选取占比。",
+      "winRate": "该角色获得第1名的比例，基准值为12.5%。",
+      "averageRp": "每局平均获得的排位分，正数代表更容易上分。"
+    },
+    "empty": "暂无数据",
+    "mobileSort": "排序",
+    "sort": {
+      "rank": "排名",
+      "winRate": "胜率",
+      "pickRate": "选取率",
+      "averageRP": "RP"
+    },
+    "showAll": "显示全部 ({count} 名角色)",
+    "collapse": "收起",
+    "rpSuffix": "RP"
+  },
+  "honeyPicks": {
+    "apiError": "API 错误",
+    "errorFallback": "出现错误。",
+    "empty": "当前版本没有找到明显上升的增强角色。",
+    "patch": "版本 {patch}",
+    "stats": {
+      "winRate": "胜率",
+      "pickRate": "选取率",
+      "rp": "RP"
+    },
+    "close": "关闭",
+    "detailAnalysis": "打开详细分析"
+  },
+  "characterPicker": {
+    "searchAria": "搜索角色",
+    "placeholder": "搜索角色",
+    "listAria": "角色列表",
+    "noResults": "没有匹配的角色。",
+    "current": "当前"
+  },
+  "characterHeader": {
+    "patch": "版本 {patch}",
+    "games": "{count} 场",
+    "tierSelectorAria": "选择分析段位",
+    "weaponSelectorAria": "选择武器",
+    "weapon": "武器",
+    "all": "全部",
+    "pickRate": "选取率",
+    "winRate": "胜率",
+    "averageRank": "平均名次",
+    "averageRp": "平均 RP",
+    "weaponSub": "武器 {value}%",
+    "emptyPatchData": "该版本暂无数据。",
+    "loadingPatchInfo": "正在加载版本数据...",
+    "tiers": {
+      "DIAMOND": "钻石",
+      "METEORITE": "陨石",
+      "MITHRIL": "秘银+",
+      "IN1000": "前1000",
+      "DIAMOND_BELOW": "钻石及以下"
+    }
+  },
+  "characterGrid": {
+    "title": "选择角色",
+    "count": "{count} 名角色",
+    "placeholder": "搜索角色"
+  },
+  "focusWeaponPool": {
+    "title": "我的角色池",
+    "count": "{count} 个选择",
+    "hint": "预先选择你真正会使用的角色与武器组合。",
+    "reset": "重置",
+    "searchPlaceholder": "搜索角色或武器",
+    "noResults": "没有搜索结果",
+    "allWeapons": "全部武器"
+  },
+  "weaponAllySelector": {
+    "heading": "选择队友 (最多2人 · 角色+武器组)",
+    "searchPlaceholder": "搜索角色或武器",
+    "noResults": "没有搜索结果",
+    "allWeapons": "全部武器"
+  },
+  "focusCharacterPool": {
+    "title": "我的角色池",
+    "count": "{count} 名角色",
+    "hint": "预先选择你真正会使用的角色。",
+    "reset": "重置",
+    "searchPlaceholder": "搜索角色"
+  },
+  "slotEmpty": {
+    "allyCharacter": "选择队友角色 {index}"
+  },
+  "synergyResults": {
+    "sort": {
+      "recommended": "推荐",
+      "averageRP": "平均 RP",
+      "winRate": "胜率",
+      "totalGames": "场次"
+    },
+    "titleSingle": "包含 {ally} 的详细阵容",
+    "titlePair": "{ally1} + {ally2} 的详细阵容",
+    "focusFilter": "按我的角色池筛选 {count} 项",
+    "copied": "已复制！",
+    "share": "分享",
+    "reset": "重置",
+    "sectionName": "详细阵容结果",
+    "empty": {
+      "prompt": "根据队友的选择寻找包含武器的详细阵容",
+      "step1": "1. 先设置你的角色池（可选）",
+      "step2": "2. 选择队友的角色和武器",
+      "step3": "3. 点击阵容查看特性层级表现"
+    },
+    "loading": "正在加载阵容数据...",
+    "infoSingle": "再添加一名队友可获得更准确的推荐 · 点击阵容可查看特性拆解",
+    "infoPair": "点击阵容可查看特性拆解",
+    "more": "显示更多 ({visible}/{total})",
+    "emptyFiltered": "当前角色池下没有匹配阵容，请尝试扩大角色池。",
+    "emptyNoData": "当前阵容没有可用数据。",
+    "clearAllies": "清除队友",
+    "timeout": "请求超时，请重试。",
+    "genericError": "出现错误。"
+  },
+  "synergyMainResults": {
+    "sort": {
+      "recommended": "推荐",
+      "averageRP": "平均 RP",
+      "winRate": "胜率",
+      "totalGames": "场次"
+    },
+    "titleSingle": "包含 {ally} 的推荐阵容",
+    "titlePair": "{ally1} + {ally2} 的阵容",
+    "focusFilter": "按我的角色池筛选 {count} 项",
+    "copied": "已复制！",
+    "share": "分享",
+    "reset": "重置",
+    "sectionName": "阵容结果",
+    "empty": {
+      "prompt": "为队友选择寻找最佳阵容",
+      "step1": "1. 先设置你的角色池（可选）",
+      "step2": "2. 选择 1 到 2 名队友角色",
+      "step3": "3. 系统会推荐你能使用的最佳阵容"
+    },
+    "loading": "正在加载阵容数据...",
+    "infoSingle": "再添加一名队友可获得更准确的推荐",
+    "emptyFiltered": "你的角色池没有匹配阵容，请尝试扩大角色池。",
+    "emptyNoData": "当前阵容没有可用数据。",
+    "clearAllies": "清除队友",
+    "timeout": "请求超时，请重试。",
+    "genericError": "出现错误。"
+  },
+  "synergyComboCard": {
+    "smallSample": "样本较少",
+    "winRate": "胜率",
+    "rp": "RP",
+    "games": "场次",
+    "averageRank": "平均名次",
+    "moreTraits": "再显示 {count} 个特性"
+  },
+  "characterAnalysis": {
+    "quickSummary": "快速摘要",
+    "summary": {
+      "tier": "梯度",
+      "winRate": "胜率",
+      "recommendedWeapon": "最佳武器",
+      "pickRate": "选取率"
+    },
+    "synergyCta": "查看该角色的阵容推荐",
+    "deepDive": "深度分析",
+    "patchComparison": "版本对比",
+    "patchNotes": "版本说明",
+    "stats": "统计"
+  },
+  "characterPatch": {
+    "types": {
+      "buff": "加强",
+      "nerf": "削弱",
+      "rework": "调整"
+    },
+    "loadingPatches": "正在加载版本数据...",
+    "current": "当前",
+    "noChanges": "无改动",
+    "noData": "暂无数据。",
+    "notEnoughData": "没有足够的版本数据可供比较。",
+    "minTwoPatches": "至少需要两个版本。",
+    "patchTrend": "版本趋势",
+    "winRate": "胜率",
+    "averageRp": "平均 RP",
+    "expected": "预期值",
+    "patch": "版本"
+  },
+  "characterMetadata": {
+    "titleWithName": "{name} 角色分析",
+    "titleFallback": "角色分析",
+    "descriptionWithName": "分析 {name} 在 Eternal Return 中的胜率、选取率、平均 RP 与最佳出装，并查看 {name} 的版本趋势和武器搭配。",
+    "descriptionFallback": "按胜率、选取率、平均 RP 和最佳出装分析 Eternal Return 角色，并查看版本趋势与武器搭配。",
+    "keywords": {
+      "character": "永恒轮回 {name}",
+      "build": "{name} 出装",
+      "winRate": "{name} 胜率",
+      "stats": "{name} 数据",
+      "brand": "ER&GG",
+      "app": "ERGG",
+      "analysis": "永恒轮回 角色分析",
+      "fallbackBuild": "永恒轮回 角色出装",
+      "fallbackStats": "永恒轮回 角色数据",
+      "fallbackWeapon": "永恒轮回 武器推荐"
+    },
+    "openGraphTitle": "{title} | ER&GG",
+    "twitterTitle": "{title} | ER&GG",
+    "socialDescription": "Eternal Return 角色胜率、选取率、平均 RP 与最佳出装统计。"
+  },
+  "synergyMetadata": {
+    "headlinePair": "{name1} + {name2} 阵容推荐",
+    "headlineSingle": "包含 {name1} 的阵容推荐",
+    "headlineFallback": "阵容推荐",
+    "descriptionPair": "通过贝叶斯队伍统计分析 {name1} + {name2} 的最佳第三手选择。",
+    "descriptionSingle": "通过贝叶斯队伍统计分析与 {name1} 搭配的最佳第二、第三手选择。",
+    "descriptionFallback": "查看 Eternal Return 三人阵容推荐，并继续进入包含武器与特性的详细分析。",
+    "socialTitle": "{headline} | ER&GG"
+  },
+  "synergyDetailMetadata": {
+    "headlinePair": "{name1} + {name2} 阵容推荐",
+    "headlineSingle": "包含 {name1} 的阵容推荐",
+    "headlineFallback": "详细阵容推荐",
+    "title": "{headline} - 含武器与特性 | ER&GG",
+    "descriptionPair": "通过包含武器与特性的贝叶斯统计分析 {name1} + {name2} 的最佳第三手选择。",
+    "descriptionSingle": "通过贝叶斯队伍统计分析与 {name1} 搭配的最佳第二、第三手选择。",
+    "descriptionFallback": "使用贝叶斯队伍分析查看包含武器与主特性的 Eternal Return 详细三人阵容推荐。",
+    "socialTitle": "{headline} | ER&GG",
+    "keywords": {
+      "brand": "ER&GG",
+      "app": "ERGG",
+      "synergy": "永恒轮回 阵容推荐",
+      "weapon": "永恒轮回 武器组合",
+      "trait": "永恒轮回 特性组合",
+      "detail": "永恒轮回 详细队伍分析",
+      "character": "{name} 阵容"
+    }
+  },
+  "characterDetailed": {
+    "groups": {
+      "havoc": {
+        "name": "破坏",
+        "letter": "破"
+      },
+      "fortification": {
+        "name": "防御",
+        "letter": "防"
+      },
+      "support": {
+        "name": "支援",
+        "letter": "支"
+      },
+      "chaos": {
+        "name": "混沌",
+        "letter": "混"
+      },
+      "unknown": {
+        "name": "其他",
+        "letter": "?"
+      }
+    },
+    "slots": {
+      "weapon": "武器",
+      "chest": "胸甲",
+      "head": "头部",
+      "arm": "手臂",
+      "leg": "腿部"
+    },
+    "sections": {
+      "topBuilds": "热门构筑",
+      "slotPopularity": "各槽位热门道具",
+      "itemBuilds": "道具构筑",
+      "secondaryTraits": "副特性组合"
+    },
+    "stats": {
+      "pickRate": "选取率",
+      "winRate": "胜率",
+      "averageRank": "平均名次",
+      "averageRp": "平均RP",
+      "total": "总计",
+      "primaryTrait": "主特性"
+    },
+    "labels": {
+      "pickShort": "选 {value}%",
+      "winShort": "胜 {value}%",
+      "rankValue": "排名 #{value}",
+      "rpValue": "RP {value}",
+      "matches": "{count}场"
+    },
+    "summaries": {
+      "mainTrait": "主特性: {name}",
+      "core": "{name}, 核心",
+      "secondary": "{name}, 副特性"
+    },
+    "empty": {
+      "detailed": "没有详细分析数据。",
+      "itemBuilds": "当前特性配置没有道具构筑数据。"
+    }
+  },
+  "characterTraitBuild": {
+    "groups": {
+      "havoc": {
+        "name": "破坏",
+        "letter": "破"
+      },
+      "fortification": {
+        "name": "防御",
+        "letter": "防"
+      },
+      "support": {
+        "name": "支援",
+        "letter": "支"
+      },
+      "chaos": {
+        "name": "混沌",
+        "letter": "混"
+      },
+      "unknown": {
+        "name": "其他",
+        "letter": "?"
+      }
+    },
+    "labels": {
+      "core": "核心",
+      "slot1": "槽位1",
+      "slot2": "槽位2",
+      "secondary": "副特性",
+      "matches": "{count}场",
+      "pick": "选 {value}%",
+      "win": "胜 {value}%"
+    },
+    "empty": {
+      "builds": "没有特性构筑数据。",
+      "cell": "没有数据"
+    }
+  }
+}
