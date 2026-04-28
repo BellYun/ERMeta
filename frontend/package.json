@@ -14,8 +14,8 @@
     "test:watch": "vitest",
     "bench:inp": "node scripts/inp-benchmark.mjs",
     "inp:ci": "node scripts/inp-ci.mjs",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
+    "test:e2e": "node scripts/run-playwright.mjs test",
+    "test:e2e:ui": "node scripts/run-playwright.mjs test --ui",
     "test:e2e:install": "playwright install --with-deps chromium",
     "fetch-l10n": "node --env-file=.env.local scripts/fetch-l10n.mjs",
     "prepare": "cd .. && husky"
