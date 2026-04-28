@@ -152,6 +152,10 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
   const visible = showAll ? filtered : filtered.slice(0, DEFAULT_VISIBLE);
   const hasMore = filtered.length > DEFAULT_VISIBLE;
 
+  React.useEffect(() => {
+    setActiveKey(null);
+  }, [patch, tier, activeRole, sortKey, sortDir, showAll]);
+
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
       setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -171,6 +175,11 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
       matchmakingTier: tier as TierGroupEnum,
     });
     router.push(`/character/${char.code}?weapon=${char.weaponCode}`);
+  };
+
+  const togglePatchNote = (e: React.MouseEvent<HTMLButtonElement>, key: string) => {
+    e.stopPropagation();
+    setActiveKey((current) => (current === key ? null : key));
   };
 
   return (
@@ -279,19 +288,14 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           "hover:bg-[var(--color-surface-2)]"
                         )}
                         onClick={() => {
-                          if (char.patchNote && "ontouchstart" in window) {
-                            if (activeKey === key) {
-                              setActiveKey(null);
-                              navigateToCharacter(char);
-                            } else {
-                              setActiveKey(key);
-                            }
-                          } else {
-                            navigateToCharacter(char);
-                          }
+                          navigateToCharacter(char);
                         }}
-                        onMouseEnter={() => setActiveKey(key)}
-                        onMouseLeave={() => setActiveKey(null)}
+                        onMouseEnter={() => {
+                          if (char.patchNote) setActiveKey(key);
+                        }}
+                        onMouseLeave={() => {
+                          if (char.patchNote) setActiveKey(null);
+                        }}
                       >
                         {/* Rank */}
                         <td className="px-3 py-2 text-center">
@@ -326,8 +330,22 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                               )}
                             </div>
                             <div className="min-w-0">
-                              <span className="text-sm font-medium text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors truncate block">
-                                {char.name}
+                              <span className="flex items-center gap-1.5">
+                                <span className="text-sm font-medium text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors truncate block">
+                                  {char.name}
+                                </span>
+                                {char.patchNote && (
+                                  <button
+                                    type="button"
+                                    aria-label={t("patchNoteButton", {
+                                      patch: char.patchNote.patch,
+                                    })}
+                                    onClick={(e) => togglePatchNote(e, key)}
+                                    className="shrink-0 rounded-md border border-[rgba(96,165,250,0.3)] bg-[rgba(96,165,250,0.1)] px-1.5 py-0.5 text-[9px] font-black tracking-[0.08em] text-[var(--color-primary)] transition-colors hover:bg-[rgba(96,165,250,0.16)]"
+                                  >
+                                    PATCH
+                                  </button>
+                                )}
                               </span>
                               <span className="text-[11px] text-[var(--color-muted-foreground)] truncate block">
                                 {char.weaponName}
@@ -455,16 +473,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                     key={key}
                     className="relative grid grid-cols-[34px_minmax(0,1.45fr)_56px_56px_72px] items-center gap-2 px-3 py-3 cursor-pointer active:bg-[var(--color-surface-2)] touch-manipulation transition-colors"
                     onClick={() => {
-                      if (char.patchNote && "ontouchstart" in window) {
-                        if (activeKey === key) {
-                          setActiveKey(null);
-                          navigateToCharacter(char);
-                        } else {
-                          setActiveKey(key);
-                        }
-                      } else {
-                        navigateToCharacter(char);
-                      }
+                      navigateToCharacter(char);
                     }}
                   >
                     {/* Rank */}
@@ -494,9 +503,21 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                         )}
                       </div>
                       <div className="min-w-0">
-                        <p className="truncate text-[0.95rem] font-semibold leading-tight text-[var(--color-foreground)]">
-                          {char.name}
-                        </p>
+                        <div className="flex items-center gap-1.5">
+                          <p className="truncate text-[0.95rem] font-semibold leading-tight text-[var(--color-foreground)]">
+                            {char.name}
+                          </p>
+                          {char.patchNote && (
+                            <button
+                              type="button"
+                              aria-label={t("patchNoteButton", { patch: char.patchNote.patch })}
+                              onClick={(e) => togglePatchNote(e, key)}
+                              className="shrink-0 rounded-md border border-[rgba(96,165,250,0.28)] bg-[rgba(96,165,250,0.1)] px-1.5 py-0.5 text-[9px] font-black tracking-[0.08em] text-[var(--color-primary)]"
+                            >
+                              PATCH
+                            </button>
+                          )}
+                        </div>
                         <p className="truncate text-[11px] text-[var(--color-muted-foreground)]">
                           {char.weaponName}
                         </p>
