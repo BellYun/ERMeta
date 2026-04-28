@@ -20,6 +20,7 @@
     "patchNotes": "패치 노트",
     "feedback": "피드백 남기기",
     "patchPanel": "패치 {patch}",
+    "patchPanelFallback": "패치 정보 없음",
     "updateStatus": "업데이트: 실시간 반영"
   },
   "mobileTab": {
@@ -139,6 +140,8 @@
       "averageRp": "게임당 평균 획득 랭크 포인트. 양수일수록 랭크 상승에 유리"
     },
     "empty": "데이터 없음",
+    "patchNoteTitle": "패치 {patch} 변경사항",
+    "patchNoteButton": "패치 {patch} 변경사항 보기",
     "mobileSort": "정렬",
     "sort": {
       "rank": "순위",

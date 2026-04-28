@@ -7,10 +7,13 @@ import { HomeFilterAside } from "@/components/features/HomeFilterAside";
 import { HoneyPicksSection } from "@/components/features/HoneyPicksSection";
 import { TierRankingTable } from "@/components/features/TierRankingTable";
 import { getPatches } from "@/lib/getPatches";
+import { DEFAULT_HOME_TIER, normalizeHomePatch, normalizeHomeTier } from "@/lib/homeFilters";
 import { fetchHoneyPicksServer } from "@/lib/honeyPicks";
 import { fetchRankingData } from "@/lib/ranking";
 
 export const revalidate = 300;
+
+type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 export const metadata: Metadata = {
   title: { absolute: "메타분석 | 이리와지지" },
@@ -57,11 +60,14 @@ function buildBarHeights(values: number[]) {
   return values.slice(0, 20).map((value) => Math.max(16, Math.round((value / max) * 78)));
 }
 
-export default async function Home() {
-  const t = await getTranslations("home");
-  const patches = await getPatches();
-  const defaultPatch = patches[0] ?? "";
-  const defaultTier = "MITHRIL";
+export default async function Home({ searchParams }: { searchParams: SearchParams }) {
+  const [t, params, patches] = await Promise.all([
+    getTranslations("home"),
+    searchParams,
+    getPatches(),
+  ]);
+  const defaultPatch = normalizeHomePatch(params.patch, patches);
+  const defaultTier = normalizeHomeTier(params.tier, DEFAULT_HOME_TIER);
 
   const [honeyData, rankingData] = defaultPatch
     ? await Promise.all([
@@ -96,7 +102,7 @@ export default async function Home() {
     rankingData.rankings.length > 0 ? positiveRpCount / rankingData.rankings.length : 0.42;
 
   return (
-    <FilterProvider initialPatches={patches}>
+    <FilterProvider initialPatches={patches} initialPatch={defaultPatch} initialTier={defaultTier}>
       <div className="page-shell flex flex-col gap-5 lg:gap-6">
         <section className="dashboard-hero px-3 py-3 sm:px-4 sm:py-4 lg:px-5 lg:py-5">
           <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-[minmax(0,1.08fr)_minmax(320px,0.92fr)] xl:grid-cols-[minmax(0,1fr)_minmax(260px,0.82fr)_150px_150px] 2xl:grid-cols-[minmax(320px,1.12fr)_360px_180px_180px]">
@@ -110,9 +116,11 @@ export default async function Home() {
                     <span className="h-2 w-2 rounded-full bg-[var(--color-success)] shadow-[0_0_10px_rgba(74,222,128,0.8)]" />
                     {t("live")}
                   </span>
-                  <span className="rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.04)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-muted-foreground)] sm:px-3 sm:text-sm">
-                    {t("patch", { patch: defaultPatch || "10.7" })}
-                  </span>
+                  {defaultPatch ? (
+                    <span className="rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.04)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-muted-foreground)] sm:px-3 sm:text-sm">
+                      {t("patch", { patch: defaultPatch })}
+                    </span>
+                  ) : null}
                 </div>
 
                 <a

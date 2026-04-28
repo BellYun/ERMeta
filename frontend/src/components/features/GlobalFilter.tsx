@@ -103,32 +103,39 @@ export function GlobalFilter() {
           </div>
         </div>
 
-        {tierOptions.map(({ value, label }, index) => {
-          const isSelected = tier === value;
-          return (
-            <button
-              key={value}
-              ref={(el) => {
-                mobileTierRefs.current[index] = el;
-              }}
-              type="button"
-              role="radio"
-              aria-checked={isSelected}
-              tabIndex={isSelected ? 0 : -1}
-              onClick={() => selectTier(value)}
-              onKeyDown={(e) => handleTierKeyDown(e, index)}
-              className={cn(
-                "flex h-14 min-w-0 items-center justify-center rounded-[18px] border px-2 text-center text-[12px] font-medium leading-4 tracking-[-0.02em] transition-all",
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
-                isSelected
-                  ? "border-[var(--color-primary)]/55 bg-[var(--color-primary)]/12 text-[var(--color-primary)] shadow-[0_18px_30px_-24px_rgba(96,165,250,0.9)]"
-                  : "border-[var(--color-border)] bg-[rgba(17,25,46,0.82)] text-[var(--color-muted-foreground)]"
-              )}
-            >
-              <span className="truncate">{label}</span>
-            </button>
-          );
-        })}
+        <div
+          role="radiogroup"
+          aria-label={t("tierAria")}
+          aria-orientation="horizontal"
+          className="col-span-3 grid grid-cols-3 gap-2"
+        >
+          {tierOptions.map(({ value, label }, index) => {
+            const isSelected = tier === value;
+            return (
+              <button
+                key={value}
+                ref={(el) => {
+                  mobileTierRefs.current[index] = el;
+                }}
+                type="button"
+                role="radio"
+                aria-checked={isSelected}
+                tabIndex={isSelected ? 0 : -1}
+                onClick={() => selectTier(value)}
+                onKeyDown={(e) => handleTierKeyDown(e, index)}
+                className={cn(
+                  "flex h-14 min-w-0 items-center justify-center rounded-[18px] border px-2 text-center text-[12px] font-medium leading-4 tracking-[-0.02em] transition-all",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
+                  isSelected
+                    ? "border-[var(--color-primary)]/55 bg-[var(--color-primary)]/12 text-[var(--color-primary)] shadow-[0_18px_30px_-24px_rgba(96,165,250,0.9)]"
+                    : "border-[var(--color-border)] bg-[rgba(17,25,46,0.82)] text-[var(--color-muted-foreground)]"
+                )}
+              >
+                <span className="truncate">{label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="hidden flex-col gap-2.5 sm:flex sm:flex-row sm:items-center sm:gap-3">
@@ -178,6 +185,7 @@ export function GlobalFilter() {
         <div
           role="radiogroup"
           aria-label={t("tierAria")}
+          aria-orientation="horizontal"
           className="flex rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] p-0.5"
         >
           {tierOptions.map(({ value, label }, index) => {

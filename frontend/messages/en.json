@@ -20,6 +20,7 @@
     "patchNotes": "Patch Notes",
     "feedback": "Send Feedback",
     "patchPanel": "Patch {patch}",
+    "patchPanelFallback": "Patch unavailable",
     "updateStatus": "Update: live refresh"
   },
   "mobileTab": {
@@ -139,6 +140,8 @@
       "averageRp": "Average rank points gained per game. Positive values mean climbing."
     },
     "empty": "No data",
+    "patchNoteTitle": "Patch {patch} changes",
+    "patchNoteButton": "View patch {patch} changes",
     "mobileSort": "Sort",
     "sort": {
       "rank": "Rank",

@@ -90,7 +90,7 @@ export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
           <div className="rounded-[20px] border border-[var(--color-border)] bg-[rgba(16,24,44,0.84)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
             <div className="flex items-center justify-between gap-2">
               <p className="text-sm font-semibold text-[var(--color-foreground)]">
-                {t("patchPanel", { patch: currentPatch })}
+                {currentPatch ? t("patchPanel", { patch: currentPatch }) : t("patchPanelFallback")}
               </p>
               <div className="flex items-center gap-1 text-[var(--color-muted-foreground)]">
                 <span className="text-xs">⌄</span>

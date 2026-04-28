@@ -21,7 +21,7 @@ export function Header({ currentPatch }: HeaderProps) {
         <div className="flex min-h-[54px] items-center gap-3 lg:min-h-[78px]">
           <Link
             href="/"
-            title={`${t("patchPrefix")}${currentPatch}`}
+            title={currentPatch ? `${t("patchPrefix")}${currentPatch}` : t("logoTitle")}
             className="flex items-center gap-3 lg:hidden"
           >
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[linear-gradient(180deg,#5fa8ff,#3266d6)] text-sm font-black text-white shadow-[0_12px_24px_-14px_rgba(96,165,250,0.9)]">

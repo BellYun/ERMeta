@@ -261,7 +261,7 @@ export default async function RootLayout({
   const locale = htmlLang;
   const messages = await loadIntlMessages(language);
   const patches = await getPatches();
-  const currentPatch = patches[0] ?? "10.7";
+  const currentPatch = patches[0] ?? "";
 
   return (
     <html lang={htmlLang} className={geistSans.variable}>
