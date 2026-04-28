@@ -67,8 +67,8 @@ export function MobileTabBar() {
       ),
     },
     {
-      href: "/updates",
-      label: t("updates"),
+      href: "/patches",
+      label: t("patches"),
       icon: (
         <svg
           className="w-5 h-5"
@@ -94,7 +94,9 @@ export function MobileTabBar() {
           {tabs.map(({ href, label, icon }) => {
             const isActive = href.startsWith("/character/")
               ? pathname.startsWith("/character/")
-              : pathname === href;
+              : href === "/patches"
+                ? pathname.startsWith("/patches")
+                : pathname === href;
             return (
               <Link
                 key={href}

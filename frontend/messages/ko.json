@@ -27,7 +27,34 @@
     "meta": "메타",
     "synergy": "조합",
     "character": "캐릭터",
-    "updates": "업데이트"
+    "updates": "업데이트",
+    "patches": "패치"
+  },
+  "patches": {
+    "indexTitle": "패치 노트",
+    "indexSubtitle": "이터널리턴 패치별 캐릭터 변경 사항을 한눈에 확인하세요.",
+    "indexDescription": "이터널리턴 패치 10.1~10.7 캐릭터 버프/너프 변경 사항. 패치별 조정된 캐릭터를 한눈에 확인하세요.",
+    "heroEyebrow": "Patch Archive",
+    "patchPrefix": "v",
+    "latestBadge": "최신",
+    "trackedPatches": "추적 패치",
+    "adjustedRoster": "조정된 캐릭터",
+    "recordedChanges": "기록된 변경",
+    "latestPatchLabel": "최신 패치",
+    "archiveTitle": "패치 아카이브",
+    "archiveCaption": "ER&GG에 정리된 모든 캐릭터 버프, 너프, 조정 내역입니다.",
+    "viewDetail": "자세히 보기",
+    "breadcrumb": "패치 노트",
+    "detailTitle": "패치 {patch} 변경 사항 - 이리와지지",
+    "detailHeading": "패치 {patch}",
+    "detailDescription": "패치 {patch} 캐릭터 변경 사항. 버프 {buffs}건, 너프 {nerfs}건, 총 {count}명의 캐릭터가 조정되었습니다.",
+    "characterCount": "캐릭터 {count}명",
+    "totalChanges": "변경 {count}건",
+    "counts": {
+      "buff": "버프",
+      "nerf": "너프",
+      "rework": "조정"
+    }
   },
   "layout": {
     "skipToMain": "본문으로 건너뛰기",

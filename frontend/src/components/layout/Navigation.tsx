@@ -35,10 +35,10 @@ export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
       isActive: pathname.startsWith("/character/"),
     },
     {
-      href: "/updates",
+      href: "/patches",
       label: t("patchNotes"),
       icon: NotebookText,
-      isActive: pathname === "/updates",
+      isActive: pathname.startsWith("/patches"),
     },
   ];
 

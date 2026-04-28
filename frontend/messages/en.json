@@ -27,7 +27,34 @@
     "meta": "Meta",
     "synergy": "Teams",
     "character": "Characters",
-    "updates": "Updates"
+    "updates": "Updates",
+    "patches": "Patches"
+  },
+  "patches": {
+    "indexTitle": "Patch Notes",
+    "indexSubtitle": "Browse character changes patch by patch in Eternal Return.",
+    "indexDescription": "Eternal Return patch 10.1–10.7 character buff/nerf changes. See all adjusted characters at a glance.",
+    "heroEyebrow": "Patch Archive",
+    "patchPrefix": "v",
+    "latestBadge": "Latest",
+    "trackedPatches": "Tracked patches",
+    "adjustedRoster": "Adjusted characters",
+    "recordedChanges": "Recorded changes",
+    "latestPatchLabel": "Latest patch",
+    "archiveTitle": "Patch archive",
+    "archiveCaption": "Every character buff, nerf, and rework entry currently indexed in ER&GG.",
+    "viewDetail": "View detail",
+    "breadcrumb": "Patch Notes",
+    "detailTitle": "Patch {patch} Changes - ER&GG",
+    "detailHeading": "Patch {patch}",
+    "detailDescription": "Character adjustments in patch {patch}: {buffs} buffs, {nerfs} nerfs across {count} characters.",
+    "characterCount": "{count} characters",
+    "totalChanges": "{count} changes",
+    "counts": {
+      "buff": "Buff",
+      "nerf": "Nerf",
+      "rework": "Rework"
+    }
   },
   "layout": {
     "skipToMain": "Skip to main content",
