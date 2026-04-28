@@ -52,8 +52,14 @@ function mergeMessages(
 }
 
 export default getRequestConfig(async () => {
-  const cookieStore = await cookies();
-  const cookieLang = cookieStore.get(LANGUAGE_COOKIE)?.value;
+  let cookieLang: string | undefined;
+  try {
+    const cookieStore = await cookies();
+    cookieLang = cookieStore.get(LANGUAGE_COOKIE)?.value;
+  } catch {
+    // Static prerender/build 단계에는 request cookie store가 없을 수 있다.
+    cookieLang = undefined;
+  }
   const language: SupportedLanguage =
     cookieLang && (SUPPORTED_LANGUAGES as readonly string[]).includes(cookieLang)
       ? (cookieLang as SupportedLanguage)

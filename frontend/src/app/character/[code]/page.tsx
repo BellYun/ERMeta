@@ -18,11 +18,6 @@ interface Props {
   searchParams: Promise<{ weapon?: string }>;
 }
 
-/** 87개 캐릭터 페이지를 빌드 타임에 정적 생성 */
-export async function generateStaticParams() {
-  return CHARACTER_CODES.map((code) => ({ code: String(code) }));
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code: rawCode } = await params;
   const code = parseInt(rawCode, 10);
@@ -83,8 +78,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 /**
- * 캐릭터 분석 페이지 — SSG + ISR
- * 87개 캐릭터를 빌드 타임에 정적 생성, 30분 주기로 재검증
+ * 캐릭터 분석 페이지 — on-demand ISR
+ * 로케일/쿠키 기반 번역이 있어 빌드 타임 전체 prerender 대신 첫 요청 시 생성 후 재검증한다.
  */
 export default async function CharacterPage({ params, searchParams }: Props) {
   const { code: rawCode } = await params;
