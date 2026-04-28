@@ -30,8 +30,6 @@ frontend/e2e/
 | `smoke/synergy-share.spec.ts`    | 🥇 시너지 공유 — `?a=&b=&c=` 조합 URL 복원, 공유 버튼 노출 규칙                                 |
 | `smoke/synergy-share-og.spec.ts` | 🥇 시너지 공유 — Dynamic OG 이미지 엔드포인트 + 페이지 `og:image` meta                          |
 | `smoke/character-qa.spec.ts`     | 🥈 Q&A 파일럿 — 상위 10 캐릭터 상세에 Q&A 섹션 + 5개 카테고리 버튼                              |
-| `smoke/patches-landing.spec.ts`  | 🥉 패치 랜딩 — `/patches/[version]` SSG + 떡상/떡락 섹션                                        |
-| `smoke/patches-seo.spec.ts`      | 🥉 패치 랜딩 — OG / canonical / JSON-LD Article / sitemap 포함                                  |
 
 ## 플로 스위트 (flows/)
 
@@ -56,7 +54,7 @@ frontend/e2e/
 # 첫 실행만: 브라우저 바이너리 설치
 npm run test:e2e:install
 
-# 전체 스위트 (webServer가 자동으로 `npm run start`를 기동)
+# 전체 스위트 (webServer가 자동으로 dev server를 기동)
 npm run test:e2e
 
 # 스모크 또는 플로만 실행
@@ -66,7 +64,6 @@ npx playwright test e2e/flows
 # 4/22 신규 기능만 실행
 npx playwright test e2e/smoke/synergy-share.spec.ts e2e/smoke/synergy-share-og.spec.ts e2e/flows/synergy-share-landing.spec.ts
 npx playwright test e2e/smoke/character-qa.spec.ts e2e/flows/character-qa-interaction.spec.ts
-npx playwright test e2e/smoke/patches-landing.spec.ts e2e/smoke/patches-seo.spec.ts
 
 # 디버그용 UI 러너
 npm run test:e2e:ui
@@ -87,4 +84,4 @@ Supabase 기반 페이지/API가 동작해야 하므로 CI는 `NEXT_PUBLIC_SUPAB
 
 ## 가정 기반 스펙 (TDD)
 
-`synergy-share*`, `character-qa*`, `patches-*` 스펙은 **2026-04-22 구현 예정 기능의 계약**으로 선행 작성됐다. 기능 배포 전에는 실패할 수 있다. 각 스펙 상단 주석의 "가정" 섹션을 읽고 실제 구현이 가정과 다르면 스펙을 현실화하거나 구현을 가정에 맞춘다.
+`synergy-share*`, `character-qa*` 스펙은 **2026-04-22 구현 예정 기능의 계약**으로 선행 작성됐다. 기능 배포 전에는 실패할 수 있다. 각 스펙 상단 주석의 "가정" 섹션을 읽고 실제 구현이 가정과 다르면 스펙을 현실화하거나 구현을 가정에 맞춘다.

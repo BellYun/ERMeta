@@ -1,0 +1,485 @@
+{
+  "header": {
+    "languageSelectAria": "選擇語言",
+    "logoTitle": "ER&GG",
+    "logoSubtitle": "永恆輪迴 Meta",
+    "patchPrefix": "v"
+  },
+  "navigation": {
+    "ariaMain": "主導覽",
+    "metaAnalysis": "Meta分析",
+    "synergyRecommendation": "陣容推薦",
+    "characterAnalysis": "角色分析"
+  },
+  "mobileTab": {
+    "meta": "Meta",
+    "synergy": "陣容",
+    "character": "角色"
+  },
+  "layout": {
+    "skipToMain": "跳至主要內容",
+    "terms": "使用條款",
+    "privacy": "隱私權政策",
+    "updates": "更新紀錄",
+    "sitemap": "網站地圖",
+    "apiAttribution": "本服務基於 Nimble Neuron 的 Open API 建置。遊戲圖片與資料版權歸 Nimble Neuron Co., Ltd. 所有。",
+    "disclaimer": "本網站並非 Nimble Neuron 官方服務，使用過程中產生的問題需由使用者自行承擔，Nimble Neuron 不負相關責任。",
+    "copyright": "© {year} ER&GG"
+  },
+  "rootMetadata": {
+    "defaultTitle": "ER&GG | Eternal Return Meta分析",
+    "description": "ER&GG 提供基於高分段對戰數據的 Eternal Return 角色梯度、三人陣容推薦，以及勝率、選取率、平均 RP 統計分析。",
+    "structuredDescription": "Eternal Return 角色梯度、三人陣容推薦與統計分析服務",
+    "titleTemplate": "%s | ER&GG",
+    "siteName": "ER&GG",
+    "author": "ER&GG",
+    "creator": "ER&GG",
+    "keywords": {
+      "brand": "ER&GG",
+      "brandAlt": "ERGG",
+      "app": "ERWAGG",
+      "appSymbol": "ER&GG",
+      "gameKo": "永恆輪迴",
+      "gameEn": "Eternal Return",
+      "tierList": "永恆輪迴 強度榜",
+      "meta": "永恆輪迴 meta",
+      "synergy": "永恆輪迴 陣容推薦",
+      "characterAnalysis": "永恆輪迴 角色分析",
+      "winRate": "永恆輪迴 勝率",
+      "pickRate": "永恆輪迴 選取率",
+      "rp": "永恆輪迴 RP",
+      "stats": "永恆輪迴 數據"
+    }
+  },
+  "home": {
+    "title": "Meta分析",
+    "subtitle": "基於 {count} 場對戰的即時分析",
+    "honeyPicksTitle": "本版本上升",
+    "honeyPicksDescription": "強化後選取率與勝率同步上升的角色",
+    "honeySectionName": "本版本上升",
+    "rankingTitle": "角色排行",
+    "rankingDescription": "基於 Meta 分數的綜合排行",
+    "rankingSectionName": "角色排行",
+    "live": "LIVE",
+    "patch": "版本 {patch}"
+  },
+  "globalFilter": {
+    "patchAria": "選擇版本",
+    "tierAria": "選擇牌位",
+    "patchOption": "版本 {patch}",
+    "noPatch": "沒有版本資料",
+    "tiers": {
+      "DIAMOND": "鑽石",
+      "METEORITE": "隕石",
+      "MITHRIL": "秘銀"
+    }
+  },
+  "synergyMain": {
+    "title": "陣容推薦已升級",
+    "subtitle": "現在可查看包含武器與主特性的詳細推薦，獲得更精準的隊伍組合建議。",
+    "cta": "前往詳細陣容推薦"
+  },
+  "pageError": {
+    "description": "可能是暫時性的伺服器或連線問題。此問題已自動回報。",
+    "retry": "重試",
+    "home": "首頁",
+    "characterLoadFailed": "無法載入角色分析資料",
+    "synergyLoadFailed": "無法載入陣容推薦資料",
+    "synergyDetailLoadFailed": "無法載入詳細陣容資料"
+  },
+  "characterPage": {
+    "title": "角色分析",
+    "subtitle": "深入查看各角色的勝率、出裝、版本趨勢與裝備數據",
+    "badge": "分析",
+    "beta": "BETA",
+    "patchBase": "開發中 · 以 {patch} 版本為準",
+    "imageNotice": "部分道具圖片可能缺失或顯示不正確。",
+    "sectionName": "角色分析"
+  },
+  "synergyPage": {
+    "dataNotice": "資料持續累積中 · 樣本越大結果越準確",
+    "title": "詳細陣容推薦",
+    "subtitle": "包含武器與主特性的深度陣容分析 · 點擊陣容可查看特性拆解",
+    "badge": "進階",
+    "beta": "BETA",
+    "steps": {
+      "pool": {
+        "label": "設定池子",
+        "sublabel": "角色 + 武器"
+      },
+      "allies": {
+        "label": "選擇隊友",
+        "sublabel": "角色 + 武器"
+      },
+      "analysis": {
+        "label": "深度分析",
+        "sublabel": "特性比較"
+      }
+    }
+  },
+  "synergyInteractive": {
+    "poolTitle": "我的角色池",
+    "alliesTitle": "選擇隊友",
+    "resultsTitle": "推薦陣容",
+    "poolHint": "可選 · 依角色 + 武器篩選",
+    "poolSection": "角色池",
+    "alliesSection": "隊友",
+    "resultsSection": "推薦陣容"
+  },
+  "sectionErrorBoundary": {
+    "loadFailed": "無法載入 {section} 資料",
+    "temporaryIssue": "這可能是暫時性的問題。",
+    "retry": "重試"
+  },
+  "tierRanking": {
+    "roles": {
+      "all": "全部",
+      "tank": "坦克",
+      "fighter": "戰士",
+      "assassin": "刺客",
+      "skillAmp": "技能增幅",
+      "ranged": "遠程輸出",
+      "support": "輔助"
+    },
+    "columns": {
+      "tier": "梯度",
+      "character": "角色",
+      "pickRate": "選取率",
+      "winRate": "勝率",
+      "averageRp": "平均 RP"
+    },
+    "tooltips": {
+      "pickRate": "該角色在全部對戰中的選取占比。",
+      "winRate": "該角色獲得第1名的比例，基準值為12.5%。",
+      "averageRp": "每局平均獲得的排位分，正數代表更容易上分。"
+    },
+    "empty": "暫無資料",
+    "mobileSort": "排序",
+    "sort": {
+      "rank": "排名",
+      "winRate": "勝率",
+      "pickRate": "選取率",
+      "averageRP": "RP"
+    },
+    "showAll": "顯示全部 ({count} 名角色)",
+    "collapse": "收起",
+    "rpSuffix": "RP"
+  },
+  "honeyPicks": {
+    "apiError": "API 錯誤",
+    "errorFallback": "發生錯誤。",
+    "empty": "這個版本沒有找到明顯上升的強化角色。",
+    "patch": "版本 {patch}",
+    "stats": {
+      "winRate": "勝率",
+      "pickRate": "選取率",
+      "rp": "RP"
+    },
+    "close": "關閉",
+    "detailAnalysis": "開啟詳細分析"
+  },
+  "characterPicker": {
+    "searchAria": "搜尋角色",
+    "placeholder": "搜尋角色",
+    "listAria": "角色列表",
+    "noResults": "沒有符合的角色。",
+    "current": "目前"
+  },
+  "characterHeader": {
+    "patch": "版本 {patch}",
+    "games": "{count} 場",
+    "tierSelectorAria": "選擇分析牌位",
+    "weaponSelectorAria": "選擇武器",
+    "weapon": "武器",
+    "all": "全部",
+    "pickRate": "選取率",
+    "winRate": "勝率",
+    "averageRank": "平均名次",
+    "averageRp": "平均 RP",
+    "weaponSub": "武器 {value}%",
+    "emptyPatchData": "此版本暫無資料。",
+    "loadingPatchInfo": "正在載入版本資料...",
+    "tiers": {
+      "DIAMOND": "鑽石",
+      "METEORITE": "隕石",
+      "MITHRIL": "秘銀+",
+      "IN1000": "前1000",
+      "DIAMOND_BELOW": "鑽石及以下"
+    }
+  },
+  "characterGrid": {
+    "title": "選擇角色",
+    "count": "{count} 名角色",
+    "placeholder": "搜尋角色"
+  },
+  "focusWeaponPool": {
+    "title": "我的角色池",
+    "count": "{count} 個選擇",
+    "hint": "預先選擇你實際會使用的角色與武器組合。",
+    "reset": "重設",
+    "searchPlaceholder": "搜尋角色或武器",
+    "noResults": "沒有搜尋結果",
+    "allWeapons": "全部武器"
+  },
+  "weaponAllySelector": {
+    "heading": "選擇隊友 (最多2人 · 角色+武器組)",
+    "searchPlaceholder": "搜尋角色或武器",
+    "noResults": "沒有搜尋結果",
+    "allWeapons": "全部武器"
+  },
+  "focusCharacterPool": {
+    "title": "我的角色池",
+    "count": "{count} 名角色",
+    "hint": "預先選擇你實際會使用的角色。",
+    "reset": "重設",
+    "searchPlaceholder": "搜尋角色"
+  },
+  "slotEmpty": {
+    "allyCharacter": "選擇隊友角色 {index}"
+  },
+  "synergyResults": {
+    "sort": {
+      "recommended": "推薦",
+      "averageRP": "平均 RP",
+      "winRate": "勝率",
+      "totalGames": "場次"
+    },
+    "titleSingle": "包含 {ally} 的詳細陣容",
+    "titlePair": "{ally1} + {ally2} 的詳細陣容",
+    "focusFilter": "依我的角色池篩選 {count} 項",
+    "copied": "已複製！",
+    "share": "分享",
+    "reset": "重設",
+    "sectionName": "詳細陣容結果",
+    "empty": {
+      "prompt": "根據隊友的選擇尋找包含武器的詳細陣容",
+      "step1": "1. 先設定你的角色池（可選）",
+      "step2": "2. 選擇隊友的角色與武器",
+      "step3": "3. 點擊陣容查看特性層級表現"
+    },
+    "loading": "正在載入陣容資料...",
+    "infoSingle": "再加入一名隊友可獲得更準確的推薦 · 點擊陣容可查看特性拆解",
+    "infoPair": "點擊陣容可查看特性拆解",
+    "more": "顯示更多 ({visible}/{total})",
+    "emptyFiltered": "目前角色池沒有符合的陣容，請嘗試擴大角色池。",
+    "emptyNoData": "目前陣容沒有可用資料。",
+    "clearAllies": "清除隊友",
+    "timeout": "請求逾時，請再試一次。",
+    "genericError": "發生錯誤。"
+  },
+  "synergyMainResults": {
+    "sort": {
+      "recommended": "推薦",
+      "averageRP": "平均 RP",
+      "winRate": "勝率",
+      "totalGames": "場次"
+    },
+    "titleSingle": "包含 {ally} 的推薦陣容",
+    "titlePair": "{ally1} + {ally2} 的陣容",
+    "focusFilter": "依我的角色池篩選 {count} 項",
+    "copied": "已複製！",
+    "share": "分享",
+    "reset": "重設",
+    "sectionName": "陣容結果",
+    "empty": {
+      "prompt": "為隊友選擇尋找最佳陣容",
+      "step1": "1. 先設定你的角色池（可選）",
+      "step2": "2. 選擇 1 到 2 名隊友角色",
+      "step3": "3. 系統會推薦你能使用的最佳陣容"
+    },
+    "loading": "正在載入陣容資料...",
+    "infoSingle": "再加入一名隊友可獲得更準確的推薦",
+    "emptyFiltered": "你的角色池沒有符合的陣容，請嘗試擴大角色池。",
+    "emptyNoData": "目前陣容沒有可用資料。",
+    "clearAllies": "清除隊友",
+    "timeout": "請求逾時，請再試一次。",
+    "genericError": "發生錯誤。"
+  },
+  "synergyComboCard": {
+    "smallSample": "樣本較少",
+    "winRate": "勝率",
+    "rp": "RP",
+    "games": "場次",
+    "averageRank": "平均名次",
+    "moreTraits": "再顯示 {count} 個特性"
+  },
+  "characterAnalysis": {
+    "quickSummary": "快速摘要",
+    "summary": {
+      "tier": "梯度",
+      "winRate": "勝率",
+      "recommendedWeapon": "最佳武器",
+      "pickRate": "選取率"
+    },
+    "synergyCta": "查看此角色的陣容推薦",
+    "deepDive": "深度分析",
+    "patchComparison": "版本比較",
+    "patchNotes": "版本說明",
+    "stats": "統計"
+  },
+  "characterPatch": {
+    "types": {
+      "buff": "加強",
+      "nerf": "削弱",
+      "rework": "調整"
+    },
+    "loadingPatches": "正在載入版本資料...",
+    "current": "目前",
+    "noChanges": "無改動",
+    "noData": "暫無資料。",
+    "notEnoughData": "沒有足夠的版本資料可供比較。",
+    "minTwoPatches": "至少需要兩個版本。",
+    "patchTrend": "版本趨勢",
+    "winRate": "勝率",
+    "averageRp": "平均 RP",
+    "expected": "預期值",
+    "patch": "版本"
+  },
+  "characterMetadata": {
+    "titleWithName": "{name} 角色分析",
+    "titleFallback": "角色分析",
+    "descriptionWithName": "分析 {name} 在 Eternal Return 中的勝率、選取率、平均 RP 與最佳出裝，並查看 {name} 的版本趨勢與武器搭配。",
+    "descriptionFallback": "依勝率、選取率、平均 RP 與最佳出裝分析 Eternal Return 角色，並查看版本趨勢與武器搭配。",
+    "keywords": {
+      "character": "永恆輪迴 {name}",
+      "build": "{name} 出裝",
+      "winRate": "{name} 勝率",
+      "stats": "{name} 數據",
+      "brand": "ER&GG",
+      "app": "ERGG",
+      "analysis": "永恆輪迴 角色分析",
+      "fallbackBuild": "永恆輪迴 角色出裝",
+      "fallbackStats": "永恆輪迴 角色數據",
+      "fallbackWeapon": "永恆輪迴 武器推薦"
+    },
+    "openGraphTitle": "{title} | ER&GG",
+    "twitterTitle": "{title} | ER&GG",
+    "socialDescription": "Eternal Return 角色勝率、選取率、平均 RP 與最佳出裝統計。"
+  },
+  "synergyMetadata": {
+    "headlinePair": "{name1} + {name2} 陣容推薦",
+    "headlineSingle": "包含 {name1} 的陣容推薦",
+    "headlineFallback": "陣容推薦",
+    "descriptionPair": "透過貝葉斯隊伍統計分析 {name1} + {name2} 的最佳第三手選擇。",
+    "descriptionSingle": "透過貝葉斯隊伍統計分析與 {name1} 搭配的最佳第二、第三手選擇。",
+    "descriptionFallback": "查看 Eternal Return 三人陣容推薦，並前往包含武器與特性的詳細分析。",
+    "socialTitle": "{headline} | ER&GG"
+  },
+  "synergyDetailMetadata": {
+    "headlinePair": "{name1} + {name2} 陣容推薦",
+    "headlineSingle": "包含 {name1} 的陣容推薦",
+    "headlineFallback": "詳細陣容推薦",
+    "title": "{headline} - 含武器與特性 | ER&GG",
+    "descriptionPair": "透過包含武器與特性的貝葉斯統計分析 {name1} + {name2} 的最佳第三手選擇。",
+    "descriptionSingle": "透過貝葉斯隊伍統計分析與 {name1} 搭配的最佳第二、第三手選擇。",
+    "descriptionFallback": "使用貝葉斯隊伍分析查看包含武器與主特性的 Eternal Return 詳細三人陣容推薦。",
+    "socialTitle": "{headline} | ER&GG",
+    "keywords": {
+      "brand": "ER&GG",
+      "app": "ERGG",
+      "synergy": "永恆輪迴 陣容推薦",
+      "weapon": "永恆輪迴 武器組合",
+      "trait": "永恆輪迴 特性組合",
+      "detail": "永恆輪迴 詳細隊伍分析",
+      "character": "{name} 陣容"
+    }
+  },
+  "characterDetailed": {
+    "groups": {
+      "havoc": {
+        "name": "破壞",
+        "letter": "破"
+      },
+      "fortification": {
+        "name": "防禦",
+        "letter": "防"
+      },
+      "support": {
+        "name": "支援",
+        "letter": "支"
+      },
+      "chaos": {
+        "name": "混沌",
+        "letter": "混"
+      },
+      "unknown": {
+        "name": "其他",
+        "letter": "?"
+      }
+    },
+    "slots": {
+      "weapon": "武器",
+      "chest": "胸甲",
+      "head": "頭部",
+      "arm": "手臂",
+      "leg": "腿部"
+    },
+    "sections": {
+      "topBuilds": "熱門構築",
+      "slotPopularity": "各槽位熱門道具",
+      "itemBuilds": "道具構築",
+      "secondaryTraits": "副特性組合"
+    },
+    "stats": {
+      "pickRate": "選取率",
+      "winRate": "勝率",
+      "averageRank": "平均名次",
+      "averageRp": "平均RP",
+      "total": "總計",
+      "primaryTrait": "主特性"
+    },
+    "labels": {
+      "pickShort": "選 {value}%",
+      "winShort": "勝 {value}%",
+      "rankValue": "排名 #{value}",
+      "rpValue": "RP {value}",
+      "matches": "{count}場"
+    },
+    "summaries": {
+      "mainTrait": "主特性: {name}",
+      "core": "{name}, 核心",
+      "secondary": "{name}, 副特性"
+    },
+    "empty": {
+      "detailed": "沒有詳細分析資料。",
+      "itemBuilds": "目前特性配置沒有道具構築資料。"
+    }
+  },
+  "characterTraitBuild": {
+    "groups": {
+      "havoc": {
+        "name": "破壞",
+        "letter": "破"
+      },
+      "fortification": {
+        "name": "防禦",
+        "letter": "防"
+      },
+      "support": {
+        "name": "支援",
+        "letter": "支"
+      },
+      "chaos": {
+        "name": "混沌",
+        "letter": "混"
+      },
+      "unknown": {
+        "name": "其他",
+        "letter": "?"
+      }
+    },
+    "labels": {
+      "core": "核心",
+      "slot1": "槽位1",
+      "slot2": "槽位2",
+      "secondary": "副特性",
+      "matches": "{count}場",
+      "pick": "選 {value}%",
+      "win": "勝 {value}%"
+    },
+    "empty": {
+      "builds": "沒有特性構築資料。",
+      "cell": "沒有資料"
+    }
+  }
+}

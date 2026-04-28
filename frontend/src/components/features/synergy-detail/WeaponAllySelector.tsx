@@ -4,11 +4,13 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { X, Search } from "lucide-react";
 import Image from "next/image";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import characterBestWeapons from "@/../const/characterBestWeapons.json";
 import { useL10n } from "@/components/L10nProvider";
 import { resolveCharacterName, getCharacterMiniWebpUrl } from "@/lib/characterMap";
 import { cn } from "@/lib/utils";
+import { resolveWeaponName } from "@/lib/weaponMap";
 import { getFallbackMap, EXCLUDED_CHARACTER_CODES } from "../synergy/constants";
 import { SlotEmpty } from "../synergy/SlotEmpty";
 import { matchesChosungSearch } from "../synergy/utils";
@@ -74,13 +76,15 @@ export interface AllySelection {
 export function parseAllyFromParams(
   params: URLSearchParams,
   allyKey: string,
-  weaponKey: string
+  weaponKey: string,
+  legacyAllyKey?: string,
+  legacyWeaponKey?: string
 ): AllySelection | null {
-  const charStr = params.get(allyKey);
+  const charStr = params.get(allyKey) ?? (legacyAllyKey ? params.get(legacyAllyKey) : null);
   if (!charStr) return null;
   const charCode = parseInt(charStr, 10);
   if (isNaN(charCode)) return null;
-  const wStr = params.get(weaponKey);
+  const wStr = params.get(weaponKey) ?? (legacyWeaponKey ? params.get(legacyWeaponKey) : null);
   const weaponCode = wStr ? parseInt(wStr, 10) : null;
   return { charCode, weaponCode: weaponCode && !isNaN(weaponCode) ? weaponCode : null };
 }
@@ -142,6 +146,8 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
     onSelect(item);
   }, [disabled, item, onSelect]);
   const tapGuard = useTapGuard(activate);
+  const { l10n } = useL10n();
+  const localizedWeaponLabel = item.weaponCode > 0 ? resolveWeaponName(item.weaponCode, l10n) : "";
   return (
     <button
       type="button"
@@ -153,7 +159,7 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
         }
       }}
       disabled={disabled}
-      title={`${charName} (${item.weaponLabel})`}
+      title={localizedWeaponLabel ? `${charName} (${localizedWeaponLabel})` : charName}
       style={{ touchAction: "manipulation" }}
       className={cn(
         "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors touch-manipulation",
@@ -176,9 +182,9 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
       <span className="w-full truncate text-center text-[11px] font-medium text-[var(--color-foreground)]">
         {charName}
       </span>
-      {item.weaponLabel && (
+      {localizedWeaponLabel && (
         <span className="w-full truncate text-center text-[10px] text-[var(--color-muted-foreground)]">
-          {item.weaponLabel}
+          {localizedWeaponLabel}
         </span>
       )}
     </button>
@@ -189,6 +195,7 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
 
 export function WeaponAllySelector() {
   const { l10n } = useL10n();
+  const t = useTranslations("weaponAllySelector");
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -202,11 +209,11 @@ export function WeaponAllySelector() {
   );
 
   const urlAlly1 = React.useMemo(
-    () => parseAllyFromParams(searchParams, "ally1", "w1"),
+    () => parseAllyFromParams(searchParams, "ally1", "w1", "a"),
     [searchParams]
   );
   const urlAlly2 = React.useMemo(
-    () => parseAllyFromParams(searchParams, "ally2", "w2"),
+    () => parseAllyFromParams(searchParams, "ally2", "w2", "b"),
     [searchParams]
   );
 
@@ -329,12 +336,18 @@ export function WeaponAllySelector() {
   const deferredSearch = React.useDeferredValue(search);
   const filteredItems = React.useMemo(() => {
     if (!deferredSearch.trim()) return getAllCharWeaponItems();
-    const q = deferredSearch.trim();
+    const q = deferredSearch.trim().toLowerCase();
     return getAllCharWeaponItems().filter((item) => {
       const name = getCharName(item.charCode) ?? "";
-      return matchesChosungSearch(name, q) || (item.weaponLabel ?? "").includes(q);
+      const localizedWeapon =
+        item.weaponCode > 0 ? resolveWeaponName(item.weaponCode, l10n).toLowerCase() : "";
+      return (
+        matchesChosungSearch(name, q) ||
+        (item.weaponLabel ?? "").toLowerCase().includes(q) ||
+        localizedWeapon.includes(q)
+      );
     });
-  }, [deferredSearch, getCharName]);
+  }, [deferredSearch, getCharName, l10n]);
 
   // 그리드 컬럼 계산
   React.useEffect(() => {
@@ -359,9 +372,8 @@ export function WeaponAllySelector() {
   });
 
   const resolveWeaponLabel = (a: AllySelection) => {
-    const weapons = weaponData[String(a.charCode)];
-    const w = weapons?.find((w) => w.weaponCode === a.weaponCode);
-    return w?.label ?? "전체 무기";
+    if (a.weaponCode == null || a.weaponCode === 0) return t("allWeapons");
+    return resolveWeaponName(a.weaponCode, l10n);
   };
 
   return (
@@ -392,16 +404,14 @@ export function WeaponAllySelector() {
 
       {/* 검색 + 가상화 그리드 */}
       <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-2">
-        <p className="mb-2 px-1 text-xs text-[var(--color-muted-foreground)]">
-          아군 선택 (최대 2명 · 캐릭터+무기군 단위)
-        </p>
+        <p className="mb-2 px-1 text-xs text-[var(--color-muted-foreground)]">{t("heading")}</p>
 
         <div className="relative mb-2">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)]" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="캐릭터 또는 무기 검색 (초성 가능: ㅎㅇ)"
+            placeholder={t("searchPlaceholder")}
             className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
           />
           {search && (
@@ -416,7 +426,7 @@ export function WeaponAllySelector() {
 
         {filteredItems.length === 0 ? (
           <p className="py-4 text-center text-xs text-[var(--color-muted-foreground)]">
-            검색 결과 없음
+            {t("noResults")}
           </p>
         ) : (
           <div

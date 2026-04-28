@@ -1,0 +1,485 @@
+{
+  "header": {
+    "languageSelectAria": "言語を選択",
+    "logoTitle": "ER&GG",
+    "logoSubtitle": "Eternal Returnメタ",
+    "patchPrefix": "v"
+  },
+  "navigation": {
+    "ariaMain": "メインナビゲーション",
+    "metaAnalysis": "メタ分析",
+    "synergyRecommendation": "編成おすすめ",
+    "characterAnalysis": "キャラクター分析"
+  },
+  "mobileTab": {
+    "meta": "メタ",
+    "synergy": "編成",
+    "character": "キャラ"
+  },
+  "layout": {
+    "skipToMain": "メインコンテンツへ移動",
+    "terms": "利用規約",
+    "privacy": "プライバシーポリシー",
+    "updates": "更新履歴",
+    "sitemap": "サイトマップ",
+    "apiAttribution": "このサービスはNimble NeuronのOpen APIを利用して構築されています。ゲーム画像とデータの著作権はNimble Neuron Co., Ltd.に帰属します。",
+    "disclaimer": "このサイトはNimble Neuronの公式サービスではなく、利用によって生じた問題について同社は責任を負いません。",
+    "copyright": "© {year} ER&GG"
+  },
+  "rootMetadata": {
+    "defaultTitle": "ER&GG | エターナルリターン メタ分析",
+    "description": "ER&GG は高ランク対戦データに基づくエターナルリターンのキャラクターティア、3人編成おすすめ、勝率・ピック率・平均 RP 統計を提供します。",
+    "structuredDescription": "エターナルリターンのキャラクターティア、3人編成おすすめ、統計分析サービス",
+    "titleTemplate": "%s | ER&GG",
+    "siteName": "ER&GG",
+    "author": "ER&GG",
+    "creator": "ER&GG",
+    "keywords": {
+      "brand": "ER&GG",
+      "brandAlt": "ERGG",
+      "app": "ERWAGG",
+      "appSymbol": "ER&GG",
+      "gameKo": "Eternal Return",
+      "gameEn": "Eternal Return",
+      "tierList": "Eternal Return ティアリスト",
+      "meta": "Eternal Return メタ",
+      "synergy": "Eternal Return チームおすすめ",
+      "characterAnalysis": "Eternal Return キャラクター分析",
+      "winRate": "Eternal Return 勝率",
+      "pickRate": "Eternal Return ピック率",
+      "rp": "Eternal Return RP",
+      "stats": "Eternal Return 統計"
+    }
+  },
+  "home": {
+    "title": "メタ分析",
+    "subtitle": "{count}試合データに基づくリアルタイム分析",
+    "honeyPicksTitle": "今パッチの急上昇",
+    "honeyPicksDescription": "バフ後にピック率と勝率が上昇したキャラクター",
+    "honeySectionName": "今パッチの急上昇",
+    "rankingTitle": "キャラクターランキング",
+    "rankingDescription": "メタスコアに基づく総合ランキング",
+    "rankingSectionName": "キャラクターランキング",
+    "live": "LIVE",
+    "patch": "パッチ {patch}"
+  },
+  "globalFilter": {
+    "patchAria": "パッチを選択",
+    "tierAria": "ティアを選択",
+    "patchOption": "パッチ {patch}",
+    "noPatch": "パッチデータなし",
+    "tiers": {
+      "DIAMOND": "ダイヤ",
+      "METEORITE": "メテオライト",
+      "MITHRIL": "ミスリル"
+    }
+  },
+  "synergyMain": {
+    "title": "編成おすすめがアップグレードされました",
+    "subtitle": "武器とメイン特性を含む詳細なおすすめで、より正確なチーム編成を確認できます。",
+    "cta": "詳細編成おすすめへ"
+  },
+  "pageError": {
+    "description": "一時的なサーバーまたは接続の問題の可能性があります。問題は自動的に報告されました。",
+    "retry": "再試行",
+    "home": "ホーム",
+    "characterLoadFailed": "キャラクター分析データを読み込めませんでした",
+    "synergyLoadFailed": "編成おすすめデータを読み込めませんでした",
+    "synergyDetailLoadFailed": "詳細編成データを読み込めませんでした"
+  },
+  "characterPage": {
+    "title": "キャラクター分析",
+    "subtitle": "キャラクターごとの勝率、ビルド、パッチ傾向、装備統計を詳しく確認します",
+    "badge": "分析",
+    "beta": "BETA",
+    "patchBase": "開発中 · パッチ {patch}基準",
+    "imageNotice": "一部のアイテム画像が欠落しているか、正しく表示されない場合があります。",
+    "sectionName": "キャラクター分析"
+  },
+  "synergyPage": {
+    "dataNotice": "データ収集中 · サンプルが増えるほど精度が向上します",
+    "title": "詳細編成おすすめ",
+    "subtitle": "武器とメイン特性まで含めた詳細分析 · 編成をクリックすると特性内訳を確認できます",
+    "badge": "詳細",
+    "beta": "BETA",
+    "steps": {
+      "pool": {
+        "label": "プール設定",
+        "sublabel": "キャラクター + 武器"
+      },
+      "allies": {
+        "label": "味方選択",
+        "sublabel": "キャラクター + 武器"
+      },
+      "analysis": {
+        "label": "詳細分析",
+        "sublabel": "特性比較"
+      }
+    }
+  },
+  "synergyInteractive": {
+    "poolTitle": "自分のキャラプール",
+    "alliesTitle": "味方を選択",
+    "resultsTitle": "おすすめ編成",
+    "poolHint": "任意 · キャラクター + 武器で絞り込み",
+    "poolSection": "キャラクタープール",
+    "alliesSection": "味方",
+    "resultsSection": "おすすめ"
+  },
+  "sectionErrorBoundary": {
+    "loadFailed": "{section} のデータを読み込めませんでした",
+    "temporaryIssue": "一時的な問題の可能性があります。",
+    "retry": "再試行"
+  },
+  "tierRanking": {
+    "roles": {
+      "all": "全体",
+      "tank": "タンク",
+      "fighter": "ファイター",
+      "assassin": "アサシン",
+      "skillAmp": "スキル増幅",
+      "ranged": "遠距離DPS",
+      "support": "サポート"
+    },
+    "columns": {
+      "tier": "ティア",
+      "character": "キャラクター",
+      "pickRate": "ピック率",
+      "winRate": "勝率",
+      "averageRp": "平均RP"
+    },
+    "tooltips": {
+      "pickRate": "このキャラクターが選択された試合の割合です。",
+      "winRate": "このキャラクターで1位を取った割合です。基準値は12.5%です。",
+      "averageRp": "1試合あたりの平均獲得RPです。プラスならランク上昇に有利です。"
+    },
+    "empty": "データなし",
+    "mobileSort": "並び替え",
+    "sort": {
+      "rank": "順位",
+      "winRate": "勝率",
+      "pickRate": "ピック率",
+      "averageRP": "RP"
+    },
+    "showAll": "すべて表示 ({count}キャラ)",
+    "collapse": "折りたたむ",
+    "rpSuffix": "RP"
+  },
+  "honeyPicks": {
+    "apiError": "API エラー",
+    "errorFallback": "エラーが発生しました。",
+    "empty": "このパッチでは急上昇したキャラクターが見つかりませんでした。",
+    "patch": "パッチ {patch}",
+    "stats": {
+      "winRate": "勝率",
+      "pickRate": "ピック率",
+      "rp": "RP"
+    },
+    "close": "閉じる",
+    "detailAnalysis": "詳細分析を開く"
+  },
+  "characterPicker": {
+    "searchAria": "キャラクターを検索",
+    "placeholder": "キャラクターを検索",
+    "listAria": "キャラクター一覧",
+    "noResults": "一致するキャラクターがありません。",
+    "current": "現在"
+  },
+  "characterHeader": {
+    "patch": "パッチ {patch}",
+    "games": "{count}試合",
+    "tierSelectorAria": "分析ティアを選択",
+    "weaponSelectorAria": "武器を選択",
+    "weapon": "武器",
+    "all": "全体",
+    "pickRate": "ピック率",
+    "winRate": "勝率",
+    "averageRank": "平均順位",
+    "averageRp": "平均RP",
+    "weaponSub": "武器 {value}%",
+    "emptyPatchData": "このパッチのデータはありません。",
+    "loadingPatchInfo": "パッチデータを読み込み中...",
+    "tiers": {
+      "DIAMOND": "ダイヤ",
+      "METEORITE": "メテオライト",
+      "MITHRIL": "ミスリル+",
+      "IN1000": "上位1000",
+      "DIAMOND_BELOW": "ダイヤ以下"
+    }
+  },
+  "characterGrid": {
+    "title": "キャラクター選択",
+    "count": "{count}キャラ",
+    "placeholder": "キャラクターを検索"
+  },
+  "focusWeaponPool": {
+    "title": "自分のキャラプール",
+    "count": "{count}件",
+    "hint": "使用できるキャラクターと武器を事前に設定してください。",
+    "reset": "初期化",
+    "searchPlaceholder": "キャラクターまたは武器を検索",
+    "noResults": "検索結果がありません",
+    "allWeapons": "全武器"
+  },
+  "weaponAllySelector": {
+    "heading": "味方を選択 (最大2人 · キャラクター+武器)",
+    "searchPlaceholder": "キャラクターまたは武器を検索",
+    "noResults": "検索結果がありません",
+    "allWeapons": "全武器"
+  },
+  "focusCharacterPool": {
+    "title": "自分のキャラプール",
+    "count": "{count}キャラ",
+    "hint": "使用できるキャラクターを事前に設定してください。",
+    "reset": "初期化",
+    "searchPlaceholder": "キャラクターを検索"
+  },
+  "slotEmpty": {
+    "allyCharacter": "味方キャラクター {index} を選択"
+  },
+  "synergyResults": {
+    "sort": {
+      "recommended": "おすすめ",
+      "averageRP": "平均RP",
+      "winRate": "勝率",
+      "totalGames": "試合数"
+    },
+    "titleSingle": "{ally} を含む詳細編成",
+    "titlePair": "{ally1} + {ally2} の詳細編成",
+    "focusFilter": "自分のプール {count}件でフィルタ中",
+    "copied": "コピーしました！",
+    "share": "共有",
+    "reset": "初期化",
+    "sectionName": "詳細編成結果",
+    "empty": {
+      "prompt": "味方のピックに合わせて武器込みの編成を探しましょう",
+      "step1": "1. 自分のキャラプールを設定します (任意)",
+      "step2": "2. 味方のキャラクターと武器を選択します",
+      "step3": "3. 編成をクリックして特性ごとの性能を確認します"
+    },
+    "loading": "編成データを読み込み中...",
+    "infoSingle": "味方をもう1人追加すると、より正確なおすすめになります · 編成をクリックすると特性内訳を確認できます",
+    "infoPair": "編成をクリックすると特性内訳を確認できます",
+    "more": "もっと見る ({visible}/{total})",
+    "emptyFiltered": "現在のキャラプールに一致する編成がありません。プールを広げてください。",
+    "emptyNoData": "この編成データはありません。",
+    "clearAllies": "味方をクリア",
+    "timeout": "リクエストがタイムアウトしました。もう一度お試しください。",
+    "genericError": "エラーが発生しました。"
+  },
+  "synergyMainResults": {
+    "sort": {
+      "recommended": "おすすめ",
+      "averageRP": "平均RP",
+      "winRate": "勝率",
+      "totalGames": "試合数"
+    },
+    "titleSingle": "{ally} を含むおすすめ編成",
+    "titlePair": "{ally1} + {ally2} の編成",
+    "focusFilter": "自分のプール {count}件でフィルタ中",
+    "copied": "コピーしました！",
+    "share": "共有",
+    "reset": "初期化",
+    "sectionName": "編成結果",
+    "empty": {
+      "prompt": "味方のピックに合う最適な編成を探しましょう",
+      "step1": "1. 自分のキャラプールを設定します (任意)",
+      "step2": "2. 味方キャラクターを1〜2人選択します",
+      "step3": "3. 自分が使える中で最適な編成をおすすめします"
+    },
+    "loading": "編成データを読み込み中...",
+    "infoSingle": "味方をもう1人追加すると、より正確なおすすめになります",
+    "emptyFiltered": "キャラプールに一致する編成がありません。プールを広げてください。",
+    "emptyNoData": "この編成データはありません。",
+    "clearAllies": "味方をクリア",
+    "timeout": "リクエストがタイムアウトしました。もう一度お試しください。",
+    "genericError": "エラーが発生しました。"
+  },
+  "synergyComboCard": {
+    "smallSample": "サンプル少",
+    "winRate": "勝率",
+    "rp": "RP",
+    "games": "試合数",
+    "averageRank": "平均順位",
+    "moreTraits": "特性をさらに {count} 件表示"
+  },
+  "characterAnalysis": {
+    "quickSummary": "クイックサマリー",
+    "summary": {
+      "tier": "ティア",
+      "winRate": "勝率",
+      "recommendedWeapon": "おすすめ武器",
+      "pickRate": "ピック率"
+    },
+    "synergyCta": "このキャラクターで編成を探す",
+    "deepDive": "詳細分析",
+    "patchComparison": "パッチ比較",
+    "patchNotes": "パッチノート",
+    "stats": "統計"
+  },
+  "characterPatch": {
+    "types": {
+      "buff": "強化",
+      "nerf": "弱体化",
+      "rework": "調整"
+    },
+    "loadingPatches": "パッチデータを読み込み中...",
+    "current": "現在",
+    "noChanges": "変更なし",
+    "noData": "利用可能なデータがありません。",
+    "notEnoughData": "パッチ比較用のデータが不足しています。",
+    "minTwoPatches": "2つ以上のパッチが必要です。",
+    "patchTrend": "パッチ推移",
+    "winRate": "勝率",
+    "averageRp": "平均RP",
+    "expected": "基準値",
+    "patch": "パッチ"
+  },
+  "characterMetadata": {
+    "titleWithName": "{name} キャラクター分析",
+    "titleFallback": "キャラクター分析",
+    "descriptionWithName": "Eternal Returnにおける{name}の勝率、ピック率、平均RP、最適ビルドを分析します。{name}のパッチ傾向と武器組み合わせも確認できます。",
+    "descriptionFallback": "Eternal Returnのキャラクターごとの勝率、ピック率、平均RP、最適ビルドを分析します。パッチ傾向と武器組み合わせも確認できます。",
+    "keywords": {
+      "character": "Eternal Return {name}",
+      "build": "{name} ビルド",
+      "winRate": "{name} 勝率",
+      "stats": "{name} 統計",
+      "brand": "ER&GG",
+      "app": "ERGG",
+      "analysis": "Eternal Return キャラクター分析",
+      "fallbackBuild": "Eternal Return キャラクタービルド",
+      "fallbackStats": "Eternal Return キャラクター統計",
+      "fallbackWeapon": "Eternal Return 武器おすすめ"
+    },
+    "openGraphTitle": "{title} | ER&GG",
+    "twitterTitle": "{title} | ER&GG",
+    "socialDescription": "Eternal Returnのキャラクター別勝率、ピック率、平均RP、最適ビルド統計。"
+  },
+  "synergyMetadata": {
+    "headlinePair": "{name1} + {name2} 編成おすすめ",
+    "headlineSingle": "{name1} を含む編成おすすめ",
+    "headlineFallback": "編成おすすめ",
+    "descriptionPair": "{name1} + {name2} の最適な3人目ピックをベイズチーム統計で分析します。",
+    "descriptionSingle": "{name1}と組む最適な2人目・3人目ピックをベイズチーム統計で分析します。",
+    "descriptionFallback": "Eternal Returnの3人編成おすすめを確認し、武器と特性を含む詳細分析に進めます。",
+    "socialTitle": "{headline} | ER&GG"
+  },
+  "synergyDetailMetadata": {
+    "headlinePair": "{name1} + {name2} 編成おすすめ",
+    "headlineSingle": "{name1} を含む編成おすすめ",
+    "headlineFallback": "詳細編成おすすめ",
+    "title": "{headline} - 武器・特性込み | ER&GG",
+    "descriptionPair": "{name1} + {name2} の最適な3人目ピックを、武器と特性を含むベイズ統計で分析します。",
+    "descriptionSingle": "{name1}と組む最適な2人目・3人目ピックをベイズチーム統計で分析します。",
+    "descriptionFallback": "武器とメイン特性を含むEternal Returnの詳細な3人編成おすすめを、ベイズチーム分析で確認できます。",
+    "socialTitle": "{headline} | ER&GG",
+    "keywords": {
+      "brand": "ER&GG",
+      "app": "ERGG",
+      "synergy": "Eternal Return チームおすすめ",
+      "weapon": "Eternal Return 武器組み合わせ",
+      "trait": "Eternal Return 特性組み合わせ",
+      "detail": "Eternal Return 詳細チーム分析",
+      "character": "{name} 編成"
+    }
+  },
+  "characterDetailed": {
+    "groups": {
+      "havoc": {
+        "name": "破壊",
+        "letter": "破"
+      },
+      "fortification": {
+        "name": "防御",
+        "letter": "防"
+      },
+      "support": {
+        "name": "支援",
+        "letter": "支"
+      },
+      "chaos": {
+        "name": "混沌",
+        "letter": "混"
+      },
+      "unknown": {
+        "name": "その他",
+        "letter": "?"
+      }
+    },
+    "slots": {
+      "weapon": "武器",
+      "chest": "胴",
+      "head": "頭",
+      "arm": "腕",
+      "leg": "脚"
+    },
+    "sections": {
+      "topBuilds": "人気ビルド",
+      "slotPopularity": "スロット別人気アイテム",
+      "itemBuilds": "アイテムビルド",
+      "secondaryTraits": "サブ特性の組み合わせ"
+    },
+    "stats": {
+      "pickRate": "ピック率",
+      "winRate": "勝率",
+      "averageRank": "平均順位",
+      "averageRp": "平均RP",
+      "total": "合計",
+      "primaryTrait": "主特性"
+    },
+    "labels": {
+      "pickShort": "ピック {value}%",
+      "winShort": "勝 {value}%",
+      "rankValue": "順位 #{value}",
+      "rpValue": "RP {value}",
+      "matches": "{count}試合"
+    },
+    "summaries": {
+      "mainTrait": "主特性: {name}",
+      "core": "{name}, コア",
+      "secondary": "{name}, サブ"
+    },
+    "empty": {
+      "detailed": "詳細分析データがありません。",
+      "itemBuilds": "この特性構成のアイテムビルドデータがありません。"
+    }
+  },
+  "characterTraitBuild": {
+    "groups": {
+      "havoc": {
+        "name": "破壊",
+        "letter": "破"
+      },
+      "fortification": {
+        "name": "防御",
+        "letter": "防"
+      },
+      "support": {
+        "name": "支援",
+        "letter": "支"
+      },
+      "chaos": {
+        "name": "混沌",
+        "letter": "混"
+      },
+      "unknown": {
+        "name": "その他",
+        "letter": "?"
+      }
+    },
+    "labels": {
+      "core": "コア",
+      "slot1": "スロット1",
+      "slot2": "スロット2",
+      "secondary": "副特性",
+      "matches": "{count}試合",
+      "pick": "ピック {value}%",
+      "win": "勝 {value}%"
+    },
+    "empty": {
+      "builds": "特性ビルドデータがありません。",
+      "cell": "データなし"
+    }
+  }
+}

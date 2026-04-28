@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useL10n } from "@/components/L10nProvider";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,8 +25,8 @@ import type { PrevStats, DisplayRow } from "./types";
 import { computeMetaScores, assignTier } from "./utils";
 
 const fallbackMap = buildFallbackMap();
-
-const roleTabs = ["전체", "탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"] as const;
+const ALL_ROLE = "all" as const;
+type RoleTabValue = typeof ALL_ROLE | CharacterRole;
 
 type SortKey = "rank" | "pickRate" | "winRate" | "averageRP";
 type SortDir = "asc" | "desc";
@@ -61,7 +62,7 @@ function buildDisplayRows(
     roles: getComboRoles(r.characterNum, r.bestWeapon),
     weaponCode: r.bestWeapon,
     name: resolveCharacterName(r.characterNum, l10n, fallbackMap),
-    weaponName: resolveWeaponName(r.bestWeapon),
+    weaponName: resolveWeaponName(r.bestWeapon, l10n),
     imageUrl: getCharacterImageUrl(r.characterNum),
     tier: assignTier(scores.get(r.characterNum * 1000 + r.bestWeapon) ?? 0),
     pickRate: r.pickRate,
@@ -78,7 +79,8 @@ interface TierRankingTableProps {
 
 export function TierRankingTable({ initialData }: TierRankingTableProps) {
   const { patch, tier } = useFilter();
-  const [activeRole, setActiveRole] = React.useState<string>("전체");
+  const t = useTranslations("tierRanking");
+  const [activeRole, setActiveRole] = React.useState<RoleTabValue>(ALL_ROLE);
   const [rankingData, setRankingData] = React.useState<RankingResponse | null>(initialData ?? null);
   const [isLoading, setIsLoading] = React.useState(!initialData);
   const [activeKey, setActiveKey] = React.useState<string | null>(null);
@@ -89,6 +91,18 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
   const { l10n } = useL10n();
   const isInitialRender = React.useRef(true);
   const router = useRouter();
+  const roleTabs = React.useMemo(
+    () => [
+      { value: ALL_ROLE, label: t("roles.all") },
+      { value: "탱커" as const, label: t("roles.tank") },
+      { value: "전사" as const, label: t("roles.fighter") },
+      { value: "암살자" as const, label: t("roles.assassin") },
+      { value: "스킬딜러" as const, label: t("roles.skillAmp") },
+      { value: "원거리 딜러" as const, label: t("roles.ranged") },
+      { value: "지원가" as const, label: t("roles.support") },
+    ],
+    [t]
+  );
 
   React.useEffect(() => {
     if (isInitialRender.current) {
@@ -120,7 +134,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
 
   const filtered = React.useMemo(() => {
     const base =
-      activeRole === "전체"
+      activeRole === ALL_ROLE
         ? rows
         : rows.filter((c) => c.roles.includes(activeRole as CharacterRole));
 
@@ -163,17 +177,17 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
     <div className="flex flex-col gap-3">
       {/* ── Role Filter ── */}
       <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
-        {roleTabs.map((tab) => (
+        {roleTabs.map(({ value, label }) => (
           <button
-            key={tab}
+            key={value}
             className="role-pill shrink-0"
-            data-active={activeRole === tab}
+            data-active={activeRole === value}
             onClick={() => {
-              setActiveRole(tab);
-              analytics.rankingTierTabChanged(tab);
+              setActiveRole(value);
+              analytics.rankingTierTabChanged(value);
             }}
           >
-            {tab}
+            {label}
           </button>
         ))}
       </div>
@@ -194,37 +208,37 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                   className="w-14 text-center"
                 />
                 <th className="px-2 py-2.5 text-left text-xs font-medium text-[var(--color-muted-foreground)] w-12">
-                  티어
+                  {t("columns.tier")}
                 </th>
                 <th className="px-2 py-2.5 text-left text-xs font-medium text-[var(--color-muted-foreground)]">
-                  캐릭터
+                  {t("columns.character")}
                 </th>
                 <SortableHead
-                  label="픽률"
+                  label={t("columns.pickRate")}
                   sortKey="pickRate"
                   currentKey={sortKey}
                   dir={sortDir}
                   onSort={handleSort}
                   className="w-28 text-right"
-                  tooltip="전체 게임 중 해당 캐릭터가 선택된 비율"
+                  tooltip={t("tooltips.pickRate")}
                 />
                 <SortableHead
-                  label="승률"
+                  label={t("columns.winRate")}
                   sortKey="winRate"
                   currentKey={sortKey}
                   dir={sortDir}
                   onSort={handleSort}
                   className="w-28 text-right"
-                  tooltip="해당 캐릭터의 1위 달성 비율 (기대값 12.5%)"
+                  tooltip={t("tooltips.winRate")}
                 />
                 <SortableHead
-                  label="평균 RP"
+                  label={t("columns.averageRp")}
                   sortKey="averageRP"
                   currentKey={sortKey}
                   dir={sortDir}
                   onSort={handleSort}
                   className="w-32 text-right"
-                  tooltip="게임당 평균 획득 랭크 포인트. 양수일수록 랭크 상승에 유리"
+                  tooltip={t("tooltips.averageRp")}
                 />
               </tr>
             </thead>
@@ -359,7 +373,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                     colSpan={6}
                     className="text-center text-sm text-[var(--color-muted-foreground)] py-16"
                   >
-                    데이터 없음
+                    {t("empty")}
                   </td>
                 </tr>
               )}
@@ -372,13 +386,13 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
           {/* Mobile sort bar */}
           <div className="flex items-center gap-1.5 px-3 py-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/50 overflow-x-auto scrollbar-hide">
             <span className="text-[10px] text-[var(--color-muted-foreground)] shrink-0 mr-1">
-              정렬
+              {t("mobileSort")}
             </span>
             {[
-              { key: "rank" as SortKey, label: "순위" },
-              { key: "winRate" as SortKey, label: "승률" },
-              { key: "pickRate" as SortKey, label: "픽률" },
-              { key: "averageRP" as SortKey, label: "RP" },
+              { key: "rank" as SortKey, label: t("sort.rank") },
+              { key: "winRate" as SortKey, label: t("sort.winRate") },
+              { key: "pickRate" as SortKey, label: t("sort.pickRate") },
+              { key: "averageRP" as SortKey, label: t("sort.averageRP") },
             ].map(({ key, label }) => (
               <button
                 key={key}
@@ -418,7 +432,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
               ))
             ) : visible.length === 0 ? (
               <div className="text-center text-sm text-[var(--color-muted-foreground)] py-12">
-                데이터 없음
+                {t("empty")}
               </div>
             ) : (
               visible.map((char) => {
@@ -489,7 +503,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                         )}
                       >
                         {char.averageRP >= 0 ? "+" : ""}
-                        {char.averageRP.toFixed(1)} RP
+                        {char.averageRP.toFixed(1)} {t("rpSuffix")}
                       </span>
                     </div>
                     {char.patchNote && activeKey === key && (
@@ -509,7 +523,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
           onClick={() => setShowAll((v) => !v)}
           className="w-full py-2.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)] transition-colors"
         >
-          {showAll ? "접기" : `전체 보기 (${filtered.length}캐릭터)`}
+          {showAll ? t("collapse") : t("showAll", { count: filtered.length })}
         </button>
       )}
     </div>

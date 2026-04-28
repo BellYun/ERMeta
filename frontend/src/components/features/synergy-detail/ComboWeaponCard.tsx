@@ -3,10 +3,10 @@
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
 import { cn } from "@/lib/utils";
-import { resolveWeaponName } from "@/lib/weaponMap";
 import { TraitIcon } from "./TraitIcon";
 import type { TrioWeaponResult } from "./types";
 import { useTapGuard } from "./useTapGuard";
@@ -61,6 +61,7 @@ interface ComboWeaponCardProps {
   group: GroupedCombo;
   rank: number;
   getCharName: (code: number) => string;
+  getWeaponName: (code: number) => string;
   getTraitName: (code: number) => string | null;
   selectedCharCodes: number[];
   /** 추천(gold ring) 캐릭터 Link 클릭 시 호출. 부모가 analytics 발화. 메모이제이션 유지를 위해 ref-stable하게 전달할 것. */
@@ -76,10 +77,12 @@ function ComboWeaponCardImpl({
   group,
   rank,
   getCharName,
+  getWeaponName,
   getTraitName,
   selectedCharCodes,
   onRecommendationClick,
 }: ComboWeaponCardProps) {
+  const t = useTranslations("synergyComboCard");
   const [showTraits, setShowTraits] = React.useState(false);
   const [showAllVariants, setShowAllVariants] = React.useState(false);
   const ordered = React.useMemo(
@@ -187,7 +190,7 @@ function ComboWeaponCardImpl({
                     {getCharName(m.char)}
                   </span>
                   <span className="text-[8px] sm:text-[10px] text-[var(--color-muted-foreground)] truncate w-10 sm:w-14 text-center">
-                    {resolveWeaponName(m.weapon)}
+                    {getWeaponName(m.weapon)}
                   </span>
                 </Link>
                 {i < 2 && (
@@ -203,23 +206,25 @@ function ComboWeaponCardImpl({
         {/* 소표본 배지 */}
         {isSmallSample && (
           <span className="text-[8px] sm:text-[9px] bg-[var(--color-surface-2)] text-[var(--color-muted-foreground)] px-1 sm:px-1.5 py-0.5 rounded shrink-0">
-            소표본
+            {t("smallSample")}
           </span>
         )}
 
         {/* 스탯 */}
         <div className="ml-auto flex items-center gap-2 sm:gap-6 text-right">
-          <StatCol label="승률" value={`${group.winRate.toFixed(1)}%`} />
+          <StatCol label={t("winRate")} value={`${group.winRate.toFixed(1)}%`} />
           <StatCol
-            label="RP"
+            label={t("rp")}
             value={`${group.averageRP > 0 ? "+" : ""}${group.averageRP.toFixed(1)}`}
             highlight={group.averageRP >= 0 ? "gold" : "muted"}
           />
           <div className="hidden sm:flex">
-            <StatCol label="게임 수" value={group.totalGames.toLocaleString()} />
+            <StatCol label={t("games")} value={group.totalGames.toLocaleString()} />
           </div>
           <div className="hidden sm:flex flex-col">
-            <span className="text-[10px] text-[var(--color-muted-foreground)]">평균 순위</span>
+            <span className="text-[10px] text-[var(--color-muted-foreground)]">
+              {t("averageRank")}
+            </span>
             <span className="text-sm font-semibold text-[var(--color-foreground)]">
               #{group.averageRank.toFixed(1)}
             </span>
@@ -271,22 +276,22 @@ function ComboWeaponCardImpl({
 
               {/* 스탯 */}
               <div className="ml-auto flex items-center gap-2 sm:gap-5 text-right">
-                <StatCol label="승률" value={`${v.winRate.toFixed(1)}%`} small />
+                <StatCol label={t("winRate")} value={`${v.winRate.toFixed(1)}%`} small />
                 <StatCol
-                  label="RP"
+                  label={t("rp")}
                   value={`${v.averageRP > 0 ? "+" : ""}${v.averageRP.toFixed(1)}`}
                   highlight={v.averageRP >= 0 ? "gold" : "muted"}
                   small
                 />
                 <div className="hidden sm:flex">
-                  <StatCol label="게임 수" value={v.totalGames.toLocaleString()} small />
+                  <StatCol label={t("games")} value={v.totalGames.toLocaleString()} small />
                 </div>
               </div>
             </div>
           ))}
           {hasMoreVariants && !showAllVariants && (
             <MoreButton
-              count={sortedVariants.length - INITIAL_VARIANTS}
+              label={t("moreTraits", { count: sortedVariants.length - INITIAL_VARIANTS })}
               onActivate={() => React.startTransition(() => setShowAllVariants(true))}
             />
           )}
@@ -300,6 +305,7 @@ export const ComboWeaponCard = React.memo(ComboWeaponCardImpl, (prev, next) => {
   if (prev.rank !== next.rank) return false;
   if (prev.group !== next.group) return false;
   if (prev.getCharName !== next.getCharName) return false;
+  if (prev.getWeaponName !== next.getWeaponName) return false;
   if (prev.getTraitName !== next.getTraitName) return false;
   // selectedCharCodes는 number[]이므로 shallow 비교
   const a = prev.selectedCharCodes;
@@ -310,7 +316,7 @@ export const ComboWeaponCard = React.memo(ComboWeaponCardImpl, (prev, next) => {
   return true;
 });
 
-function MoreButton({ count, onActivate }: { count: number; onActivate: () => void }) {
+function MoreButton({ label, onActivate }: { label: string; onActivate: () => void }) {
   const tapGuard = useTapGuard(
     React.useCallback(
       (e: React.PointerEvent) => {
@@ -328,7 +334,7 @@ function MoreButton({ count, onActivate }: { count: number; onActivate: () => vo
       className="mt-1 text-[10px] sm:text-xs text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] py-1.5 px-2 rounded bg-[var(--color-surface)]/40 hover:bg-[var(--color-surface)]/70 transition-colors"
       style={{ touchAction: "manipulation" }}
     >
-      특성 {count}개 더 보기
+      {label}
     </button>
   );
 }

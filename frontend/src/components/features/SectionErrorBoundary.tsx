@@ -1,28 +1,35 @@
-"use client"
+"use client";
 
-import { AlertTriangle, RefreshCw } from "lucide-react"
-import React from "react"
-import { captureException } from "@/lib/sentry-client"
+import { AlertTriangle, RefreshCw } from "lucide-react";
+import { useTranslations } from "next-intl";
+import React from "react";
+import { captureException } from "@/lib/sentry-client";
 
 interface Props {
-  children: React.ReactNode
-  sectionName: string
-  fallbackHeight?: string
+  children: React.ReactNode;
+  sectionName: string;
+  fallbackHeight?: string;
 }
 
 interface State {
-  hasError: boolean
-  error: Error | null
+  hasError: boolean;
+  error: Error | null;
 }
 
-export class SectionErrorBoundary extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props)
-    this.state = { hasError: false, error: null }
+interface BoundaryMessages {
+  loadFailed: string;
+  temporaryIssue: string;
+  retry: string;
+}
+
+class SectionErrorBoundaryInner extends React.Component<Props & BoundaryMessages, State> {
+  constructor(props: Props & BoundaryMessages) {
+    super(props);
+    this.state = { hasError: false, error: null };
   }
 
   static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error }
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
@@ -35,7 +42,7 @@ export class SectionErrorBoundary extends React.Component<Props, State> {
         section: this.props.sectionName,
         errorBoundary: "section",
       },
-    })
+    });
   }
 
   render() {
@@ -47,22 +54,35 @@ export class SectionErrorBoundary extends React.Component<Props, State> {
         >
           <AlertTriangle className="mb-3 h-8 w-8 text-[var(--color-danger)]" />
           <p className="text-sm font-medium text-[var(--color-foreground)]">
-            {this.props.sectionName} 데이터를 불러오지 못했습니다
+            {this.props.loadFailed}
           </p>
           <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
-            일시적인 문제일 수 있습니다
+            {this.props.temporaryIssue}
           </p>
           <button
             onClick={() => this.setState({ hasError: false, error: null })}
             className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-foreground)] hover:bg-[var(--color-surface)] transition-colors"
           >
             <RefreshCw className="h-3.5 w-3.5" />
-            다시 시도
+            {this.props.retry}
           </button>
         </div>
-      )
+      );
     }
 
-    return this.props.children
+    return this.props.children;
   }
+}
+
+export function SectionErrorBoundary(props: Props) {
+  const t = useTranslations("sectionErrorBoundary");
+
+  return (
+    <SectionErrorBoundaryInner
+      {...props}
+      loadFailed={t("loadFailed", { section: props.sectionName })}
+      temporaryIssue={t("temporaryIssue")}
+      retry={t("retry")}
+    />
+  );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import type { HoneyPickData } from "@/app/api/meta/honey-picks/route";
 import type { CharacterPatchNote } from "@/data/patch-notes";
@@ -26,6 +27,7 @@ export function PatchNoteBottomSheet({
 }: PatchNoteBottomSheetProps) {
   const sheetRef = useFocusTrap<HTMLDivElement>({ active: true, onClose });
   const titleId = React.useId();
+  const t = useTranslations("honeyPicks");
 
   return (
     <div className="fixed inset-0 z-[100] sm:hidden" onClick={onClose}>
@@ -64,12 +66,12 @@ export function PatchNoteBottomSheet({
               </span>
             )}
             <span className="text-[11px] text-[var(--color-muted-foreground)]">
-              패치 {patchNote.patch}
+              {t("patch", { patch: patchNote.patch })}
             </span>
           </div>
           <button
             type="button"
-            aria-label="닫기"
+            aria-label={t("close")}
             onClick={onClose}
             className="text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] text-lg leading-none p-1"
           >
@@ -107,11 +109,11 @@ export function PatchNoteBottomSheet({
         <div className="px-4 py-3 border-t border-[var(--color-border)]/40">
           <div className="flex items-center gap-4 mb-3">
             <div className="flex items-center gap-1.5 text-xs">
-              <span className="text-[var(--color-muted-foreground)]">승률</span>
+              <span className="text-[var(--color-muted-foreground)]">{t("stats.winRate")}</span>
               <span className="font-semibold text-green-400">+{pick.winRateDelta.toFixed(1)}%</span>
             </div>
             <div className="flex items-center gap-1.5 text-xs">
-              <span className="text-[var(--color-muted-foreground)]">RP</span>
+              <span className="text-[var(--color-muted-foreground)]">{t("stats.rp")}</span>
               <span
                 className={cn(
                   "font-semibold",
@@ -127,7 +129,7 @@ export function PatchNoteBottomSheet({
             onClick={onNavigate}
             className="w-full py-2.5 rounded-lg bg-[var(--color-primary)]/15 text-[var(--color-primary)] text-sm font-semibold hover:bg-[var(--color-primary)]/25 transition-colors"
           >
-            상세 분석 보기
+            {t("detailAnalysis")}
           </button>
         </div>
       </div>

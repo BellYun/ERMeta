@@ -3,6 +3,7 @@
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import type { HoneyPickData } from "@/app/api/meta/honey-picks/route";
 import { useL10n } from "@/components/L10nProvider";
@@ -50,14 +51,15 @@ const RANK_STYLE: Record<number, string> = {
 
 async function fetchHoneyPicks(
   patch: string | undefined,
-  tier: string
+  tier: string,
+  fallbackMessage: string
 ): Promise<{ picks: HoneyPickData[]; patchVersion: string }> {
   const params = new URLSearchParams();
   if (patch) params.set("patchVersion", patch);
   params.set("tier", tier);
   const res = await fetch(`/api/meta/honey-picks?${params}`);
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error ?? "API 오류");
+  if (!res.ok) throw new Error(data.error ?? fallbackMessage);
   return {
     picks: data.picks ?? [],
     patchVersion: data.patchVersion ?? patch ?? "",
@@ -80,6 +82,7 @@ interface HoneyPicksSectionProps {
 
 export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPicksSectionProps) {
   const { l10n } = useL10n();
+  const t = useTranslations("honeyPicks");
   const { patch, tier } = useFilter();
   const router = useRouter();
   const [picks, setPicks] = React.useState<HoneyPickData[]>(initialData ?? []);
@@ -118,14 +121,14 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
 
     setLoading(true);
     setError(null);
-    fetchHoneyPicks(patch, tier)
+    fetchHoneyPicks(patch, tier, t("apiError"))
       .then(({ picks: nextPicks, patchVersion }) => {
         setPicks(nextPicks);
         setCurrentPatch(patchVersion);
       })
-      .catch((err) => setError(err instanceof Error ? err.message : "오류가 발생했습니다."))
+      .catch((err) => setError(err instanceof Error ? err.message : t("errorFallback")))
       .finally(() => setLoading(false));
-  }, [patch, tier, initialData]);
+  }, [patch, tier, initialData, t]);
 
   // Resolve picks with patch notes, buff/rework 우선 + 최소 4개 보장
   const resolved = React.useMemo<ResolvedPick[]>(() => {
@@ -135,7 +138,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
       return {
         pick,
         name: getCharName(pick.characterNum),
-        weaponName: resolveWeaponName(pick.bestWeapon),
+        weaponName: resolveWeaponName(pick.bestWeapon, l10n),
         halfUrl: getCharacterHalfImageUrl(pick.characterNum),
         patchNote,
         changeType,
@@ -150,7 +153,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
     const buffedNums = new Set(buffed.map((r) => r.pick.characterNum));
     const rest = all.filter((r) => !buffedNums.has(r.pick.characterNum));
     return [...buffed, ...rest].slice(0, 5);
-  }, [picks, currentPatch, getCharName]);
+  }, [picks, currentPatch, getCharName, l10n]);
 
   if (loading) {
     return (
@@ -166,9 +169,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
 
   if (resolved.length === 0) {
     return (
-      <p className="py-6 text-center text-xs text-[var(--color-muted-foreground)]">
-        이번 패치에서 버프 후 떡상한 캐릭터가 없습니다.
-      </p>
+      <p className="py-6 text-center text-xs text-[var(--color-muted-foreground)]">{t("empty")}</p>
     );
   }
 
@@ -240,7 +241,9 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
               {/* Stats */}
               <div className="flex items-center gap-3 shrink-0">
                 <div className="text-center">
-                  <p className="text-[9px] text-[var(--color-muted-foreground)] uppercase">승률</p>
+                  <p className="text-[9px] text-[var(--color-muted-foreground)] uppercase">
+                    {t("stats.winRate")}
+                  </p>
                   <p className="text-sm font-bold tabular-nums text-[var(--color-foreground)]">
                     {r.pick.winRate.toFixed(1)}%
                   </p>
@@ -257,7 +260,9 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                   </p>
                 </div>
                 <div className="text-center">
-                  <p className="text-[9px] text-[var(--color-muted-foreground)] uppercase">픽률</p>
+                  <p className="text-[9px] text-[var(--color-muted-foreground)] uppercase">
+                    {t("stats.pickRate")}
+                  </p>
                   <p className="text-sm font-bold tabular-nums text-[var(--color-foreground)]">
                     {r.pick.pickRate.toFixed(1)}%
                   </p>
@@ -274,7 +279,9 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                   </p>
                 </div>
                 <div className="text-center">
-                  <p className="text-[9px] text-[var(--color-muted-foreground)] uppercase">RP</p>
+                  <p className="text-[9px] text-[var(--color-muted-foreground)] uppercase">
+                    {t("stats.rp")}
+                  </p>
                   <p
                     className={cn(
                       "text-sm font-bold tabular-nums",
@@ -385,7 +392,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                   </span>
                   <span className="ml-auto text-[var(--color-accent-gold)] tabular-nums font-semibold">
                     {r.pick.averageRP >= 0 ? "+" : ""}
-                    {r.pick.averageRP.toFixed(0)} RP
+                    {r.pick.averageRP.toFixed(0)} {t("stats.rp")}
                   </span>
                 </div>
               </div>

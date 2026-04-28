@@ -2,6 +2,7 @@
 
 import { X, Users, Loader2, Info, Share2 } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary";
 import { useL10n } from "@/components/L10nProvider";
@@ -21,6 +22,7 @@ const ComboCard = React.lazy(() => import("./ComboCard").then((m) => ({ default:
  */
 export function SynergyResults({ compact = false }: { compact?: boolean }) {
   const { l10n } = useL10n();
+  const t = useTranslations("synergyMainResults");
   const searchParams = useSearchParams();
   const router = useRouter();
   const { focusCharacters } = useFocusCharacters();
@@ -74,16 +76,16 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
       fetch(`/api/stats/trios?${params.toString()}`, { signal })
         .then(async (res) => {
           const data = await res.json();
-          if (!res.ok) throw new Error(data.error ?? "API 오류");
+          if (!res.ok) throw new Error(data.error ?? t("genericError"));
           setTrioResults(data.results ?? []);
         })
         .catch((err) => {
           if (err instanceof Error && err.name === "AbortError") return;
           if (err instanceof Error && err.name === "TimeoutError") {
-            setError("요청 시간이 초과되었습니다. 다시 시도해주세요.");
+            setError(t("timeout"));
             return;
           }
-          setError(err instanceof Error ? err.message : "오류가 발생했습니다.");
+          setError(err instanceof Error ? err.message : t("genericError"));
         })
         .finally(() => setLoading(false));
     }, 300);
@@ -94,7 +96,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
       controller.abort();
       setLoading(false);
     };
-  }, [selectedAllies, sortBy]);
+  }, [selectedAllies, sortBy, t]);
 
   const recommendations = React.useMemo(() => {
     if (selectedAllies.length === 0) return [];
@@ -158,7 +160,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
       {/* 정렬 기준 + 헤더 */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-1">
-          {SORT_OPTIONS.map(({ value, label }) => (
+          {SORT_OPTIONS.map(({ value, labelKey }) => (
             <button
               key={value}
               onClick={() => {
@@ -172,7 +174,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                   : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]"
               )}
             >
-              {label}
+              {t(`sort.${labelKey}`)}
             </button>
           ))}
         </div>
@@ -182,9 +184,14 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
             <>
               <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
                 {selectedAllies.length === 1
-                  ? `${getCharName(selectedAllies[0])} 포함 추천 조합`
-                  : `${getCharName(selectedAllies[0])} + ${getCharName(selectedAllies[1])} 조합`}
-                {focusCharacters.length > 0 ? ` (내 풀 ${focusCharacters.length}명 필터)` : ""}
+                  ? t("titleSingle", { ally: getCharName(selectedAllies[0]) })
+                  : t("titlePair", {
+                      ally1: getCharName(selectedAllies[0]),
+                      ally2: getCharName(selectedAllies[1]),
+                    })}
+                {focusCharacters.length > 0
+                  ? ` (${t("focusFilter", { count: focusCharacters.length })})`
+                  : ""}
               </h2>
               <button
                 type="button"
@@ -193,8 +200,11 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                   const ally2Code = selectedAllies[1] ?? null;
                   const title =
                     selectedAllies.length === 2
-                      ? `${getCharName(selectedAllies[0])} + ${getCharName(selectedAllies[1])} 조합 추천`
-                      : `${getCharName(selectedAllies[0])} 포함 추천 조합`;
+                      ? t("titlePair", {
+                          ally1: getCharName(selectedAllies[0]),
+                          ally2: getCharName(selectedAllies[1]),
+                        })
+                      : t("titleSingle", { ally: getCharName(selectedAllies[0]) });
                   const buildShareUrl = (method: "native" | "clipboard") => {
                     const u = new URL(window.location.href);
                     u.searchParams.set("utm_source", "ergg_share");
@@ -230,7 +240,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                 className="inline-flex items-center gap-1 shrink-0 rounded-md border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 hover:border-[var(--color-primary)]/50 transition-colors"
               >
                 <Share2 className="h-3 w-3" />
-                {copied ? "복사됨!" : "공유"}
+                {copied ? t("copied") : t("share")}
               </button>
               <button
                 type="button"
@@ -238,7 +248,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                 className="inline-flex items-center gap-1 shrink-0 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 py-1 text-xs font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:border-[var(--color-border-light)] transition-colors"
               >
                 <X className="h-3 w-3" />
-                초기화
+                {t("reset")}
               </button>
             </>
           )}
@@ -246,24 +256,22 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
       </div>
 
       {/* 결과 목록 */}
-      <SectionErrorBoundary sectionName="조합 결과">
+      <SectionErrorBoundary sectionName={t("sectionName")}>
         {selectedAllies.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
             <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
-            <p className="text-sm text-[var(--color-muted-foreground)]">
-              아군의 픽에 맞춰 최선의 조합을 찾아보세요
-            </p>
+            <p className="text-sm text-[var(--color-muted-foreground)]">{t("empty.prompt")}</p>
             <div className="flex flex-col gap-1 mt-3 text-xs text-[var(--color-muted-foreground)]">
-              <span>1. 내 캐릭터 풀을 설정하세요 (선택사항)</span>
-              <span>2. 아군의 캐릭터를 1~2명 선택하세요</span>
-              <span>3. 내가 할 수 있는 것 중 최선의 조합을 추천합니다</span>
+              <span>{t("empty.step1")}</span>
+              <span>{t("empty.step2")}</span>
+              <span>{t("empty.step3")}</span>
             </div>
           </div>
         ) : loading ? (
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2 py-2">
               <Loader2 className="h-4 w-4 animate-spin text-[var(--color-primary)]" />
-              <p className="text-sm text-[var(--color-muted-foreground)]">조합 데이터 로딩 중...</p>
+              <p className="text-sm text-[var(--color-muted-foreground)]">{t("loading")}</p>
             </div>
             {Array.from({ length: 5 }).map((_, i) => (
               <div
@@ -292,7 +300,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
             {selectedAllies.length === 1 && (
               <p className="flex items-center gap-1.5 text-[11px] text-[var(--color-muted-foreground)] bg-[var(--color-surface-2)] px-3 py-2 rounded-lg">
                 <Info className="h-3.5 w-3.5 shrink-0" />
-                1명 더 선택하면 더 정확한 추천을 받을 수 있어요
+                {t("infoSingle")}
               </p>
             )}
             <React.Suspense
@@ -327,15 +335,13 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
             <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
             <p className="text-sm text-[var(--color-muted-foreground)]">
-              {focusCharacters.length > 0
-                ? "내 캐릭터 풀에 해당하는 조합이 없습니다. 캐릭터 풀을 넓혀보세요."
-                : "해당 조합 데이터가 없습니다"}
+              {focusCharacters.length > 0 ? t("emptyFiltered") : t("emptyNoData")}
             </p>
             <button
               onClick={clearAllies}
               className="mt-3 text-xs text-[var(--color-primary)] hover:underline"
             >
-              아군 초기화하기
+              {t("clearAllies")}
             </button>
           </div>
         )}

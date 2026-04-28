@@ -1,46 +1,47 @@
-"use client"
+"use client";
 
-import { X, Search, ChevronDown, ChevronUp } from "lucide-react"
-import Image from "next/image"
-import * as React from "react"
-import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMap"
-import { useL10n } from "@/components/L10nProvider"
+import { X, Search, ChevronDown, ChevronUp } from "lucide-react";
+import Image from "next/image";
+import { useTranslations } from "next-intl";
+import * as React from "react";
+import { useL10n } from "@/components/L10nProvider";
+import { useFocusCharacters } from "@/hooks/useFocusCharacters";
+import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMap";
+import { getAllCharacterCodes, getFallbackMap } from "./constants";
+import { matchesChosungSearch } from "./utils";
+
 const VirtualCharacterGrid = React.lazy(() =>
   import("@/components/ui/VirtualCharacterGrid").then((m) => ({ default: m.VirtualCharacterGrid }))
-)
-import { useFocusCharacters } from "@/hooks/useFocusCharacters"
-import { getAllCharacterCodes, getFallbackMap } from "./constants"
-import { matchesChosungSearch } from "./utils"
+);
 
 /**
  * 내 캐릭터 풀 Island — localStorage 기반 독립 Client Component
  * 다른 Island(SynergyResults)과 useFocusCharacters 훅으로 상태 공유
  */
 export function FocusCharacterPool() {
-  const { l10n } = useL10n()
-  const { focusCharacters, setFocusCharacters, toggleFocus } = useFocusCharacters()
-  const [isFocusExpanded, setIsFocusExpanded] = React.useState(false)
-  const [focusSearch, setFocusSearch] = React.useState("")
+  const { l10n } = useL10n();
+  const t = useTranslations("focusCharacterPool");
+  const { focusCharacters, setFocusCharacters, toggleFocus } = useFocusCharacters();
+  const [isFocusExpanded, setIsFocusExpanded] = React.useState(false);
+  const [focusSearch, setFocusSearch] = React.useState("");
 
   const getCharName = React.useCallback(
     (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
     [l10n]
-  )
+  );
 
-  const deferredSearch = React.useDeferredValue(focusSearch)
+  const deferredSearch = React.useDeferredValue(focusSearch);
 
   const filteredFocusCodes = React.useMemo(() => {
-    if (!deferredSearch.trim()) return getAllCharacterCodes()
-    const q = deferredSearch.trim()
-    return getAllCharacterCodes().filter((code) =>
-      matchesChosungSearch(getCharName(code), q)
-    )
-  }, [deferredSearch, getCharName])
+    if (!deferredSearch.trim()) return getAllCharacterCodes();
+    const q = deferredSearch.trim();
+    return getAllCharacterCodes().filter((code) => matchesChosungSearch(getCharName(code), q));
+  }, [deferredSearch, getCharName]);
 
   const isSelected = React.useCallback(
     (code: number) => focusCharacters.includes(code),
     [focusCharacters]
-  )
+  );
 
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm overflow-hidden">
@@ -51,30 +52,26 @@ export function FocusCharacterPool() {
         className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-[var(--color-surface-2)] transition-colors"
       >
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-[var(--color-foreground)]">
-            내 캐릭터 풀
-          </span>
+          <span className="text-xs font-medium text-[var(--color-foreground)]">{t("title")}</span>
           {focusCharacters.length > 0 && (
             <span className="rounded-full bg-[var(--color-primary)]/20 px-1.5 py-0.5 text-[10px] font-medium text-[var(--color-primary)]">
-              {focusCharacters.length}명
+              {t("count", { count: focusCharacters.length })}
             </span>
           )}
           {focusCharacters.length === 0 && (
-            <span className="text-[10px] text-[var(--color-muted-foreground)]">
-              내가 플레이 가능한 캐릭터를 미리 설정하세요
-            </span>
+            <span className="text-[10px] text-[var(--color-muted-foreground)]">{t("hint")}</span>
           )}
         </div>
         <div className="flex items-center gap-2">
           {focusCharacters.length > 0 && (
             <button
               onClick={(e) => {
-                e.stopPropagation()
-                setFocusCharacters([])
+                e.stopPropagation();
+                setFocusCharacters([]);
               }}
               className="text-[10px] text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors px-1.5 py-0.5 rounded hover:bg-[var(--color-surface-2)]"
             >
-              초기화
+              {t("reset")}
             </button>
           )}
           {isFocusExpanded ? (
@@ -118,7 +115,7 @@ export function FocusCharacterPool() {
             <input
               value={focusSearch}
               onChange={(e) => setFocusSearch(e.target.value)}
-              placeholder="캐릭터 검색 (초성 가능: ㅎㅇ)"
+              placeholder={t("searchPlaceholder")}
               className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
             />
             {focusSearch && (
@@ -131,7 +128,11 @@ export function FocusCharacterPool() {
             )}
           </div>
 
-          <React.Suspense fallback={<div className="h-[300px] rounded-lg bg-[var(--color-surface-2)] animate-pulse" />}>
+          <React.Suspense
+            fallback={
+              <div className="h-[300px] rounded-lg bg-[var(--color-surface-2)] animate-pulse" />
+            }
+          >
             <VirtualCharacterGrid
               codes={filteredFocusCodes}
               getCharName={getCharName}
@@ -143,5 +144,5 @@ export function FocusCharacterPool() {
         </div>
       )}
     </div>
-  )
+  );
 }

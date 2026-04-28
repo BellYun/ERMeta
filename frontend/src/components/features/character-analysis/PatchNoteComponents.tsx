@@ -1,19 +1,27 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { getCharacterPatchNote } from "@/data/patch-notes"
-import type { ChangeType } from "@/data/patch-notes"
-import { cn } from "@/lib/utils"
-import { CHANGE_TYPE_CONFIG } from "./constants"
+import { useTranslations } from "next-intl";
+import * as React from "react";
+import { getCharacterPatchNote } from "@/data/patch-notes";
+import type { ChangeType } from "@/data/patch-notes";
+import { cn } from "@/lib/utils";
+import { CHANGE_TYPE_CONFIG } from "./constants";
 
 export function ChangeTypeBadge({ type }: { type: ChangeType }) {
-  const config = CHANGE_TYPE_CONFIG[type]
+  const config = CHANGE_TYPE_CONFIG[type];
+  const t = useTranslations("characterPatch");
   return (
-    <span className={cn("inline-flex items-center gap-1 rounded border px-1.5 sm:px-2 py-0.5 text-xs font-semibold shrink-0", config.bgClass, config.colorClass)}>
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 rounded border px-1.5 sm:px-2 py-0.5 text-xs font-semibold shrink-0",
+        config.bgClass,
+        config.colorClass
+      )}
+    >
       <config.Icon className="h-3 w-3" />
-      <span className="hidden sm:inline">{config.label}</span>
+      <span className="hidden sm:inline">{t(`types.${config.labelKey}`)}</span>
     </span>
-  )
+  );
 }
 
 export function PatchTooltip({
@@ -24,18 +32,19 @@ export function PatchTooltip({
   metricLabel,
   format,
 }: {
-  active?: boolean
-  payload?: ReadonlyArray<{ value?: number | string | null }>
-  label?: string | number
-  selectedCode: number
-  metricLabel: string
-  format: (v: number) => string
+  active?: boolean;
+  payload?: ReadonlyArray<{ value?: number | string | null }>;
+  label?: string | number;
+  selectedCode: number;
+  metricLabel: string;
+  format: (v: number) => string;
 }) {
-  if (!active || !payload?.length) return null
-  const rawValue = payload[0]?.value
-  const value = typeof rawValue === "number" ? rawValue : undefined
-  const patchLabel = label != null ? String(label) : ""
-  const note = patchLabel ? getCharacterPatchNote(selectedCode, patchLabel) : undefined
+  const t = useTranslations("characterPatch");
+  if (!active || !payload?.length) return null;
+  const rawValue = payload[0]?.value;
+  const value = typeof rawValue === "number" ? rawValue : undefined;
+  const patchLabel = label != null ? String(label) : "";
+  const note = patchLabel ? getCharacterPatchNote(selectedCode, patchLabel) : undefined;
 
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-3 text-xs shadow-lg max-w-[220px]">
@@ -49,11 +58,11 @@ export function PatchTooltip({
       {note && note.changes.length > 0 && (
         <div className="mt-2 border-t border-[var(--color-border)] pt-2 space-y-1">
           {note.changes.map((change, i) => {
-            const config = CHANGE_TYPE_CONFIG[change.changeType]
+            const config = CHANGE_TYPE_CONFIG[change.changeType];
             return (
               <div key={i} className="flex items-start gap-1.5">
                 <span className={cn("shrink-0 font-bold", config.colorClass)}>
-                  [{config.label}]
+                  [{t(`types.${config.labelKey}`)}]
                 </span>
                 <span className="text-[var(--color-muted-foreground)] leading-tight">
                   {change.target}
@@ -64,10 +73,10 @@ export function PatchTooltip({
                   )}
                 </span>
               </div>
-            )
+            );
           })}
         </div>
       )}
     </div>
-  )
+  );
 }

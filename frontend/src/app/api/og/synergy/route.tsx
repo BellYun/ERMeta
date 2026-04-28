@@ -492,8 +492,8 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const ally1Param = searchParams.get("ally1");
-  const ally2Param = searchParams.get("ally2");
+  const ally1Param = searchParams.get("ally1") ?? searchParams.get("a");
+  const ally2Param = searchParams.get("ally2") ?? searchParams.get("b");
 
   const char1 = ally1Param ? parseInt(ally1Param, 10) : null;
   const char2 = ally2Param ? parseInt(ally2Param, 10) : null;

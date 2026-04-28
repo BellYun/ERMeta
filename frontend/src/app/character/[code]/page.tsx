@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { CharacterPicker } from "@/components/features/character-analysis/CharacterPicker";
 import { CHARACTER_CODES } from "@/components/features/character-analysis/constants";
@@ -17,39 +18,35 @@ interface Props {
   searchParams: Promise<{ weapon?: string }>;
 }
 
-/** 87개 캐릭터 페이지를 빌드 타임에 정적 생성 */
-export async function generateStaticParams() {
-  return CHARACTER_CODES.map((code) => ({ code: String(code) }));
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code: rawCode } = await params;
   const code = parseInt(rawCode, 10);
   const name = !isNaN(code) ? getCharacterName(code) : null;
+  const t = await getTranslations("characterMetadata");
 
   if (name && !name.startsWith("코드:")) {
-    const title = `${name} 캐릭터 분석`;
-    const description = `이터널리턴 ${name} 승률, 픽률, 평균 RP, 최적 빌드 통계. ${name} 패치별 트렌드와 무기 조합을 분석해드립니다.`;
+    const title = t("titleWithName", { name });
+    const description = t("descriptionWithName", { name });
 
     return {
       title,
       description,
       keywords: [
-        `이터널리턴 ${name}`,
-        `${name} 빌드`,
-        `${name} 승률`,
-        `${name} 통계`,
-        "이리와지지",
-        "ERGG",
-        "이터널리턴 캐릭터 분석",
+        t("keywords.character", { name }),
+        t("keywords.build", { name }),
+        t("keywords.winRate", { name }),
+        t("keywords.stats", { name }),
+        t("keywords.brand"),
+        t("keywords.app"),
+        t("keywords.analysis"),
       ],
       openGraph: {
-        title: `${title} | 이리와지지 ER&GG`,
+        title: t("openGraphTitle", { title }),
         description,
         url: `/character/${code}`,
       },
       twitter: {
-        title: `${title} | ER&GG`,
+        title: t("twitterTitle", { title }),
         description,
       },
       alternates: { canonical: `/character/${code}` },
@@ -57,33 +54,32 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: "캐릭터 분석",
-    description:
-      "이터널리턴 캐릭터별 승률, 픽률, 평균 RP, 최적 빌드 통계. 패치별 트렌드와 무기 조합을 분석해드립니다.",
+    title: t("titleFallback"),
+    description: t("descriptionFallback"),
     keywords: [
-      "이리와지지",
-      "ERGG",
-      "이터널리턴 캐릭터 분석",
-      "이터널리턴 캐릭터 빌드",
-      "이터널리턴 캐릭터 통계",
-      "이터널리턴 무기 추천",
+      t("keywords.brand"),
+      t("keywords.app"),
+      t("keywords.analysis"),
+      t("keywords.fallbackBuild"),
+      t("keywords.fallbackStats"),
+      t("keywords.fallbackWeapon"),
     ],
     openGraph: {
-      title: "캐릭터 분석 | 이리와지지 ER&GG",
-      description: "이터널리턴 캐릭터별 승률, 픽률, 평균 RP, 최적 빌드 통계.",
+      title: t("openGraphTitle", { title: t("titleFallback") }),
+      description: t("socialDescription"),
       url: "/character",
     },
     twitter: {
-      title: "캐릭터 분석 | ER&GG",
-      description: "이터널리턴 캐릭터별 승률, 픽률, 평균 RP, 최적 빌드 통계.",
+      title: t("twitterTitle", { title: t("titleFallback") }),
+      description: t("socialDescription"),
     },
     alternates: { canonical: "/character" },
   };
 }
 
 /**
- * 캐릭터 분석 페이지 — SSG + ISR
- * 87개 캐릭터를 빌드 타임에 정적 생성, 30분 주기로 재검증
+ * 캐릭터 분석 페이지 — on-demand ISR
+ * 로케일/쿠키 기반 번역이 있어 빌드 타임 전체 prerender 대신 첫 요청 시 생성 후 재검증한다.
  */
 export default async function CharacterPage({ params, searchParams }: Props) {
   const { code: rawCode } = await params;
@@ -97,6 +93,7 @@ export default async function CharacterPage({ params, searchParams }: Props) {
   }
 
   const base = process.env.NEXT_PUBLIC_BASE_URL ?? "https://erwagg.com";
+  const t = await getTranslations("characterPage");
 
   const patches = await fetchPatches(base);
   const [initialStats, initialPrevStats] = await Promise.all([
@@ -127,29 +124,27 @@ export default async function CharacterPage({ params, searchParams }: Props) {
                   />
                 </svg>
                 <span className="text-[10px] sm:text-[11px] font-semibold text-[var(--color-primary)] uppercase tracking-[0.1em]">
-                  Analytics
+                  {t("badge")}
                 </span>
               </span>
               <span className="inline-flex items-center gap-1 rounded-full bg-[var(--color-warning)]/10 border border-[var(--color-warning)]/20 px-2 py-0.5">
                 <span className="text-[9px] font-bold text-[var(--color-warning)] uppercase">
-                  BETA
+                  {t("beta")}
                 </span>
               </span>
               <span className="text-[10px] sm:text-[11px] text-[var(--color-muted-foreground)]">
-                개발 중 · 패치 {patches[0] ?? "—"} 기준
+                {t("patchBase", { patch: patches[0] ?? "—" })}
               </span>
             </div>
 
             {/* Title */}
             <h1 className="text-[28px] sm:text-4xl font-black tracking-tight text-[var(--color-foreground)] leading-none">
-              캐릭터 분석
+              {t("title")}
             </h1>
             <p className="text-xs sm:text-sm text-[var(--color-muted-foreground)] max-w-lg">
-              캐릭터별 승률 · 빌드 · 패치 트렌드 · 장비 통계 심층 분석
+              {t("subtitle")}
             </p>
-            <p className="text-[11px] text-[var(--color-warning)]/80 mt-0.5">
-              일부 아이템 이미지가 누락되거나 잘못 표시될 수 있습니다
-            </p>
+            <p className="text-[11px] text-[var(--color-warning)]/80 mt-0.5">{t("imageNotice")}</p>
           </div>
         </div>
 
@@ -161,7 +156,7 @@ export default async function CharacterPage({ params, searchParams }: Props) {
         <CharacterPicker code={code} currentPatch={patches[0] ?? null} />
 
         <div className="mt-4 sm:mt-5 min-h-[4800px] sm:min-h-[3200px]">
-          <SectionErrorBoundary sectionName="캐릭터 분석">
+          <SectionErrorBoundary sectionName={t("sectionName")}>
             <Suspense fallback={<div className="min-h-[4800px] sm:min-h-[3200px]" aria-hidden />}>
               <CharacterAnalysisClient
                 key={code}

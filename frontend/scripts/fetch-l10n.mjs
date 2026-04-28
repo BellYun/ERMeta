@@ -10,7 +10,24 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUTPUT_DIR = join(__dirname, "../public/l10n");
 const SEPARATOR = "\u2503"; // ┃
 
-const LANGUAGES = ["Korean"];
+// BSER open-api.bser.io 가 지원하는 언어 (502 응답 = 미지원: Dutch/Turkish/Arabic 등)
+const LANGUAGES = [
+  "Korean",
+  "English",
+  "Japanese",
+  "ChineseSimplified",
+  "ChineseTraditional",
+  "French",
+  "German",
+  "Italian",
+  "Spanish",
+  "Portuguese",
+  "Polish",
+  "Russian",
+  "Vietnamese",
+  "Indonesian",
+  "Thai",
+];
 
 const apiKey = process.env.BSER_API_KEY;
 if (!apiKey) {
@@ -20,13 +37,24 @@ if (!apiKey) {
 
 mkdirSync(OUTPUT_DIR, { recursive: true });
 
-for (const language of LANGUAGES) {
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+for (let i = 0; i < LANGUAGES.length; i++) {
+  const language = LANGUAGES[i];
+  if (i > 0) await sleep(1500); // BSER API rate limit 회피
   console.log(`[fetch-l10n] ${language} 처리 중...`);
 
-  // 1단계: l10Path URL 가져오기
-  const metaRes = await fetch(`https://open-api.bser.io/v1/l10n/${language}`, {
-    headers: { "x-api-key": apiKey },
-  });
+  // 1단계: l10Path URL 가져오기 (429 시 재시도)
+  let metaRes;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    metaRes = await fetch(`https://open-api.bser.io/v1/l10n/${language}`, {
+      headers: { "x-api-key": apiKey },
+    });
+    if (metaRes.status !== 429) break;
+    const wait = 2000 * (attempt + 1);
+    console.log(`[fetch-l10n] 429 받음 → ${wait}ms 대기 후 재시도`);
+    await sleep(wait);
+  }
   if (!metaRes.ok) {
     console.error(`[fetch-l10n] BSER API 오류: ${metaRes.status}`);
     process.exit(1);

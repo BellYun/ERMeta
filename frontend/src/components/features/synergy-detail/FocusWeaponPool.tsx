@@ -3,11 +3,13 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { X, Search, ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useL10n } from "@/components/L10nProvider";
 import { useFocusCharWeapons } from "@/hooks/useFocusCharWeapons";
 import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMap";
 import { cn } from "@/lib/utils";
+import { resolveWeaponName } from "@/lib/weaponMap";
 import { getFallbackMap } from "../synergy/constants";
 import { matchesChosungSearch } from "../synergy/utils";
 import { useTapGuard } from "./useTapGuard";
@@ -27,6 +29,8 @@ const FocusCell = React.memo(function FocusCell({
   selected: boolean;
   onSelect: (charCode: number, weaponCode: number) => void;
 }) {
+  const { l10n } = useL10n();
+  const localizedWeaponLabel = item.weaponCode > 0 ? resolveWeaponName(item.weaponCode, l10n) : "";
   // 가상화 그리드 안의 셀 — onPointerUp 만 두면 스크롤 도중 우연 트리거됨.
   const activate = React.useCallback(
     () => onSelect(item.charCode, item.weaponCode),
@@ -43,7 +47,7 @@ const FocusCell = React.memo(function FocusCell({
           activate();
         }
       }}
-      title={item.weaponLabel ? `${charName} (${item.weaponLabel})` : charName}
+      title={localizedWeaponLabel ? `${charName} (${localizedWeaponLabel})` : charName}
       style={{ touchAction: "manipulation" }}
       className={cn(
         "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors touch-manipulation",
@@ -64,9 +68,9 @@ const FocusCell = React.memo(function FocusCell({
       <span className="w-full truncate text-center text-[11px] font-medium text-[var(--color-foreground)]">
         {charName}
       </span>
-      {item.weaponLabel && (
+      {localizedWeaponLabel && (
         <span className="w-full truncate text-center text-[10px] text-[var(--color-muted-foreground)]">
-          {item.weaponLabel}
+          {localizedWeaponLabel}
         </span>
       )}
     </button>
@@ -75,6 +79,7 @@ const FocusCell = React.memo(function FocusCell({
 
 export function FocusWeaponPool() {
   const { l10n } = useL10n();
+  const t = useTranslations("focusWeaponPool");
   const { focusCharWeapons, setFocusCharWeapons, toggleFocus } = useFocusCharWeapons();
   const [isExpanded, setIsExpanded] = React.useState(false);
   const [search, setSearch] = React.useState("");
@@ -89,12 +94,18 @@ export function FocusWeaponPool() {
   const deferredSearch = React.useDeferredValue(search);
   const filteredItems = React.useMemo(() => {
     if (!deferredSearch.trim()) return getAllCharWeaponItems();
-    const q = deferredSearch.trim();
+    const q = deferredSearch.trim().toLowerCase();
     return getAllCharWeaponItems().filter((item) => {
       const name = getCharName(item.charCode) ?? "";
-      return matchesChosungSearch(name, q) || (item.weaponLabel ?? "").includes(q);
+      const localizedWeapon =
+        item.weaponCode > 0 ? resolveWeaponName(item.weaponCode, l10n).toLowerCase() : "";
+      return (
+        matchesChosungSearch(name, q) ||
+        (item.weaponLabel ?? "").toLowerCase().includes(q) ||
+        localizedWeapon.includes(q)
+      );
     });
-  }, [deferredSearch, getCharName]);
+  }, [deferredSearch, getCharName, l10n]);
 
   const isSelected = React.useCallback(
     (item: CharWeaponItem) =>
@@ -129,11 +140,12 @@ export function FocusWeaponPool() {
   });
 
   const resolveLabel = (f: { charCode: number; weaponCode: number }) => {
-    const item = getAllCharWeaponItems().find(
-      (i) => i.charCode === f.charCode && i.weaponCode === f.weaponCode
-    );
     const name = getCharName(f.charCode);
-    return item?.weaponLabel ? `${name} (${item.weaponLabel})` : name;
+    if (f.weaponCode > 0) {
+      const weapon = resolveWeaponName(f.weaponCode, l10n);
+      return `${name} (${weapon})`;
+    }
+    return `${name} (${t("allWeapons")})`;
   };
 
   // div[role=button] 헤더에 페이지 스크롤 도중 우연 트리거가 일어나지 않도록 가드 적용.
@@ -159,16 +171,14 @@ export function FocusWeaponPool() {
         className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80 transition-colors cursor-pointer"
       >
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-[var(--color-foreground)]">내 캐릭터 풀</span>
+          <span className="text-xs font-medium text-[var(--color-foreground)]">{t("title")}</span>
           {focusCharWeapons.length > 0 && (
             <span className="rounded-full bg-[var(--color-primary)]/20 px-1.5 py-0.5 text-[10px] font-medium text-[var(--color-primary)]">
-              {focusCharWeapons.length}개
+              {t("count", { count: focusCharWeapons.length })}
             </span>
           )}
           {focusCharWeapons.length === 0 && (
-            <span className="text-[10px] text-[var(--color-muted-foreground)]">
-              내가 플레이 가능한 캐릭터+무기를 미리 설정하세요
-            </span>
+            <span className="text-[10px] text-[var(--color-muted-foreground)]">{t("hint")}</span>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -185,7 +195,7 @@ export function FocusWeaponPool() {
               onPointerUp={(e) => e.stopPropagation()}
               className="text-[10px] text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center rounded hover:bg-[var(--color-surface-2)]"
             >
-              초기화
+              {t("reset")}
             </button>
           )}
           {isExpanded ? (
@@ -229,7 +239,7 @@ export function FocusWeaponPool() {
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="캐릭터 또는 무기 검색 (초성 가능: ㅎㅇ)"
+              placeholder={t("searchPlaceholder")}
               className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
             />
             {search && (
@@ -244,7 +254,7 @@ export function FocusWeaponPool() {
 
           {filteredItems.length === 0 ? (
             <p className="py-4 text-center text-xs text-[var(--color-muted-foreground)]">
-              검색 결과 없음
+              {t("noResults")}
             </p>
           ) : (
             <div

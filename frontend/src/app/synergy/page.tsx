@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { getCharacterName } from "@/lib/characterMap";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -11,49 +13,61 @@ function parseAllyCode(raw: string | string[] | undefined): number | null {
   return Number.isFinite(code) && code > 0 ? code : null;
 }
 
+function getFirstParam(
+  params: Record<string, string | string[] | undefined>,
+  ...keys: string[]
+): string | string[] | undefined {
+  for (const key of keys) {
+    const value = params[key];
+    if (value != null) return value;
+  }
+  return undefined;
+}
+
 export async function generateMetadata({
   searchParams,
 }: {
   searchParams: SearchParams;
 }): Promise<Metadata> {
   const params = await searchParams;
-  const ally1 = parseAllyCode(params.ally1);
-  const ally2 = parseAllyCode(params.ally2);
+  const t = await getTranslations("synergyMetadata");
+  const ally1 = parseAllyCode(getFirstParam(params, "ally1", "a"));
+  const ally2 = parseAllyCode(getFirstParam(params, "ally2", "b"));
 
   const name1 = ally1 ? getCharacterName(ally1) : null;
   const name2 = ally2 ? getCharacterName(ally2) : null;
 
   const headline =
     name1 && name2
-      ? `${name1} + ${name2} 조합 추천`
+      ? t("headlinePair", { name1, name2 })
       : name1
-        ? `${name1} 포함 조합 추천`
-        : "조합 추천";
+        ? t("headlineSingle", { name1 })
+        : t("headlineFallback");
 
   const description =
     name1 && name2
-      ? `${name1} + ${name2} 조합의 최적 3번째 픽을 Bayesian 통계로 분석.`
+      ? t("descriptionPair", { name1, name2 })
       : name1
-        ? `${name1}과 함께할 최적 2~3번째 픽을 Bayesian 통계로 분석합니다.`
-        : "이터널리턴 3인 조합 추천. 무기+특성 포함 상세 조합 분석으로 이동하세요.";
+        ? t("descriptionSingle", { name1 })
+        : t("descriptionFallback");
 
   const ogQuery = new URLSearchParams();
   if (ally1) ogQuery.set("ally1", String(ally1));
   if (ally2) ogQuery.set("ally2", String(ally2));
-  const ogImageUrl = `/api/og/synergy${ogQuery.size ? `?${ogQuery.toString()}` : ""}`;
+  const ogImageUrl = `/synergy-detail/opengraph-image${ogQuery.size ? `?${ogQuery.toString()}` : ""}`;
 
   return {
     title: headline,
     description,
     openGraph: {
-      title: `${headline} | 이리와지지 ER&GG`,
+      title: t("socialTitle", { headline }),
       description,
       url: "/synergy",
       images: [{ url: ogImageUrl, width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${headline} | 이리와지지 ER&GG`,
+      title: t("socialTitle", { headline }),
       description,
       images: [ogImageUrl],
     },
@@ -62,6 +76,8 @@ export async function generateMetadata({
 }
 
 export default function SynergyPage() {
+  const t = useTranslations("synergyMain");
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 px-4">
       <div className="flex flex-col items-center gap-3 text-center">
@@ -81,17 +97,15 @@ export default function SynergyPage() {
           </svg>
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-[var(--color-foreground)] tracking-tight">
-          조합 추천이 업그레이드됐어요
+          {t("title")}
         </h1>
-        <p className="text-sm text-[var(--color-muted-foreground)] max-w-md">
-          무기 + 메인 특성까지 포함한 상세 조합 추천으로 더 정확한 팀 조합을 찾아보세요
-        </p>
+        <p className="text-sm text-[var(--color-muted-foreground)] max-w-md">{t("subtitle")}</p>
       </div>
       <Link
         href="/synergy-detail"
         className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-primary)] px-6 py-3 text-sm font-bold text-white hover:opacity-90 transition-opacity"
       >
-        상세 조합 추천 바로가기
+        {t("cta")}
         <svg
           className="h-4 w-4"
           fill="none"

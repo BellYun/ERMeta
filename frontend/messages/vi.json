@@ -1,0 +1,485 @@
+{
+  "header": {
+    "languageSelectAria": "Chọn ngôn ngữ",
+    "logoTitle": "ER&GG",
+    "logoSubtitle": "Meta Eternal Return",
+    "patchPrefix": "v"
+  },
+  "navigation": {
+    "ariaMain": "Điều hướng chính",
+    "metaAnalysis": "Phân Tích Meta",
+    "synergyRecommendation": "Đề Xuất Đội Hình",
+    "characterAnalysis": "Phân Tích Nhân Vật"
+  },
+  "mobileTab": {
+    "meta": "Meta",
+    "synergy": "Đội hình",
+    "character": "Nhân vật"
+  },
+  "layout": {
+    "skipToMain": "Chuyển đến nội dung chính",
+    "terms": "Điều khoản",
+    "privacy": "Quyền riêng tư",
+    "updates": "Cập nhật",
+    "sitemap": "Sơ đồ trang",
+    "apiAttribution": "Dịch vụ này được xây dựng bằng Open API của Nimble Neuron. Bản quyền hình ảnh và dữ liệu trong game thuộc về Nimble Neuron Co., Ltd.",
+    "disclaimer": "Trang web này không phải là dịch vụ chính thức của Nimble Neuron và công ty không chịu trách nhiệm cho các vấn đề phát sinh khi sử dụng.",
+    "copyright": "© {year} ER&GG"
+  },
+  "rootMetadata": {
+    "defaultTitle": "ER&GG | Phân Tích Meta Eternal Return",
+    "description": "ER&GG cung cấp tier nhân vật, gợi ý đội hình 3 người cùng thống kê win rate, pick rate và RP trung bình của Eternal Return dựa trên dữ liệu trận đấu rank cao.",
+    "structuredDescription": "Dịch vụ phân tích tier nhân vật, đội hình 3 người và thống kê Eternal Return",
+    "titleTemplate": "%s | ER&GG",
+    "siteName": "ER&GG",
+    "author": "ER&GG",
+    "creator": "ER&GG",
+    "keywords": {
+      "brand": "ER&GG",
+      "brandAlt": "ERGG",
+      "app": "ERWAGG",
+      "appSymbol": "ER&GG",
+      "gameKo": "Eternal Return",
+      "gameEn": "Eternal Return",
+      "tierList": "bảng xếp hạng Eternal Return",
+      "meta": "meta Eternal Return",
+      "synergy": "đề xuất đội hình Eternal Return",
+      "characterAnalysis": "phân tích nhân vật Eternal Return",
+      "winRate": "tỷ lệ thắng Eternal Return",
+      "pickRate": "tỷ lệ chọn Eternal Return",
+      "rp": "RP Eternal Return",
+      "stats": "thống kê Eternal Return"
+    }
+  },
+  "home": {
+    "title": "Phân Tích Meta",
+    "subtitle": "Phân tích trực tiếp dựa trên {count} trận đấu",
+    "honeyPicksTitle": "Tăng mạnh trong bản vá",
+    "honeyPicksDescription": "Nhân vật tăng mạnh sau buff với pick rate và win rate cùng tăng",
+    "honeySectionName": "Tăng mạnh trong bản vá",
+    "rankingTitle": "Xếp hạng nhân vật",
+    "rankingDescription": "Xếp hạng tổng thể dựa trên điểm meta",
+    "rankingSectionName": "Xếp hạng nhân vật",
+    "live": "LIVE",
+    "patch": "Bản vá {patch}"
+  },
+  "globalFilter": {
+    "patchAria": "Chọn bản vá",
+    "tierAria": "Chọn bậc",
+    "patchOption": "Bản vá {patch}",
+    "noPatch": "Không có dữ liệu bản vá",
+    "tiers": {
+      "DIAMOND": "Kim cương",
+      "METEORITE": "Thiên thạch",
+      "MITHRIL": "Mithril"
+    }
+  },
+  "synergyMain": {
+    "title": "Đề xuất đội hình đã được nâng cấp",
+    "subtitle": "Mở đề xuất chi tiết với vũ khí và trait chính để có đội hình chính xác hơn.",
+    "cta": "Mở đề xuất chi tiết"
+  },
+  "pageError": {
+    "description": "Có thể đang có sự cố máy chủ hoặc kết nối tạm thời. Vấn đề đã được báo cáo tự động.",
+    "retry": "Thử lại",
+    "home": "Trang chủ",
+    "characterLoadFailed": "Không thể tải dữ liệu phân tích nhân vật",
+    "synergyLoadFailed": "Không thể tải dữ liệu đề xuất đội hình",
+    "synergyDetailLoadFailed": "Không thể tải dữ liệu đội hình chi tiết"
+  },
+  "characterPage": {
+    "title": "Phân Tích Nhân Vật",
+    "subtitle": "Phân tích sâu win rate, build, xu hướng bản vá và thống kê trang bị cho từng nhân vật",
+    "badge": "Phân tích",
+    "beta": "BETA",
+    "patchBase": "Đang phát triển · dựa trên bản vá {patch}",
+    "imageNotice": "Một số hình ảnh vật phẩm có thể bị thiếu hoặc hiển thị không chính xác.",
+    "sectionName": "Phân tích nhân vật"
+  },
+  "synergyPage": {
+    "dataNotice": "Đang thu thập dữ liệu · độ chính xác tăng khi mẫu lớn hơn",
+    "title": "Đề Xuất Đội Hình Chi Tiết",
+    "subtitle": "Phân tích đội hình chuyên sâu với vũ khí và trait chính · bấm vào đội hình để xem chi tiết trait",
+    "badge": "Nâng cao",
+    "beta": "BETA",
+    "steps": {
+      "pool": {
+        "label": "Thiết lập pool",
+        "sublabel": "Nhân vật + vũ khí"
+      },
+      "allies": {
+        "label": "Chọn đồng đội",
+        "sublabel": "Nhân vật + vũ khí"
+      },
+      "analysis": {
+        "label": "Phân tích chuyên sâu",
+        "sublabel": "So sánh trait"
+      }
+    }
+  },
+  "synergyInteractive": {
+    "poolTitle": "Bể tướng của tôi",
+    "alliesTitle": "Chọn đồng đội",
+    "resultsTitle": "Đội hình đề xuất",
+    "poolHint": "Tùy chọn · lọc theo nhân vật + vũ khí",
+    "poolSection": "Pool nhân vật",
+    "alliesSection": "Đồng đội",
+    "resultsSection": "Đề xuất"
+  },
+  "sectionErrorBoundary": {
+    "loadFailed": "Không thể tải dữ liệu cho {section}",
+    "temporaryIssue": "Đây có thể là vấn đề tạm thời.",
+    "retry": "Thử lại"
+  },
+  "tierRanking": {
+    "roles": {
+      "all": "Tất cả",
+      "tank": "Tank",
+      "fighter": "Đấu sĩ",
+      "assassin": "Sát thủ",
+      "skillAmp": "Skill Amp",
+      "ranged": "DPS tầm xa",
+      "support": "Hỗ trợ"
+    },
+    "columns": {
+      "tier": "Tier",
+      "character": "Nhân vật",
+      "pickRate": "Pick Rate",
+      "winRate": "Win Rate",
+      "averageRp": "RP trung bình"
+    },
+    "tooltips": {
+      "pickRate": "Tỷ lệ số trận mà nhân vật này được chọn.",
+      "winRate": "Tỷ lệ về hạng 1 với nhân vật này. Mốc cơ bản kỳ vọng là 12,5%.",
+      "averageRp": "Điểm rank trung bình nhận được mỗi trận. Giá trị dương nghĩa là dễ leo rank hơn."
+    },
+    "empty": "Không có dữ liệu",
+    "mobileSort": "Sắp xếp",
+    "sort": {
+      "rank": "Hạng",
+      "winRate": "Win Rate",
+      "pickRate": "Pick Rate",
+      "averageRP": "RP"
+    },
+    "showAll": "Hiển thị tất cả ({count} nhân vật)",
+    "collapse": "Thu gọn",
+    "rpSuffix": "RP"
+  },
+  "honeyPicks": {
+    "apiError": "Lỗi API",
+    "errorFallback": "Đã xảy ra lỗi.",
+    "empty": "Không tìm thấy nhân vật được buff nào tăng mạnh trong bản vá này.",
+    "patch": "Bản vá {patch}",
+    "stats": {
+      "winRate": "Win Rate",
+      "pickRate": "Pick Rate",
+      "rp": "RP"
+    },
+    "close": "Đóng",
+    "detailAnalysis": "Mở phân tích chi tiết"
+  },
+  "characterPicker": {
+    "searchAria": "Tìm nhân vật",
+    "placeholder": "Tìm nhân vật",
+    "listAria": "Danh sách nhân vật",
+    "noResults": "Không tìm thấy nhân vật phù hợp.",
+    "current": "Hiện tại"
+  },
+  "characterHeader": {
+    "patch": "Bản vá {patch}",
+    "games": "{count} trận",
+    "tierSelectorAria": "Chọn bậc phân tích",
+    "weaponSelectorAria": "Chọn vũ khí",
+    "weapon": "Vũ khí",
+    "all": "Tất cả",
+    "pickRate": "Pick Rate",
+    "winRate": "Win Rate",
+    "averageRank": "Hạng trung bình",
+    "averageRp": "RP trung bình",
+    "weaponSub": "Vũ khí {value}%",
+    "emptyPatchData": "Không có dữ liệu cho bản vá này.",
+    "loadingPatchInfo": "Đang tải dữ liệu bản vá...",
+    "tiers": {
+      "DIAMOND": "Kim cương",
+      "METEORITE": "Thiên thạch",
+      "MITHRIL": "Mithril+",
+      "IN1000": "Top 1000",
+      "DIAMOND_BELOW": "Kim cương trở xuống"
+    }
+  },
+  "characterGrid": {
+    "title": "Chọn nhân vật",
+    "count": "{count} nhân vật",
+    "placeholder": "Tìm nhân vật"
+  },
+  "focusWeaponPool": {
+    "title": "Bể tướng của tôi",
+    "count": "{count} lựa chọn",
+    "hint": "Chọn trước các tổ hợp nhân vật + vũ khí mà bạn thực sự có thể chơi.",
+    "reset": "Đặt lại",
+    "searchPlaceholder": "Tìm nhân vật hoặc vũ khí",
+    "noResults": "Không có kết quả",
+    "allWeapons": "Tất cả vũ khí"
+  },
+  "weaponAllySelector": {
+    "heading": "Chọn đồng đội (tối đa 2 · nhân vật + nhóm vũ khí)",
+    "searchPlaceholder": "Tìm nhân vật hoặc vũ khí",
+    "noResults": "Không có kết quả",
+    "allWeapons": "Tất cả vũ khí"
+  },
+  "focusCharacterPool": {
+    "title": "Bể tướng của tôi",
+    "count": "{count} nhân vật",
+    "hint": "Chọn trước các nhân vật mà bạn thực sự có thể chơi.",
+    "reset": "Đặt lại",
+    "searchPlaceholder": "Tìm nhân vật"
+  },
+  "slotEmpty": {
+    "allyCharacter": "Chọn nhân vật đồng đội {index}"
+  },
+  "synergyResults": {
+    "sort": {
+      "recommended": "Đề xuất",
+      "averageRP": "RP trung bình",
+      "winRate": "Win Rate",
+      "totalGames": "Trận"
+    },
+    "titleSingle": "Đội hình chi tiết với {ally}",
+    "titlePair": "Đội hình chi tiết cho {ally1} + {ally2}",
+    "focusFilter": "Đã lọc theo {count} lựa chọn trong bể tướng",
+    "copied": "Đã sao chép!",
+    "share": "Chia sẻ",
+    "reset": "Đặt lại",
+    "sectionName": "Kết quả đội hình chi tiết",
+    "empty": {
+      "prompt": "Tìm đội hình có vũ khí dựa trên lựa chọn của đồng đội",
+      "step1": "1. Thiết lập bể tướng của bạn trước (tùy chọn)",
+      "step2": "2. Chọn nhân vật và vũ khí của đồng đội",
+      "step3": "3. Bấm vào đội hình để xem hiệu quả theo trait"
+    },
+    "loading": "Đang tải dữ liệu đội hình...",
+    "infoSingle": "Thêm một đồng đội nữa để có đề xuất chính xác hơn · bấm vào đội hình để xem chi tiết trait",
+    "infoPair": "Bấm vào đội hình để xem chi tiết trait",
+    "more": "Hiển thị thêm ({visible}/{total})",
+    "emptyFiltered": "Không có đội hình nào khớp với bể tướng hiện tại. Hãy thử mở rộng bể tướng.",
+    "emptyNoData": "Không có dữ liệu cho đội hình này.",
+    "clearAllies": "Xóa đồng đội",
+    "timeout": "Yêu cầu đã hết thời gian. Vui lòng thử lại.",
+    "genericError": "Đã xảy ra lỗi."
+  },
+  "synergyMainResults": {
+    "sort": {
+      "recommended": "Đề xuất",
+      "averageRP": "RP trung bình",
+      "winRate": "Win Rate",
+      "totalGames": "Trận"
+    },
+    "titleSingle": "Đội hình đề xuất với {ally}",
+    "titlePair": "Đội hình cho {ally1} + {ally2}",
+    "focusFilter": "Đã lọc theo {count} lựa chọn trong bể tướng",
+    "copied": "Đã sao chép!",
+    "share": "Chia sẻ",
+    "reset": "Đặt lại",
+    "sectionName": "Kết quả đội hình",
+    "empty": {
+      "prompt": "Tìm đội hình tốt nhất cho lựa chọn của đồng đội",
+      "step1": "1. Thiết lập bể tướng của bạn trước (tùy chọn)",
+      "step2": "2. Chọn từ 1 đến 2 nhân vật đồng đội",
+      "step3": "3. Chúng tôi sẽ đề xuất đội hình tốt nhất mà bạn có thể chơi"
+    },
+    "loading": "Đang tải dữ liệu đội hình...",
+    "infoSingle": "Thêm một đồng đội nữa để có đề xuất chính xác hơn",
+    "emptyFiltered": "Không có đội hình nào khớp với bể tướng của bạn. Hãy thử mở rộng bể tướng.",
+    "emptyNoData": "Không có dữ liệu cho đội hình này.",
+    "clearAllies": "Xóa đồng đội",
+    "timeout": "Yêu cầu đã hết thời gian. Vui lòng thử lại.",
+    "genericError": "Đã xảy ra lỗi."
+  },
+  "synergyComboCard": {
+    "smallSample": "Mẫu nhỏ",
+    "winRate": "Win Rate",
+    "rp": "RP",
+    "games": "Trận",
+    "averageRank": "Hạng trung bình",
+    "moreTraits": "Hiển thị thêm {count} trait"
+  },
+  "characterAnalysis": {
+    "quickSummary": "Tóm tắt nhanh",
+    "summary": {
+      "tier": "Tier",
+      "winRate": "Win Rate",
+      "recommendedWeapon": "Vũ khí tốt nhất",
+      "pickRate": "Pick Rate"
+    },
+    "synergyCta": "Tìm đội hình với nhân vật này",
+    "deepDive": "Phân tích sâu",
+    "patchComparison": "So sánh bản vá",
+    "patchNotes": "Ghi chú bản vá",
+    "stats": "Thống kê"
+  },
+  "characterPatch": {
+    "types": {
+      "buff": "Buff",
+      "nerf": "Nerf",
+      "rework": "Điều chỉnh"
+    },
+    "loadingPatches": "Đang tải dữ liệu bản vá...",
+    "current": "Hiện tại",
+    "noChanges": "Không có thay đổi",
+    "noData": "Không có dữ liệu.",
+    "notEnoughData": "Không đủ dữ liệu bản vá để so sánh.",
+    "minTwoPatches": "Cần ít nhất hai bản vá.",
+    "patchTrend": "Xu hướng bản vá",
+    "winRate": "Win Rate",
+    "averageRp": "RP trung bình",
+    "expected": "Kỳ vọng",
+    "patch": "Bản vá"
+  },
+  "characterMetadata": {
+    "titleWithName": "Phân tích {name}",
+    "titleFallback": "Phân Tích Nhân Vật",
+    "descriptionWithName": "Phân tích tỷ lệ thắng, tỷ lệ chọn, RP trung bình và build tối ưu của {name} trong Eternal Return. Xem thêm xu hướng patch và cặp vũ khí của {name}.",
+    "descriptionFallback": "Phân tích nhân vật Eternal Return theo tỷ lệ thắng, tỷ lệ chọn, RP trung bình và build tối ưu. Xem thêm xu hướng patch và cặp vũ khí.",
+    "keywords": {
+      "character": "Eternal Return {name}",
+      "build": "build {name}",
+      "winRate": "tỷ lệ thắng {name}",
+      "stats": "thống kê {name}",
+      "brand": "ER&GG",
+      "app": "ERGG",
+      "analysis": "phân tích nhân vật Eternal Return",
+      "fallbackBuild": "build nhân vật Eternal Return",
+      "fallbackStats": "thống kê nhân vật Eternal Return",
+      "fallbackWeapon": "gợi ý vũ khí Eternal Return"
+    },
+    "openGraphTitle": "{title} | ER&GG",
+    "twitterTitle": "{title} | ER&GG",
+    "socialDescription": "Thống kê tỷ lệ thắng, tỷ lệ chọn, RP trung bình và build tối ưu cho nhân vật Eternal Return."
+  },
+  "synergyMetadata": {
+    "headlinePair": "Đề xuất đội hình cho {name1} + {name2}",
+    "headlineSingle": "Đề xuất đội hình với {name1}",
+    "headlineFallback": "Đề xuất đội hình",
+    "descriptionPair": "Phân tích lựa chọn thứ ba tối ưu cho {name1} + {name2} bằng thống kê đội hình Bayesian.",
+    "descriptionSingle": "Phân tích lựa chọn thứ hai và thứ ba tốt nhất để ghép với {name1} bằng thống kê đội hình Bayesian.",
+    "descriptionFallback": "Khám phá gợi ý đội hình ba người Eternal Return và tiếp tục đến phân tích chi tiết với vũ khí và trait.",
+    "socialTitle": "{headline} | ER&GG"
+  },
+  "synergyDetailMetadata": {
+    "headlinePair": "Đề xuất đội hình cho {name1} + {name2}",
+    "headlineSingle": "Đề xuất đội hình với {name1}",
+    "headlineFallback": "Đề xuất đội hình chi tiết",
+    "title": "{headline} - Có vũ khí và traits | ER&GG",
+    "descriptionPair": "Phân tích lựa chọn thứ ba tối ưu cho {name1} + {name2} bằng thống kê Bayesian bao gồm vũ khí và trait.",
+    "descriptionSingle": "Phân tích lựa chọn thứ hai và thứ ba tốt nhất để ghép với {name1} bằng thống kê đội hình Bayesian.",
+    "descriptionFallback": "Khám phá gợi ý đội hình ba người Eternal Return chi tiết với vũ khí và trait chính bằng phân tích đội hình Bayesian.",
+    "socialTitle": "{headline} | ER&GG",
+    "keywords": {
+      "brand": "ER&GG",
+      "app": "ERGG",
+      "synergy": "đề xuất đội hình Eternal Return",
+      "weapon": "kết hợp vũ khí Eternal Return",
+      "trait": "kết hợp trait Eternal Return",
+      "detail": "phân tích đội hình chi tiết Eternal Return",
+      "character": "đội hình {name}"
+    }
+  },
+  "characterDetailed": {
+    "groups": {
+      "havoc": {
+        "name": "Hủy Diệt",
+        "letter": "D"
+      },
+      "fortification": {
+        "name": "Phòng Thủ",
+        "letter": "F"
+      },
+      "support": {
+        "name": "Hỗ Trợ",
+        "letter": "S"
+      },
+      "chaos": {
+        "name": "Hỗn Loạn",
+        "letter": "C"
+      },
+      "unknown": {
+        "name": "Khác",
+        "letter": "?"
+      }
+    },
+    "slots": {
+      "weapon": "Vũ khí",
+      "chest": "Giáp",
+      "head": "Đầu",
+      "arm": "Tay",
+      "leg": "Chân"
+    },
+    "sections": {
+      "topBuilds": "BUILD HÀNG ĐẦU",
+      "slotPopularity": "Vật phẩm phổ biến theo slot",
+      "itemBuilds": "Build trang bị",
+      "secondaryTraits": "Kết hợp trait phụ"
+    },
+    "stats": {
+      "pickRate": "Pick Rate",
+      "winRate": "Win Rate",
+      "averageRank": "Hạng trung bình",
+      "averageRp": "RP trung bình",
+      "total": "Tổng",
+      "primaryTrait": "Trait chính"
+    },
+    "labels": {
+      "pickShort": "Pick {value}%",
+      "winShort": "Win {value}%",
+      "rankValue": "Rank #{value}",
+      "rpValue": "RP {value}",
+      "matches": "{count} trận"
+    },
+    "summaries": {
+      "mainTrait": "Trait chính: {name}",
+      "core": "{name}, Cốt lõi",
+      "secondary": "{name}, Phụ"
+    },
+    "empty": {
+      "detailed": "Không có dữ liệu phân tích chi tiết.",
+      "itemBuilds": "Không có dữ liệu build trang bị cho cấu hình trait này."
+    }
+  },
+  "characterTraitBuild": {
+    "groups": {
+      "havoc": {
+        "name": "Hủy Diệt",
+        "letter": "D"
+      },
+      "fortification": {
+        "name": "Phòng Thủ",
+        "letter": "F"
+      },
+      "support": {
+        "name": "Hỗ Trợ",
+        "letter": "S"
+      },
+      "chaos": {
+        "name": "Hỗn Loạn",
+        "letter": "C"
+      },
+      "unknown": {
+        "name": "Khác",
+        "letter": "?"
+      }
+    },
+    "labels": {
+      "core": "Cốt lõi",
+      "slot1": "Slot 1",
+      "slot2": "Slot 2",
+      "secondary": "Trait phụ",
+      "matches": "{count} trận",
+      "pick": "Pick {value}%",
+      "win": "Win {value}%"
+    },
+    "empty": {
+      "builds": "Không có dữ liệu build trait.",
+      "cell": "Không có dữ liệu"
+    }
+  }
+}

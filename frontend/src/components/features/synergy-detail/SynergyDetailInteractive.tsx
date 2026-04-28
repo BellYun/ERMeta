@@ -1,5 +1,7 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary";
 import { FocusWeaponPool } from "./FocusWeaponPool";
 import { SynergyDetailResults } from "./SynergyDetailResults";
@@ -13,20 +15,32 @@ import { WeaponAllySelector } from "./WeaponAllySelector";
  * SSR/CSR 경계는 SynergyDetailClient가 담당 (ssr: false로 이 파일 전체를 lazy).
  */
 export function SynergyDetailInteractive() {
+  const t = useTranslations("synergyInteractive");
+  const searchParams = useSearchParams();
+  const isShareLanding =
+    searchParams.get("source") === "share" || searchParams.get("utm_source") === "ergg_share";
+
   return (
     <div className="flex flex-col gap-5 sm:gap-6 mt-5 sm:mt-7">
+      {isShareLanding && (
+        <div
+          role="status"
+          className="rounded-xl border border-[var(--color-primary)]/25 bg-[var(--color-primary)]/8 px-4 py-3 text-sm text-[var(--color-foreground)]"
+        >
+          친구가 추천한 조합입니다. 현재 메타 기준으로 바로 확인해보세요.
+        </div>
+      )}
+
       {/* ── Step 1: Weapon Pool ── */}
       <section className="reveal reveal-d1">
         <div className="flex items-center gap-2 mb-2.5">
           <span className="flex items-center justify-center h-5 w-5 rounded-md bg-[var(--color-accent-purple)]/15 text-[10px] font-bold text-[var(--color-accent-purple)]">
             1
           </span>
-          <h2 className="text-sm font-bold text-[var(--color-foreground)]">내 캐릭터 풀</h2>
-          <span className="text-[10px] text-[var(--color-muted-foreground)]">
-            선택사항 · 캐릭터+무기 단위 필터링
-          </span>
+          <h2 className="text-sm font-bold text-[var(--color-foreground)]">{t("poolTitle")}</h2>
+          <span className="text-[10px] text-[var(--color-muted-foreground)]">{t("poolHint")}</span>
         </div>
-        <SectionErrorBoundary sectionName="캐릭터 풀">
+        <SectionErrorBoundary sectionName={t("poolSection")}>
           <FocusWeaponPool />
         </SectionErrorBoundary>
       </section>
@@ -38,9 +52,9 @@ export function SynergyDetailInteractive() {
             <span className="flex items-center justify-center h-5 w-5 rounded-md bg-[var(--color-primary)]/15 text-[10px] font-bold text-[var(--color-primary)]">
               2
             </span>
-            <h2 className="text-sm font-bold text-[var(--color-foreground)]">아군 선택</h2>
+            <h2 className="text-sm font-bold text-[var(--color-foreground)]">{t("alliesTitle")}</h2>
           </div>
-          <SectionErrorBoundary sectionName="아군 선택">
+          <SectionErrorBoundary sectionName={t("alliesSection")}>
             <WeaponAllySelector />
           </SectionErrorBoundary>
         </section>
@@ -50,9 +64,11 @@ export function SynergyDetailInteractive() {
             <span className="flex items-center justify-center h-5 w-5 rounded-md bg-[var(--color-accent-gold)]/15 text-[10px] font-bold text-[var(--color-accent-gold)]">
               3
             </span>
-            <h2 className="text-sm font-bold text-[var(--color-foreground)]">추천 조합</h2>
+            <h2 className="text-sm font-bold text-[var(--color-foreground)]">
+              {t("resultsTitle")}
+            </h2>
           </div>
-          <SectionErrorBoundary sectionName="추천 조합">
+          <SectionErrorBoundary sectionName={t("resultsSection")}>
             <SynergyDetailResults />
           </SectionErrorBoundary>
         </section>

@@ -1,19 +1,23 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { analytics } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 import { useFilter } from "./FilterContext";
 
-const TIER_OPTIONS = [
-  { value: "DIAMOND", label: "다이아" },
-  { value: "METEORITE", label: "메테오라이트" },
-  { value: "MITHRIL", label: "미스릴" },
-];
-
 export function GlobalFilter() {
   const { patch, tier, patches, setPatch, setTier } = useFilter();
   const tierRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
+  const t = useTranslations("globalFilter");
+  const tierOptions = React.useMemo(
+    () => [
+      { value: "DIAMOND", label: t("tiers.DIAMOND") },
+      { value: "METEORITE", label: t("tiers.METEORITE") },
+      { value: "MITHRIL", label: t("tiers.MITHRIL") },
+    ],
+    [t]
+  );
 
   const selectTier = React.useCallback(
     (value: string) => {
@@ -25,13 +29,13 @@ export function GlobalFilter() {
 
   const focusTierAt = React.useCallback(
     (index: number) => {
-      const normalized = (index + TIER_OPTIONS.length) % TIER_OPTIONS.length;
-      const next = TIER_OPTIONS[normalized];
+      const normalized = (index + tierOptions.length) % tierOptions.length;
+      const next = tierOptions[normalized];
       if (!next) return;
       tierRefs.current[normalized]?.focus();
       selectTier(next.value);
     },
-    [selectTier]
+    [selectTier, tierOptions]
   );
 
   const handleTierKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
@@ -52,7 +56,7 @@ export function GlobalFilter() {
         break;
       case "End":
         e.preventDefault();
-        focusTierAt(TIER_OPTIONS.length - 1);
+        focusTierAt(tierOptions.length - 1);
         break;
     }
   };
@@ -62,7 +66,7 @@ export function GlobalFilter() {
       {/* Patch selector */}
       <div className="relative">
         <select
-          aria-label="패치 선택"
+          aria-label={t("patchAria")}
           value={patch || patches[0] || ""}
           onChange={(e) => {
             setPatch(e.target.value);
@@ -81,12 +85,12 @@ export function GlobalFilter() {
         >
           {patches.map((p) => (
             <option key={p} value={p}>
-              패치 {p}
+              {t("patchOption", { patch: p })}
             </option>
           ))}
           {patches.length === 0 && (
             <option value="" disabled>
-              패치 없음
+              {t("noPatch")}
             </option>
           )}
         </select>
@@ -106,10 +110,10 @@ export function GlobalFilter() {
       {/* Tier segmented control */}
       <div
         role="radiogroup"
-        aria-label="티어 필터"
+        aria-label={t("tierAria")}
         className="flex rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] p-0.5"
       >
-        {TIER_OPTIONS.map(({ value, label }, index) => {
+        {tierOptions.map(({ value, label }, index) => {
           const isSelected = tier === value;
           return (
             <button

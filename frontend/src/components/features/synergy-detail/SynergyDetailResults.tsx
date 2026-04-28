@@ -2,14 +2,17 @@
 
 import { X, Users, Loader2, Info, Share2 } from "lucide-react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary";
 import { useL10n } from "@/components/L10nProvider";
 import { useFocusCharWeapons } from "@/hooks/useFocusCharWeapons";
+import { useTraitNames } from "@/hooks/useTraitNames";
 import { analytics, type SynergySortBy } from "@/lib/analytics";
 import { resolveCharacterName } from "@/lib/characterMap";
 import { isMobileDevice } from "@/lib/device";
 import { cn } from "@/lib/utils";
+import { resolveWeaponName } from "@/lib/weaponMap";
 import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "../synergy/constants";
 import { ComboWeaponCard, type GroupedCombo } from "./ComboWeaponCard";
 import type { TrioWeaponResult, SortBy } from "./types";
@@ -81,6 +84,7 @@ function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
 
 export function SynergyDetailResults() {
   const { l10n } = useL10n();
+  const t = useTranslations("synergyResults");
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -89,7 +93,7 @@ export function SynergyDetailResults() {
   // URL에서 아군+무기 읽기
   const selectedAllies = React.useMemo(() => {
     const allies: { charCode: number; weaponCode: number | null }[] = [];
-    const a1 = searchParams.get("ally1");
+    const a1 = searchParams.get("ally1") ?? searchParams.get("a");
     const w1 = searchParams.get("w1");
     if (a1) {
       const code = parseInt(a1, 10);
@@ -97,7 +101,7 @@ export function SynergyDetailResults() {
         allies.push({ charCode: code, weaponCode: w1 ? parseInt(w1, 10) || null : null });
       }
     }
-    const a2 = searchParams.get("ally2");
+    const a2 = searchParams.get("ally2") ?? searchParams.get("b");
     const w2 = searchParams.get("w2");
     if (a2) {
       const code = parseInt(a2, 10);
@@ -169,27 +173,14 @@ export function SynergyDetailResults() {
   const IDLE_BATCH = 4;
   const IDLE_TARGET = 30;
   const [visibleCount, setVisibleCount] = React.useState(INITIAL_VISIBLE);
-  const [traitNames, setTraitNames] = React.useState<Record<number, string>>({});
+  const traitNames = useTraitNames(l10n);
 
   const getCharName = React.useCallback(
     (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
     [l10n]
   );
+  const getWeaponName = React.useCallback((code: number) => resolveWeaponName(code, l10n), [l10n]);
   const getTraitName = React.useCallback((code: number) => traitNames[code] ?? null, [traitNames]);
-
-  // 특성 이름 로드 — 페이지 mount 시 1회. setTraitNames는 큰 객체 commit이고
-  // 사용자의 탭 click과 타이밍이 겹치면 그 commit phase에 끼어 click duration이 늘어나므로
-  // startTransition으로 비긴급 처리.
-  React.useEffect(() => {
-    fetch("/api/traits/names")
-      .then((res) => res.json())
-      .then((d) => {
-        React.startTransition(() => {
-          setTraitNames(d.names ?? {});
-        });
-      })
-      .catch(() => {});
-  }, []);
 
   // API 호출 — deferredAllies 기반 (아군 선택 탭 즉시성 확보)
   React.useEffect(() => {
@@ -220,7 +211,7 @@ export function SynergyDetailResults() {
       fetch(`/api/stats/trios-weapon?${params.toString()}`, { signal })
         .then(async (res) => {
           const data = await res.json();
-          if (!res.ok) throw new Error(data.error ?? "API 오류");
+          if (!res.ok) throw new Error(data.error ?? t("genericError"));
           // setResults + setLoading(false)를 같은 startTransition 배치에 넣어
           // "로딩 꺼짐 → 결과 렌더 전" 사이 '결과 없음' 빈 화면이 깜빡이는 것을 방지.
           React.startTransition(() => {
@@ -233,10 +224,10 @@ export function SynergyDetailResults() {
           // 에러 경로는 urgent 유지 — 즉시 에러 메시지 표시
           setLoading(false);
           if (err instanceof Error && err.name === "TimeoutError") {
-            setError("요청 시간이 초과되었습니다. 다시 시도해주세요.");
+            setError(t("timeout"));
             return;
           }
-          setError(err instanceof Error ? err.message : "오류가 발생했습니다.");
+          setError(err instanceof Error ? err.message : t("genericError"));
         });
     }, 300);
 
@@ -247,7 +238,7 @@ export function SynergyDetailResults() {
       controller.abort();
       setLoading(false);
     };
-  }, [deferredAllies, sortBy]);
+  }, [deferredAllies, sortBy, t]);
 
   // 점진적 카드 mount — visibleCount를 idle frame마다 6씩 늘려 IDLE_TARGET까지 확장.
   // 사용자 click의 commit이 30개가 아닌 6개만 처리하므로 INP duration이 줄어들고,
@@ -381,7 +372,7 @@ export function SynergyDetailResults() {
       {/* 정렬 기준 */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-1">
-          {SORT_OPTIONS.map(({ value, label }) => (
+          {SORT_OPTIONS.map(({ value, labelKey }) => (
             <button
               key={value}
               onClick={() => {
@@ -395,7 +386,7 @@ export function SynergyDetailResults() {
                   : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80"
               )}
             >
-              {label}
+              {t(`sort.${labelKey}`)}
             </button>
           ))}
         </div>
@@ -405,9 +396,14 @@ export function SynergyDetailResults() {
             <>
               <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
                 {selectedCharCodes.length === 1
-                  ? `${getCharName(selectedCharCodes[0])} 포함 상세 조합`
-                  : `${getCharName(selectedCharCodes[0])} + ${getCharName(selectedCharCodes[1])} 상세 조합`}
-                {focusCharWeapons.length > 0 ? ` (내 풀 ${focusCharWeapons.length}명 필터)` : ""}
+                  ? t("titleSingle", { ally: getCharName(selectedCharCodes[0]) })
+                  : t("titlePair", {
+                      ally1: getCharName(selectedCharCodes[0]),
+                      ally2: getCharName(selectedCharCodes[1]),
+                    })}
+                {focusCharWeapons.length > 0
+                  ? ` (${t("focusFilter", { count: focusCharWeapons.length })})`
+                  : ""}
               </h2>
               <button
                 type="button"
@@ -416,8 +412,11 @@ export function SynergyDetailResults() {
                   const ally2Code = selectedCharCodes[1] ?? null;
                   const title =
                     selectedCharCodes.length === 2
-                      ? `${getCharName(selectedCharCodes[0])} + ${getCharName(selectedCharCodes[1])} 상세 조합`
-                      : `${getCharName(selectedCharCodes[0])} 포함 상세 조합`;
+                      ? t("titlePair", {
+                          ally1: getCharName(selectedCharCodes[0]),
+                          ally2: getCharName(selectedCharCodes[1]),
+                        })
+                      : t("titleSingle", { ally: getCharName(selectedCharCodes[0]) });
                   const buildShareUrl = (method: "native" | "clipboard") => {
                     const u = new URL(window.location.href);
                     u.searchParams.set("utm_source", "ergg_share");
@@ -453,7 +452,7 @@ export function SynergyDetailResults() {
                 className="inline-flex items-center gap-1 shrink-0 rounded-md border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-2.5 py-1.5 min-h-[44px] text-xs font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 active:bg-[var(--color-primary)]/30 hover:border-[var(--color-primary)]/50 transition-colors"
               >
                 <Share2 className="h-3 w-3" />
-                {copied ? "복사됨!" : "공유"}
+                {copied ? t("copied") : t("share")}
               </button>
               <button
                 type="button"
@@ -461,7 +460,7 @@ export function SynergyDetailResults() {
                 className="inline-flex items-center gap-1 shrink-0 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 py-1.5 min-h-[44px] text-xs font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] hover:border-[var(--color-border-light)] active:bg-[var(--color-surface-2)]/80 transition-colors"
               >
                 <X className="h-3 w-3" />
-                초기화
+                {t("reset")}
               </button>
             </>
           )}
@@ -469,24 +468,22 @@ export function SynergyDetailResults() {
       </div>
 
       {/* 결과 목록 */}
-      <SectionErrorBoundary sectionName="상세 조합 결과">
+      <SectionErrorBoundary sectionName={t("sectionName")}>
         {selectedAllies.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
             <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
-            <p className="text-sm text-[var(--color-muted-foreground)]">
-              아군의 픽에 맞춰 무기별 상세 조합을 찾아보세요
-            </p>
+            <p className="text-sm text-[var(--color-muted-foreground)]">{t("empty.prompt")}</p>
             <div className="flex flex-col gap-1 mt-3 text-xs text-[var(--color-muted-foreground)]">
-              <span>1. 내 캐릭터 풀을 설정하세요 (선택사항)</span>
-              <span>2. 아군의 캐릭터와 무기를 선택하세요</span>
-              <span>3. 조합을 클릭하면 특성별 성능을 확인할 수 있어요</span>
+              <span>{t("empty.step1")}</span>
+              <span>{t("empty.step2")}</span>
+              <span>{t("empty.step3")}</span>
             </div>
           </div>
         ) : showLoading ? (
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2 py-2">
               <Loader2 className="h-4 w-4 animate-spin text-[var(--color-primary)]" />
-              <p className="text-sm text-[var(--color-muted-foreground)]">조합 데이터 로딩 중...</p>
+              <p className="text-sm text-[var(--color-muted-foreground)]">{t("loading")}</p>
             </div>
             {Array.from({ length: 5 }).map((_, i) => (
               <div
@@ -515,14 +512,13 @@ export function SynergyDetailResults() {
             {selectedAllies.length === 1 && (
               <p className="flex items-center gap-1.5 text-[11px] text-[var(--color-muted-foreground)] bg-[var(--color-surface-2)] px-3 py-2 rounded-lg">
                 <Info className="h-3.5 w-3.5 shrink-0" />
-                1명 더 선택하면 더 정확한 추천을 받을 수 있어요 · 조합을 클릭하면 특성별
-                브레이크다운을 볼 수 있어요
+                {t("infoSingle")}
               </p>
             )}
             {selectedAllies.length === 2 && (
               <p className="flex items-center gap-1.5 text-[11px] text-[var(--color-muted-foreground)] bg-[var(--color-surface-2)] px-3 py-2 rounded-lg">
                 <Info className="h-3.5 w-3.5 shrink-0" />
-                조합을 클릭하면 특성별 브레이크다운을 볼 수 있어요
+                {t("infoPair")}
               </p>
             )}
             {recommendations.slice(0, visibleCount).map((group, i) => (
@@ -531,6 +527,7 @@ export function SynergyDetailResults() {
                 group={group}
                 rank={i + 1}
                 getCharName={getCharName}
+                getWeaponName={getWeaponName}
                 getTraitName={getTraitName}
                 selectedCharCodes={deferredCharCodes}
                 onRecommendationClick={onRecommendationClick}
@@ -542,7 +539,7 @@ export function SynergyDetailResults() {
                 onClick={() => setVisibleCount((prev) => prev + 30)}
                 className="w-full py-3 min-h-[44px] rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 text-sm font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80 transition-colors"
               >
-                더보기 ({visibleCount}/{recommendations.length})
+                {t("more", { visible: visibleCount, total: recommendations.length })}
               </button>
             )}
           </div>
@@ -550,15 +547,13 @@ export function SynergyDetailResults() {
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
             <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
             <p className="text-sm text-[var(--color-muted-foreground)]">
-              {focusCharWeapons.length > 0
-                ? "내 캐릭터 풀에 해당하는 조합이 없습니다. 캐릭터 풀을 넓혀보세요."
-                : "해당 조합 데이터가 없습니다"}
+              {focusCharWeapons.length > 0 ? t("emptyFiltered") : t("emptyNoData")}
             </p>
             <button
               onClick={clearAllies}
               className="mt-3 text-xs text-[var(--color-primary)] hover:underline active:opacity-70 min-h-[44px] px-2"
             >
-              아군 초기화하기
+              {t("clearAllies")}
             </button>
           </div>
         )}

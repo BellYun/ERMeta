@@ -1,0 +1,455 @@
+{
+  "header": {
+    "logoTitle": "ER&GG",
+    "logoSubtitle": "Eternal Return Meta",
+    "patchPrefix": "v",
+    "languageSelectAria": "Select language"
+  },
+  "navigation": {
+    "ariaMain": "Main navigation",
+    "metaAnalysis": "Meta Analysis",
+    "synergyRecommendation": "Team Recommender",
+    "characterAnalysis": "Character Analysis"
+  },
+  "mobileTab": {
+    "meta": "Meta",
+    "synergy": "Teams",
+    "character": "Characters"
+  },
+  "layout": {
+    "skipToMain": "Skip to main content",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "updates": "Updates",
+    "sitemap": "Sitemap",
+    "apiAttribution": "This service is built with Nimble Neuron's Open API. Copyright for game images and data belongs to Nimble Neuron Co., Ltd.",
+    "disclaimer": "This site is not an official Nimble Neuron service, and the company is not responsible for issues arising from its use.",
+    "copyright": "© {year} ER&GG"
+  },
+  "rootMetadata": {
+    "defaultTitle": "ER&GG | Eternal Return Meta Analytics",
+    "titleTemplate": "%s | ER&GG",
+    "description": "ER&GG provides Eternal Return character tiers, trio recommendations, and win rate, pick rate, and average RP statistics based on high-rank match data.",
+    "siteName": "ER&GG",
+    "author": "ER&GG",
+    "creator": "ER&GG",
+    "structuredDescription": "Eternal Return character tiers, trio recommendations, and statistics analysis service",
+    "keywords": {
+      "brand": "ER&GG",
+      "brandAlt": "ERGG",
+      "app": "ERWAGG",
+      "appSymbol": "ER&GG",
+      "gameKo": "Eternal Return",
+      "gameEn": "Eternal Return",
+      "tierList": "Eternal Return tier list",
+      "meta": "Eternal Return meta",
+      "synergy": "Eternal Return team recommendations",
+      "characterAnalysis": "Eternal Return character analysis",
+      "winRate": "Eternal Return win rate",
+      "pickRate": "Eternal Return pick rate",
+      "rp": "Eternal Return RP",
+      "stats": "Eternal Return stats"
+    }
+  },
+  "sectionErrorBoundary": {
+    "loadFailed": "Failed to load data for {section}",
+    "temporaryIssue": "This may be a temporary issue.",
+    "retry": "Try again"
+  },
+  "home": {
+    "live": "LIVE",
+    "patch": "Patch {patch}",
+    "title": "Meta Analysis",
+    "subtitle": "Live analysis based on {count} matches",
+    "honeyPicksTitle": "Patch Risers",
+    "honeyPicksDescription": "Characters climbing after buffs with rising pick and win rates",
+    "honeySectionName": "Patch Risers",
+    "rankingTitle": "Character Rankings",
+    "rankingDescription": "Overall rankings based on meta score",
+    "rankingSectionName": "Character Rankings"
+  },
+  "globalFilter": {
+    "patchAria": "Select patch",
+    "tierAria": "Select tier",
+    "patchOption": "Patch {patch}",
+    "noPatch": "No patch data",
+    "tiers": {
+      "DIAMOND": "Diamond",
+      "METEORITE": "Meteorite",
+      "MITHRIL": "Mithril"
+    }
+  },
+  "tierRanking": {
+    "roles": {
+      "all": "All",
+      "tank": "Tank",
+      "fighter": "Fighter",
+      "assassin": "Assassin",
+      "skillAmp": "Skill Amp",
+      "ranged": "Ranged DPS",
+      "support": "Support"
+    },
+    "columns": {
+      "tier": "Tier",
+      "character": "Character",
+      "pickRate": "Pick Rate",
+      "winRate": "Win Rate",
+      "averageRp": "Avg RP"
+    },
+    "tooltips": {
+      "pickRate": "Share of games where this character was picked.",
+      "winRate": "Rate of finishing 1st with this character. Expected baseline: 12.5%.",
+      "averageRp": "Average rank points gained per game. Positive values mean climbing."
+    },
+    "empty": "No data",
+    "mobileSort": "Sort",
+    "sort": {
+      "rank": "Rank",
+      "winRate": "Win Rate",
+      "pickRate": "Pick Rate",
+      "averageRP": "RP"
+    },
+    "showAll": "Show all ({count} characters)",
+    "collapse": "Collapse",
+    "rpSuffix": "RP"
+  },
+  "honeyPicks": {
+    "apiError": "API error",
+    "errorFallback": "Something went wrong.",
+    "empty": "No buffed breakout characters were found for this patch.",
+    "patch": "Patch {patch}",
+    "stats": {
+      "winRate": "Win Rate",
+      "pickRate": "Pick Rate",
+      "rp": "RP"
+    },
+    "close": "Close",
+    "detailAnalysis": "Open detailed analysis"
+  },
+  "characterPage": {
+    "badge": "Analytics",
+    "beta": "BETA",
+    "patchBase": "In development · based on patch {patch}",
+    "title": "Character Analysis",
+    "subtitle": "Deep dive into win rate, builds, patch trends, and equipment stats by character",
+    "imageNotice": "Some item images may be missing or displayed incorrectly.",
+    "sectionName": "Character Analysis"
+  },
+  "characterPicker": {
+    "searchAria": "Search characters",
+    "placeholder": "Search characters (Korean initials supported)",
+    "listAria": "Character list",
+    "noResults": "No matching characters found.",
+    "current": "Current"
+  },
+  "characterHeader": {
+    "patch": "Patch {patch}",
+    "games": "{count} matches",
+    "tierSelectorAria": "Select analysis tier",
+    "weaponSelectorAria": "Select weapon",
+    "weapon": "Weapon",
+    "all": "All",
+    "pickRate": "Pick Rate",
+    "winRate": "Win Rate",
+    "averageRank": "Avg Rank",
+    "averageRp": "Avg RP",
+    "weaponSub": "Weapon {value}%",
+    "emptyPatchData": "No data for this patch.",
+    "loadingPatchInfo": "Loading patch data...",
+    "tiers": {
+      "DIAMOND": "Diamond",
+      "METEORITE": "Meteorite",
+      "MITHRIL": "Mithril+",
+      "IN1000": "Top 1000",
+      "DIAMOND_BELOW": "Diamond and below"
+    }
+  },
+  "characterAnalysis": {
+    "quickSummary": "Quick Summary",
+    "summary": {
+      "tier": "Tier",
+      "winRate": "Win Rate",
+      "recommendedWeapon": "Best Weapon",
+      "pickRate": "Pick Rate"
+    },
+    "synergyCta": "Find team comps with this character",
+    "deepDive": "Deep Dive",
+    "patchComparison": "Patch Comparison",
+    "patchNotes": "Patch Notes",
+    "stats": "Stats"
+  },
+  "characterPatch": {
+    "types": {
+      "buff": "Buff",
+      "nerf": "Nerf",
+      "rework": "Adjust"
+    },
+    "loadingPatches": "Loading patch data...",
+    "current": "Current",
+    "noChanges": "No changes",
+    "noData": "No data available.",
+    "notEnoughData": "Not enough patch data to compare.",
+    "minTwoPatches": "At least two patches are required.",
+    "patchTrend": "Patch Trend",
+    "winRate": "Win Rate",
+    "averageRp": "Avg RP",
+    "expected": "Expected",
+    "patch": "Patch"
+  },
+  "synergyPage": {
+    "badge": "Advanced",
+    "beta": "BETA",
+    "dataNotice": "Collecting data · accuracy improves as the sample grows",
+    "title": "Detailed Team Recommender",
+    "subtitle": "Deep team analysis including weapons and main traits · click a comp to view trait breakdowns",
+    "steps": {
+      "pool": {
+        "label": "Set Pool",
+        "sublabel": "Character + weapon"
+      },
+      "allies": {
+        "label": "Pick Allies",
+        "sublabel": "Character + weapon"
+      },
+      "analysis": {
+        "label": "Deep Analysis",
+        "sublabel": "Trait comparison"
+      }
+    }
+  },
+  "synergyInteractive": {
+    "poolTitle": "My Character Pool",
+    "poolHint": "Optional · filter by character + weapon",
+    "poolSection": "Character Pool",
+    "alliesTitle": "Select Allies",
+    "alliesSection": "Allies",
+    "resultsTitle": "Recommended Comps",
+    "resultsSection": "Recommendations"
+  },
+  "synergyResults": {
+    "sort": {
+      "recommended": "Recommended",
+      "averageRP": "Avg RP",
+      "winRate": "Win Rate",
+      "totalGames": "Games"
+    },
+    "titleSingle": "Detailed comps with {ally}",
+    "titlePair": "Detailed comps for {ally1} + {ally2}",
+    "focusFilter": "Filtered to {count} pool picks",
+    "copied": "Copied!",
+    "share": "Share",
+    "reset": "Reset",
+    "sectionName": "Detailed Team Results",
+    "empty": {
+      "prompt": "Find weapon-specific team comps based on your allies' picks",
+      "step1": "1. Set your character pool first (optional)",
+      "step2": "2. Select your allies' characters and weapons",
+      "step3": "3. Click a comp to inspect trait-level performance"
+    },
+    "loading": "Loading team data...",
+    "infoSingle": "Add one more ally for more accurate recommendations · click a comp to see the trait breakdown",
+    "infoPair": "Click a comp to see the trait breakdown",
+    "more": "Show more ({visible}/{total})",
+    "emptyFiltered": "No comps match your current character pool. Try widening the pool.",
+    "emptyNoData": "No data is available for this team setup.",
+    "clearAllies": "Clear allies",
+    "timeout": "The request timed out. Please try again.",
+    "genericError": "Something went wrong."
+  },
+  "characterGrid": {
+    "title": "Select Character",
+    "count": "{count} characters",
+    "placeholder": "Search characters"
+  },
+  "characterDetailed": {
+    "groups": {
+      "havoc": { "name": "Havoc", "letter": "H" },
+      "fortification": { "name": "Fortification", "letter": "F" },
+      "support": { "name": "Support", "letter": "S" },
+      "chaos": { "name": "Chaos", "letter": "C" },
+      "unknown": { "name": "Other", "letter": "?" }
+    },
+    "slots": {
+      "weapon": "Weapon",
+      "chest": "Chest",
+      "head": "Head",
+      "arm": "Arm",
+      "leg": "Leg"
+    },
+    "sections": {
+      "topBuilds": "TOP BUILDS",
+      "slotPopularity": "Popular Items by Slot",
+      "itemBuilds": "Item Builds",
+      "secondaryTraits": "Secondary Trait Combos"
+    },
+    "stats": {
+      "pickRate": "Pick Rate",
+      "winRate": "Win Rate",
+      "averageRank": "Avg Rank",
+      "averageRp": "Avg RP",
+      "total": "Total",
+      "primaryTrait": "Primary Trait"
+    },
+    "labels": {
+      "pickShort": "Pick {value}%",
+      "winShort": "Win {value}%",
+      "rankValue": "Rank #{value}",
+      "rpValue": "RP {value}",
+      "matches": "{count} matches"
+    },
+    "summaries": {
+      "mainTrait": "Main trait: {name}",
+      "core": "{name}, Core",
+      "secondary": "{name}, Secondary"
+    },
+    "empty": {
+      "detailed": "No detailed analysis data is available.",
+      "itemBuilds": "No item build data is available for this trait setup."
+    }
+  },
+  "characterTraitBuild": {
+    "groups": {
+      "havoc": { "name": "Havoc", "letter": "H" },
+      "fortification": { "name": "Fortification", "letter": "F" },
+      "support": { "name": "Support", "letter": "S" },
+      "chaos": { "name": "Chaos", "letter": "C" },
+      "unknown": { "name": "?", "letter": "?" }
+    },
+    "labels": {
+      "core": "Core",
+      "slot1": "Slot 1",
+      "slot2": "Slot 2",
+      "secondary": "Secondary Traits",
+      "matches": "{count} matches",
+      "pick": "Pick {value}%",
+      "win": "Win {value}%"
+    },
+    "empty": {
+      "builds": "No trait build data is available.",
+      "cell": "No data"
+    }
+  },
+  "focusWeaponPool": {
+    "title": "My Character Pool",
+    "count": "{count} picks",
+    "hint": "Preselect the character + weapon combinations you can actually play.",
+    "reset": "Reset",
+    "searchPlaceholder": "Search characters or weapons",
+    "noResults": "No search results",
+    "allWeapons": "All Weapons"
+  },
+  "weaponAllySelector": {
+    "heading": "Select allies (up to 2 · character + weapon group)",
+    "searchPlaceholder": "Search characters or weapons",
+    "noResults": "No search results",
+    "allWeapons": "All Weapons"
+  },
+  "slotEmpty": {
+    "allyCharacter": "Select ally character {index}"
+  },
+  "focusCharacterPool": {
+    "title": "My Character Pool",
+    "count": "{count} characters",
+    "hint": "Preselect the characters you can actually play.",
+    "reset": "Reset",
+    "searchPlaceholder": "Search characters"
+  },
+  "synergyMain": {
+    "title": "Team Recommendations Have Been Upgraded",
+    "subtitle": "Move to detailed recommendations with weapons and main traits for more accurate team comps.",
+    "cta": "Open detailed team recommendations"
+  },
+  "synergyMainResults": {
+    "sort": {
+      "recommended": "Recommended",
+      "averageRP": "Avg RP",
+      "winRate": "Win Rate",
+      "totalGames": "Games"
+    },
+    "titleSingle": "Recommended comps with {ally}",
+    "titlePair": "Comp for {ally1} + {ally2}",
+    "focusFilter": "Filtered to {count} pool picks",
+    "copied": "Copied!",
+    "share": "Share",
+    "reset": "Reset",
+    "sectionName": "Team Results",
+    "empty": {
+      "prompt": "Find the best comp for your allies' picks",
+      "step1": "1. Set your character pool first (optional)",
+      "step2": "2. Select 1 to 2 ally characters",
+      "step3": "3. We recommend the best comp you can play"
+    },
+    "loading": "Loading team data...",
+    "infoSingle": "Add one more ally for more accurate recommendations",
+    "emptyFiltered": "No comps match your character pool. Try widening the pool.",
+    "emptyNoData": "No data is available for this team setup.",
+    "clearAllies": "Clear allies",
+    "timeout": "The request timed out. Please try again.",
+    "genericError": "Something went wrong."
+  },
+  "synergyComboCard": {
+    "smallSample": "Small sample",
+    "winRate": "Win Rate",
+    "rp": "RP",
+    "games": "Games",
+    "averageRank": "Avg Rank",
+    "moreTraits": "Show {count} more traits"
+  },
+  "pageError": {
+    "description": "There may be a temporary server or connection issue. The problem has been reported automatically.",
+    "retry": "Try again",
+    "home": "Home",
+    "characterLoadFailed": "Failed to load character analysis data",
+    "synergyLoadFailed": "Failed to load team recommendation data",
+    "synergyDetailLoadFailed": "Failed to load detailed team data"
+  },
+  "characterMetadata": {
+    "titleWithName": "{name} Character Analysis",
+    "descriptionWithName": "Analyze {name}'s Eternal Return win rate, pick rate, average RP, and optimal builds. Review patch trends and weapon pairings for {name}.",
+    "titleFallback": "Character Analysis",
+    "descriptionFallback": "Analyze Eternal Return characters by win rate, pick rate, average RP, and optimal builds. Review patch trends and weapon pairings.",
+    "keywords": {
+      "character": "Eternal Return {name}",
+      "build": "{name} build",
+      "winRate": "{name} win rate",
+      "stats": "{name} stats",
+      "brand": "ERWAGG",
+      "app": "ERGG",
+      "analysis": "Eternal Return character analysis",
+      "fallbackBuild": "Eternal Return character builds",
+      "fallbackStats": "Eternal Return character stats",
+      "fallbackWeapon": "Eternal Return weapon recommendations"
+    },
+    "openGraphTitle": "{title} | ERWAGG ER&GG",
+    "twitterTitle": "{title} | ER&GG",
+    "socialDescription": "Eternal Return character win rate, pick rate, average RP, and optimal build statistics."
+  },
+  "synergyMetadata": {
+    "headlinePair": "{name1} + {name2} Team Recommendations",
+    "headlineSingle": "Team Recommendations with {name1}",
+    "headlineFallback": "Team Recommendations",
+    "descriptionPair": "Analyze the optimal third pick for {name1} + {name2} with Bayesian team statistics.",
+    "descriptionSingle": "Analyze the best second and third picks to pair with {name1} using Bayesian team statistics.",
+    "descriptionFallback": "Explore Eternal Return trio recommendations and continue to the detailed analysis with weapons and traits.",
+    "socialTitle": "{headline} | ERWAGG ER&GG"
+  },
+  "synergyDetailMetadata": {
+    "headlinePair": "{name1} + {name2} Team Recommendations",
+    "headlineSingle": "Team Recommendations with {name1}",
+    "headlineFallback": "Detailed Team Recommendations",
+    "descriptionPair": "Analyze the optimal third pick for {name1} + {name2} with Bayesian statistics, including weapons and traits.",
+    "descriptionSingle": "Analyze the best second and third picks to pair with {name1} using Bayesian team statistics.",
+    "descriptionFallback": "Explore detailed Eternal Return trio recommendations with weapons and main traits using Bayesian team analysis.",
+    "title": "{headline} - With Weapons and Traits | ERWAGG ER&GG",
+    "socialTitle": "{headline} | ERWAGG ER&GG",
+    "keywords": {
+      "brand": "ERWAGG",
+      "app": "ERGG",
+      "synergy": "Eternal Return team recommendations",
+      "weapon": "Eternal Return weapon combinations",
+      "trait": "Eternal Return trait combinations",
+      "detail": "Eternal Return detailed team analysis",
+      "character": "{name} team comp"
+    }
+  }
+}

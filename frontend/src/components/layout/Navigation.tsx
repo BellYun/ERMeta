@@ -2,19 +2,20 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-
-const navLinks = [
-  { href: "/", label: "메타 분석" },
-  { href: "/synergy-detail", label: "조합 추천" },
-  { href: "/character/1", label: "캐릭터 분석" },
-];
 
 export function Navigation() {
   const pathname = usePathname();
+  const t = useTranslations("navigation");
+  const navLinks = [
+    { href: "/", label: t("metaAnalysis") },
+    { href: "/synergy-detail", label: t("synergyRecommendation") },
+    { href: "/character/1", label: t("characterAnalysis") },
+  ];
 
   return (
-    <nav aria-label="메인 내비게이션" className="flex items-center gap-1">
+    <nav aria-label={t("ariaMain")} className="flex items-center gap-1">
       {navLinks.map(({ href, label }) => {
         const isActive = href.startsWith("/character/")
           ? pathname.startsWith("/character/")
