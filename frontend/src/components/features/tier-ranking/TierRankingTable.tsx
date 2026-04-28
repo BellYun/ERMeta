@@ -25,7 +25,7 @@ import type { PrevStats, DisplayRow } from "./types";
 import { computeMetaScores, assignTier } from "./utils";
 
 const fallbackMap = buildFallbackMap();
-const ALL_ROLE = "전체" as const;
+const ALL_ROLE = "all" as const;
 type RoleTabValue = typeof ALL_ROLE | CharacterRole;
 
 type SortKey = "rank" | "pickRate" | "winRate" | "averageRP";
