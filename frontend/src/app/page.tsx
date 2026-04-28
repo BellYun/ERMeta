@@ -1,13 +1,11 @@
-import { Activity, Crosshair, Sparkles } from "lucide-react";
+import { Activity } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import type { ReactNode } from "react";
 import { FilterProvider } from "@/components/features/FilterContext";
 import { GlobalFilter } from "@/components/features/GlobalFilter";
 import { HomeFilterAside } from "@/components/features/HomeFilterAside";
 import { HoneyPicksSection } from "@/components/features/HoneyPicksSection";
 import { TierRankingTable } from "@/components/features/TierRankingTable";
-import { getCharacterName } from "@/lib/characterMap";
 import { getPatches } from "@/lib/getPatches";
 import { fetchHoneyPicksServer } from "@/lib/honeyPicks";
 import { fetchRankingData } from "@/lib/ranking";
@@ -59,36 +57,6 @@ function buildBarHeights(values: number[]) {
   return values.slice(0, 20).map((value) => Math.max(16, Math.round((value / max) * 78)));
 }
 
-function InsightBlock({
-  icon,
-  title,
-  body,
-  accentClass,
-}: {
-  icon: ReactNode;
-  title: string;
-  body: string;
-  accentClass: string;
-}) {
-  return (
-    <div className="rounded-[20px] border border-[var(--color-border)] bg-[rgba(19,28,50,0.76)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
-      <div className="flex items-start gap-4">
-        <div
-          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/8 ${accentClass}`}
-        >
-          {icon}
-        </div>
-        <div className="min-w-0">
-          <p className="text-xl font-bold tracking-[-0.035em] text-[var(--color-foreground)]">
-            {title}
-          </p>
-          <p className="mt-1 text-sm leading-6 text-[var(--color-muted-foreground)]">{body}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default async function Home() {
   const t = await getTranslations("home");
   const patches = await getPatches();
@@ -123,13 +91,6 @@ export default async function Home() {
       ? topBracket.reduce((sum, row) => sum + row.averageRP, 0) / topBracket.length
       : 0;
   const positiveRpCount = rankingData.rankings.filter((row) => row.averageRP > 0).length;
-  const topMetaCount = Math.min(5, rankingData.rankings.length || 5);
-  const risingName =
-    honeyData.picks[0]?.characterNum != null
-      ? getCharacterName(honeyData.picks[0].characterNum)
-      : topBracket[0]?.characterNum != null
-        ? getCharacterName(topBracket[0].characterNum)
-        : "메타";
   const volumeBars = buildBarHeights(rankingData.rankings.map((row) => row.totalGames));
   const positiveRatio =
     rankingData.rankings.length > 0 ? positiveRpCount / rankingData.rankings.length : 0.42;
@@ -234,49 +195,21 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="grid gap-5 xl:grid-cols-[minmax(0,1.6fr)_360px]">
-          <div className="dashboard-panel p-4 lg:p-5">
-            <div className="mb-4 flex flex-wrap items-end gap-x-4 gap-y-2">
-              <h2 className="text-[1.85rem] font-black tracking-[-0.05em] text-[var(--color-foreground)]">
-                {t("rankingTitle")}
-              </h2>
-              <p className="pb-1 text-sm text-[var(--color-muted-foreground)]">
-                {t("rankingDescription")}
-              </p>
-            </div>
-            <TierRankingTable initialData={rankingData} />
-          </div>
+        <HomeFilterAside anchorId="home-top-filter" />
 
-          <div className="flex flex-col gap-5">
-            <HomeFilterAside anchorId="home-top-filter" />
-
-            <div className="dashboard-panel p-4 lg:p-5">
-              <h2 className="text-[1.85rem] font-black tracking-[-0.05em] text-[var(--color-foreground)]">
-                {t("insightTitle")}
-              </h2>
-              <div className="mt-4 flex flex-col gap-3">
-                <InsightBlock
-                  icon={<Sparkles className="h-5 w-5" strokeWidth={1.9} />}
-                  accentClass="bg-[rgba(168,85,247,0.16)] text-[#c084fc]"
-                  title={t("insightCards.rising.title")}
-                  body={t("insightCards.rising.body", { name: risingName })}
-                />
-                <InsightBlock
-                  icon={<Activity className="h-5 w-5" strokeWidth={1.9} />}
-                  accentClass="bg-[rgba(59,130,246,0.16)] text-[#60a5fa]"
-                  title={t("insightCards.rp.title")}
-                  body={t("insightCards.rp.body", { count: positiveRpCount })}
-                />
-                <InsightBlock
-                  icon={<Crosshair className="h-5 w-5" strokeWidth={1.9} />}
-                  accentClass="bg-[rgba(34,197,94,0.16)] text-[#4ade80]"
-                  title={t("insightCards.meta.title")}
-                  body={t("insightCards.meta.body", { count: topMetaCount })}
-                />
-              </div>
-            </div>
+        <section className="dashboard-panel p-4 lg:p-5">
+          <div className="mb-4 flex flex-wrap items-end gap-x-4 gap-y-2">
+            <h2 className="text-[1.85rem] font-black tracking-[-0.05em] text-[var(--color-foreground)]">
+              {t("rankingTitle")}
+            </h2>
+            <p className="pb-1 text-sm text-[var(--color-muted-foreground)]">
+              {t("rankingDescription")}
+            </p>
           </div>
+          <TierRankingTable initialData={rankingData} />
         </section>
+
+        {/* TODO: Restore the meta insights panel after data-backed insight heuristics are validated. */}
       </div>
     </FilterProvider>
   );

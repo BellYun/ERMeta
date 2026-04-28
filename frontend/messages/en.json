@@ -85,16 +85,16 @@
     "insightTitle": "Meta Insights",
     "insightCards": {
       "rising": {
-        "title": "Rising pick detected",
-        "body": "{name} is climbing with stronger win rate and RP this patch."
+        "title": "Fastest riser",
+        "body": "{name} is up {winRateDelta}pp in win rate with an RP swing of {averageRPDelta}."
       },
-      "rp": {
-        "title": "Positive RP pocket",
-        "body": "{count} top characters are holding a positive average RP line."
+      "concentration": {
+        "title": "Meta concentration",
+        "body": "The top {count} characters account for {share}% of total pick share."
       },
-      "meta": {
-        "title": "Top bracket concentration",
-        "body": "The top {count} characters are driving the current meta share."
+      "patchResponse": {
+        "title": "Buff response",
+        "body": "{buffedCount} of the top {count} risers were buffed or adjusted this patch."
       }
     },
     "deepDiveTitle": "Need a deeper breakdown?",

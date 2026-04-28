@@ -85,16 +85,16 @@
     "insightTitle": "메타 인사이트",
     "insightCards": {
       "rising": {
-        "title": "상승 캐릭터 감지",
-        "body": "{name}가 승률과 RP 모두 개선되며 이번 패치 핵심 픽으로 부상했습니다."
+        "title": "최대 상승 캐릭터",
+        "body": "{name}가 승률 {winRateDelta}%p, RP {averageRPDelta} 변동으로 가장 빠르게 상승했습니다."
       },
-      "rp": {
-        "title": "RP 회복 구간",
-        "body": "상위 {count}명의 캐릭터가 평균 RP 플러스 구간을 유지하고 있습니다."
+      "concentration": {
+        "title": "메타 집중도",
+        "body": "상위 {count}개 캐릭터가 전체 픽의 {share}%를 차지하고 있습니다."
       },
-      "meta": {
-        "title": "상위권 표본 안정화",
-        "body": "TOP {count} 캐릭터가 전체 메타 점유율을 끌어가고 있습니다."
+      "patchResponse": {
+        "title": "버프 반응 확인",
+        "body": "상승 TOP {count} 중 {buffedCount}개가 이번 패치 버프 또는 조정 대상입니다."
       }
     },
     "deepDiveTitle": "더 깊이 있는 분석이 필요하신가요?",
