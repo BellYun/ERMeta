@@ -85,6 +85,26 @@ export function MobileTabBar() {
         </svg>
       ),
     },
+    {
+      href: "/season10-recap",
+      label: t("recap"),
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={1.8}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M16.5 18.75h-9a2.25 2.25 0 0 1-2.25-2.25V5.708c0-.844.474-1.616 1.226-1.997l4.5-2.286a2.25 2.25 0 0 1 2.048 0l4.5 2.286A2.25 2.25 0 0 1 19.25 5.708V16.5a2.25 2.25 0 0 1-2.25 2.25Z"
+          />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 9.75h6M9 12.75h6M10.5 6.75h3" />
+        </svg>
+      ),
+    },
   ];
 
   return (
@@ -96,7 +116,9 @@ export function MobileTabBar() {
               ? pathname.startsWith("/character/")
               : href === "/patches"
                 ? pathname.startsWith("/patches")
-                : pathname === href;
+                : href === "/season10-recap"
+                  ? pathname.startsWith("/season10-recap")
+                  : pathname === href;
             return (
               <Link
                 key={href}

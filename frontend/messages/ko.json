@@ -3,6 +3,10 @@
     "logoTitle": "ER&GG",
     "logoSubtitle": "이리와지지",
     "patchPrefix": "v",
+    "seasonRecapBadge": "NEW",
+    "seasonRecapTitle": "시즌 10 리캡 공개",
+    "seasonRecapBody": "패치별 평균 RP TOP 5와 시즌 누적 메타 흐름을 한 번에 정리했습니다.",
+    "seasonRecapCta": "보러 가기",
     "openSearch": "검색 열기",
     "closeSearch": "검색 닫기",
     "languageSelectAria": "언어 선택",
@@ -18,6 +22,7 @@
     "characterAnalysis": "캐릭터 분석",
     "dataLab": "데이터 랩",
     "patchNotes": "패치 노트",
+    "seasonRecap": "시즌 리캡",
     "feedback": "피드백 남기기",
     "patchPanel": "패치 {patch}",
     "patchPanelFallback": "패치 정보 없음",
@@ -28,7 +33,8 @@
     "synergy": "조합",
     "character": "캐릭터",
     "updates": "업데이트",
-    "patches": "패치"
+    "patches": "패치",
+    "recap": "리캡"
   },
   "patches": {
     "indexTitle": "패치 노트",

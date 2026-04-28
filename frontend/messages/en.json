@@ -3,6 +3,10 @@
     "logoTitle": "ER&GG",
     "logoSubtitle": "Eternal Return Meta",
     "patchPrefix": "v",
+    "seasonRecapBadge": "NEW",
+    "seasonRecapTitle": "Season 10 recap is live",
+    "seasonRecapBody": "Review per-patch top RP comps and the full season meta flow in one place.",
+    "seasonRecapCta": "Open recap",
     "openSearch": "Open search",
     "closeSearch": "Close search",
     "languageSelectAria": "Select language",
@@ -18,6 +22,7 @@
     "characterAnalysis": "Character Analysis",
     "dataLab": "Data Lab",
     "patchNotes": "Patch Notes",
+    "seasonRecap": "Season Recap",
     "feedback": "Send Feedback",
     "patchPanel": "Patch {patch}",
     "patchPanelFallback": "Patch unavailable",
@@ -28,7 +33,8 @@
     "synergy": "Teams",
     "character": "Characters",
     "updates": "Updates",
-    "patches": "Patches"
+    "patches": "Patches",
+    "recap": "Recap"
   },
   "patches": {
     "indexTitle": "Patch Notes",

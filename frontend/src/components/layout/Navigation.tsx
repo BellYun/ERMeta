@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, MessageSquarePlus, Network, NotebookText, Search } from "lucide-react";
+import { BarChart3, MessageSquarePlus, Network, NotebookText, Search, Trophy } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -39,6 +39,12 @@ export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
       label: t("patchNotes"),
       icon: NotebookText,
       isActive: pathname.startsWith("/patches"),
+    },
+    {
+      href: "/season10-recap",
+      label: t("seasonRecap"),
+      icon: Trophy,
+      isActive: pathname.startsWith("/season10-recap"),
     },
   ];
 
