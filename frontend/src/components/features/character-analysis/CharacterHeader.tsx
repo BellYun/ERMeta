@@ -112,7 +112,7 @@ export function CharacterHeader({
       {/* ── Character Identity ── */}
       <div
         className={cn(
-          "relative rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-4 sm:p-5 overflow-hidden",
+          "relative overflow-hidden rounded-[24px] border border-[var(--color-border)] bg-[rgba(17,25,46,0.72)] p-4 sm:p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
           charTier && TIER_GLOW[charTier]
         )}
       >
@@ -174,7 +174,7 @@ export function CharacterHeader({
             <div
               role="radiogroup"
               aria-label={t("tierSelectorAria")}
-              className="flex items-center gap-1 rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] p-0.5 w-fit"
+              className="flex items-center gap-1 rounded-[16px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] p-1 w-fit"
             >
               {METRICS_TIER_GROUPS.map((tg, i) => {
                 const isSelected = selectedTier === tg;
@@ -194,7 +194,7 @@ export function CharacterHeader({
                     }}
                     onKeyDown={(e) => handleTierKey(e, i)}
                     className={cn(
-                      "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all whitespace-nowrap",
+                      "px-3 py-1.5 rounded-xl text-[11px] font-medium transition-all whitespace-nowrap",
                       "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
                       isSelected
                         ? "bg-[var(--color-primary)]/15 text-[var(--color-primary)] shadow-sm"
@@ -212,7 +212,7 @@ export function CharacterHeader({
         {/* ── Weapon Selector ── */}
         {!loading && stats?.weapons && stats.weapons.length > 0 && (
           <div className="relative mt-4 pt-3.5 border-t border-[var(--color-border)]/60">
-            <span className="absolute -top-2.5 left-3 bg-[var(--color-surface)] px-2 text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
+            <span className="absolute -top-2.5 left-3 bg-[rgba(17,25,46,0.92)] px-2 text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
               {t("weapon")}
             </span>
             <div
@@ -231,11 +231,11 @@ export function CharacterHeader({
                 onClick={() => setSelectedWeapon(null)}
                 onKeyDown={(e) => handleWeaponKey(e, 0)}
                 className={cn(
-                  "flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all shrink-0",
+                  "flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-medium transition-all shrink-0",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
                   selectedWeapon == null
                     ? "border-[var(--color-primary)]/50 bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
-                    : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/30"
+                    : "border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/30"
                 )}
               >
                 {t("all")}
@@ -263,11 +263,11 @@ export function CharacterHeader({
                     }}
                     onKeyDown={(e) => handleWeaponKey(e, weaponIndex)}
                     className={cn(
-                      "flex flex-col rounded-lg border px-3 py-1.5 text-xs transition-all min-w-[88px] shrink-0",
+                      "flex flex-col rounded-xl border px-3 py-2 text-xs transition-all min-w-[96px] shrink-0",
                       "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
                       isSelected
                         ? "border-[var(--color-primary)]/50 bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
-                        : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/30"
+                        : "border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/30"
                     )}
                   >
                     <div className="flex items-center justify-between gap-2 w-full">
@@ -360,7 +360,7 @@ export function CharacterHeader({
           />
         </div>
       ) : (
-        <div className="rounded-xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface)]/40 px-4 py-8 text-center">
+        <div className="rounded-[22px] border border-dashed border-[var(--color-border)] bg-[rgba(255,255,255,0.02)] px-4 py-8 text-center">
           <p className="text-sm text-[var(--color-muted-foreground)]">
             {currentPatch ? t("emptyPatchData") : t("loadingPatchInfo")}
           </p>

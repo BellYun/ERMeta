@@ -3,13 +3,22 @@
     "logoTitle": "ER&GG",
     "logoSubtitle": "이리와지지",
     "patchPrefix": "v",
-    "languageSelectAria": "언어 선택"
+    "languageSelectAria": "언어 선택",
+    "searchPlaceholder": "캐릭터, 아이템, 스킬 검색",
+    "searchShortcut": "⌘ /",
+    "notificationsAria": "알림",
+    "profileLabel": "ERGG"
   },
   "navigation": {
     "ariaMain": "메인 내비게이션",
     "metaAnalysis": "메타 분석",
     "synergyRecommendation": "조합 추천",
-    "characterAnalysis": "캐릭터 분석"
+    "characterAnalysis": "캐릭터 분석",
+    "dataLab": "데이터 랩",
+    "patchNotes": "패치 노트",
+    "feedback": "피드백 남기기",
+    "patchPanel": "패치 {patch}",
+    "updateStatus": "업데이트: 실시간 반영"
   },
   "mobileTab": {
     "meta": "메타",
@@ -61,12 +70,36 @@
     "patch": "패치 {patch}",
     "title": "메타 분석",
     "subtitle": "{count}판 데이터 기반 실시간 분석",
+    "heroDescription": "이터널 리턴의 현재 메타를 데이터로 분석합니다.",
+    "matchMetric": "실시간 분석 중 매치",
+    "winRateMetric": "상위권 평균 승률",
+    "rpMetric": "상위권 평균 RP",
+    "topFiveTitle": "이번 패치 TOP 5",
     "honeyPicksTitle": "이번 패치 떡상",
     "honeyPicksDescription": "버프 후 픽률 & 승률 동반 상승 캐릭터",
     "honeySectionName": "이번 패치 떡상",
+    "topFiveCaption": "승률, 픽률, RP 변동 기준 상위 캐릭터",
     "rankingTitle": "캐릭터 순위",
     "rankingDescription": "메타 스코어 기반 종합 순위",
-    "rankingSectionName": "캐릭터 순위"
+    "rankingSectionName": "캐릭터 순위",
+    "insightTitle": "메타 인사이트",
+    "insightCards": {
+      "rising": {
+        "title": "상승 캐릭터 감지",
+        "body": "{name}가 승률과 RP 모두 개선되며 이번 패치 핵심 픽으로 부상했습니다."
+      },
+      "rp": {
+        "title": "RP 회복 구간",
+        "body": "상위 {count}명의 캐릭터가 평균 RP 플러스 구간을 유지하고 있습니다."
+      },
+      "meta": {
+        "title": "상위권 표본 안정화",
+        "body": "TOP {count} 캐릭터가 전체 메타 점유율을 끌어가고 있습니다."
+      }
+    },
+    "deepDiveTitle": "더 깊이 있는 분석이 필요하신가요?",
+    "deepDiveBody": "데이터 랩에서 다양한 통계와 메타 트렌드를 확인해보세요.",
+    "deepDiveCta": "데이터 랩으로 이동"
   },
   "globalFilter": {
     "patchAria": "패치 선택",
@@ -133,7 +166,14 @@
     "title": "캐릭터 분석",
     "subtitle": "캐릭터별 승률 · 빌드 · 패치 트렌드 · 장비 통계 심층 분석",
     "imageNotice": "일부 아이템 이미지가 누락되거나 잘못 표시될 수 있습니다",
-    "sectionName": "캐릭터 분석"
+    "sectionName": "캐릭터 분석",
+    "metrics": {
+      "matches": "분석 표본",
+      "winRate": "현재 승률",
+      "bestWeapon": "주력 무기"
+    },
+    "pickerTitle": "캐릭터 전환",
+    "pickerHint": "다른 캐릭터를 선택해 메타 성능과 빌드를 비교하세요"
   },
   "characterPicker": {
     "searchAria": "캐릭터 검색",
@@ -222,9 +262,12 @@
     "poolHint": "선택사항 · 캐릭터+무기 단위 필터링",
     "poolSection": "캐릭터 풀",
     "alliesTitle": "아군 선택",
+    "alliesHint": "최대 2명 · 캐릭터+무기 단위",
     "alliesSection": "아군 선택",
     "resultsTitle": "추천 조합",
-    "resultsSection": "추천 조합"
+    "resultsHint": "선택된 아군 기준 상세 조합 비교",
+    "resultsSection": "추천 조합",
+    "shareLanding": "친구가 추천한 조합입니다. 현재 메타 기준으로 바로 확인해보세요."
   },
   "synergyResults": {
     "sort": {

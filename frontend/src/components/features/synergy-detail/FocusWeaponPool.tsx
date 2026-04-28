@@ -154,7 +154,7 @@ export function FocusWeaponPool() {
   const headerTapGuard = useTapGuard(toggleExpanded);
 
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm overflow-hidden">
+    <div className="overflow-hidden rounded-[22px] border border-[var(--color-border)] bg-[rgba(17,25,46,0.72)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
       {/* 접이식 헤더 — button 중첩 방지를 위해 div+role 사용 */}
       <div
         role="button"
@@ -168,12 +168,12 @@ export function FocusWeaponPool() {
         }}
         aria-expanded={isExpanded}
         style={{ touchAction: "manipulation" }}
-        className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80 transition-colors cursor-pointer"
+        className="w-full flex items-center justify-between px-4 py-3 hover:bg-[rgba(255,255,255,0.03)] active:bg-[rgba(255,255,255,0.04)] transition-colors cursor-pointer"
       >
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-[var(--color-foreground)]">{t("title")}</span>
+          <span className="text-sm font-semibold text-[var(--color-foreground)]">{t("title")}</span>
           {focusCharWeapons.length > 0 && (
-            <span className="rounded-full bg-[var(--color-primary)]/20 px-1.5 py-0.5 text-[10px] font-medium text-[var(--color-primary)]">
+            <span className="rounded-full bg-[var(--color-primary)]/16 px-2 py-0.5 text-[10px] font-semibold text-[var(--color-primary-hover)]">
               {t("count", { count: focusCharWeapons.length })}
             </span>
           )}
@@ -208,12 +208,12 @@ export function FocusWeaponPool() {
 
       {/* 접힌 상태: 선택된 칩 표시 */}
       {!isExpanded && focusCharWeapons.length > 0 && (
-        <div className="px-3 pb-2.5 flex flex-wrap gap-1.5">
+        <div className="px-4 pb-3 flex flex-wrap gap-1.5">
           {focusCharWeapons.map((f) => (
             <button
               key={`${f.charCode}-${f.weaponCode}`}
               onClick={() => toggleFocus(f.charCode, f.weaponCode)}
-              className="inline-flex items-center gap-1 rounded-md border border-[var(--color-primary)]/40 bg-[var(--color-primary)]/10 px-2 py-1.5 min-h-[44px] text-[10px] text-[var(--color-foreground)] hover:bg-[var(--color-primary)]/20 active:bg-[var(--color-primary)]/30 transition-colors"
+              className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-2.5 py-1.5 text-[10px] text-[var(--color-foreground)] hover:bg-[var(--color-primary)]/20 active:bg-[var(--color-primary)]/30 transition-colors"
             >
               <span className="relative h-4 w-4 shrink-0 overflow-hidden rounded">
                 <Image
@@ -233,14 +233,14 @@ export function FocusWeaponPool() {
 
       {/* 펼친 상태: 검색 + 가상화 그리드 */}
       {isExpanded && (
-        <div className="border-t border-[var(--color-border)] p-2">
+        <div className="border-t border-[var(--color-border)] p-3">
           <div className="relative mb-2">
             <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)]" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t("searchPlaceholder")}
-              className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
+              className="w-full rounded-xl border border-[var(--color-border)] bg-[rgba(10,16,31,0.72)] py-2 pl-8 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
             />
             {search && (
               <button

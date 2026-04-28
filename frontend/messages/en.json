@@ -3,13 +3,22 @@
     "logoTitle": "ER&GG",
     "logoSubtitle": "Eternal Return Meta",
     "patchPrefix": "v",
-    "languageSelectAria": "Select language"
+    "languageSelectAria": "Select language",
+    "searchPlaceholder": "Search characters, items, and skills",
+    "searchShortcut": "⌘ /",
+    "notificationsAria": "Notifications",
+    "profileLabel": "ERGG"
   },
   "navigation": {
     "ariaMain": "Main navigation",
     "metaAnalysis": "Meta Analysis",
     "synergyRecommendation": "Team Recommender",
-    "characterAnalysis": "Character Analysis"
+    "characterAnalysis": "Character Analysis",
+    "dataLab": "Data Lab",
+    "patchNotes": "Patch Notes",
+    "feedback": "Send Feedback",
+    "patchPanel": "Patch {patch}",
+    "updateStatus": "Update: live refresh"
   },
   "mobileTab": {
     "meta": "Meta",
@@ -61,12 +70,36 @@
     "patch": "Patch {patch}",
     "title": "Meta Analysis",
     "subtitle": "Live analysis based on {count} matches",
+    "heroDescription": "Analyze the current Eternal Return meta through live performance data.",
+    "matchMetric": "Matches analyzed",
+    "winRateMetric": "Top bracket avg win rate",
+    "rpMetric": "Top bracket avg RP",
+    "topFiveTitle": "Patch Top 5",
     "honeyPicksTitle": "Patch Risers",
     "honeyPicksDescription": "Characters climbing after buffs with rising pick and win rates",
     "honeySectionName": "Patch Risers",
+    "topFiveCaption": "Top characters by win rate, pick rate, and RP movement",
     "rankingTitle": "Character Rankings",
     "rankingDescription": "Overall rankings based on meta score",
-    "rankingSectionName": "Character Rankings"
+    "rankingSectionName": "Character Rankings",
+    "insightTitle": "Meta Insights",
+    "insightCards": {
+      "rising": {
+        "title": "Rising pick detected",
+        "body": "{name} is climbing with stronger win rate and RP this patch."
+      },
+      "rp": {
+        "title": "Positive RP pocket",
+        "body": "{count} top characters are holding a positive average RP line."
+      },
+      "meta": {
+        "title": "Top bracket concentration",
+        "body": "The top {count} characters are driving the current meta share."
+      }
+    },
+    "deepDiveTitle": "Need a deeper breakdown?",
+    "deepDiveBody": "Open the Data Lab to inspect broader stats and meta trends.",
+    "deepDiveCta": "Open Data Lab"
   },
   "globalFilter": {
     "patchAria": "Select patch",
@@ -133,7 +166,14 @@
     "title": "Character Analysis",
     "subtitle": "Deep dive into win rate, builds, patch trends, and equipment stats by character",
     "imageNotice": "Some item images may be missing or displayed incorrectly.",
-    "sectionName": "Character Analysis"
+    "sectionName": "Character Analysis",
+    "metrics": {
+      "matches": "Sampled matches",
+      "winRate": "Current win rate",
+      "bestWeapon": "Primary weapon"
+    },
+    "pickerTitle": "Switch character",
+    "pickerHint": "Pick another character to compare current meta performance and builds"
   },
   "characterPicker": {
     "searchAria": "Search characters",
@@ -222,9 +262,12 @@
     "poolHint": "Optional · filter by character + weapon",
     "poolSection": "Character Pool",
     "alliesTitle": "Select Allies",
+    "alliesHint": "Up to 2 allies · character + weapon scope",
     "alliesSection": "Allies",
     "resultsTitle": "Recommended Comps",
-    "resultsSection": "Recommendations"
+    "resultsHint": "Detailed comparison for the selected allies",
+    "resultsSection": "Recommendations",
+    "shareLanding": "This team comp was shared with you. Check it against the current meta."
   },
   "synergyResults": {
     "sort": {

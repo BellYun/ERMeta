@@ -379,7 +379,7 @@ export function WeaponAllySelector() {
   return (
     <>
       {/* 슬롯 표시 */}
-      <div className="flex gap-3">
+      <div className="mb-3 flex gap-3">
         {ally1 ? (
           <SlotWeaponFilled
             code={ally1.charCode}
@@ -403,8 +403,8 @@ export function WeaponAllySelector() {
       </div>
 
       {/* 검색 + 가상화 그리드 */}
-      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-2">
-        <p className="mb-2 px-1 text-xs text-[var(--color-muted-foreground)]">{t("heading")}</p>
+      <div className="rounded-[22px] border border-[var(--color-border)] bg-[rgba(17,25,46,0.72)] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+        <p className="mb-3 px-1 text-xs text-[var(--color-muted-foreground)]">{t("heading")}</p>
 
         <div className="relative mb-2">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)]" />
@@ -412,7 +412,7 @@ export function WeaponAllySelector() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("searchPlaceholder")}
-            className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
+            className="w-full rounded-xl border border-[var(--color-border)] bg-[rgba(10,16,31,0.72)] py-2 pl-8 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
           />
           {search && (
             <button
@@ -494,8 +494,8 @@ function SlotWeaponFilled({
   onRemove: () => void;
 }) {
   return (
-    <div className="flex flex-1 items-center gap-3 rounded-lg border border-[var(--color-primary)]/50 bg-[var(--color-primary)]/10 px-4 py-3">
-      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-[var(--color-border)]">
+    <div className="flex flex-1 items-center gap-3 rounded-[18px] border border-[var(--color-primary)]/30 bg-[rgba(37,99,235,0.12)] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-[var(--color-border)]">
         <Image
           src={getCharacterMiniWebpUrl(code)}
           alt={name}
@@ -505,8 +505,10 @@ function SlotWeaponFilled({
         />
       </div>
       <div className="flex flex-col flex-1 min-w-0">
-        <span className="text-sm font-medium text-[var(--color-foreground)] truncate">{name}</span>
-        <span className="text-[11px] text-[var(--color-primary)]">{weaponName}</span>
+        <span className="truncate text-sm font-semibold text-[var(--color-foreground)]">
+          {name}
+        </span>
+        <span className="text-[11px] text-[var(--color-primary-hover)]">{weaponName}</span>
       </div>
       <button
         onClick={onRemove}

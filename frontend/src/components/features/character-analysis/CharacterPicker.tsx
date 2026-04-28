@@ -45,7 +45,6 @@ function matchesQuery(name: string, q: string): boolean {
 
 interface CharacterPickerProps {
   code: number;
-  currentPatch: string | null;
 }
 
 export function CharacterPicker({ code }: CharacterPickerProps) {
@@ -142,7 +141,7 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
   };
 
   return (
-    <div ref={containerRef} className="relative w-full sm:w-[320px] ml-auto">
+    <div ref={containerRef} className="relative w-full max-w-[420px]">
       {/* 검색 입력 — WAI-ARIA Combobox 패턴 */}
       <div className="relative">
         <Search
@@ -173,12 +172,12 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
           onKeyDown={handleKeyDown}
           placeholder={t("placeholder")}
           className={cn(
-            "w-full rounded-xl border bg-[var(--color-surface)]/80 pl-9 pr-4 py-2.5 text-sm text-[var(--color-foreground)]",
+            "w-full rounded-[18px] border bg-[rgba(17,25,46,0.72)] pl-10 pr-4 py-3 text-sm text-[var(--color-foreground)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
             "placeholder:text-[var(--color-muted-foreground)]",
             "outline-none transition-all",
             open
-              ? "border-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/30 rounded-b-none"
-              : "border-[var(--color-border)] hover:border-[var(--color-primary)]/50"
+              ? "border-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/30 rounded-b-[0px]"
+              : "border-[var(--color-border)] hover:border-[var(--color-primary)]/40"
           )}
         />
       </div>
@@ -190,7 +189,7 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
           id="character-listbox"
           role="listbox"
           aria-label={t("listAria")}
-          className="absolute z-50 top-full right-0 w-full max-h-[280px] overflow-y-auto rounded-b-xl border border-t-0 border-[var(--color-primary)] bg-[var(--color-surface)] shadow-2xl"
+          className="absolute z-50 top-full right-0 w-full max-h-[320px] overflow-y-auto rounded-b-[18px] border border-t-0 border-[var(--color-primary)] bg-[rgba(15,23,42,0.98)] shadow-[0_28px_60px_-36px_rgba(0,0,0,0.9)]"
         >
           {filtered.length === 0 ? (
             <div

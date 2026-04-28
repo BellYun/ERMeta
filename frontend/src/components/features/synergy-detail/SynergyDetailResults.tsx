@@ -369,42 +369,25 @@ export function SynergyDetailResults() {
 
   return (
     <>
-      {/* 정렬 기준 */}
-      <div className="flex items-center justify-between gap-2 flex-wrap">
-        <div className="flex items-center gap-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-1">
-          {SORT_OPTIONS.map(({ value, labelKey }) => (
-            <button
-              key={value}
-              onClick={() => {
-                setSortBy(value);
-                analytics.synergySortChanged(value);
-              }}
-              className={cn(
-                "px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors min-h-[44px] flex items-center",
-                sortBy === value
-                  ? "bg-[var(--color-primary)] text-white active:bg-[var(--color-primary)]/80"
-                  : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80"
-              )}
-            >
-              {t(`sort.${labelKey}`)}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-3">
+      <div className="mb-4 flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
+        <div className="flex flex-wrap items-center gap-2">
+          {selectedAllies.length > 0 && (
+            <h2 className="text-[1rem] font-semibold tracking-[-0.03em] text-[var(--color-foreground)]">
+              {selectedCharCodes.length === 1
+                ? t("titleSingle", { ally: getCharName(selectedCharCodes[0]) })
+                : t("titlePair", {
+                    ally1: getCharName(selectedCharCodes[0]),
+                    ally2: getCharName(selectedCharCodes[1]),
+                  })}
+            </h2>
+          )}
+          {focusCharWeapons.length > 0 && (
+            <span className="rounded-full border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-2.5 py-1 text-[11px] font-medium text-[var(--color-primary-hover)]">
+              {t("focusFilter", { count: focusCharWeapons.length })}
+            </span>
+          )}
           {selectedAllies.length > 0 && (
             <>
-              <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
-                {selectedCharCodes.length === 1
-                  ? t("titleSingle", { ally: getCharName(selectedCharCodes[0]) })
-                  : t("titlePair", {
-                      ally1: getCharName(selectedCharCodes[0]),
-                      ally2: getCharName(selectedCharCodes[1]),
-                    })}
-                {focusCharWeapons.length > 0
-                  ? ` (${t("focusFilter", { count: focusCharWeapons.length })})`
-                  : ""}
-              </h2>
               <button
                 type="button"
                 onClick={() => {
@@ -449,7 +432,7 @@ export function SynergyDetailResults() {
                     });
                   });
                 }}
-                className="inline-flex items-center gap-1 shrink-0 rounded-md border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-2.5 py-1.5 min-h-[44px] text-xs font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 active:bg-[var(--color-primary)]/30 hover:border-[var(--color-primary)]/50 transition-colors"
+                className="inline-flex min-h-[40px] shrink-0 items-center gap-1 rounded-xl border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-3 py-2 text-xs font-medium text-[var(--color-primary-hover)] hover:bg-[var(--color-primary)]/18 transition-colors"
               >
                 <Share2 className="h-3 w-3" />
                 {copied ? t("copied") : t("share")}
@@ -457,7 +440,7 @@ export function SynergyDetailResults() {
               <button
                 type="button"
                 onClick={clearAllies}
-                className="inline-flex items-center gap-1 shrink-0 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 py-1.5 min-h-[44px] text-xs font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] hover:border-[var(--color-border-light)] active:bg-[var(--color-surface-2)]/80 transition-colors"
+                className="inline-flex min-h-[40px] shrink-0 items-center gap-1 rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-3 py-2 text-xs font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[rgba(255,255,255,0.05)] transition-colors"
               >
                 <X className="h-3 w-3" />
                 {t("reset")}
@@ -465,12 +448,32 @@ export function SynergyDetailResults() {
             </>
           )}
         </div>
+
+        <div className="flex flex-wrap items-center gap-1 rounded-[16px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] p-1">
+          {SORT_OPTIONS.map(({ value, labelKey }) => (
+            <button
+              key={value}
+              onClick={() => {
+                setSortBy(value);
+                analytics.synergySortChanged(value);
+              }}
+              className={cn(
+                "flex min-h-[40px] items-center rounded-xl px-3 py-2 text-xs font-medium transition-colors",
+                sortBy === value
+                  ? "bg-[var(--color-primary)] text-white"
+                  : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[rgba(255,255,255,0.05)]"
+              )}
+            >
+              {t(`sort.${labelKey}`)}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* 결과 목록 */}
       <SectionErrorBoundary sectionName={t("sectionName")}>
         {selectedAllies.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
+          <div className="flex flex-col items-center justify-center rounded-[22px] border border-dashed border-[var(--color-border)] bg-[rgba(255,255,255,0.02)] py-16 text-center">
             <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
             <p className="text-sm text-[var(--color-muted-foreground)]">{t("empty.prompt")}</p>
             <div className="flex flex-col gap-1 mt-3 text-xs text-[var(--color-muted-foreground)]">
@@ -488,7 +491,7 @@ export function SynergyDetailResults() {
             {Array.from({ length: 5 }).map((_, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-3 animate-pulse"
+                className="flex items-center gap-3 rounded-[20px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] p-3 animate-pulse"
               >
                 <div className="h-6 w-6 rounded-full bg-[var(--color-surface-2)]" />
                 <div className="flex gap-2">
@@ -504,19 +507,19 @@ export function SynergyDetailResults() {
             ))}
           </div>
         ) : error ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16">
+          <div className="flex flex-col items-center justify-center rounded-[22px] border border-dashed border-[var(--color-border)] bg-[rgba(255,255,255,0.02)] py-16">
             <p className="text-sm text-[var(--color-danger)]">{error}</p>
           </div>
         ) : recommendations.length > 0 ? (
           <div data-sr-block className="flex flex-col gap-2">
             {selectedAllies.length === 1 && (
-              <p className="flex items-center gap-1.5 text-[11px] text-[var(--color-muted-foreground)] bg-[var(--color-surface-2)] px-3 py-2 rounded-lg">
+              <p className="flex items-center gap-1.5 rounded-xl bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[11px] text-[var(--color-muted-foreground)]">
                 <Info className="h-3.5 w-3.5 shrink-0" />
                 {t("infoSingle")}
               </p>
             )}
             {selectedAllies.length === 2 && (
-              <p className="flex items-center gap-1.5 text-[11px] text-[var(--color-muted-foreground)] bg-[var(--color-surface-2)] px-3 py-2 rounded-lg">
+              <p className="flex items-center gap-1.5 rounded-xl bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[11px] text-[var(--color-muted-foreground)]">
                 <Info className="h-3.5 w-3.5 shrink-0" />
                 {t("infoPair")}
               </p>
@@ -537,14 +540,14 @@ export function SynergyDetailResults() {
               <button
                 type="button"
                 onClick={() => setVisibleCount((prev) => prev + 30)}
-                className="w-full py-3 min-h-[44px] rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 text-sm font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80 transition-colors"
+                className="w-full min-h-[44px] rounded-[18px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] py-3 text-sm font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[rgba(255,255,255,0.05)] transition-colors"
               >
                 {t("more", { visible: visibleCount, total: recommendations.length })}
               </button>
             )}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
+          <div className="flex flex-col items-center justify-center rounded-[22px] border border-dashed border-[var(--color-border)] bg-[rgba(255,255,255,0.02)] py-16 text-center">
             <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
             <p className="text-sm text-[var(--color-muted-foreground)]">
               {focusCharWeapons.length > 0 ? t("emptyFiltered") : t("emptyNoData")}

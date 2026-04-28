@@ -182,6 +182,7 @@ export default function FeedbackWidget() {
         aria-label={isOpen ? "피드백 닫기" : "피드백 보내기"}
         className={[
           "pointer-events-auto",
+          "lg:hidden",
           "flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-colors",
           "bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white",
         ].join(" ")}

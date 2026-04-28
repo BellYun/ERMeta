@@ -203,37 +203,37 @@ export function CharacterAnalysisClient({
   const hasPreviousData = displayPrevStat != null && (displayPrevStat.totalGames ?? 0) > 0;
 
   return (
-    <div className="flex flex-col gap-4 sm:gap-5">
-      {/* ── Analysis Content ── */}
-      <div className="flex flex-col gap-4 sm:gap-5 min-w-0">
-        <CharacterHeader
-          selectedCode={code}
-          selectedTier={selectedTier}
-          setSelectedTier={setSelectedTier}
-          selectedWeapon={selectedWeapon}
-          setSelectedWeapon={handleWeaponChange}
-          stats={stats}
-          previousStats={previousStats}
-          displayStat={displayStat}
-          displayPrevStat={displayPrevStat}
-          charTier={charTier}
-          currentPatch={currentPatch}
-          loading={loading}
-          hasPreviousData={hasPreviousData}
-        />
+    <div className="flex flex-col gap-5 sm:gap-6">
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_340px]">
+        <section className="dashboard-panel p-4 lg:p-5">
+          <CharacterHeader
+            selectedCode={code}
+            selectedTier={selectedTier}
+            setSelectedTier={setSelectedTier}
+            selectedWeapon={selectedWeapon}
+            setSelectedWeapon={handleWeaponChange}
+            stats={stats}
+            previousStats={previousStats}
+            displayStat={displayStat}
+            displayPrevStat={displayPrevStat}
+            charTier={charTier}
+            currentPatch={currentPatch}
+            loading={loading}
+            hasPreviousData={hasPreviousData}
+          />
+        </section>
 
-        {/* ── Quick Summary ── */}
         {!loading && displayStat && displayStat.totalGames > 0 && (
-          <section className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-4 sm:p-5">
-            <div className="flex items-center gap-2 mb-3">
+          <section className="dashboard-panel p-4 lg:p-5">
+            <div className="mb-4 flex items-center gap-2">
               <Zap className="h-4 w-4 text-[var(--color-primary)]" />
-              <h2 className="text-sm font-bold text-[var(--color-foreground)]">
+              <h2 className="text-[1.25rem] font-black tracking-[-0.04em] text-[var(--color-foreground)]">
                 {t("quickSummary")}
               </h2>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               {/* Tier */}
-              <div className="flex flex-col items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] p-3">
+              <div className="flex flex-col items-center gap-1.5 rounded-[18px] bg-[rgba(255,255,255,0.04)] p-4">
                 <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
                   {t("summary.tier")}
                 </span>
@@ -257,7 +257,7 @@ export function CharacterAnalysisClient({
                 )}
               </div>
               {/* Win Rate */}
-              <div className="flex flex-col items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] p-3">
+              <div className="flex flex-col items-center gap-1.5 rounded-[18px] bg-[rgba(255,255,255,0.04)] p-4">
                 <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
                   {t("summary.winRate")}
                 </span>
@@ -273,7 +273,7 @@ export function CharacterAnalysisClient({
                 </span>
               </div>
               {/* Best Weapon */}
-              <div className="flex flex-col items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] p-3">
+              <div className="flex flex-col items-center gap-1.5 rounded-[18px] bg-[rgba(255,255,255,0.04)] p-4">
                 <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
                   {t("summary.recommendedWeapon")}
                 </span>
@@ -284,7 +284,7 @@ export function CharacterAnalysisClient({
                 </span>
               </div>
               {/* Pick Rate */}
-              <div className="flex flex-col items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] p-3">
+              <div className="flex flex-col items-center gap-1.5 rounded-[18px] bg-[rgba(255,255,255,0.04)] p-4">
                 <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
                   {t("summary.pickRate")}
                 </span>
@@ -294,11 +294,10 @@ export function CharacterAnalysisClient({
               </div>
             </div>
 
-            {/* CTA */}
-            <div className="mt-3 flex justify-end">
+            <div className="mt-4 flex justify-end">
               <Link
                 href={`/synergy-detail?ally1=${code}${selectedWeapon != null ? `&w1=${selectedWeapon}` : ""}`}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/30 px-3.5 py-2 text-xs font-semibold text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/30 px-3.5 py-2.5 text-xs font-semibold text-[var(--color-primary-hover)] hover:bg-[var(--color-primary)]/20 transition-colors"
               >
                 <Users className="h-3.5 w-3.5" />
                 {t("synergyCta")}
@@ -307,65 +306,63 @@ export function CharacterAnalysisClient({
             </div>
           </section>
         )}
+      </div>
 
-        {/* ── Deep Dive ── */}
-        <div className="pt-2">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="h-px flex-1 bg-[var(--color-border)]" />
-            <span className="text-[11px] font-semibold text-[var(--color-muted-foreground)] uppercase tracking-widest">
-              {t("deepDive")}
-            </span>
-            <div className="h-px flex-1 bg-[var(--color-border)]" />
-          </div>
+      <div className="pt-1">
+        <div className="mb-4 flex items-center gap-2">
+          <div className="h-px flex-1 bg-[var(--color-border)]" />
+          <span className="text-[11px] font-semibold text-[var(--color-muted-foreground)] uppercase tracking-widest">
+            {t("deepDive")}
+          </span>
+          <div className="h-px flex-1 bg-[var(--color-border)]" />
+        </div>
 
-          <div className="flex flex-col gap-4 sm:gap-5">
-            {/* ── 패치 비교 ── */}
-            <section>
-              <div className="flex items-center gap-2 mb-3">
-                <BarChart2 className="h-4 w-4 text-[var(--color-primary)]" />
-                <h2 className="text-sm font-bold text-[var(--color-foreground)]">
-                  {t("patchComparison")}
-                </h2>
-              </div>
-              <Suspense fallback={<TabFallback />}>
-                <PatchComparisonTab
-                  chartData={chartData}
-                  stats={stats}
-                  loading={loading}
-                  selectedCode={code}
-                />
-              </Suspense>
-            </section>
+        <div className="grid gap-5 xl:grid-cols-2">
+          <section className="dashboard-panel p-4 lg:p-5">
+            <div className="mb-4 flex items-center gap-2">
+              <BarChart2 className="h-4 w-4 text-[var(--color-primary)]" />
+              <h2 className="text-[1.25rem] font-black tracking-[-0.04em] text-[var(--color-foreground)]">
+                {t("patchComparison")}
+              </h2>
+            </div>
+            <Suspense fallback={<TabFallback />}>
+              <PatchComparisonTab
+                chartData={chartData}
+                stats={stats}
+                loading={loading}
+                selectedCode={code}
+              />
+            </Suspense>
+          </section>
 
-            {/* ── 패치 내역 ── */}
-            <section>
-              <div className="flex items-center gap-2 mb-3">
-                <FileText className="h-4 w-4 text-[var(--color-primary)]" />
-                <h2 className="text-sm font-bold text-[var(--color-foreground)]">
-                  {t("patchNotes")}
-                </h2>
-              </div>
-              <Suspense fallback={<TabFallback />}>
-                <PatchLogTab patches={patches} selectedCode={code} />
-              </Suspense>
-            </section>
+          <section className="dashboard-panel p-4 lg:p-5">
+            <div className="mb-4 flex items-center gap-2">
+              <FileText className="h-4 w-4 text-[var(--color-primary)]" />
+              <h2 className="text-[1.25rem] font-black tracking-[-0.04em] text-[var(--color-foreground)]">
+                {t("patchNotes")}
+              </h2>
+            </div>
+            <Suspense fallback={<TabFallback />}>
+              <PatchLogTab patches={patches} selectedCode={code} />
+            </Suspense>
+          </section>
 
-            {/* ── 통계 ── */}
-            <section>
-              <div className="flex items-center gap-2 mb-4">
-                <BarChart2 className="h-4 w-4 text-[var(--color-accent-gold)]" />
-                <h2 className="text-sm font-bold text-[var(--color-foreground)]">{t("stats")}</h2>
-              </div>
-              <Suspense fallback={<TabFallback />}>
-                <CharacterDetailedAnalyzer
-                  characterCode={code}
-                  tier={selectedTier}
-                  patchVersion={currentPatch}
-                  bestWeapon={selectedWeapon}
-                />
-              </Suspense>
-            </section>
-          </div>
+          <section className="dashboard-panel p-4 lg:p-5 xl:col-span-2">
+            <div className="mb-4 flex items-center gap-2">
+              <BarChart2 className="h-4 w-4 text-[var(--color-accent-gold)]" />
+              <h2 className="text-[1.25rem] font-black tracking-[-0.04em] text-[var(--color-foreground)]">
+                {t("stats")}
+              </h2>
+            </div>
+            <Suspense fallback={<TabFallback />}>
+              <CharacterDetailedAnalyzer
+                characterCode={code}
+                tier={selectedTier}
+                patchVersion={currentPatch}
+                bestWeapon={selectedWeapon}
+              />
+            </Suspense>
+          </section>
         </div>
       </div>
     </div>

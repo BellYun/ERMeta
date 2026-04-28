@@ -1,6 +1,8 @@
+import { Crosshair, Sparkles, Swords, Users2 } from "lucide-react";
 import type { Metadata } from "next";
 import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
+import type { ReactNode } from "react";
 import { SynergyDetailClient } from "@/components/features/synergy-detail/SynergyDetailClient";
 import { getCharacterName } from "@/lib/characterMap";
 
@@ -85,135 +87,95 @@ export async function generateMetadata({
   };
 }
 
-export default function SynergyDetailPage() {
-  const t = useTranslations("synergyPage");
-
-  return (
-    <>
-      {/* ── Hero Zone ── */}
-      <section className="synergy-hero -mx-3 sm:-mx-4 -mt-4 sm:-mt-5 px-3 sm:px-4 pt-5 sm:pt-8 pb-6 sm:pb-8 relative">
-        <div className="max-w-6xl mx-auto">
-          <div className="reveal flex flex-col gap-3">
-            {/* Badge */}
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-accent-gold)]/10 border border-[var(--color-accent-gold)]/20 px-2.5 py-1">
-                <svg
-                  className="h-3 w-3 text-[var(--color-accent-gold)]"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z"
-                  />
-                </svg>
-                <span className="text-[10px] sm:text-[11px] font-semibold text-[var(--color-accent-gold)] uppercase tracking-[0.1em]">
-                  {t("badge")}
-                </span>
-              </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-[var(--color-warning)]/10 border border-[var(--color-warning)]/20 px-2 py-0.5">
-                <span className="text-[9px] font-bold text-[var(--color-warning)] uppercase">
-                  {t("beta")}
-                </span>
-              </span>
-              <span className="text-[10px] sm:text-[11px] text-[var(--color-muted-foreground)]">
-                {t("dataNotice")}
-              </span>
-            </div>
-
-            {/* Title */}
-            <h1 className="text-[28px] sm:text-4xl font-black tracking-tight text-[var(--color-foreground)] leading-none">
-              {t("title")}
-            </h1>
-            <p className="text-xs sm:text-sm text-[var(--color-muted-foreground)] max-w-lg">
-              {t("subtitle")}
-            </p>
-
-            {/* Flow Steps */}
-            <div className="flex items-center gap-2 mt-2">
-              <StepIndicator
-                step={1}
-                label={t("steps.pool.label")}
-                sublabel={t("steps.pool.sublabel")}
-                color="purple"
-              />
-              <StepConnector />
-              <StepIndicator
-                step={2}
-                label={t("steps.allies.label")}
-                sublabel={t("steps.allies.sublabel")}
-                color="blue"
-              />
-              <StepConnector />
-              <StepIndicator
-                step={3}
-                label={t("steps.analysis.label")}
-                sublabel={t("steps.analysis.sublabel")}
-                color="gold"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom edge */}
-        <div className="absolute bottom-0 inset-x-0 section-divider" />
-      </section>
-
-      <SynergyDetailClient />
-    </>
-  );
-}
-
-/* ── Step Flow Components ── */
-
-function StepIndicator({
+function FlowCard({
   step,
+  icon,
   label,
   sublabel,
-  color,
+  accentClass,
 }: {
   step: number;
+  icon: ReactNode;
   label: string;
   sublabel: string;
-  color: "purple" | "blue" | "gold";
+  accentClass: string;
 }) {
-  const colorMap = {
-    purple: {
-      bg: "bg-[var(--color-accent-purple)]/10",
-      border: "border-[var(--color-accent-purple)]/30",
-      text: "text-[var(--color-accent-purple)]",
-    },
-    blue: {
-      bg: "bg-[var(--color-primary)]/10",
-      border: "border-[var(--color-primary)]/30",
-      text: "text-[var(--color-primary)]",
-    },
-    gold: {
-      bg: "bg-[var(--color-accent-gold)]/10",
-      border: "border-[var(--color-accent-gold)]/30",
-      text: "text-[var(--color-accent-gold)]",
-    },
-  };
-  const c = colorMap[color];
-
   return (
-    <div className={`flex items-center gap-2 rounded-lg ${c.bg} border ${c.border} px-2.5 py-1.5`}>
-      <span className={`text-xs font-bold ${c.text}`}>{step}</span>
-      <div className="flex flex-col">
-        <span className={`text-[11px] font-semibold ${c.text}`}>{label}</span>
-        <span className="text-[9px] text-[var(--color-muted-foreground)] hidden sm:block">
-          {sublabel}
+    <div className="metric-card flex min-h-[150px] flex-col gap-5 px-5 py-5">
+      <div className="flex items-center justify-between">
+        <div
+          className={`flex h-12 w-12 items-center justify-center rounded-2xl border border-white/8 ${accentClass}`}
+        >
+          {icon}
+        </div>
+        <span className="text-sm font-black tracking-[-0.04em] text-[var(--color-muted-foreground)]">
+          0{step}
         </span>
+      </div>
+      <div>
+        <p className="text-xl font-black tracking-[-0.04em] text-[var(--color-foreground)]">
+          {label}
+        </p>
+        <p className="mt-1 text-sm text-[var(--color-muted-foreground)]">{sublabel}</p>
       </div>
     </div>
   );
 }
 
-function StepConnector() {
+export default function SynergyDetailPage() {
+  const t = useTranslations("synergyPage");
+
   return (
-    <div className="flex-shrink-0 w-4 sm:w-6 h-px bg-gradient-to-r from-[var(--color-border)] to-[var(--color-border-light)]" />
+    <div className="page-shell flex flex-col gap-5 lg:gap-6">
+      <section className="dashboard-hero px-4 py-4 lg:px-5 lg:py-5">
+        <div className="grid gap-3 xl:grid-cols-[minmax(0,1.08fr)_180px_180px_180px]">
+          <div className="flex flex-col justify-center px-2 py-2 lg:px-4">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(251,191,36,0.18)] bg-[rgba(251,191,36,0.08)] px-3 py-1 text-sm font-semibold text-[var(--color-accent-gold)]">
+                <Sparkles className="h-3.5 w-3.5" strokeWidth={2.1} />
+                {t("badge")}
+              </span>
+              <span className="rounded-full border border-[rgba(251,191,36,0.18)] bg-[rgba(251,191,36,0.08)] px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-warning)]">
+                {t("beta")}
+              </span>
+              <span className="text-sm text-[var(--color-muted-foreground)]">
+                {t("dataNotice")}
+              </span>
+            </div>
+
+            <h1 className="mt-4 text-[2.2rem] font-black tracking-[-0.055em] text-[var(--color-foreground)] lg:text-[3.2rem]">
+              {t("title")}
+            </h1>
+            <p className="mt-3 max-w-[42rem] text-base leading-7 text-[var(--color-foreground)]/88 lg:text-[1.05rem]">
+              {t("subtitle")}
+            </p>
+          </div>
+
+          <FlowCard
+            step={1}
+            icon={<Swords className="h-5 w-5 text-[#c084fc]" strokeWidth={2} />}
+            label={t("steps.pool.label")}
+            sublabel={t("steps.pool.sublabel")}
+            accentClass="bg-[rgba(168,85,247,0.14)] text-[#c084fc]"
+          />
+          <FlowCard
+            step={2}
+            icon={<Users2 className="h-5 w-5 text-[#60a5fa]" strokeWidth={2} />}
+            label={t("steps.allies.label")}
+            sublabel={t("steps.allies.sublabel")}
+            accentClass="bg-[rgba(59,130,246,0.14)] text-[#60a5fa]"
+          />
+          <FlowCard
+            step={3}
+            icon={<Crosshair className="h-5 w-5 text-[#fbbf24]" strokeWidth={2} />}
+            label={t("steps.analysis.label")}
+            sublabel={t("steps.analysis.sublabel")}
+            accentClass="bg-[rgba(251,191,36,0.14)] text-[#fbbf24]"
+          />
+        </div>
+      </section>
+
+      <SynergyDetailClient />
+    </div>
   );
 }
