@@ -21,6 +21,10 @@ export default defineConfig({
     video: "retain-on-failure",
     actionTimeout: 10_000,
     navigationTimeout: 20_000,
+    locale: "ko-KR",
+    extraHTTPHeaders: {
+      "Accept-Language": "ko-KR,ko;q=0.9",
+    },
   },
   projects: [
     {
