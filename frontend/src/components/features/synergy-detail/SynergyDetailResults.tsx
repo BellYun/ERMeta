@@ -93,7 +93,7 @@ export function SynergyDetailResults() {
   // URL에서 아군+무기 읽기
   const selectedAllies = React.useMemo(() => {
     const allies: { charCode: number; weaponCode: number | null }[] = [];
-    const a1 = searchParams.get("ally1");
+    const a1 = searchParams.get("ally1") ?? searchParams.get("a");
     const w1 = searchParams.get("w1");
     if (a1) {
       const code = parseInt(a1, 10);
@@ -101,7 +101,7 @@ export function SynergyDetailResults() {
         allies.push({ charCode: code, weaponCode: w1 ? parseInt(w1, 10) || null : null });
       }
     }
-    const a2 = searchParams.get("ally2");
+    const a2 = searchParams.get("ally2") ?? searchParams.get("b");
     const w2 = searchParams.get("w2");
     if (a2) {
       const code = parseInt(a2, 10);

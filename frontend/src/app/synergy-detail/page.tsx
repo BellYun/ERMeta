@@ -13,6 +13,17 @@ function parseAllyCode(raw: string | string[] | undefined): number | null {
   return Number.isFinite(code) && code > 0 ? code : null;
 }
 
+function getFirstParam(
+  params: Record<string, string | string[] | undefined>,
+  ...keys: string[]
+): string | string[] | undefined {
+  for (const key of keys) {
+    const value = params[key];
+    if (value != null) return value;
+  }
+  return undefined;
+}
+
 export async function generateMetadata({
   searchParams,
 }: {
@@ -20,8 +31,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const params = await searchParams;
   const t = await getTranslations("synergyDetailMetadata");
-  const ally1 = parseAllyCode(params.ally1);
-  const ally2 = parseAllyCode(params.ally2);
+  const ally1 = parseAllyCode(getFirstParam(params, "ally1", "a"));
+  const ally2 = parseAllyCode(getFirstParam(params, "ally2", "b"));
 
   const name1 = ally1 ? getCharacterName(ally1) : null;
   const name2 = ally2 ? getCharacterName(ally2) : null;
@@ -43,7 +54,7 @@ export async function generateMetadata({
   const ogQuery = new URLSearchParams();
   if (ally1) ogQuery.set("ally1", String(ally1));
   if (ally2) ogQuery.set("ally2", String(ally2));
-  const ogImageUrl = `/api/og/synergy${ogQuery.size ? `?${ogQuery.toString()}` : ""}`;
+  const ogImageUrl = `/synergy-detail/opengraph-image${ogQuery.size ? `?${ogQuery.toString()}` : ""}`;
 
   return {
     title: t("title", { headline }),

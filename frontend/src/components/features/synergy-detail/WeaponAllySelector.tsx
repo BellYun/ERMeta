@@ -76,13 +76,15 @@ export interface AllySelection {
 export function parseAllyFromParams(
   params: URLSearchParams,
   allyKey: string,
-  weaponKey: string
+  weaponKey: string,
+  legacyAllyKey?: string,
+  legacyWeaponKey?: string
 ): AllySelection | null {
-  const charStr = params.get(allyKey);
+  const charStr = params.get(allyKey) ?? (legacyAllyKey ? params.get(legacyAllyKey) : null);
   if (!charStr) return null;
   const charCode = parseInt(charStr, 10);
   if (isNaN(charCode)) return null;
-  const wStr = params.get(weaponKey);
+  const wStr = params.get(weaponKey) ?? (legacyWeaponKey ? params.get(legacyWeaponKey) : null);
   const weaponCode = wStr ? parseInt(wStr, 10) : null;
   return { charCode, weaponCode: weaponCode && !isNaN(weaponCode) ? weaponCode : null };
 }
@@ -207,11 +209,11 @@ export function WeaponAllySelector() {
   );
 
   const urlAlly1 = React.useMemo(
-    () => parseAllyFromParams(searchParams, "ally1", "w1"),
+    () => parseAllyFromParams(searchParams, "ally1", "w1", "a"),
     [searchParams]
   );
   const urlAlly2 = React.useMemo(
-    () => parseAllyFromParams(searchParams, "ally2", "w2"),
+    () => parseAllyFromParams(searchParams, "ally2", "w2", "b"),
     [searchParams]
   );
 

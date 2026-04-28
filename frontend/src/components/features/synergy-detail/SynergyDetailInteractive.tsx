@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary";
 import { FocusWeaponPool } from "./FocusWeaponPool";
@@ -15,9 +16,21 @@ import { WeaponAllySelector } from "./WeaponAllySelector";
  */
 export function SynergyDetailInteractive() {
   const t = useTranslations("synergyInteractive");
+  const searchParams = useSearchParams();
+  const isShareLanding =
+    searchParams.get("source") === "share" || searchParams.get("utm_source") === "ergg_share";
 
   return (
     <div className="flex flex-col gap-5 sm:gap-6 mt-5 sm:mt-7">
+      {isShareLanding && (
+        <div
+          role="status"
+          className="rounded-xl border border-[var(--color-primary)]/25 bg-[var(--color-primary)]/8 px-4 py-3 text-sm text-[var(--color-foreground)]"
+        >
+          친구가 추천한 조합입니다. 현재 메타 기준으로 바로 확인해보세요.
+        </div>
+      )}
+
       {/* ── Step 1: Weapon Pool ── */}
       <section className="reveal reveal-d1">
         <div className="flex items-center gap-2 mb-2.5">
