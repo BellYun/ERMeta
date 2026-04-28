@@ -69,12 +69,12 @@
     "live": "LIVE",
     "patch": "패치 {patch}",
     "title": "메타 분석",
-    "subtitle": "{count}판 데이터 기반 실시간 분석",
-    "heroDescription": "이터널 리턴의 현재 메타를 데이터로 분석합니다.",
-    "matchMetric": "실시간 분석 중 매치",
+    "subtitle": "{count}판 집계 데이터 기반 메타 분석",
+    "heroDescription": "이터널 리턴의 현재 메타를 집계 데이터로 분석합니다.",
+    "matchMetric": "집계 매치 수",
     "winRateMetric": "상위권 평균 승률",
     "rpMetric": "상위권 평균 RP",
-    "topFiveTitle": "이번 패치 TOP 5",
+    "topFiveTitle": "이번 패치 상승 TOP 5",
     "honeyPicksTitle": "이번 패치 떡상",
     "honeyPicksDescription": "버프 후 픽률 & 승률 동반 상승 캐릭터",
     "honeySectionName": "이번 패치 떡상",
@@ -171,9 +171,7 @@
       "matches": "분석 표본",
       "winRate": "현재 승률",
       "bestWeapon": "주력 무기"
-    },
-    "pickerTitle": "캐릭터 전환",
-    "pickerHint": "다른 캐릭터를 선택해 메타 성능과 빌드를 비교하세요"
+    }
   },
   "characterPicker": {
     "searchAria": "캐릭터 검색",

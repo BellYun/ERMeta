@@ -179,6 +179,8 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
       <div className="hidden sm:grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-5">
         {resolved.map((r, i) => {
           const changeLabel = r.changeType ? CHANGE_LABEL[r.changeType] : null;
+          const desktopPatchNote = r.changeType === "buff" ? r.patchNote : null;
+          const previewChanges = desktopPatchNote?.changes.slice(0, 2) ?? [];
 
           return (
             <div
@@ -301,6 +303,48 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                   </p>
                 </div>
               </div>
+
+              {desktopPatchNote && previewChanges.length > 0 && (
+                <div className="pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,10,20,0.96),rgba(9,14,28,0.98))]" />
+                  <div className="absolute inset-0 flex flex-col gap-3 p-4">
+                    <div className="flex items-center gap-2 pr-10">
+                      {changeLabel && (
+                        <span
+                          className={cn(
+                            "rounded-md px-1.5 py-0.5 text-[10px] font-bold shrink-0",
+                            changeLabel.color,
+                            changeLabel.bg
+                          )}
+                        >
+                          {changeLabel.text}
+                        </span>
+                      )}
+                      <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
+                        {t("patch", { patch: desktopPatchNote.patch })}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      {previewChanges.map((change, changeIndex) => (
+                        <div
+                          key={`${change.target}-${changeIndex}`}
+                          className="rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-3 py-2"
+                        >
+                          <p className="text-[11px] font-semibold leading-5 text-[var(--color-foreground)]">
+                            {change.target}
+                          </p>
+                          {change.valueSummary && (
+                            <p className="mt-1 text-[11px] leading-5 text-[var(--color-primary-hover)]">
+                              {change.valueSummary}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}

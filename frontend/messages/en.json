@@ -69,12 +69,12 @@
     "live": "LIVE",
     "patch": "Patch {patch}",
     "title": "Meta Analysis",
-    "subtitle": "Live analysis based on {count} matches",
-    "heroDescription": "Analyze the current Eternal Return meta through live performance data.",
-    "matchMetric": "Matches analyzed",
+    "subtitle": "Meta analysis based on {count} aggregated matches",
+    "heroDescription": "Analyze the current Eternal Return meta through aggregated match data.",
+    "matchMetric": "Aggregated matches",
     "winRateMetric": "Top bracket avg win rate",
     "rpMetric": "Top bracket avg RP",
-    "topFiveTitle": "Patch Top 5",
+    "topFiveTitle": "Patch Risers Top 5",
     "honeyPicksTitle": "Patch Risers",
     "honeyPicksDescription": "Characters climbing after buffs with rising pick and win rates",
     "honeySectionName": "Patch Risers",
@@ -171,9 +171,7 @@
       "matches": "Sampled matches",
       "winRate": "Current win rate",
       "bestWeapon": "Primary weapon"
-    },
-    "pickerTitle": "Switch character",
-    "pickerHint": "Pick another character to compare current meta performance and builds"
+    }
   },
   "characterPicker": {
     "searchAria": "Search characters",

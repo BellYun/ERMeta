@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import { CharacterPicker } from "@/components/features/character-analysis/CharacterPicker";
 import { CHARACTER_CODES } from "@/components/features/character-analysis/constants";
 import { fetchPatches, fetchStats } from "@/components/features/character-analysis/utils";
 import { CharacterAnalysisClient } from "@/components/features/CharacterAnalysisClient";
@@ -177,16 +176,6 @@ export default async function CharacterPage({ params, searchParams }: Props) {
             </div>
           </div>
         </div>
-      </section>
-
-      <section className="dashboard-panel reveal reveal-d2 p-4 lg:p-5">
-        <div className="mb-4 flex flex-wrap items-end gap-x-3 gap-y-2">
-          <h2 className="text-[1.35rem] font-black tracking-[-0.04em] text-[var(--color-foreground)]">
-            {t("pickerTitle")}
-          </h2>
-          <p className="pb-0.5 text-xs text-[var(--color-muted-foreground)]">{t("pickerHint")}</p>
-        </div>
-        <CharacterPicker code={code} />
       </section>
 
       <div className="min-h-[4800px] sm:min-h-[3200px]">

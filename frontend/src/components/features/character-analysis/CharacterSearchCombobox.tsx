@@ -2,7 +2,7 @@
 
 import { Search } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useL10n } from "@/components/L10nProvider";
@@ -18,7 +18,6 @@ import { CHARACTER_CODES } from "./constants";
 
 const FALLBACK_MAP = buildFallbackMap();
 
-// ── 초성 검색 유틸 ──
 const CHOSUNG = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
 const CHOSUNG_SET = new Set(CHOSUNG);
 
@@ -36,30 +35,45 @@ function isChosungOnly(str: string): boolean {
   return [...str].every((ch) => CHOSUNG_SET.has(ch));
 }
 
-function matchesQuery(name: string, q: string): boolean {
-  if (isChosungOnly(q)) {
-    return getChosung(name).includes(q);
+function matchesQuery(name: string, query: string): boolean {
+  if (isChosungOnly(query)) {
+    return getChosung(name).includes(query);
   }
-  return name.includes(q);
+  return name.includes(query);
 }
 
-interface CharacterPickerProps {
-  code: number;
+interface CharacterSearchComboboxProps {
+  currentCode?: number | null;
+  scroll?: boolean;
+  className?: string;
 }
 
-export function CharacterPicker({ code }: CharacterPickerProps) {
+export function CharacterSearchCombobox({
+  currentCode,
+  scroll = true,
+  className,
+}: CharacterSearchComboboxProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const { l10n } = useL10n();
   const t = useTranslations("characterPicker");
   const [query, setQuery] = React.useState("");
   const [open, setOpen] = React.useState(false);
   const [highlightIndex, setHighlightIndex] = React.useState(-1);
+  const listboxId = React.useId();
   const containerRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const listRef = React.useRef<HTMLDivElement>(null);
 
+  const routeCharacterCode = React.useMemo(() => {
+    const match = pathname.match(/^\/character\/(\d+)/);
+    return match ? Number(match[1]) : null;
+  }, [pathname]);
+
+  const activeCode = currentCode ?? routeCharacterCode;
+
   const getDisplayName = React.useCallback(
-    (c: number) => resolveCharacterName(c, l10n, FALLBACK_MAP),
+    (code: number) => resolveCharacterName(code, l10n, FALLBACK_MAP),
     [l10n]
   );
 
@@ -69,63 +83,63 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
   );
 
   const filtered = React.useMemo(() => {
-    const q = query.trim();
-    if (!q) return sortedCodes;
-    return sortedCodes.filter((c) => matchesQuery(getDisplayName(c), q));
-  }, [query, sortedCodes, getDisplayName]);
+    const trimmed = query.trim();
+    if (!trimmed) return sortedCodes;
+    return sortedCodes.filter((code) => matchesQuery(getDisplayName(code), trimmed));
+  }, [getDisplayName, query, sortedCodes]);
 
   const select = React.useCallback(
-    (c: number) => {
+    (code: number) => {
       setQuery("");
       setOpen(false);
       setHighlightIndex(-1);
       inputRef.current?.blur();
-      router.push(`/character/${c}`, { scroll: false });
-      analytics.characterViewed(c, getCharacterName(c));
+      router.push(`/character/${code}`, { scroll });
+      analytics.characterViewed(code, getCharacterName(code));
     },
-    [router]
+    [router, scroll]
   );
 
-  // 외부 클릭 닫기
   React.useEffect(() => {
     if (!open) return;
-    const handler = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+
+    const handleOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setOpen(false);
         setHighlightIndex(-1);
       }
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+
+    document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
   }, [open]);
 
-  // 하이라이트 스크롤
   React.useEffect(() => {
     if (highlightIndex < 0 || !listRef.current) return;
-    const el = listRef.current.children[highlightIndex] as HTMLElement | undefined;
-    el?.scrollIntoView({ block: "nearest" });
+    const element = listRef.current.children[highlightIndex] as HTMLElement | undefined;
+    element?.scrollIntoView({ block: "nearest" });
   }, [highlightIndex]);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!open && e.key !== "Escape") {
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (!open && event.key !== "Escape") {
       setOpen(true);
     }
 
-    switch (e.key) {
+    switch (event.key) {
       case "ArrowDown":
-        e.preventDefault();
+        event.preventDefault();
         if (filtered.length > 0) {
           setHighlightIndex((prev) => (prev < filtered.length - 1 ? prev + 1 : 0));
         }
         break;
       case "ArrowUp":
-        e.preventDefault();
+        event.preventDefault();
         if (filtered.length > 0) {
           setHighlightIndex((prev) => (prev > 0 ? prev - 1 : filtered.length - 1));
         }
         break;
       case "Enter":
-        e.preventDefault();
+        event.preventDefault();
         if (highlightIndex >= 0 && filtered[highlightIndex]) {
           select(filtered[highlightIndex]);
         } else if (filtered.length === 1) {
@@ -141,11 +155,10 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
   };
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-[420px]">
-      {/* 검색 입력 — WAI-ARIA Combobox 패턴 */}
+    <div ref={containerRef} className={cn("relative w-full max-w-[420px]", className)}>
       <div className="relative">
         <Search
-          className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-muted-foreground)] pointer-events-none"
+          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-muted-foreground)]"
           aria-hidden="true"
         />
         <input
@@ -154,17 +167,17 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
           role="combobox"
           aria-haspopup="listbox"
           aria-expanded={open}
-          aria-controls="character-listbox"
+          aria-controls={listboxId}
           aria-activedescendant={
             open && highlightIndex >= 0 && filtered[highlightIndex] !== undefined
-              ? `character-option-${filtered[highlightIndex]}`
+              ? `${listboxId}-option-${filtered[highlightIndex]}`
               : undefined
           }
           aria-autocomplete="list"
           aria-label={t("searchAria")}
           value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
+          onChange={(event) => {
+            setQuery(event.target.value);
             setOpen(true);
             setHighlightIndex(-1);
           }}
@@ -172,24 +185,23 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
           onKeyDown={handleKeyDown}
           placeholder={t("placeholder")}
           className={cn(
-            "w-full rounded-[18px] border bg-[rgba(17,25,46,0.72)] pl-10 pr-4 py-3 text-sm text-[var(--color-foreground)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
+            "w-full rounded-[18px] border bg-[rgba(17,25,46,0.72)] py-3 pl-10 pr-4 text-sm text-[var(--color-foreground)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
             "placeholder:text-[var(--color-muted-foreground)]",
             "outline-none transition-all",
             open
-              ? "border-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/30 rounded-b-[0px]"
+              ? "rounded-b-[0px] border-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/30"
               : "border-[var(--color-border)] hover:border-[var(--color-primary)]/40"
           )}
         />
       </div>
 
-      {/* 자동완성 드롭다운 — WAI-ARIA Listbox */}
       {open && (
         <div
           ref={listRef}
-          id="character-listbox"
+          id={listboxId}
           role="listbox"
           aria-label={t("listAria")}
-          className="absolute z-50 top-full right-0 w-full max-h-[320px] overflow-y-auto rounded-b-[18px] border border-t-0 border-[var(--color-primary)] bg-[rgba(15,23,42,0.98)] shadow-[0_28px_60px_-36px_rgba(0,0,0,0.9)]"
+          className="absolute top-full right-0 z-50 max-h-[320px] w-full overflow-y-auto rounded-b-[18px] border border-t-0 border-[var(--color-primary)] bg-[rgba(15,23,42,0.98)] shadow-[0_28px_60px_-36px_rgba(0,0,0,0.9)]"
         >
           {filtered.length === 0 ? (
             <div
@@ -199,40 +211,45 @@ export function CharacterPicker({ code }: CharacterPickerProps) {
               {t("noResults")}
             </div>
           ) : (
-            filtered.map((c, i) => (
+            filtered.map((code, index) => (
               <button
-                key={c}
-                id={`character-option-${c}`}
+                key={code}
+                id={`${listboxId}-option-${code}`}
                 role="option"
-                aria-selected={c === code}
-                onMouseDown={(e) => {
-                  e.preventDefault();
-                  select(c);
+                aria-selected={code === activeCode}
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                  select(code);
                 }}
-                onMouseEnter={() => setHighlightIndex(i)}
+                onMouseEnter={() => setHighlightIndex(index)}
                 className={cn(
-                  "w-full flex items-center gap-3 px-3 py-2 text-left text-sm transition-colors",
-                  c === code && "bg-[var(--color-primary)]/5",
-                  highlightIndex === i
+                  "flex w-full items-center gap-3 px-3 py-2 text-left text-sm transition-colors",
+                  code === activeCode && "bg-[var(--color-primary)]/5",
+                  highlightIndex === index
                     ? "bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
                     : "text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]"
                 )}
               >
                 <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-md bg-[var(--color-surface-2)]">
                   <Image
-                    src={getCharacterImageUrl(c)}
-                    alt={getDisplayName(c)}
+                    src={getCharacterImageUrl(code)}
+                    alt={getDisplayName(code)}
                     fill
                     className="object-cover"
                     sizes="32px"
                     unoptimized
                   />
                 </div>
-                <span className={cn("font-medium", c === code && "text-[var(--color-primary)]")}>
-                  {getDisplayName(c)}
+                <span
+                  className={cn(
+                    "font-medium",
+                    code === activeCode && "text-[var(--color-primary)]"
+                  )}
+                >
+                  {getDisplayName(code)}
                 </span>
-                {c === code && (
-                  <span className="ml-auto text-[10px] text-[var(--color-primary)] font-medium">
+                {code === activeCode && (
+                  <span className="ml-auto text-[10px] font-medium text-[var(--color-primary)]">
                     {t("current")}
                   </span>
                 )}

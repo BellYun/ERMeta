@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  BarChart3,
-  FlaskConical,
-  MessageSquarePlus,
-  Network,
-  NotebookText,
-  Search,
-} from "lucide-react";
+import { BarChart3, MessageSquarePlus, Network, NotebookText, Search } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -39,12 +32,6 @@ export function Navigation({ currentPatch }: NavigationProps) {
       label: t("characterAnalysis"),
       icon: Search,
       isActive: pathname.startsWith("/character/"),
-    },
-    {
-      href: "/synergy",
-      label: t("dataLab"),
-      icon: FlaskConical,
-      isActive: pathname === "/synergy",
     },
     {
       href: "/updates",

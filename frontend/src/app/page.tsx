@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { FilterProvider } from "@/components/features/FilterContext";
 import { GlobalFilter } from "@/components/features/GlobalFilter";
+import { HomeFilterAside } from "@/components/features/HomeFilterAside";
 import { HoneyPicksSection } from "@/components/features/HoneyPicksSection";
 import { TierRankingTable } from "@/components/features/TierRankingTable";
 import { getCharacterName } from "@/lib/characterMap";
@@ -221,7 +222,9 @@ export default async function Home() {
                   {t("topFiveCaption")}
                 </p>
               </div>
-              <GlobalFilter />
+              <div id="home-top-filter">
+                <GlobalFilter />
+              </div>
             </div>
 
             <HoneyPicksSection
@@ -245,6 +248,8 @@ export default async function Home() {
           </div>
 
           <div className="flex flex-col gap-5">
+            <HomeFilterAside anchorId="home-top-filter" />
+
             <div className="dashboard-panel p-4 lg:p-5">
               <h2 className="text-[1.85rem] font-black tracking-[-0.05em] text-[var(--color-foreground)]">
                 {t("insightTitle")}
