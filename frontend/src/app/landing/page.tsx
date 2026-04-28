@@ -63,7 +63,7 @@ const FEATURES = [
     description:
       "시너지 점수 기반 최적의 트리오 조합을 추천. 팀원과 함께 승률 높은 조합을 찾아보세요.",
     badge: "시너지",
-    href: "/synergy",
+    href: "/synergy-detail",
   },
   {
     icon: (
@@ -166,7 +166,7 @@ export default function LandingPage() {
                 메타 분석 보기
               </Button>
             </Link>
-            <Link href="/synergy">
+            <Link href="/synergy-detail">
               <Button variant="outline" size="lg" className="px-8 text-base">
                 조합 추천 보기
               </Button>
