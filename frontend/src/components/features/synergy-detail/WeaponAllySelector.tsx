@@ -379,7 +379,7 @@ export function WeaponAllySelector() {
   return (
     <>
       {/* 슬롯 표시 */}
-      <div className="mb-3 flex gap-3">
+      <div className="mb-3 grid gap-2.5 sm:grid-cols-2 sm:gap-3">
         {ally1 ? (
           <SlotWeaponFilled
             code={ally1.charCode}
@@ -494,7 +494,7 @@ function SlotWeaponFilled({
   onRemove: () => void;
 }) {
   return (
-    <div className="flex flex-1 items-center gap-3 rounded-[18px] border border-[var(--color-primary)]/30 bg-[rgba(37,99,235,0.12)] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+    <div className="flex w-full items-center gap-3 rounded-[18px] border border-[var(--color-primary)]/30 bg-[rgba(37,99,235,0.12)] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
       <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-[var(--color-border)]">
         <Image
           src={getCharacterMiniWebpUrl(code)}

@@ -284,7 +284,7 @@ export default async function RootLayout({
                   <Header currentPatch={currentPatch} />
                   <main
                     id="main"
-                    className="flex-1 px-3 pt-4 pb-20 sm:px-4 sm:pt-5 lg:px-6 lg:pt-5 lg:pb-8"
+                    className="flex-1 px-3 pt-4 pb-28 sm:px-4 sm:pt-5 sm:pb-20 lg:px-6 lg:pt-5 lg:pb-8"
                   >
                     {children}
                   </main>

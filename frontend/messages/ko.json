@@ -3,6 +3,8 @@
     "logoTitle": "ER&GG",
     "logoSubtitle": "이리와지지",
     "patchPrefix": "v",
+    "openSearch": "검색 열기",
+    "closeSearch": "검색 닫기",
     "languageSelectAria": "언어 선택",
     "searchPlaceholder": "캐릭터, 아이템, 스킬 검색",
     "searchShortcut": "⌘ /",
@@ -23,7 +25,8 @@
   "mobileTab": {
     "meta": "메타",
     "synergy": "조합",
-    "character": "캐릭터"
+    "character": "캐릭터",
+    "updates": "업데이트"
   },
   "layout": {
     "skipToMain": "본문으로 건너뛰기",
@@ -74,6 +77,7 @@
     "matchMetric": "집계 매치 수",
     "winRateMetric": "상위권 평균 승률",
     "rpMetric": "상위권 평균 RP",
+    "filterCta": "필터 열기",
     "topFiveTitle": "이번 패치 상승 TOP 5",
     "honeyPicksTitle": "이번 패치 떡상",
     "honeyPicksDescription": "버프 후 픽률 & 승률 동반 상승 캐릭터",

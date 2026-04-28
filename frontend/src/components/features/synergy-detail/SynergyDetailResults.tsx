@@ -370,7 +370,7 @@ export function SynergyDetailResults() {
   return (
     <>
       <div className="mb-4 flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
           {selectedAllies.length > 0 && (
             <h2 className="text-[1rem] font-semibold tracking-[-0.03em] text-[var(--color-foreground)]">
               {selectedCharCodes.length === 1
@@ -387,7 +387,7 @@ export function SynergyDetailResults() {
             </span>
           )}
           {selectedAllies.length > 0 && (
-            <>
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
                 onClick={() => {
@@ -432,7 +432,7 @@ export function SynergyDetailResults() {
                     });
                   });
                 }}
-                className="inline-flex min-h-[40px] shrink-0 items-center gap-1 rounded-xl border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-3 py-2 text-xs font-medium text-[var(--color-primary-hover)] hover:bg-[var(--color-primary)]/18 transition-colors"
+                className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1 rounded-xl border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-3 py-2 text-xs font-medium text-[var(--color-primary-hover)] hover:bg-[var(--color-primary)]/18 transition-colors"
               >
                 <Share2 className="h-3 w-3" />
                 {copied ? t("copied") : t("share")}
@@ -440,16 +440,16 @@ export function SynergyDetailResults() {
               <button
                 type="button"
                 onClick={clearAllies}
-                className="inline-flex min-h-[40px] shrink-0 items-center gap-1 rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-3 py-2 text-xs font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[rgba(255,255,255,0.05)] transition-colors"
+                className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1 rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-3 py-2 text-xs font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[rgba(255,255,255,0.05)] transition-colors"
               >
                 <X className="h-3 w-3" />
                 {t("reset")}
               </button>
-            </>
+            </div>
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-1 rounded-[16px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] p-1">
+        <div className="flex w-full items-center gap-1 overflow-x-auto rounded-[16px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] p-1 xl:w-auto">
           {SORT_OPTIONS.map(({ value, labelKey }) => (
             <button
               key={value}
@@ -458,7 +458,7 @@ export function SynergyDetailResults() {
                 analytics.synergySortChanged(value);
               }}
               className={cn(
-                "flex min-h-[40px] items-center rounded-xl px-3 py-2 text-xs font-medium transition-colors",
+                "flex min-h-[40px] shrink-0 items-center rounded-xl px-3 py-2 text-xs font-medium transition-colors",
                 sortBy === value
                   ? "bg-[var(--color-primary)] text-white"
                   : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[rgba(255,255,255,0.05)]"

@@ -8,9 +8,10 @@ import { cn } from "@/lib/utils";
 
 interface NavigationProps {
   currentPatch: string;
+  onNavigate?: () => void;
 }
 
-export function Navigation({ currentPatch }: NavigationProps) {
+export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
   const pathname = usePathname();
   const t = useTranslations("navigation");
   const tHeader = useTranslations("header");
@@ -43,7 +44,7 @@ export function Navigation({ currentPatch }: NavigationProps) {
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-[linear-gradient(180deg,rgba(7,13,29,0.96),rgba(8,12,26,0.96))] px-4 py-5">
-      <Link href="/" className="flex items-center gap-3 px-2">
+      <Link href="/" onClick={onNavigate} className="flex items-center gap-3 px-2">
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[linear-gradient(180deg,#5fa8ff,#3266d6)] text-sm font-black text-white shadow-[0_14px_30px_-16px_rgba(96,165,250,1)]">
           ER
         </div>
@@ -62,6 +63,7 @@ export function Navigation({ currentPatch }: NavigationProps) {
           <Link
             key={href}
             href={href}
+            onClick={onNavigate}
             aria-current={isActive ? "page" : undefined}
             className={cn(
               "group flex items-center gap-3 rounded-[18px] border px-4 py-3 text-sm font-medium transition-all",
@@ -103,7 +105,10 @@ export function Navigation({ currentPatch }: NavigationProps) {
 
           <button
             type="button"
-            onClick={() => window.dispatchEvent(new Event("ergg:feedback-open"))}
+            onClick={() => {
+              onNavigate?.();
+              window.dispatchEvent(new Event("ergg:feedback-open"));
+            }}
             className="flex items-center gap-3 rounded-[18px] border border-[var(--color-border)] bg-[rgba(14,20,36,0.9)] px-4 py-3 text-sm font-medium text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[rgba(21,31,54,0.94)]"
           >
             <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.03)] text-[var(--color-muted-foreground)]">

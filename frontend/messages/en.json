@@ -3,6 +3,8 @@
     "logoTitle": "ER&GG",
     "logoSubtitle": "Eternal Return Meta",
     "patchPrefix": "v",
+    "openSearch": "Open search",
+    "closeSearch": "Close search",
     "languageSelectAria": "Select language",
     "searchPlaceholder": "Search characters, items, and skills",
     "searchShortcut": "⌘ /",
@@ -23,7 +25,8 @@
   "mobileTab": {
     "meta": "Meta",
     "synergy": "Teams",
-    "character": "Characters"
+    "character": "Characters",
+    "updates": "Updates"
   },
   "layout": {
     "skipToMain": "Skip to main content",
@@ -74,6 +77,7 @@
     "matchMetric": "Aggregated matches",
     "winRateMetric": "Top bracket avg win rate",
     "rpMetric": "Top bracket avg RP",
+    "filterCta": "Open filters",
     "topFiveTitle": "Patch Risers Top 5",
     "honeyPicksTitle": "Patch Risers",
     "honeyPicksDescription": "Characters climbing after buffs with rising pick and win rates",

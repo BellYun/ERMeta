@@ -112,19 +112,20 @@ export function CharacterHeader({
       {/* ── Character Identity ── */}
       <div
         className={cn(
-          "relative overflow-hidden rounded-[24px] border border-[var(--color-border)] bg-[rgba(17,25,46,0.72)] p-4 sm:p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
+          "relative overflow-hidden rounded-[20px] border border-[var(--color-border)] bg-[rgba(17,25,46,0.72)] p-3 sm:rounded-[24px] sm:p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
           charTier && TIER_GLOW[charTier]
         )}
       >
         {/* Subtle gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/[0.03] via-transparent to-[var(--color-accent-purple)]/[0.02] pointer-events-none" />
 
-        <div className="relative flex gap-4 sm:gap-5 items-start">
+        <div className="relative flex items-start gap-3 sm:gap-5">
           {/* Character Image - larger and more prominent */}
           <div className="relative shrink-0">
             <div
               className={cn(
                 "relative h-20 w-20 sm:h-24 sm:w-24 overflow-hidden rounded-xl bg-[var(--color-surface-2)] ring-2",
+                "h-16 w-16 sm:h-24 sm:w-24",
                 charTier === "S"
                   ? "ring-[var(--color-tier-s)]/40"
                   : charTier === "A"
@@ -151,19 +152,19 @@ export function CharacterHeader({
           </div>
 
           {/* Character Info */}
-          <div className="flex flex-1 flex-col gap-2 min-w-0">
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-[var(--color-foreground)] tracking-tight leading-tight">
+              <h2 className="text-[1.1rem] font-black leading-tight tracking-tight text-[var(--color-foreground)] sm:text-2xl">
                 {characterName}
               </h2>
-              <div className="flex items-center gap-1.5 mt-1.5">
+              <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                 {currentPatch && (
-                  <span className="rounded-md bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 px-2 py-0.5 text-[10px] font-medium text-[var(--color-primary)]">
+                  <span className="rounded-md border border-[var(--color-primary)]/20 bg-[var(--color-primary)]/10 px-2 py-0.5 text-[9px] font-medium text-[var(--color-primary)] sm:text-[10px]">
                     {t("patch", { patch: currentPatch })}
                   </span>
                 )}
                 {displayStat && displayStat.totalGames > 0 && (
-                  <span className="rounded-md bg-[var(--color-surface-3)] px-2 py-0.5 text-[10px] text-[var(--color-muted-foreground)]">
+                  <span className="rounded-md bg-[var(--color-surface-3)] px-2 py-0.5 text-[9px] text-[var(--color-muted-foreground)] sm:text-[10px]">
                     {t("games", { count: displayStat.totalGames.toLocaleString() })}
                   </span>
                 )}
@@ -174,7 +175,7 @@ export function CharacterHeader({
             <div
               role="radiogroup"
               aria-label={t("tierSelectorAria")}
-              className="flex items-center gap-1 rounded-[16px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] p-1 w-fit"
+              className="flex w-fit items-center gap-1 rounded-[14px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] p-1 sm:rounded-[16px]"
             >
               {METRICS_TIER_GROUPS.map((tg, i) => {
                 const isSelected = selectedTier === tg;
@@ -194,7 +195,7 @@ export function CharacterHeader({
                     }}
                     onKeyDown={(e) => handleTierKey(e, i)}
                     className={cn(
-                      "px-3 py-1.5 rounded-xl text-[11px] font-medium transition-all whitespace-nowrap",
+                      "rounded-lg px-2.5 py-1.5 text-[10px] font-medium whitespace-nowrap transition-all sm:rounded-xl sm:px-3 sm:text-[11px]",
                       "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
                       isSelected
                         ? "bg-[var(--color-primary)]/15 text-[var(--color-primary)] shadow-sm"
@@ -211,7 +212,7 @@ export function CharacterHeader({
 
         {/* ── Weapon Selector ── */}
         {!loading && stats?.weapons && stats.weapons.length > 0 && (
-          <div className="relative mt-4 pt-3.5 border-t border-[var(--color-border)]/60">
+          <div className="relative mt-3.5 border-t border-[var(--color-border)]/60 pt-3 sm:mt-4 sm:pt-3.5">
             <span className="absolute -top-2.5 left-3 bg-[rgba(17,25,46,0.92)] px-2 text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
               {t("weapon")}
             </span>
@@ -231,7 +232,7 @@ export function CharacterHeader({
                 onClick={() => setSelectedWeapon(null)}
                 onKeyDown={(e) => handleWeaponKey(e, 0)}
                 className={cn(
-                  "flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-medium transition-all shrink-0",
+                  "flex shrink-0 items-center gap-1.5 rounded-lg border px-2.5 py-2 text-[11px] font-medium transition-all sm:rounded-xl sm:px-3 sm:text-xs",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
                   selectedWeapon == null
                     ? "border-[var(--color-primary)]/50 bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
@@ -263,7 +264,7 @@ export function CharacterHeader({
                     }}
                     onKeyDown={(e) => handleWeaponKey(e, weaponIndex)}
                     className={cn(
-                      "flex flex-col rounded-xl border px-3 py-2 text-xs transition-all min-w-[96px] shrink-0",
+                      "flex min-w-[88px] shrink-0 flex-col rounded-lg border px-2.5 py-2 text-[11px] transition-all sm:min-w-[96px] sm:rounded-xl sm:px-3 sm:text-xs",
                       "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
                       isSelected
                         ? "border-[var(--color-primary)]/50 bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
@@ -315,7 +316,7 @@ export function CharacterHeader({
           ))}
         </div>
       ) : displayStat && displayStat.totalGames > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
           <StatCard
             label={t("pickRate")}
             value={`${(stats?.pickRate ?? displayStat.pickRate).toFixed(1)}%`}

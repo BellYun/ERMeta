@@ -205,7 +205,7 @@ export function CharacterAnalysisClient({
   return (
     <div className="flex flex-col gap-5 sm:gap-6">
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_340px]">
-        <section className="dashboard-panel p-4 lg:p-5">
+        <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
           <CharacterHeader
             selectedCode={code}
             selectedTier={selectedTier}
@@ -224,16 +224,16 @@ export function CharacterAnalysisClient({
         </section>
 
         {!loading && displayStat && displayStat.totalGames > 0 && (
-          <section className="dashboard-panel p-4 lg:p-5">
-            <div className="mb-4 flex items-center gap-2">
+          <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
+            <div className="mb-3 flex items-center gap-2 sm:mb-4">
               <Zap className="h-4 w-4 text-[var(--color-primary)]" />
-              <h2 className="text-[1.25rem] font-black tracking-[-0.04em] text-[var(--color-foreground)]">
+              <h2 className="text-[1.1rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.25rem]">
                 {t("quickSummary")}
               </h2>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
               {/* Tier */}
-              <div className="flex flex-col items-center gap-1.5 rounded-[18px] bg-[rgba(255,255,255,0.04)] p-4">
+              <div className="flex flex-col items-center gap-1.5 rounded-[16px] bg-[rgba(255,255,255,0.04)] p-3 sm:rounded-[18px] sm:p-4">
                 <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
                   {t("summary.tier")}
                 </span>
@@ -257,7 +257,7 @@ export function CharacterAnalysisClient({
                 )}
               </div>
               {/* Win Rate */}
-              <div className="flex flex-col items-center gap-1.5 rounded-[18px] bg-[rgba(255,255,255,0.04)] p-4">
+              <div className="flex flex-col items-center gap-1.5 rounded-[16px] bg-[rgba(255,255,255,0.04)] p-3 sm:rounded-[18px] sm:p-4">
                 <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
                   {t("summary.winRate")}
                 </span>
@@ -273,7 +273,7 @@ export function CharacterAnalysisClient({
                 </span>
               </div>
               {/* Best Weapon */}
-              <div className="flex flex-col items-center gap-1.5 rounded-[18px] bg-[rgba(255,255,255,0.04)] p-4">
+              <div className="flex flex-col items-center gap-1.5 rounded-[16px] bg-[rgba(255,255,255,0.04)] p-3 sm:rounded-[18px] sm:p-4">
                 <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
                   {t("summary.recommendedWeapon")}
                 </span>
@@ -284,7 +284,7 @@ export function CharacterAnalysisClient({
                 </span>
               </div>
               {/* Pick Rate */}
-              <div className="flex flex-col items-center gap-1.5 rounded-[18px] bg-[rgba(255,255,255,0.04)] p-4">
+              <div className="flex flex-col items-center gap-1.5 rounded-[16px] bg-[rgba(255,255,255,0.04)] p-3 sm:rounded-[18px] sm:p-4">
                 <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
                   {t("summary.pickRate")}
                 </span>
@@ -294,10 +294,10 @@ export function CharacterAnalysisClient({
               </div>
             </div>
 
-            <div className="mt-4 flex justify-end">
+            <div className="mt-3 flex justify-stretch sm:mt-4 sm:justify-end">
               <Link
                 href={`/synergy-detail?ally1=${code}${selectedWeapon != null ? `&w1=${selectedWeapon}` : ""}`}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/30 px-3.5 py-2.5 text-xs font-semibold text-[var(--color-primary-hover)] hover:bg-[var(--color-primary)]/20 transition-colors"
+                className="inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-3.5 py-2.5 text-xs font-semibold text-[var(--color-primary-hover)] transition-colors hover:bg-[var(--color-primary)]/20 sm:min-h-0 sm:w-auto"
               >
                 <Users className="h-3.5 w-3.5" />
                 {t("synergyCta")}
@@ -308,20 +308,20 @@ export function CharacterAnalysisClient({
         )}
       </div>
 
-      <div className="pt-1">
-        <div className="mb-4 flex items-center gap-2">
+      <div className="pt-0.5 sm:pt-1">
+        <div className="mb-3 flex items-center gap-2 sm:mb-4">
           <div className="h-px flex-1 bg-[var(--color-border)]" />
-          <span className="text-[11px] font-semibold text-[var(--color-muted-foreground)] uppercase tracking-widest">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)] sm:text-[11px]">
             {t("deepDive")}
           </span>
           <div className="h-px flex-1 bg-[var(--color-border)]" />
         </div>
 
         <div className="grid gap-5 xl:grid-cols-2">
-          <section className="dashboard-panel p-4 lg:p-5">
-            <div className="mb-4 flex items-center gap-2">
+          <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
+            <div className="mb-3 flex items-center gap-2 sm:mb-4">
               <BarChart2 className="h-4 w-4 text-[var(--color-primary)]" />
-              <h2 className="text-[1.25rem] font-black tracking-[-0.04em] text-[var(--color-foreground)]">
+              <h2 className="text-[1.1rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.25rem]">
                 {t("patchComparison")}
               </h2>
             </div>
@@ -335,10 +335,10 @@ export function CharacterAnalysisClient({
             </Suspense>
           </section>
 
-          <section className="dashboard-panel p-4 lg:p-5">
-            <div className="mb-4 flex items-center gap-2">
+          <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
+            <div className="mb-3 flex items-center gap-2 sm:mb-4">
               <FileText className="h-4 w-4 text-[var(--color-primary)]" />
-              <h2 className="text-[1.25rem] font-black tracking-[-0.04em] text-[var(--color-foreground)]">
+              <h2 className="text-[1.1rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.25rem]">
                 {t("patchNotes")}
               </h2>
             </div>
@@ -347,10 +347,10 @@ export function CharacterAnalysisClient({
             </Suspense>
           </section>
 
-          <section className="dashboard-panel p-4 lg:p-5 xl:col-span-2">
-            <div className="mb-4 flex items-center gap-2">
+          <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5 xl:col-span-2">
+            <div className="mb-3 flex items-center gap-2 sm:mb-4">
               <BarChart2 className="h-4 w-4 text-[var(--color-accent-gold)]" />
-              <h2 className="text-[1.25rem] font-black tracking-[-0.04em] text-[var(--color-foreground)]">
+              <h2 className="text-[1.1rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.25rem]">
                 {t("stats")}
               </h2>
             </div>

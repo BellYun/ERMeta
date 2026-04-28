@@ -25,19 +25,19 @@ export function SynergyDetailInteractive() {
       {isShareLanding && (
         <div
           role="status"
-          className="dashboard-panel px-4 py-3 text-sm text-[var(--color-foreground)]"
+          className="dashboard-panel px-3 py-2.5 text-sm text-[var(--color-foreground)] sm:px-4 sm:py-3"
         >
           {t("shareLanding")}
         </div>
       )}
 
-      <section className="dashboard-panel reveal reveal-d1 p-4 lg:p-5">
-        <div className="mb-4 flex flex-wrap items-end gap-x-3 gap-y-2">
+      <section className="dashboard-panel reveal reveal-d1 p-3.5 sm:p-4 lg:p-5">
+        <div className="mb-3 flex flex-wrap items-end gap-x-3 gap-y-2 sm:mb-4">
           <div className="flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-[rgba(168,85,247,0.14)] text-xs font-bold text-[#c084fc]">
+            <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[rgba(168,85,247,0.14)] text-[11px] font-bold text-[#c084fc] sm:h-7 sm:w-7 sm:rounded-xl sm:text-xs">
               1
             </span>
-            <h2 className="text-[1.35rem] font-black tracking-[-0.04em] text-[var(--color-foreground)]">
+            <h2 className="text-[1.1rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.35rem]">
               {t("poolTitle")}
             </h2>
           </div>
@@ -51,13 +51,13 @@ export function SynergyDetailInteractive() {
       </section>
 
       <div className="grid gap-5 xl:grid-cols-[360px_minmax(0,1fr)]">
-        <section className="dashboard-panel reveal reveal-d2 p-4 lg:p-5">
-          <div className="mb-4 flex flex-wrap items-end gap-x-3 gap-y-2">
+        <section className="dashboard-panel reveal reveal-d2 p-3.5 sm:p-4 lg:p-5">
+          <div className="mb-3 flex flex-wrap items-end gap-x-3 gap-y-2 sm:mb-4">
             <div className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-[rgba(59,130,246,0.14)] text-xs font-bold text-[#60a5fa]">
+              <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[rgba(59,130,246,0.14)] text-[11px] font-bold text-[#60a5fa] sm:h-7 sm:w-7 sm:rounded-xl sm:text-xs">
                 2
               </span>
-              <h2 className="text-[1.35rem] font-black tracking-[-0.04em] text-[var(--color-foreground)]">
+              <h2 className="text-[1.1rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.35rem]">
                 {t("alliesTitle")}
               </h2>
             </div>
@@ -70,13 +70,13 @@ export function SynergyDetailInteractive() {
           </SectionErrorBoundary>
         </section>
 
-        <section className="dashboard-panel reveal reveal-d3 min-w-0 p-4 lg:p-5">
-          <div className="mb-4 flex flex-wrap items-end gap-x-3 gap-y-2">
+        <section className="dashboard-panel reveal reveal-d3 min-w-0 p-3.5 sm:p-4 lg:p-5">
+          <div className="mb-3 flex flex-wrap items-end gap-x-3 gap-y-2 sm:mb-4">
             <div className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-[rgba(251,191,36,0.14)] text-xs font-bold text-[#fbbf24]">
+              <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[rgba(251,191,36,0.14)] text-[11px] font-bold text-[#fbbf24] sm:h-7 sm:w-7 sm:rounded-xl sm:text-xs">
                 3
               </span>
-              <h2 className="text-[1.35rem] font-black tracking-[-0.04em] text-[var(--color-foreground)]">
+              <h2 className="text-[1.1rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.35rem]">
                 {t("resultsTitle")}
               </h2>
             </div>
