@@ -4,6 +4,7 @@ import { BarChart3, MessageSquarePlus, Network, NotebookText, Search, Trophy } f
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface NavigationProps {
@@ -15,6 +16,18 @@ export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
   const pathname = usePathname();
   const t = useTranslations("navigation");
   const tHeader = useTranslations("header");
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+
+  useEffect(() => {
+    const handleFeedbackState = (event: Event) => {
+      const detail = (event as CustomEvent<{ open?: boolean }>).detail;
+      setIsFeedbackOpen(Boolean(detail?.open));
+    };
+
+    window.addEventListener("ergg:feedback-state", handleFeedbackState);
+    return () => window.removeEventListener("ergg:feedback-state", handleFeedbackState);
+  }, []);
+
   const navLinks = [
     {
       href: "/",
@@ -113,11 +126,26 @@ export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
             type="button"
             onClick={() => {
               onNavigate?.();
-              window.dispatchEvent(new Event("ergg:feedback-open"));
+              window.dispatchEvent(new Event("ergg:feedback-toggle"));
             }}
-            className="flex items-center gap-3 rounded-[18px] border border-[var(--color-border)] bg-[rgba(14,20,36,0.9)] px-4 py-3 text-sm font-medium text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[rgba(21,31,54,0.94)]"
+            aria-controls="feedback-panel"
+            aria-expanded={isFeedbackOpen}
+            aria-pressed={isFeedbackOpen}
+            className={cn(
+              "flex items-center gap-3 rounded-[18px] border px-4 py-3 text-sm font-medium transition-colors",
+              isFeedbackOpen
+                ? "border-[rgba(96,165,250,0.34)] bg-[linear-gradient(180deg,rgba(28,48,88,0.88),rgba(17,30,58,0.88))] text-[var(--color-foreground)] shadow-[0_18px_32px_-20px_rgba(96,165,250,0.7)]"
+                : "border-[var(--color-border)] bg-[rgba(14,20,36,0.9)] text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[rgba(21,31,54,0.94)]"
+            )}
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.03)] text-[var(--color-muted-foreground)]">
+            <span
+              className={cn(
+                "flex h-9 w-9 items-center justify-center rounded-xl border transition-colors",
+                isFeedbackOpen
+                  ? "border-[rgba(96,165,250,0.28)] bg-[rgba(96,165,250,0.14)] text-[var(--color-primary)]"
+                  : "border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.03)] text-[var(--color-muted-foreground)]"
+              )}
+            >
               <MessageSquarePlus className="h-[18px] w-[18px]" strokeWidth={1.9} />
             </span>
             <span>{t("feedback")}</span>
