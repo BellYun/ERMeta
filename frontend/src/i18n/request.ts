@@ -17,16 +17,6 @@ export const NEXT_INTL_LOCALE_BY_LANGUAGE: Record<SupportedLanguage, string> = {
   Japanese: "ja",
   ChineseSimplified: "zh-Hans",
   ChineseTraditional: "zh-Hant",
-  Spanish: "es",
-  French: "fr",
-  German: "de",
-  Indonesian: "id",
-  Italian: "it",
-  Polish: "pl",
-  Portuguese: "pt",
-  Russian: "ru",
-  Vietnamese: "vi",
-  Thai: "th",
 };
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {

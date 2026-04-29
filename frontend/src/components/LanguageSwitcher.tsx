@@ -11,16 +11,6 @@ const LANGUAGE_LABELS: Record<SupportedLanguage, string> = {
   Japanese: "日本語",
   ChineseSimplified: "简体中文",
   ChineseTraditional: "繁體中文",
-  Spanish: "Español",
-  French: "Français",
-  German: "Deutsch",
-  Indonesian: "Bahasa Indonesia",
-  Italian: "Italiano",
-  Polish: "Polski",
-  Portuguese: "Português",
-  Russian: "Русский",
-  Vietnamese: "Tiếng Việt",
-  Thai: "ไทย",
 };
 
 export function LanguageSwitcher() {

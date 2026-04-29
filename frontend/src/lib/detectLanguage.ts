@@ -1,20 +1,10 @@
-// 지원 언어 화이트리스트. BSER l10n 파일과 1:1 대응 (public/l10n/{lang}.json).
+// 서비스 노출 언어 화이트리스트. 기본 한국어 + 영어/일본어/중국어만 운영.
 export const SUPPORTED_LANGUAGES = [
   "Korean",
   "English",
   "Japanese",
   "ChineseSimplified",
   "ChineseTraditional",
-  "Spanish",
-  "French",
-  "German",
-  "Indonesian",
-  "Italian",
-  "Polish",
-  "Portuguese",
-  "Russian",
-  "Vietnamese",
-  "Thai",
 ] as const;
 
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
@@ -25,22 +15,12 @@ export const LANGUAGE_COOKIE = "er-meta-language";
 /** BCP 47 언어 태그 → 우리 언어. 첫 매치 우선. */
 const BCP47_MAP: Array<[RegExp, SupportedLanguage]> = [
   [/^ko\b/i, "Korean"],
+  [/^en\b/i, "English"],
   [/^ja\b/i, "Japanese"],
   // 중국어: hans/cn = 간체, hant/tw/hk/mo = 번체
   [/^zh-(hant|tw|hk|mo)\b/i, "ChineseTraditional"],
   [/^zh-(hans|cn|sg)\b/i, "ChineseSimplified"],
   [/^zh\b/i, "ChineseSimplified"],
-  [/^es\b/i, "Spanish"],
-  [/^fr\b/i, "French"],
-  [/^de\b/i, "German"],
-  [/^id\b/i, "Indonesian"],
-  [/^it\b/i, "Italian"],
-  [/^pl\b/i, "Polish"],
-  [/^pt\b/i, "Portuguese"],
-  [/^ru\b/i, "Russian"],
-  [/^vi\b/i, "Vietnamese"],
-  [/^th\b/i, "Thai"],
-  [/^en\b/i, "English"],
 ];
 
 function tagToLanguage(tag: string): SupportedLanguage | null {

@@ -8,16 +8,6 @@ export const HTML_LANG_BY_LANGUAGE: Record<SupportedLanguage, string> = {
   Japanese: "ja",
   ChineseSimplified: "zh-Hans",
   ChineseTraditional: "zh-Hant",
-  Spanish: "es",
-  French: "fr",
-  German: "de",
-  Indonesian: "id",
-  Italian: "it",
-  Polish: "pl",
-  Portuguese: "pt",
-  Russian: "ru",
-  Vietnamese: "vi",
-  Thai: "th",
 };
 
 export const OG_LOCALE_BY_LANGUAGE: Record<SupportedLanguage, string> = {
@@ -26,16 +16,6 @@ export const OG_LOCALE_BY_LANGUAGE: Record<SupportedLanguage, string> = {
   Japanese: "ja_JP",
   ChineseSimplified: "zh_CN",
   ChineseTraditional: "zh_TW",
-  Spanish: "es_ES",
-  French: "fr_FR",
-  German: "de_DE",
-  Indonesian: "id_ID",
-  Italian: "it_IT",
-  Polish: "pl_PL",
-  Portuguese: "pt_BR",
-  Russian: "ru_RU",
-  Vietnamese: "vi_VN",
-  Thai: "th_TH",
 };
 
 export const STRUCTURED_DATA_LANGUAGE_BY_LANGUAGE: Record<SupportedLanguage, string> = {
@@ -44,16 +24,6 @@ export const STRUCTURED_DATA_LANGUAGE_BY_LANGUAGE: Record<SupportedLanguage, str
   Japanese: "ja-JP",
   ChineseSimplified: "zh-CN",
   ChineseTraditional: "zh-TW",
-  Spanish: "es-ES",
-  French: "fr-FR",
-  German: "de-DE",
-  Indonesian: "id-ID",
-  Italian: "it-IT",
-  Polish: "pl-PL",
-  Portuguese: "pt-BR",
-  Russian: "ru-RU",
-  Vietnamese: "vi-VN",
-  Thai: "th-TH",
 };
 
 type MessagesModule = { default: IntlMessages };
@@ -64,16 +34,6 @@ const MESSAGE_LOADERS: Record<string, () => Promise<MessagesModule>> = {
   ja: () => import("../../messages/ja.json"),
   "zh-Hans": () => import("../../messages/zh-Hans.json"),
   "zh-Hant": () => import("../../messages/zh-Hant.json"),
-  es: () => import("../../messages/es.json"),
-  fr: () => import("../../messages/fr.json"),
-  de: () => import("../../messages/de.json"),
-  id: () => import("../../messages/id.json"),
-  it: () => import("../../messages/it.json"),
-  pl: () => import("../../messages/pl.json"),
-  pt: () => import("../../messages/pt.json"),
-  ru: () => import("../../messages/ru.json"),
-  vi: () => import("../../messages/vi.json"),
-  th: () => import("../../messages/th.json"),
 };
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
