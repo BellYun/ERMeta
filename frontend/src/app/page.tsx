@@ -199,7 +199,7 @@ export default async function Home() {
             <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
               <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
                 <h2 className="text-[1.5rem] font-black tracking-[-0.05em] text-[var(--color-foreground)] sm:text-[1.9rem]">
-                  {t("topFiveTitle")}
+                  {t("honeyPicksTitle")}
                 </h2>
                 <p className="pb-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">
                   {t("topFiveCaption")}

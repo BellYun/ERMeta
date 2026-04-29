@@ -23,9 +23,10 @@ export function useTapGuard(onActivate: (e: React.PointerEvent) => void) {
   const startRef = React.useRef<{ x: number; y: number; id: number } | null>(null);
   const TAP_SLOP = 10;
   const SLOP_SQ = TAP_SLOP * TAP_SLOP;
+  const isPrimaryPointer = (e: React.PointerEvent) => e.pointerType !== "mouse" || e.button === 0;
 
   const onPointerDown = React.useCallback((e: React.PointerEvent) => {
-    if (e.button !== 0) return;
+    if (!isPrimaryPointer(e)) return;
     startRef.current = { x: e.clientX, y: e.clientY, id: e.pointerId };
   }, []);
 
@@ -42,7 +43,7 @@ export function useTapGuard(onActivate: (e: React.PointerEvent) => void) {
 
   const onPointerUp = React.useCallback(
     (e: React.PointerEvent) => {
-      if (e.button !== 0) return;
+      if (!isPrimaryPointer(e)) return;
       const s = startRef.current;
       startRef.current = null;
       if (!s || s.id !== e.pointerId) return;

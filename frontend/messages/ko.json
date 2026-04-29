@@ -23,7 +23,7 @@
     "dataLab": "데이터 랩",
     "patchNotes": "패치 노트",
     "seasonRecap": "시즌 리캡",
-    "feedback": "피드백 남기기",
+    "feedback": "피드백 보내기",
     "patchPanel": "패치 {patch}",
     "patchPanelFallback": "패치 정보 없음",
     "updateStatus": "업데이트: 실시간 반영"

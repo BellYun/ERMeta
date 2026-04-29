@@ -15,11 +15,6 @@ const nextConfig: NextConfig = {
         destination: "/character/1",
         permanent: true,
       },
-      {
-        source: "/synergy",
-        destination: "/synergy-detail",
-        permanent: true,
-      },
     ];
   },
 };

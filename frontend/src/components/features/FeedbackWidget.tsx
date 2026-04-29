@@ -70,7 +70,7 @@ export default function FeedbackWidget() {
     // pointer-events-none 핵심: 닫힌 panel 도 layout 박스(약 358×410px)를 그대로 차지해
     // 모바일 화면 하단 ~50% 의 hit-test 를 wrapper 가 흡수하던 버그.
     // FAB / 열린 panel 에서만 pointer-events:auto 로 다시 켜고 그 외 빈 영역은 통과시킴.
-    <div className="pointer-events-none fixed bottom-[calc(60px+env(safe-area-inset-bottom)+0.75rem)] right-4 z-40 flex flex-col items-end gap-3 lg:bottom-6 lg:right-6">
+    <div className="pointer-events-none fixed bottom-[calc(78px+env(safe-area-inset-bottom)+0.75rem)] right-4 z-[60] flex flex-col items-end gap-3 lg:bottom-6 lg:right-6">
       {/* Form Panel */}
       <div
         ref={panelRef}
@@ -101,7 +101,17 @@ export default function FeedbackWidget() {
         ) : (
           <form onSubmit={handleSubmit} className="p-4 flex flex-col gap-4">
             {/* Header */}
-            <p className="text-sm font-semibold text-[var(--color-foreground)]">피드백 보내기</p>
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm font-semibold text-[var(--color-foreground)]">피드백 보내기</p>
+              <button
+                type="button"
+                onClick={handleClose}
+                aria-label="피드백 닫기"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
 
             {/* Category */}
             <div className="flex gap-2 flex-wrap">
@@ -179,7 +189,7 @@ export default function FeedbackWidget() {
           누락 시 "의견 보내기 버튼 안 눌림" 회귀. 원칙은 feedback_fixed_wrapper_pointer_events.md. */}
       <button
         onClick={handleToggle}
-        aria-label={isOpen ? "피드백 닫기" : "피드백 보내기"}
+        aria-label={isOpen ? "피드백 패널 접기" : "피드백 보내기"}
         className={[
           "pointer-events-auto",
           "lg:hidden",
