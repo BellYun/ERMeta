@@ -3,10 +3,9 @@ import { join } from "path";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import { cookies } from "next/headers";
 import "./globals.css";
 import Script from "next/script";
-import { NextIntlClientProvider } from "next-intl";
+import type { ReactNode } from "react";
 import { AmplitudeLoader } from "@/components/AmplitudeLoader";
 import FeedbackWidget from "@/components/features/FeedbackWidget";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
@@ -15,13 +14,14 @@ import { Header } from "@/components/layout/Header";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { Navigation } from "@/components/layout/Navigation";
 import { WebVitalsReporter } from "@/components/WebVitalsReporter";
+import { DEFAULT_LANGUAGE, type SupportedLanguage } from "@/lib/detectLanguage";
 import {
-  DEFAULT_LANGUAGE,
-  LANGUAGE_COOKIE,
-  SUPPORTED_LANGUAGES,
-  type SupportedLanguage,
-} from "@/lib/detectLanguage";
-import { getPatches } from "@/lib/getPatches";
+  getMessage,
+  HTML_LANG_BY_LANGUAGE,
+  loadIntlMessages,
+  OG_LOCALE_BY_LANGUAGE,
+  STRUCTURED_DATA_LANGUAGE_BY_LANGUAGE,
+} from "@/lib/staticIntl";
 
 function loadL10n(language: SupportedLanguage): Record<string, string> | undefined {
   try {
@@ -42,143 +42,15 @@ function loadL10n(language: SupportedLanguage): Record<string, string> | undefin
   }
 }
 
-type IntlMessages = Record<string, unknown>;
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function mergeMessages(base: IntlMessages, overlay: IntlMessages): IntlMessages {
-  const merged: IntlMessages = { ...base };
-
-  for (const [key, value] of Object.entries(overlay)) {
-    const current = merged[key];
-    if (isPlainObject(current) && isPlainObject(value)) {
-      merged[key] = mergeMessages(current, value);
-      continue;
-    }
-    merged[key] = value;
-  }
-
-  return merged;
-}
-
-function getMessage(messages: IntlMessages, path: string): string {
-  const value = path.split(".").reduce<unknown>((acc, key) => {
-    if (!isPlainObject(acc)) return undefined;
-    return acc[key];
-  }, messages);
-
-  return typeof value === "string" ? value : path;
-}
-
-function formatMessage(
-  messages: IntlMessages,
-  path: string,
-  values?: Record<string, string | number>
-): string {
-  const template = getMessage(messages, path);
-  if (!values) return template;
-  return template.replace(/\{(\w+)\}/g, (_, key) => String(values[key] ?? `{${key}}`));
-}
-
-async function loadIntlMessages(language: SupportedLanguage): Promise<IntlMessages> {
-  const locale = HTML_LANG_BY_LANGUAGE[language] ?? "ko";
-  const baseMessages = (await import("../../messages/en.json")).default as IntlMessages;
-
-  if (locale === "en") {
-    return baseMessages;
-  }
-
-  try {
-    const localeMessages = (await import(`../../messages/${locale}.json`)).default as IntlMessages;
-    return mergeMessages(baseMessages, localeMessages);
-  } catch {
-    return baseMessages;
-  }
-}
-
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://erwagg.com";
-
-const OG_LOCALE_BY_LANGUAGE: Record<SupportedLanguage, string> = {
-  Korean: "ko_KR",
-  English: "en_US",
-  Japanese: "ja_JP",
-  ChineseSimplified: "zh_CN",
-  ChineseTraditional: "zh_TW",
-  Spanish: "es_ES",
-  French: "fr_FR",
-  German: "de_DE",
-  Indonesian: "id_ID",
-  Italian: "it_IT",
-  Polish: "pl_PL",
-  Portuguese: "pt_BR",
-  Russian: "ru_RU",
-  Vietnamese: "vi_VN",
-  Thai: "th_TH",
-};
-
-const HTML_LANG_BY_LANGUAGE: Record<SupportedLanguage, string> = {
-  Korean: "ko",
-  English: "en",
-  Japanese: "ja",
-  ChineseSimplified: "zh-Hans",
-  ChineseTraditional: "zh-Hant",
-  Spanish: "es",
-  French: "fr",
-  German: "de",
-  Indonesian: "id",
-  Italian: "it",
-  Polish: "pl",
-  Portuguese: "pt",
-  Russian: "ru",
-  Vietnamese: "vi",
-  Thai: "th",
-};
-
-const STRUCTURED_DATA_LANGUAGE_BY_LANGUAGE: Record<SupportedLanguage, string> = {
-  Korean: "ko-KR",
-  English: "en-US",
-  Japanese: "ja-JP",
-  ChineseSimplified: "zh-CN",
-  ChineseTraditional: "zh-TW",
-  Spanish: "es-ES",
-  French: "fr-FR",
-  German: "de-DE",
-  Indonesian: "id-ID",
-  Italian: "it-IT",
-  Polish: "pl-PL",
-  Portuguese: "pt-BR",
-  Russian: "ru-RU",
-  Vietnamese: "vi-VN",
-  Thai: "th-TH",
-};
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-// 루트 셸은 쿠키 기반 언어 결정에 의존하므로 정적 prerender 대신 요청 시 렌더링한다.
-export const dynamic = "force-dynamic";
-
-async function getRequestLanguage(): Promise<SupportedLanguage> {
-  let cookieLang: string | undefined;
-  try {
-    const cookieStore = await cookies();
-    cookieLang = cookieStore.get(LANGUAGE_COOKIE)?.value;
-  } catch {
-    // Static prerender/build 단계에는 request cookie store가 없을 수 있다.
-    cookieLang = undefined;
-  }
-
-  return cookieLang && (SUPPORTED_LANGUAGES as readonly string[]).includes(cookieLang)
-    ? (cookieLang as SupportedLanguage)
-    : DEFAULT_LANGUAGE;
-}
-
 export async function generateMetadata(): Promise<Metadata> {
-  const language = await getRequestLanguage();
+  const language = DEFAULT_LANGUAGE;
   const messages = await loadIntlMessages(language);
   const titleDefault = getMessage(messages, "rootMetadata.defaultTitle");
   const description = getMessage(messages, "rootMetadata.description");
@@ -253,87 +125,88 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
-  const language = await getRequestLanguage();
+  const language = DEFAULT_LANGUAGE;
   const initialL10n = loadL10n(language);
   const htmlLang = HTML_LANG_BY_LANGUAGE[language] ?? "ko";
-  const locale = htmlLang;
   const messages = await loadIntlMessages(language);
-  const patches = await getPatches();
-  const currentPatch = patches[0] ?? "";
+  const currentPatch = "";
 
   return (
     <html lang={htmlLang} className={geistSans.variable}>
       <body>
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-3 focus:py-2 focus:rounded-md focus:bg-[var(--color-primary)] focus:text-white focus:shadow-lg focus:outline-none"
+        <L10nProvider
+          initialL10n={initialL10n}
+          initialMessages={messages}
+          initialLanguage={language}
         >
-          {getMessage(messages, "layout.skipToMain")}
-        </a>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <L10nProvider initialL10n={initialL10n} initialLanguage={language}>
-            <div className="app-shell min-h-screen lg:p-4">
-              <aside className="hidden lg:fixed lg:inset-y-4 lg:left-4 lg:z-40 lg:block lg:w-[220px] xl:w-[228px] lg:overflow-hidden lg:rounded-[30px] lg:border lg:border-[var(--color-border)] lg:bg-[rgba(8,13,27,0.92)] lg:shadow-[0_40px_90px_-60px_rgba(0,0,0,0.92)]">
-                <Navigation currentPatch={currentPatch} />
-              </aside>
+          <a
+            href="#main"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-3 focus:py-2 focus:rounded-md focus:bg-[var(--color-primary)] focus:text-white focus:shadow-lg focus:outline-none"
+          >
+            {getMessage(messages, "layout.skipToMain")}
+          </a>
+          <div className="app-shell min-h-screen lg:p-4">
+            <aside className="hidden lg:fixed lg:inset-y-4 lg:left-4 lg:z-40 lg:block lg:w-[220px] xl:w-[228px] lg:overflow-hidden lg:rounded-[30px] lg:border lg:border-[var(--color-border)] lg:bg-[rgba(8,13,27,0.92)] lg:shadow-[0_40px_90px_-60px_rgba(0,0,0,0.92)]">
+              <Navigation currentPatch={currentPatch} />
+            </aside>
 
-              <div className="min-h-screen overflow-hidden lg:ml-[236px] xl:ml-[244px] lg:min-h-[calc(100vh-2rem)] lg:rounded-[30px] lg:border lg:border-[var(--color-border)] lg:bg-[rgba(6,10,22,0.88)] lg:shadow-[0_44px_100px_-64px_rgba(0,0,0,0.88)]">
-                <div className="min-w-0 flex flex-col">
-                  <Header currentPatch={currentPatch} />
-                  <main
-                    id="main"
-                    className="flex-1 px-3 pt-4 pb-28 sm:px-4 sm:pt-5 sm:pb-20 lg:px-6 lg:pt-5 lg:pb-8"
-                  >
-                    {children}
-                  </main>
-                  <footer className="border-t border-[var(--color-border)] bg-[rgba(10,15,29,0.84)]">
-                    <div className="px-4 py-5 lg:px-6 flex flex-col gap-2.5 text-[11px] text-[var(--color-muted-foreground)] leading-relaxed">
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                        <a
-                          href="/terms"
-                          className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
-                        >
-                          {getMessage(messages, "layout.terms")}
-                        </a>
-                        <span className="text-[var(--color-border)]">&middot;</span>
-                        <a
-                          href="/privacy"
-                          className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
-                        >
-                          {getMessage(messages, "layout.privacy")}
-                        </a>
-                        <span className="text-[var(--color-border)]">&middot;</span>
-                        <a
-                          href="/updates"
-                          className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
-                        >
-                          {getMessage(messages, "layout.updates")}
-                        </a>
-                        <span className="text-[var(--color-border)]">&middot;</span>
-                        <a
-                          href="/sitemap.xml"
-                          className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
-                        >
-                          {getMessage(messages, "layout.sitemap")}
-                        </a>
-                      </div>
-                      <p>{getMessage(messages, "layout.apiAttribution")}</p>
-                      <p>{getMessage(messages, "layout.disclaimer")}</p>
-                      <p className="text-[var(--color-foreground)]/60">
-                        {formatMessage(messages, "layout.copyright", {
-                          year: new Date().getFullYear(),
-                        })}
-                      </p>
+            <div className="min-h-screen overflow-hidden lg:ml-[236px] xl:ml-[244px] lg:min-h-[calc(100vh-2rem)] lg:rounded-[30px] lg:border lg:border-[var(--color-border)] lg:bg-[rgba(6,10,22,0.88)] lg:shadow-[0_44px_100px_-64px_rgba(0,0,0,0.88)]">
+              <div className="min-w-0 flex flex-col">
+                <Header currentPatch={currentPatch} />
+                <main
+                  id="main"
+                  className="flex-1 px-3 pt-4 pb-28 sm:px-4 sm:pt-5 sm:pb-20 lg:px-6 lg:pt-5 lg:pb-8"
+                >
+                  {children}
+                </main>
+                <footer className="border-t border-[var(--color-border)] bg-[rgba(10,15,29,0.84)]">
+                  <div className="px-4 py-5 lg:px-6 flex flex-col gap-2.5 text-[11px] text-[var(--color-muted-foreground)] leading-relaxed">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                      <a
+                        href="/terms"
+                        className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
+                      >
+                        {getMessage(messages, "layout.terms")}
+                      </a>
+                      <span className="text-[var(--color-border)]">&middot;</span>
+                      <a
+                        href="/privacy"
+                        className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
+                      >
+                        {getMessage(messages, "layout.privacy")}
+                      </a>
+                      <span className="text-[var(--color-border)]">&middot;</span>
+                      <a
+                        href="/updates"
+                        className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
+                      >
+                        {getMessage(messages, "layout.updates")}
+                      </a>
+                      <span className="text-[var(--color-border)]">&middot;</span>
+                      <a
+                        href="/sitemap.xml"
+                        className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
+                      >
+                        {getMessage(messages, "layout.sitemap")}
+                      </a>
                     </div>
-                  </footer>
-                </div>
+                    <p>{getMessage(messages, "layout.apiAttribution")}</p>
+                    <p>{getMessage(messages, "layout.disclaimer")}</p>
+                    <p className="text-[var(--color-foreground)]/60">
+                      {getMessage(messages, "layout.copyright").replace(
+                        "{year}",
+                        String(new Date().getFullYear())
+                      )}
+                    </p>
+                  </div>
+                </footer>
               </div>
             </div>
-            <MobileTabBar />
-          </L10nProvider>
-        </NextIntlClientProvider>
+          </div>
+          <MobileTabBar />
+        </L10nProvider>
         <FeedbackWidget />
         <Analytics />
         <AmplitudeLoader />

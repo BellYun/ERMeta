@@ -1,16 +1,38 @@
 "use client";
 
+import { NextIntlClientProvider } from "next-intl";
 import { useRouter } from "next/navigation";
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
-import { DEFAULT_LANGUAGE, LANGUAGE_COOKIE, type SupportedLanguage } from "@/lib/detectLanguage";
+import {
+  DEFAULT_LANGUAGE,
+  LANGUAGE_COOKIE,
+  SUPPORTED_LANGUAGES,
+  resolveLanguage,
+  type SupportedLanguage,
+} from "@/lib/detectLanguage";
+import { HTML_LANG_BY_LANGUAGE, loadIntlMessages, type IntlMessages } from "@/lib/staticIntl";
 import { fetchAndParseL10n } from "@/utils/l10n";
 
 const COOKIE_MAX_AGE_DAYS = 365;
 
-function setLanguageCookie(lang: string) {
+function setLanguageCookie(lang: SupportedLanguage) {
   if (typeof document === "undefined") return;
   const maxAge = COOKIE_MAX_AGE_DAYS * 24 * 60 * 60;
   document.cookie = `${LANGUAGE_COOKIE}=${encodeURIComponent(lang)};path=/;max-age=${maxAge};SameSite=Lax`;
+}
+
+function getLanguageCookie(): SupportedLanguage | null {
+  if (typeof document === "undefined") return null;
+
+  const cookie = document.cookie
+    .split(";")
+    .map((entry) => entry.trim())
+    .find((entry) => entry.startsWith(`${LANGUAGE_COOKIE}=`));
+
+  if (!cookie) return null;
+
+  const value = decodeURIComponent(cookie.slice(LANGUAGE_COOKIE.length + 1));
+  return (SUPPORTED_LANGUAGES as readonly string[]).includes(value) ? (value as SupportedLanguage) : null;
 }
 
 interface L10nState {
@@ -41,8 +63,8 @@ interface L10nContextType {
   l10n: Map<string, string>;
   loading: boolean;
   error: string | null;
-  language: string;
-  setLanguage: (lang: string) => void;
+  language: SupportedLanguage;
+  setLanguage: (lang: SupportedLanguage) => void;
 }
 
 const L10nContext = createContext<L10nContextType | undefined>(undefined);
@@ -57,60 +79,102 @@ export function useL10n() {
 
 interface L10nProviderProps {
   initialL10n?: Record<string, string>;
+  initialMessages: IntlMessages;
   initialLanguage?: SupportedLanguage;
   children: React.ReactNode;
 }
 
-export function L10nProvider({ initialL10n, initialLanguage, children }: L10nProviderProps) {
+export function L10nProvider({
+  initialL10n,
+  initialMessages,
+  initialLanguage,
+  children,
+}: L10nProviderProps) {
   const router = useRouter();
   const serverLanguage = initialLanguage ?? DEFAULT_LANGUAGE;
-  // SSR 일치 보장: 서버 결정 언어로 시작 → 마운트 후 localStorage 우선값 적용
-  const [language, setLanguageState] = useState<string>(serverLanguage);
+  const [language, setLanguageState] = useState<SupportedLanguage>(serverLanguage);
+  const [messages, setMessages] = useState<IntlMessages>(initialMessages);
   const [l10nState, l10nDispatch] = React.useReducer(l10nReducer, {
     l10n: initialL10n ? new Map(Object.entries(initialL10n)) : new Map(),
     loading: !initialL10n,
     error: null,
   });
   const { l10n, loading, error } = l10nState;
-  // 현재 l10n state 가 어떤 언어로 로드돼있는지 추적 (재선택 시 fetch skip 판단)
-  const loadedLanguageRef = useRef<string>(initialL10n ? serverLanguage : "");
+  const messageCacheRef = useRef<Partial<Record<SupportedLanguage, IntlMessages>>>({
+    [serverLanguage]: initialMessages,
+  });
+  const l10nCacheRef = useRef<Partial<Record<SupportedLanguage, Map<string, string>>>>(
+    initialL10n ? { [serverLanguage]: new Map(Object.entries(initialL10n)) } : {}
+  );
+  const hasResolvedPreferenceRef = useRef(false);
 
-  // 언어가 현재 로드된 것과 다를 때만 갱신.
-  // 같은 언어로 다시 돌아온 경우 (예: KO→EN→KO) 캐시된 initialL10n 즉시 복원 또는 fetch.
   useEffect(() => {
-    if (language === loadedLanguageRef.current) return;
+    document.documentElement.lang = HTML_LANG_BY_LANGUAGE[language] ?? "ko";
+    if (hasResolvedPreferenceRef.current) {
+      setLanguageCookie(language);
+    }
+  }, [language]);
 
-    // 서버 hydration 언어로 돌아오는 경우 → initialL10n 즉시 복원 (네트워크 절약)
-    if (language === serverLanguage && initialL10n) {
-      l10nDispatch({ type: "FETCH_SUCCESS", payload: new Map(Object.entries(initialL10n)) });
-      loadedLanguageRef.current = language;
+  useEffect(() => {
+    const preferredLanguage =
+      getLanguageCookie() ??
+      resolveLanguage(null, typeof navigator === "undefined" ? null : navigator.languages.join(","));
+
+    hasResolvedPreferenceRef.current = true;
+    setLanguageCookie(preferredLanguage);
+
+    if (preferredLanguage !== language) {
+      setLanguageState(preferredLanguage);
+    }
+  }, [language]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    const cachedMessages = messageCacheRef.current[language];
+    const cachedL10n = l10nCacheRef.current[language];
+
+    if (cachedMessages) {
+      setMessages(cachedMessages);
+    }
+
+    if (cachedL10n) {
+      l10nDispatch({ type: "FETCH_SUCCESS", payload: cachedL10n });
+    } else {
+      l10nDispatch({ type: "FETCH_START" });
+    }
+
+    if (cachedMessages && cachedL10n) {
       return;
     }
 
-    let ignore = false;
-    l10nDispatch({ type: "FETCH_START" });
+    Promise.all([
+      cachedMessages ? Promise.resolve(cachedMessages) : loadIntlMessages(language),
+      cachedL10n ? Promise.resolve(cachedL10n) : fetchAndParseL10n(language),
+    ])
+      .then(([nextMessages, nextL10n]) => {
+        if (ignore) return;
 
-    fetchAndParseL10n(language)
-      .then((map) => {
-        if (!ignore) {
-          l10nDispatch({ type: "FETCH_SUCCESS", payload: map });
-          loadedLanguageRef.current = language;
-        }
+        messageCacheRef.current[language] = nextMessages;
+        l10nCacheRef.current[language] = nextL10n;
+        setMessages(nextMessages);
+        l10nDispatch({ type: "FETCH_SUCCESS", payload: nextL10n });
       })
       .catch((err) => {
-        if (!ignore)
+        if (!ignore) {
           l10nDispatch({
             type: "FETCH_ERROR",
             payload: err instanceof Error ? err.message : "l10n 로딩 실패",
           });
+        }
       });
 
     return () => {
       ignore = true;
     };
-  }, [language, serverLanguage, initialL10n]);
+  }, [language]);
 
-  const setLanguage = (lang: string) => {
+  const setLanguage = (lang: SupportedLanguage) => {
     if (lang === language) return;
     setLanguageCookie(lang);
     setLanguageState(lang);
@@ -118,8 +182,14 @@ export function L10nProvider({ initialL10n, initialLanguage, children }: L10nPro
   };
 
   return (
-    <L10nContext.Provider value={{ l10n, loading, error, language, setLanguage }}>
-      {children}
-    </L10nContext.Provider>
+    <NextIntlClientProvider
+      locale={HTML_LANG_BY_LANGUAGE[language] ?? "ko"}
+      messages={messages}
+      timeZone="Asia/Seoul"
+    >
+      <L10nContext.Provider value={{ l10n, loading, error, language, setLanguage }}>
+        {children}
+      </L10nContext.Provider>
+    </NextIntlClientProvider>
   );
 }
