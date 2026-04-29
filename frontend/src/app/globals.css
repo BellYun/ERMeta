@@ -214,6 +214,13 @@
   z-index: 0;
 }
 
+@media (min-width: 1800px) {
+  .page-shell {
+    max-width: 1280px;
+    margin-inline: auto;
+  }
+}
+
 .glass-card,
 .dashboard-panel {
   position: relative;
