@@ -3,18 +3,64 @@
     "logoTitle": "ER&GG",
     "logoSubtitle": "Eternal Return Meta",
     "patchPrefix": "v",
-    "languageSelectAria": "Select language"
+    "seasonRecapBadge": "NEW",
+    "seasonRecapTitle": "Season 10 recap is live",
+    "seasonRecapBody": "Review per-patch top RP comps and the full season meta flow in one place.",
+    "seasonRecapCta": "Open recap",
+    "openSearch": "Open search",
+    "closeSearch": "Close search",
+    "languageSelectAria": "Select language",
+    "searchPlaceholder": "Search characters, items, and skills",
+    "searchShortcut": "⌘ /",
+    "notificationsAria": "Notifications",
+    "profileLabel": "ERGG"
   },
   "navigation": {
     "ariaMain": "Main navigation",
     "metaAnalysis": "Meta Analysis",
     "synergyRecommendation": "Team Recommender",
-    "characterAnalysis": "Character Analysis"
+    "characterAnalysis": "Character Analysis",
+    "dataLab": "Data Lab",
+    "patchNotes": "Patch Notes",
+    "seasonRecap": "Season Recap",
+    "feedback": "Send Feedback",
+    "patchPanel": "Patch {patch}",
+    "patchPanelFallback": "Patch unavailable",
+    "updateStatus": "Update: live refresh"
   },
   "mobileTab": {
     "meta": "Meta",
     "synergy": "Teams",
-    "character": "Characters"
+    "character": "Characters",
+    "updates": "Updates",
+    "patches": "Patches",
+    "recap": "Recap"
+  },
+  "patches": {
+    "indexTitle": "Patch Notes",
+    "indexSubtitle": "Browse character changes patch by patch in Eternal Return.",
+    "indexDescription": "Eternal Return patch 10.1–10.7 character buff/nerf changes. See all adjusted characters at a glance.",
+    "heroEyebrow": "Patch Archive",
+    "patchPrefix": "v",
+    "latestBadge": "Latest",
+    "trackedPatches": "Tracked patches",
+    "adjustedRoster": "Adjusted characters",
+    "recordedChanges": "Recorded changes",
+    "latestPatchLabel": "Latest patch",
+    "archiveTitle": "Patch archive",
+    "archiveCaption": "Every character buff, nerf, and rework entry currently indexed in ER&GG.",
+    "viewDetail": "View detail",
+    "breadcrumb": "Patch Notes",
+    "detailTitle": "Patch {patch} Changes - ER&GG",
+    "detailHeading": "Patch {patch}",
+    "detailDescription": "Character adjustments in patch {patch}: {buffs} buffs, {nerfs} nerfs across {count} characters.",
+    "characterCount": "{count} characters",
+    "totalChanges": "{count} changes",
+    "counts": {
+      "buff": "Buff",
+      "nerf": "Nerf",
+      "rework": "Rework"
+    }
   },
   "layout": {
     "skipToMain": "Skip to main content",
@@ -60,13 +106,38 @@
     "live": "LIVE",
     "patch": "Patch {patch}",
     "title": "Meta Analysis",
-    "subtitle": "Live analysis based on {count} matches",
+    "subtitle": "Meta analysis based on {count} aggregated matches",
+    "heroDescription": "Analyze the current Eternal Return meta through aggregated match data.",
+    "matchMetric": "Aggregated matches",
+    "winRateMetric": "Top bracket avg win rate",
+    "rpMetric": "Top bracket avg RP",
+    "filterCta": "Open filters",
+    "topFiveTitle": "Patch Risers Top 5",
     "honeyPicksTitle": "Patch Risers",
     "honeyPicksDescription": "Characters climbing after buffs with rising pick and win rates",
     "honeySectionName": "Patch Risers",
+    "topFiveCaption": "Top characters by win rate, pick rate, and RP movement",
     "rankingTitle": "Character Rankings",
     "rankingDescription": "Overall rankings based on meta score",
-    "rankingSectionName": "Character Rankings"
+    "rankingSectionName": "Character Rankings",
+    "insightTitle": "Meta Insights",
+    "insightCards": {
+      "rising": {
+        "title": "Fastest riser",
+        "body": "{name} is up {winRateDelta}pp in win rate with an RP swing of {averageRPDelta}."
+      },
+      "concentration": {
+        "title": "Meta concentration",
+        "body": "The top {count} characters account for {share}% of total pick share."
+      },
+      "patchResponse": {
+        "title": "Buff response",
+        "body": "{buffedCount} of the top {count} risers were buffed or adjusted this patch."
+      }
+    },
+    "deepDiveTitle": "Need a deeper breakdown?",
+    "deepDiveBody": "Open the Data Lab to inspect broader stats and meta trends.",
+    "deepDiveCta": "Open Data Lab"
   },
   "globalFilter": {
     "patchAria": "Select patch",
@@ -102,6 +173,8 @@
       "averageRp": "Average rank points gained per game. Positive values mean climbing."
     },
     "empty": "No data",
+    "patchNoteTitle": "Patch {patch} changes",
+    "patchNoteButton": "View patch {patch} changes",
     "mobileSort": "Sort",
     "sort": {
       "rank": "Rank",
@@ -133,7 +206,12 @@
     "title": "Character Analysis",
     "subtitle": "Deep dive into win rate, builds, patch trends, and equipment stats by character",
     "imageNotice": "Some item images may be missing or displayed incorrectly.",
-    "sectionName": "Character Analysis"
+    "sectionName": "Character Analysis",
+    "metrics": {
+      "matches": "Sampled matches",
+      "winRate": "Current win rate",
+      "bestWeapon": "Primary weapon"
+    }
   },
   "characterPicker": {
     "searchAria": "Search characters",
@@ -222,9 +300,12 @@
     "poolHint": "Optional · filter by character + weapon",
     "poolSection": "Character Pool",
     "alliesTitle": "Select Allies",
+    "alliesHint": "Up to 2 allies · character + weapon scope",
     "alliesSection": "Allies",
     "resultsTitle": "Recommended Comps",
-    "resultsSection": "Recommendations"
+    "resultsHint": "Detailed comparison for the selected allies",
+    "resultsSection": "Recommendations",
+    "shareLanding": "This team comp was shared with you. Check it against the current meta."
   },
   "synergyResults": {
     "sort": {

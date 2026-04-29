@@ -1,21 +1,31 @@
-import type { CharacterPatchNote } from "@/data/patch-notes"
-import { cn } from "@/lib/utils"
+"use client";
+
+import { useTranslations } from "next-intl";
+import type { CharacterPatchNote } from "@/data/patch-notes";
+import { cn } from "@/lib/utils";
 
 export function PatchNoteTooltip({ patchNote }: { patchNote: CharacterPatchNote }) {
+  const t = useTranslations("tierRanking");
+
   const changeTypeLabel = (type: string): { text: string; color: string } => {
-    if (type === "buff") return { text: "BUFF", color: "text-green-400 bg-green-400/10 border-green-400/20" }
-    if (type === "nerf") return { text: "NERF", color: "text-red-400 bg-red-400/10 border-red-400/20" }
-    return { text: "REWORK", color: "text-blue-400 bg-blue-400/10 border-blue-400/20" }
-  }
+    if (type === "buff")
+      return { text: "BUFF", color: "text-green-400 bg-green-400/10 border-green-400/20" };
+    if (type === "nerf")
+      return { text: "NERF", color: "text-red-400 bg-red-400/10 border-red-400/20" };
+    return { text: "REWORK", color: "text-blue-400 bg-blue-400/10 border-blue-400/20" };
+  };
 
   return (
-    <div className="absolute z-50 left-0 sm:left-0 right-0 sm:right-auto top-full mt-1 w-auto sm:w-96 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3 sm:p-4 shadow-2xl shadow-black/40 pointer-events-auto sm:pointer-events-none">
+    <div
+      className="absolute z-50 left-0 sm:left-0 right-0 sm:right-auto top-full mt-1 w-auto sm:w-96 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3 sm:p-4 shadow-2xl shadow-black/40 pointer-events-auto sm:pointer-events-none"
+      onClick={(e) => e.stopPropagation()}
+    >
       <p className="text-xs font-medium text-[var(--color-muted-foreground)] mb-3">
-        패치 {patchNote.patch} 변경사항
+        {t("patchNoteTitle", { patch: patchNote.patch })}
       </p>
       <div className="flex flex-col gap-3">
         {patchNote.changes.map((change, i) => {
-          const { text, color } = changeTypeLabel(change.changeType)
+          const { text, color } = changeTypeLabel(change.changeType);
           return (
             <div key={i} className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
@@ -32,9 +42,9 @@ export function PatchNoteTooltip({ patchNote }: { patchNote: CharacterPatchNote 
                 </p>
               )}
             </div>
-          )
+          );
         })}
       </div>
     </div>
-  )
+  );
 }

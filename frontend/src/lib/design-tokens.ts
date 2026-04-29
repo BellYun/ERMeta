@@ -1,64 +1,71 @@
 /**
- * ER&GG 디자인 토큰
+ * ER&GG Analytics Dashboard Design System
+ *
+ * 리브랜딩 방향:
+ * - 게임 UI가 아니라 데이터 제품처럼 보이는 어두운 분석 대시보드
+ * - 숫자와 표가 가장 먼저 읽히는 정보 계층
+ * - subtle glassmorphism 위에 절제된 블루 액센트
  *
  * CSS 변수(globals.css @theme)와 1:1 대응.
- * 컴포넌트에서 값 참조가 필요할 때 이 파일을 단일 소스로 사용한다.
  */
 
 export const colors = {
   // 배경 계층
-  background: "#0d1117",
-  surface: "#161b22",
-  surface2: "#1c2128",
-  surface3: "#242a33",
-  border: "#30363d",
-  borderLight: "#3d444d",
+  background: "#0b0f1a",
+  surface: "rgba(15, 23, 42, 0.74)",
+  surface2: "rgba(30, 41, 59, 0.58)",
+  surface3: "rgba(51, 65, 85, 0.42)",
+  surface4: "rgba(96, 165, 250, 0.10)",
+  border: "rgba(255, 255, 255, 0.08)",
+  borderLight: "rgba(255, 255, 255, 0.14)",
 
   // 텍스트
-  foreground: "#c9d1d9",
-  mutedForeground: "#7d8590",
+  foreground: "#e5e7eb",
+  mutedForeground: "#9ca3af",
 
   // 액센트
-  primary: "#58a6ff",
-  primaryHover: "#79c0ff",
-  accentGold: "#f0b132",
-  accentPurple: "#bc8cff",
+  primary: "#60a5fa",
+  primaryHover: "#93c5fd",
+  accentGold: "#fbbf24",
+  accentPurple: "#a78bfa",
 
   // Semantic
-  danger: "#f85149",
-  success: "#3fb950",
-  warning: "#d29922",
+  danger: "#f87171",
+  success: "#4ade80",
+  warning: "#fbbf24",
 
   // 스탯
-  statUp: "#3fb950",
-  statDown: "#f85149",
+  statUp: "#4ade80",
+  statDown: "#f87171",
 
   // 티어
   tier: {
-    S: "#ff6b6b",
-    A: "#ff922b",
-    B: "#ffd43b",
-    C: "#51cf66",
-    D: "#7d8590",
+    S: "#fbbf24",
+    A: "#60a5fa",
+    B: "#34d399",
+    C: "#a78bfa",
+    D: "#94a3b8",
   },
-} as const
+} as const;
 
 export const spacing = {
-  headerHeight: "3rem", // 48px
-  containerMaxWidth: "72rem", // max-w-6xl
-  containerPadding: "1rem",
-} as const
+  headerHeight: "4rem",
+  containerMaxWidth: "96rem",
+  containerPadding: "1.5rem",
+  sidebarWidth: "13rem",
+} as const;
 
 export const borderRadius = {
-  sm: "0.375rem",
-  md: "0.5rem",
-  lg: "0.75rem",
-  xl: "1rem",
+  sm: "0.5rem",
+  md: "0.75rem",
+  lg: "1rem",
+  xl: "1.5rem",
   full: "9999px",
-} as const
+} as const;
 
 export const typography = {
-  fontFamily: "var(--font-geist-sans), system-ui, sans-serif",
+  fontFamily: "var(--font-plex-sans-kr), sans-serif",
+  monoFamily: "var(--font-plex-mono), monospace",
   size: {
     xs: "0.75rem",
     sm: "0.875rem",
@@ -66,6 +73,11 @@ export const typography = {
     lg: "1.125rem",
     xl: "1.25rem",
   },
-} as const
+} as const;
 
-export type Tier = keyof typeof colors.tier
+export const elevation = {
+  panel: "0 28px 60px -40px rgba(0, 0, 0, 0.72)",
+  soft: "0 20px 40px -32px rgba(0, 0, 0, 0.56)",
+} as const;
+
+export type Tier = keyof typeof colors.tier;

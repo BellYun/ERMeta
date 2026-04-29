@@ -1,7 +1,7 @@
 "use client";
 
-import { MessageCircle, X, Check } from "lucide-react";
-import { useState } from "react";
+import { Check, MessageCircle, X } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 type Category = "버그 신고" | "기능 제안" | "일반 문의";
@@ -16,21 +16,42 @@ export default function FeedbackWidget() {
   const [contact, setContact] = useState("");
   const [formState, setFormState] = useState<FormState>("idle");
 
-  const handleClose = () => {
+  const openPanel = useCallback(() => {
+    setFormState("idle");
+    setIsOpen(true);
+  }, []);
+
+  const handleClose = useCallback(() => {
     if (formState === "submitting") return;
     setIsOpen(false);
     setFormState("idle");
-  };
+  }, [formState]);
 
   const panelRef = useFocusTrap<HTMLDivElement>({ active: isOpen, onClose: handleClose });
 
-  const handleToggle = () => {
+  const handleToggle = useCallback(() => {
     if (formState === "submitting") return;
     setIsOpen((prev) => !prev);
     if (isOpen) {
       setFormState("idle");
     }
-  };
+  }, [formState, isOpen]);
+
+  useEffect(() => {
+    const handleExternalOpen = () => openPanel();
+    const handleExternalToggle = () => handleToggle();
+
+    window.addEventListener("ergg:feedback-open", handleExternalOpen);
+    window.addEventListener("ergg:feedback-toggle", handleExternalToggle);
+    return () => {
+      window.removeEventListener("ergg:feedback-open", handleExternalOpen);
+      window.removeEventListener("ergg:feedback-toggle", handleExternalToggle);
+    };
+  }, [openPanel, handleToggle]);
+
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("ergg:feedback-state", { detail: { open: isOpen } }));
+  }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,9 +81,10 @@ export default function FeedbackWidget() {
     // pointer-events-none 핵심: 닫힌 panel 도 layout 박스(약 358×410px)를 그대로 차지해
     // 모바일 화면 하단 ~50% 의 hit-test 를 wrapper 가 흡수하던 버그.
     // FAB / 열린 panel 에서만 pointer-events:auto 로 다시 켜고 그 외 빈 영역은 통과시킴.
-    <div className="pointer-events-none fixed bottom-[calc(60px+env(safe-area-inset-bottom)+0.75rem)] sm:bottom-6 right-4 sm:right-6 z-40 flex flex-col items-end gap-3">
+    <div className="pointer-events-none fixed bottom-[calc(78px+env(safe-area-inset-bottom)+0.75rem)] right-4 z-[60] flex flex-col items-end gap-3 lg:bottom-6 lg:left-[252px] lg:right-auto lg:items-start xl:left-[260px]">
       {/* Form Panel */}
       <div
+        id="feedback-panel"
         ref={panelRef}
         role="dialog"
         aria-modal="true"
@@ -72,12 +94,10 @@ export default function FeedbackWidget() {
         className={[
           "w-[calc(100vw-2rem)] max-w-sm sm:w-80",
           "rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xl",
-          "transition-all duration-200 origin-bottom-right focus:outline-none",
+          "transition-all duration-200 origin-bottom-right focus:outline-none lg:origin-bottom-left",
           isOpen
             ? "opacity-100 translate-y-0 pointer-events-auto"
             : "opacity-0 translate-y-4 pointer-events-none",
-          // On small screens keep left margin
-          "sm:right-0",
         ].join(" ")}
         style={{ position: "relative" }}
       >
@@ -91,7 +111,17 @@ export default function FeedbackWidget() {
         ) : (
           <form onSubmit={handleSubmit} className="p-4 flex flex-col gap-4">
             {/* Header */}
-            <p className="text-sm font-semibold text-[var(--color-foreground)]">피드백 보내기</p>
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm font-semibold text-[var(--color-foreground)]">피드백 보내기</p>
+              <button
+                type="button"
+                onClick={handleClose}
+                aria-label="피드백 닫기"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
 
             {/* Category */}
             <div className="flex gap-2 flex-wrap">
@@ -169,9 +199,10 @@ export default function FeedbackWidget() {
           누락 시 "의견 보내기 버튼 안 눌림" 회귀. 원칙은 feedback_fixed_wrapper_pointer_events.md. */}
       <button
         onClick={handleToggle}
-        aria-label={isOpen ? "피드백 닫기" : "피드백 보내기"}
+        aria-label={isOpen ? "피드백 패널 접기" : "피드백 보내기"}
         className={[
           "pointer-events-auto",
+          "lg:hidden",
           "flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-colors",
           "bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white",
         ].join(" ")}

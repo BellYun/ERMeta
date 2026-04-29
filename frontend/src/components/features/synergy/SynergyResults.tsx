@@ -134,7 +134,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
   }, [trioResults, selectedAllies, focusCharacters, sortBy]);
 
   const clearAllies = React.useCallback(() => {
-    router.replace("/synergy", { scroll: false });
+    router.replace("/synergy-detail", { scroll: false });
   }, [router]);
 
   // synergy_result_viewed — 같은 (ally1,ally2,sortBy) 조합은 중복 fire 금지

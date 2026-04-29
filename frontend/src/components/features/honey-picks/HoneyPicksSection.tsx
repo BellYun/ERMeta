@@ -175,27 +175,25 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
 
   return (
     <>
-      {/* ── Desktop: Compact 2-column grid ── */}
-      <div className="hidden sm:grid grid-cols-2 gap-2.5">
+      {/* ── Desktop: Dashboard row ── */}
+      <div className="hidden sm:grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-5">
         {resolved.map((r, i) => {
           const changeLabel = r.changeType ? CHANGE_LABEL[r.changeType] : null;
+          const desktopPatchNote = r.changeType === "buff" ? r.patchNote : null;
+          const previewChanges = desktopPatchNote?.changes.slice(0, 2) ?? [];
 
           return (
             <div
               key={r.pick.characterNum}
-              className={cn(
-                "relative flex items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-3 cursor-pointer group transition-colors hover:bg-[var(--color-surface-2)]",
-                i === 0 && "col-span-2"
-              )}
+              className="char-card group cursor-pointer p-4"
               onClick={() => {
                 trackHoneyClick(r, i + 1);
                 router.push(`/character/${r.pick.characterNum}?weapon=${r.pick.bestWeapon}`);
               }}
             >
-              {/* Rank */}
               <span
                 className={cn(
-                  "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-black bg-gradient-to-br",
+                  "absolute left-4 top-4 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/12 text-sm font-black bg-gradient-to-br shadow-[0_14px_24px_-18px_rgba(0,0,0,0.92)]",
                   RANK_STYLE[i + 1] ??
                     "from-[var(--color-surface-3)] to-[var(--color-surface-2)] text-[var(--color-muted-foreground)]"
                 )}
@@ -203,53 +201,52 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                 {i + 1}
               </span>
 
-              {/* Character image */}
-              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
-                <Image
-                  src={r.halfUrl}
-                  alt={r.name}
-                  fill
-                  className="object-cover object-top"
-                  sizes="48px"
-                  priority={i < 3}
-                />
-              </div>
-
-              {/* Name + weapon + badge */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <p className="text-sm font-bold text-[var(--color-foreground)] truncate group-hover:text-[var(--color-primary)] transition-colors">
-                    {r.name}
-                  </p>
-                  {changeLabel && (
-                    <span
-                      className={cn(
-                        "rounded px-1.5 py-0.5 text-[8px] font-bold shrink-0",
-                        changeLabel.color,
-                        changeLabel.bg
-                      )}
-                    >
-                      {changeLabel.text}
-                    </span>
-                  )}
+              <div className="flex items-start gap-3 pl-10">
+                <div className="relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-[18px] border border-white/6 bg-[rgba(255,255,255,0.04)]">
+                  <Image
+                    src={r.halfUrl}
+                    alt={r.name}
+                    fill
+                    className="object-cover object-top"
+                    sizes="72px"
+                    priority={i < 3}
+                  />
                 </div>
-                <p className="text-[11px] text-[var(--color-muted-foreground)] truncate">
-                  {r.weaponName}
-                </p>
+
+                <div className="min-w-0 flex-1 pt-1">
+                  <div className="flex items-center gap-2">
+                    <p className="truncate text-[1.05rem] font-extrabold tracking-[-0.04em] text-[var(--color-foreground)] transition-colors group-hover:text-[var(--color-primary-hover)]">
+                      {r.name}
+                    </p>
+                    {changeLabel && (
+                      <span
+                        className={cn(
+                          "rounded-md px-1.5 py-0.5 text-[10px] font-bold shrink-0",
+                          changeLabel.color,
+                          changeLabel.bg
+                        )}
+                      >
+                        {changeLabel.text}
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1 text-sm text-[var(--color-muted-foreground)] truncate">
+                    {r.weaponName}
+                  </p>
+                </div>
               </div>
 
-              {/* Stats */}
-              <div className="flex items-center gap-3 shrink-0">
-                <div className="text-center">
-                  <p className="text-[9px] text-[var(--color-muted-foreground)] uppercase">
+              <div className="mt-5 grid grid-cols-3 gap-2 border-t border-[var(--color-border)]/70 pt-4">
+                <div className="min-w-0">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--color-muted-foreground)]">
                     {t("stats.winRate")}
                   </p>
-                  <p className="text-sm font-bold tabular-nums text-[var(--color-foreground)]">
+                  <p className="mt-1 text-[1.05rem] font-bold tabular-nums text-[var(--color-foreground)]">
                     {r.pick.winRate.toFixed(1)}%
                   </p>
                   <p
                     className={cn(
-                      "text-[10px] font-semibold tabular-nums",
+                      "mt-1 text-[0.95rem] font-semibold tabular-nums",
                       r.pick.winRateDelta >= 0
                         ? "text-[var(--color-stat-up)]"
                         : "text-[var(--color-stat-down)]"
@@ -259,16 +256,16 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                     {r.pick.winRateDelta.toFixed(1)}
                   </p>
                 </div>
-                <div className="text-center">
-                  <p className="text-[9px] text-[var(--color-muted-foreground)] uppercase">
+                <div className="min-w-0 border-x border-[var(--color-border)]/50 px-2">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--color-muted-foreground)]">
                     {t("stats.pickRate")}
                   </p>
-                  <p className="text-sm font-bold tabular-nums text-[var(--color-foreground)]">
+                  <p className="mt-1 text-[1.05rem] font-bold tabular-nums text-[var(--color-foreground)]">
                     {r.pick.pickRate.toFixed(1)}%
                   </p>
                   <p
                     className={cn(
-                      "text-[10px] font-semibold tabular-nums",
+                      "mt-1 text-[0.95rem] font-semibold tabular-nums",
                       r.pick.pickRateDelta >= 0
                         ? "text-[var(--color-stat-up)]"
                         : "text-[var(--color-stat-down)]"
@@ -278,13 +275,13 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                     {r.pick.pickRateDelta.toFixed(1)}
                   </p>
                 </div>
-                <div className="text-center">
-                  <p className="text-[9px] text-[var(--color-muted-foreground)] uppercase">
+                <div className="min-w-0 pl-2">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--color-muted-foreground)]">
                     {t("stats.rp")}
                   </p>
                   <p
                     className={cn(
-                      "text-sm font-bold tabular-nums",
+                      "mt-1 text-[1.05rem] font-bold tabular-nums",
                       r.pick.averageRP >= 0
                         ? "text-[var(--color-accent-gold)]"
                         : "text-[var(--color-muted-foreground)]"
@@ -295,7 +292,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                   </p>
                   <p
                     className={cn(
-                      "text-[10px] font-semibold tabular-nums",
+                      "mt-1 text-[0.95rem] font-semibold tabular-nums",
                       r.pick.averageRPDelta >= 0
                         ? "text-[var(--color-stat-up)]"
                         : "text-[var(--color-stat-down)]"
@@ -306,23 +303,64 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                   </p>
                 </div>
               </div>
+
+              {desktopPatchNote && previewChanges.length > 0 && (
+                <div className="pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,10,20,0.96),rgba(9,14,28,0.98))]" />
+                  <div className="absolute inset-0 flex flex-col gap-3 p-4">
+                    <div className="flex items-center gap-2 pr-10">
+                      {changeLabel && (
+                        <span
+                          className={cn(
+                            "rounded-md px-1.5 py-0.5 text-[10px] font-bold shrink-0",
+                            changeLabel.color,
+                            changeLabel.bg
+                          )}
+                        >
+                          {changeLabel.text}
+                        </span>
+                      )}
+                      <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
+                        {t("patch", { patch: desktopPatchNote.patch })}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      {previewChanges.map((change, changeIndex) => (
+                        <div
+                          key={`${change.target}-${changeIndex}`}
+                          className="rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-3 py-2"
+                        >
+                          <p className="text-[11px] font-semibold leading-5 text-[var(--color-foreground)]">
+                            {change.target}
+                          </p>
+                          {change.valueSummary && (
+                            <p className="mt-1 text-[11px] leading-5 text-[var(--color-primary-hover)]">
+                              {change.valueSummary}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}
       </div>
 
       {/* ── Mobile: Card grid ── */}
-      <div className="sm:hidden grid grid-cols-2 gap-2.5">
+      <div className="sm:hidden -mx-1 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-1 pb-1 scrollbar-hide">
         {resolved.map((r, i) => {
           const changeLabel = r.changeType ? CHANGE_LABEL[r.changeType] : null;
           return (
             <div
               key={r.pick.characterNum}
               className={cn(
-                "relative rounded-xl overflow-hidden cursor-pointer active:scale-[0.97] transition-transform touch-manipulation",
-                i === 0 && "col-span-2"
+                "relative w-[138px] shrink-0 snap-start overflow-hidden rounded-[20px] border border-[rgba(255,255,255,0.08)] bg-[rgba(14,21,39,0.94)] cursor-pointer active:scale-[0.98] transition-transform touch-manipulation"
               )}
-              style={{ aspectRatio: i === 0 ? "16/9" : "3/4" }}
+              style={{ aspectRatio: "0.72" }}
               onClick={() => {
                 trackHoneyClick(r, i + 1);
                 if (r.patchNote) {
@@ -346,16 +384,16 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                 alt={r.name}
                 fill
                 className="object-cover object-top"
-                sizes="50vw"
+                sizes="138px"
                 priority={i < 2}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[rgba(5,9,18,0.94)] via-[rgba(8,14,28,0.4)] to-transparent" />
 
               {/* Rank + badge */}
-              <div className="absolute top-2 left-2 flex items-center gap-1.5">
+              <div className="absolute left-2.5 top-2.5 flex items-center gap-1.5">
                 <span
                   className={cn(
-                    "flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-black shadow bg-gradient-to-br",
+                    "flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br text-[10px] font-black shadow",
                     RANK_STYLE[i + 1] ??
                       "from-[var(--color-surface-3)] to-[var(--color-surface-2)] text-[var(--color-muted-foreground)]"
                   )}
@@ -365,7 +403,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                 {changeLabel && (
                   <span
                     className={cn(
-                      "rounded px-1.5 py-0.5 text-[8px] font-bold backdrop-blur-sm",
+                      "rounded-md px-1.5 py-0.5 text-[8px] font-bold backdrop-blur-sm",
                       changeLabel.color,
                       changeLabel.bg
                     )}
@@ -376,24 +414,46 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
               </div>
 
               {/* Info */}
-              <div className="absolute bottom-0 inset-x-0 p-2.5">
-                <p
-                  className={cn("font-bold text-white truncate", i === 0 ? "text-base" : "text-sm")}
-                >
+              <div className="absolute inset-x-0 bottom-0 p-3">
+                <p className="truncate text-[1.05rem] font-black tracking-[-0.04em] text-white">
                   {r.name}
                 </p>
-                <p className="text-[10px] text-white/50 truncate">{r.weaponName}</p>
-                <div className="flex items-center gap-2 mt-1.5 text-[10px]">
-                  <span className="font-semibold tabular-nums text-white">
-                    {r.pick.winRate.toFixed(1)}%
-                  </span>
+                <p className="truncate text-[11px] text-white/55">{r.weaponName}</p>
+                <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-[10px]">
+                  <div className="min-w-0">
+                    <p className="text-white/45">{t("stats.winRate")}</p>
+                    <span className="font-semibold tabular-nums text-white">
+                      {r.pick.winRate.toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-white/45">{t("stats.pickRate")}</p>
+                    <span className="font-semibold tabular-nums text-white">
+                      {r.pick.pickRate.toFixed(1)}%
+                    </span>
+                  </div>
                   <span className="text-[var(--color-stat-up)] tabular-nums font-medium">
-                    +{r.pick.winRateDelta.toFixed(1)}
+                    {r.pick.winRateDelta >= 0 ? "+" : ""}
+                    {r.pick.winRateDelta.toFixed(1)}
                   </span>
-                  <span className="ml-auto text-[var(--color-accent-gold)] tabular-nums font-semibold">
-                    {r.pick.averageRP >= 0 ? "+" : ""}
-                    {r.pick.averageRP.toFixed(0)} {t("stats.rp")}
+                  <span
+                    className={cn(
+                      "tabular-nums font-medium",
+                      r.pick.pickRateDelta >= 0
+                        ? "text-[var(--color-stat-up)]"
+                        : "text-[var(--color-stat-down)]"
+                    )}
+                  >
+                    {r.pick.pickRateDelta >= 0 ? "+" : ""}
+                    {r.pick.pickRateDelta.toFixed(1)}
                   </span>
+                  <div className="col-span-2 mt-1 flex items-center justify-between border-t border-white/8 pt-2">
+                    <span className="text-white/45">{t("stats.rp")}</span>
+                    <span className="text-[var(--color-accent-gold)] tabular-nums font-semibold">
+                      {r.pick.averageRP >= 0 ? "+" : ""}
+                      {r.pick.averageRP.toFixed(0)}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>

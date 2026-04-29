@@ -192,7 +192,7 @@ function TreeRow({
   if (options.length === 0) return null;
   const maxPick = Math.max(...options.map((o) => o.pickRate));
   return (
-    <div className="flex items-center justify-center gap-2 sm:gap-3">
+    <div className="flex w-full items-start justify-center gap-1.5 sm:gap-3">
       {options.map((opt, i) => {
         if (opt.code == null) return null;
         const isTop = opt.pickRate === maxPick;
@@ -208,13 +208,13 @@ function TreeRow({
             </div>
             <span
               className={cn(
-                "text-[10px] font-medium truncate max-w-[56px] text-center",
+                "max-w-[44px] truncate text-center text-[10px] font-medium sm:max-w-[56px]",
                 isTop ? "text-[var(--color-foreground)]" : "text-[var(--color-muted-foreground)]"
               )}
             >
               {traitNames[opt.code] ?? opt.code}
             </span>
-            <div className="flex gap-1.5">
+            <div className="flex gap-1 sm:gap-1.5">
               <span
                 className={cn(
                   "text-[9px]",
@@ -923,66 +923,74 @@ export function CharacterDetailedAnalyzer({
                           {t("sections.secondaryTraits")}
                         </span>
                       </div>
-                      <div
-                        className={cn(
-                          "grid gap-px bg-[var(--color-border)]/30",
-                          selectedGroup.secondaries.length === 1 && "grid-cols-1",
-                          selectedGroup.secondaries.length === 2 && "grid-cols-2",
-                          selectedGroup.secondaries.length >= 3 && "grid-cols-1 sm:grid-cols-3"
-                        )}
-                      >
-                        {selectedGroup.secondaries.map((sec, si) => {
-                          const secConfig = groupConfig[sec.secGroup];
-                          return (
-                            <div key={si} className="bg-[var(--color-surface)]/80 p-3 sm:p-4">
-                              {/* 부특성 그룹 헤더 */}
-                              <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-2">
-                                  <div
-                                    className={cn(
-                                      "flex items-center justify-center rounded-full h-6 w-6",
-                                      secConfig.bg
-                                    )}
-                                  >
-                                    <span className={cn("text-xs font-black", secConfig.text)}>
-                                      {secConfig.letter}
+                      <div className="overflow-x-auto pb-1">
+                        <div
+                          className={cn(
+                            "flex min-w-max gap-px bg-[var(--color-border)]/30 sm:grid sm:min-w-0",
+                            selectedGroup.secondaries.length === 1 && "sm:grid-cols-1",
+                            selectedGroup.secondaries.length === 2 && "sm:grid-cols-2",
+                            selectedGroup.secondaries.length >= 3 && "sm:grid-cols-3"
+                          )}
+                        >
+                          {selectedGroup.secondaries.map((sec, si) => {
+                            const secConfig = groupConfig[sec.secGroup];
+                            return (
+                              <div
+                                key={si}
+                                className="min-w-[220px] overflow-hidden bg-[var(--color-surface)]/80 p-3 sm:min-w-0 sm:p-4"
+                              >
+                                {/* 부특성 그룹 헤더 */}
+                                <div className="mb-3 flex min-w-0 items-center justify-between gap-2">
+                                  <div className="flex min-w-0 items-center gap-2">
+                                    <div
+                                      className={cn(
+                                        "flex h-6 w-6 shrink-0 items-center justify-center rounded-full",
+                                        secConfig.bg
+                                      )}
+                                    >
+                                      <span className={cn("text-xs font-black", secConfig.text)}>
+                                        {secConfig.letter}
+                                      </span>
+                                    </div>
+                                    <span
+                                      className={cn("truncate text-xs font-bold", secConfig.text)}
+                                    >
+                                      {secConfig.name}
                                     </span>
                                   </div>
-                                  <span className={cn("text-xs font-bold", secConfig.text)}>
-                                    {secConfig.name}
-                                  </span>
+                                  <div className="flex shrink-0 gap-1.5 text-[10px] sm:gap-2">
+                                    <span className="whitespace-nowrap text-[var(--color-muted-foreground)]">
+                                      {t("labels.pickShort", { value: sec.pickRate.toFixed(0) })}
+                                    </span>
+                                    <span
+                                      className={cn(
+                                        "whitespace-nowrap",
+                                        sec.winRate >= 12.5
+                                          ? "text-[var(--color-accent-gold)]"
+                                          : "text-[var(--color-danger)]"
+                                      )}
+                                    >
+                                      {t("labels.winShort", { value: sec.winRate.toFixed(1) })}
+                                    </span>
+                                  </div>
                                 </div>
-                                <div className="flex gap-2 text-[10px]">
-                                  <span className="text-[var(--color-muted-foreground)]">
-                                    {t("labels.pickShort", { value: sec.pickRate.toFixed(0) })}
-                                  </span>
-                                  <span
-                                    className={cn(
-                                      sec.winRate >= 12.5
-                                        ? "text-[var(--color-accent-gold)]"
-                                        : "text-[var(--color-danger)]"
-                                    )}
-                                  >
-                                    {t("labels.winShort", { value: sec.winRate.toFixed(1) })}
-                                  </span>
+                                {/* 부특성 트리 */}
+                                <div className="flex min-w-0 flex-col items-center gap-2">
+                                  <TreeRow
+                                    options={sec.optionTrait1Options}
+                                    traitNames={traitNames}
+                                    groupConfig={secConfig}
+                                  />
+                                  <TreeRow
+                                    options={sec.optionTrait2Options}
+                                    traitNames={traitNames}
+                                    groupConfig={secConfig}
+                                  />
                                 </div>
                               </div>
-                              {/* 부특성 트리 */}
-                              <div className="flex flex-col items-center gap-2">
-                                <TreeRow
-                                  options={sec.optionTrait1Options}
-                                  traitNames={traitNames}
-                                  groupConfig={secConfig}
-                                />
-                                <TreeRow
-                                  options={sec.optionTrait2Options}
-                                  traitNames={traitNames}
-                                  groupConfig={secConfig}
-                                />
-                              </div>
-                            </div>
-                          );
-                        })}
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
                   )}

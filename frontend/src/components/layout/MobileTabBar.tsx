@@ -66,40 +66,84 @@ export function MobileTabBar() {
         </svg>
       ),
     },
+    {
+      href: "/patches",
+      label: t("patches"),
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={1.8}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M9 12.75 11.25 15 15 9.75m-9 8.25h12a2.25 2.25 0 0 0 2.25-2.25V6.108c0-.884-.52-1.685-1.326-2.042l-6-2.667a2.25 2.25 0 0 0-1.848 0l-6 2.667A2.25 2.25 0 0 0 3.75 6.108v9.642A2.25 2.25 0 0 0 6 18Z"
+          />
+        </svg>
+      ),
+    },
+    {
+      href: "/season10-recap",
+      label: t("recap"),
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={1.8}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M16.5 18.75h-9a2.25 2.25 0 0 1-2.25-2.25V5.708c0-.844.474-1.616 1.226-1.997l4.5-2.286a2.25 2.25 0 0 1 2.048 0l4.5 2.286A2.25 2.25 0 0 1 19.25 5.708V16.5a2.25 2.25 0 0 1-2.25 2.25Z"
+          />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 9.75h6M9 12.75h6M10.5 6.75h3" />
+        </svg>
+      ),
+    },
   ];
 
   return (
-    <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--color-surface)]/95 backdrop-blur-sm border-t border-[var(--color-border)]">
-      <div className="flex items-stretch">
-        {tabs.map(({ href, label, icon }) => {
-          const isActive = href.startsWith("/character/")
-            ? pathname.startsWith("/character/")
-            : pathname === href;
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={cn(
-                "flex-1 flex flex-col items-center justify-center gap-0.5 py-2 min-h-[52px] touch-manipulation transition-colors",
-                isActive
-                  ? "text-[var(--color-primary)]"
-                  : "text-[var(--color-muted-foreground)] active:text-[var(--color-foreground)]"
-              )}
-            >
-              {icon}
-              <span
+    <nav className="fixed inset-x-0 bottom-0 z-50 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 lg:hidden">
+      <div className="rounded-[24px] border border-[var(--color-border)] bg-[rgba(8,13,27,0.92)] px-2 py-2 shadow-[0_24px_60px_-36px_rgba(0,0,0,0.92)] backdrop-blur-xl">
+        <div className="flex items-stretch gap-1.5">
+          {tabs.map(({ href, label, icon }) => {
+            const isActive = href.startsWith("/character/")
+              ? pathname.startsWith("/character/")
+              : href === "/patches"
+                ? pathname.startsWith("/patches")
+                : href === "/season10-recap"
+                  ? pathname.startsWith("/season10-recap")
+                  : pathname === href;
+            return (
+              <Link
+                key={href}
+                href={href}
                 className={cn(
-                  "text-[10px] leading-none",
-                  isActive ? "font-semibold" : "font-medium"
+                  "flex min-h-[58px] flex-1 flex-col items-center justify-center gap-1 rounded-[18px] px-2 py-2.5 touch-manipulation transition-all",
+                  isActive
+                    ? "border border-[rgba(96,165,250,0.28)] bg-[linear-gradient(180deg,rgba(26,43,81,0.96),rgba(15,26,52,0.96))] text-[var(--color-primary)] shadow-[0_18px_30px_-24px_rgba(96,165,250,0.92)]"
+                    : "border border-transparent text-[var(--color-muted-foreground)] active:border-[var(--color-border)] active:bg-[rgba(255,255,255,0.04)] active:text-[var(--color-foreground)]"
                 )}
               >
-                {label}
-              </span>
-            </Link>
-          );
-        })}
+                {icon}
+                <span
+                  className={cn(
+                    "text-[10px] leading-none tracking-[-0.02em]",
+                    isActive ? "font-semibold" : "font-medium"
+                  )}
+                >
+                  {label}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
       </div>
-      <div className="h-[env(safe-area-inset-bottom)]" />
     </nav>
   );
 }

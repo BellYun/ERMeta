@@ -152,6 +152,10 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
   const visible = showAll ? filtered : filtered.slice(0, DEFAULT_VISIBLE);
   const hasMore = filtered.length > DEFAULT_VISIBLE;
 
+  React.useEffect(() => {
+    setActiveKey(null);
+  }, [patch, tier, activeRole, sortKey, sortDir, showAll]);
+
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
       setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -171,6 +175,11 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
       matchmakingTier: tier as TierGroupEnum,
     });
     router.push(`/character/${char.code}?weapon=${char.weaponCode}`);
+  };
+
+  const togglePatchNote = (e: React.MouseEvent<HTMLButtonElement>, key: string) => {
+    e.stopPropagation();
+    setActiveKey((current) => (current === key ? null : key));
   };
 
   return (
@@ -279,19 +288,14 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           "hover:bg-[var(--color-surface-2)]"
                         )}
                         onClick={() => {
-                          if (char.patchNote && "ontouchstart" in window) {
-                            if (activeKey === key) {
-                              setActiveKey(null);
-                              navigateToCharacter(char);
-                            } else {
-                              setActiveKey(key);
-                            }
-                          } else {
-                            navigateToCharacter(char);
-                          }
+                          navigateToCharacter(char);
                         }}
-                        onMouseEnter={() => setActiveKey(key)}
-                        onMouseLeave={() => setActiveKey(null)}
+                        onMouseEnter={() => {
+                          if (char.patchNote) setActiveKey(key);
+                        }}
+                        onMouseLeave={() => {
+                          if (char.patchNote) setActiveKey(null);
+                        }}
                       >
                         {/* Rank */}
                         <td className="px-3 py-2 text-center">
@@ -326,8 +330,22 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                               )}
                             </div>
                             <div className="min-w-0">
-                              <span className="text-sm font-medium text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors truncate block">
-                                {char.name}
+                              <span className="flex items-center gap-1.5">
+                                <span className="text-sm font-medium text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors truncate block">
+                                  {char.name}
+                                </span>
+                                {char.patchNote && (
+                                  <button
+                                    type="button"
+                                    aria-label={t("patchNoteButton", {
+                                      patch: char.patchNote.patch,
+                                    })}
+                                    onClick={(e) => togglePatchNote(e, key)}
+                                    className="shrink-0 rounded-md border border-[rgba(96,165,250,0.3)] bg-[rgba(96,165,250,0.1)] px-1.5 py-0.5 text-[9px] font-black tracking-[0.08em] text-[var(--color-primary)] transition-colors hover:bg-[rgba(96,165,250,0.16)]"
+                                  >
+                                    PATCH
+                                  </button>
+                                )}
                               </span>
                               <span className="text-[11px] text-[var(--color-muted-foreground)] truncate block">
                                 {char.weaponName}
@@ -383,51 +401,64 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
 
         {/* Mobile List */}
         <div className="sm:hidden">
-          {/* Mobile sort bar */}
-          <div className="flex items-center gap-1.5 px-3 py-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/50 overflow-x-auto scrollbar-hide">
-            <span className="text-[10px] text-[var(--color-muted-foreground)] shrink-0 mr-1">
-              {t("mobileSort")}
-            </span>
-            {[
-              { key: "rank" as SortKey, label: t("sort.rank") },
-              { key: "winRate" as SortKey, label: t("sort.winRate") },
-              { key: "pickRate" as SortKey, label: t("sort.pickRate") },
-              { key: "averageRP" as SortKey, label: t("sort.averageRP") },
-            ].map(({ key, label }) => (
-              <button
-                key={key}
-                onClick={() => handleSort(key)}
-                className={cn(
-                  "shrink-0 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all touch-manipulation",
-                  sortKey === key
-                    ? "bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
-                    : "text-[var(--color-muted-foreground)]"
-                )}
-              >
-                {label}
-                {sortKey === key && (
-                  <span className="ml-0.5">{sortDir === "desc" ? "↓" : "↑"}</span>
-                )}
-              </button>
-            ))}
+          <div className="grid grid-cols-[34px_minmax(0,1.45fr)_56px_56px_72px] items-center gap-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/55 px-3 py-3 text-[11px] font-medium text-[var(--color-muted-foreground)]">
+            <span className="text-center">#</span>
+            <span>{t("columns.character")}</span>
+            <button
+              type="button"
+              onClick={() => handleSort("winRate")}
+              className={cn(
+                "text-right transition-colors",
+                sortKey === "winRate"
+                  ? "text-[var(--color-primary)]"
+                  : "text-[var(--color-muted-foreground)]"
+              )}
+            >
+              {t("columns.winRate")}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSort("pickRate")}
+              className={cn(
+                "text-right transition-colors",
+                sortKey === "pickRate"
+                  ? "text-[var(--color-primary)]"
+                  : "text-[var(--color-muted-foreground)]"
+              )}
+            >
+              {t("columns.pickRate")}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSort("averageRP")}
+              className={cn(
+                "text-right transition-colors",
+                sortKey === "averageRP"
+                  ? "text-[var(--color-primary)]"
+                  : "text-[var(--color-muted-foreground)]"
+              )}
+            >
+              {t("sort.averageRP")}
+            </button>
           </div>
 
           {/* Mobile rows */}
           <div className="divide-y divide-[var(--color-border)]/30">
             {isLoading ? (
               Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="flex items-center gap-2.5 px-3 py-2.5">
+                <div
+                  key={i}
+                  className="grid grid-cols-[34px_minmax(0,1.45fr)_56px_56px_72px] items-center gap-2 px-3 py-3"
+                >
                   <Skeleton className="h-4 w-5 shrink-0" />
-                  <Skeleton className="h-5 w-5 rounded shrink-0" />
-                  <Skeleton className="h-9 w-9 rounded-lg shrink-0" />
-                  <div className="flex-1 min-w-0 flex flex-col gap-1">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <Skeleton className="h-5 w-5 rounded shrink-0" />
+                    <Skeleton className="h-9 w-9 rounded-lg shrink-0" />
                     <Skeleton className="h-3.5 w-20" />
-                    <Skeleton className="h-3 w-14" />
                   </div>
-                  <div className="flex flex-col items-end gap-1 shrink-0">
-                    <Skeleton className="h-3.5 w-10" />
-                    <Skeleton className="h-3 w-12" />
-                  </div>
+                  <Skeleton className="ml-auto h-3.5 w-10" />
+                  <Skeleton className="ml-auto h-3.5 w-10" />
+                  <Skeleton className="ml-auto h-3.5 w-12" />
                 </div>
               ))
             ) : visible.length === 0 ? (
@@ -440,24 +471,15 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                 return (
                   <div
                     key={key}
-                    className="relative flex items-center gap-2.5 px-3 py-2.5 cursor-pointer active:bg-[var(--color-surface-2)] touch-manipulation transition-colors"
+                    className="relative grid grid-cols-[34px_minmax(0,1.45fr)_56px_56px_72px] items-center gap-2 px-3 py-3 cursor-pointer active:bg-[var(--color-surface-2)] touch-manipulation transition-colors"
                     onClick={() => {
-                      if (char.patchNote && "ontouchstart" in window) {
-                        if (activeKey === key) {
-                          setActiveKey(null);
-                          navigateToCharacter(char);
-                        } else {
-                          setActiveKey(key);
-                        }
-                      } else {
-                        navigateToCharacter(char);
-                      }
+                      navigateToCharacter(char);
                     }}
                   >
                     {/* Rank */}
                     <span
                       className={cn(
-                        "text-xs font-bold w-5 text-center shrink-0 tabular-nums",
+                        "w-6 text-center text-[1.1rem] font-black tabular-nums",
                         char.rank <= 3
                           ? "text-[var(--color-accent-gold)]"
                           : "text-[var(--color-muted-foreground)]"
@@ -466,46 +488,58 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                       {char.rank}
                     </span>
                     {/* Tier */}
-                    <TierBadge tier={char.tier} />
-                    {/* Image */}
-                    <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
-                      <Image
-                        src={char.imageUrl}
-                        alt={char.name}
-                        fill
-                        className="object-cover"
-                        sizes="36px"
-                      />
-                      {char.patchNote && (
-                        <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]" />
-                      )}
-                    </div>
-                    {/* Name + Weapon */}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-[var(--color-foreground)] truncate leading-tight">
-                        {char.name}
-                      </p>
-                      <p className="text-[11px] text-[var(--color-muted-foreground)] truncate">
-                        {char.weaponName}
-                      </p>
-                    </div>
-                    {/* Stats */}
-                    <div className="flex flex-col items-end shrink-0 gap-0.5">
-                      <span className="text-xs font-medium tabular-nums text-[var(--color-foreground)]">
-                        {char.winRate.toFixed(1)}%
-                      </span>
-                      <span
-                        className={cn(
-                          "text-[11px] font-semibold tabular-nums",
-                          char.averageRP >= 0
-                            ? "text-[var(--color-accent-gold)]"
-                            : "text-[var(--color-muted-foreground)]"
+                    <div className="flex min-w-0 items-center gap-2.5">
+                      <TierBadge tier={char.tier} />
+                      <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
+                        <Image
+                          src={char.imageUrl}
+                          alt={char.name}
+                          fill
+                          className="object-cover"
+                          sizes="36px"
+                        />
+                        {char.patchNote && (
+                          <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]" />
                         )}
-                      >
-                        {char.averageRP >= 0 ? "+" : ""}
-                        {char.averageRP.toFixed(1)} {t("rpSuffix")}
-                      </span>
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <p className="truncate text-[0.95rem] font-semibold leading-tight text-[var(--color-foreground)]">
+                            {char.name}
+                          </p>
+                          {char.patchNote && (
+                            <button
+                              type="button"
+                              aria-label={t("patchNoteButton", { patch: char.patchNote.patch })}
+                              onClick={(e) => togglePatchNote(e, key)}
+                              className="shrink-0 rounded-md border border-[rgba(96,165,250,0.28)] bg-[rgba(96,165,250,0.1)] px-1.5 py-0.5 text-[9px] font-black tracking-[0.08em] text-[var(--color-primary)]"
+                            >
+                              PATCH
+                            </button>
+                          )}
+                        </div>
+                        <p className="truncate text-[11px] text-[var(--color-muted-foreground)]">
+                          {char.weaponName}
+                        </p>
+                      </div>
                     </div>
+                    <span className="text-right text-[0.95rem] font-medium tabular-nums text-[var(--color-foreground)]">
+                      {char.winRate.toFixed(1)}%
+                    </span>
+                    <span className="text-right text-[0.95rem] font-medium tabular-nums text-[var(--color-foreground)]">
+                      {char.pickRate.toFixed(1)}%
+                    </span>
+                    <span
+                      className={cn(
+                        "text-right text-[1rem] font-semibold tabular-nums",
+                        char.averageRP >= 0
+                          ? "text-[var(--color-accent-gold)]"
+                          : "text-[var(--color-muted-foreground)]"
+                      )}
+                    >
+                      {char.averageRP >= 0 ? "+" : ""}
+                      {char.averageRP.toFixed(1)}
+                    </span>
                     {char.patchNote && activeKey === key && (
                       <PatchNoteTooltip patchNote={char.patchNote} />
                     )}

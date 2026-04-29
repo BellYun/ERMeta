@@ -3,18 +3,64 @@
     "logoTitle": "ER&GG",
     "logoSubtitle": "이리와지지",
     "patchPrefix": "v",
-    "languageSelectAria": "언어 선택"
+    "seasonRecapBadge": "NEW",
+    "seasonRecapTitle": "시즌 10 리캡 공개",
+    "seasonRecapBody": "패치별 평균 RP TOP 5와 시즌 누적 메타 흐름을 한 번에 정리했습니다.",
+    "seasonRecapCta": "보러 가기",
+    "openSearch": "검색 열기",
+    "closeSearch": "검색 닫기",
+    "languageSelectAria": "언어 선택",
+    "searchPlaceholder": "캐릭터, 아이템, 스킬 검색",
+    "searchShortcut": "⌘ /",
+    "notificationsAria": "알림",
+    "profileLabel": "ERGG"
   },
   "navigation": {
     "ariaMain": "메인 내비게이션",
     "metaAnalysis": "메타 분석",
     "synergyRecommendation": "조합 추천",
-    "characterAnalysis": "캐릭터 분석"
+    "characterAnalysis": "캐릭터 분석",
+    "dataLab": "데이터 랩",
+    "patchNotes": "패치 노트",
+    "seasonRecap": "시즌 리캡",
+    "feedback": "피드백 보내기",
+    "patchPanel": "패치 {patch}",
+    "patchPanelFallback": "패치 정보 없음",
+    "updateStatus": "업데이트: 실시간 반영"
   },
   "mobileTab": {
     "meta": "메타",
     "synergy": "조합",
-    "character": "캐릭터"
+    "character": "캐릭터",
+    "updates": "업데이트",
+    "patches": "패치",
+    "recap": "리캡"
+  },
+  "patches": {
+    "indexTitle": "패치 노트",
+    "indexSubtitle": "이터널리턴 패치별 캐릭터 변경 사항을 한눈에 확인하세요.",
+    "indexDescription": "이터널리턴 패치 10.1~10.7 캐릭터 버프/너프 변경 사항. 패치별 조정된 캐릭터를 한눈에 확인하세요.",
+    "heroEyebrow": "Patch Archive",
+    "patchPrefix": "v",
+    "latestBadge": "최신",
+    "trackedPatches": "추적 패치",
+    "adjustedRoster": "조정된 캐릭터",
+    "recordedChanges": "기록된 변경",
+    "latestPatchLabel": "최신 패치",
+    "archiveTitle": "패치 아카이브",
+    "archiveCaption": "ER&GG에 정리된 모든 캐릭터 버프, 너프, 조정 내역입니다.",
+    "viewDetail": "자세히 보기",
+    "breadcrumb": "패치 노트",
+    "detailTitle": "패치 {patch} 변경 사항 - 이리와지지",
+    "detailHeading": "패치 {patch}",
+    "detailDescription": "패치 {patch} 캐릭터 변경 사항. 버프 {buffs}건, 너프 {nerfs}건, 총 {count}명의 캐릭터가 조정되었습니다.",
+    "characterCount": "캐릭터 {count}명",
+    "totalChanges": "변경 {count}건",
+    "counts": {
+      "buff": "버프",
+      "nerf": "너프",
+      "rework": "조정"
+    }
   },
   "layout": {
     "skipToMain": "본문으로 건너뛰기",
@@ -60,13 +106,38 @@
     "live": "LIVE",
     "patch": "패치 {patch}",
     "title": "메타 분석",
-    "subtitle": "{count}판 데이터 기반 실시간 분석",
+    "subtitle": "{count}판 집계 데이터 기반 메타 분석",
+    "heroDescription": "이터널 리턴의 현재 메타를 집계 데이터로 분석합니다.",
+    "matchMetric": "집계 매치 수",
+    "winRateMetric": "상위권 평균 승률",
+    "rpMetric": "상위권 평균 RP",
+    "filterCta": "필터 열기",
+    "topFiveTitle": "이번 패치 상승 TOP 5",
     "honeyPicksTitle": "이번 패치 떡상",
     "honeyPicksDescription": "버프 후 픽률 & 승률 동반 상승 캐릭터",
     "honeySectionName": "이번 패치 떡상",
+    "topFiveCaption": "승률, 픽률, RP 변동 기준 상위 캐릭터",
     "rankingTitle": "캐릭터 순위",
     "rankingDescription": "메타 스코어 기반 종합 순위",
-    "rankingSectionName": "캐릭터 순위"
+    "rankingSectionName": "캐릭터 순위",
+    "insightTitle": "메타 인사이트",
+    "insightCards": {
+      "rising": {
+        "title": "최대 상승 캐릭터",
+        "body": "{name}가 승률 {winRateDelta}%p, RP {averageRPDelta} 변동으로 가장 빠르게 상승했습니다."
+      },
+      "concentration": {
+        "title": "메타 집중도",
+        "body": "상위 {count}개 캐릭터가 전체 픽의 {share}%를 차지하고 있습니다."
+      },
+      "patchResponse": {
+        "title": "버프 반응 확인",
+        "body": "상승 TOP {count} 중 {buffedCount}개가 이번 패치 버프 또는 조정 대상입니다."
+      }
+    },
+    "deepDiveTitle": "더 깊이 있는 분석이 필요하신가요?",
+    "deepDiveBody": "데이터 랩에서 다양한 통계와 메타 트렌드를 확인해보세요.",
+    "deepDiveCta": "데이터 랩으로 이동"
   },
   "globalFilter": {
     "patchAria": "패치 선택",
@@ -102,6 +173,8 @@
       "averageRp": "게임당 평균 획득 랭크 포인트. 양수일수록 랭크 상승에 유리"
     },
     "empty": "데이터 없음",
+    "patchNoteTitle": "패치 {patch} 변경사항",
+    "patchNoteButton": "패치 {patch} 변경사항 보기",
     "mobileSort": "정렬",
     "sort": {
       "rank": "순위",
@@ -133,7 +206,12 @@
     "title": "캐릭터 분석",
     "subtitle": "캐릭터별 승률 · 빌드 · 패치 트렌드 · 장비 통계 심층 분석",
     "imageNotice": "일부 아이템 이미지가 누락되거나 잘못 표시될 수 있습니다",
-    "sectionName": "캐릭터 분석"
+    "sectionName": "캐릭터 분석",
+    "metrics": {
+      "matches": "분석 표본",
+      "winRate": "현재 승률",
+      "bestWeapon": "주력 무기"
+    }
   },
   "characterPicker": {
     "searchAria": "캐릭터 검색",
@@ -222,9 +300,12 @@
     "poolHint": "선택사항 · 캐릭터+무기 단위 필터링",
     "poolSection": "캐릭터 풀",
     "alliesTitle": "아군 선택",
+    "alliesHint": "최대 2명 · 캐릭터+무기 단위",
     "alliesSection": "아군 선택",
     "resultsTitle": "추천 조합",
-    "resultsSection": "추천 조합"
+    "resultsHint": "선택된 아군 기준 상세 조합 비교",
+    "resultsSection": "추천 조합",
+    "shareLanding": "친구가 추천한 조합입니다. 현재 메타 기준으로 바로 확인해보세요."
   },
   "synergyResults": {
     "sort": {

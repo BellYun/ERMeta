@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
+import { getPatches } from "@/lib/getPatches";
 import { fetchRankingData } from "@/lib/ranking";
 
 export type { CharacterRankingData } from "@/lib/ranking";
@@ -8,21 +9,25 @@ export const revalidate = 1800; // L1: 30분 서버 캐시
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const patchVersion = searchParams.get("patchVersion") ?? "10.6";
-  const requestedTier = searchParams.get("tier") ?? "DIAMOND";
+  const latestPatch = (await getPatches())[0] ?? "";
+  const patchVersion = searchParams.get("patchVersion") ?? latestPatch;
+  const requestedTier = searchParams.get("tier") ?? "MITHRIL";
 
-  console.log("[mithril-rp-ranking] params:", { patchVersion, requestedTier });
+  if (!patchVersion) {
+    return NextResponse.json(
+      {
+        rankings: [],
+        previousRankings: [],
+        patchVersion: "",
+        previousPatch: null,
+        tier: requestedTier,
+      },
+      { headers: NO_CACHE_HEADERS }
+    );
+  }
 
   try {
     const result = await fetchRankingData(patchVersion, requestedTier);
-
-    console.log("[mithril-rp-ranking] 최종 응답:", {
-      usedTier: result.tier,
-      patchVersion: result.patchVersion,
-      previousPatch: result.previousPatch,
-      rankingCount: result.rankings.length,
-      previousRankingCount: result.previousRankings.length,
-    });
 
     return NextResponse.json(result, { headers: getCacheHeaders("daily") });
   } catch (err) {

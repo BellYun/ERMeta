@@ -21,52 +21,68 @@ export function SynergyDetailInteractive() {
     searchParams.get("source") === "share" || searchParams.get("utm_source") === "ergg_share";
 
   return (
-    <div className="flex flex-col gap-5 sm:gap-6 mt-5 sm:mt-7">
+    <div className="flex flex-col gap-5 sm:gap-6">
       {isShareLanding && (
         <div
           role="status"
-          className="rounded-xl border border-[var(--color-primary)]/25 bg-[var(--color-primary)]/8 px-4 py-3 text-sm text-[var(--color-foreground)]"
+          className="dashboard-panel px-3 py-2.5 text-sm text-[var(--color-foreground)] sm:px-4 sm:py-3"
         >
-          친구가 추천한 조합입니다. 현재 메타 기준으로 바로 확인해보세요.
+          {t("shareLanding")}
         </div>
       )}
 
-      {/* ── Step 1: Weapon Pool ── */}
-      <section className="reveal reveal-d1">
-        <div className="flex items-center gap-2 mb-2.5">
-          <span className="flex items-center justify-center h-5 w-5 rounded-md bg-[var(--color-accent-purple)]/15 text-[10px] font-bold text-[var(--color-accent-purple)]">
-            1
+      <section className="dashboard-panel reveal reveal-d1 p-3.5 sm:p-4 lg:p-5">
+        <div className="mb-3 flex flex-wrap items-end gap-x-3 gap-y-2 sm:mb-4">
+          <div className="flex items-center gap-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[rgba(168,85,247,0.14)] text-[11px] font-bold text-[#c084fc] sm:h-7 sm:w-7 sm:rounded-xl sm:text-xs">
+              1
+            </span>
+            <h2 className="text-[1.1rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.35rem]">
+              {t("poolTitle")}
+            </h2>
+          </div>
+          <span className="pb-0.5 text-xs text-[var(--color-muted-foreground)]">
+            {t("poolHint")}
           </span>
-          <h2 className="text-sm font-bold text-[var(--color-foreground)]">{t("poolTitle")}</h2>
-          <span className="text-[10px] text-[var(--color-muted-foreground)]">{t("poolHint")}</span>
         </div>
         <SectionErrorBoundary sectionName={t("poolSection")}>
           <FocusWeaponPool />
         </SectionErrorBoundary>
       </section>
 
-      {/* ── Step 2 & 3: Selector + Results ── */}
-      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
-        <section className="reveal reveal-d2 w-full lg:w-[340px] shrink-0">
-          <div className="flex items-center gap-2 mb-2.5">
-            <span className="flex items-center justify-center h-5 w-5 rounded-md bg-[var(--color-primary)]/15 text-[10px] font-bold text-[var(--color-primary)]">
-              2
+      <div className="grid gap-5 xl:grid-cols-[360px_minmax(0,1fr)]">
+        <section className="dashboard-panel reveal reveal-d2 p-3.5 sm:p-4 lg:p-5">
+          <div className="mb-3 flex flex-wrap items-end gap-x-3 gap-y-2 sm:mb-4">
+            <div className="flex items-center gap-2">
+              <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[rgba(59,130,246,0.14)] text-[11px] font-bold text-[#60a5fa] sm:h-7 sm:w-7 sm:rounded-xl sm:text-xs">
+                2
+              </span>
+              <h2 className="text-[1.1rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.35rem]">
+                {t("alliesTitle")}
+              </h2>
+            </div>
+            <span className="pb-0.5 text-xs text-[var(--color-muted-foreground)]">
+              {t("alliesHint")}
             </span>
-            <h2 className="text-sm font-bold text-[var(--color-foreground)]">{t("alliesTitle")}</h2>
           </div>
           <SectionErrorBoundary sectionName={t("alliesSection")}>
             <WeaponAllySelector />
           </SectionErrorBoundary>
         </section>
 
-        <section className="reveal reveal-d3 flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-2.5">
-            <span className="flex items-center justify-center h-5 w-5 rounded-md bg-[var(--color-accent-gold)]/15 text-[10px] font-bold text-[var(--color-accent-gold)]">
-              3
+        <section className="dashboard-panel reveal reveal-d3 min-w-0 p-3.5 sm:p-4 lg:p-5">
+          <div className="mb-3 flex flex-wrap items-end gap-x-3 gap-y-2 sm:mb-4">
+            <div className="flex items-center gap-2">
+              <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[rgba(251,191,36,0.14)] text-[11px] font-bold text-[#fbbf24] sm:h-7 sm:w-7 sm:rounded-xl sm:text-xs">
+                3
+              </span>
+              <h2 className="text-[1.1rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.35rem]">
+                {t("resultsTitle")}
+              </h2>
+            </div>
+            <span className="pb-0.5 text-xs text-[var(--color-muted-foreground)]">
+              {t("resultsHint")}
             </span>
-            <h2 className="text-sm font-bold text-[var(--color-foreground)]">
-              {t("resultsTitle")}
-            </h2>
           </div>
           <SectionErrorBoundary sectionName={t("resultsSection")}>
             <SynergyDetailResults />

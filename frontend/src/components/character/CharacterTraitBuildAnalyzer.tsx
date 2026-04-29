@@ -190,23 +190,25 @@ function SlotRow({
 }) {
   if (options.length === 0) return null;
   return (
-    <div className="flex items-start gap-2 py-2">
+    <div className="flex min-w-0 items-start gap-2 py-2">
       <span className={cn("shrink-0 text-[10px] font-semibold pt-2 w-10", config.text)}>
         {label}
       </span>
-      <div className="flex flex-wrap gap-2">
-        {options.map(
-          (opt) =>
-            opt.code != null && (
-              <TraitIcon
-                key={opt.code}
-                code={opt.code}
-                name={traitNames[opt.code]}
-                pickRate={opt.pickRate}
-                winRate={opt.winRate}
-              />
-            )
-        )}
+      <div className="min-w-0 flex-1 overflow-x-auto pb-1">
+        <div className="flex min-w-max gap-1.5 sm:gap-2">
+          {options.map(
+            (opt) =>
+              opt.code != null && (
+                <TraitIcon
+                  key={opt.code}
+                  code={opt.code}
+                  name={traitNames[opt.code]}
+                  pickRate={opt.pickRate}
+                  winRate={opt.winRate}
+                />
+              )
+          )}
+        </div>
       </div>
     </div>
   );
@@ -341,99 +343,105 @@ export function CharacterTraitBuildAnalyzer({
                     {t("labels.secondary")}
                   </span>
                 </div>
-                <div
-                  className={cn(
-                    "grid gap-px bg-[var(--color-border)]/20",
-                    group.secondaries.length === 1 && "grid-cols-1",
-                    group.secondaries.length === 2 && "grid-cols-2",
-                    group.secondaries.length >= 3 && "grid-cols-1 sm:grid-cols-3"
-                  )}
-                >
-                  {group.secondaries.map((sec, si) => {
-                    const secConfig = groupConfig[sec.secGroup];
-                    const isEmpty = sec.totalGames === 0;
-                    return (
-                      <div
-                        key={si}
-                        className={cn("bg-[var(--color-surface)]/80 p-3", isEmpty && "opacity-40")}
-                      >
-                        {/* 부특성 그룹 헤더 */}
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-1.5">
-                            <div
-                              className={cn(
-                                "flex items-center justify-center rounded-full h-5 w-5",
-                                secConfig.bg
-                              )}
-                            >
-                              <span className={cn("text-[10px] font-black", secConfig.text)}>
-                                {secConfig.letter}
-                              </span>
-                            </div>
-                            <span className={cn("text-xs font-bold", secConfig.text)}>
-                              {secConfig.label}
-                            </span>
-                          </div>
-                          <div className="flex gap-1.5 text-[9px]">
-                            <span className="text-[var(--color-muted-foreground)]">
-                              {t("labels.pick", { value: sec.pickRate.toFixed(0) })}
-                            </span>
-                            {!isEmpty && (
-                              <span
+                <div className="overflow-x-auto pb-1">
+                  <div
+                    className={cn(
+                      "flex min-w-max gap-px bg-[var(--color-border)]/20 sm:grid sm:min-w-0",
+                      group.secondaries.length === 1 && "sm:grid-cols-1",
+                      group.secondaries.length === 2 && "sm:grid-cols-2",
+                      group.secondaries.length >= 3 && "sm:grid-cols-3"
+                    )}
+                  >
+                    {group.secondaries.map((sec, si) => {
+                      const secConfig = groupConfig[sec.secGroup];
+                      const isEmpty = sec.totalGames === 0;
+                      return (
+                        <div
+                          key={si}
+                          className={cn(
+                            "min-w-[220px] overflow-hidden bg-[var(--color-surface)]/80 p-3 sm:min-w-0",
+                            isEmpty && "opacity-40"
+                          )}
+                        >
+                          {/* 부특성 그룹 헤더 */}
+                          <div className="mb-2 flex min-w-0 items-center justify-between gap-2">
+                            <div className="flex min-w-0 items-center gap-1.5">
+                              <div
                                 className={cn(
-                                  sec.winRate >= 55
-                                    ? "text-[var(--color-accent-gold)]"
-                                    : "text-[var(--color-muted-foreground)]"
+                                  "flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
+                                  secConfig.bg
                                 )}
                               >
-                                {t("labels.win", { value: sec.winRate.toFixed(1) })}
+                                <span className={cn("text-[10px] font-black", secConfig.text)}>
+                                  {secConfig.letter}
+                                </span>
+                              </div>
+                              <span className={cn("truncate text-xs font-bold", secConfig.text)}>
+                                {secConfig.label}
                               </span>
-                            )}
+                            </div>
+                            <div className="flex shrink-0 gap-1 text-[9px] sm:gap-1.5">
+                              <span className="whitespace-nowrap text-[var(--color-muted-foreground)]">
+                                {t("labels.pick", { value: sec.pickRate.toFixed(0) })}
+                              </span>
+                              {!isEmpty && (
+                                <span
+                                  className={cn(
+                                    "whitespace-nowrap",
+                                    sec.winRate >= 55
+                                      ? "text-[var(--color-accent-gold)]"
+                                      : "text-[var(--color-muted-foreground)]"
+                                  )}
+                                >
+                                  {t("labels.win", { value: sec.winRate.toFixed(1) })}
+                                </span>
+                              )}
+                            </div>
                           </div>
-                        </div>
 
-                        {/* 슬롯1 + 슬롯2 아이콘 */}
-                        {!isEmpty ? (
-                          <div className="space-y-2">
-                            <div className="flex flex-wrap gap-1.5">
-                              {sec.optionTrait1Options.map(
-                                (opt) =>
-                                  opt.code != null && (
-                                    <TraitIcon
-                                      key={opt.code}
-                                      code={opt.code}
-                                      name={traitNames[opt.code]}
-                                      pickRate={opt.pickRate}
-                                      winRate={opt.winRate}
-                                      size={24}
-                                    />
-                                  )
-                              )}
+                          {/* 슬롯1 + 슬롯2 아이콘 */}
+                          {!isEmpty ? (
+                            <div className="space-y-2">
+                              <div className="flex flex-wrap gap-1.5">
+                                {sec.optionTrait1Options.map(
+                                  (opt) =>
+                                    opt.code != null && (
+                                      <TraitIcon
+                                        key={opt.code}
+                                        code={opt.code}
+                                        name={traitNames[opt.code]}
+                                        pickRate={opt.pickRate}
+                                        winRate={opt.winRate}
+                                        size={24}
+                                      />
+                                    )
+                                )}
+                              </div>
+                              <div className="flex flex-wrap gap-1.5">
+                                {sec.optionTrait2Options.map(
+                                  (opt) =>
+                                    opt.code != null && (
+                                      <TraitIcon
+                                        key={opt.code}
+                                        code={opt.code}
+                                        name={traitNames[opt.code]}
+                                        pickRate={opt.pickRate}
+                                        winRate={opt.winRate}
+                                        size={24}
+                                      />
+                                    )
+                                )}
+                              </div>
                             </div>
-                            <div className="flex flex-wrap gap-1.5">
-                              {sec.optionTrait2Options.map(
-                                (opt) =>
-                                  opt.code != null && (
-                                    <TraitIcon
-                                      key={opt.code}
-                                      code={opt.code}
-                                      name={traitNames[opt.code]}
-                                      pickRate={opt.pickRate}
-                                      winRate={opt.winRate}
-                                      size={24}
-                                    />
-                                  )
-                              )}
-                            </div>
-                          </div>
-                        ) : (
-                          <p className="text-[10px] text-[var(--color-muted-foreground)] text-center py-2">
-                            {t("empty.cell")}
-                          </p>
-                        )}
-                      </div>
-                    );
-                  })}
+                          ) : (
+                            <p className="text-[10px] text-[var(--color-muted-foreground)] text-center py-2">
+                              {t("empty.cell")}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             )}

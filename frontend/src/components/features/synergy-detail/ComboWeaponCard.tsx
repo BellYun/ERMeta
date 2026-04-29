@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight } from "lucide-react";
+import { ArrowUpRight, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -150,21 +150,7 @@ function ComboWeaponCardImpl({
             const isRecommended = !selectedCharCodes.includes(m.char);
             return (
               <React.Fragment key={`${m.char}-${m.weapon}`}>
-                <Link
-                  href={`/character/${m.char}?weapon=${m.weapon}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (isRecommended) onRecommendationClick?.(m.char, rank);
-                  }}
-                  onTouchEnd={(e) => e.stopPropagation()}
-                  // 외부 div[role=button]가 onPointerUp으로 토글하므로 pointer 단계에서도
-                  // 차단해야 "캐릭터 상세 이동" 탭이 실수로 브레이크다운 토글을 함께 트리거하지 않음.
-                  // pointerDown 도 차단해야 부모 div 의 pointerStartRef 가 Link 좌표로 오염되지 않음
-                  // (Safari 는 pointercancel 비보장 — Link 탭 후 다음 카드 탭에서 stale start 로 토글되는 회귀 차단).
-                  onPointerDown={(e) => e.stopPropagation()}
-                  onPointerUp={(e) => e.stopPropagation()}
-                  className="flex flex-col items-center gap-0.5 hover:opacity-80 active:opacity-60 transition-opacity"
-                >
+                <div className="flex flex-col items-center gap-0.5">
                   <div
                     className={cn(
                       "relative h-8 w-8 sm:h-10 sm:w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
@@ -192,7 +178,25 @@ function ComboWeaponCardImpl({
                   <span className="text-[8px] sm:text-[10px] text-[var(--color-muted-foreground)] truncate w-10 sm:w-14 text-center">
                     {getWeaponName(m.weapon)}
                   </span>
-                </Link>
+                  <Link
+                    href={`/character/${m.char}?weapon=${m.weapon}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (isRecommended) onRecommendationClick?.(m.char, rank);
+                    }}
+                    onTouchEnd={(e) => e.stopPropagation()}
+                    // 외부 div[role=button]가 onPointerUp으로 토글하므로 pointer 단계에서도
+                    // 차단해야 "캐릭터 상세 이동" 탭이 실수로 브레이크다운 토글을 함께 트리거하지 않음.
+                    // pointerDown 도 차단해야 부모 div 의 pointerStartRef 가 Link 좌표로 오염되지 않음
+                    // (Safari 는 pointercancel 비보장 — Link 탭 후 다음 카드 탭에서 stale start 로 토글되는 회귀 차단).
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onPointerUp={(e) => e.stopPropagation()}
+                    aria-label={`${getCharName(m.char)} 상세 보기`}
+                    className="mt-0.5 inline-flex h-[18px] w-[18px] items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]/80 text-[var(--color-muted-foreground)] transition-colors hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)] active:bg-[var(--color-surface-2)] sm:h-5 sm:w-5"
+                  >
+                    <ArrowUpRight className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                  </Link>
+                </div>
                 {i < 2 && (
                   <span className="text-[8px] sm:text-[10px] text-[var(--color-border)] self-start mt-2 sm:mt-3">
                     +

@@ -34,7 +34,8 @@ function wilsonLower(winRatePct: number, totalGames: number): number {
   const p = winRatePct / 100;
   const z = 1.645;
   const n = totalGames;
-  const numerator = p + (z * z) / (2 * n) - z * Math.sqrt((p * (1 - p)) / n + (z * z) / (4 * n * n));
+  const numerator =
+    p + (z * z) / (2 * n) - z * Math.sqrt((p * (1 - p)) / n + (z * z) / (4 * n * n));
   const denominator = 1 + (z * z) / n;
   return Math.max(0, numerator / denominator);
 }
@@ -58,7 +59,7 @@ function recommendedScore(
   const wilson = wilsonLower(rec.winRate, rec.totalGames);
   const rScore = rankScore(rec.averageRank);
 
-  return 0.60 * normalizedRP + 0.30 * wilson + 0.10 * rScore;
+  return 0.6 * normalizedRP + 0.3 * wilson + 0.1 * rScore;
 }
 
 interface TrioRow {
@@ -122,10 +123,7 @@ function aggregateByTrio(rows: TrioRow[]): AggregatedTrio[] {
     character3: v.c3,
     totalGames: v.totalGames,
     winRate: v.totalGames > 0 ? v.winRateWeighted / v.totalGames : 0,
-    averageRP:
-      v.totalGames > 0
-        ? v.avgRPWeighted / v.totalGames / TRIO_MEMBER_COUNT
-        : 0,
+    averageRP: v.totalGames > 0 ? v.avgRPWeighted / v.totalGames / TRIO_MEMBER_COUNT : 0,
     averageRank: v.totalGames > 0 ? v.avgRankWeighted / v.totalGames : 0,
   }));
 }
@@ -174,8 +172,6 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = createServerClient();
 
-    const TWO_WEEKS_AGO = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
-
     // 캐릭터 필터 조건 (old / v2 공용)
     const charFilterOr =
       char1 != null && char2 != null
@@ -196,7 +192,6 @@ export async function GET(request: NextRequest) {
       .from("v2_CharacterTrio")
       .select("character1,character2,character3,winRate,averageRP,totalGames,averageRank")
       .in("tier", DIAMOND_PLUS_TIERS)
-      .gte("lastUpdated", TWO_WEEKS_AGO)
       .order("totalGames", { ascending: false })
       .limit(5000);
 
@@ -207,7 +202,6 @@ export async function GET(request: NextRequest) {
       .from("CharacterTrio")
       .select("character1,character2,character3,winRate,averageRP,totalGames,averageRank")
       .in("tier", DIAMOND_PLUS_TIERS)
-      .gte("lastUpdated", TWO_WEEKS_AGO)
       .order("totalGames", { ascending: false })
       .limit(5000);
 
@@ -259,8 +253,7 @@ export async function GET(request: NextRequest) {
       };
       aggregated.sort(
         (a, b) =>
-          recommendedScore(b, globalAvgRP, rpRange) -
-          recommendedScore(a, globalAvgRP, rpRange)
+          recommendedScore(b, globalAvgRP, rpRange) - recommendedScore(a, globalAvgRP, rpRange)
       );
     } else {
       aggregated.sort((a, b) => {
@@ -270,7 +263,10 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    return NextResponse.json({ results: aggregated.slice(0, limit) }, { headers: getCacheHeaders("frequent") });
+    return NextResponse.json(
+      { results: aggregated.slice(0, limit) },
+      { headers: getCacheHeaders("frequent") }
+    );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("[stats/trios] 예외:", message);

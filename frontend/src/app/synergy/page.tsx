@@ -1,125 +1,89 @@
+import { ArrowRight, Network, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
-import { getCharacterName } from "@/lib/characterMap";
+import { SynergyClient } from "@/components/features/SynergyClient";
 
-type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+export const revalidate = 300;
 
-function parseAllyCode(raw: string | string[] | undefined): number | null {
-  const value = Array.isArray(raw) ? raw[0] : raw;
-  if (!value) return null;
-  const code = Number.parseInt(value, 10);
-  return Number.isFinite(code) && code > 0 ? code : null;
-}
-
-function getFirstParam(
-  params: Record<string, string | string[] | undefined>,
-  ...keys: string[]
-): string | string[] | undefined {
-  for (const key of keys) {
-    const value = params[key];
-    if (value != null) return value;
-  }
-  return undefined;
-}
-
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}): Promise<Metadata> {
-  const params = await searchParams;
-  const t = await getTranslations("synergyMetadata");
-  const ally1 = parseAllyCode(getFirstParam(params, "ally1", "a"));
-  const ally2 = parseAllyCode(getFirstParam(params, "ally2", "b"));
-
-  const name1 = ally1 ? getCharacterName(ally1) : null;
-  const name2 = ally2 ? getCharacterName(ally2) : null;
-
-  const headline =
-    name1 && name2
-      ? t("headlinePair", { name1, name2 })
-      : name1
-        ? t("headlineSingle", { name1 })
-        : t("headlineFallback");
-
-  const description =
-    name1 && name2
-      ? t("descriptionPair", { name1, name2 })
-      : name1
-        ? t("descriptionSingle", { name1 })
-        : t("descriptionFallback");
-
-  const ogQuery = new URLSearchParams();
-  if (ally1) ogQuery.set("ally1", String(ally1));
-  if (ally2) ogQuery.set("ally2", String(ally2));
-  const ogImageUrl = `/synergy-detail/opengraph-image${ogQuery.size ? `?${ogQuery.toString()}` : ""}`;
+export async function generateMetadata(): Promise<Metadata> {
+  const tNav = await getTranslations("navigation");
+  const tPage = await getTranslations("synergyPage");
 
   return {
-    title: headline,
-    description,
+    title: `${tNav("synergyRecommendation")} | ER&GG`,
+    description: tPage("subtitle"),
+    alternates: { canonical: "/synergy" },
     openGraph: {
-      title: t("socialTitle", { headline }),
-      description,
+      title: tNav("synergyRecommendation"),
+      description: tPage("subtitle"),
       url: "/synergy",
-      images: [{ url: ogImageUrl, width: 1200, height: 630 }],
     },
-    twitter: {
-      card: "summary_large_image",
-      title: t("socialTitle", { headline }),
-      description,
-      images: [ogImageUrl],
-    },
-    alternates: { canonical: "/synergy-detail" },
   };
 }
 
-export default function SynergyPage() {
-  const t = useTranslations("synergyMain");
+export default async function SynergyPage() {
+  const tNav = await getTranslations("navigation");
+  const tPage = await getTranslations("synergyPage");
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 px-4">
-      <div className="flex flex-col items-center gap-3 text-center">
-        <div className="flex items-center justify-center h-14 w-14 rounded-2xl bg-[var(--color-accent-gold)]/10 border border-[var(--color-accent-gold)]/20">
-          <svg
-            className="h-7 w-7 text-[var(--color-accent-gold)]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z"
-            />
-          </svg>
+    <div className="page-shell flex flex-col gap-5 lg:gap-6">
+      <section className="dashboard-hero px-3 py-3 sm:px-4 sm:py-4 lg:px-5 lg:py-5">
+        <div className="grid gap-3 xl:grid-cols-[minmax(0,1.08fr)_minmax(320px,0.92fr)]">
+          <div className="flex flex-col justify-center px-1 py-1.5 sm:px-2 sm:py-2 lg:px-4">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(96,165,250,0.18)] bg-[rgba(96,165,250,0.08)] px-2.5 py-1 text-[11px] font-semibold text-[var(--color-primary)] sm:px-3 sm:text-sm">
+                <Network className="h-3.5 w-3.5" strokeWidth={2} />
+                {tNav("synergyRecommendation")}
+              </span>
+              <span className="rounded-full border border-[rgba(251,191,36,0.18)] bg-[rgba(251,191,36,0.08)] px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-warning)]">
+                {tPage("beta")}
+              </span>
+            </div>
+
+            <h1 className="mt-3 text-[1.9rem] font-black tracking-[-0.055em] text-[var(--color-foreground)] sm:mt-4 sm:text-[2.2rem] lg:text-[3.1rem]">
+              {tNav("synergyRecommendation")}
+            </h1>
+            <p className="mt-2.5 max-w-[42rem] text-[0.95rem] leading-6 text-[var(--color-foreground)]/88 sm:mt-3 sm:text-base sm:leading-7 lg:text-[1.05rem]">
+              {tPage("subtitle")}
+            </p>
+          </div>
+
+          <div className="metric-card flex min-h-[132px] flex-col justify-between px-4 py-4 sm:px-5 sm:py-5">
+            <div>
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[rgba(251,191,36,0.18)] bg-[rgba(251,191,36,0.12)] text-[var(--color-accent-gold)]">
+                <Sparkles className="h-5 w-5" strokeWidth={2} />
+              </div>
+              <p className="mt-4 text-[1.15rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.35rem]">
+                {tPage("title")}
+              </p>
+              <p className="mt-2 text-sm leading-6 text-[var(--color-muted-foreground)]">
+                {tPage("steps.analysis.sublabel")}
+              </p>
+            </div>
+
+            <Link
+              href="/synergy-detail"
+              className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.04)] px-3 py-2.5 text-sm font-medium text-[var(--color-foreground)] transition hover:border-[var(--color-border-light)] hover:bg-[rgba(255,255,255,0.07)]"
+            >
+              {tPage("title")}
+              <ArrowRight className="h-4 w-4" strokeWidth={2} />
+            </Link>
+          </div>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-black text-[var(--color-foreground)] tracking-tight">
-          {t("title")}
-        </h1>
-        <p className="text-sm text-[var(--color-muted-foreground)] max-w-md">{t("subtitle")}</p>
-      </div>
-      <Link
-        href="/synergy-detail"
-        className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-primary)] px-6 py-3 text-sm font-bold text-white hover:opacity-90 transition-opacity"
-      >
-        {t("cta")}
-        <svg
-          className="h-4 w-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth="2.5"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
-          />
-        </svg>
-      </Link>
+      </section>
+
+      <section className="dashboard-panel p-4 lg:p-5">
+        <div className="mb-4 flex flex-wrap items-end gap-x-4 gap-y-2">
+          <h2 className="text-[1.4rem] font-black tracking-[-0.05em] text-[var(--color-foreground)] sm:text-[1.8rem]">
+            {tNav("synergyRecommendation")}
+          </h2>
+          <p className="pb-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">
+            {tPage("dataNotice")}
+          </p>
+        </div>
+        <SynergyClient />
+      </section>
     </div>
   );
 }
