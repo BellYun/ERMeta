@@ -2,16 +2,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { isRouteLocale } from "@/i18n/routing";
 import { localizeMetadata } from "@/lib/routeMetadata";
-import SynergyPage, {
-  generateMetadata as generateBaseMetadata,
-  revalidate,
-} from "@/views/synergy/SynergyPage";
+import SynergyPage, { generateMetadata as generateBaseMetadata } from "@/views/synergy/SynergyPage";
 
 interface LocalePageProps {
   params: Promise<{ locale: string }>;
 }
 
-export { revalidate };
+export const revalidate = 300;
 
 export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
   const { locale } = await params;

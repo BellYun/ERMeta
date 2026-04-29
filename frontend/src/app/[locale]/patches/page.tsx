@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { isRouteLocale } from "@/i18n/routing";
 import { localizeMetadata } from "@/lib/routeMetadata";
 import PatchesIndexPage, {
-  dynamic,
   generateMetadata as generateBaseMetadata,
 } from "@/views/patches/PatchesIndexPage";
 
@@ -11,7 +10,7 @@ interface LocalePageProps {
   params: Promise<{ locale: string }>;
 }
 
-export { dynamic };
+export const dynamic = "force-static";
 
 export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
   const { locale } = await params;

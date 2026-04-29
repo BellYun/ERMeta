@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import * as React from "react";
 import { CharacterSearchCombobox } from "@/components/features/character-analysis/CharacterSearchCombobox";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { LocaleRecommendationBanner } from "@/components/layout/LocaleRecommendationBanner";
 import { stripRouteLocaleFromPathname, withCurrentRouteLocale } from "@/lib/localizedPath";
 
 interface HeaderProps {
@@ -22,6 +23,8 @@ export function Header({ currentPatch }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[rgba(6,11,24,0.86)] backdrop-blur-xl">
+      <LocaleRecommendationBanner />
+
       {showSeasonRecapBanner && (
         <Link
           href={withCurrentRouteLocale(pathname, "/season10-recap")}

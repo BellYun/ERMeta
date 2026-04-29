@@ -4,14 +4,13 @@ import { isRouteLocale } from "@/i18n/routing";
 import { localizeMetadata } from "@/lib/routeMetadata";
 import SeasonRecapPage, {
   metadata as baseMetadata,
-  revalidate,
 } from "@/views/season10-recap/Season10RecapPage";
 
 interface LocalePageProps {
   params: Promise<{ locale: string }>;
 }
 
-export { revalidate };
+export const revalidate = 3600;
 
 export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
   const { locale } = await params;

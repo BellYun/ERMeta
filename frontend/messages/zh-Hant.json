@@ -3,7 +3,10 @@
     "languageSelectAria": "選擇語言",
     "logoTitle": "ER&GG",
     "logoSubtitle": "永恆輪迴 Meta",
-    "patchPrefix": "v"
+    "patchPrefix": "v",
+    "localeRecommendationBody": "你的瀏覽器語言設定為 {language}。要切換到該語言嗎？",
+    "localeRecommendationCta": "切換語言",
+    "localeRecommendationDismiss": "關閉語言推薦"
   },
   "navigation": {
     "ariaMain": "主導覽",

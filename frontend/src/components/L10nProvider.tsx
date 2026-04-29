@@ -1,22 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
-import React, {
-  createContext,
-  startTransition,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import {
-  DEFAULT_LANGUAGE,
-  LANGUAGE_COOKIE,
-  SUPPORTED_LANGUAGES,
-  resolveLanguage,
-  type SupportedLanguage,
-} from "@/lib/detectLanguage";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import { DEFAULT_LANGUAGE, LANGUAGE_COOKIE, type SupportedLanguage } from "@/lib/detectLanguage";
 import { HTML_LANG_BY_LANGUAGE, loadIntlMessages, type IntlMessages } from "@/lib/staticIntl";
 import { fetchAndParseL10n } from "@/utils/l10n";
 
@@ -26,22 +12,6 @@ function setLanguageCookie(lang: SupportedLanguage) {
   if (typeof document === "undefined") return;
   const maxAge = COOKIE_MAX_AGE_DAYS * 24 * 60 * 60;
   document.cookie = `${LANGUAGE_COOKIE}=${encodeURIComponent(lang)};path=/;max-age=${maxAge};SameSite=Lax`;
-}
-
-function getLanguageCookie(): SupportedLanguage | null {
-  if (typeof document === "undefined") return null;
-
-  const cookie = document.cookie
-    .split(";")
-    .map((entry) => entry.trim())
-    .find((entry) => entry.startsWith(`${LANGUAGE_COOKIE}=`));
-
-  if (!cookie) return null;
-
-  const value = decodeURIComponent(cookie.slice(LANGUAGE_COOKIE.length + 1));
-  return (SUPPORTED_LANGUAGES as readonly string[]).includes(value)
-    ? (value as SupportedLanguage)
-    : null;
 }
 
 interface L10nState {
@@ -98,11 +68,11 @@ export function L10nProvider({
   initialL10n,
   initialMessages,
   initialLanguage,
-  lockInitialLanguage = false,
+  lockInitialLanguage: _lockInitialLanguage = false,
   children,
 }: L10nProviderProps) {
-  const router = useRouter();
   const serverLanguage = initialLanguage ?? DEFAULT_LANGUAGE;
+  void _lockInitialLanguage;
   const [language, setLanguageState] = useState<SupportedLanguage>(serverLanguage);
   const [messages, setMessages] = useState<IntlMessages>(initialMessages);
   const [l10nState, l10nDispatch] = React.useReducer(l10nReducer, {
@@ -117,36 +87,11 @@ export function L10nProvider({
   const l10nCacheRef = useRef<Partial<Record<SupportedLanguage, Map<string, string>>>>(
     initialL10n ? { [serverLanguage]: new Map(Object.entries(initialL10n)) } : {}
   );
-  const hasResolvedPreferenceRef = useRef(lockInitialLanguage);
 
   useEffect(() => {
     document.documentElement.lang = HTML_LANG_BY_LANGUAGE[language] ?? "ko";
-    if (hasResolvedPreferenceRef.current) {
-      setLanguageCookie(language);
-    }
+    setLanguageCookie(language);
   }, [language]);
-
-  useEffect(() => {
-    if (lockInitialLanguage) {
-      return;
-    }
-
-    const preferredLanguage =
-      getLanguageCookie() ??
-      resolveLanguage(
-        null,
-        typeof navigator === "undefined" ? null : navigator.languages.join(",")
-      );
-
-    hasResolvedPreferenceRef.current = true;
-    setLanguageCookie(preferredLanguage);
-
-    if (preferredLanguage !== language) {
-      startTransition(() => {
-        setLanguageState(preferredLanguage);
-      });
-    }
-  }, [language, lockInitialLanguage]);
 
   useEffect(() => {
     let ignore = false;
@@ -198,7 +143,6 @@ export function L10nProvider({
     if (lang === language) return;
     setLanguageCookie(lang);
     setLanguageState(lang);
-    router.refresh();
   };
 
   return (
