@@ -1,28 +1,55 @@
 import { NextRequest, NextResponse } from "next/server";
-import { LANGUAGE_COOKIE, resolveLanguage, SUPPORTED_LANGUAGES } from "@/lib/detectLanguage";
+import createMiddleware from "next-intl/middleware";
+import {
+  DEFAULT_ROUTE_LOCALE,
+  LANGUAGE_BY_ROUTE_LOCALE,
+  ROUTE_LOCALE_BY_LANGUAGE,
+  routing,
+} from "@/i18n/routing";
+import { LANGUAGE_COOKIE, resolveLanguage } from "@/lib/detectLanguage";
+import {
+  getRouteLocaleSegmentFromPathname,
+  stripRouteLocaleFromPathname,
+} from "@/lib/localizedPath";
+import { localizeRoutePath } from "@/lib/seoLocales";
 
 const COOKIE_MAX_AGE = 365 * 24 * 60 * 60; // 1년
+const handleI18nRouting = createMiddleware(routing);
 
 export function proxy(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  const routeLocale = getRouteLocaleSegmentFromPathname(pathname);
   const existing = request.cookies.get(LANGUAGE_COOKIE)?.value;
+  const accept = request.headers.get("accept-language");
+  const preferredLanguage = resolveLanguage(existing, accept);
+  const preferredLocale = ROUTE_LOCALE_BY_LANGUAGE[preferredLanguage];
 
-  // 이미 유효한 cookie 있으면 그대로 통과
-  if (existing && (SUPPORTED_LANGUAGES as readonly string[]).includes(existing)) {
-    return NextResponse.next();
+  if (!routeLocale && preferredLocale !== DEFAULT_ROUTE_LOCALE) {
+    const url = request.nextUrl.clone();
+    url.pathname = localizeRoutePath(pathname || "/", preferredLocale);
+    const response = NextResponse.redirect(url);
+    response.cookies.set(LANGUAGE_COOKIE, preferredLanguage, {
+      maxAge: COOKIE_MAX_AGE,
+      path: "/",
+      sameSite: "lax",
+    });
+    return response;
   }
 
-  // 첫 방문(또는 잘못된 값) → Accept-Language 기반으로 결정 후 cookie 박아두기
-  const accept = request.headers.get("accept-language");
-  const language = resolveLanguage(null, accept);
+  const response = handleI18nRouting(request);
+  const normalizedPath = stripRouteLocaleFromPathname(pathname);
+  const cookieLanguage = routeLocale
+    ? LANGUAGE_BY_ROUTE_LOCALE[routeLocale]
+    : normalizedPath === pathname
+      ? preferredLanguage
+      : resolveLanguage(existing, accept);
 
-  // 동일 요청에서도 layout이 새 값을 보도록 request cookie도 mutate
-  const response = NextResponse.next({ request });
-  request.cookies.set(LANGUAGE_COOKIE, language);
-  response.cookies.set(LANGUAGE_COOKIE, language, {
+  response.cookies.set(LANGUAGE_COOKIE, cookieLanguage, {
     maxAge: COOKIE_MAX_AGE,
     path: "/",
     sameSite: "lax",
   });
+
   return response;
 }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { X, Users, Loader2, Info, Share2 } from "lucide-react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary";
@@ -10,6 +10,7 @@ import { useFocusCharacters } from "@/hooks/useFocusCharacters";
 import { analytics, type SynergySortBy } from "@/lib/analytics";
 import { resolveCharacterName } from "@/lib/characterMap";
 import { isMobileDevice } from "@/lib/device";
+import { withCurrentRouteLocale } from "@/lib/localizedPath";
 import { cn } from "@/lib/utils";
 import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "./constants";
 import type { TrioResult, SortBy } from "./types";
@@ -24,6 +25,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
   const { l10n } = useL10n();
   const t = useTranslations("synergyMainResults");
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const router = useRouter();
   const { focusCharacters } = useFocusCharacters();
 
@@ -134,8 +136,8 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
   }, [trioResults, selectedAllies, focusCharacters, sortBy]);
 
   const clearAllies = React.useCallback(() => {
-    router.replace("/synergy-detail", { scroll: false });
-  }, [router]);
+    router.replace(withCurrentRouteLocale(pathname, "/synergy-detail"), { scroll: false });
+  }, [pathname, router]);
 
   // synergy_result_viewed — 같은 (ally1,ally2,sortBy) 조합은 중복 fire 금지
   const lastViewedKeyRef = React.useRef<string | null>(null);

@@ -1,7 +1,7 @@
 "use client";
 
 import { Search, X } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useL10n } from "@/components/L10nProvider";
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/VirtualCharacterGrid";
 import { analytics } from "@/lib/analytics";
 import { buildFallbackMap, getCharacterName, resolveCharacterName } from "@/lib/characterMap";
+import { withCurrentSeoLocale } from "@/lib/localizedPath";
 
 const FALLBACK_MAP = buildFallbackMap();
 
@@ -38,6 +39,7 @@ export function CharacterGrid({
   statsMap,
 }: CharacterGridProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const { l10n } = useL10n();
   const t = useTranslations("characterGrid");
 
@@ -46,10 +48,10 @@ export function CharacterGrid({
       onSelect?.(code);
       setSearchQuery("");
       onClose?.();
-      router.push(`/character/${code}`, { scroll: false });
+      router.push(withCurrentSeoLocale(pathname, `/character/${code}`), { scroll: false });
       analytics.characterViewed(code, getCharacterName(code));
     },
-    [onSelect, onClose, setSearchQuery, router]
+    [onSelect, onClose, setSearchQuery, router, pathname]
   );
 
   const isSelected = React.useCallback((code: number) => selectedCode === code, [selectedCode]);

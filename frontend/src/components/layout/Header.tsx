@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import * as React from "react";
 import { CharacterSearchCombobox } from "@/components/features/character-analysis/CharacterSearchCombobox";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { stripRouteLocaleFromPathname, withCurrentRouteLocale } from "@/lib/localizedPath";
 
 interface HeaderProps {
   currentPatch: string;
@@ -15,14 +16,15 @@ interface HeaderProps {
 export function Header({ currentPatch }: HeaderProps) {
   const t = useTranslations("header");
   const pathname = usePathname();
+  const normalizedPathname = stripRouteLocaleFromPathname(pathname);
   const [mobileSearchOpen, setMobileSearchOpen] = React.useState(false);
-  const showSeasonRecapBanner = !pathname.startsWith("/season10-recap");
+  const showSeasonRecapBanner = !normalizedPathname.startsWith("/season10-recap");
 
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[rgba(6,11,24,0.86)] backdrop-blur-xl">
       {showSeasonRecapBanner && (
         <Link
-          href="/season10-recap"
+          href={withCurrentRouteLocale(pathname, "/season10-recap")}
           className="group flex items-center justify-between gap-3 border-b border-[rgba(251,191,36,0.16)] bg-[linear-gradient(90deg,rgba(251,191,36,0.12),rgba(96,165,250,0.08))] px-3 py-2.5 transition-colors hover:bg-[linear-gradient(90deg,rgba(251,191,36,0.16),rgba(96,165,250,0.12))] sm:px-4 lg:px-6"
         >
           <div className="flex min-w-0 items-start gap-3">
@@ -54,7 +56,7 @@ export function Header({ currentPatch }: HeaderProps) {
       <div className="px-3 py-3 sm:px-4 lg:px-6 lg:py-0">
         <div className="flex min-h-[54px] items-center gap-3 lg:min-h-[78px]">
           <Link
-            href="/"
+            href={withCurrentRouteLocale(pathname, "/")}
             title={currentPatch ? `${t("patchPrefix")}${currentPatch}` : t("logoTitle")}
             className="flex items-center gap-3 lg:hidden"
           >

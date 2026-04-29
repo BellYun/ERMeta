@@ -3,14 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { stripRouteLocaleFromPathname, withCurrentRouteLocale } from "@/lib/localizedPath";
 import { cn } from "@/lib/utils";
 
 export function MobileTabBar() {
   const pathname = usePathname();
+  const normalizedPathname = stripRouteLocaleFromPathname(pathname);
   const t = useTranslations("mobileTab");
   const tabs = [
     {
-      href: "/",
+      href: withCurrentRouteLocale(pathname, "/"),
       label: t("meta"),
       icon: (
         <svg
@@ -29,7 +31,7 @@ export function MobileTabBar() {
       ),
     },
     {
-      href: "/synergy-detail",
+      href: withCurrentRouteLocale(pathname, "/synergy-detail"),
       label: t("synergy"),
       icon: (
         <svg
@@ -48,7 +50,7 @@ export function MobileTabBar() {
       ),
     },
     {
-      href: "/character/1",
+      href: withCurrentRouteLocale(pathname, "/character/1"),
       label: t("character"),
       icon: (
         <svg
@@ -67,7 +69,7 @@ export function MobileTabBar() {
       ),
     },
     {
-      href: "/patches",
+      href: withCurrentRouteLocale(pathname, "/patches"),
       label: t("patches"),
       icon: (
         <svg
@@ -86,7 +88,7 @@ export function MobileTabBar() {
       ),
     },
     {
-      href: "/season10-recap",
+      href: withCurrentRouteLocale(pathname, "/season10-recap"),
       label: t("recap"),
       icon: (
         <svg
@@ -113,12 +115,12 @@ export function MobileTabBar() {
         <div className="flex items-stretch gap-1.5">
           {tabs.map(({ href, label, icon }) => {
             const isActive = href.startsWith("/character/")
-              ? pathname.startsWith("/character/")
+              ? normalizedPathname.startsWith("/character/")
               : href === "/patches"
-                ? pathname.startsWith("/patches")
+                ? normalizedPathname.startsWith("/patches")
                 : href === "/season10-recap"
-                  ? pathname.startsWith("/season10-recap")
-                  : pathname === href;
+                  ? normalizedPathname.startsWith("/season10-recap")
+                  : normalizedPathname === stripRouteLocaleFromPathname(href);
             return (
               <Link
                 key={href}

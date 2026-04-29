@@ -1,8 +1,15 @@
 "use client";
 
-import { NextIntlClientProvider } from "next-intl";
 import { useRouter } from "next/navigation";
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import { NextIntlClientProvider } from "next-intl";
+import React, {
+  createContext,
+  startTransition,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   DEFAULT_LANGUAGE,
   LANGUAGE_COOKIE,
@@ -32,7 +39,9 @@ function getLanguageCookie(): SupportedLanguage | null {
   if (!cookie) return null;
 
   const value = decodeURIComponent(cookie.slice(LANGUAGE_COOKIE.length + 1));
-  return (SUPPORTED_LANGUAGES as readonly string[]).includes(value) ? (value as SupportedLanguage) : null;
+  return (SUPPORTED_LANGUAGES as readonly string[]).includes(value)
+    ? (value as SupportedLanguage)
+    : null;
 }
 
 interface L10nState {
@@ -81,6 +90,7 @@ interface L10nProviderProps {
   initialL10n?: Record<string, string>;
   initialMessages: IntlMessages;
   initialLanguage?: SupportedLanguage;
+  lockInitialLanguage?: boolean;
   children: React.ReactNode;
 }
 
@@ -88,6 +98,7 @@ export function L10nProvider({
   initialL10n,
   initialMessages,
   initialLanguage,
+  lockInitialLanguage = false,
   children,
 }: L10nProviderProps) {
   const router = useRouter();
@@ -106,7 +117,7 @@ export function L10nProvider({
   const l10nCacheRef = useRef<Partial<Record<SupportedLanguage, Map<string, string>>>>(
     initialL10n ? { [serverLanguage]: new Map(Object.entries(initialL10n)) } : {}
   );
-  const hasResolvedPreferenceRef = useRef(false);
+  const hasResolvedPreferenceRef = useRef(lockInitialLanguage);
 
   useEffect(() => {
     document.documentElement.lang = HTML_LANG_BY_LANGUAGE[language] ?? "ko";
@@ -116,17 +127,26 @@ export function L10nProvider({
   }, [language]);
 
   useEffect(() => {
+    if (lockInitialLanguage) {
+      return;
+    }
+
     const preferredLanguage =
       getLanguageCookie() ??
-      resolveLanguage(null, typeof navigator === "undefined" ? null : navigator.languages.join(","));
+      resolveLanguage(
+        null,
+        typeof navigator === "undefined" ? null : navigator.languages.join(",")
+      );
 
     hasResolvedPreferenceRef.current = true;
     setLanguageCookie(preferredLanguage);
 
     if (preferredLanguage !== language) {
-      setLanguageState(preferredLanguage);
+      startTransition(() => {
+        setLanguageState(preferredLanguage);
+      });
     }
-  }, [language]);
+  }, [language, lockInitialLanguage]);
 
   useEffect(() => {
     let ignore = false;
