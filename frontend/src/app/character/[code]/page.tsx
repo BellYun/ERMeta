@@ -1,24 +1,30 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
 import { CharacterPageContent } from "@/components/features/character-analysis/CharacterPageContent";
 import { CHARACTER_CODES } from "@/components/features/character-analysis/constants";
-import { fetchPatches, fetchStats } from "@/components/features/character-analysis/utils";
 import { getCharacterName } from "@/lib/characterMap";
+import { getCachedCharacterStats } from "@/lib/characterStats";
+import { getPatches } from "@/lib/getPatches";
+import { getStaticTranslator } from "@/lib/staticIntl";
 import { TierGroup } from "@/utils/tier";
 
 /** 1시간마다 ISR 재생성 */
 export const revalidate = 3600;
+export const dynamicParams = false;
 
 interface Props {
   params: Promise<{ code: string }>;
+}
+
+export function generateStaticParams() {
+  return CHARACTER_CODES.map((code) => ({ code: String(code) }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code: rawCode } = await params;
   const code = parseInt(rawCode, 10);
   const name = !isNaN(code) ? getCharacterName(code) : null;
-  const t = await getTranslations("characterMetadata");
+  const t = await getStaticTranslator("characterMetadata");
 
   if (name && !name.startsWith("코드:")) {
     const title = t("titleWithName", { name });
@@ -81,12 +87,10 @@ export default async function CharacterPage({ params }: Props) {
     notFound();
   }
 
-  const base = process.env.NEXT_PUBLIC_BASE_URL ?? "https://erwagg.com";
-
-  const patches = await fetchPatches(base);
+  const patches = await getPatches();
   const [initialStats, initialPrevStats] = await Promise.all([
-    patches[0] ? fetchStats(code, patches[0], TierGroup.MITHRIL, base) : null,
-    patches[1] ? fetchStats(code, patches[1], TierGroup.MITHRIL, base) : null,
+    patches[0] ? getCachedCharacterStats(code, patches[0], TierGroup.MITHRIL) : null,
+    patches[1] ? getCachedCharacterStats(code, patches[1], TierGroup.MITHRIL) : null,
   ]);
 
   return (

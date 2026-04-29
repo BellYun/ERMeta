@@ -4,7 +4,8 @@ import { getPatches } from "@/lib/getPatches";
 import { fetchHoneyPicksServer } from "@/lib/honeyPicks";
 import { fetchRankingData } from "@/lib/ranking";
 
-export const revalidate = 300;
+export const revalidate = 3600;
+export const dynamic = "force-static";
 
 export const metadata: Metadata = {
   title: { absolute: "메타분석 | 이리와지지" },
