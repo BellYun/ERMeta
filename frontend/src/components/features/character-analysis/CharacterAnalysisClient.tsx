@@ -39,7 +39,16 @@ interface CharacterAnalysisClientProps {
   initialStats?: CharacterStatsResponse | null;
   initialPrevStats?: CharacterStatsResponse | null;
   code: number;
-  initialWeapon?: number | null;
+}
+
+function readWeaponFromLocation(): number | null {
+  if (typeof window === "undefined") return null;
+
+  const rawWeapon = new URL(window.location.href).searchParams.get("weapon");
+  if (!rawWeapon) return null;
+
+  const weapon = Number.parseInt(rawWeapon, 10);
+  return Number.isFinite(weapon) ? weapon : null;
 }
 
 export function CharacterAnalysisClient({
@@ -47,7 +56,6 @@ export function CharacterAnalysisClient({
   initialStats,
   initialPrevStats,
   code,
-  initialWeapon,
 }: CharacterAnalysisClientProps) {
   const { l10n } = useL10n();
   const t = useTranslations("characterAnalysis");
@@ -56,12 +64,18 @@ export function CharacterAnalysisClient({
   const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.MITHRIL);
 
   const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>((): number | null => {
-    if (initialWeapon != null) return initialWeapon;
     if (initialStats?.weapons && initialStats.weapons.length > 0) {
       return initialStats.weapons[0].bestWeapon ?? null;
     }
     return null;
   });
+
+  React.useEffect(() => {
+    const weapon = readWeaponFromLocation();
+    if (weapon != null) {
+      setSelectedWeapon(weapon);
+    }
+  }, [code]);
 
   // 무기 변경 시 URL 파라미터 동기화
   const handleWeaponChange = React.useCallback((weapon: number | null) => {
@@ -127,7 +141,7 @@ export function CharacterAnalysisClient({
         if (initialPrevStats) initial[1] = initialPrevStats;
         return initial;
       });
-      setSelectedWeapon(initialStats?.weapons?.[0]?.bestWeapon ?? null);
+      setSelectedWeapon(readWeaponFromLocation() ?? initialStats?.weapons?.[0]?.bestWeapon ?? null);
       return;
     }
 
