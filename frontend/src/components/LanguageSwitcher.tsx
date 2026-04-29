@@ -30,7 +30,7 @@ export function LanguageSwitcher() {
   return (
     <Select
       value={language}
-      onChange={(e) => setLanguage(e.target.value)}
+      onChange={(e) => setLanguage(e.target.value as SupportedLanguage)}
       aria-label={t("languageSelectAria")}
       className="h-7 px-2.5 pr-7 text-[11px] sm:text-xs"
       wrapperClassName="shrink-0"

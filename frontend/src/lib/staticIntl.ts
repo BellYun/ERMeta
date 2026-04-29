@@ -1,20 +1,8 @@
-// SSG/prerender-safe i18n helper.
-// next-intl 의 getTranslations 는 cookies() 의존이라 정적 prerender 단계에서 실패함.
-// 본 helper 는 messages JSON 을 직접 import 해서 형식화한다.
-//
-// layout.tsx 의 loadIntlMessages 와 같은 패턴.
+import { DEFAULT_LANGUAGE, type SupportedLanguage } from "@/lib/detectLanguage";
 
-import { cookies } from "next/headers";
-import {
-  DEFAULT_LANGUAGE,
-  LANGUAGE_COOKIE,
-  SUPPORTED_LANGUAGES,
-  type SupportedLanguage,
-} from "@/lib/detectLanguage";
+export type IntlMessages = Record<string, unknown>;
 
-type Messages = Record<string, unknown>;
-
-const LOCALE_BY_LANGUAGE: Record<SupportedLanguage, string> = {
+export const HTML_LANG_BY_LANGUAGE: Record<SupportedLanguage, string> = {
   Korean: "ko",
   English: "en",
   Japanese: "ja",
@@ -32,12 +20,69 @@ const LOCALE_BY_LANGUAGE: Record<SupportedLanguage, string> = {
   Thai: "th",
 };
 
+export const OG_LOCALE_BY_LANGUAGE: Record<SupportedLanguage, string> = {
+  Korean: "ko_KR",
+  English: "en_US",
+  Japanese: "ja_JP",
+  ChineseSimplified: "zh_CN",
+  ChineseTraditional: "zh_TW",
+  Spanish: "es_ES",
+  French: "fr_FR",
+  German: "de_DE",
+  Indonesian: "id_ID",
+  Italian: "it_IT",
+  Polish: "pl_PL",
+  Portuguese: "pt_BR",
+  Russian: "ru_RU",
+  Vietnamese: "vi_VN",
+  Thai: "th_TH",
+};
+
+export const STRUCTURED_DATA_LANGUAGE_BY_LANGUAGE: Record<SupportedLanguage, string> = {
+  Korean: "ko-KR",
+  English: "en-US",
+  Japanese: "ja-JP",
+  ChineseSimplified: "zh-CN",
+  ChineseTraditional: "zh-TW",
+  Spanish: "es-ES",
+  French: "fr-FR",
+  German: "de-DE",
+  Indonesian: "id-ID",
+  Italian: "it-IT",
+  Polish: "pl-PL",
+  Portuguese: "pt-BR",
+  Russian: "ru-RU",
+  Vietnamese: "vi-VN",
+  Thai: "th-TH",
+};
+
+type MessagesModule = { default: IntlMessages };
+
+const MESSAGE_LOADERS: Record<string, () => Promise<MessagesModule>> = {
+  en: () => import("../../messages/en.json"),
+  ko: () => import("../../messages/ko.json"),
+  ja: () => import("../../messages/ja.json"),
+  "zh-Hans": () => import("../../messages/zh-Hans.json"),
+  "zh-Hant": () => import("../../messages/zh-Hant.json"),
+  es: () => import("../../messages/es.json"),
+  fr: () => import("../../messages/fr.json"),
+  de: () => import("../../messages/de.json"),
+  id: () => import("../../messages/id.json"),
+  it: () => import("../../messages/it.json"),
+  pl: () => import("../../messages/pl.json"),
+  pt: () => import("../../messages/pt.json"),
+  ru: () => import("../../messages/ru.json"),
+  vi: () => import("../../messages/vi.json"),
+  th: () => import("../../messages/th.json"),
+};
+
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function mergeMessages(base: Messages, overlay: Messages): Messages {
-  const merged: Messages = { ...base };
+export function mergeMessages(base: IntlMessages, overlay: IntlMessages): IntlMessages {
+  const merged: IntlMessages = { ...base };
+
   for (const [key, value] of Object.entries(overlay)) {
     const current = merged[key];
     if (isPlainObject(current) && isPlainObject(value)) {
@@ -46,14 +91,16 @@ function mergeMessages(base: Messages, overlay: Messages): Messages {
     }
     merged[key] = value;
   }
+
   return merged;
 }
 
-function lookup(messages: Messages, path: string): string {
+export function getMessage(messages: IntlMessages, path: string): string {
   const value = path.split(".").reduce<unknown>((acc, key) => {
     if (!isPlainObject(acc)) return undefined;
     return acc[key];
   }, messages);
+
   return typeof value === "string" ? value : path;
 }
 
@@ -62,37 +109,37 @@ function format(template: string, values?: Record<string, string | number>): str
   return template.replace(/\{(\w+)\}/g, (_, key) => String(values[key] ?? `{${key}}`));
 }
 
-async function loadMessages(language: SupportedLanguage): Promise<Messages> {
-  const locale = LOCALE_BY_LANGUAGE[language] ?? "en";
-  const base = (await import("../../messages/en.json")).default as Messages;
-  if (locale === "en") return base;
-  try {
-    const overlay = (await import(`../../messages/${locale}.json`)).default as Messages;
-    return mergeMessages(base, overlay);
-  } catch {
-    return base;
-  }
-}
+export async function loadIntlMessages(
+  language: SupportedLanguage = DEFAULT_LANGUAGE
+): Promise<IntlMessages> {
+  const locale = HTML_LANG_BY_LANGUAGE[language] ?? "ko";
+  const baseMessages = (await MESSAGE_LOADERS.en()).default as IntlMessages;
 
-async function getRequestLanguage(): Promise<SupportedLanguage> {
-  let cookieLang: string | undefined;
-  try {
-    const store = await cookies();
-    cookieLang = store.get(LANGUAGE_COOKIE)?.value;
-  } catch {
-    cookieLang = undefined;
+  if (locale === "en") {
+    return baseMessages;
   }
-  return cookieLang && (SUPPORTED_LANGUAGES as readonly string[]).includes(cookieLang)
-    ? (cookieLang as SupportedLanguage)
-    : DEFAULT_LANGUAGE;
+
+  const loadLocaleMessages = MESSAGE_LOADERS[locale];
+  if (!loadLocaleMessages) {
+    return baseMessages;
+  }
+
+  try {
+    const localeMessages = (await loadLocaleMessages()).default as IntlMessages;
+    return mergeMessages(baseMessages, localeMessages);
+  } catch {
+    return baseMessages;
+  }
 }
 
 export interface StaticTranslator {
   (key: string, values?: Record<string, string | number>): string;
 }
 
-export async function getStaticTranslator(namespace: string): Promise<StaticTranslator> {
-  const language = await getRequestLanguage();
-  const messages = await loadMessages(language);
-  return (key, values) => format(lookup(messages, `${namespace}.${key}`), values);
+export async function getStaticTranslator(
+  namespace: string,
+  language: SupportedLanguage = DEFAULT_LANGUAGE
+): Promise<StaticTranslator> {
+  const messages = await loadIntlMessages(language);
+  return (key, values) => format(getMessage(messages, `${namespace}.${key}`), values);
 }

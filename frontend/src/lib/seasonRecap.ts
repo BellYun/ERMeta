@@ -105,158 +105,167 @@ function aggregateByCombo(rows: StatRow[]): RecapEntry[] {
     }));
 }
 
+function emptySeasonRecapData(): SeasonRecapData {
+  return { patches: [], perPatchTop: [], seasonTop: [], roleStats: [] };
+}
+
 export async function getSeasonRecapData(): Promise<SeasonRecapData> {
-  const supabase = createServerClient();
+  try {
+    const supabase = createServerClient();
 
-  const { data: patchData, error: patchError } = await supabase
-    .from("PatchVersion")
-    .select("version,startDate")
-    .like("version", `${SEASON_PATCH_PREFIX}%`)
-    .order("startDate", { ascending: true });
+    const { data: patchData, error: patchError } = await supabase
+      .from("PatchVersion")
+      .select("version,startDate")
+      .like("version", `${SEASON_PATCH_PREFIX}%`)
+      .order("startDate", { ascending: true });
 
-  if (patchError) {
-    console.error("[seasonRecap] PatchVersion 조회 실패:", patchError);
-  }
-
-  const patches = (patchData ?? [])
-    .map((r: { version: string }) => r.version)
-    .filter((v): v is string => Boolean(v));
-
-  if (patches.length === 0) {
-    return { patches: [], perPatchTop: [], seasonTop: [], roleStats: [] };
-  }
-
-  // 패치 × 4티어 × 평균 90 캐릭 ≈ 패치당 360 row. 패치별로 나눠서 1000-row 기본 제한 회피.
-  const perPatchResults = await Promise.all(
-    patches.map((patch) =>
-      supabase
-        .from("v2_CharacterStats")
-        .select("patchVersion,characterNum,bestWeapon,tier,totalGames,totalWins,totalRP")
-        .eq("patchVersion", patch)
-        .in("tier", MITHRIL_PLUS_TIERS)
-    )
-  );
-
-  const allRows: StatRow[] = [];
-  for (let i = 0; i < perPatchResults.length; i++) {
-    const { data, error } = perPatchResults[i];
-    if (error) {
-      console.error(`[seasonRecap] ${patches[i]} 조회 실패:`, error);
-      continue;
+    if (patchError) {
+      console.error("[seasonRecap] PatchVersion 조회 실패:", patchError);
     }
-    if (data) allRows.push(...(data as StatRow[]));
-  }
 
-  const perPatchTop: PatchTopGroup[] = patches.map((patch) => {
-    const patchRows = allRows.filter((r) => r.patchVersion === patch);
-    const entries = aggregateByCombo(patchRows)
-      .sort((a, b) => b.averageRP - a.averageRP)
-      .slice(0, 5);
-    return { patch, entries };
-  });
+    const patches = (patchData ?? [])
+      .map((r: { version: string }) => r.version)
+      .filter((v): v is string => Boolean(v));
 
-  const appearanceMap = new Map<number, number>();
-  for (const { entries } of perPatchTop) {
-    for (const e of entries) {
-      const key = comboKey(e.characterNum, e.bestWeapon);
-      appearanceMap.set(key, (appearanceMap.get(key) ?? 0) + 1);
+    if (patches.length === 0) {
+      return emptySeasonRecapData();
     }
-  }
 
-  const activeMap = new Map<number, Set<string>>();
-  for (const r of allRows) {
-    if ((r.totalGames ?? 0) === 0) continue;
-    const key = comboKey(r.characterNum, r.bestWeapon);
-    const set = activeMap.get(key) ?? new Set<string>();
-    set.add(r.patchVersion);
-    activeMap.set(key, set);
-  }
+    // 패치 × 4티어 × 평균 90 캐릭 ≈ 패치당 360 row. 패치별로 나눠서 1000-row 기본 제한 회피.
+    const perPatchResults = await Promise.all(
+      patches.map((patch) =>
+        supabase
+          .from("v2_CharacterStats")
+          .select("patchVersion,characterNum,bestWeapon,tier,totalGames,totalWins,totalRP")
+          .eq("patchVersion", patch)
+          .in("tier", MITHRIL_PLUS_TIERS)
+      )
+    );
 
-  // (patchVersion, comboKey) → aggregated stats. perPatch breakdown 빠르게 채우기 위함.
-  const perPatchComboMap = new Map<string, Map<number, { games: number; rp: number }>>();
-  for (const r of allRows) {
-    const games = r.totalGames ?? 0;
-    if (games === 0) continue;
-    const key = comboKey(r.characterNum, r.bestWeapon);
-    let patchMap = perPatchComboMap.get(r.patchVersion);
-    if (!patchMap) {
-      patchMap = new Map();
-      perPatchComboMap.set(r.patchVersion, patchMap);
-    }
-    const cur = patchMap.get(key) ?? { games: 0, rp: 0 };
-    cur.games += games;
-    cur.rp += r.totalRP ?? 0;
-    patchMap.set(key, cur);
-  }
-
-  const seasonTop: SeasonAggregateEntry[] = aggregateByCombo(allRows)
-    .sort((a, b) => b.averageRP - a.averageRP)
-    .map((e) => {
-      const key = comboKey(e.characterNum, e.bestWeapon);
-      const perPatch: PerPatchStat[] = [];
-      for (const patch of patches) {
-        const stat = perPatchComboMap.get(patch)?.get(key);
-        if (!stat) continue;
-        perPatch.push({
-          patch,
-          totalGames: stat.games,
-          averageRP: stat.rp / stat.games,
-        });
+    const allRows: StatRow[] = [];
+    for (let i = 0; i < perPatchResults.length; i++) {
+      const { data, error } = perPatchResults[i];
+      if (error) {
+        console.error(`[seasonRecap] ${patches[i]} 조회 실패:`, error);
+        continue;
       }
-      return {
-        ...e,
-        topAppearances: appearanceMap.get(key) ?? 0,
-        patchesActive: activeMap.get(key)?.size ?? 0,
-        perPatch,
-      };
+      if (data) allRows.push(...(data as StatRow[]));
+    }
+
+    const perPatchTop: PatchTopGroup[] = patches.map((patch) => {
+      const patchRows = allRows.filter((r) => r.patchVersion === patch);
+      const entries = aggregateByCombo(patchRows)
+        .sort((a, b) => b.averageRP - a.averageRP)
+        .slice(0, 5);
+      return { patch, entries };
     });
 
-  // 직업군별 평균 RP — 패치별 + 시즌 전체. 한 row(캐릭+무기+티어)가 복수 직업군 매핑될 수 있으며,
-  // 각 직업군 버킷에 그대로 누적(중복 카운트 허용 — 탱커/전사 겸업은 양쪽 모두에 기여).
-  const rolePatchTotals = new Map<CharacterRole, Map<string, { games: number; rp: number }>>();
-  const roleSeasonTotals = new Map<CharacterRole, { games: number; rp: number }>();
+    const appearanceMap = new Map<number, number>();
+    for (const { entries } of perPatchTop) {
+      for (const e of entries) {
+        const key = comboKey(e.characterNum, e.bestWeapon);
+        appearanceMap.set(key, (appearanceMap.get(key) ?? 0) + 1);
+      }
+    }
 
-  for (const r of allRows) {
-    const games = r.totalGames ?? 0;
-    if (games === 0) continue;
-    const rp = r.totalRP ?? 0;
-    const roles = getComboRoles(r.characterNum, r.bestWeapon);
-    if (roles.length === 0) continue;
+    const activeMap = new Map<number, Set<string>>();
+    for (const r of allRows) {
+      if ((r.totalGames ?? 0) === 0) continue;
+      const key = comboKey(r.characterNum, r.bestWeapon);
+      const set = activeMap.get(key) ?? new Set<string>();
+      set.add(r.patchVersion);
+      activeMap.set(key, set);
+    }
 
-    for (const role of roles) {
-      let patchMap = rolePatchTotals.get(role);
+    // (patchVersion, comboKey) → aggregated stats. perPatch breakdown 빠르게 채우기 위함.
+    const perPatchComboMap = new Map<string, Map<number, { games: number; rp: number }>>();
+    for (const r of allRows) {
+      const games = r.totalGames ?? 0;
+      if (games === 0) continue;
+      const key = comboKey(r.characterNum, r.bestWeapon);
+      let patchMap = perPatchComboMap.get(r.patchVersion);
       if (!patchMap) {
         patchMap = new Map();
-        rolePatchTotals.set(role, patchMap);
+        perPatchComboMap.set(r.patchVersion, patchMap);
       }
-      const cur = patchMap.get(r.patchVersion) ?? { games: 0, rp: 0 };
+      const cur = patchMap.get(key) ?? { games: 0, rp: 0 };
       cur.games += games;
-      cur.rp += rp;
-      patchMap.set(r.patchVersion, cur);
-
-      const seasonCur = roleSeasonTotals.get(role) ?? { games: 0, rp: 0 };
-      seasonCur.games += games;
-      seasonCur.rp += rp;
-      roleSeasonTotals.set(role, seasonCur);
+      cur.rp += r.totalRP ?? 0;
+      patchMap.set(key, cur);
     }
-  }
 
-  const roleStats: RoleAggregate[] = ROLES.map((role) => {
-    const patchMap = rolePatchTotals.get(role);
-    const perPatch = patches.map((patch) => {
-      const t = patchMap?.get(patch);
-      return {
-        patch,
-        stat: t && t.games > 0 ? { totalGames: t.games, averageRP: t.rp / t.games } : null,
-      };
+    const seasonTop: SeasonAggregateEntry[] = aggregateByCombo(allRows)
+      .sort((a, b) => b.averageRP - a.averageRP)
+      .map((e) => {
+        const key = comboKey(e.characterNum, e.bestWeapon);
+        const perPatch: PerPatchStat[] = [];
+        for (const patch of patches) {
+          const stat = perPatchComboMap.get(patch)?.get(key);
+          if (!stat) continue;
+          perPatch.push({
+            patch,
+            totalGames: stat.games,
+            averageRP: stat.rp / stat.games,
+          });
+        }
+        return {
+          ...e,
+          topAppearances: appearanceMap.get(key) ?? 0,
+          patchesActive: activeMap.get(key)?.size ?? 0,
+          perPatch,
+        };
+      });
+
+    // 직업군별 평균 RP — 패치별 + 시즌 전체. 한 row(캐릭+무기+티어)가 복수 직업군 매핑될 수 있으며,
+    // 각 직업군 버킷에 그대로 누적(중복 카운트 허용 — 탱커/전사 겸업은 양쪽 모두에 기여).
+    const rolePatchTotals = new Map<CharacterRole, Map<string, { games: number; rp: number }>>();
+    const roleSeasonTotals = new Map<CharacterRole, { games: number; rp: number }>();
+
+    for (const r of allRows) {
+      const games = r.totalGames ?? 0;
+      if (games === 0) continue;
+      const rp = r.totalRP ?? 0;
+      const roles = getComboRoles(r.characterNum, r.bestWeapon);
+      if (roles.length === 0) continue;
+
+      for (const role of roles) {
+        let patchMap = rolePatchTotals.get(role);
+        if (!patchMap) {
+          patchMap = new Map();
+          rolePatchTotals.set(role, patchMap);
+        }
+        const cur = patchMap.get(r.patchVersion) ?? { games: 0, rp: 0 };
+        cur.games += games;
+        cur.rp += rp;
+        patchMap.set(r.patchVersion, cur);
+
+        const seasonCur = roleSeasonTotals.get(role) ?? { games: 0, rp: 0 };
+        seasonCur.games += games;
+        seasonCur.rp += rp;
+        roleSeasonTotals.set(role, seasonCur);
+      }
+    }
+
+    const roleStats: RoleAggregate[] = ROLES.map((role) => {
+      const patchMap = rolePatchTotals.get(role);
+      const perPatch = patches.map((patch) => {
+        const t = patchMap?.get(patch);
+        return {
+          patch,
+          stat: t && t.games > 0 ? { totalGames: t.games, averageRP: t.rp / t.games } : null,
+        };
+      });
+      const seasonTotal = roleSeasonTotals.get(role);
+      const season =
+        seasonTotal && seasonTotal.games > 0
+          ? { totalGames: seasonTotal.games, averageRP: seasonTotal.rp / seasonTotal.games }
+          : null;
+      return { role, perPatch, season };
     });
-    const seasonTotal = roleSeasonTotals.get(role);
-    const season =
-      seasonTotal && seasonTotal.games > 0
-        ? { totalGames: seasonTotal.games, averageRP: seasonTotal.rp / seasonTotal.games }
-        : null;
-    return { role, perPatch, season };
-  });
 
-  return { patches, perPatchTop, seasonTop, roleStats };
+    return { patches, perPatchTop, seasonTop, roleStats };
+  } catch (error) {
+    console.error("[seasonRecap] 집계 실패, 빈 데이터로 폴백:", error);
+    return emptySeasonRecapData();
+  }
 }
