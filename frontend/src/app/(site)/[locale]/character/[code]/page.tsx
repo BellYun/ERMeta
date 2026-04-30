@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CharacterPageContent } from "@/components/features/character-analysis/CharacterPageContent";
 import { CHARACTER_CODES } from "@/components/features/character-analysis/constants";
+import { getAllPatchVersions } from "@/data/patch-notes";
 import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
 import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
 import { getCachedCharacterStats } from "@/lib/characterStats";
-import { getPatches } from "@/lib/getPatches";
 import { buildLocalizedAlternates, localizeRoutePath } from "@/lib/seoLocales";
 import { loadL10nMap } from "@/lib/serverL10n";
 import { BASE_URL } from "@/lib/siteMetadata";
@@ -118,7 +118,12 @@ export default async function LocalizedCharacterPage({ params }: Props) {
     notFound();
   }
 
-  const patches = (await getPatches()).filter((patch) => patch !== "11.0");
+  // 임시 핫픽스: 캐릭터 분석은 10.7 기준으로 고정하고, 비교 대상도 정적 패치 목록만 사용한다.
+  const latestPinnedPatch = "10.7";
+  const patches = [
+    latestPinnedPatch,
+    ...getAllPatchVersions().filter((patch) => patch !== latestPinnedPatch),
+  ];
   const [initialStats, initialPrevStats] = await Promise.all([
     patches[0] ? getCachedCharacterStats(code, patches[0], TierGroup.MITHRIL) : null,
     patches[1] ? getCachedCharacterStats(code, patches[1], TierGroup.MITHRIL) : null,
