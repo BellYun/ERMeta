@@ -4,6 +4,7 @@ import { Activity, SlidersHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { HoneyPickData } from "@/app/api/meta/honey-picks/route";
 import { FilterProvider } from "@/components/features/FilterContext";
+import { useFilter } from "@/components/features/FilterContext";
 import { GlobalFilter } from "@/components/features/GlobalFilter";
 import { HomeFilterAside } from "@/components/features/HomeFilterAside";
 import { HoneyPicksSection } from "@/components/features/HoneyPicksSection";
@@ -43,7 +44,10 @@ function HomeDashboard({
   rankingData,
 }: HomePageContentProps) {
   const t = useTranslations("home");
+  const { patch } = useFilter();
   const defaultPatch = patches[0] ?? "";
+  const selectedPatch = patch || defaultPatch;
+  const isPreseasonPatch = selectedPatch === "11.0";
   const totalMatches = rankingData.rankings.reduce((sum, row) => sum + row.totalGames, 0);
   const trackedMatches = formatMetricNumber(totalMatches);
   const topBracket = rankingData.rankings.slice(0, 10);
@@ -173,6 +177,12 @@ function HomeDashboard({
               <GlobalFilter />
             </div>
           </div>
+
+          {isPreseasonPatch ? (
+            <div className="rounded-2xl border border-[rgba(251,191,36,0.24)] bg-[rgba(251,191,36,0.08)] px-3.5 py-3 text-sm font-medium text-[var(--color-accent-gold)] sm:px-4">
+              {t("preseasonNotice")}
+            </div>
+          ) : null}
 
           <HoneyPicksSection initialData={honeyPicks} initialPatchVersion={honeyPatchVersion} />
         </div>

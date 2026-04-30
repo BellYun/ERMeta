@@ -32,6 +32,6 @@ export function proxy(request: NextRequest) {
 // 정적 자산/내부 라우트에서는 미들웨어 스킵 (불필요한 edge 호출 줄이기)
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap|manifest|apple-icon|icon|characters/|l10n/|api/).*)",
+    "/((?!_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap|manifest|apple-icon|icon|characters/|CharactER/|TraitSkill/|Item/|l10n/|api/).*)",
   ],
 };

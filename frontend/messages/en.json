@@ -114,6 +114,7 @@
     "matchMetric": "Aggregated matches",
     "winRateMetric": "Top bracket avg win rate",
     "rpMetric": "Top bracket avg RP",
+    "preseasonNotice": "Patch 11.0 uses preseason data and is not provided.",
     "filterCta": "Open filters",
     "topFiveTitle": "Patch Risers Top 5",
     "honeyPicksTitle": "Patch Risers",

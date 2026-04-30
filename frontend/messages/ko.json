@@ -114,6 +114,7 @@
     "matchMetric": "집계 매치 수",
     "winRateMetric": "상위권 평균 승률",
     "rpMetric": "상위권 평균 RP",
+    "preseasonNotice": "11.0 버전은 프리시즌 데이터이므로 제공하지 않습니다.",
     "filterCta": "필터 열기",
     "topFiveTitle": "이번 패치 상승 TOP 5",
     "honeyPicksTitle": "이번 패치 떡상",
