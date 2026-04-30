@@ -104,10 +104,10 @@ function HomeDashboard({
 
           <div className="metric-card col-span-2 flex min-h-[126px] flex-col justify-between px-4 py-4 sm:min-h-[150px] sm:px-5 sm:py-5 lg:px-6">
             <div>
-              <p className="metric-value text-[1.85rem] sm:text-[2.1rem] lg:text-[2.45rem]">
+              <p className="metric-value text-[1.65rem] sm:text-[2.1rem] lg:text-[2.45rem]">
                 {trackedMatches}
               </p>
-              <p className="mt-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">
+              <p className="mt-1 text-[11px] text-[var(--color-muted-foreground)] sm:text-sm">
                 {t("matchMetric")}
               </p>
             </div>
@@ -136,10 +136,10 @@ function HomeDashboard({
               <Activity className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2} />
             </div>
             <div>
-              <p className="metric-value text-[1.55rem] sm:text-[2rem]">
+              <p className="metric-value text-[1.35rem] sm:text-[2rem]">
                 {averageWinRate.toFixed(1)}%
               </p>
-              <p className="mt-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">
+              <p className="mt-1 text-[11px] text-[var(--color-muted-foreground)] sm:text-sm">
                 {t("winRateMetric")}
               </p>
             </div>
@@ -148,10 +148,10 @@ function HomeDashboard({
           <div className="metric-card flex min-h-[116px] flex-col gap-4 px-4 py-4 sm:min-h-[150px] sm:justify-between sm:px-5 sm:py-5">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="metric-value text-[1.55rem] sm:text-[2rem]">
+                <p className="metric-value text-[1.35rem] sm:text-[2rem]">
                   {formatSigned(averageRp, 2)}
                 </p>
-                <p className="mt-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">
+                <p className="mt-1 text-[11px] text-[var(--color-muted-foreground)] sm:text-sm">
                   {t("rpMetric")}
                 </p>
               </div>
