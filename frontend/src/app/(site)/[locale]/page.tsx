@@ -5,7 +5,8 @@ import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/r
 import { getPatches } from "@/lib/getPatches";
 import { fetchHoneyPicksServer } from "@/lib/honeyPicks";
 import { fetchRankingData } from "@/lib/ranking";
-import { buildLocalizedAlternates } from "@/lib/seoLocales";
+import { buildLocalizedAlternates, localizeRoutePath } from "@/lib/seoLocales";
+import { BASE_URL } from "@/lib/siteMetadata";
 import { getMessage, loadIntlMessages, OG_LOCALE_BY_LANGUAGE } from "@/lib/staticIntl";
 
 export const revalidate = 3600;
@@ -33,6 +34,7 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
   const description = getMessage(messages, "rootMetadata.description");
 
   return {
+    metadataBase: new URL(BASE_URL),
     title: { absolute: title },
     description,
     keywords: [
@@ -48,7 +50,7 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
       locale: OG_LOCALE_BY_LANGUAGE[language] ?? "ja_JP",
       title,
       description,
-      url: `/${locale}`,
+      url: localizeRoutePath("/", locale),
     },
     twitter: {
       title,

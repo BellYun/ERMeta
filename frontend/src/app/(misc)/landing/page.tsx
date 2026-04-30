@@ -3,8 +3,10 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { BASE_URL } from "@/lib/siteMetadata";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL),
   title: "이터널리턴 메타 분석 서비스",
   description:
     "이리와지지(ER&GG) - 이터널리턴 캐릭터 티어, 3인 조합 추천, 승률·픽률·평균 RP 통계 분석. 다이아~상위 1000위 실전 데이터 기반.",

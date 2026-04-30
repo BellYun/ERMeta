@@ -6,8 +6,9 @@ import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/r
 import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
 import { getCachedCharacterStats } from "@/lib/characterStats";
 import { getPatches } from "@/lib/getPatches";
-import { buildLocalizedAlternates } from "@/lib/seoLocales";
+import { buildLocalizedAlternates, localizeRoutePath } from "@/lib/seoLocales";
 import { loadL10nMap } from "@/lib/serverL10n";
+import { BASE_URL } from "@/lib/siteMetadata";
 import { getStaticTranslator, OG_LOCALE_BY_LANGUAGE } from "@/lib/staticIntl";
 import { TierGroup } from "@/utils/tier";
 
@@ -44,6 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const description = t("descriptionWithName", { name });
 
     return {
+      metadataBase: new URL(BASE_URL),
       title,
       description,
       keywords: [
@@ -59,7 +61,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         locale: OG_LOCALE_BY_LANGUAGE[language] ?? "ja_JP",
         title: t("openGraphTitle", { title }),
         description,
-        url: `/${locale}/character/${code}`,
+        url: localizeRoutePath(`/character/${code}`, locale),
       },
       twitter: {
         title: t("twitterTitle", { title }),
@@ -74,6 +76,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
+    metadataBase: new URL(BASE_URL),
     title: t("titleFallback"),
     description: t("descriptionFallback"),
     keywords: [
@@ -88,7 +91,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: OG_LOCALE_BY_LANGUAGE[language] ?? "ja_JP",
       title: t("openGraphTitle", { title: t("titleFallback") }),
       description: t("socialDescription"),
-      url: `/${locale}/character`,
+      url: localizeRoutePath("/character", locale),
     },
     twitter: {
       title: t("twitterTitle", { title: t("titleFallback") }),
