@@ -172,7 +172,7 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = createServerClient();
 
-    // 캐릭터 필터 조건 (old / v2 공용)
+    // 캐릭터 필터 조건
     const charFilterOr =
       char1 != null && char2 != null
         ? (() => {
@@ -197,40 +197,17 @@ export async function GET(request: NextRequest) {
 
     if (charFilterOr) v2Query = v2Query.or(charFilterOr);
 
-    // ── old 테이블 조회 (patchVersion 없음, Prisma enum tier) ──
-    let oldQuery = supabase
-      .from("CharacterTrio")
-      .select("character1,character2,character3,winRate,averageRP,totalGames,averageRank")
-      .in("tier", DIAMOND_PLUS_TIERS)
-      .order("totalGames", { ascending: false })
-      .limit(5000);
-
-    if (charFilterOr) oldQuery = oldQuery.or(charFilterOr);
-
-    // 병렬 조회
-    const [v2Result, oldResult] = await Promise.all([v2Query, oldQuery]);
+    const v2Result = await v2Query;
 
     if (v2Result.error) {
       console.error("[stats/trios] v2 Supabase error:", v2Result.error);
-    }
-    if (oldResult.error) {
-      console.error("[stats/trios] old Supabase error:", oldResult.error);
-    }
-
-    // 둘 다 실패하면 에러 반환
-    if (v2Result.error && oldResult.error) {
       return NextResponse.json(
         { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
         { status: 500, headers: NO_CACHE_HEADERS }
       );
     }
 
-    const combinedRows = [
-      ...((v2Result.data ?? []) as TrioRow[]),
-      ...((oldResult.data ?? []) as TrioRow[]),
-    ];
-
-    const filteredRows = combinedRows.filter(
+    const filteredRows = ((v2Result.data ?? []) as TrioRow[]).filter(
       (row) =>
         !EXCLUDED_CHARACTER_CODES.has(row.character1) &&
         !EXCLUDED_CHARACTER_CODES.has(row.character2) &&
