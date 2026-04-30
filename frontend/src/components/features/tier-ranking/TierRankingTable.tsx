@@ -405,7 +405,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
 
         {/* Mobile List */}
         <div className="sm:hidden">
-          <div className="grid grid-cols-[34px_minmax(0,1.45fr)_56px_56px_72px] items-center gap-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/55 px-3 py-3 text-[11px] font-medium text-[var(--color-muted-foreground)]">
+          <div className="grid grid-cols-[30px_minmax(0,1.7fr)_50px_50px_64px] items-center gap-1.5 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/55 px-3 py-2.5 text-[10px] font-medium text-[var(--color-muted-foreground)]">
             <span className="text-center">#</span>
             <span>{t("columns.character")}</span>
             <button
@@ -452,17 +452,17 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
               Array.from({ length: 8 }).map((_, i) => (
                 <div
                   key={i}
-                  className="grid grid-cols-[34px_minmax(0,1.45fr)_56px_56px_72px] items-center gap-2 px-3 py-3"
+                  className="grid grid-cols-[30px_minmax(0,1.7fr)_50px_50px_64px] items-center gap-1.5 px-3 py-2.5"
                 >
                   <Skeleton className="h-4 w-5 shrink-0" />
-                  <div className="flex min-w-0 items-center gap-2">
+                  <div className="flex min-w-0 items-center gap-1.5">
                     <Skeleton className="h-5 w-5 rounded shrink-0" />
-                    <Skeleton className="h-9 w-9 rounded-lg shrink-0" />
-                    <Skeleton className="h-3.5 w-20" />
+                    <Skeleton className="h-8 w-8 rounded-lg shrink-0" />
+                    <Skeleton className="h-3 w-18" />
                   </div>
-                  <Skeleton className="ml-auto h-3.5 w-10" />
-                  <Skeleton className="ml-auto h-3.5 w-10" />
-                  <Skeleton className="ml-auto h-3.5 w-12" />
+                  <Skeleton className="ml-auto h-3 w-9" />
+                  <Skeleton className="ml-auto h-3 w-9" />
+                  <Skeleton className="ml-auto h-3 w-11" />
                 </div>
               ))
             ) : visible.length === 0 ? (
@@ -475,7 +475,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                 return (
                   <div
                     key={key}
-                    className="relative grid grid-cols-[34px_minmax(0,1.45fr)_56px_56px_72px] items-center gap-2 px-3 py-3 cursor-pointer active:bg-[var(--color-surface-2)] touch-manipulation transition-colors"
+                    className="relative grid grid-cols-[30px_minmax(0,1.7fr)_50px_50px_64px] items-center gap-1.5 px-3 py-2.5 cursor-pointer active:bg-[var(--color-surface-2)] touch-manipulation transition-colors"
                     onClick={() => {
                       navigateToCharacter(char);
                     }}
@@ -483,7 +483,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                     {/* Rank */}
                     <span
                       className={cn(
-                        "w-6 text-center text-[1.1rem] font-black tabular-nums",
+                        "w-5 text-center text-[0.95rem] font-black tabular-nums",
                         char.rank <= 3
                           ? "text-[var(--color-accent-gold)]"
                           : "text-[var(--color-muted-foreground)]"
@@ -492,15 +492,15 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                       {char.rank}
                     </span>
                     {/* Tier */}
-                    <div className="flex min-w-0 items-center gap-2.5">
+                    <div className="flex min-w-0 items-center gap-1.5">
                       <TierBadge tier={char.tier} />
-                      <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
+                      <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
                         <Image
                           src={char.imageUrl}
                           alt={char.name}
                           fill
                           className="object-cover"
-                          sizes="36px"
+                          sizes="32px"
                         />
                         {char.patchNote && (
                           <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]" />
@@ -508,7 +508,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <p className="truncate text-[0.95rem] font-semibold leading-tight text-[var(--color-foreground)]">
+                          <p className="truncate text-[0.82rem] font-semibold leading-tight text-[var(--color-foreground)]">
                             {char.name}
                           </p>
                           {char.patchNote && (
@@ -516,26 +516,26 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                               type="button"
                               aria-label={t("patchNoteButton", { patch: char.patchNote.patch })}
                               onClick={(e) => togglePatchNote(e, key)}
-                              className="shrink-0 rounded-md border border-[rgba(96,165,250,0.28)] bg-[rgba(96,165,250,0.1)] px-1.5 py-0.5 text-[9px] font-black tracking-[0.08em] text-[var(--color-primary)]"
+                              className="shrink-0 rounded-md border border-[rgba(96,165,250,0.28)] bg-[rgba(96,165,250,0.1)] px-1 py-0.5 text-[8px] font-black tracking-[0.06em] text-[var(--color-primary)]"
                             >
                               PATCH
                             </button>
                           )}
                         </div>
-                        <p className="truncate text-[11px] text-[var(--color-muted-foreground)]">
+                        <p className="truncate text-[10px] text-[var(--color-muted-foreground)]">
                           {char.weaponName}
                         </p>
                       </div>
                     </div>
-                    <span className="text-right text-[0.95rem] font-medium tabular-nums text-[var(--color-foreground)]">
+                    <span className="text-right text-[0.82rem] font-medium tabular-nums text-[var(--color-foreground)]">
                       {char.winRate.toFixed(1)}%
                     </span>
-                    <span className="text-right text-[0.95rem] font-medium tabular-nums text-[var(--color-foreground)]">
+                    <span className="text-right text-[0.82rem] font-medium tabular-nums text-[var(--color-foreground)]">
                       {char.pickRate.toFixed(1)}%
                     </span>
                     <span
                       className={cn(
-                        "text-right text-[1rem] font-semibold tabular-nums",
+                        "text-right text-[0.88rem] font-semibold tabular-nums",
                         char.averageRP >= 0
                           ? "text-[var(--color-accent-gold)]"
                           : "text-[var(--color-muted-foreground)]"
