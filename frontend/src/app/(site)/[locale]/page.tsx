@@ -105,6 +105,7 @@ export default async function LocalizedHomePage({ params }: LocalePageProps) {
 
   return (
     <HomePageContent
+      locale={locale}
       patches={patches}
       honeyPicks={honeyData.picks}
       honeyPatchVersion={honeyData.patchVersion}
