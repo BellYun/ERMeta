@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useL10n } from "@/components/L10nProvider";
@@ -15,6 +15,7 @@ import {
   getCharacterImageUrl,
   getComboRoles,
 } from "@/lib/characterMap";
+import { withCurrentSeoLocale } from "@/lib/localizedPath";
 import type { CharacterRankingData, RankingResponse } from "@/lib/ranking";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
@@ -90,6 +91,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
   const DEFAULT_VISIBLE = 20;
   const { l10n } = useL10n();
   const isInitialRender = React.useRef(true);
+  const pathname = usePathname();
   const router = useRouter();
   const roleTabs = React.useMemo(
     () => [
@@ -174,7 +176,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
       patch: patch ?? "",
       matchmakingTier: tier as TierGroupEnum,
     });
-    router.push(`/character/${char.code}?weapon=${char.weaponCode}`);
+    router.push(
+      withCurrentSeoLocale(pathname, `/character/${char.code}?weapon=${char.weaponCode}`)
+    );
   };
 
   const togglePatchNote = (e: React.MouseEvent<HTMLButtonElement>, key: string) => {

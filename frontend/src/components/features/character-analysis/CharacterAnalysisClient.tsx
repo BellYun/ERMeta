@@ -1,12 +1,12 @@
 "use client";
 
 import { BarChart2, ChevronRight, FileText, Loader2, Users, Zap } from "lucide-react";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import { Suspense } from "react";
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route";
 import { useL10n } from "@/components/L10nProvider";
+import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
 import { TierGroup } from "@/utils/tier";

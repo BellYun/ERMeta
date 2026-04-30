@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import { stripRouteLocaleFromPathname, withCurrentRouteLocale } from "@/lib/localizedPath";
 import { cn } from "@/lib/utils";
 
 interface NavigationProps {
@@ -14,6 +15,7 @@ interface NavigationProps {
 
 export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
   const pathname = usePathname();
+  const normalizedPathname = stripRouteLocaleFromPathname(pathname);
   const t = useTranslations("navigation");
   const tHeader = useTranslations("header");
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
@@ -30,40 +32,44 @@ export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
 
   const navLinks = [
     {
-      href: "/",
+      href: withCurrentRouteLocale(pathname, "/"),
       label: t("metaAnalysis"),
       icon: BarChart3,
-      isActive: pathname === "/",
+      isActive: normalizedPathname === "/",
     },
     {
-      href: "/synergy-detail",
+      href: withCurrentRouteLocale(pathname, "/synergy-detail"),
       label: t("synergyRecommendation"),
       icon: Network,
-      isActive: pathname === "/synergy-detail",
+      isActive: normalizedPathname === "/synergy-detail",
     },
     {
-      href: "/character/1",
+      href: withCurrentRouteLocale(pathname, "/character/1"),
       label: t("characterAnalysis"),
       icon: Search,
-      isActive: pathname.startsWith("/character/"),
+      isActive: normalizedPathname.startsWith("/character/"),
     },
     {
-      href: "/patches",
+      href: withCurrentRouteLocale(pathname, "/patches"),
       label: t("patchNotes"),
       icon: NotebookText,
-      isActive: pathname.startsWith("/patches"),
+      isActive: normalizedPathname.startsWith("/patches"),
     },
     {
-      href: "/season10-recap",
+      href: withCurrentRouteLocale(pathname, "/season10-recap"),
       label: t("seasonRecap"),
       icon: Trophy,
-      isActive: pathname.startsWith("/season10-recap"),
+      isActive: normalizedPathname.startsWith("/season10-recap"),
     },
   ];
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-[linear-gradient(180deg,rgba(7,13,29,0.96),rgba(8,12,26,0.96))] px-4 py-5">
-      <Link href="/" onClick={onNavigate} className="flex items-center gap-3 px-2">
+      <Link
+        href={withCurrentRouteLocale(pathname, "/")}
+        onClick={onNavigate}
+        className="flex items-center gap-3 px-2"
+      >
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[linear-gradient(180deg,#5fa8ff,#3266d6)] text-sm font-black text-white shadow-[0_14px_30px_-16px_rgba(96,165,250,1)]">
           ER
         </div>

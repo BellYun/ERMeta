@@ -2,7 +2,7 @@
 
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import type { HoneyPickData } from "@/app/api/meta/honey-picks/route";
@@ -15,6 +15,7 @@ import {
   getCharacterHalfImageUrl,
   resolveCharacterName,
 } from "@/lib/characterMap";
+import { withCurrentSeoLocale } from "@/lib/localizedPath";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
 import { useFilter } from "../FilterContext";
@@ -85,6 +86,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
   const t = useTranslations("honeyPicks");
   const { patch, tier } = useFilter();
   const router = useRouter();
+  const pathname = usePathname();
   const [picks, setPicks] = React.useState<HoneyPickData[]>(initialData ?? []);
   const [loading, setLoading] = React.useState(!initialData || initialData.length === 0);
   const [error, setError] = React.useState<string | null>(null);
@@ -188,7 +190,12 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
               className="char-card group cursor-pointer p-4"
               onClick={() => {
                 trackHoneyClick(r, i + 1);
-                router.push(`/character/${r.pick.characterNum}?weapon=${r.pick.bestWeapon}`);
+                router.push(
+                  withCurrentSeoLocale(
+                    pathname,
+                    `/character/${r.pick.characterNum}?weapon=${r.pick.bestWeapon}`
+                  )
+                );
               }}
             >
               <span
@@ -375,7 +382,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                       : null,
                   });
                 } else {
-                  router.push(`/character/${r.pick.characterNum}`);
+                  router.push(withCurrentSeoLocale(pathname, `/character/${r.pick.characterNum}`));
                 }
               }}
             >
@@ -472,7 +479,10 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
           onNavigate={() => {
             setMobileSheet(null);
             router.push(
-              `/character/${mobileSheet.pick.characterNum}?weapon=${mobileSheet.pick.bestWeapon}`
+              withCurrentSeoLocale(
+                pathname,
+                `/character/${mobileSheet.pick.characterNum}?weapon=${mobileSheet.pick.bestWeapon}`
+              )
             );
           }}
         />

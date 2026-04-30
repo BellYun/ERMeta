@@ -13,6 +13,7 @@ import {
   getCharacterName,
   resolveCharacterName,
 } from "@/lib/characterMap";
+import { stripRouteLocaleFromPathname, withCurrentRouteLocale } from "@/lib/localizedPath";
 import { cn } from "@/lib/utils";
 import { CHARACTER_CODES } from "./constants";
 
@@ -66,7 +67,7 @@ export function CharacterSearchCombobox({
   const listRef = React.useRef<HTMLDivElement>(null);
 
   const routeCharacterCode = React.useMemo(() => {
-    const match = pathname.match(/^\/character\/(\d+)/);
+    const match = stripRouteLocaleFromPathname(pathname).match(/^\/character\/(\d+)/);
     return match ? Number(match[1]) : null;
   }, [pathname]);
 
@@ -94,10 +95,10 @@ export function CharacterSearchCombobox({
       setOpen(false);
       setHighlightIndex(-1);
       inputRef.current?.blur();
-      router.push(`/character/${code}`, { scroll });
+      router.push(withCurrentRouteLocale(pathname, `/character/${code}`), { scroll });
       analytics.characterViewed(code, getCharacterName(code));
     },
-    [router, scroll]
+    [pathname, router, scroll]
   );
 
   React.useEffect(() => {

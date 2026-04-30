@@ -1,28 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
-import { LANGUAGE_COOKIE, resolveLanguage, SUPPORTED_LANGUAGES } from "@/lib/detectLanguage";
+import createMiddleware from "next-intl/middleware";
+import { DEFAULT_ROUTE_LOCALE, LANGUAGE_BY_ROUTE_LOCALE, routing } from "@/i18n/routing";
+import { LANGUAGE_COOKIE } from "@/lib/detectLanguage";
+import { getRouteLocaleSegmentFromPathname } from "@/lib/localizedPath";
 
 const COOKIE_MAX_AGE = 365 * 24 * 60 * 60; // 1년
+const handleI18nRouting = createMiddleware(routing);
 
 export function proxy(request: NextRequest) {
-  const existing = request.cookies.get(LANGUAGE_COOKIE)?.value;
+  const pathname = request.nextUrl.pathname;
 
-  // 이미 유효한 cookie 있으면 그대로 통과
-  if (existing && (SUPPORTED_LANGUAGES as readonly string[]).includes(existing)) {
+  if (pathname === "/synergy-detail/opengraph-image") {
     return NextResponse.next();
   }
 
-  // 첫 방문(또는 잘못된 값) → Accept-Language 기반으로 결정 후 cookie 박아두기
-  const accept = request.headers.get("accept-language");
-  const language = resolveLanguage(null, accept);
+  const routeLocale = getRouteLocaleSegmentFromPathname(pathname);
+  const response = handleI18nRouting(request);
+  const cookieLanguage = routeLocale
+    ? LANGUAGE_BY_ROUTE_LOCALE[routeLocale]
+    : LANGUAGE_BY_ROUTE_LOCALE[DEFAULT_ROUTE_LOCALE];
 
-  // 동일 요청에서도 layout이 새 값을 보도록 request cookie도 mutate
-  const response = NextResponse.next({ request });
-  request.cookies.set(LANGUAGE_COOKIE, language);
-  response.cookies.set(LANGUAGE_COOKIE, language, {
+  response.cookies.set(LANGUAGE_COOKIE, cookieLanguage, {
     maxAge: COOKIE_MAX_AGE,
     path: "/",
     sameSite: "lax",
   });
+
   return response;
 }
 

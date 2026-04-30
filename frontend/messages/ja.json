@@ -3,7 +3,10 @@
     "languageSelectAria": "言語を選択",
     "logoTitle": "ER&GG",
     "logoSubtitle": "Eternal Returnメタ",
-    "patchPrefix": "v"
+    "patchPrefix": "v",
+    "localeRecommendationBody": "ブラウザの言語は {language} に設定されています。この言語で表示しますか？",
+    "localeRecommendationCta": "言語を切り替え",
+    "localeRecommendationDismiss": "言語の案内を閉じる"
   },
   "navigation": {
     "ariaMain": "メインナビゲーション",
