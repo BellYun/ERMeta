@@ -61,6 +61,7 @@ function HomeDashboard({
       : 0;
   const positiveRpCount = rankingData.rankings.filter((row) => row.averageRP > 0).length;
   const volumeBars = buildBarHeights(rankingData.rankings.map((row) => row.totalGames));
+  const mobileVolumeBars = volumeBars.slice(0, 10);
   const positiveRatio =
     rankingData.rankings.length > 0 ? positiveRpCount / rankingData.rankings.length : 0.42;
 
@@ -110,10 +111,19 @@ function HomeDashboard({
                 {t("matchMetric")}
               </p>
             </div>
-            <div className="mt-3 flex h-[52px] items-end gap-1 sm:mt-4 sm:h-[70px]">
+            <div className="mt-3 grid h-[52px] grid-cols-10 items-end gap-1.5 sm:hidden">
+              {mobileVolumeBars.map((height, index) => (
+                <span
+                  key={`mobile-${height}-${index}`}
+                  className="min-w-0 rounded-full bg-[linear-gradient(180deg,rgba(37,99,235,0.22),rgba(59,130,246,0.88))]"
+                  style={{ height: Math.max(14, Math.round(height * 0.72)) }}
+                />
+              ))}
+            </div>
+            <div className="mt-4 hidden h-[70px] items-end gap-1 sm:flex">
               {volumeBars.map((height, index) => (
                 <span
-                  key={`${height}-${index}`}
+                  key={`desktop-${height}-${index}`}
                   className="w-2 flex-1 rounded-full bg-[linear-gradient(180deg,rgba(37,99,235,0.24),rgba(59,130,246,0.9))]"
                   style={{ height: Math.max(12, Math.round(height * 0.8)) }}
                 />
@@ -135,7 +145,7 @@ function HomeDashboard({
             </div>
           </div>
 
-          <div className="metric-card flex min-h-[116px] flex-col justify-between px-4 py-4 sm:min-h-[150px] sm:px-5 sm:py-5">
+          <div className="metric-card flex min-h-[116px] flex-col gap-4 px-4 py-4 sm:min-h-[150px] sm:justify-between sm:px-5 sm:py-5">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="metric-value text-[1.55rem] sm:text-[2rem]">
@@ -146,7 +156,7 @@ function HomeDashboard({
                 </p>
               </div>
               <div
-                className="relative h-12 w-12 rounded-full sm:h-16 sm:w-16"
+                className="relative h-12 w-12 shrink-0 rounded-full sm:h-16 sm:w-16"
                 style={{
                   background: `conic-gradient(var(--color-primary) ${positiveRatio * 360}deg, rgba(255,255,255,0.08) 0deg)`,
                 }}
