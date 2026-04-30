@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DEFAULT_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
 import { buildLocalizedAlternates, localizeRoutePath } from "@/lib/seoLocales";
+import { BASE_URL } from "@/lib/siteMetadata";
 
 export function localizeMetadata(
   metadata: Metadata,
@@ -11,6 +12,7 @@ export function localizeMetadata(
 
   return {
     ...metadata,
+    metadataBase: metadata.metadataBase ?? new URL(BASE_URL),
     alternates: buildLocalizedAlternates(pathname, locale),
     openGraph: metadata.openGraph
       ? {

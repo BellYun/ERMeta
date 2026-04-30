@@ -8,10 +8,12 @@ import { SeasonHallOfFameBlock } from "@/app/season10-recap/SeasonHallOfFameBloc
 import { Link } from "@/i18n/navigation";
 import { getCharacterImageUrl, getCharacterName } from "@/lib/characterMap";
 import { getSeasonRecapData } from "@/lib/seasonRecap";
+import { BASE_URL } from "@/lib/siteMetadata";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL),
   title: "시즌 10 리캡 — 마지막 메타 박제 | ER&GG",
   description:
     "이터널리턴 시즌 10 마무리. 패치별 평균 RP TOP 5와 시즌 누적 평균 RP 전체 랭킹. 미스릴+ 기준.",

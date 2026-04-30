@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { SynergyDetailClient } from "@/components/features/synergy-detail/SynergyDetailClient";
 import { getCharacterName } from "@/lib/characterMap";
+import { BASE_URL } from "@/lib/siteMetadata";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -59,6 +60,7 @@ export async function generateMetadata({
   const ogImageUrl = `/synergy-detail/opengraph-image${ogQuery.size ? `?${ogQuery.toString()}` : ""}`;
 
   return {
+    metadataBase: new URL(BASE_URL),
     title: t("title", { headline }),
     description,
     keywords: [
