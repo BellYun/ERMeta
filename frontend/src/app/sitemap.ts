@@ -117,7 +117,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const pathname = `/character/${code}`;
     return {
       url: `${base}${prefixSeoLocalePath(pathname, "ja")}`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: "daily" as const,
       priority: 0.6,
       alternates: {
