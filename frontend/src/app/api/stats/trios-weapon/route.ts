@@ -13,11 +13,21 @@ const DIAMOND_PLUS_TIERS: TierGroup[] = [
 ];
 const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]);
 
+// .or() 한 번에 character1/2/3 세 컬럼 OR 절을 던지면 인기 캐릭(예: 자히르=1)에서
+// PostgREST statement_timeout(~3s) 초과 → 500. 컬럼당 단일 인덱스만 쓰는 .eq() 3쿼리
+// Promise.all 병렬로 분해하여 각 쿼리는 인덱스 1개만 타도록 한다.
+const PARALLEL_FETCH_LIMIT = 2000;
+const FULL_FETCH_LIMIT = 5000;
+
 type SortBy = "averageRP" | "winRate" | "totalGames" | "recommended";
 
-// ─── 추천 점수 계산 (trios와 동일) ─────────────────────────────────────────────
-
 const BAYESIAN_K = 50;
+
+function parseIntOrNull(param: string | null): number | null {
+  if (param == null) return null;
+  const n = parseInt(param, 10);
+  return isNaN(n) ? null : n;
+}
 
 function bayesianRP(averageRP: number, totalGames: number, globalAvgRP: number): number {
   return (totalGames * averageRP + BAYESIAN_K * globalAvgRP) / (totalGames + BAYESIAN_K);
@@ -51,9 +61,8 @@ function recommendedScore(
   return 0.6 * normalizedRP + 0.3 * wilson + 0.1 * rScore;
 }
 
-// ─── 타입 ──────────────────────────────────────────────────────────────────────
-
 interface TrioWeaponRow {
+  tier: string;
   character1: number;
   weapon_type1: number;
   character2: number;
@@ -84,8 +93,6 @@ interface AggregatedTrioWeapon {
   averageRP: number;
   averageRank: number;
 }
-
-// ─── 티어 간 집계 (가중 평균) ──────────────────────────────────────────────────
 
 function aggregateByTrioWeapon(rows: TrioWeaponRow[]): AggregatedTrioWeapon[] {
   const map = new Map<
@@ -151,21 +158,19 @@ function aggregateByTrioWeapon(rows: TrioWeaponRow[]): AggregatedTrioWeapon[] {
   }));
 }
 
-// ─── GET ────────────────────────────────────────────────────────────────────────
+function rowKey(row: TrioWeaponRow): string {
+  return `${row.tier}|${row.character1}|${row.weapon_type1}|${row.character2}|${row.weapon_type2}|${row.character3}|${row.weapon_type3}|${row.main_core1 ?? "n"}|${row.main_core2 ?? "n"}|${row.main_core3 ?? "n"}`;
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const sortByParam = (searchParams.get("sortBy") ?? "recommended") as SortBy;
   const limitParam = searchParams.get("limit");
-  const char1Param = searchParams.get("character1");
-  const char2Param = searchParams.get("character2");
-  const weapon1Param = searchParams.get("weapon1");
-  const weapon2Param = searchParams.get("weapon2");
 
-  const char1 = char1Param != null ? parseInt(char1Param, 10) : null;
-  const char2 = char2Param != null ? parseInt(char2Param, 10) : null;
-  const weapon1 = weapon1Param != null ? parseInt(weapon1Param, 10) : null;
-  const weapon2 = weapon2Param != null ? parseInt(weapon2Param, 10) : null;
+  const char1 = parseIntOrNull(searchParams.get("character1"));
+  const char2 = parseIntOrNull(searchParams.get("character2"));
+  const weapon1 = parseIntOrNull(searchParams.get("weapon1"));
+  const weapon2 = parseIntOrNull(searchParams.get("weapon2"));
 
   if (char2 != null && char1 == null) {
     return NextResponse.json(
@@ -192,41 +197,80 @@ export async function GET(request: NextRequest) {
 
   try {
     const supabase = createServerClient();
+    const select =
+      "tier,character1,weapon_type1,character2,weapon_type2,character3,weapon_type3,main_core1,main_core2,main_core3,total_games,total_wins,total_rp,rank_sum";
 
-    let query = supabase
-      .from("v2_CharacterTrioWeapon")
-      .select(
-        "character1,weapon_type1,character2,weapon_type2,character3,weapon_type3,main_core1,main_core2,main_core3,total_games,total_wins,total_rp,rank_sum"
-      )
-      .in("tier", DIAMOND_PLUS_TIERS)
-      .order("total_games", { ascending: false })
-      .limit(5000);
+    const baseQuery = (perQueryLimit: number) =>
+      supabase
+        .from("v2_CharacterTrioWeapon")
+        .select(select)
+        .in("tier", DIAMOND_PLUS_TIERS)
+        .order("total_games", { ascending: false })
+        .limit(perQueryLimit);
+
+    let rows: TrioWeaponRow[] = [];
 
     if (char1 != null && char2 != null) {
       const [low, high] = [char1, char2].sort((a, b) => a - b);
-      query = query.or(
-        [
-          `and(character1.eq.${low},character2.eq.${high})`,
-          `and(character1.eq.${low},character3.eq.${high})`,
-          `and(character2.eq.${low},character3.eq.${high})`,
-        ].join(",")
-      );
+      const results = await Promise.all([
+        baseQuery(PARALLEL_FETCH_LIMIT).eq("character1", low).eq("character2", high),
+        baseQuery(PARALLEL_FETCH_LIMIT).eq("character1", low).eq("character3", high),
+        baseQuery(PARALLEL_FETCH_LIMIT).eq("character2", low).eq("character3", high),
+      ]);
+      for (const r of results) {
+        if (r.error) {
+          console.error("[stats/trios-weapon] Supabase error:", r.error);
+          return NextResponse.json(
+            { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
+            { status: 500, headers: NO_CACHE_HEADERS }
+          );
+        }
+        rows.push(...((r.data ?? []) as TrioWeaponRow[]));
+      }
+      const seen = new Set<string>();
+      rows = rows.filter((row) => {
+        const k = rowKey(row);
+        if (seen.has(k)) return false;
+        seen.add(k);
+        return true;
+      });
     } else if (char1 != null) {
-      query = query.or(`character1.eq.${char1},character2.eq.${char1},character3.eq.${char1}`);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error("[stats/trios-weapon] Supabase error:", error);
-      return NextResponse.json(
-        { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
-        { status: 500, headers: NO_CACHE_HEADERS }
-      );
+      const results = await Promise.all([
+        baseQuery(PARALLEL_FETCH_LIMIT).eq("character1", char1),
+        baseQuery(PARALLEL_FETCH_LIMIT).eq("character2", char1),
+        baseQuery(PARALLEL_FETCH_LIMIT).eq("character3", char1),
+      ]);
+      for (const r of results) {
+        if (r.error) {
+          console.error("[stats/trios-weapon] Supabase error:", r.error);
+          return NextResponse.json(
+            { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
+            { status: 500, headers: NO_CACHE_HEADERS }
+          );
+        }
+        rows.push(...((r.data ?? []) as TrioWeaponRow[]));
+      }
+      const seen = new Set<string>();
+      rows = rows.filter((row) => {
+        const k = rowKey(row);
+        if (seen.has(k)) return false;
+        seen.add(k);
+        return true;
+      });
+    } else {
+      const { data, error } = await baseQuery(FULL_FETCH_LIMIT);
+      if (error) {
+        console.error("[stats/trios-weapon] Supabase error:", error);
+        return NextResponse.json(
+          { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
+          { status: 500, headers: NO_CACHE_HEADERS }
+        );
+      }
+      rows = (data ?? []) as TrioWeaponRow[];
     }
 
     // 무기 필터 (JS-side): 선택된 캐릭터의 무기 타입 매칭
-    const filteredRows = ((data ?? []) as TrioWeaponRow[]).filter((row) => {
+    const filteredRows = rows.filter((row) => {
       if (
         EXCLUDED_CHARACTER_CODES.has(row.character1) ||
         EXCLUDED_CHARACTER_CODES.has(row.character2) ||
@@ -234,7 +278,6 @@ export async function GET(request: NextRequest) {
       )
         return false;
 
-      // 무기 필터링: 각 ally의 charCode가 row의 어떤 position에 매칭되는지 찾아서 weapon 비교
       if (char1 != null && weapon1 != null) {
         const matched =
           (row.character1 === char1 && row.weapon_type1 === weapon1) ||

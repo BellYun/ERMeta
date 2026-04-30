@@ -15,6 +15,12 @@ const DIAMOND_PLUS_TIERS: TierGroup[] = [
 const TRIO_MEMBER_COUNT = 3;
 const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]); // Dr. 하나, 나쟈
 
+// .or() 한 번에 character1/2/3 세 컬럼 OR 절을 던지면 인기 캐릭(예: 자히르=1)에서
+// PostgREST statement_timeout 초과 → 500. 컬럼당 단일 인덱스만 쓰는 .eq() 3쿼리
+// Promise.all 병렬로 분해.
+const PARALLEL_FETCH_LIMIT = 2000;
+const FULL_FETCH_LIMIT = 5000;
+
 type SortBy = "averageRP" | "winRate" | "totalGames" | "recommended";
 
 // ─── 추천 점수 계산 ────────────────────────────────────────────────────────────
@@ -22,6 +28,12 @@ type SortBy = "averageRP" | "winRate" | "totalGames" | "recommended";
 // RP 손익 분기점: ~4~5등 (그 이하 음수 RP)
 
 const BAYESIAN_K = 50; // prior 강도: 샘플 50판 수준의 전체 평균으로 수렴
+
+function parseIntOrNull(param: string | null): number | null {
+  if (param == null) return null;
+  const n = parseInt(param, 10);
+  return isNaN(n) ? null : n;
+}
 
 /** 베이지안 RP: 샘플 부족 시 전체 평균으로 수렴 */
 function bayesianRP(averageRP: number, totalGames: number, globalAvgRP: number): number {
@@ -63,6 +75,7 @@ function recommendedScore(
 }
 
 interface TrioRow {
+  tier: string;
   character1: number;
   character2: number;
   character3: number;
@@ -128,17 +141,18 @@ function aggregateByTrio(rows: TrioRow[]): AggregatedTrio[] {
   }));
 }
 
+function rowKey(row: TrioRow): string {
+  return `${row.tier}|${row.character1}|${row.character2}|${row.character3}`;
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
   const sortByParam = (searchParams.get("sortBy") ?? "recommended") as SortBy;
   const limitParam = searchParams.get("limit");
-  const char1Param = searchParams.get("character1");
-  const char2Param = searchParams.get("character2");
 
-  // character 코드 파싱
-  const char1 = char1Param != null ? parseInt(char1Param, 10) : null;
-  const char2 = char2Param != null ? parseInt(char2Param, 10) : null;
+  const char1 = parseIntOrNull(searchParams.get("character1"));
+  const char2 = parseIntOrNull(searchParams.get("character2"));
 
   // character2만 단독 전달 금지
   if (char2 != null && char1 == null) {
@@ -171,43 +185,78 @@ export async function GET(request: NextRequest) {
 
   try {
     const supabase = createServerClient();
+    const select = "tier,character1,character2,character3,winRate,averageRP,totalGames,averageRank";
 
-    // 캐릭터 필터 조건
-    const charFilterOr =
-      char1 != null && char2 != null
-        ? (() => {
-            const [low, high] = [char1, char2].sort((a, b) => a - b);
-            return [
-              `and(character1.eq.${low},character2.eq.${high})`,
-              `and(character1.eq.${low},character3.eq.${high})`,
-              `and(character2.eq.${low},character3.eq.${high})`,
-            ].join(",");
-          })()
-        : char1 != null
-          ? `character1.eq.${char1},character2.eq.${char1},character3.eq.${char1}`
-          : null;
+    const baseQuery = (perQueryLimit: number) =>
+      supabase
+        .from("v2_CharacterTrio")
+        .select(select)
+        .in("tier", DIAMOND_PLUS_TIERS)
+        .order("totalGames", { ascending: false })
+        .limit(perQueryLimit);
 
-    // ── v2 테이블 조회 ──
-    let v2Query = supabase
-      .from("v2_CharacterTrio")
-      .select("character1,character2,character3,winRate,averageRP,totalGames,averageRank")
-      .in("tier", DIAMOND_PLUS_TIERS)
-      .order("totalGames", { ascending: false })
-      .limit(5000);
+    let rows: TrioRow[] = [];
 
-    if (charFilterOr) v2Query = v2Query.or(charFilterOr);
-
-    const v2Result = await v2Query;
-
-    if (v2Result.error) {
-      console.error("[stats/trios] v2 Supabase error:", v2Result.error);
-      return NextResponse.json(
-        { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
-        { status: 500, headers: NO_CACHE_HEADERS }
-      );
+    if (char1 != null && char2 != null) {
+      const [low, high] = [char1, char2].sort((a, b) => a - b);
+      const results = await Promise.all([
+        baseQuery(PARALLEL_FETCH_LIMIT).eq("character1", low).eq("character2", high),
+        baseQuery(PARALLEL_FETCH_LIMIT).eq("character1", low).eq("character3", high),
+        baseQuery(PARALLEL_FETCH_LIMIT).eq("character2", low).eq("character3", high),
+      ]);
+      for (const r of results) {
+        if (r.error) {
+          console.error("[stats/trios] v2 Supabase error:", r.error);
+          return NextResponse.json(
+            { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
+            { status: 500, headers: NO_CACHE_HEADERS }
+          );
+        }
+        rows.push(...((r.data ?? []) as TrioRow[]));
+      }
+      const seen = new Set<string>();
+      rows = rows.filter((row) => {
+        const k = rowKey(row);
+        if (seen.has(k)) return false;
+        seen.add(k);
+        return true;
+      });
+    } else if (char1 != null) {
+      const results = await Promise.all([
+        baseQuery(PARALLEL_FETCH_LIMIT).eq("character1", char1),
+        baseQuery(PARALLEL_FETCH_LIMIT).eq("character2", char1),
+        baseQuery(PARALLEL_FETCH_LIMIT).eq("character3", char1),
+      ]);
+      for (const r of results) {
+        if (r.error) {
+          console.error("[stats/trios] v2 Supabase error:", r.error);
+          return NextResponse.json(
+            { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
+            { status: 500, headers: NO_CACHE_HEADERS }
+          );
+        }
+        rows.push(...((r.data ?? []) as TrioRow[]));
+      }
+      const seen = new Set<string>();
+      rows = rows.filter((row) => {
+        const k = rowKey(row);
+        if (seen.has(k)) return false;
+        seen.add(k);
+        return true;
+      });
+    } else {
+      const { data, error } = await baseQuery(FULL_FETCH_LIMIT);
+      if (error) {
+        console.error("[stats/trios] v2 Supabase error:", error);
+        return NextResponse.json(
+          { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
+          { status: 500, headers: NO_CACHE_HEADERS }
+        );
+      }
+      rows = (data ?? []) as TrioRow[];
     }
 
-    const filteredRows = ((v2Result.data ?? []) as TrioRow[]).filter(
+    const filteredRows = rows.filter(
       (row) =>
         !EXCLUDED_CHARACTER_CODES.has(row.character1) &&
         !EXCLUDED_CHARACTER_CODES.has(row.character2) &&
