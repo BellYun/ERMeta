@@ -7,7 +7,6 @@ import { L10nProvider } from "@/components/L10nProvider";
 import { RootDocumentExtras } from "@/components/RootDocumentExtras";
 import { DEFAULT_ROUTE_LOCALE } from "@/i18n/routing";
 import { DEFAULT_LANGUAGE } from "@/lib/detectLanguage";
-import { loadL10nRecord } from "@/lib/serverL10n";
 import { buildDefaultSiteMetadata, buildWebsiteStructuredData } from "@/lib/siteMetadata";
 import { HTML_LANG_BY_LANGUAGE, loadIntlMessages } from "@/lib/staticIntl";
 
@@ -16,7 +15,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function DefaultLayout({ children }: { children: ReactNode }) {
-  const initialL10n = loadL10nRecord(DEFAULT_LANGUAGE);
   const initialMessages = await loadIntlMessages(DEFAULT_LANGUAGE);
   const structuredData = await buildWebsiteStructuredData(DEFAULT_LANGUAGE, DEFAULT_ROUTE_LOCALE);
 
@@ -24,7 +22,6 @@ export default async function DefaultLayout({ children }: { children: ReactNode 
     <html lang={HTML_LANG_BY_LANGUAGE[DEFAULT_LANGUAGE] ?? "ko"}>
       <body>
         <L10nProvider
-          initialL10n={initialL10n}
           initialMessages={initialMessages}
           initialLanguage={DEFAULT_LANGUAGE}
           lockInitialLanguage
