@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
 import { DEFAULT_ROUTE_LOCALE, LANGUAGE_BY_ROUTE_LOCALE, routing } from "@/i18n/routing";
 import { LANGUAGE_COOKIE } from "@/lib/detectLanguage";
@@ -9,6 +9,11 @@ const handleI18nRouting = createMiddleware(routing);
 
 export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+
+  if (pathname === "/synergy-detail/opengraph-image") {
+    return NextResponse.next();
+  }
+
   const routeLocale = getRouteLocaleSegmentFromPathname(pathname);
   const response = handleI18nRouting(request);
   const cookieLanguage = routeLocale
