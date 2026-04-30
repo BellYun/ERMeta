@@ -1,24 +1,15 @@
 import type { Metadata } from "next";
 import { getPathname } from "@/i18n/navigation";
-import { DEFAULT_ROUTE_LOCALE, LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
-import type { SupportedLanguage } from "@/lib/detectLanguage";
+import { DEFAULT_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
 
-export const SEO_LOCALE_SEGMENTS = ["ja"] as const;
-export type SeoLocaleSegment = (typeof SEO_LOCALE_SEGMENTS)[number];
+// 일본어만 별도 locale path + hreflang 대상으로 운영한다.
+export const SEO_TARGET_LOCALE = "ja" as const;
+export type SeoLocaleSegment = typeof SEO_TARGET_LOCALE;
 
 export interface SeoLanguageAlternates {
   ko: string;
   ja: string;
   "x-default": string;
-}
-
-export function isSeoLocaleSegment(value: string): value is SeoLocaleSegment {
-  return (SEO_LOCALE_SEGMENTS as readonly string[]).includes(value);
-}
-
-export function getSeoLanguageFromSegment(locale: string): SupportedLanguage | null {
-  if (!isSeoLocaleSegment(locale)) return null;
-  return LANGUAGE_BY_ROUTE_LOCALE[locale];
 }
 
 export function localizeRoutePath(pathname: string, locale: RouteLocale): string {
@@ -32,7 +23,7 @@ export function prefixSeoLocalePath(pathname: string, locale: SeoLocaleSegment):
 export function buildSeoAlternateLanguages(pathname: string): SeoLanguageAlternates {
   return {
     ko: localizeRoutePath(pathname, DEFAULT_ROUTE_LOCALE),
-    ja: localizeRoutePath(pathname, "ja"),
+    ja: localizeRoutePath(pathname, SEO_TARGET_LOCALE),
     "x-default": localizeRoutePath(pathname, DEFAULT_ROUTE_LOCALE),
   };
 }
@@ -43,7 +34,7 @@ export function buildLocalizedAlternates(
 ): NonNullable<Metadata["alternates"]> {
   const canonical = localizeRoutePath(pathname, locale);
 
-  if (locale === "ja" || locale === DEFAULT_ROUTE_LOCALE) {
+  if (locale === SEO_TARGET_LOCALE || locale === DEFAULT_ROUTE_LOCALE) {
     return {
       canonical,
       languages: buildSeoAlternateLanguages(pathname) as unknown as NonNullable<
