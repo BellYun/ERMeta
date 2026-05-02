@@ -12,6 +12,7 @@ interface LocalePageProps {
   params: Promise<{ locale: string; version: string }>;
 }
 
+export const dynamic = "force-static";
 export const dynamicParams = false;
 export const revalidate = 3600;
 

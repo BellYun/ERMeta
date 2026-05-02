@@ -11,6 +11,7 @@ interface LocalePageProps {
   params: Promise<{ locale: string }>;
 }
 
+export const dynamic = "force-static";
 export const revalidate = 3600;
 
 export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
