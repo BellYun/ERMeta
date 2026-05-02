@@ -57,36 +57,25 @@ export function useL10n() {
 }
 
 interface L10nProviderProps {
-  initialL10n?: Record<string, string>;
   initialMessages: IntlMessages;
   initialLanguage?: SupportedLanguage;
-  lockInitialLanguage?: boolean;
   children: React.ReactNode;
 }
 
-export function L10nProvider({
-  initialL10n,
-  initialMessages,
-  initialLanguage,
-  lockInitialLanguage: _lockInitialLanguage = false,
-  children,
-}: L10nProviderProps) {
+export function L10nProvider({ initialMessages, initialLanguage, children }: L10nProviderProps) {
   const serverLanguage = initialLanguage ?? DEFAULT_LANGUAGE;
-  void _lockInitialLanguage;
   const [language, setLanguageState] = useState<SupportedLanguage>(serverLanguage);
   const [messages, setMessages] = useState<IntlMessages>(initialMessages);
   const [l10nState, l10nDispatch] = React.useReducer(l10nReducer, {
-    l10n: initialL10n ? new Map(Object.entries(initialL10n)) : new Map(),
-    loading: !initialL10n,
+    l10n: new Map(),
+    loading: true,
     error: null,
   });
   const { l10n, loading, error } = l10nState;
   const messageCacheRef = useRef<Partial<Record<SupportedLanguage, IntlMessages>>>({
     [serverLanguage]: initialMessages,
   });
-  const l10nCacheRef = useRef<Partial<Record<SupportedLanguage, Map<string, string>>>>(
-    initialL10n ? { [serverLanguage]: new Map(Object.entries(initialL10n)) } : {}
-  );
+  const l10nCacheRef = useRef<Partial<Record<SupportedLanguage, Map<string, string>>>>({});
 
   useEffect(() => {
     document.documentElement.lang = HTML_LANG_BY_LANGUAGE[language] ?? "ko";

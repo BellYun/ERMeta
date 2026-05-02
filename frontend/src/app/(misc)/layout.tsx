@@ -18,11 +18,7 @@ export default async function MiscLayout({ children }: { children: ReactNode }) 
   return (
     <html lang={HTML_LANG_BY_LANGUAGE[DEFAULT_LANGUAGE] ?? "ko"} className={geistSans.variable}>
       <body>
-        <L10nProvider
-          initialMessages={initialMessages}
-          initialLanguage={DEFAULT_LANGUAGE}
-          lockInitialLanguage
-        >
+        <L10nProvider initialMessages={initialMessages} initialLanguage={DEFAULT_LANGUAGE}>
           {children}
         </L10nProvider>
         <RootDocumentExtras />

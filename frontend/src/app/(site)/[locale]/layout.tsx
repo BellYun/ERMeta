@@ -45,11 +45,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   return (
     <html lang={htmlLang} className={geistSans.variable}>
       <body>
-        <L10nProvider
-          initialMessages={initialMessages}
-          initialLanguage={language}
-          lockInitialLanguage
-        >
+        <L10nProvider initialMessages={initialMessages} initialLanguage={language}>
           <AppFrame shellId={`locale-shell-${locale}`} messages={initialMessages} currentPatch="">
             {children}
           </AppFrame>

@@ -21,11 +21,7 @@ export default async function DefaultLayout({ children }: { children: ReactNode 
   return (
     <html lang={HTML_LANG_BY_LANGUAGE[DEFAULT_LANGUAGE] ?? "ko"}>
       <body>
-        <L10nProvider
-          initialMessages={initialMessages}
-          initialLanguage={DEFAULT_LANGUAGE}
-          lockInitialLanguage
-        >
+        <L10nProvider initialMessages={initialMessages} initialLanguage={DEFAULT_LANGUAGE}>
           <AppFrame shellId="default-ko-shell" messages={initialMessages} currentPatch="">
             {children}
           </AppFrame>
