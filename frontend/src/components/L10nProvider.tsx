@@ -57,13 +57,23 @@ export function useL10n() {
 }
 
 interface L10nProviderProps {
+  initialL10n?: Record<string, string>;
   initialMessages: IntlMessages;
   initialLanguage?: SupportedLanguage;
   children: React.ReactNode;
 }
 
-export function L10nProvider({ initialMessages, initialLanguage, children }: L10nProviderProps) {
+export function L10nProvider({
+  initialL10n,
+  initialMessages,
+  initialLanguage,
+  children,
+}: L10nProviderProps) {
   const serverLanguage = initialLanguage ?? DEFAULT_LANGUAGE;
+  const initialL10nMap = React.useMemo(
+    () => (initialL10n ? new Map(Object.entries(initialL10n)) : null),
+    [initialL10n]
+  );
   const [language, setLanguageState] = useState<SupportedLanguage>(serverLanguage);
   const [messages, setMessages] = useState<IntlMessages>(initialMessages);
   const [l10nState, l10nDispatch] = React.useReducer(l10nReducer, {
@@ -75,7 +85,9 @@ export function L10nProvider({ initialMessages, initialLanguage, children }: L10
   const messageCacheRef = useRef<Partial<Record<SupportedLanguage, IntlMessages>>>({
     [serverLanguage]: initialMessages,
   });
-  const l10nCacheRef = useRef<Partial<Record<SupportedLanguage, Map<string, string>>>>({});
+  const l10nCacheRef = useRef<Partial<Record<SupportedLanguage, Map<string, string>>>>(
+    initialL10nMap ? { [serverLanguage]: initialL10nMap } : {}
+  );
 
   useEffect(() => {
     document.documentElement.lang = HTML_LANG_BY_LANGUAGE[language] ?? "ko";
