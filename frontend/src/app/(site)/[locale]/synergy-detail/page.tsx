@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { setRequestLocale } from "next-intl/server";
 import { isRouteLocale } from "@/i18n/routing";
 import { localizeMetadata } from "@/lib/routeMetadata";
 import SynergyDetailPage, {
@@ -26,4 +27,14 @@ export async function generateMetadata({
   return localizeMetadata(await generateBaseMetadata({ searchParams }), "/synergy-detail", locale);
 }
 
-export default SynergyDetailPage;
+export default async function LocalizedSynergyDetailPage({ params }: LocalePageProps) {
+  const { locale } = await params;
+
+  if (!isRouteLocale(locale)) {
+    notFound();
+  }
+
+  setRequestLocale(locale);
+
+  return <SynergyDetailPage />;
+}

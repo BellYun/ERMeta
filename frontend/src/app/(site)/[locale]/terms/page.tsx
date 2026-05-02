@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { setRequestLocale } from "next-intl/server";
 import { isRouteLocale } from "@/i18n/routing";
 import { localizeMetadata } from "@/lib/routeMetadata";
 import TermsPage, { metadata as baseMetadata } from "@/views/legal/TermsPage";
@@ -7,6 +8,8 @@ import TermsPage, { metadata as baseMetadata } from "@/views/legal/TermsPage";
 interface LocalePageProps {
   params: Promise<{ locale: string }>;
 }
+
+export const dynamic = "force-static";
 
 export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
   const { locale } = await params;
@@ -18,4 +21,14 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
   return localizeMetadata(baseMetadata, "/terms", locale);
 }
 
-export default TermsPage;
+export default async function LocalizedTermsPage({ params }: LocalePageProps) {
+  const { locale } = await params;
+
+  if (!isRouteLocale(locale)) {
+    notFound();
+  }
+
+  setRequestLocale(locale);
+
+  return <TermsPage />;
+}

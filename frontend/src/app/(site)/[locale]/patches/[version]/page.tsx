@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { setRequestLocale } from "next-intl/server";
 import { ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
 import { localizeMetadata } from "@/lib/routeMetadata";
 import PatchDetailPage, {
@@ -11,6 +12,7 @@ interface LocalePageProps {
   params: Promise<{ locale: string; version: string }>;
 }
 
+export const dynamic = "force-static";
 export const dynamicParams = false;
 export const revalidate = 3600;
 
@@ -40,6 +42,8 @@ export default async function LocalizedPatchDetailPage({ params }: LocalePagePro
   if (!isRouteLocale(locale)) {
     notFound();
   }
+
+  setRequestLocale(locale);
 
   return <PatchDetailPage params={Promise.resolve({ version })} />;
 }

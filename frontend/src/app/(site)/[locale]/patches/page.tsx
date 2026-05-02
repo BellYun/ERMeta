@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { setRequestLocale } from "next-intl/server";
 import { isRouteLocale } from "@/i18n/routing";
 import { localizeMetadata } from "@/lib/routeMetadata";
 import PatchesIndexPage, {
@@ -22,4 +23,14 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
   return localizeMetadata(await generateBaseMetadata(), "/patches", locale);
 }
 
-export default PatchesIndexPage;
+export default async function LocalizedPatchesIndexPage({ params }: LocalePageProps) {
+  const { locale } = await params;
+
+  if (!isRouteLocale(locale)) {
+    notFound();
+  }
+
+  setRequestLocale(locale);
+
+  return <PatchesIndexPage />;
+}

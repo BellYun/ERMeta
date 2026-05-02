@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { setRequestLocale } from "next-intl/server";
 import { isRouteLocale } from "@/i18n/routing";
 import { localizeMetadata } from "@/lib/routeMetadata";
 import SeasonRecapPage, {
@@ -10,6 +11,7 @@ interface LocalePageProps {
   params: Promise<{ locale: string }>;
 }
 
+export const dynamic = "force-static";
 export const revalidate = 3600;
 
 export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
@@ -22,4 +24,14 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
   return localizeMetadata(baseMetadata, "/season10-recap", locale);
 }
 
-export default SeasonRecapPage;
+export default async function LocalizedSeasonRecapPage({ params }: LocalePageProps) {
+  const { locale } = await params;
+
+  if (!isRouteLocale(locale)) {
+    notFound();
+  }
+
+  setRequestLocale(locale);
+
+  return <SeasonRecapPage />;
+}

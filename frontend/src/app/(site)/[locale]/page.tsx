@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { setRequestLocale } from "next-intl/server";
 import { HomePageContent } from "@/components/features/home/HomePageContent";
 import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
 import { getPatches } from "@/lib/getPatches";
@@ -70,6 +71,8 @@ export default async function LocalizedHomePage({ params }: LocalePageProps) {
   if (!isRouteLocale(locale)) {
     notFound();
   }
+
+  setRequestLocale(locale);
 
   const defaultTier = "MITHRIL";
   const emptyRankingData: Awaited<ReturnType<typeof fetchRankingData>> = {
