@@ -14,8 +14,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function MiscLayout({ children }: { children: ReactNode }) {
-  const initialL10n = loadL10nRecord(DEFAULT_LANGUAGE);
   const initialMessages = await loadIntlMessages(DEFAULT_LANGUAGE);
+  const initialL10n = loadL10nRecord(DEFAULT_LANGUAGE);
 
   return (
     <html lang={HTML_LANG_BY_LANGUAGE[DEFAULT_LANGUAGE] ?? "ko"} className={geistSans.variable}>
@@ -24,7 +24,6 @@ export default async function MiscLayout({ children }: { children: ReactNode }) 
           initialL10n={initialL10n}
           initialMessages={initialMessages}
           initialLanguage={DEFAULT_LANGUAGE}
-          lockInitialLanguage
         >
           {children}
         </L10nProvider>

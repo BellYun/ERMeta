@@ -39,8 +39,8 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   }
 
   const language = LANGUAGE_BY_ROUTE_LOCALE[locale];
-  const initialL10n = loadL10nRecord(language);
   const initialMessages = await loadIntlMessages(language);
+  const initialL10n = loadL10nRecord(language);
   const htmlLang = HTML_LANG_BY_LANGUAGE[language] ?? "ko";
   const structuredData = await buildWebsiteStructuredData(language, locale);
 
@@ -51,7 +51,6 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           initialL10n={initialL10n}
           initialMessages={initialMessages}
           initialLanguage={language}
-          lockInitialLanguage
         >
           <AppFrame shellId={`locale-shell-${locale}`} messages={initialMessages} currentPatch="">
             {children}

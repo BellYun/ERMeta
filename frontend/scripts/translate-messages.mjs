@@ -20,21 +20,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const MESSAGES_DIR = join(__dirname, "../messages");
 const SOURCE_LOCALE = "ko";
 
+// src/i18n/routing.ts 의 ROUTE_LOCALES 와 일치 유지.
+// 라우트가 없는 locale 은 messages 파일이 dead asset 이 되므로 번역하지 않는다.
 const TARGETS = [
   { locale: "en", lang: "English" },
   { locale: "ja", lang: "Japanese (日本語)" },
   { locale: "zh-Hans", lang: "Simplified Chinese (简体中文)" },
   { locale: "zh-Hant", lang: "Traditional Chinese (繁體中文)" },
-  { locale: "es", lang: "Spanish (Español)" },
-  { locale: "fr", lang: "French (Français)" },
-  { locale: "de", lang: "German (Deutsch)" },
-  { locale: "id", lang: "Indonesian (Bahasa Indonesia)" },
-  { locale: "it", lang: "Italian (Italiano)" },
-  { locale: "pl", lang: "Polish (Polski)" },
-  { locale: "pt", lang: "Portuguese (Português)" },
-  { locale: "ru", lang: "Russian (Русский)" },
-  { locale: "vi", lang: "Vietnamese (Tiếng Việt)" },
-  { locale: "th", lang: "Thai (ไทย)" },
 ];
 
 // Eternal Return 게임 도메인 glossary — 일관된 용어 보장.

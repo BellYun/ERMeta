@@ -119,6 +119,7 @@ export default async function DefaultCharacterPage({ params }: Props) {
 
   return (
     <CharacterPageContent
+      locale="ko"
       code={code}
       patches={patches}
       initialStats={initialStats}

@@ -16,8 +16,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function DefaultLayout({ children }: { children: ReactNode }) {
-  const initialL10n = loadL10nRecord(DEFAULT_LANGUAGE);
   const initialMessages = await loadIntlMessages(DEFAULT_LANGUAGE);
+  const initialL10n = loadL10nRecord(DEFAULT_LANGUAGE);
   const structuredData = await buildWebsiteStructuredData(DEFAULT_LANGUAGE, DEFAULT_ROUTE_LOCALE);
 
   return (
@@ -27,7 +27,6 @@ export default async function DefaultLayout({ children }: { children: ReactNode 
           initialL10n={initialL10n}
           initialMessages={initialMessages}
           initialLanguage={DEFAULT_LANGUAGE}
-          lockInitialLanguage
         >
           <AppFrame shellId="default-ko-shell" messages={initialMessages} currentPatch="">
             {children}

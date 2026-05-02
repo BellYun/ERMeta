@@ -1,13 +1,13 @@
-"use client";
-
 import { BarChart3 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route";
 import { CharacterAnalysisClient } from "@/components/features/CharacterAnalysisClient";
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary";
+import type { RouteLocale } from "@/i18n/routing";
 
 interface CharacterPageContentProps {
+  locale: RouteLocale;
   code: number;
   patches: string[];
   initialStats: CharacterStatsResponse | null;
@@ -54,13 +54,14 @@ function CharacterAnalysisFallback() {
   );
 }
 
-export function CharacterPageContent({
+export async function CharacterPageContent({
+  locale,
   code,
   patches,
   initialStats,
   initialPrevStats,
 }: CharacterPageContentProps) {
-  const t = useTranslations("characterPage");
+  const t = await getTranslations({ locale, namespace: "characterPage" });
 
   return (
     <div className="page-shell flex flex-col gap-5 lg:gap-6">
