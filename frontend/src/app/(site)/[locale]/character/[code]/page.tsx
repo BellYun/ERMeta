@@ -131,6 +131,7 @@ export default async function LocalizedCharacterPage({ params }: Props) {
 
   return (
     <CharacterPageContent
+      locale={locale}
       code={code}
       patches={patches}
       initialStats={initialStats}
