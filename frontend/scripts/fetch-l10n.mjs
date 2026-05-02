@@ -10,23 +10,14 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUTPUT_DIR = join(__dirname, "../public/l10n");
 const SEPARATOR = "\u2503"; // ┃
 
-// BSER open-api.bser.io 가 지원하는 언어 (502 응답 = 미지원: Dutch/Turkish/Arabic 등)
+// 서비스 노출 언어 화이트리스트 (src/lib/detectLanguage.ts 의 SUPPORTED_LANGUAGES 와 일치 유지).
+// 그 외 언어는 라우트가 없어 dead asset 이 되므로 fetch 하지 않는다.
 const LANGUAGES = [
   "Korean",
   "English",
   "Japanese",
   "ChineseSimplified",
   "ChineseTraditional",
-  "French",
-  "German",
-  "Italian",
-  "Spanish",
-  "Portuguese",
-  "Polish",
-  "Russian",
-  "Vietnamese",
-  "Indonesian",
-  "Thai",
 ];
 
 const apiKey = process.env.BSER_API_KEY;
