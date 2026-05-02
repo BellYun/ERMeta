@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { setRequestLocale } from "next-intl/server";
 import "../../globals.css";
 import type { ReactNode } from "react";
 import { AppFrame } from "@/components/AppFrame";
@@ -37,6 +38,8 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   if (!isRouteLocale(locale)) {
     notFound();
   }
+
+  setRequestLocale(locale);
 
   const language = LANGUAGE_BY_ROUTE_LOCALE[locale];
   const initialMessages = await loadIntlMessages(language);
