@@ -13,6 +13,7 @@ import { getStaticTranslator, OG_LOCALE_BY_LANGUAGE } from "@/lib/staticIntl";
 import { TierGroup } from "@/utils/tier";
 
 export const revalidate = 3600;
+export const dynamic = "force-static";
 export const dynamicParams = false;
 
 interface Props {

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { setRequestLocale } from "next-intl/server";
 import { CharacterPageContent } from "@/components/features/character-analysis/CharacterPageContent";
 import { CHARACTER_CODES } from "@/components/features/character-analysis/constants";
 import { getAllPatchVersions } from "@/data/patch-notes";
@@ -13,6 +14,7 @@ import { getStaticTranslator, OG_LOCALE_BY_LANGUAGE } from "@/lib/staticIntl";
 import { TierGroup } from "@/utils/tier";
 
 export const revalidate = 3600;
+export const dynamic = "force-static";
 export const dynamicParams = false;
 
 interface Props {
@@ -111,6 +113,8 @@ export default async function LocalizedCharacterPage({ params }: Props) {
   if (!isRouteLocale(locale)) {
     notFound();
   }
+
+  setRequestLocale(locale);
 
   const code = parseInt(rawCode, 10);
 
