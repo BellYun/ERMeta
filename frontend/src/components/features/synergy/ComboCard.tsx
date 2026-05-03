@@ -1,10 +1,12 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import * as React from "react"
-import { getCharacterMiniWebpUrl } from "@/lib/characterMap"
-import { cn } from "@/lib/utils"
-import type { TrioResult } from "./types"
+import Image from "next/image";
+import * as React from "react";
+import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
+import { cn } from "@/lib/utils";
+import type { TrioResult } from "./types";
+
+const SMALL_SAMPLE_THRESHOLD = 20;
 
 export function ComboCard({
   rec,
@@ -15,30 +17,30 @@ export function ComboCard({
   priorityImages = false,
   onNavigateAnalysis,
 }: {
-  rec: TrioResult
-  rank: number
-  getCharName: (code: number) => string
-  selectedAllies: number[]
-  compact?: boolean
+  rec: TrioResult;
+  rank: number;
+  getCharName: (code: number) => string;
+  selectedAllies: number[];
+  compact?: boolean;
   /** true면 이미지를 priority로 즉시 로드 (상위 카드용) */
-  priorityImages?: boolean
-  onNavigateAnalysis?: (code: number) => void
+  priorityImages?: boolean;
+  onNavigateAnalysis?: (code: number) => void;
 }) {
   // 선택한 아군을 앞에, 추천 캐릭터를 마지막에 표시
-  const allChars = [rec.character1, rec.character2, rec.character3]
-  const allies: number[] = []
-  const rest: number[] = []
+  const allChars = [rec.character1, rec.character2, rec.character3];
+  const allies: number[] = [];
+  const rest: number[] = [];
   for (const code of allChars) {
     if (selectedAllies.includes(code) && allies.length < selectedAllies.length) {
-      allies.push(code)
+      allies.push(code);
     } else {
-      rest.push(code)
+      rest.push(code);
     }
   }
   // 선택 순서 유지
-  allies.sort((a, b) => selectedAllies.indexOf(a) - selectedAllies.indexOf(b))
-  const chars = [...allies, ...rest]
-  const isSmallSample = rec.totalGames <= 10
+  allies.sort((a, b) => selectedAllies.indexOf(a) - selectedAllies.indexOf(b));
+  const chars = [...allies, ...rest];
+  const isSmallSample = rec.totalGames < SMALL_SAMPLE_THRESHOLD;
 
   return (
     <div className="group flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 px-3 py-2.5 hover:bg-[var(--color-primary)]/[0.04] hover:border-[var(--color-primary)]/20 transition-all duration-200">
@@ -50,7 +52,7 @@ export function ComboCard({
       {/* 3캐릭터 */}
       <div className="flex items-center gap-1">
         {chars.map((code, i) => {
-          const isRecommended = !selectedAllies.includes(code)
+          const isRecommended = !selectedAllies.includes(code);
           const charContent = (
             <div className="flex flex-col items-center gap-0.5">
               <div
@@ -71,17 +73,19 @@ export function ComboCard({
                 />
               </div>
               {!compact && (
-                <span className={cn(
-                  "w-10 truncate text-center text-[9px]",
-                  isRecommended
-                    ? "text-[var(--color-accent-gold)] group-hover/char:text-[var(--color-primary)]"
-                    : "text-[var(--color-muted-foreground)]"
-                )}>
+                <span
+                  className={cn(
+                    "w-10 truncate text-center text-[9px]",
+                    isRecommended
+                      ? "text-[var(--color-accent-gold)] group-hover/char:text-[var(--color-primary)]"
+                      : "text-[var(--color-muted-foreground)]"
+                  )}
+                >
                   {getCharName(code)}
                 </span>
               )}
             </div>
-          )
+          );
           return (
             <React.Fragment key={code}>
               {isRecommended && onNavigateAnalysis ? (
@@ -101,11 +105,9 @@ export function ComboCard({
               ) : (
                 charContent
               )}
-              {i < 2 && (
-                <span className="text-[10px] text-[var(--color-border)]">+</span>
-              )}
+              {i < 2 && <span className="text-[10px] text-[var(--color-border)]">+</span>}
             </React.Fragment>
-          )
+          );
         })}
       </div>
 
@@ -122,11 +124,16 @@ export function ComboCard({
           <span className="text-xs font-semibold text-[var(--color-foreground)]">
             {rec.winRate.toFixed(1)}%
           </span>
-          <span className={cn(
-            "text-[10px]",
-            rec.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
-          )}>
-            {rec.averageRP > 0 ? "+" : ""}{rec.averageRP.toFixed(1)} RP
+          <span
+            className={cn(
+              "text-[10px]",
+              rec.averageRP >= 0
+                ? "text-[var(--color-accent-gold)]"
+                : "text-[var(--color-muted-foreground)]"
+            )}
+          >
+            {rec.averageRP > 0 ? "+" : ""}
+            {rec.averageRP.toFixed(1)} RP
           </span>
         </div>
       ) : (
@@ -139,11 +146,16 @@ export function ComboCard({
           </div>
           <div className="flex flex-col">
             <span className="text-[10px] text-[var(--color-muted-foreground)]">평균 RP</span>
-            <span className={cn(
-              "text-sm font-semibold",
-              rec.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
-            )}>
-              {rec.averageRP > 0 ? "+" : ""}{rec.averageRP.toFixed(1)}
+            <span
+              className={cn(
+                "text-sm font-semibold",
+                rec.averageRP >= 0
+                  ? "text-[var(--color-accent-gold)]"
+                  : "text-[var(--color-muted-foreground)]"
+              )}
+            >
+              {rec.averageRP > 0 ? "+" : ""}
+              {rec.averageRP.toFixed(1)}
             </span>
           </div>
           <div className="flex flex-col">
@@ -160,7 +172,6 @@ export function ComboCard({
           </div>
         </div>
       )}
-
     </div>
-  )
+  );
 }

@@ -51,6 +51,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [copied, setCopied] = React.useState(false);
+  const MIN_MEANINGFUL_GAMES = 20;
 
   const getCharName = React.useCallback(
     (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
@@ -127,13 +128,13 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
     const sorted =
       sortBy === "recommended"
         ? [
-            ...deduped.filter((r) => r.totalGames > 10 && r.averageRP >= 0),
-            ...deduped.filter((r) => r.totalGames > 10 && r.averageRP < 0),
-            ...deduped.filter((r) => r.totalGames <= 10),
+            ...deduped.filter((r) => r.totalGames >= MIN_MEANINGFUL_GAMES && r.averageRP >= 0),
+            ...deduped.filter((r) => r.totalGames >= MIN_MEANINGFUL_GAMES && r.averageRP < 0),
+            ...deduped.filter((r) => r.totalGames < MIN_MEANINGFUL_GAMES),
           ]
         : [...deduped.filter((r) => r.averageRP >= 0), ...deduped.filter((r) => r.averageRP < 0)];
     return sorted.slice(0, 20);
-  }, [trioResults, selectedAllies, focusCharacters, sortBy]);
+  }, [trioResults, selectedAllies, focusCharacters, sortBy, MIN_MEANINGFUL_GAMES]);
 
   const clearAllies = React.useCallback(() => {
     router.replace(withCurrentRouteLocale(pathname, "/synergy-detail"), { scroll: false });
