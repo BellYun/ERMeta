@@ -12,6 +12,7 @@ const DIAMOND_PLUS_TIERS: TierGroup[] = [
   TierGroup.IN1000,
 ];
 const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]);
+const TRIO_WEAPON_SEARCH_P10_TABLE = "v2_CharacterTrioWeaponSearch_p10";
 
 // .or() 한 번에 character1/2/3 세 컬럼 OR 절을 던지면 인기 캐릭(예: 자히르=1)에서
 // PostgREST statement_timeout(~3s) 초과 → 500. 컬럼당 단일 인덱스만 쓰는 .eq() 3쿼리
@@ -92,6 +93,118 @@ interface AggregatedTrioWeapon {
   winRate: number;
   averageRP: number;
   averageRank: number;
+}
+
+interface TrioWeaponSearchRow {
+  ally1_char: number;
+  ally1_weapon: number;
+  ally1_core: number | null;
+  ally2_char: number;
+  ally2_weapon: number;
+  ally2_core: number | null;
+  third_char: number;
+  third_weapon: number;
+  third_core: number | null;
+  total_games: number;
+  total_wins: number;
+  total_rp: number;
+  rank_sum: number;
+}
+
+function searchRowKey(row: TrioWeaponSearchRow): string {
+  return [
+    row.ally1_char,
+    row.ally1_weapon,
+    row.ally1_core ?? 0,
+    row.ally2_char,
+    row.ally2_weapon,
+    row.ally2_core ?? 0,
+    row.third_char,
+    row.third_weapon,
+    row.third_core ?? 0,
+  ].join("|");
+}
+
+function normalizeSelectedPair(
+  char1: number,
+  weapon1: number | null,
+  char2: number,
+  weapon2: number | null
+) {
+  if (char1 < char2) {
+    return {
+      ally1Char: char1,
+      ally1Weapon: weapon1,
+      ally2Char: char2,
+      ally2Weapon: weapon2,
+    };
+  }
+
+  return {
+    ally1Char: char2,
+    ally1Weapon: weapon2,
+    ally2Char: char1,
+    ally2Weapon: weapon1,
+  };
+}
+
+function mapSearchRowToAggregated(row: TrioWeaponSearchRow): AggregatedTrioWeapon {
+  return {
+    character1: row.ally1_char,
+    weaponType1: row.ally1_weapon,
+    character2: row.ally2_char,
+    weaponType2: row.ally2_weapon,
+    character3: row.third_char,
+    weaponType3: row.third_weapon,
+    mainCore1: row.ally1_core,
+    mainCore2: row.ally2_core,
+    mainCore3: row.third_core,
+    totalGames: row.total_games,
+    winRate: row.total_games > 0 ? (row.total_wins / row.total_games) * 100 : 0,
+    averageRP: row.total_games > 0 ? row.total_rp / row.total_games / 3 : 0,
+    averageRank: row.total_games > 0 ? row.rank_sum / row.total_games : 0,
+  };
+}
+
+function aggregateSearchRows(rows: TrioWeaponSearchRow[]): AggregatedTrioWeapon[] {
+  const grouped = new Map<string, TrioWeaponSearchRow>();
+
+  for (const row of rows) {
+    const key = searchRowKey(row);
+    const existing = grouped.get(key);
+
+    if (!existing) {
+      grouped.set(key, { ...row });
+      continue;
+    }
+
+    existing.total_games += row.total_games;
+    existing.total_wins += row.total_wins;
+    existing.total_rp += row.total_rp;
+    existing.rank_sum += row.rank_sum;
+  }
+
+  return Array.from(grouped.values()).map(mapSearchRowToAggregated);
+}
+
+function sortAggregatedResults(results: AggregatedTrioWeapon[], sortByParam: SortBy) {
+  if (sortByParam === "recommended") {
+    const globalAvgRP =
+      results.length > 0 ? results.reduce((sum, r) => sum + r.averageRP, 0) / results.length : 0;
+    const rpValues = results.map((r) => r.averageRP);
+    const rpRange = { min: Math.min(...rpValues), max: Math.max(...rpValues) };
+    results.sort(
+      (a, b) =>
+        recommendedScore(b, globalAvgRP, rpRange) - recommendedScore(a, globalAvgRP, rpRange)
+    );
+    return;
+  }
+
+  results.sort((a, b) => {
+    if (sortByParam === "averageRP") return b.averageRP - a.averageRP;
+    if (sortByParam === "winRate") return b.winRate - a.winRate;
+    return b.totalGames - a.totalGames;
+  });
 }
 
 function aggregateByTrioWeapon(rows: TrioWeaponRow[]): AggregatedTrioWeapon[] {
@@ -200,6 +313,50 @@ export async function GET(request: NextRequest) {
     const select =
       "tier,character1,weapon_type1,character2,weapon_type2,character3,weapon_type3,main_core1,main_core2,main_core3,total_games,total_wins,total_rp,rank_sum";
 
+    if (char1 != null && char2 != null) {
+      const normalized = normalizeSelectedPair(char1, weapon1, char2, weapon2);
+      let searchQuery = supabase
+        .from(TRIO_WEAPON_SEARCH_P10_TABLE)
+        .select(
+          "ally1_char,ally1_weapon,ally1_core,ally2_char,ally2_weapon,ally2_core,third_char,third_weapon,third_core,total_games,total_wins,total_rp,rank_sum"
+        )
+        .eq("ally1_char", normalized.ally1Char)
+        .eq("ally2_char", normalized.ally2Char)
+        .order("total_games", { ascending: false })
+        .limit(FULL_FETCH_LIMIT);
+
+      if (normalized.ally1Weapon != null) {
+        searchQuery = searchQuery.eq("ally1_weapon", normalized.ally1Weapon);
+      }
+      if (normalized.ally2Weapon != null) {
+        searchQuery = searchQuery.eq("ally2_weapon", normalized.ally2Weapon);
+      }
+
+      const { data: searchRows, error: searchError } = await searchQuery;
+
+      if (searchError) {
+        console.warn(
+          `[stats/trios-weapon] ${TRIO_WEAPON_SEARCH_P10_TABLE} fallback:`,
+          searchError.message
+        );
+      } else {
+        const aggregated = aggregateSearchRows((searchRows ?? []) as TrioWeaponSearchRow[]);
+
+        if (aggregated.length > 0) {
+          sortAggregatedResults(aggregated, sortByParam);
+
+          return NextResponse.json(
+            { results: aggregated.slice(0, limit) },
+            { headers: getCacheHeaders("frequent") }
+          );
+        }
+
+        console.info(
+          `[stats/trios-weapon] ${TRIO_WEAPON_SEARCH_P10_TABLE} returned 0 rows, fallback to v2_CharacterTrioWeapon`
+        );
+      }
+    }
+
     const baseQuery = (perQueryLimit: number) =>
       supabase
         .from("v2_CharacterTrioWeapon")
@@ -297,25 +454,7 @@ export async function GET(request: NextRequest) {
     });
 
     const aggregated = aggregateByTrioWeapon(filteredRows);
-
-    if (sortByParam === "recommended") {
-      const globalAvgRP =
-        aggregated.length > 0
-          ? aggregated.reduce((sum, r) => sum + r.averageRP, 0) / aggregated.length
-          : 0;
-      const rpValues = aggregated.map((r) => r.averageRP);
-      const rpRange = { min: Math.min(...rpValues), max: Math.max(...rpValues) };
-      aggregated.sort(
-        (a, b) =>
-          recommendedScore(b, globalAvgRP, rpRange) - recommendedScore(a, globalAvgRP, rpRange)
-      );
-    } else {
-      aggregated.sort((a, b) => {
-        if (sortByParam === "averageRP") return b.averageRP - a.averageRP;
-        if (sortByParam === "winRate") return b.winRate - a.winRate;
-        return b.totalGames - a.totalGames;
-      });
-    }
+    sortAggregatedResults(aggregated, sortByParam);
 
     return NextResponse.json(
       { results: aggregated.slice(0, limit) },

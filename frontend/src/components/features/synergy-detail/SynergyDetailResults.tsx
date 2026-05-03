@@ -140,6 +140,7 @@ export function SynergyDetailResults() {
   const [results, setResults] = React.useState<TrioWeaponResult[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const MIN_MEANINGFUL_GAMES = 20;
 
   /**
    * 1번 탭 즉각 반응 핵심:
@@ -311,8 +312,8 @@ export function SynergyDetailResults() {
     if (sortBy === "recommended") {
       grouped.sort((a, b) => {
         // 소표본 후순위
-        const aOk = a.totalGames > 10 && a.averageRP >= 0;
-        const bOk = b.totalGames > 10 && b.averageRP >= 0;
+        const aOk = a.totalGames >= MIN_MEANINGFUL_GAMES && a.averageRP >= 0;
+        const bOk = b.totalGames >= MIN_MEANINGFUL_GAMES && b.averageRP >= 0;
         if (aOk !== bOk) return aOk ? -1 : 1;
         return b.averageRP - a.averageRP;
       });
@@ -325,7 +326,7 @@ export function SynergyDetailResults() {
     }
 
     return grouped;
-  }, [results, deferredAllies, deferredCharCodes, focusCharWeapons, sortBy]);
+  }, [results, deferredAllies, deferredCharCodes, focusCharWeapons, sortBy, MIN_MEANINGFUL_GAMES]);
 
   const clearAllies = React.useCallback(() => {
     router.replace(pathname, { scroll: false });

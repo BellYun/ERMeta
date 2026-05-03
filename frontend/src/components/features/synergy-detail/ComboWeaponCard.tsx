@@ -11,6 +11,8 @@ import { TraitIcon } from "./TraitIcon";
 import type { TrioWeaponResult } from "./types";
 import { useTapGuard } from "./useTapGuard";
 
+const SMALL_SAMPLE_THRESHOLD = 20;
+
 /** Level 1 (접힘): 캐릭터+무기 조합 (mainCore 집계) */
 export interface GroupedCombo {
   character1: number;
@@ -89,7 +91,7 @@ function ComboWeaponCardImpl({
     () => getOrderedMembers(group, selectedCharCodes),
     [group, selectedCharCodes]
   );
-  const isSmallSample = group.totalGames <= 10;
+  const isSmallSample = group.totalGames < SMALL_SAMPLE_THRESHOLD;
   // 상위 10개까지 잘라두고, 초기 펼침에서는 상위 3개만 노출하여 첫 커밋 비용을 줄임.
   // 나머지는 "더보기" 로 유저 의도 있을 때만 mount (TraitIcon n×3 서브트리가 무거워서 INP 주요 기여자).
   const sortedVariants = React.useMemo(
