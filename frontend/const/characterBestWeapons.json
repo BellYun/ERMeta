@@ -727,8 +727,8 @@
   ],
   "86": [
     {
-      "weaponCode": 16,
-      "label": "양손검",
+      "weaponCode": 1,
+      "label": "글러브",
       "isDefault": true
     }
   ],
