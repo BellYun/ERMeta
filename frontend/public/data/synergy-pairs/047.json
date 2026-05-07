@@ -1,0 +1,159 @@
+{
+  "characterCode": 47,
+  "characterName": "라우라",
+  "patchScope": "10.x",
+  "tierScope": "DIAMOND+",
+  "minSampleGames": 40,
+  "confidenceThresholds": {
+    "high": 500,
+    "medium": 200
+  },
+  "builtAt": "2026-05-07T03:44:40.569Z",
+  "weapons": [
+    {
+      "weapon": 4,
+      "weaponName": "채찍",
+      "soloBaseline": {
+        "games": 64262,
+        "winRate": 11.77,
+        "avgRP": 1.77,
+        "avgRank": 4.35
+      },
+      "topSynergy": [
+        {
+          "partnerCode": 29,
+          "partnerName": "레온",
+          "partnerWeapon": 2,
+          "partnerWeaponName": "톤파",
+          "games": 585,
+          "winRate": 14.87,
+          "avgRP": 6.16,
+          "avgRank": 3.9,
+          "rpLift": 4.39,
+          "winRateLift": 3.1,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 3,
+          "partnerName": "피오라",
+          "partnerWeapon": 19,
+          "partnerWeaponName": "창",
+          "games": 330,
+          "winRate": 11.82,
+          "avgRP": 5.61,
+          "avgRank": 3.91,
+          "rpLift": 3.84,
+          "winRateLift": 0.05,
+          "confidence": "medium"
+        },
+        {
+          "partnerCode": 36,
+          "partnerName": "이바",
+          "partnerWeapon": 5,
+          "partnerWeaponName": "투척",
+          "games": 2586,
+          "winRate": 14.27,
+          "avgRP": 3.96,
+          "avgRank": 4.16,
+          "rpLift": 2.19,
+          "winRateLift": 2.5,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 23,
+          "partnerName": "캐시",
+          "partnerWeapon": 15,
+          "partnerWeaponName": "단검",
+          "games": 1689,
+          "winRate": 13.32,
+          "avgRP": 3.88,
+          "avgRank": 4.22,
+          "rpLift": 2.11,
+          "winRateLift": 1.55,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 4,
+          "partnerName": "매그너스",
+          "partnerWeapon": 13,
+          "partnerWeaponName": "망치",
+          "games": 2979,
+          "winRate": 13.09,
+          "avgRP": 3.53,
+          "avgRank": 4.24,
+          "rpLift": 1.76,
+          "winRateLift": 1.32,
+          "confidence": "high"
+        }
+      ],
+      "topAnti": [
+        {
+          "partnerCode": 45,
+          "partnerName": "마이",
+          "partnerWeapon": 4,
+          "partnerWeaponName": "채찍",
+          "games": 834,
+          "winRate": 13.67,
+          "avgRP": -5.56,
+          "avgRank": 4.41,
+          "rpLift": -7.33,
+          "winRateLift": 1.9,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 6,
+          "partnerName": "나딘",
+          "partnerWeapon": 7,
+          "partnerWeaponName": "활",
+          "games": 1512,
+          "winRate": 10.32,
+          "avgRP": -5.34,
+          "avgRank": 4.17,
+          "rpLift": -7.11,
+          "winRateLift": -1.45,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 8,
+          "partnerName": "하트",
+          "partnerWeapon": 22,
+          "partnerWeaponName": "기타",
+          "games": 1152,
+          "winRate": 15.36,
+          "avgRP": -5.14,
+          "avgRank": 4.38,
+          "rpLift": -6.91,
+          "winRateLift": 3.59,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 1,
+          "partnerName": "재키",
+          "partnerWeapon": 15,
+          "partnerWeaponName": "단검",
+          "games": 1335,
+          "winRate": 9.89,
+          "avgRP": -3.66,
+          "avgRank": 4.44,
+          "rpLift": -5.43,
+          "winRateLift": -1.88,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 71,
+          "partnerName": "케네스",
+          "partnerWeapon": 14,
+          "partnerWeaponName": "도끼",
+          "games": 2727,
+          "winRate": 9.57,
+          "avgRP": -3.59,
+          "avgRank": 4.61,
+          "rpLift": -5.36,
+          "winRateLift": -2.2,
+          "confidence": "high"
+        }
+      ],
+      "eligiblePairs": 114
+    }
+  ]
+}

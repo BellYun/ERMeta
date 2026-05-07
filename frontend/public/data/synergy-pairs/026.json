@@ -1,0 +1,159 @@
+{
+  "characterCode": 26,
+  "characterName": "바바라",
+  "patchScope": "10.x",
+  "tierScope": "DIAMOND+",
+  "minSampleGames": 40,
+  "confidenceThresholds": {
+    "high": 500,
+    "medium": 200
+  },
+  "builtAt": "2026-05-07T03:44:40.552Z",
+  "weapons": [
+    {
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloBaseline": {
+        "games": 89290,
+        "winRate": 14.7,
+        "avgRP": 0.06,
+        "avgRank": 4.2
+      },
+      "topSynergy": [
+        {
+          "partnerCode": 5,
+          "partnerName": "자히르",
+          "partnerWeapon": 5,
+          "partnerWeaponName": "투척",
+          "games": 828,
+          "winRate": 22.1,
+          "avgRP": 5.25,
+          "avgRank": 3.94,
+          "rpLift": 5.19,
+          "winRateLift": 7.4,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 9,
+          "partnerName": "아이솔",
+          "partnerWeapon": 10,
+          "partnerWeaponName": "돌격 소총",
+          "games": 4014,
+          "winRate": 17.94,
+          "avgRP": 4.24,
+          "avgRank": 4.11,
+          "rpLift": 4.18,
+          "winRateLift": 3.24,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 39,
+          "partnerName": "카밀로",
+          "partnerWeapon": 18,
+          "partnerWeaponName": "쌍검",
+          "games": 1683,
+          "winRate": 15.86,
+          "avgRP": 3.89,
+          "avgRank": 4.22,
+          "rpLift": 3.83,
+          "winRateLift": 1.16,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 57,
+          "partnerName": "마르티나",
+          "partnerWeapon": 23,
+          "partnerWeaponName": "카메라",
+          "games": 1305,
+          "winRate": 18.62,
+          "avgRP": 3.48,
+          "avgRank": 4.08,
+          "rpLift": 3.42,
+          "winRateLift": 3.92,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 29,
+          "partnerName": "레온",
+          "partnerWeapon": 2,
+          "partnerWeaponName": "톤파",
+          "games": 1425,
+          "winRate": 18.53,
+          "avgRP": 3.44,
+          "avgRank": 4,
+          "rpLift": 3.38,
+          "winRateLift": 3.83,
+          "confidence": "high"
+        }
+      ],
+      "topAnti": [
+        {
+          "partnerCode": 69,
+          "partnerName": "레니",
+          "partnerWeapon": 9,
+          "partnerWeaponName": "권총",
+          "games": 741,
+          "winRate": 12.96,
+          "avgRP": -7.69,
+          "avgRank": 4.44,
+          "rpLift": -7.75,
+          "winRateLift": -1.74,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 38,
+          "partnerName": "제니",
+          "partnerWeapon": 9,
+          "partnerWeaponName": "권총",
+          "games": 1062,
+          "winRate": 18.08,
+          "avgRP": -7.51,
+          "avgRank": 3.84,
+          "rpLift": -7.57,
+          "winRateLift": 3.38,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 24,
+          "partnerName": "아델라",
+          "partnerWeapon": 3,
+          "partnerWeaponName": "방망이",
+          "games": 798,
+          "winRate": 13.53,
+          "avgRP": -4.54,
+          "avgRank": 4.32,
+          "rpLift": -4.6,
+          "winRateLift": -1.17,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 12,
+          "partnerName": "혜진",
+          "partnerWeapon": 7,
+          "partnerWeaponName": "활",
+          "games": 1662,
+          "winRate": 16.97,
+          "avgRP": -4.52,
+          "avgRank": 4.01,
+          "rpLift": -4.58,
+          "winRateLift": 2.27,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 5,
+          "partnerName": "자히르",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "games": 909,
+          "winRate": 17.16,
+          "avgRP": -3.82,
+          "avgRank": 4.11,
+          "rpLift": -3.88,
+          "winRateLift": 2.46,
+          "confidence": "high"
+        }
+      ],
+      "eligiblePairs": 114
+    }
+  ]
+}

@@ -1,0 +1,159 @@
+{
+  "characterCode": 82,
+  "characterName": "슈린",
+  "patchScope": "10.x",
+  "tierScope": "DIAMOND+",
+  "minSampleGames": 40,
+  "confidenceThresholds": {
+    "high": 500,
+    "medium": 200
+  },
+  "builtAt": "2026-05-07T03:44:40.600Z",
+  "weapons": [
+    {
+      "weapon": 21,
+      "weaponName": "레이피어",
+      "soloBaseline": {
+        "games": 63710,
+        "winRate": 11.3,
+        "avgRP": 2.6,
+        "avgRank": 4.37
+      },
+      "topSynergy": [
+        {
+          "partnerCode": 27,
+          "partnerName": "알렉스",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "games": 750,
+          "winRate": 8.8,
+          "avgRP": 4.58,
+          "avgRank": 4,
+          "rpLift": 1.98,
+          "winRateLift": -2.5,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 28,
+          "partnerName": "수아",
+          "partnerWeapon": 13,
+          "partnerWeaponName": "망치",
+          "games": 1020,
+          "winRate": 12.94,
+          "avgRP": 3.97,
+          "avgRank": 4.26,
+          "rpLift": 1.37,
+          "winRateLift": 1.64,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 27,
+          "partnerName": "알렉스",
+          "partnerWeapon": 9,
+          "partnerWeaponName": "권총",
+          "games": 1557,
+          "winRate": 11.95,
+          "avgRP": 3.72,
+          "avgRank": 4.2,
+          "rpLift": 1.12,
+          "winRateLift": 0.65,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 28,
+          "partnerName": "수아",
+          "partnerWeapon": 3,
+          "partnerWeaponName": "방망이",
+          "games": 1473,
+          "winRate": 10.79,
+          "avgRP": 3.45,
+          "avgRank": 4.27,
+          "rpLift": 0.85,
+          "winRateLift": -0.51,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 6,
+          "partnerName": "나딘",
+          "partnerWeapon": 7,
+          "partnerWeaponName": "활",
+          "games": 1188,
+          "winRate": 13.64,
+          "avgRP": 3.06,
+          "avgRank": 4.16,
+          "rpLift": 0.46,
+          "winRateLift": 2.34,
+          "confidence": "high"
+        }
+      ],
+      "topAnti": [
+        {
+          "partnerCode": 7,
+          "partnerName": "현우",
+          "partnerWeapon": 2,
+          "partnerWeaponName": "톤파",
+          "games": 657,
+          "winRate": 10.05,
+          "avgRP": -8.11,
+          "avgRank": 4.39,
+          "rpLift": -10.71,
+          "winRateLift": -1.25,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 38,
+          "partnerName": "제니",
+          "partnerWeapon": 9,
+          "partnerWeaponName": "권총",
+          "games": 942,
+          "winRate": 11.46,
+          "avgRP": -4.25,
+          "avgRank": 4.28,
+          "rpLift": -6.85,
+          "winRateLift": 0.16,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 19,
+          "partnerName": "엠마",
+          "partnerWeapon": 24,
+          "partnerWeaponName": "아르카나",
+          "games": 645,
+          "winRate": 10.23,
+          "avgRP": -4.14,
+          "avgRank": 4.43,
+          "rpLift": -6.74,
+          "winRateLift": -1.07,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 44,
+          "partnerName": "에키온",
+          "partnerWeapon": 25,
+          "partnerWeaponName": "VF의수",
+          "games": 2520,
+          "winRate": 10,
+          "avgRP": -4.09,
+          "avgRank": 4.46,
+          "rpLift": -6.69,
+          "winRateLift": -1.3,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 2,
+          "partnerName": "아야",
+          "partnerWeapon": 11,
+          "partnerWeaponName": "저격총",
+          "games": 2655,
+          "winRate": 11.53,
+          "avgRP": -3.93,
+          "avgRank": 4.24,
+          "rpLift": -6.53,
+          "winRateLift": 0.23,
+          "confidence": "high"
+        }
+      ],
+      "eligiblePairs": 114
+    }
+  ]
+}
