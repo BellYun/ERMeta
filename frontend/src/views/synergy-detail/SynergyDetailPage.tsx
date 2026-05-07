@@ -95,30 +95,36 @@ function FlowCard({
   label,
   sublabel,
   accentClass,
+  stepClass,
+  edgeClass,
 }: {
   step: number;
   icon: ReactNode;
   label: string;
   sublabel: string;
   accentClass: string;
+  stepClass: string;
+  edgeClass: string;
 }) {
   return (
-    <div className="metric-card flex min-h-[108px] flex-col gap-3 px-3 py-3 sm:min-h-[150px] sm:gap-5 sm:px-5 sm:py-5">
+    <div
+      className={`metric-card relative flex min-h-[108px] flex-col gap-3 px-3 py-3 sm:min-h-[150px] sm:gap-5 sm:px-5 sm:py-5 ${edgeClass}`}
+    >
       <div className="flex items-center justify-between">
         <div
-          className={`flex h-9 w-9 items-center justify-center rounded-2xl border border-white/8 sm:h-12 sm:w-12 ${accentClass}`}
+          className={`flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 sm:h-12 sm:w-12 ${accentClass}`}
         >
           {icon}
         </div>
-        <span className="text-[11px] font-black tracking-[-0.04em] text-[var(--color-muted-foreground)] sm:text-sm">
+        <span className={`text-[13px] font-black tracking-[-0.02em] sm:text-base ${stepClass}`}>
           0{step}
         </span>
       </div>
       <div>
-        <p className="text-[0.95rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-xl">
+        <p className="text-[1rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-xl">
           {label}
         </p>
-        <p className="mt-1 text-[11px] leading-5 text-[var(--color-muted-foreground)] sm:text-sm">
+        <p className="mt-1.5 text-[12px] leading-5 text-[var(--color-foreground)]/72 sm:text-[13px] sm:leading-6">
           {sublabel}
         </p>
       </div>
@@ -142,15 +148,15 @@ export default function SynergyDetailPage() {
               <span className="rounded-full border border-[rgba(251,191,36,0.18)] bg-[rgba(251,191,36,0.08)] px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-warning)]">
                 {t("beta")}
               </span>
-              <span className="text-xs text-[var(--color-muted-foreground)] sm:text-sm">
+              <span className="text-xs text-[var(--color-foreground)]/72 sm:text-sm">
                 {t("dataNotice")}
               </span>
             </div>
 
-            <h1 className="mt-3 text-[1.9rem] font-black tracking-[-0.055em] text-[var(--color-foreground)] sm:mt-4 sm:text-[2.2rem] lg:text-[3.2rem]">
+            <h1 className="mt-3 text-[1.95rem] font-black tracking-[-0.055em] text-[var(--color-foreground)] sm:mt-4 sm:text-[2.3rem] lg:text-[3.25rem]">
               {t("title")}
             </h1>
-            <p className="mt-2.5 max-w-[42rem] text-[0.95rem] leading-6 text-[var(--color-foreground)]/88 sm:mt-3 sm:text-base sm:leading-7 lg:text-[1.05rem]">
+            <p className="mt-3 max-w-[42rem] text-[0.98rem] leading-6 text-[var(--color-foreground)]/92 sm:mt-3.5 sm:text-[1.02rem] sm:leading-7 lg:text-[1.08rem]">
               {t("subtitle")}
             </p>
           </div>
@@ -158,24 +164,30 @@ export default function SynergyDetailPage() {
           <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3 sm:gap-3 xl:contents">
             <FlowCard
               step={1}
-              icon={<Swords className="h-5 w-5 text-[#c084fc]" strokeWidth={2} />}
+              icon={<Swords className="h-5 w-5 text-[#d8b4fe]" strokeWidth={2.2} />}
               label={t("steps.pool.label")}
               sublabel={t("steps.pool.sublabel")}
-              accentClass="bg-[rgba(168,85,247,0.14)] text-[#c084fc]"
+              accentClass="bg-[rgba(168,85,247,0.22)] text-[#d8b4fe] shadow-[inset_0_0_0_1px_rgba(168,85,247,0.32)]"
+              stepClass="text-[#c084fc]"
+              edgeClass="border-l-2 border-l-[rgba(168,85,247,0.55)]"
             />
             <FlowCard
               step={2}
-              icon={<Users2 className="h-5 w-5 text-[#60a5fa]" strokeWidth={2} />}
+              icon={<Users2 className="h-5 w-5 text-[#93c5fd]" strokeWidth={2.2} />}
               label={t("steps.allies.label")}
               sublabel={t("steps.allies.sublabel")}
-              accentClass="bg-[rgba(59,130,246,0.14)] text-[#60a5fa]"
+              accentClass="bg-[rgba(59,130,246,0.22)] text-[#93c5fd] shadow-[inset_0_0_0_1px_rgba(59,130,246,0.32)]"
+              stepClass="text-[#60a5fa]"
+              edgeClass="border-l-2 border-l-[rgba(59,130,246,0.55)]"
             />
             <FlowCard
               step={3}
-              icon={<Crosshair className="h-5 w-5 text-[#fbbf24]" strokeWidth={2} />}
+              icon={<Crosshair className="h-5 w-5 text-[#fcd34d]" strokeWidth={2.2} />}
               label={t("steps.analysis.label")}
               sublabel={t("steps.analysis.sublabel")}
-              accentClass="bg-[rgba(251,191,36,0.14)] text-[#fbbf24]"
+              accentClass="bg-[rgba(251,191,36,0.22)] text-[#fcd34d] shadow-[inset_0_0_0_1px_rgba(251,191,36,0.34)]"
+              stepClass="text-[#fbbf24]"
+              edgeClass="border-l-2 border-l-[rgba(251,191,36,0.6)]"
             />
           </div>
         </div>

@@ -1,0 +1,1160 @@
+{
+  "characterCode": 60,
+  "characterName": "타지아",
+  "patchScope": "10.x",
+  "tierScope": "DIAMOND+",
+  "minSampleGames": 40,
+  "extractedAt": "2026-05-07T03:44:28.909Z",
+  "soloBaseline": [
+    {
+      "weapon": 6,
+      "games": 27463,
+      "wins": 3907,
+      "win_rate": 14.23,
+      "avg_rp": -0.5,
+      "avg_rank": 4.31
+    }
+  ],
+  "pairs": [
+    {
+      "focus_weapon": 6,
+      "partner_char": 72,
+      "partner_weapon": 11,
+      "games": 2856,
+      "wins": 414,
+      "win_rate": 14.5,
+      "avg_rp": 3.03,
+      "avg_rank": 4.25
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 65,
+      "partner_weapon": 16,
+      "games": 2820,
+      "wins": 378,
+      "win_rate": 13.4,
+      "avg_rp": 1.23,
+      "avg_rank": 4.37
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 22,
+      "partner_weapon": 3,
+      "games": 2583,
+      "wins": 276,
+      "win_rate": 10.69,
+      "avg_rp": 1.29,
+      "avg_rank": 4.59
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 31,
+      "partner_weapon": 7,
+      "games": 2568,
+      "wins": 390,
+      "win_rate": 15.19,
+      "avg_rp": -1.59,
+      "avg_rank": 4.33
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 78,
+      "partner_weapon": 16,
+      "games": 2490,
+      "wins": 318,
+      "win_rate": 12.77,
+      "avg_rp": 1.83,
+      "avg_rank": 4.42
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 67,
+      "partner_weapon": 14,
+      "games": 2292,
+      "wins": 324,
+      "win_rate": 14.14,
+      "avg_rp": -0.53,
+      "avg_rank": 4.34
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 74,
+      "partner_weapon": 3,
+      "games": 2181,
+      "wins": 306,
+      "win_rate": 14.03,
+      "avg_rp": 2.38,
+      "avg_rank": 4.35
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 69,
+      "partner_weapon": 9,
+      "games": 2175,
+      "wins": 315,
+      "win_rate": 14.48,
+      "avg_rp": -1.53,
+      "avg_rank": 4.25
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 21,
+      "partner_weapon": 9,
+      "games": 2046,
+      "wins": 309,
+      "win_rate": 15.1,
+      "avg_rp": 0.81,
+      "avg_rank": 4.29
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 18,
+      "partner_weapon": 15,
+      "games": 1965,
+      "wins": 195,
+      "win_rate": 9.92,
+      "avg_rp": -6.98,
+      "avg_rank": 4.6
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 59,
+      "partner_weapon": 2,
+      "games": 1962,
+      "wins": 291,
+      "win_rate": 14.83,
+      "avg_rp": -1.32,
+      "avg_rank": 4.45
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 51,
+      "partner_weapon": 22,
+      "games": 1956,
+      "wins": 372,
+      "win_rate": 19.02,
+      "avg_rp": 2.66,
+      "avg_rank": 4.07
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 84,
+      "partner_weapon": 18,
+      "games": 1944,
+      "wins": 327,
+      "win_rate": 16.82,
+      "avg_rp": 4.27,
+      "avg_rank": 4.27
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 58,
+      "partner_weapon": 10,
+      "games": 1929,
+      "wins": 291,
+      "win_rate": 15.09,
+      "avg_rp": 0.45,
+      "avg_rank": 4.21
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 7,
+      "partner_weapon": 1,
+      "games": 1860,
+      "wins": 261,
+      "win_rate": 14.03,
+      "avg_rp": 0.52,
+      "avg_rank": 4.42
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 73,
+      "partner_weapon": 24,
+      "games": 1821,
+      "wins": 309,
+      "win_rate": 16.97,
+      "avg_rp": 1.7,
+      "avg_rank": 4.45
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 85,
+      "partner_weapon": 13,
+      "games": 1707,
+      "wins": 246,
+      "win_rate": 14.41,
+      "avg_rp": -2.83,
+      "avg_rank": 4.24
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 11,
+      "partner_weapon": 16,
+      "games": 1704,
+      "wins": 198,
+      "win_rate": 11.62,
+      "avg_rp": -2.87,
+      "avg_rank": 4.41
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 33,
+      "partner_weapon": 1,
+      "games": 1671,
+      "wins": 207,
+      "win_rate": 12.39,
+      "avg_rp": -1.34,
+      "avg_rank": 4.42
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 71,
+      "partner_weapon": 14,
+      "games": 1644,
+      "wins": 213,
+      "win_rate": 12.96,
+      "avg_rp": -0.4,
+      "avg_rank": 4.31
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 70,
+      "partner_weapon": 6,
+      "games": 1620,
+      "wins": 213,
+      "win_rate": 13.15,
+      "avg_rp": 3.11,
+      "avg_rank": 4.37
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 77,
+      "partner_weapon": 24,
+      "games": 1563,
+      "wins": 231,
+      "win_rate": 14.78,
+      "avg_rp": -1.3,
+      "avg_rank": 4.3
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 79,
+      "partner_weapon": 8,
+      "games": 1521,
+      "wins": 156,
+      "win_rate": 10.26,
+      "avg_rp": -0.85,
+      "avg_rank": 4.44
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 87,
+      "partner_weapon": 24,
+      "games": 1512,
+      "wins": 195,
+      "win_rate": 12.9,
+      "avg_rp": 0.55,
+      "avg_rank": 4.4
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 86,
+      "partner_weapon": 1,
+      "games": 1494,
+      "wins": 189,
+      "win_rate": 12.65,
+      "avg_rp": -0.22,
+      "avg_rank": 4.28
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 46,
+      "partner_weapon": 16,
+      "games": 1392,
+      "wins": 216,
+      "win_rate": 15.52,
+      "avg_rp": 1.85,
+      "avg_rank": 4.21
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 4,
+      "partner_weapon": 13,
+      "games": 1383,
+      "wins": 174,
+      "win_rate": 12.58,
+      "avg_rp": -0.21,
+      "avg_rank": 4.46
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 80,
+      "partner_weapon": 19,
+      "games": 1359,
+      "wins": 150,
+      "win_rate": 11.04,
+      "avg_rp": 2.32,
+      "avg_rank": 4.39
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 20,
+      "partner_weapon": 4,
+      "games": 1356,
+      "wins": 240,
+      "win_rate": 17.7,
+      "avg_rp": 3.23,
+      "avg_rank": 4.17
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 26,
+      "partner_weapon": 9,
+      "games": 1353,
+      "wins": 195,
+      "win_rate": 14.41,
+      "avg_rp": 2.07,
+      "avg_rank": 4.29
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 53,
+      "partner_weapon": 14,
+      "games": 1335,
+      "wins": 186,
+      "win_rate": 13.93,
+      "avg_rp": -1.88,
+      "avg_rank": 4.33
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 29,
+      "partner_weapon": 1,
+      "games": 1308,
+      "wins": 180,
+      "win_rate": 13.76,
+      "avg_rp": 0.43,
+      "avg_rank": 4.39
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 64,
+      "partner_weapon": 24,
+      "games": 1260,
+      "wins": 201,
+      "win_rate": 15.95,
+      "avg_rp": -2.37,
+      "avg_rank": 4.3
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 55,
+      "partner_weapon": 14,
+      "games": 1230,
+      "wins": 183,
+      "win_rate": 14.88,
+      "avg_rp": -1.05,
+      "avg_rank": 4.24
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 83,
+      "partner_weapon": 6,
+      "games": 1227,
+      "wins": 144,
+      "win_rate": 11.74,
+      "avg_rp": 1.98,
+      "avg_rank": 4.32
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 75,
+      "partner_weapon": 22,
+      "games": 1224,
+      "wins": 123,
+      "win_rate": 10.05,
+      "avg_rp": 0.54,
+      "avg_rank": 4.61
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 16,
+      "partner_weapon": 9,
+      "games": 1218,
+      "wins": 189,
+      "win_rate": 15.52,
+      "avg_rp": 2.65,
+      "avg_rank": 4.26
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 42,
+      "partner_weapon": 24,
+      "games": 1197,
+      "wins": 132,
+      "win_rate": 11.03,
+      "avg_rp": -0.65,
+      "avg_rank": 4.59
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 76,
+      "partner_weapon": 3,
+      "games": 1194,
+      "wins": 183,
+      "win_rate": 15.33,
+      "avg_rp": 3.6,
+      "avg_rank": 4.16
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 14,
+      "partner_weapon": 21,
+      "games": 1182,
+      "wins": 177,
+      "win_rate": 14.97,
+      "avg_rp": -3.52,
+      "avg_rank": 4.47
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 47,
+      "partner_weapon": 4,
+      "games": 1182,
+      "wins": 144,
+      "win_rate": 12.18,
+      "avg_rp": 3.22,
+      "avg_rank": 4.31
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 30,
+      "partner_weapon": 13,
+      "games": 1182,
+      "wins": 153,
+      "win_rate": 12.94,
+      "avg_rp": -2.5,
+      "avg_rank": 4.38
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 32,
+      "partner_weapon": 5,
+      "games": 1179,
+      "wins": 225,
+      "win_rate": 19.08,
+      "avg_rp": 3.36,
+      "avg_rank": 4.14
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 81,
+      "partner_weapon": 9,
+      "games": 1173,
+      "wins": 162,
+      "win_rate": 13.81,
+      "avg_rp": -1.45,
+      "avg_rank": 4.42
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 49,
+      "partner_weapon": 19,
+      "games": 1173,
+      "wins": 159,
+      "win_rate": 13.55,
+      "avg_rp": -4.64,
+      "avg_rank": 4.29
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 53,
+      "partner_weapon": 13,
+      "games": 1167,
+      "wins": 171,
+      "win_rate": 14.65,
+      "avg_rp": -1.99,
+      "avg_rank": 4.48
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 56,
+      "partner_weapon": 20,
+      "games": 1140,
+      "wins": 144,
+      "win_rate": 12.63,
+      "avg_rp": -1.59,
+      "avg_rank": 4.44
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 25,
+      "partner_weapon": 11,
+      "games": 1122,
+      "wins": 171,
+      "win_rate": 15.24,
+      "avg_rp": 2.2,
+      "avg_rank": 4.39
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 6,
+      "partner_weapon": 8,
+      "games": 1116,
+      "wins": 150,
+      "win_rate": 13.44,
+      "avg_rp": 0.44,
+      "avg_rank": 4.42
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 10,
+      "partner_weapon": 1,
+      "games": 1113,
+      "wins": 177,
+      "win_rate": 15.9,
+      "avg_rp": 5.47,
+      "avg_rank": 3.96
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 41,
+      "partner_weapon": 24,
+      "games": 1101,
+      "wins": 159,
+      "win_rate": 14.44,
+      "avg_rp": 0.01,
+      "avg_rank": 4.34
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 2,
+      "partner_weapon": 10,
+      "games": 1095,
+      "wins": 174,
+      "win_rate": 15.89,
+      "avg_rp": 0.98,
+      "avg_rank": 4.16
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 39,
+      "partner_weapon": 21,
+      "games": 1083,
+      "wins": 180,
+      "win_rate": 16.62,
+      "avg_rp": 2.42,
+      "avg_rank": 4.34
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 82,
+      "partner_weapon": 21,
+      "games": 1074,
+      "wins": 171,
+      "win_rate": 15.92,
+      "avg_rp": 1.91,
+      "avg_rank": 4.35
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 1,
+      "partner_weapon": 16,
+      "games": 1068,
+      "wins": 135,
+      "win_rate": 12.64,
+      "avg_rp": -1.07,
+      "avg_rank": 4.29
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 63,
+      "partner_weapon": 15,
+      "games": 1053,
+      "wins": 138,
+      "win_rate": 13.11,
+      "avg_rp": 0.68,
+      "avg_rank": 4.34
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 9,
+      "partner_weapon": 10,
+      "games": 1047,
+      "wins": 156,
+      "win_rate": 14.9,
+      "avg_rp": 3.34,
+      "avg_rank": 4.3
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 44,
+      "partner_weapon": 25,
+      "games": 1035,
+      "wins": 123,
+      "win_rate": 11.88,
+      "avg_rp": 0.31,
+      "avg_rank": 4.25
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 50,
+      "partner_weapon": 21,
+      "games": 1014,
+      "wins": 126,
+      "win_rate": 12.43,
+      "avg_rp": -2.34,
+      "avg_rank": 4.38
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 48,
+      "partner_weapon": 3,
+      "games": 1005,
+      "wins": 132,
+      "win_rate": 13.13,
+      "avg_rp": -3.61,
+      "avg_rank": 4.29
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 35,
+      "partner_weapon": 2,
+      "games": 960,
+      "wins": 144,
+      "win_rate": 15,
+      "avg_rp": 0.96,
+      "avg_rank": 4.38
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 62,
+      "partner_weapon": 11,
+      "games": 951,
+      "wins": 162,
+      "win_rate": 17.03,
+      "avg_rp": 1.09,
+      "avg_rank": 4.31
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 36,
+      "partner_weapon": 5,
+      "games": 945,
+      "wins": 186,
+      "win_rate": 19.68,
+      "avg_rp": 4.12,
+      "avg_rank": 4.09
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 61,
+      "partner_weapon": 5,
+      "games": 930,
+      "wins": 144,
+      "win_rate": 15.48,
+      "avg_rp": 3.28,
+      "avg_rank": 4.06
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 35,
+      "partner_weapon": 1,
+      "games": 930,
+      "wins": 120,
+      "win_rate": 12.9,
+      "avg_rp": 2.92,
+      "avg_rank": 4.22
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 34,
+      "partner_weapon": 23,
+      "games": 906,
+      "wins": 165,
+      "win_rate": 18.21,
+      "avg_rp": 4.46,
+      "avg_rank": 4.25
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 3,
+      "partner_weapon": 21,
+      "games": 888,
+      "wins": 114,
+      "win_rate": 12.84,
+      "avg_rp": 2.04,
+      "avg_rank": 4.39
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 2,
+      "partner_weapon": 11,
+      "games": 885,
+      "wins": 156,
+      "win_rate": 17.63,
+      "avg_rp": 4.04,
+      "avg_rank": 4.09
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 11,
+      "partner_weapon": 18,
+      "games": 882,
+      "wins": 123,
+      "win_rate": 13.95,
+      "avg_rp": 3.64,
+      "avg_rank": 4.3
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 37,
+      "partner_weapon": 15,
+      "games": 879,
+      "wins": 141,
+      "win_rate": 16.04,
+      "avg_rp": 6.58,
+      "avg_rank": 3.96
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 40,
+      "partner_weapon": 6,
+      "games": 849,
+      "wins": 147,
+      "win_rate": 17.31,
+      "avg_rp": 2.35,
+      "avg_rank": 4.12
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 17,
+      "partner_weapon": 5,
+      "games": 840,
+      "wins": 114,
+      "win_rate": 13.57,
+      "avg_rp": 1.99,
+      "avg_rank": 4.41
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 68,
+      "partner_weapon": 1,
+      "games": 810,
+      "wins": 129,
+      "win_rate": 15.93,
+      "avg_rp": 3.26,
+      "avg_rank": 4.34
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 54,
+      "partner_weapon": 8,
+      "games": 792,
+      "wins": 114,
+      "win_rate": 14.39,
+      "avg_rp": 0.83,
+      "avg_rank": 4.33
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 52,
+      "partner_weapon": 24,
+      "games": 774,
+      "wins": 117,
+      "win_rate": 15.12,
+      "avg_rp": 4.35,
+      "avg_rank": 4.17
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 2,
+      "partner_weapon": 9,
+      "games": 744,
+      "wins": 108,
+      "win_rate": 14.52,
+      "avg_rp": 1.68,
+      "avg_rank": 4.17
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 45,
+      "partner_weapon": 4,
+      "games": 744,
+      "wins": 93,
+      "win_rate": 12.5,
+      "avg_rp": 1.61,
+      "avg_rank": 4.39
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 27,
+      "partner_weapon": 9,
+      "games": 723,
+      "wins": 138,
+      "win_rate": 19.09,
+      "avg_rp": 1.07,
+      "avg_rank": 4.11
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 27,
+      "partner_weapon": 16,
+      "games": 720,
+      "wins": 81,
+      "win_rate": 11.25,
+      "avg_rp": 2.15,
+      "avg_rank": 4.18
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 28,
+      "partner_weapon": 3,
+      "games": 690,
+      "wins": 126,
+      "win_rate": 18.26,
+      "avg_rp": 0.1,
+      "avg_rank": 4.06
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 66,
+      "partner_weapon": 24,
+      "games": 684,
+      "wins": 108,
+      "win_rate": 15.79,
+      "avg_rp": -2.69,
+      "avg_rank": 4.14
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 8,
+      "partner_weapon": 22,
+      "games": 660,
+      "wins": 105,
+      "win_rate": 15.91,
+      "avg_rp": -4,
+      "avg_rank": 4.33
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 23,
+      "partner_weapon": 15,
+      "games": 651,
+      "wins": 66,
+      "win_rate": 10.14,
+      "avg_rp": 4.57,
+      "avg_rank": 4.05
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 13,
+      "partner_weapon": 15,
+      "games": 630,
+      "wins": 63,
+      "win_rate": 10,
+      "avg_rp": -2.61,
+      "avg_rank": 4.45
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 12,
+      "partner_weapon": 7,
+      "games": 627,
+      "wins": 87,
+      "win_rate": 13.88,
+      "avg_rp": 0.63,
+      "avg_rank": 4.46
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 9,
+      "partner_weapon": 9,
+      "games": 615,
+      "wins": 102,
+      "win_rate": 16.59,
+      "avg_rp": 4.21,
+      "avg_rank": 4.1
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 39,
+      "partner_weapon": 18,
+      "games": 603,
+      "wins": 78,
+      "win_rate": 12.94,
+      "avg_rp": 3.75,
+      "avg_rank": 4.15
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 57,
+      "partner_weapon": 23,
+      "games": 600,
+      "wins": 75,
+      "win_rate": 12.5,
+      "avg_rp": -1.89,
+      "avg_rank": 4.23
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 15,
+      "partner_weapon": 6,
+      "games": 588,
+      "wins": 72,
+      "win_rate": 12.24,
+      "avg_rp": -1.55,
+      "avg_rank": 4.31
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 43,
+      "partner_weapon": 5,
+      "games": 576,
+      "wins": 96,
+      "win_rate": 16.67,
+      "avg_rp": 3.35,
+      "avg_rank": 4.34
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 19,
+      "partner_weapon": 6,
+      "games": 576,
+      "wins": 72,
+      "win_rate": 12.5,
+      "avg_rp": 1.68,
+      "avg_rank": 4.07
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 10,
+      "partner_weapon": 20,
+      "games": 543,
+      "wins": 63,
+      "win_rate": 11.6,
+      "avg_rp": -1.46,
+      "avg_rank": 4.45
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 6,
+      "partner_weapon": 7,
+      "games": 522,
+      "wins": 123,
+      "win_rate": 23.56,
+      "avg_rp": 2.34,
+      "avg_rank": 3.89
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 27,
+      "partner_weapon": 2,
+      "games": 507,
+      "wins": 51,
+      "win_rate": 10.06,
+      "avg_rp": -3.16,
+      "avg_rank": 4.46
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 4,
+      "partner_weapon": 3,
+      "games": 480,
+      "wins": 57,
+      "win_rate": 11.88,
+      "avg_rp": 1.94,
+      "avg_rank": 4.45
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 28,
+      "partner_weapon": 13,
+      "games": 459,
+      "wins": 63,
+      "win_rate": 13.73,
+      "avg_rp": -0.65,
+      "avg_rank": 4.26
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 15,
+      "partner_weapon": 5,
+      "games": 456,
+      "wins": 75,
+      "win_rate": 16.45,
+      "avg_rp": -0.82,
+      "avg_rank": 3.99
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 1,
+      "partner_weapon": 15,
+      "games": 444,
+      "wins": 57,
+      "win_rate": 12.84,
+      "avg_rp": 3.32,
+      "avg_rank": 4.3
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 38,
+      "partner_weapon": 9,
+      "games": 438,
+      "wins": 60,
+      "win_rate": 13.7,
+      "avg_rp": -4.12,
+      "avg_rank": 4.29
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 24,
+      "partner_weapon": 21,
+      "games": 435,
+      "wins": 108,
+      "win_rate": 24.83,
+      "avg_rp": -2.62,
+      "avg_rank": 3.92
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 27,
+      "partner_weapon": 6,
+      "games": 354,
+      "wins": 45,
+      "win_rate": 12.71,
+      "avg_rp": -7.3,
+      "avg_rank": 4.24
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 1,
+      "partner_weapon": 18,
+      "games": 348,
+      "wins": 51,
+      "win_rate": 14.66,
+      "avg_rp": 3.65,
+      "avg_rank": 4.25
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 29,
+      "partner_weapon": 2,
+      "games": 330,
+      "wins": 45,
+      "win_rate": 13.64,
+      "avg_rp": 2.91,
+      "avg_rank": 4.36
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 5,
+      "partner_weapon": 6,
+      "games": 324,
+      "wins": 54,
+      "win_rate": 16.67,
+      "avg_rp": 0.53,
+      "avg_rank": 4.34
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 3,
+      "partner_weapon": 16,
+      "games": 321,
+      "wins": 18,
+      "win_rate": 5.61,
+      "avg_rp": -4.47,
+      "avg_rank": 4.34
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 7,
+      "partner_weapon": 2,
+      "games": 288,
+      "wins": 21,
+      "win_rate": 7.29,
+      "avg_rp": -7.01,
+      "avg_rank": 4.65
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 13,
+      "partner_weapon": 19,
+      "games": 270,
+      "wins": 21,
+      "win_rate": 7.78,
+      "avg_rp": 0.71,
+      "avg_rank": 4.21
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 24,
+      "partner_weapon": 3,
+      "games": 252,
+      "wins": 42,
+      "win_rate": 16.67,
+      "avg_rp": 3.88,
+      "avg_rank": 4.29
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 5,
+      "partner_weapon": 5,
+      "games": 240,
+      "wins": 45,
+      "win_rate": 18.75,
+      "avg_rp": 6.08,
+      "avg_rank": 4.03
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 19,
+      "partner_weapon": 24,
+      "games": 222,
+      "wins": 27,
+      "win_rate": 12.16,
+      "avg_rp": -6.25,
+      "avg_rank": 4.05
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 12,
+      "partner_weapon": 6,
+      "games": 204,
+      "wins": 27,
+      "win_rate": 13.24,
+      "avg_rp": 4.61,
+      "avg_rank": 3.91
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 1,
+      "partner_weapon": 14,
+      "games": 159,
+      "wins": 18,
+      "win_rate": 11.32,
+      "avg_rp": 1.78,
+      "avg_rank": 4.43
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 3,
+      "partner_weapon": 19,
+      "games": 150,
+      "wins": 18,
+      "win_rate": 12,
+      "avg_rp": 2.67,
+      "avg_rank": 4.48
+    },
+    {
+      "focus_weapon": 6,
+      "partner_char": 23,
+      "partner_weapon": 18,
+      "games": 138,
+      "wins": 24,
+      "win_rate": 17.39,
+      "avg_rp": 3.4,
+      "avg_rank": 4.02
+    }
+  ]
+}

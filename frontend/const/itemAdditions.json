@@ -1,0 +1,18 @@
+{
+  "201536": {
+    "name": "백야의 관",
+    "nameEn": "White Night Crown",
+    "slot": "head",
+    "grade": "Legend",
+    "imagePath": "/Item/02. Armor/02. Head/063. White Night Crown.png",
+    "addedIn": "11.1"
+  },
+  "201537": {
+    "name": "야생의 허기",
+    "nameEn": "Wild Hunger",
+    "slot": "head",
+    "grade": "Legend",
+    "imagePath": "/Item/02. Armor/02. Head/064. Wild Hunger.png",
+    "addedIn": "11.1"
+  }
+}

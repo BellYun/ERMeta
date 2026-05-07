@@ -149,6 +149,7 @@
     "patchOption": "패치 {patch}",
     "noPatch": "패치 없음",
     "tiers": {
+      "PLATINUM": "플레티넘",
       "DIAMOND": "다이아",
       "METEORITE": "메테오라이트",
       "MITHRIL": "미스릴"
@@ -239,6 +240,7 @@
     "emptyPatchData": "이 패치에서 데이터가 없습니다.",
     "loadingPatchInfo": "패치 정보를 불러오는 중...",
     "tiers": {
+      "PLATINUM": "플레티넘",
       "DIAMOND": "다이아",
       "METEORITE": "메테오라이트",
       "MITHRIL": "미스릴 이상",

@@ -1,0 +1,159 @@
+{
+  "characterCode": 56,
+  "characterName": "피올로",
+  "patchScope": "10.x",
+  "tierScope": "DIAMOND+",
+  "minSampleGames": 40,
+  "confidenceThresholds": {
+    "high": 500,
+    "medium": 200
+  },
+  "builtAt": "2026-05-07T03:44:40.575Z",
+  "weapons": [
+    {
+      "weapon": 20,
+      "weaponName": "쌍절곤",
+      "soloBaseline": {
+        "games": 61742,
+        "winRate": 12.78,
+        "avgRP": 3.52,
+        "avgRank": 4.23
+      },
+      "topSynergy": [
+        {
+          "partnerCode": 13,
+          "partnerName": "쇼우",
+          "partnerWeapon": 19,
+          "partnerWeaponName": "창",
+          "games": 420,
+          "winRate": 17.14,
+          "avgRP": 6.88,
+          "avgRank": 3.95,
+          "rpLift": 3.36,
+          "winRateLift": 4.36,
+          "confidence": "medium"
+        },
+        {
+          "partnerCode": 1,
+          "partnerName": "재키",
+          "partnerWeapon": 14,
+          "partnerWeaponName": "도끼",
+          "games": 450,
+          "winRate": 14.67,
+          "avgRP": 6.46,
+          "avgRank": 4,
+          "rpLift": 2.94,
+          "winRateLift": 1.89,
+          "confidence": "medium"
+        },
+        {
+          "partnerCode": 1,
+          "partnerName": "재키",
+          "partnerWeapon": 18,
+          "partnerWeaponName": "쌍검",
+          "games": 975,
+          "winRate": 13.54,
+          "avgRP": 5.54,
+          "avgRank": 4.02,
+          "rpLift": 2.02,
+          "winRateLift": 0.76,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 23,
+          "partnerName": "캐시",
+          "partnerWeapon": 18,
+          "partnerWeaponName": "쌍검",
+          "games": 294,
+          "winRate": 8.16,
+          "avgRP": 5.02,
+          "avgRank": 3.95,
+          "rpLift": 1.5,
+          "winRateLift": -4.62,
+          "confidence": "medium"
+        },
+        {
+          "partnerCode": 34,
+          "partnerName": "나타폰",
+          "partnerWeapon": 23,
+          "partnerWeaponName": "카메라",
+          "games": 2523,
+          "winRate": 13.91,
+          "avgRP": 4.75,
+          "avgRank": 4.17,
+          "rpLift": 1.23,
+          "winRateLift": 1.13,
+          "confidence": "high"
+        }
+      ],
+      "topAnti": [
+        {
+          "partnerCode": 24,
+          "partnerName": "아델라",
+          "partnerWeapon": 3,
+          "partnerWeaponName": "방망이",
+          "games": 819,
+          "winRate": 10.26,
+          "avgRP": -5.01,
+          "avgRank": 4.32,
+          "rpLift": -8.53,
+          "winRateLift": -2.52,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 3,
+          "partnerName": "피오라",
+          "partnerWeapon": 16,
+          "partnerWeaponName": "양손검",
+          "games": 795,
+          "winRate": 9.43,
+          "avgRP": -4.74,
+          "avgRank": 4.36,
+          "rpLift": -8.26,
+          "winRateLift": -3.35,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 20,
+          "partnerName": "레녹스",
+          "partnerWeapon": 4,
+          "partnerWeaponName": "채찍",
+          "games": 1863,
+          "winRate": 12.24,
+          "avgRP": -3.89,
+          "avgRank": 4.27,
+          "rpLift": -7.41,
+          "winRateLift": -0.54,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 5,
+          "partnerName": "자히르",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "games": 876,
+          "winRate": 15.07,
+          "avgRP": -3.13,
+          "avgRank": 4,
+          "rpLift": -6.65,
+          "winRateLift": 2.29,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 61,
+          "partnerName": "이렘",
+          "partnerWeapon": 5,
+          "partnerWeaponName": "투척",
+          "games": 2292,
+          "winRate": 12.7,
+          "avgRP": -3.04,
+          "avgRank": 4.2,
+          "rpLift": -6.56,
+          "winRateLift": -0.08,
+          "confidence": "high"
+        }
+      ],
+      "eligiblePairs": 114
+    }
+  ]
+}

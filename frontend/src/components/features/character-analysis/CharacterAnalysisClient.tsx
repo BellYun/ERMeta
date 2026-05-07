@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
 import { TierGroup } from "@/utils/tier";
 import { CharacterHeader } from "./CharacterHeader";
+import { SynergyPartnersSection } from "./SynergyPartnersSection";
 import { assignCharTier, fetchStats } from "./utils";
 
 // 탭 콘텐츠: lazy import (코드 스플릿)
@@ -320,6 +321,8 @@ export function CharacterAnalysisClient({
             </div>
           </section>
         )}
+
+        <SynergyPartnersSection characterCode={code} selectedWeapon={selectedWeapon} />
       </div>
 
       <div className="pt-0.5 sm:pt-1">
