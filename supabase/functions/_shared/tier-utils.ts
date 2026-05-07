@@ -5,14 +5,16 @@
 
 export enum TierGroup {
   DIAMOND_BELOW = "DIAMOND_BELOW",
+  PLATINUM = "PLATINUM",
   DIAMOND = "DIAMOND",
   METEORITE = "METEORITE",
   MITHRIL = "MITHRIL",
   IN1000 = "IN1000",
 }
 
-// 다이아 이상 지표 수집 대상 티어
+// 플래티넘 이상 지표 수집 대상 티어
 export const COLLECT_TIERS: TierGroup[] = [
+  TierGroup.PLATINUM,
   TierGroup.DIAMOND,
   TierGroup.METEORITE,
   TierGroup.MITHRIL,
@@ -21,6 +23,13 @@ export const COLLECT_TIERS: TierGroup[] = [
 
 /**
  * MMR이 속하는 모든 티어 그룹 반환
+ *
+ * - DIAMOND_BELOW: MMR < 3600  (수집 제외)
+ * - PLATINUM: 3600 <= MMR < 5000
+ * - DIAMOND: 5000 <= MMR < 6400
+ * - METEORITE: 6400 <= MMR < 7600
+ * - MITHRIL: MMR >= 7600
+ * - IN1000: MMR >= rank1000MMR (다른 티어와 중복 부여)
  */
 export function getAllTierGroupsFromMMR(
   mmr: number | null | undefined,
@@ -35,15 +44,19 @@ export function getAllTierGroupsFromMMR(
     groups.push(TierGroup.IN1000);
   }
 
-  if (mmr < 5000) {
+  if (mmr < 3600) {
     groups.push(TierGroup.DIAMOND_BELOW);
+    return groups;
+  }
+  if (mmr < 5000) {
+    groups.push(TierGroup.PLATINUM);
     return groups;
   }
   if (mmr < 6400) {
     groups.push(TierGroup.DIAMOND);
     return groups;
   }
-  if (mmr < 7200) {
+  if (mmr < 7600) {
     groups.push(TierGroup.METEORITE);
     return groups;
   }

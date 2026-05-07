@@ -11,6 +11,7 @@ export const CHARACTER_CODES: number[] = [
 ];
 
 export const TIER_LABELS: Record<TierGroup, string> = {
+  [TierGroup.PLATINUM]: "플레티넘",
   [TierGroup.DIAMOND]: "다이아",
   [TierGroup.METEORITE]: "메테오라이트",
   [TierGroup.MITHRIL]: "미스릴 이상",

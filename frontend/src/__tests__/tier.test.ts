@@ -28,7 +28,7 @@ describe("getTierFromMMR", () => {
     expect(getTierFromMMR(3600)).toBe("PLATINUM");
     expect(getTierFromMMR(5000)).toBe("DIAMOND");
     expect(getTierFromMMR(6400)).toBe("METEORITE");
-    expect(getTierFromMMR(7200)).toBe("MITHRIL");
+    expect(getTierFromMMR(7600)).toBe("MITHRIL");
   });
 
   it("최대값 초과 시 MITHRIL", () => {
@@ -66,9 +66,14 @@ describe("getTierGroupFromMMR", () => {
     expect(getTierGroupFromMMR(-1)).toBeNull();
   });
 
-  it("DIAMOND_BELOW: MMR < 5000", () => {
+  it("DIAMOND_BELOW: MMR < 3600", () => {
     expect(getTierGroupFromMMR(0)).toBe(TierGroup.DIAMOND_BELOW);
-    expect(getTierGroupFromMMR(4999)).toBe(TierGroup.DIAMOND_BELOW);
+    expect(getTierGroupFromMMR(3599)).toBe(TierGroup.DIAMOND_BELOW);
+  });
+
+  it("PLATINUM: 3600 <= MMR < 5000", () => {
+    expect(getTierGroupFromMMR(3600)).toBe(TierGroup.PLATINUM);
+    expect(getTierGroupFromMMR(4999)).toBe(TierGroup.PLATINUM);
   });
 
   it("DIAMOND: 5000 <= MMR < 6400", () => {
@@ -76,13 +81,13 @@ describe("getTierGroupFromMMR", () => {
     expect(getTierGroupFromMMR(6399)).toBe(TierGroup.DIAMOND);
   });
 
-  it("METEORITE: 6400 <= MMR < 7200", () => {
+  it("METEORITE: 6400 <= MMR < 7600", () => {
     expect(getTierGroupFromMMR(6400)).toBe(TierGroup.METEORITE);
-    expect(getTierGroupFromMMR(7199)).toBe(TierGroup.METEORITE);
+    expect(getTierGroupFromMMR(7599)).toBe(TierGroup.METEORITE);
   });
 
-  it("MITHRIL: MMR >= 7200", () => {
-    expect(getTierGroupFromMMR(7200)).toBe(TierGroup.MITHRIL);
+  it("MITHRIL: MMR >= 7600", () => {
+    expect(getTierGroupFromMMR(7600)).toBe(TierGroup.MITHRIL);
     expect(getTierGroupFromMMR(10000)).toBe(TierGroup.MITHRIL);
   });
 });
@@ -105,7 +110,7 @@ describe("getAllTierGroupsFromMMR", () => {
   });
 
   it("rank1000MMR 미만이면 IN1000 미포함", () => {
-    const groups = getAllTierGroupsFromMMR(7300, 7500);
+    const groups = getAllTierGroupsFromMMR(7700, 7900);
     expect(groups).toContain(TierGroup.MITHRIL);
     expect(groups).not.toContain(TierGroup.IN1000);
   });
@@ -118,15 +123,16 @@ describe("isTierGroupMatch", () => {
 
   it("각 티어 그룹 매칭", () => {
     expect(isTierGroupMatch(TierGroup.DIAMOND_BELOW, 3000)).toBe(true);
+    expect(isTierGroupMatch(TierGroup.PLATINUM, 4000)).toBe(true);
     expect(isTierGroupMatch(TierGroup.DIAMOND, 5500)).toBe(true);
     expect(isTierGroupMatch(TierGroup.METEORITE, 6500)).toBe(true);
-    expect(isTierGroupMatch(TierGroup.MITHRIL, 7500)).toBe(true);
+    expect(isTierGroupMatch(TierGroup.MITHRIL, 7700)).toBe(true);
   });
 
   it("경계값 불일치", () => {
     expect(isTierGroupMatch(TierGroup.DIAMOND, 4999)).toBe(false);
     expect(isTierGroupMatch(TierGroup.DIAMOND, 6400)).toBe(false);
-    expect(isTierGroupMatch(TierGroup.METEORITE, 7200)).toBe(false);
+    expect(isTierGroupMatch(TierGroup.METEORITE, 7600)).toBe(false);
   });
 
   it("IN1000은 rank1000MMR 필요", () => {
@@ -151,6 +157,10 @@ describe("parseTierGroup", () => {
 
   it("DIAMOND_BELOW는 null (지표에서 제외)", () => {
     expect(parseTierGroup("DIAMOND_BELOW")).toBeNull();
+  });
+
+  it("PLATINUM은 통과 (수집·노출 대상)", () => {
+    expect(parseTierGroup("PLATINUM")).toBe(TierGroup.PLATINUM);
   });
 
   it("잘못된 값은 null", () => {

@@ -3,15 +3,17 @@
  */
 
 export enum TierGroup {
-  DIAMOND_BELOW = 'DIAMOND_BELOW',
-  DIAMOND = 'DIAMOND',
-  METEORITE = 'METEORITE',
-  MITHRIL = 'MITHRIL',
-  IN1000 = 'IN1000',
+  DIAMOND_BELOW = "DIAMOND_BELOW",
+  PLATINUM = "PLATINUM",
+  DIAMOND = "DIAMOND",
+  METEORITE = "METEORITE",
+  MITHRIL = "MITHRIL",
+  IN1000 = "IN1000",
 }
 
 // 지표 노출용 티어 (DIAMOND_BELOW 제외)
 export const METRICS_TIER_GROUPS: TierGroup[] = [
+  TierGroup.PLATINUM,
   TierGroup.DIAMOND,
   TierGroup.METEORITE,
   TierGroup.MITHRIL,
@@ -19,14 +21,14 @@ export const METRICS_TIER_GROUPS: TierGroup[] = [
 ];
 
 export type Tier =
-  | 'IRON'
-  | 'BRONZE'
-  | 'SILVER'
-  | 'GOLD'
-  | 'PLATINUM'
-  | 'DIAMOND'
-  | 'METEORITE'
-  | 'MITHRIL';
+  | "IRON"
+  | "BRONZE"
+  | "SILVER"
+  | "GOLD"
+  | "PLATINUM"
+  | "DIAMOND"
+  | "METEORITE"
+  | "MITHRIL";
 
 interface TierRange {
   minMMR: number;
@@ -38,10 +40,10 @@ const tierMap: Record<Tier, TierRange> = {
   BRONZE: { minMMR: 600, maxMMR: 1399 },
   SILVER: { minMMR: 1400, maxMMR: 2399 },
   GOLD: { minMMR: 2400, maxMMR: 3599 },
-  PLATINUM: { minMMR: 3600, maxMMR: 4799 },
+  PLATINUM: { minMMR: 3600, maxMMR: 4999 },
   DIAMOND: { minMMR: 5000, maxMMR: 6399 },
-  METEORITE: { minMMR: 6400, maxMMR: 7199 },
-  MITHRIL: { minMMR: 7200, maxMMR: 999999 },
+  METEORITE: { minMMR: 6400, maxMMR: 7599 },
+  MITHRIL: { minMMR: 7600, maxMMR: 999999 },
 };
 
 /**
@@ -57,7 +59,7 @@ export function getTierFromMMR(mmr: number | null | undefined): Tier | null {
   }
 
   // MMR이 정의된 범위를 초과하면 최상위 티어(MITHRIL)로 처리
-  return 'MITHRIL';
+  return "MITHRIL";
 }
 
 /**
@@ -72,10 +74,11 @@ export function normalizeTier(tier: string | null | undefined): Tier | null {
 /**
  * MMR을 기준으로 티어 그룹 반환 (단일 그룹)
  *
- * - DIAMOND_BELOW: MMR < 5000
+ * - DIAMOND_BELOW: MMR < 3600
+ * - PLATINUM: 3600 <= MMR < 5000
  * - DIAMOND: 5000 <= MMR < 6400
- * - METEORITE: 6400 <= MMR < 7200
- * - MITHRIL: MMR >= 7200
+ * - METEORITE: 6400 <= MMR < 7600
+ * - MITHRIL: MMR >= 7600
  */
 export function getTierGroupFromMMR(mmrBefore: number | null | undefined): TierGroup | null {
   if (mmrBefore == null || mmrBefore < 0) {
@@ -84,22 +87,10 @@ export function getTierGroupFromMMR(mmrBefore: number | null | undefined): TierG
 
   const mmr = mmrBefore;
 
-  // MITHRIL: MMR >= 7200
-  if (mmr >= 7200) {
-    return TierGroup.MITHRIL;
-  }
-
-  // DIAMOND: 5000 <= MMR < 6400
-  if (mmr >= 5000 && mmr < 6400) {
-    return TierGroup.DIAMOND;
-  }
-
-  // METEORITE: 6400 <= MMR < 7200
-  if (mmr >= 6400) {
-    return TierGroup.METEORITE;
-  }
-
-  // DIAMOND_BELOW: MMR < 5000
+  if (mmr >= 7600) return TierGroup.MITHRIL;
+  if (mmr >= 6400) return TierGroup.METEORITE;
+  if (mmr >= 5000) return TierGroup.DIAMOND;
+  if (mmr >= 3600) return TierGroup.PLATINUM;
   return TierGroup.DIAMOND_BELOW;
 }
 
@@ -125,25 +116,23 @@ export function getAllTierGroupsFromMMR(
     groups.push(TierGroup.IN1000);
   }
 
-  // DIAMOND_BELOW: MMR < 5000
-  if (mmr < 5000) {
+  if (mmr < 3600) {
     groups.push(TierGroup.DIAMOND_BELOW);
     return groups;
   }
-
-  // DIAMOND: 5000 <= MMR < 6400
+  if (mmr < 5000) {
+    groups.push(TierGroup.PLATINUM);
+    return groups;
+  }
   if (mmr < 6400) {
     groups.push(TierGroup.DIAMOND);
     return groups;
   }
-
-  // METEORITE: 6400 <= MMR < 7200
-  if (mmr < 7200) {
+  if (mmr < 7600) {
     groups.push(TierGroup.METEORITE);
     return groups;
   }
 
-  // MITHRIL: MMR >= 7200
   groups.push(TierGroup.MITHRIL);
   return groups;
 }
@@ -167,13 +156,15 @@ export function isTierGroupMatch(
     case TierGroup.IN1000:
       return rank1000MMR != null && mmr >= rank1000MMR;
     case TierGroup.MITHRIL:
-      return mmr >= 7200; // 7200 이상 미스릴
+      return mmr >= 7600;
     case TierGroup.METEORITE:
-      return mmr >= 6400 && mmr < 7200; // 메테오라이트 구간
+      return mmr >= 6400 && mmr < 7600;
     case TierGroup.DIAMOND:
       return mmr >= 5000 && mmr < 6400;
+    case TierGroup.PLATINUM:
+      return mmr >= 3600 && mmr < 5000;
     case TierGroup.DIAMOND_BELOW:
-      return mmr < 5000;
+      return mmr < 3600;
     default:
       return false;
   }
@@ -193,7 +184,7 @@ export function getAllTierGroupsFromMatch(
 
   for (const participant of participants) {
     const groups = getAllTierGroupsFromMMR(participant.mmrBefore, rank1000MMR);
-    groups.forEach(group => tierGroups.add(group));
+    groups.forEach((group) => tierGroups.add(group));
   }
 
   return Array.from(tierGroups);
@@ -205,7 +196,7 @@ export function getAllTierGroupsFromMatch(
  */
 export function parseTierGroup(value: string | null | undefined): TierGroup | null {
   if (!value) return null;
-  
+
   // enum 값 목록 확인
   const validValues = Object.values(TierGroup);
   if (validValues.includes(value as TierGroup)) {
@@ -216,6 +207,6 @@ export function parseTierGroup(value: string | null | undefined): TierGroup | nu
     }
     return parsed;
   }
-  
+
   return null;
 }
