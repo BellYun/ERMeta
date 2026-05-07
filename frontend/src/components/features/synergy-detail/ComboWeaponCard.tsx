@@ -11,7 +11,7 @@ import { TraitIcon } from "./TraitIcon";
 import type { TrioWeaponResult } from "./types";
 import { useTapGuard } from "./useTapGuard";
 
-const SMALL_SAMPLE_THRESHOLD = 20;
+const SMALL_SAMPLE_THRESHOLD = 10;
 
 /** Level 1 (접힘): 캐릭터+무기 조합 (mainCore 집계) */
 export interface GroupedCombo {

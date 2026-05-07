@@ -6,7 +6,7 @@ import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
 import { cn } from "@/lib/utils";
 import type { TrioResult } from "./types";
 
-const SMALL_SAMPLE_THRESHOLD = 20;
+const SMALL_SAMPLE_THRESHOLD = 10;
 
 export function ComboCard({
   rec,

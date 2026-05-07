@@ -51,7 +51,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [copied, setCopied] = React.useState(false);
-  const MIN_MEANINGFUL_GAMES = 20;
+  const MIN_MEANINGFUL_GAMES = 10;
 
   const getCharName = React.useCallback(
     (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),

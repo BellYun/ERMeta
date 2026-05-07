@@ -17,7 +17,7 @@ import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "../synergy/c
 import { ComboWeaponCard, type GroupedCombo } from "./ComboWeaponCard";
 import type { TrioWeaponResult, SortBy } from "./types";
 
-/** mainCore 무시하고 캐릭터+무기 기준으로 그룹화 */
+/** 무기·코어 무시하고 캐릭터(c1,c2,c3) 기준으로 그룹화 */
 function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
   const map = new Map<
     string,
@@ -28,6 +28,7 @@ function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
       w2: number;
       c3: number;
       w3: number;
+      topVariantGames: number;
       totalGames: number;
       totalWins: number;
       totalRP: number;
@@ -37,7 +38,7 @@ function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
   >();
 
   for (const r of results) {
-    const key = `${r.character1}-${r.weaponType1}-${r.character2}-${r.weaponType2}-${r.character3}-${r.weaponType3}`;
+    const key = `${r.character1}-${r.character2}-${r.character3}`;
     const existing = map.get(key);
     const games = r.totalGames;
     const wins = (r.winRate * games) / 100;
@@ -52,6 +53,7 @@ function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
         w2: r.weaponType2,
         c3: r.character3,
         w3: r.weaponType3,
+        topVariantGames: games,
         totalGames: games,
         totalWins: wins,
         totalRP: rp,
@@ -64,6 +66,13 @@ function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
       existing.totalRP += rp;
       existing.rankSum += rankSum;
       existing.variants.push(r);
+      // 무기 대표 = totalGames 가장 큰 variant의 무기
+      if (games > existing.topVariantGames) {
+        existing.topVariantGames = games;
+        existing.w1 = r.weaponType1;
+        existing.w2 = r.weaponType2;
+        existing.w3 = r.weaponType3;
+      }
     }
   }
 
@@ -140,7 +149,7 @@ export function SynergyDetailResults() {
   const [results, setResults] = React.useState<TrioWeaponResult[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const MIN_MEANINGFUL_GAMES = 20;
+  const MIN_MEANINGFUL_GAMES = 10;
 
   /**
    * 1번 탭 즉각 반응 핵심:
@@ -193,7 +202,7 @@ export function SynergyDetailResults() {
 
     const controller = new AbortController();
     const timerId = setTimeout(() => {
-      const params = new URLSearchParams({ sortBy, limit: "200" });
+      const params = new URLSearchParams({ sortBy, limit: "500" });
       const a1 = deferredAllies[0];
       if (a1) {
         params.set("character1", String(a1.charCode));

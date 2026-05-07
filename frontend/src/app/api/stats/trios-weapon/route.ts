@@ -306,7 +306,7 @@ export async function GET(request: NextRequest) {
 
   let limit = limitParam ? parseInt(limitParam, 10) : 100;
   if (isNaN(limit) || limit < 1) limit = 1;
-  if (limit > 200) limit = 200;
+  if (limit > 1000) limit = 1000;
 
   try {
     const supabase = createServerClient();
@@ -335,26 +335,89 @@ export async function GET(request: NextRequest) {
       const { data: searchRows, error: searchError } = await searchQuery;
 
       if (searchError) {
-        console.warn(
-          `[stats/trios-weapon] ${TRIO_WEAPON_SEARCH_P10_TABLE} fallback:`,
-          searchError.message
-        );
-      } else {
-        const aggregated = aggregateSearchRows((searchRows ?? []) as TrioWeaponSearchRow[]);
-
-        if (aggregated.length > 0) {
-          sortAggregatedResults(aggregated, sortByParam);
-
-          return NextResponse.json(
-            { results: aggregated.slice(0, limit) },
-            { headers: getCacheHeaders("frequent") }
-          );
-        }
-
-        console.info(
-          `[stats/trios-weapon] ${TRIO_WEAPON_SEARCH_P10_TABLE} returned 0 rows, fallback to v2_CharacterTrioWeapon`
+        console.error("[stats/trios-weapon] Supabase error:", searchError);
+        return NextResponse.json(
+          { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
+          { status: 500, headers: NO_CACHE_HEADERS }
         );
       }
+
+      const aggregated = aggregateSearchRows((searchRows ?? []) as TrioWeaponSearchRow[]);
+      sortAggregatedResults(aggregated, sortByParam);
+
+      return NextResponse.json(
+        { results: aggregated.slice(0, limit) },
+        { headers: getCacheHeaders("stats-long") }
+      );
+    }
+
+    if (char1 != null) {
+      // 단일 캐릭터 — p10 테이블에서 ally1/ally2/third 3 위치별 fetch 후 trio 단위 dedup
+      const searchSelect =
+        "ally1_char,ally1_weapon,ally1_core,ally2_char,ally2_weapon,ally2_core,third_char,third_weapon,third_core,total_games,total_wins,total_rp,rank_sum";
+      const p10Q = () =>
+        supabase
+          .from(TRIO_WEAPON_SEARCH_P10_TABLE)
+          .select(searchSelect)
+          .order("total_games", { ascending: false })
+          .limit(PARALLEL_FETCH_LIMIT);
+      const results = await Promise.all([
+        p10Q().eq("ally1_char", char1),
+        p10Q().eq("ally2_char", char1),
+        p10Q().eq("third_char", char1),
+      ]);
+      const allSearchRows: TrioWeaponSearchRow[] = [];
+      for (const r of results) {
+        if (r.error) {
+          console.error("[stats/trios-weapon] Supabase error:", r.error);
+          return NextResponse.json(
+            { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
+            { status: 500, headers: NO_CACHE_HEADERS }
+          );
+        }
+        allSearchRows.push(...((r.data ?? []) as TrioWeaponSearchRow[]));
+      }
+      // dedup: 같은 trio가 ally1/ally2/third 3 위치에서 동시 매칭됨. 정렬된 (char, weapon, core) tuple을 키로.
+      const seen = new Set<string>();
+      const dedupedRows = allSearchRows.filter((row) => {
+        const triple = [
+          [row.ally1_char, row.ally1_weapon, row.ally1_core ?? 0],
+          [row.ally2_char, row.ally2_weapon, row.ally2_core ?? 0],
+          [row.third_char, row.third_weapon, row.third_core ?? 0],
+        ]
+          .sort((a, b) => a[0]! - b[0]!)
+          .map((t) => t.join(":"))
+          .join("|");
+        if (seen.has(triple)) return false;
+        seen.add(triple);
+        return true;
+      });
+
+      const aggregated = aggregateSearchRows(dedupedRows);
+
+      // 무기 필터: char1 위치 weapon이 weapon1과 일치
+      const filtered = aggregated.filter((row) => {
+        if (
+          EXCLUDED_CHARACTER_CODES.has(row.character1) ||
+          EXCLUDED_CHARACTER_CODES.has(row.character2) ||
+          EXCLUDED_CHARACTER_CODES.has(row.character3)
+        )
+          return false;
+        if (weapon1 != null) {
+          const matched =
+            (row.character1 === char1 && row.weaponType1 === weapon1) ||
+            (row.character2 === char1 && row.weaponType2 === weapon1) ||
+            (row.character3 === char1 && row.weaponType3 === weapon1);
+          if (!matched) return false;
+        }
+        return true;
+      });
+
+      sortAggregatedResults(filtered, sortByParam);
+      return NextResponse.json(
+        { results: filtered.slice(0, limit) },
+        { headers: getCacheHeaders("stats-long") }
+      );
     }
 
     const baseQuery = (perQueryLimit: number) =>
@@ -367,54 +430,7 @@ export async function GET(request: NextRequest) {
 
     let rows: TrioWeaponRow[] = [];
 
-    if (char1 != null && char2 != null) {
-      const [low, high] = [char1, char2].sort((a, b) => a - b);
-      const results = await Promise.all([
-        baseQuery(PARALLEL_FETCH_LIMIT).eq("character1", low).eq("character2", high),
-        baseQuery(PARALLEL_FETCH_LIMIT).eq("character1", low).eq("character3", high),
-        baseQuery(PARALLEL_FETCH_LIMIT).eq("character2", low).eq("character3", high),
-      ]);
-      for (const r of results) {
-        if (r.error) {
-          console.error("[stats/trios-weapon] Supabase error:", r.error);
-          return NextResponse.json(
-            { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
-            { status: 500, headers: NO_CACHE_HEADERS }
-          );
-        }
-        rows.push(...((r.data ?? []) as TrioWeaponRow[]));
-      }
-      const seen = new Set<string>();
-      rows = rows.filter((row) => {
-        const k = rowKey(row);
-        if (seen.has(k)) return false;
-        seen.add(k);
-        return true;
-      });
-    } else if (char1 != null) {
-      const results = await Promise.all([
-        baseQuery(PARALLEL_FETCH_LIMIT).eq("character1", char1),
-        baseQuery(PARALLEL_FETCH_LIMIT).eq("character2", char1),
-        baseQuery(PARALLEL_FETCH_LIMIT).eq("character3", char1),
-      ]);
-      for (const r of results) {
-        if (r.error) {
-          console.error("[stats/trios-weapon] Supabase error:", r.error);
-          return NextResponse.json(
-            { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
-            { status: 500, headers: NO_CACHE_HEADERS }
-          );
-        }
-        rows.push(...((r.data ?? []) as TrioWeaponRow[]));
-      }
-      const seen = new Set<string>();
-      rows = rows.filter((row) => {
-        const k = rowKey(row);
-        if (seen.has(k)) return false;
-        seen.add(k);
-        return true;
-      });
-    } else {
+    {
       const { data, error } = await baseQuery(FULL_FETCH_LIMIT);
       if (error) {
         console.error("[stats/trios-weapon] Supabase error:", error);
@@ -458,7 +474,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       { results: aggregated.slice(0, limit) },
-      { headers: getCacheHeaders("frequent") }
+      { headers: getCacheHeaders("stats-long") }
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
