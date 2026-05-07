@@ -164,13 +164,18 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
       className={cn(
         "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors touch-manipulation",
         selected
-          ? "bg-[var(--color-primary)]/20 ring-1 ring-[var(--color-primary)]"
+          ? "bg-[var(--color-primary)]/28 ring-2 ring-[var(--color-primary)] shadow-[0_0_0_1px_rgba(96,165,250,0.18)]"
           : disabled
-            ? "opacity-30 cursor-not-allowed"
+            ? "opacity-25 cursor-not-allowed"
             : "hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80"
       )}
     >
-      <div className="relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]">
+      <div
+        className={cn(
+          "relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
+          selected && "ring-2 ring-[var(--color-primary-hover)]/60"
+        )}
+      >
         <Image
           src={getCharacterMiniWebpUrl(item.charCode)}
           alt={charName}
@@ -179,11 +184,21 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
           sizes="40px"
         />
       </div>
-      <span className="w-full truncate text-center text-[11px] font-medium text-[var(--color-foreground)]">
+      <span
+        className={cn(
+          "w-full truncate text-center text-[11.5px] font-semibold",
+          selected ? "text-[var(--color-primary-hover)]" : "text-[var(--color-foreground)]/92"
+        )}
+      >
         {charName}
       </span>
       {localizedWeaponLabel && (
-        <span className="w-full truncate text-center text-[10px] text-[var(--color-muted-foreground)]">
+        <span
+          className={cn(
+            "w-full truncate text-center text-[10px] font-medium",
+            selected ? "text-[var(--color-primary)]/90" : "text-[var(--color-foreground)]/60"
+          )}
+        >
           {localizedWeaponLabel}
         </span>
       )}
@@ -378,8 +393,8 @@ export function WeaponAllySelector() {
 
   return (
     <>
-      {/* 슬롯 표시 */}
-      <div className="mb-3 grid gap-2.5 sm:grid-cols-2 sm:gap-3">
+      {/* 슬롯 표시 — 두 아군은 항상 수직 정렬 */}
+      <div className="mb-3 flex flex-col gap-2.5 sm:gap-3">
         {ally1 ? (
           <SlotWeaponFilled
             code={ally1.charCode}
@@ -404,7 +419,9 @@ export function WeaponAllySelector() {
 
       {/* 검색 + 가상화 그리드 */}
       <div className="rounded-[22px] border border-[var(--color-border)] bg-[rgba(17,25,46,0.72)] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
-        <p className="mb-3 px-1 text-xs text-[var(--color-muted-foreground)]">{t("heading")}</p>
+        <p className="mb-3 px-1 text-[12px] font-medium text-[var(--color-foreground)]/72">
+          {t("heading")}
+        </p>
 
         <div className="relative mb-2">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)]" />
@@ -494,8 +511,8 @@ function SlotWeaponFilled({
   onRemove: () => void;
 }) {
   return (
-    <div className="flex w-full items-center gap-3 rounded-[18px] border border-[var(--color-primary)]/30 bg-[rgba(37,99,235,0.12)] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
-      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-[var(--color-border)]">
+    <div className="flex w-full items-center gap-3 rounded-[18px] border border-[var(--color-primary)]/45 bg-[linear-gradient(135deg,rgba(96,165,250,0.22),rgba(37,99,235,0.1)_70%)] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_24px_-18px_rgba(96,165,250,0.6)]">
+      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-[var(--color-border)] ring-2 ring-[var(--color-primary)]/45">
         <Image
           src={getCharacterMiniWebpUrl(code)}
           alt={name}
@@ -505,16 +522,19 @@ function SlotWeaponFilled({
         />
       </div>
       <div className="flex flex-col flex-1 min-w-0">
-        <span className="truncate text-sm font-semibold text-[var(--color-foreground)]">
+        <span className="truncate text-[15px] font-bold tracking-[-0.01em] text-[var(--color-foreground)]">
           {name}
         </span>
-        <span className="text-[11px] text-[var(--color-primary-hover)]">{weaponName}</span>
+        <span className="truncate text-[11.5px] font-semibold text-[var(--color-primary-hover)]">
+          {weaponName}
+        </span>
       </div>
       <button
         onClick={onRemove}
-        className="rounded-md min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80 hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] transition-colors"
+        aria-label={`${name} 제거`}
+        className="rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-foreground)]/70 hover:bg-[rgba(255,255,255,0.08)] active:bg-[rgba(255,255,255,0.12)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] transition-colors"
       >
-        <X className="h-4 w-4" />
+        <X className="h-4 w-4" strokeWidth={2.4} />
       </button>
     </div>
   );

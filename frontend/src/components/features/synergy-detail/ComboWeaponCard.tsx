@@ -119,9 +119,12 @@ function ComboWeaponCardImpl({
 
   return (
     <div
-      className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 transition-all duration-200"
-      // 뷰포트 밖 카드는 layout/paint 스킵 → 초기 30 카드 mount 시 commit 비용 감소.
-      // intrinsic-size 는 접힌 상태 행 높이(모바일 48px, 데스크톱 56px)에 맞춘 보수값.
+      className={cn(
+        "rounded-xl border bg-[var(--color-surface)]/85 transition-all duration-200",
+        rank <= 3
+          ? "border-[var(--color-accent-gold)]/22 shadow-[inset_0_1px_0_rgba(251,191,36,0.06),0_8px_22px_-22px_rgba(251,191,36,0.45)]"
+          : "border-[var(--color-border)]"
+      )}
       style={{ contentVisibility: "auto", containIntrinsicSize: "auto 56px" }}
     >
       {/* 메인 행 — 포인터 단계로 특성 토글 (div+role로 Link 중첩 이슈 해소) */}
@@ -135,14 +138,22 @@ function ComboWeaponCardImpl({
             toggleTraits();
           }
         }}
-        // touchAction: manipulation — 카드를 페이지 스크롤과 명확히 분리하여 더블탭 줌 차단,
-        // pan 제스처는 부모 (페이지) 로 위임. 카드 영역 내부에서 스크롤 시도가 카드 자체 탭으로
-        // 잘못 인식되는 충돌을 줄임.
         style={{ touchAction: "manipulation" }}
         className="w-full flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-2 sm:py-2.5 text-left cursor-pointer rounded-xl hover:bg-[var(--color-surface-2)]/60 active:bg-[var(--color-surface-2)]/80 transition-colors"
       >
         {/* 순위 */}
-        <span className="w-4 sm:w-5 shrink-0 text-center text-[10px] sm:text-xs font-bold text-[var(--color-muted-foreground)]">
+        <span
+          className={cn(
+            "w-5 sm:w-6 shrink-0 text-center text-xs sm:text-sm font-black",
+            rank === 1
+              ? "text-[var(--color-accent-gold)]"
+              : rank === 2
+                ? "text-[#e5e7eb]"
+                : rank === 3
+                  ? "text-[#f0a44a]"
+                  : "text-[var(--color-foreground)]/55"
+          )}
+        >
           {rank}
         </span>
 
@@ -156,7 +167,9 @@ function ComboWeaponCardImpl({
                   <div
                     className={cn(
                       "relative h-8 w-8 sm:h-10 sm:w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
-                      isRecommended && "ring-2 ring-[var(--color-accent-gold)]"
+                      isRecommended
+                        ? "ring-2 ring-[var(--color-accent-gold)] shadow-[0_0_0_1px_rgba(251,191,36,0.22)]"
+                        : "ring-1 ring-[rgba(255,255,255,0.08)]"
                     )}
                   >
                     <Image
@@ -169,15 +182,22 @@ function ComboWeaponCardImpl({
                   </div>
                   <span
                     className={cn(
-                      "w-10 sm:w-14 truncate text-center text-[9px] sm:text-[11px] font-medium",
+                      "w-10 sm:w-14 truncate text-center text-[9.5px] sm:text-[11.5px] font-bold tracking-[-0.01em]",
                       isRecommended
                         ? "text-[var(--color-accent-gold)]"
-                        : "text-[var(--color-muted-foreground)]"
+                        : "text-[var(--color-foreground)]/82"
                     )}
                   >
                     {getCharName(m.char)}
                   </span>
-                  <span className="text-[8px] sm:text-[10px] text-[var(--color-muted-foreground)] truncate w-10 sm:w-14 text-center">
+                  <span
+                    className={cn(
+                      "text-[8.5px] sm:text-[10px] truncate w-10 sm:w-14 text-center font-medium",
+                      isRecommended
+                        ? "text-[var(--color-accent-gold)]/72"
+                        : "text-[var(--color-foreground)]/55"
+                    )}
+                  >
                     {getWeaponName(m.weapon)}
                   </span>
                   <Link
@@ -211,7 +231,7 @@ function ComboWeaponCardImpl({
 
         {/* 소표본 배지 */}
         {isSmallSample && (
-          <span className="text-[8px] sm:text-[9px] bg-[var(--color-surface-2)] text-[var(--color-muted-foreground)] px-1 sm:px-1.5 py-0.5 rounded shrink-0">
+          <span className="rounded-md border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 px-1.5 py-0.5 text-[8.5px] sm:text-[9.5px] font-bold text-[var(--color-warning)] shrink-0">
             {t("smallSample")}
           </span>
         )}
@@ -228,30 +248,31 @@ function ComboWeaponCardImpl({
             <StatCol label={t("games")} value={group.totalGames.toLocaleString()} />
           </div>
           <div className="hidden sm:flex flex-col">
-            <span className="text-[10px] text-[var(--color-muted-foreground)]">
+            <span className="text-[10px] font-medium text-[var(--color-foreground)]/55">
               {t("averageRank")}
             </span>
-            <span className="text-sm font-semibold text-[var(--color-foreground)]">
+            <span className="text-sm font-bold text-[var(--color-foreground)]">
               #{group.averageRank.toFixed(1)}
             </span>
           </div>
 
           <ChevronRight
             className={cn(
-              "h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-[var(--color-muted-foreground)] transition-transform duration-200",
-              showTraits && "rotate-90"
+              "h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-[var(--color-foreground)]/55 transition-transform duration-200",
+              showTraits && "rotate-90 text-[var(--color-primary-hover)]"
             )}
+            strokeWidth={2.4}
           />
         </div>
       </div>
 
       {/* 특성 브레이크다운 */}
       {showTraits && (
-        <div className="px-2 sm:px-3 py-2 flex flex-col gap-1.5 bg-[var(--color-surface-2)]/40 border-t border-[var(--color-border)]">
+        <div className="px-2 sm:px-3 py-2.5 flex flex-col gap-1.5 bg-[linear-gradient(180deg,rgba(96,165,250,0.06),rgba(255,255,255,0.02))] border-t border-[var(--color-primary)]/22">
           {visibleVariants.map((v, vi) => (
             <div
               key={`${v.mainCore1}-${v.mainCore2}-${v.mainCore3}-${vi}`}
-              className="flex items-center gap-1.5 sm:gap-2 rounded-lg bg-[var(--color-surface)]/60 px-2 sm:px-3 py-1.5 sm:py-2 border border-[var(--color-border)]/50"
+              className="flex items-center gap-1.5 sm:gap-2 rounded-lg bg-[var(--color-surface)]/72 px-2 sm:px-3 py-1.5 sm:py-2 border border-[var(--color-border-light)]"
             >
               {/* 순위 열과 동일한 오프셋 */}
               <span className="w-1 sm:w-2 shrink-0" />
@@ -361,24 +382,24 @@ function StatCol({
     highlight === "gold"
       ? "text-[var(--color-accent-gold)]"
       : highlight === "muted"
-        ? "text-[var(--color-muted-foreground)]"
+        ? "text-[var(--color-foreground)]/55"
         : "text-[var(--color-foreground)]";
 
   return (
     <div className="flex flex-col">
       <span
         className={cn(
-          "text-[var(--color-muted-foreground)]",
-          small ? "text-[8px] sm:text-[9px]" : "text-[8px] sm:text-[10px]"
+          "font-medium text-[var(--color-foreground)]/55",
+          small ? "text-[8.5px] sm:text-[9.5px]" : "text-[8.5px] sm:text-[10px]"
         )}
       >
         {label}
       </span>
       <span
         className={cn(
-          "font-semibold",
+          "font-bold",
           textColor,
-          small ? "text-[10px] sm:text-xs" : "text-xs sm:text-sm"
+          small ? "text-[10.5px] sm:text-[12.5px]" : "text-[12px] sm:text-[14.5px]"
         )}
       >
         {value}

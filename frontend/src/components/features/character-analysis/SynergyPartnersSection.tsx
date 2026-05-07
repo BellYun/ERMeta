@@ -76,7 +76,7 @@ export function SynergyPartnersSection({
       <div className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 sm:mb-4">
         <Users className="h-4 w-4 text-[var(--color-primary)]" />
         <h2 className="text-[1.1rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.25rem]">
-          잘 맞는 동료
+          잘 맞는 실험체
         </h2>
         <span className="text-[10px] text-[var(--color-muted-foreground)]">
           {data.characterName}({entry.weaponName}) 기준 · {data.patchScope} · {data.tierScope}
@@ -168,9 +168,6 @@ function PartnerCard({
           <span>{p.games.toLocaleString()}판</span>
           <span>·</span>
           <span>승률 {p.winRate.toFixed(1)}%</span>
-          <span className={cn("ml-auto", p.confidence === "medium" && "opacity-60")}>
-            {p.confidence === "high" ? "신뢰 높음" : "신뢰 보통"}
-          </span>
         </div>
       </div>
       <div className={cn("flex flex-col items-end tabular-nums", liftColor)}>
@@ -178,7 +175,7 @@ function PartnerCard({
           {liftSign}
           {p.rpLift.toFixed(1)}
         </span>
-        <span className="text-[9px] uppercase tracking-wider opacity-80">RP lift</span>
+        <span className="text-[9px] opacity-80">RP 증가량</span>
       </div>
     </li>
   );
