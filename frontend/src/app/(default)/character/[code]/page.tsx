@@ -108,7 +108,7 @@ export default async function DefaultCharacterPage({ params }: Props) {
     notFound();
   }
 
-  const latestPinnedPatch = "10.7";
+  const latestPinnedPatch = "11.1";
   const patches = [
     latestPinnedPatch,
     ...getAllPatchVersions().filter((patch) => patch !== latestPinnedPatch),

@@ -12,13 +12,12 @@ export enum TierGroup {
   IN1000 = "IN1000",
 }
 
-// 플래티넘 이상 지표 수집 대상 티어
+// 플래티넘 이상 지표 수집 대상 티어 (IN1000 제거됨)
 export const COLLECT_TIERS: TierGroup[] = [
   TierGroup.PLATINUM,
   TierGroup.DIAMOND,
   TierGroup.METEORITE,
   TierGroup.MITHRIL,
-  TierGroup.IN1000,
 ];
 
 /**
@@ -29,20 +28,16 @@ export const COLLECT_TIERS: TierGroup[] = [
  * - DIAMOND: 5000 <= MMR < 6400
  * - METEORITE: 6400 <= MMR < 7600
  * - MITHRIL: MMR >= 7600
- * - IN1000: MMR >= rank1000MMR (다른 티어와 중복 부여)
+ *
+ * IN1000은 시즌 초 컷이 낮아 노이즈가 커서 수집에서 제외함.
  */
 export function getAllTierGroupsFromMMR(
   mmr: number | null | undefined,
-  rank1000MMR: number | null = null
+  _rank1000MMR: number | null = null
 ): TierGroup[] {
   if (mmr === null || mmr === undefined || mmr < 0) return [];
 
   const groups: TierGroup[] = [];
-
-  // IN1000
-  if (rank1000MMR !== null && mmr >= rank1000MMR) {
-    groups.push(TierGroup.IN1000);
-  }
 
   if (mmr < 3600) {
     groups.push(TierGroup.DIAMOND_BELOW);

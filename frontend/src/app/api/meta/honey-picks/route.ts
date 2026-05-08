@@ -54,10 +54,7 @@ function selectTierRows(
   data: StatRow[],
   requestedTier: string
 ): { rows: StatRow[]; usedTier: string } {
-  const tierOrder = [
-    requestedTier,
-    ...TIER_FALLBACK_ORDER.filter((t) => t !== requestedTier),
-  ];
+  const tierOrder = [requestedTier, ...TIER_FALLBACK_ORDER.filter((t) => t !== requestedTier)];
   for (const tier of tierOrder) {
     const rows = data.filter((r) => r.tier === tier);
     if (rows.length > 0) return { rows, usedTier: tier };
@@ -67,7 +64,7 @@ function selectTierRows(
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const patchVersion = searchParams.get("patchVersion") ?? "10.6";
+  const patchVersion = searchParams.get("patchVersion") ?? "11.1";
   const requestedTier = searchParams.get("tier") ?? "MITHRIL";
 
   try {
@@ -83,9 +80,7 @@ export async function GET(request: NextRequest) {
     const patchList = (patches ?? []).map((p: { version: string }) => p.version);
     const currentIndex = patchList.indexOf(patchVersion);
     const previousPatch =
-      currentIndex >= 0 && currentIndex + 1 < patchList.length
-        ? patchList[currentIndex + 1]
-        : null;
+      currentIndex >= 0 && currentIndex + 1 < patchList.length ? patchList[currentIndex + 1] : null;
 
     if (!previousPatch) {
       return NextResponse.json({
@@ -97,7 +92,8 @@ export async function GET(request: NextRequest) {
     }
 
     // 현재 + 이전 패치 데이터 조회 (v2 → old fallback)
-    const selectCols = "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,tier,patchVersion"
+    const selectCols =
+      "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,tier,patchVersion";
     let { data, error } = await supabase
       .from("v2_CharacterStats")
       .select(selectCols)
@@ -106,7 +102,9 @@ export async function GET(request: NextRequest) {
 
     // v2에 이전 패치 데이터 없으면 old 테이블 fallback
     if (data && previousPatch) {
-      const hasV2Prev = data.some((r: { patchVersion: string }) => r.patchVersion === previousPatch)
+      const hasV2Prev = data.some(
+        (r: { patchVersion: string }) => r.patchVersion === previousPatch
+      );
       if (!hasV2Prev) {
         const { data: oldData } = await supabase
           .from("CharacterStats")
@@ -184,12 +182,15 @@ export async function GET(request: NextRequest) {
     honeyPicks.sort((a, b) => b.honeyScore - a.honeyScore);
     const top5 = honeyPicks.slice(0, 10);
 
-    return NextResponse.json({
-      picks: top5,
-      patchVersion,
-      previousPatch,
-      tier: usedTier,
-    }, { headers: getCacheHeaders("daily") });
+    return NextResponse.json(
+      {
+        picks: top5,
+        patchVersion,
+        previousPatch,
+        tier: usedTier,
+      },
+      { headers: getCacheHeaders("daily") }
+    );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("[honey-picks] 예외:", message);

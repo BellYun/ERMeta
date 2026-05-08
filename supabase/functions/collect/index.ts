@@ -23,7 +23,7 @@ import { getCollectableTiers, TierGroup } from "../_shared/tier-utils.ts";
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // ── 상수 ──────────────────────────────────────────────────
-const SEASON_ID = 37;
+const SEASON_ID = 39;
 const TEAM_MODE = 3; // 스쿼드
 const TOTAL_BUDGET_MS = 135_000; // Edge Function 총 예산 135초 (2분 15초)
 const FORWARD2_BUDGET_MS = 135_000; // forward2 최대 (RECENT 도달 시 즉시 중단)
@@ -53,6 +53,9 @@ interface Participant {
   traitSecondSub: number[];
   skillOrderInfo: Record<string, number>;
   skillLevelInfo: Record<string, number>;
+  tacticalSkillGroup: number;
+  tacticalSkillLevel: number;
+  tacticalSkillUseCount: number;
   routeIdOfStart: number;
   placeOfStart: string;
   mmrBefore: number;
@@ -143,6 +146,9 @@ function extractParticipant(raw: any): Participant | null {
     traitSecondSub: Array.isArray(raw.traitSecondSub) ? raw.traitSecondSub : [],
     skillOrderInfo: raw.skillOrderInfo ?? {},
     skillLevelInfo: raw.skillLevelInfo ?? {},
+    tacticalSkillGroup: raw.tacticalSkillGroup ?? 0,
+    tacticalSkillLevel: raw.tacticalSkillLevel ?? 0,
+    tacticalSkillUseCount: raw.tacticalSkillUseCount ?? 0,
     routeIdOfStart: raw.routeIdOfStart ?? 0,
     placeOfStart: raw.placeOfStart ?? "",
     mmrBefore: raw.mmrBefore ?? 0,
@@ -261,6 +267,9 @@ function parseGameData(
       so: skillOrderToArray(p.skillOrderInfo),
       soi: p.skillOrderInfo,
       sli: p.skillLevelInfo,
+      ts: p.tacticalSkillGroup,
+      tsl: p.tacticalSkillLevel,
+      tsuc: p.tacticalSkillUseCount,
       rid: p.routeIdOfStart || null,
       pos: p.placeOfStart || null,
       mb: p.mmrBefore,

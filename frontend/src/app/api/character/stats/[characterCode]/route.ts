@@ -18,7 +18,7 @@ export async function GET(
 
   const { searchParams } = new URL(request.url);
   const tier = searchParams.get("tier") ?? "DIAMOND";
-  const patchVersion = searchParams.get("patchVersion") ?? "10.6";
+  const patchVersion = searchParams.get("patchVersion") ?? "11.1";
 
   try {
     const stats = await fetchCharacterStatsServer(characterCode, patchVersion, tier);
