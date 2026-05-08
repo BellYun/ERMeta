@@ -1,5 +1,5 @@
-import type { HoneyPickData } from "@/app/api/meta/honey-picks/route"
-import { createServerClient } from "@/lib/supabase"
+import type { HoneyPickData } from "@/app/api/meta/honey-picks/route";
+import { createServerClient } from "@/lib/supabase";
 
 /**
  * 꿀챔 데이터 서버 직접 fetch — API Route 경유 없이 Supabase 직접 쿼리
@@ -8,37 +8,40 @@ import { createServerClient } from "@/lib/supabase"
  * 개선: Server Component → fetchHoneyPicksServer() → Supabase (네트워크 홉 1회 제거)
  */
 
-const TIER_FALLBACK_ORDER = ["DIAMOND", "METEORITE", "MITHRIL", "IN1000"]
+const TIER_FALLBACK_ORDER = ["DIAMOND", "METEORITE", "MITHRIL", "IN1000"];
+
+// 비교 대상에서 제외할 패치 (시즌 종료 직전 패치 등 표본/메타가 왜곡된 패치)
+const SKIP_COMPARISON_PATCHES = new Set(["11.0"]);
 
 interface StatRow {
-  characterNum: number
-  bestWeapon: number
-  totalGames: number
-  totalWins: number
-  totalRP: number
-  totalTop3: number
-  tier: string
-  patchVersion: string
+  characterNum: number;
+  bestWeapon: number;
+  totalGames: number;
+  totalWins: number;
+  totalRP: number;
+  totalTop3: number;
+  tier: string;
+  patchVersion: string;
 }
 
 interface ComputedRate {
-  characterNum: number
-  bestWeapon: number
-  totalGames: number
-  pickRate: number
-  winRate: number
-  averageRP: number
+  characterNum: number;
+  bestWeapon: number;
+  totalGames: number;
+  pickRate: number;
+  winRate: number;
+  averageRP: number;
 }
 
 interface HoneyPicksResult {
-  picks: HoneyPickData[]
-  patchVersion: string
-  previousPatch: string | null
-  tier: string
+  picks: HoneyPickData[];
+  patchVersion: string;
+  previousPatch: string | null;
+  tier: string;
 }
 
 function computeRates(rows: StatRow[]): ComputedRate[] {
-  const grandTotal = rows.reduce((sum, r) => sum + (r.totalGames ?? 0), 0)
+  const grandTotal = rows.reduce((sum, r) => sum + (r.totalGames ?? 0), 0);
   return rows.map((r) => ({
     characterNum: r.characterNum,
     bestWeapon: r.bestWeapon,
@@ -46,22 +49,19 @@ function computeRates(rows: StatRow[]): ComputedRate[] {
     pickRate: grandTotal > 0 ? ((r.totalGames ?? 0) / grandTotal) * 100 : 0,
     winRate: r.totalGames > 0 ? ((r.totalWins ?? 0) / r.totalGames) * 100 : 0,
     averageRP: r.totalGames > 0 ? (r.totalRP ?? 0) / r.totalGames : 0,
-  }))
+  }));
 }
 
 function selectTierRows(
   data: StatRow[],
   requestedTier: string
 ): { rows: StatRow[]; usedTier: string } {
-  const tierOrder = [
-    requestedTier,
-    ...TIER_FALLBACK_ORDER.filter((t) => t !== requestedTier),
-  ]
+  const tierOrder = [requestedTier, ...TIER_FALLBACK_ORDER.filter((t) => t !== requestedTier)];
   for (const tier of tierOrder) {
-    const rows = data.filter((r) => r.tier === tier)
-    if (rows.length > 0) return { rows, usedTier: tier }
+    const rows = data.filter((r) => r.tier === tier);
+    if (rows.length > 0) return { rows, usedTier: tier };
   }
-  return { rows: [], usedTier: requestedTier }
+  return { rows: [], usedTier: requestedTier };
 }
 
 export async function fetchHoneyPicksServer(
@@ -73,83 +73,88 @@ export async function fetchHoneyPicksServer(
     patchVersion,
     previousPatch: null,
     tier: requestedTier,
-  }
+  };
 
   try {
-    const supabase = createServerClient()
+    const supabase = createServerClient();
 
     // 패치 목록 조회
     const { data: patches } = await supabase
       .from("PatchVersion")
       .select("version")
       .order("startDate", { ascending: false })
-      .limit(50)
+      .limit(50);
 
-    const patchList = (patches ?? []).map((p: { version: string }) => p.version)
-    const currentIndex = patchList.indexOf(patchVersion)
-    const previousPatch =
-      currentIndex >= 0 && currentIndex + 1 < patchList.length
-        ? patchList[currentIndex + 1]
-        : null
+    const patchList = (patches ?? []).map((p: { version: string }) => p.version);
+    const currentIndex = patchList.indexOf(patchVersion);
+    let previousPatch: string | null = null;
+    if (currentIndex >= 0) {
+      for (let i = currentIndex + 1; i < patchList.length; i++) {
+        if (!SKIP_COMPARISON_PATCHES.has(patchList[i])) {
+          previousPatch = patchList[i];
+          break;
+        }
+      }
+    }
 
-    if (!previousPatch) return empty
+    if (!previousPatch) return empty;
 
     // 현재 + 이전 패치 데이터 조회 (v2 → old fallback)
     const selectCols =
-      "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,tier,patchVersion"
+      "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,tier,patchVersion";
     let { data, error } = await supabase
       .from("v2_CharacterStats")
       .select(selectCols)
       .in("patchVersion", [patchVersion, previousPatch])
-      .in("tier", TIER_FALLBACK_ORDER)
+      .in("tier", TIER_FALLBACK_ORDER);
 
     // v2에 이전 패치 데이터 없으면 old 테이블 fallback
     if (data && previousPatch) {
       const hasV2Prev = data.some(
         (r: { patchVersion: string }) => r.patchVersion === previousPatch
-      )
+      );
       if (!hasV2Prev) {
         const { data: oldData } = await supabase
           .from("CharacterStats")
           .select(selectCols)
           .eq("patchVersion", previousPatch)
-          .in("tier", TIER_FALLBACK_ORDER)
+          .in("tier", TIER_FALLBACK_ORDER);
         if (oldData && oldData.length > 0) {
-          data = [...data, ...oldData]
+          data = [...data, ...oldData];
         }
       }
     }
 
-    if (error || !data) return empty
+    if (error || !data) return empty;
 
-    const typedData = data as StatRow[]
-    const currentData = typedData.filter((r) => r.patchVersion === patchVersion)
-    const prevData = typedData.filter((r) => r.patchVersion === previousPatch)
+    const typedData = data as StatRow[];
+    const currentData = typedData.filter((r) => r.patchVersion === patchVersion);
+    const prevData = typedData.filter((r) => r.patchVersion === previousPatch);
 
-    const { rows: currentRows, usedTier } = selectTierRows(currentData, requestedTier)
-    const { rows: prevRows } = selectTierRows(prevData, usedTier)
+    const { rows: currentRows, usedTier } = selectTierRows(currentData, requestedTier);
+    const { rows: prevRows } = selectTierRows(prevData, usedTier);
 
     if (currentRows.length === 0 || prevRows.length === 0) {
-      return { ...empty, previousPatch, tier: usedTier }
+      return { ...empty, previousPatch, tier: usedTier };
     }
 
-    const currentRates = computeRates(currentRows)
-    const prevRates = computeRates(prevRows)
-    const prevMap = new Map(prevRates.map((r) => [r.characterNum, r]))
+    const currentRates = computeRates(currentRows);
+    const prevRates = computeRates(prevRows);
+    const prevMap = new Map(prevRates.map((r) => [r.characterNum, r]));
 
     // 꿀챔 필터: 승률 ↑ 필수 (픽률은 무관)
-    const honeyPicks: HoneyPickData[] = []
+    const honeyPicks: HoneyPickData[] = [];
     for (const curr of currentRates) {
-      const prev = prevMap.get(curr.characterNum)
-      if (!prev) continue
+      const prev = prevMap.get(curr.characterNum);
+      if (!prev) continue;
 
-      const pickRateDelta = curr.pickRate - prev.pickRate
-      const winRateDelta = curr.winRate - prev.winRate
+      const pickRateDelta = curr.pickRate - prev.pickRate;
+      const winRateDelta = curr.winRate - prev.winRate;
 
       if (winRateDelta > 0) {
-        const rpBonus = curr.averageRP > 0 ? 1 + curr.averageRP / 100 : 1
+        const rpBonus = curr.averageRP > 0 ? 1 + curr.averageRP / 100 : 1;
         // 픽률 상승 시 가산, 하락 시 승률 변화만으로 스코어 산정
-        const pickFactor = pickRateDelta > 0 ? 1 + pickRateDelta : 1
+        const pickFactor = pickRateDelta > 0 ? 1 + pickRateDelta : 1;
         honeyPicks.push({
           characterNum: curr.characterNum,
           bestWeapon: curr.bestWeapon,
@@ -160,20 +165,20 @@ export async function fetchHoneyPicksServer(
           winRateDelta,
           averageRPDelta: curr.averageRP - prev.averageRP,
           honeyScore: winRateDelta * pickFactor * rpBonus,
-        })
+        });
       }
     }
 
-    honeyPicks.sort((a, b) => b.honeyScore - a.honeyScore)
+    honeyPicks.sort((a, b) => b.honeyScore - a.honeyScore);
 
     return {
       picks: honeyPicks.slice(0, 10),
       patchVersion,
       previousPatch,
       tier: usedTier,
-    }
+    };
   } catch (err) {
-    console.error("[honeyPicks] 서버 fetch 예외:", err)
-    return empty
+    console.error("[honeyPicks] 서버 fetch 예외:", err);
+    return empty;
   }
 }
