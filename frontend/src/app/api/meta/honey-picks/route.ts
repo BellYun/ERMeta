@@ -6,6 +6,9 @@ export const revalidate = 1800; // L1: 30분 서버 캐시
 
 const TIER_FALLBACK_ORDER = ["DIAMOND", "METEORITE", "MITHRIL", "IN1000"];
 
+// 비교 대상에서 제외할 패치 (시즌 종료 직전 패치 등 표본/메타가 왜곡된 패치)
+const SKIP_COMPARISON_PATCHES = new Set(["11.0"]);
+
 interface StatRow {
   characterNum: number;
   bestWeapon: number;
@@ -79,8 +82,15 @@ export async function GET(request: NextRequest) {
 
     const patchList = (patches ?? []).map((p: { version: string }) => p.version);
     const currentIndex = patchList.indexOf(patchVersion);
-    const previousPatch =
-      currentIndex >= 0 && currentIndex + 1 < patchList.length ? patchList[currentIndex + 1] : null;
+    let previousPatch: string | null = null;
+    if (currentIndex >= 0) {
+      for (let i = currentIndex + 1; i < patchList.length; i++) {
+        if (!SKIP_COMPARISON_PATCHES.has(patchList[i])) {
+          previousPatch = patchList[i];
+          break;
+        }
+      }
+    }
 
     if (!previousPatch) {
       return NextResponse.json({
