@@ -129,8 +129,8 @@ export default async function LocalizedCharacterPage({ params }: Props) {
     ...getAllPatchVersions().filter((patch) => patch !== latestPinnedPatch),
   ];
   const [initialStats, initialPrevStats] = await Promise.all([
-    patches[0] ? getCachedCharacterStats(code, patches[0], TierGroup.MITHRIL) : null,
-    patches[1] ? getCachedCharacterStats(code, patches[1], TierGroup.MITHRIL) : null,
+    patches[0] ? getCachedCharacterStats(code, patches[0], TierGroup.DIAMOND) : null,
+    patches[1] ? getCachedCharacterStats(code, patches[1], TierGroup.DIAMOND) : null,
   ]);
 
   return (

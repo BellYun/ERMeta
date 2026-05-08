@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const latestPatch = (await getPatches())[0] ?? "";
   const patchVersion = searchParams.get("patchVersion") ?? latestPatch;
-  const requestedTier = searchParams.get("tier") ?? "MITHRIL";
+  const requestedTier = searchParams.get("tier") ?? "DIAMOND";
 
   if (!patchVersion) {
     return NextResponse.json(

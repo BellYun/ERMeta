@@ -62,7 +62,7 @@ export function CharacterAnalysisClient({
   const t = useTranslations("characterAnalysis");
   const patches = React.useMemo(() => initialPatches ?? [], [initialPatches]);
 
-  const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.MITHRIL);
+  const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.DIAMOND);
 
   const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>((): number | null => {
     if (initialStats?.weapons && initialStats.weapons.length > 0) {

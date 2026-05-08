@@ -65,7 +65,7 @@ function selectTierRows(
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const patchVersion = searchParams.get("patchVersion") ?? "11.1";
-  const requestedTier = searchParams.get("tier") ?? "MITHRIL";
+  const requestedTier = searchParams.get("tier") ?? "DIAMOND";
 
   try {
     const supabase = createServerClient();

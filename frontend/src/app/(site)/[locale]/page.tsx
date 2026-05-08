@@ -74,7 +74,7 @@ export default async function LocalizedHomePage({ params }: LocalePageProps) {
 
   setRequestLocale(locale);
 
-  const defaultTier = "MITHRIL";
+  const defaultTier = "DIAMOND";
   const emptyRankingData: Awaited<ReturnType<typeof fetchRankingData>> = {
     rankings: [],
     previousRankings: [],
