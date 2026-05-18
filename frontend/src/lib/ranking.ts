@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { createServerClient } from "@/lib/supabase";
 
 const TIER_FALLBACK_ORDER = ["DIAMOND", "METEORITE", "MITHRIL", "IN1000"];
@@ -85,11 +86,13 @@ export async function fetchRankingData(
 
   const selectCols =
     "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank,tier,patchVersion";
-  let { data, error } = await supabase
+  const queryResult = await supabase
     .from("v2_CharacterStats")
     .select(selectCols)
     .in("patchVersion", patchVersions)
     .in("tier", TIER_FALLBACK_ORDER);
+  const { error } = queryResult;
+  let { data } = queryResult;
 
   // v2에 이전 패치 데이터 없으면 old 테이블 fallback 병합
   if (previousPatch && data) {
@@ -133,4 +136,22 @@ export async function fetchRankingData(
     previousPatch,
     tier: usedTier,
   };
+}
+
+export async function getCachedRankingData(
+  patchVersion: string,
+  requestedTier: string
+): Promise<RankingResponse> {
+  return unstable_cache(
+    async () => fetchRankingData(patchVersion, requestedTier),
+    ["character-rankings", patchVersion, requestedTier],
+    {
+      revalidate: 1800,
+      tags: [
+        "character-rankings",
+        `character-rankings:${patchVersion}`,
+        `character-rankings:tier:${requestedTier}`,
+      ],
+    }
+  )();
 }
