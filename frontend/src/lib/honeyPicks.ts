@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import type { HoneyPickData } from "@/app/api/meta/honey-picks/route";
 import { createServerClient } from "@/lib/supabase";
 
@@ -102,11 +103,13 @@ export async function fetchHoneyPicksServer(
     // 현재 + 이전 패치 데이터 조회 (v2 → old fallback)
     const selectCols =
       "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,tier,patchVersion";
-    let { data, error } = await supabase
+    const queryResult = await supabase
       .from("v2_CharacterStats")
       .select(selectCols)
       .in("patchVersion", [patchVersion, previousPatch])
       .in("tier", TIER_FALLBACK_ORDER);
+    const { error } = queryResult;
+    let { data } = queryResult;
 
     // v2에 이전 패치 데이터 없으면 old 테이블 fallback
     if (data && previousPatch) {
@@ -181,4 +184,18 @@ export async function fetchHoneyPicksServer(
     console.error("[honeyPicks] 서버 fetch 예외:", err);
     return empty;
   }
+}
+
+export async function getCachedHoneyPicks(
+  patchVersion: string,
+  requestedTier: string
+): Promise<HoneyPicksResult> {
+  return unstable_cache(
+    async () => fetchHoneyPicksServer(patchVersion, requestedTier),
+    ["honey-picks", patchVersion, requestedTier],
+    {
+      revalidate: 1800,
+      tags: ["honey-picks", `honey-picks:${patchVersion}`, `honey-picks:tier:${requestedTier}`],
+    }
+  )();
 }

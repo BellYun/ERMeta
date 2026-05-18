@@ -54,12 +54,10 @@ function buildEmptyResponse(
   };
 }
 
-export async function fetchCharacterStatsServer(
-  characterCode: number,
+async function fetchCharacterStatRowsServer(
   patchVersion: string,
   tier: string
-): Promise<CharacterStatsResponse> {
-  const emptyResponse = buildEmptyResponse(characterCode, patchVersion, tier);
+): Promise<StatRow[]> {
   const supabase = createServerClient();
 
   const selectCols = "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank";
@@ -80,10 +78,24 @@ export async function fetchCharacterStatsServer(
   }
 
   if (error || !data || data.length === 0) {
+    return [];
+  }
+
+  return data as StatRow[];
+}
+
+function buildCharacterStatsResponse(
+  allRows: StatRow[],
+  characterCode: number,
+  patchVersion: string,
+  tier: string
+): CharacterStatsResponse {
+  const emptyResponse = buildEmptyResponse(characterCode, patchVersion, tier);
+
+  if (allRows.length === 0) {
     return emptyResponse;
   }
 
-  const allRows = data as StatRow[];
   const grandTotal = allRows.reduce((sum, row) => sum + (row.totalGames ?? 0), 0);
   const rows = allRows.filter((row) => row.characterNum === characterCode);
 
@@ -127,24 +139,38 @@ export async function fetchCharacterStatsServer(
   };
 }
 
+export async function fetchCharacterStatsServer(
+  characterCode: number,
+  patchVersion: string,
+  tier: string
+): Promise<CharacterStatsResponse> {
+  const allRows = await fetchCharacterStatRowsServer(patchVersion, tier);
+  return buildCharacterStatsResponse(allRows, characterCode, patchVersion, tier);
+}
+
+async function getCachedCharacterStatRows(patchVersion: string, tier: string): Promise<StatRow[]> {
+  return unstable_cache(
+    async () => fetchCharacterStatRowsServer(patchVersion, tier),
+    ["character-stats-rows", patchVersion, tier],
+    {
+      revalidate: 3600,
+      tags: [
+        "character-stats:rows",
+        `character-stats:patch:${patchVersion}`,
+        `character-stats:tier:${tier}`,
+      ],
+    }
+  )();
+}
+
 export async function getCachedCharacterStats(
   characterCode: number,
   patchVersion: string,
   tier: string
 ): Promise<CharacterStatsResponse | null> {
   try {
-    return await unstable_cache(
-      async () => fetchCharacterStatsServer(characterCode, patchVersion, tier),
-      ["character-stats", String(characterCode), patchVersion, tier],
-      {
-        revalidate: 3600,
-        tags: [
-          `character-stats:${characterCode}`,
-          `character-stats:${characterCode}:${patchVersion}`,
-          `character-stats:tier:${tier}`,
-        ],
-      }
-    )();
+    const allRows = await getCachedCharacterStatRows(patchVersion, tier);
+    return buildCharacterStatsResponse(allRows, characterCode, patchVersion, tier);
   } catch {
     return null;
   }

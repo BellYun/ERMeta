@@ -4,15 +4,12 @@ import { CharacterPageContent } from "@/components/features/character-analysis/C
 import { CHARACTER_CODES } from "@/components/features/character-analysis/constants";
 import { getAllPatchVersions } from "@/data/patch-notes";
 import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
-import { getCachedCharacterStats } from "@/lib/characterStats";
 import { DEFAULT_LANGUAGE } from "@/lib/detectLanguage";
 import { buildDefaultAlternates } from "@/lib/seoLocales";
 import { loadL10nMap } from "@/lib/serverL10n";
 import { BASE_URL } from "@/lib/siteMetadata";
 import { getStaticTranslator, OG_LOCALE_BY_LANGUAGE } from "@/lib/staticIntl";
-import { TierGroup } from "@/utils/tier";
 
-export const revalidate = 3600;
 export const dynamic = "force-static";
 export const dynamicParams = false;
 
@@ -113,18 +110,14 @@ export default async function DefaultCharacterPage({ params }: Props) {
     latestPinnedPatch,
     ...getAllPatchVersions().filter((patch) => patch !== latestPinnedPatch),
   ];
-  const [initialStats, initialPrevStats] = await Promise.all([
-    patches[0] ? getCachedCharacterStats(code, patches[0], TierGroup.DIAMOND) : null,
-    patches[1] ? getCachedCharacterStats(code, patches[1], TierGroup.DIAMOND) : null,
-  ]);
 
   return (
     <CharacterPageContent
       locale="ko"
       code={code}
       patches={patches}
-      initialStats={initialStats}
-      initialPrevStats={initialPrevStats}
+      initialStats={null}
+      initialPrevStats={null}
     />
   );
 }

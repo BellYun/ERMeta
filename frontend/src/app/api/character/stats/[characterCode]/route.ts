@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
-import { fetchCharacterStatsServer, type CharacterStatsResponse } from "@/lib/characterStats";
+import { getCachedCharacterStats, type CharacterStatsResponse } from "@/lib/characterStats";
 
-export const revalidate = 1800; // L1: 30분 서버 캐시
 export type { CharacterStatsResponse, WeaponStatItem } from "@/lib/characterStats";
 
 export async function GET(
@@ -21,7 +20,10 @@ export async function GET(
   const patchVersion = searchParams.get("patchVersion") ?? "11.1";
 
   try {
-    const stats = await fetchCharacterStatsServer(characterCode, patchVersion, tier);
+    const stats = await getCachedCharacterStats(characterCode, patchVersion, tier);
+    if (!stats) {
+      throw new Error("Failed to load cached character stats");
+    }
     return NextResponse.json(stats satisfies CharacterStatsResponse, {
       headers: getCacheHeaders("daily"),
     });

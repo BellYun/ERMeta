@@ -4,8 +4,6 @@ import { getTranslations } from "next-intl/server";
 import { SynergyClient } from "@/components/features/SynergyClient";
 import { Link } from "@/i18n/navigation";
 
-export const revalidate = 300;
-
 export async function generateMetadata(): Promise<Metadata> {
   const tNav = await getTranslations("navigation");
   const tPage = await getTranslations("synergyPage");
