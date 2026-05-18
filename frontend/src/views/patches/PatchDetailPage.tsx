@@ -9,7 +9,6 @@ import { Link } from "@/i18n/navigation";
 import { getCharacterMiniWebpUrl, getCharacterName } from "@/lib/characterMap";
 import { getStaticTranslator } from "@/lib/staticIntl";
 
-export const revalidate = 3600;
 export const dynamicParams = false;
 
 function DetailMetricCard({
