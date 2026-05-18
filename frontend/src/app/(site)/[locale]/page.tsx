@@ -4,8 +4,8 @@ import { setRequestLocale } from "next-intl/server";
 import { HomePageContent } from "@/components/features/home/HomePageContent";
 import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
 import { getPatches } from "@/lib/getPatches";
-import { fetchHoneyPicksServer } from "@/lib/honeyPicks";
-import { fetchRankingData } from "@/lib/ranking";
+import { getCachedHoneyPicks } from "@/lib/honeyPicks";
+import { getCachedRankingData } from "@/lib/ranking";
 import { buildLocalizedAlternates, localizeRoutePath } from "@/lib/seoLocales";
 import { BASE_URL } from "@/lib/siteMetadata";
 import { getMessage, loadIntlMessages, OG_LOCALE_BY_LANGUAGE } from "@/lib/staticIntl";
@@ -75,7 +75,7 @@ export default async function LocalizedHomePage({ params }: LocalePageProps) {
   setRequestLocale(locale);
 
   const defaultTier = "DIAMOND";
-  const emptyRankingData: Awaited<ReturnType<typeof fetchRankingData>> = {
+  const emptyRankingData: Awaited<ReturnType<typeof getCachedRankingData>> = {
     rankings: [],
     previousRankings: [],
     patchVersion: "",
@@ -86,7 +86,7 @@ export default async function LocalizedHomePage({ params }: LocalePageProps) {
   const patches = await getPatches();
   const defaultPatch = patches[0] ?? "";
 
-  let honeyData: Awaited<ReturnType<typeof fetchHoneyPicksServer>> = {
+  let honeyData: Awaited<ReturnType<typeof getCachedHoneyPicks>> = {
     picks: [],
     patchVersion: "",
     previousPatch: null as string | null,
@@ -97,8 +97,8 @@ export default async function LocalizedHomePage({ params }: LocalePageProps) {
   if (defaultPatch) {
     try {
       [honeyData, rankingData] = await Promise.all([
-        fetchHoneyPicksServer(defaultPatch, defaultTier),
-        fetchRankingData(defaultPatch, defaultTier),
+        getCachedHoneyPicks(defaultPatch, defaultTier),
+        getCachedRankingData(defaultPatch, defaultTier),
       ]);
     } catch {
       honeyData = { ...honeyData, patchVersion: defaultPatch };
