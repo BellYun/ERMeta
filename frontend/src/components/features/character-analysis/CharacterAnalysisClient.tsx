@@ -132,8 +132,9 @@ export function CharacterAnalysisClient({
 
   // 티어 변경 시 데이터 리페치
   React.useEffect(() => {
-    if (selectedTier === TierGroup.MITHRIL) {
-      // 서버에서 받은 초기 데이터로 복원
+    let cancelled = false;
+
+    if (selectedTier === TierGroup.DIAMOND && initialStats) {
       setStats(initialStats ?? null);
       setPreviousStats(initialPrevStats ?? null);
       setAllPatchStats(() => {
@@ -143,34 +144,52 @@ export function CharacterAnalysisClient({
         return initial;
       });
       setSelectedWeapon(readWeaponFromLocation() ?? initialStats?.weapons?.[0]?.bestWeapon ?? null);
-      return;
+      setLoading(false);
+      return () => {
+        cancelled = true;
+      };
     }
 
-    setLoading(true);
-    setStats(null);
-    setPreviousStats(null);
-    setAllPatchStats([]);
-    setSelectedWeapon(null);
+    const fetchPriorityStats = async () => {
+      setLoading(true);
+      setStats(null);
+      setPreviousStats(null);
+      setAllPatchStats([]);
+      setSelectedWeapon(null);
 
-    const priorityPatches = patches.slice(0, 2);
-    Promise.all(priorityPatches.map((p) => fetchStats(code, p, selectedTier))).then(
-      (priorityResults) => {
-        const current = priorityResults[0] ?? null;
-        setStats(current);
-        setPreviousStats(priorityResults[1] ?? null);
-        if (current?.weapons && current.weapons.length > 0) {
-          setSelectedWeapon(current.weapons[0].bestWeapon ?? null);
-        }
-        const initial: (CharacterStatsResponse | null)[] = Array(patches.length).fill(null);
-        priorityResults.forEach((r, i) => {
-          initial[i] = r;
-        });
-        setAllPatchStats(initial);
-        setLoading(false);
+      const priorityPatches = patches.slice(0, 2);
+      const priorityResults = await Promise.all(
+        priorityPatches.map((patch) => fetchStats(code, patch, selectedTier))
+      );
+
+      if (cancelled) {
+        return;
       }
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTier]);
+
+      const current = priorityResults[0] ?? null;
+      setStats(current);
+      setPreviousStats(priorityResults[1] ?? null);
+      setSelectedWeapon(readWeaponFromLocation() ?? current?.weapons?.[0]?.bestWeapon ?? null);
+
+      const initial: (CharacterStatsResponse | null)[] = Array(patches.length).fill(null);
+      priorityResults.forEach((result, index) => {
+        initial[index] = result;
+      });
+      setAllPatchStats(initial);
+      setLoading(false);
+    };
+
+    void fetchPriorityStats().catch(() => {
+      if (cancelled) {
+        return;
+      }
+      setLoading(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [code, initialPrevStats, initialStats, patches, selectedTier]);
 
   const currentPatch = patches[0] ?? null;
 
