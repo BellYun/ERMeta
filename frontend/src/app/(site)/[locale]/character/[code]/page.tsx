@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { CharacterPageContent } from "@/components/features/character-analysis/CharacterPageContent";
 import { CHARACTER_CODES } from "@/components/features/character-analysis/constants";
-import { getAllPatchVersions } from "@/data/patch-notes";
+import { getStatsPatchVersions } from "@/data/patch-notes";
 import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
 import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
 import { buildLocalizedAlternates, localizeRoutePath } from "@/lib/seoLocales";
@@ -119,8 +119,8 @@ export default async function LocalizedCharacterPage({ params }: Props) {
     notFound();
   }
 
-  // 패치노트 최신 버전이 자동으로 맨 앞(기본 선택)에 온다.
-  const patches = getAllPatchVersions();
+  // 통계용 패치 목록(제외 패치 제외). 최신 버전이 자동으로 맨 앞(기본 선택)에 온다.
+  const patches = getStatsPatchVersions();
 
   return (
     <CharacterPageContent

@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import type { HoneyPickData } from "@/app/api/meta/honey-picks/route";
+import { STATS_EXCLUDED_PATCHES } from "@/data/patch-notes";
 import { createServerClient } from "@/lib/supabase";
 
 /**
@@ -11,8 +12,8 @@ import { createServerClient } from "@/lib/supabase";
 
 const TIER_FALLBACK_ORDER = ["DIAMOND", "METEORITE", "MITHRIL", "IN1000"];
 
-// 비교 대상에서 제외할 패치 (시즌 종료 직전 패치 등 표본/메타가 왜곡된 패치)
-const SKIP_COMPARISON_PATCHES = new Set(["11.0"]);
+// 비교 대상에서 제외할 패치 (표본/메타가 왜곡된 프리시즌 등) — 통계 공통 상수 사용
+const SKIP_COMPARISON_PATCHES = STATS_EXCLUDED_PATCHES;
 
 interface StatRow {
   characterNum: number;

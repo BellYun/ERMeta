@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAllPatchVersions } from "@/data/patch-notes";
+import { getStatsPatchVersions, STATS_EXCLUDED_PATCHES } from "@/data/patch-notes";
 import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
 import { createServerClient } from "@/lib/supabase";
 
@@ -7,8 +7,8 @@ export const revalidate = 1800; // L1: 30분 서버 캐시
 
 const TIER_FALLBACK_ORDER = ["DIAMOND", "METEORITE", "MITHRIL", "IN1000"];
 
-// 비교 대상에서 제외할 패치 (시즌 종료 직전 패치 등 표본/메타가 왜곡된 패치)
-const SKIP_COMPARISON_PATCHES = new Set(["11.0"]);
+// 비교 대상에서 제외할 패치 (표본/메타가 왜곡된 프리시즌 등) — 통계 공통 상수 사용
+const SKIP_COMPARISON_PATCHES = STATS_EXCLUDED_PATCHES;
 
 interface StatRow {
   characterNum: number;
@@ -68,7 +68,7 @@ function selectTierRows(
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const patchVersion = searchParams.get("patchVersion") ?? getAllPatchVersions()[0];
+  const patchVersion = searchParams.get("patchVersion") ?? getStatsPatchVersions()[0];
   const requestedTier = searchParams.get("tier") ?? "DIAMOND";
 
   try {
