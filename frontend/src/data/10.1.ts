@@ -1,16 +1,16 @@
-export type ChangeType = "buff" | "nerf" | "rework"
+export type ChangeType = "buff" | "nerf" | "rework";
 
 export interface PatchChange {
-  target: string          // 예: "Q - 전격 연속공격", "기본 체력"
-  changeType: ChangeType
-  description: string[]   // 변경 설명 (여러 줄 지원)
-  valueSummary?: string   // 예: "850 → 920" (선택)
+  target: string; // 예: "Q - 전격 연속공격", "기본 체력"
+  changeType: ChangeType;
+  description: string[]; // 변경 설명 (여러 줄 지원)
+  valueSummary?: string; // 예: "850 → 920" (선택)
 }
 
 export interface CharacterPatchNote {
-  characterCode: number   // getCharacterName(code)와 동일한 코드 체계
-  patch: string           // 패치 버전 문자열 (DB의 patchVersion과 동일)
-  changes: PatchChange[]
+  characterCode: number; // getCharacterName(code)와 동일한 코드 체계
+  patch: string; // 패치 버전 문자열 (DB의 patchVersion과 동일)
+  changes: PatchChange[];
 }
 
 export const PATCH_NOTES: CharacterPatchNote[] = [
@@ -106,7 +106,8 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "고정 사격(W)",
         changeType: "nerf",
         description: ["스킬 증폭 계수가 감소했습니다."],
-        valueSummary: "20/30/40/50/60(+공격력의 50%)(+스킬 증폭의 30/35/40/45/50%) → 20/30/40/50/60(+공격력의 50%)(+스킬 증폭의 28/33/38/43/48%)",
+        valueSummary:
+          "20/30/40/50/60(+공격력의 50%)(+스킬 증폭의 30/35/40/45/50%) → 20/30/40/50/60(+공격력의 50%)(+스킬 증폭의 28/33/38/43/48%)",
       },
     ],
   },
@@ -170,13 +171,4 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
       },
     ],
   },
-]
-
-export function getCharacterPatchNote(
-  characterCode: number,
-  patch: string
-): CharacterPatchNote | undefined {
-  return PATCH_NOTES.find(
-    (note) => note.characterCode === characterCode && note.patch === patch
-  )
-}
+];

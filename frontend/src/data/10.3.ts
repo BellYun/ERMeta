@@ -1,16 +1,16 @@
-export type ChangeType = "buff" | "nerf" | "rework"
+export type ChangeType = "buff" | "nerf" | "rework";
 
 export interface PatchChange {
-  target: string          // 예: "Q - 전격 연속공격", "기본 체력"
-  changeType: ChangeType
-  description: string[]   // 변경 설명 (여러 줄 지원)
-  valueSummary?: string   // 예: "850 → 920" (선택)
+  target: string; // 예: "Q - 전격 연속공격", "기본 체력"
+  changeType: ChangeType;
+  description: string[]; // 변경 설명 (여러 줄 지원)
+  valueSummary?: string; // 예: "850 → 920" (선택)
 }
 
 export interface CharacterPatchNote {
-  characterCode: number   // getCharacterName(code)와 동일한 코드 체계
-  patch: string           // 패치 버전 문자열 (DB의 patchVersion과 동일)
-  changes: PatchChange[]
+  characterCode: number; // getCharacterName(code)와 동일한 코드 체계
+  patch: string; // 패치 버전 문자열 (DB의 patchVersion과 동일)
+  changes: PatchChange[];
 }
 
 export const PATCH_NOTES: CharacterPatchNote[] = [
@@ -22,7 +22,8 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "짓뭉개기&꿰뚫기(Q) - 짓뭉개기 피해량",
         changeType: "buff",
         description: ["짓뭉개기 피해량이 증가했습니다."],
-        valueSummary: "40/60/80/100/120(+스킬 증폭의 50%)(+최대 체력의 5%) → 40/65/90/115/140(+스킬 증폭의 50%)(+최대 체력의 5%)",
+        valueSummary:
+          "40/60/80/100/120(+스킬 증폭의 50%)(+최대 체력의 5%) → 40/65/90/115/140(+스킬 증폭의 50%)(+최대 체력의 5%)",
       },
       {
         target: "억누른 고통(W)",
@@ -130,7 +131,8 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "드레이프(Q) - 피해량",
         changeType: "nerf",
         description: ["피해량이 감소했습니다."],
-        valueSummary: "40/80/120/160/200(+스킬 증폭의 40%)(+최대 체력의 7%) → 40/75/110/145/180(+스킬 증폭의 40%)(+최대 체력의 7%)",
+        valueSummary:
+          "40/80/120/160/200(+스킬 증폭의 40%)(+최대 체력의 7%) → 40/75/110/145/180(+스킬 증폭의 40%)(+최대 체력의 7%)",
       },
     ],
   },
@@ -220,7 +222,8 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "셈텍스 폭탄(Q) - 피해량",
         changeType: "buff",
         description: ["피해량이 증가했습니다."],
-        valueSummary: "50/70/90/110/130(+공격력의 25%)(+스킬 증폭의 70%) → 60/85/110/135/160(+공격력의 25%)(+스킬 증폭의 70%)",
+        valueSummary:
+          "50/70/90/110/130(+공격력의 25%)(+스킬 증폭의 70%) → 60/85/110/135/160(+공격력의 25%)(+스킬 증폭의 70%)",
       },
     ],
   },
@@ -255,7 +258,8 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "진압(Q) - 피해량",
         changeType: "buff",
         description: ["피해량의 스킬 증폭 계수가 증가했습니다."],
-        valueSummary: "50/80/110/140/170(+스킬 증폭의 35%)(+최대 체력의 5%) → 50/80/110/140/170(+스킬 증폭의 40%)(+최대 체력의 5%)",
+        valueSummary:
+          "50/80/110/140/170(+스킬 증폭의 35%)(+최대 체력의 5%) → 50/80/110/140/170(+스킬 증폭의 40%)(+최대 체력의 5%)",
       },
     ],
   },
@@ -339,7 +343,8 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "분노의 일격(Q) - 피해량",
         changeType: "nerf",
         description: ["피해량의 공격력 계수가 감소했습니다."],
-        valueSummary: "30/40/50/60/70(+공격력의 160/165/170/175/180%) → 30/40/50/60/70(+공격력의 150/155/160/165/170%)",
+        valueSummary:
+          "30/40/50/60/70(+공격력의 160/165/170/175/180%) → 30/40/50/60/70(+공격력의 150/155/160/165/170%)",
       },
     ],
   },
@@ -453,17 +458,9 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "발 밟기(Q)",
         changeType: "buff",
         description: ["피해량의 추가 공격력 계수가 증가했습니다."],
-        valueSummary: "50/100/150/200/250(+추가 공격력의 40%)(+스킬 증폭의 80%) → 50/100/150/200/250(+추가 공격력의 60%)(+스킬 증폭의 80%)",
+        valueSummary:
+          "50/100/150/200/250(+추가 공격력의 40%)(+스킬 증폭의 80%) → 50/100/150/200/250(+추가 공격력의 60%)(+스킬 증폭의 80%)",
       },
     ],
   },
-]
-
-export function getCharacterPatchNote(
-  characterCode: number,
-  patch: string
-): CharacterPatchNote | undefined {
-  return PATCH_NOTES.find(
-    (note) => note.characterCode === characterCode && note.patch === patch
-  )
-}
+];
