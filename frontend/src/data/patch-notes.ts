@@ -8,6 +8,7 @@ import { PATCH_NOTES as PATCH_10_6 } from "./10.6";
 import { PATCH_NOTES as PATCH_10_7 } from "./10.7";
 import { PATCH_NOTES as PATCH_11_0 } from "./11.0";
 import { PATCH_NOTES as PATCH_11_1 } from "./11.1";
+import { PATCH_NOTES as PATCH_11_2 } from "./11.2";
 
 export type { ChangeType, PatchChange, CharacterPatchNote } from "./10.1";
 
@@ -21,6 +22,7 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
   ...PATCH_10_7,
   ...PATCH_11_0,
   ...PATCH_11_1,
+  ...PATCH_11_2,
 ];
 
 export function getCharacterPatchNote(
