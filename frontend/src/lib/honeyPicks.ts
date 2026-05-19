@@ -2,6 +2,7 @@ import { unstable_cache } from "next/cache";
 import type { HoneyPickData } from "@/app/api/meta/honey-picks/route";
 import { STATS_EXCLUDED_PATCHES } from "@/data/patch-notes";
 import { createServerClient } from "@/lib/supabase";
+import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
 
 /**
  * 꿀챔 데이터 서버 직접 fetch — API Route 경유 없이 Supabase 직접 쿼리
@@ -132,8 +133,15 @@ export async function fetchHoneyPicksServer(
     if (error || !data) return empty;
 
     const typedData = data as StatRow[];
-    const currentData = typedData.filter((r) => r.patchVersion === patchVersion);
-    const prevData = typedData.filter((r) => r.patchVersion === previousPatch);
+    // 무기 무관 캐릭터(알렉스 등)는 tier별로 단일 row 합산
+    const currentData = collapseWeaponAgnosticRows(
+      typedData.filter((r) => r.patchVersion === patchVersion),
+      (r) => r.tier
+    );
+    const prevData = collapseWeaponAgnosticRows(
+      typedData.filter((r) => r.patchVersion === previousPatch),
+      (r) => r.tier
+    );
 
     const { rows: currentRows, usedTier } = selectTierRows(currentData, requestedTier);
     const { rows: prevRows } = selectTierRows(prevData, usedTier);

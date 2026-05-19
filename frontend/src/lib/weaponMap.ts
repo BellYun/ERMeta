@@ -61,7 +61,8 @@ export const WEAPON_ENUM_BY_CODE: Record<number, string> = {
  * - 매핑에 없는 코드는 "무기 {code}"
  */
 export function resolveWeaponName(code: number | null, l10n?: Map<string, string>): string {
-  if (code == null) return "전체 무기";
+  // null 또는 0(무기 무관 합산 센티넬) → 전체 무기
+  if (code == null || code === 0) return "전체 무기";
   if (l10n) {
     const enumName = WEAPON_ENUM_BY_CODE[code];
     if (enumName) {

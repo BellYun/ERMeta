@@ -361,8 +361,20 @@ const WEAPON_ROLES_FALLBACK: Record<number, CharacterRole[]> = {
   25: ["전사"], // VF의수
 };
 
-/** 캐릭터+무기 조합으로 직업군 조회. 없으면 무기 fallback. */
+// 무기군 구분 없이 단일 직업군/통계로 통합하는 캐릭터 (코드 → 통합 직업군)
+export const WEAPON_AGNOSTIC_ROLES: Record<number, CharacterRole[]> = {
+  27: ["전사"], // 알렉스: 어떤 무기군이든 전사로 통합
+};
+
+export function isWeaponAgnosticCharacter(characterCode: number): boolean {
+  return characterCode in WEAPON_AGNOSTIC_ROLES;
+}
+
+/** 캐릭터+무기 조합으로 직업군 조회. 무기 무관 캐릭터는 고정 직업군, 없으면 무기 fallback. */
 export function getComboRoles(characterCode: number, weaponCode: number): CharacterRole[] {
+  if (characterCode in WEAPON_AGNOSTIC_ROLES) {
+    return WEAPON_AGNOSTIC_ROLES[characterCode];
+  }
   const key = `${characterCode}_${weaponCode}`;
   return COMBO_ROLES[key] ?? WEAPON_ROLES_FALLBACK[weaponCode] ?? [];
 }
