@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getAllPatchVersions } from "@/data/patch-notes";
 import { getCacheHeaders } from "@/lib/cache";
 import { createServerClient } from "@/lib/supabase";
 import {
@@ -104,7 +105,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const characterCode = Number(searchParams.get("characterCode"));
   const tier = searchParams.get("tier") ?? "DIAMOND";
-  const patchVersion = searchParams.get("patchVersion") ?? "11.1";
+  const patchVersion = searchParams.get("patchVersion") ?? getAllPatchVersions()[0];
   const bestWeapon = searchParams.get("bestWeapon");
 
   if (!characterCode || isNaN(characterCode)) {

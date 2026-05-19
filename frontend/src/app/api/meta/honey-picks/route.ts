@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getAllPatchVersions } from "@/data/patch-notes";
 import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
 import { createServerClient } from "@/lib/supabase";
 
@@ -67,7 +68,7 @@ function selectTierRows(
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const patchVersion = searchParams.get("patchVersion") ?? "11.1";
+  const patchVersion = searchParams.get("patchVersion") ?? getAllPatchVersions()[0];
   const requestedTier = searchParams.get("tier") ?? "DIAMOND";
 
   try {

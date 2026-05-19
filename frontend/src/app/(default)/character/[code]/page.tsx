@@ -105,11 +105,8 @@ export default async function DefaultCharacterPage({ params }: Props) {
     notFound();
   }
 
-  const latestPinnedPatch = "11.1";
-  const patches = [
-    latestPinnedPatch,
-    ...getAllPatchVersions().filter((patch) => patch !== latestPinnedPatch),
-  ];
+  // 패치노트 최신 버전이 자동으로 맨 앞(기본 선택)에 온다.
+  const patches = getAllPatchVersions();
 
   return (
     <CharacterPageContent

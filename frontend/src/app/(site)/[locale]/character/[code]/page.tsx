@@ -119,12 +119,8 @@ export default async function LocalizedCharacterPage({ params }: Props) {
     notFound();
   }
 
-  // 임시 핫픽스: 캐릭터 분석은 11.1 기준으로 고정하고, 비교 대상도 정적 패치 목록만 사용한다.
-  const latestPinnedPatch = "11.1";
-  const patches = [
-    latestPinnedPatch,
-    ...getAllPatchVersions().filter((patch) => patch !== latestPinnedPatch),
-  ];
+  // 패치노트 최신 버전이 자동으로 맨 앞(기본 선택)에 온다.
+  const patches = getAllPatchVersions();
 
   return (
     <CharacterPageContent
