@@ -8,6 +8,7 @@ import { PATCH_NOTES as PATCH_10_6 } from "./10.6";
 import { PATCH_NOTES as PATCH_10_7 } from "./10.7";
 import { PATCH_NOTES as PATCH_11_0 } from "./11.0";
 import { PATCH_NOTES as PATCH_11_1 } from "./11.1";
+import { PATCH_NOTES as PATCH_11_2 } from "./11.2";
 
 export type { ChangeType, PatchChange, CharacterPatchNote } from "./10.1";
 
@@ -21,6 +22,7 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
   ...PATCH_10_7,
   ...PATCH_11_0,
   ...PATCH_11_1,
+  ...PATCH_11_2,
 ];
 
 export function getCharacterPatchNote(
@@ -41,6 +43,18 @@ function compareVersionDesc(a: string, b: string): number {
 export function getAllPatchVersions(): string[] {
   const set = new Set(PATCH_NOTES.map((n) => n.patch));
   return [...set].sort(compareVersionDesc);
+}
+
+// 통계 계산에서 제외할 패치 (표본/메타가 왜곡된 프리시즌 등). 패치노트 이력에는 그대로 노출.
+export const STATS_EXCLUDED_PATCHES = new Set(["11.0"]);
+
+export function isStatsExcludedPatch(patch: string): boolean {
+  return STATS_EXCLUDED_PATCHES.has(patch);
+}
+
+// 통계용 패치 목록 (최신순). 제외 패치를 뺀다.
+export function getStatsPatchVersions(): string[] {
+  return getAllPatchVersions().filter((p) => !STATS_EXCLUDED_PATCHES.has(p));
 }
 
 export interface PatchSummary {

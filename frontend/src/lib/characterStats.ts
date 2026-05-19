@@ -2,6 +2,7 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 import { createServerClient } from "@/lib/supabase";
+import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
 
 interface StatRow {
   characterNum: number;
@@ -97,7 +98,10 @@ function buildCharacterStatsResponse(
   }
 
   const grandTotal = allRows.reduce((sum, row) => sum + (row.totalGames ?? 0), 0);
-  const rows = allRows.filter((row) => row.characterNum === characterCode);
+  // 무기 무관 캐릭터(알렉스 등)는 무기별 row를 단일 entry로 합산 (단일 patch+tier 컨텍스트)
+  const rows = collapseWeaponAgnosticRows(
+    allRows.filter((row) => row.characterNum === characterCode)
+  );
 
   if (rows.length === 0) {
     return emptyResponse;

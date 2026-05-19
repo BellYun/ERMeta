@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getStatsPatchVersions } from "@/data/patch-notes";
 import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
 import { getCachedCharacterStats, type CharacterStatsResponse } from "@/lib/characterStats";
 
@@ -17,7 +18,7 @@ export async function GET(
 
   const { searchParams } = new URL(request.url);
   const tier = searchParams.get("tier") ?? "DIAMOND";
-  const patchVersion = searchParams.get("patchVersion") ?? "11.1";
+  const patchVersion = searchParams.get("patchVersion") ?? getStatsPatchVersions()[0];
 
   try {
     const stats = await getCachedCharacterStats(characterCode, patchVersion, tier);

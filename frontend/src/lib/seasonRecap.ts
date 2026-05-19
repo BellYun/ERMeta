@@ -1,10 +1,8 @@
-import { type CharacterRole, getComboRoles } from "@/lib/characterMap";
+import { type CharacterRole, getComboRoles, isWeaponAgnosticCharacter } from "@/lib/characterMap";
 import { createServerClient } from "@/lib/supabase";
 
 const MITHRIL_PLUS_TIERS = ["MITHRIL", "METEORITE", "DIAMOND", "IN1000"];
 const SEASON_PATCH_PREFIX = "10.";
-// 무기군별로 분리하지 않는 캐릭터 (알렉스 등). 모든 무기 row를 단일 entry로 합산.
-const SINGLE_ENTRY_CHARS = new Set<number>([27]);
 const ROLES: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
 
 export interface RecapEntry {
@@ -63,7 +61,7 @@ interface StatRow {
 }
 
 function normalizeWeapon(character: number, weapon: number): number {
-  return SINGLE_ENTRY_CHARS.has(character) ? 0 : weapon;
+  return isWeaponAgnosticCharacter(character) ? 0 : weapon;
 }
 
 function comboKey(character: number, weapon: number): number {

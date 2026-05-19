@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getStatsPatchVersions, STATS_EXCLUDED_PATCHES } from "@/data/patch-notes";
 import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
 import { createServerClient } from "@/lib/supabase";
+import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
 
 export const revalidate = 1800; // L1: 30분 서버 캐시
 
 const TIER_FALLBACK_ORDER = ["DIAMOND", "METEORITE", "MITHRIL", "IN1000"];
 
-// 비교 대상에서 제외할 패치 (시즌 종료 직전 패치 등 표본/메타가 왜곡된 패치)
-const SKIP_COMPARISON_PATCHES = new Set(["11.0"]);
+// 비교 대상에서 제외할 패치 (표본/메타가 왜곡된 프리시즌 등) — 통계 공통 상수 사용
+const SKIP_COMPARISON_PATCHES = STATS_EXCLUDED_PATCHES;
 
 interface StatRow {
   characterNum: number;
@@ -67,7 +69,7 @@ function selectTierRows(
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const patchVersion = searchParams.get("patchVersion") ?? "11.1";
+  const patchVersion = searchParams.get("patchVersion") ?? getStatsPatchVersions()[0];
   const requestedTier = searchParams.get("tier") ?? "DIAMOND";
 
   try {
@@ -137,8 +139,15 @@ export async function GET(request: NextRequest) {
     }
 
     const typedData = data as StatRow[];
-    const currentData = typedData.filter((r) => r.patchVersion === patchVersion);
-    const prevData = typedData.filter((r) => r.patchVersion === previousPatch);
+    // 무기 무관 캐릭터(알렉스 등)는 tier별로 단일 row 합산
+    const currentData = collapseWeaponAgnosticRows(
+      typedData.filter((r) => r.patchVersion === patchVersion),
+      (r) => r.tier
+    );
+    const prevData = collapseWeaponAgnosticRows(
+      typedData.filter((r) => r.patchVersion === previousPatch),
+      (r) => r.tier
+    );
 
     const { rows: currentRows, usedTier } = selectTierRows(currentData, requestedTier);
     const { rows: prevRows } = selectTierRows(prevData, usedTier);

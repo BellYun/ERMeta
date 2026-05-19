@@ -1,16 +1,16 @@
-export type ChangeType = "buff" | "nerf" | "rework"
+export type ChangeType = "buff" | "nerf" | "rework";
 
 export interface PatchChange {
-  target: string          // 예: "Q - 전격 연속공격", "기본 체력"
-  changeType: ChangeType
-  description: string[]   // 변경 설명 (여러 줄 지원)
-  valueSummary?: string   // 예: "850 → 920" (선택)
+  target: string; // 예: "Q - 전격 연속공격", "기본 체력"
+  changeType: ChangeType;
+  description: string[]; // 변경 설명 (여러 줄 지원)
+  valueSummary?: string; // 예: "850 → 920" (선택)
 }
 
 export interface CharacterPatchNote {
-  characterCode: number   // getCharacterName(code)와 동일한 코드 체계
-  patch: string           // 패치 버전 문자열 (DB의 patchVersion과 동일)
-  changes: PatchChange[]
+  characterCode: number; // getCharacterName(code)와 동일한 코드 체계
+  patch: string; // 패치 버전 문자열 (DB의 patchVersion과 동일)
+  changes: PatchChange[];
 }
 
 export const PATCH_NOTES: CharacterPatchNote[] = [
@@ -178,7 +178,8 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "말살(쌍검 W) - 피해량",
         changeType: "nerf",
         description: ["피해량이 감소했습니다."],
-        valueSummary: "60/90/120/150/180(+추가 공격력의 100%) → 50/80/110/140/170(+추가 공격력의 100%)",
+        valueSummary:
+          "60/90/120/150/180(+추가 공격력의 100%) → 50/80/110/140/170(+추가 공격력의 100%)",
       },
       {
         target: "말살(쌍검 W) - 방어력 감소",
@@ -190,7 +191,8 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "절단 베기(쌍검 E) - 피해량",
         changeType: "nerf",
         description: ["피해량의 추가 공격력 계수가 감소했습니다."],
-        valueSummary: "40/70/100/130/160(+추가 공격력의 70/80/90/100/110%) → 40/70/100/130/160(+추가 공격력의 60/70/80/90/100%)",
+        valueSummary:
+          "40/70/100/130/160(+추가 공격력의 70/80/90/100/110%) → 40/70/100/130/160(+추가 공격력의 60/70/80/90/100%)",
       },
     ],
   },
@@ -202,7 +204,8 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "식사 시간(W)",
         changeType: "buff",
         description: ["체력 회복량이 증가했습니다."],
-        valueSummary: "20/40/60/80/100(+최대 체력의 4%)(+요리사의 열정 중첩 수) → 40/60/80/100/120(+최대 체력의 4%)(+요리사의 열정 중첩 수)",
+        valueSummary:
+          "20/40/60/80/100(+최대 체력의 4%)(+요리사의 열정 중첩 수) → 40/60/80/100/120(+최대 체력의 4%)(+요리사의 열정 중첩 수)",
       },
       {
         target: "웍 돌진(E)",
@@ -249,7 +252,9 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
       {
         target: "님루드의 비석(E) / 님루드의 문(RE) - 피해량",
         changeType: "buff",
-        description: ["피해량의 스킬 증폭 계수가 증가했습니다. 님루드의 문(RE)에도 동일하게 적용됩니다."],
+        description: [
+          "피해량의 스킬 증폭 계수가 증가했습니다. 님루드의 문(RE)에도 동일하게 적용됩니다.",
+        ],
         valueSummary: "80/110/140/170/200(+스킬 증폭의 50%) → 80/110/140/170/200(+스킬 증폭의 55%)",
       },
     ],
@@ -298,7 +303,8 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "마그네틱 펀치(Q) - 연결된 적 피해량",
         changeType: "buff",
         description: ["연결된 적에게 주는 최대 체력 비례 피해량이 증가했습니다."],
-        valueSummary: "(알론소 레벨*8)(+적 최대 체력의 5/6/7/8/9%) → (알론소 레벨*8)(+적 최대 체력의 6/7/8/9/10%)",
+        valueSummary:
+          "(알론소 레벨*8)(+적 최대 체력의 5/6/7/8/9%) → (알론소 레벨*8)(+적 최대 체력의 6/7/8/9/10%)",
       },
     ],
   },
@@ -394,7 +400,8 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "브엘따(Q) - 강화 시 2타 피해량",
         changeType: "nerf",
         description: ["강화 시 2타 피해량의 공격력 계수가 감소했습니다."],
-        valueSummary: "30/60/90/120/150(+공격력의 90%)*(기본 공격 증폭) → 30/60/90/120/150(+공격력의 80%)*(기본 공격 증폭)",
+        valueSummary:
+          "30/60/90/120/150(+공격력의 90%)*(기본 공격 증폭) → 30/60/90/120/150(+공격력의 80%)*(기본 공격 증폭)",
       },
     ],
   },
@@ -412,7 +419,8 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "작살 장전(P) - 완전히 충전된 피해량",
         changeType: "nerf",
         description: ["완전히 충전된 피해량의 스킬 증폭 계수가 감소했습니다."],
-        valueSummary: "10/25/40(+스킬 증폭의 30%)(+대상 최대 체력의 4/7/10%) → 10/25/40(+스킬 증폭의 25%)(+대상 최대 체력의 4/7/10%)",
+        valueSummary:
+          "10/25/40(+스킬 증폭의 30%)(+대상 최대 체력의 4/7/10%) → 10/25/40(+스킬 증폭의 25%)(+대상 최대 체력의 4/7/10%)",
       },
     ],
   },
@@ -494,13 +502,4 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
       },
     ],
   },
-]
-
-export function getCharacterPatchNote(
-  characterCode: number,
-  patch: string
-): CharacterPatchNote | undefined {
-  return PATCH_NOTES.find(
-    (note) => note.characterCode === characterCode && note.patch === patch
-  )
-}
+];

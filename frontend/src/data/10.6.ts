@@ -1,4 +1,4 @@
-import type { CharacterPatchNote } from "./10.1"
+import type { CharacterPatchNote } from "./10.1";
 
 export const PATCH_NOTES: CharacterPatchNote[] = [
   // 가넷 (76)
@@ -465,7 +465,9 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
       {
         target: "살아 있는 마리오네트(P) - 체력 소모량",
         changeType: "buff",
-        description: ["니나 부활 시 체력 소모량을 완화하여 안정적으로 전투에 합류할 수 있도록 돕습니다."],
+        description: [
+          "니나 부활 시 체력 소모량을 완화하여 안정적으로 전투에 합류할 수 있도록 돕습니다.",
+        ],
         valueSummary: "현재 체력의 30% → 20%",
       },
     ],
@@ -559,13 +561,4 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
       },
     ],
   },
-]
-
-export function getCharacterPatchNote(
-  characterCode: number,
-  patch: string
-): CharacterPatchNote | undefined {
-  return PATCH_NOTES.find(
-    (note) => note.characterCode === characterCode && note.patch === patch
-  )
-}
+];

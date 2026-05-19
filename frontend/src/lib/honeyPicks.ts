@@ -1,6 +1,8 @@
 import { unstable_cache } from "next/cache";
 import type { HoneyPickData } from "@/app/api/meta/honey-picks/route";
+import { STATS_EXCLUDED_PATCHES } from "@/data/patch-notes";
 import { createServerClient } from "@/lib/supabase";
+import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
 
 /**
  * 꿀챔 데이터 서버 직접 fetch — API Route 경유 없이 Supabase 직접 쿼리
@@ -11,8 +13,8 @@ import { createServerClient } from "@/lib/supabase";
 
 const TIER_FALLBACK_ORDER = ["DIAMOND", "METEORITE", "MITHRIL", "IN1000"];
 
-// 비교 대상에서 제외할 패치 (시즌 종료 직전 패치 등 표본/메타가 왜곡된 패치)
-const SKIP_COMPARISON_PATCHES = new Set(["11.0"]);
+// 비교 대상에서 제외할 패치 (표본/메타가 왜곡된 프리시즌 등) — 통계 공통 상수 사용
+const SKIP_COMPARISON_PATCHES = STATS_EXCLUDED_PATCHES;
 
 interface StatRow {
   characterNum: number;
@@ -131,8 +133,15 @@ export async function fetchHoneyPicksServer(
     if (error || !data) return empty;
 
     const typedData = data as StatRow[];
-    const currentData = typedData.filter((r) => r.patchVersion === patchVersion);
-    const prevData = typedData.filter((r) => r.patchVersion === previousPatch);
+    // 무기 무관 캐릭터(알렉스 등)는 tier별로 단일 row 합산
+    const currentData = collapseWeaponAgnosticRows(
+      typedData.filter((r) => r.patchVersion === patchVersion),
+      (r) => r.tier
+    );
+    const prevData = collapseWeaponAgnosticRows(
+      typedData.filter((r) => r.patchVersion === previousPatch),
+      (r) => r.tier
+    );
 
     const { rows: currentRows, usedTier } = selectTierRows(currentData, requestedTier);
     const { rows: prevRows } = selectTierRows(prevData, usedTier);

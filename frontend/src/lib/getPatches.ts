@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { STATS_EXCLUDED_PATCHES } from "@/data/patch-notes";
 import { createServerClient } from "@/lib/supabase";
 
 /**
@@ -18,7 +19,7 @@ export const getPatches = unstable_cache(
         .limit(10);
 
       if (!error && data && data.length > 0) {
-        return data.map((p) => p.version);
+        return data.map((p) => p.version).filter((v) => !STATS_EXCLUDED_PATCHES.has(v));
       }
       return [];
     } catch {

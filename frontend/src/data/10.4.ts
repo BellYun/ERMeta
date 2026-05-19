@@ -1,4 +1,4 @@
-import type { CharacterPatchNote } from "./10.1"
+import type { CharacterPatchNote } from "./10.1";
 
 export const PATCH_NOTES: CharacterPatchNote[] = [
   {
@@ -9,13 +9,15 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "짓뭉개기&꿰뚫기(Q) - 짓뭉개기 피해량",
         changeType: "buff",
         description: ["짓뭉개기 피해량의 최대 체력 비례 계수가 증가했습니다."],
-        valueSummary: "40/65/90/115/140(+스킬 증폭의 50%)(+최대 체력의 5%) → 40/65/90/115/140(+스킬 증폭의 50%)(+최대 체력의 6%)",
+        valueSummary:
+          "40/65/90/115/140(+스킬 증폭의 50%)(+최대 체력의 5%) → 40/65/90/115/140(+스킬 증폭의 50%)(+최대 체력의 6%)",
       },
       {
         target: "짓뭉개기&꿰뚫기(Q) - 꿰뚫기 피해량",
         changeType: "buff",
         description: ["꿰뚫기 피해량의 최대 체력 비례 계수가 증가했습니다."],
-        valueSummary: "50/75/100/125/150(+스킬 증폭의 50%)(+최대 체력의 6%) → 50/75/100/125/150(+스킬 증폭의 50%)(+최대 체력의 7%)",
+        valueSummary:
+          "50/75/100/125/150(+스킬 증폭의 50%)(+최대 체력의 6%) → 50/75/100/125/150(+스킬 증폭의 50%)(+최대 체력의 7%)",
       },
       {
         target: "그릇된 집착(E) - 사거리",
@@ -57,7 +59,8 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "격투 액션(Q) - 최대 피해량",
         changeType: "buff",
         description: ["최대 피해량의 스킬 증폭 계수가 증가했습니다."],
-        valueSummary: "60/100/140/180/220(+스킬 증폭의 130%) → 60/100/140/180/220(+스킬 증폭의 140%)",
+        valueSummary:
+          "60/100/140/180/220(+스킬 증폭의 130%) → 60/100/140/180/220(+스킬 증폭의 140%)",
       },
     ],
   },
@@ -201,7 +204,8 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "뜨거운 맛(R) - 피해량",
         changeType: "nerf",
         description: ["피해량의 스킬 증폭 계수가 감소했습니다."],
-        valueSummary: "60/95/130(+스킬 증폭의 55%)(+최대 체력의 5%) → 60/95/130(+스킬 증폭의 50%)(+최대 체력의 5%)",
+        valueSummary:
+          "60/95/130(+스킬 증폭의 55%)(+최대 체력의 5%) → 60/95/130(+스킬 증폭의 50%)(+최대 체력의 5%)",
       },
     ],
   },
@@ -237,7 +241,8 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "나랑 놀자(E) - 피해량",
         changeType: "buff",
         description: ["저레벨 구간 피해량이 증가했습니다."],
-        valueSummary: "90/110/130/150/170(+스킬 증폭의 70%) → 110/125/140/155/170(+스킬 증폭의 70%)",
+        valueSummary:
+          "90/110/130/150/170(+스킬 증폭의 70%) → 110/125/140/155/170(+스킬 증폭의 70%)",
       },
     ],
   },
@@ -297,7 +302,8 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "고정 사격(W) - 피해량",
         changeType: "buff",
         description: ["피해량의 스킬 증폭 계수가 증가했습니다."],
-        valueSummary: "20/30/40/50/60(+스킬 증폭의 28/33/38/43/48%) → 20/30/40/50/60(+스킬 증폭의 30/35/40/45/50%)",
+        valueSummary:
+          "20/30/40/50/60(+스킬 증폭의 28/33/38/43/48%) → 20/30/40/50/60(+스킬 증폭의 30/35/40/45/50%)",
       },
     ],
   },
@@ -333,7 +339,8 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "겨울여왕의 영지(P) - 피해량",
         changeType: "rework",
         description: ["기본 피해량이 감소했으나, 대상 최대 체력 비례 피해량이 증가했습니다."],
-        valueSummary: "20/40/60(+스킬 증폭의 20%)(+대상 최대 체력의 4/6/8%) → 10/30/50(+스킬 증폭의 20%)(+대상 최대 체력의 6/8/10%)",
+        valueSummary:
+          "20/40/60(+스킬 증폭의 20%)(+대상 최대 체력의 4/6/8%) → 10/30/50(+스킬 증폭의 20%)(+대상 최대 체력의 6/8/10%)",
       },
     ],
   },
@@ -471,7 +478,8 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         target: "선빵필승(E) - 벽 적중 시 추가 피해량",
         changeType: "buff",
         description: ["벽에 부딪힐 시 추가 피해량의 추가 공격력 계수가 증가했습니다."],
-        valueSummary: "80/115/150/185/220(+추가 공격력의 60%)(+스킬 증폭의 90%) → 80/115/150/185/220(+추가 공격력의 75%)(+스킬 증폭의 90%)",
+        valueSummary:
+          "80/115/150/185/220(+추가 공격력의 60%)(+스킬 증폭의 90%) → 80/115/150/185/220(+추가 공격력의 75%)(+스킬 증폭의 90%)",
       },
       {
         target: "선빵필승(E) - 기절 지속 시간",
@@ -481,13 +489,4 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
       },
     ],
   },
-]
-
-export function getCharacterPatchNote(
-  characterCode: number,
-  patch: string
-): CharacterPatchNote | undefined {
-  return PATCH_NOTES.find(
-    (note) => note.characterCode === characterCode && note.patch === patch
-  )
-}
+];

@@ -123,10 +123,3 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
     ],
   },
 ];
-
-export function getCharacterPatchNote(
-  characterCode: number,
-  patch: string
-): CharacterPatchNote | undefined {
-  return PATCH_NOTES.find((note) => note.characterCode === characterCode && note.patch === patch);
-}

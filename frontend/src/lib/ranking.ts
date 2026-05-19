@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { createServerClient } from "@/lib/supabase";
+import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
 
 const TIER_FALLBACK_ORDER = ["DIAMOND", "METEORITE", "MITHRIL", "IN1000"];
 
@@ -58,7 +59,8 @@ function selectRankings(
   for (const tier of tierOrder) {
     const rows = data.filter((r) => r.tier === tier);
     if (rows.length > 0) {
-      return { rankings: buildRankings(rows), usedTier: tier };
+      // 무기 무관 캐릭터(알렉스 등)는 단일 row로 합산 후 랭킹 산정
+      return { rankings: buildRankings(collapseWeaponAgnosticRows(rows)), usedTier: tier };
     }
   }
 
