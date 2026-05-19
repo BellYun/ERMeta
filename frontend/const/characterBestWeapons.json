@@ -738,5 +738,12 @@
       "label": "아르카나",
       "isDefault": true
     }
+  ],
+  "88": [
+    {
+      "weaponCode": 3,
+      "label": "방망이",
+      "isDefault": true
+    }
   ]
 }
