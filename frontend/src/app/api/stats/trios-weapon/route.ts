@@ -19,8 +19,10 @@ const TRIO_WEAPON_SEARCH_P10_TABLE = "v2_CharacterTrioWeaponSearch_p10";
 const PARALLEL_FETCH_LIMIT = 2000;
 const FULL_FETCH_LIMIT = 5000;
 
-// L1 캐시 TTL — tag 기반 무효화에 의존하므로 길게. 무기/sortBy/limit 은 캐시 외부에서 적용.
-const L1_REVALIDATE_SEC = 6 * 3600;
+// L1 캐시 TTL — source 가 사전 집계 테이블(v2_CharacterTrioWeapon* / _p10)이고
+// tag-based invalidation 으로 즉시 갱신되므로 7d. 카디널리티가 가장 큰 라우트라
+// 한번 채워진 항목을 최대한 오래 유지해 hit rate 극대화. 무기/sortBy/limit 은 캐시 외부.
+const L1_REVALIDATE_SEC = 7 * 24 * 3600;
 
 type SortBy = "averageRP" | "winRate" | "totalGames" | "recommended";
 

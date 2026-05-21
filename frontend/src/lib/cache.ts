@@ -5,9 +5,12 @@
  *   A. 불변 (종료 패치)  → "immutable"
  *   B. 준정적 (패치 목록) → "slow"
  *   C. 준동적 (통계)     → "daily"
- *   D. 고파라미터 (trios) → "frequent"
- *   E. 고파라미터 + 캐시 키 폭발 (trios-weapon) → "stats-long"
- *      24h CDN + 24h SWR. 24h stale 허용 (게임 통계 특성상 메타 변동 느림).
+ *   D. 고카디널리티 사전집계 (trios)        → "frequent"
+ *   E. 고카디널리티 사전집계 + 키 폭발 (trios-weapon) → "stats-long"
+ *
+ * D/E 는 source 가 사전 집계 테이블 (v2_CharacterTrio*) + tag-based invalidation
+ * (revalidateTag) 으로 즉시 갱신되므로 TTL/SWR 을 길게 잡아 hit rate 극대화.
+ * Stale window 는 invalidation 실패 시의 safety net.
  */
 
 export type CachePreset = "immutable" | "slow" | "daily" | "frequent" | "stats-long";
@@ -16,8 +19,10 @@ const CACHE_CONTROL: Record<CachePreset, string> = {
   immutable: "public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400",
   slow: "public, max-age=300, s-maxage=3600, stale-while-revalidate=600",
   daily: "public, max-age=300, s-maxage=1800, stale-while-revalidate=300",
-  frequent: "public, max-age=120, s-maxage=300, stale-while-revalidate=3600",
-  "stats-long": "public, max-age=600, s-maxage=86400, stale-while-revalidate=86400",
+  // frequent (trios): L3 5m / L2 1h / SWR 7d — tag invalidation 의존, stale 7d 안전망
+  frequent: "public, max-age=300, s-maxage=3600, stale-while-revalidate=604800",
+  // stats-long (trios-weapon): L3 10m / L2 7d / SWR 7d — 최고 카디널리티, 가장 길게
+  "stats-long": "public, max-age=600, s-maxage=604800, stale-while-revalidate=604800",
 };
 
 export function getCacheHeaders(preset: CachePreset): Record<string, string> {

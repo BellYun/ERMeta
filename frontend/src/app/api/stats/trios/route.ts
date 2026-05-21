@@ -20,9 +20,9 @@ const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]); // Dr. 하나, 나쟈
 const PARALLEL_FETCH_LIMIT = 2000;
 const FULL_FETCH_LIMIT = 5000;
 
-// L1 캐시 TTL — tag 기반 무효화에 의존하므로 길게.
-// 신규 데이터 노출은 ERmangho 수집 완료 webhook 으로 revalidateTag 호출 시 즉시.
-const L1_REVALIDATE_SEC = 6 * 3600;
+// L1 캐시 TTL — source 가 사전 집계 테이블(v2_CharacterTrio)이고 tag-based
+// invalidation 으로 즉시 갱신되므로 7d 로 매우 길게. TTL 은 webhook 실패 시 safety net.
+const L1_REVALIDATE_SEC = 7 * 24 * 3600;
 
 type SortBy = "averageRP" | "winRate" | "totalGames" | "recommended";
 
@@ -327,8 +327,7 @@ export async function GET(request: NextRequest) {
       { headers: withCacheObservability(getCacheHeaders("frequent"), latencyMs) }
     );
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("[stats/trios] 예외:", message);
+    console.error("[stats/trios] 예외:", err);
     return NextResponse.json(
       { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
       { status: 500, headers: SERVER_ERROR_HEADERS }
