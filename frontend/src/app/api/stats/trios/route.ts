@@ -1,9 +1,8 @@
+import { unstable_cache } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { getCacheHeaders, SERVER_ERROR_HEADERS } from "@/lib/cache";
 import { createServerClient } from "@/lib/supabase";
 import { TierGroup } from "@/utils/tier";
-
-export const revalidate = 3600; // L1: 1시간 서버 캐시
 
 // 다이아 이상 티어 전체
 const DIAMOND_PLUS_TIERS: TierGroup[] = [
@@ -20,6 +19,10 @@ const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]); // Dr. 하나, 나쟈
 // Promise.all 병렬로 분해.
 const PARALLEL_FETCH_LIMIT = 2000;
 const FULL_FETCH_LIMIT = 5000;
+
+// L1 캐시 TTL — tag 기반 무효화에 의존하므로 길게.
+// 신규 데이터 노출은 ERmangho 수집 완료 webhook 으로 revalidateTag 호출 시 즉시.
+const L1_REVALIDATE_SEC = 6 * 3600;
 
 type SortBy = "averageRP" | "winRate" | "totalGames" | "recommended";
 
@@ -145,17 +148,138 @@ function rowKey(row: TrioRow): string {
   return `${row.tier}|${row.character1}|${row.character2}|${row.character3}`;
 }
 
+/**
+ * DB fetch + dedup + filter(제외 캐릭터) + 집계.
+ * sort/limit 은 캐시 외부에서 적용해 sortBy/limit 토글에도 L1 hit 유지.
+ *
+ * char1/char2 는 호출 측에서 char1 < char2 로 정규화된 값을 전달해야 한다.
+ */
+async function fetchAndAggregateTrios(
+  char1: number | null,
+  char2: number | null
+): Promise<AggregatedTrio[]> {
+  const supabase = createServerClient();
+  const select = "tier,character1,character2,character3,winRate,averageRP,totalGames,averageRank";
+
+  const baseQuery = (perQueryLimit: number) =>
+    supabase
+      .from("v2_CharacterTrio")
+      .select(select)
+      .in("tier", DIAMOND_PLUS_TIERS)
+      .order("totalGames", { ascending: false })
+      .limit(perQueryLimit);
+
+  let rows: TrioRow[] = [];
+
+  if (char1 != null && char2 != null) {
+    const results = await Promise.all([
+      baseQuery(PARALLEL_FETCH_LIMIT).eq("character1", char1).eq("character2", char2),
+      baseQuery(PARALLEL_FETCH_LIMIT).eq("character1", char1).eq("character3", char2),
+      baseQuery(PARALLEL_FETCH_LIMIT).eq("character2", char1).eq("character3", char2),
+    ]);
+    for (const r of results) {
+      if (r.error) throw r.error;
+      rows.push(...((r.data ?? []) as TrioRow[]));
+    }
+    const seen = new Set<string>();
+    rows = rows.filter((row) => {
+      const k = rowKey(row);
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+  } else if (char1 != null) {
+    const results = await Promise.all([
+      baseQuery(PARALLEL_FETCH_LIMIT).eq("character1", char1),
+      baseQuery(PARALLEL_FETCH_LIMIT).eq("character2", char1),
+      baseQuery(PARALLEL_FETCH_LIMIT).eq("character3", char1),
+    ]);
+    for (const r of results) {
+      if (r.error) throw r.error;
+      rows.push(...((r.data ?? []) as TrioRow[]));
+    }
+    const seen = new Set<string>();
+    rows = rows.filter((row) => {
+      const k = rowKey(row);
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+  } else {
+    const { data, error } = await baseQuery(FULL_FETCH_LIMIT);
+    if (error) throw error;
+    rows = (data ?? []) as TrioRow[];
+  }
+
+  const filteredRows = rows.filter(
+    (row) =>
+      !EXCLUDED_CHARACTER_CODES.has(row.character1) &&
+      !EXCLUDED_CHARACTER_CODES.has(row.character2) &&
+      !EXCLUDED_CHARACTER_CODES.has(row.character3)
+  );
+
+  return aggregateByTrio(filteredRows);
+}
+
+/**
+ * L1 캐시 래퍼 — 키는 정규화된 (char1, char2) 만 사용. sortBy/limit 은 키에서 제외.
+ * tag 무효화: ERmangho 수집 webhook → revalidateTag("trios") | revalidateTag(`trios:char:${n}`)
+ */
+function getCachedAggregatedTrios(
+  char1: number | null,
+  char2: number | null
+): Promise<AggregatedTrio[]> {
+  const c1Key = char1 == null ? "none" : String(char1);
+  const c2Key = char2 == null ? "none" : String(char2);
+  const tags = ["trios"];
+  if (char1 != null) tags.push(`trios:char:${char1}`);
+  if (char2 != null) tags.push(`trios:char:${char2}`);
+
+  return unstable_cache(
+    () => fetchAndAggregateTrios(char1, char2),
+    ["trios-aggregated", c1Key, c2Key],
+    {
+      revalidate: L1_REVALIDATE_SEC,
+      tags,
+    }
+  )();
+}
+
+function sortAggregated(aggregated: AggregatedTrio[], sortBy: SortBy): void {
+  if (sortBy === "recommended") {
+    const globalAvgRP =
+      aggregated.length > 0
+        ? aggregated.reduce((sum, r) => sum + r.averageRP, 0) / aggregated.length
+        : 0;
+    const rpValues = aggregated.map((r) => r.averageRP);
+    const rpRange = {
+      min: rpValues.length > 0 ? Math.min(...rpValues) : 0,
+      max: rpValues.length > 0 ? Math.max(...rpValues) : 0,
+    };
+    aggregated.sort(
+      (a, b) =>
+        recommendedScore(b, globalAvgRP, rpRange) - recommendedScore(a, globalAvgRP, rpRange)
+    );
+    return;
+  }
+  aggregated.sort((a, b) => {
+    if (sortBy === "averageRP") return b.averageRP - a.averageRP;
+    if (sortBy === "winRate") return b.winRate - a.winRate;
+    return b.totalGames - a.totalGames;
+  });
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
   const sortByParam = (searchParams.get("sortBy") ?? "recommended") as SortBy;
   const limitParam = searchParams.get("limit");
 
-  const char1 = parseIntOrNull(searchParams.get("character1"));
-  const char2 = parseIntOrNull(searchParams.get("character2"));
+  const rawChar1 = parseIntOrNull(searchParams.get("character1"));
+  const rawChar2 = parseIntOrNull(searchParams.get("character2"));
 
   // character2만 단독 전달 금지
-  if (char2 != null && char1 == null) {
+  if (rawChar2 != null && rawChar1 == null) {
     return NextResponse.json(
       { error: "character2는 character1 없이 사용할 수 없습니다." },
       { status: 400 }
@@ -163,7 +287,7 @@ export async function GET(request: NextRequest) {
   }
 
   // 동일 캐릭터 금지
-  if (char1 != null && char2 != null && char1 === char2) {
+  if (rawChar1 != null && rawChar2 != null && rawChar1 === rawChar2) {
     return NextResponse.json(
       { error: "character1과 character2는 달라야 합니다." },
       { status: 400 }
@@ -172,10 +296,17 @@ export async function GET(request: NextRequest) {
 
   // 제외 캐릭터 선택 시 빈 결과
   if (
-    (char1 != null && EXCLUDED_CHARACTER_CODES.has(char1)) ||
-    (char2 != null && EXCLUDED_CHARACTER_CODES.has(char2))
+    (rawChar1 != null && EXCLUDED_CHARACTER_CODES.has(rawChar1)) ||
+    (rawChar2 != null && EXCLUDED_CHARACTER_CODES.has(rawChar2))
   ) {
-    return NextResponse.json({ results: [] });
+    return NextResponse.json({ results: [] }, { headers: getCacheHeaders("frequent") });
+  }
+
+  // (char1, char2) 정규화 — 캐시 키 카디널리티 절반으로 축소
+  let char1 = rawChar1;
+  let char2 = rawChar2;
+  if (char1 != null && char2 != null && char1 > char2) {
+    [char1, char2] = [char2, char1];
   }
 
   // limit 보정 (1~200, 기본 100)
@@ -184,113 +315,13 @@ export async function GET(request: NextRequest) {
   if (limit > 200) limit = 200;
 
   try {
-    const supabase = createServerClient();
-    const select = "tier,character1,character2,character3,winRate,averageRP,totalGames,averageRank";
-
-    const baseQuery = (perQueryLimit: number) =>
-      supabase
-        .from("v2_CharacterTrio")
-        .select(select)
-        .in("tier", DIAMOND_PLUS_TIERS)
-        .order("totalGames", { ascending: false })
-        .limit(perQueryLimit);
-
-    let rows: TrioRow[] = [];
-
-    if (char1 != null && char2 != null) {
-      const [low, high] = [char1, char2].sort((a, b) => a - b);
-      const results = await Promise.all([
-        baseQuery(PARALLEL_FETCH_LIMIT).eq("character1", low).eq("character2", high),
-        baseQuery(PARALLEL_FETCH_LIMIT).eq("character1", low).eq("character3", high),
-        baseQuery(PARALLEL_FETCH_LIMIT).eq("character2", low).eq("character3", high),
-      ]);
-      for (const r of results) {
-        if (r.error) {
-          console.error("[stats/trios] v2 Supabase error:", r.error);
-          return NextResponse.json(
-            { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
-            { status: 500, headers: SERVER_ERROR_HEADERS }
-          );
-        }
-        rows.push(...((r.data ?? []) as TrioRow[]));
-      }
-      const seen = new Set<string>();
-      rows = rows.filter((row) => {
-        const k = rowKey(row);
-        if (seen.has(k)) return false;
-        seen.add(k);
-        return true;
-      });
-    } else if (char1 != null) {
-      const results = await Promise.all([
-        baseQuery(PARALLEL_FETCH_LIMIT).eq("character1", char1),
-        baseQuery(PARALLEL_FETCH_LIMIT).eq("character2", char1),
-        baseQuery(PARALLEL_FETCH_LIMIT).eq("character3", char1),
-      ]);
-      for (const r of results) {
-        if (r.error) {
-          console.error("[stats/trios] v2 Supabase error:", r.error);
-          return NextResponse.json(
-            { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
-            { status: 500, headers: SERVER_ERROR_HEADERS }
-          );
-        }
-        rows.push(...((r.data ?? []) as TrioRow[]));
-      }
-      const seen = new Set<string>();
-      rows = rows.filter((row) => {
-        const k = rowKey(row);
-        if (seen.has(k)) return false;
-        seen.add(k);
-        return true;
-      });
-    } else {
-      const { data, error } = await baseQuery(FULL_FETCH_LIMIT);
-      if (error) {
-        console.error("[stats/trios] v2 Supabase error:", error);
-        return NextResponse.json(
-          { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
-          { status: 500, headers: SERVER_ERROR_HEADERS }
-        );
-      }
-      rows = (data ?? []) as TrioRow[];
-    }
-
-    const filteredRows = rows.filter(
-      (row) =>
-        !EXCLUDED_CHARACTER_CODES.has(row.character1) &&
-        !EXCLUDED_CHARACTER_CODES.has(row.character2) &&
-        !EXCLUDED_CHARACTER_CODES.has(row.character3)
-    );
-
-    // 티어 간 집계 (가중 평균)
-    const aggregated = aggregateByTrio(filteredRows);
-
-    // 집계 후 정렬
-    if (sortByParam === "recommended") {
-      const globalAvgRP =
-        aggregated.length > 0
-          ? aggregated.reduce((sum, r) => sum + r.averageRP, 0) / aggregated.length
-          : 0;
-      const rpValues = aggregated.map((r) => r.averageRP);
-      const rpRange = {
-        min: Math.min(...rpValues),
-        max: Math.max(...rpValues),
-      };
-      aggregated.sort(
-        (a, b) =>
-          recommendedScore(b, globalAvgRP, rpRange) - recommendedScore(a, globalAvgRP, rpRange)
-      );
-    } else {
-      aggregated.sort((a, b) => {
-        if (sortByParam === "averageRP") return b.averageRP - a.averageRP;
-        if (sortByParam === "winRate") return b.winRate - a.winRate;
-        return b.totalGames - a.totalGames;
-      });
-    }
+    const aggregated = await getCachedAggregatedTrios(char1, char2);
+    // 원본 캐시 mutate 방지를 위해 복사 후 정렬
+    const sorted = [...aggregated];
+    sortAggregated(sorted, sortByParam);
 
     return NextResponse.json(
-      { results: aggregated.slice(0, limit) },
+      { results: sorted.slice(0, limit) },
       { headers: getCacheHeaders("frequent") }
     );
   } catch (err) {
