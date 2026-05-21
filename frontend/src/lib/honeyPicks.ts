@@ -1,5 +1,4 @@
 import { unstable_cache } from "next/cache";
-import type { HoneyPickData } from "@/app/api/meta/honey-picks/route";
 import { STATS_EXCLUDED_PATCHES } from "@/data/patch-notes";
 import { createServerClient } from "@/lib/supabase";
 import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
@@ -12,9 +11,28 @@ import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
  */
 
 const TIER_FALLBACK_ORDER = ["DIAMOND", "METEORITE", "MITHRIL", "IN1000"];
+const PLAYERS_PER_MATCH = 24;
+const CURRENT_PATCH_MIN_MATCH_RATIO = 0.1;
+const HONEY_PICK_SCORE_WEIGHTS = {
+  winRate: 0.5,
+  pickRate: 0.3,
+  averageRP: 0.2,
+} as const;
 
 // 비교 대상에서 제외할 패치 (표본/메타가 왜곡된 프리시즌 등) — 통계 공통 상수 사용
 const SKIP_COMPARISON_PATCHES = STATS_EXCLUDED_PATCHES;
+
+export interface HoneyPickData {
+  characterNum: number;
+  bestWeapon: number;
+  pickRate: number;
+  winRate: number;
+  averageRP: number;
+  pickRateDelta: number;
+  winRateDelta: number;
+  averageRPDelta: number;
+  honeyScore: number;
+}
 
 interface StatRow {
   characterNum: number;
@@ -36,11 +54,21 @@ interface ComputedRate {
   averageRP: number;
 }
 
-interface HoneyPicksResult {
+export interface HoneyPicksResult {
   picks: HoneyPickData[];
   patchVersion: string;
   previousPatch: string | null;
   tier: string;
+}
+
+function getHoneyPickKey(characterNum: number, bestWeapon: number) {
+  return `${characterNum}:${bestWeapon}`;
+}
+
+function computeCurrentPatchMinGames(rows: StatRow[]): number {
+  const currentTotalGames = rows.reduce((sum, row) => sum + (row.totalGames ?? 0), 0);
+  const estimatedMatchCount = currentTotalGames / PLAYERS_PER_MATCH;
+  return Math.ceil(estimatedMatchCount * CURRENT_PATCH_MIN_MATCH_RATIO);
 }
 
 function computeRates(rows: StatRow[]): ComputedRate[] {
@@ -152,21 +180,28 @@ export async function fetchHoneyPicksServer(
 
     const currentRates = computeRates(currentRows);
     const prevRates = computeRates(prevRows);
-    const prevMap = new Map(prevRates.map((r) => [r.characterNum, r]));
+    const prevMap = new Map(
+      prevRates.map((r) => [getHoneyPickKey(r.characterNum, r.bestWeapon), r])
+    );
+    const minCurrentGames = computeCurrentPatchMinGames(currentRows);
 
-    // 꿀챔 필터: 승률 ↑ 필수 (픽률은 무관)
+    // 꿀챔 필터: 현재 패치 동적 소표본 컷 + 승률/픽률/RP 상승
     const honeyPicks: HoneyPickData[] = [];
     for (const curr of currentRates) {
-      const prev = prevMap.get(curr.characterNum);
+      if (curr.totalGames < minCurrentGames) continue;
+      const prev = prevMap.get(getHoneyPickKey(curr.characterNum, curr.bestWeapon));
       if (!prev) continue;
 
       const pickRateDelta = curr.pickRate - prev.pickRate;
       const winRateDelta = curr.winRate - prev.winRate;
+      const averageRPDelta = curr.averageRP - prev.averageRP;
 
-      if (winRateDelta > 0) {
-        const rpBonus = curr.averageRP > 0 ? 1 + curr.averageRP / 100 : 1;
-        // 픽률 상승 시 가산, 하락 시 승률 변화만으로 스코어 산정
-        const pickFactor = pickRateDelta > 0 ? 1 + pickRateDelta : 1;
+      if (winRateDelta > 0 && pickRateDelta > 0 && averageRPDelta > 0) {
+        const honeyScore =
+          HONEY_PICK_SCORE_WEIGHTS.winRate * winRateDelta +
+          HONEY_PICK_SCORE_WEIGHTS.pickRate * pickRateDelta +
+          HONEY_PICK_SCORE_WEIGHTS.averageRP * averageRPDelta;
+
         honeyPicks.push({
           characterNum: curr.characterNum,
           bestWeapon: curr.bestWeapon,
@@ -175,8 +210,8 @@ export async function fetchHoneyPicksServer(
           averageRP: curr.averageRP,
           pickRateDelta,
           winRateDelta,
-          averageRPDelta: curr.averageRP - prev.averageRP,
-          honeyScore: winRateDelta * pickFactor * rpBonus,
+          averageRPDelta,
+          honeyScore,
         });
       }
     }

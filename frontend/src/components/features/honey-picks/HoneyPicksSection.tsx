@@ -5,7 +5,6 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import * as React from "react";
-import type { HoneyPickData } from "@/app/api/meta/honey-picks/route";
 import { useL10n } from "@/components/L10nProvider";
 import { getCharacterPatchNote } from "@/data/patch-notes";
 import type { CharacterPatchNote } from "@/data/patch-notes";
@@ -15,6 +14,7 @@ import {
   getCharacterHalfImageUrl,
   resolveCharacterName,
 } from "@/lib/characterMap";
+import type { HoneyPickData } from "@/lib/honeyPicks";
 import { withCurrentSeoLocale } from "@/lib/localizedPath";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
@@ -216,7 +216,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                     fill
                     className="object-cover object-top"
                     sizes="72px"
-                    priority={i < 3}
+                    priority={i < 1}
                   />
                 </div>
 
@@ -392,7 +392,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                 fill
                 className="object-cover object-top"
                 sizes="138px"
-                priority={i < 2}
+                priority={i < 1}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[rgba(5,9,18,0.94)] via-[rgba(8,14,28,0.4)] to-transparent" />
 

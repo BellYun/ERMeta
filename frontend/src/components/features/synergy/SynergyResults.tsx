@@ -10,6 +10,7 @@ import { useFocusCharacters } from "@/hooks/useFocusCharacters";
 import { analytics, type SynergySortBy } from "@/lib/analytics";
 import { resolveCharacterName } from "@/lib/characterMap";
 import { isMobileDevice } from "@/lib/device";
+import { FetchHttpError, FetchRetriesExhaustedError, fetchWithRetry } from "@/lib/fetchWithRetry";
 import { withCurrentRouteLocale } from "@/lib/localizedPath";
 import { cn } from "@/lib/utils";
 import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "./constants";
@@ -73,19 +74,27 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
       if (selectedAllies[1] !== undefined) params.set("character2", String(selectedAllies[1]));
 
       setError(null);
-      const timeout = AbortSignal.timeout(10_000);
-      const signal = AbortSignal.any([controller.signal, timeout]);
 
-      fetch(`/api/stats/trios?${params.toString()}`, { signal })
-        .then(async (res) => {
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error ?? t("genericError"));
+      fetchWithRetry<{ results?: TrioResult[]; error?: string }>(
+        `/api/stats/trios?${params.toString()}`,
+        { signal: controller.signal }
+      )
+        .then((data) => {
           setTrioResults(data.results ?? []);
         })
         .catch((err) => {
-          if (err instanceof Error && err.name === "AbortError") return;
-          if (err instanceof Error && err.name === "TimeoutError") {
+          if (err instanceof DOMException && err.name === "AbortError") return;
+          if (err instanceof DOMException && err.name === "TimeoutError") {
             setError(t("timeout"));
+            return;
+          }
+          if (err instanceof FetchRetriesExhaustedError) {
+            setError(t("genericError"));
+            return;
+          }
+          if (err instanceof FetchHttpError) {
+            const body = err.body as { error?: string } | null;
+            setError(body?.error ?? t("genericError"));
             return;
           }
           setError(err instanceof Error ? err.message : t("genericError"));

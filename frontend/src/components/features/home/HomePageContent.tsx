@@ -1,6 +1,6 @@
 import { Activity, SlidersHorizontal } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import type { HoneyPickData } from "@/app/api/meta/honey-picks/route";
+import type { HoneyPickData } from "@/lib/honeyPicks";
 import type { RankingResponse } from "@/lib/ranking";
 import { HomeDashboardSections } from "./HomeDashboardSections";
 
