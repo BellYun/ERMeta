@@ -461,8 +461,7 @@ export async function GET(request: NextRequest) {
       { headers: withCacheObservability(getCacheHeaders("stats-long"), latencyMs) }
     );
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("[stats/trios-weapon] 예외:", message);
+    console.error("[stats/trios-weapon] 예외:", err);
     return NextResponse.json(
       { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
       { status: 500, headers: SERVER_ERROR_HEADERS }
