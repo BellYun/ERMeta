@@ -1,12 +1,12 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { HoneyPickData } from "@/app/api/meta/honey-picks/route";
 import { FilterProvider, useFilter } from "@/components/features/FilterContext";
 import { GlobalFilter } from "@/components/features/GlobalFilter";
 import { HomeFilterAside } from "@/components/features/HomeFilterAside";
 import { HoneyPicksSection } from "@/components/features/HoneyPicksSection";
 import { TierRankingTable } from "@/components/features/TierRankingTable";
+import type { HoneyPickData } from "@/lib/honeyPicks";
 import type { RankingResponse } from "@/lib/ranking";
 
 interface HomeDashboardSectionsProps {
