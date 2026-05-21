@@ -101,7 +101,9 @@ export async function POST(request: NextRequest) {
   }
 
   for (const tag of revalidated) {
-    revalidateTag(tag);
+    // Next.js 16: 2번째 인자로 cache lifetime profile 필요.
+    // "default" 는 라우트별 unstable_cache 의 자체 revalidate 값을 유지.
+    revalidateTag(tag, "default");
   }
 
   return NextResponse.json(
