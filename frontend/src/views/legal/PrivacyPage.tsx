@@ -10,7 +10,7 @@ export default function PrivacyPage() {
   return (
     <article className="prose-custom max-w-3xl mx-auto py-8">
       <h1 className="text-xl font-bold text-[var(--color-foreground)] mb-6">개인정보처리방침</h1>
-      <p className="text-xs text-[var(--color-muted-foreground)] mb-8">시행일: 2026년 3월 12일</p>
+      <p className="text-xs text-[var(--color-muted-foreground)] mb-8">시행일: 2026년 5월 28일</p>
 
       <section className="mb-8">
         <h2 className="text-base font-semibold text-[var(--color-foreground)] mb-3">
@@ -74,7 +74,53 @@ export default function PrivacyPage() {
 
       <section className="mb-8">
         <h2 className="text-base font-semibold text-[var(--color-foreground)] mb-3">
-          4. 개인정보의 보유 및 파기
+          4. 광고 및 제3자 광고 쿠키
+        </h2>
+        <p className="text-sm text-[var(--color-muted-foreground)] leading-relaxed mb-3">
+          본 서비스는 운영비 충당을 위해 Google AdSense를 통한 광고를 게재합니다. Google 및 광고
+          파트너는 이용자의 관심사에 맞춘 광고를 제공하기 위해 쿠키를 사용할 수 있으며, 다음 정보가
+          수집될 수 있습니다.
+        </p>
+        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 space-y-3">
+          <div>
+            <p className="text-sm font-medium text-[var(--color-foreground)]">Google AdSense</p>
+            <p className="text-xs text-[var(--color-muted-foreground)]">
+              광고 게재 및 성과 측정. 쿠키 식별자, 디바이스 정보, 광고 클릭/노출 데이터 수집. 제공:
+              Google LLC.
+            </p>
+          </div>
+        </div>
+        <ul className="list-disc list-inside text-sm text-[var(--color-muted-foreground)] leading-relaxed space-y-1.5 mt-3">
+          <li>
+            Google 광고 설정 페이지(
+            <a
+              href="https://adssettings.google.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[var(--color-primary)] underline"
+            >
+              adssettings.google.com
+            </a>
+            )에서 맞춤 광고를 비활성화할 수 있습니다.
+          </li>
+          <li>
+            제3자 광고 공급업체의 쿠키 사용에 대한 자세한 내용은{" "}
+            <a
+              href="https://policies.google.com/technologies/ads"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[var(--color-primary)] underline"
+            >
+              Google 광고 정책
+            </a>
+            을 참고해 주세요.
+          </li>
+        </ul>
+      </section>
+
+      <section className="mb-8">
+        <h2 className="text-base font-semibold text-[var(--color-foreground)] mb-3">
+          5. 개인정보의 보유 및 파기
         </h2>
         <p className="text-sm text-[var(--color-muted-foreground)] leading-relaxed">
           자동 수집된 이용 통계 데이터는 수집일로부터 최대 26개월간 보관 후 자동 삭제됩니다. 별도로
@@ -84,7 +130,7 @@ export default function PrivacyPage() {
 
       <section className="mb-8">
         <h2 className="text-base font-semibold text-[var(--color-foreground)] mb-3">
-          5. 개인정보의 제3자 제공
+          6. 개인정보의 제3자 제공
         </h2>
         <p className="text-sm text-[var(--color-muted-foreground)] leading-relaxed">
           본 서비스는 이용자의 개인정보를 제3자에게 제공하지 않습니다. 다만, 위 분석 도구
@@ -95,7 +141,7 @@ export default function PrivacyPage() {
 
       <section className="mb-8">
         <h2 className="text-base font-semibold text-[var(--color-foreground)] mb-3">
-          6. 이용자의 권리
+          7. 이용자의 권리
         </h2>
         <ul className="list-disc list-inside text-sm text-[var(--color-muted-foreground)] leading-relaxed space-y-1.5">
           <li>브라우저 설정에서 쿠키를 삭제하거나 차단할 수 있습니다.</li>
@@ -105,7 +151,7 @@ export default function PrivacyPage() {
       </section>
 
       <section className="mb-8">
-        <h2 className="text-base font-semibold text-[var(--color-foreground)] mb-3">7. 연락처</h2>
+        <h2 className="text-base font-semibold text-[var(--color-foreground)] mb-3">8. 연락처</h2>
         <p className="text-sm text-[var(--color-muted-foreground)] leading-relaxed">
           개인정보 관련 문의: 서비스 내 피드백 위젯을 이용해 주세요.
         </p>
