@@ -20,11 +20,11 @@ const CACHE_CONTROL: Record<CachePreset, string> = {
   "stats-long": "public, max-age=600, s-maxage=86400, stale-while-revalidate=86400",
 };
 
-export function getCacheHeaders(preset: CachePreset): HeadersInit {
+export function getCacheHeaders(preset: CachePreset): Record<string, string> {
   return { "Cache-Control": CACHE_CONTROL[preset] };
 }
 
-export const NO_CACHE_HEADERS: HeadersInit = {
+export const NO_CACHE_HEADERS: Record<string, string> = {
   "Cache-Control": "no-store",
 };
 
@@ -32,7 +32,30 @@ export const NO_CACHE_HEADERS: HeadersInit = {
  * 5xx 응답 헤더 — 캐시 금지 + Retry-After 힌트.
  * 클라이언트 fetchWithRetry 가 이 힌트를 존중해 backoff 한다.
  */
-export const SERVER_ERROR_HEADERS: HeadersInit = {
+export const SERVER_ERROR_HEADERS: Record<string, string> = {
   "Cache-Control": "no-store",
   "Retry-After": "5",
 };
+
+/**
+ * L1(unstable_cache) hit/miss 추적용 latency 임계값.
+ * DB 호출은 최소 수백 ms 이므로 50ms 미만이면 L1 hit 으로 간주.
+ */
+const CACHE_HIT_LATENCY_THRESHOLD_MS = 50;
+
+export type CacheStatus = "HIT" | "MISS";
+
+export function classifyCacheStatus(latencyMs: number): CacheStatus {
+  return latencyMs < CACHE_HIT_LATENCY_THRESHOLD_MS ? "HIT" : "MISS";
+}
+
+export function withCacheObservability(
+  baseHeaders: Record<string, string>,
+  latencyMs: number
+): Record<string, string> {
+  return {
+    ...baseHeaders,
+    "X-Cache-Status": classifyCacheStatus(latencyMs),
+    "X-Cache-Latency-Ms": String(Math.round(latencyMs)),
+  };
+}

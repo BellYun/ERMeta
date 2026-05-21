@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
-import { getCacheHeaders, SERVER_ERROR_HEADERS } from "@/lib/cache";
+import { getCacheHeaders, SERVER_ERROR_HEADERS, withCacheObservability } from "@/lib/cache";
 import { createServerClient } from "@/lib/supabase";
 import { TierGroup } from "@/utils/tier";
 
@@ -315,14 +315,16 @@ export async function GET(request: NextRequest) {
   if (limit > 200) limit = 200;
 
   try {
+    const t0 = Date.now();
     const aggregated = await getCachedAggregatedTrios(char1, char2);
+    const latencyMs = Date.now() - t0;
     // 원본 캐시 mutate 방지를 위해 복사 후 정렬
     const sorted = [...aggregated];
     sortAggregated(sorted, sortByParam);
 
     return NextResponse.json(
       { results: sorted.slice(0, limit) },
-      { headers: getCacheHeaders("frequent") }
+      { headers: withCacheObservability(getCacheHeaders("frequent"), latencyMs) }
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";

@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
-import { getCacheHeaders, SERVER_ERROR_HEADERS } from "@/lib/cache";
+import { getCacheHeaders, SERVER_ERROR_HEADERS, withCacheObservability } from "@/lib/cache";
 import { createServerClient } from "@/lib/supabase";
 import { TierGroup } from "@/utils/tier";
 
@@ -432,6 +432,7 @@ export async function GET(request: NextRequest) {
   if (limit > 1000) limit = 1000;
 
   try {
+    const t0 = Date.now();
     let aggregated: AggregatedTrioWeapon[];
     if (char1 != null && char2 != null) {
       aggregated = await getCachedTrioWeaponPair(char1, char2);
@@ -440,6 +441,7 @@ export async function GET(request: NextRequest) {
     } else {
       aggregated = await getCachedTrioWeaponAll();
     }
+    const latencyMs = Date.now() - t0;
 
     // 무기 필터 — 캐시 외부에서 적용 (캐시 키에 weapon 미포함)
     let filtered = aggregated;
@@ -456,7 +458,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       { results: sorted.slice(0, limit) },
-      { headers: getCacheHeaders("stats-long") }
+      { headers: withCacheObservability(getCacheHeaders("stats-long"), latencyMs) }
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
