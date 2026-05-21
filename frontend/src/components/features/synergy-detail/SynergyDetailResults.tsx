@@ -11,6 +11,7 @@ import { useTraitNames } from "@/hooks/useTraitNames";
 import { analytics, type SynergySortBy } from "@/lib/analytics";
 import { resolveCharacterName } from "@/lib/characterMap";
 import { isMobileDevice } from "@/lib/device";
+import { FetchHttpError, FetchRetriesExhaustedError, fetchWithRetry } from "@/lib/fetchWithRetry";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
 import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "../synergy/constants";
@@ -215,13 +216,12 @@ export function SynergyDetailResults() {
       }
 
       setError(null);
-      const timeout = AbortSignal.timeout(10_000);
-      const signal = AbortSignal.any([controller.signal, timeout]);
 
-      fetch(`/api/stats/trios-weapon?${params.toString()}`, { signal })
-        .then(async (res) => {
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error ?? t("genericError"));
+      fetchWithRetry<{ results?: TrioWeaponResult[]; error?: string }>(
+        `/api/stats/trios-weapon?${params.toString()}`,
+        { signal: controller.signal }
+      )
+        .then((data) => {
           // setResults + setLoading(false)를 같은 startTransition 배치에 넣어
           // "로딩 꺼짐 → 결과 렌더 전" 사이 '결과 없음' 빈 화면이 깜빡이는 것을 방지.
           React.startTransition(() => {
@@ -230,11 +230,20 @@ export function SynergyDetailResults() {
           });
         })
         .catch((err) => {
-          if (err instanceof Error && err.name === "AbortError") return;
+          if (err instanceof DOMException && err.name === "AbortError") return;
           // 에러 경로는 urgent 유지 — 즉시 에러 메시지 표시
           setLoading(false);
-          if (err instanceof Error && err.name === "TimeoutError") {
+          if (err instanceof DOMException && err.name === "TimeoutError") {
             setError(t("timeout"));
+            return;
+          }
+          if (err instanceof FetchRetriesExhaustedError) {
+            setError(t("genericError"));
+            return;
+          }
+          if (err instanceof FetchHttpError) {
+            const body = err.body as { error?: string } | null;
+            setError(body?.error ?? t("genericError"));
             return;
           }
           setError(err instanceof Error ? err.message : t("genericError"));

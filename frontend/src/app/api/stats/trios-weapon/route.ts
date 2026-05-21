@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
+import { getCacheHeaders, SERVER_ERROR_HEADERS } from "@/lib/cache";
 import { createServerClient } from "@/lib/supabase";
 import { TierGroup } from "@/utils/tier";
 
@@ -338,7 +338,7 @@ export async function GET(request: NextRequest) {
         console.error("[stats/trios-weapon] Supabase error:", searchError);
         return NextResponse.json(
           { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
-          { status: 500, headers: NO_CACHE_HEADERS }
+          { status: 500, headers: SERVER_ERROR_HEADERS }
         );
       }
 
@@ -372,7 +372,7 @@ export async function GET(request: NextRequest) {
           console.error("[stats/trios-weapon] Supabase error:", r.error);
           return NextResponse.json(
             { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
-            { status: 500, headers: NO_CACHE_HEADERS }
+            { status: 500, headers: SERVER_ERROR_HEADERS }
           );
         }
         allSearchRows.push(...((r.data ?? []) as TrioWeaponSearchRow[]));
@@ -436,7 +436,7 @@ export async function GET(request: NextRequest) {
         console.error("[stats/trios-weapon] Supabase error:", error);
         return NextResponse.json(
           { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
-          { status: 500, headers: NO_CACHE_HEADERS }
+          { status: 500, headers: SERVER_ERROR_HEADERS }
         );
       }
       rows = (data ?? []) as TrioWeaponRow[];
@@ -481,7 +481,7 @@ export async function GET(request: NextRequest) {
     console.error("[stats/trios-weapon] 예외:", message);
     return NextResponse.json(
       { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
-      { status: 500, headers: NO_CACHE_HEADERS }
+      { status: 500, headers: SERVER_ERROR_HEADERS }
     );
   }
 }

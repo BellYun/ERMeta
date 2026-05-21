@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStatsPatchVersions } from "@/data/patch-notes";
-import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
+import { getCacheHeaders, SERVER_ERROR_HEADERS } from "@/lib/cache";
 import { getCachedCharacterStats, type CharacterStatsResponse } from "@/lib/characterStats";
 
 export type { CharacterStatsResponse, WeaponStatItem } from "@/lib/characterStats";
@@ -33,7 +33,7 @@ export async function GET(
     console.error("[character/stats] 예외:", message);
     return NextResponse.json(
       { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
-      { status: 500, headers: NO_CACHE_HEADERS }
+      { status: 500, headers: SERVER_ERROR_HEADERS }
     );
   }
 }

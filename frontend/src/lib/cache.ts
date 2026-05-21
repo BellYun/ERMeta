@@ -27,3 +27,12 @@ export function getCacheHeaders(preset: CachePreset): HeadersInit {
 export const NO_CACHE_HEADERS: HeadersInit = {
   "Cache-Control": "no-store",
 };
+
+/**
+ * 5xx 응답 헤더 — 캐시 금지 + Retry-After 힌트.
+ * 클라이언트 fetchWithRetry 가 이 힌트를 존중해 backoff 한다.
+ */
+export const SERVER_ERROR_HEADERS: HeadersInit = {
+  "Cache-Control": "no-store",
+  "Retry-After": "5",
+};
