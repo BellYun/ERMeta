@@ -1,6 +1,15 @@
 "use client";
 
-import { BarChart3, MessageSquarePlus, Network, NotebookText, Search, Trophy } from "lucide-react";
+import {
+  BarChart3,
+  FlaskConical,
+  Layers,
+  MessageSquarePlus,
+  Network,
+  NotebookText,
+  Search,
+  Trophy,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -42,6 +51,21 @@ export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
       label: t("synergyRecommendation"),
       icon: Network,
       isActive: normalizedPathname === "/synergy-detail",
+    },
+    {
+      href: withCurrentRouteLocale(pathname, "/trio-lab"),
+      label: "조합 실험실",
+      icon: FlaskConical,
+      isActive: normalizedPathname.startsWith("/trio-lab"),
+    },
+    {
+      href: withCurrentRouteLocale(pathname, "/character-lab"),
+      label: "캐릭터 유형 분석",
+      icon: Layers,
+      isActive:
+        normalizedPathname.startsWith("/character-lab") ||
+        normalizedPathname === "/lab" ||
+        normalizedPathname.startsWith("/lab/"),
     },
     {
       href: withCurrentRouteLocale(pathname, "/character/1"),
