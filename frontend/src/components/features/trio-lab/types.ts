@@ -65,6 +65,35 @@ export function apiRowToCombo(row: ApiTrioWeaponRow): TrioWeaponCombo {
   };
 }
 
+export function mergeApiRowsByComboId(rows: ApiTrioWeaponRow[]): TrioWeaponCombo[] {
+  const merged = new Map<string, TrioWeaponCombo>();
+
+  for (const row of rows) {
+    const combo = apiRowToCombo(row);
+    const existing = merged.get(combo.id);
+
+    if (!existing) {
+      merged.set(combo.id, combo);
+      continue;
+    }
+
+    const totalGames = existing.totalGames + combo.totalGames;
+    if (totalGames > 0) {
+      existing.winRate =
+        (existing.winRate * existing.totalGames + combo.winRate * combo.totalGames) / totalGames;
+      existing.averageRP =
+        (existing.averageRP * existing.totalGames + combo.averageRP * combo.totalGames) /
+        totalGames;
+      existing.averageRank =
+        (existing.averageRank * existing.totalGames + combo.averageRank * combo.totalGames) /
+        totalGames;
+    }
+    existing.totalGames = totalGames;
+  }
+
+  return Array.from(merged.values());
+}
+
 export function characterDisplayName(code: number): string {
   return getCharacterName(code);
 }

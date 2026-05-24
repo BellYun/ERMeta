@@ -10,7 +10,7 @@ import { VirtualCharacterGrid } from "@/components/ui/VirtualCharacterGrid";
 import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMap";
 import { ComboGalleryCard } from "./ComboGalleryCard";
 import {
-  apiRowToCombo,
+  mergeApiRowsByComboId,
   SORT_LABELS,
   type ApiTrioWeaponRow,
   type TrioSortBy,
@@ -81,7 +81,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                 .map(Number)
                 .every((c) => chars.has(c));
             });
-        setCombos(filtered.slice(0, 60).map(apiRowToCombo));
+        setCombos(mergeApiRowsByComboId(filtered).slice(0, 60));
       })
       .catch((err: unknown) => {
         if (err instanceof Error && err.name === "AbortError") return;
@@ -225,6 +225,12 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
           maxHeight="280px"
         />
       </section>
+
+      {loading && (
+        <div className="relative h-0.5 overflow-hidden rounded-full bg-[var(--color-surface-3)]">
+          <div className="trio-lab-loader-bar absolute inset-y-0 w-1/3 rounded-full bg-[var(--color-primary)]" />
+        </div>
+      )}
 
       <div className="flex items-center justify-between gap-3 border-b border-[var(--color-border)] pb-3 text-xs text-[var(--color-muted-foreground)]">
         <p>

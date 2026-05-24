@@ -115,31 +115,88 @@ interface TrioWeaponSearchRow {
   rank_sum: number;
 }
 
+interface TrioWeaponMember {
+  character: number;
+  weapon: number;
+  mainCore: number | null;
+}
+
+function normalizeTrioMembersByCharacter(
+  members: readonly [TrioWeaponMember, TrioWeaponMember, TrioWeaponMember]
+): [TrioWeaponMember, TrioWeaponMember, TrioWeaponMember] {
+  return [...members].sort(
+    (a, b) =>
+      a.character - b.character || a.weapon - b.weapon || (a.mainCore ?? 0) - (b.mainCore ?? 0)
+  ) as [TrioWeaponMember, TrioWeaponMember, TrioWeaponMember];
+}
+
+function trioWeaponKeyFromMembers(
+  members: readonly [TrioWeaponMember, TrioWeaponMember, TrioWeaponMember]
+): string {
+  return members
+    .map((member) => [member.character, member.weapon, member.mainCore ?? 0].join(":"))
+    .join("|");
+}
+
+function buildNormalizedMembersFromSearchRow(
+  row: Pick<
+    TrioWeaponSearchRow,
+    | "ally1_char"
+    | "ally1_weapon"
+    | "ally1_core"
+    | "ally2_char"
+    | "ally2_weapon"
+    | "ally2_core"
+    | "third_char"
+    | "third_weapon"
+    | "third_core"
+  >
+): [TrioWeaponMember, TrioWeaponMember, TrioWeaponMember] {
+  return normalizeTrioMembersByCharacter([
+    { character: row.ally1_char, weapon: row.ally1_weapon, mainCore: row.ally1_core },
+    { character: row.ally2_char, weapon: row.ally2_weapon, mainCore: row.ally2_core },
+    { character: row.third_char, weapon: row.third_weapon, mainCore: row.third_core },
+  ]);
+}
+
+function buildNormalizedMembersFromTrioRow(
+  row: Pick<
+    TrioWeaponRow,
+    | "character1"
+    | "weapon_type1"
+    | "main_core1"
+    | "character2"
+    | "weapon_type2"
+    | "main_core2"
+    | "character3"
+    | "weapon_type3"
+    | "main_core3"
+  >
+): [TrioWeaponMember, TrioWeaponMember, TrioWeaponMember] {
+  return normalizeTrioMembersByCharacter([
+    { character: row.character1, weapon: row.weapon_type1, mainCore: row.main_core1 },
+    { character: row.character2, weapon: row.weapon_type2, mainCore: row.main_core2 },
+    { character: row.character3, weapon: row.weapon_type3, mainCore: row.main_core3 },
+  ]);
+}
+
 function searchRowKey(row: TrioWeaponSearchRow): string {
-  return [
-    row.ally1_char,
-    row.ally1_weapon,
-    row.ally1_core ?? 0,
-    row.ally2_char,
-    row.ally2_weapon,
-    row.ally2_core ?? 0,
-    row.third_char,
-    row.third_weapon,
-    row.third_core ?? 0,
-  ].join("|");
+  return trioWeaponKeyFromMembers(buildNormalizedMembersFromSearchRow(row));
 }
 
 function mapSearchRowToAggregated(row: TrioWeaponSearchRow): AggregatedTrioWeapon {
+  const [m1, m2, m3] = buildNormalizedMembersFromSearchRow(row);
+
   return {
-    character1: row.ally1_char,
-    weaponType1: row.ally1_weapon,
-    character2: row.ally2_char,
-    weaponType2: row.ally2_weapon,
-    character3: row.third_char,
-    weaponType3: row.third_weapon,
-    mainCore1: row.ally1_core,
-    mainCore2: row.ally2_core,
-    mainCore3: row.third_core,
+    character1: m1.character,
+    weaponType1: m1.weapon,
+    character2: m2.character,
+    weaponType2: m2.weapon,
+    character3: m3.character,
+    weaponType3: m3.weapon,
+    mainCore1: m1.mainCore,
+    mainCore2: m2.mainCore,
+    mainCore3: m3.mainCore,
     totalGames: row.total_games,
     winRate: row.total_games > 0 ? (row.total_wins / row.total_games) * 100 : 0,
     averageRP: row.total_games > 0 ? row.total_rp / row.total_games / 3 : 0,
@@ -212,19 +269,20 @@ function aggregateByTrioWeapon(rows: TrioWeaponRow[]): AggregatedTrioWeapon[] {
   >();
 
   for (const row of rows) {
-    const key = `${row.character1}-${row.weapon_type1}-${row.character2}-${row.weapon_type2}-${row.character3}-${row.weapon_type3}-${row.main_core1 ?? 0}-${row.main_core2 ?? 0}-${row.main_core3 ?? 0}`;
+    const [m1, m2, m3] = buildNormalizedMembersFromTrioRow(row);
+    const key = trioWeaponKeyFromMembers([m1, m2, m3]);
     const existing = map.get(key);
     if (!existing) {
       map.set(key, {
-        c1: row.character1,
-        w1: row.weapon_type1,
-        c2: row.character2,
-        w2: row.weapon_type2,
-        c3: row.character3,
-        w3: row.weapon_type3,
-        mc1: row.main_core1,
-        mc2: row.main_core2,
-        mc3: row.main_core3,
+        c1: m1.character,
+        w1: m1.weapon,
+        c2: m2.character,
+        w2: m2.weapon,
+        c3: m3.character,
+        w3: m3.weapon,
+        mc1: m1.mainCore,
+        mc2: m2.mainCore,
+        mc3: m3.mainCore,
         totalGames: row.total_games,
         totalWins: row.total_wins,
         totalRP: row.total_rp,

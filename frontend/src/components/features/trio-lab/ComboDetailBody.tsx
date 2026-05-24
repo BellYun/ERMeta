@@ -1,18 +1,23 @@
-import {
-  ArrowRight,
-  ChevronRight,
-  Sparkles,
-  Wand2,
-  Share2,
-  ArrowDown,
-  ArrowUp,
-  RotateCw,
-} from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUp, ChevronRight, RotateCw } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import itemNameMap from "@/../const/itemNameMap.json";
 import { ItemIcon } from "@/components/character/shared";
 import type { PatchChange } from "@/data/10.1";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
+
+const ITEM_NAMES = itemNameMap as Record<string, string>;
+function itemNameOf(code: number | null | undefined): string {
+  if (code == null) return "";
+  return ITEM_NAMES[String(code)] ?? `#${code}`;
+}
+function traitNameOf(
+  names: Record<number, string> | undefined,
+  code: number | null | undefined
+): string {
+  if (code == null) return "";
+  return names?.[code] ?? `#${code}`;
+}
 import {
   characterDisplayName,
   scoreFromWinRate,
@@ -36,6 +41,7 @@ export interface CharacterDetailData {
   patchVersion: string;
   topTrait: TopTraitBuild | null;
   topBuild: TopEquipmentBuild | null;
+  traitNames?: Record<number, string>;
 }
 
 export interface TopEquipmentBuild {
@@ -68,6 +74,16 @@ export interface TopTraitBuild {
   sub1WinRate: number;
   sub2: number | null;
   sub2WinRate: number;
+  /** 부특성 (sub group) + 옵션 픽률 최고 조합 */
+  secondaryGroup: "havoc" | "fortification" | "support" | "chaos" | "unknown" | null;
+  secondaryPickRate: number;
+  secondaryWinRate: number;
+  secondaryOpt1: number | null;
+  secondaryOpt1PickRate: number;
+  secondaryOpt1WinRate: number;
+  secondaryOpt2: number | null;
+  secondaryOpt2PickRate: number;
+  secondaryOpt2WinRate: number;
 }
 
 const TRAIT_GROUP_META: Record<
@@ -206,12 +222,18 @@ function PatchChangeRow({ change }: { change: PatchChange }) {
 }
 
 function ItemThumb({ code, label }: { code: number | null; label: string }) {
+  const name = itemNameOf(code);
   return (
-    <div className="flex flex-col items-center gap-1">
+    <div className="flex w-16 flex-col items-center gap-1 text-center">
       <ItemIcon code={code} size={40} />
       <span className="text-[9px] uppercase tracking-wide text-[var(--color-muted-foreground)]">
         {label}
       </span>
+      {name && (
+        <span className="line-clamp-2 text-[10px] leading-tight text-[var(--color-foreground)]">
+          {name}
+        </span>
+      )}
     </div>
   );
 }
@@ -220,13 +242,16 @@ function TraitThumb({
   code,
   label,
   size = 44,
+  traitNames,
 }: {
   code: number | null;
   label: string;
   size?: number;
+  traitNames?: Record<number, string>;
 }) {
+  const name = traitNameOf(traitNames, code);
   return (
-    <div className="flex flex-col items-center gap-1">
+    <div className="flex w-20 flex-col items-center gap-1 text-center">
       <div
         className="relative overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)]"
         style={{ width: size, height: size }}
@@ -234,7 +259,7 @@ function TraitThumb({
         {code != null && code > 0 ? (
           <Image
             src={`/TraitSkill/TraitSkillIcon_${code}.png`}
-            alt={label}
+            alt={name || label}
             width={size}
             height={size}
             className="h-full w-full object-cover"
@@ -249,11 +274,22 @@ function TraitThumb({
       <span className="text-[9px] uppercase tracking-wide text-[var(--color-muted-foreground)]">
         {label}
       </span>
+      {name && (
+        <span className="line-clamp-2 text-[10px] leading-tight text-[var(--color-foreground)]">
+          {name}
+        </span>
+      )}
     </div>
   );
 }
 
-function TraitBlock({ trait }: { trait: TopTraitBuild | null }) {
+function TraitBlock({
+  trait,
+  traitNames,
+}: {
+  trait: TopTraitBuild | null;
+  traitNames?: Record<number, string>;
+}) {
   if (!trait) {
     return <p className="text-xs text-[var(--color-muted-foreground)]">특성 표본이 부족합니다.</p>;
   }
@@ -278,7 +314,7 @@ function TraitBlock({ trait }: { trait: TopTraitBuild | null }) {
 
       <div className="mt-3 grid grid-cols-3 gap-3">
         <div className="flex flex-col items-center gap-1.5">
-          <TraitThumb code={trait.mainCore} label="고승률 코어" size={48} />
+          <TraitThumb code={trait.mainCore} label="고승률 코어" size={48} traitNames={traitNames} />
           <p className="font-mono text-[11px] tabular-nums text-[var(--color-stat-up)]">
             승률 {trait.mainCoreWinRate.toFixed(1)}%
           </p>
@@ -288,13 +324,13 @@ function TraitBlock({ trait }: { trait: TopTraitBuild | null }) {
           </p>
         </div>
         <div className="flex flex-col items-center gap-1.5">
-          <TraitThumb code={trait.sub1} label="서브 1" />
+          <TraitThumb code={trait.sub1} label="서브 1" traitNames={traitNames} />
           <p className="font-mono text-[10px] text-[var(--color-muted-foreground)]">
             승률 {trait.sub1WinRate.toFixed(1)}%
           </p>
         </div>
         <div className="flex flex-col items-center gap-1.5">
-          <TraitThumb code={trait.sub2} label="서브 2" />
+          <TraitThumb code={trait.sub2} label="서브 2" traitNames={traitNames} />
           <p className="font-mono text-[10px] text-[var(--color-muted-foreground)]">
             승률 {trait.sub2WinRate.toFixed(1)}%
           </p>
@@ -303,7 +339,12 @@ function TraitBlock({ trait }: { trait: TopTraitBuild | null }) {
 
       {showsPopularComparison && (
         <div className="mt-3 flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] p-2">
-          <TraitThumb code={trait.popularCore} label="인기 코어" size={32} />
+          <TraitThumb
+            code={trait.popularCore}
+            label="인기 코어"
+            size={32}
+            traitNames={traitNames}
+          />
           <div className="min-w-0 flex-1">
             <p className="text-[10px] uppercase tracking-wide text-[var(--color-muted-foreground)]">
               가장 많이 쓰는 코어 (비교용)
@@ -321,12 +362,58 @@ function TraitBlock({ trait }: { trait: TopTraitBuild | null }) {
           </div>
         </div>
       )}
+
+      {trait.secondaryGroup && (trait.secondaryOpt1 != null || trait.secondaryOpt2 != null) && (
+        <div className="mt-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] p-2.5">
+          <div className="flex flex-wrap items-center gap-2">
+            <span
+              className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold ${TRAIT_GROUP_META[trait.secondaryGroup].ring} ${TRAIT_GROUP_META[trait.secondaryGroup].color}`}
+            >
+              {TRAIT_GROUP_META[trait.secondaryGroup].label} 부특성 · 픽률 1위
+            </span>
+            <span className="font-mono text-[11px] tabular-nums text-[var(--color-muted-foreground)]">
+              부특성 픽률{" "}
+              <span className="font-bold text-[var(--color-foreground)]">
+                {trait.secondaryPickRate.toFixed(1)}%
+              </span>
+              {" · "}승률{" "}
+              <span className="font-bold text-[var(--color-foreground)]">
+                {trait.secondaryWinRate.toFixed(1)}%
+              </span>
+            </span>
+          </div>
+          <div className="mt-2 flex items-end gap-3">
+            <div className="flex flex-col items-center gap-1">
+              <TraitThumb
+                code={trait.secondaryOpt1}
+                label="옵션 1"
+                size={36}
+                traitNames={traitNames}
+              />
+              <p className="font-mono text-[10px] text-[var(--color-muted-foreground)]">
+                픽 {trait.secondaryOpt1PickRate.toFixed(1)}%
+              </p>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <TraitThumb
+                code={trait.secondaryOpt2}
+                label="옵션 2"
+                size={36}
+                traitNames={traitNames}
+              />
+              <p className="font-mono text-[10px] text-[var(--color-muted-foreground)]">
+                픽 {trait.secondaryOpt2PickRate.toFixed(1)}%
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
 
 function CharacterDetailCard({ data }: { data: CharacterDetailData }) {
-  const { member, patchChanges, patchVersion, topTrait, topBuild } = data;
+  const { member, patchChanges, patchVersion, topTrait, topBuild, traitNames } = data;
   return (
     <article className="char-card flex flex-col gap-3 p-4">
       <header className="flex items-center gap-3 border-b border-[var(--color-border)] pb-3">
@@ -353,7 +440,7 @@ function CharacterDetailCard({ data }: { data: CharacterDetailData }) {
           추천 특성 · 패치 {patchVersion}
         </h3>
         <div className="mt-2">
-          <TraitBlock trait={topTrait} />
+          <TraitBlock trait={topTrait} traitNames={traitNames} />
         </div>
       </section>
 
@@ -534,31 +621,6 @@ export function StickySidebar({ combo }: { combo: TrioWeaponCombo }) {
             </dd>
           </div>
         </dl>
-      </section>
-
-      <section className="dashboard-panel flex flex-col gap-2.5 p-5">
-        <p className="text-[11px] font-mono uppercase tracking-widest text-[var(--color-muted-foreground)]">
-          다음 액션
-        </p>
-        <Link
-          href={`/synergy?focus=${combo.members[0].character}`}
-          className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-[rgba(251,191,36,0.32)] bg-[rgba(251,191,36,0.12)] px-4 py-2.5 text-sm font-bold text-[var(--color-accent-gold)] transition-colors hover:bg-[rgba(251,191,36,0.2)]"
-        >
-          <Wand2 className="h-4 w-4" strokeWidth={2.2} />이 조합 직접 만들어보기
-        </Link>
-        <Link
-          href={`/synergy-detail?ally1=${combo.members[0].character}&ally2=${combo.members[1].character}`}
-          className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-3)] px-4 py-2.5 text-sm font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[rgba(255,255,255,0.06)]"
-        >
-          <Sparkles className="h-4 w-4" strokeWidth={2.2} />내 픽으로 비슷한 조합 찾기
-        </Link>
-        <button
-          type="button"
-          className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-3)] px-4 py-2.5 text-sm font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[rgba(255,255,255,0.06)]"
-        >
-          <Share2 className="h-4 w-4" strokeWidth={2.2} />
-          조합 공유 / 북마크
-        </button>
       </section>
 
       <div

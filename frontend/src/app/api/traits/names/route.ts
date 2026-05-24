@@ -1,55 +1,24 @@
-import { NextResponse } from "next/server"
-import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache"
+import { NextResponse } from "next/server";
+import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
+import { getCachedTraitNames } from "@/lib/l10nNames";
 
-export const revalidate = 86400 // L1: 24시간 서버 캐시
-
+// 사용 중단 예정 호환용 endpoint:
+// 내부 앱은 더 이상 이 route를 직접 쓰지 않고 L10nProvider/static l10n에서 특성 이름을 읽는다.
+// 외부 사용 여부가 확인되기 전까지는 호환용으로만 유지한다.
 export async function GET() {
-  const apiKey = process.env.BSER_API_KEY
-  if (!apiKey) {
-    return NextResponse.json({ error: "BSER_API_KEY not set" }, { status: 500 })
-  }
-
   try {
-    // 1단계: l10n 파일 URL 조회
-    const metaRes = await fetch("https://open-api.bser.io/v1/l10n/Korean", {
-      headers: { "x-api-key": apiKey },
-      next: { revalidate: 86400 }, // 24시간 fetch 캐시
-    })
-    if (!metaRes.ok) {
-      return NextResponse.json({ error: `BSER API error: ${metaRes.status}` }, { status: metaRes.status })
-    }
-    const metaJson = await metaRes.json()
-    const l10Path: string = metaJson?.data?.l10Path
-    if (!l10Path) {
-      return NextResponse.json({ error: "l10Path not found" }, { status: 502 })
+    const names = await getCachedTraitNames();
+
+    if (!names) {
+      return NextResponse.json(
+        { error: "Static l10n not found" },
+        { status: 500, headers: NO_CACHE_HEADERS }
+      );
     }
 
-    // 2단계: l10n 텍스트 다운로드 및 파싱
-    const l10nRes = await fetch(l10Path)
-    if (!l10nRes.ok) {
-      return NextResponse.json({ error: `l10n fetch error: ${l10nRes.status}` }, { status: 502 })
-    }
-    const text = await l10nRes.text()
-
-    // 3단계: Trait/Name/{code} 키만 추출 → { code: name }
-    const SEPARATOR = "\u2503"
-    const names: Record<number, string> = {}
-    for (const line of text.split(/\r?\n/)) {
-      const trimmed = line.trim()
-      if (!trimmed || trimmed.startsWith("#")) continue
-      const sepIdx = trimmed.indexOf(SEPARATOR)
-      if (sepIdx === -1) continue
-      const key = trimmed.slice(0, sepIdx)
-      if (!key.startsWith("Trait/Name/")) continue
-      const code = Number(key.slice("Trait/Name/".length))
-      if (!isNaN(code) && code > 0) {
-        names[code] = trimmed.slice(sepIdx + 1)
-      }
-    }
-
-    return NextResponse.json({ names }, { headers: getCacheHeaders("slow") })
+    return NextResponse.json({ names }, { headers: getCacheHeaders("slow") });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error"
-    return NextResponse.json({ error: message }, { status: 500, headers: NO_CACHE_HEADERS })
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return NextResponse.json({ error: message }, { status: 500, headers: NO_CACHE_HEADERS });
   }
 }

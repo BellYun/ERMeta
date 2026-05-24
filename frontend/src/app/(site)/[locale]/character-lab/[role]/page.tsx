@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const data = LAB_DATA[role as SupportedRole];
   if (!data) return { title: "캐릭터 유형 분석 | ER&GG" };
   const title = `${data.role} 시너지 그룹 — 캐릭터 유형 분석 | ER&GG`;
-  const description = `${data.role} 캐릭터별 강한 조합·주의 조합을 데이터로 확인하세요. 패치 무관 누적 통계 기준.`;
+  const description = `${data.role} 캐릭터마다 잘 나오는 조합·못 나오는 조합. 누적 통계 기준.`;
   return {
     metadataBase: new URL(BASE_URL),
     title,
@@ -93,8 +93,8 @@ export default async function CharacterLabRolePage({ params }: Props) {
           </span>
         </div>
         <p className="text-sm text-[var(--color-muted-foreground)]">
-          3인 조합 역할군별 평균 RP 기여를 분석한 시너지 데이터입니다. 표본{" "}
-          {data.minGames.toLocaleString("ko-KR")}판 미만 조합은 제외됩니다.
+          캐릭터마다 어떤 3인 조합에서 평균 RP 가 잘 나오는지 누적 통계로 정리. 표본{" "}
+          {data.minGames.toLocaleString("ko-KR")}판 미만 조합은 제외.
         </p>
       </div>
 

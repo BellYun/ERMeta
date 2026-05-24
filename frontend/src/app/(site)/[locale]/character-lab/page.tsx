@@ -30,9 +30,9 @@ const ROLES = [
 export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
   const { locale } = await params;
   if (!isRouteLocale(locale)) notFound();
-  const title = "캐릭터 유형 분석 — 직업군 시너지 클러스터링 | ER&GG";
+  const title = "캐릭터 유형 분석 — 시너지 그룹 | ER&GG";
   const description =
-    "이터널리턴 캐릭터를 직업군 시너지 패턴으로 그룹화. 원거리 딜러·스킬딜러·탱커·전사 각 직업군의 강한 조합·약한 조합 멀티셋을 누적 통계로 분석합니다.";
+    "이터널리턴 캐릭터를 trio 시너지 패턴별로 묶은 그룹. 직업군마다 잘 어울리는 조합과 안 어울리는 조합을 누적 통계로 보여줍니다.";
   return {
     metadataBase: new URL(BASE_URL),
     title,
@@ -64,8 +64,8 @@ export default async function CharacterLabPage({ params }: LocalePageProps) {
           캐릭터 <em>유형 분석</em>
         </h1>
         <p className="dashboard-subtitle">
-          캐릭터를 직업군 시너지 패턴으로 묶어 메타 지형도를 그립니다. 각 그룹의 강한 조합·약한 조합
-          멀티셋을 비교해 픽/드래프트 전에 전략을 내재화하세요.
+          비슷한 trio 시너지를 가진 캐릭터끼리 묶었습니다. 그룹별로 어떤 조합에서 잘 나오고 어떤
+          조합에서 못 나오는지 보세요.
         </p>
         <dl className="mt-2 flex flex-wrap gap-4 text-xs">
           <div className="flex items-baseline gap-2">
@@ -148,7 +148,7 @@ export default async function CharacterLabPage({ params }: LocalePageProps) {
               Step 1
             </p>
             <p className="mt-1 text-sm text-[var(--color-foreground)]">
-              캐릭터+무기 단위로 3인 조합 누적 통계 집계 (rp_delta, 게임 수)
+              (캐릭터+무기) 마다 3인 조합 통계 합산 (RP 변화, 게임 수)
             </p>
           </li>
           <li className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] p-3">
@@ -156,7 +156,7 @@ export default async function CharacterLabPage({ params }: LocalePageProps) {
               Step 2
             </p>
             <p className="mt-1 text-sm text-[var(--color-foreground)]">
-              ‘잘 맞는 파트너 패턴’이 비슷한 캐릭터를 같은 그룹으로 클러스터링
+              잘 맞는 파트너 패턴이 비슷한 캐릭터끼리 한 그룹으로 묶음
             </p>
           </li>
           <li className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] p-3">
@@ -164,7 +164,7 @@ export default async function CharacterLabPage({ params }: LocalePageProps) {
               Step 3
             </p>
             <p className="mt-1 text-sm text-[var(--color-foreground)]">
-              각 캐릭터의 강한 조합 / 약한 조합 멀티셋을 함께 노출 (해석은 유저에게)
+              캐릭터마다 잘 나오는 조합 / 못 나오는 조합 같이 표시
             </p>
           </li>
           <li className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] p-3">
@@ -172,7 +172,7 @@ export default async function CharacterLabPage({ params }: LocalePageProps) {
               Step 4
             </p>
             <p className="mt-1 text-sm text-[var(--color-foreground)]">
-              큐레이팅 그룹은 ‘스킬딜러 친화’ 등 친화적 라벨로 표현
+              패턴이 명확한 그룹은 ‘스킬딜러 친화’ 같은 라벨이 붙음
             </p>
           </li>
         </ol>

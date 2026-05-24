@@ -15,16 +15,17 @@ import {
   fetchTrioWeaponRows,
 } from "@/components/features/trio-lab/serverApi";
 import {
-  apiRowToCombo,
   buildComboId,
   characterDisplayName,
+  mergeApiRowsByComboId,
   parseComboId,
   type ApiTrioWeaponRow,
   type TrioWeaponCombo,
   type TrioWeaponMember,
 } from "@/components/features/trio-lab/types";
 import { getCharacterPatchNote, getStatsPatchVersions } from "@/data/patch-notes";
-import { isRouteLocale } from "@/i18n/routing";
+import { isRouteLocale, LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
+import { loadL10nRecord } from "@/lib/serverL10n";
 import { BASE_URL } from "@/lib/siteMetadata";
 
 export const dynamic = "force-dynamic";
@@ -40,21 +41,8 @@ function findExactMatch(
   rows: ApiTrioWeaponRow[],
   members: TrioWeaponMember[]
 ): TrioWeaponCombo | null {
-  const wanted = members
-    .map((m) => `${m.character}-${m.weapon}`)
-    .sort()
-    .join("|");
-  for (const row of rows) {
-    const rowKey = [
-      `${row.character1}-${row.weaponType1}`,
-      `${row.character2}-${row.weaponType2}`,
-      `${row.character3}-${row.weaponType3}`,
-    ]
-      .sort()
-      .join("|");
-    if (rowKey === wanted) return apiRowToCombo(row);
-  }
-  return null;
+  const wantedId = buildComboId(members);
+  return mergeApiRowsByComboId(rows).find((combo) => combo.id === wantedId) ?? null;
 }
 
 async function loadComboData(members: TrioWeaponMember[]) {
@@ -82,16 +70,9 @@ async function loadComboData(members: TrioWeaponMember[]) {
 }
 
 function buildSimilarCombos(rows: ApiTrioWeaponRow[], currentId: string): TrioWeaponCombo[] {
-  const seen = new Set<string>([currentId]);
-  const out: TrioWeaponCombo[] = [];
-  for (const row of rows) {
-    const c = apiRowToCombo(row);
-    if (seen.has(c.id)) continue;
-    seen.add(c.id);
-    out.push(c);
-    if (out.length >= 4) break;
-  }
-  return out;
+  return mergeApiRowsByComboId(rows)
+    .filter((combo) => combo.id !== currentId)
+    .slice(0, 4);
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -123,6 +104,16 @@ export default async function TrioLabDetailPage({ params }: PageProps) {
 
   const patchVersion = getStatsPatchVersions()[0];
 
+  // 트레이트/아이템 이름 lookup 용 l10n 로드
+  const language = LANGUAGE_BY_ROUTE_LOCALE[locale as RouteLocale];
+  const l10nRecord = loadL10nRecord(language) ?? {};
+  const traitNames: Record<number, string> = {};
+  for (const key of Object.keys(l10nRecord)) {
+    if (!key.startsWith("Trait/Name/")) continue;
+    const code = Number(key.slice("Trait/Name/".length));
+    if (Number.isFinite(code) && code > 0) traitNames[code] = l10nRecord[key];
+  }
+
   const { combo, trioRows } = await loadComboData(members);
   if (!combo) {
     notFound();
@@ -148,6 +139,7 @@ export default async function TrioLabDetailPage({ params }: PageProps) {
     patchVersion,
     topTrait: d.topTrait,
     topBuild: d.topBuild,
+    traitNames,
   }));
 
   const similar = buildSimilarCombos(trioRows, normalizedId);

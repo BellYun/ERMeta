@@ -43,6 +43,15 @@ interface TraitSubOptionRaw {
   winRate: number;
 }
 
+interface TraitSecondaryRaw {
+  secGroup: "havoc" | "fortification" | "support" | "chaos" | "unknown";
+  totalGames: number;
+  pickRate: number;
+  winRate: number;
+  optionTrait1Options: TraitSubOptionRaw[];
+  optionTrait2Options: TraitSubOptionRaw[];
+}
+
 interface TraitMainGroupRaw {
   mainGroup: "havoc" | "fortification" | "support" | "chaos" | "unknown";
   totalGames: number;
@@ -51,6 +60,7 @@ interface TraitMainGroupRaw {
   mainCoreOptions: TraitSubOptionRaw[];
   sub1Options: TraitSubOptionRaw[];
   sub2Options: TraitSubOptionRaw[];
+  secondaries?: TraitSecondaryRaw[];
 }
 
 const TRAIT_MIN_SAMPLE = 20;
@@ -97,6 +107,13 @@ export async function fetchTopTraitBuild(
     const sub1Best = pickByWin(top.sub1Options);
     const sub2Best = pickByWin(top.sub2Options);
 
+    // 부특성 (secondary): 메인 그룹 안에서 픽률 최고인 sub-group + 그 안의 옵션 픽률 최고 조합
+    const secondaries = top.secondaries ?? [];
+    const topSec =
+      secondaries.length > 0 ? [...secondaries].sort((a, b) => b.pickRate - a.pickRate)[0] : null;
+    const subOpt1 = topSec ? pickByPick(topSec.optionTrait1Options) : null;
+    const subOpt2 = topSec ? pickByPick(topSec.optionTrait2Options) : null;
+
     return {
       mainGroup: top.mainGroup,
       groupPickRate: top.groupPickRate,
@@ -113,6 +130,16 @@ export async function fetchTopTraitBuild(
       sub1WinRate: sub1Best?.winRate ?? 0,
       sub2: sub2Best?.code ?? null,
       sub2WinRate: sub2Best?.winRate ?? 0,
+      // 부특성 (sub group + option pick 1·2)
+      secondaryGroup: topSec?.secGroup ?? null,
+      secondaryPickRate: topSec?.pickRate ?? 0,
+      secondaryWinRate: topSec?.winRate ?? 0,
+      secondaryOpt1: subOpt1?.code ?? null,
+      secondaryOpt1PickRate: subOpt1?.pickRate ?? 0,
+      secondaryOpt1WinRate: subOpt1?.winRate ?? 0,
+      secondaryOpt2: subOpt2?.code ?? null,
+      secondaryOpt2PickRate: subOpt2?.pickRate ?? 0,
+      secondaryOpt2WinRate: subOpt2?.winRate ?? 0,
     };
   } catch {
     return null;
