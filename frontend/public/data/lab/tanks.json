@@ -29,13 +29,13 @@
       "id": 3,
       "label": "outlier · 레녹스-채찍",
       "curated": false,
-      "characterKeys": ["13_15"]
+      "characterKeys": ["20_4"]
     },
     {
       "id": 4,
       "label": "outlier · 쇼우-단검",
       "curated": false,
-      "characterKeys": ["20_4"]
+      "characterKeys": ["13_15"]
     },
     {
       "id": 5,
@@ -52,7 +52,7 @@
       "weaponName": "채찍",
       "totalGames": 232083,
       "ownMeanRP": 1.076,
-      "groupId": 4,
+      "groupId": 3,
       "strong": [
         {
           "multiset": "스킬딜러 + 지원가 + 탱커",
@@ -1080,7 +1080,7 @@
       "weaponName": "단검",
       "totalGames": 64050,
       "ownMeanRP": 1.194,
-      "groupId": 3,
+      "groupId": 4,
       "strong": [
         {
           "multiset": "원거리 딜러 + 원거리 딜러 + 탱커",

@@ -35,13 +35,13 @@
       "id": 4,
       "label": "outlier · 아이솔-돌격 소총",
       "curated": false,
-      "characterKeys": ["6_8"]
+      "characterKeys": ["9_10"]
     },
     {
       "id": 5,
       "label": "outlier · 나딘-석궁",
       "curated": false,
-      "characterKeys": ["9_10"]
+      "characterKeys": ["6_8"]
     }
   ],
   "characters": [
@@ -587,7 +587,7 @@
       "weaponName": "돌격 소총",
       "totalGames": 149937,
       "ownMeanRP": 1.378,
-      "groupId": 5,
+      "groupId": 4,
       "strong": [
         {
           "multiset": "스킬딜러 + 탱커 + 탱커",
@@ -886,7 +886,7 @@
       "weaponName": "석궁",
       "totalGames": 139371,
       "ownMeanRP": 0.486,
-      "groupId": 4,
+      "groupId": 5,
       "strong": [
         {
           "multiset": "원거리 딜러 + 탱커 + 탱커",
