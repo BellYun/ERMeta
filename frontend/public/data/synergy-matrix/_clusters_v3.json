@@ -1,0 +1,3621 @@
+{
+  "config": {
+    "version": 3,
+    "minFocusGames": 2000,
+    "minCellGames": 100,
+    "minPartnerCoverage": 0.1,
+    "feature": "partnerCells.rpLift (partner_char × partner_weapon flat)",
+    "rawCellCount": 115,
+    "filteredCellCount": 115,
+    "pcaDims": 30,
+    "pcaExplainedVariance": 0.805,
+    "kmeansSearch": [
+      {
+        "k": 3,
+        "silhouette": 0.1324
+      },
+      {
+        "k": 4,
+        "silhouette": 0.0994
+      },
+      {
+        "k": 5,
+        "silhouette": 0.1139
+      },
+      {
+        "k": 6,
+        "silhouette": 0.088
+      },
+      {
+        "k": 7,
+        "silhouette": 0.0818
+      },
+      {
+        "k": 8,
+        "silhouette": 0.0872
+      },
+      {
+        "k": 9,
+        "silhouette": 0.0848
+      },
+      {
+        "k": 10,
+        "silhouette": 0.0648
+      }
+    ],
+    "wardSearch": [
+      {
+        "k": 3,
+        "silhouette": 0.1233
+      },
+      {
+        "k": 4,
+        "silhouette": 0.1257
+      },
+      {
+        "k": 5,
+        "silhouette": 0.1133
+      },
+      {
+        "k": 6,
+        "silhouette": 0.0763
+      },
+      {
+        "k": 7,
+        "silhouette": 0.0785
+      },
+      {
+        "k": 8,
+        "silhouette": 0.0807
+      },
+      {
+        "k": 9,
+        "silhouette": 0.079
+      },
+      {
+        "k": 10,
+        "silhouette": 0.0473
+      }
+    ],
+    "method": "kmeans",
+    "kSelected": 3,
+    "silhouette": 0.1324
+  },
+  "rowCount": 115,
+  "cellKeys": [
+    {
+      "partnerCode": 1,
+      "partnerWeapon": 14,
+      "partnerName": "재키",
+      "partnerWeaponName": "도끼"
+    },
+    {
+      "partnerCode": 1,
+      "partnerWeapon": 15,
+      "partnerName": "재키",
+      "partnerWeaponName": "단검"
+    },
+    {
+      "partnerCode": 1,
+      "partnerWeapon": 16,
+      "partnerName": "재키",
+      "partnerWeaponName": "양손검"
+    },
+    {
+      "partnerCode": 1,
+      "partnerWeapon": 18,
+      "partnerName": "재키",
+      "partnerWeaponName": "쌍검"
+    },
+    {
+      "partnerCode": 2,
+      "partnerWeapon": 9,
+      "partnerName": "아야",
+      "partnerWeaponName": "권총"
+    },
+    {
+      "partnerCode": 2,
+      "partnerWeapon": 10,
+      "partnerName": "아야",
+      "partnerWeaponName": "돌격 소총"
+    },
+    {
+      "partnerCode": 2,
+      "partnerWeapon": 11,
+      "partnerName": "아야",
+      "partnerWeaponName": "저격총"
+    },
+    {
+      "partnerCode": 3,
+      "partnerWeapon": 16,
+      "partnerName": "피오라",
+      "partnerWeaponName": "양손검"
+    },
+    {
+      "partnerCode": 3,
+      "partnerWeapon": 19,
+      "partnerName": "피오라",
+      "partnerWeaponName": "창"
+    },
+    {
+      "partnerCode": 3,
+      "partnerWeapon": 21,
+      "partnerName": "피오라",
+      "partnerWeaponName": "레이피어"
+    },
+    {
+      "partnerCode": 4,
+      "partnerWeapon": 3,
+      "partnerName": "매그너스",
+      "partnerWeaponName": "방망이"
+    },
+    {
+      "partnerCode": 4,
+      "partnerWeapon": 13,
+      "partnerName": "매그너스",
+      "partnerWeaponName": "망치"
+    },
+    {
+      "partnerCode": 5,
+      "partnerWeapon": 5,
+      "partnerName": "자히르",
+      "partnerWeaponName": "투척"
+    },
+    {
+      "partnerCode": 5,
+      "partnerWeapon": 6,
+      "partnerName": "자히르",
+      "partnerWeaponName": "암기"
+    },
+    {
+      "partnerCode": 6,
+      "partnerWeapon": 7,
+      "partnerName": "나딘",
+      "partnerWeaponName": "활"
+    },
+    {
+      "partnerCode": 6,
+      "partnerWeapon": 8,
+      "partnerName": "나딘",
+      "partnerWeaponName": "석궁"
+    },
+    {
+      "partnerCode": 7,
+      "partnerWeapon": 1,
+      "partnerName": "현우",
+      "partnerWeaponName": "글러브"
+    },
+    {
+      "partnerCode": 7,
+      "partnerWeapon": 2,
+      "partnerName": "현우",
+      "partnerWeaponName": "톤파"
+    },
+    {
+      "partnerCode": 8,
+      "partnerWeapon": 22,
+      "partnerName": "하트",
+      "partnerWeaponName": "기타"
+    },
+    {
+      "partnerCode": 9,
+      "partnerWeapon": 9,
+      "partnerName": "아이솔",
+      "partnerWeaponName": "권총"
+    },
+    {
+      "partnerCode": 9,
+      "partnerWeapon": 10,
+      "partnerName": "아이솔",
+      "partnerWeaponName": "돌격 소총"
+    },
+    {
+      "partnerCode": 10,
+      "partnerWeapon": 1,
+      "partnerName": "리 다이린",
+      "partnerWeaponName": "글러브"
+    },
+    {
+      "partnerCode": 10,
+      "partnerWeapon": 20,
+      "partnerName": "리 다이린",
+      "partnerWeaponName": "쌍절곤"
+    },
+    {
+      "partnerCode": 11,
+      "partnerWeapon": 16,
+      "partnerName": "유키",
+      "partnerWeaponName": "양손검"
+    },
+    {
+      "partnerCode": 11,
+      "partnerWeapon": 18,
+      "partnerName": "유키",
+      "partnerWeaponName": "쌍검"
+    },
+    {
+      "partnerCode": 12,
+      "partnerWeapon": 6,
+      "partnerName": "혜진",
+      "partnerWeaponName": "암기"
+    },
+    {
+      "partnerCode": 12,
+      "partnerWeapon": 7,
+      "partnerName": "혜진",
+      "partnerWeaponName": "활"
+    },
+    {
+      "partnerCode": 13,
+      "partnerWeapon": 15,
+      "partnerName": "쇼우",
+      "partnerWeaponName": "단검"
+    },
+    {
+      "partnerCode": 13,
+      "partnerWeapon": 19,
+      "partnerName": "쇼우",
+      "partnerWeaponName": "창"
+    },
+    {
+      "partnerCode": 14,
+      "partnerWeapon": 21,
+      "partnerName": "키아라",
+      "partnerWeaponName": "레이피어"
+    },
+    {
+      "partnerCode": 15,
+      "partnerWeapon": 5,
+      "partnerName": "시셀라",
+      "partnerWeaponName": "투척"
+    },
+    {
+      "partnerCode": 15,
+      "partnerWeapon": 6,
+      "partnerName": "시셀라",
+      "partnerWeaponName": "암기"
+    },
+    {
+      "partnerCode": 16,
+      "partnerWeapon": 9,
+      "partnerName": "실비아",
+      "partnerWeaponName": "권총"
+    },
+    {
+      "partnerCode": 17,
+      "partnerWeapon": 5,
+      "partnerName": "아드리아나",
+      "partnerWeaponName": "투척"
+    },
+    {
+      "partnerCode": 18,
+      "partnerWeapon": 15,
+      "partnerName": "쇼이치",
+      "partnerWeaponName": "단검"
+    },
+    {
+      "partnerCode": 19,
+      "partnerWeapon": 6,
+      "partnerName": "엠마",
+      "partnerWeaponName": "암기"
+    },
+    {
+      "partnerCode": 19,
+      "partnerWeapon": 24,
+      "partnerName": "엠마",
+      "partnerWeaponName": "아르카나"
+    },
+    {
+      "partnerCode": 20,
+      "partnerWeapon": 4,
+      "partnerName": "레녹스",
+      "partnerWeaponName": "채찍"
+    },
+    {
+      "partnerCode": 21,
+      "partnerWeapon": 9,
+      "partnerName": "로지",
+      "partnerWeaponName": "권총"
+    },
+    {
+      "partnerCode": 22,
+      "partnerWeapon": 3,
+      "partnerName": "루크",
+      "partnerWeaponName": "방망이"
+    },
+    {
+      "partnerCode": 23,
+      "partnerWeapon": 15,
+      "partnerName": "캐시",
+      "partnerWeaponName": "단검"
+    },
+    {
+      "partnerCode": 23,
+      "partnerWeapon": 18,
+      "partnerName": "캐시",
+      "partnerWeaponName": "쌍검"
+    },
+    {
+      "partnerCode": 24,
+      "partnerWeapon": 3,
+      "partnerName": "아델라",
+      "partnerWeaponName": "방망이"
+    },
+    {
+      "partnerCode": 24,
+      "partnerWeapon": 21,
+      "partnerName": "아델라",
+      "partnerWeaponName": "레이피어"
+    },
+    {
+      "partnerCode": 25,
+      "partnerWeapon": 11,
+      "partnerName": "버니스",
+      "partnerWeaponName": "저격총"
+    },
+    {
+      "partnerCode": 26,
+      "partnerWeapon": 9,
+      "partnerName": "바바라",
+      "partnerWeaponName": "권총"
+    },
+    {
+      "partnerCode": 27,
+      "partnerWeapon": 2,
+      "partnerName": "알렉스",
+      "partnerWeaponName": "톤파"
+    },
+    {
+      "partnerCode": 27,
+      "partnerWeapon": 6,
+      "partnerName": "알렉스",
+      "partnerWeaponName": "암기"
+    },
+    {
+      "partnerCode": 27,
+      "partnerWeapon": 9,
+      "partnerName": "알렉스",
+      "partnerWeaponName": "권총"
+    },
+    {
+      "partnerCode": 27,
+      "partnerWeapon": 16,
+      "partnerName": "알렉스",
+      "partnerWeaponName": "양손검"
+    },
+    {
+      "partnerCode": 28,
+      "partnerWeapon": 3,
+      "partnerName": "수아",
+      "partnerWeaponName": "방망이"
+    },
+    {
+      "partnerCode": 28,
+      "partnerWeapon": 13,
+      "partnerName": "수아",
+      "partnerWeaponName": "망치"
+    },
+    {
+      "partnerCode": 29,
+      "partnerWeapon": 1,
+      "partnerName": "레온",
+      "partnerWeaponName": "글러브"
+    },
+    {
+      "partnerCode": 29,
+      "partnerWeapon": 2,
+      "partnerName": "레온",
+      "partnerWeaponName": "톤파"
+    },
+    {
+      "partnerCode": 30,
+      "partnerWeapon": 13,
+      "partnerName": "일레븐",
+      "partnerWeaponName": "망치"
+    },
+    {
+      "partnerCode": 31,
+      "partnerWeapon": 7,
+      "partnerName": "리오",
+      "partnerWeaponName": "활"
+    },
+    {
+      "partnerCode": 32,
+      "partnerWeapon": 5,
+      "partnerName": "윌리엄",
+      "partnerWeaponName": "투척"
+    },
+    {
+      "partnerCode": 33,
+      "partnerWeapon": 1,
+      "partnerName": "니키",
+      "partnerWeaponName": "글러브"
+    },
+    {
+      "partnerCode": 34,
+      "partnerWeapon": 23,
+      "partnerName": "나타폰",
+      "partnerWeaponName": "카메라"
+    },
+    {
+      "partnerCode": 35,
+      "partnerWeapon": 1,
+      "partnerName": "얀",
+      "partnerWeaponName": "글러브"
+    },
+    {
+      "partnerCode": 35,
+      "partnerWeapon": 2,
+      "partnerName": "얀",
+      "partnerWeaponName": "톤파"
+    },
+    {
+      "partnerCode": 36,
+      "partnerWeapon": 5,
+      "partnerName": "이바",
+      "partnerWeaponName": "투척"
+    },
+    {
+      "partnerCode": 37,
+      "partnerWeapon": 15,
+      "partnerName": "다니엘",
+      "partnerWeaponName": "단검"
+    },
+    {
+      "partnerCode": 38,
+      "partnerWeapon": 9,
+      "partnerName": "제니",
+      "partnerWeaponName": "권총"
+    },
+    {
+      "partnerCode": 39,
+      "partnerWeapon": 18,
+      "partnerName": "카밀로",
+      "partnerWeaponName": "쌍검"
+    },
+    {
+      "partnerCode": 39,
+      "partnerWeapon": 21,
+      "partnerName": "카밀로",
+      "partnerWeaponName": "레이피어"
+    },
+    {
+      "partnerCode": 40,
+      "partnerWeapon": 6,
+      "partnerName": "클로에",
+      "partnerWeaponName": "암기"
+    },
+    {
+      "partnerCode": 41,
+      "partnerWeapon": 24,
+      "partnerName": "요한",
+      "partnerWeaponName": "아르카나"
+    },
+    {
+      "partnerCode": 42,
+      "partnerWeapon": 24,
+      "partnerName": "비앙카",
+      "partnerWeaponName": "아르카나"
+    },
+    {
+      "partnerCode": 43,
+      "partnerWeapon": 5,
+      "partnerName": "셀린",
+      "partnerWeaponName": "투척"
+    },
+    {
+      "partnerCode": 44,
+      "partnerWeapon": 25,
+      "partnerName": "에키온",
+      "partnerWeaponName": "VF의수"
+    },
+    {
+      "partnerCode": 45,
+      "partnerWeapon": 4,
+      "partnerName": "마이",
+      "partnerWeaponName": "채찍"
+    },
+    {
+      "partnerCode": 46,
+      "partnerWeapon": 16,
+      "partnerName": "에이든",
+      "partnerWeaponName": "양손검"
+    },
+    {
+      "partnerCode": 47,
+      "partnerWeapon": 4,
+      "partnerName": "라우라",
+      "partnerWeaponName": "채찍"
+    },
+    {
+      "partnerCode": 48,
+      "partnerWeapon": 3,
+      "partnerName": "띠아",
+      "partnerWeaponName": "방망이"
+    },
+    {
+      "partnerCode": 49,
+      "partnerWeapon": 19,
+      "partnerName": "펠릭스",
+      "partnerWeaponName": "창"
+    },
+    {
+      "partnerCode": 50,
+      "partnerWeapon": 21,
+      "partnerName": "엘레나",
+      "partnerWeaponName": "레이피어"
+    },
+    {
+      "partnerCode": 51,
+      "partnerWeapon": 22,
+      "partnerName": "프리야",
+      "partnerWeaponName": "기타"
+    },
+    {
+      "partnerCode": 52,
+      "partnerWeapon": 24,
+      "partnerName": "아디나",
+      "partnerWeaponName": "아르카나"
+    },
+    {
+      "partnerCode": 53,
+      "partnerWeapon": 13,
+      "partnerName": "마커스",
+      "partnerWeaponName": "망치"
+    },
+    {
+      "partnerCode": 53,
+      "partnerWeapon": 14,
+      "partnerName": "마커스",
+      "partnerWeaponName": "도끼"
+    },
+    {
+      "partnerCode": 54,
+      "partnerWeapon": 8,
+      "partnerName": "칼라",
+      "partnerWeaponName": "석궁"
+    },
+    {
+      "partnerCode": 55,
+      "partnerWeapon": 14,
+      "partnerName": "에스텔",
+      "partnerWeaponName": "도끼"
+    },
+    {
+      "partnerCode": 56,
+      "partnerWeapon": 20,
+      "partnerName": "피올로",
+      "partnerWeaponName": "쌍절곤"
+    },
+    {
+      "partnerCode": 57,
+      "partnerWeapon": 23,
+      "partnerName": "마르티나",
+      "partnerWeaponName": "카메라"
+    },
+    {
+      "partnerCode": 58,
+      "partnerWeapon": 10,
+      "partnerName": "헤이즈",
+      "partnerWeaponName": "돌격 소총"
+    },
+    {
+      "partnerCode": 59,
+      "partnerWeapon": 2,
+      "partnerName": "아이작",
+      "partnerWeaponName": "톤파"
+    },
+    {
+      "partnerCode": 60,
+      "partnerWeapon": 6,
+      "partnerName": "타지아",
+      "partnerWeaponName": "암기"
+    },
+    {
+      "partnerCode": 61,
+      "partnerWeapon": 5,
+      "partnerName": "이렘",
+      "partnerWeaponName": "투척"
+    },
+    {
+      "partnerCode": 62,
+      "partnerWeapon": 11,
+      "partnerName": "테오도르",
+      "partnerWeaponName": "저격총"
+    },
+    {
+      "partnerCode": 63,
+      "partnerWeapon": 15,
+      "partnerName": "이안",
+      "partnerWeaponName": "단검"
+    },
+    {
+      "partnerCode": 64,
+      "partnerWeapon": 24,
+      "partnerName": "바냐",
+      "partnerWeaponName": "아르카나"
+    },
+    {
+      "partnerCode": 65,
+      "partnerWeapon": 16,
+      "partnerName": "데비&마를렌",
+      "partnerWeaponName": "양손검"
+    },
+    {
+      "partnerCode": 66,
+      "partnerWeapon": 24,
+      "partnerName": "아르다",
+      "partnerWeaponName": "아르카나"
+    },
+    {
+      "partnerCode": 67,
+      "partnerWeapon": 14,
+      "partnerName": "아비게일",
+      "partnerWeaponName": "도끼"
+    },
+    {
+      "partnerCode": 68,
+      "partnerWeapon": 1,
+      "partnerName": "알론소",
+      "partnerWeaponName": "글러브"
+    },
+    {
+      "partnerCode": 69,
+      "partnerWeapon": 9,
+      "partnerName": "레니",
+      "partnerWeaponName": "권총"
+    },
+    {
+      "partnerCode": 70,
+      "partnerWeapon": 6,
+      "partnerName": "츠바메",
+      "partnerWeaponName": "암기"
+    },
+    {
+      "partnerCode": 71,
+      "partnerWeapon": 14,
+      "partnerName": "케네스",
+      "partnerWeaponName": "도끼"
+    },
+    {
+      "partnerCode": 72,
+      "partnerWeapon": 11,
+      "partnerName": "카티야",
+      "partnerWeaponName": "저격총"
+    },
+    {
+      "partnerCode": 73,
+      "partnerWeapon": 24,
+      "partnerName": "샬럿",
+      "partnerWeaponName": "아르카나"
+    },
+    {
+      "partnerCode": 74,
+      "partnerWeapon": 3,
+      "partnerName": "다르코",
+      "partnerWeaponName": "방망이"
+    },
+    {
+      "partnerCode": 75,
+      "partnerWeapon": 22,
+      "partnerName": "르노어",
+      "partnerWeaponName": "기타"
+    },
+    {
+      "partnerCode": 76,
+      "partnerWeapon": 3,
+      "partnerName": "가넷",
+      "partnerWeaponName": "방망이"
+    },
+    {
+      "partnerCode": 77,
+      "partnerWeapon": 24,
+      "partnerName": "유민",
+      "partnerWeaponName": "아르카나"
+    },
+    {
+      "partnerCode": 78,
+      "partnerWeapon": 16,
+      "partnerName": "히스이",
+      "partnerWeaponName": "양손검"
+    },
+    {
+      "partnerCode": 79,
+      "partnerWeapon": 8,
+      "partnerName": "유스티나",
+      "partnerWeaponName": "석궁"
+    },
+    {
+      "partnerCode": 80,
+      "partnerWeapon": 19,
+      "partnerName": "이슈트반",
+      "partnerWeaponName": "창"
+    },
+    {
+      "partnerCode": 81,
+      "partnerWeapon": 9,
+      "partnerName": "니아",
+      "partnerWeaponName": "권총"
+    },
+    {
+      "partnerCode": 82,
+      "partnerWeapon": 21,
+      "partnerName": "슈린",
+      "partnerWeaponName": "레이피어"
+    },
+    {
+      "partnerCode": 83,
+      "partnerWeapon": 6,
+      "partnerName": "헨리",
+      "partnerWeaponName": "암기"
+    },
+    {
+      "partnerCode": 84,
+      "partnerWeapon": 18,
+      "partnerName": "블레어",
+      "partnerWeaponName": "쌍검"
+    },
+    {
+      "partnerCode": 85,
+      "partnerWeapon": 13,
+      "partnerName": "미르카",
+      "partnerWeaponName": "망치"
+    },
+    {
+      "partnerCode": 86,
+      "partnerWeapon": 1,
+      "partnerName": "펜리르",
+      "partnerWeaponName": "글러브"
+    },
+    {
+      "partnerCode": 87,
+      "partnerWeapon": 24,
+      "partnerName": "코렐라인",
+      "partnerWeaponName": "아르카나"
+    }
+  ],
+  "rows": [
+    {
+      "characterCode": 1,
+      "characterName": "재키",
+      "weapon": 16,
+      "weaponName": "양손검",
+      "soloGames": 58883,
+      "soloAvgRP": 1.49,
+      "soloWinRate": 12.37,
+      "cluster": 2
+    },
+    {
+      "characterCode": 1,
+      "characterName": "재키",
+      "weapon": 15,
+      "weaponName": "단검",
+      "soloGames": 28453,
+      "soloAvgRP": 3.8,
+      "soloWinRate": 11.57,
+      "cluster": 1
+    },
+    {
+      "characterCode": 1,
+      "characterName": "재키",
+      "weapon": 18,
+      "weaponName": "쌍검",
+      "soloGames": 19705,
+      "soloAvgRP": -0.53,
+      "soloWinRate": 12.33,
+      "cluster": 0
+    },
+    {
+      "characterCode": 1,
+      "characterName": "재키",
+      "weapon": 14,
+      "weaponName": "도끼",
+      "soloGames": 10024,
+      "soloAvgRP": 2.32,
+      "soloWinRate": 11.8,
+      "cluster": 2
+    },
+    {
+      "characterCode": 2,
+      "characterName": "아야",
+      "weapon": 10,
+      "weaponName": "돌격 소총",
+      "soloGames": 68320,
+      "soloAvgRP": 3.78,
+      "soloWinRate": 14.18,
+      "cluster": 1
+    },
+    {
+      "characterCode": 2,
+      "characterName": "아야",
+      "weapon": 11,
+      "weaponName": "저격총",
+      "soloGames": 54724,
+      "soloAvgRP": 1.99,
+      "soloWinRate": 14.6,
+      "cluster": 2
+    },
+    {
+      "characterCode": 2,
+      "characterName": "아야",
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloGames": 53267,
+      "soloAvgRP": 4.51,
+      "soloWinRate": 13.69,
+      "cluster": 1
+    },
+    {
+      "characterCode": 3,
+      "characterName": "피오라",
+      "weapon": 21,
+      "weaponName": "레이피어",
+      "soloGames": 50013,
+      "soloAvgRP": 2.58,
+      "soloWinRate": 12.62,
+      "cluster": 2
+    },
+    {
+      "characterCode": 3,
+      "characterName": "피오라",
+      "weapon": 16,
+      "weaponName": "양손검",
+      "soloGames": 15583,
+      "soloAvgRP": -0.54,
+      "soloWinRate": 11.33,
+      "cluster": 0
+    },
+    {
+      "characterCode": 3,
+      "characterName": "피오라",
+      "weapon": 19,
+      "weaponName": "창",
+      "soloGames": 7612,
+      "soloAvgRP": 6.61,
+      "soloWinRate": 12.68,
+      "cluster": 1
+    },
+    {
+      "characterCode": 4,
+      "characterName": "매그너스",
+      "weapon": 13,
+      "weaponName": "망치",
+      "soloGames": 76633,
+      "soloAvgRP": 1.39,
+      "soloWinRate": 13.1,
+      "cluster": 2
+    },
+    {
+      "characterCode": 4,
+      "characterName": "매그너스",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "soloGames": 29489,
+      "soloAvgRP": 2.14,
+      "soloWinRate": 12.33,
+      "cluster": 2
+    },
+    {
+      "characterCode": 5,
+      "characterName": "자히르",
+      "weapon": 6,
+      "weaponName": "암기",
+      "soloGames": 19864,
+      "soloAvgRP": 3.36,
+      "soloWinRate": 17.02,
+      "cluster": 2
+    },
+    {
+      "characterCode": 5,
+      "characterName": "자히르",
+      "weapon": 5,
+      "weaponName": "투척",
+      "soloGames": 16066,
+      "soloAvgRP": 3.69,
+      "soloWinRate": 15.44,
+      "cluster": 1
+    },
+    {
+      "characterCode": 6,
+      "characterName": "나딘",
+      "weapon": 8,
+      "weaponName": "석궁",
+      "soloGames": 60450,
+      "soloAvgRP": 2.26,
+      "soloWinRate": 14.5,
+      "cluster": 2
+    },
+    {
+      "characterCode": 6,
+      "characterName": "나딘",
+      "weapon": 7,
+      "weaponName": "활",
+      "soloGames": 29222,
+      "soloAvgRP": 0.4,
+      "soloWinRate": 14.51,
+      "cluster": 2
+    },
+    {
+      "characterCode": 7,
+      "characterName": "현우",
+      "weapon": 1,
+      "weaponName": "글러브",
+      "soloGames": 100837,
+      "soloAvgRP": 1.71,
+      "soloWinRate": 13.31,
+      "cluster": 2
+    },
+    {
+      "characterCode": 7,
+      "characterName": "현우",
+      "weapon": 2,
+      "weaponName": "톤파",
+      "soloGames": 14108,
+      "soloAvgRP": -7.95,
+      "soloWinRate": 11.24,
+      "cluster": 0
+    },
+    {
+      "characterCode": 8,
+      "characterName": "하트",
+      "weapon": 22,
+      "weaponName": "기타",
+      "soloGames": 30466,
+      "soloAvgRP": 0.9,
+      "soloWinRate": 14.44,
+      "cluster": 2
+    },
+    {
+      "characterCode": 9,
+      "characterName": "아이솔",
+      "weapon": 10,
+      "weaponName": "돌격 소총",
+      "soloGames": 66460,
+      "soloAvgRP": 5.07,
+      "soloWinRate": 14.42,
+      "cluster": 1
+    },
+    {
+      "characterCode": 9,
+      "characterName": "아이솔",
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloGames": 34744,
+      "soloAvgRP": -2.18,
+      "soloWinRate": 12.97,
+      "cluster": 0
+    },
+    {
+      "characterCode": 10,
+      "characterName": "리 다이린",
+      "weapon": 1,
+      "weaponName": "글러브",
+      "soloGames": 54363,
+      "soloAvgRP": 3.96,
+      "soloWinRate": 12.44,
+      "cluster": 1
+    },
+    {
+      "characterCode": 10,
+      "characterName": "리 다이린",
+      "weapon": 20,
+      "weaponName": "쌍절곤",
+      "soloGames": 31348,
+      "soloAvgRP": 1.11,
+      "soloWinRate": 12.02,
+      "cluster": 2
+    },
+    {
+      "characterCode": 11,
+      "characterName": "유키",
+      "weapon": 16,
+      "weaponName": "양손검",
+      "soloGames": 91925,
+      "soloAvgRP": 2.85,
+      "soloWinRate": 13,
+      "cluster": 2
+    },
+    {
+      "characterCode": 11,
+      "characterName": "유키",
+      "weapon": 18,
+      "weaponName": "쌍검",
+      "soloGames": 51774,
+      "soloAvgRP": -2.22,
+      "soloWinRate": 11.42,
+      "cluster": 0
+    },
+    {
+      "characterCode": 12,
+      "characterName": "혜진",
+      "weapon": 7,
+      "weaponName": "활",
+      "soloGames": 36895,
+      "soloAvgRP": -0.69,
+      "soloWinRate": 13.81,
+      "cluster": 0
+    },
+    {
+      "characterCode": 12,
+      "characterName": "혜진",
+      "weapon": 6,
+      "weaponName": "암기",
+      "soloGames": 9950,
+      "soloAvgRP": 4.34,
+      "soloWinRate": 14.86,
+      "cluster": 1
+    },
+    {
+      "characterCode": 13,
+      "characterName": "쇼우",
+      "weapon": 15,
+      "weaponName": "단검",
+      "soloGames": 27697,
+      "soloAvgRP": 0.58,
+      "soloWinRate": 14.91,
+      "cluster": 0
+    },
+    {
+      "characterCode": 13,
+      "characterName": "쇼우",
+      "weapon": 19,
+      "weaponName": "창",
+      "soloGames": 14852,
+      "soloAvgRP": 1.62,
+      "soloWinRate": 15.3,
+      "cluster": 2
+    },
+    {
+      "characterCode": 14,
+      "characterName": "키아라",
+      "weapon": 21,
+      "weaponName": "레이피어",
+      "soloGames": 60919,
+      "soloAvgRP": -0.06,
+      "soloWinRate": 13.79,
+      "cluster": 0
+    },
+    {
+      "characterCode": 15,
+      "characterName": "시셀라",
+      "weapon": 6,
+      "weaponName": "암기",
+      "soloGames": 38820,
+      "soloAvgRP": 1.01,
+      "soloWinRate": 13.51,
+      "cluster": 2
+    },
+    {
+      "characterCode": 15,
+      "characterName": "시셀라",
+      "weapon": 5,
+      "weaponName": "투척",
+      "soloGames": 27315,
+      "soloAvgRP": -1.41,
+      "soloWinRate": 13.56,
+      "cluster": 0
+    },
+    {
+      "characterCode": 16,
+      "characterName": "실비아",
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloGames": 71136,
+      "soloAvgRP": 1.97,
+      "soloWinRate": 13.28,
+      "cluster": 2
+    },
+    {
+      "characterCode": 17,
+      "characterName": "아드리아나",
+      "weapon": 5,
+      "weaponName": "투척",
+      "soloGames": 55746,
+      "soloAvgRP": 1.68,
+      "soloWinRate": 14.17,
+      "cluster": 2
+    },
+    {
+      "characterCode": 18,
+      "characterName": "쇼이치",
+      "weapon": 15,
+      "weaponName": "단검",
+      "soloGames": 120104,
+      "soloAvgRP": -4.05,
+      "soloWinRate": 11.41,
+      "cluster": 0
+    },
+    {
+      "characterCode": 19,
+      "characterName": "엠마",
+      "weapon": 6,
+      "weaponName": "암기",
+      "soloGames": 39784,
+      "soloAvgRP": -0.7,
+      "soloWinRate": 13.75,
+      "cluster": 0
+    },
+    {
+      "characterCode": 19,
+      "characterName": "엠마",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "soloGames": 14048,
+      "soloAvgRP": -0.66,
+      "soloWinRate": 14.07,
+      "cluster": 0
+    },
+    {
+      "characterCode": 20,
+      "characterName": "레녹스",
+      "weapon": 4,
+      "weaponName": "채찍",
+      "soloGames": 101527,
+      "soloAvgRP": 3.13,
+      "soloWinRate": 15.35,
+      "cluster": 1
+    },
+    {
+      "characterCode": 21,
+      "characterName": "로지",
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloGames": 102808,
+      "soloAvgRP": 2.62,
+      "soloWinRate": 13.77,
+      "cluster": 2
+    },
+    {
+      "characterCode": 22,
+      "characterName": "루크",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "soloGames": 134065,
+      "soloAvgRP": -2.03,
+      "soloWinRate": 11.19,
+      "cluster": 0
+    },
+    {
+      "characterCode": 23,
+      "characterName": "캐시",
+      "weapon": 15,
+      "weaponName": "단검",
+      "soloGames": 32031,
+      "soloAvgRP": 3.63,
+      "soloWinRate": 11.97,
+      "cluster": 1
+    },
+    {
+      "characterCode": 23,
+      "characterName": "캐시",
+      "weapon": 18,
+      "weaponName": "쌍검",
+      "soloGames": 8025,
+      "soloAvgRP": 1.64,
+      "soloWinRate": 11.5,
+      "cluster": 2
+    },
+    {
+      "characterCode": 24,
+      "characterName": "아델라",
+      "weapon": 21,
+      "weaponName": "레이피어",
+      "soloGames": 27130,
+      "soloAvgRP": 5.43,
+      "soloWinRate": 14.36,
+      "cluster": 1
+    },
+    {
+      "characterCode": 24,
+      "characterName": "아델라",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "soloGames": 15327,
+      "soloAvgRP": 1.11,
+      "soloWinRate": 13.28,
+      "cluster": 2
+    },
+    {
+      "characterCode": 25,
+      "characterName": "버니스",
+      "weapon": 11,
+      "weaponName": "저격총",
+      "soloGames": 61592,
+      "soloAvgRP": 1.52,
+      "soloWinRate": 13.91,
+      "cluster": 2
+    },
+    {
+      "characterCode": 26,
+      "characterName": "바바라",
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloGames": 89290,
+      "soloAvgRP": 0.06,
+      "soloWinRate": 14.7,
+      "cluster": 0
+    },
+    {
+      "characterCode": 27,
+      "characterName": "알렉스",
+      "weapon": 16,
+      "weaponName": "양손검",
+      "soloGames": 35771,
+      "soloAvgRP": 3.04,
+      "soloWinRate": 12.54,
+      "cluster": 1
+    },
+    {
+      "characterCode": 27,
+      "characterName": "알렉스",
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloGames": 32762,
+      "soloAvgRP": 2.45,
+      "soloWinRate": 13,
+      "cluster": 2
+    },
+    {
+      "characterCode": 27,
+      "characterName": "알렉스",
+      "weapon": 2,
+      "weaponName": "톤파",
+      "soloGames": 22849,
+      "soloAvgRP": 2.42,
+      "soloWinRate": 11.09,
+      "cluster": 2
+    },
+    {
+      "characterCode": 27,
+      "characterName": "알렉스",
+      "weapon": 6,
+      "weaponName": "암기",
+      "soloGames": 17091,
+      "soloAvgRP": 4.43,
+      "soloWinRate": 10.51,
+      "cluster": 1
+    },
+    {
+      "characterCode": 28,
+      "characterName": "수아",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "soloGames": 33669,
+      "soloAvgRP": 3.9,
+      "soloWinRate": 13.6,
+      "cluster": 1
+    },
+    {
+      "characterCode": 28,
+      "characterName": "수아",
+      "weapon": 13,
+      "weaponName": "망치",
+      "soloGames": 24093,
+      "soloAvgRP": 5.06,
+      "soloWinRate": 13.07,
+      "cluster": 1
+    },
+    {
+      "characterCode": 29,
+      "characterName": "레온",
+      "weapon": 1,
+      "weaponName": "글러브",
+      "soloGames": 74229,
+      "soloAvgRP": 5.21,
+      "soloWinRate": 13.09,
+      "cluster": 1
+    },
+    {
+      "characterCode": 29,
+      "characterName": "레온",
+      "weapon": 2,
+      "weaponName": "톤파",
+      "soloGames": 16516,
+      "soloAvgRP": 0.02,
+      "soloWinRate": 14.68,
+      "cluster": 0
+    },
+    {
+      "characterCode": 30,
+      "characterName": "일레븐",
+      "weapon": 13,
+      "weaponName": "망치",
+      "soloGames": 72886,
+      "soloAvgRP": 2.11,
+      "soloWinRate": 15.03,
+      "cluster": 2
+    },
+    {
+      "characterCode": 31,
+      "characterName": "리오",
+      "weapon": 7,
+      "weaponName": "활",
+      "soloGames": 150312,
+      "soloAvgRP": 0.55,
+      "soloWinRate": 14.08,
+      "cluster": 2
+    },
+    {
+      "characterCode": 32,
+      "characterName": "윌리엄",
+      "weapon": 5,
+      "weaponName": "투척",
+      "soloGames": 54322,
+      "soloAvgRP": -0.09,
+      "soloWinRate": 15.27,
+      "cluster": 0
+    },
+    {
+      "characterCode": 33,
+      "characterName": "니키",
+      "weapon": 1,
+      "weaponName": "글러브",
+      "soloGames": 81133,
+      "soloAvgRP": 1.02,
+      "soloWinRate": 11.99,
+      "cluster": 2
+    },
+    {
+      "characterCode": 34,
+      "characterName": "나타폰",
+      "weapon": 23,
+      "weaponName": "카메라",
+      "soloGames": 54785,
+      "soloAvgRP": 3.59,
+      "soloWinRate": 14.25,
+      "cluster": 2
+    },
+    {
+      "characterCode": 35,
+      "characterName": "얀",
+      "weapon": 2,
+      "weaponName": "톤파",
+      "soloGames": 51686,
+      "soloAvgRP": -0.4,
+      "soloWinRate": 11.19,
+      "cluster": 0
+    },
+    {
+      "characterCode": 35,
+      "characterName": "얀",
+      "weapon": 1,
+      "weaponName": "글러브",
+      "soloGames": 45815,
+      "soloAvgRP": 0.86,
+      "soloWinRate": 12.41,
+      "cluster": 2
+    },
+    {
+      "characterCode": 36,
+      "characterName": "이바",
+      "weapon": 5,
+      "weaponName": "투척",
+      "soloGames": 62870,
+      "soloAvgRP": 1.59,
+      "soloWinRate": 15.79,
+      "cluster": 2
+    },
+    {
+      "characterCode": 37,
+      "characterName": "다니엘",
+      "weapon": 15,
+      "weaponName": "단검",
+      "soloGames": 45515,
+      "soloAvgRP": -0.73,
+      "soloWinRate": 11.44,
+      "cluster": 0
+    },
+    {
+      "characterCode": 38,
+      "characterName": "제니",
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloGames": 22999,
+      "soloAvgRP": 0.63,
+      "soloWinRate": 16.8,
+      "cluster": 0
+    },
+    {
+      "characterCode": 39,
+      "characterName": "카밀로",
+      "weapon": 21,
+      "weaponName": "레이피어",
+      "soloGames": 57837,
+      "soloAvgRP": 3.37,
+      "soloWinRate": 14.71,
+      "cluster": 2
+    },
+    {
+      "characterCode": 39,
+      "characterName": "카밀로",
+      "weapon": 18,
+      "weaponName": "쌍검",
+      "soloGames": 38003,
+      "soloAvgRP": 1.02,
+      "soloWinRate": 14.11,
+      "cluster": 2
+    },
+    {
+      "characterCode": 40,
+      "characterName": "클로에",
+      "weapon": 6,
+      "weaponName": "암기",
+      "soloGames": 46499,
+      "soloAvgRP": 6.2,
+      "soloWinRate": 14.67,
+      "cluster": 1
+    },
+    {
+      "characterCode": 41,
+      "characterName": "요한",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "soloGames": 17892,
+      "soloAvgRP": 2.45,
+      "soloWinRate": 16.59,
+      "cluster": 1
+    },
+    {
+      "characterCode": 42,
+      "characterName": "비앙카",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "soloGames": 73329,
+      "soloAvgRP": 2.97,
+      "soloWinRate": 12.56,
+      "cluster": 1
+    },
+    {
+      "characterCode": 43,
+      "characterName": "셀린",
+      "weapon": 5,
+      "weaponName": "투척",
+      "soloGames": 38273,
+      "soloAvgRP": 4.22,
+      "soloWinRate": 15.25,
+      "cluster": 1
+    },
+    {
+      "characterCode": 44,
+      "characterName": "에키온",
+      "weapon": 25,
+      "weaponName": "VF의수",
+      "soloGames": 53707,
+      "soloAvgRP": -1.4,
+      "soloWinRate": 12.5,
+      "cluster": 0
+    },
+    {
+      "characterCode": 45,
+      "characterName": "마이",
+      "weapon": 4,
+      "weaponName": "채찍",
+      "soloGames": 33553,
+      "soloAvgRP": 1.2,
+      "soloWinRate": 14.65,
+      "cluster": 2
+    },
+    {
+      "characterCode": 46,
+      "characterName": "에이든",
+      "weapon": 16,
+      "weaponName": "양손검",
+      "soloGames": 87798,
+      "soloAvgRP": 0.81,
+      "soloWinRate": 13.42,
+      "cluster": 2
+    },
+    {
+      "characterCode": 47,
+      "characterName": "라우라",
+      "weapon": 4,
+      "weaponName": "채찍",
+      "soloGames": 64262,
+      "soloAvgRP": 1.77,
+      "soloWinRate": 11.77,
+      "cluster": 2
+    },
+    {
+      "characterCode": 48,
+      "characterName": "띠아",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "soloGames": 60540,
+      "soloAvgRP": 2.82,
+      "soloWinRate": 12.32,
+      "cluster": 2
+    },
+    {
+      "characterCode": 49,
+      "characterName": "펠릭스",
+      "weapon": 19,
+      "weaponName": "창",
+      "soloGames": 59503,
+      "soloAvgRP": -1.61,
+      "soloWinRate": 13.4,
+      "cluster": 0
+    },
+    {
+      "characterCode": 50,
+      "characterName": "엘레나",
+      "weapon": 21,
+      "weaponName": "레이피어",
+      "soloGames": 43885,
+      "soloAvgRP": -0.35,
+      "soloWinRate": 13.12,
+      "cluster": 0
+    },
+    {
+      "characterCode": 51,
+      "characterName": "프리야",
+      "weapon": 22,
+      "weaponName": "기타",
+      "soloGames": 31370,
+      "soloAvgRP": -1.91,
+      "soloWinRate": 14.57,
+      "cluster": 0
+    },
+    {
+      "characterCode": 52,
+      "characterName": "아디나",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "soloGames": 42952,
+      "soloAvgRP": 2.11,
+      "soloWinRate": 15.35,
+      "cluster": 2
+    },
+    {
+      "characterCode": 53,
+      "characterName": "마커스",
+      "weapon": 14,
+      "weaponName": "도끼",
+      "soloGames": 68799,
+      "soloAvgRP": 0.15,
+      "soloWinRate": 13.92,
+      "cluster": 2
+    },
+    {
+      "characterCode": 53,
+      "characterName": "마커스",
+      "weapon": 13,
+      "weaponName": "망치",
+      "soloGames": 61193,
+      "soloAvgRP": 1.8,
+      "soloWinRate": 13.86,
+      "cluster": 2
+    },
+    {
+      "characterCode": 54,
+      "characterName": "칼라",
+      "weapon": 8,
+      "weaponName": "석궁",
+      "soloGames": 48217,
+      "soloAvgRP": -0.19,
+      "soloWinRate": 11.72,
+      "cluster": 0
+    },
+    {
+      "characterCode": 55,
+      "characterName": "에스텔",
+      "weapon": 14,
+      "weaponName": "도끼",
+      "soloGames": 74416,
+      "soloAvgRP": 2.46,
+      "soloWinRate": 14.28,
+      "cluster": 2
+    },
+    {
+      "characterCode": 56,
+      "characterName": "피올로",
+      "weapon": 20,
+      "weaponName": "쌍절곤",
+      "soloGames": 61742,
+      "soloAvgRP": 3.52,
+      "soloWinRate": 12.78,
+      "cluster": 1
+    },
+    {
+      "characterCode": 57,
+      "characterName": "마르티나",
+      "weapon": 23,
+      "weaponName": "카메라",
+      "soloGames": 25167,
+      "soloAvgRP": 1.16,
+      "soloWinRate": 15.75,
+      "cluster": 2
+    },
+    {
+      "characterCode": 58,
+      "characterName": "헤이즈",
+      "weapon": 10,
+      "weaponName": "돌격 소총",
+      "soloGames": 125376,
+      "soloAvgRP": 0.6,
+      "soloWinRate": 13.16,
+      "cluster": 2
+    },
+    {
+      "characterCode": 59,
+      "characterName": "아이작",
+      "weapon": 2,
+      "weaponName": "톤파",
+      "soloGames": 98828,
+      "soloAvgRP": 1.39,
+      "soloWinRate": 12.82,
+      "cluster": 2
+    },
+    {
+      "characterCode": 60,
+      "characterName": "타지아",
+      "weapon": 6,
+      "weaponName": "암기",
+      "soloGames": 27463,
+      "soloAvgRP": -0.5,
+      "soloWinRate": 14.23,
+      "cluster": 0
+    },
+    {
+      "characterCode": 61,
+      "characterName": "이렘",
+      "weapon": 5,
+      "weaponName": "투척",
+      "soloGames": 46999,
+      "soloAvgRP": 2.67,
+      "soloWinRate": 13.07,
+      "cluster": 2
+    },
+    {
+      "characterCode": 62,
+      "characterName": "테오도르",
+      "weapon": 11,
+      "weaponName": "저격총",
+      "soloGames": 64732,
+      "soloAvgRP": 0.54,
+      "soloWinRate": 15.61,
+      "cluster": 0
+    },
+    {
+      "characterCode": 63,
+      "characterName": "이안",
+      "weapon": 15,
+      "weaponName": "단검",
+      "soloGames": 57261,
+      "soloAvgRP": 2.94,
+      "soloWinRate": 14.94,
+      "cluster": 2
+    },
+    {
+      "characterCode": 64,
+      "characterName": "바냐",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "soloGames": 85362,
+      "soloAvgRP": 3.54,
+      "soloWinRate": 14.54,
+      "cluster": 2
+    },
+    {
+      "characterCode": 65,
+      "characterName": "데비&마를렌",
+      "weapon": 16,
+      "weaponName": "양손검",
+      "soloGames": 161968,
+      "soloAvgRP": -0.23,
+      "soloWinRate": 12.22,
+      "cluster": 0
+    },
+    {
+      "characterCode": 66,
+      "characterName": "아르다",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "soloGames": 52687,
+      "soloAvgRP": 2.73,
+      "soloWinRate": 14,
+      "cluster": 2
+    },
+    {
+      "characterCode": 67,
+      "characterName": "아비게일",
+      "weapon": 14,
+      "weaponName": "도끼",
+      "soloGames": 140451,
+      "soloAvgRP": 2.51,
+      "soloWinRate": 12.99,
+      "cluster": 2
+    },
+    {
+      "characterCode": 68,
+      "characterName": "알론소",
+      "weapon": 1,
+      "weaponName": "글러브",
+      "soloGames": 47033,
+      "soloAvgRP": 1.67,
+      "soloWinRate": 15.49,
+      "cluster": 2
+    },
+    {
+      "characterCode": 69,
+      "characterName": "레니",
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloGames": 58564,
+      "soloAvgRP": -1.45,
+      "soloWinRate": 12.68,
+      "cluster": 0
+    },
+    {
+      "characterCode": 70,
+      "characterName": "츠바메",
+      "weapon": 6,
+      "weaponName": "암기",
+      "soloGames": 96447,
+      "soloAvgRP": 2.34,
+      "soloWinRate": 12.83,
+      "cluster": 2
+    },
+    {
+      "characterCode": 71,
+      "characterName": "케네스",
+      "weapon": 14,
+      "weaponName": "도끼",
+      "soloGames": 74463,
+      "soloAvgRP": -1.38,
+      "soloWinRate": 12.62,
+      "cluster": 0
+    },
+    {
+      "characterCode": 72,
+      "characterName": "카티야",
+      "weapon": 11,
+      "weaponName": "저격총",
+      "soloGames": 194101,
+      "soloAvgRP": 0.36,
+      "soloWinRate": 13.21,
+      "cluster": 2
+    },
+    {
+      "characterCode": 73,
+      "characterName": "샬럿",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "soloGames": 16019,
+      "soloAvgRP": -6.57,
+      "soloWinRate": 15.22,
+      "cluster": 0
+    },
+    {
+      "characterCode": 74,
+      "characterName": "다르코",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "soloGames": 124875,
+      "soloAvgRP": 0.8,
+      "soloWinRate": 12.65,
+      "cluster": 2
+    },
+    {
+      "characterCode": 75,
+      "characterName": "르노어",
+      "weapon": 22,
+      "weaponName": "기타",
+      "soloGames": 80139,
+      "soloAvgRP": 3.92,
+      "soloWinRate": 14.73,
+      "cluster": 1
+    },
+    {
+      "characterCode": 76,
+      "characterName": "가넷",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "soloGames": 66481,
+      "soloAvgRP": 0.49,
+      "soloWinRate": 13.24,
+      "cluster": 2
+    },
+    {
+      "characterCode": 77,
+      "characterName": "유민",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "soloGames": 97829,
+      "soloAvgRP": 3.73,
+      "soloWinRate": 14.39,
+      "cluster": 1
+    },
+    {
+      "characterCode": 78,
+      "characterName": "히스이",
+      "weapon": 16,
+      "weaponName": "양손검",
+      "soloGames": 150471,
+      "soloAvgRP": -1.49,
+      "soloWinRate": 12.41,
+      "cluster": 0
+    },
+    {
+      "characterCode": 79,
+      "characterName": "유스티나",
+      "weapon": 8,
+      "weaponName": "석궁",
+      "soloGames": 86317,
+      "soloAvgRP": -2.66,
+      "soloWinRate": 12.12,
+      "cluster": 0
+    },
+    {
+      "characterCode": 80,
+      "characterName": "이슈트반",
+      "weapon": 19,
+      "weaponName": "창",
+      "soloGames": 75778,
+      "soloAvgRP": 1.99,
+      "soloWinRate": 11.34,
+      "cluster": 2
+    },
+    {
+      "characterCode": 81,
+      "characterName": "니아",
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloGames": 74596,
+      "soloAvgRP": 2.03,
+      "soloWinRate": 13.6,
+      "cluster": 2
+    },
+    {
+      "characterCode": 82,
+      "characterName": "슈린",
+      "weapon": 21,
+      "weaponName": "레이피어",
+      "soloGames": 63710,
+      "soloAvgRP": 2.6,
+      "soloWinRate": 11.3,
+      "cluster": 2
+    },
+    {
+      "characterCode": 83,
+      "characterName": "헨리",
+      "weapon": 6,
+      "weaponName": "암기",
+      "soloGames": 81897,
+      "soloAvgRP": 3.08,
+      "soloWinRate": 14.41,
+      "cluster": 2
+    },
+    {
+      "characterCode": 84,
+      "characterName": "블레어",
+      "weapon": 18,
+      "weaponName": "쌍검",
+      "soloGames": 102752,
+      "soloAvgRP": -0.59,
+      "soloWinRate": 12.46,
+      "cluster": 0
+    },
+    {
+      "characterCode": 85,
+      "characterName": "미르카",
+      "weapon": 13,
+      "weaponName": "망치",
+      "soloGames": 89982,
+      "soloAvgRP": -0.61,
+      "soloWinRate": 13.61,
+      "cluster": 0
+    },
+    {
+      "characterCode": 86,
+      "characterName": "펜리르",
+      "weapon": 1,
+      "weaponName": "글러브",
+      "soloGames": 84661,
+      "soloAvgRP": 2.59,
+      "soloWinRate": 11.14,
+      "cluster": 2
+    },
+    {
+      "characterCode": 87,
+      "characterName": "코렐라인",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "soloGames": 96939,
+      "soloAvgRP": -3.61,
+      "soloWinRate": 13.09,
+      "cluster": 0
+    }
+  ],
+  "clusters": [
+    {
+      "cluster": 2,
+      "size": 57,
+      "avgSoloRP": 1.85,
+      "avgSoloWinRate": 13.52,
+      "topPartnerCells": [
+        {
+          "partnerCode": 34,
+          "partnerName": "나타폰",
+          "partnerWeapon": 23,
+          "partnerWeaponName": "카메라",
+          "meanRpLift": 0.349
+        },
+        {
+          "partnerCode": 63,
+          "partnerName": "이안",
+          "partnerWeapon": 15,
+          "partnerWeaponName": "단검",
+          "meanRpLift": 0.281
+        },
+        {
+          "partnerCode": 27,
+          "partnerName": "알렉스",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "meanRpLift": 0.197
+        },
+        {
+          "partnerCode": 5,
+          "partnerName": "자히르",
+          "partnerWeapon": 5,
+          "partnerWeaponName": "투척",
+          "meanRpLift": 0.111
+        },
+        {
+          "partnerCode": 11,
+          "partnerName": "유키",
+          "partnerWeapon": 16,
+          "partnerWeaponName": "양손검",
+          "meanRpLift": -0.094
+        },
+        {
+          "partnerCode": 5,
+          "partnerName": "자히르",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "meanRpLift": -0.104
+        },
+        {
+          "partnerCode": 12,
+          "partnerName": "혜진",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "meanRpLift": -0.189
+        },
+        {
+          "partnerCode": 24,
+          "partnerName": "아델라",
+          "partnerWeapon": 21,
+          "partnerWeaponName": "레이피어",
+          "meanRpLift": -0.284
+        },
+        {
+          "partnerCode": 64,
+          "partnerName": "바냐",
+          "partnerWeapon": 24,
+          "partnerWeaponName": "아르카나",
+          "meanRpLift": -0.379
+        },
+        {
+          "partnerCode": 27,
+          "partnerName": "알렉스",
+          "partnerWeapon": 2,
+          "partnerWeaponName": "톤파",
+          "meanRpLift": -0.427
+        },
+        {
+          "partnerCode": 70,
+          "partnerName": "츠바메",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "meanRpLift": -0.482
+        },
+        {
+          "partnerCode": 1,
+          "partnerName": "재키",
+          "partnerWeapon": 15,
+          "partnerWeaponName": "단검",
+          "meanRpLift": -0.526
+        }
+      ],
+      "bottomPartnerCells": [
+        {
+          "partnerCode": 73,
+          "partnerName": "샬럿",
+          "partnerWeapon": 24,
+          "partnerWeaponName": "아르카나",
+          "meanRpLift": -4.318
+        },
+        {
+          "partnerCode": 87,
+          "partnerName": "코렐라인",
+          "partnerWeapon": 24,
+          "partnerWeaponName": "아르카나",
+          "meanRpLift": -3.791
+        },
+        {
+          "partnerCode": 7,
+          "partnerName": "현우",
+          "partnerWeapon": 2,
+          "partnerWeaponName": "톤파",
+          "meanRpLift": -3.564
+        },
+        {
+          "partnerCode": 51,
+          "partnerName": "프리야",
+          "partnerWeapon": 22,
+          "partnerWeaponName": "기타",
+          "meanRpLift": -2.799
+        },
+        {
+          "partnerCode": 15,
+          "partnerName": "시셀라",
+          "partnerWeapon": 5,
+          "partnerWeaponName": "투척",
+          "meanRpLift": -2.69
+        },
+        {
+          "partnerCode": 69,
+          "partnerName": "레니",
+          "partnerWeapon": 9,
+          "partnerWeaponName": "권총",
+          "meanRpLift": -2.685
+        },
+        {
+          "partnerCode": 85,
+          "partnerName": "미르카",
+          "partnerWeapon": 13,
+          "partnerWeaponName": "망치",
+          "meanRpLift": -2.627
+        },
+        {
+          "partnerCode": 6,
+          "partnerName": "나딘",
+          "partnerWeapon": 7,
+          "partnerWeaponName": "활",
+          "meanRpLift": -2.61
+        },
+        {
+          "partnerCode": 19,
+          "partnerName": "엠마",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "meanRpLift": -2.565
+        },
+        {
+          "partnerCode": 41,
+          "partnerName": "요한",
+          "partnerWeapon": 24,
+          "partnerWeaponName": "아르카나",
+          "meanRpLift": -2.484
+        },
+        {
+          "partnerCode": 79,
+          "partnerName": "유스티나",
+          "partnerWeapon": 8,
+          "partnerWeaponName": "석궁",
+          "meanRpLift": -2.481
+        },
+        {
+          "partnerCode": 71,
+          "partnerName": "케네스",
+          "partnerWeapon": 14,
+          "partnerWeaponName": "도끼",
+          "meanRpLift": -2.285
+        }
+      ],
+      "members": [
+        {
+          "characterCode": 72,
+          "characterName": "카티야",
+          "weapon": 11,
+          "weaponName": "저격총",
+          "soloGames": 194101,
+          "soloAvgRP": 0.36,
+          "soloWinRate": 13.21,
+          "rowIndex": 99
+        },
+        {
+          "characterCode": 31,
+          "characterName": "리오",
+          "weapon": 7,
+          "weaponName": "활",
+          "soloGames": 150312,
+          "soloAvgRP": 0.55,
+          "soloWinRate": 14.08,
+          "rowIndex": 55
+        },
+        {
+          "characterCode": 67,
+          "characterName": "아비게일",
+          "weapon": 14,
+          "weaponName": "도끼",
+          "soloGames": 140451,
+          "soloAvgRP": 2.51,
+          "soloWinRate": 12.99,
+          "rowIndex": 94
+        },
+        {
+          "characterCode": 58,
+          "characterName": "헤이즈",
+          "weapon": 10,
+          "weaponName": "돌격 소총",
+          "soloGames": 125376,
+          "soloAvgRP": 0.6,
+          "soloWinRate": 13.16,
+          "rowIndex": 85
+        },
+        {
+          "characterCode": 74,
+          "characterName": "다르코",
+          "weapon": 3,
+          "weaponName": "방망이",
+          "soloGames": 124875,
+          "soloAvgRP": 0.8,
+          "soloWinRate": 12.65,
+          "rowIndex": 101
+        },
+        {
+          "characterCode": 21,
+          "characterName": "로지",
+          "weapon": 9,
+          "weaponName": "권총",
+          "soloGames": 102808,
+          "soloAvgRP": 2.62,
+          "soloWinRate": 13.77,
+          "rowIndex": 38
+        },
+        {
+          "characterCode": 7,
+          "characterName": "현우",
+          "weapon": 1,
+          "weaponName": "글러브",
+          "soloGames": 100837,
+          "soloAvgRP": 1.71,
+          "soloWinRate": 13.31,
+          "rowIndex": 16
+        },
+        {
+          "characterCode": 59,
+          "characterName": "아이작",
+          "weapon": 2,
+          "weaponName": "톤파",
+          "soloGames": 98828,
+          "soloAvgRP": 1.39,
+          "soloWinRate": 12.82,
+          "rowIndex": 86
+        },
+        {
+          "characterCode": 70,
+          "characterName": "츠바메",
+          "weapon": 6,
+          "weaponName": "암기",
+          "soloGames": 96447,
+          "soloAvgRP": 2.34,
+          "soloWinRate": 12.83,
+          "rowIndex": 97
+        },
+        {
+          "characterCode": 11,
+          "characterName": "유키",
+          "weapon": 16,
+          "weaponName": "양손검",
+          "soloGames": 91925,
+          "soloAvgRP": 2.85,
+          "soloWinRate": 13,
+          "rowIndex": 23
+        },
+        {
+          "characterCode": 46,
+          "characterName": "에이든",
+          "weapon": 16,
+          "weaponName": "양손검",
+          "soloGames": 87798,
+          "soloAvgRP": 0.81,
+          "soloWinRate": 13.42,
+          "rowIndex": 72
+        },
+        {
+          "characterCode": 64,
+          "characterName": "바냐",
+          "weapon": 24,
+          "weaponName": "아르카나",
+          "soloGames": 85362,
+          "soloAvgRP": 3.54,
+          "soloWinRate": 14.54,
+          "rowIndex": 91
+        },
+        {
+          "characterCode": 86,
+          "characterName": "펜리르",
+          "weapon": 1,
+          "weaponName": "글러브",
+          "soloGames": 84661,
+          "soloAvgRP": 2.59,
+          "soloWinRate": 11.14,
+          "rowIndex": 113
+        },
+        {
+          "characterCode": 83,
+          "characterName": "헨리",
+          "weapon": 6,
+          "weaponName": "암기",
+          "soloGames": 81897,
+          "soloAvgRP": 3.08,
+          "soloWinRate": 14.41,
+          "rowIndex": 110
+        },
+        {
+          "characterCode": 33,
+          "characterName": "니키",
+          "weapon": 1,
+          "weaponName": "글러브",
+          "soloGames": 81133,
+          "soloAvgRP": 1.02,
+          "soloWinRate": 11.99,
+          "rowIndex": 57
+        },
+        {
+          "characterCode": 4,
+          "characterName": "매그너스",
+          "weapon": 13,
+          "weaponName": "망치",
+          "soloGames": 76633,
+          "soloAvgRP": 1.39,
+          "soloWinRate": 13.1,
+          "rowIndex": 10
+        },
+        {
+          "characterCode": 80,
+          "characterName": "이슈트반",
+          "weapon": 19,
+          "weaponName": "창",
+          "soloGames": 75778,
+          "soloAvgRP": 1.99,
+          "soloWinRate": 11.34,
+          "rowIndex": 107
+        },
+        {
+          "characterCode": 81,
+          "characterName": "니아",
+          "weapon": 9,
+          "weaponName": "권총",
+          "soloGames": 74596,
+          "soloAvgRP": 2.03,
+          "soloWinRate": 13.6,
+          "rowIndex": 108
+        },
+        {
+          "characterCode": 55,
+          "characterName": "에스텔",
+          "weapon": 14,
+          "weaponName": "도끼",
+          "soloGames": 74416,
+          "soloAvgRP": 2.46,
+          "soloWinRate": 14.28,
+          "rowIndex": 82
+        },
+        {
+          "characterCode": 30,
+          "characterName": "일레븐",
+          "weapon": 13,
+          "weaponName": "망치",
+          "soloGames": 72886,
+          "soloAvgRP": 2.11,
+          "soloWinRate": 15.03,
+          "rowIndex": 54
+        },
+        {
+          "characterCode": 16,
+          "characterName": "실비아",
+          "weapon": 9,
+          "weaponName": "권총",
+          "soloGames": 71136,
+          "soloAvgRP": 1.97,
+          "soloWinRate": 13.28,
+          "rowIndex": 32
+        },
+        {
+          "characterCode": 53,
+          "characterName": "마커스",
+          "weapon": 14,
+          "weaponName": "도끼",
+          "soloGames": 68799,
+          "soloAvgRP": 0.15,
+          "soloWinRate": 13.92,
+          "rowIndex": 79
+        },
+        {
+          "characterCode": 76,
+          "characterName": "가넷",
+          "weapon": 3,
+          "weaponName": "방망이",
+          "soloGames": 66481,
+          "soloAvgRP": 0.49,
+          "soloWinRate": 13.24,
+          "rowIndex": 103
+        },
+        {
+          "characterCode": 47,
+          "characterName": "라우라",
+          "weapon": 4,
+          "weaponName": "채찍",
+          "soloGames": 64262,
+          "soloAvgRP": 1.77,
+          "soloWinRate": 11.77,
+          "rowIndex": 73
+        },
+        {
+          "characterCode": 82,
+          "characterName": "슈린",
+          "weapon": 21,
+          "weaponName": "레이피어",
+          "soloGames": 63710,
+          "soloAvgRP": 2.6,
+          "soloWinRate": 11.3,
+          "rowIndex": 109
+        },
+        {
+          "characterCode": 36,
+          "characterName": "이바",
+          "weapon": 5,
+          "weaponName": "투척",
+          "soloGames": 62870,
+          "soloAvgRP": 1.59,
+          "soloWinRate": 15.79,
+          "rowIndex": 61
+        },
+        {
+          "characterCode": 25,
+          "characterName": "버니스",
+          "weapon": 11,
+          "weaponName": "저격총",
+          "soloGames": 61592,
+          "soloAvgRP": 1.52,
+          "soloWinRate": 13.91,
+          "rowIndex": 44
+        },
+        {
+          "characterCode": 53,
+          "characterName": "마커스",
+          "weapon": 13,
+          "weaponName": "망치",
+          "soloGames": 61193,
+          "soloAvgRP": 1.8,
+          "soloWinRate": 13.86,
+          "rowIndex": 80
+        },
+        {
+          "characterCode": 48,
+          "characterName": "띠아",
+          "weapon": 3,
+          "weaponName": "방망이",
+          "soloGames": 60540,
+          "soloAvgRP": 2.82,
+          "soloWinRate": 12.32,
+          "rowIndex": 74
+        },
+        {
+          "characterCode": 6,
+          "characterName": "나딘",
+          "weapon": 8,
+          "weaponName": "석궁",
+          "soloGames": 60450,
+          "soloAvgRP": 2.26,
+          "soloWinRate": 14.5,
+          "rowIndex": 14
+        },
+        {
+          "characterCode": 1,
+          "characterName": "재키",
+          "weapon": 16,
+          "weaponName": "양손검",
+          "soloGames": 58883,
+          "soloAvgRP": 1.49,
+          "soloWinRate": 12.37,
+          "rowIndex": 0
+        },
+        {
+          "characterCode": 39,
+          "characterName": "카밀로",
+          "weapon": 21,
+          "weaponName": "레이피어",
+          "soloGames": 57837,
+          "soloAvgRP": 3.37,
+          "soloWinRate": 14.71,
+          "rowIndex": 64
+        },
+        {
+          "characterCode": 63,
+          "characterName": "이안",
+          "weapon": 15,
+          "weaponName": "단검",
+          "soloGames": 57261,
+          "soloAvgRP": 2.94,
+          "soloWinRate": 14.94,
+          "rowIndex": 90
+        },
+        {
+          "characterCode": 17,
+          "characterName": "아드리아나",
+          "weapon": 5,
+          "weaponName": "투척",
+          "soloGames": 55746,
+          "soloAvgRP": 1.68,
+          "soloWinRate": 14.17,
+          "rowIndex": 33
+        },
+        {
+          "characterCode": 34,
+          "characterName": "나타폰",
+          "weapon": 23,
+          "weaponName": "카메라",
+          "soloGames": 54785,
+          "soloAvgRP": 3.59,
+          "soloWinRate": 14.25,
+          "rowIndex": 58
+        },
+        {
+          "characterCode": 2,
+          "characterName": "아야",
+          "weapon": 11,
+          "weaponName": "저격총",
+          "soloGames": 54724,
+          "soloAvgRP": 1.99,
+          "soloWinRate": 14.6,
+          "rowIndex": 5
+        },
+        {
+          "characterCode": 66,
+          "characterName": "아르다",
+          "weapon": 24,
+          "weaponName": "아르카나",
+          "soloGames": 52687,
+          "soloAvgRP": 2.73,
+          "soloWinRate": 14,
+          "rowIndex": 93
+        },
+        {
+          "characterCode": 3,
+          "characterName": "피오라",
+          "weapon": 21,
+          "weaponName": "레이피어",
+          "soloGames": 50013,
+          "soloAvgRP": 2.58,
+          "soloWinRate": 12.62,
+          "rowIndex": 7
+        },
+        {
+          "characterCode": 68,
+          "characterName": "알론소",
+          "weapon": 1,
+          "weaponName": "글러브",
+          "soloGames": 47033,
+          "soloAvgRP": 1.67,
+          "soloWinRate": 15.49,
+          "rowIndex": 95
+        },
+        {
+          "characterCode": 61,
+          "characterName": "이렘",
+          "weapon": 5,
+          "weaponName": "투척",
+          "soloGames": 46999,
+          "soloAvgRP": 2.67,
+          "soloWinRate": 13.07,
+          "rowIndex": 88
+        },
+        {
+          "characterCode": 35,
+          "characterName": "얀",
+          "weapon": 1,
+          "weaponName": "글러브",
+          "soloGames": 45815,
+          "soloAvgRP": 0.86,
+          "soloWinRate": 12.41,
+          "rowIndex": 60
+        },
+        {
+          "characterCode": 52,
+          "characterName": "아디나",
+          "weapon": 24,
+          "weaponName": "아르카나",
+          "soloGames": 42952,
+          "soloAvgRP": 2.11,
+          "soloWinRate": 15.35,
+          "rowIndex": 78
+        },
+        {
+          "characterCode": 15,
+          "characterName": "시셀라",
+          "weapon": 6,
+          "weaponName": "암기",
+          "soloGames": 38820,
+          "soloAvgRP": 1.01,
+          "soloWinRate": 13.51,
+          "rowIndex": 30
+        },
+        {
+          "characterCode": 39,
+          "characterName": "카밀로",
+          "weapon": 18,
+          "weaponName": "쌍검",
+          "soloGames": 38003,
+          "soloAvgRP": 1.02,
+          "soloWinRate": 14.11,
+          "rowIndex": 65
+        },
+        {
+          "characterCode": 45,
+          "characterName": "마이",
+          "weapon": 4,
+          "weaponName": "채찍",
+          "soloGames": 33553,
+          "soloAvgRP": 1.2,
+          "soloWinRate": 14.65,
+          "rowIndex": 71
+        },
+        {
+          "characterCode": 27,
+          "characterName": "알렉스",
+          "weapon": 9,
+          "weaponName": "권총",
+          "soloGames": 32762,
+          "soloAvgRP": 2.45,
+          "soloWinRate": 13,
+          "rowIndex": 47
+        },
+        {
+          "characterCode": 10,
+          "characterName": "리 다이린",
+          "weapon": 20,
+          "weaponName": "쌍절곤",
+          "soloGames": 31348,
+          "soloAvgRP": 1.11,
+          "soloWinRate": 12.02,
+          "rowIndex": 22
+        },
+        {
+          "characterCode": 8,
+          "characterName": "하트",
+          "weapon": 22,
+          "weaponName": "기타",
+          "soloGames": 30466,
+          "soloAvgRP": 0.9,
+          "soloWinRate": 14.44,
+          "rowIndex": 18
+        },
+        {
+          "characterCode": 4,
+          "characterName": "매그너스",
+          "weapon": 3,
+          "weaponName": "방망이",
+          "soloGames": 29489,
+          "soloAvgRP": 2.14,
+          "soloWinRate": 12.33,
+          "rowIndex": 11
+        },
+        {
+          "characterCode": 6,
+          "characterName": "나딘",
+          "weapon": 7,
+          "weaponName": "활",
+          "soloGames": 29222,
+          "soloAvgRP": 0.4,
+          "soloWinRate": 14.51,
+          "rowIndex": 15
+        },
+        {
+          "characterCode": 57,
+          "characterName": "마르티나",
+          "weapon": 23,
+          "weaponName": "카메라",
+          "soloGames": 25167,
+          "soloAvgRP": 1.16,
+          "soloWinRate": 15.75,
+          "rowIndex": 84
+        },
+        {
+          "characterCode": 27,
+          "characterName": "알렉스",
+          "weapon": 2,
+          "weaponName": "톤파",
+          "soloGames": 22849,
+          "soloAvgRP": 2.42,
+          "soloWinRate": 11.09,
+          "rowIndex": 48
+        },
+        {
+          "characterCode": 5,
+          "characterName": "자히르",
+          "weapon": 6,
+          "weaponName": "암기",
+          "soloGames": 19864,
+          "soloAvgRP": 3.36,
+          "soloWinRate": 17.02,
+          "rowIndex": 12
+        },
+        {
+          "characterCode": 24,
+          "characterName": "아델라",
+          "weapon": 3,
+          "weaponName": "방망이",
+          "soloGames": 15327,
+          "soloAvgRP": 1.11,
+          "soloWinRate": 13.28,
+          "rowIndex": 43
+        },
+        {
+          "characterCode": 13,
+          "characterName": "쇼우",
+          "weapon": 19,
+          "weaponName": "창",
+          "soloGames": 14852,
+          "soloAvgRP": 1.62,
+          "soloWinRate": 15.3,
+          "rowIndex": 28
+        },
+        {
+          "characterCode": 1,
+          "characterName": "재키",
+          "weapon": 14,
+          "weaponName": "도끼",
+          "soloGames": 10024,
+          "soloAvgRP": 2.32,
+          "soloWinRate": 11.8,
+          "rowIndex": 3
+        },
+        {
+          "characterCode": 23,
+          "characterName": "캐시",
+          "weapon": 18,
+          "weaponName": "쌍검",
+          "soloGames": 8025,
+          "soloAvgRP": 1.64,
+          "soloWinRate": 11.5,
+          "rowIndex": 41
+        }
+      ]
+    },
+    {
+      "cluster": 0,
+      "size": 35,
+      "avgSoloRP": -1.34,
+      "avgSoloWinRate": 13.18,
+      "topPartnerCells": [
+        {
+          "partnerCode": 27,
+          "partnerName": "알렉스",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "meanRpLift": 2.926
+        },
+        {
+          "partnerCode": 5,
+          "partnerName": "자히르",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "meanRpLift": 2.887
+        },
+        {
+          "partnerCode": 39,
+          "partnerName": "카밀로",
+          "partnerWeapon": 21,
+          "partnerWeaponName": "레이피어",
+          "meanRpLift": 2.692
+        },
+        {
+          "partnerCode": 63,
+          "partnerName": "이안",
+          "partnerWeapon": 15,
+          "partnerWeaponName": "단검",
+          "meanRpLift": 2.505
+        },
+        {
+          "partnerCode": 27,
+          "partnerName": "알렉스",
+          "partnerWeapon": 2,
+          "partnerWeaponName": "톤파",
+          "meanRpLift": 2.486
+        },
+        {
+          "partnerCode": 2,
+          "partnerName": "아야",
+          "partnerWeapon": 10,
+          "partnerWeaponName": "돌격 소총",
+          "meanRpLift": 2.429
+        },
+        {
+          "partnerCode": 12,
+          "partnerName": "혜진",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "meanRpLift": 2.424
+        },
+        {
+          "partnerCode": 28,
+          "partnerName": "수아",
+          "partnerWeapon": 13,
+          "partnerWeaponName": "망치",
+          "meanRpLift": 2.372
+        },
+        {
+          "partnerCode": 29,
+          "partnerName": "레온",
+          "partnerWeapon": 1,
+          "partnerWeaponName": "글러브",
+          "meanRpLift": 2.226
+        },
+        {
+          "partnerCode": 56,
+          "partnerName": "피올로",
+          "partnerWeapon": 20,
+          "partnerWeaponName": "쌍절곤",
+          "meanRpLift": 2.155
+        },
+        {
+          "partnerCode": 47,
+          "partnerName": "라우라",
+          "partnerWeapon": 4,
+          "partnerWeaponName": "채찍",
+          "meanRpLift": 2.128
+        },
+        {
+          "partnerCode": 34,
+          "partnerName": "나타폰",
+          "partnerWeapon": 23,
+          "partnerWeaponName": "카메라",
+          "meanRpLift": 2.095
+        }
+      ],
+      "bottomPartnerCells": [
+        {
+          "partnerCode": 69,
+          "partnerName": "레니",
+          "partnerWeapon": 9,
+          "partnerWeaponName": "권총",
+          "meanRpLift": -2.709
+        },
+        {
+          "partnerCode": 73,
+          "partnerName": "샬럿",
+          "partnerWeapon": 24,
+          "partnerWeaponName": "아르카나",
+          "meanRpLift": -2.154
+        },
+        {
+          "partnerCode": 7,
+          "partnerName": "현우",
+          "partnerWeapon": 2,
+          "partnerWeaponName": "톤파",
+          "meanRpLift": -1.301
+        },
+        {
+          "partnerCode": 87,
+          "partnerName": "코렐라인",
+          "partnerWeapon": 24,
+          "partnerWeaponName": "아르카나",
+          "meanRpLift": -1.061
+        },
+        {
+          "partnerCode": 24,
+          "partnerName": "아델라",
+          "partnerWeapon": 3,
+          "partnerWeaponName": "방망이",
+          "meanRpLift": -0.798
+        },
+        {
+          "partnerCode": 9,
+          "partnerName": "아이솔",
+          "partnerWeapon": 9,
+          "partnerWeaponName": "권총",
+          "meanRpLift": -0.646
+        },
+        {
+          "partnerCode": 79,
+          "partnerName": "유스티나",
+          "partnerWeapon": 8,
+          "partnerWeaponName": "석궁",
+          "meanRpLift": -0.52
+        },
+        {
+          "partnerCode": 19,
+          "partnerName": "엠마",
+          "partnerWeapon": 24,
+          "partnerWeaponName": "아르카나",
+          "meanRpLift": -0.239
+        },
+        {
+          "partnerCode": 18,
+          "partnerName": "쇼이치",
+          "partnerWeapon": 15,
+          "partnerWeaponName": "단검",
+          "meanRpLift": -0.235
+        },
+        {
+          "partnerCode": 41,
+          "partnerName": "요한",
+          "partnerWeapon": 24,
+          "partnerWeaponName": "아르카나",
+          "meanRpLift": -0.155
+        },
+        {
+          "partnerCode": 71,
+          "partnerName": "케네스",
+          "partnerWeapon": 14,
+          "partnerWeaponName": "도끼",
+          "meanRpLift": -0.063
+        },
+        {
+          "partnerCode": 17,
+          "partnerName": "아드리아나",
+          "partnerWeapon": 5,
+          "partnerWeaponName": "투척",
+          "meanRpLift": -0.049
+        }
+      ],
+      "members": [
+        {
+          "characterCode": 65,
+          "characterName": "데비&마를렌",
+          "weapon": 16,
+          "weaponName": "양손검",
+          "soloGames": 161968,
+          "soloAvgRP": -0.23,
+          "soloWinRate": 12.22,
+          "rowIndex": 92
+        },
+        {
+          "characterCode": 78,
+          "characterName": "히스이",
+          "weapon": 16,
+          "weaponName": "양손검",
+          "soloGames": 150471,
+          "soloAvgRP": -1.49,
+          "soloWinRate": 12.41,
+          "rowIndex": 105
+        },
+        {
+          "characterCode": 22,
+          "characterName": "루크",
+          "weapon": 3,
+          "weaponName": "방망이",
+          "soloGames": 134065,
+          "soloAvgRP": -2.03,
+          "soloWinRate": 11.19,
+          "rowIndex": 39
+        },
+        {
+          "characterCode": 18,
+          "characterName": "쇼이치",
+          "weapon": 15,
+          "weaponName": "단검",
+          "soloGames": 120104,
+          "soloAvgRP": -4.05,
+          "soloWinRate": 11.41,
+          "rowIndex": 34
+        },
+        {
+          "characterCode": 84,
+          "characterName": "블레어",
+          "weapon": 18,
+          "weaponName": "쌍검",
+          "soloGames": 102752,
+          "soloAvgRP": -0.59,
+          "soloWinRate": 12.46,
+          "rowIndex": 111
+        },
+        {
+          "characterCode": 87,
+          "characterName": "코렐라인",
+          "weapon": 24,
+          "weaponName": "아르카나",
+          "soloGames": 96939,
+          "soloAvgRP": -3.61,
+          "soloWinRate": 13.09,
+          "rowIndex": 114
+        },
+        {
+          "characterCode": 85,
+          "characterName": "미르카",
+          "weapon": 13,
+          "weaponName": "망치",
+          "soloGames": 89982,
+          "soloAvgRP": -0.61,
+          "soloWinRate": 13.61,
+          "rowIndex": 112
+        },
+        {
+          "characterCode": 26,
+          "characterName": "바바라",
+          "weapon": 9,
+          "weaponName": "권총",
+          "soloGames": 89290,
+          "soloAvgRP": 0.06,
+          "soloWinRate": 14.7,
+          "rowIndex": 45
+        },
+        {
+          "characterCode": 79,
+          "characterName": "유스티나",
+          "weapon": 8,
+          "weaponName": "석궁",
+          "soloGames": 86317,
+          "soloAvgRP": -2.66,
+          "soloWinRate": 12.12,
+          "rowIndex": 106
+        },
+        {
+          "characterCode": 71,
+          "characterName": "케네스",
+          "weapon": 14,
+          "weaponName": "도끼",
+          "soloGames": 74463,
+          "soloAvgRP": -1.38,
+          "soloWinRate": 12.62,
+          "rowIndex": 98
+        },
+        {
+          "characterCode": 62,
+          "characterName": "테오도르",
+          "weapon": 11,
+          "weaponName": "저격총",
+          "soloGames": 64732,
+          "soloAvgRP": 0.54,
+          "soloWinRate": 15.61,
+          "rowIndex": 89
+        },
+        {
+          "characterCode": 14,
+          "characterName": "키아라",
+          "weapon": 21,
+          "weaponName": "레이피어",
+          "soloGames": 60919,
+          "soloAvgRP": -0.06,
+          "soloWinRate": 13.79,
+          "rowIndex": 29
+        },
+        {
+          "characterCode": 49,
+          "characterName": "펠릭스",
+          "weapon": 19,
+          "weaponName": "창",
+          "soloGames": 59503,
+          "soloAvgRP": -1.61,
+          "soloWinRate": 13.4,
+          "rowIndex": 75
+        },
+        {
+          "characterCode": 69,
+          "characterName": "레니",
+          "weapon": 9,
+          "weaponName": "권총",
+          "soloGames": 58564,
+          "soloAvgRP": -1.45,
+          "soloWinRate": 12.68,
+          "rowIndex": 96
+        },
+        {
+          "characterCode": 32,
+          "characterName": "윌리엄",
+          "weapon": 5,
+          "weaponName": "투척",
+          "soloGames": 54322,
+          "soloAvgRP": -0.09,
+          "soloWinRate": 15.27,
+          "rowIndex": 56
+        },
+        {
+          "characterCode": 44,
+          "characterName": "에키온",
+          "weapon": 25,
+          "weaponName": "VF의수",
+          "soloGames": 53707,
+          "soloAvgRP": -1.4,
+          "soloWinRate": 12.5,
+          "rowIndex": 70
+        },
+        {
+          "characterCode": 11,
+          "characterName": "유키",
+          "weapon": 18,
+          "weaponName": "쌍검",
+          "soloGames": 51774,
+          "soloAvgRP": -2.22,
+          "soloWinRate": 11.42,
+          "rowIndex": 24
+        },
+        {
+          "characterCode": 35,
+          "characterName": "얀",
+          "weapon": 2,
+          "weaponName": "톤파",
+          "soloGames": 51686,
+          "soloAvgRP": -0.4,
+          "soloWinRate": 11.19,
+          "rowIndex": 59
+        },
+        {
+          "characterCode": 54,
+          "characterName": "칼라",
+          "weapon": 8,
+          "weaponName": "석궁",
+          "soloGames": 48217,
+          "soloAvgRP": -0.19,
+          "soloWinRate": 11.72,
+          "rowIndex": 81
+        },
+        {
+          "characterCode": 37,
+          "characterName": "다니엘",
+          "weapon": 15,
+          "weaponName": "단검",
+          "soloGames": 45515,
+          "soloAvgRP": -0.73,
+          "soloWinRate": 11.44,
+          "rowIndex": 62
+        },
+        {
+          "characterCode": 50,
+          "characterName": "엘레나",
+          "weapon": 21,
+          "weaponName": "레이피어",
+          "soloGames": 43885,
+          "soloAvgRP": -0.35,
+          "soloWinRate": 13.12,
+          "rowIndex": 76
+        },
+        {
+          "characterCode": 19,
+          "characterName": "엠마",
+          "weapon": 6,
+          "weaponName": "암기",
+          "soloGames": 39784,
+          "soloAvgRP": -0.7,
+          "soloWinRate": 13.75,
+          "rowIndex": 35
+        },
+        {
+          "characterCode": 12,
+          "characterName": "혜진",
+          "weapon": 7,
+          "weaponName": "활",
+          "soloGames": 36895,
+          "soloAvgRP": -0.69,
+          "soloWinRate": 13.81,
+          "rowIndex": 25
+        },
+        {
+          "characterCode": 9,
+          "characterName": "아이솔",
+          "weapon": 9,
+          "weaponName": "권총",
+          "soloGames": 34744,
+          "soloAvgRP": -2.18,
+          "soloWinRate": 12.97,
+          "rowIndex": 20
+        },
+        {
+          "characterCode": 51,
+          "characterName": "프리야",
+          "weapon": 22,
+          "weaponName": "기타",
+          "soloGames": 31370,
+          "soloAvgRP": -1.91,
+          "soloWinRate": 14.57,
+          "rowIndex": 77
+        },
+        {
+          "characterCode": 13,
+          "characterName": "쇼우",
+          "weapon": 15,
+          "weaponName": "단검",
+          "soloGames": 27697,
+          "soloAvgRP": 0.58,
+          "soloWinRate": 14.91,
+          "rowIndex": 27
+        },
+        {
+          "characterCode": 60,
+          "characterName": "타지아",
+          "weapon": 6,
+          "weaponName": "암기",
+          "soloGames": 27463,
+          "soloAvgRP": -0.5,
+          "soloWinRate": 14.23,
+          "rowIndex": 87
+        },
+        {
+          "characterCode": 15,
+          "characterName": "시셀라",
+          "weapon": 5,
+          "weaponName": "투척",
+          "soloGames": 27315,
+          "soloAvgRP": -1.41,
+          "soloWinRate": 13.56,
+          "rowIndex": 31
+        },
+        {
+          "characterCode": 38,
+          "characterName": "제니",
+          "weapon": 9,
+          "weaponName": "권총",
+          "soloGames": 22999,
+          "soloAvgRP": 0.63,
+          "soloWinRate": 16.8,
+          "rowIndex": 63
+        },
+        {
+          "characterCode": 1,
+          "characterName": "재키",
+          "weapon": 18,
+          "weaponName": "쌍검",
+          "soloGames": 19705,
+          "soloAvgRP": -0.53,
+          "soloWinRate": 12.33,
+          "rowIndex": 2
+        },
+        {
+          "characterCode": 29,
+          "characterName": "레온",
+          "weapon": 2,
+          "weaponName": "톤파",
+          "soloGames": 16516,
+          "soloAvgRP": 0.02,
+          "soloWinRate": 14.68,
+          "rowIndex": 53
+        },
+        {
+          "characterCode": 73,
+          "characterName": "샬럿",
+          "weapon": 24,
+          "weaponName": "아르카나",
+          "soloGames": 16019,
+          "soloAvgRP": -6.57,
+          "soloWinRate": 15.22,
+          "rowIndex": 100
+        },
+        {
+          "characterCode": 3,
+          "characterName": "피오라",
+          "weapon": 16,
+          "weaponName": "양손검",
+          "soloGames": 15583,
+          "soloAvgRP": -0.54,
+          "soloWinRate": 11.33,
+          "rowIndex": 8
+        },
+        {
+          "characterCode": 7,
+          "characterName": "현우",
+          "weapon": 2,
+          "weaponName": "톤파",
+          "soloGames": 14108,
+          "soloAvgRP": -7.95,
+          "soloWinRate": 11.24,
+          "rowIndex": 17
+        },
+        {
+          "characterCode": 19,
+          "characterName": "엠마",
+          "weapon": 24,
+          "weaponName": "아르카나",
+          "soloGames": 14048,
+          "soloAvgRP": -0.66,
+          "soloWinRate": 14.07,
+          "rowIndex": 36
+        }
+      ]
+    },
+    {
+      "cluster": 1,
+      "size": 23,
+      "avgSoloRP": 4.2,
+      "avgSoloWinRate": 13.68,
+      "topPartnerCells": [
+        {
+          "partnerCode": 1,
+          "partnerName": "재키",
+          "partnerWeapon": 14,
+          "partnerWeaponName": "도끼",
+          "meanRpLift": -0.934
+        },
+        {
+          "partnerCode": 40,
+          "partnerName": "클로에",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "meanRpLift": -1.255
+        },
+        {
+          "partnerCode": 38,
+          "partnerName": "제니",
+          "partnerWeapon": 9,
+          "partnerWeaponName": "권총",
+          "meanRpLift": -1.414
+        },
+        {
+          "partnerCode": 27,
+          "partnerName": "알렉스",
+          "partnerWeapon": 2,
+          "partnerWeaponName": "톤파",
+          "meanRpLift": -1.539
+        },
+        {
+          "partnerCode": 27,
+          "partnerName": "알렉스",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "meanRpLift": -1.574
+        },
+        {
+          "partnerCode": 34,
+          "partnerName": "나타폰",
+          "partnerWeapon": 23,
+          "partnerWeaponName": "카메라",
+          "meanRpLift": -1.583
+        },
+        {
+          "partnerCode": 29,
+          "partnerName": "레온",
+          "partnerWeapon": 1,
+          "partnerWeaponName": "글러브",
+          "meanRpLift": -1.592
+        },
+        {
+          "partnerCode": 36,
+          "partnerName": "이바",
+          "partnerWeapon": 5,
+          "partnerWeaponName": "투척",
+          "meanRpLift": -1.602
+        },
+        {
+          "partnerCode": 75,
+          "partnerName": "르노어",
+          "partnerWeapon": 22,
+          "partnerWeaponName": "기타",
+          "meanRpLift": -1.709
+        },
+        {
+          "partnerCode": 2,
+          "partnerName": "아야",
+          "partnerWeapon": 10,
+          "partnerWeaponName": "돌격 소총",
+          "meanRpLift": -1.999
+        },
+        {
+          "partnerCode": 5,
+          "partnerName": "자히르",
+          "partnerWeapon": 5,
+          "partnerWeaponName": "투척",
+          "meanRpLift": -2.03
+        },
+        {
+          "partnerCode": 2,
+          "partnerName": "아야",
+          "partnerWeapon": 9,
+          "partnerWeaponName": "권총",
+          "meanRpLift": -2.083
+        }
+      ],
+      "bottomPartnerCells": [
+        {
+          "partnerCode": 73,
+          "partnerName": "샬럿",
+          "partnerWeapon": 24,
+          "partnerWeaponName": "아르카나",
+          "meanRpLift": -9.142
+        },
+        {
+          "partnerCode": 45,
+          "partnerName": "마이",
+          "partnerWeapon": 4,
+          "partnerWeaponName": "채찍",
+          "meanRpLift": -5.897
+        },
+        {
+          "partnerCode": 15,
+          "partnerName": "시셀라",
+          "partnerWeapon": 5,
+          "partnerWeaponName": "투척",
+          "meanRpLift": -5.619
+        },
+        {
+          "partnerCode": 3,
+          "partnerName": "피오라",
+          "partnerWeapon": 19,
+          "partnerWeaponName": "창",
+          "meanRpLift": -5.374
+        },
+        {
+          "partnerCode": 27,
+          "partnerName": "알렉스",
+          "partnerWeapon": 16,
+          "partnerWeaponName": "양손검",
+          "meanRpLift": -5.358
+        },
+        {
+          "partnerCode": 7,
+          "partnerName": "현우",
+          "partnerWeapon": 2,
+          "partnerWeaponName": "톤파",
+          "meanRpLift": -5.285
+        },
+        {
+          "partnerCode": 44,
+          "partnerName": "에키온",
+          "partnerWeapon": 25,
+          "partnerWeaponName": "VF의수",
+          "meanRpLift": -5.132
+        },
+        {
+          "partnerCode": 50,
+          "partnerName": "엘레나",
+          "partnerWeapon": 21,
+          "partnerWeaponName": "레이피어",
+          "meanRpLift": -5.049
+        },
+        {
+          "partnerCode": 10,
+          "partnerName": "리 다이린",
+          "partnerWeapon": 20,
+          "partnerWeaponName": "쌍절곤",
+          "meanRpLift": -4.927
+        },
+        {
+          "partnerCode": 3,
+          "partnerName": "피오라",
+          "partnerWeapon": 16,
+          "partnerWeaponName": "양손검",
+          "meanRpLift": -4.811
+        },
+        {
+          "partnerCode": 79,
+          "partnerName": "유스티나",
+          "partnerWeapon": 8,
+          "partnerWeaponName": "석궁",
+          "meanRpLift": -4.723
+        },
+        {
+          "partnerCode": 69,
+          "partnerName": "레니",
+          "partnerWeapon": 9,
+          "partnerWeaponName": "권총",
+          "meanRpLift": -4.71
+        }
+      ],
+      "members": [
+        {
+          "characterCode": 20,
+          "characterName": "레녹스",
+          "weapon": 4,
+          "weaponName": "채찍",
+          "soloGames": 101527,
+          "soloAvgRP": 3.13,
+          "soloWinRate": 15.35,
+          "rowIndex": 37
+        },
+        {
+          "characterCode": 77,
+          "characterName": "유민",
+          "weapon": 24,
+          "weaponName": "아르카나",
+          "soloGames": 97829,
+          "soloAvgRP": 3.73,
+          "soloWinRate": 14.39,
+          "rowIndex": 104
+        },
+        {
+          "characterCode": 75,
+          "characterName": "르노어",
+          "weapon": 22,
+          "weaponName": "기타",
+          "soloGames": 80139,
+          "soloAvgRP": 3.92,
+          "soloWinRate": 14.73,
+          "rowIndex": 102
+        },
+        {
+          "characterCode": 29,
+          "characterName": "레온",
+          "weapon": 1,
+          "weaponName": "글러브",
+          "soloGames": 74229,
+          "soloAvgRP": 5.21,
+          "soloWinRate": 13.09,
+          "rowIndex": 52
+        },
+        {
+          "characterCode": 42,
+          "characterName": "비앙카",
+          "weapon": 24,
+          "weaponName": "아르카나",
+          "soloGames": 73329,
+          "soloAvgRP": 2.97,
+          "soloWinRate": 12.56,
+          "rowIndex": 68
+        },
+        {
+          "characterCode": 2,
+          "characterName": "아야",
+          "weapon": 10,
+          "weaponName": "돌격 소총",
+          "soloGames": 68320,
+          "soloAvgRP": 3.78,
+          "soloWinRate": 14.18,
+          "rowIndex": 4
+        },
+        {
+          "characterCode": 9,
+          "characterName": "아이솔",
+          "weapon": 10,
+          "weaponName": "돌격 소총",
+          "soloGames": 66460,
+          "soloAvgRP": 5.07,
+          "soloWinRate": 14.42,
+          "rowIndex": 19
+        },
+        {
+          "characterCode": 56,
+          "characterName": "피올로",
+          "weapon": 20,
+          "weaponName": "쌍절곤",
+          "soloGames": 61742,
+          "soloAvgRP": 3.52,
+          "soloWinRate": 12.78,
+          "rowIndex": 83
+        },
+        {
+          "characterCode": 10,
+          "characterName": "리 다이린",
+          "weapon": 1,
+          "weaponName": "글러브",
+          "soloGames": 54363,
+          "soloAvgRP": 3.96,
+          "soloWinRate": 12.44,
+          "rowIndex": 21
+        },
+        {
+          "characterCode": 2,
+          "characterName": "아야",
+          "weapon": 9,
+          "weaponName": "권총",
+          "soloGames": 53267,
+          "soloAvgRP": 4.51,
+          "soloWinRate": 13.69,
+          "rowIndex": 6
+        },
+        {
+          "characterCode": 40,
+          "characterName": "클로에",
+          "weapon": 6,
+          "weaponName": "암기",
+          "soloGames": 46499,
+          "soloAvgRP": 6.2,
+          "soloWinRate": 14.67,
+          "rowIndex": 66
+        },
+        {
+          "characterCode": 43,
+          "characterName": "셀린",
+          "weapon": 5,
+          "weaponName": "투척",
+          "soloGames": 38273,
+          "soloAvgRP": 4.22,
+          "soloWinRate": 15.25,
+          "rowIndex": 69
+        },
+        {
+          "characterCode": 27,
+          "characterName": "알렉스",
+          "weapon": 16,
+          "weaponName": "양손검",
+          "soloGames": 35771,
+          "soloAvgRP": 3.04,
+          "soloWinRate": 12.54,
+          "rowIndex": 46
+        },
+        {
+          "characterCode": 28,
+          "characterName": "수아",
+          "weapon": 3,
+          "weaponName": "방망이",
+          "soloGames": 33669,
+          "soloAvgRP": 3.9,
+          "soloWinRate": 13.6,
+          "rowIndex": 50
+        },
+        {
+          "characterCode": 23,
+          "characterName": "캐시",
+          "weapon": 15,
+          "weaponName": "단검",
+          "soloGames": 32031,
+          "soloAvgRP": 3.63,
+          "soloWinRate": 11.97,
+          "rowIndex": 40
+        },
+        {
+          "characterCode": 1,
+          "characterName": "재키",
+          "weapon": 15,
+          "weaponName": "단검",
+          "soloGames": 28453,
+          "soloAvgRP": 3.8,
+          "soloWinRate": 11.57,
+          "rowIndex": 1
+        },
+        {
+          "characterCode": 24,
+          "characterName": "아델라",
+          "weapon": 21,
+          "weaponName": "레이피어",
+          "soloGames": 27130,
+          "soloAvgRP": 5.43,
+          "soloWinRate": 14.36,
+          "rowIndex": 42
+        },
+        {
+          "characterCode": 28,
+          "characterName": "수아",
+          "weapon": 13,
+          "weaponName": "망치",
+          "soloGames": 24093,
+          "soloAvgRP": 5.06,
+          "soloWinRate": 13.07,
+          "rowIndex": 51
+        },
+        {
+          "characterCode": 41,
+          "characterName": "요한",
+          "weapon": 24,
+          "weaponName": "아르카나",
+          "soloGames": 17892,
+          "soloAvgRP": 2.45,
+          "soloWinRate": 16.59,
+          "rowIndex": 67
+        },
+        {
+          "characterCode": 27,
+          "characterName": "알렉스",
+          "weapon": 6,
+          "weaponName": "암기",
+          "soloGames": 17091,
+          "soloAvgRP": 4.43,
+          "soloWinRate": 10.51,
+          "rowIndex": 49
+        },
+        {
+          "characterCode": 5,
+          "characterName": "자히르",
+          "weapon": 5,
+          "weaponName": "투척",
+          "soloGames": 16066,
+          "soloAvgRP": 3.69,
+          "soloWinRate": 15.44,
+          "rowIndex": 13
+        },
+        {
+          "characterCode": 12,
+          "characterName": "혜진",
+          "weapon": 6,
+          "weaponName": "암기",
+          "soloGames": 9950,
+          "soloAvgRP": 4.34,
+          "soloWinRate": 14.86,
+          "rowIndex": 26
+        },
+        {
+          "characterCode": 3,
+          "characterName": "피오라",
+          "weapon": 19,
+          "weaponName": "창",
+          "soloGames": 7612,
+          "soloAvgRP": 6.61,
+          "soloWinRate": 12.68,
+          "rowIndex": 9
+        }
+      ]
+    }
+  ]
+}

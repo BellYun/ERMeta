@@ -1,6 +1,15 @@
 "use client";
 
-import { BarChart3, MessageSquarePlus, Network, NotebookText, Search, Trophy } from "lucide-react";
+import {
+  BarChart3,
+  FlaskConical,
+  Layers,
+  MessageSquarePlus,
+  Network,
+  NotebookText,
+  Search,
+  Trophy,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -44,6 +53,23 @@ export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
       isActive: normalizedPathname === "/synergy-detail",
     },
     {
+      href: withCurrentRouteLocale(pathname, "/trio-lab"),
+      label: "조합 실험실",
+      icon: FlaskConical,
+      isActive: normalizedPathname.startsWith("/trio-lab"),
+      badge: "BETA",
+    },
+    {
+      href: withCurrentRouteLocale(pathname, "/character-lab"),
+      label: "캐릭터 유형 분석",
+      icon: Layers,
+      isActive:
+        normalizedPathname.startsWith("/character-lab") ||
+        normalizedPathname === "/lab" ||
+        normalizedPathname.startsWith("/lab/"),
+      badge: "BETA",
+    },
+    {
       href: withCurrentRouteLocale(pathname, "/character/1"),
       label: t("characterAnalysis"),
       icon: Search,
@@ -84,32 +110,41 @@ export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
       </Link>
 
       <nav aria-label={t("ariaMain")} className="mt-6 flex flex-1 flex-col gap-2">
-        {navLinks.map(({ href, label, icon: Icon, isActive }) => (
-          <Link
-            key={href}
-            href={href}
-            onClick={onNavigate}
-            aria-current={isActive ? "page" : undefined}
-            className={cn(
-              "group flex items-center gap-3 rounded-[18px] border px-4 py-3 text-sm font-medium transition-all",
-              isActive
-                ? "border-[rgba(96,165,250,0.38)] bg-[linear-gradient(180deg,rgba(28,48,88,0.88),rgba(17,30,58,0.88))] text-[var(--color-foreground)] shadow-[0_18px_32px_-20px_rgba(96,165,250,0.85)]"
-                : "border-transparent text-[var(--color-muted-foreground)] hover:border-[var(--color-border)] hover:bg-[rgba(17,25,46,0.72)] hover:text-[var(--color-foreground)]"
-            )}
-          >
-            <span
+        {navLinks.map((link) => {
+          const { href, label, icon: Icon, isActive } = link;
+          const badge = "badge" in link ? link.badge : undefined;
+          return (
+            <Link
+              key={href}
+              href={href}
+              onClick={onNavigate}
+              aria-current={isActive ? "page" : undefined}
               className={cn(
-                "flex h-9 w-9 items-center justify-center rounded-xl border transition-colors",
+                "group flex items-center gap-3 rounded-[18px] border px-4 py-3 text-sm font-medium transition-all",
                 isActive
-                  ? "border-[rgba(96,165,250,0.3)] bg-[rgba(96,165,250,0.14)] text-[var(--color-primary)]"
-                  : "border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.03)] text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]"
+                  ? "border-[rgba(96,165,250,0.38)] bg-[linear-gradient(180deg,rgba(28,48,88,0.88),rgba(17,30,58,0.88))] text-[var(--color-foreground)] shadow-[0_18px_32px_-20px_rgba(96,165,250,0.85)]"
+                  : "border-transparent text-[var(--color-muted-foreground)] hover:border-[var(--color-border)] hover:bg-[rgba(17,25,46,0.72)] hover:text-[var(--color-foreground)]"
               )}
             >
-              <Icon className="h-[18px] w-[18px]" strokeWidth={1.9} />
-            </span>
-            <span className="tracking-[-0.02em]">{label}</span>
-          </Link>
-        ))}
+              <span
+                className={cn(
+                  "flex h-9 w-9 items-center justify-center rounded-xl border transition-colors",
+                  isActive
+                    ? "border-[rgba(96,165,250,0.3)] bg-[rgba(96,165,250,0.14)] text-[var(--color-primary)]"
+                    : "border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.03)] text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]"
+                )}
+              >
+                <Icon className="h-[18px] w-[18px]" strokeWidth={1.9} />
+              </span>
+              <span className="tracking-[-0.02em]">{label}</span>
+              {badge && (
+                <span className="ml-auto rounded-full border border-[rgba(251,191,36,0.32)] bg-[rgba(251,191,36,0.12)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-[var(--color-accent-gold)]">
+                  {badge}
+                </span>
+              )}
+            </Link>
+          );
+        })}
 
         <div className="mt-auto flex flex-col gap-3 pt-4">
           <div className="rounded-[20px] border border-[var(--color-border)] bg-[rgba(16,24,44,0.84)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">

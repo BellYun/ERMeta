@@ -28,7 +28,7 @@ export const getPatches = unstable_cache(
   },
   ["patches"],
   {
-    revalidate: 3600,
+    revalidate: 21600,
     tags: ["patches"],
   }
 );

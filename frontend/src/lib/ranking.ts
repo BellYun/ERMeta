@@ -148,7 +148,7 @@ export async function getCachedRankingData(
     async () => fetchRankingData(patchVersion, requestedTier),
     ["character-rankings", patchVersion, requestedTier],
     {
-      revalidate: 1800,
+      revalidate: 21600,
       tags: [
         "character-rankings",
         `character-rankings:${patchVersion}`,

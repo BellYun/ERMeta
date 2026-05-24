@@ -1,0 +1,6308 @@
+{
+  "allRoles": ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"],
+  "matrix": {
+    "탱커": {
+      "탱커": {
+        "games": 11134,
+        "pairCount": 60,
+        "rpLift": -1.564,
+        "winRateLift": -0.733
+      },
+      "전사": {
+        "games": 694968,
+        "pairCount": 615,
+        "rpLift": -0.741,
+        "winRateLift": -0.69
+      },
+      "암살자": {
+        "games": 83004,
+        "pairCount": 60,
+        "rpLift": -1.44,
+        "winRateLift": -1.681
+      },
+      "스킬딜러": {
+        "games": 733821,
+        "pairCount": 474,
+        "rpLift": -0.926,
+        "winRateLift": 0.288
+      },
+      "원거리 딜러": {
+        "games": 749155,
+        "pairCount": 259,
+        "rpLift": -0.927,
+        "winRateLift": 0.402
+      },
+      "지원가": {
+        "games": 56711,
+        "pairCount": 77,
+        "rpLift": -0.626,
+        "winRateLift": 1.405
+      }
+    },
+    "전사": {
+      "탱커": {
+        "games": 694968,
+        "pairCount": 615,
+        "rpLift": -0.634,
+        "winRateLift": 0.695
+      },
+      "전사": {
+        "games": 5636550,
+        "pairCount": 2652,
+        "rpLift": -0.843,
+        "winRateLift": -0.496
+      },
+      "암살자": {
+        "games": 504764,
+        "pairCount": 249,
+        "rpLift": -1.303,
+        "winRateLift": -1.675
+      },
+      "스킬딜러": {
+        "games": 3662303,
+        "pairCount": 1914,
+        "rpLift": -0.558,
+        "winRateLift": 0.403
+      },
+      "원거리 딜러": {
+        "games": 2875340,
+        "pairCount": 1050,
+        "rpLift": -0.728,
+        "winRateLift": 0.228
+      },
+      "지원가": {
+        "games": 583971,
+        "pairCount": 392,
+        "rpLift": -0.627,
+        "winRateLift": 1.204
+      }
+    },
+    "암살자": {
+      "탱커": {
+        "games": 83004,
+        "pairCount": 60,
+        "rpLift": 1.532,
+        "winRateLift": 0.939
+      },
+      "전사": {
+        "games": 504764,
+        "pairCount": 249,
+        "rpLift": 1.132,
+        "winRateLift": -0.451
+      },
+      "암살자": {
+        "games": 23952,
+        "pairCount": 18,
+        "rpLift": -0.652,
+        "winRateLift": -1.942
+      },
+      "스킬딜러": {
+        "games": 255802,
+        "pairCount": 171,
+        "rpLift": 1.1,
+        "winRateLift": 0.422
+      },
+      "원거리 딜러": {
+        "games": 184072,
+        "pairCount": 95,
+        "rpLift": 1.155,
+        "winRateLift": 0.457
+      },
+      "지원가": {
+        "games": 35858,
+        "pairCount": 33,
+        "rpLift": 0.818,
+        "winRateLift": 0.788
+      }
+    },
+    "스킬딜러": {
+      "탱커": {
+        "games": 733821,
+        "pairCount": 474,
+        "rpLift": -0.98,
+        "winRateLift": 0.639
+      },
+      "전사": {
+        "games": 3662303,
+        "pairCount": 1914,
+        "rpLift": -1.012,
+        "winRateLift": -0.697
+      },
+      "암살자": {
+        "games": 255802,
+        "pairCount": 171,
+        "rpLift": -1.642,
+        "winRateLift": -1.868
+      },
+      "스킬딜러": {
+        "games": 1119022,
+        "pairCount": 1268,
+        "rpLift": -1.221,
+        "winRateLift": 0.609
+      },
+      "원거리 딜러": {
+        "games": 1159066,
+        "pairCount": 721,
+        "rpLift": -0.842,
+        "winRateLift": 1.436
+      },
+      "지원가": {
+        "games": 106916,
+        "pairCount": 245,
+        "rpLift": -2.304,
+        "winRateLift": 0.926
+      }
+    },
+    "원거리 딜러": {
+      "탱커": {
+        "games": 749155,
+        "pairCount": 259,
+        "rpLift": -0.886,
+        "winRateLift": 0.879
+      },
+      "전사": {
+        "games": 2875340,
+        "pairCount": 1050,
+        "rpLift": -1.22,
+        "winRateLift": -0.915
+      },
+      "암살자": {
+        "games": 184072,
+        "pairCount": 95,
+        "rpLift": -1.701,
+        "winRateLift": -1.972
+      },
+      "스킬딜러": {
+        "games": 1159066,
+        "pairCount": 721,
+        "rpLift": -1.12,
+        "winRateLift": 1.333
+      },
+      "원거리 딜러": {
+        "games": 483447,
+        "pairCount": 364,
+        "rpLift": -1.524,
+        "winRateLift": 1.211
+      },
+      "지원가": {
+        "games": 131587,
+        "pairCount": 152,
+        "rpLift": -1.943,
+        "winRateLift": 1.886
+      }
+    },
+    "지원가": {
+      "탱커": {
+        "games": 56711,
+        "pairCount": 77,
+        "rpLift": 0.162,
+        "winRateLift": 0.806
+      },
+      "전사": {
+        "games": 583971,
+        "pairCount": 392,
+        "rpLift": 0.392,
+        "winRateLift": -0.299
+      },
+      "암살자": {
+        "games": 35858,
+        "pairCount": 33,
+        "rpLift": -0.853,
+        "winRateLift": -2.01
+      },
+      "스킬딜러": {
+        "games": 106916,
+        "pairCount": 245,
+        "rpLift": -0.989,
+        "winRateLift": 0.102
+      },
+      "원거리 딜러": {
+        "games": 131587,
+        "pairCount": 152,
+        "rpLift": -0.245,
+        "winRateLift": 1.26
+      },
+      "지원가": {
+        "games": 7851,
+        "pairCount": 34,
+        "rpLift": -1.081,
+        "winRateLift": -0.043
+      }
+    }
+  },
+  "withinRoleStats": {
+    "탱커": {
+      "memberCount": 13,
+      "byPartnerRole": {
+        "탱커": {
+          "mean": -2.232,
+          "std": 3.569,
+          "n": 12
+        },
+        "전사": {
+          "mean": -0.78,
+          "std": 0.975,
+          "n": 13
+        },
+        "암살자": {
+          "mean": -1.552,
+          "std": 1.087,
+          "n": 13
+        },
+        "스킬딜러": {
+          "mean": -0.837,
+          "std": 1.0,
+          "n": 13
+        },
+        "원거리 딜러": {
+          "mean": -0.673,
+          "std": 0.822,
+          "n": 13
+        },
+        "지원가": {
+          "mean": -0.63,
+          "std": 1.14,
+          "n": 13
+        }
+      }
+    },
+    "전사": {
+      "memberCount": 46,
+      "byPartnerRole": {
+        "탱커": {
+          "mean": -1.086,
+          "std": 2.237,
+          "n": 46
+        },
+        "전사": {
+          "mean": -1.057,
+          "std": 1.961,
+          "n": 46
+        },
+        "암살자": {
+          "mean": -1.428,
+          "std": 2.036,
+          "n": 46
+        },
+        "스킬딜러": {
+          "mean": -0.733,
+          "std": 1.864,
+          "n": 46
+        },
+        "원거리 딜러": {
+          "mean": -0.913,
+          "std": 2.143,
+          "n": 46
+        },
+        "지원가": {
+          "mean": -0.951,
+          "std": 2.256,
+          "n": 46
+        }
+      }
+    },
+    "암살자": {
+      "memberCount": 4,
+      "byPartnerRole": {
+        "탱커": {
+          "mean": -1.631,
+          "std": 3.986,
+          "n": 4
+        },
+        "전사": {
+          "mean": 0.083,
+          "std": 2.427,
+          "n": 4
+        },
+        "암살자": {
+          "mean": -1.305,
+          "std": 2.372,
+          "n": 4
+        },
+        "스킬딜러": {
+          "mean": -0.183,
+          "std": 2.707,
+          "n": 4
+        },
+        "원거리 딜러": {
+          "mean": 0.066,
+          "std": 2.447,
+          "n": 4
+        },
+        "지원가": {
+          "mean": -0.782,
+          "std": 2.696,
+          "n": 4
+        }
+      }
+    },
+    "스킬딜러": {
+      "memberCount": 34,
+      "byPartnerRole": {
+        "탱커": {
+          "mean": -0.974,
+          "std": 1.674,
+          "n": 34
+        },
+        "전사": {
+          "mean": -1.031,
+          "std": 1.761,
+          "n": 34
+        },
+        "암살자": {
+          "mean": -1.828,
+          "std": 2.153,
+          "n": 34
+        },
+        "스킬딜러": {
+          "mean": -1.411,
+          "std": 1.896,
+          "n": 34
+        },
+        "원거리 딜러": {
+          "mean": -1.085,
+          "std": 1.881,
+          "n": 34
+        },
+        "지원가": {
+          "mean": -2.231,
+          "std": 2.429,
+          "n": 34
+        }
+      }
+    },
+    "원거리 딜러": {
+      "memberCount": 15,
+      "byPartnerRole": {
+        "탱커": {
+          "mean": -1.105,
+          "std": 1.76,
+          "n": 15
+        },
+        "전사": {
+          "mean": -1.183,
+          "std": 1.239,
+          "n": 15
+        },
+        "암살자": {
+          "mean": -1.702,
+          "std": 1.405,
+          "n": 15
+        },
+        "스킬딜러": {
+          "mean": -1.286,
+          "std": 1.102,
+          "n": 15
+        },
+        "원거리 딜러": {
+          "mean": -1.537,
+          "std": 1.433,
+          "n": 15
+        },
+        "지원가": {
+          "mean": -1.878,
+          "std": 1.911,
+          "n": 15
+        }
+      }
+    },
+    "지원가": {
+      "memberCount": 3,
+      "byPartnerRole": {
+        "탱커": {
+          "mean": 0.53,
+          "std": 2.688,
+          "n": 3
+        },
+        "전사": {
+          "mean": 1.65,
+          "std": 2.987,
+          "n": 3
+        },
+        "암살자": {
+          "mean": -0.168,
+          "std": 1.598,
+          "n": 3
+        },
+        "스킬딜러": {
+          "mean": 0.447,
+          "std": 2.585,
+          "n": 3
+        },
+        "원거리 딜러": {
+          "mean": 0.788,
+          "std": 2.267,
+          "n": 3
+        },
+        "지원가": {
+          "mean": -3.996,
+          "std": 1.565,
+          "n": 3
+        }
+      }
+    }
+  },
+  "combos": {
+    "1_16": {
+      "characterCode": 1,
+      "characterName": "재키",
+      "weapon": 16,
+      "weaponName": "양손검",
+      "soloGames": 58883,
+      "soloAvgRP": 1.49,
+      "soloWinRate": 12.37,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 21124,
+          "rpLift": -1.323,
+          "winRateLift": 1.121
+        },
+        "전사": {
+          "games": 119625,
+          "rpLift": -1.119,
+          "winRateLift": -0.543
+        },
+        "암살자": {
+          "games": 8775,
+          "rpLift": -0.513,
+          "winRateLift": -2.078
+        },
+        "스킬딜러": {
+          "games": 68307,
+          "rpLift": -0.46,
+          "winRateLift": 0.752
+        },
+        "원거리 딜러": {
+          "games": 44757,
+          "rpLift": -2.292,
+          "winRateLift": -0.099
+        },
+        "지원가": {
+          "games": 13730,
+          "rpLift": -0.228,
+          "winRateLift": 1.2
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.106,
+        "전사": -0.032,
+        "암살자": 0.449,
+        "스킬딜러": 0.146,
+        "원거리 딜러": -0.643,
+        "지원가": 0.32
+      }
+    },
+    "1_15": {
+      "characterCode": 1,
+      "characterName": "재키",
+      "weapon": 15,
+      "weaponName": "단검",
+      "soloGames": 28453,
+      "soloAvgRP": 3.8,
+      "soloWinRate": 11.57,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 10098,
+          "rpLift": -4.444,
+          "winRateLift": 0.685
+        },
+        "전사": {
+          "games": 57246,
+          "rpLift": -2.775,
+          "winRateLift": -0.415
+        },
+        "암살자": {
+          "games": 3672,
+          "rpLift": -4.285,
+          "winRateLift": -2.299
+        },
+        "스킬딜러": {
+          "games": 31467,
+          "rpLift": -1.727,
+          "winRateLift": 0.948
+        },
+        "원거리 딜러": {
+          "games": 20924,
+          "rpLift": -4.077,
+          "winRateLift": -0.602
+        },
+        "지원가": {
+          "games": 3790,
+          "rpLift": -3.022,
+          "winRateLift": -0.926
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -1.501,
+        "전사": -0.876,
+        "암살자": -1.403,
+        "스킬딜러": -0.533,
+        "원거리 딜러": -1.476,
+        "지원가": -0.918
+      }
+    },
+    "1_18": {
+      "characterCode": 1,
+      "characterName": "재키",
+      "weapon": 18,
+      "weaponName": "쌍검",
+      "soloGames": 19705,
+      "soloAvgRP": -0.53,
+      "soloWinRate": 12.33,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 7380,
+          "rpLift": 0.42,
+          "winRateLift": 0.902
+        },
+        "전사": {
+          "games": 39452,
+          "rpLift": 0.757,
+          "winRateLift": -0.548
+        },
+        "암살자": {
+          "games": 2829,
+          "rpLift": 2.313,
+          "winRateLift": -1.512
+        },
+        "스킬딜러": {
+          "games": 20432,
+          "rpLift": 1.47,
+          "winRateLift": 0.371
+        },
+        "원거리 딜러": {
+          "games": 14202,
+          "rpLift": -0.414,
+          "winRateLift": -1.315
+        },
+        "지원가": {
+          "games": 5316,
+          "rpLift": 0.427,
+          "winRateLift": 0.565
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.673,
+        "전사": 0.925,
+        "암살자": 1.837,
+        "스킬딜러": 1.182,
+        "원거리 딜러": 0.233,
+        "지원가": 0.611
+      }
+    },
+    "1_14": {
+      "characterCode": 1,
+      "characterName": "재키",
+      "weapon": 14,
+      "weaponName": "도끼",
+      "soloGames": 10024,
+      "soloAvgRP": 2.32,
+      "soloWinRate": 11.8,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 2931,
+          "rpLift": -1.744,
+          "winRateLift": 1.607
+        },
+        "전사": {
+          "games": 19498,
+          "rpLift": -2.819,
+          "winRateLift": -0.868
+        },
+        "암살자": {
+          "games": 1604,
+          "rpLift": -1.701,
+          "winRateLift": -3.476
+        },
+        "스킬딜러": {
+          "games": 10346,
+          "rpLift": -2.738,
+          "winRateLift": 0.234
+        },
+        "원거리 딜러": {
+          "games": 7731,
+          "rpLift": -1.084,
+          "winRateLift": -0.313
+        },
+        "지원가": {
+          "games": 1744,
+          "rpLift": -2.947,
+          "winRateLift": 0.064
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.294,
+        "전사": -0.899,
+        "암살자": -0.134,
+        "스킬딜러": -1.076,
+        "원거리 딜러": -0.08,
+        "지원가": -0.885
+      }
+    },
+    "2_10": {
+      "characterCode": 2,
+      "characterName": "아야",
+      "weapon": 10,
+      "weaponName": "돌격 소총",
+      "soloGames": 68320,
+      "soloAvgRP": 3.78,
+      "soloWinRate": 14.18,
+      "roles": ["원거리 딜러"],
+      "primaryRole": "원거리 딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 47854,
+          "rpLift": -3.002,
+          "winRateLift": 0.763
+        },
+        "전사": {
+          "games": 160624,
+          "rpLift": -2.811,
+          "winRateLift": -0.708
+        },
+        "암살자": {
+          "games": 9714,
+          "rpLift": -2.626,
+          "winRateLift": -1.161
+        },
+        "스킬딜러": {
+          "games": 66045,
+          "rpLift": -2.527,
+          "winRateLift": 1.368
+        },
+        "원거리 딜러": {
+          "games": 17698,
+          "rpLift": -3.163,
+          "winRateLift": 0.742
+        },
+        "지원가": {
+          "games": 8528,
+          "rpLift": -4.252,
+          "winRateLift": 2.301
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -1.078,
+        "전사": -1.314,
+        "암살자": -0.658,
+        "스킬딜러": -1.126,
+        "원거리 딜러": -1.135,
+        "지원가": -1.242
+      }
+    },
+    "2_11": {
+      "characterCode": 2,
+      "characterName": "아야",
+      "weapon": 11,
+      "weaponName": "저격총",
+      "soloGames": 54724,
+      "soloAvgRP": 1.99,
+      "soloWinRate": 14.6,
+      "roles": ["스킬딜러", "원거리 딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 29646,
+          "rpLift": -0.903,
+          "winRateLift": 0.315
+        },
+        "전사": {
+          "games": 131606,
+          "rpLift": -1.7,
+          "winRateLift": -0.957
+        },
+        "암살자": {
+          "games": 8980,
+          "rpLift": -3.064,
+          "winRateLift": -2.307
+        },
+        "스킬딜러": {
+          "games": 40964,
+          "rpLift": -1.29,
+          "winRateLift": 1.497
+        },
+        "원거리 딜러": {
+          "games": 36160,
+          "rpLift": -1.741,
+          "winRateLift": 1.143
+        },
+        "지원가": {
+          "games": 3684,
+          "rpLift": -1.789,
+          "winRateLift": 0.342
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.042,
+        "전사": -0.38,
+        "암살자": -0.574,
+        "스킬딜러": 0.064,
+        "원거리 딜러": -0.349,
+        "지원가": 0.182
+      }
+    },
+    "2_9": {
+      "characterCode": 2,
+      "characterName": "아야",
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloGames": 53267,
+      "soloAvgRP": 4.51,
+      "soloWinRate": 13.69,
+      "roles": ["스킬딜러", "원거리 딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 25700,
+          "rpLift": -4.104,
+          "winRateLift": 0.219
+        },
+        "전사": {
+          "games": 130256,
+          "rpLift": -3.254,
+          "winRateLift": -0.691
+        },
+        "암살자": {
+          "games": 10029,
+          "rpLift": -4.806,
+          "winRateLift": -1.979
+        },
+        "스킬딜러": {
+          "games": 37791,
+          "rpLift": -3.833,
+          "winRateLift": 1.186
+        },
+        "원거리 딜러": {
+          "games": 32532,
+          "rpLift": -4.236,
+          "winRateLift": 1.216
+        },
+        "지원가": {
+          "games": 3309,
+          "rpLift": -4.861,
+          "winRateLift": 1.044
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -1.87,
+        "전사": -1.262,
+        "암살자": -1.383,
+        "스킬딜러": -1.277,
+        "원거리 딜러": -1.675,
+        "지원가": -1.083
+      }
+    },
+    "3_21": {
+      "characterCode": 3,
+      "characterName": "피오라",
+      "weapon": 21,
+      "weaponName": "레이피어",
+      "soloGames": 50013,
+      "soloAvgRP": 2.58,
+      "soloWinRate": 12.62,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 12027,
+          "rpLift": -2.496,
+          "winRateLift": 0.737
+        },
+        "전사": {
+          "games": 101426,
+          "rpLift": -1.626,
+          "winRateLift": -0.248
+        },
+        "암살자": {
+          "games": 9567,
+          "rpLift": -3.027,
+          "winRateLift": -2.917
+        },
+        "스킬딜러": {
+          "games": 59678,
+          "rpLift": -1.494,
+          "winRateLift": 0.137
+        },
+        "원거리 딜러": {
+          "games": 42750,
+          "rpLift": -1.885,
+          "winRateLift": -0.209
+        },
+        "지원가": {
+          "games": 6723,
+          "rpLift": -2.098,
+          "winRateLift": 0.767
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.63,
+        "전사": -0.29,
+        "암살자": -0.785,
+        "스킬딜러": -0.408,
+        "원거리 딜러": -0.454,
+        "지원가": -0.508
+      }
+    },
+    "3_16": {
+      "characterCode": 3,
+      "characterName": "피오라",
+      "weapon": 16,
+      "weaponName": "양손검",
+      "soloGames": 15583,
+      "soloAvgRP": -0.54,
+      "soloWinRate": 11.33,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 4731,
+          "rpLift": 1.292,
+          "winRateLift": 0.591
+        },
+        "전사": {
+          "games": 30524,
+          "rpLift": -0.569,
+          "winRateLift": -0.72
+        },
+        "암살자": {
+          "games": 2535,
+          "rpLift": -2.632,
+          "winRateLift": -1.628
+        },
+        "스킬딜러": {
+          "games": 17913,
+          "rpLift": 0.757,
+          "winRateLift": 0.503
+        },
+        "원거리 딜러": {
+          "games": 13102,
+          "rpLift": 1.273,
+          "winRateLift": 0.221
+        },
+        "지원가": {
+          "games": 2172,
+          "rpLift": 1.638,
+          "winRateLift": 0.066
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 1.063,
+        "전사": 0.249,
+        "암살자": -0.591,
+        "스킬딜러": 0.799,
+        "원거리 딜러": 1.02,
+        "지원가": 1.148
+      }
+    },
+    "3_19": {
+      "characterCode": 3,
+      "characterName": "피오라",
+      "weapon": 19,
+      "weaponName": "창",
+      "soloGames": 7612,
+      "soloAvgRP": 6.61,
+      "soloWinRate": 12.68,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 1948,
+          "rpLift": -2.59,
+          "winRateLift": 2.716
+        },
+        "전사": {
+          "games": 13508,
+          "rpLift": -6.296,
+          "winRateLift": -0.454
+        },
+        "암살자": {
+          "games": 976,
+          "rpLift": -4.901,
+          "winRateLift": -3.615
+        },
+        "스킬딜러": {
+          "games": 6540,
+          "rpLift": -5.019,
+          "winRateLift": 1.494
+        },
+        "원거리 딜러": {
+          "games": 5542,
+          "rpLift": -5.726,
+          "winRateLift": -0.665
+        },
+        "지원가": {
+          "games": 636,
+          "rpLift": -3.621,
+          "winRateLift": 0.996
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.672,
+        "전사": -2.672,
+        "암살자": -1.706,
+        "스킬딜러": -2.299,
+        "원거리 딜러": -2.246,
+        "지원가": -1.184
+      }
+    },
+    "4_13": {
+      "characterCode": 4,
+      "characterName": "매그너스",
+      "weapon": 13,
+      "weaponName": "망치",
+      "soloGames": 76633,
+      "soloAvgRP": 1.39,
+      "soloWinRate": 13.1,
+      "roles": ["탱커", "전사"],
+      "primaryRole": "탱커",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 3831,
+          "rpLift": -2.813,
+          "winRateLift": -0.298
+        },
+        "전사": {
+          "games": 148112,
+          "rpLift": -0.436,
+          "winRateLift": -0.159
+        },
+        "암살자": {
+          "games": 17754,
+          "rpLift": -0.308,
+          "winRateLift": -1.247
+        },
+        "스킬딜러": {
+          "games": 92280,
+          "rpLift": -0.857,
+          "winRateLift": -0.073
+        },
+        "원거리 딜러": {
+          "games": 83492,
+          "rpLift": -0.705,
+          "winRateLift": 0.387
+        },
+        "지원가": {
+          "games": 7995,
+          "rpLift": -1.095,
+          "winRateLift": 0.821
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.163,
+        "전사": 0.353,
+        "암살자": 1.144,
+        "스킬딜러": -0.02,
+        "원거리 딜러": -0.039,
+        "지원가": -0.408
+      }
+    },
+    "4_3": {
+      "characterCode": 4,
+      "characterName": "매그너스",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "soloGames": 29489,
+      "soloAvgRP": 2.14,
+      "soloWinRate": 12.33,
+      "roles": ["탱커", "전사"],
+      "primaryRole": "탱커",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 5162,
+          "rpLift": -2.081,
+          "winRateLift": 0.457
+        },
+        "전사": {
+          "games": 56805,
+          "rpLift": -1.719,
+          "winRateLift": -0.437
+        },
+        "암살자": {
+          "games": 5589,
+          "rpLift": -2.414,
+          "winRateLift": -1.7
+        },
+        "스킬딜러": {
+          "games": 34718,
+          "rpLift": -2.0,
+          "winRateLift": 0.623
+        },
+        "원거리 딜러": {
+          "games": 27370,
+          "rpLift": -1.416,
+          "winRateLift": 0.467
+        },
+        "지원가": {
+          "games": 4564,
+          "rpLift": -2.856,
+          "winRateLift": -0.073
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.042,
+        "전사": -0.963,
+        "암살자": -0.793,
+        "스킬딜러": -1.163,
+        "원거리 딜러": -0.904,
+        "지원가": -1.953
+      }
+    },
+    "5_6": {
+      "characterCode": 5,
+      "characterName": "자히르",
+      "weapon": 6,
+      "weaponName": "암기",
+      "soloGames": 19864,
+      "soloAvgRP": 3.36,
+      "soloWinRate": 17.02,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 12878,
+          "rpLift": 0.286,
+          "winRateLift": 2.223
+        },
+        "전사": {
+          "games": 45372,
+          "rpLift": -2.297,
+          "winRateLift": -1.373
+        },
+        "암살자": {
+          "games": 2668,
+          "rpLift": -2.605,
+          "winRateLift": -1.561
+        },
+        "스킬딜러": {
+          "games": 13418,
+          "rpLift": -2.161,
+          "winRateLift": 0.286
+        },
+        "원거리 딜러": {
+          "games": 12926,
+          "rpLift": -1.399,
+          "winRateLift": 1.722
+        },
+        "지원가": {
+          "games": 1659,
+          "rpLift": -2.527,
+          "winRateLift": 2.421
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.753,
+        "전사": -0.719,
+        "암살자": -0.361,
+        "스킬딜러": -0.396,
+        "원거리 딜러": -0.167,
+        "지원가": -0.122
+      }
+    },
+    "5_5": {
+      "characterCode": 5,
+      "characterName": "자히르",
+      "weapon": 5,
+      "weaponName": "투척",
+      "soloGames": 16066,
+      "soloAvgRP": 3.69,
+      "soloWinRate": 15.44,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 10473,
+          "rpLift": -2.477,
+          "winRateLift": 1.087
+        },
+        "전사": {
+          "games": 37468,
+          "rpLift": -2.262,
+          "winRateLift": -1.268
+        },
+        "암살자": {
+          "games": 2504,
+          "rpLift": -5.894,
+          "winRateLift": -2.559
+        },
+        "스킬딜러": {
+          "games": 10521,
+          "rpLift": -1.998,
+          "winRateLift": 0.671
+        },
+        "원거리 딜러": {
+          "games": 10996,
+          "rpLift": -1.957,
+          "winRateLift": 2.129
+        },
+        "지원가": {
+          "games": 1328,
+          "rpLift": -2.038,
+          "winRateLift": 0.72
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.898,
+        "전사": -0.699,
+        "암살자": -1.889,
+        "스킬딜러": -0.31,
+        "원거리 딜러": -0.464,
+        "지원가": 0.079
+      }
+    },
+    "6_8": {
+      "characterCode": 6,
+      "characterName": "나딘",
+      "weapon": 8,
+      "weaponName": "석궁",
+      "soloGames": 60450,
+      "soloAvgRP": 2.26,
+      "soloWinRate": 14.5,
+      "roles": ["원거리 딜러"],
+      "primaryRole": "원거리 딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 43617,
+          "rpLift": -1.241,
+          "winRateLift": 0.628
+        },
+        "전사": {
+          "games": 139996,
+          "rpLift": -1.908,
+          "winRateLift": -0.931
+        },
+        "암살자": {
+          "games": 8150,
+          "rpLift": -2.152,
+          "winRateLift": -3.031
+        },
+        "스킬딜러": {
+          "games": 63460,
+          "rpLift": -1.516,
+          "winRateLift": 1.32
+        },
+        "원거리 딜러": {
+          "games": 15794,
+          "rpLift": -2.449,
+          "winRateLift": 0.628
+        },
+        "지원가": {
+          "games": 7218,
+          "rpLift": -2.403,
+          "winRateLift": 1.211
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.077,
+        "전사": -0.585,
+        "암살자": -0.32,
+        "스킬딜러": -0.209,
+        "원거리 딜러": -0.636,
+        "지원가": -0.275
+      }
+    },
+    "6_7": {
+      "characterCode": 6,
+      "characterName": "나딘",
+      "weapon": 7,
+      "weaponName": "활",
+      "soloGames": 29222,
+      "soloAvgRP": 0.4,
+      "soloWinRate": 14.51,
+      "roles": ["스킬딜러", "원거리 딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 15440,
+          "rpLift": -0.931,
+          "winRateLift": 0.637
+        },
+        "전사": {
+          "games": 65966,
+          "rpLift": -0.494,
+          "winRateLift": -0.921
+        },
+        "암살자": {
+          "games": 4650,
+          "rpLift": -0.896,
+          "winRateLift": -2.572
+        },
+        "스킬딜러": {
+          "games": 27142,
+          "rpLift": -0.996,
+          "winRateLift": 1.627
+        },
+        "원거리 딜러": {
+          "games": 17632,
+          "rpLift": -2.498,
+          "winRateLift": 1.644
+        },
+        "지원가": {
+          "games": 1713,
+          "rpLift": 1.294,
+          "winRateLift": 1.776
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.026,
+        "전사": 0.305,
+        "암살자": 0.433,
+        "스킬딜러": 0.219,
+        "원거리 딜러": -0.751,
+        "지원가": 1.451
+      }
+    },
+    "7_1": {
+      "characterCode": 7,
+      "characterName": "현우",
+      "weapon": 1,
+      "weaponName": "글러브",
+      "soloGames": 100837,
+      "soloAvgRP": 1.71,
+      "soloWinRate": 13.31,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 21308,
+          "rpLift": -1.55,
+          "winRateLift": 1.101
+        },
+        "전사": {
+          "games": 187160,
+          "rpLift": -1.493,
+          "winRateLift": -0.732
+        },
+        "암살자": {
+          "games": 17613,
+          "rpLift": -1.767,
+          "winRateLift": -1.438
+        },
+        "스킬딜러": {
+          "games": 115509,
+          "rpLift": -0.826,
+          "winRateLift": 0.836
+        },
+        "원거리 딜러": {
+          "games": 88164,
+          "rpLift": -1.746,
+          "winRateLift": 0.062
+        },
+        "지원가": {
+          "games": 35037,
+          "rpLift": -1.411,
+          "winRateLift": 1.641
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.207,
+        "전사": -0.222,
+        "암살자": -0.167,
+        "스킬딜러": -0.05,
+        "원거리 딜러": -0.389,
+        "지원가": -0.204
+      }
+    },
+    "7_2": {
+      "characterCode": 7,
+      "characterName": "현우",
+      "weapon": 2,
+      "weaponName": "톤파",
+      "soloGames": 14108,
+      "soloAvgRP": -7.95,
+      "soloWinRate": 11.24,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 1791,
+          "rpLift": 2.162,
+          "winRateLift": -1.859
+        },
+        "전사": {
+          "games": 23674,
+          "rpLift": 5.852,
+          "winRateLift": -0.684
+        },
+        "암살자": {
+          "games": 2684,
+          "rpLift": 6.629,
+          "winRateLift": -1.624
+        },
+        "스킬딜러": {
+          "games": 18213,
+          "rpLift": 5.026,
+          "winRateLift": -0.55
+        },
+        "원거리 딜러": {
+          "games": 15238,
+          "rpLift": 7.374,
+          "winRateLift": 1.813
+        },
+        "지원가": {
+          "games": 1282,
+          "rpLift": 8.15,
+          "winRateLift": 0.454
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 1.452,
+        "전사": 3.523,
+        "암살자": 3.957,
+        "스킬딜러": 3.09,
+        "원거리 딜러": 3.867,
+        "지원가": 4.034
+      }
+    },
+    "8_22": {
+      "characterCode": 8,
+      "characterName": "하트",
+      "weapon": 22,
+      "weaponName": "기타",
+      "soloGames": 30466,
+      "soloAvgRP": 0.9,
+      "soloWinRate": 14.44,
+      "roles": ["원거리 딜러"],
+      "primaryRole": "원거리 딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 10444,
+          "rpLift": -0.8,
+          "winRateLift": -0.007
+        },
+        "전사": {
+          "games": 53492,
+          "rpLift": -0.204,
+          "winRateLift": -1.296
+        },
+        "암살자": {
+          "games": 4068,
+          "rpLift": 0.25,
+          "winRateLift": -2.639
+        },
+        "스킬딜러": {
+          "games": 51050,
+          "rpLift": -1.56,
+          "winRateLift": 1.01
+        },
+        "원거리 딜러": {
+          "games": 20106,
+          "rpLift": -0.849,
+          "winRateLift": 0.817
+        },
+        "지원가": {
+          "games": 3254,
+          "rpLift": -0.708,
+          "winRateLift": 1.005
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.173,
+        "전사": 0.79,
+        "암살자": 1.389,
+        "스킬딜러": -0.249,
+        "원거리 딜러": 0.48,
+        "지원가": 0.612
+      }
+    },
+    "9_10": {
+      "characterCode": 9,
+      "characterName": "아이솔",
+      "weapon": 10,
+      "weaponName": "돌격 소총",
+      "soloGames": 66460,
+      "soloAvgRP": 5.07,
+      "soloWinRate": 14.42,
+      "roles": ["스킬딜러", "원거리 딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 46893,
+          "rpLift": -3.047,
+          "winRateLift": 0.979
+        },
+        "전사": {
+          "games": 158368,
+          "rpLift": -3.992,
+          "winRateLift": -0.914
+        },
+        "암살자": {
+          "games": 9486,
+          "rpLift": -4.877,
+          "winRateLift": -2.243
+        },
+        "스킬딜러": {
+          "games": 61425,
+          "rpLift": -2.858,
+          "winRateLift": 1.406
+        },
+        "원거리 딜러": {
+          "games": 16214,
+          "rpLift": -4.275,
+          "winRateLift": 0.882
+        },
+        "지원가": {
+          "games": 7353,
+          "rpLift": -5.443,
+          "winRateLift": 1.552
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -1.238,
+        "전사": -1.681,
+        "암살자": -1.416,
+        "스킬딜러": -0.763,
+        "원거리 딜러": -1.696,
+        "지원가": -1.322
+      }
+    },
+    "9_9": {
+      "characterCode": 9,
+      "characterName": "아이솔",
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloGames": 34744,
+      "soloAvgRP": -2.18,
+      "soloWinRate": 12.97,
+      "roles": ["스킬딜러", "원거리 딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 14318,
+          "rpLift": 2.04,
+          "winRateLift": 0.829
+        },
+        "전사": {
+          "games": 81975,
+          "rpLift": 1.508,
+          "winRateLift": -0.904
+        },
+        "암살자": {
+          "games": 6678,
+          "rpLift": -0.533,
+          "winRateLift": -2.886
+        },
+        "스킬딜러": {
+          "games": 30375,
+          "rpLift": 2.313,
+          "winRateLift": 1.085
+        },
+        "원거리 딜러": {
+          "games": 25760,
+          "rpLift": 1.779,
+          "winRateLift": 2.186
+        },
+        "지원가": {
+          "games": 1923,
+          "rpLift": -2.443,
+          "winRateLift": 0.368
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 1.8,
+        "전사": 1.442,
+        "암살자": 0.601,
+        "스킬딜러": 1.964,
+        "원거리 딜러": 1.523,
+        "지원가": -0.087
+      }
+    },
+    "10_1": {
+      "characterCode": 10,
+      "characterName": "리 다이린",
+      "weapon": 1,
+      "weaponName": "글러브",
+      "soloGames": 54363,
+      "soloAvgRP": 3.96,
+      "soloWinRate": 12.44,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 9891,
+          "rpLift": -4.112,
+          "winRateLift": -0.458
+        },
+        "전사": {
+          "games": 96892,
+          "rpLift": -3.223,
+          "winRateLift": -0.525
+        },
+        "암살자": {
+          "games": 9544,
+          "rpLift": -2.922,
+          "winRateLift": -0.919
+        },
+        "스킬딜러": {
+          "games": 71442,
+          "rpLift": -3.211,
+          "winRateLift": 0.648
+        },
+        "원거리 딜러": {
+          "games": 55593,
+          "rpLift": -3.237,
+          "winRateLift": 0.218
+        },
+        "지원가": {
+          "games": 7527,
+          "rpLift": -4.12,
+          "winRateLift": 0.472
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -1.353,
+        "전사": -1.105,
+        "암살자": -0.734,
+        "스킬딜러": -1.329,
+        "원거리 딜러": -1.084,
+        "지원가": -1.405
+      }
+    },
+    "10_20": {
+      "characterCode": 10,
+      "characterName": "리 다이린",
+      "weapon": 20,
+      "weaponName": "쌍절곤",
+      "soloGames": 31348,
+      "soloAvgRP": 1.11,
+      "soloWinRate": 12.02,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 11104,
+          "rpLift": -0.413,
+          "winRateLift": 0.745
+        },
+        "전사": {
+          "games": 59898,
+          "rpLift": -1.575,
+          "winRateLift": -0.368
+        },
+        "암살자": {
+          "games": 4258,
+          "rpLift": -1.159,
+          "winRateLift": -1.877
+        },
+        "스킬딜러": {
+          "games": 35228,
+          "rpLift": -0.817,
+          "winRateLift": 1.147
+        },
+        "원거리 딜러": {
+          "games": 25622,
+          "rpLift": -1.215,
+          "winRateLift": -0.264
+        },
+        "지원가": {
+          "games": 5379,
+          "rpLift": -1.172,
+          "winRateLift": 0.249
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.301,
+        "전사": -0.264,
+        "암살자": 0.132,
+        "스킬딜러": -0.045,
+        "원거리 딜러": -0.141,
+        "지원가": -0.098
+      }
+    },
+    "11_16": {
+      "characterCode": 11,
+      "characterName": "유키",
+      "weapon": 16,
+      "weaponName": "양손검",
+      "soloGames": 91925,
+      "soloAvgRP": 2.85,
+      "soloWinRate": 13,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 11442,
+          "rpLift": -2.218,
+          "winRateLift": 0.175
+        },
+        "전사": {
+          "games": 149484,
+          "rpLift": -1.854,
+          "winRateLift": -0.89
+        },
+        "암살자": {
+          "games": 15052,
+          "rpLift": -2.203,
+          "winRateLift": -2.617
+        },
+        "스킬딜러": {
+          "games": 125618,
+          "rpLift": -1.461,
+          "winRateLift": 0.389
+        },
+        "원거리 딜러": {
+          "games": 103588,
+          "rpLift": -1.329,
+          "winRateLift": 0.61
+        },
+        "지원가": {
+          "games": 10436,
+          "rpLift": -1.9,
+          "winRateLift": 1.43
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.506,
+        "전사": -0.406,
+        "암살자": -0.381,
+        "스킬딜러": -0.391,
+        "원거리 딜러": -0.194,
+        "지원가": -0.421
+      }
+    },
+    "11_18": {
+      "characterCode": 11,
+      "characterName": "유키",
+      "weapon": 18,
+      "weaponName": "쌍검",
+      "soloGames": 51774,
+      "soloAvgRP": -2.22,
+      "soloWinRate": 11.42,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 15303,
+          "rpLift": 1.887,
+          "winRateLift": 0.097
+        },
+        "전사": {
+          "games": 98528,
+          "rpLift": 1.937,
+          "winRateLift": -0.739
+        },
+        "암살자": {
+          "games": 8584,
+          "rpLift": 0.182,
+          "winRateLift": -2.384
+        },
+        "스킬딜러": {
+          "games": 60988,
+          "rpLift": 3.064,
+          "winRateLift": 0.602
+        },
+        "원거리 딜러": {
+          "games": 46200,
+          "rpLift": 2.594,
+          "winRateLift": 0.014
+        },
+        "지원가": {
+          "games": 8134,
+          "rpLift": 2.244,
+          "winRateLift": 1.247
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 1.329,
+        "전사": 1.527,
+        "암살자": 0.791,
+        "스킬딜러": 2.037,
+        "원거리 딜러": 1.636,
+        "지원가": 1.416
+      }
+    },
+    "12_7": {
+      "characterCode": 12,
+      "characterName": "혜진",
+      "weapon": 7,
+      "weaponName": "활",
+      "soloGames": 36895,
+      "soloAvgRP": -0.69,
+      "soloWinRate": 13.81,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 15810,
+          "rpLift": 0.616,
+          "winRateLift": -0.119
+        },
+        "전사": {
+          "games": 92834,
+          "rpLift": 1.402,
+          "winRateLift": -0.831
+        },
+        "암살자": {
+          "games": 7184,
+          "rpLift": 0.514,
+          "winRateLift": -0.553
+        },
+        "스킬딜러": {
+          "games": 24458,
+          "rpLift": -0.155,
+          "winRateLift": 0.137
+        },
+        "원거리 딜러": {
+          "games": 25886,
+          "rpLift": 2.48,
+          "winRateLift": 1.789
+        },
+        "지원가": {
+          "games": 1866,
+          "rpLift": 1.38,
+          "winRateLift": 2.669
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.95,
+        "전사": 1.382,
+        "암살자": 1.088,
+        "스킬딜러": 0.662,
+        "원거리 딜러": 1.895,
+        "지원가": 1.487
+      }
+    },
+    "12_6": {
+      "characterCode": 12,
+      "characterName": "혜진",
+      "weapon": 6,
+      "weaponName": "암기",
+      "soloGames": 9950,
+      "soloAvgRP": 4.34,
+      "soloWinRate": 14.86,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 3902,
+          "rpLift": -2.26,
+          "winRateLift": -0.366
+        },
+        "전사": {
+          "games": 24034,
+          "rpLift": -3.395,
+          "winRateLift": -0.93
+        },
+        "암살자": {
+          "games": 1606,
+          "rpLift": -4.58,
+          "winRateLift": -3.565
+        },
+        "스킬딜러": {
+          "games": 6102,
+          "rpLift": -3.272,
+          "winRateLift": 0.087
+        },
+        "원거리 딜러": {
+          "games": 7372,
+          "rpLift": -3.225,
+          "winRateLift": 1.945
+        },
+        "지원가": {
+          "games": 255,
+          "rpLift": 0.696,
+          "winRateLift": 6.316
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.768,
+        "전사": -1.342,
+        "암살자": -1.278,
+        "스킬딜러": -0.982,
+        "원거리 딜러": -1.138,
+        "지원가": 1.205
+      }
+    },
+    "13_15": {
+      "characterCode": 13,
+      "characterName": "쇼우",
+      "weapon": 15,
+      "weaponName": "단검",
+      "soloGames": 27697,
+      "soloAvgRP": 0.58,
+      "soloWinRate": 14.91,
+      "roles": ["탱커"],
+      "primaryRole": "탱커",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 518,
+          "rpLift": -4.619,
+          "winRateLift": -5.054
+        },
+        "전사": {
+          "games": 39777,
+          "rpLift": 0.828,
+          "winRateLift": -1.221
+        },
+        "암살자": {
+          "games": 4323,
+          "rpLift": -2.016,
+          "winRateLift": -2.139
+        },
+        "스킬딜러": {
+          "games": 38553,
+          "rpLift": 0.832,
+          "winRateLift": 0.724
+        },
+        "원거리 딜러": {
+          "games": 40630,
+          "rpLift": 0.568,
+          "winRateLift": 0.755
+        },
+        "지원가": {
+          "games": 2259,
+          "rpLift": 1.581,
+          "winRateLift": 3.48
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.669,
+        "전사": 1.649,
+        "암살자": -0.427,
+        "스킬딜러": 1.669,
+        "원거리 딜러": 1.51,
+        "지원가": 1.939
+      }
+    },
+    "13_19": {
+      "characterCode": 13,
+      "characterName": "쇼우",
+      "weapon": 19,
+      "weaponName": "창",
+      "soloGames": 14852,
+      "soloAvgRP": 1.62,
+      "soloWinRate": 15.3,
+      "roles": ["탱커"],
+      "primaryRole": "탱커",
+      "synergyByPartnerRole": {
+        "탱커": null,
+        "전사": {
+          "games": 17061,
+          "rpLift": -1.772,
+          "winRateLift": -1.207
+        },
+        "암살자": {
+          "games": 1974,
+          "rpLift": -1.203,
+          "winRateLift": -0.634
+        },
+        "스킬딜러": {
+          "games": 21708,
+          "rpLift": -0.994,
+          "winRateLift": 0.772
+        },
+        "원거리 딜러": {
+          "games": 23079,
+          "rpLift": -0.503,
+          "winRateLift": 0.708
+        },
+        "지원가": {
+          "games": 1152,
+          "rpLift": -0.666,
+          "winRateLift": 2.015
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": null,
+        "전사": -1.017,
+        "암살자": 0.321,
+        "스킬딜러": -0.157,
+        "원거리 딜러": 0.207,
+        "지원가": -0.032
+      }
+    },
+    "14_21": {
+      "characterCode": 14,
+      "characterName": "키아라",
+      "weapon": 21,
+      "weaponName": "레이피어",
+      "soloGames": 60919,
+      "soloAvgRP": -0.06,
+      "soloWinRate": 13.79,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 19370,
+          "rpLift": 1.291,
+          "winRateLift": 1.016
+        },
+        "전사": {
+          "games": 124368,
+          "rpLift": 0.32,
+          "winRateLift": -0.329
+        },
+        "암살자": {
+          "games": 10080,
+          "rpLift": -0.454,
+          "winRateLift": -1.854
+        },
+        "스킬딜러": {
+          "games": 66996,
+          "rpLift": 0.543,
+          "winRateLift": 0.193
+        },
+        "원거리 딜러": {
+          "games": 53054,
+          "rpLift": 0.691,
+          "winRateLift": 0.186
+        },
+        "지원가": {
+          "games": 12507,
+          "rpLift": -1.242,
+          "winRateLift": 0.518
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 1.063,
+        "전사": 0.702,
+        "암살자": 0.478,
+        "스킬딜러": 0.685,
+        "원거리 딜러": 0.748,
+        "지원가": -0.129
+      }
+    },
+    "15_6": {
+      "characterCode": 15,
+      "characterName": "시셀라",
+      "weapon": 6,
+      "weaponName": "암기",
+      "soloGames": 38820,
+      "soloAvgRP": 1.01,
+      "soloWinRate": 13.51,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 19910,
+          "rpLift": -0.49,
+          "winRateLift": 0.495
+        },
+        "전사": {
+          "games": 91425,
+          "rpLift": -0.199,
+          "winRateLift": -0.66
+        },
+        "암살자": {
+          "games": 6225,
+          "rpLift": -1.718,
+          "winRateLift": -3.291
+        },
+        "스킬딜러": {
+          "games": 25262,
+          "rpLift": -0.802,
+          "winRateLift": 0.8
+        },
+        "원거리 딜러": {
+          "games": 31569,
+          "rpLift": -0.458,
+          "winRateLift": 1.999
+        },
+        "지원가": {
+          "games": 1623,
+          "rpLift": -5.746,
+          "winRateLift": -0.847
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.289,
+        "전사": 0.472,
+        "암살자": 0.051,
+        "스킬딜러": 0.321,
+        "원거리 딜러": 0.333,
+        "지원가": -1.447
+      }
+    },
+    "15_5": {
+      "characterCode": 15,
+      "characterName": "시셀라",
+      "weapon": 5,
+      "weaponName": "투척",
+      "soloGames": 27315,
+      "soloAvgRP": -1.41,
+      "soloWinRate": 13.56,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 14096,
+          "rpLift": 0.94,
+          "winRateLift": 0.444
+        },
+        "전사": {
+          "games": 64380,
+          "rpLift": 1.142,
+          "winRateLift": -0.932
+        },
+        "암살자": {
+          "games": 4479,
+          "rpLift": 1.241,
+          "winRateLift": -1.136
+        },
+        "스킬딜러": {
+          "games": 16796,
+          "rpLift": 0.454,
+          "winRateLift": 0.446
+        },
+        "원거리 딜러": {
+          "games": 23156,
+          "rpLift": 1.455,
+          "winRateLift": 2.551
+        },
+        "지원가": {
+          "games": 1100,
+          "rpLift": 1.32,
+          "winRateLift": 0.082
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 1.143,
+        "전사": 1.234,
+        "암살자": 1.425,
+        "스킬딜러": 0.984,
+        "원거리 딜러": 1.35,
+        "지원가": 1.462
+      }
+    },
+    "16_9": {
+      "characterCode": 16,
+      "characterName": "실비아",
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloGames": 71136,
+      "soloAvgRP": 1.97,
+      "soloWinRate": 13.28,
+      "roles": ["전사", "스킬딜러"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 25990,
+          "rpLift": -2.079,
+          "winRateLift": 0.341
+        },
+        "전사": {
+          "games": 161262,
+          "rpLift": -1.338,
+          "winRateLift": -0.661
+        },
+        "암살자": {
+          "games": 12014,
+          "rpLift": -1.843,
+          "winRateLift": -2.507
+        },
+        "스킬딜러": {
+          "games": 67024,
+          "rpLift": -1.158,
+          "winRateLift": 0.763
+        },
+        "원거리 딜러": {
+          "games": 56126,
+          "rpLift": -1.465,
+          "winRateLift": 0.926
+        },
+        "지원가": {
+          "games": 5568,
+          "rpLift": -1.822,
+          "winRateLift": 2.667
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.444,
+        "전사": -0.143,
+        "암살자": -0.204,
+        "스킬딜러": -0.228,
+        "원거리 딜러": -0.258,
+        "지원가": -0.386
+      }
+    },
+    "17_5": {
+      "characterCode": 17,
+      "characterName": "아드리아나",
+      "weapon": 5,
+      "weaponName": "투척",
+      "soloGames": 55746,
+      "soloAvgRP": 1.68,
+      "soloWinRate": 14.17,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 29001,
+          "rpLift": -1.807,
+          "winRateLift": 0.451
+        },
+        "전사": {
+          "games": 151593,
+          "rpLift": -1.276,
+          "winRateLift": -0.258
+        },
+        "암살자": {
+          "games": 9783,
+          "rpLift": -2.917,
+          "winRateLift": -1.106
+        },
+        "스킬딜러": {
+          "games": 27370,
+          "rpLift": -2.791,
+          "winRateLift": -0.633
+        },
+        "원거리 딜러": {
+          "games": 36598,
+          "rpLift": -1.077,
+          "winRateLift": 1.987
+        },
+        "지원가": {
+          "games": 2037,
+          "rpLift": -4.692,
+          "winRateLift": -0.252
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.498,
+        "전사": -0.139,
+        "암살자": -0.506,
+        "스킬딜러": -0.728,
+        "원거리 딜러": 0.004,
+        "지원가": -1.013
+      }
+    },
+    "18_15": {
+      "characterCode": 18,
+      "characterName": "쇼이치",
+      "weapon": 15,
+      "weaponName": "단검",
+      "soloGames": 120104,
+      "soloAvgRP": -4.05,
+      "soloWinRate": 11.41,
+      "roles": ["암살자"],
+      "primaryRole": "암살자",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 48015,
+          "rpLift": 4.032,
+          "winRateLift": 1.535
+        },
+        "전사": {
+          "games": 256972,
+          "rpLift": 3.329,
+          "winRateLift": -0.548
+        },
+        "암살자": {
+          "games": 8752,
+          "rpLift": 2.331,
+          "winRateLift": -1.674
+        },
+        "스킬딜러": {
+          "games": 127116,
+          "rpLift": 3.262,
+          "winRateLift": 0.599
+        },
+        "원거리 딜러": {
+          "games": 89412,
+          "rpLift": 3.633,
+          "winRateLift": 0.365
+        },
+        "지원가": {
+          "games": 22398,
+          "rpLift": 2.535,
+          "winRateLift": 1.069
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 1.421,
+        "전사": 1.337,
+        "암살자": 1.533,
+        "스킬딜러": 1.273,
+        "원거리 딜러": 1.458,
+        "지원가": 1.23
+      }
+    },
+    "19_6": {
+      "characterCode": 19,
+      "characterName": "엠마",
+      "weapon": 6,
+      "weaponName": "암기",
+      "soloGames": 39784,
+      "soloAvgRP": -0.7,
+      "soloWinRate": 13.75,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 14016,
+          "rpLift": -0.787,
+          "winRateLift": 0.591
+        },
+        "전사": {
+          "games": 86985,
+          "rpLift": 0.248,
+          "winRateLift": -0.999
+        },
+        "암살자": {
+          "games": 6872,
+          "rpLift": 0.191,
+          "winRateLift": -1.812
+        },
+        "스킬딜러": {
+          "games": 38169,
+          "rpLift": 0.379,
+          "winRateLift": 1.958
+        },
+        "원거리 딜러": {
+          "games": 36018,
+          "rpLift": -0.183,
+          "winRateLift": 0.739
+        },
+        "지원가": {
+          "games": 2770,
+          "rpLift": -0.89,
+          "winRateLift": 2.222
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.112,
+        "전사": 0.726,
+        "암살자": 0.938,
+        "스킬딜러": 0.944,
+        "원거리 딜러": 0.48,
+        "지원가": 0.552
+      }
+    },
+    "19_24": {
+      "characterCode": 19,
+      "characterName": "엠마",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "soloGames": 14048,
+      "soloAvgRP": -0.66,
+      "soloWinRate": 14.07,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 4948,
+          "rpLift": 0.302,
+          "winRateLift": 1.056
+        },
+        "전사": {
+          "games": 30484,
+          "rpLift": 0.472,
+          "winRateLift": -0.829
+        },
+        "암살자": {
+          "games": 2314,
+          "rpLift": 0.209,
+          "winRateLift": -2.016
+        },
+        "스킬딜러": {
+          "games": 11146,
+          "rpLift": -0.613,
+          "winRateLift": 1.312
+        },
+        "원거리 딜러": {
+          "games": 11856,
+          "rpLift": 0.769,
+          "winRateLift": 1.58
+        },
+        "지원가": {
+          "games": 573,
+          "rpLift": -2.141,
+          "winRateLift": 1.116
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.762,
+        "전사": 0.853,
+        "암살자": 0.946,
+        "스킬딜러": 0.421,
+        "원거리 딜러": 0.986,
+        "지원가": 0.037
+      }
+    },
+    "20_4": {
+      "characterCode": 20,
+      "characterName": "레녹스",
+      "weapon": 4,
+      "weaponName": "채찍",
+      "soloGames": 101527,
+      "soloAvgRP": 3.13,
+      "soloWinRate": 15.35,
+      "roles": ["탱커"],
+      "primaryRole": "탱커",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 526,
+          "rpLift": -3.987,
+          "winRateLift": -1.391
+        },
+        "전사": {
+          "games": 93069,
+          "rpLift": -2.317,
+          "winRateLift": -1.791
+        },
+        "암살자": {
+          "games": 10484,
+          "rpLift": -3.364,
+          "winRateLift": -3.075
+        },
+        "스킬딜러": {
+          "games": 163656,
+          "rpLift": -1.89,
+          "winRateLift": 0.343
+        },
+        "원거리 딜러": {
+          "games": 185554,
+          "rpLift": -1.974,
+          "winRateLift": 0.846
+        },
+        "지원가": {
+          "games": 10028,
+          "rpLift": -1.219,
+          "winRateLift": 1.957
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.492,
+        "전사": -1.576,
+        "암살자": -1.667,
+        "스킬딜러": -1.053,
+        "원거리 딜러": -1.583,
+        "지원가": -0.517
+      }
+    },
+    "21_9": {
+      "characterCode": 21,
+      "characterName": "로지",
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloGames": 102808,
+      "soloAvgRP": 2.62,
+      "soloWinRate": 13.77,
+      "roles": ["원거리 딜러"],
+      "primaryRole": "원거리 딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 55707,
+          "rpLift": -1.796,
+          "winRateLift": 1.567
+        },
+        "전사": {
+          "games": 250798,
+          "rpLift": -1.952,
+          "winRateLift": -0.996
+        },
+        "암살자": {
+          "games": 17888,
+          "rpLift": -2.033,
+          "winRateLift": -1.71
+        },
+        "스킬딜러": {
+          "games": 100473,
+          "rpLift": -1.982,
+          "winRateLift": 1.677
+        },
+        "원거리 딜러": {
+          "games": 33168,
+          "rpLift": -2.545,
+          "winRateLift": 0.255
+        },
+        "지원가": {
+          "games": 12114,
+          "rpLift": -2.337,
+          "winRateLift": 2.216
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.393,
+        "전사": -0.621,
+        "암살자": -0.236,
+        "스킬딜러": -0.632,
+        "원거리 딜러": -0.703,
+        "지원가": -0.24
+      }
+    },
+    "22_3": {
+      "characterCode": 22,
+      "characterName": "루크",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "soloGames": 134065,
+      "soloAvgRP": -2.03,
+      "soloWinRate": 11.19,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 29268,
+          "rpLift": 1.608,
+          "winRateLift": 0.552
+        },
+        "전사": {
+          "games": 257482,
+          "rpLift": 1.467,
+          "winRateLift": -0.369
+        },
+        "암살자": {
+          "games": 24148,
+          "rpLift": 1.088,
+          "winRateLift": -1.484
+        },
+        "스킬딜러": {
+          "games": 162369,
+          "rpLift": 2.097,
+          "winRateLift": 0.378
+        },
+        "원거리 딜러": {
+          "games": 123572,
+          "rpLift": 1.594,
+          "winRateLift": 0.342
+        },
+        "지원가": {
+          "games": 24628,
+          "rpLift": 1.699,
+          "winRateLift": 1.079
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 1.204,
+        "전사": 1.287,
+        "암살자": 1.236,
+        "스킬딜러": 1.518,
+        "원거리 딜러": 1.17,
+        "지원가": 1.175
+      }
+    },
+    "23_15": {
+      "characterCode": 23,
+      "characterName": "캐시",
+      "weapon": 15,
+      "weaponName": "단검",
+      "soloGames": 32031,
+      "soloAvgRP": 3.63,
+      "soloWinRate": 11.97,
+      "roles": ["암살자"],
+      "primaryRole": "암살자",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 9702,
+          "rpLift": -3.345,
+          "winRateLift": 0.459
+        },
+        "전사": {
+          "games": 68336,
+          "rpLift": -3.429,
+          "winRateLift": -0.235
+        },
+        "암살자": {
+          "games": 3675,
+          "rpLift": -4.314,
+          "winRateLift": -3.074
+        },
+        "스킬딜러": {
+          "games": 34378,
+          "rpLift": -3.3,
+          "winRateLift": -0.329
+        },
+        "원거리 딜러": {
+          "games": 26212,
+          "rpLift": -2.959,
+          "winRateLift": 0.946
+        },
+        "지원가": {
+          "games": 2362,
+          "rpLift": -4.968,
+          "winRateLift": -1.238
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.43,
+        "전사": -1.447,
+        "암살자": -1.269,
+        "스킬딜러": -1.151,
+        "원거리 딜러": -1.236,
+        "지원가": -1.553
+      }
+    },
+    "23_18": {
+      "characterCode": 23,
+      "characterName": "캐시",
+      "weapon": 18,
+      "weaponName": "쌍검",
+      "soloGames": 8025,
+      "soloAvgRP": 1.64,
+      "soloWinRate": 11.5,
+      "roles": ["암살자"],
+      "primaryRole": "암살자",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 1377,
+          "rpLift": -6.826,
+          "winRateLift": -1.261
+        },
+        "전사": {
+          "games": 14205,
+          "rpLift": -0.354,
+          "winRateLift": -0.043
+        },
+        "암살자": {
+          "games": 1251,
+          "rpLift": -1.761,
+          "winRateLift": -0.587
+        },
+        "스킬딜러": {
+          "games": 7974,
+          "rpLift": -2.306,
+          "winRateLift": -1.248
+        },
+        "원거리 딜러": {
+          "games": 6468,
+          "rpLift": -1.188,
+          "winRateLift": 1.37
+        },
+        "지원가": {
+          "games": 492,
+          "rpLift": -0.641,
+          "winRateLift": 1.915
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -1.303,
+        "전사": -0.18,
+        "암살자": -0.192,
+        "스킬딜러": -0.784,
+        "원거리 딜러": -0.512,
+        "지원가": 0.052
+      }
+    },
+    "24_21": {
+      "characterCode": 24,
+      "characterName": "아델라",
+      "weapon": 21,
+      "weaponName": "레이피어",
+      "soloGames": 27130,
+      "soloAvgRP": 5.43,
+      "soloWinRate": 14.36,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 11272,
+          "rpLift": -3.956,
+          "winRateLift": 0.889
+        },
+        "전사": {
+          "games": 65998,
+          "rpLift": -3.503,
+          "winRateLift": -0.4
+        },
+        "암살자": {
+          "games": 4089,
+          "rpLift": -4.161,
+          "winRateLift": -1.632
+        },
+        "스킬딜러": {
+          "games": 19143,
+          "rpLift": -5.625,
+          "winRateLift": 0.425
+        },
+        "원거리 딜러": {
+          "games": 20502,
+          "rpLift": -3.454,
+          "winRateLift": 1.37
+        },
+        "지원가": {
+          "games": 1221,
+          "rpLift": -5.139,
+          "winRateLift": 2.595
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -1.781,
+        "전사": -1.404,
+        "암살자": -1.084,
+        "스킬딜러": -2.223,
+        "원거리 딜러": -1.259,
+        "지원가": -1.197
+      }
+    },
+    "24_3": {
+      "characterCode": 24,
+      "characterName": "아델라",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "soloGames": 15327,
+      "soloAvgRP": 1.11,
+      "soloWinRate": 13.28,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 5985,
+          "rpLift": -0.415,
+          "winRateLift": -0.322
+        },
+        "전사": {
+          "games": 36236,
+          "rpLift": -0.508,
+          "winRateLift": -0.684
+        },
+        "암살자": {
+          "games": 2560,
+          "rpLift": -3.97,
+          "winRateLift": -1.682
+        },
+        "스킬딜러": {
+          "games": 10844,
+          "rpLift": -2.122,
+          "winRateLift": -0.457
+        },
+        "원거리 딜러": {
+          "games": 11424,
+          "rpLift": -1.651,
+          "winRateLift": 0.848
+        },
+        "지원가": {
+          "games": 662,
+          "rpLift": -3.193,
+          "winRateLift": 1.007
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.334,
+        "전사": 0.297,
+        "암살자": -0.995,
+        "스킬딜러": -0.375,
+        "원거리 딜러": -0.301,
+        "지원가": -0.396
+      }
+    },
+    "25_11": {
+      "characterCode": 25,
+      "characterName": "버니스",
+      "weapon": 11,
+      "weaponName": "저격총",
+      "soloGames": 61592,
+      "soloAvgRP": 1.52,
+      "soloWinRate": 13.91,
+      "roles": ["원거리 딜러"],
+      "primaryRole": "원거리 딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 34304,
+          "rpLift": -1.052,
+          "winRateLift": 0.983
+        },
+        "전사": {
+          "games": 145186,
+          "rpLift": -1.61,
+          "winRateLift": -0.899
+        },
+        "암살자": {
+          "games": 10089,
+          "rpLift": -2.151,
+          "winRateLift": -1.706
+        },
+        "스킬딜러": {
+          "games": 64191,
+          "rpLift": -1.278,
+          "winRateLift": 1.275
+        },
+        "원거리 딜러": {
+          "games": 24682,
+          "rpLift": -1.557,
+          "winRateLift": 1.525
+        },
+        "지원가": {
+          "games": 8762,
+          "rpLift": -0.586,
+          "winRateLift": 1.875
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.03,
+        "전사": -0.345,
+        "암살자": -0.32,
+        "스킬딜러": 0.007,
+        "원거리 딜러": -0.014,
+        "지원가": 0.676
+      }
+    },
+    "26_9": {
+      "characterCode": 26,
+      "characterName": "바바라",
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloGames": 89290,
+      "soloAvgRP": 0.06,
+      "soloWinRate": 14.7,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 45030,
+          "rpLift": 0.286,
+          "winRateLift": 0.5
+        },
+        "전사": {
+          "games": 199938,
+          "rpLift": 0.237,
+          "winRateLift": -1.251
+        },
+        "암살자": {
+          "games": 13592,
+          "rpLift": -1.156,
+          "winRateLift": -2.483
+        },
+        "스킬딜러": {
+          "games": 73302,
+          "rpLift": 0.465,
+          "winRateLift": 0.989
+        },
+        "원거리 딜러": {
+          "games": 76814,
+          "rpLift": 0.458,
+          "winRateLift": 1.902
+        },
+        "지원가": {
+          "games": 7029,
+          "rpLift": -0.947,
+          "winRateLift": 1.24
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.753,
+        "전사": 0.72,
+        "암살자": 0.312,
+        "스킬딜러": 0.989,
+        "원거리 딜러": 0.82,
+        "지원가": 0.529
+      }
+    },
+    "27_16": {
+      "characterCode": 27,
+      "characterName": "알렉스",
+      "weapon": 16,
+      "weaponName": "양손검",
+      "soloGames": 35771,
+      "soloAvgRP": 3.04,
+      "soloWinRate": 12.54,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 6684,
+          "rpLift": -3.474,
+          "winRateLift": -0.04
+        },
+        "전사": {
+          "games": 68577,
+          "rpLift": -3.219,
+          "winRateLift": -0.899
+        },
+        "암살자": {
+          "games": 6468,
+          "rpLift": -2.562,
+          "winRateLift": -2.431
+        },
+        "스킬딜러": {
+          "games": 45462,
+          "rpLift": -2.935,
+          "winRateLift": 0.38
+        },
+        "원거리 딜러": {
+          "games": 36168,
+          "rpLift": -2.897,
+          "winRateLift": 0.743
+        },
+        "지원가": {
+          "games": 3543,
+          "rpLift": -3.661,
+          "winRateLift": 1.94
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -1.068,
+        "전사": -1.102,
+        "암살자": -0.557,
+        "스킬딜러": -1.181,
+        "원거리 딜러": -0.926,
+        "지원가": -1.201
+      }
+    },
+    "27_9": {
+      "characterCode": 27,
+      "characterName": "알렉스",
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloGames": 32762,
+      "soloAvgRP": 2.45,
+      "soloWinRate": 13,
+      "roles": ["원거리 딜러"],
+      "primaryRole": "원거리 딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 6891,
+          "rpLift": -4.35,
+          "winRateLift": -1.245
+        },
+        "전사": {
+          "games": 62900,
+          "rpLift": -1.677,
+          "winRateLift": -0.689
+        },
+        "암살자": {
+          "games": 5752,
+          "rpLift": -2.768,
+          "winRateLift": -1.108
+        },
+        "스킬딜러": {
+          "games": 41030,
+          "rpLift": -2.059,
+          "winRateLift": 0.425
+        },
+        "원거리 딜러": {
+          "games": 31686,
+          "rpLift": -2.307,
+          "winRateLift": 0.961
+        },
+        "지원가": {
+          "games": 3344,
+          "rpLift": -4.045,
+          "winRateLift": 0.596
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -1.844,
+        "전사": -0.399,
+        "암살자": -0.759,
+        "스킬딜러": -0.701,
+        "원거리 딜러": -0.537,
+        "지원가": -1.134
+      }
+    },
+    "27_2": {
+      "characterCode": 27,
+      "characterName": "알렉스",
+      "weapon": 2,
+      "weaponName": "톤파",
+      "soloGames": 22849,
+      "soloAvgRP": 2.42,
+      "soloWinRate": 11.09,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 4556,
+          "rpLift": -1.882,
+          "winRateLift": -2.035
+        },
+        "전사": {
+          "games": 42722,
+          "rpLift": -0.566,
+          "winRateLift": -0.452
+        },
+        "암살자": {
+          "games": 4059,
+          "rpLift": -0.004,
+          "winRateLift": -0.448
+        },
+        "스킬딜러": {
+          "games": 29445,
+          "rpLift": -1.075,
+          "winRateLift": 0.045
+        },
+        "원거리 딜러": {
+          "games": 22712,
+          "rpLift": -0.032,
+          "winRateLift": 1.102
+        },
+        "지원가": {
+          "games": 2204,
+          "rpLift": 0.425,
+          "winRateLift": 1.095
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.356,
+        "전사": 0.25,
+        "암살자": 0.699,
+        "스킬딜러": -0.183,
+        "원거리 딜러": 0.411,
+        "지원가": 0.61
+      }
+    },
+    "27_6": {
+      "characterCode": 27,
+      "characterName": "알렉스",
+      "weapon": 6,
+      "weaponName": "암기",
+      "soloGames": 17091,
+      "soloAvgRP": 4.43,
+      "soloWinRate": 10.51,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 3490,
+          "rpLift": -2.229,
+          "winRateLift": 0.277
+        },
+        "전사": {
+          "games": 32368,
+          "rpLift": -2.722,
+          "winRateLift": -0.232
+        },
+        "암살자": {
+          "games": 2964,
+          "rpLift": -1.851,
+          "winRateLift": -0.895
+        },
+        "스킬딜러": {
+          "games": 20576,
+          "rpLift": -2.715,
+          "winRateLift": -0.1
+        },
+        "원거리 딜러": {
+          "games": 16638,
+          "rpLift": -3.482,
+          "winRateLift": 0.778
+        },
+        "지원가": {
+          "games": 1526,
+          "rpLift": -2.682,
+          "winRateLift": 2.174
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.75,
+        "전사": -0.96,
+        "암살자": -0.011,
+        "스킬딜러": -0.688,
+        "원거리 딜러": -1.274,
+        "지원가": -0.186
+      }
+    },
+    "28_3": {
+      "characterCode": 28,
+      "characterName": "수아",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "soloGames": 33669,
+      "soloAvgRP": 3.9,
+      "soloWinRate": 13.6,
+      "roles": ["전사", "스킬딜러"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 8386,
+          "rpLift": -2.954,
+          "winRateLift": 0.155
+        },
+        "전사": {
+          "games": 63009,
+          "rpLift": -2.92,
+          "winRateLift": -0.466
+        },
+        "암살자": {
+          "games": 5338,
+          "rpLift": -2.867,
+          "winRateLift": -0.536
+        },
+        "스킬딜러": {
+          "games": 37570,
+          "rpLift": -2.96,
+          "winRateLift": 0.705
+        },
+        "원거리 딜러": {
+          "games": 30279,
+          "rpLift": -2.875,
+          "winRateLift": -0.374
+        },
+        "지원가": {
+          "games": 6596,
+          "rpLift": -3.678,
+          "winRateLift": 1.819
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.835,
+        "전사": -0.95,
+        "암살자": -0.707,
+        "스킬딜러": -1.195,
+        "원거리 딜러": -0.916,
+        "지원가": -1.209
+      }
+    },
+    "28_13": {
+      "characterCode": 28,
+      "characterName": "수아",
+      "weapon": 13,
+      "weaponName": "망치",
+      "soloGames": 24093,
+      "soloAvgRP": 5.06,
+      "soloWinRate": 13.07,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 4800,
+          "rpLift": -4.175,
+          "winRateLift": 1.117
+        },
+        "전사": {
+          "games": 43994,
+          "rpLift": -4.537,
+          "winRateLift": -0.831
+        },
+        "암살자": {
+          "games": 4029,
+          "rpLift": -4.641,
+          "winRateLift": -1.079
+        },
+        "스킬딜러": {
+          "games": 30297,
+          "rpLift": -3.47,
+          "winRateLift": 0.521
+        },
+        "원거리 딜러": {
+          "games": 24254,
+          "rpLift": -4.787,
+          "winRateLift": 0.444
+        },
+        "지원가": {
+          "games": 4317,
+          "rpLift": -4.748,
+          "winRateLift": 0.689
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -1.381,
+        "전사": -1.775,
+        "암살자": -1.578,
+        "스킬딜러": -1.468,
+        "원거리 딜러": -1.808,
+        "지원가": -1.683
+      }
+    },
+    "29_1": {
+      "characterCode": 29,
+      "characterName": "레온",
+      "weapon": 1,
+      "weaponName": "글러브",
+      "soloGames": 74229,
+      "soloAvgRP": 5.21,
+      "soloWinRate": 13.09,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 20385,
+          "rpLift": -4.632,
+          "winRateLift": 0.081
+        },
+        "전사": {
+          "games": 144298,
+          "rpLift": -3.9,
+          "winRateLift": -0.488
+        },
+        "암살자": {
+          "games": 11787,
+          "rpLift": -3.87,
+          "winRateLift": -2.168
+        },
+        "스킬딜러": {
+          "games": 86906,
+          "rpLift": -3.71,
+          "winRateLift": 0.494
+        },
+        "원거리 딜러": {
+          "games": 65794,
+          "rpLift": -3.911,
+          "winRateLift": 0.251
+        },
+        "지원가": {
+          "games": 9452,
+          "rpLift": -3.834,
+          "winRateLift": 0.671
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -1.585,
+        "전사": -1.45,
+        "암살자": -1.199,
+        "스킬딜러": -1.597,
+        "원거리 딜러": -1.399,
+        "지원가": -1.278
+      }
+    },
+    "29_2": {
+      "characterCode": 29,
+      "characterName": "레온",
+      "weapon": 2,
+      "weaponName": "톤파",
+      "soloGames": 16516,
+      "soloAvgRP": 0.02,
+      "soloWinRate": 14.68,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 2098,
+          "rpLift": 0.521,
+          "winRateLift": -1.099
+        },
+        "전사": {
+          "games": 26631,
+          "rpLift": 0.761,
+          "winRateLift": -0.852
+        },
+        "암살자": {
+          "games": 2277,
+          "rpLift": -0.838,
+          "winRateLift": -2.231
+        },
+        "스킬딜러": {
+          "games": 21534,
+          "rpLift": 0.805,
+          "winRateLift": 1.07
+        },
+        "원거리 딜러": {
+          "games": 20576,
+          "rpLift": 0.874,
+          "winRateLift": 1.504
+        },
+        "지원가": {
+          "games": 879,
+          "rpLift": 0.953,
+          "winRateLift": 2.552
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.718,
+        "전사": 0.927,
+        "암살자": 0.29,
+        "스킬딜러": 0.825,
+        "원거리 딜러": 0.834,
+        "지원가": 0.844
+      }
+    },
+    "30_13": {
+      "characterCode": 30,
+      "characterName": "일레븐",
+      "weapon": 13,
+      "weaponName": "망치",
+      "soloGames": 72886,
+      "soloAvgRP": 2.11,
+      "soloWinRate": 15.03,
+      "roles": ["탱커"],
+      "primaryRole": "탱커",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 598,
+          "rpLift": 0.602,
+          "winRateLift": 1.258
+        },
+        "전사": {
+          "games": 85744,
+          "rpLift": -1.124,
+          "winRateLift": -0.297
+        },
+        "암살자": {
+          "games": 10996,
+          "rpLift": -1.031,
+          "winRateLift": -1.336
+        },
+        "스킬딜러": {
+          "games": 112526,
+          "rpLift": -1.152,
+          "winRateLift": 0.312
+        },
+        "원거리 딜러": {
+          "games": 117332,
+          "rpLift": -1.331,
+          "winRateLift": -0.274
+        },
+        "지원가": {
+          "games": 5996,
+          "rpLift": -1.798,
+          "winRateLift": 1.66
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.794,
+        "전사": -0.353,
+        "암살자": 0.479,
+        "스킬딜러": -0.315,
+        "원거리 딜러": -0.8,
+        "지원가": -1.025
+      }
+    },
+    "31_7": {
+      "characterCode": 31,
+      "characterName": "리오",
+      "weapon": 7,
+      "weaponName": "활",
+      "soloGames": 150312,
+      "soloAvgRP": 0.55,
+      "soloWinRate": 14.08,
+      "roles": ["원거리 딜러"],
+      "primaryRole": "원거리 딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 115600,
+          "rpLift": 0.137,
+          "winRateLift": 1.097
+        },
+        "전사": {
+          "games": 339044,
+          "rpLift": -0.59,
+          "winRateLift": -1.092
+        },
+        "암살자": {
+          "games": 18354,
+          "rpLift": -1.111,
+          "winRateLift": -2.68
+        },
+        "스킬딜러": {
+          "games": 152608,
+          "rpLift": -0.033,
+          "winRateLift": 1.45
+        },
+        "원거리 딜러": {
+          "games": 40341,
+          "rpLift": -1.498,
+          "winRateLift": 0.423
+        },
+        "지원가": {
+          "games": 18256,
+          "rpLift": -0.541,
+          "winRateLift": 3.034
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.706,
+        "전사": 0.479,
+        "암살자": 0.421,
+        "스킬딜러": 1.137,
+        "원거리 딜러": 0.027,
+        "지원가": 0.7
+      }
+    },
+    "32_5": {
+      "characterCode": 32,
+      "characterName": "윌리엄",
+      "weapon": 5,
+      "weaponName": "투척",
+      "soloGames": 54322,
+      "soloAvgRP": -0.09,
+      "soloWinRate": 15.27,
+      "roles": ["원거리 딜러"],
+      "primaryRole": "원거리 딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 34078,
+          "rpLift": 1.001,
+          "winRateLift": 1.437
+        },
+        "전사": {
+          "games": 136890,
+          "rpLift": 0.14,
+          "winRateLift": -0.931
+        },
+        "암살자": {
+          "games": 8976,
+          "rpLift": 0.839,
+          "winRateLift": -1.068
+        },
+        "스킬딜러": {
+          "games": 48522,
+          "rpLift": 0.3,
+          "winRateLift": 1.612
+        },
+        "원거리 딜러": {
+          "games": 13736,
+          "rpLift": 0.51,
+          "winRateLift": 0.825
+        },
+        "지원가": {
+          "games": 5415,
+          "rpLift": 1.216,
+          "winRateLift": 3.15
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 1.197,
+        "전사": 1.068,
+        "암살자": 1.809,
+        "스킬딜러": 1.439,
+        "원거리 딜러": 1.428,
+        "지원가": 1.619
+      }
+    },
+    "33_1": {
+      "characterCode": 33,
+      "characterName": "니키",
+      "weapon": 1,
+      "weaponName": "글러브",
+      "soloGames": 81133,
+      "soloAvgRP": 1.02,
+      "soloWinRate": 11.99,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 8955,
+          "rpLift": -0.94,
+          "winRateLift": -1.421
+        },
+        "전사": {
+          "games": 142562,
+          "rpLift": -0.528,
+          "winRateLift": -0.305
+        },
+        "암살자": {
+          "games": 15478,
+          "rpLift": -2.515,
+          "winRateLift": -1.546
+        },
+        "스킬딜러": {
+          "games": 108704,
+          "rpLift": -0.496,
+          "winRateLift": 0.679
+        },
+        "원거리 딜러": {
+          "games": 79398,
+          "rpLift": -1.055,
+          "winRateLift": 0.263
+        },
+        "지원가": {
+          "games": 11792,
+          "rpLift": -0.953,
+          "winRateLift": 1.84
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.065,
+        "전사": 0.27,
+        "암살자": -0.534,
+        "스킬딜러": 0.127,
+        "원거리 딜러": -0.066,
+        "지원가": -0.001
+      }
+    },
+    "34_23": {
+      "characterCode": 34,
+      "characterName": "나타폰",
+      "weapon": 23,
+      "weaponName": "카메라",
+      "soloGames": 54785,
+      "soloAvgRP": 3.59,
+      "soloWinRate": 14.25,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 28770,
+          "rpLift": -1.69,
+          "winRateLift": 0.322
+        },
+        "전사": {
+          "games": 134408,
+          "rpLift": -1.694,
+          "winRateLift": -0.842
+        },
+        "암살자": {
+          "games": 9561,
+          "rpLift": -3.285,
+          "winRateLift": -1.592
+        },
+        "스킬딜러": {
+          "games": 36861,
+          "rpLift": -1.589,
+          "winRateLift": 1.001
+        },
+        "원거리 딜러": {
+          "games": 37134,
+          "rpLift": -1.619,
+          "winRateLift": 1.742
+        },
+        "지원가": {
+          "games": 3388,
+          "rpLift": -3.815,
+          "winRateLift": -0.216
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.428,
+        "전사": -0.376,
+        "암살자": -0.677,
+        "스킬딜러": -0.094,
+        "원거리 딜러": -0.284,
+        "지원가": -0.652
+      }
+    },
+    "35_2": {
+      "characterCode": 35,
+      "characterName": "얀",
+      "weapon": 2,
+      "weaponName": "톤파",
+      "soloGames": 51686,
+      "soloAvgRP": -0.4,
+      "soloWinRate": 11.19,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 10148,
+          "rpLift": -1.044,
+          "winRateLift": -0.384
+        },
+        "전사": {
+          "games": 97540,
+          "rpLift": 0.35,
+          "winRateLift": -0.448
+        },
+        "암살자": {
+          "games": 9813,
+          "rpLift": 0.044,
+          "winRateLift": -1.148
+        },
+        "스킬딜러": {
+          "games": 63687,
+          "rpLift": 0.349,
+          "winRateLift": 0.33
+        },
+        "원거리 딜러": {
+          "games": 47235,
+          "rpLift": 0.981,
+          "winRateLift": 0.602
+        },
+        "지원가": {
+          "games": 7137,
+          "rpLift": 1.315,
+          "winRateLift": 1.905
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.019,
+        "전사": 0.717,
+        "암살자": 0.723,
+        "스킬딜러": 0.58,
+        "원거리 딜러": 0.884,
+        "지원가": 1.004
+      }
+    },
+    "35_1": {
+      "characterCode": 35,
+      "characterName": "얀",
+      "weapon": 1,
+      "weaponName": "글러브",
+      "soloGames": 45815,
+      "soloAvgRP": 0.86,
+      "soloWinRate": 12.41,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 9256,
+          "rpLift": -0.257,
+          "winRateLift": 0.553
+        },
+        "전사": {
+          "games": 86949,
+          "rpLift": -0.834,
+          "winRateLift": -0.637
+        },
+        "암살자": {
+          "games": 8730,
+          "rpLift": -0.1,
+          "winRateLift": -1.553
+        },
+        "스킬딜러": {
+          "games": 56956,
+          "rpLift": 0.005,
+          "winRateLift": 0.736
+        },
+        "원거리 딜러": {
+          "games": 40454,
+          "rpLift": -0.18,
+          "winRateLift": 0.29
+        },
+        "지원가": {
+          "games": 8980,
+          "rpLift": -1.317,
+          "winRateLift": 2.137
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.371,
+        "전사": 0.114,
+        "암살자": 0.652,
+        "스킬딜러": 0.396,
+        "원거리 딜러": 0.342,
+        "지원가": -0.162
+      }
+    },
+    "36_5": {
+      "characterCode": 36,
+      "characterName": "이바",
+      "weapon": 5,
+      "weaponName": "투척",
+      "soloGames": 62870,
+      "soloAvgRP": 1.59,
+      "soloWinRate": 15.79,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 40316,
+          "rpLift": -0.926,
+          "winRateLift": 0.82
+        },
+        "전사": {
+          "games": 146606,
+          "rpLift": -0.89,
+          "winRateLift": -1.075
+        },
+        "암살자": {
+          "games": 8716,
+          "rpLift": -1.562,
+          "winRateLift": -1.641
+        },
+        "스킬딜러": {
+          "games": 39404,
+          "rpLift": -0.731,
+          "winRateLift": 1.272
+        },
+        "원거리 딜러": {
+          "games": 41511,
+          "rpLift": -0.252,
+          "winRateLift": 2.054
+        },
+        "지원가": {
+          "games": 4614,
+          "rpLift": -2.055,
+          "winRateLift": 0.889
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.029,
+        "전사": 0.08,
+        "암살자": 0.124,
+        "스킬딜러": 0.359,
+        "원거리 딜러": 0.443,
+        "지원가": 0.072
+      }
+    },
+    "37_15": {
+      "characterCode": 37,
+      "characterName": "다니엘",
+      "weapon": 15,
+      "weaponName": "단검",
+      "soloGames": 45515,
+      "soloAvgRP": -0.73,
+      "soloWinRate": 11.44,
+      "roles": ["암살자"],
+      "primaryRole": "암살자",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 13930,
+          "rpLift": -0.384,
+          "winRateLift": -0.51
+        },
+        "전사": {
+          "games": 101056,
+          "rpLift": 0.787,
+          "winRateLift": -0.48
+        },
+        "암살자": {
+          "games": 5764,
+          "rpLift": -1.475,
+          "winRateLift": -2.407
+        },
+        "스킬딜러": {
+          "games": 50025,
+          "rpLift": 1.611,
+          "winRateLift": 0.809
+        },
+        "원거리 딜러": {
+          "games": 36516,
+          "rpLift": 0.777,
+          "winRateLift": 0.436
+        },
+        "지원가": {
+          "games": 3860,
+          "rpLift": -0.055,
+          "winRateLift": -0.325
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.313,
+        "전사": 0.29,
+        "암살자": -0.072,
+        "스킬딜러": 0.663,
+        "원거리 딜러": 0.291,
+        "지원가": 0.27
+      }
+    },
+    "38_9": {
+      "characterCode": 38,
+      "characterName": "제니",
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloGames": 22999,
+      "soloAvgRP": 0.63,
+      "soloWinRate": 16.8,
+      "roles": ["원거리 딜러"],
+      "primaryRole": "원거리 딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 11282,
+          "rpLift": 1.347,
+          "winRateLift": -0.352
+        },
+        "전사": {
+          "games": 51742,
+          "rpLift": -0.028,
+          "winRateLift": -0.85
+        },
+        "암살자": {
+          "games": 3285,
+          "rpLift": -2.12,
+          "winRateLift": -4.835
+        },
+        "스킬딜러": {
+          "games": 18954,
+          "rpLift": -0.882,
+          "winRateLift": 1.339
+        },
+        "원거리 딜러": {
+          "games": 7782,
+          "rpLift": -0.131,
+          "winRateLift": 0.375
+        },
+        "지원가": {
+          "games": 12033,
+          "rpLift": -1.706,
+          "winRateLift": 2.699
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 1.393,
+        "전사": 0.932,
+        "암살자": -0.298,
+        "스킬딜러": 0.367,
+        "원거리 딜러": 0.981,
+        "지원가": 0.09
+      }
+    },
+    "39_21": {
+      "characterCode": 39,
+      "characterName": "카밀로",
+      "weapon": 21,
+      "weaponName": "레이피어",
+      "soloGames": 57837,
+      "soloAvgRP": 3.37,
+      "soloWinRate": 14.71,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 15944,
+          "rpLift": -1.403,
+          "winRateLift": 2.027
+        },
+        "전사": {
+          "games": 112506,
+          "rpLift": -2.17,
+          "winRateLift": -0.825
+        },
+        "암살자": {
+          "games": 9618,
+          "rpLift": -2.245,
+          "winRateLift": -1.375
+        },
+        "스킬딜러": {
+          "games": 64948,
+          "rpLift": -1.901,
+          "winRateLift": 0.441
+        },
+        "원거리 딜러": {
+          "games": 46430,
+          "rpLift": -2.499,
+          "winRateLift": -0.249
+        },
+        "지원가": {
+          "games": 16180,
+          "rpLift": -2.058,
+          "winRateLift": 1.337
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.142,
+        "전사": -0.568,
+        "암살자": -0.401,
+        "스킬딜러": -0.627,
+        "원거리 딜러": -0.74,
+        "지원가": -0.491
+      }
+    },
+    "39_18": {
+      "characterCode": 39,
+      "characterName": "카밀로",
+      "weapon": 18,
+      "weaponName": "쌍검",
+      "soloGames": 38003,
+      "soloAvgRP": 1.02,
+      "soloWinRate": 14.11,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 14134,
+          "rpLift": 0.123,
+          "winRateLift": 0.503
+        },
+        "전사": {
+          "games": 74060,
+          "rpLift": -0.358,
+          "winRateLift": -0.761
+        },
+        "암살자": {
+          "games": 5378,
+          "rpLift": -3.554,
+          "winRateLift": -1.03
+        },
+        "스킬딜러": {
+          "games": 37692,
+          "rpLift": -0.079,
+          "winRateLift": 0.36
+        },
+        "원거리 딜러": {
+          "games": 26088,
+          "rpLift": -0.891,
+          "winRateLift": -0.862
+        },
+        "지원가": {
+          "games": 15506,
+          "rpLift": 1.827,
+          "winRateLift": 1.879
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.54,
+        "전사": 0.356,
+        "암살자": -1.044,
+        "스킬딜러": 0.351,
+        "원거리 딜러": 0.01,
+        "지원가": 1.231
+      }
+    },
+    "40_6": {
+      "characterCode": 40,
+      "characterName": "클로에",
+      "weapon": 6,
+      "weaponName": "암기",
+      "soloGames": 46499,
+      "soloAvgRP": 6.2,
+      "soloWinRate": 14.67,
+      "roles": ["원거리 딜러"],
+      "primaryRole": "원거리 딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 24814,
+          "rpLift": -4.852,
+          "winRateLift": 0.389
+        },
+        "전사": {
+          "games": 102087,
+          "rpLift": -4.448,
+          "winRateLift": -0.71
+        },
+        "암살자": {
+          "games": 6948,
+          "rpLift": -5.233,
+          "winRateLift": -2.56
+        },
+        "스킬딜러": {
+          "games": 49846,
+          "rpLift": -4.289,
+          "winRateLift": 1.028
+        },
+        "원거리 딜러": {
+          "games": 18196,
+          "rpLift": -5.353,
+          "winRateLift": 0.348
+        },
+        "지원가": {
+          "games": 5426,
+          "rpLift": -6.427,
+          "winRateLift": 2.25
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -2.129,
+        "전사": -2.635,
+        "암살자": -2.513,
+        "스킬딜러": -2.725,
+        "원거리 딜러": -2.663,
+        "지원가": -2.38
+      }
+    },
+    "41_24": {
+      "characterCode": 41,
+      "characterName": "요한",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "soloGames": 17892,
+      "soloAvgRP": 2.45,
+      "soloWinRate": 16.59,
+      "roles": ["지원가"],
+      "primaryRole": "지원가",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 2030,
+          "rpLift": -3.206,
+          "winRateLift": -2.621
+        },
+        "전사": {
+          "games": 51294,
+          "rpLift": -1.632,
+          "winRateLift": -0.225
+        },
+        "암살자": {
+          "games": 2140,
+          "rpLift": -1.997,
+          "winRateLift": -5.588
+        },
+        "스킬딜러": {
+          "games": 8379,
+          "rpLift": -2.065,
+          "winRateLift": -0.281
+        },
+        "원거리 딜러": {
+          "games": 15651,
+          "rpLift": -1.871,
+          "winRateLift": 2.176
+        },
+        "지원가": {
+          "games": 486,
+          "rpLift": -2.294,
+          "winRateLift": 2.236
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -1.39,
+        "전사": -1.099,
+        "암살자": -1.145,
+        "스킬딜러": -0.972,
+        "원거리 딜러": -1.173,
+        "지원가": 1.088
+      }
+    },
+    "42_24": {
+      "characterCode": 42,
+      "characterName": "비앙카",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "soloGames": 73329,
+      "soloAvgRP": 2.97,
+      "soloWinRate": 12.56,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 18939,
+          "rpLift": -2.414,
+          "winRateLift": 0.366
+        },
+        "전사": {
+          "games": 200038,
+          "rpLift": -1.782,
+          "winRateLift": -0.15
+        },
+        "암살자": {
+          "games": 16131,
+          "rpLift": -3.253,
+          "winRateLift": -1.401
+        },
+        "스킬딜러": {
+          "games": 45198,
+          "rpLift": -2.84,
+          "winRateLift": 0.074
+        },
+        "원거리 딜러": {
+          "games": 52521,
+          "rpLift": -1.988,
+          "winRateLift": 1.008
+        },
+        "지원가": {
+          "games": 3008,
+          "rpLift": -5.049,
+          "winRateLift": -0.489
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.86,
+        "전사": -0.426,
+        "암살자": -0.662,
+        "스킬딜러": -0.754,
+        "원거리 딜러": -0.48,
+        "지원가": -1.16
+      }
+    },
+    "43_5": {
+      "characterCode": 43,
+      "characterName": "셀린",
+      "weapon": 5,
+      "weaponName": "투척",
+      "soloGames": 38273,
+      "soloAvgRP": 4.22,
+      "soloWinRate": 15.25,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 24772,
+          "rpLift": -3.038,
+          "winRateLift": 0.773
+        },
+        "전사": {
+          "games": 82364,
+          "rpLift": -3.541,
+          "winRateLift": -0.927
+        },
+        "암살자": {
+          "games": 4382,
+          "rpLift": -1.176,
+          "winRateLift": -1.317
+        },
+        "스킬딜러": {
+          "games": 25502,
+          "rpLift": -4.452,
+          "winRateLift": -0.439
+        },
+        "원거리 딜러": {
+          "games": 30802,
+          "rpLift": -3.202,
+          "winRateLift": 1.367
+        },
+        "지원가": {
+          "games": 2162,
+          "rpLift": -4.869,
+          "winRateLift": -0.536
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -1.233,
+        "전사": -1.425,
+        "암살자": 0.303,
+        "스킬딜러": -1.604,
+        "원거리 딜러": -1.125,
+        "지원가": -1.086
+      }
+    },
+    "44_25": {
+      "characterCode": 44,
+      "characterName": "에키온",
+      "weapon": 25,
+      "weaponName": "VF의수",
+      "soloGames": 53707,
+      "soloAvgRP": -1.4,
+      "soloWinRate": 12.5,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 11799,
+          "rpLift": 3.654,
+          "winRateLift": 1.001
+        },
+        "전사": {
+          "games": 105316,
+          "rpLift": 1.322,
+          "winRateLift": -0.345
+        },
+        "암살자": {
+          "games": 10563,
+          "rpLift": 0.663,
+          "winRateLift": -0.488
+        },
+        "스킬딜러": {
+          "games": 62757,
+          "rpLift": 1.397,
+          "winRateLift": -0.063
+        },
+        "원거리 딜러": {
+          "games": 49683,
+          "rpLift": 1.113,
+          "winRateLift": 0.171
+        },
+        "지원가": {
+          "games": 8546,
+          "rpLift": 1.458,
+          "winRateLift": 1.718
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 2.119,
+        "전사": 1.213,
+        "암살자": 1.027,
+        "스킬딜러": 1.143,
+        "원거리 딜러": 0.945,
+        "지원가": 1.068
+      }
+    },
+    "45_4": {
+      "characterCode": 45,
+      "characterName": "마이",
+      "weapon": 4,
+      "weaponName": "채찍",
+      "soloGames": 33553,
+      "soloAvgRP": 1.2,
+      "soloWinRate": 14.65,
+      "roles": ["탱커", "지원가"],
+      "primaryRole": "탱커",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 146,
+          "rpLift": -12.45,
+          "winRateLift": -3.31
+        },
+        "전사": {
+          "games": 40707,
+          "rpLift": -0.491,
+          "winRateLift": -0.246
+        },
+        "암살자": {
+          "games": 7550,
+          "rpLift": -2.565,
+          "winRateLift": -1.216
+        },
+        "스킬딜러": {
+          "games": 46665,
+          "rpLift": -1.859,
+          "winRateLift": 0.33
+        },
+        "원거리 딜러": {
+          "games": 53739,
+          "rpLift": -1.028,
+          "winRateLift": 0.271
+        },
+        "지원가": {
+          "games": 3216,
+          "rpLift": -0.894,
+          "winRateLift": 1.207
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -2.863,
+        "전사": 0.296,
+        "암살자": -0.932,
+        "스킬딜러": -1.022,
+        "원거리 딜러": -0.432,
+        "지원가": -0.232
+      }
+    },
+    "46_16": {
+      "characterCode": 46,
+      "characterName": "에이든",
+      "weapon": 16,
+      "weaponName": "양손검",
+      "soloGames": 87798,
+      "soloAvgRP": 0.81,
+      "soloWinRate": 13.42,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 26271,
+          "rpLift": 0.146,
+          "winRateLift": 0.77
+        },
+        "전사": {
+          "games": 171966,
+          "rpLift": -0.461,
+          "winRateLift": -0.492
+        },
+        "암살자": {
+          "games": 14174,
+          "rpLift": -1.458,
+          "winRateLift": -1.803
+        },
+        "스킬딜러": {
+          "games": 101176,
+          "rpLift": -0.518,
+          "winRateLift": 0.445
+        },
+        "원거리 딜러": {
+          "games": 73077,
+          "rpLift": -0.456,
+          "winRateLift": 0.442
+        },
+        "지원가": {
+          "games": 12852,
+          "rpLift": 0.313,
+          "winRateLift": 1.402
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.551,
+        "전사": 0.304,
+        "암살자": -0.015,
+        "스킬딜러": 0.115,
+        "원거리 딜러": 0.213,
+        "지원가": 0.56
+      }
+    },
+    "47_4": {
+      "characterCode": 47,
+      "characterName": "라우라",
+      "weapon": 4,
+      "weaponName": "채찍",
+      "soloGames": 64262,
+      "soloAvgRP": 1.77,
+      "soloWinRate": 11.77,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 14158,
+          "rpLift": -1.124,
+          "winRateLift": 1.315
+        },
+        "전사": {
+          "games": 125994,
+          "rpLift": -1.74,
+          "winRateLift": -0.477
+        },
+        "암살자": {
+          "games": 11715,
+          "rpLift": -0.86,
+          "winRateLift": -1.014
+        },
+        "스킬딜러": {
+          "games": 78144,
+          "rpLift": -0.815,
+          "winRateLift": 0.411
+        },
+        "원거리 딜러": {
+          "games": 57610,
+          "rpLift": -1.995,
+          "winRateLift": 0.189
+        },
+        "지원가": {
+          "games": 9420,
+          "rpLift": -0.813,
+          "winRateLift": 1.862
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.017,
+        "전사": -0.348,
+        "암살자": 0.279,
+        "스킬딜러": -0.044,
+        "원거리 딜러": -0.505,
+        "지원가": 0.061
+      }
+    },
+    "48_3": {
+      "characterCode": 48,
+      "characterName": "띠아",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "soloGames": 60540,
+      "soloAvgRP": 2.82,
+      "soloWinRate": 12.32,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 25288,
+          "rpLift": -2.176,
+          "winRateLift": 0.576
+        },
+        "전사": {
+          "games": 133128,
+          "rpLift": -1.74,
+          "winRateLift": -0.272
+        },
+        "암살자": {
+          "games": 9756,
+          "rpLift": -4.298,
+          "winRateLift": -2.544
+        },
+        "스킬딜러": {
+          "games": 50434,
+          "rpLift": -2.001,
+          "winRateLift": 0.766
+        },
+        "원거리 딜러": {
+          "games": 49060,
+          "rpLift": -2.017,
+          "winRateLift": 0.877
+        },
+        "지원가": {
+          "games": 4546,
+          "rpLift": -3.979,
+          "winRateLift": 0.251
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.718,
+        "전사": -0.403,
+        "암살자": -1.147,
+        "스킬딜러": -0.311,
+        "원거리 딜러": -0.495,
+        "지원가": -0.72
+      }
+    },
+    "49_19": {
+      "characterCode": 49,
+      "characterName": "펠릭스",
+      "weapon": 19,
+      "weaponName": "창",
+      "soloGames": 59503,
+      "soloAvgRP": -1.61,
+      "soloWinRate": 13.4,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 18936,
+          "rpLift": 2.412,
+          "winRateLift": 0.985
+        },
+        "전사": {
+          "games": 112870,
+          "rpLift": 1.616,
+          "winRateLift": -0.56
+        },
+        "암살자": {
+          "games": 8854,
+          "rpLift": 0.11,
+          "winRateLift": -1.527
+        },
+        "스킬딜러": {
+          "games": 66525,
+          "rpLift": 1.663,
+          "winRateLift": 0.59
+        },
+        "원거리 딜러": {
+          "games": 45726,
+          "rpLift": 2.026,
+          "winRateLift": -0.103
+        },
+        "지원가": {
+          "games": 19068,
+          "rpLift": 0.942,
+          "winRateLift": 1.569
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 1.564,
+        "전사": 1.363,
+        "암살자": 0.755,
+        "스킬딜러": 1.285,
+        "원거리 딜러": 1.371,
+        "지원가": 0.839
+      }
+    },
+    "50_21": {
+      "characterCode": 50,
+      "characterName": "엘레나",
+      "weapon": 21,
+      "weaponName": "레이피어",
+      "soloGames": 43885,
+      "soloAvgRP": -0.35,
+      "soloWinRate": 13.12,
+      "roles": ["탱커"],
+      "primaryRole": "탱커",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 872,
+          "rpLift": 0.064,
+          "winRateLift": -2.104
+        },
+        "전사": {
+          "games": 82808,
+          "rpLift": 0.644,
+          "winRateLift": -0.09
+        },
+        "암살자": {
+          "games": 9765,
+          "rpLift": -0.883,
+          "winRateLift": -1.278
+        },
+        "스킬딜러": {
+          "games": 54390,
+          "rpLift": 0.07,
+          "winRateLift": -0.684
+        },
+        "원거리 딜러": {
+          "games": 50055,
+          "rpLift": 0.788,
+          "winRateLift": 0.546
+        },
+        "지원가": {
+          "games": 3594,
+          "rpLift": 0.478,
+          "winRateLift": 1.029
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.643,
+        "전사": 1.461,
+        "암살자": 0.615,
+        "스킬딜러": 0.907,
+        "원거리 딜러": 1.777,
+        "지원가": 0.972
+      }
+    },
+    "51_22": {
+      "characterCode": 51,
+      "characterName": "프리야",
+      "weapon": 22,
+      "weaponName": "기타",
+      "soloGames": 31370,
+      "soloAvgRP": -1.91,
+      "soloWinRate": 14.57,
+      "roles": ["스킬딜러", "지원가"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 6788,
+          "rpLift": 2.505,
+          "winRateLift": 0.769
+        },
+        "전사": {
+          "games": 69267,
+          "rpLift": 1.955,
+          "winRateLift": -0.65
+        },
+        "암살자": {
+          "games": 4326,
+          "rpLift": 2.431,
+          "winRateLift": -0.734
+        },
+        "스킬딜러": {
+          "games": 27592,
+          "rpLift": 0.639,
+          "winRateLift": 0.281
+        },
+        "원거리 딜러": {
+          "games": 33027,
+          "rpLift": 0.622,
+          "winRateLift": 0.754
+        },
+        "지원가": {
+          "games": 1320,
+          "rpLift": 2.108,
+          "winRateLift": -0.821
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 2.078,
+        "전사": 1.696,
+        "암살자": 1.978,
+        "스킬딜러": 1.081,
+        "원거리 딜러": 0.907,
+        "지원가": 1.786
+      }
+    },
+    "52_24": {
+      "characterCode": 52,
+      "characterName": "아디나",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "soloGames": 42952,
+      "soloAvgRP": 2.11,
+      "soloWinRate": 15.35,
+      "roles": ["스킬딜러", "지원가"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 25053,
+          "rpLift": -1.048,
+          "winRateLift": 1.51
+        },
+        "전사": {
+          "games": 102214,
+          "rpLift": -1.484,
+          "winRateLift": -0.797
+        },
+        "암살자": {
+          "games": 6184,
+          "rpLift": -0.96,
+          "winRateLift": -1.091
+        },
+        "스킬딜러": {
+          "games": 27303,
+          "rpLift": -1.822,
+          "winRateLift": -0.341
+        },
+        "원거리 딜러": {
+          "games": 32178,
+          "rpLift": -1.693,
+          "winRateLift": 1.525
+        },
+        "지원가": {
+          "games": 2784,
+          "rpLift": -0.891,
+          "winRateLift": 0.542
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.044,
+        "전사": -0.257,
+        "암살자": 0.403,
+        "스킬딜러": -0.217,
+        "원거리 딜러": -0.323,
+        "지원가": 0.552
+      }
+    },
+    "53_14": {
+      "characterCode": 53,
+      "characterName": "마커스",
+      "weapon": 14,
+      "weaponName": "도끼",
+      "soloGames": 68799,
+      "soloAvgRP": 0.15,
+      "soloWinRate": 13.92,
+      "roles": ["탱커", "전사"],
+      "primaryRole": "탱커",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 2026,
+          "rpLift": -1.19,
+          "winRateLift": -1.116
+        },
+        "전사": {
+          "games": 94202,
+          "rpLift": -0.116,
+          "winRateLift": -1.07
+        },
+        "암살자": {
+          "games": 11469,
+          "rpLift": -0.764,
+          "winRateLift": -0.895
+        },
+        "스킬딜러": {
+          "games": 99669,
+          "rpLift": 0.216,
+          "winRateLift": 0.415
+        },
+        "원거리 딜러": {
+          "games": 94034,
+          "rpLift": -0.46,
+          "winRateLift": 0.283
+        },
+        "지원가": {
+          "games": 13150,
+          "rpLift": 1.066,
+          "winRateLift": 0.998
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.292,
+        "전사": 0.681,
+        "암살자": 0.725,
+        "스킬딜러": 1.053,
+        "원거리 딜러": 0.259,
+        "지원가": 1.488
+      }
+    },
+    "53_13": {
+      "characterCode": 53,
+      "characterName": "마커스",
+      "weapon": 13,
+      "weaponName": "망치",
+      "soloGames": 61193,
+      "soloAvgRP": 1.8,
+      "soloWinRate": 13.86,
+      "roles": ["탱커", "전사"],
+      "primaryRole": "탱커",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 2055,
+          "rpLift": -1.924,
+          "winRateLift": -0.355
+        },
+        "전사": {
+          "games": 96110,
+          "rpLift": -1.715,
+          "winRateLift": -0.644
+        },
+        "암살자": {
+          "games": 10732,
+          "rpLift": -1.581,
+          "winRateLift": -2.512
+        },
+        "스킬딜러": {
+          "games": 81134,
+          "rpLift": -1.838,
+          "winRateLift": 0.502
+        },
+        "원거리 딜러": {
+          "games": 74625,
+          "rpLift": -1.358,
+          "winRateLift": 0.298
+        },
+        "지원가": {
+          "games": 15074,
+          "rpLift": -0.486,
+          "winRateLift": 1.506
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.086,
+        "전사": -0.959,
+        "암살자": -0.027,
+        "스킬딜러": -1.001,
+        "원거리 딜러": -0.833,
+        "지원가": 0.126
+      }
+    },
+    "54_8": {
+      "characterCode": 54,
+      "characterName": "칼라",
+      "weapon": 8,
+      "weaponName": "석궁",
+      "soloGames": 48217,
+      "soloAvgRP": -0.19,
+      "soloWinRate": 11.72,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 25558,
+          "rpLift": 0.534,
+          "winRateLift": 1.091
+        },
+        "전사": {
+          "games": 113782,
+          "rpLift": 0.466,
+          "winRateLift": -0.613
+        },
+        "암살자": {
+          "games": 8506,
+          "rpLift": -0.022,
+          "winRateLift": -1.546
+        },
+        "스킬딜러": {
+          "games": 39039,
+          "rpLift": 0.442,
+          "winRateLift": 1.259
+        },
+        "원거리 딜러": {
+          "games": 31152,
+          "rpLift": 0.344,
+          "winRateLift": 1.249
+        },
+        "지원가": {
+          "games": 4112,
+          "rpLift": 1.165,
+          "winRateLift": 2.254
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.901,
+        "전사": 0.85,
+        "암살자": 0.839,
+        "스킬딜러": 0.977,
+        "원거리 딜러": 0.76,
+        "지원가": 1.398
+      }
+    },
+    "55_14": {
+      "characterCode": 55,
+      "characterName": "에스텔",
+      "weapon": 14,
+      "weaponName": "도끼",
+      "soloGames": 74416,
+      "soloAvgRP": 2.46,
+      "soloWinRate": 14.28,
+      "roles": ["탱커", "전사"],
+      "primaryRole": "탱커",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 1023,
+          "rpLift": 0.332,
+          "winRateLift": -1.085
+        },
+        "전사": {
+          "games": 97268,
+          "rpLift": -1.471,
+          "winRateLift": -1.075
+        },
+        "암살자": {
+          "games": 13230,
+          "rpLift": -2.534,
+          "winRateLift": -2.07
+        },
+        "스킬딜러": {
+          "games": 106227,
+          "rpLift": -1.935,
+          "winRateLift": 0.529
+        },
+        "원거리 딜러": {
+          "games": 112880,
+          "rpLift": -1.472,
+          "winRateLift": 0.474
+        },
+        "지원가": {
+          "games": 6450,
+          "rpLift": -1.38,
+          "winRateLift": 2.348
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.718,
+        "전사": -0.709,
+        "암살자": -0.903,
+        "스킬딜러": -1.098,
+        "원거리 딜러": -0.972,
+        "지원가": -0.658
+      }
+    },
+    "56_20": {
+      "characterCode": 56,
+      "characterName": "피올로",
+      "weapon": 20,
+      "weaponName": "쌍절곤",
+      "soloGames": 61742,
+      "soloAvgRP": 3.52,
+      "soloWinRate": 12.78,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 14760,
+          "rpLift": -2.274,
+          "winRateLift": 0.461
+        },
+        "전사": {
+          "games": 124094,
+          "rpLift": -2.871,
+          "winRateLift": -0.767
+        },
+        "암살자": {
+          "games": 11078,
+          "rpLift": -2.839,
+          "winRateLift": -1.232
+        },
+        "스킬딜러": {
+          "games": 71322,
+          "rpLift": -1.811,
+          "winRateLift": 0.4
+        },
+        "원거리 딜러": {
+          "games": 54519,
+          "rpLift": -2.466,
+          "winRateLift": -0.207
+        },
+        "지원가": {
+          "games": 9624,
+          "rpLift": -2.704,
+          "winRateLift": 1.808
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.531,
+        "전사": -0.925,
+        "암살자": -0.693,
+        "스킬딜러": -0.578,
+        "원거리 딜러": -0.725,
+        "지원가": -0.777
+      }
+    },
+    "57_23": {
+      "characterCode": 57,
+      "characterName": "마르티나",
+      "weapon": 23,
+      "weaponName": "카메라",
+      "soloGames": 25167,
+      "soloAvgRP": 1.16,
+      "soloWinRate": 15.75,
+      "roles": ["원거리 딜러"],
+      "primaryRole": "원거리 딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 12078,
+          "rpLift": -1.45,
+          "winRateLift": 0.756
+        },
+        "전사": {
+          "games": 62919,
+          "rpLift": -0.833,
+          "winRateLift": -0.926
+        },
+        "암살자": {
+          "games": 4534,
+          "rpLift": -2.298,
+          "winRateLift": -1.457
+        },
+        "스킬딜러": {
+          "games": 23752,
+          "rpLift": -0.623,
+          "winRateLift": 1.029
+        },
+        "원거리 딜러": {
+          "games": 11097,
+          "rpLift": -0.655,
+          "winRateLift": 1.971
+        },
+        "지원가": {
+          "games": 1998,
+          "rpLift": -1.593,
+          "winRateLift": -0.058
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.196,
+        "전사": 0.282,
+        "암살자": -0.424,
+        "스킬딜러": 0.602,
+        "원거리 딜러": 0.615,
+        "지원가": 0.149
+      }
+    },
+    "58_10": {
+      "characterCode": 58,
+      "characterName": "헤이즈",
+      "weapon": 10,
+      "weaponName": "돌격 소총",
+      "soloGames": 125376,
+      "soloAvgRP": 0.6,
+      "soloWinRate": 13.16,
+      "roles": ["원거리 딜러"],
+      "primaryRole": "원거리 딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 76268,
+          "rpLift": -0.603,
+          "winRateLift": 0.693
+        },
+        "전사": {
+          "games": 305478,
+          "rpLift": -0.584,
+          "winRateLift": -0.851
+        },
+        "암살자": {
+          "games": 19341,
+          "rpLift": -0.386,
+          "winRateLift": -1.481
+        },
+        "스킬딜러": {
+          "games": 74684,
+          "rpLift": -0.994,
+          "winRateLift": 0.253
+        },
+        "원거리 딜러": {
+          "games": 92660,
+          "rpLift": -0.582,
+          "winRateLift": 2.111
+        },
+        "지원가": {
+          "games": 7522,
+          "rpLift": -1.98,
+          "winRateLift": 1.035
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.285,
+        "전사": 0.483,
+        "암살자": 0.937,
+        "스킬딜러": 0.265,
+        "원거리 딜러": 0.666,
+        "지원가": -0.053
+      }
+    },
+    "59_2": {
+      "characterCode": 59,
+      "characterName": "아이작",
+      "weapon": 2,
+      "weaponName": "톤파",
+      "soloGames": 98828,
+      "soloAvgRP": 1.39,
+      "soloWinRate": 12.82,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 20402,
+          "rpLift": -1.22,
+          "winRateLift": 0.554
+        },
+        "전사": {
+          "games": 185109,
+          "rpLift": -1.082,
+          "winRateLift": -0.549
+        },
+        "암살자": {
+          "games": 16914,
+          "rpLift": -1.717,
+          "winRateLift": -1.416
+        },
+        "스킬딜러": {
+          "games": 124454,
+          "rpLift": -0.824,
+          "winRateLift": 0.321
+        },
+        "원거리 딜러": {
+          "games": 94504,
+          "rpLift": -0.73,
+          "winRateLift": 0.396
+        },
+        "지원가": {
+          "games": 17840,
+          "rpLift": -0.317,
+          "winRateLift": 1.121
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.06,
+        "전사": -0.013,
+        "암살자": -0.142,
+        "스킬딜러": -0.049,
+        "원거리 딜러": 0.085,
+        "지원가": 0.281
+      }
+    },
+    "60_6": {
+      "characterCode": 60,
+      "characterName": "타지아",
+      "weapon": 6,
+      "weaponName": "암기",
+      "soloGames": 27463,
+      "soloAvgRP": -0.5,
+      "soloWinRate": 14.23,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 9072,
+          "rpLift": -0.03,
+          "winRateLift": -0.457
+        },
+        "전사": {
+          "games": 55230,
+          "rpLift": 1.08,
+          "winRateLift": -0.678
+        },
+        "암살자": {
+          "games": 4032,
+          "rpLift": -0.475,
+          "winRateLift": -2.141
+        },
+        "스킬딜러": {
+          "games": 25144,
+          "rpLift": 1.319,
+          "winRateLift": 0.285
+        },
+        "원거리 딜러": {
+          "games": 21183,
+          "rpLift": 1.628,
+          "winRateLift": 1.187
+        },
+        "지원가": {
+          "games": 7652,
+          "rpLift": 1.057,
+          "winRateLift": 1.57
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.564,
+        "전사": 1.199,
+        "암살자": 0.628,
+        "스킬딜러": 1.44,
+        "원거리 딜러": 1.442,
+        "지원가": 1.354
+      }
+    },
+    "61_5": {
+      "characterCode": 61,
+      "characterName": "이렘",
+      "weapon": 5,
+      "weaponName": "투척",
+      "soloGames": 46999,
+      "soloAvgRP": 2.67,
+      "soloWinRate": 13.07,
+      "roles": ["전사", "스킬딜러"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 15674,
+          "rpLift": -1.723,
+          "winRateLift": 0.95
+        },
+        "전사": {
+          "games": 98450,
+          "rpLift": -2.111,
+          "winRateLift": -0.595
+        },
+        "암살자": {
+          "games": 7992,
+          "rpLift": -0.579,
+          "winRateLift": -1.526
+        },
+        "스킬딜러": {
+          "games": 47493,
+          "rpLift": -1.925,
+          "winRateLift": 1.006
+        },
+        "원거리 딜러": {
+          "games": 40263,
+          "rpLift": -1.735,
+          "winRateLift": 0.319
+        },
+        "지원가": {
+          "games": 4263,
+          "rpLift": -1.473,
+          "winRateLift": 2.024
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.285,
+        "전사": -0.537,
+        "암살자": 0.417,
+        "스킬딜러": -0.639,
+        "원거리 딜러": -0.384,
+        "지원가": -0.231
+      }
+    },
+    "62_11": {
+      "characterCode": 62,
+      "characterName": "테오도르",
+      "weapon": 11,
+      "weaponName": "저격총",
+      "soloGames": 64732,
+      "soloAvgRP": 0.54,
+      "soloWinRate": 15.61,
+      "roles": ["원거리 딜러", "지원가"],
+      "primaryRole": "원거리 딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 37206,
+          "rpLift": 0.967,
+          "winRateLift": 1.184
+        },
+        "전사": {
+          "games": 200580,
+          "rpLift": 0.519,
+          "winRateLift": -0.278
+        },
+        "암살자": {
+          "games": 9884,
+          "rpLift": -0.998,
+          "winRateLift": -2.024
+        },
+        "스킬딜러": {
+          "games": 25752,
+          "rpLift": -0.868,
+          "winRateLift": -0.14
+        },
+        "원거리 딜러": {
+          "games": 21471,
+          "rpLift": -0.116,
+          "winRateLift": 2.429
+        },
+        "지원가": {
+          "games": 3416,
+          "rpLift": 0.97,
+          "winRateLift": 1.65
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 1.177,
+        "전사": 1.374,
+        "암살자": 0.501,
+        "스킬딜러": 0.379,
+        "원거리 딜러": 0.992,
+        "지원가": 1.49
+      }
+    },
+    "63_15": {
+      "characterCode": 63,
+      "characterName": "이안",
+      "weapon": 15,
+      "weaponName": "단검",
+      "soloGames": 57261,
+      "soloAvgRP": 2.94,
+      "soloWinRate": 14.94,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 15170,
+          "rpLift": -0.744,
+          "winRateLift": 0.378
+        },
+        "전사": {
+          "games": 105292,
+          "rpLift": -1.444,
+          "winRateLift": -0.692
+        },
+        "암살자": {
+          "games": 8350,
+          "rpLift": -4.135,
+          "winRateLift": -3.119
+        },
+        "스킬딜러": {
+          "games": 66890,
+          "rpLift": -1.265,
+          "winRateLift": 0.478
+        },
+        "원거리 딜러": {
+          "games": 50904,
+          "rpLift": -1.308,
+          "winRateLift": 0.415
+        },
+        "지원가": {
+          "games": 15852,
+          "rpLift": -2.23,
+          "winRateLift": 1.279
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.153,
+        "전사": -0.197,
+        "암살자": -1.33,
+        "스킬딜러": -0.285,
+        "원거리 딜러": -0.184,
+        "지원가": -0.567
+      }
+    },
+    "64_24": {
+      "characterCode": 64,
+      "characterName": "바냐",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "soloGames": 85362,
+      "soloAvgRP": 3.54,
+      "soloWinRate": 14.54,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 27196,
+          "rpLift": -1.816,
+          "winRateLift": 1.626
+        },
+        "전사": {
+          "games": 163628,
+          "rpLift": -2.071,
+          "winRateLift": -0.284
+        },
+        "암살자": {
+          "games": 13284,
+          "rpLift": -3.805,
+          "winRateLift": -2.56
+        },
+        "스킬딜러": {
+          "games": 91286,
+          "rpLift": -3.019,
+          "winRateLift": -0.12
+        },
+        "원거리 딜러": {
+          "games": 77823,
+          "rpLift": -2.451,
+          "winRateLift": 0.187
+        },
+        "지원가": {
+          "games": 13592,
+          "rpLift": -2.761,
+          "winRateLift": 1.485
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.326,
+        "전사": -0.517,
+        "암살자": -1.167,
+        "스킬딜러": -1.226,
+        "원거리 딜러": -0.718,
+        "지원가": -0.802
+      }
+    },
+    "65_16": {
+      "characterCode": 65,
+      "characterName": "데비&마를렌",
+      "weapon": 16,
+      "weaponName": "양손검",
+      "soloGames": 161968,
+      "soloAvgRP": -0.23,
+      "soloWinRate": 12.22,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 35498,
+          "rpLift": 0.578,
+          "winRateLift": 1.186
+        },
+        "전사": {
+          "games": 292677,
+          "rpLift": -0.096,
+          "winRateLift": -0.413
+        },
+        "암살자": {
+          "games": 26283,
+          "rpLift": -0.639,
+          "winRateLift": -1.089
+        },
+        "스킬딜러": {
+          "games": 198940,
+          "rpLift": -0.134,
+          "winRateLift": 0.091
+        },
+        "원거리 딜러": {
+          "games": 154966,
+          "rpLift": 0.019,
+          "winRateLift": 0.054
+        },
+        "지원가": {
+          "games": 32114,
+          "rpLift": -0.841,
+          "winRateLift": 0.442
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.744,
+        "전사": 0.49,
+        "암살자": 0.388,
+        "스킬딜러": 0.321,
+        "원거리 딜러": 0.435,
+        "지원가": 0.049
+      }
+    },
+    "66_24": {
+      "characterCode": 66,
+      "characterName": "아르다",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "soloGames": 52687,
+      "soloAvgRP": 2.73,
+      "soloWinRate": 14,
+      "roles": ["스킬딜러", "지원가"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 17234,
+          "rpLift": -2.195,
+          "winRateLift": 0.04
+        },
+        "전사": {
+          "games": 155332,
+          "rpLift": -1.879,
+          "winRateLift": -0.536
+        },
+        "암살자": {
+          "games": 9680,
+          "rpLift": -2.864,
+          "winRateLift": -2.022
+        },
+        "스킬딜러": {
+          "games": 25924,
+          "rpLift": -3.093,
+          "winRateLift": 0.731
+        },
+        "원거리 딜러": {
+          "games": 29168,
+          "rpLift": -1.569,
+          "winRateLift": 2.441
+        },
+        "지원가": {
+          "games": 1118,
+          "rpLift": -0.401,
+          "winRateLift": 2.509
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.729,
+        "전사": -0.482,
+        "암살자": -0.481,
+        "스킬딜러": -0.887,
+        "원거리 딜러": -0.257,
+        "지원가": 0.753
+      }
+    },
+    "67_14": {
+      "characterCode": 67,
+      "characterName": "아비게일",
+      "weapon": 14,
+      "weaponName": "도끼",
+      "soloGames": 140451,
+      "soloAvgRP": 2.51,
+      "soloWinRate": 12.99,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 45117,
+          "rpLift": -1.51,
+          "winRateLift": 0.833
+        },
+        "전사": {
+          "games": 276292,
+          "rpLift": -1.88,
+          "winRateLift": -0.262
+        },
+        "암살자": {
+          "games": 20823,
+          "rpLift": -2.167,
+          "winRateLift": -2.624
+        },
+        "스킬딜러": {
+          "games": 158202,
+          "rpLift": -1.578,
+          "winRateLift": 0.315
+        },
+        "원거리 딜러": {
+          "games": 118143,
+          "rpLift": -1.501,
+          "winRateLift": 0.23
+        },
+        "지원가": {
+          "games": 22786,
+          "rpLift": -1.485,
+          "winRateLift": 0.992
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.19,
+        "전사": -0.42,
+        "암살자": -0.363,
+        "스킬딜러": -0.453,
+        "원거리 딜러": -0.274,
+        "지원가": -0.237
+      }
+    },
+    "68_1": {
+      "characterCode": 68,
+      "characterName": "알론소",
+      "weapon": 1,
+      "weaponName": "글러브",
+      "soloGames": 47033,
+      "soloAvgRP": 1.67,
+      "soloWinRate": 15.49,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 308,
+          "rpLift": -9.29,
+          "winRateLift": -2.81
+        },
+        "전사": {
+          "games": 49268,
+          "rpLift": -1.445,
+          "winRateLift": -1.044
+        },
+        "암살자": {
+          "games": 6238,
+          "rpLift": -0.608,
+          "winRateLift": -2.003
+        },
+        "스킬딜러": {
+          "games": 77416,
+          "rpLift": -1.415,
+          "winRateLift": 0.482
+        },
+        "원거리 딜러": {
+          "games": 73401,
+          "rpLift": -1.221,
+          "winRateLift": 0.316
+        },
+        "지원가": {
+          "games": 5214,
+          "rpLift": -3.01,
+          "winRateLift": 0.592
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -3.667,
+        "전사": -0.198,
+        "암살자": 0.403,
+        "스킬딜러": -0.366,
+        "원거리 딜러": -0.144,
+        "지원가": -0.913
+      }
+    },
+    "69_9": {
+      "characterCode": 69,
+      "characterName": "레니",
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloGames": 58564,
+      "soloAvgRP": -1.45,
+      "soloWinRate": 12.68,
+      "roles": ["지원가"],
+      "primaryRole": "지원가",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 10138,
+          "rpLift": 1.789,
+          "winRateLift": 1.096
+        },
+        "전사": {
+          "games": 209733,
+          "rpLift": 0.987,
+          "winRateLift": 0.007
+        },
+        "암살자": {
+          "games": 12346,
+          "rpLift": -0.404,
+          "winRateLift": -1.876
+        },
+        "스킬딜러": {
+          "games": 14226,
+          "rpLift": -0.598,
+          "winRateLift": -0.196
+        },
+        "원거리 딜러": {
+          "games": 15621,
+          "rpLift": 0.568,
+          "winRateLift": -0.186
+        },
+        "지원가": {
+          "games": 942,
+          "rpLift": -6.073,
+          "winRateLift": -3.604
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.468,
+        "전사": -0.222,
+        "암살자": -0.148,
+        "스킬딜러": -0.404,
+        "원거리 딜러": -0.097,
+        "지원가": -1.327
+      }
+    },
+    "70_6": {
+      "characterCode": 70,
+      "characterName": "츠바메",
+      "weapon": 6,
+      "weaponName": "암기",
+      "soloGames": 96447,
+      "soloAvgRP": 2.34,
+      "soloWinRate": 12.83,
+      "roles": ["원거리 딜러"],
+      "primaryRole": "원거리 딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 51712,
+          "rpLift": -0.702,
+          "winRateLift": 1.278
+        },
+        "전사": {
+          "games": 248121,
+          "rpLift": -1.21,
+          "winRateLift": -0.682
+        },
+        "암살자": {
+          "games": 17910,
+          "rpLift": -2.093,
+          "winRateLift": -1.777
+        },
+        "스킬딜러": {
+          "games": 89550,
+          "rpLift": -0.827,
+          "winRateLift": 1.537
+        },
+        "원거리 딜러": {
+          "games": 25808,
+          "rpLift": -1.699,
+          "winRateLift": 0.528
+        },
+        "지원가": {
+          "games": 8343,
+          "rpLift": -2.449,
+          "winRateLift": 1.286
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.229,
+        "전사": -0.022,
+        "암살자": -0.278,
+        "스킬딜러": 0.417,
+        "원거리 딜러": -0.113,
+        "지원가": -0.299
+      }
+    },
+    "71_14": {
+      "characterCode": 71,
+      "characterName": "케네스",
+      "weapon": 14,
+      "weaponName": "도끼",
+      "soloGames": 74463,
+      "soloAvgRP": -1.38,
+      "soloWinRate": 12.62,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 11112,
+          "rpLift": 0.22,
+          "winRateLift": 0.475
+        },
+        "전사": {
+          "games": 130884,
+          "rpLift": 0.838,
+          "winRateLift": -0.566
+        },
+        "암살자": {
+          "games": 12168,
+          "rpLift": 0.393,
+          "winRateLift": -0.799
+        },
+        "스킬딜러": {
+          "games": 89626,
+          "rpLift": 1.024,
+          "winRateLift": 0.148
+        },
+        "원거리 딜러": {
+          "games": 69214,
+          "rpLift": 0.479,
+          "winRateLift": 0.271
+        },
+        "지원가": {
+          "games": 28635,
+          "rpLift": 1.02,
+          "winRateLift": 1.022
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.584,
+        "전사": 0.966,
+        "암살자": 0.894,
+        "스킬딜러": 0.943,
+        "원거리 딜러": 0.65,
+        "지원가": 0.874
+      }
+    },
+    "72_11": {
+      "characterCode": 72,
+      "characterName": "카티야",
+      "weapon": 11,
+      "weaponName": "저격총",
+      "soloGames": 194101,
+      "soloAvgRP": 0.36,
+      "soloWinRate": 13.21,
+      "roles": ["원거리 딜러"],
+      "primaryRole": "원거리 딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 139904,
+          "rpLift": -0.176,
+          "winRateLift": 0.779
+        },
+        "전사": {
+          "games": 431686,
+          "rpLift": -0.555,
+          "winRateLift": -1.195
+        },
+        "암살자": {
+          "games": 24210,
+          "rpLift": -0.649,
+          "winRateLift": -1.904
+        },
+        "스킬딜러": {
+          "games": 203176,
+          "rpLift": -0.146,
+          "winRateLift": 1.782
+        },
+        "원거리 딜러": {
+          "games": 55809,
+          "rpLift": -0.662,
+          "winRateLift": 1.515
+        },
+        "지원가": {
+          "games": 18676,
+          "rpLift": -1.324,
+          "winRateLift": 1.23
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.528,
+        "전사": 0.507,
+        "암살자": 0.749,
+        "스킬딜러": 1.034,
+        "원거리 딜러": 0.611,
+        "지원가": 0.29
+      }
+    },
+    "73_24": {
+      "characterCode": 73,
+      "characterName": "샬럿",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "soloGames": 16019,
+      "soloAvgRP": -6.57,
+      "soloWinRate": 15.22,
+      "roles": ["지원가"],
+      "primaryRole": "지원가",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 1330,
+          "rpLift": 3.007,
+          "winRateLift": -2.819
+        },
+        "전사": {
+          "games": 38894,
+          "rpLift": 5.595,
+          "winRateLift": -0.682
+        },
+        "암살자": {
+          "games": 2559,
+          "rpLift": 1.896,
+          "winRateLift": -2.968
+        },
+        "스킬딜러": {
+          "games": 7692,
+          "rpLift": 4.004,
+          "winRateLift": 0.186
+        },
+        "원거리 딜러": {
+          "games": 15524,
+          "rpLift": 3.668,
+          "winRateLift": 1.846
+        },
+        "지원가": {
+          "games": 496,
+          "rpLift": -3.62,
+          "winRateLift": -8.876
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.922,
+        "전사": 1.321,
+        "암살자": 1.292,
+        "스킬딜러": 1.376,
+        "원거리 딜러": 1.27,
+        "지원가": 0.24
+      }
+    },
+    "74_3": {
+      "characterCode": 74,
+      "characterName": "다르코",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "soloGames": 124875,
+      "soloAvgRP": 0.8,
+      "soloWinRate": 12.65,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 13878,
+          "rpLift": 0.54,
+          "winRateLift": 0.395
+        },
+        "전사": {
+          "games": 189920,
+          "rpLift": -0.653,
+          "winRateLift": -0.783
+        },
+        "암살자": {
+          "games": 19434,
+          "rpLift": -0.662,
+          "winRateLift": -1.905
+        },
+        "스킬딜러": {
+          "games": 171333,
+          "rpLift": -0.135,
+          "winRateLift": 0.57
+        },
+        "원거리 딜러": {
+          "games": 155532,
+          "rpLift": -0.151,
+          "winRateLift": 0.378
+        },
+        "지원가": {
+          "games": 16406,
+          "rpLift": -1.354,
+          "winRateLift": 0.998
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.727,
+        "전사": 0.206,
+        "암살자": 0.376,
+        "스킬딜러": 0.321,
+        "원거리 딜러": 0.356,
+        "지원가": -0.179
+      }
+    },
+    "75_22": {
+      "characterCode": 75,
+      "characterName": "르노어",
+      "weapon": 22,
+      "weaponName": "기타",
+      "soloGames": 80139,
+      "soloAvgRP": 3.92,
+      "soloWinRate": 14.73,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 46972,
+          "rpLift": -1.976,
+          "winRateLift": 1.04
+        },
+        "전사": {
+          "games": 201714,
+          "rpLift": -2.803,
+          "winRateLift": -0.691
+        },
+        "암살자": {
+          "games": 12664,
+          "rpLift": -4.409,
+          "winRateLift": -3.216
+        },
+        "스킬딜러": {
+          "games": 45672,
+          "rpLift": -3.059,
+          "winRateLift": -0.348
+        },
+        "원거리 딜러": {
+          "games": 57804,
+          "rpLift": -1.88,
+          "winRateLift": 2.042
+        },
+        "지원가": {
+          "games": 4941,
+          "rpLift": -4.68,
+          "winRateLift": 0.571
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.599,
+        "전사": -1.006,
+        "암살자": -1.199,
+        "스킬딜러": -0.869,
+        "원거리 딜러": -0.423,
+        "지원가": -1.008
+      }
+    },
+    "76_3": {
+      "characterCode": 76,
+      "characterName": "가넷",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "soloGames": 66481,
+      "soloAvgRP": 0.49,
+      "soloWinRate": 13.24,
+      "roles": ["탱커", "전사"],
+      "primaryRole": "탱커",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 1096,
+          "rpLift": -0.306,
+          "winRateLift": -1.065
+        },
+        "전사": {
+          "games": 83166,
+          "rpLift": -0.851,
+          "winRateLift": -1.427
+        },
+        "암살자": {
+          "games": 9159,
+          "rpLift": -2.314,
+          "winRateLift": -2.596
+        },
+        "스킬딜러": {
+          "games": 102596,
+          "rpLift": 0.347,
+          "winRateLift": 0.741
+        },
+        "원거리 딜러": {
+          "games": 96681,
+          "rpLift": -0.013,
+          "winRateLift": 0.368
+        },
+        "지원가": {
+          "games": 7566,
+          "rpLift": -0.855,
+          "winRateLift": 0.913
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.54,
+        "전사": -0.073,
+        "암살자": -0.701,
+        "스킬딜러": 1.184,
+        "원거리 딜러": 0.803,
+        "지원가": -0.197
+      }
+    },
+    "77_24": {
+      "characterCode": 77,
+      "characterName": "유민",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "soloGames": 97829,
+      "soloAvgRP": 3.73,
+      "soloWinRate": 14.39,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 53012,
+          "rpLift": -2.263,
+          "winRateLift": 0.904
+        },
+        "전사": {
+          "games": 237178,
+          "rpLift": -2.629,
+          "winRateLift": -0.403
+        },
+        "암살자": {
+          "games": 15675,
+          "rpLift": -2.702,
+          "winRateLift": -1.682
+        },
+        "스킬딜러": {
+          "games": 61638,
+          "rpLift": -3.324,
+          "winRateLift": -0.003
+        },
+        "원거리 딜러": {
+          "games": 65326,
+          "rpLift": -3.161,
+          "winRateLift": 0.934
+        },
+        "지원가": {
+          "games": 8884,
+          "rpLift": -2.706,
+          "winRateLift": 1.901
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.77,
+        "전사": -0.907,
+        "암살자": -0.406,
+        "스킬딜러": -1.009,
+        "원거리 딜러": -1.104,
+        "지원가": -0.196
+      }
+    },
+    "78_16": {
+      "characterCode": 78,
+      "characterName": "히스이",
+      "weapon": 16,
+      "weaponName": "양손검",
+      "soloGames": 150471,
+      "soloAvgRP": -1.49,
+      "soloWinRate": 12.41,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 46892,
+          "rpLift": 1.661,
+          "winRateLift": 1.056
+        },
+        "전사": {
+          "games": 278913,
+          "rpLift": 1.069,
+          "winRateLift": -0.202
+        },
+        "암살자": {
+          "games": 22725,
+          "rpLift": -0.044,
+          "winRateLift": -1.579
+        },
+        "스킬딜러": {
+          "games": 161282,
+          "rpLift": 1.202,
+          "winRateLift": 0.158
+        },
+        "원거리 딜러": {
+          "games": 119475,
+          "rpLift": 1.239,
+          "winRateLift": -0.042
+        },
+        "지원가": {
+          "games": 40032,
+          "rpLift": 1.088,
+          "winRateLift": 1.643
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 1.228,
+        "전사": 1.084,
+        "암살자": 0.68,
+        "스킬딜러": 1.038,
+        "원거리 딜러": 1.004,
+        "지원가": 0.904
+      }
+    },
+    "79_8": {
+      "characterCode": 79,
+      "characterName": "유스티나",
+      "weapon": 8,
+      "weaponName": "석궁",
+      "soloGames": 86317,
+      "soloAvgRP": -2.66,
+      "soloWinRate": 12.12,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 45626,
+          "rpLift": 1.431,
+          "winRateLift": 0.587
+        },
+        "전사": {
+          "games": 207364,
+          "rpLift": 1.886,
+          "winRateLift": -0.747
+        },
+        "암살자": {
+          "games": 15153,
+          "rpLift": 2.184,
+          "winRateLift": -1.418
+        },
+        "스킬딜러": {
+          "games": 53085,
+          "rpLift": 1.588,
+          "winRateLift": 0.561
+        },
+        "원거리 딜러": {
+          "games": 73326,
+          "rpLift": 2.09,
+          "winRateLift": 1.489
+        },
+        "지원가": {
+          "games": 5958,
+          "rpLift": 0.655,
+          "winRateLift": 0.115
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 1.437,
+        "전사": 1.656,
+        "암살자": 1.863,
+        "스킬딜러": 1.582,
+        "원거리 딜러": 1.688,
+        "지원가": 1.188
+      }
+    },
+    "80_19": {
+      "characterCode": 80,
+      "characterName": "이슈트반",
+      "weapon": 19,
+      "weaponName": "창",
+      "soloGames": 75778,
+      "soloAvgRP": 1.99,
+      "soloWinRate": 11.34,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 20104,
+          "rpLift": -2.209,
+          "winRateLift": 0.203
+        },
+        "전사": {
+          "games": 154413,
+          "rpLift": -1.631,
+          "winRateLift": -0.209
+        },
+        "암살자": {
+          "games": 13032,
+          "rpLift": -2.941,
+          "winRateLift": -0.44
+        },
+        "스킬딜러": {
+          "games": 89187,
+          "rpLift": -1.401,
+          "winRateLift": 0.184
+        },
+        "원거리 딜러": {
+          "games": 63862,
+          "rpLift": -1.048,
+          "winRateLift": 0.125
+        },
+        "지원가": {
+          "games": 10245,
+          "rpLift": -2.016,
+          "winRateLift": -0.594
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.502,
+        "전사": -0.293,
+        "암살자": -0.743,
+        "스킬딜러": -0.358,
+        "원거리 딜러": -0.063,
+        "지원가": -0.472
+      }
+    },
+    "81_9": {
+      "characterCode": 81,
+      "characterName": "니아",
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloGames": 74596,
+      "soloAvgRP": 2.03,
+      "soloWinRate": 13.6,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 34228,
+          "rpLift": -1.371,
+          "winRateLift": 0.606
+        },
+        "전사": {
+          "games": 203682,
+          "rpLift": -1.525,
+          "winRateLift": -0.37
+        },
+        "암살자": {
+          "games": 13008,
+          "rpLift": -1.235,
+          "winRateLift": -2.379
+        },
+        "스킬딜러": {
+          "games": 38610,
+          "rpLift": -1.457,
+          "winRateLift": 0.363
+        },
+        "원거리 딜러": {
+          "games": 40947,
+          "rpLift": -1.529,
+          "winRateLift": 1.703
+        },
+        "지원가": {
+          "games": 3268,
+          "rpLift": -6.869,
+          "winRateLift": -0.89
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.237,
+        "전사": -0.281,
+        "암살자": 0.275,
+        "스킬딜러": -0.024,
+        "원거리 딜러": -0.236,
+        "지원가": -1.909
+      }
+    },
+    "82_21": {
+      "characterCode": 82,
+      "characterName": "슈린",
+      "weapon": 21,
+      "weaponName": "레이피어",
+      "soloGames": 63710,
+      "soloAvgRP": 2.6,
+      "soloWinRate": 11.3,
+      "roles": ["전사", "암살자"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 19959,
+          "rpLift": -1.926,
+          "winRateLift": 0.867
+        },
+        "전사": {
+          "games": 128390,
+          "rpLift": -1.94,
+          "winRateLift": -0.34
+        },
+        "암살자": {
+          "games": 9018,
+          "rpLift": -2.097,
+          "winRateLift": -1.319
+        },
+        "스킬딜러": {
+          "games": 72616,
+          "rpLift": -2.262,
+          "winRateLift": 0.348
+        },
+        "원거리 딜러": {
+          "games": 50928,
+          "rpLift": -2.17,
+          "winRateLift": 0.077
+        },
+        "지원가": {
+          "games": 13491,
+          "rpLift": -2.247,
+          "winRateLift": 1.119
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.376,
+        "전사": -0.45,
+        "암살자": -0.329,
+        "스킬딜러": -0.82,
+        "원거리 딜러": -0.587,
+        "지원가": -0.574
+      }
+    },
+    "83_6": {
+      "characterCode": 83,
+      "characterName": "헨리",
+      "weapon": 6,
+      "weaponName": "암기",
+      "soloGames": 81897,
+      "soloAvgRP": 3.08,
+      "soloWinRate": 14.41,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 29266,
+          "rpLift": -1.854,
+          "winRateLift": 0.454
+        },
+        "전사": {
+          "games": 166784,
+          "rpLift": -2.018,
+          "winRateLift": -0.731
+        },
+        "암살자": {
+          "games": 12874,
+          "rpLift": -1.857,
+          "winRateLift": -1.733
+        },
+        "스킬딜러": {
+          "games": 73743,
+          "rpLift": -2.386,
+          "winRateLift": 0.105
+        },
+        "원거리 딜러": {
+          "games": 82122,
+          "rpLift": -2.043,
+          "winRateLift": 1.488
+        },
+        "지원가": {
+          "games": 4768,
+          "rpLift": -3.669,
+          "winRateLift": 0.752
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.526,
+        "전사": -0.56,
+        "암살자": -0.013,
+        "스킬딜러": -0.514,
+        "원거리 딜러": -0.509,
+        "지원가": -0.592
+      }
+    },
+    "84_18": {
+      "characterCode": 84,
+      "characterName": "블레어",
+      "weapon": 18,
+      "weaponName": "쌍검",
+      "soloGames": 102752,
+      "soloAvgRP": -0.59,
+      "soloWinRate": 12.46,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 30990,
+          "rpLift": 0.372,
+          "winRateLift": 1.195
+        },
+        "전사": {
+          "games": 201690,
+          "rpLift": 0.199,
+          "winRateLift": -0.335
+        },
+        "암살자": {
+          "games": 16340,
+          "rpLift": 0.957,
+          "winRateLift": -2.031
+        },
+        "스킬딜러": {
+          "games": 106652,
+          "rpLift": 0.742,
+          "winRateLift": 0.353
+        },
+        "원거리 딜러": {
+          "games": 77132,
+          "rpLift": 0.084,
+          "winRateLift": 0.119
+        },
+        "지원가": {
+          "games": 41678,
+          "rpLift": 0.293,
+          "winRateLift": 1.427
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 0.652,
+        "전사": 0.64,
+        "암살자": 1.171,
+        "스킬딜러": 0.791,
+        "원거리 딜러": 0.465,
+        "지원가": 0.551
+      }
+    },
+    "85_13": {
+      "characterCode": 85,
+      "characterName": "미르카",
+      "weapon": 13,
+      "weaponName": "망치",
+      "soloGames": 89982,
+      "soloAvgRP": -0.61,
+      "soloWinRate": 13.61,
+      "roles": ["탱커", "전사"],
+      "primaryRole": "탱커",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 1902,
+          "rpLift": 1.585,
+          "winRateLift": -1.542
+        },
+        "전사": {
+          "games": 136650,
+          "rpLift": 0.398,
+          "winRateLift": 0.163
+        },
+        "암살자": {
+          "games": 15441,
+          "rpLift": 0.799,
+          "winRateLift": -0.645
+        },
+        "스킬딜러": {
+          "games": 122690,
+          "rpLift": 0.183,
+          "winRateLift": -0.163
+        },
+        "원거리 딜러": {
+          "games": 122188,
+          "rpLift": 0.154,
+          "winRateLift": 0.051
+        },
+        "지원가": {
+          "games": 9351,
+          "rpLift": -0.071,
+          "winRateLift": 0.474
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 1.069,
+        "전사": 1.208,
+        "암살자": 2.163,
+        "스킬딜러": 1.02,
+        "원거리 딜러": 1.006,
+        "지원가": 0.49
+      }
+    },
+    "86_1": {
+      "characterCode": 86,
+      "characterName": "펜리르",
+      "weapon": 1,
+      "weaponName": "글러브",
+      "soloGames": 84661,
+      "soloAvgRP": 2.59,
+      "soloWinRate": 11.14,
+      "roles": ["전사"],
+      "primaryRole": "전사",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 22149,
+          "rpLift": -1.279,
+          "winRateLift": 0.123
+        },
+        "전사": {
+          "games": 167912,
+          "rpLift": -1.973,
+          "winRateLift": -0.204
+        },
+        "암살자": {
+          "games": 14361,
+          "rpLift": -2.932,
+          "winRateLift": -1.928
+        },
+        "스킬딜러": {
+          "games": 98428,
+          "rpLift": -1.236,
+          "winRateLift": 0.673
+        },
+        "원거리 딜러": {
+          "games": 76188,
+          "rpLift": -1.513,
+          "winRateLift": 0.413
+        },
+        "지원가": {
+          "games": 14004,
+          "rpLift": -2.457,
+          "winRateLift": 0.844
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": -0.086,
+        "전사": -0.467,
+        "암살자": -0.739,
+        "스킬딜러": -0.27,
+        "원거리 딜러": -0.28,
+        "지원가": -0.668
+      }
+    },
+    "87_24": {
+      "characterCode": 87,
+      "characterName": "코렐라인",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "soloGames": 96939,
+      "soloAvgRP": -3.61,
+      "soloWinRate": 13.09,
+      "roles": ["스킬딜러"],
+      "primaryRole": "스킬딜러",
+      "synergyByPartnerRole": {
+        "탱커": {
+          "games": 45630,
+          "rpLift": 2.336,
+          "winRateLift": 0.391
+        },
+        "전사": {
+          "games": 212056,
+          "rpLift": 2.123,
+          "winRateLift": -0.971
+        },
+        "암살자": {
+          "games": 15824,
+          "rpLift": 2.199,
+          "winRateLift": -1.668
+        },
+        "스킬딜러": {
+          "games": 72285,
+          "rpLift": 2.422,
+          "winRateLift": 1.066
+        },
+        "원거리 딜러": {
+          "games": 79754,
+          "rpLift": 2.088,
+          "winRateLift": 1.244
+        },
+        "지원가": {
+          "games": 6152,
+          "rpLift": -2.019,
+          "winRateLift": -1.14
+        }
+      },
+      "zScoreVsRoleBaseline": {
+        "탱커": 1.977,
+        "전사": 1.791,
+        "암살자": 1.87,
+        "스킬딜러": 2.022,
+        "원거리 딜러": 1.687,
+        "지원가": 0.087
+      }
+    }
+  }
+}

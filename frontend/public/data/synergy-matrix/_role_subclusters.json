@@ -1,0 +1,2720 @@
+{
+  "config": {
+    "minPartnerGames": 100,
+    "feature": "partner_char rpLift + winRateLift (87+87 dims, role 단위 standardize)",
+    "kSearchRange": "2..min(6, n//3)"
+  },
+  "byRole": {
+    "탱커": {
+      "role": "탱커",
+      "size": 13,
+      "skipped": false,
+      "method": "kmeans",
+      "kSelected": 2,
+      "silhouette": 0.1731,
+      "kSearch": [
+        {
+          "k": 2,
+          "kmeansSilhouette": 0.1731,
+          "wardSilhouette": 0.1731
+        },
+        {
+          "k": 3,
+          "kmeansSilhouette": 0.0657,
+          "wardSilhouette": 0.054
+        },
+        {
+          "k": 4,
+          "kmeansSilhouette": 0.045,
+          "wardSilhouette": 0.045
+        }
+      ],
+      "pcaDims": 12,
+      "pcaExplainedVariance": 1.0,
+      "clusters": [
+        {
+          "cluster": 1,
+          "size": 12,
+          "avgSoloRP": 1.21,
+          "avgSoloWinRate": 13.95,
+          "avgRpLift": -1.589,
+          "avgWinRateLift": -0.344,
+          "distinctivePositive": [
+            {
+              "partnerCode": 74,
+              "partnerName": "다르코",
+              "clusterMeanRpLift": 0.419,
+              "roleMeanRpLift": -0.467,
+              "deviation": 0.886
+            },
+            {
+              "partnerCode": 10,
+              "partnerName": "리 다이린",
+              "clusterMeanRpLift": -1.199,
+              "roleMeanRpLift": -1.801,
+              "deviation": 0.602
+            },
+            {
+              "partnerCode": 39,
+              "partnerName": "카밀로",
+              "clusterMeanRpLift": 0.529,
+              "roleMeanRpLift": 0.015,
+              "deviation": 0.514
+            },
+            {
+              "partnerCode": 66,
+              "partnerName": "아르다",
+              "clusterMeanRpLift": -0.33,
+              "roleMeanRpLift": -0.799,
+              "deviation": 0.469
+            },
+            {
+              "partnerCode": 77,
+              "partnerName": "유민",
+              "clusterMeanRpLift": 0.49,
+              "roleMeanRpLift": 0.027,
+              "deviation": 0.463
+            },
+            {
+              "partnerCode": 53,
+              "partnerName": "마커스",
+              "clusterMeanRpLift": -1.282,
+              "roleMeanRpLift": -1.732,
+              "deviation": 0.451
+            },
+            {
+              "partnerCode": 67,
+              "partnerName": "아비게일",
+              "clusterMeanRpLift": 0.04,
+              "roleMeanRpLift": -0.388,
+              "deviation": 0.428
+            },
+            {
+              "partnerCode": 57,
+              "partnerName": "마르티나",
+              "clusterMeanRpLift": -1.383,
+              "roleMeanRpLift": -1.81,
+              "deviation": 0.427
+            }
+          ],
+          "distinctiveNegative": [
+            {
+              "partnerCode": 17,
+              "partnerName": "아드리아나",
+              "clusterMeanRpLift": -2.012,
+              "roleMeanRpLift": -1.527,
+              "deviation": -0.485
+            },
+            {
+              "partnerCode": 4,
+              "partnerName": "매그너스",
+              "clusterMeanRpLift": -2.313,
+              "roleMeanRpLift": -1.868,
+              "deviation": -0.445
+            },
+            {
+              "partnerCode": 41,
+              "partnerName": "요한",
+              "clusterMeanRpLift": -6.405,
+              "roleMeanRpLift": -6.008,
+              "deviation": -0.397
+            },
+            {
+              "partnerCode": 56,
+              "partnerName": "피올로",
+              "clusterMeanRpLift": 0.348,
+              "roleMeanRpLift": 0.725,
+              "deviation": -0.378
+            },
+            {
+              "partnerCode": 81,
+              "partnerName": "니아",
+              "clusterMeanRpLift": -1.287,
+              "roleMeanRpLift": -0.928,
+              "deviation": -0.358
+            },
+            {
+              "partnerCode": 75,
+              "partnerName": "르노어",
+              "clusterMeanRpLift": -0.043,
+              "roleMeanRpLift": 0.299,
+              "deviation": -0.342
+            },
+            {
+              "partnerCode": 55,
+              "partnerName": "에스텔",
+              "clusterMeanRpLift": -5.503,
+              "roleMeanRpLift": -5.178,
+              "deviation": -0.325
+            },
+            {
+              "partnerCode": 86,
+              "partnerName": "펜리르",
+              "clusterMeanRpLift": -0.417,
+              "roleMeanRpLift": -0.136,
+              "deviation": -0.281
+            }
+          ],
+          "members": [
+            {
+              "characterCode": 20,
+              "characterName": "레녹스",
+              "weapon": 4,
+              "weaponName": "채찍",
+              "soloGames": 101527,
+              "soloAvgRP": 3.13,
+              "soloWinRate": 15.35
+            },
+            {
+              "characterCode": 85,
+              "characterName": "미르카",
+              "weapon": 13,
+              "weaponName": "망치",
+              "soloGames": 89982,
+              "soloAvgRP": -0.61,
+              "soloWinRate": 13.61
+            },
+            {
+              "characterCode": 4,
+              "characterName": "매그너스",
+              "weapon": 13,
+              "weaponName": "망치",
+              "soloGames": 76633,
+              "soloAvgRP": 1.39,
+              "soloWinRate": 13.1
+            },
+            {
+              "characterCode": 55,
+              "characterName": "에스텔",
+              "weapon": 14,
+              "weaponName": "도끼",
+              "soloGames": 74416,
+              "soloAvgRP": 2.46,
+              "soloWinRate": 14.28
+            },
+            {
+              "characterCode": 30,
+              "characterName": "일레븐",
+              "weapon": 13,
+              "weaponName": "망치",
+              "soloGames": 72886,
+              "soloAvgRP": 2.11,
+              "soloWinRate": 15.03
+            },
+            {
+              "characterCode": 53,
+              "characterName": "마커스",
+              "weapon": 14,
+              "weaponName": "도끼",
+              "soloGames": 68799,
+              "soloAvgRP": 0.15,
+              "soloWinRate": 13.92
+            },
+            {
+              "characterCode": 76,
+              "characterName": "가넷",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "soloGames": 66481,
+              "soloAvgRP": 0.49,
+              "soloWinRate": 13.24
+            },
+            {
+              "characterCode": 53,
+              "characterName": "마커스",
+              "weapon": 13,
+              "weaponName": "망치",
+              "soloGames": 61193,
+              "soloAvgRP": 1.8,
+              "soloWinRate": 13.86
+            },
+            {
+              "characterCode": 50,
+              "characterName": "엘레나",
+              "weapon": 21,
+              "weaponName": "레이피어",
+              "soloGames": 43885,
+              "soloAvgRP": -0.35,
+              "soloWinRate": 13.12
+            },
+            {
+              "characterCode": 45,
+              "characterName": "마이",
+              "weapon": 4,
+              "weaponName": "채찍",
+              "soloGames": 33553,
+              "soloAvgRP": 1.2,
+              "soloWinRate": 14.65
+            },
+            {
+              "characterCode": 4,
+              "characterName": "매그너스",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "soloGames": 29489,
+              "soloAvgRP": 2.14,
+              "soloWinRate": 12.33
+            },
+            {
+              "characterCode": 13,
+              "characterName": "쇼우",
+              "weapon": 15,
+              "weaponName": "단검",
+              "soloGames": 27697,
+              "soloAvgRP": 0.58,
+              "soloWinRate": 14.91
+            }
+          ]
+        },
+        {
+          "cluster": 0,
+          "size": 1,
+          "avgSoloRP": 1.62,
+          "avgSoloWinRate": 15.3,
+          "avgRpLift": -1.603,
+          "avgWinRateLift": -0.711,
+          "distinctivePositive": [
+            {
+              "partnerCode": 17,
+              "partnerName": "아드리아나",
+              "clusterMeanRpLift": 4.29,
+              "roleMeanRpLift": -1.527,
+              "deviation": 5.817
+            },
+            {
+              "partnerCode": 4,
+              "partnerName": "매그너스",
+              "clusterMeanRpLift": 3.47,
+              "roleMeanRpLift": -1.868,
+              "deviation": 5.338
+            },
+            {
+              "partnerCode": 41,
+              "partnerName": "요한",
+              "clusterMeanRpLift": -1.24,
+              "roleMeanRpLift": -6.008,
+              "deviation": 4.768
+            },
+            {
+              "partnerCode": 56,
+              "partnerName": "피올로",
+              "clusterMeanRpLift": 5.26,
+              "roleMeanRpLift": 0.725,
+              "deviation": 4.535
+            },
+            {
+              "partnerCode": 81,
+              "partnerName": "니아",
+              "clusterMeanRpLift": 3.37,
+              "roleMeanRpLift": -0.928,
+              "deviation": 4.298
+            },
+            {
+              "partnerCode": 75,
+              "partnerName": "르노어",
+              "clusterMeanRpLift": 4.4,
+              "roleMeanRpLift": 0.299,
+              "deviation": 4.101
+            },
+            {
+              "partnerCode": 55,
+              "partnerName": "에스텔",
+              "clusterMeanRpLift": -1.275,
+              "roleMeanRpLift": -5.178,
+              "deviation": 3.903
+            },
+            {
+              "partnerCode": 86,
+              "partnerName": "펜리르",
+              "clusterMeanRpLift": 3.24,
+              "roleMeanRpLift": -0.136,
+              "deviation": 3.376
+            }
+          ],
+          "distinctiveNegative": [
+            {
+              "partnerCode": 74,
+              "partnerName": "다르코",
+              "clusterMeanRpLift": -11.1,
+              "roleMeanRpLift": -0.467,
+              "deviation": -10.633
+            },
+            {
+              "partnerCode": 10,
+              "partnerName": "리 다이린",
+              "clusterMeanRpLift": -9.02,
+              "roleMeanRpLift": -1.801,
+              "deviation": -7.219
+            },
+            {
+              "partnerCode": 39,
+              "partnerName": "카밀로",
+              "clusterMeanRpLift": -6.15,
+              "roleMeanRpLift": 0.015,
+              "deviation": -6.165
+            },
+            {
+              "partnerCode": 66,
+              "partnerName": "아르다",
+              "clusterMeanRpLift": -6.43,
+              "roleMeanRpLift": -0.799,
+              "deviation": -5.631
+            },
+            {
+              "partnerCode": 77,
+              "partnerName": "유민",
+              "clusterMeanRpLift": -5.53,
+              "roleMeanRpLift": 0.027,
+              "deviation": -5.557
+            },
+            {
+              "partnerCode": 53,
+              "partnerName": "마커스",
+              "clusterMeanRpLift": -7.14,
+              "roleMeanRpLift": -1.732,
+              "deviation": -5.408
+            },
+            {
+              "partnerCode": 67,
+              "partnerName": "아비게일",
+              "clusterMeanRpLift": -5.53,
+              "roleMeanRpLift": -0.388,
+              "deviation": -5.142
+            },
+            {
+              "partnerCode": 57,
+              "partnerName": "마르티나",
+              "clusterMeanRpLift": -6.93,
+              "roleMeanRpLift": -1.81,
+              "deviation": -5.12
+            }
+          ],
+          "members": [
+            {
+              "characterCode": 13,
+              "characterName": "쇼우",
+              "weapon": 19,
+              "weaponName": "창",
+              "soloGames": 14852,
+              "soloAvgRP": 1.62,
+              "soloWinRate": 15.3
+            }
+          ]
+        }
+      ]
+    },
+    "전사": {
+      "role": "전사",
+      "size": 46,
+      "skipped": false,
+      "method": "kmeans",
+      "kSelected": 3,
+      "silhouette": 0.2281,
+      "kSearch": [
+        {
+          "k": 2,
+          "kmeansSilhouette": 0.1947,
+          "wardSilhouette": 0.1976
+        },
+        {
+          "k": 3,
+          "kmeansSilhouette": 0.2281,
+          "wardSilhouette": 0.2047
+        },
+        {
+          "k": 4,
+          "kmeansSilhouette": 0.1884,
+          "wardSilhouette": 0.1868
+        },
+        {
+          "k": 5,
+          "kmeansSilhouette": 0.1961,
+          "wardSilhouette": 0.1957
+        },
+        {
+          "k": 6,
+          "kmeansSilhouette": 0.1942,
+          "wardSilhouette": 0.1771
+        }
+      ],
+      "pcaDims": 15,
+      "pcaExplainedVariance": 0.7644,
+      "clusters": [
+        {
+          "cluster": 1,
+          "size": 31,
+          "avgSoloRP": 2.47,
+          "avgSoloWinRate": 12.82,
+          "avgRpLift": -1.774,
+          "avgWinRateLift": 0.14,
+          "distinctivePositive": [
+            {
+              "partnerCode": 44,
+              "partnerName": "에키온",
+              "clusterMeanRpLift": -2.495,
+              "roleMeanRpLift": -2.216,
+              "deviation": -0.28
+            },
+            {
+              "partnerCode": 82,
+              "partnerName": "슈린",
+              "clusterMeanRpLift": -1.189,
+              "roleMeanRpLift": -0.735,
+              "deviation": -0.454
+            },
+            {
+              "partnerCode": 17,
+              "partnerName": "아드리아나",
+              "clusterMeanRpLift": -1.281,
+              "roleMeanRpLift": -0.812,
+              "deviation": -0.47
+            },
+            {
+              "partnerCode": 11,
+              "partnerName": "유키",
+              "clusterMeanRpLift": -1.32,
+              "roleMeanRpLift": -0.825,
+              "deviation": -0.495
+            },
+            {
+              "partnerCode": 3,
+              "partnerName": "피오라",
+              "clusterMeanRpLift": -1.332,
+              "roleMeanRpLift": -0.807,
+              "deviation": -0.525
+            },
+            {
+              "partnerCode": 8,
+              "partnerName": "하트",
+              "clusterMeanRpLift": -1.622,
+              "roleMeanRpLift": -1.094,
+              "deviation": -0.528
+            },
+            {
+              "partnerCode": 59,
+              "partnerName": "아이작",
+              "clusterMeanRpLift": -2.01,
+              "roleMeanRpLift": -1.472,
+              "deviation": -0.538
+            },
+            {
+              "partnerCode": 86,
+              "partnerName": "펜리르",
+              "clusterMeanRpLift": -1.443,
+              "roleMeanRpLift": -0.889,
+              "deviation": -0.554
+            }
+          ],
+          "distinctiveNegative": [
+            {
+              "partnerCode": 51,
+              "partnerName": "프리야",
+              "clusterMeanRpLift": -2.529,
+              "roleMeanRpLift": -1.024,
+              "deviation": -1.505
+            },
+            {
+              "partnerCode": 47,
+              "partnerName": "라우라",
+              "clusterMeanRpLift": -2.333,
+              "roleMeanRpLift": -0.946,
+              "deviation": -1.387
+            },
+            {
+              "partnerCode": 30,
+              "partnerName": "일레븐",
+              "clusterMeanRpLift": -1.393,
+              "roleMeanRpLift": -0.025,
+              "deviation": -1.368
+            },
+            {
+              "partnerCode": 38,
+              "partnerName": "제니",
+              "clusterMeanRpLift": -1.551,
+              "roleMeanRpLift": -0.199,
+              "deviation": -1.352
+            },
+            {
+              "partnerCode": 31,
+              "partnerName": "리오",
+              "clusterMeanRpLift": -2.294,
+              "roleMeanRpLift": -1.115,
+              "deviation": -1.179
+            },
+            {
+              "partnerCode": 36,
+              "partnerName": "이바",
+              "clusterMeanRpLift": -1.6,
+              "roleMeanRpLift": -0.425,
+              "deviation": -1.175
+            },
+            {
+              "partnerCode": 68,
+              "partnerName": "알론소",
+              "clusterMeanRpLift": -1.871,
+              "roleMeanRpLift": -0.699,
+              "deviation": -1.172
+            },
+            {
+              "partnerCode": 54,
+              "partnerName": "칼라",
+              "clusterMeanRpLift": -2.104,
+              "roleMeanRpLift": -0.934,
+              "deviation": -1.17
+            }
+          ],
+          "members": [
+            {
+              "characterCode": 67,
+              "characterName": "아비게일",
+              "weapon": 14,
+              "weaponName": "도끼",
+              "soloGames": 140451,
+              "soloAvgRP": 2.51,
+              "soloWinRate": 12.99
+            },
+            {
+              "characterCode": 74,
+              "characterName": "다르코",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "soloGames": 124875,
+              "soloAvgRP": 0.8,
+              "soloWinRate": 12.65
+            },
+            {
+              "characterCode": 7,
+              "characterName": "현우",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "soloGames": 100837,
+              "soloAvgRP": 1.71,
+              "soloWinRate": 13.31
+            },
+            {
+              "characterCode": 59,
+              "characterName": "아이작",
+              "weapon": 2,
+              "weaponName": "톤파",
+              "soloGames": 98828,
+              "soloAvgRP": 1.39,
+              "soloWinRate": 12.82
+            },
+            {
+              "characterCode": 11,
+              "characterName": "유키",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "soloGames": 91925,
+              "soloAvgRP": 2.85,
+              "soloWinRate": 13
+            },
+            {
+              "characterCode": 46,
+              "characterName": "에이든",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "soloGames": 87798,
+              "soloAvgRP": 0.81,
+              "soloWinRate": 13.42
+            },
+            {
+              "characterCode": 64,
+              "characterName": "바냐",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "soloGames": 85362,
+              "soloAvgRP": 3.54,
+              "soloWinRate": 14.54
+            },
+            {
+              "characterCode": 86,
+              "characterName": "펜리르",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "soloGames": 84661,
+              "soloAvgRP": 2.59,
+              "soloWinRate": 11.14
+            },
+            {
+              "characterCode": 33,
+              "characterName": "니키",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "soloGames": 81133,
+              "soloAvgRP": 1.02,
+              "soloWinRate": 11.99
+            },
+            {
+              "characterCode": 80,
+              "characterName": "이슈트반",
+              "weapon": 19,
+              "weaponName": "창",
+              "soloGames": 75778,
+              "soloAvgRP": 1.99,
+              "soloWinRate": 11.34
+            },
+            {
+              "characterCode": 29,
+              "characterName": "레온",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "soloGames": 74229,
+              "soloAvgRP": 5.21,
+              "soloWinRate": 13.09
+            },
+            {
+              "characterCode": 16,
+              "characterName": "실비아",
+              "weapon": 9,
+              "weaponName": "권총",
+              "soloGames": 71136,
+              "soloAvgRP": 1.97,
+              "soloWinRate": 13.28
+            },
+            {
+              "characterCode": 47,
+              "characterName": "라우라",
+              "weapon": 4,
+              "weaponName": "채찍",
+              "soloGames": 64262,
+              "soloAvgRP": 1.77,
+              "soloWinRate": 11.77
+            },
+            {
+              "characterCode": 82,
+              "characterName": "슈린",
+              "weapon": 21,
+              "weaponName": "레이피어",
+              "soloGames": 63710,
+              "soloAvgRP": 2.6,
+              "soloWinRate": 11.3
+            },
+            {
+              "characterCode": 56,
+              "characterName": "피올로",
+              "weapon": 20,
+              "weaponName": "쌍절곤",
+              "soloGames": 61742,
+              "soloAvgRP": 3.52,
+              "soloWinRate": 12.78
+            },
+            {
+              "characterCode": 1,
+              "characterName": "재키",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "soloGames": 58883,
+              "soloAvgRP": 1.49,
+              "soloWinRate": 12.37
+            },
+            {
+              "characterCode": 39,
+              "characterName": "카밀로",
+              "weapon": 21,
+              "weaponName": "레이피어",
+              "soloGames": 57837,
+              "soloAvgRP": 3.37,
+              "soloWinRate": 14.71
+            },
+            {
+              "characterCode": 63,
+              "characterName": "이안",
+              "weapon": 15,
+              "weaponName": "단검",
+              "soloGames": 57261,
+              "soloAvgRP": 2.94,
+              "soloWinRate": 14.94
+            },
+            {
+              "characterCode": 10,
+              "characterName": "리 다이린",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "soloGames": 54363,
+              "soloAvgRP": 3.96,
+              "soloWinRate": 12.44
+            },
+            {
+              "characterCode": 3,
+              "characterName": "피오라",
+              "weapon": 21,
+              "weaponName": "레이피어",
+              "soloGames": 50013,
+              "soloAvgRP": 2.58,
+              "soloWinRate": 12.62
+            },
+            {
+              "characterCode": 68,
+              "characterName": "알론소",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "soloGames": 47033,
+              "soloAvgRP": 1.67,
+              "soloWinRate": 15.49
+            },
+            {
+              "characterCode": 61,
+              "characterName": "이렘",
+              "weapon": 5,
+              "weaponName": "투척",
+              "soloGames": 46999,
+              "soloAvgRP": 2.67,
+              "soloWinRate": 13.07
+            },
+            {
+              "characterCode": 35,
+              "characterName": "얀",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "soloGames": 45815,
+              "soloAvgRP": 0.86,
+              "soloWinRate": 12.41
+            },
+            {
+              "characterCode": 39,
+              "characterName": "카밀로",
+              "weapon": 18,
+              "weaponName": "쌍검",
+              "soloGames": 38003,
+              "soloAvgRP": 1.02,
+              "soloWinRate": 14.11
+            },
+            {
+              "characterCode": 27,
+              "characterName": "알렉스",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "soloGames": 35771,
+              "soloAvgRP": 3.04,
+              "soloWinRate": 12.54
+            },
+            {
+              "characterCode": 28,
+              "characterName": "수아",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "soloGames": 33669,
+              "soloAvgRP": 3.9,
+              "soloWinRate": 13.6
+            },
+            {
+              "characterCode": 10,
+              "characterName": "리 다이린",
+              "weapon": 20,
+              "weaponName": "쌍절곤",
+              "soloGames": 31348,
+              "soloAvgRP": 1.11,
+              "soloWinRate": 12.02
+            },
+            {
+              "characterCode": 1,
+              "characterName": "재키",
+              "weapon": 15,
+              "weaponName": "단검",
+              "soloGames": 28453,
+              "soloAvgRP": 3.8,
+              "soloWinRate": 11.57
+            },
+            {
+              "characterCode": 28,
+              "characterName": "수아",
+              "weapon": 13,
+              "weaponName": "망치",
+              "soloGames": 24093,
+              "soloAvgRP": 5.06,
+              "soloWinRate": 13.07
+            },
+            {
+              "characterCode": 27,
+              "characterName": "알렉스",
+              "weapon": 2,
+              "weaponName": "톤파",
+              "soloGames": 22849,
+              "soloAvgRP": 2.42,
+              "soloWinRate": 11.09
+            },
+            {
+              "characterCode": 1,
+              "characterName": "재키",
+              "weapon": 14,
+              "weaponName": "도끼",
+              "soloGames": 10024,
+              "soloAvgRP": 2.32,
+              "soloWinRate": 11.8
+            }
+          ]
+        },
+        {
+          "cluster": 2,
+          "size": 14,
+          "avgSoloRP": -1.46,
+          "avgSoloWinRate": 12.34,
+          "avgRpLift": 1.29,
+          "avgWinRateLift": 0.119,
+          "distinctivePositive": [
+            {
+              "partnerCode": 28,
+              "partnerName": "수아",
+              "clusterMeanRpLift": 2.459,
+              "roleMeanRpLift": -0.825,
+              "deviation": 3.283
+            },
+            {
+              "partnerCode": 51,
+              "partnerName": "프리야",
+              "clusterMeanRpLift": 2.222,
+              "roleMeanRpLift": -1.024,
+              "deviation": 3.246
+            },
+            {
+              "partnerCode": 47,
+              "partnerName": "라우라",
+              "clusterMeanRpLift": 2.129,
+              "roleMeanRpLift": -0.946,
+              "deviation": 3.075
+            },
+            {
+              "partnerCode": 25,
+              "partnerName": "버니스",
+              "clusterMeanRpLift": 1.367,
+              "roleMeanRpLift": -1.703,
+              "deviation": 3.07
+            },
+            {
+              "partnerCode": 30,
+              "partnerName": "일레븐",
+              "clusterMeanRpLift": 2.902,
+              "roleMeanRpLift": -0.025,
+              "deviation": 2.927
+            },
+            {
+              "partnerCode": 38,
+              "partnerName": "제니",
+              "clusterMeanRpLift": 2.674,
+              "roleMeanRpLift": -0.199,
+              "deviation": 2.873
+            },
+            {
+              "partnerCode": 45,
+              "partnerName": "마이",
+              "clusterMeanRpLift": 1.621,
+              "roleMeanRpLift": -1.221,
+              "deviation": 2.842
+            },
+            {
+              "partnerCode": 68,
+              "partnerName": "알론소",
+              "clusterMeanRpLift": 2.059,
+              "roleMeanRpLift": -0.699,
+              "deviation": 2.758
+            }
+          ],
+          "distinctiveNegative": [
+            {
+              "partnerCode": 17,
+              "partnerName": "아드리아나",
+              "clusterMeanRpLift": 0.164,
+              "roleMeanRpLift": -0.812,
+              "deviation": 0.975
+            },
+            {
+              "partnerCode": 3,
+              "partnerName": "피오라",
+              "clusterMeanRpLift": 0.349,
+              "roleMeanRpLift": -0.807,
+              "deviation": 1.157
+            },
+            {
+              "partnerCode": 11,
+              "partnerName": "유키",
+              "clusterMeanRpLift": 0.392,
+              "roleMeanRpLift": -0.825,
+              "deviation": 1.217
+            },
+            {
+              "partnerCode": 41,
+              "partnerName": "요한",
+              "clusterMeanRpLift": 0.685,
+              "roleMeanRpLift": -0.635,
+              "deviation": 1.319
+            },
+            {
+              "partnerCode": 23,
+              "partnerName": "캐시",
+              "clusterMeanRpLift": 0.235,
+              "roleMeanRpLift": -1.19,
+              "deviation": 1.425
+            },
+            {
+              "partnerCode": 8,
+              "partnerName": "하트",
+              "clusterMeanRpLift": 0.396,
+              "roleMeanRpLift": -1.094,
+              "deviation": 1.49
+            },
+            {
+              "partnerCode": 43,
+              "partnerName": "셀린",
+              "clusterMeanRpLift": 0.939,
+              "roleMeanRpLift": -0.559,
+              "deviation": 1.498
+            },
+            {
+              "partnerCode": 7,
+              "partnerName": "현우",
+              "clusterMeanRpLift": -0.115,
+              "roleMeanRpLift": -1.613,
+              "deviation": 1.498
+            }
+          ],
+          "members": [
+            {
+              "characterCode": 65,
+              "characterName": "데비&마를렌",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "soloGames": 161968,
+              "soloAvgRP": -0.23,
+              "soloWinRate": 12.22
+            },
+            {
+              "characterCode": 78,
+              "characterName": "히스이",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "soloGames": 150471,
+              "soloAvgRP": -1.49,
+              "soloWinRate": 12.41
+            },
+            {
+              "characterCode": 22,
+              "characterName": "루크",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "soloGames": 134065,
+              "soloAvgRP": -2.03,
+              "soloWinRate": 11.19
+            },
+            {
+              "characterCode": 84,
+              "characterName": "블레어",
+              "weapon": 18,
+              "weaponName": "쌍검",
+              "soloGames": 102752,
+              "soloAvgRP": -0.59,
+              "soloWinRate": 12.46
+            },
+            {
+              "characterCode": 71,
+              "characterName": "케네스",
+              "weapon": 14,
+              "weaponName": "도끼",
+              "soloGames": 74463,
+              "soloAvgRP": -1.38,
+              "soloWinRate": 12.62
+            },
+            {
+              "characterCode": 14,
+              "characterName": "키아라",
+              "weapon": 21,
+              "weaponName": "레이피어",
+              "soloGames": 60919,
+              "soloAvgRP": -0.06,
+              "soloWinRate": 13.79
+            },
+            {
+              "characterCode": 49,
+              "characterName": "펠릭스",
+              "weapon": 19,
+              "weaponName": "창",
+              "soloGames": 59503,
+              "soloAvgRP": -1.61,
+              "soloWinRate": 13.4
+            },
+            {
+              "characterCode": 44,
+              "characterName": "에키온",
+              "weapon": 25,
+              "weaponName": "VF의수",
+              "soloGames": 53707,
+              "soloAvgRP": -1.4,
+              "soloWinRate": 12.5
+            },
+            {
+              "characterCode": 11,
+              "characterName": "유키",
+              "weapon": 18,
+              "weaponName": "쌍검",
+              "soloGames": 51774,
+              "soloAvgRP": -2.22,
+              "soloWinRate": 11.42
+            },
+            {
+              "characterCode": 35,
+              "characterName": "얀",
+              "weapon": 2,
+              "weaponName": "톤파",
+              "soloGames": 51686,
+              "soloAvgRP": -0.4,
+              "soloWinRate": 11.19
+            },
+            {
+              "characterCode": 1,
+              "characterName": "재키",
+              "weapon": 18,
+              "weaponName": "쌍검",
+              "soloGames": 19705,
+              "soloAvgRP": -0.53,
+              "soloWinRate": 12.33
+            },
+            {
+              "characterCode": 29,
+              "characterName": "레온",
+              "weapon": 2,
+              "weaponName": "톤파",
+              "soloGames": 16516,
+              "soloAvgRP": 0.02,
+              "soloWinRate": 14.68
+            },
+            {
+              "characterCode": 3,
+              "characterName": "피오라",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "soloGames": 15583,
+              "soloAvgRP": -0.54,
+              "soloWinRate": 11.33
+            },
+            {
+              "characterCode": 7,
+              "characterName": "현우",
+              "weapon": 2,
+              "weaponName": "톤파",
+              "soloGames": 14108,
+              "soloAvgRP": -7.95,
+              "soloWinRate": 11.24
+            }
+          ]
+        },
+        {
+          "cluster": 0,
+          "size": 1,
+          "avgSoloRP": 6.61,
+          "avgSoloWinRate": 12.68,
+          "avgRpLift": -5.651,
+          "avgWinRateLift": 0.466,
+          "distinctivePositive": [
+            {
+              "partnerCode": 41,
+              "partnerName": "요한",
+              "clusterMeanRpLift": 2.15,
+              "roleMeanRpLift": -0.635,
+              "deviation": 2.785
+            },
+            {
+              "partnerCode": 81,
+              "partnerName": "니아",
+              "clusterMeanRpLift": 1.36,
+              "roleMeanRpLift": -0.541,
+              "deviation": 1.901
+            },
+            {
+              "partnerCode": 38,
+              "partnerName": "제니",
+              "clusterMeanRpLift": 1.48,
+              "roleMeanRpLift": -0.199,
+              "deviation": 1.679
+            },
+            {
+              "partnerCode": 30,
+              "partnerName": "일레븐",
+              "clusterMeanRpLift": 1.41,
+              "roleMeanRpLift": -0.025,
+              "deviation": 1.435
+            },
+            {
+              "partnerCode": 51,
+              "partnerName": "프리야",
+              "clusterMeanRpLift": 0.18,
+              "roleMeanRpLift": -1.024,
+              "deviation": 1.204
+            },
+            {
+              "partnerCode": 50,
+              "partnerName": "엘레나",
+              "clusterMeanRpLift": -0.19,
+              "roleMeanRpLift": -1.256,
+              "deviation": 1.066
+            },
+            {
+              "partnerCode": 17,
+              "partnerName": "아드리아나",
+              "clusterMeanRpLift": 0.1,
+              "roleMeanRpLift": -0.812,
+              "deviation": 0.912
+            },
+            {
+              "partnerCode": 73,
+              "partnerName": "샬럿",
+              "clusterMeanRpLift": -1.945,
+              "roleMeanRpLift": -2.832,
+              "deviation": 0.887
+            }
+          ],
+          "distinctiveNegative": [
+            {
+              "partnerCode": 44,
+              "partnerName": "에키온",
+              "clusterMeanRpLift": -29.44,
+              "roleMeanRpLift": -2.216,
+              "deviation": -27.224
+            },
+            {
+              "partnerCode": 28,
+              "partnerName": "수아",
+              "clusterMeanRpLift": -25.76,
+              "roleMeanRpLift": -0.825,
+              "deviation": -24.935
+            },
+            {
+              "partnerCode": 25,
+              "partnerName": "버니스",
+              "clusterMeanRpLift": -21.53,
+              "roleMeanRpLift": -1.703,
+              "deviation": -19.827
+            },
+            {
+              "partnerCode": 52,
+              "partnerName": "아디나",
+              "clusterMeanRpLift": -18.12,
+              "roleMeanRpLift": -0.92,
+              "deviation": -17.2
+            },
+            {
+              "partnerCode": 27,
+              "partnerName": "알렉스",
+              "clusterMeanRpLift": -16.53,
+              "roleMeanRpLift": -0.47,
+              "deviation": -16.06
+            },
+            {
+              "partnerCode": 14,
+              "partnerName": "키아라",
+              "clusterMeanRpLift": -15.3,
+              "roleMeanRpLift": -1.289,
+              "deviation": -14.011
+            },
+            {
+              "partnerCode": 5,
+              "partnerName": "자히르",
+              "clusterMeanRpLift": -14.11,
+              "roleMeanRpLift": -0.309,
+              "deviation": -13.801
+            },
+            {
+              "partnerCode": 42,
+              "partnerName": "비앙카",
+              "clusterMeanRpLift": -11.96,
+              "roleMeanRpLift": -0.197,
+              "deviation": -11.763
+            }
+          ],
+          "members": [
+            {
+              "characterCode": 3,
+              "characterName": "피오라",
+              "weapon": 19,
+              "weaponName": "창",
+              "soloGames": 7612,
+              "soloAvgRP": 6.61,
+              "soloWinRate": 12.68
+            }
+          ]
+        }
+      ]
+    },
+    "암살자": {
+      "role": "암살자",
+      "size": 4,
+      "skipped": true,
+      "reason": "size < 5 — sub-clustering skipped",
+      "members": [
+        {
+          "characterCode": 18,
+          "characterName": "쇼이치",
+          "weapon": 15,
+          "weaponName": "단검",
+          "soloGames": 120104,
+          "soloAvgRP": -4.05,
+          "soloWinRate": 11.41,
+          "cluster": -1
+        },
+        {
+          "characterCode": 23,
+          "characterName": "캐시",
+          "weapon": 15,
+          "weaponName": "단검",
+          "soloGames": 32031,
+          "soloAvgRP": 3.63,
+          "soloWinRate": 11.97,
+          "cluster": -1
+        },
+        {
+          "characterCode": 23,
+          "characterName": "캐시",
+          "weapon": 18,
+          "weaponName": "쌍검",
+          "soloGames": 8025,
+          "soloAvgRP": 1.64,
+          "soloWinRate": 11.5,
+          "cluster": -1
+        },
+        {
+          "characterCode": 37,
+          "characterName": "다니엘",
+          "weapon": 15,
+          "weaponName": "단검",
+          "soloGames": 45515,
+          "soloAvgRP": -0.73,
+          "soloWinRate": 11.44,
+          "cluster": -1
+        }
+      ]
+    },
+    "스킬딜러": {
+      "role": "스킬딜러",
+      "size": 34,
+      "skipped": false,
+      "method": "ward",
+      "kSelected": 5,
+      "silhouette": 0.2136,
+      "kSearch": [
+        {
+          "k": 2,
+          "kmeansSilhouette": 0.2115,
+          "wardSilhouette": 0.2115
+        },
+        {
+          "k": 3,
+          "kmeansSilhouette": 0.205,
+          "wardSilhouette": 0.2099
+        },
+        {
+          "k": 4,
+          "kmeansSilhouette": 0.1945,
+          "wardSilhouette": 0.2083
+        },
+        {
+          "k": 5,
+          "kmeansSilhouette": 0.1977,
+          "wardSilhouette": 0.2136
+        },
+        {
+          "k": 6,
+          "kmeansSilhouette": 0.1095,
+          "wardSilhouette": 0.108
+        }
+      ],
+      "pcaDims": 15,
+      "pcaExplainedVariance": 0.7813,
+      "clusters": [
+        {
+          "cluster": 2,
+          "size": 20,
+          "avgSoloRP": 3.05,
+          "avgSoloWinRate": 14.09,
+          "avgRpLift": -2.385,
+          "avgWinRateLift": 0.181,
+          "distinctivePositive": [
+            {
+              "partnerCode": 69,
+              "partnerName": "레니",
+              "clusterMeanRpLift": -3.685,
+              "roleMeanRpLift": -4.825,
+              "deviation": 1.14
+            },
+            {
+              "partnerCode": 40,
+              "partnerName": "클로에",
+              "clusterMeanRpLift": -0.528,
+              "roleMeanRpLift": -0.424,
+              "deviation": -0.104
+            },
+            {
+              "partnerCode": 42,
+              "partnerName": "비앙카",
+              "clusterMeanRpLift": -2.173,
+              "roleMeanRpLift": -2.066,
+              "deviation": -0.107
+            },
+            {
+              "partnerCode": 24,
+              "partnerName": "아델라",
+              "clusterMeanRpLift": -2.367,
+              "roleMeanRpLift": -2.228,
+              "deviation": -0.139
+            },
+            {
+              "partnerCode": 57,
+              "partnerName": "마르티나",
+              "clusterMeanRpLift": -1.799,
+              "roleMeanRpLift": -1.651,
+              "deviation": -0.148
+            },
+            {
+              "partnerCode": 83,
+              "partnerName": "헨리",
+              "clusterMeanRpLift": -1.307,
+              "roleMeanRpLift": -0.899,
+              "deviation": -0.408
+            },
+            {
+              "partnerCode": 14,
+              "partnerName": "키아라",
+              "clusterMeanRpLift": -1.845,
+              "roleMeanRpLift": -1.424,
+              "deviation": -0.422
+            },
+            {
+              "partnerCode": 38,
+              "partnerName": "제니",
+              "clusterMeanRpLift": -1.678,
+              "roleMeanRpLift": -1.231,
+              "deviation": -0.447
+            }
+          ],
+          "distinctiveNegative": [
+            {
+              "partnerCode": 73,
+              "partnerName": "샬럿",
+              "clusterMeanRpLift": -8.364,
+              "roleMeanRpLift": -5.453,
+              "deviation": -2.911
+            },
+            {
+              "partnerCode": 48,
+              "partnerName": "띠아",
+              "clusterMeanRpLift": -2.914,
+              "roleMeanRpLift": -0.833,
+              "deviation": -2.082
+            },
+            {
+              "partnerCode": 51,
+              "partnerName": "프리야",
+              "clusterMeanRpLift": -4.612,
+              "roleMeanRpLift": -2.606,
+              "deviation": -2.005
+            },
+            {
+              "partnerCode": 5,
+              "partnerName": "자히르",
+              "clusterMeanRpLift": -1.492,
+              "roleMeanRpLift": 0.496,
+              "deviation": -1.988
+            },
+            {
+              "partnerCode": 62,
+              "partnerName": "테오도르",
+              "clusterMeanRpLift": -3.22,
+              "roleMeanRpLift": -1.335,
+              "deviation": -1.886
+            },
+            {
+              "partnerCode": 23,
+              "partnerName": "캐시",
+              "clusterMeanRpLift": -2.787,
+              "roleMeanRpLift": -0.924,
+              "deviation": -1.863
+            },
+            {
+              "partnerCode": 68,
+              "partnerName": "알론소",
+              "clusterMeanRpLift": -3.358,
+              "roleMeanRpLift": -1.593,
+              "deviation": -1.765
+            },
+            {
+              "partnerCode": 44,
+              "partnerName": "에키온",
+              "clusterMeanRpLift": -3.365,
+              "roleMeanRpLift": -1.647,
+              "deviation": -1.718
+            }
+          ],
+          "members": [
+            {
+              "characterCode": 77,
+              "characterName": "유민",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "soloGames": 97829,
+              "soloAvgRP": 3.73,
+              "soloWinRate": 14.39
+            },
+            {
+              "characterCode": 83,
+              "characterName": "헨리",
+              "weapon": 6,
+              "weaponName": "암기",
+              "soloGames": 81897,
+              "soloAvgRP": 3.08,
+              "soloWinRate": 14.41
+            },
+            {
+              "characterCode": 75,
+              "characterName": "르노어",
+              "weapon": 22,
+              "weaponName": "기타",
+              "soloGames": 80139,
+              "soloAvgRP": 3.92,
+              "soloWinRate": 14.73
+            },
+            {
+              "characterCode": 81,
+              "characterName": "니아",
+              "weapon": 9,
+              "weaponName": "권총",
+              "soloGames": 74596,
+              "soloAvgRP": 2.03,
+              "soloWinRate": 13.6
+            },
+            {
+              "characterCode": 42,
+              "characterName": "비앙카",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "soloGames": 73329,
+              "soloAvgRP": 2.97,
+              "soloWinRate": 12.56
+            },
+            {
+              "characterCode": 9,
+              "characterName": "아이솔",
+              "weapon": 10,
+              "weaponName": "돌격 소총",
+              "soloGames": 66460,
+              "soloAvgRP": 5.07,
+              "soloWinRate": 14.42
+            },
+            {
+              "characterCode": 36,
+              "characterName": "이바",
+              "weapon": 5,
+              "weaponName": "투척",
+              "soloGames": 62870,
+              "soloAvgRP": 1.59,
+              "soloWinRate": 15.79
+            },
+            {
+              "characterCode": 48,
+              "characterName": "띠아",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "soloGames": 60540,
+              "soloAvgRP": 2.82,
+              "soloWinRate": 12.32
+            },
+            {
+              "characterCode": 17,
+              "characterName": "아드리아나",
+              "weapon": 5,
+              "weaponName": "투척",
+              "soloGames": 55746,
+              "soloAvgRP": 1.68,
+              "soloWinRate": 14.17
+            },
+            {
+              "characterCode": 34,
+              "characterName": "나타폰",
+              "weapon": 23,
+              "weaponName": "카메라",
+              "soloGames": 54785,
+              "soloAvgRP": 3.59,
+              "soloWinRate": 14.25
+            },
+            {
+              "characterCode": 2,
+              "characterName": "아야",
+              "weapon": 11,
+              "weaponName": "저격총",
+              "soloGames": 54724,
+              "soloAvgRP": 1.99,
+              "soloWinRate": 14.6
+            },
+            {
+              "characterCode": 2,
+              "characterName": "아야",
+              "weapon": 9,
+              "weaponName": "권총",
+              "soloGames": 53267,
+              "soloAvgRP": 4.51,
+              "soloWinRate": 13.69
+            },
+            {
+              "characterCode": 66,
+              "characterName": "아르다",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "soloGames": 52687,
+              "soloAvgRP": 2.73,
+              "soloWinRate": 14
+            },
+            {
+              "characterCode": 52,
+              "characterName": "아디나",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "soloGames": 42952,
+              "soloAvgRP": 2.11,
+              "soloWinRate": 15.35
+            },
+            {
+              "characterCode": 15,
+              "characterName": "시셀라",
+              "weapon": 6,
+              "weaponName": "암기",
+              "soloGames": 38820,
+              "soloAvgRP": 1.01,
+              "soloWinRate": 13.51
+            },
+            {
+              "characterCode": 43,
+              "characterName": "셀린",
+              "weapon": 5,
+              "weaponName": "투척",
+              "soloGames": 38273,
+              "soloAvgRP": 4.22,
+              "soloWinRate": 15.25
+            },
+            {
+              "characterCode": 6,
+              "characterName": "나딘",
+              "weapon": 7,
+              "weaponName": "활",
+              "soloGames": 29222,
+              "soloAvgRP": 0.4,
+              "soloWinRate": 14.51
+            },
+            {
+              "characterCode": 24,
+              "characterName": "아델라",
+              "weapon": 21,
+              "weaponName": "레이피어",
+              "soloGames": 27130,
+              "soloAvgRP": 5.43,
+              "soloWinRate": 14.36
+            },
+            {
+              "characterCode": 27,
+              "characterName": "알렉스",
+              "weapon": 6,
+              "weaponName": "암기",
+              "soloGames": 17091,
+              "soloAvgRP": 4.43,
+              "soloWinRate": 10.51
+            },
+            {
+              "characterCode": 5,
+              "characterName": "자히르",
+              "weapon": 5,
+              "weaponName": "투척",
+              "soloGames": 16066,
+              "soloAvgRP": 3.69,
+              "soloWinRate": 15.44
+            }
+          ]
+        },
+        {
+          "cluster": 0,
+          "size": 10,
+          "avgSoloRP": -1.38,
+          "avgSoloWinRate": 13.45,
+          "avgRpLift": 0.911,
+          "avgWinRateLift": 0.239,
+          "distinctivePositive": [
+            {
+              "partnerCode": 73,
+              "partnerName": "샬럿",
+              "clusterMeanRpLift": -0.93,
+              "roleMeanRpLift": -5.453,
+              "deviation": 4.523
+            },
+            {
+              "partnerCode": 82,
+              "partnerName": "슈린",
+              "clusterMeanRpLift": 2.366,
+              "roleMeanRpLift": -1.145,
+              "deviation": 3.511
+            },
+            {
+              "partnerCode": 61,
+              "partnerName": "이렘",
+              "clusterMeanRpLift": 2.496,
+              "roleMeanRpLift": -0.944,
+              "deviation": 3.44
+            },
+            {
+              "partnerCode": 17,
+              "partnerName": "아드리아나",
+              "clusterMeanRpLift": 0.405,
+              "roleMeanRpLift": -2.997,
+              "deviation": 3.402
+            },
+            {
+              "partnerCode": 23,
+              "partnerName": "캐시",
+              "clusterMeanRpLift": 2.394,
+              "roleMeanRpLift": -0.924,
+              "deviation": 3.318
+            },
+            {
+              "partnerCode": 70,
+              "partnerName": "츠바메",
+              "clusterMeanRpLift": 2.875,
+              "roleMeanRpLift": -0.326,
+              "deviation": 3.201
+            },
+            {
+              "partnerCode": 60,
+              "partnerName": "타지아",
+              "clusterMeanRpLift": 2.456,
+              "roleMeanRpLift": -0.727,
+              "deviation": 3.183
+            },
+            {
+              "partnerCode": 52,
+              "partnerName": "아디나",
+              "clusterMeanRpLift": 1.721,
+              "roleMeanRpLift": -1.406,
+              "deviation": 3.127
+            }
+          ],
+          "distinctiveNegative": [
+            {
+              "partnerCode": 69,
+              "partnerName": "레니",
+              "clusterMeanRpLift": -6.175,
+              "roleMeanRpLift": -4.825,
+              "deviation": -1.35
+            },
+            {
+              "partnerCode": 55,
+              "partnerName": "에스텔",
+              "clusterMeanRpLift": -0.623,
+              "roleMeanRpLift": -1.131,
+              "deviation": 0.508
+            },
+            {
+              "partnerCode": 57,
+              "partnerName": "마르티나",
+              "clusterMeanRpLift": -1.102,
+              "roleMeanRpLift": -1.651,
+              "deviation": 0.549
+            },
+            {
+              "partnerCode": 38,
+              "partnerName": "제니",
+              "clusterMeanRpLift": -0.54,
+              "roleMeanRpLift": -1.231,
+              "deviation": 0.691
+            },
+            {
+              "partnerCode": 24,
+              "partnerName": "아델라",
+              "clusterMeanRpLift": -0.965,
+              "roleMeanRpLift": -2.228,
+              "deviation": 1.263
+            },
+            {
+              "partnerCode": 36,
+              "partnerName": "이바",
+              "clusterMeanRpLift": 0.879,
+              "roleMeanRpLift": -0.397,
+              "deviation": 1.276
+            },
+            {
+              "partnerCode": 21,
+              "partnerName": "로지",
+              "clusterMeanRpLift": 0.431,
+              "roleMeanRpLift": -0.847,
+              "deviation": 1.278
+            },
+            {
+              "partnerCode": 33,
+              "partnerName": "니키",
+              "clusterMeanRpLift": 0.166,
+              "roleMeanRpLift": -1.131,
+              "deviation": 1.297
+            }
+          ],
+          "members": [
+            {
+              "characterCode": 87,
+              "characterName": "코렐라인",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "soloGames": 96939,
+              "soloAvgRP": -3.61,
+              "soloWinRate": 13.09
+            },
+            {
+              "characterCode": 26,
+              "characterName": "바바라",
+              "weapon": 9,
+              "weaponName": "권총",
+              "soloGames": 89290,
+              "soloAvgRP": 0.06,
+              "soloWinRate": 14.7
+            },
+            {
+              "characterCode": 79,
+              "characterName": "유스티나",
+              "weapon": 8,
+              "weaponName": "석궁",
+              "soloGames": 86317,
+              "soloAvgRP": -2.66,
+              "soloWinRate": 12.12
+            },
+            {
+              "characterCode": 54,
+              "characterName": "칼라",
+              "weapon": 8,
+              "weaponName": "석궁",
+              "soloGames": 48217,
+              "soloAvgRP": -0.19,
+              "soloWinRate": 11.72
+            },
+            {
+              "characterCode": 19,
+              "characterName": "엠마",
+              "weapon": 6,
+              "weaponName": "암기",
+              "soloGames": 39784,
+              "soloAvgRP": -0.7,
+              "soloWinRate": 13.75
+            },
+            {
+              "characterCode": 12,
+              "characterName": "혜진",
+              "weapon": 7,
+              "weaponName": "활",
+              "soloGames": 36895,
+              "soloAvgRP": -0.69,
+              "soloWinRate": 13.81
+            },
+            {
+              "characterCode": 9,
+              "characterName": "아이솔",
+              "weapon": 9,
+              "weaponName": "권총",
+              "soloGames": 34744,
+              "soloAvgRP": -2.18,
+              "soloWinRate": 12.97
+            },
+            {
+              "characterCode": 51,
+              "characterName": "프리야",
+              "weapon": 22,
+              "weaponName": "기타",
+              "soloGames": 31370,
+              "soloAvgRP": -1.91,
+              "soloWinRate": 14.57
+            },
+            {
+              "characterCode": 60,
+              "characterName": "타지아",
+              "weapon": 6,
+              "weaponName": "암기",
+              "soloGames": 27463,
+              "soloAvgRP": -0.5,
+              "soloWinRate": 14.23
+            },
+            {
+              "characterCode": 15,
+              "characterName": "시셀라",
+              "weapon": 5,
+              "weaponName": "투척",
+              "soloGames": 27315,
+              "soloAvgRP": -1.41,
+              "soloWinRate": 13.56
+            }
+          ]
+        },
+        {
+          "cluster": 3,
+          "size": 2,
+          "avgSoloRP": 2.73,
+          "avgSoloWinRate": 14.07,
+          "avgRpLift": -1.991,
+          "avgWinRateLift": 0.025,
+          "distinctivePositive": [
+            {
+              "partnerCode": 43,
+              "partnerName": "셀린",
+              "clusterMeanRpLift": 1.785,
+              "roleMeanRpLift": -1.944,
+              "deviation": 3.729
+            },
+            {
+              "partnerCode": 62,
+              "partnerName": "테오도르",
+              "clusterMeanRpLift": 1.95,
+              "roleMeanRpLift": -1.335,
+              "deviation": 3.285
+            },
+            {
+              "partnerCode": 21,
+              "partnerName": "로지",
+              "clusterMeanRpLift": 1.78,
+              "roleMeanRpLift": -0.847,
+              "deviation": 2.627
+            },
+            {
+              "partnerCode": 36,
+              "partnerName": "이바",
+              "clusterMeanRpLift": 2.205,
+              "roleMeanRpLift": -0.397,
+              "deviation": 2.602
+            },
+            {
+              "partnerCode": 66,
+              "partnerName": "아르다",
+              "clusterMeanRpLift": 0.81,
+              "roleMeanRpLift": -1.777,
+              "deviation": 2.587
+            },
+            {
+              "partnerCode": 69,
+              "partnerName": "레니",
+              "clusterMeanRpLift": -2.24,
+              "roleMeanRpLift": -4.825,
+              "deviation": 2.585
+            },
+            {
+              "partnerCode": 48,
+              "partnerName": "띠아",
+              "clusterMeanRpLift": 1.515,
+              "roleMeanRpLift": -0.833,
+              "deviation": 2.348
+            },
+            {
+              "partnerCode": 5,
+              "partnerName": "자히르",
+              "clusterMeanRpLift": 2.785,
+              "roleMeanRpLift": 0.496,
+              "deviation": 2.289
+            }
+          ],
+          "distinctiveNegative": [
+            {
+              "partnerCode": 40,
+              "partnerName": "클로에",
+              "clusterMeanRpLift": -9.725,
+              "roleMeanRpLift": -0.424,
+              "deviation": -9.301
+            },
+            {
+              "partnerCode": 19,
+              "partnerName": "엠마",
+              "clusterMeanRpLift": -10.655,
+              "roleMeanRpLift": -2.597,
+              "deviation": -8.058
+            },
+            {
+              "partnerCode": 56,
+              "partnerName": "피올로",
+              "clusterMeanRpLift": -6.12,
+              "roleMeanRpLift": -0.251,
+              "deviation": -5.869
+            },
+            {
+              "partnerCode": 9,
+              "partnerName": "아이솔",
+              "clusterMeanRpLift": -5.93,
+              "roleMeanRpLift": -0.267,
+              "deviation": -5.663
+            },
+            {
+              "partnerCode": 79,
+              "partnerName": "유스티나",
+              "clusterMeanRpLift": -8.22,
+              "roleMeanRpLift": -3.055,
+              "deviation": -5.165
+            },
+            {
+              "partnerCode": 14,
+              "partnerName": "키아라",
+              "clusterMeanRpLift": -6.485,
+              "roleMeanRpLift": -1.424,
+              "deviation": -5.061
+            },
+            {
+              "partnerCode": 83,
+              "partnerName": "헨리",
+              "clusterMeanRpLift": -5.695,
+              "roleMeanRpLift": -0.899,
+              "deviation": -4.796
+            },
+            {
+              "partnerCode": 54,
+              "partnerName": "칼라",
+              "clusterMeanRpLift": -5.52,
+              "roleMeanRpLift": -1.187,
+              "deviation": -4.333
+            }
+          ],
+          "members": [
+            {
+              "characterCode": 24,
+              "characterName": "아델라",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "soloGames": 15327,
+              "soloAvgRP": 1.11,
+              "soloWinRate": 13.28
+            },
+            {
+              "characterCode": 12,
+              "characterName": "혜진",
+              "weapon": 6,
+              "weaponName": "암기",
+              "soloGames": 9950,
+              "soloAvgRP": 4.34,
+              "soloWinRate": 14.86
+            }
+          ]
+        },
+        {
+          "cluster": 1,
+          "size": 1,
+          "avgSoloRP": -0.66,
+          "avgSoloWinRate": 14.07,
+          "avgRpLift": -0.251,
+          "avgWinRateLift": 0.436,
+          "distinctivePositive": [
+            {
+              "partnerCode": 48,
+              "partnerName": "띠아",
+              "clusterMeanRpLift": 8.1,
+              "roleMeanRpLift": -0.833,
+              "deviation": 8.933
+            },
+            {
+              "partnerCode": 12,
+              "partnerName": "혜진",
+              "clusterMeanRpLift": 6.79,
+              "roleMeanRpLift": -1.439,
+              "deviation": 8.229
+            },
+            {
+              "partnerCode": 76,
+              "partnerName": "가넷",
+              "clusterMeanRpLift": 6.02,
+              "roleMeanRpLift": -0.757,
+              "deviation": 6.777
+            },
+            {
+              "partnerCode": 68,
+              "partnerName": "알론소",
+              "clusterMeanRpLift": 5.1,
+              "roleMeanRpLift": -1.593,
+              "deviation": 6.693
+            },
+            {
+              "partnerCode": 71,
+              "partnerName": "케네스",
+              "clusterMeanRpLift": 4.38,
+              "roleMeanRpLift": -1.993,
+              "deviation": 6.373
+            },
+            {
+              "partnerCode": 25,
+              "partnerName": "버니스",
+              "clusterMeanRpLift": 5.01,
+              "roleMeanRpLift": -1.324,
+              "deviation": 6.334
+            },
+            {
+              "partnerCode": 36,
+              "partnerName": "이바",
+              "clusterMeanRpLift": 5.78,
+              "roleMeanRpLift": -0.397,
+              "deviation": 6.177
+            },
+            {
+              "partnerCode": 85,
+              "partnerName": "미르카",
+              "clusterMeanRpLift": 4.26,
+              "roleMeanRpLift": -1.872,
+              "deviation": 6.132
+            }
+          ],
+          "distinctiveNegative": [
+            {
+              "partnerCode": 42,
+              "partnerName": "비앙카",
+              "clusterMeanRpLift": -19.72,
+              "roleMeanRpLift": -2.066,
+              "deviation": -17.654
+            },
+            {
+              "partnerCode": 24,
+              "partnerName": "아델라",
+              "clusterMeanRpLift": -17.22,
+              "roleMeanRpLift": -2.228,
+              "deviation": -14.992
+            },
+            {
+              "partnerCode": 69,
+              "partnerName": "레니",
+              "clusterMeanRpLift": -17.66,
+              "roleMeanRpLift": -4.825,
+              "deviation": -12.835
+            },
+            {
+              "partnerCode": 49,
+              "partnerName": "펠릭스",
+              "clusterMeanRpLift": -12.79,
+              "roleMeanRpLift": -1.777,
+              "deviation": -11.013
+            },
+            {
+              "partnerCode": 61,
+              "partnerName": "이렘",
+              "clusterMeanRpLift": -6.88,
+              "roleMeanRpLift": -0.944,
+              "deviation": -5.936
+            },
+            {
+              "partnerCode": 54,
+              "partnerName": "칼라",
+              "clusterMeanRpLift": -6.97,
+              "roleMeanRpLift": -1.187,
+              "deviation": -5.783
+            },
+            {
+              "partnerCode": 60,
+              "partnerName": "타지아",
+              "clusterMeanRpLift": -5.59,
+              "roleMeanRpLift": -0.727,
+              "deviation": -4.863
+            },
+            {
+              "partnerCode": 4,
+              "partnerName": "매그너스",
+              "clusterMeanRpLift": -5.96,
+              "roleMeanRpLift": -1.278,
+              "deviation": -4.682
+            }
+          ],
+          "members": [
+            {
+              "characterCode": 19,
+              "characterName": "엠마",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "soloGames": 14048,
+              "soloAvgRP": -0.66,
+              "soloWinRate": 14.07
+            }
+          ]
+        },
+        {
+          "cluster": 4,
+          "size": 1,
+          "avgSoloRP": 3.36,
+          "avgSoloWinRate": 17.02,
+          "avgRpLift": -1.889,
+          "avgWinRateLift": 0.106,
+          "distinctivePositive": [
+            {
+              "partnerCode": 73,
+              "partnerName": "샬럿",
+              "clusterMeanRpLift": 3.21,
+              "roleMeanRpLift": -5.453,
+              "deviation": 8.663
+            },
+            {
+              "partnerCode": 13,
+              "partnerName": "쇼우",
+              "clusterMeanRpLift": 5.13,
+              "roleMeanRpLift": -0.556,
+              "deviation": 5.686
+            },
+            {
+              "partnerCode": 17,
+              "partnerName": "아드리아나",
+              "clusterMeanRpLift": 2.32,
+              "roleMeanRpLift": -2.997,
+              "deviation": 5.317
+            },
+            {
+              "partnerCode": 19,
+              "partnerName": "엠마",
+              "clusterMeanRpLift": 2.06,
+              "roleMeanRpLift": -2.597,
+              "deviation": 4.657
+            },
+            {
+              "partnerCode": 51,
+              "partnerName": "프리야",
+              "clusterMeanRpLift": 1.32,
+              "roleMeanRpLift": -2.606,
+              "deviation": 3.926
+            },
+            {
+              "partnerCode": 24,
+              "partnerName": "아델라",
+              "clusterMeanRpLift": 1.57,
+              "roleMeanRpLift": -2.228,
+              "deviation": 3.798
+            },
+            {
+              "partnerCode": 66,
+              "partnerName": "아르다",
+              "clusterMeanRpLift": 2.02,
+              "roleMeanRpLift": -1.777,
+              "deviation": 3.797
+            },
+            {
+              "partnerCode": 23,
+              "partnerName": "캐시",
+              "clusterMeanRpLift": 2.74,
+              "roleMeanRpLift": -0.924,
+              "deviation": 3.664
+            }
+          ],
+          "distinctiveNegative": [
+            {
+              "partnerCode": 71,
+              "partnerName": "케네스",
+              "clusterMeanRpLift": -11.71,
+              "roleMeanRpLift": -1.993,
+              "deviation": -9.717
+            },
+            {
+              "partnerCode": 52,
+              "partnerName": "아디나",
+              "clusterMeanRpLift": -9.28,
+              "roleMeanRpLift": -1.406,
+              "deviation": -7.874
+            },
+            {
+              "partnerCode": 40,
+              "partnerName": "클로에",
+              "clusterMeanRpLift": -7.41,
+              "roleMeanRpLift": -0.424,
+              "deviation": -6.986
+            },
+            {
+              "partnerCode": 77,
+              "partnerName": "유민",
+              "clusterMeanRpLift": -8.18,
+              "roleMeanRpLift": -1.701,
+              "deviation": -6.479
+            },
+            {
+              "partnerCode": 56,
+              "partnerName": "피올로",
+              "clusterMeanRpLift": -6.49,
+              "roleMeanRpLift": -0.251,
+              "deviation": -6.239
+            },
+            {
+              "partnerCode": 26,
+              "partnerName": "바바라",
+              "clusterMeanRpLift": -7.18,
+              "roleMeanRpLift": -1.251,
+              "deviation": -5.929
+            },
+            {
+              "partnerCode": 46,
+              "partnerName": "에이든",
+              "clusterMeanRpLift": -7.36,
+              "roleMeanRpLift": -1.543,
+              "deviation": -5.817
+            },
+            {
+              "partnerCode": 10,
+              "partnerName": "리 다이린",
+              "clusterMeanRpLift": -6.85,
+              "roleMeanRpLift": -1.202,
+              "deviation": -5.648
+            }
+          ],
+          "members": [
+            {
+              "characterCode": 5,
+              "characterName": "자히르",
+              "weapon": 6,
+              "weaponName": "암기",
+              "soloGames": 19864,
+              "soloAvgRP": 3.36,
+              "soloWinRate": 17.02
+            }
+          ]
+        }
+      ]
+    },
+    "원거리 딜러": {
+      "role": "원거리 딜러",
+      "size": 15,
+      "skipped": false,
+      "method": "ward",
+      "kSelected": 2,
+      "silhouette": 0.1955,
+      "kSearch": [
+        {
+          "k": 2,
+          "kmeansSilhouette": 0.0998,
+          "wardSilhouette": 0.1955
+        },
+        {
+          "k": 3,
+          "kmeansSilhouette": 0.1309,
+          "wardSilhouette": 0.1609
+        },
+        {
+          "k": 4,
+          "kmeansSilhouette": 0.1066,
+          "wardSilhouette": 0.1357
+        },
+        {
+          "k": 5,
+          "kmeansSilhouette": 0.0553,
+          "wardSilhouette": 0.0898
+        }
+      ],
+      "pcaDims": 14,
+      "pcaExplainedVariance": 1.0,
+      "clusters": [
+        {
+          "cluster": 0,
+          "size": 14,
+          "avgSoloRP": 1.4,
+          "avgSoloWinRate": 14.32,
+          "avgRpLift": -1.095,
+          "avgWinRateLift": 0.269,
+          "distinctivePositive": [
+            {
+              "partnerCode": 38,
+              "partnerName": "제니",
+              "clusterMeanRpLift": -0.763,
+              "roleMeanRpLift": -1.629,
+              "deviation": 0.866
+            },
+            {
+              "partnerCode": 32,
+              "partnerName": "윌리엄",
+              "clusterMeanRpLift": -0.799,
+              "roleMeanRpLift": -1.512,
+              "deviation": 0.713
+            },
+            {
+              "partnerCode": 62,
+              "partnerName": "테오도르",
+              "clusterMeanRpLift": -0.735,
+              "roleMeanRpLift": -1.361,
+              "deviation": 0.626
+            },
+            {
+              "partnerCode": 51,
+              "partnerName": "프리야",
+              "clusterMeanRpLift": -3.413,
+              "roleMeanRpLift": -4.014,
+              "deviation": 0.601
+            },
+            {
+              "partnerCode": 57,
+              "partnerName": "마르티나",
+              "clusterMeanRpLift": -1.185,
+              "roleMeanRpLift": -1.734,
+              "deviation": 0.549
+            },
+            {
+              "partnerCode": 5,
+              "partnerName": "자히르",
+              "clusterMeanRpLift": 0.479,
+              "roleMeanRpLift": -0.027,
+              "deviation": 0.506
+            },
+            {
+              "partnerCode": 69,
+              "partnerName": "레니",
+              "clusterMeanRpLift": -1.987,
+              "roleMeanRpLift": -2.469,
+              "deviation": 0.482
+            },
+            {
+              "partnerCode": 54,
+              "partnerName": "칼라",
+              "clusterMeanRpLift": -1.485,
+              "roleMeanRpLift": -1.937,
+              "deviation": 0.452
+            }
+          ],
+          "distinctiveNegative": [
+            {
+              "partnerCode": 40,
+              "partnerName": "클로에",
+              "clusterMeanRpLift": -1.899,
+              "roleMeanRpLift": -1.847,
+              "deviation": -0.053
+            },
+            {
+              "partnerCode": 41,
+              "partnerName": "요한",
+              "clusterMeanRpLift": -1.207,
+              "roleMeanRpLift": -1.175,
+              "deviation": -0.032
+            },
+            {
+              "partnerCode": 71,
+              "partnerName": "케네스",
+              "clusterMeanRpLift": -2.85,
+              "roleMeanRpLift": -2.853,
+              "deviation": 0.003
+            },
+            {
+              "partnerCode": 17,
+              "partnerName": "아드리아나",
+              "clusterMeanRpLift": -1.969,
+              "roleMeanRpLift": -1.991,
+              "deviation": 0.021
+            },
+            {
+              "partnerCode": 28,
+              "partnerName": "수아",
+              "clusterMeanRpLift": -0.807,
+              "roleMeanRpLift": -0.84,
+              "deviation": 0.033
+            },
+            {
+              "partnerCode": 49,
+              "partnerName": "펠릭스",
+              "clusterMeanRpLift": -1.077,
+              "roleMeanRpLift": -1.145,
+              "deviation": 0.068
+            },
+            {
+              "partnerCode": 34,
+              "partnerName": "나타폰",
+              "clusterMeanRpLift": 0.829,
+              "roleMeanRpLift": 0.745,
+              "deviation": 0.084
+            },
+            {
+              "partnerCode": 87,
+              "partnerName": "코렐라인",
+              "clusterMeanRpLift": -3.4,
+              "roleMeanRpLift": -3.504,
+              "deviation": 0.104
+            }
+          ],
+          "members": [
+            {
+              "characterCode": 72,
+              "characterName": "카티야",
+              "weapon": 11,
+              "weaponName": "저격총",
+              "soloGames": 194101,
+              "soloAvgRP": 0.36,
+              "soloWinRate": 13.21
+            },
+            {
+              "characterCode": 31,
+              "characterName": "리오",
+              "weapon": 7,
+              "weaponName": "활",
+              "soloGames": 150312,
+              "soloAvgRP": 0.55,
+              "soloWinRate": 14.08
+            },
+            {
+              "characterCode": 58,
+              "characterName": "헤이즈",
+              "weapon": 10,
+              "weaponName": "돌격 소총",
+              "soloGames": 125376,
+              "soloAvgRP": 0.6,
+              "soloWinRate": 13.16
+            },
+            {
+              "characterCode": 21,
+              "characterName": "로지",
+              "weapon": 9,
+              "weaponName": "권총",
+              "soloGames": 102808,
+              "soloAvgRP": 2.62,
+              "soloWinRate": 13.77
+            },
+            {
+              "characterCode": 70,
+              "characterName": "츠바메",
+              "weapon": 6,
+              "weaponName": "암기",
+              "soloGames": 96447,
+              "soloAvgRP": 2.34,
+              "soloWinRate": 12.83
+            },
+            {
+              "characterCode": 2,
+              "characterName": "아야",
+              "weapon": 10,
+              "weaponName": "돌격 소총",
+              "soloGames": 68320,
+              "soloAvgRP": 3.78,
+              "soloWinRate": 14.18
+            },
+            {
+              "characterCode": 62,
+              "characterName": "테오도르",
+              "weapon": 11,
+              "weaponName": "저격총",
+              "soloGames": 64732,
+              "soloAvgRP": 0.54,
+              "soloWinRate": 15.61
+            },
+            {
+              "characterCode": 25,
+              "characterName": "버니스",
+              "weapon": 11,
+              "weaponName": "저격총",
+              "soloGames": 61592,
+              "soloAvgRP": 1.52,
+              "soloWinRate": 13.91
+            },
+            {
+              "characterCode": 6,
+              "characterName": "나딘",
+              "weapon": 8,
+              "weaponName": "석궁",
+              "soloGames": 60450,
+              "soloAvgRP": 2.26,
+              "soloWinRate": 14.5
+            },
+            {
+              "characterCode": 32,
+              "characterName": "윌리엄",
+              "weapon": 5,
+              "weaponName": "투척",
+              "soloGames": 54322,
+              "soloAvgRP": -0.09,
+              "soloWinRate": 15.27
+            },
+            {
+              "characterCode": 27,
+              "characterName": "알렉스",
+              "weapon": 9,
+              "weaponName": "권총",
+              "soloGames": 32762,
+              "soloAvgRP": 2.45,
+              "soloWinRate": 13
+            },
+            {
+              "characterCode": 8,
+              "characterName": "하트",
+              "weapon": 22,
+              "weaponName": "기타",
+              "soloGames": 30466,
+              "soloAvgRP": 0.9,
+              "soloWinRate": 14.44
+            },
+            {
+              "characterCode": 57,
+              "characterName": "마르티나",
+              "weapon": 23,
+              "weaponName": "카메라",
+              "soloGames": 25167,
+              "soloAvgRP": 1.16,
+              "soloWinRate": 15.75
+            },
+            {
+              "characterCode": 38,
+              "characterName": "제니",
+              "weapon": 9,
+              "weaponName": "권총",
+              "soloGames": 22999,
+              "soloAvgRP": 0.63,
+              "soloWinRate": 16.8
+            }
+          ]
+        },
+        {
+          "cluster": 1,
+          "size": 1,
+          "avgSoloRP": 6.2,
+          "avgSoloWinRate": 14.67,
+          "avgRpLift": -4.894,
+          "avgWinRateLift": 0.204,
+          "distinctivePositive": [
+            {
+              "partnerCode": 40,
+              "partnerName": "클로에",
+              "clusterMeanRpLift": -1.11,
+              "roleMeanRpLift": -1.847,
+              "deviation": 0.737
+            },
+            {
+              "partnerCode": 41,
+              "partnerName": "요한",
+              "clusterMeanRpLift": -0.73,
+              "roleMeanRpLift": -1.175,
+              "deviation": 0.445
+            },
+            {
+              "partnerCode": 71,
+              "partnerName": "케네스",
+              "clusterMeanRpLift": -2.9,
+              "roleMeanRpLift": -2.853,
+              "deviation": -0.047
+            },
+            {
+              "partnerCode": 17,
+              "partnerName": "아드리아나",
+              "clusterMeanRpLift": -2.29,
+              "roleMeanRpLift": -1.991,
+              "deviation": -0.299
+            },
+            {
+              "partnerCode": 28,
+              "partnerName": "수아",
+              "clusterMeanRpLift": -1.3,
+              "roleMeanRpLift": -0.84,
+              "deviation": -0.46
+            },
+            {
+              "partnerCode": 49,
+              "partnerName": "펠릭스",
+              "clusterMeanRpLift": -2.09,
+              "roleMeanRpLift": -1.145,
+              "deviation": -0.945
+            },
+            {
+              "partnerCode": 34,
+              "partnerName": "나타폰",
+              "clusterMeanRpLift": -0.43,
+              "roleMeanRpLift": 0.745,
+              "deviation": -1.175
+            },
+            {
+              "partnerCode": 87,
+              "partnerName": "코렐라인",
+              "clusterMeanRpLift": -4.96,
+              "roleMeanRpLift": -3.504,
+              "deviation": -1.456
+            }
+          ],
+          "distinctiveNegative": [
+            {
+              "partnerCode": 38,
+              "partnerName": "제니",
+              "clusterMeanRpLift": -13.76,
+              "roleMeanRpLift": -1.629,
+              "deviation": -12.131
+            },
+            {
+              "partnerCode": 32,
+              "partnerName": "윌리엄",
+              "clusterMeanRpLift": -11.49,
+              "roleMeanRpLift": -1.512,
+              "deviation": -9.978
+            },
+            {
+              "partnerCode": 62,
+              "partnerName": "테오도르",
+              "clusterMeanRpLift": -10.13,
+              "roleMeanRpLift": -1.361,
+              "deviation": -8.769
+            },
+            {
+              "partnerCode": 51,
+              "partnerName": "프리야",
+              "clusterMeanRpLift": -12.43,
+              "roleMeanRpLift": -4.014,
+              "deviation": -8.416
+            },
+            {
+              "partnerCode": 57,
+              "partnerName": "마르티나",
+              "clusterMeanRpLift": -9.42,
+              "roleMeanRpLift": -1.734,
+              "deviation": -7.686
+            },
+            {
+              "partnerCode": 5,
+              "partnerName": "자히르",
+              "clusterMeanRpLift": -7.11,
+              "roleMeanRpLift": -0.027,
+              "deviation": -7.083
+            },
+            {
+              "partnerCode": 69,
+              "partnerName": "레니",
+              "clusterMeanRpLift": -9.22,
+              "roleMeanRpLift": -2.469,
+              "deviation": -6.751
+            },
+            {
+              "partnerCode": 54,
+              "partnerName": "칼라",
+              "clusterMeanRpLift": -8.26,
+              "roleMeanRpLift": -1.937,
+              "deviation": -6.323
+            }
+          ],
+          "members": [
+            {
+              "characterCode": 40,
+              "characterName": "클로에",
+              "weapon": 6,
+              "weaponName": "암기",
+              "soloGames": 46499,
+              "soloAvgRP": 6.2,
+              "soloWinRate": 14.67
+            }
+          ]
+        }
+      ]
+    },
+    "지원가": {
+      "role": "지원가",
+      "size": 3,
+      "skipped": true,
+      "reason": "size < 5 — sub-clustering skipped",
+      "members": [
+        {
+          "characterCode": 41,
+          "characterName": "요한",
+          "weapon": 24,
+          "weaponName": "아르카나",
+          "soloGames": 17892,
+          "soloAvgRP": 2.45,
+          "soloWinRate": 16.59,
+          "cluster": -1
+        },
+        {
+          "characterCode": 69,
+          "characterName": "레니",
+          "weapon": 9,
+          "weaponName": "권총",
+          "soloGames": 58564,
+          "soloAvgRP": -1.45,
+          "soloWinRate": 12.68,
+          "cluster": -1
+        },
+        {
+          "characterCode": 73,
+          "characterName": "샬럿",
+          "weapon": 24,
+          "weaponName": "아르카나",
+          "soloGames": 16019,
+          "soloAvgRP": -6.57,
+          "soloWinRate": 15.22,
+          "cluster": -1
+        }
+      ]
+    }
+  }
+}

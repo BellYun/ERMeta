@@ -238,7 +238,7 @@ export async function getCachedHoneyPicks(
     async () => fetchHoneyPicksServer(patchVersion, requestedTier),
     ["honey-picks", patchVersion, requestedTier],
     {
-      revalidate: 1800,
+      revalidate: 21600,
       tags: ["honey-picks", `honey-picks:${patchVersion}`, `honey-picks:tier:${requestedTier}`],
     }
   )();

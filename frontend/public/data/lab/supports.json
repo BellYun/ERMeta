@@ -1,0 +1,208 @@
+{
+  "role": "지원가",
+  "roleSlug": "supports",
+  "groupK": 1,
+  "minGames": 1000,
+  "cumulative": true,
+  "generatedFrom": "DATA/trio-role-combinations/raw_character_multiset.json",
+  "generatedAt": "2026-05-22",
+  "groups": [
+    {
+      "id": 0,
+      "label": "지원가 전체",
+      "curated": false,
+      "characterKeys": ["69_9", "41_24", "73_24"]
+    }
+  ],
+  "characters": [
+    {
+      "characterCode": 69,
+      "characterName": "레니",
+      "weapon": 9,
+      "weaponName": "권총",
+      "totalGames": 132468,
+      "ownMeanRP": -0.664,
+      "groupId": 0,
+      "strong": [
+        {
+          "multiset": "지원가 + 탱커 + 탱커",
+          "delta": 2.953,
+          "games": 729
+        },
+        {
+          "multiset": "전사 + 지원가 + 탱커",
+          "delta": 0.97,
+          "games": 13911
+        },
+        {
+          "multiset": "원거리 딜러 + 원거리 딜러 + 지원가",
+          "delta": 0.775,
+          "games": 279
+        },
+        {
+          "multiset": "원거리 딜러 + 지원가 + 탱커",
+          "delta": 0.628,
+          "games": 1842
+        },
+        {
+          "multiset": "원거리 딜러 + 전사 + 지원가",
+          "delta": 0.407,
+          "games": 10515
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "암살자 + 암살자 + 지원가",
+          "delta": -31.573,
+          "games": 69
+        },
+        {
+          "multiset": "전사 + 지원가 + 지원가",
+          "delta": -15.006,
+          "games": 231
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -13.279,
+          "games": 627
+        },
+        {
+          "multiset": "지원가 + 지원가 + 지원가",
+          "delta": -10.388,
+          "games": 51
+        },
+        {
+          "multiset": "지원가 + 지원가 + 탱커",
+          "delta": -9.346,
+          "games": 33
+        }
+      ]
+    },
+    {
+      "characterCode": 41,
+      "characterName": "요한",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "totalGames": 41616,
+      "ownMeanRP": 0.516,
+      "groupId": 0,
+      "strong": [
+        {
+          "multiset": "암살자 + 원거리 딜러 + 지원가",
+          "delta": 3.416,
+          "games": 216
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": 1.109,
+          "games": 1833
+        },
+        {
+          "multiset": "원거리 딜러 + 전사 + 지원가",
+          "delta": 0.899,
+          "games": 10338
+        },
+        {
+          "multiset": "전사 + 전사 + 지원가",
+          "delta": 0.461,
+          "games": 15822
+        },
+        {
+          "multiset": "암살자 + 지원가 + 탱커",
+          "delta": 0.206,
+          "games": 90
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "지원가 + 지원가 + 지원가",
+          "delta": -11.568,
+          "games": 51
+        },
+        {
+          "multiset": "원거리 딜러 + 원거리 딜러 + 지원가",
+          "delta": -5.893,
+          "games": 372
+        },
+        {
+          "multiset": "스킬딜러 + 지원가 + 탱커",
+          "delta": -5.747,
+          "games": 726
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -3.97,
+          "games": 483
+        },
+        {
+          "multiset": "지원가 + 탱커 + 탱커",
+          "delta": -3.21,
+          "games": 36
+        }
+      ]
+    },
+    {
+      "characterCode": 73,
+      "characterName": "샬럿",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "totalGames": 35325,
+      "ownMeanRP": -2.086,
+      "groupId": 0,
+      "strong": [
+        {
+          "multiset": "원거리 딜러 + 원거리 딜러 + 지원가",
+          "delta": 5.057,
+          "games": 618
+        },
+        {
+          "multiset": "전사 + 전사 + 지원가",
+          "delta": 1.855,
+          "games": 10986
+        },
+        {
+          "multiset": "스킬딜러 + 전사 + 지원가",
+          "delta": 1.142,
+          "games": 5217
+        },
+        {
+          "multiset": "원거리 딜러 + 전사 + 지원가",
+          "delta": 0.165,
+          "games": 9645
+        },
+        {
+          "multiset": "암살자 + 전사 + 지원가",
+          "delta": -0.194,
+          "games": 1449
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "암살자 + 지원가 + 탱커",
+          "delta": -20.056,
+          "games": 120
+        },
+        {
+          "multiset": "전사 + 지원가 + 지원가",
+          "delta": -13.468,
+          "games": 219
+        },
+        {
+          "multiset": "암살자 + 원거리 딜러 + 지원가",
+          "delta": -13.157,
+          "games": 402
+        },
+        {
+          "multiset": "지원가 + 지원가 + 지원가",
+          "delta": -8.966,
+          "games": 51
+        },
+        {
+          "multiset": "스킬딜러 + 지원가 + 탱커",
+          "delta": -7.145,
+          "games": 459
+        }
+      ]
+    }
+  ]
+}

@@ -157,7 +157,7 @@ async function getCachedCharacterStatRows(patchVersion: string, tier: string): P
     async () => fetchCharacterStatRowsServer(patchVersion, tier),
     ["character-stats-rows", patchVersion, tier],
     {
-      revalidate: 3600,
+      revalidate: 21600,
       tags: [
         "character-stats:rows",
         `character-stats:patch:${patchVersion}`,
