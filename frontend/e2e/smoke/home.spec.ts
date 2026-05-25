@@ -17,7 +17,7 @@ test.describe("홈 페이지 스모크", () => {
     await expect(patchSelect).toBeVisible({ timeout: 15_000 });
 
     // 티어 세그먼트는 radiogroup + role="radio"로 구현됨 (accessibility)
-    const mithrilButton = page.getByRole("radio", { name: "미스릴" });
+    const mithrilButton = page.getByRole("radio", { name: "미스릴", exact: true });
     await expect(mithrilButton).toBeVisible();
   });
 
