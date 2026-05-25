@@ -1,6 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { createServerClient } from "@/lib/supabase";
 import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
+import { expandCumulativeTier } from "@/utils/tier";
 
 const TIER_FALLBACK_ORDER = ["DIAMOND", "METEORITE", "MITHRIL", "IN1000"];
 
@@ -50,21 +51,53 @@ export function buildRankings(rows: StatRow[]): CharacterRankingData[] {
   return rankings.map((c, i) => ({ rank: i + 1, ...c }));
 }
 
+function aggregateAcrossTiers(rows: (StatRow & { tier: string })[]): StatRow[] {
+  const map = new Map<string, StatRow & { _rankSum: number }>();
+  for (const r of rows) {
+    const key = `${r.characterNum}|${r.bestWeapon ?? "null"}`;
+    const games = r.totalGames ?? 0;
+    const ex = map.get(key);
+    if (!ex) {
+      map.set(key, {
+        characterNum: r.characterNum,
+        bestWeapon: r.bestWeapon,
+        totalGames: games,
+        totalWins: r.totalWins ?? 0,
+        totalRP: r.totalRP ?? 0,
+        totalTop3: r.totalTop3 ?? 0,
+        averageRank: 0,
+        _rankSum: (r.averageRank ?? 0) * games,
+      });
+    } else {
+      ex.totalGames += games;
+      ex.totalWins += r.totalWins ?? 0;
+      ex.totalRP += r.totalRP ?? 0;
+      ex.totalTop3 += r.totalTop3 ?? 0;
+      ex._rankSum += (r.averageRank ?? 0) * games;
+    }
+  }
+  return Array.from(map.values()).map(({ _rankSum, ...rest }) => ({
+    ...rest,
+    averageRank: rest.totalGames > 0 ? _rankSum / rest.totalGames : 0,
+  }));
+}
+
 function selectRankings(
   data: (StatRow & { tier: string })[],
   requestedTier: string
 ): { rankings: CharacterRankingData[]; usedTier: string } {
-  const tierOrder = [requestedTier, ...TIER_FALLBACK_ORDER.filter((t) => t !== requestedTier)];
-
-  for (const tier of tierOrder) {
-    const rows = data.filter((r) => r.tier === tier);
-    if (rows.length > 0) {
-      // 무기 무관 캐릭터(알렉스 등)는 단일 row로 합산 후 랭킹 산정
-      return { rankings: buildRankings(collapseWeaponAgnosticRows(rows)), usedTier: tier };
-    }
+  // 누적(+) tier 필터: 요청 tier 와 그 위 모든 tier row 를 합산.
+  const cumulativeTiers = new Set(expandCumulativeTier(requestedTier));
+  const rows = data.filter((r) => cumulativeTiers.has(r.tier));
+  if (rows.length === 0) {
+    return { rankings: [], usedTier: requestedTier };
   }
-
-  return { rankings: [], usedTier: requestedTier };
+  // 같은 (characterNum, bestWeapon) 의 multiple tier row 합산.
+  const merged = aggregateAcrossTiers(rows);
+  return {
+    rankings: buildRankings(collapseWeaponAgnosticRows(merged)),
+    usedTier: requestedTier,
+  };
 }
 
 export async function fetchRankingData(

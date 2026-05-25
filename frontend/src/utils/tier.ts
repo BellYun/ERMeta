@@ -20,6 +20,35 @@ export const METRICS_TIER_GROUPS: TierGroup[] = [
   TierGroup.IN1000,
 ];
 
+/**
+ * 누적(cumulative) 티어 매핑.
+ * 사용자가 "다이아+" 라고 부르는 것 = 다이아 이상 모든 상위 티어 통합.
+ * 정렬: 낮은 티어 → 높은 티어 순서.
+ * IN1000 는 단독 (상위 티어가 더 없음).
+ */
+export const TIER_CUMULATIVE: Record<string, TierGroup[]> = {
+  PLATINUM: [
+    TierGroup.PLATINUM,
+    TierGroup.DIAMOND,
+    TierGroup.METEORITE,
+    TierGroup.MITHRIL,
+    TierGroup.IN1000,
+  ],
+  DIAMOND: [TierGroup.DIAMOND, TierGroup.METEORITE, TierGroup.MITHRIL, TierGroup.IN1000],
+  METEORITE: [TierGroup.METEORITE, TierGroup.MITHRIL, TierGroup.IN1000],
+  MITHRIL: [TierGroup.MITHRIL, TierGroup.IN1000],
+  IN1000: [TierGroup.IN1000],
+};
+
+/**
+ * 단일 tier 문자열을 누적 tier 배열로 확장.
+ * 등록되지 않은 tier 는 단일 원소 배열로 반환 (backward-compatible fallback).
+ */
+export function expandCumulativeTier(tier: string): string[] {
+  const mapped = TIER_CUMULATIVE[tier];
+  return mapped ?? [tier];
+}
+
 export type Tier =
   | "IRON"
   | "BRONZE"
