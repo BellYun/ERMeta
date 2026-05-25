@@ -401,23 +401,23 @@ async function fetchTrioWeaponSingle(char1: number): Promise<AggregatedTrioWeapo
   return aggregateSearchRows(dedupedRows).filter((r) => !hasExcludedChar(r));
 }
 
-/** 캐릭터 미지정 — v2_CharacterTrioWeapon 풀 테이블 top N 으로 집계. */
+/** [임시 검증] 캐릭터 미지정 — p10 search 테이블 top N (migration 024 인덱스 효과 측정용) */
 async function fetchTrioWeaponAll(): Promise<AggregatedTrioWeapon[]> {
   const supabase = createServerClient();
   const select =
-    "tier,character1,weapon_type1,character2,weapon_type2,character3,weapon_type3,main_core1,main_core2,main_core3,total_games,total_wins,total_rp,rank_sum";
+    "ally1_char,ally1_weapon,ally1_core,ally2_char,ally2_weapon,ally2_core,third_char,third_weapon,third_core,total_games,total_wins,total_rp,rank_sum";
 
   const { data, error } = await supabase
-    .from("v2_CharacterTrioWeapon")
+    .from(TRIO_WEAPON_SEARCH_P10_TABLE)
     .select(select)
-    .in("tier", DIAMOND_PLUS_TIERS)
     .order("total_games", { ascending: false })
     .limit(FULL_FETCH_LIMIT);
 
   if (error) throw error;
 
-  const rows = (data ?? []) as TrioWeaponRow[];
-  return aggregateByTrioWeapon(rows).filter((r) => !hasExcludedChar(r));
+  return aggregateSearchRows((data ?? []) as TrioWeaponSearchRow[]).filter(
+    (r) => !hasExcludedChar(r)
+  );
 }
 
 // ─── L1 캐시 래퍼 — 키는 정규화된 캐릭터 코드만. 무기/sortBy/limit 은 외부 적용. ──
