@@ -19,7 +19,7 @@ interface FilterProviderProps {
 
 export function FilterProvider({ initialPatches, children }: FilterProviderProps) {
   const [patch, setPatch] = React.useState(initialPatches[0] ?? "");
-  const [tier, setTier] = React.useState("DIAMOND");
+  const [tier, setTier] = React.useState("METEORITE_PLUS");
 
   const value = React.useMemo(
     () => ({ patch, tier, patches: initialPatches, setPatch, setTier }),

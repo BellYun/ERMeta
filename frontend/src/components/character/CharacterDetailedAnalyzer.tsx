@@ -9,7 +9,6 @@ import type { EquipmentBuildResult, BuildSummary } from "@/app/api/builds/equipm
 import { useL10n } from "@/components/L10nProvider";
 import { useTraitNames } from "@/hooks/useTraitNames";
 import { cn } from "@/lib/utils";
-import { TierGroup } from "@/utils/tier";
 import { ItemIcon, WinRateSpan, SLOTS } from "./shared";
 
 /** l10n에 `Item/Name/{code}` 가 있으면 우선, 없으면 정적 itemNameMap 폴백. */
@@ -55,7 +54,7 @@ interface TraitMainGroupData {
 
 interface Props {
   characterCode: number;
-  tier: TierGroup;
+  tier: string;
   patchVersion: string | null;
   bestWeapon: number | null;
 }

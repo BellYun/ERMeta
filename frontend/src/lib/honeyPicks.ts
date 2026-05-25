@@ -2,6 +2,7 @@ import { unstable_cache } from "next/cache";
 import { STATS_EXCLUDED_PATCHES } from "@/data/patch-notes";
 import { createServerClient } from "@/lib/supabase";
 import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
+import { expandCumulativeTier } from "@/utils/tier";
 
 /**
  * 꿀챔 데이터 서버 직접 fetch — API Route 경유 없이 Supabase 직접 쿼리
@@ -83,16 +84,41 @@ function computeRates(rows: StatRow[]): ComputedRate[] {
   }));
 }
 
+function aggregateAcrossTiers(rows: StatRow[]): StatRow[] {
+  const map = new Map<string, StatRow>();
+  for (const r of rows) {
+    const key = `${r.characterNum}|${r.bestWeapon ?? "null"}`;
+    const ex = map.get(key);
+    if (!ex) {
+      map.set(key, {
+        characterNum: r.characterNum,
+        bestWeapon: r.bestWeapon,
+        totalGames: r.totalGames ?? 0,
+        totalWins: r.totalWins ?? 0,
+        totalRP: r.totalRP ?? 0,
+        totalTop3: r.totalTop3 ?? 0,
+        tier: r.tier,
+        patchVersion: r.patchVersion,
+      });
+    } else {
+      ex.totalGames += r.totalGames ?? 0;
+      ex.totalWins += r.totalWins ?? 0;
+      ex.totalRP += r.totalRP ?? 0;
+      ex.totalTop3 += r.totalTop3 ?? 0;
+    }
+  }
+  return Array.from(map.values());
+}
+
 function selectTierRows(
   data: StatRow[],
   requestedTier: string
 ): { rows: StatRow[]; usedTier: string } {
-  const tierOrder = [requestedTier, ...TIER_FALLBACK_ORDER.filter((t) => t !== requestedTier)];
-  for (const tier of tierOrder) {
-    const rows = data.filter((r) => r.tier === tier);
-    if (rows.length > 0) return { rows, usedTier: tier };
-  }
-  return { rows: [], usedTier: requestedTier };
+  // 누적(+) tier: 요청 tier 와 그 위 모든 tier 의 row 를 합산.
+  const cumulativeTiers = new Set(expandCumulativeTier(requestedTier));
+  const filtered = data.filter((r) => cumulativeTiers.has(r.tier));
+  if (filtered.length === 0) return { rows: [], usedTier: requestedTier };
+  return { rows: aggregateAcrossTiers(filtered), usedTier: requestedTier };
 }
 
 export async function fetchHoneyPicksServer(
@@ -161,18 +187,18 @@ export async function fetchHoneyPicksServer(
     if (error || !data) return empty;
 
     const typedData = data as StatRow[];
-    // 무기 무관 캐릭터(알렉스 등)는 tier별로 단일 row 합산
-    const currentData = collapseWeaponAgnosticRows(
+    // selectTierRows 가 cumulative tier filter + (characterNum, bestWeapon) 합산 후,
+    // 무기 무관 캐릭터(알렉스 등) collapse 는 마지막에 한 번.
+    const { rows: currentMerged, usedTier } = selectTierRows(
       typedData.filter((r) => r.patchVersion === patchVersion),
-      (r) => r.tier
+      requestedTier
     );
-    const prevData = collapseWeaponAgnosticRows(
+    const { rows: prevMerged } = selectTierRows(
       typedData.filter((r) => r.patchVersion === previousPatch),
-      (r) => r.tier
+      usedTier
     );
-
-    const { rows: currentRows, usedTier } = selectTierRows(currentData, requestedTier);
-    const { rows: prevRows } = selectTierRows(prevData, usedTier);
+    const currentRows = collapseWeaponAgnosticRows(currentMerged);
+    const prevRows = collapseWeaponAgnosticRows(prevMerged);
 
     if (currentRows.length === 0 || prevRows.length === 0) {
       return { ...empty, previousPatch, tier: usedTier };

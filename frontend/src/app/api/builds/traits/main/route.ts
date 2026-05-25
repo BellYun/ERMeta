@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getStatsPatchVersions } from "@/data/patch-notes";
 import { getCacheHeaders } from "@/lib/cache";
 import { createServerClient } from "@/lib/supabase";
+import { expandCumulativeTier } from "@/utils/tier";
 import {
   getTraitGroup,
   TRAIT_CORES,
@@ -120,7 +121,9 @@ export async function GET(request: NextRequest) {
       .select("*")
       .eq("characterNum", characterCode)
       .eq("patchVersion", patchVersion)
-      .eq("tier", tier)
+      // 누적(+) tier: 후처리에서 mainGroup/secGroup/option 별로 합산되므로
+      // .in 만으로 multiple tier rows 자동 통합.
+      .in("tier", expandCumulativeTier(tier))
       .order("totalGames", { ascending: false });
 
     if (bestWeapon) {

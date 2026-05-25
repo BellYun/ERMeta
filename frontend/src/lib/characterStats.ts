@@ -3,6 +3,7 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 import { createServerClient } from "@/lib/supabase";
 import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
+import { expandCumulativeTier } from "@/utils/tier";
 
 interface StatRow {
   characterNum: number;
@@ -60,20 +61,22 @@ async function fetchCharacterStatRowsServer(
   tier: string
 ): Promise<StatRow[]> {
   const supabase = createServerClient();
+  // 누적 tier: DIAMOND → [DIAMOND, METEORITE, MITHRIL, IN1000] 4 row 그룹 fetch
+  const tiers = expandCumulativeTier(tier);
 
   const selectCols = "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank";
   let { data, error } = await supabase
     .from("v2_CharacterStats")
     .select(selectCols)
     .eq("patchVersion", patchVersion)
-    .eq("tier", tier);
+    .in("tier", tiers);
 
   if ((!data || data.length === 0) && !error) {
     const fallback = await supabase
       .from("CharacterStats")
       .select(selectCols)
       .eq("patchVersion", patchVersion)
-      .eq("tier", tier);
+      .in("tier", tiers);
     data = fallback.data;
     error = fallback.error;
   }
@@ -82,7 +85,40 @@ async function fetchCharacterStatRowsServer(
     return [];
   }
 
-  return data as StatRow[];
+  // 누적 tier 의 row 들은 같은 (characterNum, bestWeapon) 에서 N tier 만큼 N row 가 옴.
+  // weighted aggregate (games·wins·RP·top3 sum + rank weighted avg) 로 합산.
+  return aggregateAcrossTiers(data as StatRow[]);
+}
+
+function aggregateAcrossTiers(rows: StatRow[]): StatRow[] {
+  const map = new Map<string, StatRow & { _rankSum: number }>();
+  for (const row of rows) {
+    const key = `${row.characterNum}|${row.bestWeapon ?? "null"}`;
+    const games = row.totalGames ?? 0;
+    const existing = map.get(key);
+    if (!existing) {
+      map.set(key, {
+        characterNum: row.characterNum,
+        bestWeapon: row.bestWeapon,
+        totalGames: games,
+        totalWins: row.totalWins ?? 0,
+        totalRP: row.totalRP ?? 0,
+        totalTop3: row.totalTop3 ?? 0,
+        averageRank: row.averageRank ?? 0,
+        _rankSum: (row.averageRank ?? 0) * games,
+      });
+    } else {
+      existing.totalGames += games;
+      existing.totalWins += row.totalWins ?? 0;
+      existing.totalRP += row.totalRP ?? 0;
+      existing.totalTop3 += row.totalTop3 ?? 0;
+      existing._rankSum += (row.averageRank ?? 0) * games;
+    }
+  }
+  return Array.from(map.values()).map(({ _rankSum, ...rest }) => ({
+    ...rest,
+    averageRank: rest.totalGames > 0 ? _rankSum / rest.totalGames : 0,
+  }));
 }
 
 function buildCharacterStatsResponse(
