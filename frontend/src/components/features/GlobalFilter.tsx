@@ -13,10 +13,12 @@ export function GlobalFilter() {
   const t = useTranslations("globalFilter");
   const tierOptions = React.useMemo(
     () => [
-      { value: "PLATINUM", label: t("tiers.PLATINUM") },
       { value: "DIAMOND", label: t("tiers.DIAMOND") },
+      { value: "DIAMOND_PLUS", label: `${t("tiers.DIAMOND")}+` },
       { value: "METEORITE", label: t("tiers.METEORITE") },
+      { value: "METEORITE_PLUS", label: `${t("tiers.METEORITE")}+` },
       { value: "MITHRIL", label: t("tiers.MITHRIL") },
+      { value: "MITHRIL_PLUS", label: `${t("tiers.MITHRIL")}+` },
     ],
     [t]
   );

@@ -9,7 +9,6 @@ import { useL10n } from "@/components/L10nProvider";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
-import { TierGroup } from "@/utils/tier";
 import { CharacterHeader } from "./CharacterHeader";
 import { SynergyPartnersSection } from "./SynergyPartnersSection";
 import { assignCharTier, fetchStats } from "./utils";
@@ -62,7 +61,7 @@ export function CharacterAnalysisClient({
   const t = useTranslations("characterAnalysis");
   const patches = React.useMemo(() => initialPatches ?? [], [initialPatches]);
 
-  const [selectedTier, setSelectedTier] = React.useState<TierGroup>(TierGroup.DIAMOND);
+  const [selectedTier, setSelectedTier] = React.useState<string>("METEORITE_PLUS");
 
   const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>((): number | null => {
     if (initialStats?.weapons && initialStats.weapons.length > 0) {
@@ -134,7 +133,7 @@ export function CharacterAnalysisClient({
   React.useEffect(() => {
     let cancelled = false;
 
-    if (selectedTier === TierGroup.DIAMOND && initialStats) {
+    if (selectedTier === "METEORITE_PLUS" && initialStats) {
       setStats(initialStats ?? null);
       setPreviousStats(initialPrevStats ?? null);
       setAllPatchStats(() => {

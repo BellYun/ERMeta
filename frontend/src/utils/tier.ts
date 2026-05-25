@@ -21,28 +21,30 @@ export const METRICS_TIER_GROUPS: TierGroup[] = [
 ];
 
 /**
- * 누적(cumulative) 티어 매핑.
- * 사용자가 "다이아+" 라고 부르는 것 = 다이아 이상 모든 상위 티어 통합.
+ * 누적(+) 티어 매핑.
+ * value 규칙:
+ *   - 단일: "DIAMOND" → ["DIAMOND"]                       (DB tier 값 그대로 사용, fallback 처리)
+ *   - 누적: "DIAMOND_PLUS" → ["DIAMOND", ..., "IN1000"]   (해당 티어 + 그 위 모든 상위 티어)
  * 정렬: 낮은 티어 → 높은 티어 순서.
- * IN1000 는 단독 (상위 티어가 더 없음).
  */
 export const TIER_CUMULATIVE: Record<string, TierGroup[]> = {
-  PLATINUM: [
+  PLATINUM_PLUS: [
     TierGroup.PLATINUM,
     TierGroup.DIAMOND,
     TierGroup.METEORITE,
     TierGroup.MITHRIL,
     TierGroup.IN1000,
   ],
-  DIAMOND: [TierGroup.DIAMOND, TierGroup.METEORITE, TierGroup.MITHRIL, TierGroup.IN1000],
-  METEORITE: [TierGroup.METEORITE, TierGroup.MITHRIL, TierGroup.IN1000],
-  MITHRIL: [TierGroup.MITHRIL, TierGroup.IN1000],
-  IN1000: [TierGroup.IN1000],
+  DIAMOND_PLUS: [TierGroup.DIAMOND, TierGroup.METEORITE, TierGroup.MITHRIL, TierGroup.IN1000],
+  METEORITE_PLUS: [TierGroup.METEORITE, TierGroup.MITHRIL, TierGroup.IN1000],
+  MITHRIL_PLUS: [TierGroup.MITHRIL, TierGroup.IN1000],
+  IN1000_PLUS: [TierGroup.IN1000],
 };
 
 /**
- * 단일 tier 문자열을 누적 tier 배열로 확장.
- * 등록되지 않은 tier 는 단일 원소 배열로 반환 (backward-compatible fallback).
+ * tier 문자열을 누적 또는 단일 tier 배열로 확장.
+ * - "X_PLUS" 형식이면 누적 매핑 사용
+ * - 그 외 (단일 DB tier 값, 예: "DIAMOND") 는 [그 자체] 단일 배열로 반환
  */
 export function expandCumulativeTier(tier: string): string[] {
   const mapped = TIER_CUMULATIVE[tier];

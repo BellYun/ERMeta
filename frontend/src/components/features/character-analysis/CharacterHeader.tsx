@@ -13,7 +13,7 @@ import { buildFallbackMap, getCharacterImageUrl, resolveCharacterName } from "@/
 import type { Tier } from "@/lib/design-tokens";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
-import { METRICS_TIER_GROUPS, TierGroup } from "@/utils/tier";
+import { TierGroup } from "@/utils/tier";
 import { TierBadge } from "../TierBadge";
 import { StatCard, SkeletonCard } from "./StatCard";
 
@@ -23,8 +23,8 @@ type DisplayStat = CharacterStatsResponse | WeaponStatItem;
 
 interface CharacterHeaderProps {
   selectedCode: number;
-  selectedTier: TierGroup;
-  setSelectedTier: (tier: TierGroup) => void;
+  selectedTier: string;
+  setSelectedTier: (tier: string) => void;
   selectedWeapon: number | null;
   setSelectedWeapon: (weapon: number | null) => void;
   stats: CharacterStatsResponse | null;
@@ -81,15 +81,29 @@ export function CharacterHeader({
   const tierRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
   const weaponRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
 
+  // 단일 + 누적(+) 7 옵션 (다이아 / 다이아+ / 메테오 / 메테오+ / 미스릴 / 미스릴+ / 1000위)
+  const tierOptionsList = React.useMemo(
+    () => [
+      { value: "DIAMOND", label: t("tiers.DIAMOND") },
+      { value: "DIAMOND_PLUS", label: `${t("tiers.DIAMOND")}+` },
+      { value: "METEORITE", label: t("tiers.METEORITE") },
+      { value: "METEORITE_PLUS", label: `${t("tiers.METEORITE")}+` },
+      { value: "MITHRIL", label: t("tiers.MITHRIL") },
+      { value: "MITHRIL_PLUS", label: `${t("tiers.MITHRIL")}+` },
+      { value: TierGroup.IN1000, label: t("tiers.IN1000") },
+    ],
+    [t]
+  );
+
   const weaponOptions: Array<number | null> = stats?.weapons
     ? [null, ...stats.weapons.map((w) => w.bestWeapon ?? null)]
     : [null];
 
   const handleTierKey = (e: React.KeyboardEvent, index: number) => {
-    const next = radioGroupKeyIndex(e.key, index, METRICS_TIER_GROUPS.length);
+    const next = radioGroupKeyIndex(e.key, index, tierOptionsList.length);
     if (next === null) return;
     e.preventDefault();
-    const nextTier = METRICS_TIER_GROUPS[next];
+    const nextTier = tierOptionsList[next].value;
     setSelectedTier(nextTier);
     analytics.analysisTierChanged(nextTier);
     tierRefs.current[next]?.focus();
@@ -177,11 +191,11 @@ export function CharacterHeader({
               aria-label={t("tierSelectorAria")}
               className="flex w-fit items-center gap-1 rounded-[14px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] p-1 sm:rounded-[16px]"
             >
-              {METRICS_TIER_GROUPS.map((tg, i) => {
-                const isSelected = selectedTier === tg;
+              {tierOptionsList.map((opt, i) => {
+                const isSelected = selectedTier === opt.value;
                 return (
                   <button
-                    key={tg}
+                    key={opt.value}
                     ref={(el) => {
                       tierRefs.current[i] = el;
                     }}
@@ -190,8 +204,8 @@ export function CharacterHeader({
                     aria-checked={isSelected}
                     tabIndex={isSelected ? 0 : -1}
                     onClick={() => {
-                      setSelectedTier(tg);
-                      analytics.analysisTierChanged(tg);
+                      setSelectedTier(opt.value);
+                      analytics.analysisTierChanged(opt.value);
                     }}
                     onKeyDown={(e) => handleTierKey(e, i)}
                     className={cn(
@@ -202,7 +216,7 @@ export function CharacterHeader({
                         : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
                     )}
                   >
-                    {t(`tiers.${tg}`)}
+                    {opt.label}
                   </button>
                 );
               })}
