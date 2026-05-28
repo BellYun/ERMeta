@@ -1,6 +1,5 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -18,7 +17,6 @@ import type { HoneyPickData } from "@/lib/honeyPicks";
 import { withCurrentSeoLocale } from "@/lib/localizedPath";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
-import { useFilter } from "../FilterContext";
 import { PatchNoteBottomSheet } from "./PatchNoteBottomSheet";
 
 const FALLBACK_MAP = buildFallbackMap();
@@ -50,23 +48,6 @@ const RANK_STYLE: Record<number, string> = {
   3: "from-[#CD7F32] to-[#A0522D] text-white",
 };
 
-async function fetchHoneyPicks(
-  patch: string | undefined,
-  tier: string,
-  fallbackMessage: string
-): Promise<{ picks: HoneyPickData[]; patchVersion: string }> {
-  const params = new URLSearchParams();
-  if (patch) params.set("patchVersion", patch);
-  params.set("tier", tier);
-  const res = await fetch(`/api/meta/honey-picks?${params}`);
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error ?? fallbackMessage);
-  return {
-    picks: data.picks ?? [],
-    patchVersion: data.patchVersion ?? patch ?? "",
-  };
-}
-
 interface ResolvedPick {
   pick: HoneyPickData;
   name: string;
@@ -84,13 +65,10 @@ interface HoneyPicksSectionProps {
 export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPicksSectionProps) {
   const { l10n } = useL10n();
   const t = useTranslations("honeyPicks");
-  const { patch, tier } = useFilter();
   const router = useRouter();
   const pathname = usePathname();
-  const [picks, setPicks] = React.useState<HoneyPickData[]>(initialData ?? []);
-  const [loading, setLoading] = React.useState(!initialData || initialData.length === 0);
-  const [error, setError] = React.useState<string | null>(null);
-  const [currentPatch, setCurrentPatch] = React.useState<string>(initialPatchVersion ?? "");
+  const picks = React.useMemo(() => initialData ?? [], [initialData]);
+  const currentPatch = initialPatchVersion ?? "";
   const [mobileSheet, setMobileSheet] = React.useState<{
     pick: HoneyPickData;
     patchNote: CharacterPatchNote;
@@ -111,26 +89,6 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
       rank,
     });
   };
-
-  const isInitialRender = React.useRef(true);
-  React.useEffect(() => {
-    if (isInitialRender.current && initialData && initialData.length > 0) {
-      isInitialRender.current = false;
-      setLoading(false);
-      return;
-    }
-    isInitialRender.current = false;
-
-    setLoading(true);
-    setError(null);
-    fetchHoneyPicks(patch, tier, t("apiError"))
-      .then(({ picks: nextPicks, patchVersion }) => {
-        setPicks(nextPicks);
-        setCurrentPatch(patchVersion);
-      })
-      .catch((err) => setError(err instanceof Error ? err.message : t("errorFallback")))
-      .finally(() => setLoading(false));
-  }, [patch, tier, initialData, t]);
 
   // Resolve picks with patch notes, buff/rework 우선 + 최소 4개 보장
   const resolved = React.useMemo<ResolvedPick[]>(() => {
@@ -156,18 +114,6 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
     const rest = all.filter((r) => !buffedNums.has(r.pick.characterNum));
     return [...buffed, ...rest].slice(0, 5);
   }, [picks, currentPatch, getCharName, l10n]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-5 w-5 animate-spin text-[var(--color-muted-foreground)]" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return <p className="py-4 text-sm text-[var(--color-danger)]">{error}</p>;
-  }
 
   if (resolved.length === 0) {
     return (

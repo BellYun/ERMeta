@@ -1,32 +1,71 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import * as React from "react";
 import { FilterProvider, useFilter } from "@/components/features/FilterContext";
 import { GlobalFilter } from "@/components/features/GlobalFilter";
 import { HomeFilterAside } from "@/components/features/HomeFilterAside";
 import { HoneyPicksSection } from "@/components/features/HoneyPicksSection";
 import { TierRankingTable } from "@/components/features/TierRankingTable";
-import type { HoneyPickData } from "@/lib/honeyPicks";
-import type { RankingResponse } from "@/lib/ranking";
+import {
+  buildHomeMetaView,
+  createEmptyHomeMetaStats,
+  type HomeMetaStats,
+} from "@/lib/homeMetaShared";
 
 interface HomeDashboardSectionsProps {
   patches: string[];
-  honeyPicks: HoneyPickData[];
-  honeyPatchVersion: string;
-  rankingData: RankingResponse;
+  homeMetaStats: HomeMetaStats;
   defaultPatch: string;
 }
 
 function HomeDashboardSectionsBody({
-  honeyPicks,
-  honeyPatchVersion,
-  rankingData,
+  homeMetaStats,
   defaultPatch,
 }: Omit<HomeDashboardSectionsProps, "patches">) {
   const t = useTranslations("home");
-  const { patch } = useFilter();
+  const { patch, tier } = useFilter();
   const selectedPatch = patch || defaultPatch;
   const isPreseasonPatch = selectedPatch === "11.0";
+  const [statsByPatch, setStatsByPatch] = React.useState<Record<string, HomeMetaStats>>(() => ({
+    [homeMetaStats.patchVersion]: homeMetaStats,
+  }));
+  const [statsError, setStatsError] = React.useState<string | null>(null);
+  const selectedStats = statsByPatch[selectedPatch];
+
+  React.useEffect(() => {
+    if (!selectedPatch || statsByPatch[selectedPatch]) return;
+
+    const controller = new AbortController();
+    setStatsError(null);
+
+    fetch(`/api/meta/home-stats?patchVersion=${encodeURIComponent(selectedPatch)}`, {
+      signal: controller.signal,
+    })
+      .then(async (res) => {
+        const data = (await res.json()) as HomeMetaStats | { error?: string };
+        if (!res.ok) throw new Error("error" in data ? data.error : undefined);
+        return data as HomeMetaStats;
+      })
+      .then((stats) => {
+        setStatsByPatch((current) => ({ ...current, [stats.patchVersion]: stats }));
+      })
+      .catch((err) => {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        setStatsError(err instanceof Error ? err.message : "데이터를 불러오지 못했습니다.");
+      });
+
+    return () => controller.abort();
+  }, [selectedPatch, statsByPatch, t]);
+
+  const computedView = React.useMemo(() => {
+    const view = buildHomeMetaView(selectedStats ?? createEmptyHomeMetaStats(selectedPatch), tier);
+    return {
+      honeyPicks: view.honeyPicks,
+      rankingData: view.rankingData,
+      honeyPatchVersion: view.rankingData.patchVersion,
+    };
+  }, [selectedPatch, selectedStats, tier]);
 
   return (
     <>
@@ -55,8 +94,12 @@ function HomeDashboardSectionsBody({
               {t("preseasonNotice")}
             </div>
           ) : null}
+          {statsError ? <p className="text-sm text-[var(--color-danger)]">{statsError}</p> : null}
 
-          <HoneyPicksSection initialData={honeyPicks} initialPatchVersion={honeyPatchVersion} />
+          <HoneyPicksSection
+            initialData={computedView.honeyPicks}
+            initialPatchVersion={computedView.honeyPatchVersion}
+          />
         </div>
       </section>
 
@@ -71,7 +114,7 @@ function HomeDashboardSectionsBody({
             {t("rankingDescription")}
           </p>
         </div>
-        <TierRankingTable initialData={rankingData} />
+        <TierRankingTable initialData={computedView.rankingData} />
       </section>
     </>
   );
@@ -81,9 +124,7 @@ export function HomeDashboardSections(props: HomeDashboardSectionsProps) {
   return (
     <FilterProvider initialPatches={props.patches}>
       <HomeDashboardSectionsBody
-        honeyPicks={props.honeyPicks}
-        honeyPatchVersion={props.honeyPatchVersion}
-        rankingData={props.rankingData}
+        homeMetaStats={props.homeMetaStats}
         defaultPatch={props.defaultPatch}
       />
     </FilterProvider>

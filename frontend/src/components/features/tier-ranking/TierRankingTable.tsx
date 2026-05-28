@@ -82,15 +82,14 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
   const { patch, tier } = useFilter();
   const t = useTranslations("tierRanking");
   const [activeRole, setActiveRole] = React.useState<RoleTabValue>(ALL_ROLE);
-  const [rankingData, setRankingData] = React.useState<RankingResponse | null>(initialData ?? null);
-  const [isLoading, setIsLoading] = React.useState(!initialData);
+  const rankingData = initialData ?? null;
+  const isLoading = !initialData;
   const [activeKey, setActiveKey] = React.useState<string | null>(null);
   const [sortKey, setSortKey] = React.useState<SortKey>("rank");
   const [sortDir, setSortDir] = React.useState<SortDir>("asc");
   const [showAll, setShowAll] = React.useState(false);
   const DEFAULT_VISIBLE = 20;
   const { l10n } = useL10n();
-  const isInitialRender = React.useRef(true);
   const pathname = usePathname();
   const router = useRouter();
   const roleTabs = React.useMemo(
@@ -105,24 +104,6 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
     ],
     [t]
   );
-
-  React.useEffect(() => {
-    if (isInitialRender.current) {
-      isInitialRender.current = false;
-      if (initialData) return;
-    }
-
-    setIsLoading(true);
-    const params = new URLSearchParams();
-    if (patch) params.set("patchVersion", patch);
-    params.set("tier", tier);
-
-    fetch(`/api/character/mithril-rp-ranking?${params}`)
-      .then((res) => res.json())
-      .then((data: RankingResponse) => setRankingData(data))
-      .catch(() => setRankingData(null))
-      .finally(() => setIsLoading(false));
-  }, [patch, tier]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const rows = React.useMemo(() => {
     if (!rankingData) return [];
