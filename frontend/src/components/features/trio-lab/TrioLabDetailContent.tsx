@@ -43,7 +43,7 @@ async function loadComboData(members: TrioWeaponMember[]) {
     weapon1: String(m1.weapon),
     character2: String(m2.character),
     weapon2: String(m2.weapon),
-    sortBy: "averageRP",
+    sortBy: "totalGames",
     limit: "60",
   });
 
@@ -51,7 +51,7 @@ async function loadComboData(members: TrioWeaponMember[]) {
   if (!combo) {
     const fallback = await fetchTrioWeaponRows({
       character1: String(m1.character),
-      sortBy: "averageRP",
+      sortBy: "totalGames",
       limit: "200",
     });
     combo = findExactMatch(fallback, members);

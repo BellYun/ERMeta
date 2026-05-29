@@ -112,7 +112,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
     [l10n]
   );
 
-  // API 호출: 아군 선택 / 정렬 변경 시 (300ms 디바운스 + AbortController)
+  // API 호출: 아군 선택 시 (300ms 디바운스 + AbortController). 정렬은 클라이언트에서 처리해 CDN 키를 줄인다.
   React.useEffect(() => {
     if (selectedAllies.length === 0) {
       setTrioResults([]);
@@ -122,7 +122,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
 
     const controller = new AbortController();
     const timerId = setTimeout(() => {
-      const params = new URLSearchParams({ sortBy, limit: "5000" });
+      const params = new URLSearchParams({ sortBy: "totalGames", limit: "5000" });
       if (selectedAllies[0] !== undefined) params.set("character1", String(selectedAllies[0]));
       if (selectedAllies[1] !== undefined) params.set("character2", String(selectedAllies[1]));
 
@@ -161,7 +161,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
       controller.abort();
       setLoading(false);
     };
-  }, [selectedAllies, sortBy, t]);
+  }, [selectedAllies, t]);
 
   const recommendations = React.useMemo(() => {
     if (selectedAllies.length === 0) return [];

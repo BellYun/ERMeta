@@ -1,8 +1,9 @@
 import characterBestWeapons from "@/../const/characterBestWeapons.json";
-import type { ApiTrioWeaponRow, TrioSortBy } from "./types";
+import type { ApiTrioWeaponRow } from "./types";
 
 const EXACT_FANOUT_LIMIT = 12;
 const REQUEST_LIMIT = "5000";
+const CANONICAL_SORT_BY = "totalGames";
 
 const weaponData = characterBestWeapons as Record<
   string,
@@ -16,20 +17,16 @@ function getCharacterWeapons(characterCode: number): number[] {
   return weapons.map((weapon) => weapon.weaponCode).filter((weaponCode) => weaponCode > 0);
 }
 
-function buildPairRequest(charA: number, charB: number, sort: TrioSortBy): TrioWeaponSearchRequest {
+function buildPairRequest(charA: number, charB: number): TrioWeaponSearchRequest {
   return {
-    sortBy: sort,
+    sortBy: CANONICAL_SORT_BY,
     limit: REQUEST_LIMIT,
     character1: String(Math.min(charA, charB)),
     character2: String(Math.max(charA, charB)),
   };
 }
 
-function buildExactPairWeaponRequests(
-  charA: number,
-  charB: number,
-  sort: TrioSortBy
-): TrioWeaponSearchRequest[] {
+function buildExactPairWeaponRequests(charA: number, charB: number): TrioWeaponSearchRequest[] {
   const weaponsA = getCharacterWeapons(charA);
   const weaponsB = getCharacterWeapons(charB);
   if (weaponsA.length === 0 || weaponsB.length === 0) return [];
@@ -42,7 +39,7 @@ function buildExactPairWeaponRequests(
   for (const weapon1 of weaponList1) {
     for (const weapon2 of weaponList2) {
       requests.push({
-        sortBy: sort,
+        sortBy: CANONICAL_SORT_BY,
         limit: REQUEST_LIMIT,
         character1: String(char1),
         weapon1: String(weapon1),
@@ -79,27 +76,24 @@ export function filterRowsByPool(rows: ApiTrioWeaponRow[], pool: number[]) {
   });
 }
 
-export function buildTrioWeaponSearchRequests(
-  pool: number[],
-  sort: TrioSortBy
-): TrioWeaponSearchRequest[] {
-  const base = { sortBy: sort, limit: REQUEST_LIMIT };
+export function buildTrioWeaponSearchRequests(pool: number[]): TrioWeaponSearchRequest[] {
+  const base = { sortBy: CANONICAL_SORT_BY, limit: REQUEST_LIMIT };
   if (pool.length === 0) return [base];
   if (pool.length === 1) return [{ ...base, character1: String(pool[0]) }];
 
   if (pool.length === 2) {
-    const exactRequests = buildExactPairWeaponRequests(pool[0], pool[1], sort);
-    return exactRequests.length > 0 ? exactRequests : [buildPairRequest(pool[0], pool[1], sort)];
+    const exactRequests = buildExactPairWeaponRequests(pool[0], pool[1]);
+    return exactRequests.length > 0 ? exactRequests : [buildPairRequest(pool[0], pool[1])];
   }
 
   const exactPair = pickSmallestExactPair(pool);
   if (exactPair) {
-    return buildExactPairWeaponRequests(exactPair[0], exactPair[1], sort);
+    return buildExactPairWeaponRequests(exactPair[0], exactPair[1]);
   }
 
   return [
-    buildPairRequest(pool[0], pool[1], sort),
-    buildPairRequest(pool[0], pool[2], sort),
-    buildPairRequest(pool[1], pool[2], sort),
+    buildPairRequest(pool[0], pool[1]),
+    buildPairRequest(pool[0], pool[2]),
+    buildPairRequest(pool[1], pool[2]),
   ];
 }
