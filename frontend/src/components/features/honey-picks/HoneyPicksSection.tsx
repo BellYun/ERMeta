@@ -133,7 +133,6 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
           return (
             <div
               key={r.pick.characterNum}
-              data-testid="honey-pick-card"
               className="char-card group cursor-pointer p-4"
               onClick={() => {
                 trackHoneyClick(r, i + 1);
@@ -315,7 +314,6 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
           return (
             <div
               key={r.pick.characterNum}
-              data-testid="honey-pick-card"
               className={cn(
                 "relative w-[138px] shrink-0 snap-start overflow-hidden rounded-[20px] border border-[rgba(255,255,255,0.08)] bg-[rgba(14,21,39,0.94)] cursor-pointer active:scale-[0.98] transition-transform touch-manipulation"
               )}

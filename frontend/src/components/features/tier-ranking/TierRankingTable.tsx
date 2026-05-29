@@ -268,7 +268,6 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                     return (
                       <tr
                         key={key}
-                        data-testid="tier-ranking-row"
                         className={cn(
                           "border-b border-[var(--color-border)]/30 last:border-b-0 cursor-pointer group transition-colors",
                           "hover:bg-[var(--color-surface-2)]"
@@ -457,7 +456,6 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                 return (
                   <div
                     key={key}
-                    data-testid="tier-ranking-row"
                     className="relative grid grid-cols-[30px_minmax(0,1.7fr)_50px_50px_64px] items-center gap-1.5 px-3 py-2.5 cursor-pointer active:bg-[var(--color-surface-2)] touch-manipulation transition-colors"
                     onClick={() => {
                       navigateToCharacter(char);

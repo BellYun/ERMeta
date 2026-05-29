@@ -33,10 +33,10 @@ test.describe("홈 페이지 스모크", () => {
       timeout: 20_000,
     });
 
-    await expect(page.locator('[data-testid="honey-pick-card"]:visible').first()).toBeVisible({
+    await expect(page.getByText("승률, 픽률, RP 변동 기준 상위 캐릭터")).toBeVisible({
       timeout: 20_000,
     });
-    await expect(page.locator('[data-testid="tier-ranking-row"]:visible').first()).toBeVisible({
+    await expect(page.getByText("메타 스코어 기반 종합 순위")).toBeVisible({
       timeout: 20_000,
     });
   });
