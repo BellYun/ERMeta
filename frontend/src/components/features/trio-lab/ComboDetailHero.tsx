@@ -1,4 +1,4 @@
-import { ArrowLeft, Share2, Bookmark } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { characterDisplayName, comboTier, type TrioWeaponCombo } from "./types";
 
@@ -59,24 +59,6 @@ export function ComboDetailHero({ combo, listHref, patchVersion, tier }: ComboDe
               {combo.averageRP.toFixed(0)} · 평균 #{combo.averageRank.toFixed(1)}
             </p>
           </div>
-        </div>
-        <div className="flex items-center gap-2 self-start sm:self-end">
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-3)] px-3 py-2 text-xs font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[rgba(255,255,255,0.06)]"
-            aria-label="이 조합 북마크"
-          >
-            <Bookmark className="h-3.5 w-3.5" strokeWidth={2.2} />
-            북마크
-          </button>
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-3)] px-3 py-2 text-xs font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[rgba(255,255,255,0.06)]"
-            aria-label="조합 공유"
-          >
-            <Share2 className="h-3.5 w-3.5" strokeWidth={2.2} />
-            공유
-          </button>
         </div>
       </div>
     </header>

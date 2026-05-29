@@ -1,8 +1,7 @@
-import { ArrowDown, ArrowRight, ArrowUp, ChevronRight, RotateCw } from "lucide-react";
+import { ArrowRight, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import itemNameMap from "@/../const/itemNameMap.json";
 import { ItemIcon } from "@/components/character/shared";
-import type { PatchChange } from "@/data/10.1";
 import { Link } from "@/i18n/navigation";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
 const ITEM_NAMES = itemNameMap as Record<string, string>;
@@ -19,8 +18,10 @@ function traitNameOf(
 }
 import {
   characterDisplayName,
+  apiRowToCombo,
   comboTier,
   weaponDisplayName,
+  type ApiTrioWeaponRow,
   type TrioWeaponCombo,
   type TrioWeaponMember,
 } from "./types";
@@ -36,7 +37,6 @@ const SCORE_COLOR: Record<string, string> = {
 
 export interface CharacterDetailData {
   member: TrioWeaponMember;
-  patchChanges: PatchChange[];
   patchVersion: string;
   topTrait: TopTraitBuild | null;
   topBuild: TopEquipmentBuild | null;
@@ -62,6 +62,7 @@ export interface TopTraitBuild {
   totalGames: number;
   /** 표본 ≥ 20 옵션 중 winRate 최고. 최소 표본 미달 시 pickRate fallback. */
   mainCore: number | null;
+  mainCoreSource?: "combo" | "global";
   mainCorePickRate: number;
   mainCoreWinRate: number;
   mainCoreGames: number;
@@ -184,42 +185,6 @@ export function MetricsBlock({ combo }: { combo: TrioWeaponCombo }) {
   );
 }
 
-const CHANGE_ICON = {
-  buff: <ArrowUp className="h-3 w-3" strokeWidth={2.4} />,
-  nerf: <ArrowDown className="h-3 w-3" strokeWidth={2.4} />,
-  rework: <RotateCw className="h-3 w-3" strokeWidth={2.4} />,
-} as const;
-
-const CHANGE_LABEL = { buff: "버프", nerf: "너프", rework: "리워크" } as const;
-
-const CHANGE_COLOR = {
-  buff: "border-[rgba(74,222,128,0.32)] bg-[rgba(74,222,128,0.12)] text-[var(--color-stat-up)]",
-  nerf: "border-[rgba(248,113,113,0.32)] bg-[rgba(248,113,113,0.12)] text-[var(--color-stat-down)]",
-  rework:
-    "border-[rgba(167,139,250,0.32)] bg-[rgba(167,139,250,0.12)] text-[var(--color-accent-purple)]",
-} as const;
-
-function PatchChangeRow({ change }: { change: PatchChange }) {
-  return (
-    <li className="flex items-start gap-2 py-1.5">
-      <span
-        className={`mt-0.5 inline-flex shrink-0 items-center gap-1 rounded-full border px-1.5 py-0.5 text-[10px] font-bold ${CHANGE_COLOR[change.changeType]}`}
-      >
-        {CHANGE_ICON[change.changeType]}
-        {CHANGE_LABEL[change.changeType]}
-      </span>
-      <div className="min-w-0 flex-1">
-        <p className="text-xs font-semibold text-[var(--color-foreground)]">{change.target}</p>
-        {change.valueSummary && (
-          <p className="mt-0.5 font-mono text-[11px] text-[var(--color-muted-foreground)]">
-            {change.valueSummary}
-          </p>
-        )}
-      </div>
-    </li>
-  );
-}
-
 function ItemThumb({ code, label }: { code: number | null; label: string }) {
   const name = itemNameOf(code);
   return (
@@ -294,6 +259,7 @@ function TraitBlock({
   }
   const meta = TRAIT_GROUP_META[trait.mainGroup];
   const showsPopularComparison = trait.popularCore != null && trait.popularCore !== trait.mainCore;
+  const isComboCore = trait.mainCoreSource === "combo";
 
   return (
     <>
@@ -313,13 +279,18 @@ function TraitBlock({
 
       <div className="mt-3 grid grid-cols-3 gap-3">
         <div className="flex flex-col items-center gap-1.5">
-          <TraitThumb code={trait.mainCore} label="고승률 코어" size={48} traitNames={traitNames} />
+          <TraitThumb
+            code={trait.mainCore}
+            label={isComboCore ? "조합 코어" : "고승률 코어"}
+            size={48}
+            traitNames={traitNames}
+          />
           <p className="font-mono text-[11px] tabular-nums text-[var(--color-stat-up)]">
             승률 {trait.mainCoreWinRate.toFixed(1)}%
           </p>
           <p className="font-mono text-[10px] text-[var(--color-muted-foreground)]">
-            {trait.mainCoreGames.toLocaleString("ko-KR")}판 · 픽률{" "}
-            {trait.mainCorePickRate.toFixed(1)}%
+            {trait.mainCoreGames.toLocaleString("ko-KR")}판
+            {!isComboCore && ` · 픽률 ${trait.mainCorePickRate.toFixed(1)}%`}
           </p>
         </div>
         <div className="flex flex-col items-center gap-1.5">
@@ -412,11 +383,11 @@ function TraitBlock({
 }
 
 function CharacterDetailCard({ data }: { data: CharacterDetailData }) {
-  const { member, patchChanges, patchVersion, topTrait, topBuild, traitNames } = data;
+  const { member, patchVersion, topTrait, topBuild, traitNames } = data;
   return (
     <article className="char-card flex flex-col gap-3 p-4">
       <header className="flex items-center gap-3 border-b border-[var(--color-border)] pb-3">
-        <MemberAvatar member={member} />
+        <MemberAvatar member={member} size="h-14 w-14" />
         <div className="min-w-0 flex-1">
           <p className="text-base font-extrabold leading-tight text-[var(--color-foreground)]">
             {characterDisplayName(member.character)}
@@ -445,7 +416,7 @@ function CharacterDetailCard({ data }: { data: CharacterDetailData }) {
 
       <section className="border-t border-[var(--color-border)] pt-3">
         <h3 className="text-[11px] font-mono font-semibold uppercase tracking-[0.14em] text-[var(--color-muted-foreground)]">
-          이 특성에 맞는 추천 아이템
+          추천 아이템
         </h3>
         {!topBuild ? (
           <p className="mt-2 text-xs text-[var(--color-muted-foreground)]">
@@ -475,23 +446,6 @@ function CharacterDetailCard({ data }: { data: CharacterDetailData }) {
           </>
         )}
       </section>
-
-      <section className="border-t border-[var(--color-border)] pt-3">
-        <h3 className="text-[11px] font-mono font-semibold uppercase tracking-[0.14em] text-[var(--color-muted-foreground)]">
-          최근 패치 변동 · {patchVersion}
-        </h3>
-        {patchChanges.length === 0 ? (
-          <p className="mt-2 text-xs text-[var(--color-muted-foreground)]">
-            이번 패치에서 변경 사항 없음.
-          </p>
-        ) : (
-          <ul className="mt-1 divide-y divide-[var(--color-border)]">
-            {patchChanges.slice(0, 4).map((change, idx) => (
-              <PatchChangeRow key={idx} change={change} />
-            ))}
-          </ul>
-        )}
-      </section>
     </article>
   );
 }
@@ -500,9 +454,7 @@ export function CharacterDetailGrid({ rows }: { rows: CharacterDetailData[] }) {
   return (
     <section className="flex flex-col gap-3">
       <div className="flex items-center justify-between border-l-2 border-[var(--color-primary)] pl-3">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">
-          캐릭터별 추천 빌드 + 최근 패치
-        </h2>
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">캐릭터별 추천 빌드</h2>
         <p className="text-[11px] font-mono uppercase tracking-widest text-[var(--color-muted-foreground)]">
           무기군별 호출
         </p>
@@ -510,6 +462,80 @@ export function CharacterDetailGrid({ rows }: { rows: CharacterDetailData[] }) {
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
         {rows.map((row) => (
           <CharacterDetailCard key={`${row.member.character}-${row.member.weapon}`} data={row} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function coreForMember(row: ApiTrioWeaponRow, member: TrioWeaponMember): number | null {
+  if (row.character1 === member.character && row.weaponType1 === member.weapon)
+    return row.mainCore1;
+  if (row.character2 === member.character && row.weaponType2 === member.weapon)
+    return row.mainCore2;
+  if (row.character3 === member.character && row.weaponType3 === member.weapon)
+    return row.mainCore3;
+  return null;
+}
+
+export function TraitComboBlock({
+  combo,
+  rows,
+  traitNames,
+}: {
+  combo: TrioWeaponCombo;
+  rows: ApiTrioWeaponRow[];
+  traitNames?: Record<number, string>;
+}) {
+  const topRows = rows
+    .filter((row) => apiRowToCombo(row).id === combo.id)
+    .sort((a, b) => b.averageRP - a.averageRP)
+    .slice(0, 3);
+
+  if (topRows.length === 0) return null;
+
+  return (
+    <section className="dashboard-panel flex flex-col gap-3 p-5">
+      <div className="flex items-center justify-between border-l-2 border-[var(--color-primary)] pl-3">
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">상위 특성 조합</h2>
+        <p className="text-[11px] font-mono uppercase tracking-widest text-[var(--color-muted-foreground)]">
+          평균 RP 기준
+        </p>
+      </div>
+      <div className="flex flex-col gap-2">
+        {topRows.map((row, index) => (
+          <div
+            key={`${row.mainCore1}-${row.mainCore2}-${row.mainCore3}-${index}`}
+            className="flex flex-wrap items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/72 p-3"
+          >
+            <span className="w-8 font-mono text-sm font-black text-[var(--color-muted-foreground)]">
+              #{index + 1}
+            </span>
+            <div className="flex flex-wrap gap-3">
+              {combo.members.map((member) => (
+                <div
+                  key={`${member.character}-${member.weapon}`}
+                  className="flex items-center gap-2"
+                >
+                  <MemberAvatar member={member} size="h-8 w-8" />
+                  <TraitThumb
+                    code={coreForMember(row, member)}
+                    label={characterDisplayName(member.character)}
+                    size={34}
+                    traitNames={traitNames}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="ml-auto flex items-center gap-4 font-mono text-xs tabular-nums text-[var(--color-muted-foreground)]">
+              <span>{row.totalGames.toLocaleString("ko-KR")}판</span>
+              <span>승률 {row.winRate.toFixed(1)}%</span>
+              <span className="font-bold text-[var(--color-accent-gold)]">
+                {row.averageRP >= 0 ? "+" : ""}
+                {row.averageRP.toFixed(1)} RP
+              </span>
+            </div>
+          </div>
         ))}
       </div>
     </section>

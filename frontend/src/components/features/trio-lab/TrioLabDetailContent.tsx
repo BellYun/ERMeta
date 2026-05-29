@@ -3,7 +3,7 @@ import {
   CharacterDetailGrid,
   MetricsBlock,
   SimilarBlock,
-  StickySidebar,
+  TraitComboBlock,
   type CharacterDetailData,
 } from "@/components/features/trio-lab/ComboDetailBody";
 import { ComboDetailHero } from "@/components/features/trio-lab/ComboDetailHero";
@@ -13,6 +13,7 @@ import {
   fetchTrioWeaponRows,
 } from "@/components/features/trio-lab/serverApi";
 import {
+  apiRowToCombo,
   buildComboId,
   mergeApiRowsByComboId,
   parseComboId,
@@ -20,9 +21,10 @@ import {
   type TrioWeaponCombo,
   type TrioWeaponMember,
 } from "@/components/features/trio-lab/types";
-import { getCharacterPatchNote, getStatsPatchVersions } from "@/data/patch-notes";
+import { getStatsPatchVersions } from "@/data/patch-notes";
 import { LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
 import { loadL10nRecord } from "@/lib/serverL10n";
+import { getTraitGroup } from "@/utils/traitCodes";
 
 const TIER_LABEL = "다이아+";
 
@@ -64,6 +66,25 @@ function buildSimilarCombos(rows: ApiTrioWeaponRow[], currentId: string): TrioWe
     .slice(0, 4);
 }
 
+function findTopTraitRow(rows: ApiTrioWeaponRow[], currentId: string): ApiTrioWeaponRow | null {
+  return (
+    rows
+      .filter((row) => apiRowToCombo(row).id === currentId)
+      .sort((a, b) => b.averageRP - a.averageRP || b.totalGames - a.totalGames)[0] ?? null
+  );
+}
+
+function getMainCoreForMember(row: ApiTrioWeaponRow | null, member: TrioWeaponMember) {
+  if (!row) return null;
+  if (row.character1 === member.character && row.weaponType1 === member.weapon)
+    return row.mainCore1;
+  if (row.character2 === member.character && row.weaponType2 === member.weapon)
+    return row.mainCore2;
+  if (row.character3 === member.character && row.weaponType3 === member.weapon)
+    return row.mainCore3;
+  return null;
+}
+
 interface TrioLabDetailContentProps {
   comboId: string;
   detailHrefQueryString: string;
@@ -96,23 +117,36 @@ export async function TrioLabDetailContent({
 
   const { combo, trioRows } = await loadComboData(members);
   if (!combo) notFound();
+  const topTraitRow = findTopTraitRow(trioRows, normalizedId);
 
   const memberDetails = await Promise.all(
     combo.members.map(async (member) => {
       const trait = await fetchTopTraitBuild(member.character, member.weapon, patchVersion);
+      const comboMainCore = getMainCoreForMember(topTraitRow, member);
+      const displayTrait =
+        trait && comboMainCore != null
+          ? {
+              ...trait,
+              mainGroup: getTraitGroup(comboMainCore),
+              mainCore: comboMainCore,
+              mainCoreSource: "combo" as const,
+              mainCoreGames: topTraitRow?.totalGames ?? 0,
+              mainCoreWinRate: topTraitRow?.winRate ?? 0,
+              mainCorePickRate: 0,
+            }
+          : trait;
       const build = await fetchTopEquipmentBuild(
         member.character,
         member.weapon,
         patchVersion,
-        trait?.mainCore ?? null
+        comboMainCore ?? trait?.mainCore ?? null
       );
-      return { member, topTrait: trait, topBuild: build };
+      return { member, topTrait: displayTrait, topBuild: build };
     })
   );
 
   const characterDetails: CharacterDetailData[] = memberDetails.map((d) => ({
     member: d.member,
-    patchChanges: getCharacterPatchNote(d.member.character, patchVersion)?.changes ?? [],
     patchVersion,
     topTrait: d.topTrait,
     topBuild: d.topBuild,
@@ -129,17 +163,15 @@ export async function TrioLabDetailContent({
         patchVersion={patchVersion}
         tier={TIER_LABEL}
       />
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_320px] lg:gap-6">
-        <div className="flex min-w-0 flex-col gap-5">
-          <MetricsBlock combo={combo} />
-          <CharacterDetailGrid rows={characterDetails} />
-          <SimilarBlock
-            detailHrefQueryString={detailHrefQueryString}
-            listHref={listHref}
-            similar={similar}
-          />
-        </div>
-        <StickySidebar combo={combo} />
+      <div className="flex min-w-0 flex-col gap-5">
+        <MetricsBlock combo={combo} />
+        <CharacterDetailGrid rows={characterDetails} />
+        <TraitComboBlock combo={combo} rows={trioRows} traitNames={traitNames} />
+        <SimilarBlock
+          detailHrefQueryString={detailHrefQueryString}
+          listHref={listHref}
+          similar={similar}
+        />
       </div>
     </>
   );
