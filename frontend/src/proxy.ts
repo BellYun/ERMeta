@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import createMiddleware from "next-intl/middleware";
-import { DEFAULT_ROUTE_LOCALE, LANGUAGE_BY_ROUTE_LOCALE, routing } from "@/i18n/routing";
+import { DEFAULT_ROUTE_LOCALE, LANGUAGE_BY_ROUTE_LOCALE } from "@/i18n/routing";
 import { LANGUAGE_COOKIE } from "@/lib/detectLanguage";
 import { getRouteLocaleSegmentFromPathname } from "@/lib/localizedPath";
 
 const COOKIE_MAX_AGE = 365 * 24 * 60 * 60; // 1년
-const handleI18nRouting = createMiddleware(routing);
+
+function applyLanguageCookie(response: NextResponse, cookieLanguage: string) {
+  response.cookies.set(LANGUAGE_COOKIE, cookieLanguage, {
+    maxAge: COOKIE_MAX_AGE,
+    path: "/",
+    sameSite: "lax",
+  });
+}
 
 export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -15,16 +21,22 @@ export function proxy(request: NextRequest) {
   }
 
   const routeLocale = getRouteLocaleSegmentFromPathname(pathname);
-  const response = handleI18nRouting(request);
   const cookieLanguage = routeLocale
     ? LANGUAGE_BY_ROUTE_LOCALE[routeLocale]
     : LANGUAGE_BY_ROUTE_LOCALE[DEFAULT_ROUTE_LOCALE];
 
-  response.cookies.set(LANGUAGE_COOKIE, cookieLanguage, {
-    maxAge: COOKIE_MAX_AGE,
-    path: "/",
-    sameSite: "lax",
-  });
+  if (!routeLocale) {
+    const rewriteUrl = request.nextUrl.clone();
+    rewriteUrl.pathname =
+      pathname === "/" ? `/${DEFAULT_ROUTE_LOCALE}` : `/${DEFAULT_ROUTE_LOCALE}${pathname}`;
+
+    const response = NextResponse.rewrite(rewriteUrl);
+    applyLanguageCookie(response, cookieLanguage);
+    return response;
+  }
+
+  const response = NextResponse.next();
+  applyLanguageCookie(response, cookieLanguage);
 
   return response;
 }
