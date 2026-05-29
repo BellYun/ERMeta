@@ -247,7 +247,8 @@
       "recommended": "おすすめ",
       "averageRP": "平均RP",
       "winRate": "勝率",
-      "totalGames": "試合数"
+      "totalGames": "試合数",
+      "averageRank": "平均順位"
     },
     "titleSingle": "{ally} を含む詳細編成",
     "titlePair": "{ally1} + {ally2} の詳細編成",
@@ -277,7 +278,8 @@
       "recommended": "おすすめ",
       "averageRP": "平均RP",
       "winRate": "勝率",
-      "totalGames": "試合数"
+      "totalGames": "試合数",
+      "averageRank": "平均順位"
     },
     "titleSingle": "{ally} を含むおすすめ編成",
     "titlePair": "{ally1} + {ally2} の編成",

@@ -2,12 +2,7 @@ import { ChevronRight, TrendingUp } from "lucide-react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
-import {
-  characterDisplayName,
-  scoreFromWinRate,
-  weaponDisplayName,
-  type TrioWeaponCombo,
-} from "./types";
+import { characterDisplayName, comboTier, weaponDisplayName, type TrioWeaponCombo } from "./types";
 
 const SCORE_COLOR: Record<string, string> = {
   "S+": "text-[var(--color-accent-gold)]",
@@ -25,7 +20,7 @@ interface ComboGalleryCardProps {
 }
 
 export function ComboGalleryCard({ combo, detailHref, rank }: ComboGalleryCardProps) {
-  const score = scoreFromWinRate(combo.winRate, combo.totalGames);
+  const score = comboTier(combo.winRate, combo.averageRP, combo.averageRank, combo.totalGames);
   const positiveRP = combo.averageRP > 0;
 
   return (

@@ -247,7 +247,8 @@
       "recommended": "推荐",
       "averageRP": "平均 RP",
       "winRate": "胜率",
-      "totalGames": "场次"
+      "totalGames": "场次",
+      "averageRank": "平均名次"
     },
     "titleSingle": "包含 {ally} 的详细阵容",
     "titlePair": "{ally1} + {ally2} 的详细阵容",
@@ -277,7 +278,8 @@
       "recommended": "推荐",
       "averageRP": "平均 RP",
       "winRate": "胜率",
-      "totalGames": "场次"
+      "totalGames": "场次",
+      "averageRank": "平均名次"
     },
     "titleSingle": "包含 {ally} 的推荐阵容",
     "titlePair": "{ally1} + {ally2} 的阵容",

@@ -27,10 +27,10 @@ export function getAllCharacterCodes(): number[] {
 export const SORT_OPTIONS: {
   value: SortBy;
   label: string;
-  labelKey: "recommended" | "averageRP" | "winRate" | "totalGames";
+  labelKey: "averageRP" | "winRate" | "averageRank" | "totalGames";
 }[] = [
-  { value: "recommended", label: "추천순", labelKey: "recommended" },
   { value: "averageRP", label: "평균 RP", labelKey: "averageRP" },
   { value: "winRate", label: "승률", labelKey: "winRate" },
+  { value: "averageRank", label: "평균 순위", labelKey: "averageRank" },
   { value: "totalGames", label: "게임 수", labelKey: "totalGames" },
 ];

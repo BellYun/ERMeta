@@ -318,7 +318,8 @@
       "recommended": "Recommended",
       "averageRP": "Avg RP",
       "winRate": "Win Rate",
-      "totalGames": "Games"
+      "totalGames": "Games",
+      "averageRank": "Avg Rank"
     },
     "titleSingle": "Detailed comps with {ally}",
     "titlePair": "Detailed comps for {ally1} + {ally2}",
@@ -451,7 +452,8 @@
       "recommended": "Recommended",
       "averageRP": "Avg RP",
       "winRate": "Win Rate",
-      "totalGames": "Games"
+      "totalGames": "Games",
+      "averageRank": "Avg Rank"
     },
     "titleSingle": "Recommended comps with {ally}",
     "titlePair": "Comp for {ally1} + {ally2}",

@@ -119,15 +119,38 @@ export const SORT_LABELS: Record<TrioSortBy, string> = {
   totalGames: "표본순",
 };
 
-export function scoreFromWinRate(
+function clamp01(value: number): number {
+  return Math.max(0, Math.min(1, value));
+}
+
+export function comboQualityScore(
   winRate: number,
+  averageRP: number,
+  averageRank: number,
+  games: number
+): number {
+  if (games < 20) return 0;
+
+  const winScore = clamp01((winRate - 8) / 8);
+  const rpScore = clamp01((averageRP + 5) / 15);
+  const rankScore = clamp01((5.5 - averageRank) / 2.5);
+  const samplePenalty = games < 100 ? 0.9 : 1;
+
+  return (winScore * 0.45 + rpScore * 0.4 + rankScore * 0.15) * samplePenalty * 100;
+}
+
+export function comboTier(
+  winRate: number,
+  averageRP: number,
+  averageRank: number,
   games: number
 ): "S+" | "S" | "A" | "B" | "C" | "D" {
   if (games < 20) return "D";
-  if (winRate >= 16) return "S+";
-  if (winRate >= 14) return "S";
-  if (winRate >= 12) return "A";
-  if (winRate >= 10) return "B";
-  if (winRate >= 8) return "C";
+  const score = comboQualityScore(winRate, averageRP, averageRank, games);
+  if (score >= 78) return "S+";
+  if (score >= 68) return "S";
+  if (score >= 56) return "A";
+  if (score >= 44) return "B";
+  if (score >= 32) return "C";
   return "D";
 }
