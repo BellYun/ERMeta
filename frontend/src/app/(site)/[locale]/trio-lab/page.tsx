@@ -2,9 +2,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
+import {
+  buildTrioWeaponSearchRequests,
+  filterRowsByPool,
+} from "@/components/features/trio-lab/searchRequests";
 import { fetchTrioWeaponRows } from "@/components/features/trio-lab/serverApi";
 import { TrioLabGalleryClient } from "@/components/features/trio-lab/TrioLabGalleryClient";
-import { mergeApiRowsByComboId, type ApiTrioWeaponRow } from "@/components/features/trio-lab/types";
+import { mergeApiRowsByComboId, sortTrioWeaponCombos } from "@/components/features/trio-lab/types";
 import { parseTrioLabUrlState } from "@/components/features/trio-lab/urlState";
 import { isRouteLocale } from "@/i18n/routing";
 import { BASE_URL } from "@/lib/siteMetadata";
@@ -19,39 +23,6 @@ interface LocalePageProps {
   searchParams: SearchParams;
 }
 
-function filterRowsByPool(rows: ApiTrioWeaponRow[], pool: number[]) {
-  if (pool.length === 0) return rows;
-
-  return rows.filter((row) => {
-    const chars = new Set([row.character1, row.character2, row.character3]);
-    return pool.every((character) => chars.has(character));
-  });
-}
-
-function buildTrioWeaponSearchRequests(
-  pool: number[],
-  sort: string
-): Array<Record<string, string>> {
-  const base = { sortBy: sort, limit: "1000" };
-  if (pool.length === 0) return [base];
-  if (pool.length === 1) return [{ ...base, character1: String(pool[0]) }];
-
-  const pairs =
-    pool.length === 2
-      ? [[pool[0], pool[1]]]
-      : [
-          [pool[0], pool[1]],
-          [pool[0], pool[2]],
-          [pool[1], pool[2]],
-        ];
-
-  return pairs.map(([a, b]) => ({
-    ...base,
-    character1: String(Math.min(a, b)),
-    character2: String(Math.max(a, b)),
-  }));
-}
-
 async function fetchInitialCombos(searchParams: Awaited<SearchParams>) {
   const state = parseTrioLabUrlState(searchParams);
   const rowGroups = await Promise.all(
@@ -60,7 +31,10 @@ async function fetchInitialCombos(searchParams: Awaited<SearchParams>) {
     )
   );
   const rows = rowGroups.flat();
-  return mergeApiRowsByComboId(filterRowsByPool(rows, state.pool));
+  return sortTrioWeaponCombos(
+    mergeApiRowsByComboId(filterRowsByPool(rows, state.pool)),
+    state.sort
+  );
 }
 
 export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {

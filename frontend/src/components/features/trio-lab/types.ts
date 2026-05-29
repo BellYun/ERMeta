@@ -94,6 +94,18 @@ export function mergeApiRowsByComboId(rows: ApiTrioWeaponRow[]): TrioWeaponCombo
   return Array.from(merged.values());
 }
 
+export function sortTrioWeaponCombos(
+  combos: TrioWeaponCombo[],
+  sortBy: TrioSortBy
+): TrioWeaponCombo[] {
+  return [...combos].sort((a, b) => {
+    if (sortBy === "averageRP") return b.averageRP - a.averageRP;
+    if (sortBy === "winRate") return b.winRate - a.winRate;
+    if (sortBy === "averageRank") return a.averageRank - b.averageRank;
+    return b.totalGames - a.totalGames;
+  });
+}
+
 export function characterDisplayName(code: number): string {
   return getCharacterName(code);
 }

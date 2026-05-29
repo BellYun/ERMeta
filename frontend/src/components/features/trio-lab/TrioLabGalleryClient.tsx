@@ -11,9 +11,11 @@ import { VirtualCharacterGrid } from "@/components/ui/VirtualCharacterGrid";
 import { usePathname } from "@/i18n/navigation";
 import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMap";
 import { ComboGalleryCard } from "./ComboGalleryCard";
+import { buildTrioWeaponSearchRequests, filterRowsByPool } from "./searchRequests";
 import {
   mergeApiRowsByComboId,
   SORT_LABELS,
+  sortTrioWeaponCombos,
   type ApiTrioWeaponRow,
   type TrioSortBy,
   type TrioWeaponCombo,
@@ -40,36 +42,6 @@ function isSameState(a: TrioLabUrlState, b: TrioLabUrlState) {
     a.pool.length === b.pool.length &&
     a.pool.every((value, index) => value === b.pool[index])
   );
-}
-
-function filterRowsByPool(rows: ApiTrioWeaponRow[], pool: number[]) {
-  if (pool.length === 0) return rows;
-
-  return rows.filter((row) => {
-    const chars = new Set([row.character1, row.character2, row.character3]);
-    return pool.every((character) => chars.has(character));
-  });
-}
-
-function buildTrioWeaponSearchRequests(pool: number[], sort: TrioSortBy) {
-  const base = { sortBy: sort, limit: "1000" };
-  if (pool.length === 0) return [base];
-  if (pool.length === 1) return [{ ...base, character1: String(pool[0]) }];
-
-  const pairs =
-    pool.length === 2
-      ? [[pool[0], pool[1]]]
-      : [
-          [pool[0], pool[1]],
-          [pool[0], pool[2]],
-          [pool[1], pool[2]],
-        ];
-
-  return pairs.map(([a, b]) => ({
-    ...base,
-    character1: String(Math.min(a, b)),
-    character2: String(Math.max(a, b)),
-  }));
 }
 
 export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProps) {
@@ -150,7 +122,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
       .then((responses) => {
         const rows = responses.flatMap((data) => data.results ?? []);
         const filtered = filterRowsByPool(rows, poolCodes);
-        setCombos(mergeApiRowsByComboId(filtered));
+        setCombos(sortTrioWeaponCombos(mergeApiRowsByComboId(filtered), sort));
         setVisibleCount(PAGE_SIZE);
       })
       .catch((err: unknown) => {
