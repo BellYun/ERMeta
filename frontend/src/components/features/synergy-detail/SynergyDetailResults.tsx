@@ -18,6 +18,8 @@ import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "../synergy/c
 import { ComboWeaponCard, type GroupedCombo } from "./ComboWeaponCard";
 import type { TrioWeaponResult, SortBy } from "./types";
 
+const MIN_MEANINGFUL_GAMES = 10;
+
 /** 무기·코어 무시하고 캐릭터(c1,c2,c3) 기준으로 그룹화 */
 function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
   const map = new Map<
@@ -202,7 +204,7 @@ export function SynergyDetailResults() {
 
     const controller = new AbortController();
     const timerId = setTimeout(() => {
-      const params = new URLSearchParams({ sortBy, limit: "500" });
+      const params = new URLSearchParams({ sortBy, limit: "5000" });
       const a1 = deferredAllies[0];
       if (a1) {
         params.set("character1", String(a1.charCode));
@@ -336,7 +338,11 @@ export function SynergyDetailResults() {
       grouped.sort((a, b) => b.totalGames - a.totalGames);
     }
 
-    return grouped;
+    if (sortBy === "totalGames") return grouped;
+    return [
+      ...grouped.filter((group) => group.totalGames >= MIN_MEANINGFUL_GAMES),
+      ...grouped.filter((group) => group.totalGames < MIN_MEANINGFUL_GAMES),
+    ];
   }, [results, deferredAllies, deferredCharCodes, focusCharWeapons, sortBy]);
 
   const clearAllies = React.useCallback(() => {

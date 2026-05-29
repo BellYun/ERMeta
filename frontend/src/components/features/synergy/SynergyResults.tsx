@@ -17,6 +17,7 @@ import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "./constants"
 import type { TrioResult, SortBy } from "./types";
 import { getThirdCharacter, deduplicateResults } from "./utils";
 const ComboCard = React.lazy(() => import("./ComboCard").then((m) => ({ default: m.ComboCard })));
+const MIN_MEANINGFUL_GAMES = 10;
 
 interface TrioWeaponApiRow {
   character1: number;
@@ -121,7 +122,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
 
     const controller = new AbortController();
     const timerId = setTimeout(() => {
-      const params = new URLSearchParams({ sortBy, limit: "1000" });
+      const params = new URLSearchParams({ sortBy, limit: "5000" });
       if (selectedAllies[0] !== undefined) params.set("character1", String(selectedAllies[0]));
       if (selectedAllies[1] !== undefined) params.set("character2", String(selectedAllies[1]));
 
@@ -190,7 +191,14 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
       ...deduped.filter((r) => r.averageRP >= 0),
       ...deduped.filter((r) => r.averageRP < 0),
     ];
-    return sorted.slice(0, 20);
+    const sampleAwareSorted =
+      sortBy === "totalGames"
+        ? sorted
+        : [
+            ...sorted.filter((r) => r.totalGames >= MIN_MEANINGFUL_GAMES),
+            ...sorted.filter((r) => r.totalGames < MIN_MEANINGFUL_GAMES),
+          ];
+    return sampleAwareSorted.slice(0, 20);
   }, [trioResults, selectedAllies, focusCharacters, sortBy]);
 
   const clearAllies = React.useCallback(() => {
