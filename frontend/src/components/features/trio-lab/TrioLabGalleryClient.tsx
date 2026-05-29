@@ -93,15 +93,14 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
       const normalizedState = parseTrioLabUrlState(nextParams);
       const nextUrl = nextParams.toString() ? `${pathname}?${nextParams.toString()}` : pathname;
 
+      if (normalizedState.sort !== currentState.sort) {
+        setVisibleCount(PAGE_SIZE);
+      }
       setCurrentState(normalizedState);
       window.history.replaceState(window.history.state, "", nextUrl);
     },
-    [pathname, searchParams]
+    [currentState.sort, pathname, searchParams]
   );
-
-  React.useEffect(() => {
-    setVisibleCount(PAGE_SIZE);
-  }, [sort]);
 
   React.useEffect(() => {
     if (!didMountRef.current) {
@@ -371,11 +370,11 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
               <button
                 type="button"
                 onClick={() =>
-                  setVisibleCount((count) => Math.min(count + PAGE_SIZE, combos.length))
+                  setVisibleCount((count) => Math.min(count + PAGE_SIZE, sortedCombos.length))
                 }
                 className="inline-flex min-h-[42px] items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-3)] px-5 text-xs font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)]/10"
               >
-                더보기 · {Math.min(PAGE_SIZE, combos.length - visibleCount)}개
+                더보기 · {Math.min(PAGE_SIZE, sortedCombos.length - visibleCount)}개
               </button>
             </div>
           ) : null}
