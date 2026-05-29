@@ -4,18 +4,18 @@ import { getPatches } from "@/lib/getPatches";
 import { getCachedHomeMetaStats } from "@/lib/homeMetaServer";
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const latestPatch = (await getPatches())[0] ?? "";
-  const patchVersion = searchParams.get("patchVersion") ?? latestPatch;
-
-  if (!patchVersion) {
-    return NextResponse.json(
-      { patchVersion: "", previousPatch: null, rows: [] },
-      { headers: NO_CACHE_HEADERS }
-    );
-  }
-
   try {
+    const { searchParams } = new URL(request.url);
+    const latestPatch = (await getPatches())[0] ?? "";
+    const patchVersion = searchParams.get("patchVersion") ?? latestPatch;
+
+    if (!patchVersion) {
+      return NextResponse.json(
+        { patchVersion: "", previousPatch: null, rows: [] },
+        { headers: NO_CACHE_HEADERS }
+      );
+    }
+
     const result = await getCachedHomeMetaStats(patchVersion);
     return NextResponse.json(result, { headers: getCacheHeaders("daily") });
   } catch (err) {

@@ -30,11 +30,12 @@ function HomeDashboardSectionsBody({
   const [statsByPatch, setStatsByPatch] = React.useState<Record<string, HomeMetaStats>>(() => ({
     [homeMetaStats.patchVersion]: homeMetaStats,
   }));
+  const statsByPatchRef = React.useRef(statsByPatch);
   const [statsError, setStatsError] = React.useState<string | null>(null);
   const selectedStats = statsByPatch[selectedPatch];
 
   React.useEffect(() => {
-    if (!selectedPatch || statsByPatch[selectedPatch]) return;
+    if (!selectedPatch || statsByPatchRef.current[selectedPatch]) return;
 
     const controller = new AbortController();
     setStatsError(null);
@@ -48,7 +49,11 @@ function HomeDashboardSectionsBody({
         return data as HomeMetaStats;
       })
       .then((stats) => {
-        setStatsByPatch((current) => ({ ...current, [stats.patchVersion]: stats }));
+        setStatsByPatch((current) => {
+          const next = { ...current, [stats.patchVersion]: stats };
+          statsByPatchRef.current = next;
+          return next;
+        });
       })
       .catch((err) => {
         if (err instanceof DOMException && err.name === "AbortError") return;
@@ -56,7 +61,7 @@ function HomeDashboardSectionsBody({
       });
 
     return () => controller.abort();
-  }, [selectedPatch, statsByPatch, t]);
+  }, [selectedPatch]);
 
   const computedView = React.useMemo(() => {
     const view = buildHomeMetaView(selectedStats ?? createEmptyHomeMetaStats(selectedPatch), tier);

@@ -24,6 +24,8 @@ const ALL_LAB_SLUGS = [
   "supports",
 ] as const;
 
+const labDataCache = new Map<string, Promise<LabData | null>>();
+
 interface RoleComboRpPanelProps {
   characterCode: number;
   selectedWeapon: number | null;
@@ -44,9 +46,14 @@ function formatGames(value: number) {
 }
 
 async function fetchLabData(slug: string): Promise<LabData | null> {
-  const res = await fetch(`/data/lab/${slug}.json`);
-  if (!res.ok) return null;
-  return (await res.json()) as LabData;
+  const cached = labDataCache.get(slug);
+  if (cached) return cached;
+
+  const promise = fetch(`/data/lab/${slug}.json`).then((res) =>
+    res.ok ? (res.json() as Promise<LabData>) : null
+  );
+  labDataCache.set(slug, promise);
+  return promise;
 }
 
 function findLabCharacter(
@@ -66,6 +73,22 @@ function findLabCharacter(
   };
 }
 
+async function findCharacterInSlugs(
+  slugs: readonly string[],
+  characterCode: number,
+  selectedWeapon: number
+): Promise<RoleComboData | null> {
+  const results = await Promise.all(slugs.map((slug) => fetchLabData(slug)));
+
+  for (const result of results) {
+    if (!result) continue;
+    const found = findLabCharacter(result, characterCode, selectedWeapon);
+    if (found) return found;
+  }
+
+  return null;
+}
+
 export function RoleComboRpPanel({ characterCode, selectedWeapon }: RoleComboRpPanelProps) {
   const [data, setData] = React.useState<RoleComboData | null>(null);
   const [loading, setLoading] = React.useState(false);
@@ -83,28 +106,26 @@ export function RoleComboRpPanel({ characterCode, selectedWeapon }: RoleComboRpP
     setLoading(true);
     setExpanded(false);
 
-    const roles = getComboRoles(characterCode, selectedWeapon);
+    const weapon = selectedWeapon;
+    const roles = getComboRoles(characterCode, weapon);
     const preferredSlugs = roles.map((role) => ROLE_TO_LAB_SLUG[role]).filter(Boolean);
-    const slugs = [
-      ...new Set([
-        ...preferredSlugs,
-        ...ALL_LAB_SLUGS.filter((slug) => !preferredSlugs.includes(slug)),
-      ]),
-    ];
+    const uniquePreferredSlugs = [...new Set(preferredSlugs)];
+    const remainingSlugs = ALL_LAB_SLUGS.filter((slug) => !uniquePreferredSlugs.includes(slug));
 
-    Promise.all(slugs.map((slug) => fetchLabData(slug)))
-      .then((results) => {
+    async function loadData() {
+      const preferredFound = await findCharacterInSlugs(
+        uniquePreferredSlugs,
+        characterCode,
+        weapon
+      );
+      if (preferredFound) return preferredFound;
+      return findCharacterInSlugs(remainingSlugs, characterCode, weapon);
+    }
+
+    loadData()
+      .then((found) => {
         if (cancelled) return;
-        for (const result of results) {
-          if (!result) continue;
-          const found = findLabCharacter(result, characterCode, selectedWeapon);
-          if (found) {
-            setData(found);
-            setLoading(false);
-            return;
-          }
-        }
-        setData(null);
+        setData(found);
         setLoading(false);
       })
       .catch(() => {
