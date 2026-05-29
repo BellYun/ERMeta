@@ -128,6 +128,38 @@ interface TrioWeaponMember {
 }
 
 type SearchPositionColumn = "ally1_char" | "ally2_char" | "third_char";
+type TrioWeaponPositionColumn = "character1" | "character2" | "character3";
+type TrioWeaponColumn = keyof TrioWeaponRow;
+type TrioWeaponPairPosition = {
+  charColumn1: TrioWeaponPositionColumn;
+  weaponColumn1: TrioWeaponColumn;
+  charColumn2: TrioWeaponPositionColumn;
+  weaponColumn2: TrioWeaponColumn;
+};
+
+const TRIO_WEAPON_SELECT =
+  "tier,character1,weapon_type1,character2,weapon_type2,character3,weapon_type3,main_core1,main_core2,main_core3,total_games,total_wins,total_rp,rank_sum";
+
+const TRIO_WEAPON_PAIR_POSITIONS: readonly TrioWeaponPairPosition[] = [
+  {
+    charColumn1: "character1",
+    weaponColumn1: "weapon_type1",
+    charColumn2: "character2",
+    weaponColumn2: "weapon_type2",
+  },
+  {
+    charColumn1: "character1",
+    weaponColumn1: "weapon_type1",
+    charColumn2: "character3",
+    weaponColumn2: "weapon_type3",
+  },
+  {
+    charColumn1: "character2",
+    weaponColumn1: "weapon_type2",
+    charColumn2: "character3",
+    weaponColumn2: "weapon_type3",
+  },
+];
 
 function normalizeTrioMembersByCharacter(
   members: readonly [TrioWeaponMember, TrioWeaponMember, TrioWeaponMember]
@@ -389,62 +421,119 @@ function matchesWeaponFilter(
   );
 }
 
-async function fetchSupplementalTrioWeaponRows(
-  orFilter: string | null,
+async function fetchSupplementalTrioWeaponPairPosition(
+  char1: number,
+  char2: number,
+  position: TrioWeaponPairPosition,
   fetchLimit: number
-): Promise<AggregatedTrioWeapon[]> {
+): Promise<TrioWeaponRow[]> {
   const supabase = createServerClient();
-  const select =
-    "tier,character1,weapon_type1,character2,weapon_type2,character3,weapon_type3,main_core1,main_core2,main_core3,total_games,total_wins,total_rp,rank_sum";
   const rows: TrioWeaponRow[] = [];
 
   for (let offset = 0; offset < fetchLimit; offset += DB_PAGE_SIZE) {
     const pageEnd = Math.min(offset + DB_PAGE_SIZE, fetchLimit) - 1;
-    let query = supabase
+    const { data, error } = await supabase
       .from(TRIO_WEAPON_TABLE)
-      .select(select)
+      .select(TRIO_WEAPON_SELECT)
       .in("patch_version", SUPPLEMENTAL_PATCH_VERSIONS)
       .in("tier", DIAMOND_PLUS_TIERS)
-      .order("total_games", { ascending: false })
+      .eq(position.charColumn1, char1)
+      .eq(position.charColumn2, char2)
       .range(offset, pageEnd);
 
-    if (orFilter) {
-      query = query.or(orFilter) as typeof query;
-    }
-
-    const { data, error } = await query;
     if (error) throw error;
     const pageRows = (data ?? []) as TrioWeaponRow[];
     rows.push(...pageRows);
     if (pageRows.length < DB_PAGE_SIZE) break;
   }
 
-  return aggregateByTrioWeapon(rows).filter((r) => !hasExcludedChar(r));
+  return rows;
 }
 
-function supplementalSingleFilter(char1: number): string {
-  return [`character1.eq.${char1}`, `character2.eq.${char1}`, `character3.eq.${char1}`].join(",");
-}
-
-function supplementalPairFilter(char1: number, char2: number): string {
-  return [
-    `and(character1.eq.${char1},character2.eq.${char2})`,
-    `and(character1.eq.${char1},character3.eq.${char2})`,
-    `and(character2.eq.${char1},character3.eq.${char2})`,
-  ].join(",");
-}
-
-function supplementalExactPairFilter(
+async function fetchSupplementalTrioWeaponExactPairPosition(
   char1: number,
   weapon1: number,
   char2: number,
-  weapon2: number
-): string {
-  return [
-    `and(character1.eq.${char1},weapon_type1.eq.${weapon1},character2.eq.${char2},weapon_type2.eq.${weapon2})`,
-    `and(character1.eq.${char1},weapon_type1.eq.${weapon1},character3.eq.${char2},weapon_type3.eq.${weapon2})`,
-    `and(character2.eq.${char1},weapon_type2.eq.${weapon1},character3.eq.${char2},weapon_type3.eq.${weapon2})`,
-  ].join(",");
+  weapon2: number,
+  position: TrioWeaponPairPosition,
+  fetchLimit: number
+): Promise<TrioWeaponRow[]> {
+  const supabase = createServerClient();
+  const rows: TrioWeaponRow[] = [];
+
+  for (let offset = 0; offset < fetchLimit; offset += DB_PAGE_SIZE) {
+    const pageEnd = Math.min(offset + DB_PAGE_SIZE, fetchLimit) - 1;
+    const { data, error } = await supabase
+      .from(TRIO_WEAPON_TABLE)
+      .select(TRIO_WEAPON_SELECT)
+      .in("patch_version", SUPPLEMENTAL_PATCH_VERSIONS)
+      .in("tier", DIAMOND_PLUS_TIERS)
+      .eq(position.charColumn1, char1)
+      .eq(position.weaponColumn1, weapon1)
+      .eq(position.charColumn2, char2)
+      .eq(position.weaponColumn2, weapon2)
+      .range(offset, pageEnd);
+
+    if (error) throw error;
+    const pageRows = (data ?? []) as TrioWeaponRow[];
+    rows.push(...pageRows);
+    if (pageRows.length < DB_PAGE_SIZE) break;
+  }
+
+  return rows;
+}
+
+async function fetchSupplementalTrioWeaponPair(
+  char1: number,
+  char2: number,
+  fetchLimit: number
+): Promise<AggregatedTrioWeapon[]> {
+  const rows = (
+    await Promise.all(
+      TRIO_WEAPON_PAIR_POSITIONS.map((position) =>
+        fetchSupplementalTrioWeaponPairPosition(char1, char2, position, fetchLimit)
+      )
+    )
+  ).flat();
+
+  return aggregateByTrioWeapon(rows).filter((r) => !hasExcludedChar(r));
+}
+
+async function fetchSupplementalTrioWeaponExactPair(
+  char1: number,
+  weapon1: number,
+  char2: number,
+  weapon2: number,
+  fetchLimit: number
+): Promise<AggregatedTrioWeapon[]> {
+  const rows = (
+    await Promise.all(
+      TRIO_WEAPON_PAIR_POSITIONS.map((position) =>
+        fetchSupplementalTrioWeaponExactPairPosition(
+          char1,
+          weapon1,
+          char2,
+          weapon2,
+          position,
+          fetchLimit
+        )
+      )
+    )
+  ).flat();
+
+  return aggregateByTrioWeapon(rows).filter((r) => !hasExcludedChar(r));
+}
+
+async function safeFetchSupplemental(
+  label: string,
+  fetcher: () => Promise<AggregatedTrioWeapon[]>
+): Promise<AggregatedTrioWeapon[]> {
+  try {
+    return await fetcher();
+  } catch (error) {
+    console.warn(`[stats/trios-weapon] supplemental fetch skipped: ${label}`, error);
+    return [];
+  }
 }
 
 // ─── DB fetch + 집계 — 기본 분기는 무기 필터를 캐시 외부에서 적용해 L1 키 카디널리티 압축 ──
@@ -477,9 +566,8 @@ async function fetchTrioWeaponPair(char1: number, char2: number): Promise<Aggreg
   }
 
   const baseResults = aggregateSearchRows(rows).filter((r) => !hasExcludedChar(r));
-  const supplementalResults = await fetchSupplementalTrioWeaponRows(
-    supplementalPairFilter(char1, char2),
-    FULL_FETCH_LIMIT
+  const supplementalResults = await safeFetchSupplemental(`pair:${char1}:${char2}`, () =>
+    fetchSupplementalTrioWeaponPair(char1, char2, FULL_FETCH_LIMIT)
   );
   return mergeAggregatedResults([...baseResults, ...supplementalResults]);
 }
@@ -518,9 +606,16 @@ async function fetchTrioWeaponPairWeaponExact(
   }
 
   const baseResults = aggregateSearchRows(rows).filter((r) => !hasExcludedChar(r));
-  const supplementalResults = await fetchSupplementalTrioWeaponRows(
-    supplementalExactPairFilter(char1, weapon1, char2, weapon2),
-    EXACT_PAIR_WEAPON_FETCH_LIMIT
+  const supplementalResults = await safeFetchSupplemental(
+    `exact-pair:${char1}:${weapon1}:${char2}:${weapon2}`,
+    () =>
+      fetchSupplementalTrioWeaponExactPair(
+        char1,
+        weapon1,
+        char2,
+        weapon2,
+        EXACT_PAIR_WEAPON_FETCH_LIMIT
+      )
   );
   return mergeAggregatedResults([...baseResults, ...supplementalResults]);
 }
@@ -540,7 +635,6 @@ async function fetchTrioWeaponSinglePosition(
       .from(TRIO_WEAPON_SEARCH_P10_TABLE)
       .select(searchSelect)
       .eq(column, char1)
-      .order("total_games", { ascending: false })
       .range(offset, pageEnd);
 
     if (error) throw error;
@@ -577,12 +671,7 @@ async function fetchTrioWeaponSingle(char1: number): Promise<AggregatedTrioWeapo
     return true;
   });
 
-  const baseResults = aggregateSearchRows(dedupedRows).filter((r) => !hasExcludedChar(r));
-  const supplementalResults = await fetchSupplementalTrioWeaponRows(
-    supplementalSingleFilter(char1),
-    PARALLEL_FETCH_LIMIT
-  );
-  return mergeAggregatedResults([...baseResults, ...supplementalResults]);
+  return aggregateSearchRows(dedupedRows).filter((r) => !hasExcludedChar(r));
 }
 
 /** [임시 검증] 캐릭터 미지정 — p10 search 테이블 top N (migration 024 인덱스 효과 측정용) */
@@ -606,9 +695,7 @@ async function fetchTrioWeaponAll(): Promise<AggregatedTrioWeapon[]> {
     if (pageRows.length < DB_PAGE_SIZE) break;
   }
 
-  const baseResults = aggregateSearchRows(rows).filter((r) => !hasExcludedChar(r));
-  const supplementalResults = await fetchSupplementalTrioWeaponRows(null, FULL_FETCH_LIMIT);
-  return mergeAggregatedResults([...baseResults, ...supplementalResults]);
+  return aggregateSearchRows(rows).filter((r) => !hasExcludedChar(r));
 }
 
 // ─── L1 캐시 래퍼 — 키는 정규화된 캐릭터 코드만. 무기/sortBy/limit 은 외부 적용. ──
