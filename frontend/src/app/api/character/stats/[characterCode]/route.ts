@@ -28,7 +28,7 @@ export async function GET(
       throw new Error("Failed to load cached character stats");
     }
     return NextResponse.json(stats satisfies CharacterStatsResponse, {
-      headers: withCacheObservability(getCacheHeaders("daily"), latencyMs),
+      headers: withCacheObservability(getCacheHeaders("character-stats"), latencyMs),
     });
   } catch (err) {
     console.error("[character/stats] 예외:", err);

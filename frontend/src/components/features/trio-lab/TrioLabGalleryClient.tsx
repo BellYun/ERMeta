@@ -80,8 +80,12 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
     () => buildTrioLabQueryString(currentState),
     [currentState]
   );
-  const visibleCombos = React.useMemo(() => combos.slice(0, visibleCount), [combos, visibleCount]);
-  const hasMore = visibleCount < combos.length;
+  const sortedCombos = React.useMemo(() => sortTrioWeaponCombos(combos, sort), [combos, sort]);
+  const visibleCombos = React.useMemo(
+    () => sortedCombos.slice(0, visibleCount),
+    [sortedCombos, visibleCount]
+  );
+  const hasMore = visibleCount < sortedCombos.length;
 
   const replaceUrlState = React.useCallback(
     (nextState: TrioLabUrlState) => {
@@ -89,10 +93,13 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
       const normalizedState = parseTrioLabUrlState(nextParams);
       const nextUrl = nextParams.toString() ? `${pathname}?${nextParams.toString()}` : pathname;
 
+      if (normalizedState.sort !== currentState.sort) {
+        setVisibleCount(PAGE_SIZE);
+      }
       setCurrentState(normalizedState);
       window.history.replaceState(window.history.state, "", nextUrl);
     },
-    [pathname, searchParams]
+    [currentState.sort, pathname, searchParams]
   );
 
   React.useEffect(() => {
@@ -106,7 +113,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
     setError(null);
 
     const poolCodes = poolKey ? poolKey.split(",").map(Number) : [];
-    const requests = buildTrioWeaponSearchRequests(poolCodes, sort);
+    const requests = buildTrioWeaponSearchRequests(poolCodes);
 
     Promise.all(
       requests.map((requestParams) => {
@@ -122,7 +129,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
       .then((responses) => {
         const rows = responses.flatMap((data) => data.results ?? []);
         const filtered = filterRowsByPool(rows, poolCodes);
-        setCombos(sortTrioWeaponCombos(mergeApiRowsByComboId(filtered), sort));
+        setCombos(mergeApiRowsByComboId(filtered));
         setVisibleCount(PAGE_SIZE);
       })
       .catch((err: unknown) => {
@@ -134,7 +141,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
       });
 
     return () => controller.abort();
-  }, [poolKey, sort]);
+  }, [poolKey]);
 
   const toggleCharacter = React.useCallback(
     (code: number) => {
@@ -363,11 +370,11 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
               <button
                 type="button"
                 onClick={() =>
-                  setVisibleCount((count) => Math.min(count + PAGE_SIZE, combos.length))
+                  setVisibleCount((count) => Math.min(count + PAGE_SIZE, sortedCombos.length))
                 }
                 className="inline-flex min-h-[42px] items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-3)] px-5 text-xs font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)]/10"
               >
-                더보기 · {Math.min(PAGE_SIZE, combos.length - visibleCount)}개
+                더보기 · {Math.min(PAGE_SIZE, sortedCombos.length - visibleCount)}개
               </button>
             </div>
           ) : null}

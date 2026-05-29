@@ -36,14 +36,18 @@ function findExactMatch(
   return mergeApiRowsByComboId(rows).find((combo) => combo.id === wantedId) ?? null;
 }
 
+function sortMembersByCharacter(members: TrioWeaponMember[]): TrioWeaponMember[] {
+  return [...members].sort((a, b) => a.character - b.character);
+}
+
 async function loadComboData(members: TrioWeaponMember[]) {
-  const [m1, m2] = members;
+  const [m1, m2] = sortMembersByCharacter(members);
   const trioRows = await fetchTrioWeaponRows({
     character1: String(m1.character),
     weapon1: String(m1.weapon),
     character2: String(m2.character),
     weapon2: String(m2.weapon),
-    sortBy: "averageRP",
+    sortBy: "totalGames",
     limit: "60",
   });
 
@@ -51,7 +55,7 @@ async function loadComboData(members: TrioWeaponMember[]) {
   if (!combo) {
     const fallback = await fetchTrioWeaponRows({
       character1: String(m1.character),
-      sortBy: "averageRP",
+      sortBy: "totalGames",
       limit: "200",
     });
     combo = findExactMatch(fallback, members);

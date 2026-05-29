@@ -26,9 +26,7 @@ interface LocalePageProps {
 async function fetchInitialCombos(searchParams: Awaited<SearchParams>) {
   const state = parseTrioLabUrlState(searchParams);
   const rowGroups = await Promise.all(
-    buildTrioWeaponSearchRequests(state.pool, state.sort).map((params) =>
-      fetchTrioWeaponRows(params)
-    )
+    buildTrioWeaponSearchRequests(state.pool).map((params) => fetchTrioWeaponRows(params))
   );
   const rows = rowGroups.flat();
   return sortTrioWeaponCombos(

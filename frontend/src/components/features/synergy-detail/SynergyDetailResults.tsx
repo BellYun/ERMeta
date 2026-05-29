@@ -94,6 +94,10 @@ function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
   }));
 }
 
+function sortAllyPair<T extends { charCode: number }>(allies: T[]): T[] {
+  return [...allies].sort((a, b) => a.charCode - b.charCode);
+}
+
 export function SynergyDetailResults() {
   const { l10n } = useL10n();
   const t = useTranslations("synergyResults");
@@ -194,7 +198,7 @@ export function SynergyDetailResults() {
   const getWeaponName = React.useCallback((code: number) => resolveWeaponName(code, l10n), [l10n]);
   const getTraitName = React.useCallback((code: number) => traitNames[code] ?? null, [traitNames]);
 
-  // API 호출 — deferredAllies 기반 (아군 선택 탭 즉시성 확보)
+  // API 호출 — deferredAllies 기반 (아군 선택 탭 즉시성 확보). 정렬은 클라이언트에서 처리해 CDN 키를 줄인다.
   React.useEffect(() => {
     if (deferredAllies.length === 0) {
       setResults([]);
@@ -204,13 +208,14 @@ export function SynergyDetailResults() {
 
     const controller = new AbortController();
     const timerId = setTimeout(() => {
-      const params = new URLSearchParams({ sortBy, limit: "5000" });
-      const a1 = deferredAllies[0];
+      const params = new URLSearchParams({ sortBy: "totalGames", limit: "5000" });
+      const queryAllies = sortAllyPair(deferredAllies);
+      const a1 = queryAllies[0];
       if (a1) {
         params.set("character1", String(a1.charCode));
         if (a1.weaponCode) params.set("weapon1", String(a1.weaponCode));
       }
-      const a2 = deferredAllies[1];
+      const a2 = queryAllies[1];
       if (a2) {
         params.set("character2", String(a2.charCode));
         if (a2.weaponCode) params.set("weapon2", String(a2.weaponCode));
@@ -258,7 +263,7 @@ export function SynergyDetailResults() {
       controller.abort();
       setLoading(false);
     };
-  }, [deferredAllies, sortBy, t]);
+  }, [deferredAllies, t]);
 
   // 점진적 카드 mount — visibleCount를 idle frame마다 6씩 늘려 IDLE_TARGET까지 확장.
   // 사용자 click의 commit이 30개가 아닌 6개만 처리하므로 INP duration이 줄어들고,
