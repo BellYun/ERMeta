@@ -15,6 +15,7 @@ import { HTML_LANG_BY_LANGUAGE, loadIntlMessages } from "@/lib/staticIntl";
 
 interface LocaleLayoutProps {
   children: ReactNode;
+  modal: ReactNode;
   params: Promise<{ locale: string }>;
 }
 
@@ -32,7 +33,7 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
   return buildSiteMetadata(LANGUAGE_BY_ROUTE_LOCALE[locale], locale);
 }
 
-export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
+export default async function LocaleLayout({ children, modal, params }: LocaleLayoutProps) {
   const { locale } = await params;
 
   if (!isRouteLocale(locale)) {
@@ -58,6 +59,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           <AppFrame shellId={`locale-shell-${locale}`} messages={initialMessages} currentPatch="">
             {children}
           </AppFrame>
+          {modal}
           <FeedbackWidget />
         </L10nProvider>
         <RootDocumentExtras />

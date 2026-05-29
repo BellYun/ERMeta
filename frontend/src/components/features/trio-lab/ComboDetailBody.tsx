@@ -1,11 +1,10 @@
 import { ArrowDown, ArrowRight, ArrowUp, ChevronRight, RotateCw } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import itemNameMap from "@/../const/itemNameMap.json";
 import { ItemIcon } from "@/components/character/shared";
 import type { PatchChange } from "@/data/10.1";
+import { Link } from "@/i18n/navigation";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
-
 const ITEM_NAMES = itemNameMap as Record<string, string>;
 function itemNameOf(code: number | null | undefined): string {
   if (code == null) return "";
@@ -20,7 +19,7 @@ function traitNameOf(
 }
 import {
   characterDisplayName,
-  scoreFromWinRate,
+  comboTier,
   weaponDisplayName,
   type TrioWeaponCombo,
   type TrioWeaponMember,
@@ -517,10 +516,21 @@ export function CharacterDetailGrid({ rows }: { rows: CharacterDetailData[] }) {
   );
 }
 
-function MiniComboCard({ combo }: { combo: TrioWeaponCombo }) {
-  const score = scoreFromWinRate(combo.winRate, combo.totalGames);
+function MiniComboCard({
+  combo,
+  detailHrefQueryString,
+}: {
+  combo: TrioWeaponCombo;
+  detailHrefQueryString: string;
+}) {
+  const score = comboTier(combo.winRate, combo.averageRP, combo.averageRank, combo.totalGames);
   return (
-    <Link href={`/trio-lab/${combo.id}`} className="char-card group flex flex-col gap-2 p-3">
+    <Link
+      href={`/trio-lab/${combo.id}${detailHrefQueryString}`}
+      prefetch={false}
+      scroll={false}
+      className="char-card group flex flex-col gap-2 p-3"
+    >
       <div className="flex items-center justify-between">
         <span className="text-[10px] font-mono uppercase tracking-widest text-[var(--color-muted-foreground)]">
           유사 조합
@@ -554,7 +564,15 @@ function MiniComboCard({ combo }: { combo: TrioWeaponCombo }) {
   );
 }
 
-export function SimilarBlock({ similar }: { similar: TrioWeaponCombo[] }) {
+export function SimilarBlock({
+  detailHrefQueryString,
+  listHref,
+  similar,
+}: {
+  detailHrefQueryString: string;
+  listHref: string;
+  similar: TrioWeaponCombo[];
+}) {
   const top = similar.slice(0, 4);
   if (top.length === 0) return null;
   return (
@@ -564,7 +582,8 @@ export function SimilarBlock({ similar }: { similar: TrioWeaponCombo[] }) {
           비슷한 조합 {top.length}개
         </h2>
         <Link
-          href="/trio-lab"
+          href={listHref}
+          scroll={false}
           className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-primary)] transition-colors hover:text-[var(--color-primary-hover)]"
         >
           실험실에서 더 보기
@@ -573,7 +592,7 @@ export function SimilarBlock({ similar }: { similar: TrioWeaponCombo[] }) {
       </div>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {top.map((c) => (
-          <MiniComboCard key={c.id} combo={c} />
+          <MiniComboCard key={c.id} combo={c} detailHrefQueryString={detailHrefQueryString} />
         ))}
       </div>
     </section>
@@ -581,7 +600,7 @@ export function SimilarBlock({ similar }: { similar: TrioWeaponCombo[] }) {
 }
 
 export function StickySidebar({ combo }: { combo: TrioWeaponCombo }) {
-  const score = scoreFromWinRate(combo.winRate, combo.totalGames);
+  const score = comboTier(combo.winRate, combo.averageRP, combo.averageRank, combo.totalGames);
   return (
     <aside className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
       <section className="dashboard-panel flex flex-col gap-3 p-5">
@@ -597,7 +616,7 @@ export function StickySidebar({ combo }: { combo: TrioWeaponCombo }) {
             {score}
           </span>
           <p className="text-sm font-semibold text-[var(--color-muted-foreground)]">
-            승률 {combo.winRate.toFixed(1)}% 기반
+            승률 · 평균 RP · 평균 순위 기반
           </p>
         </div>
         <dl className="mt-2 flex flex-col gap-2 text-sm">
