@@ -133,6 +133,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
           return (
             <div
               key={r.pick.characterNum}
+              data-testid="honey-pick-card"
               className="char-card group cursor-pointer p-4"
               onClick={() => {
                 trackHoneyClick(r, i + 1);
@@ -304,12 +305,17 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
       </div>
 
       {/* ── Mobile: Card grid ── */}
-      <div className="sm:hidden -mx-1 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-1 pb-1 scrollbar-hide">
+      <div
+        tabIndex={0}
+        aria-label="모바일 꿀챔 카드 목록"
+        className="sm:hidden -mx-1 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-1 pb-1 scrollbar-hide"
+      >
         {resolved.map((r, i) => {
           const changeLabel = r.changeType ? CHANGE_LABEL[r.changeType] : null;
           return (
             <div
               key={r.pick.characterNum}
+              data-testid="honey-pick-card"
               className={cn(
                 "relative w-[138px] shrink-0 snap-start overflow-hidden rounded-[20px] border border-[rgba(255,255,255,0.08)] bg-[rgba(14,21,39,0.94)] cursor-pointer active:scale-[0.98] transition-transform touch-manipulation"
               )}

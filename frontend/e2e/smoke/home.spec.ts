@@ -33,7 +33,11 @@ test.describe("홈 페이지 스모크", () => {
       timeout: 20_000,
     });
 
-    const characterLink = page.locator('a[href^="/character/"]:visible').first();
-    await expect(characterLink).toBeVisible({ timeout: 20_000 });
+    await expect(page.locator('[data-testid="honey-pick-card"]:visible').first()).toBeVisible({
+      timeout: 20_000,
+    });
+    await expect(page.locator('[data-testid="tier-ranking-row"]:visible').first()).toBeVisible({
+      timeout: 20_000,
+    });
   });
 });
