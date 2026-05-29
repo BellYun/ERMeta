@@ -64,10 +64,7 @@ export default async function TrioLabGalleryPage({ params, searchParams }: Local
     <main className="page-shell mx-auto flex max-w-6xl flex-col gap-5 px-3 py-6 sm:px-5 sm:py-8 lg:gap-6">
       <header className="dashboard-hero flex flex-col gap-3 p-5 sm:p-7">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="dashboard-kicker">LAB · BETA · 다이아+ 기준</span>
-          <span className="rounded-full border border-[rgba(74,222,128,0.22)] bg-[rgba(74,222,128,0.08)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[var(--color-success)]">
-            NEW
-          </span>
+          <span className="dashboard-kicker">LAB · 다이아+ 기준</span>
         </div>
         <h1 className="dashboard-title">
           조합 <em>실험실</em>

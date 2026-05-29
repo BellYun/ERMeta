@@ -9,6 +9,7 @@ import {
   NotebookText,
   Search,
   Trophy,
+  type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,6 +21,14 @@ import { cn } from "@/lib/utils";
 interface NavigationProps {
   currentPatch: string;
   onNavigate?: () => void;
+}
+
+interface NavigationLink {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+  isActive: boolean;
+  badge?: string;
 }
 
 export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
@@ -39,12 +48,18 @@ export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
     return () => window.removeEventListener("ergg:feedback-state", handleFeedbackState);
   }, []);
 
-  const navLinks = [
+  const navLinks: NavigationLink[] = [
     {
       href: withCurrentRouteLocale(pathname, "/"),
       label: t("metaAnalysis"),
       icon: BarChart3,
       isActive: normalizedPathname === "/",
+    },
+    {
+      href: withCurrentRouteLocale(pathname, "/character/1"),
+      label: t("characterAnalysis"),
+      icon: Search,
+      isActive: normalizedPathname.startsWith("/character/"),
     },
     {
       href: withCurrentRouteLocale(pathname, "/synergy-detail"),
@@ -57,7 +72,6 @@ export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
       label: "조합 실험실",
       icon: FlaskConical,
       isActive: normalizedPathname.startsWith("/trio-lab"),
-      badge: "BETA",
     },
     {
       href: withCurrentRouteLocale(pathname, "/character-lab"),
@@ -67,13 +81,6 @@ export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
         normalizedPathname.startsWith("/character-lab") ||
         normalizedPathname === "/lab" ||
         normalizedPathname.startsWith("/lab/"),
-      badge: "BETA",
-    },
-    {
-      href: withCurrentRouteLocale(pathname, "/character/1"),
-      label: t("characterAnalysis"),
-      icon: Search,
-      isActive: normalizedPathname.startsWith("/character/"),
     },
     {
       href: withCurrentRouteLocale(pathname, "/patches"),
