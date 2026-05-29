@@ -2,11 +2,13 @@
 
 import { Search, X } from "lucide-react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import * as React from "react";
 import { getAllCharacterCodes, getFallbackMap } from "@/components/features/synergy/constants";
 import { matchesChosungSearch } from "@/components/features/synergy/utils";
 import { useL10n } from "@/components/L10nProvider";
 import { VirtualCharacterGrid } from "@/components/ui/VirtualCharacterGrid";
+import { usePathname } from "@/i18n/navigation";
 import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMap";
 import { ComboGalleryCard } from "./ComboGalleryCard";
 import {
@@ -16,27 +18,78 @@ import {
   type TrioSortBy,
   type TrioWeaponCombo,
 } from "./types";
+import {
+  buildTrioLabQueryString,
+  buildTrioLabSearchParams,
+  parseTrioLabUrlState,
+  type TrioLabUrlState,
+} from "./urlState";
 
 interface TrioLabGalleryClientProps {
   initialCombos: TrioWeaponCombo[];
 }
 
 const MAX_POOL = 3;
+const PAGE_SIZE = 60;
 const SORT_KEYS = Object.keys(SORT_LABELS) as TrioSortBy[];
+
+function isSameState(a: TrioLabUrlState, b: TrioLabUrlState) {
+  return (
+    a.sort === b.sort &&
+    a.search === b.search &&
+    a.pool.length === b.pool.length &&
+    a.pool.every((value, index) => value === b.pool[index])
+  );
+}
+
+function filterRowsByPool(rows: ApiTrioWeaponRow[], pool: number[]) {
+  if (pool.length === 0) return rows;
+
+  return rows.filter((row) => {
+    const chars = new Set([row.character1, row.character2, row.character3]);
+    return pool.every((character) => chars.has(character));
+  });
+}
+
+function buildTrioWeaponSearchRequests(pool: number[], sort: TrioSortBy) {
+  const base = { sortBy: sort, limit: "1000" };
+  if (pool.length === 0) return [base];
+  if (pool.length === 1) return [{ ...base, character1: String(pool[0]) }];
+
+  const pairs =
+    pool.length === 2
+      ? [[pool[0], pool[1]]]
+      : [
+          [pool[0], pool[1]],
+          [pool[0], pool[2]],
+          [pool[1], pool[2]],
+        ];
+
+  return pairs.map(([a, b]) => ({
+    ...base,
+    character1: String(Math.min(a, b)),
+    character2: String(Math.max(a, b)),
+  }));
+}
 
 export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProps) {
   const { l10n } = useL10n();
-
-  // SSOT: React state. URL searchParams 사용 안 함.
-  const [pool, setPool] = React.useState<number[]>([]);
-  const [sort, setSort] = React.useState<TrioSortBy>("recommended");
-  const [search, setSearch] = React.useState("");
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const paramsState = React.useMemo(() => parseTrioLabUrlState(searchParams), [searchParams]);
+  const [currentState, setCurrentState] = React.useState<TrioLabUrlState>(paramsState);
+  const { pool, sort, search } = currentState;
 
   const [combos, setCombos] = React.useState<TrioWeaponCombo[]>(initialCombos);
+  const [visibleCount, setVisibleCount] = React.useState(PAGE_SIZE);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const didMountRef = React.useRef(false);
 
-  // 캐릭터 맵 워밍업
+  React.useEffect(() => {
+    setCurrentState((prev) => (isSameState(prev, paramsState) ? prev : paramsState));
+  }, [paramsState]);
+
   React.useEffect(() => {
     const id = requestIdleCallback(() => {
       getFallbackMap();
@@ -50,38 +103,55 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
     [l10n]
   );
 
-  // pool 멤버 매칭은 전부 client-side. API 는 cache hit 극대화 위해 최저 코드 1명만 필터.
-  // pool 순서 무관: [20,3,2] / [3,20,2] / [2,20,3] 모두 같은 cache key (character1=2) 공유.
   const poolKey = React.useMemo(() => [...pool].sort((a, b) => a - b).join(","), [pool]);
+  const currentQueryString = React.useMemo(
+    () => buildTrioLabQueryString(currentState),
+    [currentState]
+  );
+  const visibleCombos = React.useMemo(() => combos.slice(0, visibleCount), [combos, visibleCount]);
+  const hasMore = visibleCount < combos.length;
+
+  const replaceUrlState = React.useCallback(
+    (nextState: TrioLabUrlState) => {
+      const nextParams = buildTrioLabSearchParams(nextState, searchParams);
+      const normalizedState = parseTrioLabUrlState(nextParams);
+      const nextUrl = nextParams.toString() ? `${pathname}?${nextParams.toString()}` : pathname;
+
+      setCurrentState(normalizedState);
+      window.history.replaceState(window.history.state, "", nextUrl);
+    },
+    [pathname, searchParams]
+  );
 
   React.useEffect(() => {
+    if (!didMountRef.current) {
+      didMountRef.current = true;
+      return;
+    }
+
     const controller = new AbortController();
     setLoading(true);
     setError(null);
 
-    const params = new URLSearchParams({ sortBy: sort, limit: "300" });
-    if (poolKey) {
-      const min = Math.min(...poolKey.split(",").map(Number));
-      params.set("character1", String(min));
-    }
+    const poolCodes = poolKey ? poolKey.split(",").map(Number) : [];
+    const requests = buildTrioWeaponSearchRequests(poolCodes, sort);
 
-    fetch(`/api/stats/trios-weapon?${params.toString()}`, { signal: controller.signal })
-      .then((res) => {
-        if (!res.ok) throw new Error(`API ${res.status}`);
-        return res.json();
+    Promise.all(
+      requests.map((requestParams) => {
+        const params = new URLSearchParams(requestParams);
+        return fetch(`/api/stats/trios-weapon?${params.toString()}`, {
+          signal: controller.signal,
+        }).then((res) => {
+          if (!res.ok) throw new Error(`API ${res.status}`);
+          return res.json() as Promise<{ results: ApiTrioWeaponRow[] }>;
+        });
       })
-      .then((data: { results: ApiTrioWeaponRow[] }) => {
-        const rows = data.results ?? [];
-        const filtered = !poolKey
-          ? rows
-          : rows.filter((row) => {
-              const chars = new Set([row.character1, row.character2, row.character3]);
-              return poolKey
-                .split(",")
-                .map(Number)
-                .every((c) => chars.has(c));
-            });
-        setCombos(mergeApiRowsByComboId(filtered).slice(0, 60));
+    )
+      .then((responses) => {
+        const rows = responses.flatMap((data) => data.results ?? []);
+        const filtered = filterRowsByPool(rows, poolCodes);
+        setCombos(mergeApiRowsByComboId(filtered));
+        setVisibleCount(PAGE_SIZE);
       })
       .catch((err: unknown) => {
         if (err instanceof Error && err.name === "AbortError") return;
@@ -94,19 +164,33 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
     return () => controller.abort();
   }, [poolKey, sort]);
 
-  const toggleCharacter = React.useCallback((code: number) => {
-    setPool((prev) => {
-      if (prev.includes(code)) return prev.filter((c) => c !== code);
-      if (prev.length >= MAX_POOL) return prev;
-      return [...prev, code];
-    });
-  }, []);
+  const toggleCharacter = React.useCallback(
+    (code: number) => {
+      const nextPool = pool.includes(code)
+        ? pool.filter((character) => character !== code)
+        : pool.length >= MAX_POOL
+          ? pool
+          : [...pool, code];
 
-  const removeFromPool = React.useCallback((code: number) => {
-    setPool((prev) => prev.filter((c) => c !== code));
-  }, []);
+      replaceUrlState({ ...currentState, pool: nextPool });
+    },
+    [currentState, pool, replaceUrlState]
+  );
 
-  const clearPool = React.useCallback(() => setPool([]), []);
+  const removeFromPool = React.useCallback(
+    (code: number) => {
+      replaceUrlState({
+        ...currentState,
+        pool: pool.filter((character) => character !== code),
+      });
+    },
+    [currentState, pool, replaceUrlState]
+  );
+
+  const clearPool = React.useCallback(
+    () => replaceUrlState({ ...currentState, pool: [] }),
+    [currentState, replaceUrlState]
+  );
 
   const deferredSearch = React.useDeferredValue(search);
 
@@ -125,8 +209,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
 
   return (
     <>
-      {/* 조합 검색 패널 */}
-      <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-3 sm:p-4">
+      <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-3 backdrop-blur-sm sm:p-4">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-baseline gap-2">
             <p className="text-xs font-semibold text-[var(--color-foreground)]">
@@ -152,7 +235,6 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
           )}
         </div>
 
-        {/* 조합 슬롯 표시 */}
         <div className="mb-3 flex gap-2">
           {Array.from({ length: MAX_POOL }).map((_, idx) => {
             const code = pool[idx];
@@ -166,6 +248,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                 </div>
               );
             }
+
             return (
               <button
                 key={code}
@@ -197,17 +280,22 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
         </div>
 
         <div className="relative mb-2">
-          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)]" />
+          <Search className="absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--color-muted-foreground)]" />
           <input
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            onChange={(event) =>
+              replaceUrlState({
+                ...currentState,
+                search: event.target.value,
+              })
+            }
             placeholder="캐릭터 검색 (초성 가능: ㅎㅇ)"
             className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
           />
           {search && (
             <button
               type="button"
-              onClick={() => setSearch("")}
+              onClick={() => replaceUrlState({ ...currentState, search: "" })}
               aria-label="검색어 지우기"
               className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--color-foreground)]"
             >
@@ -234,12 +322,12 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
 
       <div className="flex items-center justify-between gap-3 border-b border-[var(--color-border)] pb-3 text-xs text-[var(--color-muted-foreground)]">
         <p>
-          {loading ? "조합 로드 중…" : `${combos.length}개 조합`}
+          {loading ? "조합 로드 중…" : `${visibleCombos.length}/${combos.length}개 조합`}
           {pool.length > 0 && (
             <>
               {" · 검색 "}
               <span className="text-[var(--color-foreground)]">
-                {pool.map((c) => getCharName(c)).join(" + ")}
+                {pool.map((character) => getCharName(character)).join(" + ")}
               </span>
             </>
           )}
@@ -248,7 +336,12 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
           정렬
           <select
             value={sort}
-            onChange={(event) => setSort(event.target.value as TrioSortBy)}
+            onChange={(event) =>
+              replaceUrlState({
+                ...currentState,
+                sort: event.target.value as TrioSortBy,
+              })
+            }
             className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 py-1.5 text-xs font-medium text-[var(--color-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
             aria-label="조합 정렬 기준"
           >
@@ -261,14 +354,19 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
         </label>
       </div>
 
-      {error ? (
-        <div className="rounded-2xl border border-[var(--color-danger)]/30 bg-[rgba(248,113,113,0.06)] p-6 text-center text-sm text-[var(--color-danger)]">
+      {error && (
+        <div className="rounded-xl border border-[rgba(248,113,113,0.24)] bg-[rgba(248,113,113,0.08)] px-3 py-2 text-xs text-[var(--color-danger)]">
           {error}
         </div>
-      ) : loading && combos.length === 0 ? (
+      )}
+
+      {loading && combos.length === 0 ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-72 animate-pulse rounded-2xl bg-[var(--color-surface-3)]" />
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div
+              key={`skeleton-${index}`}
+              className="h-72 animate-pulse rounded-2xl bg-[var(--color-surface-3)]"
+            />
           ))}
         </div>
       ) : combos.length === 0 ? (
@@ -276,11 +374,32 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
           조건에 맞는 조합이 없습니다. 검색 슬롯의 캐릭터를 다시 골라보세요.
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {combos.map((combo, idx) => (
-            <ComboGalleryCard key={combo.id} combo={combo} rank={idx + 1} />
-          ))}
-        </div>
+        <>
+          <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {visibleCombos.map((combo, idx) => (
+              <ComboGalleryCard
+                key={combo.id}
+                combo={combo}
+                detailHref={`${pathname.replace(/\/$/, "")}/${combo.id}${currentQueryString}`}
+                rank={idx + 1}
+              />
+            ))}
+          </section>
+
+          {hasMore ? (
+            <div className="flex justify-center pt-2">
+              <button
+                type="button"
+                onClick={() =>
+                  setVisibleCount((count) => Math.min(count + PAGE_SIZE, combos.length))
+                }
+                className="inline-flex min-h-[42px] items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-3)] px-5 text-xs font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)]/10"
+              >
+                더보기 · {Math.min(PAGE_SIZE, combos.length - visibleCount)}개
+              </button>
+            </div>
+          ) : null}
+        </>
       )}
     </>
   );

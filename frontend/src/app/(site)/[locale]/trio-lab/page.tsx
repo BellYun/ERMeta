@@ -4,15 +4,63 @@ import { setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { fetchTrioWeaponRows } from "@/components/features/trio-lab/serverApi";
 import { TrioLabGalleryClient } from "@/components/features/trio-lab/TrioLabGalleryClient";
-import { apiRowToCombo } from "@/components/features/trio-lab/types";
+import { mergeApiRowsByComboId, type ApiTrioWeaponRow } from "@/components/features/trio-lab/types";
+import { parseTrioLabUrlState } from "@/components/features/trio-lab/urlState";
 import { isRouteLocale } from "@/i18n/routing";
 import { BASE_URL } from "@/lib/siteMetadata";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 600;
 
+type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+
 interface LocalePageProps {
   params: Promise<{ locale: string }>;
+  searchParams: SearchParams;
+}
+
+function filterRowsByPool(rows: ApiTrioWeaponRow[], pool: number[]) {
+  if (pool.length === 0) return rows;
+
+  return rows.filter((row) => {
+    const chars = new Set([row.character1, row.character2, row.character3]);
+    return pool.every((character) => chars.has(character));
+  });
+}
+
+function buildTrioWeaponSearchRequests(
+  pool: number[],
+  sort: string
+): Array<Record<string, string>> {
+  const base = { sortBy: sort, limit: "1000" };
+  if (pool.length === 0) return [base];
+  if (pool.length === 1) return [{ ...base, character1: String(pool[0]) }];
+
+  const pairs =
+    pool.length === 2
+      ? [[pool[0], pool[1]]]
+      : [
+          [pool[0], pool[1]],
+          [pool[0], pool[2]],
+          [pool[1], pool[2]],
+        ];
+
+  return pairs.map(([a, b]) => ({
+    ...base,
+    character1: String(Math.min(a, b)),
+    character2: String(Math.max(a, b)),
+  }));
+}
+
+async function fetchInitialCombos(searchParams: Awaited<SearchParams>) {
+  const state = parseTrioLabUrlState(searchParams);
+  const rowGroups = await Promise.all(
+    buildTrioWeaponSearchRequests(state.pool, state.sort).map((params) =>
+      fetchTrioWeaponRows(params)
+    )
+  );
+  const rows = rowGroups.flat();
+  return mergeApiRowsByComboId(filterRowsByPool(rows, state.pool));
 }
 
 export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
@@ -31,13 +79,12 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
   };
 }
 
-export default async function TrioLabGalleryPage({ params }: LocalePageProps) {
-  const { locale } = await params;
+export default async function TrioLabGalleryPage({ params, searchParams }: LocalePageProps) {
+  const [{ locale }, query] = await Promise.all([params, searchParams]);
   if (!isRouteLocale(locale)) notFound();
   setRequestLocale(locale);
 
-  const initialRows = await fetchTrioWeaponRows({ sortBy: "recommended", limit: "60" });
-  const initialCombos = initialRows.map(apiRowToCombo);
+  const initialCombos = await fetchInitialCombos(query);
 
   return (
     <main className="page-shell mx-auto flex max-w-6xl flex-col gap-5 px-3 py-6 sm:px-5 sm:py-8 lg:gap-6">

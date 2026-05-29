@@ -110,12 +110,12 @@ export function trioName(combo: TrioWeaponCombo): string {
   return combo.members.map((m) => characterDisplayName(m.character)).join(" + ");
 }
 
-export type TrioSortBy = "recommended" | "winRate" | "averageRP" | "totalGames";
+export type TrioSortBy = "winRate" | "averageRP" | "averageRank" | "totalGames";
 
 export const SORT_LABELS: Record<TrioSortBy, string> = {
-  recommended: "추천순",
-  winRate: "승률순",
   averageRP: "평균 RP순",
+  winRate: "승률순",
+  averageRank: "평균 순위순",
   totalGames: "표본순",
 };
 

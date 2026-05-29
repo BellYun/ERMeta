@@ -1,6 +1,6 @@
 import { ChevronRight, TrendingUp } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
 import {
   characterDisplayName,
@@ -20,10 +20,11 @@ const SCORE_COLOR: Record<string, string> = {
 
 interface ComboGalleryCardProps {
   combo: TrioWeaponCombo;
+  detailHref: string;
   rank: number;
 }
 
-export function ComboGalleryCard({ combo, rank }: ComboGalleryCardProps) {
+export function ComboGalleryCard({ combo, detailHref, rank }: ComboGalleryCardProps) {
   const score = scoreFromWinRate(combo.winRate, combo.totalGames);
   const positiveRP = combo.averageRP > 0;
 
@@ -119,7 +120,8 @@ export function ComboGalleryCard({ combo, rank }: ComboGalleryCardProps) {
 
       <footer className="mt-auto pt-1">
         <Link
-          href={`/trio-lab/${combo.id}`}
+          href={detailHref}
+          scroll={false}
           className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-[rgba(251,191,36,0.28)] bg-[rgba(251,191,36,0.10)] py-2 text-xs font-bold text-[var(--color-accent-gold)] transition-colors hover:bg-[rgba(251,191,36,0.18)]"
         >
           조합 상세 보기
