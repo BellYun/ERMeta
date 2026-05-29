@@ -13,8 +13,6 @@ interface Props {
 
 export function LabCharacterCard({ character }: Props) {
   const imgUrl = getCharacterMiniWebpUrl(character.characterCode);
-  const topStrong = character.strong.slice(0, 5);
-  const topWeak = character.weak.slice(0, 5);
 
   return (
     <div className="rounded-xl border border-[var(--color-border)] bg-[rgba(15,23,42,0.72)] backdrop-blur-xl overflow-hidden">
@@ -45,8 +43,7 @@ export function LabCharacterCard({ character }: Props) {
         </div>
       </div>
 
-      {/* Diverging bar chart: strong (right) + weak (left) combos */}
-      <DivergingBarChart strong={topStrong} weak={topWeak} />
+      <DivergingBarChart strong={character.strong} weak={character.weak} />
     </div>
   );
 }

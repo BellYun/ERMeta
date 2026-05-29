@@ -123,9 +123,9 @@ function HalfPanel({ label, labelColor, entries, maxDelta, variant, className }:
 // ── DivergingBarChart ──────────────────────────────────────────────────────
 
 interface DivergingBarChartProps {
-  /** Top ~5, sorted desc by delta (positive RP) */
+  /** Sorted desc by delta (positive RP) */
   strong: ComboEntry[];
-  /** Top ~5, sorted asc by delta (most negative first) */
+  /** Sorted asc by delta (most negative first) */
   weak: ComboEntry[];
 }
 
@@ -149,7 +149,7 @@ export function DivergingBarChart({ strong, weak }: DivergingBarChartProps) {
       <div aria-hidden="true" className="hidden sm:block self-stretch bg-[var(--color-border)]" />
 
       <HalfPanel
-        label="주의 조합"
+        label="약한 조합"
         labelColor="var(--color-danger)"
         entries={weak}
         maxDelta={maxDelta}

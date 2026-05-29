@@ -1,77 +1,65 @@
 {
   "role": "스킬딜러",
   "roleSlug": "skilldealers",
-  "groupK": 11,
+  "groupK": 9,
   "minGames": 100,
   "cumulative": true,
   "generatedFrom": "DATA/trio-role-combinations/skilldealers",
-  "generatedAt": "2026-05-19",
+  "generatedAt": "2026-05-29",
   "groups": [
     {
       "id": 0,
-      "label": "정형 폭딜 캐스터 (변칙 약점)",
-      "curated": false,
-      "characterKeys": ["9_9", "60_6"]
+      "label": "전열 화력 스증",
+      "curated": true,
+      "characterKeys": ["34_23", "2_9", "15_6", "5_6", "9_9", "54_8"]
     },
     {
       "id": 1,
-      "label": "후방 마법사 / 탱커 의존 (단독 약점)",
-      "curated": false,
-      "characterKeys": ["42_24", "34_23", "24_3"]
+      "label": "쌍포 스증",
+      "curated": true,
+      "characterKeys": ["75_22", "36_5", "15_5", "12_7", "83_6"]
     },
     {
       "id": 2,
-      "label": "쌍포·삼원딜 스페셜리스트",
-      "curated": false,
-      "characterKeys": ["26_9", "2_9", "54_8", "15_6"]
+      "label": "난전 스증",
+      "curated": true,
+      "characterKeys": ["87_24", "81_9", "52_24", "19_24", "79_8", "6_7"]
     },
     {
       "id": 3,
-      "label": "정형 캐스터 만능 (변칙 약점)",
-      "curated": false,
-      "characterKeys": ["17_5"]
+      "label": "포킹 스증",
+      "curated": true,
+      "characterKeys": ["60_6", "2_11", "12_6", "5_5"]
     },
     {
       "id": 4,
-      "label": "다중 메타 마법사",
-      "curated": false,
-      "characterKeys": ["66_24"]
+      "label": "유틸 스증",
+      "curated": true,
+      "characterKeys": ["66_24", "51_22", "48_3"]
     },
     {
       "id": 5,
-      "label": "암살+탱커 환경형 (정형 약점)",
-      "curated": false,
-      "characterKeys": ["79_8", "81_9", "24_21", "19_24"]
+      "label": "지역 장악 스증",
+      "curated": true,
+      "characterKeys": ["17_5", "43_5", "26_9"]
     },
     {
       "id": 6,
-      "label": "지원가 백업형 (셀프 약점)",
-      "curated": false,
-      "characterKeys": ["75_22", "12_7"]
+      "label": "진입 스증",
+      "curated": true,
+      "characterKeys": ["42_24", "24_3", "24_21"]
     },
     {
       "id": 7,
-      "label": "원딜 시너지 캐스터",
-      "curated": false,
-      "characterKeys": ["83_6", "36_5", "48_3", "19_6", "15_5", "5_5"]
+      "label": "화력 스증",
+      "curated": true,
+      "characterKeys": ["77_24"]
     },
     {
       "id": 8,
-      "label": "전사+원딜 동행 (탱커 약점)",
-      "curated": false,
-      "characterKeys": ["77_24", "6_7"]
-    },
-    {
-      "id": 9,
-      "label": "스킬 듀오 메타",
-      "curated": false,
-      "characterKeys": ["87_24", "52_24", "43_5", "5_6"]
-    },
-    {
-      "id": 10,
-      "label": "그룹 10",
-      "curated": false,
-      "characterKeys": ["2_11", "51_22", "12_6"]
+      "label": "변칙 스증",
+      "curated": true,
+      "characterKeys": ["19_6"]
     }
   ],
   "characters": [
@@ -82,7 +70,7 @@
       "weaponName": "아르카나",
       "totalGames": 220854,
       "ownMeanRP": 0.965,
-      "groupId": 8,
+      "groupId": 7,
       "strong": [
         {
           "multiset": "스킬딜러 + 스킬딜러 + 암살자",
@@ -185,7 +173,7 @@
       "weaponName": "아르카나",
       "totalGames": 215844,
       "ownMeanRP": -1.477,
-      "groupId": 9,
+      "groupId": 2,
       "strong": [
         {
           "multiset": "스킬딜러 + 암살자 + 암살자",
@@ -288,7 +276,7 @@
       "weaponName": "권총",
       "totalGames": 207852,
       "ownMeanRP": 0.318,
-      "groupId": 2,
+      "groupId": 5,
       "strong": [
         {
           "multiset": "스킬딜러 + 탱커 + 탱커",
@@ -391,7 +379,7 @@
       "weaponName": "석궁",
       "totalGames": 200256,
       "ownMeanRP": -0.835,
-      "groupId": 5,
+      "groupId": 2,
       "strong": [
         {
           "multiset": "스킬딜러 + 암살자 + 암살자",
@@ -494,7 +482,7 @@
       "weaponName": "기타",
       "totalGames": 184884,
       "ownMeanRP": 1.255,
-      "groupId": 6,
+      "groupId": 1,
       "strong": [
         {
           "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
@@ -592,7 +580,7 @@
       "weaponName": "암기",
       "totalGames": 184764,
       "ownMeanRP": 0.981,
-      "groupId": 7,
+      "groupId": 1,
       "strong": [
         {
           "multiset": "스킬딜러 + 스킬딜러 + 암살자",
@@ -695,7 +683,7 @@
       "weaponName": "아르카나",
       "totalGames": 167994,
       "ownMeanRP": 0.869,
-      "groupId": 1,
+      "groupId": 6,
       "strong": [
         {
           "multiset": "스킬딜러 + 탱커 + 탱커",
@@ -788,7 +776,7 @@
       "weaponName": "권총",
       "totalGames": 166848,
       "ownMeanRP": 0.487,
-      "groupId": 5,
+      "groupId": 2,
       "strong": [
         {
           "multiset": "스킬딜러 + 암살자 + 원거리 딜러",
@@ -886,7 +874,7 @@
       "weaponName": "투척",
       "totalGames": 140583,
       "ownMeanRP": 0.771,
-      "groupId": 7,
+      "groupId": 1,
       "strong": [
         {
           "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
@@ -989,7 +977,7 @@
       "weaponName": "방망이",
       "totalGames": 136104,
       "ownMeanRP": 0.813,
-      "groupId": 7,
+      "groupId": 4,
       "strong": [
         {
           "multiset": "스킬딜러 + 암살자 + 원거리 딜러",
@@ -1087,7 +1075,7 @@
       "weaponName": "투척",
       "totalGames": 128346,
       "ownMeanRP": 0.125,
-      "groupId": 3,
+      "groupId": 5,
       "strong": [
         {
           "multiset": "스킬딜러 + 암살자 + 원거리 딜러",
@@ -1175,7 +1163,7 @@
       "weaponName": "저격총",
       "totalGames": 125517,
       "ownMeanRP": 0.395,
-      "groupId": 10,
+      "groupId": 3,
       "strong": [
         {
           "multiset": "스킬딜러 + 스킬딜러 + 지원가",
@@ -1273,7 +1261,7 @@
       "weaponName": "카메라",
       "totalGames": 125037,
       "ownMeanRP": 1.834,
-      "groupId": 1,
+      "groupId": 0,
       "strong": [
         {
           "multiset": "스킬딜러 + 탱커 + 탱커",
@@ -1366,7 +1354,7 @@
       "weaponName": "권총",
       "totalGames": 119871,
       "ownMeanRP": 0.854,
-      "groupId": 2,
+      "groupId": 0,
       "strong": [
         {
           "multiset": "스킬딜러 + 탱커 + 탱커",
@@ -1552,7 +1540,7 @@
       "weaponName": "석궁",
       "totalGames": 111045,
       "ownMeanRP": 0.258,
-      "groupId": 2,
+      "groupId": 0,
       "strong": [
         {
           "multiset": "스킬딜러 + 탱커 + 탱커",
@@ -1650,7 +1638,7 @@
       "weaponName": "아르카나",
       "totalGames": 97893,
       "ownMeanRP": 0.614,
-      "groupId": 9,
+      "groupId": 2,
       "strong": [
         {
           "multiset": "스킬딜러 + 암살자 + 원거리 딜러",
@@ -1743,7 +1731,7 @@
       "weaponName": "암기",
       "totalGames": 92472,
       "ownMeanRP": -0.604,
-      "groupId": 7,
+      "groupId": 8,
       "strong": [
         {
           "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
@@ -1831,7 +1819,7 @@
       "weaponName": "암기",
       "totalGames": 88383,
       "ownMeanRP": 0.536,
-      "groupId": 2,
+      "groupId": 0,
       "strong": [
         {
           "multiset": "스킬딜러 + 탱커 + 탱커",
@@ -1924,7 +1912,7 @@
       "weaponName": "투척",
       "totalGames": 85674,
       "ownMeanRP": 0.746,
-      "groupId": 9,
+      "groupId": 5,
       "strong": [
         {
           "multiset": "스킬딜러 + 스킬딜러 + 암살자",
@@ -2017,7 +2005,7 @@
       "weaponName": "활",
       "totalGames": 84162,
       "ownMeanRP": 0.543,
-      "groupId": 6,
+      "groupId": 1,
       "strong": [
         {
           "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
@@ -2208,7 +2196,7 @@
       "weaponName": "기타",
       "totalGames": 71808,
       "ownMeanRP": -0.468,
-      "groupId": 10,
+      "groupId": 4,
       "strong": [
         {
           "multiset": "스킬딜러 + 스킬딜러 + 암살자",
@@ -2291,7 +2279,7 @@
       "weaponName": "활",
       "totalGames": 66558,
       "ownMeanRP": -0.496,
-      "groupId": 8,
+      "groupId": 2,
       "strong": [
         {
           "multiset": "스킬딜러 + 전사 + 지원가",
@@ -2379,7 +2367,7 @@
       "weaponName": "투척",
       "totalGames": 62679,
       "ownMeanRP": -0.296,
-      "groupId": 7,
+      "groupId": 1,
       "strong": [
         {
           "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
@@ -2472,7 +2460,7 @@
       "weaponName": "레이피어",
       "totalGames": 61680,
       "ownMeanRP": 1.526,
-      "groupId": 5,
+      "groupId": 6,
       "strong": [
         {
           "multiset": "스킬딜러 + 암살자 + 원거리 딜러",
@@ -2555,7 +2543,7 @@
       "weaponName": "암기",
       "totalGames": 61374,
       "ownMeanRP": 0.597,
-      "groupId": 0,
+      "groupId": 3,
       "strong": [
         {
           "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
@@ -2658,7 +2646,7 @@
       "weaponName": "암기",
       "totalGames": 45096,
       "ownMeanRP": 1.585,
-      "groupId": 9,
+      "groupId": 0,
       "strong": [
         {
           "multiset": "스킬딜러 + 전사 + 탱커",
@@ -2746,7 +2734,7 @@
       "weaponName": "투척",
       "totalGames": 37386,
       "ownMeanRP": 1.403,
-      "groupId": 7,
+      "groupId": 3,
       "strong": [
         {
           "multiset": "스킬딜러 + 탱커 + 탱커",
@@ -2834,7 +2822,7 @@
       "weaponName": "방망이",
       "totalGames": 34815,
       "ownMeanRP": 0.012,
-      "groupId": 1,
+      "groupId": 6,
       "strong": [
         {
           "multiset": "스킬딜러 + 암살자 + 탱커",
@@ -2912,7 +2900,7 @@
       "weaponName": "아르카나",
       "totalGames": 31638,
       "ownMeanRP": -0.292,
-      "groupId": 5,
+      "groupId": 2,
       "strong": [
         {
           "multiset": "스킬딜러 + 스킬딜러 + 암살자",
@@ -2995,7 +2983,7 @@
       "weaponName": "암기",
       "totalGames": 23319,
       "ownMeanRP": 1.216,
-      "groupId": 10,
+      "groupId": 3,
       "strong": [
         {
           "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
