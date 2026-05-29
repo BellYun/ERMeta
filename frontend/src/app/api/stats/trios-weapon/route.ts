@@ -12,6 +12,8 @@ const DIAMOND_PLUS_TIERS: TierGroup[] = [
 ];
 const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]);
 const TRIO_WEAPON_SEARCH_P10_TABLE = "v2_CharacterTrioWeaponSearch_p10";
+const TRIO_WEAPON_TABLE = "v2_CharacterTrioWeapon";
+const SUPPLEMENTAL_PATCH_VERSIONS = ["11.1", "11.2", "11.3"];
 
 // .or() 한 번에 character1/2/3 세 컬럼 OR 절을 던지면 인기 캐릭(예: 자히르=1)에서
 // PostgREST statement_timeout(~3s) 초과 → 500. 컬럼당 단일 인덱스만 쓰는 .eq() 3쿼리
@@ -21,7 +23,7 @@ const PARALLEL_FETCH_LIMIT = 5000;
 const FULL_FETCH_LIMIT = 5000;
 const EXACT_PAIR_WEAPON_FETCH_LIMIT = 20000;
 const MAX_RESPONSE_LIMIT = FULL_FETCH_LIMIT;
-const TRIO_WEAPON_CACHE_VERSION = "v2";
+const TRIO_WEAPON_CACHE_VERSION = "v3";
 
 // L1 캐시 TTL — source 가 사전 집계 테이블(v2_CharacterTrioWeapon* / _p10)이고
 // tag-based invalidation 으로 즉시 갱신되므로 7d. 카디널리티가 가장 큰 라우트라
@@ -320,6 +322,53 @@ function aggregateByTrioWeapon(rows: TrioWeaponRow[]): AggregatedTrioWeapon[] {
   }));
 }
 
+function aggregateKey(row: AggregatedTrioWeapon): string {
+  return trioWeaponKeyFromMembers(
+    normalizeTrioMembersByCharacter([
+      { character: row.character1, weapon: row.weaponType1, mainCore: row.mainCore1 },
+      { character: row.character2, weapon: row.weaponType2, mainCore: row.mainCore2 },
+      { character: row.character3, weapon: row.weaponType3, mainCore: row.mainCore3 },
+    ])
+  );
+}
+
+function mergeAggregatedResults(results: AggregatedTrioWeapon[]): AggregatedTrioWeapon[] {
+  const merged = new Map<
+    string,
+    {
+      row: AggregatedTrioWeapon;
+      totalWins: number;
+      totalRP: number;
+      rankSum: number;
+    }
+  >();
+
+  for (const result of results) {
+    const key = aggregateKey(result);
+    const totalWins = (result.winRate * result.totalGames) / 100;
+    const totalRP = result.averageRP * result.totalGames * 3;
+    const rankSum = result.averageRank * result.totalGames;
+    const existing = merged.get(key);
+
+    if (!existing) {
+      merged.set(key, { row: { ...result }, totalWins, totalRP, rankSum });
+      continue;
+    }
+
+    existing.row.totalGames += result.totalGames;
+    existing.totalWins += totalWins;
+    existing.totalRP += totalRP;
+    existing.rankSum += rankSum;
+  }
+
+  return Array.from(merged.values()).map(({ row, totalWins, totalRP, rankSum }) => ({
+    ...row,
+    winRate: row.totalGames > 0 ? (totalWins / row.totalGames) * 100 : 0,
+    averageRP: row.totalGames > 0 ? totalRP / row.totalGames / 3 : 0,
+    averageRank: row.totalGames > 0 ? rankSum / row.totalGames : 0,
+  }));
+}
+
 function hasExcludedChar(r: AggregatedTrioWeapon): boolean {
   return (
     EXCLUDED_CHARACTER_CODES.has(r.character1) ||
@@ -338,6 +387,64 @@ function matchesWeaponFilter(
     (r.character2 === charCode && r.weaponType2 === weaponCode) ||
     (r.character3 === charCode && r.weaponType3 === weaponCode)
   );
+}
+
+async function fetchSupplementalTrioWeaponRows(
+  orFilter: string | null,
+  fetchLimit: number
+): Promise<AggregatedTrioWeapon[]> {
+  const supabase = createServerClient();
+  const select =
+    "tier,character1,weapon_type1,character2,weapon_type2,character3,weapon_type3,main_core1,main_core2,main_core3,total_games,total_wins,total_rp,rank_sum";
+  const rows: TrioWeaponRow[] = [];
+
+  for (let offset = 0; offset < fetchLimit; offset += DB_PAGE_SIZE) {
+    const pageEnd = Math.min(offset + DB_PAGE_SIZE, fetchLimit) - 1;
+    let query = supabase
+      .from(TRIO_WEAPON_TABLE)
+      .select(select)
+      .in("patch_version", SUPPLEMENTAL_PATCH_VERSIONS)
+      .in("tier", DIAMOND_PLUS_TIERS)
+      .order("total_games", { ascending: false })
+      .range(offset, pageEnd);
+
+    if (orFilter) {
+      query = query.or(orFilter) as typeof query;
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    const pageRows = (data ?? []) as TrioWeaponRow[];
+    rows.push(...pageRows);
+    if (pageRows.length < DB_PAGE_SIZE) break;
+  }
+
+  return aggregateByTrioWeapon(rows).filter((r) => !hasExcludedChar(r));
+}
+
+function supplementalSingleFilter(char1: number): string {
+  return [`character1.eq.${char1}`, `character2.eq.${char1}`, `character3.eq.${char1}`].join(",");
+}
+
+function supplementalPairFilter(char1: number, char2: number): string {
+  return [
+    `and(character1.eq.${char1},character2.eq.${char2})`,
+    `and(character1.eq.${char1},character3.eq.${char2})`,
+    `and(character2.eq.${char1},character3.eq.${char2})`,
+  ].join(",");
+}
+
+function supplementalExactPairFilter(
+  char1: number,
+  weapon1: number,
+  char2: number,
+  weapon2: number
+): string {
+  return [
+    `and(character1.eq.${char1},weapon_type1.eq.${weapon1},character2.eq.${char2},weapon_type2.eq.${weapon2})`,
+    `and(character1.eq.${char1},weapon_type1.eq.${weapon1},character3.eq.${char2},weapon_type3.eq.${weapon2})`,
+    `and(character2.eq.${char1},weapon_type2.eq.${weapon1},character3.eq.${char2},weapon_type3.eq.${weapon2})`,
+  ].join(",");
 }
 
 // ─── DB fetch + 집계 — 기본 분기는 무기 필터를 캐시 외부에서 적용해 L1 키 카디널리티 압축 ──
@@ -369,7 +476,12 @@ async function fetchTrioWeaponPair(char1: number, char2: number): Promise<Aggreg
     if (pageRows.length < DB_PAGE_SIZE) break;
   }
 
-  return aggregateSearchRows(rows).filter((r) => !hasExcludedChar(r));
+  const baseResults = aggregateSearchRows(rows).filter((r) => !hasExcludedChar(r));
+  const supplementalResults = await fetchSupplementalTrioWeaponRows(
+    supplementalPairFilter(char1, char2),
+    FULL_FETCH_LIMIT
+  );
+  return mergeAggregatedResults([...baseResults, ...supplementalResults]);
 }
 
 /**
@@ -405,7 +517,12 @@ async function fetchTrioWeaponPairWeaponExact(
     if (pageRows.length < DB_PAGE_SIZE) break;
   }
 
-  return aggregateSearchRows(rows).filter((r) => !hasExcludedChar(r));
+  const baseResults = aggregateSearchRows(rows).filter((r) => !hasExcludedChar(r));
+  const supplementalResults = await fetchSupplementalTrioWeaponRows(
+    supplementalExactPairFilter(char1, weapon1, char2, weapon2),
+    EXACT_PAIR_WEAPON_FETCH_LIMIT
+  );
+  return mergeAggregatedResults([...baseResults, ...supplementalResults]);
 }
 
 async function fetchTrioWeaponSinglePosition(
@@ -460,7 +577,12 @@ async function fetchTrioWeaponSingle(char1: number): Promise<AggregatedTrioWeapo
     return true;
   });
 
-  return aggregateSearchRows(dedupedRows).filter((r) => !hasExcludedChar(r));
+  const baseResults = aggregateSearchRows(dedupedRows).filter((r) => !hasExcludedChar(r));
+  const supplementalResults = await fetchSupplementalTrioWeaponRows(
+    supplementalSingleFilter(char1),
+    PARALLEL_FETCH_LIMIT
+  );
+  return mergeAggregatedResults([...baseResults, ...supplementalResults]);
 }
 
 /** [임시 검증] 캐릭터 미지정 — p10 search 테이블 top N (migration 024 인덱스 효과 측정용) */
@@ -484,7 +606,9 @@ async function fetchTrioWeaponAll(): Promise<AggregatedTrioWeapon[]> {
     if (pageRows.length < DB_PAGE_SIZE) break;
   }
 
-  return aggregateSearchRows(rows).filter((r) => !hasExcludedChar(r));
+  const baseResults = aggregateSearchRows(rows).filter((r) => !hasExcludedChar(r));
+  const supplementalResults = await fetchSupplementalTrioWeaponRows(null, FULL_FETCH_LIMIT);
+  return mergeAggregatedResults([...baseResults, ...supplementalResults]);
 }
 
 // ─── L1 캐시 래퍼 — 키는 정규화된 캐릭터 코드만. 무기/sortBy/limit 은 외부 적용. ──
