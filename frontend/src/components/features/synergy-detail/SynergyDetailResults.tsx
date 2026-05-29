@@ -203,7 +203,7 @@ export function SynergyDetailResults() {
 
     const controller = new AbortController();
     const timerId = setTimeout(() => {
-      const params = new URLSearchParams({ sortBy, limit: "500" });
+      const params = new URLSearchParams({ sortBy, limit: "1000" });
       const a1 = deferredAllies[0];
       if (a1) {
         params.set("character1", String(a1.charCode));

@@ -18,6 +18,59 @@ import type { TrioResult, SortBy } from "./types";
 import { getThirdCharacter, deduplicateResults } from "./utils";
 const ComboCard = React.lazy(() => import("./ComboCard").then((m) => ({ default: m.ComboCard })));
 
+interface TrioWeaponApiRow {
+  character1: number;
+  weaponType1: number;
+  character2: number;
+  weaponType2: number;
+  character3: number;
+  weaponType3: number;
+  mainCore1: number | null;
+  mainCore2: number | null;
+  mainCore3: number | null;
+  totalGames: number;
+  winRate: number;
+  averageRP: number;
+  averageRank: number;
+}
+
+function mergeTrioWeaponRowsByCharacters(rows: TrioWeaponApiRow[]): TrioResult[] {
+  const merged = new Map<string, TrioResult>();
+
+  for (const row of rows) {
+    const characters = [row.character1, row.character2, row.character3].sort((a, b) => a - b);
+    const key = characters.join("-");
+    const existing = merged.get(key);
+
+    if (!existing) {
+      merged.set(key, {
+        character1: characters[0],
+        character2: characters[1],
+        character3: characters[2],
+        winRate: row.winRate,
+        averageRP: row.averageRP,
+        totalGames: row.totalGames,
+        averageRank: row.averageRank,
+      });
+      continue;
+    }
+
+    const totalGames = existing.totalGames + row.totalGames;
+    if (totalGames > 0) {
+      existing.winRate =
+        (existing.winRate * existing.totalGames + row.winRate * row.totalGames) / totalGames;
+      existing.averageRP =
+        (existing.averageRP * existing.totalGames + row.averageRP * row.totalGames) / totalGames;
+      existing.averageRank =
+        (existing.averageRank * existing.totalGames + row.averageRank * row.totalGames) /
+        totalGames;
+    }
+    existing.totalGames = totalGames;
+  }
+
+  return Array.from(merged.values());
+}
+
 /**
  * 시너지 결과 Island — URL params(ally1,ally2) + localStorage(focusCharacters) 기반
  * SynergyClient에서 분리된 독립 Client Component
@@ -69,18 +122,18 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
 
     const controller = new AbortController();
     const timerId = setTimeout(() => {
-      const params = new URLSearchParams({ sortBy, limit: "100" });
+      const params = new URLSearchParams({ sortBy, limit: "1000" });
       if (selectedAllies[0] !== undefined) params.set("character1", String(selectedAllies[0]));
       if (selectedAllies[1] !== undefined) params.set("character2", String(selectedAllies[1]));
 
       setError(null);
 
-      fetchWithRetry<{ results?: TrioResult[]; error?: string }>(
-        `/api/stats/trios?${params.toString()}`,
+      fetchWithRetry<{ results?: TrioWeaponApiRow[]; error?: string }>(
+        `/api/stats/trios-weapon?${params.toString()}`,
         { signal: controller.signal }
       )
         .then((data) => {
-          setTrioResults(data.results ?? []);
+          setTrioResults(mergeTrioWeaponRowsByCharacters(data.results ?? []));
         })
         .catch((err) => {
           if (err instanceof DOMException && err.name === "AbortError") return;
