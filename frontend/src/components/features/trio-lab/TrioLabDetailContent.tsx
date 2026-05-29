@@ -36,8 +36,12 @@ function findExactMatch(
   return mergeApiRowsByComboId(rows).find((combo) => combo.id === wantedId) ?? null;
 }
 
+function sortMembersByCharacter(members: TrioWeaponMember[]): TrioWeaponMember[] {
+  return [...members].sort((a, b) => a.character - b.character);
+}
+
 async function loadComboData(members: TrioWeaponMember[]) {
-  const [m1, m2] = members;
+  const [m1, m2] = sortMembersByCharacter(members);
   const trioRows = await fetchTrioWeaponRows({
     character1: String(m1.character),
     weapon1: String(m1.weapon),

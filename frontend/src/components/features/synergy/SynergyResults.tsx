@@ -72,6 +72,10 @@ function mergeTrioWeaponRowsByCharacters(rows: TrioWeaponApiRow[]): TrioResult[]
   return Array.from(merged.values());
 }
 
+function sortCharacterPair(characters: number[]): number[] {
+  return [...characters].sort((a, b) => a - b);
+}
+
 /**
  * 시너지 결과 Island — URL params(ally1,ally2) + localStorage(focusCharacters) 기반
  * SynergyClient에서 분리된 독립 Client Component
@@ -123,8 +127,9 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
     const controller = new AbortController();
     const timerId = setTimeout(() => {
       const params = new URLSearchParams({ sortBy: "totalGames", limit: "5000" });
-      if (selectedAllies[0] !== undefined) params.set("character1", String(selectedAllies[0]));
-      if (selectedAllies[1] !== undefined) params.set("character2", String(selectedAllies[1]));
+      const queryAllies = sortCharacterPair(selectedAllies);
+      if (queryAllies[0] !== undefined) params.set("character1", String(queryAllies[0]));
+      if (queryAllies[1] !== undefined) params.set("character2", String(queryAllies[1]));
 
       setError(null);
 

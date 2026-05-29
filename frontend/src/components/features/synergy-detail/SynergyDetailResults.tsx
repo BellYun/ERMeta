@@ -94,6 +94,10 @@ function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
   }));
 }
 
+function sortAllyPair<T extends { charCode: number }>(allies: T[]): T[] {
+  return [...allies].sort((a, b) => a.charCode - b.charCode);
+}
+
 export function SynergyDetailResults() {
   const { l10n } = useL10n();
   const t = useTranslations("synergyResults");
@@ -205,12 +209,13 @@ export function SynergyDetailResults() {
     const controller = new AbortController();
     const timerId = setTimeout(() => {
       const params = new URLSearchParams({ sortBy: "totalGames", limit: "5000" });
-      const a1 = deferredAllies[0];
+      const queryAllies = sortAllyPair(deferredAllies);
+      const a1 = queryAllies[0];
       if (a1) {
         params.set("character1", String(a1.charCode));
         if (a1.weaponCode) params.set("weapon1", String(a1.weaponCode));
       }
-      const a2 = deferredAllies[1];
+      const a2 = queryAllies[1];
       if (a2) {
         params.set("character2", String(a2.charCode));
         if (a2.weaponCode) params.set("weapon2", String(a2.weaponCode));
