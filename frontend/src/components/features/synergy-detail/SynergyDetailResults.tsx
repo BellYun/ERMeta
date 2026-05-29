@@ -18,6 +18,8 @@ import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "../synergy/c
 import { ComboWeaponCard, type GroupedCombo } from "./ComboWeaponCard";
 import type { TrioWeaponResult, SortBy } from "./types";
 
+const MIN_MEANINGFUL_GAMES = 10;
+
 /** 무기·코어 무시하고 캐릭터(c1,c2,c3) 기준으로 그룹화 */
 function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
   const map = new Map<
@@ -146,11 +148,10 @@ export function SynergyDetailResults() {
     [deferredAllies]
   );
 
-  const [sortBy, setSortBy] = React.useState<SortBy>("recommended");
+  const [sortBy, setSortBy] = React.useState<SortBy>("averageRP");
   const [results, setResults] = React.useState<TrioWeaponResult[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const MIN_MEANINGFUL_GAMES = 10;
 
   /**
    * 1번 탭 즉각 반응 핵심:
@@ -203,7 +204,7 @@ export function SynergyDetailResults() {
 
     const controller = new AbortController();
     const timerId = setTimeout(() => {
-      const params = new URLSearchParams({ sortBy, limit: "500" });
+      const params = new URLSearchParams({ sortBy, limit: "5000" });
       const a1 = deferredAllies[0];
       if (a1) {
         params.set("character1", String(a1.charCode));
@@ -327,24 +328,22 @@ export function SynergyDetailResults() {
     const grouped = groupByCharWeapon(scopedResults);
 
     // Sort
-    if (sortBy === "recommended") {
-      grouped.sort((a, b) => {
-        // 소표본 후순위
-        const aOk = a.totalGames >= MIN_MEANINGFUL_GAMES && a.averageRP >= 0;
-        const bOk = b.totalGames >= MIN_MEANINGFUL_GAMES && b.averageRP >= 0;
-        if (aOk !== bOk) return aOk ? -1 : 1;
-        return b.averageRP - a.averageRP;
-      });
-    } else if (sortBy === "averageRP") {
+    if (sortBy === "averageRP") {
       grouped.sort((a, b) => b.averageRP - a.averageRP);
     } else if (sortBy === "winRate") {
       grouped.sort((a, b) => b.winRate - a.winRate);
+    } else if (sortBy === "averageRank") {
+      grouped.sort((a, b) => a.averageRank - b.averageRank);
     } else {
       grouped.sort((a, b) => b.totalGames - a.totalGames);
     }
 
-    return grouped;
-  }, [results, deferredAllies, deferredCharCodes, focusCharWeapons, sortBy, MIN_MEANINGFUL_GAMES]);
+    if (sortBy === "totalGames") return grouped;
+    return [
+      ...grouped.filter((group) => group.totalGames >= MIN_MEANINGFUL_GAMES),
+      ...grouped.filter((group) => group.totalGames < MIN_MEANINGFUL_GAMES),
+    ];
+  }, [results, deferredAllies, deferredCharCodes, focusCharWeapons, sortBy]);
 
   const clearAllies = React.useCallback(() => {
     router.replace(pathname, { scroll: false });

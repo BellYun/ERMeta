@@ -17,8 +17,9 @@ test.describe("홈 페이지 스모크", () => {
     await expect(patchSelect).toBeVisible({ timeout: 15_000 });
 
     // 티어 세그먼트는 radiogroup + role="radio"로 구현됨 (accessibility)
-    const mithrilButton = page.getByRole("radio", { name: "미스릴", exact: true });
-    await expect(mithrilButton).toBeVisible();
+    await expect(page.getByRole("radio", { name: "미스릴", exact: true })).toHaveCount(0);
+    const mithrilPlusButton = page.getByRole("radio", { name: "미스릴+", exact: true });
+    await expect(mithrilPlusButton).toBeVisible();
   });
 
   test("티어 랭킹과 꿀챔 섹션이 순차 스트리밍되어 나타난다", async ({ page }) => {
@@ -32,7 +33,11 @@ test.describe("홈 페이지 스모크", () => {
       timeout: 20_000,
     });
 
-    const characterLink = page.locator('a[href^="/character/"]:visible').first();
-    await expect(characterLink).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByText("승률, 픽률, RP 변동 기준 상위 캐릭터")).toBeVisible({
+      timeout: 20_000,
+    });
+    await expect(page.getByText("메타 스코어 기반 종합 순위")).toBeVisible({
+      timeout: 20_000,
+    });
   });
 });

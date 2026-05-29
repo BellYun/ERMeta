@@ -1,47 +1,59 @@
 {
   "role": "탱커",
   "roleSlug": "tanks",
-  "groupK": 6,
+  "groupK": 8,
   "minGames": 100,
   "cumulative": true,
   "generatedFrom": "DATA/trio-role-combinations/tanks",
-  "generatedAt": "2026-05-19",
+  "generatedAt": "2026-05-29",
   "groups": [
     {
       "id": 0,
-      "label": "정형 전사 탱커 (스킬 듀오 약점)",
-      "curated": false,
-      "characterKeys": ["85_13", "4_13", "53_13"]
+      "label": "근접 난전 탱커",
+      "curated": true,
+      "characterKeys": ["85_13", "4_13"]
     },
     {
       "id": 1,
-      "label": "변칙 탱커 (정형 약점)",
-      "curated": false,
-      "characterKeys": ["55_14", "30_13", "50_21", "45_4", "4_3"]
+      "label": "전사 연계 탱커",
+      "curated": true,
+      "characterKeys": ["50_21", "45_4"]
     },
     {
       "id": 2,
-      "label": "스킬 동반 탱커 (탱커 듀오 약점)",
-      "curated": false,
-      "characterKeys": ["53_14", "76_3"]
+      "label": "후열 보조 탱커",
+      "curated": true,
+      "characterKeys": ["20_4", "53_13"]
     },
     {
       "id": 3,
-      "label": "outlier · 레녹스-채찍",
-      "curated": false,
-      "characterKeys": ["20_4"]
+      "label": "스증 보조 탱커",
+      "curated": true,
+      "characterKeys": ["76_3"]
     },
     {
       "id": 4,
-      "label": "outlier · 쇼우-단검",
-      "curated": false,
-      "characterKeys": ["13_15"]
+      "label": "교전 개시 탱커",
+      "curated": true,
+      "characterKeys": ["55_14", "30_13", "68_1"]
     },
     {
       "id": 5,
-      "label": "outlier · 쇼우-창",
-      "curated": false,
-      "characterKeys": ["13_19"]
+      "label": "화력 탱커",
+      "curated": true,
+      "characterKeys": ["13_15", "13_19"]
+    },
+    {
+      "id": 6,
+      "label": "전사형 탱커",
+      "curated": true,
+      "characterKeys": ["53_14"]
+    },
+    {
+      "id": 7,
+      "label": "변칙 교전 탱커",
+      "curated": true,
+      "characterKeys": ["4_3"]
     }
   ],
   "characters": [
@@ -52,7 +64,7 @@
       "weaponName": "채찍",
       "totalGames": 232083,
       "ownMeanRP": 1.076,
-      "groupId": 3,
+      "groupId": 2,
       "strong": [
         {
           "multiset": "스킬딜러 + 지원가 + 탱커",
@@ -336,7 +348,7 @@
       "weaponName": "도끼",
       "totalGames": 169083,
       "ownMeanRP": 0.776,
-      "groupId": 1,
+      "groupId": 4,
       "strong": [
         {
           "multiset": "전사 + 지원가 + 탱커",
@@ -424,7 +436,7 @@
       "weaponName": "망치",
       "totalGames": 167271,
       "ownMeanRP": 0.873,
-      "groupId": 1,
+      "groupId": 4,
       "strong": [
         {
           "multiset": "암살자 + 원거리 딜러 + 탱커",
@@ -507,7 +519,7 @@
       "weaponName": "도끼",
       "totalGames": 157635,
       "ownMeanRP": 0.048,
-      "groupId": 2,
+      "groupId": 6,
       "strong": [
         {
           "multiset": "암살자 + 탱커 + 탱커",
@@ -610,7 +622,7 @@
       "weaponName": "방망이",
       "totalGames": 150672,
       "ownMeanRP": 0.245,
-      "groupId": 2,
+      "groupId": 3,
       "strong": [
         {
           "multiset": "지원가 + 탱커 + 탱커",
@@ -703,7 +715,7 @@
       "weaponName": "망치",
       "totalGames": 140253,
       "ownMeanRP": 0.206,
-      "groupId": 0,
+      "groupId": 2,
       "strong": [
         {
           "multiset": "스킬딜러 + 지원가 + 탱커",
@@ -796,6 +808,94 @@
           "multiset": "원거리 딜러 + 전사 + 탱커",
           "delta": -0.044,
           "games": 33639
+        }
+      ]
+    },
+    {
+      "characterCode": 68,
+      "characterName": "알론소",
+      "weapon": 1,
+      "weaponName": "글러브",
+      "totalGames": 106581,
+      "ownMeanRP": 0.255,
+      "groupId": 4,
+      "strong": [
+        {
+          "multiset": "스킬딜러 + 암살자 + 탱커",
+          "delta": 0.853,
+          "games": 2403
+        },
+        {
+          "multiset": "원거리 딜러 + 지원가 + 탱커",
+          "delta": 0.618,
+          "games": 165
+        },
+        {
+          "multiset": "원거리 딜러 + 전사 + 탱커",
+          "delta": 0.556,
+          "games": 20283
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 탱커",
+          "delta": 0.298,
+          "games": 33270
+        },
+        {
+          "multiset": "암살자 + 원거리 딜러 + 탱커",
+          "delta": 0.258,
+          "games": 2034
+        },
+        {
+          "multiset": "암살자 + 전사 + 탱커",
+          "delta": 0.082,
+          "games": 969
+        },
+        {
+          "multiset": "전사 + 전사 + 탱커",
+          "delta": 0.036,
+          "games": 3393
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "스킬딜러 + 탱커 + 탱커",
+          "delta": -13.839,
+          "games": 543
+        },
+        {
+          "multiset": "전사 + 탱커 + 탱커",
+          "delta": -11.894,
+          "games": 291
+        },
+        {
+          "multiset": "원거리 딜러 + 탱커 + 탱커",
+          "delta": -7.324,
+          "games": 444
+        },
+        {
+          "multiset": "스킬딜러 + 지원가 + 탱커",
+          "delta": -3.284,
+          "games": 105
+        },
+        {
+          "multiset": "전사 + 지원가 + 탱커",
+          "delta": -0.708,
+          "games": 111
+        },
+        {
+          "multiset": "원거리 딜러 + 원거리 딜러 + 탱커",
+          "delta": -0.473,
+          "games": 6675
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 탱커",
+          "delta": -0.374,
+          "games": 12375
+        },
+        {
+          "multiset": "스킬딜러 + 전사 + 탱커",
+          "delta": -0.108,
+          "games": 23412
         }
       ]
     },
@@ -982,7 +1082,7 @@
       "weaponName": "방망이",
       "totalGames": 67398,
       "ownMeanRP": 0.317,
-      "groupId": 1,
+      "groupId": 7,
       "strong": [
         {
           "multiset": "원거리 딜러 + 지원가 + 탱커",
@@ -1080,7 +1180,7 @@
       "weaponName": "단검",
       "totalGames": 64050,
       "ownMeanRP": 1.194,
-      "groupId": 4,
+      "groupId": 5,
       "strong": [
         {
           "multiset": "원거리 딜러 + 원거리 딜러 + 탱커",

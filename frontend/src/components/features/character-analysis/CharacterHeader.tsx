@@ -81,14 +81,13 @@ export function CharacterHeader({
   const tierRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
   const weaponRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
 
-  // 단일 + 누적(+) 7 옵션 (다이아 / 다이아+ / 메테오 / 메테오+ / 미스릴 / 미스릴+ / 1000위)
+  // 단일 + 누적(+) 옵션 (다이아 / 다이아+ / 메테오 / 메테오+ / 미스릴+ / 1000위)
   const tierOptionsList = React.useMemo(
     () => [
       { value: "DIAMOND", label: t("tiers.DIAMOND") },
       { value: "DIAMOND_PLUS", label: `${t("tiers.DIAMOND")}+` },
       { value: "METEORITE", label: t("tiers.METEORITE") },
       { value: "METEORITE_PLUS", label: `${t("tiers.METEORITE")}+` },
-      { value: "MITHRIL", label: t("tiers.MITHRIL") },
       { value: "MITHRIL_PLUS", label: `${t("tiers.MITHRIL")}+` },
       { value: TierGroup.IN1000, label: t("tiers.IN1000") },
     ],

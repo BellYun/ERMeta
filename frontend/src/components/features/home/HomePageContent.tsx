@@ -1,14 +1,13 @@
 import { Activity, SlidersHorizontal } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import type { HoneyPickData } from "@/lib/honeyPicks";
+import type { HomeMetaStats } from "@/lib/homeMetaShared";
 import type { RankingResponse } from "@/lib/ranking";
 import { HomeDashboardSections } from "./HomeDashboardSections";
 
 interface HomePageContentProps {
   locale: string;
   patches: string[];
-  honeyPicks: HoneyPickData[];
-  honeyPatchVersion: string;
+  homeMetaStats: HomeMetaStats;
   rankingData: RankingResponse;
 }
 
@@ -34,8 +33,7 @@ function buildBarHeights(values: number[]) {
 export async function HomePageContent({
   locale,
   patches,
-  honeyPicks,
-  honeyPatchVersion,
+  homeMetaStats,
   rankingData,
 }: HomePageContentProps) {
   const t = await getTranslations({ locale, namespace: "home" });
@@ -162,9 +160,7 @@ export async function HomePageContent({
 
       <HomeDashboardSections
         patches={patches}
-        honeyPicks={honeyPicks}
-        honeyPatchVersion={honeyPatchVersion}
-        rankingData={rankingData}
+        homeMetaStats={homeMetaStats}
         defaultPatch={defaultPatch}
       />
     </div>

@@ -100,12 +100,8 @@ describe("getSortValue", () => {
     expect(getSortValue(rec, "totalGames")).toBe(200);
   });
 
-  it("recommended: serverIndex 있으면 음수 인덱스", () => {
-    expect(getSortValue(rec, "recommended", 3)).toBe(-3);
-  });
-
-  it("recommended: serverIndex 없으면 averageRP 폴백", () => {
-    expect(getSortValue(rec, "recommended")).toBe(10);
+  it("averageRank 정렬은 낮은 순위가 높게 평가됨", () => {
+    expect(getSortValue(rec, "averageRank")).toBe(-4);
   });
 });
 

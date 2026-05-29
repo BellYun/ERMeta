@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { DEFAULT_HOME_TIER } from "@/lib/homeMetaShared";
 
 interface FilterState {
   patch: string;
@@ -19,7 +20,7 @@ interface FilterProviderProps {
 
 export function FilterProvider({ initialPatches, children }: FilterProviderProps) {
   const [patch, setPatch] = React.useState(initialPatches[0] ?? "");
-  const [tier, setTier] = React.useState("METEORITE_PLUS");
+  const [tier, setTier] = React.useState<string>(DEFAULT_HOME_TIER);
 
   const value = React.useMemo(
     () => ({ patch, tier, patches: initialPatches, setPatch, setTier }),

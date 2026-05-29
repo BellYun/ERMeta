@@ -24,7 +24,7 @@ const FULL_FETCH_LIMIT = 5000;
 // invalidation 으로 즉시 갱신되므로 7d 로 매우 길게. TTL 은 webhook 실패 시 safety net.
 const L1_REVALIDATE_SEC = 7 * 24 * 3600;
 
-type SortBy = "averageRP" | "winRate" | "totalGames" | "recommended";
+type SortBy = "averageRP" | "winRate" | "averageRank" | "totalGames" | "recommended";
 
 // ─── 추천 점수 계산 ────────────────────────────────────────────────────────────
 // 이터널리턴 트리오: 24인 8팀, 순위 1~8
@@ -265,6 +265,7 @@ function sortAggregated(aggregated: AggregatedTrio[], sortBy: SortBy): void {
   aggregated.sort((a, b) => {
     if (sortBy === "averageRP") return b.averageRP - a.averageRP;
     if (sortBy === "winRate") return b.winRate - a.winRate;
+    if (sortBy === "averageRank") return a.averageRank - b.averageRank;
     return b.totalGames - a.totalGames;
   });
 }
@@ -272,7 +273,7 @@ function sortAggregated(aggregated: AggregatedTrio[], sortBy: SortBy): void {
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
-  const sortByParam = (searchParams.get("sortBy") ?? "recommended") as SortBy;
+  const sortByParam = (searchParams.get("sortBy") ?? "averageRP") as SortBy;
   const limitParam = searchParams.get("limit");
 
   const rawChar1 = parseIntOrNull(searchParams.get("character1"));

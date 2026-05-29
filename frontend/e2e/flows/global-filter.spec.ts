@@ -1,36 +1,33 @@
 import { expect, test } from "@playwright/test";
 
-// 사용자 여정: 홈에서 패치/티어 필터를 바꾸면 TierRankingTable이 /api/character/mithril-rp-ranking
-// 을 새 쿼리로 다시 호출한다. (FilterContext는 URL이 아니라 React state 기반이므로 검증 기준은 네트워크다.)
-// Supabase secrets 없으면 patches가 비어 FilterContext 기본값이 세팅되지 않아 refetch 자체가 안 일어난다.
+// 사용자 여정: 홈에서 티어 필터를 바꾸면 서버 재호출 없이 클라이언트가 raw home stats를 합산한다.
+// 패치 필터 변경 시에는 해당 패치의 raw home stats를 새로 가져온다.
+// Supabase secrets 없으면 patches가 비어 FilterContext 기본값이 세팅되지 않아 테스트를 건너뛴다.
 const hasSupabase = !!process.env.NEXT_PUBLIC_SUPABASE_URL;
 
-test.describe("Flow: Global Filter → 랭킹 refetch", () => {
+test.describe("Flow: Global Filter → 홈 메타 재계산", () => {
   test.skip(!hasSupabase, "NEXT_PUBLIC_SUPABASE_URL 미주입 (fork PR 등) → 실 DB 의존 테스트 skip");
 
-  test("'다이아' 티어 버튼을 누르면 ranking API를 tier=DIAMOND 로 재호출한다", async ({ page }) => {
+  test("'미스릴' 단일 옵션 없이 '미스릴+' 기본값과 다이아 선택 상태를 노출한다", async ({
+    page,
+  }) => {
     await page.goto("/");
 
-    // 단일 "다이아" 버튼 (누적 "다이아+" 와 라벨이 겹치므로 exact match 필수).
-    const diamondButton = page.getByRole("radio", { name: "다이아", exact: true });
-    await expect(diamondButton).toBeVisible({ timeout: 15_000 });
-
-    const responsePromise = page.waitForResponse(
-      (res) =>
-        res.url().includes("/api/character/mithril-rp-ranking") &&
-        res.url().includes("tier=DIAMOND"),
+    await expect(page.getByRole("radio", { name: "미스릴", exact: true })).toHaveCount(0);
+    await expect(page.getByRole("radio", { name: "미스릴+", exact: true })).toHaveAttribute(
+      "aria-checked",
+      "true",
       { timeout: 15_000 }
     );
 
-    await diamondButton.click();
+    const diamondButton = page.getByRole("radio", { name: "다이아", exact: true });
+    await expect(diamondButton).toBeVisible({ timeout: 15_000 });
 
-    const response = await responsePromise;
-    expect(response.status()).toBe(200);
-    // active 클래스명은 Tailwind arbitrary value 기반이라 테마 변경에 취약 →
-    // 네트워크 응답 URL이 tier=DIAMOND 로 바뀌었다는 사실을 primary signal로 유지한다.
+    await diamondButton.click();
+    await expect(diamondButton).toHaveAttribute("aria-checked", "true");
   });
 
-  test("다른 패치로 select 변경 시 ranking API를 새 patchVersion 으로 재호출한다", async ({
+  test("다른 패치로 select 변경 시 home stats API를 새 patchVersion 으로 호출한다", async ({
     page,
   }) => {
     await page.goto("/");
@@ -47,7 +44,7 @@ test.describe("Flow: Global Filter → 랭킹 refetch", () => {
 
     const responsePromise = page.waitForResponse(
       (res) =>
-        res.url().includes("/api/character/mithril-rp-ranking") &&
+        res.url().includes("/api/meta/home-stats") &&
         res.url().includes(`patchVersion=${encodeURIComponent(nextPatch!)}`),
       { timeout: 15_000 }
     );

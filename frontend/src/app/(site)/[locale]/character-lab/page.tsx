@@ -19,12 +19,12 @@ interface LocalePageProps {
 }
 
 const ROLES = [
-  { slug: "rangers", data: rangersData, emoji: "🏹" },
-  { slug: "skilldealers", data: skilldealersData, emoji: "✨" },
-  { slug: "tanks", data: tanksData, emoji: "🛡️" },
-  { slug: "warriors", data: warriorsData, emoji: "⚔️" },
-  { slug: "assassins", data: assassinsData, emoji: "🗡️" },
-  { slug: "supports", data: supportsData, emoji: "💉" },
+  { slug: "rangers", data: rangersData },
+  { slug: "skilldealers", data: skilldealersData },
+  { slug: "tanks", data: tanksData },
+  { slug: "warriors", data: warriorsData },
+  { slug: "assassins", data: assassinsData },
+  { slug: "supports", data: supportsData },
 ] as const;
 
 export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
@@ -55,10 +55,7 @@ export default async function CharacterLabPage({ params }: LocalePageProps) {
     <main className="page-shell mx-auto flex max-w-6xl flex-col gap-5 px-3 py-6 sm:px-5 sm:py-8 lg:gap-6">
       <header className="dashboard-hero flex flex-col gap-3 p-5 sm:p-7">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="dashboard-kicker">LAB · BETA · 누적 통계 기준</span>
-          <span className="rounded-full border border-[rgba(74,222,128,0.22)] bg-[rgba(74,222,128,0.08)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[var(--color-success)]">
-            NEW
-          </span>
+          <span className="dashboard-kicker">LAB · 누적 통계 기준</span>
         </div>
         <h1 className="dashboard-title">
           캐릭터 <em>유형 분석</em>
@@ -97,7 +94,7 @@ export default async function CharacterLabPage({ params }: LocalePageProps) {
           </p>
         </div>
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {ROLES.map(({ slug, data, emoji }) => {
+          {ROLES.map(({ slug, data }) => {
             const curatedGroups = data.groups.filter((g) => g.curated).length;
             return (
               <li key={slug}>
@@ -106,8 +103,8 @@ export default async function CharacterLabPage({ params }: LocalePageProps) {
                   className="char-card group flex h-full flex-col gap-3 p-5 transition-all"
                 >
                   <header className="flex items-center justify-between">
-                    <span className="text-3xl" aria-hidden>
-                      {emoji}
+                    <span className="text-[11px] font-mono uppercase tracking-widest text-[var(--color-muted-foreground)]">
+                      Cluster
                     </span>
                     <ArrowRight
                       className="h-4 w-4 text-[var(--color-muted-foreground)] transition-transform group-hover:translate-x-1 group-hover:text-[var(--color-primary)]"
@@ -136,46 +133,6 @@ export default async function CharacterLabPage({ params }: LocalePageProps) {
             );
           })}
         </ul>
-      </section>
-
-      <section className="dashboard-panel flex flex-col gap-3 p-5">
-        <div className="flex items-center justify-between border-l-2 border-[var(--color-accent-gold)] pl-3">
-          <h2 className="text-sm font-bold text-[var(--color-foreground)]">분석 방법</h2>
-        </div>
-        <ol className="grid gap-2 text-sm text-[var(--color-muted-foreground)] sm:grid-cols-2">
-          <li className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] p-3">
-            <p className="text-xs font-mono uppercase tracking-widest text-[var(--color-muted-foreground)]">
-              Step 1
-            </p>
-            <p className="mt-1 text-sm text-[var(--color-foreground)]">
-              (캐릭터+무기) 마다 3인 조합 통계 합산 (RP 변화, 게임 수)
-            </p>
-          </li>
-          <li className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] p-3">
-            <p className="text-xs font-mono uppercase tracking-widest text-[var(--color-muted-foreground)]">
-              Step 2
-            </p>
-            <p className="mt-1 text-sm text-[var(--color-foreground)]">
-              잘 맞는 파트너 패턴이 비슷한 캐릭터끼리 한 그룹으로 묶음
-            </p>
-          </li>
-          <li className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] p-3">
-            <p className="text-xs font-mono uppercase tracking-widest text-[var(--color-muted-foreground)]">
-              Step 3
-            </p>
-            <p className="mt-1 text-sm text-[var(--color-foreground)]">
-              캐릭터마다 잘 나오는 조합 / 못 나오는 조합 같이 표시
-            </p>
-          </li>
-          <li className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] p-3">
-            <p className="text-xs font-mono uppercase tracking-widest text-[var(--color-muted-foreground)]">
-              Step 4
-            </p>
-            <p className="mt-1 text-sm text-[var(--color-foreground)]">
-              패턴이 명확한 그룹은 ‘스킬딜러 친화’ 같은 라벨이 붙음
-            </p>
-          </li>
-        </ol>
       </section>
     </main>
   );

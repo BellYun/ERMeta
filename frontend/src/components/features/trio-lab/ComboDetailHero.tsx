@@ -1,6 +1,6 @@
-import { ArrowLeft, Share2, Bookmark } from "lucide-react";
-import Link from "next/link";
-import { characterDisplayName, scoreFromWinRate, type TrioWeaponCombo } from "./types";
+import { ArrowLeft } from "lucide-react";
+import { Link } from "@/i18n/navigation";
+import { characterDisplayName, comboTier, type TrioWeaponCombo } from "./types";
 
 const SCORE_COLOR: Record<string, string> = {
   "S+": "text-[var(--color-accent-gold)]",
@@ -13,19 +13,21 @@ const SCORE_COLOR: Record<string, string> = {
 
 interface ComboDetailHeroProps {
   combo: TrioWeaponCombo;
+  listHref: string;
   patchVersion: string;
   tier: string;
 }
 
-export function ComboDetailHero({ combo, patchVersion, tier }: ComboDetailHeroProps) {
+export function ComboDetailHero({ combo, listHref, patchVersion, tier }: ComboDetailHeroProps) {
   const trioName = combo.members.map((m) => characterDisplayName(m.character)).join(" + ");
-  const score = scoreFromWinRate(combo.winRate, combo.totalGames);
+  const score = comboTier(combo.winRate, combo.averageRP, combo.averageRank, combo.totalGames);
 
   return (
     <header className="analysis-hero flex flex-col gap-3 p-5 sm:p-7">
       <nav className="flex items-center gap-1.5 text-xs text-[var(--color-muted-foreground)]">
         <Link
-          href="/trio-lab"
+          href={listHref}
+          scroll={false}
           className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-[rgba(255,255,255,0.04)] hover:text-[var(--color-foreground)]"
         >
           <ArrowLeft className="h-3 w-3" strokeWidth={2.4} />
@@ -57,24 +59,6 @@ export function ComboDetailHero({ combo, patchVersion, tier }: ComboDetailHeroPr
               {combo.averageRP.toFixed(0)} · 평균 #{combo.averageRank.toFixed(1)}
             </p>
           </div>
-        </div>
-        <div className="flex items-center gap-2 self-start sm:self-end">
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-3)] px-3 py-2 text-xs font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[rgba(255,255,255,0.06)]"
-            aria-label="이 조합 북마크"
-          >
-            <Bookmark className="h-3.5 w-3.5" strokeWidth={2.2} />
-            북마크
-          </button>
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-3)] px-3 py-2 text-xs font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[rgba(255,255,255,0.06)]"
-            aria-label="조합 공유"
-          >
-            <Share2 className="h-3.5 w-3.5" strokeWidth={2.2} />
-            공유
-          </button>
         </div>
       </div>
     </header>

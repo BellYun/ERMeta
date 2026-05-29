@@ -1,17 +1,29 @@
 {
   "role": "지원가",
   "roleSlug": "supports",
-  "groupK": 1,
+  "groupK": 3,
   "minGames": 1000,
   "cumulative": true,
   "generatedFrom": "DATA/trio-role-combinations/raw_character_multiset.json",
-  "generatedAt": "2026-05-22",
+  "generatedAt": "2026-05-29",
   "groups": [
     {
       "id": 0,
-      "label": "지원가 전체",
-      "curated": false,
-      "characterKeys": ["69_9", "41_24", "73_24"]
+      "label": "탱커 연계 지원가",
+      "curated": true,
+      "characterKeys": ["69_9"]
+    },
+    {
+      "id": 1,
+      "label": "딜러 연계 지원가",
+      "curated": true,
+      "characterKeys": ["41_24"]
+    },
+    {
+      "id": 2,
+      "label": "전열 보조 지원가",
+      "curated": true,
+      "characterKeys": ["73_24"]
     }
   ],
   "characters": [
@@ -85,7 +97,7 @@
       "weaponName": "아르카나",
       "totalGames": 41616,
       "ownMeanRP": 0.516,
-      "groupId": 0,
+      "groupId": 1,
       "strong": [
         {
           "multiset": "암살자 + 원거리 딜러 + 지원가",
@@ -148,7 +160,7 @@
       "weaponName": "아르카나",
       "totalGames": 35325,
       "ownMeanRP": -2.086,
-      "groupId": 0,
+      "groupId": 2,
       "strong": [
         {
           "multiset": "원거리 딜러 + 원거리 딜러 + 지원가",

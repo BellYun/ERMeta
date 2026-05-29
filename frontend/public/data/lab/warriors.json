@@ -1,95 +1,137 @@
 {
   "role": "전사",
   "roleSlug": "warriors",
-  "groupK": 12,
+  "groupK": 21,
   "minGames": 100,
   "cumulative": true,
   "generatedFrom": "DATA/trio-role-combinations/warriors",
-  "generatedAt": "2026-05-19",
+  "generatedAt": "2026-05-29",
   "groups": [
     {
       "id": 0,
-      "label": "올라운드 정형 메타",
-      "curated": false,
-      "characterKeys": ["78_16", "3_21", "39_18"]
+      "label": "스증 연계 전사",
+      "curated": true,
+      "characterKeys": ["78_16", "22_3", "11_18", "28_13", "56_20"]
     },
     {
       "id": 1,
-      "label": "캐리형 딜브루저",
-      "curated": false,
-      "characterKeys": ["74_3", "61_5", "7_2", "3_19"]
+      "label": "원딜 연계 전사",
+      "curated": true,
+      "characterKeys": ["67_14", "59_2", "11_16"]
     },
     {
       "id": 2,
-      "label": "원딜+탱커 안정형",
-      "curated": false,
-      "characterKeys": ["29_1"]
+      "label": "단독 캐리형 전사",
+      "curated": true,
+      "characterKeys": ["64_24"]
     },
     {
       "id": 3,
-      "label": "변칙 카운터형",
-      "curated": false,
-      "characterKeys": ["56_20", "28_3", "29_2"]
+      "label": "선진입 전사",
+      "curated": true,
+      "characterKeys": ["33_1", "80_19", "86_1"]
     },
     {
       "id": 4,
-      "label": "스킬딜러 시너지형",
-      "curated": false,
-      "characterKeys": ["67_14", "84_18", "46_16", "27_null", "49_19", "63_15", "10_20", "3_16"]
-    },
-    {
-      "id": 5,
-      "label": "근딜 박치기 스페셜리스트",
-      "curated": false,
-      "characterKeys": ["59_2", "11_18", "1_15", "28_13"]
+      "label": "암살 연계 전사",
+      "curated": true,
+      "characterKeys": ["1_18", "1_14", "3_19"]
     },
     {
       "id": 6,
-      "label": "지원가+탱커 어시스트",
-      "curated": false,
-      "characterKeys": ["1_16"]
+      "label": "크랙형 전사",
+      "curated": true,
+      "characterKeys": ["10_20", "7_2", "35_2"]
     },
     {
       "id": 7,
-      "label": "메이저 메타 만능",
-      "curated": false,
-      "characterKeys": [
-        "65_16",
-        "22_3",
-        "7_1",
-        "64_24",
-        "47_4",
-        "14_21",
-        "39_21",
-        "44_25",
-        "35_1",
-        "1_18",
-        "1_14"
-      ]
+      "label": "탱커 연계 전사",
+      "curated": true,
+      "characterKeys": ["74_3", "14_21", "44_25"]
     },
     {
       "id": 8,
-      "label": "outlier · 레온-글러브",
-      "curated": false,
-      "characterKeys": ["11_16", "86_1", "33_1", "80_19", "16_9", "35_2"]
+      "label": "지원가 연계 전사",
+      "curated": true,
+      "characterKeys": ["46_16", "39_18"]
     },
     {
       "id": 9,
-      "label": "outlier · 재키-양손검",
-      "curated": false,
-      "characterKeys": ["71_14", "82_21"]
-    },
-    {
-      "id": 10,
-      "label": "outlier · 알론소-글러브",
-      "curated": false,
-      "characterKeys": ["68_1"]
+      "label": "핑퐁형 전사",
+      "curated": true,
+      "characterKeys": ["27_null", "10_1", "35_1"]
     },
     {
       "id": 11,
-      "label": "outlier · 리 다이린-글러브",
-      "curated": false,
-      "characterKeys": ["10_1"]
+      "label": "아웃라이어-레온-글러브",
+      "curated": true,
+      "characterKeys": ["29_1"]
+    },
+    {
+      "id": 13,
+      "label": "탱커 선진입 캐미",
+      "curated": true,
+      "characterKeys": ["82_21", "1_16", "49_19"]
+    },
+    {
+      "id": 14,
+      "label": "플렉스 교전 전사",
+      "curated": true,
+      "characterKeys": ["61_5", "28_3", "65_16"]
+    },
+    {
+      "id": 16,
+      "label": "선진입 딜브루저",
+      "curated": true,
+      "characterKeys": ["39_21", "3_21", "63_15"]
+    },
+    {
+      "id": 17,
+      "label": "아웃라이어-케네스-도끼",
+      "curated": true,
+      "characterKeys": ["71_14"]
+    },
+    {
+      "id": 18,
+      "label": "아웃라이어-재키-단검",
+      "curated": true,
+      "characterKeys": ["1_15"]
+    },
+    {
+      "id": 19,
+      "label": "아웃라이어-실비아-권총",
+      "curated": true,
+      "characterKeys": ["16_9"]
+    },
+    {
+      "id": 20,
+      "label": "아웃라이어-피오라-양손검",
+      "curated": true,
+      "characterKeys": ["3_16"]
+    },
+    {
+      "id": 21,
+      "label": "아웃라이어-현우-글러브",
+      "curated": true,
+      "characterKeys": ["7_1"]
+    },
+    {
+      "id": 22,
+      "label": "아웃라이어-레온-톤파",
+      "curated": true,
+      "characterKeys": ["29_2"]
+    },
+    {
+      "id": 23,
+      "label": "아웃라이어-라우라-채찍",
+      "curated": true,
+      "characterKeys": ["47_4"]
+    },
+    {
+      "id": 24,
+      "label": "아웃라이어-블레어-쌍검",
+      "curated": true,
+      "characterKeys": ["84_18"]
     }
   ],
   "characters": [
@@ -100,7 +142,7 @@
       "weaponName": "양손검",
       "totalGames": 370215,
       "ownMeanRP": -0.331,
-      "groupId": 7,
+      "groupId": 14,
       "strong": [
         {
           "multiset": "전사 + 탱커 + 탱커",
@@ -326,7 +368,7 @@
       "weaponName": "도끼",
       "totalGames": 320673,
       "ownMeanRP": 0.805,
-      "groupId": 4,
+      "groupId": 1,
       "strong": [
         {
           "multiset": "원거리 딜러 + 전사 + 지원가",
@@ -439,7 +481,7 @@
       "weaponName": "방망이",
       "totalGames": 310725,
       "ownMeanRP": -0.372,
-      "groupId": 7,
+      "groupId": 0,
       "strong": [
         {
           "multiset": "스킬딜러 + 전사 + 지원가",
@@ -552,7 +594,7 @@
       "weaponName": "방망이",
       "totalGames": 283251,
       "ownMeanRP": 0.45,
-      "groupId": 1,
+      "groupId": 7,
       "strong": [
         {
           "multiset": "전사 + 전사 + 탱커",
@@ -655,7 +697,7 @@
       "weaponName": "쌍검",
       "totalGames": 237213,
       "ownMeanRP": -0.242,
-      "groupId": 4,
+      "groupId": 24,
       "strong": [
         {
           "multiset": "스킬딜러 + 암살자 + 전사",
@@ -768,7 +810,7 @@
       "weaponName": "글러브",
       "totalGames": 232386,
       "ownMeanRP": 0.328,
-      "groupId": 7,
+      "groupId": 21,
       "strong": [
         {
           "multiset": "스킬딜러 + 전사 + 지원가",
@@ -881,7 +923,7 @@
       "weaponName": "톤파",
       "totalGames": 229611,
       "ownMeanRP": 0.451,
-      "groupId": 5,
+      "groupId": 1,
       "strong": [
         {
           "multiset": "원거리 딜러 + 원거리 딜러 + 전사",
@@ -984,7 +1026,7 @@
       "weaponName": "양손검",
       "totalGames": 207810,
       "ownMeanRP": 1.222,
-      "groupId": 8,
+      "groupId": 1,
       "strong": [
         {
           "multiset": "원거리 딜러 + 전사 + 지원가",
@@ -1082,7 +1124,7 @@
       "weaponName": "양손검",
       "totalGames": 199752,
       "ownMeanRP": 0.365,
-      "groupId": 4,
+      "groupId": 8,
       "strong": [
         {
           "multiset": "전사 + 지원가 + 탱커",
@@ -1195,7 +1237,7 @@
       "weaponName": "글러브",
       "totalGames": 196512,
       "ownMeanRP": 0.878,
-      "groupId": 8,
+      "groupId": 3,
       "strong": [
         {
           "multiset": "전사 + 탱커 + 탱커",
@@ -1308,7 +1350,7 @@
       "weaponName": "아르카나",
       "totalGames": 193398,
       "ownMeanRP": 1.103,
-      "groupId": 7,
+      "groupId": 2,
       "strong": [
         {
           "multiset": "전사 + 탱커 + 탱커",
@@ -1416,7 +1458,7 @@
       "weaponName": "글러브",
       "totalGames": 183444,
       "ownMeanRP": 0.281,
-      "groupId": 8,
+      "groupId": 3,
       "strong": [
         {
           "multiset": "암살자 + 전사 + 탱커",
@@ -1519,7 +1561,7 @@
       "weaponName": "창",
       "totalGames": 175422,
       "ownMeanRP": 0.431,
-      "groupId": 8,
+      "groupId": 3,
       "strong": [
         {
           "multiset": "전사 + 탱커 + 탱커",
@@ -1632,7 +1674,7 @@
       "weaponName": "도끼",
       "totalGames": 170811,
       "ownMeanRP": -0.586,
-      "groupId": 9,
+      "groupId": 17,
       "strong": [
         {
           "multiset": "스킬딜러 + 원거리 딜러 + 전사",
@@ -1735,7 +1777,7 @@
       "weaponName": "글러브",
       "totalGames": 169308,
       "ownMeanRP": 1.316,
-      "groupId": 2,
+      "groupId": 11,
       "strong": [
         {
           "multiset": "암살자 + 암살자 + 전사",
@@ -1848,7 +1890,7 @@
       "weaponName": "권총",
       "totalGames": 163992,
       "ownMeanRP": 0.562,
-      "groupId": 8,
+      "groupId": 19,
       "strong": [
         {
           "multiset": "전사 + 탱커 + 탱커",
@@ -1946,7 +1988,7 @@
       "weaponName": "채찍",
       "totalGames": 148518,
       "ownMeanRP": 0.318,
-      "groupId": 7,
+      "groupId": 23,
       "strong": [
         {
           "multiset": "원거리 딜러 + 전사 + 지원가",
@@ -2049,7 +2091,7 @@
       "weaponName": "레이피어",
       "totalGames": 147198,
       "ownMeanRP": 0.523,
-      "groupId": 9,
+      "groupId": 13,
       "strong": [
         {
           "multiset": "전사 + 탱커 + 탱커",
@@ -2265,7 +2307,7 @@
       "weaponName": "쌍절곤",
       "totalGames": 142692,
       "ownMeanRP": 1.03,
-      "groupId": 3,
+      "groupId": 0,
       "strong": [
         {
           "multiset": "스킬딜러 + 스킬딜러 + 전사",
@@ -2373,7 +2415,7 @@
       "weaponName": "양손검",
       "totalGames": 138156,
       "ownMeanRP": 0.392,
-      "groupId": 6,
+      "groupId": 13,
       "strong": [
         {
           "multiset": "전사 + 탱커 + 탱커",
@@ -2481,7 +2523,7 @@
       "weaponName": "양손검 / 톤파",
       "totalGames": 136935,
       "ownMeanRP": 0.657,
-      "groupId": 4,
+      "groupId": 9,
       "strong": [
         {
           "multiset": "암살자 + 원거리 딜러 + 전사",
@@ -2574,7 +2616,7 @@
       "weaponName": "창",
       "totalGames": 135981,
       "ownMeanRP": 0.046,
-      "groupId": 4,
+      "groupId": 13,
       "strong": [
         {
           "multiset": "전사 + 지원가 + 탱커",
@@ -2677,7 +2719,7 @@
       "weaponName": "레이피어",
       "totalGames": 132795,
       "ownMeanRP": 1.259,
-      "groupId": 7,
+      "groupId": 16,
       "strong": [
         {
           "multiset": "스킬딜러 + 전사 + 지원가",
@@ -2780,7 +2822,7 @@
       "weaponName": "단검",
       "totalGames": 131226,
       "ownMeanRP": 1.475,
-      "groupId": 4,
+      "groupId": 16,
       "strong": [
         {
           "multiset": "전사 + 지원가 + 탱커",
@@ -2883,7 +2925,7 @@
       "weaponName": "글러브",
       "totalGames": 125442,
       "ownMeanRP": 0.687,
-      "groupId": 11,
+      "groupId": 9,
       "strong": [
         {
           "multiset": "암살자 + 전사 + 지원가",
@@ -3089,7 +3131,7 @@
       "weaponName": "쌍검",
       "totalGames": 118854,
       "ownMeanRP": 0.079,
-      "groupId": 5,
+      "groupId": 0,
       "strong": [
         {
           "multiset": "스킬딜러 + 전사 + 지원가",
@@ -3187,7 +3229,7 @@
       "weaponName": "톤파",
       "totalGames": 117780,
       "ownMeanRP": 0.032,
-      "groupId": 8,
+      "groupId": 6,
       "strong": [
         {
           "multiset": "원거리 딜러 + 원거리 딜러 + 전사",
@@ -3280,7 +3322,7 @@
       "weaponName": "레이피어",
       "totalGames": 116085,
       "ownMeanRP": 0.824,
-      "groupId": 0,
+      "groupId": 16,
       "strong": [
         {
           "multiset": "원거리 딜러 + 원거리 딜러 + 전사",
@@ -3373,7 +3415,7 @@
       "weaponName": "투척",
       "totalGames": 107061,
       "ownMeanRP": 0.769,
-      "groupId": 1,
+      "groupId": 14,
       "strong": [
         {
           "multiset": "원거리 딜러 + 전사 + 지원가",
@@ -3460,101 +3502,13 @@
       ]
     },
     {
-      "characterCode": 68,
-      "characterName": "알론소",
-      "weapon": 1,
-      "weaponName": "글러브",
-      "totalGames": 106581,
-      "ownMeanRP": 0.255,
-      "groupId": 10,
-      "strong": [
-        {
-          "multiset": "스킬딜러 + 암살자 + 전사",
-          "delta": 0.853,
-          "games": 2403
-        },
-        {
-          "multiset": "원거리 딜러 + 전사 + 지원가",
-          "delta": 0.618,
-          "games": 165
-        },
-        {
-          "multiset": "원거리 딜러 + 전사 + 전사",
-          "delta": 0.556,
-          "games": 20283
-        },
-        {
-          "multiset": "스킬딜러 + 원거리 딜러 + 전사",
-          "delta": 0.298,
-          "games": 33270
-        },
-        {
-          "multiset": "암살자 + 원거리 딜러 + 전사",
-          "delta": 0.258,
-          "games": 2034
-        },
-        {
-          "multiset": "암살자 + 전사 + 전사",
-          "delta": 0.082,
-          "games": 969
-        },
-        {
-          "multiset": "전사 + 전사 + 전사",
-          "delta": 0.036,
-          "games": 3393
-        }
-      ],
-      "weak": [
-        {
-          "multiset": "스킬딜러 + 전사 + 탱커",
-          "delta": -13.839,
-          "games": 543
-        },
-        {
-          "multiset": "전사 + 전사 + 탱커",
-          "delta": -11.894,
-          "games": 291
-        },
-        {
-          "multiset": "원거리 딜러 + 전사 + 탱커",
-          "delta": -7.324,
-          "games": 444
-        },
-        {
-          "multiset": "스킬딜러 + 전사 + 지원가",
-          "delta": -3.284,
-          "games": 105
-        },
-        {
-          "multiset": "전사 + 전사 + 지원가",
-          "delta": -0.708,
-          "games": 111
-        },
-        {
-          "multiset": "원거리 딜러 + 원거리 딜러 + 전사",
-          "delta": -0.473,
-          "games": 6675
-        },
-        {
-          "multiset": "스킬딜러 + 스킬딜러 + 전사",
-          "delta": -0.374,
-          "games": 12375
-        },
-        {
-          "multiset": "스킬딜러 + 전사 + 전사",
-          "delta": -0.108,
-          "games": 23412
-        }
-      ]
-    },
-    {
       "characterCode": 35,
       "characterName": "얀",
       "weapon": 1,
       "weaponName": "글러브",
       "totalGames": 105660,
       "ownMeanRP": 0.412,
-      "groupId": 7,
+      "groupId": 9,
       "strong": [
         {
           "multiset": "전사 + 지원가 + 탱커",
@@ -3657,7 +3611,7 @@
       "weaponName": "쌍검",
       "totalGames": 86493,
       "ownMeanRP": 0.781,
-      "groupId": 0,
+      "groupId": 8,
       "strong": [
         {
           "multiset": "원거리 딜러 + 원거리 딜러 + 전사",
@@ -3765,7 +3719,7 @@
       "weaponName": "방망이",
       "totalGames": 75738,
       "ownMeanRP": 0.91,
-      "groupId": 3,
+      "groupId": 14,
       "strong": [
         {
           "multiset": "스킬딜러 + 전사 + 지원가",
@@ -3863,7 +3817,7 @@
       "weaponName": "쌍절곤",
       "totalGames": 70968,
       "ownMeanRP": -0.091,
-      "groupId": 4,
+      "groupId": 6,
       "strong": [
         {
           "multiset": "암살자 + 원거리 딜러 + 전사",
@@ -3956,7 +3910,7 @@
       "weaponName": "단검",
       "totalGames": 63774,
       "ownMeanRP": 0.894,
-      "groupId": 5,
+      "groupId": 18,
       "strong": [
         {
           "multiset": "스킬딜러 + 전사 + 지원가",
@@ -4049,7 +4003,7 @@
       "weaponName": "망치",
       "totalGames": 56310,
       "ownMeanRP": 0.755,
-      "groupId": 5,
+      "groupId": 0,
       "strong": [
         {
           "multiset": "스킬딜러 + 스킬딜러 + 전사",
@@ -4142,7 +4096,7 @@
       "weaponName": "쌍검",
       "totalGames": 45402,
       "ownMeanRP": 0.237,
-      "groupId": 7,
+      "groupId": 4,
       "strong": [
         {
           "multiset": "전사 + 지원가 + 탱커",
@@ -4240,7 +4194,7 @@
       "weaponName": "톤파",
       "totalGames": 37992,
       "ownMeanRP": 0.772,
-      "groupId": 3,
+      "groupId": 22,
       "strong": [
         {
           "multiset": "암살자 + 원거리 딜러 + 전사",
@@ -4313,7 +4267,7 @@
       "weaponName": "양손검",
       "totalGames": 36045,
       "ownMeanRP": -0.29,
-      "groupId": 4,
+      "groupId": 20,
       "strong": [
         {
           "multiset": "암살자 + 원거리 딜러 + 전사",
@@ -4396,7 +4350,7 @@
       "weaponName": "톤파",
       "totalGames": 32349,
       "ownMeanRP": -1.926,
-      "groupId": 1,
+      "groupId": 6,
       "strong": [
         {
           "multiset": "암살자 + 원거리 딜러 + 전사",
@@ -4479,7 +4433,7 @@
       "weaponName": "도끼",
       "totalGames": 23538,
       "ownMeanRP": 0.039,
-      "groupId": 7,
+      "groupId": 4,
       "strong": [
         {
           "multiset": "원거리 딜러 + 원거리 딜러 + 전사",
@@ -4562,7 +4516,7 @@
       "weaponName": "창",
       "totalGames": 16962,
       "ownMeanRP": 0.792,
-      "groupId": 1,
+      "groupId": 4,
       "strong": [
         {
           "multiset": "암살자 + 원거리 딜러 + 전사",

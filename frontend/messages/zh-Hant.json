@@ -247,7 +247,8 @@
       "recommended": "推薦",
       "averageRP": "平均 RP",
       "winRate": "勝率",
-      "totalGames": "場次"
+      "totalGames": "場次",
+      "averageRank": "平均名次"
     },
     "titleSingle": "包含 {ally} 的詳細陣容",
     "titlePair": "{ally1} + {ally2} 的詳細陣容",
@@ -277,7 +278,8 @@
       "recommended": "推薦",
       "averageRP": "平均 RP",
       "winRate": "勝率",
-      "totalGames": "場次"
+      "totalGames": "場次",
+      "averageRank": "平均名次"
     },
     "titleSingle": "包含 {ally} 的推薦陣容",
     "titlePair": "{ally1} + {ally2} 的陣容",

@@ -81,7 +81,7 @@ export default function FeedbackWidget() {
     // pointer-events-none 핵심: 닫힌 panel 도 layout 박스(약 358×410px)를 그대로 차지해
     // 모바일 화면 하단 ~50% 의 hit-test 를 wrapper 가 흡수하던 버그.
     // FAB / 열린 panel 에서만 pointer-events:auto 로 다시 켜고 그 외 빈 영역은 통과시킴.
-    <div className="pointer-events-none fixed bottom-[calc(78px+env(safe-area-inset-bottom)+0.75rem)] right-4 z-[60] flex flex-col items-end gap-3 lg:bottom-6 lg:left-6 lg:right-auto lg:items-start xl:left-8">
+    <div className="pointer-events-none fixed bottom-[calc(env(safe-area-inset-bottom)+1rem)] right-4 z-[60] flex flex-col items-end gap-3 lg:bottom-6 lg:left-6 lg:right-auto lg:items-start xl:left-8">
       {/* Form Panel */}
       <div
         id="feedback-panel"

@@ -94,6 +94,18 @@ export function mergeApiRowsByComboId(rows: ApiTrioWeaponRow[]): TrioWeaponCombo
   return Array.from(merged.values());
 }
 
+export function sortTrioWeaponCombos(
+  combos: TrioWeaponCombo[],
+  sortBy: TrioSortBy
+): TrioWeaponCombo[] {
+  return [...combos].sort((a, b) => {
+    if (sortBy === "averageRP") return b.averageRP - a.averageRP;
+    if (sortBy === "winRate") return b.winRate - a.winRate;
+    if (sortBy === "averageRank") return a.averageRank - b.averageRank;
+    return b.totalGames - a.totalGames;
+  });
+}
+
 export function characterDisplayName(code: number): string {
   return getCharacterName(code);
 }
@@ -110,24 +122,47 @@ export function trioName(combo: TrioWeaponCombo): string {
   return combo.members.map((m) => characterDisplayName(m.character)).join(" + ");
 }
 
-export type TrioSortBy = "recommended" | "winRate" | "averageRP" | "totalGames";
+export type TrioSortBy = "winRate" | "averageRP" | "averageRank" | "totalGames";
 
 export const SORT_LABELS: Record<TrioSortBy, string> = {
-  recommended: "추천순",
-  winRate: "승률순",
   averageRP: "평균 RP순",
+  winRate: "승률순",
+  averageRank: "평균 순위순",
   totalGames: "표본순",
 };
 
-export function scoreFromWinRate(
+function clamp01(value: number): number {
+  return Math.max(0, Math.min(1, value));
+}
+
+export function comboQualityScore(
   winRate: number,
+  averageRP: number,
+  averageRank: number,
+  games: number
+): number {
+  if (games < 20) return 0;
+
+  const winScore = clamp01((winRate - 8) / 8);
+  const rpScore = clamp01((averageRP + 5) / 15);
+  const rankScore = clamp01((5.5 - averageRank) / 2.5);
+  const samplePenalty = games < 100 ? 0.9 : 1;
+
+  return (winScore * 0.45 + rpScore * 0.4 + rankScore * 0.15) * samplePenalty * 100;
+}
+
+export function comboTier(
+  winRate: number,
+  averageRP: number,
+  averageRank: number,
   games: number
 ): "S+" | "S" | "A" | "B" | "C" | "D" {
   if (games < 20) return "D";
-  if (winRate >= 16) return "S+";
-  if (winRate >= 14) return "S";
-  if (winRate >= 12) return "A";
-  if (winRate >= 10) return "B";
-  if (winRate >= 8) return "C";
+  const score = comboQualityScore(winRate, averageRP, averageRank, games);
+  if (score >= 78) return "S+";
+  if (score >= 68) return "S";
+  if (score >= 56) return "A";
+  if (score >= 44) return "B";
+  if (score >= 32) return "C";
   return "D";
 }

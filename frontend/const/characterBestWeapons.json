@@ -256,6 +256,11 @@
       "weaponCode": 21,
       "label": "레이피어",
       "isDefault": true
+    },
+    {
+      "weaponCode": 3,
+      "label": "방망이",
+      "isDefault": false
     }
   ],
   "25": [

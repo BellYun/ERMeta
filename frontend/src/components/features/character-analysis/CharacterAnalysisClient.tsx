@@ -10,6 +10,7 @@ import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
 import { CharacterHeader } from "./CharacterHeader";
+import { RoleComboRpPanel } from "./RoleComboRpPanel";
 import { SynergyPartnersSection } from "./SynergyPartnersSection";
 import { assignCharTier, fetchStats } from "./utils";
 
@@ -340,7 +341,10 @@ export function CharacterAnalysisClient({
           </section>
         )}
 
-        <SynergyPartnersSection characterCode={code} selectedWeapon={selectedWeapon} />
+        <div className="flex flex-col gap-5 xl:col-span-2">
+          <SynergyPartnersSection characterCode={code} selectedWeapon={selectedWeapon} />
+          <RoleComboRpPanel characterCode={code} selectedWeapon={selectedWeapon} />
+        </div>
       </div>
 
       <div className="pt-0.5 sm:pt-1">

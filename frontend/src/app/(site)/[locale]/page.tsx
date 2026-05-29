@@ -4,8 +4,12 @@ import { setRequestLocale } from "next-intl/server";
 import { HomePageContent } from "@/components/features/home/HomePageContent";
 import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
 import { getPatches } from "@/lib/getPatches";
-import { getCachedHoneyPicks } from "@/lib/honeyPicks";
-import { getCachedRankingData } from "@/lib/ranking";
+import { getCachedHomeMetaStats } from "@/lib/homeMetaServer";
+import {
+  DEFAULT_HOME_TIER,
+  buildHomeMetaView,
+  createEmptyHomeMetaStats,
+} from "@/lib/homeMetaShared";
 import { buildLocalizedAlternates, localizeRoutePath } from "@/lib/seoLocales";
 import { BASE_URL } from "@/lib/siteMetadata";
 import { getMessage, loadIntlMessages, OG_LOCALE_BY_LANGUAGE } from "@/lib/staticIntl";
@@ -74,45 +78,26 @@ export default async function LocalizedHomePage({ params }: LocalePageProps) {
 
   setRequestLocale(locale);
 
-  const defaultTier = "DIAMOND";
-  const emptyRankingData: Awaited<ReturnType<typeof getCachedRankingData>> = {
-    rankings: [],
-    previousRankings: [],
-    patchVersion: "",
-    previousPatch: null,
-    tier: defaultTier,
-  };
-
   const patches = await getPatches();
   const defaultPatch = patches[0] ?? "";
-
-  let honeyData: Awaited<ReturnType<typeof getCachedHoneyPicks>> = {
-    picks: [],
-    patchVersion: "",
-    previousPatch: null as string | null,
-    tier: defaultTier,
-  };
-  let rankingData = emptyRankingData;
+  let homeMetaStats = createEmptyHomeMetaStats(defaultPatch);
 
   if (defaultPatch) {
     try {
-      [honeyData, rankingData] = await Promise.all([
-        getCachedHoneyPicks(defaultPatch, defaultTier),
-        getCachedRankingData(defaultPatch, defaultTier),
-      ]);
+      homeMetaStats = await getCachedHomeMetaStats(defaultPatch);
     } catch {
-      honeyData = { ...honeyData, patchVersion: defaultPatch };
-      rankingData = { ...emptyRankingData, patchVersion: defaultPatch };
+      homeMetaStats = createEmptyHomeMetaStats(defaultPatch);
     }
   }
+
+  const initialView = buildHomeMetaView(homeMetaStats, DEFAULT_HOME_TIER);
 
   return (
     <HomePageContent
       locale={locale}
       patches={patches}
-      honeyPicks={honeyData.picks}
-      honeyPatchVersion={honeyData.patchVersion}
-      rankingData={rankingData}
+      homeMetaStats={homeMetaStats}
+      rankingData={initialView.rankingData}
     />
   );
 }
