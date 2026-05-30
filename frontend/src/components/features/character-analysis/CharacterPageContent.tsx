@@ -4,7 +4,10 @@ import { Suspense } from "react";
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route";
 import { CharacterAnalysisClient } from "@/components/features/CharacterAnalysisClient";
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary";
-import type { RouteLocale } from "@/i18n/routing";
+import { LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
+import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
+import { loadL10nMap } from "@/lib/serverL10n";
+import { resolveWeaponName } from "@/lib/weaponMap";
 
 interface CharacterPageContentProps {
   locale: RouteLocale;
@@ -54,6 +57,51 @@ function CharacterAnalysisFallback() {
   );
 }
 
+function formatNumber(value: number) {
+  return new Intl.NumberFormat("en-US").format(Math.round(value));
+}
+
+function buildServerSummary(
+  locale: RouteLocale,
+  code: number,
+  stats: CharacterStatsResponse | null
+) {
+  if (!stats || stats.totalGames <= 0) return null;
+
+  const language = LANGUAGE_BY_ROUTE_LOCALE[locale];
+  const l10n = loadL10nMap(language);
+  const name = resolveCharacterName(code, l10n, buildFallbackMap());
+  const topWeapon = stats.weapons[0] ?? null;
+  const topWeaponName = topWeapon ? resolveWeaponName(topWeapon.bestWeapon, l10n) : null;
+  const sample = formatNumber(stats.totalGames);
+  const winRate = stats.winRate.toFixed(1);
+  const pickRate = stats.pickRate.toFixed(1);
+  const averageRp = stats.averageRP.toFixed(1);
+  const top3Rate = stats.top3Rate.toFixed(1);
+
+  if (locale === "ja") {
+    return `${name}はパッチ${stats.patchVersion}の${stats.tier}基準で${sample}試合の標本があります。勝率は${winRate}%、ピック率は${pickRate}%、平均RPは${averageRp}、Top 3率は${top3Rate}%です。${
+      topWeaponName
+        ? `最も多く使われた武器は${topWeaponName}で、武器別成績と前パッチ比較を下の分析表で確認できます。`
+        : "武器別成績と前パッチ比較を下の分析表で確認できます。"
+    }`;
+  }
+
+  if (locale !== "ko") {
+    return `${name} has a ${sample}-match sample on patch ${stats.patchVersion} in ${stats.tier}. The current win rate is ${winRate}%, pick rate is ${pickRate}%, average RP is ${averageRp}, and Top 3 rate is ${top3Rate}%. ${
+      topWeaponName
+        ? `The most played weapon is ${topWeaponName}, with weapon performance and patch comparison available in the analysis below.`
+        : "Weapon performance and patch comparison are available in the analysis below."
+    }`;
+  }
+
+  return `${name}는 패치 ${stats.patchVersion} ${stats.tier} 기준 ${sample}판 표본에서 승률 ${winRate}%, 픽률 ${pickRate}%, 평균 RP ${averageRp}, Top 3 비율 ${top3Rate}%를 기록했습니다. ${
+    topWeaponName
+      ? `가장 많이 선택된 무기는 ${topWeaponName}이며, 아래 분석에서 무기별 성과와 이전 패치 대비 변화를 함께 확인할 수 있습니다.`
+      : "아래 분석에서 무기별 성과와 이전 패치 대비 변화를 함께 확인할 수 있습니다."
+  }`;
+}
+
 export async function CharacterPageContent({
   locale,
   code,
@@ -62,6 +110,7 @@ export async function CharacterPageContent({
   initialPrevStats,
 }: CharacterPageContentProps) {
   const t = await getTranslations({ locale, namespace: "characterPage" });
+  const serverSummary = buildServerSummary(locale, code, initialStats);
 
   return (
     <div className="page-shell flex flex-col gap-5 lg:gap-6">
@@ -94,6 +143,11 @@ export async function CharacterPageContent({
             <p className="mt-2 text-xs text-[var(--color-warning)]/80 sm:text-sm">
               {t("imageNotice")}
             </p>
+            {serverSummary ? (
+              <p className="mt-3 max-w-[48rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem] sm:leading-7">
+                {serverSummary}
+              </p>
+            ) : null}
           </div>
         </div>
       </section>

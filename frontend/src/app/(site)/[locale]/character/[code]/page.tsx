@@ -6,6 +6,7 @@ import { CHARACTER_CODES } from "@/components/features/character-analysis/consta
 import { getStatsPatchVersions } from "@/data/patch-notes";
 import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
 import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
+import { getCachedCharacterStats } from "@/lib/characterStats";
 import { buildLocalizedAlternates, localizeRoutePath } from "@/lib/seoLocales";
 import { loadL10nMap } from "@/lib/serverL10n";
 import { BASE_URL } from "@/lib/siteMetadata";
@@ -121,14 +122,19 @@ export default async function LocalizedCharacterPage({ params }: Props) {
 
   // 통계용 패치 목록(제외 패치 제외). 최신 버전이 자동으로 맨 앞(기본 선택)에 온다.
   const patches = getStatsPatchVersions();
+  const [currentPatch, previousPatch] = patches;
+  const [initialStats, initialPrevStats] = await Promise.all([
+    currentPatch ? getCachedCharacterStats(code, currentPatch, "METEORITE_PLUS") : null,
+    previousPatch ? getCachedCharacterStats(code, previousPatch, "METEORITE_PLUS") : null,
+  ]);
 
   return (
     <CharacterPageContent
       locale={locale}
       code={code}
       patches={patches}
-      initialStats={null}
-      initialPrevStats={null}
+      initialStats={initialStats}
+      initialPrevStats={initialPrevStats}
     />
   );
 }
