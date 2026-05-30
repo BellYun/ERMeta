@@ -21,6 +21,8 @@
   },
   "layout": {
     "skipToMain": "メインコンテンツへ移動",
+    "about": "サービス紹介",
+    "methodology": "データ方法論",
     "terms": "利用規約",
     "privacy": "プライバシーポリシー",
     "updates": "更新履歴",

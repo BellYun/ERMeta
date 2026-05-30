@@ -50,6 +50,20 @@ export function AppFrame({
             <div className="px-4 py-5 lg:px-6 flex flex-col gap-2.5 text-[11px] text-[var(--color-muted-foreground)] leading-relaxed">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <Link
+                  href="/about"
+                  className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
+                >
+                  {getMessage(messages, "layout.about")}
+                </Link>
+                <span className="text-[var(--color-border)]">&middot;</span>
+                <Link
+                  href="/methodology"
+                  className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
+                >
+                  {getMessage(messages, "layout.methodology")}
+                </Link>
+                <span className="text-[var(--color-border)]">&middot;</span>
+                <Link
                   href="/terms"
                   className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
                 >

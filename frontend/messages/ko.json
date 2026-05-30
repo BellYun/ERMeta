@@ -67,6 +67,8 @@
   },
   "layout": {
     "skipToMain": "본문으로 건너뛰기",
+    "about": "서비스 소개",
+    "methodology": "데이터 방법론",
     "terms": "이용약관",
     "privacy": "개인정보처리방침",
     "updates": "업데이트 내역",
