@@ -61,8 +61,10 @@ export function CharacterAnalysisClient({
   const { l10n } = useL10n();
   const t = useTranslations("characterAnalysis");
   const patches = React.useMemo(() => initialPatches ?? [], [initialPatches]);
+  const selectablePatches = React.useMemo(() => patches.slice(0, 2), [patches]);
 
-  const [selectedTier, setSelectedTier] = React.useState<string>("METEORITE_PLUS");
+  const [selectedTier, setSelectedTier] = React.useState<string>("DIAMOND_PLUS");
+  const [selectedPatch, setSelectedPatch] = React.useState<string | null>(() => patches[0] ?? null);
 
   const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>((): number | null => {
     if (initialStats?.weapons && initialStats.weapons.length > 0) {
@@ -99,11 +101,17 @@ export function CharacterAnalysisClient({
       return initial;
     }
   );
-  const [stats, setStats] = React.useState<CharacterStatsResponse | null>(initialStats ?? null);
-  const [previousStats, setPreviousStats] = React.useState<CharacterStatsResponse | null>(
-    initialPrevStats ?? null
-  );
   const [loading, setLoading] = React.useState(false);
+
+  const selectedPatchIndex = selectedPatch ? patches.indexOf(selectedPatch) : 0;
+  const selectedPreviousPatch =
+    selectedPatchIndex >= 0 ? (patches[selectedPatchIndex + 1] ?? null) : null;
+
+  const stats = selectedPatchIndex >= 0 ? (allPatchStats[selectedPatchIndex] ?? null) : null;
+  const previousStats =
+    selectedPatchIndex >= 0 && selectedPreviousPatch
+      ? (allPatchStats[selectedPatchIndex + 1] ?? null)
+      : null;
 
   // 나머지 패치 데이터 로드 (idle 시)
   React.useEffect(() => {
@@ -113,7 +121,8 @@ export function CharacterAnalysisClient({
       Promise.all(remainingPatches.map((p) => fetchStats(code, p, selectedTier))).then(
         (restResults) => {
           setAllPatchStats((prev) => {
-            const merged = [...prev];
+            const merged =
+              prev.length === patches.length ? [...prev] : Array(patches.length).fill(null);
             restResults.forEach((r, i) => {
               merged[i + 2] = r;
             });
@@ -130,13 +139,18 @@ export function CharacterAnalysisClient({
     }
   }, [patches, code, selectedTier]);
 
+  React.useEffect(() => {
+    if (!selectablePatches.length) return;
+    setSelectedPatch((current) =>
+      current && selectablePatches.includes(current) ? current : selectablePatches[0]
+    );
+  }, [selectablePatches]);
+
   // 티어 변경 시 데이터 리페치
   React.useEffect(() => {
     let cancelled = false;
 
-    if (selectedTier === "METEORITE_PLUS" && initialStats) {
-      setStats(initialStats ?? null);
-      setPreviousStats(initialPrevStats ?? null);
+    if (selectedTier === "DIAMOND_PLUS" && initialStats) {
       setAllPatchStats(() => {
         const initial: (CharacterStatsResponse | null)[] = Array(patches.length).fill(null);
         if (initialStats) initial[0] = initialStats;
@@ -152,8 +166,6 @@ export function CharacterAnalysisClient({
 
     const fetchPriorityStats = async () => {
       setLoading(true);
-      setStats(null);
-      setPreviousStats(null);
       setAllPatchStats([]);
       setSelectedWeapon(null);
 
@@ -167,8 +179,6 @@ export function CharacterAnalysisClient({
       }
 
       const current = priorityResults[0] ?? null;
-      setStats(current);
-      setPreviousStats(priorityResults[1] ?? null);
       setSelectedWeapon(readWeaponFromLocation() ?? current?.weapons?.[0]?.bestWeapon ?? null);
 
       const initial: (CharacterStatsResponse | null)[] = Array(patches.length).fill(null);
@@ -191,7 +201,59 @@ export function CharacterAnalysisClient({
     };
   }, [code, initialPrevStats, initialStats, patches, selectedTier]);
 
-  const currentPatch = patches[0] ?? null;
+  React.useEffect(() => {
+    let cancelled = false;
+    if (!selectedPatch || selectedPatchIndex < 0) return;
+    const hasSelectedPatchStats = Boolean(allPatchStats[selectedPatchIndex]);
+    const hasPreviousPatchStats =
+      !selectedPreviousPatch || Boolean(allPatchStats[selectedPatchIndex + 1]);
+    if (hasSelectedPatchStats && hasPreviousPatchStats) return;
+
+    const fetchSelectedPatch = async () => {
+      setLoading(true);
+      const [selectedResult, previousResult] = await Promise.all([
+        hasSelectedPatchStats
+          ? Promise.resolve(allPatchStats[selectedPatchIndex])
+          : fetchStats(code, selectedPatch, selectedTier),
+        selectedPreviousPatch && !hasPreviousPatchStats
+          ? fetchStats(code, selectedPreviousPatch, selectedTier)
+          : Promise.resolve(allPatchStats[selectedPatchIndex + 1] ?? null),
+      ]);
+      if (cancelled) return;
+
+      setAllPatchStats((prev) => {
+        const merged =
+          prev.length === patches.length ? [...prev] : Array(patches.length).fill(null);
+        merged[selectedPatchIndex] = selectedResult ?? null;
+        if (selectedPreviousPatch) {
+          merged[selectedPatchIndex + 1] = previousResult;
+        }
+        return merged;
+      });
+      setSelectedWeapon(
+        readWeaponFromLocation() ?? selectedResult?.weapons?.[0]?.bestWeapon ?? null
+      );
+      setLoading(false);
+    };
+
+    void fetchSelectedPatch().catch(() => {
+      if (!cancelled) setLoading(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    allPatchStats,
+    code,
+    patches.length,
+    selectedPatch,
+    selectedPatchIndex,
+    selectedPreviousPatch,
+    selectedTier,
+  ]);
+
+  const currentPatch = selectedPatch ?? patches[0] ?? null;
 
   const selectedWeaponStat = React.useMemo(() => {
     if (!stats?.weapons || selectedWeapon == null) return null;
@@ -244,6 +306,9 @@ export function CharacterAnalysisClient({
             selectedCode={code}
             selectedTier={selectedTier}
             setSelectedTier={setSelectedTier}
+            patches={selectablePatches}
+            selectedPatch={currentPatch}
+            setSelectedPatch={setSelectedPatch}
             selectedWeapon={selectedWeapon}
             setSelectedWeapon={handleWeaponChange}
             stats={stats}

@@ -42,22 +42,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const staticPages: MetadataRoute.Sitemap = [
     buildLocalizedEntry("/", "daily", 1.0),
+    buildLocalizedEntry("/about", "monthly", 0.45),
+    buildLocalizedEntry("/methodology", "monthly", 0.45),
     buildLocalizedEntry("/character/1", "daily", 0.9),
+    buildLocalizedEntry("/character-lab", "daily", 0.85),
+    buildLocalizedEntry("/trio-lab", "daily", 0.85),
     buildLocalizedEntry("/synergy", "daily", 0.8),
     buildLocalizedEntry("/synergy-detail", "daily", 0.75),
     buildLocalizedEntry("/patches", "weekly", 0.7),
     buildLocalizedEntry("/season10-recap", "weekly", 0.8),
+    buildLocalizedEntry("/privacy", "monthly", 0.35),
+    buildLocalizedEntry("/terms", "monthly", 0.35),
     {
       url: `${base}/updates`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.4,
-    },
-    {
-      url: `${base}/landing`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.5,
     },
   ];
 
@@ -68,6 +68,34 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "daily",
       priority: 0.9,
       alternates: buildAlternates("/"),
+    },
+    {
+      url: `${base}${prefixSeoLocalePath("/about", SEO_TARGET_LOCALE)}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.4,
+      alternates: buildAlternates("/about"),
+    },
+    {
+      url: `${base}${prefixSeoLocalePath("/methodology", SEO_TARGET_LOCALE)}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.4,
+      alternates: buildAlternates("/methodology"),
+    },
+    {
+      url: `${base}${prefixSeoLocalePath("/character-lab", SEO_TARGET_LOCALE)}`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.75,
+      alternates: buildAlternates("/character-lab"),
+    },
+    {
+      url: `${base}${prefixSeoLocalePath("/trio-lab", SEO_TARGET_LOCALE)}`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.75,
+      alternates: buildAlternates("/trio-lab"),
     },
     {
       url: `${base}${prefixSeoLocalePath("/synergy", SEO_TARGET_LOCALE)}`,
@@ -96,6 +124,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.7,
       alternates: buildAlternates("/season10-recap"),
+    },
+    {
+      url: `${base}${prefixSeoLocalePath("/privacy", SEO_TARGET_LOCALE)}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.3,
+      alternates: buildAlternates("/privacy"),
+    },
+    {
+      url: `${base}${prefixSeoLocalePath("/terms", SEO_TARGET_LOCALE)}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.3,
+      alternates: buildAlternates("/terms"),
     },
   ];
 

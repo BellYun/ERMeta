@@ -2,7 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { SupabaseService } from '../../common/database/supabase.service';
 import { RedisService } from '../../common/redis/redis.service';
 
-const DIAMOND_PLUS_TIERS = ['DIAMOND', 'METEORITE', 'MITHRIL', 'IN1000'];
+const DIAMOND_PLUS_TIERS = ['DIAMOND', 'METEORITE', 'MITHRIL'];
 const TRIO_MEMBER_COUNT = 3;
 const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]);
 const BAYESIAN_K = 50;

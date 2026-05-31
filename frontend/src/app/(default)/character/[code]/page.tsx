@@ -4,6 +4,7 @@ import { CharacterPageContent } from "@/components/features/character-analysis/C
 import { CHARACTER_CODES } from "@/components/features/character-analysis/constants";
 import { getStatsPatchVersions } from "@/data/patch-notes";
 import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
+import { getCachedCharacterStats } from "@/lib/characterStats";
 import { DEFAULT_LANGUAGE } from "@/lib/detectLanguage";
 import { buildDefaultAlternates } from "@/lib/seoLocales";
 import { loadL10nMap } from "@/lib/serverL10n";
@@ -107,14 +108,19 @@ export default async function DefaultCharacterPage({ params }: Props) {
 
   // 통계용 패치 목록(제외 패치 제외). 최신 버전이 자동으로 맨 앞(기본 선택)에 온다.
   const patches = getStatsPatchVersions();
+  const [currentPatch, previousPatch] = patches;
+  const [initialStats, initialPrevStats] = await Promise.all([
+    currentPatch ? getCachedCharacterStats(code, currentPatch, "DIAMOND_PLUS") : null,
+    previousPatch ? getCachedCharacterStats(code, previousPatch, "DIAMOND_PLUS") : null,
+  ]);
 
   return (
     <CharacterPageContent
       locale="ko"
       code={code}
       patches={patches}
-      initialStats={null}
-      initialPrevStats={null}
+      initialStats={initialStats}
+      initialPrevStats={initialPrevStats}
     />
   );
 }

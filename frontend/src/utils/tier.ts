@@ -24,20 +24,15 @@ export const METRICS_TIER_GROUPS: TierGroup[] = [
  * 누적(+) 티어 매핑.
  * value 규칙:
  *   - 단일: "DIAMOND" → ["DIAMOND"]                       (DB tier 값 그대로 사용, fallback 처리)
- *   - 누적: "DIAMOND_PLUS" → ["DIAMOND", ..., "IN1000"]   (해당 티어 + 그 위 모든 상위 티어)
+ *   - 누적: "DIAMOND_PLUS" → ["DIAMOND", "METEORITE", "MITHRIL"]
+ *     IN1000은 MITHRIL과 독립 표본이 아니라 별도 상위권 조회용으로만 사용한다.
  * 정렬: 낮은 티어 → 높은 티어 순서.
  */
 export const TIER_CUMULATIVE: Record<string, TierGroup[]> = {
-  PLATINUM_PLUS: [
-    TierGroup.PLATINUM,
-    TierGroup.DIAMOND,
-    TierGroup.METEORITE,
-    TierGroup.MITHRIL,
-    TierGroup.IN1000,
-  ],
-  DIAMOND_PLUS: [TierGroup.DIAMOND, TierGroup.METEORITE, TierGroup.MITHRIL, TierGroup.IN1000],
-  METEORITE_PLUS: [TierGroup.METEORITE, TierGroup.MITHRIL, TierGroup.IN1000],
-  MITHRIL_PLUS: [TierGroup.MITHRIL, TierGroup.IN1000],
+  PLATINUM_PLUS: [TierGroup.PLATINUM, TierGroup.DIAMOND, TierGroup.METEORITE, TierGroup.MITHRIL],
+  DIAMOND_PLUS: [TierGroup.DIAMOND, TierGroup.METEORITE, TierGroup.MITHRIL],
+  METEORITE_PLUS: [TierGroup.METEORITE, TierGroup.MITHRIL],
+  MITHRIL_PLUS: [TierGroup.MITHRIL],
   IN1000_PLUS: [TierGroup.IN1000],
 };
 

@@ -1,4 +1,17 @@
+import type { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
+
+export const metadata: Metadata = {
+  title: "페이지를 찾을 수 없습니다 | ER&GG",
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
+};
 
 export default function NotFound() {
   return (

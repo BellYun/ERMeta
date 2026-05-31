@@ -6,11 +6,19 @@ import { RootDocumentExtras } from "@/components/RootDocumentExtras";
 import { DEFAULT_LANGUAGE } from "@/lib/detectLanguage";
 import { geistSans } from "@/lib/geistFont";
 import { loadL10nRecord } from "@/lib/serverL10n";
-import { buildDefaultSiteMetadata } from "@/lib/siteMetadata";
 import { HTML_LANG_BY_LANGUAGE, loadIntlMessages } from "@/lib/staticIntl";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return buildDefaultSiteMetadata();
+  return {
+    robots: {
+      index: false,
+      follow: false,
+      googleBot: {
+        index: false,
+        follow: false,
+      },
+    },
+  };
 }
 
 export default async function MiscLayout({ children }: { children: ReactNode }) {

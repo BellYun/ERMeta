@@ -21,6 +21,8 @@
   },
   "layout": {
     "skipToMain": "跳至主要內容",
+    "about": "服務介紹",
+    "methodology": "資料方法",
     "terms": "使用條款",
     "privacy": "隱私權政策",
     "updates": "更新紀錄",
@@ -57,12 +59,48 @@
   "home": {
     "title": "Meta分析",
     "subtitle": "基於 {count} 場對戰的即時分析",
+    "heroDescription": "使用彙總數據分析永恆輪迴目前版本環境。",
+    "matchMetric": "彙總對戰數",
+    "winRateMetric": "高分段平均勝率",
+    "rpMetric": "高分段平均 RP",
+    "guide": {
+      "kicker": "統計解讀標準",
+      "title": "ER&GG 將永恆輪迴牌位數據整理成可用於實戰判斷的內容",
+      "body": "角色梯度、三人陣容與武器選擇不會只按勝率排序。ER&GG 會同時比較勝率、選取率、平均 RP、Top 3 率與樣本數，並優先展示目前版本數據。",
+      "cta": "查看統計方法",
+      "metricsTitle": "指標標準",
+      "metricsBody": "勝率代表第一名轉換能力，Top 3 率代表穩定進圈能力，平均 RP 代表牌位上分效率。",
+      "comboTitle": "陣容判斷",
+      "comboBody": "好的陣容不只看單一勝率，也要看角色分工、平均 RP 與樣本數是否穩定。",
+      "cautionTitle": "注意事項",
+      "cautionBody": "低選取率或低樣本資料可能偏向熟練玩家，解讀梯度表與推薦結果時應保持保守。"
+    },
+    "preseasonNotice": "11.0 為季前賽資料，因此不提供。",
+    "filterCta": "開啟篩選",
     "honeyPicksTitle": "本版本上升",
     "honeyPicksDescription": "強化後選取率與勝率同步上升的角色",
     "honeySectionName": "本版本上升",
     "rankingTitle": "角色排行",
     "rankingDescription": "基於 Meta 分數的綜合排行",
     "rankingSectionName": "角色排行",
+    "insightTitle": "Meta 洞察",
+    "insightCards": {
+      "rising": {
+        "title": "上升最快角色",
+        "body": "{name} 的勝率變化 {winRateDelta}pp，RP 變化 {averageRPDelta}，是目前上升最快的角色。"
+      },
+      "concentration": {
+        "title": "Meta 集中度",
+        "body": "前 {count} 名角色占整體選取率的 {share}%。"
+      },
+      "patchResponse": {
+        "title": "強化反應",
+        "body": "上升 TOP {count} 中有 {buffedCount} 個角色屬於本版本強化或調整對象。"
+      }
+    },
+    "deepDiveTitle": "需要更深入的分析？",
+    "deepDiveBody": "在資料實驗室查看更廣的統計與 Meta 趨勢。",
+    "deepDiveCta": "前往資料實驗室",
     "live": "LIVE",
     "patch": "版本 {patch}"
   },
@@ -93,7 +131,8 @@
   },
   "characterPage": {
     "title": "角色分析",
-    "subtitle": "深入查看各角色的勝率、出裝、版本趨勢與裝備數據",
+    "subtitle": "ER&GG 會按目前版本重新整理各角色的牌位指標",
+    "description": "我們會同時查看勝率、選取率、平均 RP、Top 3 率與樣本數，判斷角色是穩定上分、後期決勝，還是更依賴特定武器或隊伍環境。",
     "badge": "分析",
     "beta": "BETA",
     "patchBase": "開發中 · 以 {patch} 版本為準",
@@ -103,7 +142,8 @@
   "synergyPage": {
     "dataNotice": "資料持續累積中 · 樣本越大結果越準確",
     "title": "詳細陣容推薦",
-    "subtitle": "包含武器與主特性的深度陣容分析 · 點擊陣容可查看特性拆解",
+    "subtitle": "ER&GG 會根據隊友選擇與你的角色池重新計算陣容判斷",
+    "description": "推薦結果不會只看勝率，也會同時比較武器、主特性、平均 RP 與樣本數，展示與目前隊友選擇實際成立的三人陣容。",
     "badge": "進階",
     "beta": "BETA",
     "steps": {

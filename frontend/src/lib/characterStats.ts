@@ -5,6 +5,8 @@ import { createServerClient } from "@/lib/supabase";
 import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
 import { expandCumulativeTier } from "@/utils/tier";
 
+const CHARACTER_STATS_CACHE_VERSION = "diamond-plus-without-in1000-v1";
+
 interface StatRow {
   characterNum: number;
   bestWeapon: number | null;
@@ -61,7 +63,8 @@ async function fetchCharacterStatRowsServer(
   tier: string
 ): Promise<StatRow[]> {
   const supabase = createServerClient();
-  // 누적 tier: DIAMOND → [DIAMOND, METEORITE, MITHRIL, IN1000] 4 row 그룹 fetch
+  // 누적 tier: DIAMOND_PLUS → [DIAMOND, METEORITE, MITHRIL] row 그룹 fetch.
+  // IN1000은 MITHRIL과 별도 합산하지 않고 단독 조회에만 사용한다.
   const tiers = expandCumulativeTier(tier);
 
   const selectCols = "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank";
@@ -191,7 +194,7 @@ export async function fetchCharacterStatsServer(
 async function getCachedCharacterStatRows(patchVersion: string, tier: string): Promise<StatRow[]> {
   return unstable_cache(
     async () => fetchCharacterStatRowsServer(patchVersion, tier),
-    ["character-stats-rows", patchVersion, tier],
+    ["character-stats-rows", CHARACTER_STATS_CACHE_VERSION, patchVersion, tier],
     {
       revalidate: 21600,
       tags: [

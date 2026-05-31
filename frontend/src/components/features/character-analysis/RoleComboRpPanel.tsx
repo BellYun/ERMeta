@@ -45,6 +45,29 @@ function formatGames(value: number) {
   return value.toLocaleString("ko-KR");
 }
 
+function buildPickTimingCopy(data: RoleComboData) {
+  const strong = data.character.strong.slice(0, 2);
+  const weak = data.character.weak[0] ?? null;
+
+  if (strong.length === 0) {
+    return "역할 조합별 RP 표본이 부족해 특정 상황을 단정하기 어렵습니다. 이 경우 캐릭터 기본 지표와 실제 팀 조합의 부족한 역할을 먼저 확인하세요.";
+  }
+
+  const strongText = strong
+    .map(
+      (entry) => `${entry.multiset}(${formatDelta(entry.delta)} RP, ${formatGames(entry.games)}판)`
+    )
+    .join(", ");
+
+  if (!weak) {
+    return `역할 조합별 RP 기준으로 ${strongText}에서 성과가 좋습니다. 이 역할군을 팀원이 이미 확보했거나 남은 픽으로 맞출 수 있을 때 선택 가치가 올라갑니다.`;
+  }
+
+  return `역할 조합별 RP 기준으로 ${strongText}에서 성과가 좋습니다. 반대로 ${weak.multiset}(${formatDelta(
+    weak.delta
+  )} RP)처럼 낮게 나온 조합은 팀의 교전 개시, 앞라인, 마무리 화력 중 빠지는 역할이 없는지 확인한 뒤 선택하는 편이 안전합니다.`;
+}
+
 async function fetchLabData(slug: string): Promise<LabData | null> {
   const cached = labDataCache.get(slug);
   if (cached) return cached;
@@ -189,6 +212,13 @@ export function RoleComboRpPanel({ characterCode, selectedWeapon }: RoleComboRpP
               ) : null}
             </div>
           ) : null}
+
+          <div className="mx-4 mb-3 rounded-lg border border-[rgba(96,165,250,0.18)] bg-[rgba(96,165,250,0.06)] px-3 py-2.5">
+            <p className="text-[11px] font-bold text-[var(--color-primary)]">언제 뽑으면 좋은가</p>
+            <p className="mt-1 text-xs leading-5 text-[var(--color-muted-foreground)]">
+              {buildPickTimingCopy(data)}
+            </p>
+          </div>
 
           <ComboDivergingList
             strong={data.character.strong}

@@ -58,6 +58,10 @@ export function ComboDetailHero({ combo, listHref, patchVersion, tier }: ComboDe
               trio-weapon 통계 기반 · 평균 RP {combo.averageRP >= 0 ? "+" : ""}
               {combo.averageRP.toFixed(0)} · 평균 #{combo.averageRank.toFixed(1)}
             </p>
+            <p className="mt-2 max-w-[42rem] text-sm leading-6 text-[var(--color-muted-foreground)]">
+              ER&GG는 이 조합의 승률, 평균 RP, 평균 순위, 표본 수를 함께 비교해 실제 랭크에서 유지할
+              만한 3인 구도인지 확인합니다.
+            </p>
           </div>
         </div>
       </div>

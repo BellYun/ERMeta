@@ -4,12 +4,7 @@ import { getCacheHeaders, SERVER_ERROR_HEADERS, withCacheObservability } from "@
 import { createServerClient } from "@/lib/supabase";
 import { TierGroup } from "@/utils/tier";
 
-const DIAMOND_PLUS_TIERS: TierGroup[] = [
-  TierGroup.DIAMOND,
-  TierGroup.METEORITE,
-  TierGroup.MITHRIL,
-  TierGroup.IN1000,
-];
+const DIAMOND_PLUS_TIERS: TierGroup[] = [TierGroup.DIAMOND, TierGroup.METEORITE, TierGroup.MITHRIL];
 const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]);
 const TRIO_WEAPON_SEARCH_P10_TABLE = "v2_CharacterTrioWeaponSearch_p10";
 const TRIO_WEAPON_TABLE = "v2_CharacterTrioWeapon";

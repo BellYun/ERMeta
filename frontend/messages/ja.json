@@ -21,6 +21,8 @@
   },
   "layout": {
     "skipToMain": "メインコンテンツへ移動",
+    "about": "サービス紹介",
+    "methodology": "データ方法論",
     "terms": "利用規約",
     "privacy": "プライバシーポリシー",
     "updates": "更新履歴",
@@ -57,12 +59,48 @@
   "home": {
     "title": "メタ分析",
     "subtitle": "{count}試合データに基づくリアルタイム分析",
+    "heroDescription": "エターナルリターンの現在のメタを集計データで分析します。",
+    "matchMetric": "集計試合数",
+    "winRateMetric": "上位帯の平均勝率",
+    "rpMetric": "上位帯の平均RP",
+    "guide": {
+      "kicker": "統計の読み方",
+      "title": "ER&GGはランクデータを実戦判断に使える形で整理します",
+      "body": "キャラクターティア、3人編成、武器選択を勝率だけで並べず、勝率、ピック率、平均RP、Top 3率、サンプル数を合わせて比較します。パッチやティア条件によって解釈が変わるため、現在パッチを基準に表示します。",
+      "cta": "データ方法論を見る",
+      "metricsTitle": "指標の基準",
+      "metricsBody": "勝率は1位への変換力、Top 3率は安定性、平均RPはランク上昇効率を見る指標です。",
+      "comboTitle": "編成判断",
+      "comboBody": "良い編成は勝率だけでなく、役割分担、平均RP、サンプル数が安定しているかで判断します。",
+      "cautionTitle": "注意点",
+      "cautionBody": "ピック率やサンプルが低いデータは熟練者に偏る可能性があるため、ティア表やおすすめは慎重に読む必要があります。"
+    },
+    "preseasonNotice": "11.0はプレシーズンデータのため提供していません。",
+    "filterCta": "フィルターを開く",
     "honeyPicksTitle": "今パッチの急上昇",
     "honeyPicksDescription": "バフ後にピック率と勝率が上昇したキャラクター",
     "honeySectionName": "今パッチの急上昇",
     "rankingTitle": "キャラクターランキング",
     "rankingDescription": "メタスコアに基づく総合ランキング",
     "rankingSectionName": "キャラクターランキング",
+    "insightTitle": "メタインサイト",
+    "insightCards": {
+      "rising": {
+        "title": "最大上昇キャラクター",
+        "body": "{name} は勝率 {winRateDelta}pp、RP {averageRPDelta} の変化で最も大きく上昇しました。"
+      },
+      "concentration": {
+        "title": "メタ集中度",
+        "body": "上位 {count} 体が全体ピックの {share}% を占めています。"
+      },
+      "patchResponse": {
+        "title": "バフ反応",
+        "body": "上昇TOP {count} のうち {buffedCount} 体が今回のバフまたは調整対象です。"
+      }
+    },
+    "deepDiveTitle": "さらに詳しい分析が必要ですか？",
+    "deepDiveBody": "データラボでより広い統計とメタ傾向を確認できます。",
+    "deepDiveCta": "データラボへ",
     "live": "LIVE",
     "patch": "パッチ {patch}"
   },
@@ -93,7 +131,8 @@
   },
   "characterPage": {
     "title": "キャラクター分析",
-    "subtitle": "キャラクターごとの勝率、ビルド、パッチ傾向、装備統計を詳しく確認します",
+    "subtitle": "ER&GGはキャラクター別ランク指標を現在パッチ基準で整理します",
+    "description": "勝率、ピック率、平均RP、Top 3率、サンプル数を合わせて見て、そのキャラクターが安定型か、終盤戦で伸びる型か、特定の武器や編成に依存するかを解釈します。",
     "badge": "分析",
     "beta": "BETA",
     "patchBase": "開発中 · パッチ {patch}基準",
@@ -103,7 +142,8 @@
   "synergyPage": {
     "dataNotice": "データ収集中 · サンプルが増えるほど精度が向上します",
     "title": "詳細編成おすすめ",
-    "subtitle": "武器とメイン特性まで含めた詳細分析 · 編成をクリックすると特性内訳を確認できます",
+    "subtitle": "ER&GGは味方ピックと自分のプールを編成判断用に再計算します",
+    "description": "勝率だけでおすすめするのではなく、武器、メイン特性、平均RP、サンプル数を合わせて比較し、選択した味方と実際に成立する3人編成を表示します。",
     "badge": "詳細",
     "beta": "BETA",
     "steps": {

@@ -42,8 +42,11 @@ export default async function SynergyPage() {
             <h1 className="mt-3 text-[1.9rem] font-black tracking-[-0.055em] text-[var(--color-foreground)] sm:mt-4 sm:text-[2.2rem] lg:text-[3.1rem]">
               {tNav("synergyRecommendation")}
             </h1>
-            <p className="mt-2.5 max-w-[42rem] text-[0.95rem] leading-6 text-[var(--color-foreground)]/88 sm:mt-3 sm:text-base sm:leading-7 lg:text-[1.05rem]">
+            <p className="mt-2.5 max-w-[42rem] text-[0.95rem] font-semibold leading-6 text-[var(--color-foreground)]/88 sm:mt-3 sm:text-base sm:leading-7 lg:text-[1.05rem]">
               {tPage("subtitle")}
+            </p>
+            <p className="mt-2 max-w-[42rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem] sm:leading-7">
+              {tPage("description")}
             </p>
           </div>
 

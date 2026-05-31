@@ -60,7 +60,10 @@ export default async function CharacterLabPage({ params }: LocalePageProps) {
         <h1 className="dashboard-title">
           캐릭터 <em>유형 분석</em>
         </h1>
-        <p className="dashboard-subtitle">
+        <p className="max-w-[46rem] text-[0.95rem] font-semibold leading-6 text-[var(--color-foreground)]/88 sm:text-base sm:leading-7">
+          ER&GG는 캐릭터별 trio 시너지 패턴을 누적 랭크 데이터로 다시 묶어 보여줍니다.
+        </p>
+        <p className="max-w-[46rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem] sm:leading-7">
           비슷한 trio 시너지를 가진 캐릭터끼리 묶었습니다. 그룹별로 어떤 조합에서 잘 나오고 어떤
           조합에서 못 나오는지 보세요.
         </p>
