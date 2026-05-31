@@ -59,12 +59,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.4,
     },
-    {
-      url: `${base}/landing`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.5,
-    },
   ];
 
   const localizedStaticPages: MetadataRoute.Sitemap = [
