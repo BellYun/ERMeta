@@ -121,11 +121,19 @@ function formatSignedRp(value: number) {
   return `${value >= 0 ? "+" : ""}${value.toFixed(1)} RP`;
 }
 
+const labDataCache = new Map<string, LabData | null>();
+
 function loadLabData(slug: string): LabData | null {
+  const cached = labDataCache.get(slug);
+  if (cached !== undefined) return cached;
+
   try {
     const filePath = path.join(process.cwd(), "public", "data", "lab", `${slug}.json`);
-    return JSON.parse(readFileSync(filePath, "utf8")) as LabData;
+    const data = JSON.parse(readFileSync(filePath, "utf8")) as LabData;
+    labDataCache.set(slug, data);
+    return data;
   } catch {
+    labDataCache.set(slug, null);
     return null;
   }
 }
@@ -367,8 +375,11 @@ export async function CharacterPageContent({
             <h1 className="mt-3 text-[1.9rem] font-black tracking-[-0.055em] text-[var(--color-foreground)] sm:mt-4 sm:text-[2.2rem] lg:text-[3.15rem]">
               {t("title")}
             </h1>
-            <p className="mt-2.5 max-w-[42rem] text-[0.95rem] leading-6 text-[var(--color-foreground)]/88 sm:mt-3 sm:text-base sm:leading-7 lg:text-[1.05rem]">
+            <p className="mt-2.5 max-w-[46rem] text-[0.95rem] font-semibold leading-6 text-[var(--color-foreground)]/88 sm:mt-3 sm:text-base sm:leading-7 lg:text-[1.05rem]">
               {t("subtitle")}
+            </p>
+            <p className="mt-2 max-w-[46rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem] sm:leading-7">
+              {t("description")}
             </p>
             <p className="mt-2 text-xs text-[var(--color-warning)]/80 sm:text-sm">
               {t("imageNotice")}

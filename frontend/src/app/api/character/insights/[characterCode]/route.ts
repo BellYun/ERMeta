@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStatsPatchVersions } from "@/data/patch-notes";
+import { isRouteLocale, LANGUAGE_BY_ROUTE_LOCALE } from "@/i18n/routing";
 import { buildCharacterInsight } from "@/lib/characterInsights";
 import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
 import { getCachedCharacterStats } from "@/lib/characterStats";
@@ -22,7 +23,8 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
   const patchVersion = searchParams.get("patchVersion") ?? getStatsPatchVersions()[0] ?? "";
   const previousPatch = getStatsPatchVersions().find((patch) => patch !== patchVersion) ?? null;
   const tier = searchParams.get("tier") ?? "DIAMOND_PLUS";
-  const locale = searchParams.get("locale") === "ja" ? "ja" : "ko";
+  const localeParam = searchParams.get("locale");
+  const locale = localeParam && isRouteLocale(localeParam) ? localeParam : "ko";
 
   if (!patchVersion) {
     return NextResponse.json({ error: "No patch version available" }, { status: 404 });
@@ -37,7 +39,7 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
     return NextResponse.json({ error: "No stats available" }, { status: 404 });
   }
 
-  const l10n = loadL10nMap(locale === "ja" ? "Japanese" : "Korean");
+  const l10n = loadL10nMap(LANGUAGE_BY_ROUTE_LOCALE[locale]);
   const characterName = resolveCharacterName(code, l10n, buildFallbackMap());
   const weaponName = stats.weapons[0] ? resolveWeaponName(stats.weapons[0].bestWeapon, l10n) : null;
   const insight = buildCharacterInsight({

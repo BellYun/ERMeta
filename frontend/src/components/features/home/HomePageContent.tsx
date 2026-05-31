@@ -1,4 +1,4 @@
-import { Activity, SlidersHorizontal } from "lucide-react";
+import { Activity, BookOpenText, SlidersHorizontal } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import type { HomeMetaStats } from "@/lib/homeMetaShared";
 import type { RankingResponse } from "@/lib/ranking";
@@ -62,7 +62,7 @@ export async function HomePageContent({
           <div className="col-span-2 flex flex-col justify-center px-1 py-1.5 sm:px-2 sm:py-2 lg:px-4">
             <div className="flex items-start justify-between gap-3">
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-[1.9rem] font-black tracking-[-0.055em] text-[var(--color-foreground)] sm:text-[2.2rem] lg:text-[3.35rem] lg:whitespace-nowrap">
+                <h1 className="text-[1.9rem] font-black text-[var(--color-foreground)] sm:text-[2.2rem] lg:text-[3.35rem] lg:whitespace-nowrap">
                   {t("title")}
                 </h1>
                 <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(74,222,128,0.18)] bg-[rgba(74,222,128,0.08)] px-2.5 py-1 text-[11px] font-semibold text-[var(--color-success)] sm:px-3 sm:text-sm">
@@ -84,12 +84,22 @@ export async function HomePageContent({
                 <SlidersHorizontal className="h-4.5 w-4.5" strokeWidth={2} />
               </a>
             </div>
-            <p className="mt-2.5 max-w-[34rem] text-[0.95rem] leading-6 text-[var(--color-foreground)]/88 sm:mt-3 sm:text-base sm:leading-7 lg:text-[1.1rem]">
-              {t("heroDescription")}
+            <p className="mt-2.5 max-w-[46rem] text-[0.95rem] font-semibold leading-6 text-[var(--color-foreground)]/88 sm:mt-3 sm:text-base sm:leading-7 lg:text-[1.1rem]">
+              {t("guide.title")}
+            </p>
+            <p className="mt-2 max-w-[46rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem] sm:leading-7">
+              {t("guide.body")}
             </p>
             <p className="mt-1.5 text-xs text-[var(--color-muted-foreground)] sm:text-sm">
               {t("subtitle", { count: trackedMatches })}
             </p>
+            <a
+              href={`/${locale}/methodology`}
+              className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-primary)] hover:underline"
+            >
+              <BookOpenText className="h-4 w-4" strokeWidth={2} />
+              {t("guide.cta")}
+            </a>
           </div>
 
           <div className="metric-card col-span-2 flex min-h-[126px] flex-col justify-between px-4 py-4 sm:min-h-[150px] sm:px-5 sm:py-5 lg:px-6">

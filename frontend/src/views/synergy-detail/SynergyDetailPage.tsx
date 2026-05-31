@@ -156,8 +156,11 @@ export default function SynergyDetailPage() {
             <h1 className="mt-3 text-[1.95rem] font-black tracking-[-0.055em] text-[var(--color-foreground)] sm:mt-4 sm:text-[2.3rem] lg:text-[3.25rem]">
               {t("title")}
             </h1>
-            <p className="mt-3 max-w-[42rem] text-[0.98rem] leading-6 text-[var(--color-foreground)]/92 sm:mt-3.5 sm:text-[1.02rem] sm:leading-7 lg:text-[1.08rem]">
+            <p className="mt-3 max-w-[42rem] text-[0.98rem] font-semibold leading-6 text-[var(--color-foreground)]/92 sm:mt-3.5 sm:text-[1.02rem] sm:leading-7 lg:text-[1.08rem]">
               {t("subtitle")}
+            </p>
+            <p className="mt-2 max-w-[42rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem] sm:leading-7">
+              {t("description")}
             </p>
           </div>
 

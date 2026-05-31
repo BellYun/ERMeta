@@ -116,6 +116,18 @@
     "matchMetric": "Aggregated matches",
     "winRateMetric": "Top bracket avg win rate",
     "rpMetric": "Top bracket avg RP",
+    "guide": {
+      "kicker": "How to read the stats",
+      "title": "ER&GG turns Eternal Return ranked data into practical meta context",
+      "body": "Character tiers, trio compositions, and weapon choices are not ranked by win rate alone. ER&GG compares win rate, pick rate, average RP, Top 3 rate, and sample size together, with the current patch as the default context.",
+      "cta": "Open the methodology",
+      "metricsTitle": "Metric rules",
+      "metricsBody": "Win rate measures first-place conversion, Top 3 rate measures placement stability, and average RP reflects ranked climb efficiency.",
+      "comboTitle": "Composition rules",
+      "comboBody": "A strong composition should have role coverage, stable average RP, and enough sample size instead of only one high metric.",
+      "cautionTitle": "Caution rules",
+      "cautionBody": "Low-pick or low-sample data can be biased toward specialists, so tier lists and recommendations should be read conservatively."
+    },
     "preseasonNotice": "Patch 11.0 uses preseason data and is not provided.",
     "filterCta": "Open filters",
     "topFiveTitle": "Patch Risers Top 5",
@@ -211,7 +223,8 @@
     "beta": "BETA",
     "patchBase": "In development · based on patch {patch}",
     "title": "Character Analysis",
-    "subtitle": "Deep dive into win rate, builds, patch trends, and equipment stats by character",
+    "subtitle": "ER&GG reframes character ranked stats around the current patch",
+    "description": "Win rate, pick rate, average RP, Top 3 rate, and sample size are read together to explain whether a character is stable, converts late fights well, or depends on specific weapons and team context.",
     "imageNotice": "Some item images may be missing or displayed incorrectly.",
     "sectionName": "Character Analysis",
     "metrics": {
@@ -287,7 +300,8 @@
     "beta": "BETA",
     "dataNotice": "Collecting data · accuracy improves as the sample grows",
     "title": "Detailed Team Recommender",
-    "subtitle": "Deep team analysis including weapons and main traits · click a comp to view trait breakdowns",
+    "subtitle": "ER&GG recalculates ally picks and your pool as practical team context",
+    "description": "Recommendations are not based on win rate alone. Weapons, main traits, average RP, and sample size are compared together to show which three-character setups actually fit the selected allies.",
     "steps": {
       "pool": {
         "label": "Set Pool",

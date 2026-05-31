@@ -3,6 +3,7 @@
 import { AlertTriangle, RefreshCw, ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
+import { NoIndexMeta } from "@/components/seo/NoIndexMeta";
 import { Link } from "@/i18n/navigation";
 import { captureException } from "@/lib/sentry-client";
 
@@ -23,6 +24,7 @@ export default function SynergyDetailError({
 
   return (
     <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
+      <NoIndexMeta />
       <AlertTriangle className="h-10 w-10 text-[var(--color-danger)]" />
       <h2 className="text-base font-semibold text-[var(--color-foreground)]">
         {t("synergyDetailLoadFailed")}

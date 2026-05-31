@@ -67,7 +67,10 @@ export default async function TrioLabGalleryPage({ params, searchParams }: Local
         <h1 className="dashboard-title">
           조합 <em>실험실</em>
         </h1>
-        <p className="dashboard-subtitle">
+        <p className="max-w-[46rem] text-[0.95rem] font-semibold leading-6 text-[var(--color-foreground)]/88 sm:text-base sm:leading-7">
+          ER&GG는 trio-weapon 랭크 데이터를 조합 판단에 맞게 다시 정리합니다.
+        </p>
+        <p className="max-w-[46rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem] sm:leading-7">
           trio-weapon 실 매치 통계 기반으로 검증된 3인 조합을 둘러보세요. 캐릭터를 선택하면 그
           캐릭터가 포함된 강력한 조합과 디테일한 빌드를 확인할 수 있습니다.
         </p>

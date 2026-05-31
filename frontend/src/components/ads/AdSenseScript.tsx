@@ -15,7 +15,6 @@ const CONTENT_PATH_PREFIXES = [
   "/synergy",
   "/synergy-detail",
   "/patches",
-  "/meta-report",
   "/season10-recap",
   "/updates",
   "/privacy",
@@ -23,7 +22,7 @@ const CONTENT_PATH_PREFIXES = [
 ];
 
 function stripLocale(pathname: string) {
-  return pathname.replace(/^\/(?:ko|ja)(?=\/|$)/, "") || "/";
+  return pathname.replace(/^\/(?:ko|en|ja|zh-Hans|zh-Hant)(?=\/|$)/, "") || "/";
 }
 
 function canLoadAds(pathname: string) {

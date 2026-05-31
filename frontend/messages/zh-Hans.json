@@ -59,12 +59,48 @@
   "home": {
     "title": "Meta分析",
     "subtitle": "基于 {count} 场对局的实时分析",
+    "heroDescription": "使用汇总数据分析永恒轮回当前版本环境。",
+    "matchMetric": "汇总对局数",
+    "winRateMetric": "高分段平均胜率",
+    "rpMetric": "高分段平均 RP",
+    "guide": {
+      "kicker": "统计解读标准",
+      "title": "ER&GG 将永恒轮回排位数据整理成可用于实战判断的内容",
+      "body": "角色梯度、三人阵容和武器选择不会只按胜率排序。ER&GG 会同时比较胜率、选取率、平均 RP、Top 3 率和样本数，并优先展示当前版本数据。",
+      "cta": "查看统计方法",
+      "metricsTitle": "指标标准",
+      "metricsBody": "胜率代表第一名转换能力，Top 3 率代表稳定进圈能力，平均 RP 代表排位上分效率。",
+      "comboTitle": "阵容判断",
+      "comboBody": "好的阵容不只看单一胜率，也要看角色分工、平均 RP 和样本数是否稳定。",
+      "cautionTitle": "注意事项",
+      "cautionBody": "低选取率或低样本数据可能偏向熟练玩家，解读梯度表和推荐结果时应保持保守。"
+    },
+    "preseasonNotice": "11.0 为季前赛数据，因此不提供。",
+    "filterCta": "打开筛选",
     "honeyPicksTitle": "本版本上升",
     "honeyPicksDescription": "增强后选取率和胜率同步上升的角色",
     "honeySectionName": "本版本上升",
     "rankingTitle": "角色排名",
     "rankingDescription": "基于 Meta 评分的综合排名",
     "rankingSectionName": "角色排名",
+    "insightTitle": "Meta 洞察",
+    "insightCards": {
+      "rising": {
+        "title": "上升最快角色",
+        "body": "{name} 的胜率变化 {winRateDelta}pp，RP 变化 {averageRPDelta}，是当前上升最快的角色。"
+      },
+      "concentration": {
+        "title": "Meta 集中度",
+        "body": "前 {count} 名角色占整体选取率的 {share}%。"
+      },
+      "patchResponse": {
+        "title": "增强反馈",
+        "body": "上升 TOP {count} 中有 {buffedCount} 个角色属于本版本增强或调整对象。"
+      }
+    },
+    "deepDiveTitle": "需要更深入的分析？",
+    "deepDiveBody": "在数据实验室查看更广的统计和 Meta 趋势。",
+    "deepDiveCta": "前往数据实验室",
     "live": "LIVE",
     "patch": "版本 {patch}"
   },
@@ -95,7 +131,8 @@
   },
   "characterPage": {
     "title": "角色分析",
-    "subtitle": "深入查看各角色的胜率、出装、版本趋势和装备数据",
+    "subtitle": "ER&GG 按当前版本重新整理各角色的排位指标",
+    "description": "我们会同时查看胜率、选取率、平均 RP、Top 3 率和样本数，判断角色是稳定上分、后期决胜，还是更依赖特定武器或队伍环境。",
     "badge": "分析",
     "beta": "BETA",
     "patchBase": "开发中 · 基于 {patch} 版本",
@@ -105,7 +142,8 @@
   "synergyPage": {
     "dataNotice": "数据持续积累中 · 样本越大结果越准确",
     "title": "详细阵容推荐",
-    "subtitle": "包含武器和主特性的深度阵容分析 · 点击阵容可查看特性拆解",
+    "subtitle": "ER&GG 会根据队友选择和你的角色池重新计算阵容判断",
+    "description": "推荐结果不会只看胜率，也会同时比较武器、主特性、平均 RP 和样本数，展示与当前队友选择实际成立的三人阵容。",
     "badge": "进阶",
     "beta": "BETA",
     "steps": {
