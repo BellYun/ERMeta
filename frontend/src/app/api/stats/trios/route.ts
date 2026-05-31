@@ -5,12 +5,7 @@ import { createServerClient } from "@/lib/supabase";
 import { TierGroup } from "@/utils/tier";
 
 // 다이아 이상 티어 전체
-const DIAMOND_PLUS_TIERS: TierGroup[] = [
-  TierGroup.DIAMOND,
-  TierGroup.METEORITE,
-  TierGroup.MITHRIL,
-  TierGroup.IN1000,
-];
+const DIAMOND_PLUS_TIERS: TierGroup[] = [TierGroup.DIAMOND, TierGroup.METEORITE, TierGroup.MITHRIL];
 const TRIO_MEMBER_COUNT = 3;
 const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]); // Dr. 하나, 나쟈
 

@@ -44,7 +44,7 @@ const SIZE = { width: 1200, height: 630 };
 // ─── 추천 점수 계산 (trios/route.ts 동일 로직) ─────────────────────────────
 const BAYESIAN_K = 50;
 const TRIO_MEMBER_COUNT = 3;
-const DIAMOND_PLUS_TIERS = ["DIAMOND", "METEORITE", "MITHRIL", "IN1000"];
+const DIAMOND_PLUS_TIERS = ["DIAMOND", "METEORITE", "MITHRIL"];
 const EXCLUDED = new Set([9998, 9999]);
 
 interface TrioRow {
