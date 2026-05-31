@@ -124,8 +124,8 @@ export default async function LocalizedCharacterPage({ params }: Props) {
   const patches = getStatsPatchVersions();
   const [currentPatch, previousPatch] = patches;
   const [initialStats, initialPrevStats] = await Promise.all([
-    currentPatch ? getCachedCharacterStats(code, currentPatch, "METEORITE_PLUS") : null,
-    previousPatch ? getCachedCharacterStats(code, previousPatch, "METEORITE_PLUS") : null,
+    currentPatch ? getCachedCharacterStats(code, currentPatch, "DIAMOND_PLUS") : null,
+    previousPatch ? getCachedCharacterStats(code, previousPatch, "DIAMOND_PLUS") : null,
   ]);
 
   return (

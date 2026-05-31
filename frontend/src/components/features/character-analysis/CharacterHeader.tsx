@@ -25,6 +25,9 @@ interface CharacterHeaderProps {
   selectedCode: number;
   selectedTier: string;
   setSelectedTier: (tier: string) => void;
+  patches: string[];
+  selectedPatch: string | null;
+  setSelectedPatch: (patch: string) => void;
   selectedWeapon: number | null;
   setSelectedWeapon: (weapon: number | null) => void;
   stats: CharacterStatsResponse | null;
@@ -64,6 +67,9 @@ export function CharacterHeader({
   selectedCode,
   selectedTier,
   setSelectedTier,
+  patches,
+  selectedPatch,
+  setSelectedPatch,
   selectedWeapon,
   setSelectedWeapon,
   stats,
@@ -81,14 +87,14 @@ export function CharacterHeader({
   const tierRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
   const weaponRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
 
-  // 단일 + 누적(+) 옵션 (다이아 / 다이아+ / 메테오 / 메테오+ / 미스릴+ / 1000위)
+  // 단일 + 누적(+) 옵션 (다이아 / 다이아+ / 메테오 / 메테오+ / 미스릴 이상 / 1000위)
   const tierOptionsList = React.useMemo(
     () => [
       { value: "DIAMOND", label: t("tiers.DIAMOND") },
       { value: "DIAMOND_PLUS", label: `${t("tiers.DIAMOND")}+` },
       { value: "METEORITE", label: t("tiers.METEORITE") },
       { value: "METEORITE_PLUS", label: `${t("tiers.METEORITE")}+` },
-      { value: "MITHRIL_PLUS", label: `${t("tiers.MITHRIL")}+` },
+      { value: "MITHRIL_PLUS", label: t("tiers.MITHRIL") },
       { value: TierGroup.IN1000, label: t("tiers.IN1000") },
     ],
     [t]
@@ -185,40 +191,59 @@ export function CharacterHeader({
             </div>
 
             {/* Tier selector — WAI-ARIA radiogroup */}
-            <div
-              role="radiogroup"
-              aria-label={t("tierSelectorAria")}
-              className="flex w-fit items-center gap-1 rounded-[14px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] p-1 sm:rounded-[16px]"
-            >
-              {tierOptionsList.map((opt, i) => {
-                const isSelected = selectedTier === opt.value;
-                return (
-                  <button
-                    key={opt.value}
-                    ref={(el) => {
-                      tierRefs.current[i] = el;
-                    }}
-                    type="button"
-                    role="radio"
-                    aria-checked={isSelected}
-                    tabIndex={isSelected ? 0 : -1}
-                    onClick={() => {
-                      setSelectedTier(opt.value);
-                      analytics.analysisTierChanged(opt.value);
-                    }}
-                    onKeyDown={(e) => handleTierKey(e, i)}
-                    className={cn(
-                      "rounded-lg px-2.5 py-1.5 text-[10px] font-medium whitespace-nowrap transition-all sm:rounded-xl sm:px-3 sm:text-[11px]",
-                      "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
-                      isSelected
-                        ? "bg-[var(--color-primary)]/15 text-[var(--color-primary)] shadow-sm"
-                        : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
-                    )}
+            <div className="flex flex-wrap items-center gap-2">
+              <div
+                role="radiogroup"
+                aria-label={t("tierSelectorAria")}
+                className="flex w-fit items-center gap-1 rounded-[14px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] p-1 sm:rounded-[16px]"
+              >
+                {tierOptionsList.map((opt, i) => {
+                  const isSelected = selectedTier === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      ref={(el) => {
+                        tierRefs.current[i] = el;
+                      }}
+                      type="button"
+                      role="radio"
+                      aria-checked={isSelected}
+                      tabIndex={isSelected ? 0 : -1}
+                      onClick={() => {
+                        setSelectedTier(opt.value);
+                        analytics.analysisTierChanged(opt.value);
+                      }}
+                      onKeyDown={(e) => handleTierKey(e, i)}
+                      className={cn(
+                        "rounded-lg px-2.5 py-1.5 text-[10px] font-medium whitespace-nowrap transition-all sm:rounded-xl sm:px-3 sm:text-[11px]",
+                        "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
+                        isSelected
+                          ? "bg-[var(--color-primary)]/15 text-[var(--color-primary)] shadow-sm"
+                          : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
+                      )}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {patches.length > 0 && (
+                <label className="flex min-h-[34px] items-center gap-1.5 rounded-[14px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-2.5 text-[10px] font-medium text-[var(--color-muted-foreground)] sm:rounded-[16px] sm:text-[11px]">
+                  <span>패치</span>
+                  <select
+                    value={selectedPatch ?? patches[0]}
+                    onChange={(event) => setSelectedPatch(event.target.value)}
+                    className="bg-transparent text-[var(--color-foreground)] outline-none"
                   >
-                    {opt.label}
-                  </button>
-                );
-              })}
+                    {patches.map((patch) => (
+                      <option key={patch} value={patch} className="bg-[var(--color-surface)]">
+                        {patch}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
             </div>
           </div>
         </div>
