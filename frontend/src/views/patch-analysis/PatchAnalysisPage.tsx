@@ -198,7 +198,7 @@ function CharacterDeltaCard({ entry }: { entry: PatchCharacterDelta }) {
             >
               {entry.scopeLabel}
             </span>
-            {weaponNames.slice(0, 3).map((weaponName) => (
+            {weaponNames.map((weaponName) => (
               <span
                 key={weaponName}
                 className="rounded-full border border-[var(--color-border)] bg-[rgba(255,255,255,0.035)] px-2 py-1 text-[10px] font-semibold text-[var(--color-muted-foreground)]"
@@ -243,12 +243,29 @@ function CharacterDeltaCard({ entry }: { entry: PatchCharacterDelta }) {
               className="text-xs leading-5 text-[var(--color-muted-foreground)]"
             >
               <span className="font-semibold text-[var(--color-foreground)]">{change.target}</span>
-              {change.valueSummary ? <span> · {change.valueSummary}</span> : null}
+              {change.valueSummary ? <PatchValueSummary value={change.valueSummary} /> : null}
             </li>
           ))}
         </ul>
       </div>
     </article>
+  );
+}
+
+function PatchValueSummary({ value }: { value: string }) {
+  const [before, after] = value.split("→").map((part) => part.trim());
+
+  if (!after) {
+    return <span> · {value}</span>;
+  }
+
+  return (
+    <span>
+      {" · "}
+      <span>{before}</span>
+      <span className="px-1 text-[var(--color-muted-foreground)]">→</span>
+      <span className="font-black text-[var(--color-accent-gold)]">{after}</span>
+    </span>
   );
 }
 
@@ -458,7 +475,7 @@ function CharacterSection({
                 {group.entries.length}건
               </span>
             </div>
-            <div className="grid gap-3 xl:grid-cols-2">
+            <div className="grid gap-3">
               {group.entries.map((entry) => (
                 <CharacterDeltaCard
                   key={`${group.role}-${entry.characterNum}-${entry.scopeKey}`}
