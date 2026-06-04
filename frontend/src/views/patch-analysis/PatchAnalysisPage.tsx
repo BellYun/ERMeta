@@ -124,6 +124,8 @@ function DeltaBadge({ value, suffix = "" }: { value: number; suffix?: string }) 
 
 function CharacterDeltaCard({ entry }: { entry: PatchCharacterDelta }) {
   const firstChanges = entry.note.changes.slice(0, 3);
+  const roles = getEntryRoles(entry);
+
   return (
     <article className="metric-card flex h-full flex-col gap-4 px-4 py-4 sm:px-5 sm:py-5">
       <div className="flex items-start gap-3">
@@ -148,7 +150,7 @@ function CharacterDeltaCard({ entry }: { entry: PatchCharacterDelta }) {
                 label={type === "buff" ? "버프" : type === "nerf" ? "너프" : "조정"}
               />
             ))}
-            {entry.roles.slice(0, 2).map((role) => (
+            {roles.slice(0, 2).map((role) => (
               <span
                 key={role}
                 className="rounded-full border border-[var(--color-border)] bg-[rgba(255,255,255,0.035)] px-2 py-1 text-[10px] font-semibold text-[var(--color-muted-foreground)]"
@@ -412,7 +414,7 @@ function groupEntriesByRole(entries: PatchCharacterDelta[]) {
   const map = new Map<string, PatchCharacterDelta[]>();
 
   for (const entry of entries) {
-    const role = entry.roles[0] ?? "역할 미분류";
+    const role = getEntryRoles(entry)[0] ?? "역할 미분류";
     const group = map.get(role) ?? [];
     group.push(entry);
     map.set(role, group);
@@ -425,6 +427,10 @@ function groupEntriesByRole(entries: PatchCharacterDelta[]) {
       const bIndex = ROLE_ORDER.indexOf(b.role as CharacterRole);
       return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
     });
+}
+
+function getEntryRoles(entry: PatchCharacterDelta) {
+  return Array.isArray(entry.roles) ? entry.roles : [];
 }
 
 export default async function PatchAnalysisPage() {
