@@ -1,6 +1,7 @@
 import { ArrowDown, ArrowUp, BarChart3, CalendarDays, Swords, TrendingUp } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeBadgeStatic";
 import {
@@ -23,41 +24,10 @@ export const revalidate = 21600;
 
 const ROLE_ORDER: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
 const AGGREGATE_ONLY_CHARACTERS = new Set([3, 13, 15, 29]);
-const PATCH_EVALUATIONS: Record<number, string> = {
-  3: "기존에도 지표가 좋던 피오라가 너프되었습니다. RP 획득량은 상승하였으나, 승률과 순방률이 낮아졌습니다.",
-  5: "암기 무기 숙련도 너프를 받은 자히르는 분명 큰 너프이나 현 메타에서는 아직까지 좋은 지표를 보여주고 있습니다.",
-  6: "기존에도 지표가 나쁘지 않았던 석궁 나딘이 공격 속도 숙련도 버프 이후 더 좋은 지표를 보여주고 있습니다. 픽률, 승률, RP 획득량에서 모두 강세를 보여주고 있어 원딜 유저 분들은 석궁 나딘을 추천드립니다.",
-  8: "레벨당 공격력 버프가 들어왔지만 유의미하게 지표가 변경되지는 않았습니다. 카티야, 아드리아나 등 교전 대치 상황에서 하트 상대로 이득을 볼 수 있는 실험체의 강세 영향으로 예상됩니다.",
-  13: "Q 스킬의 이동 속도 감소 시간 버프가 들어왔지만 쇼우의 사출 리스크는 아직 큰 문제입니다. 창과 단검 모두 좋지 않은 지표를 보여주고 있습니다.",
-  15: "시셀라는 초반 체급 버프로 인해 초반 교전이 좋아져서 초반에 사출당하는 일이 적어졌습니다.",
-  17: "이동기 쿨타임 버프를 받은 아드리아나의 RP 획득량이 크게 증가했습니다. 이동기 쿨타임 버프로 인해 사출 방지 능력과 교전 능력이 모두 향상되어 좋은 지표를 보여주고 있습니다.",
-  18: "E 스킬 피해량 버프를 받았습니다. 다만 현재 암살자 캐릭터들 지표가 전체적으로 좋지 않아, 쇼이치에게도 현재 섬은 어려운 것 같습니다.",
-  21: "근접 상대 억제력을 낮추려는 의도는 적중하였으나, 아직까지 로지는 좋은 픽입니다.",
-  29: "이번 시즌 레온에게 좋은 버프가 들어왔습니다. 기존에도 나쁘지 않았던 레온인데, 패시브 이동 속도 증가 버프를 받아 톤파와 글러브 모두 지표가 상승했습니다. 특히 글러브 레온이 더 영향을 많이 받았습니다.",
-  33: "오랜만에 니키에게 버프가 들어왔습니다. 패시브 버프와 E 스킬 버프는 저번 시즌 내내 영향력을 끼치지 못하고 있던 니키에게 유효한 버프가 된 것 같습니다. RP 획득량, 승률, 픽률 모두 우상향을 그리고 있습니다.",
-  35: "톤파 얀에게 2연속 버프가 들어갑니다. 톤파 얀의 RP 획득량이 상승하여, 최근에 글러브 얀으로 이동한 많은 유저분들은 다시 톤파 얀으로 돌아오기를 고려하셔도 좋을 것 같습니다.",
-  38: "패시브 쿨타임 감소 버프가 교전에 직접 영향을 주는 버프는 아니라 큰 영향을 주지 못했던 것 같습니다.",
-  45: "마이의 익스클루시브 버프는 솔로 랭크 특성상 큰 영향을 주지 못한 것 같습니다.",
-  47: "기본 이동 속도와 레벨당 스킬 증폭이라는 체급 버프가 들어왔습니다. 기존에도 라우라 지표가 나쁘지 않았지만, 이번 버프로 브루저 상대와 원거리 딜러 상대가 조금 더 쉬워졌을 것 같습니다.",
-  51: "버프 되었지만 유의미한 내용은 없었습니다.",
-  52: "이동 속도 증가가 있었지만 유의미한 버프라고 보기는 어렵습니다.",
-  55: "기존에도 지표가 좋았던 에스텔이 피해량 버프로 더욱 좋은 지표를 보여주고 있습니다. 탱커가 필요한 시점에 에스텔을 플레이하는 것이 좋을 것 같습니다.",
-  56: "2연속 너프를 받은 피올로입니다. 전체적으로 데미지 너프가 계속되고 있지만 좋은 유틸로 인해서 RP 획득량은 감소하지 않고 있습니다. 추후에 너프가 더 들어올지 지켜봐야 할 것 같습니다.",
-  59: "아이작에게 다시 버프가 들어왔습니다. 레벨당 공격력과 패시브 피해량이 늘어났습니다. 파격적인 버프였으나 픽률이 0.7% 증가해 비숙련자들의 유입이 있었음에도 RP 획득량이 증가했습니다. 지표가 크게 늘지 않았으나 픽률 상승량이 높아 다음 패치까지 지켜봐야 할 것 같습니다.",
-  61: "신스킨이 나온 이렘입니다. 패시브 버프가 들어왔으나, 신스킨 영향으로 픽률이 많이 올라 비숙련자들의 대거 유입으로 아직 올바른 지표가 나타나지 않는 것 같습니다. 조금 더 지표를 두고 봐야 할 것 같습니다.",
-  63: "나쁘지 않던 지표를 보이고 있던 이안에게 기분 좋은 버프가 들어왔습니다. 주력기 W의 피해량 버프로 모든 지표가 우상향 중에 있습니다.",
-  66: "상위권 구간에서 좋은 지표를 보여주던 아르다가 너프되었습니다. 궁극기 쿨타임 증가라는 치명적인 너프 대비 지표는 나쁘지 않아 아직까지는 사용할 수 있을 것 같습니다.",
-  69: "방어력과 기절 시간 하향이 안정성에 반영됐습니다. RP 획득량이 떨어졌습니다.",
-  70: "기존에 지표가 좋지 않았던 츠바메에게 버프가 들어왔지만, 츠바메의 지표를 올리기에는 역부족인 버프였습니다.",
-  71: "케네스가 2연속 버프를 받습니다. 저번 패치 버프 이후로 지표가 크게 개선되지 않고 있던 케네스인데, 이번 W 받는 피해 감소 버프까지 더해지니 모든 지표가 향상되었습니다.",
-  72: "레벨당 공격력 0.2라는 버프가 들어온 카티야는 역시 좋은 지표를 보여주고 있습니다. 픽률이 0.8% 올라 비숙련자의 유입이 있음에도 RP 획득량과 승률이 소폭 상승해 사용할 만해 보입니다.",
-  74: "이번 시즌 다르코는 좀 어려운 시즌을 보내고 있습니다. 비형 대비 이점을 모르겠다는 다수의 의견을 의식한 것인지 버프가 들어왔으나, 후반 보호막 상향은 아직 부족한 것 같습니다.",
-  77: "기존에 무난한 지표를 보여주던 유민의 Q 데미지가 너프되었습니다. 아직까지 큰 영향은 없으며 남은 기간을 더 지켜봐야 할 것 같습니다.",
-  83: "단순한 레벨당 체력 너프를 받은 헨리의 RP 획득량이 소폭 감소했지만 큰 영향을 받지 않았습니다.",
-  84: "오랜만에 너프를 받은 블레어입니다. 시즌 초기에 너무 좋은 모습을 보여줬던 탓일까요, Q 데미지 너프가 들어왔습니다. RP 획득량은 상승하였지만 승률이 떨어져 공격력 계수 너프의 영향이 있어 보입니다.",
-  87: "Q 스킬의 거울 강화 시 투사체 속도가 너프되었습니다. 전 구간에서 무난한 지표를 보여주던 코렐라인인데 타격이 좀 있는 것으로 보입니다.",
-  88: "좋은 체급이었던 비형을 다시 너프합니다. 이제는 OP 반열에서는 내려올 때가 된 것 같습니다.",
-};
+const EVALUATED_CHARACTER_NUMS = [
+  3, 5, 6, 8, 13, 15, 17, 18, 21, 29, 33, 35, 38, 45, 47, 51, 52, 55, 56, 59, 61, 63, 66, 69, 70,
+  71, 72, 74, 77, 83, 84, 87, 88,
+];
 
 export async function generateMetadata(): Promise<Metadata> {
   const data = await getPatchAnalysisData();
@@ -160,13 +130,19 @@ function DeltaBadge({ value, suffix = "" }: { value: number; suffix?: string }) 
   );
 }
 
-function CharacterDeltaCard({ entry }: { entry: PatchCharacterDelta }) {
+function CharacterDeltaCard({
+  entry,
+  evaluations,
+}: {
+  entry: PatchCharacterDelta;
+  evaluations: Record<number, string>;
+}) {
   const firstChanges = entry.note.changes.slice(0, 3);
   const weaponNames =
     entry.isAggregate && !AGGREGATE_ONLY_CHARACTERS.has(entry.characterNum)
       ? getEntryWeaponNames(entry)
       : [];
-  const evaluation = PATCH_EVALUATIONS[entry.characterNum];
+  const evaluation = evaluations[entry.characterNum];
 
   return (
     <article className="metric-card grid gap-4 px-4 py-4 sm:px-5 sm:py-5 lg:grid-cols-[minmax(260px,0.9fr)_minmax(0,1.55fr)] lg:items-start">
@@ -487,10 +463,12 @@ function CharacterSection({
   title,
   description,
   entries,
+  evaluations,
 }: {
   title: string;
   description: string;
   entries: PatchCharacterDelta[];
+  evaluations: Record<number, string>;
 }) {
   if (entries.length === 0) return null;
   const groups = groupEntriesByRole(entries);
@@ -526,6 +504,7 @@ function CharacterSection({
                 <CharacterDeltaCard
                   key={`${group.role}-${entry.characterNum}-${entry.scopeKey}`}
                   entry={entry}
+                  evaluations={evaluations}
                 />
               ))}
             </div>
@@ -567,6 +546,13 @@ function getEntryRoles(entry: PatchCharacterDelta) {
 
 export default async function PatchAnalysisPage() {
   const data = await getPatchAnalysisData();
+  const tEvaluations = await getTranslations("patchAnalysis.evaluations");
+  const evaluations = Object.fromEntries(
+    EVALUATED_CHARACTER_NUMS.map((characterNum) => [
+      characterNum,
+      tEvaluations(String(characterNum)),
+    ])
+  );
   const bestRole = data.roleMetrics[0];
   const worstRole = data.roleMetrics[data.roleMetrics.length - 1];
 
@@ -645,16 +631,19 @@ export default async function PatchAnalysisPage() {
         title="버프 캐릭터 지표 반응"
         description="버프 대상 캐릭터를 평균 RP 상승폭 기준으로 정렬했습니다. 기존 지표와 현재 지표를 함께 봐야 실제 패치 반응을 판단할 수 있습니다."
         entries={data.buffed}
+        evaluations={evaluations}
       />
       <CharacterSection
         title="너프 캐릭터 지표 반응"
         description="너프 대상 캐릭터는 평균 RP 하락폭이 큰 순서로 정렬했습니다. 너프 후에도 표본과 승률이 유지되면 여전히 메타 픽으로 볼 수 있습니다."
         entries={data.nerfed}
+        evaluations={evaluations}
       />
       <CharacterSection
         title="혼합 조정 캐릭터"
         description="버프와 너프가 함께 들어간 캐릭터는 단일 방향보다 실제 지표 변화로 해석하는 편이 안전합니다."
         entries={data.mixed}
+        evaluations={evaluations}
       />
 
       <section className="dashboard-panel p-4 lg:p-6">
