@@ -22,6 +22,7 @@ export const dynamic = "force-static";
 export const revalidate = 21600;
 
 const ROLE_ORDER: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
+const AGGREGATE_ONLY_CHARACTERS = new Set([3, 13, 15, 29]);
 const PATCH_EVALUATIONS: Record<number, string> = {
   3: "기존에도 지표가 좋던 피오라가 너프되었습니다. RP 획득량은 상승하였으나, 승률과 순방률이 낮아졌습니다.",
   5: "암기 무기 숙련도 너프를 받은 자히르는 분명 큰 너프이나 현 메타에서는 아직까지 좋은 지표를 보여주고 있습니다.",
@@ -161,7 +162,10 @@ function DeltaBadge({ value, suffix = "" }: { value: number; suffix?: string }) 
 
 function CharacterDeltaCard({ entry }: { entry: PatchCharacterDelta }) {
   const firstChanges = entry.note.changes.slice(0, 3);
-  const weaponNames = entry.isAggregate ? getEntryWeaponNames(entry) : [];
+  const weaponNames =
+    entry.isAggregate && !AGGREGATE_ONLY_CHARACTERS.has(entry.characterNum)
+      ? getEntryWeaponNames(entry)
+      : [];
   const evaluation = PATCH_EVALUATIONS[entry.characterNum];
 
   return (
