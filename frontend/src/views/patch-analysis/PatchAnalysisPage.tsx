@@ -29,8 +29,12 @@ const EVALUATED_CHARACTER_NUMS = [
   71, 72, 74, 77, 83, 84, 87, 88,
 ];
 
-export async function generateMetadata(): Promise<Metadata> {
-  const data = await getPatchAnalysisData();
+interface PatchAnalysisPageProps {
+  version?: string;
+}
+
+export async function generateMetadata(version?: string): Promise<Metadata> {
+  const data = await getPatchAnalysisData(version);
   const pathname = `/patch-analysis/${data.currentPatch}`;
 
   return {
@@ -544,8 +548,8 @@ function getEntryRoles(entry: PatchCharacterDelta) {
   return Array.isArray(entry.roles) ? entry.roles : [];
 }
 
-export default async function PatchAnalysisPage() {
-  const data = await getPatchAnalysisData();
+export default async function PatchAnalysisPage({ version }: PatchAnalysisPageProps = {}) {
+  const data = await getPatchAnalysisData(version);
   const tEvaluations = await getTranslations("patchAnalysis.evaluations");
   const evaluations = Object.fromEntries(
     EVALUATED_CHARACTER_NUMS.map((characterNum) => [

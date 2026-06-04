@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
-import { getStatsPatchVersions } from "@/data/patch-notes";
 import { isRouteLocale, ROUTE_LOCALES } from "@/i18n/routing";
+import { getPatchAnalysisVersions } from "@/lib/patchAnalysis";
 import { localizeMetadata } from "@/lib/routeMetadata";
 import PatchAnalysisPage, {
   generateMetadata as generateBaseMetadata,
@@ -17,33 +17,38 @@ export const dynamic = "force-static";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  const latestPatch = getStatsPatchVersions()[0];
-  if (!latestPatch) return [];
+  const patchVersions = getPatchAnalysisVersions();
 
-  return ROUTE_LOCALES.map((locale) => ({
-    locale,
-    version: latestPatch,
-  }));
+  return ROUTE_LOCALES.flatMap((locale) =>
+    patchVersions.map((version) => ({
+      locale,
+      version,
+    }))
+  );
 }
 
 export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
   const { locale, version } = await params;
 
-  if (!isRouteLocale(locale) || version !== getStatsPatchVersions()[0]) {
+  if (!isRouteLocale(locale) || !getPatchAnalysisVersions().includes(version)) {
     notFound();
   }
 
-  return localizeMetadata(await generateBaseMetadata(), `/patch-analysis/${version}`, locale);
+  return localizeMetadata(
+    await generateBaseMetadata(version),
+    `/patch-analysis/${version}`,
+    locale
+  );
 }
 
 export default async function LocalizedPatchAnalysisVersionPage({ params }: LocalePageProps) {
   const { locale, version } = await params;
 
-  if (!isRouteLocale(locale) || version !== getStatsPatchVersions()[0]) {
+  if (!isRouteLocale(locale) || !getPatchAnalysisVersions().includes(version)) {
     notFound();
   }
 
   setRequestLocale(locale);
 
-  return <PatchAnalysisPage />;
+  return <PatchAnalysisPage version={version} />;
 }

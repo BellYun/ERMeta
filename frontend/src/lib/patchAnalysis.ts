@@ -204,6 +204,10 @@ function sortWeaponCodes(weaponCodes: number[]) {
   });
 }
 
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function getNoteWeaponCodes(note: CharacterPatchNote) {
   return sortWeaponCodes(
     note.changes.flatMap((change) =>
@@ -211,8 +215,11 @@ function getNoteWeaponCodes(note: CharacterPatchNote) {
         .filter(([weaponCode, weaponName]) => {
           const haystack = [change.target, change.description.join(" ")].join(" ");
           const aliases = WEAPON_ALIASES[Number(weaponCode)] ?? [];
-          return [`${weaponName} 무기`, `${weaponName} `, ...aliases].some((keyword) =>
-            haystack.includes(keyword)
+          const weaponPattern = new RegExp(
+            `${escapeRegExp(weaponName)}(?:\\s*무기|[의을를이가은는도]|(?=\\s|$|[,.!?;:)\\]]))`
+          );
+          return [weaponPattern, ...aliases].some((pattern) =>
+            pattern instanceof RegExp ? pattern.test(haystack) : haystack.includes(pattern)
           );
         })
         .map(([weaponCode]) => Number(weaponCode))
@@ -422,10 +429,17 @@ function buildAsOfLabel() {
   return formatter.format(new Date());
 }
 
-async function fetchPatchAnalysisData(): Promise<PatchAnalysisData> {
+export function getPatchAnalysisVersions() {
   const patches = getStatsPatchVersions();
-  const currentPatch = patches[0] ?? "";
-  const previousPatch = patches[1] ?? "";
+  return patches.filter((_, index) => Boolean(patches[index + 1]));
+}
+
+async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAnalysisData> {
+  const patches = getStatsPatchVersions();
+  const requestedIndex = requestedPatch ? patches.indexOf(requestedPatch) : 0;
+  const currentIndex = requestedIndex >= 0 ? requestedIndex : 0;
+  const currentPatch = patches[currentIndex] ?? "";
+  const previousPatch = patches[currentIndex + 1] ?? "";
 
   if (!currentPatch || !previousPatch) {
     return {
@@ -486,9 +500,15 @@ async function fetchPatchAnalysisData(): Promise<PatchAnalysisData> {
   };
 }
 
-export async function getPatchAnalysisData(): Promise<PatchAnalysisData> {
-  return unstable_cache(fetchPatchAnalysisData, ["patch-analysis", ANALYSIS_TIER], {
-    revalidate: 21600,
-    tags: ["patch-analysis", `patch-analysis:${ANALYSIS_TIER}`],
-  })();
+export async function getPatchAnalysisData(version?: string): Promise<PatchAnalysisData> {
+  const patchVersion = version ?? getStatsPatchVersions()[0] ?? "";
+
+  return unstable_cache(
+    () => fetchPatchAnalysisData(patchVersion),
+    ["patch-analysis", ANALYSIS_TIER, patchVersion],
+    {
+      revalidate: 21600,
+      tags: ["patch-analysis", `patch-analysis:${ANALYSIS_TIER}`, `patch-analysis:${patchVersion}`],
+    }
+  )();
 }
