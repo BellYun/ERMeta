@@ -75,6 +75,16 @@
       "cautionTitle": "注意事项",
       "cautionBody": "低选取率或低样本数据可能偏向熟练玩家，解读梯度表和推荐结果时应保持保守。"
     },
+    "fallback": {
+      "subtitle": "正在分析版本 {patch} 的钻石以上排位数据。",
+      "kicker": "版本 {patch} 分析基准",
+      "title": "当前版本 Meta 不只看胜率，而是按排位判断指标整理",
+      "body": "ER&GG 会把永恒轮回排位数据按角色梯度、三人阵容、武器选择和版本前后变化一起整理。胜率用于观察第一名转换能力，Top 3 率用于观察排名稳定性，平均 RP 用于判断上分效率，选取率和样本数用于判断数据可信度。同一角色会因为版本、分段、队伍角色和武器选择而出现不同解读，因此本站优先提供当前版本数据，并在角色详情和版本笔记中连接最新统计与平衡改动。",
+      "characterCta": "角色分析",
+      "patchCta": "版本笔记",
+      "recapCta": "赛季回顾",
+      "methodologyCta": "统计方法"
+    },
     "preseasonNotice": "11.0 为季前赛数据，因此不提供。",
     "filterCta": "打开筛选",
     "honeyPicksTitle": "本版本上升",
@@ -197,7 +207,7 @@
       "winRate": "该角色获得第1名的比例，基准值为12.5%。",
       "averageRp": "每局平均获得的排位分，正数代表更容易上分。"
     },
-    "empty": "暂无数据",
+    "empty": "正在确认符合条件的样本",
     "mobileSort": "排序",
     "sort": {
       "rank": "排名",
@@ -241,7 +251,7 @@
     "averageRank": "平均名次",
     "averageRp": "平均 RP",
     "weaponSub": "武器 {value}%",
-    "emptyPatchData": "该版本暂无数据。",
+    "emptyPatchData": "正在确认该版本的样本。",
     "loadingPatchInfo": "正在加载版本数据...",
     "tiers": {
       "PLATINUM": "白金",
@@ -373,7 +383,7 @@
     "loadingPatches": "正在加载版本数据...",
     "current": "当前",
     "noChanges": "无改动",
-    "noData": "暂无数据。",
+    "noData": "正在确认符合条件的样本。",
     "notEnoughData": "没有足够的版本数据可供比较。",
     "minTwoPatches": "至少需要两个版本。",
     "patchTrend": "版本趋势",

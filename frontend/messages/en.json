@@ -28,7 +28,6 @@
     "seasonRecap": "Season Recap",
     "feedback": "Send Feedback",
     "patchPanel": "Patch {patch}",
-    "patchPanelFallback": "Patch unavailable",
     "updateStatus": "Update: live refresh"
   },
   "mobileTab": {
@@ -128,6 +127,16 @@
       "cautionTitle": "Caution rules",
       "cautionBody": "Low-pick or low-sample data can be biased toward specialists, so tier lists and recommendations should be read conservatively."
     },
+    "fallback": {
+      "subtitle": "Analyzing Diamond+ ranked data for patch {patch}.",
+      "kicker": "Patch {patch} analysis baseline",
+      "title": "Current patch meta is summarized with ranked decision metrics, not win rate alone",
+      "body": "ER&GG organizes Eternal Return ranked data across character tiers, trio compositions, weapon choices, and patch-to-patch movement. Win rate is treated as first-place conversion, Top 3 rate as placement stability, average RP as climb efficiency, and pick rate with sample size as context for reliability. The same character can read differently by patch, tier, team role, and weapon choice, so the current patch is used as the default baseline. Character pages and patch notes connect live statistics with the latest balance changes.",
+      "characterCta": "Character analysis",
+      "patchCta": "Patch notes",
+      "recapCta": "Season recap",
+      "methodologyCta": "Methodology"
+    },
     "preseasonNotice": "Patch 11.0 uses preseason data and is not provided.",
     "filterCta": "Open filters",
     "topFiveTitle": "Patch Risers Top 5",
@@ -191,7 +200,7 @@
       "winRate": "Rate of finishing 1st with this character. Expected baseline: 12.5%.",
       "averageRp": "Average rank points gained per game. Positive values mean climbing."
     },
-    "empty": "No data",
+    "empty": "Checking samples for the selected conditions",
     "patchNoteTitle": "Patch {patch} changes",
     "patchNoteButton": "View patch {patch} changes",
     "mobileSort": "Sort",
@@ -252,7 +261,7 @@
     "averageRank": "Avg Rank",
     "averageRp": "Avg RP",
     "weaponSub": "Weapon {value}%",
-    "emptyPatchData": "No data for this patch.",
+    "emptyPatchData": "Checking samples for this patch.",
     "loadingPatchInfo": "Loading patch data...",
     "tiers": {
       "PLATINUM": "Platinum",
@@ -286,7 +295,7 @@
     "loadingPatches": "Loading patch data...",
     "current": "Current",
     "noChanges": "No changes",
-    "noData": "No data available.",
+    "noData": "Checking samples for the selected conditions.",
     "notEnoughData": "Not enough patch data to compare.",
     "minTwoPatches": "At least two patches are required.",
     "patchTrend": "Patch Trend",
@@ -355,7 +364,7 @@
     "infoPair": "Click a comp to see the trait breakdown",
     "more": "Show more ({visible}/{total})",
     "emptyFiltered": "No comps match your current character pool. Try widening the pool.",
-    "emptyNoData": "No data is available for this team setup.",
+    "emptyNoData": "Checking samples for this team setup.",
     "clearAllies": "Clear allies",
     "timeout": "The request timed out. Please try again.",
     "genericError": "Something went wrong."
@@ -430,7 +439,7 @@
     },
     "empty": {
       "builds": "No trait build data is available.",
-      "cell": "No data"
+      "cell": "Checking sample"
     }
   },
   "focusWeaponPool": {
@@ -487,7 +496,7 @@
     "loading": "Loading team data...",
     "infoSingle": "Add one more ally for more accurate recommendations",
     "emptyFiltered": "No comps match your character pool. Try widening the pool.",
-    "emptyNoData": "No data is available for this team setup.",
+    "emptyNoData": "Checking samples for this team setup.",
     "clearAllies": "Clear allies",
     "timeout": "The request timed out. Please try again.",
     "genericError": "Something went wrong."
