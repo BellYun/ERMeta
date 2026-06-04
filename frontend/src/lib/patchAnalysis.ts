@@ -18,6 +18,9 @@ import warriorsData from "../../public/data/lab/warriors.json";
 const ANALYSIS_TIER = "DIAMOND_PLUS";
 const ROLES: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
 const WEAPON_ORDER = Object.keys(WEAPON_KOR_BY_CODE).map(Number);
+const WEAPON_ALIASES: Partial<Record<number, string[]>> = {
+  18: ["쌍날검"],
+};
 const LAB_ROLE_DATA = [
   tanksData,
   warriorsData,
@@ -169,7 +172,13 @@ function getNoteWeaponCodes(note: CharacterPatchNote) {
   return sortWeaponCodes(
     note.changes.flatMap((change) =>
       Object.entries(WEAPON_KOR_BY_CODE)
-        .filter(([, weaponName]) => change.target.includes(`${weaponName} 무기`))
+        .filter(([weaponCode, weaponName]) => {
+          const haystack = [change.target, change.description.join(" ")].join(" ");
+          const aliases = WEAPON_ALIASES[Number(weaponCode)] ?? [];
+          return [`${weaponName} 무기`, `${weaponName} `, ...aliases].some((keyword) =>
+            haystack.includes(keyword)
+          );
+        })
         .map(([weaponCode]) => Number(weaponCode))
     )
   );
@@ -337,35 +346,9 @@ function buildDeltas(
     ...collectCharacterWeaponCodes(note.characterCode, currentRankings),
     ...collectCharacterWeaponCodes(note.characterCode, previousRankings),
   ]);
-  const weaponCodes = noteWeaponCodes.length > 0 ? noteWeaponCodes : statWeaponCodes;
 
-  if (weaponCodes.length <= 1) {
-    return [
-      buildDeltaForScope(
-        note,
-        currentRankings,
-        previousRankings,
-        totalMatches,
-        previousTotalMatches,
-        weaponCodes,
-        weaponCodes[0] ? resolveWeaponName(weaponCodes[0]) : "통합",
-        weaponCodes.length === 0
-      ),
-    ];
-  }
-
-  return [
-    buildDeltaForScope(
-      note,
-      currentRankings,
-      previousRankings,
-      totalMatches,
-      previousTotalMatches,
-      weaponCodes,
-      "통합",
-      true
-    ),
-    ...weaponCodes.map((weaponCode) =>
+  if (noteWeaponCodes.length > 0) {
+    return noteWeaponCodes.map((weaponCode) =>
       buildDeltaForScope(
         note,
         currentRankings,
@@ -376,6 +359,20 @@ function buildDeltas(
         resolveWeaponName(weaponCode),
         false
       )
+    );
+  }
+
+  const weaponCodes = statWeaponCodes;
+  return [
+    buildDeltaForScope(
+      note,
+      currentRankings,
+      previousRankings,
+      totalMatches,
+      previousTotalMatches,
+      weaponCodes,
+      "통합",
+      true
     ),
   ];
 }
