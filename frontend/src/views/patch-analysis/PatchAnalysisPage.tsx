@@ -165,8 +165,8 @@ function CharacterDeltaCard({ entry }: { entry: PatchCharacterDelta }) {
   const evaluation = PATCH_EVALUATIONS[entry.characterNum];
 
   return (
-    <article className="metric-card flex h-full flex-col gap-4 px-4 py-4 sm:px-5 sm:py-5">
-      <div className="flex items-start gap-3">
+    <article className="metric-card grid gap-4 px-4 py-4 sm:px-5 sm:py-5 lg:grid-cols-[minmax(220px,0.85fr)_minmax(260px,0.95fr)_minmax(320px,1.2fr)] lg:items-start">
+      <div className="flex items-start gap-3 lg:sticky lg:top-24">
         <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)]">
           <Image
             src={getCharacterMiniWebpUrl(entry.characterNum)}
@@ -216,41 +216,47 @@ function CharacterDeltaCard({ entry }: { entry: PatchCharacterDelta }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-2">
         <DeltaMetric label="RP" value={entry.deltaAverageRP} />
         <DeltaMetric label="승률" value={entry.deltaWinRate} suffix="%p" />
         <DeltaMetric label="픽률" value={entry.deltaPickRate} suffix="%p" />
         <DeltaMetric label="Top 3" value={entry.deltaTop3Rate} suffix="%p" />
       </div>
 
-      {evaluation ? (
-        <div className="rounded-2xl border border-[rgba(96,165,250,0.16)] bg-[rgba(96,165,250,0.06)] px-3 py-3">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-primary)]">
-            패치 평가
-          </p>
-          <p className="mt-2 text-xs leading-5 text-[var(--color-foreground)]/86">{evaluation}</p>
-        </div>
-      ) : null}
+      <div className="flex flex-col gap-3">
+        {evaluation ? (
+          <div className="rounded-2xl border border-[rgba(96,165,250,0.16)] bg-[rgba(96,165,250,0.06)] px-3 py-3">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-primary)]">
+              패치 평가
+            </p>
+            <p className="mt-2 text-xs leading-5 text-[var(--color-foreground)]/86">{evaluation}</p>
+          </div>
+        ) : null}
 
-      <div className="mt-auto rounded-2xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.025)] px-3 py-3">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-muted-foreground)]">
-          패치 내역
-        </p>
-        <ul className="mt-2 flex flex-col gap-2">
-          {firstChanges.map((change, index) => (
-            <li
-              key={`${change.target}-${index}`}
-              className="text-xs leading-5 text-[var(--color-muted-foreground)]"
-            >
-              <span className="font-semibold text-[var(--color-foreground)]">{change.target}</span>
-              {change.valueSummary ? <PatchValueSummary value={change.valueSummary} /> : null}
-            </li>
-          ))}
-        </ul>
+        <div className="rounded-2xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.025)] px-3 py-3">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-muted-foreground)]">
+            패치 내역
+          </p>
+          <ul className="mt-2 flex flex-col gap-2">
+            {firstChanges.map((change, index) => (
+              <li
+                key={`${change.target}-${index}`}
+                className="text-xs leading-5 text-[var(--color-muted-foreground)]"
+              >
+                <span className="font-semibold text-[var(--color-foreground)]">
+                  {change.target}
+                </span>
+                {change.valueSummary ? <PatchValueSummary value={change.valueSummary} /> : null}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </article>
   );
 }
+
+const NUMERIC_VALUE_PATTERN = /[+-]?\d+(?:\.\d+)?%?/g;
 
 function PatchValueSummary({ value }: { value: string }) {
   const [before, after] = value.split("→").map((part) => part.trim());
@@ -264,9 +270,43 @@ function PatchValueSummary({ value }: { value: string }) {
       {" · "}
       <span>{before}</span>
       <span className="px-1 text-[var(--color-muted-foreground)]">→</span>
-      <span className="font-black text-[var(--color-accent-gold)]">{after}</span>
+      <HighlightedChangedValue before={before} after={after} />
     </span>
   );
+}
+
+function HighlightedChangedValue({ before, after }: { before: string; after: string }) {
+  const beforeValues = before.match(NUMERIC_VALUE_PATTERN) ?? [];
+  let valueIndex = 0;
+  let cursor = 0;
+  const parts: ReactNode[] = [];
+
+  for (const match of after.matchAll(NUMERIC_VALUE_PATTERN)) {
+    const index = match.index ?? 0;
+    const token = match[0];
+    if (index > cursor) {
+      parts.push(after.slice(cursor, index));
+    }
+
+    const changed = beforeValues[valueIndex] !== token;
+    parts.push(
+      <span
+        key={`${index}-${token}`}
+        className={changed ? "font-black text-[var(--color-accent-gold)]" : undefined}
+      >
+        {token}
+      </span>
+    );
+
+    valueIndex += 1;
+    cursor = index + token.length;
+  }
+
+  if (cursor < after.length) {
+    parts.push(after.slice(cursor));
+  }
+
+  return <span>{parts}</span>;
 }
 
 function DeltaMetric({
