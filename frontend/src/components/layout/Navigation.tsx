@@ -35,6 +35,7 @@ interface NavigationLink {
 export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
   const pathname = usePathname();
   const normalizedPathname = stripRouteLocaleFromPathname(pathname);
+  const patchAnalysisPath = currentPatch ? `/patch-analysis/${currentPatch}` : "/patch-analysis";
   const t = useTranslations("navigation");
   const tHeader = useTranslations("header");
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
@@ -90,7 +91,7 @@ export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
       isActive: normalizedPathname.startsWith("/patches"),
     },
     {
-      href: withCurrentRouteLocale(pathname, "/patch-analysis"),
+      href: withCurrentRouteLocale(pathname, patchAnalysisPath),
       label: "패치 분석",
       icon: Gauge,
       isActive: normalizedPathname.startsWith("/patch-analysis"),

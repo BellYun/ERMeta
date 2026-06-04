@@ -1,37 +1,22 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
+import { notFound, redirect } from "next/navigation";
+import { getStatsPatchVersions } from "@/data/patch-notes";
 import { isRouteLocale } from "@/i18n/routing";
-import { localizeMetadata } from "@/lib/routeMetadata";
-import PatchAnalysisPage, {
-  generateMetadata as generateBaseMetadata,
-} from "@/views/patch-analysis/PatchAnalysisPage";
+import { localizeRoutePath } from "@/lib/seoLocales";
 
 interface LocalePageProps {
   params: Promise<{ locale: string }>;
 }
 
-export const revalidate = 21600;
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
+export default async function LocalizedPatchAnalysisRedirectPage({ params }: LocalePageProps) {
   const { locale } = await params;
 
   if (!isRouteLocale(locale)) {
     notFound();
   }
 
-  return localizeMetadata(await generateBaseMetadata(), "/patch-analysis", locale);
-}
-
-export default async function LocalizedPatchAnalysisPage({ params }: LocalePageProps) {
-  const { locale } = await params;
-
-  if (!isRouteLocale(locale)) {
-    notFound();
-  }
-
-  setRequestLocale(locale);
-
-  return <PatchAnalysisPage />;
+  const latestPatch = getStatsPatchVersions()[0];
+  if (!latestPatch) notFound();
+  redirect(localizeRoutePath(`/patch-analysis/${latestPatch}`, locale));
 }

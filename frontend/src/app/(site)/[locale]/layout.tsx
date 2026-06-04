@@ -7,6 +7,7 @@ import { AppFrame } from "@/components/AppFrame";
 import FeedbackWidget from "@/components/features/FeedbackWidget";
 import { L10nProvider } from "@/components/L10nProvider";
 import { RootDocumentExtras } from "@/components/RootDocumentExtras";
+import { getStatsPatchVersions } from "@/data/patch-notes";
 import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
 import { geistSans } from "@/lib/geistFont";
 import { loadL10nRecord } from "@/lib/serverL10n";
@@ -46,6 +47,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   const initialL10n = loadL10nRecord(language);
   const htmlLang = HTML_LANG_BY_LANGUAGE[language] ?? "ko";
   const structuredData = await buildWebsiteStructuredData(language, locale);
+  const currentPatch = getStatsPatchVersions()[0] ?? "";
 
   return (
     <html lang={htmlLang} className={geistSans.variable}>
@@ -55,7 +57,11 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           initialMessages={initialMessages}
           initialLanguage={language}
         >
-          <AppFrame shellId={`locale-shell-${locale}`} messages={initialMessages} currentPatch="">
+          <AppFrame
+            shellId={`locale-shell-${locale}`}
+            messages={initialMessages}
+            currentPatch={currentPatch}
+          >
             {children}
           </AppFrame>
           <FeedbackWidget />

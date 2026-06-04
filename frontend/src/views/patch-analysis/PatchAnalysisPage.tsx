@@ -24,12 +24,14 @@ export const revalidate = 21600;
 const ROLE_ORDER: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
 
 export async function generateMetadata(): Promise<Metadata> {
+  const data = await getPatchAnalysisData();
+  const pathname = `/patch-analysis/${data.currentPatch}`;
+
   return {
     metadataBase: new URL(BASE_URL),
-    title: "패치 메타 분석 — 11.3 통계 변화 | ER&GG",
-    description:
-      "이터널리턴 최신 패치 기준 다이아 이상 통계 분석. 11.3과 11.2의 평균 RP, 승률, 픽률, Top 3 비율 변화를 비교합니다.",
-    alternates: { canonical: "/patch-analysis" },
+    title: `패치 메타 분석 — ${data.currentPatch} 통계 변화 | ER&GG`,
+    description: `이터널리턴 최신 패치 기준 다이아 이상 통계 분석. ${data.currentPatch}과 ${data.previousPatch}의 평균 RP, 승률, 픽률, Top 3 비율 변화를 비교합니다.`,
+    alternates: { canonical: pathname },
     openGraph: {
       title: "패치 메타 분석 | ER&GG",
       description:
