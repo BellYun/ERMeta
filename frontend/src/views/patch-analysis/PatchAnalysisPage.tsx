@@ -165,74 +165,67 @@ function CharacterDeltaCard({ entry }: { entry: PatchCharacterDelta }) {
   const evaluation = PATCH_EVALUATIONS[entry.characterNum];
 
   return (
-    <article className="metric-card grid gap-4 px-4 py-4 sm:px-5 sm:py-5 lg:grid-cols-[minmax(220px,0.85fr)_minmax(260px,0.95fr)_minmax(320px,1.2fr)] lg:items-start">
-      <div className="flex items-start gap-3 lg:sticky lg:top-24">
-        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)]">
-          <Image
-            src={getCharacterMiniWebpUrl(entry.characterNum)}
-            alt={entry.name}
-            fill
-            className="object-cover"
-            sizes="56px"
-          />
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-base font-black tracking-[-0.04em] text-[var(--color-foreground)]">
-              {entry.name}
-            </h3>
-            {entry.changeTypes.map((type) => (
-              <ChangeTypeBadgeStatic
-                key={type}
-                type={type}
-                label={type === "buff" ? "버프" : type === "nerf" ? "너프" : "조정"}
-              />
-            ))}
-            <span
-              className={cn(
-                "rounded-full border px-2 py-1 text-[10px] font-black",
-                entry.isAggregate
-                  ? "border-[rgba(251,191,36,0.24)] bg-[rgba(251,191,36,0.1)] text-[var(--color-accent-gold)]"
-                  : "border-[rgba(96,165,250,0.24)] bg-[rgba(96,165,250,0.1)] text-[var(--color-primary)]"
-              )}
-            >
-              {entry.scopeLabel}
-            </span>
-            {weaponNames.map((weaponName) => (
-              <span
-                key={weaponName}
-                className="rounded-full border border-[var(--color-border)] bg-[rgba(255,255,255,0.035)] px-2 py-1 text-[10px] font-semibold text-[var(--color-muted-foreground)]"
-              >
-                {weaponName}
-              </span>
-            ))}
+    <article className="metric-card grid gap-4 px-4 py-4 sm:px-5 sm:py-5 lg:grid-cols-[minmax(260px,0.9fr)_minmax(0,1.55fr)] lg:items-start">
+      <div className="flex flex-col gap-3 lg:sticky lg:top-24">
+        <div className="flex items-start gap-3">
+          <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)]">
+            <Image
+              src={getCharacterMiniWebpUrl(entry.characterNum)}
+              alt={entry.name}
+              fill
+              className="object-cover"
+              sizes="56px"
+            />
           </div>
-          <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
-            {metricLabel(entry.previous, entry.characterNum)}
-          </p>
-          <p className="mt-0.5 text-xs text-[var(--color-foreground)]">
-            → {metricLabel(entry.current, entry.characterNum)}
-          </p>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-base font-black tracking-[-0.04em] text-[var(--color-foreground)]">
+                {entry.name}
+              </h3>
+              {entry.changeTypes.map((type) => (
+                <ChangeTypeBadgeStatic
+                  key={type}
+                  type={type}
+                  label={type === "buff" ? "버프" : type === "nerf" ? "너프" : "조정"}
+                />
+              ))}
+              <span
+                className={cn(
+                  "rounded-full border px-2 py-1 text-[10px] font-black",
+                  entry.isAggregate
+                    ? "border-[rgba(251,191,36,0.24)] bg-[rgba(251,191,36,0.1)] text-[var(--color-accent-gold)]"
+                    : "border-[rgba(96,165,250,0.24)] bg-[rgba(96,165,250,0.1)] text-[var(--color-primary)]"
+                )}
+              >
+                {entry.scopeLabel}
+              </span>
+              {weaponNames.map((weaponName) => (
+                <span
+                  key={weaponName}
+                  className="rounded-full border border-[var(--color-border)] bg-[rgba(255,255,255,0.035)] px-2 py-1 text-[10px] font-semibold text-[var(--color-muted-foreground)]"
+                >
+                  {weaponName}
+                </span>
+              ))}
+            </div>
+            <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
+              {metricLabel(entry.previous, entry.characterNum)}
+            </p>
+            <p className="mt-0.5 text-xs text-[var(--color-foreground)]">
+              → {metricLabel(entry.current, entry.characterNum)}
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-2">
-        <DeltaMetric label="RP" value={entry.deltaAverageRP} />
-        <DeltaMetric label="승률" value={entry.deltaWinRate} suffix="%p" />
-        <DeltaMetric label="픽률" value={entry.deltaPickRate} suffix="%p" />
-        <DeltaMetric label="Top 3" value={entry.deltaTop3Rate} suffix="%p" />
+        <div className="grid grid-cols-2 gap-2">
+          <DeltaMetric label="RP" value={entry.deltaAverageRP} />
+          <DeltaMetric label="승률" value={entry.deltaWinRate} suffix="%p" />
+          <DeltaMetric label="픽률" value={entry.deltaPickRate} suffix="%p" />
+          <DeltaMetric label="Top 3" value={entry.deltaTop3Rate} suffix="%p" />
+        </div>
       </div>
 
       <div className="flex flex-col gap-3">
-        {evaluation ? (
-          <div className="rounded-2xl border border-[rgba(96,165,250,0.16)] bg-[rgba(96,165,250,0.06)] px-3 py-3">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-primary)]">
-              패치 평가
-            </p>
-            <p className="mt-2 text-xs leading-5 text-[var(--color-foreground)]/86">{evaluation}</p>
-          </div>
-        ) : null}
-
         <div className="rounded-2xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.025)] px-3 py-3">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-muted-foreground)]">
             패치 내역
@@ -251,6 +244,15 @@ function CharacterDeltaCard({ entry }: { entry: PatchCharacterDelta }) {
             ))}
           </ul>
         </div>
+
+        {evaluation ? (
+          <div className="rounded-2xl border border-[rgba(96,165,250,0.16)] bg-[rgba(96,165,250,0.06)] px-3 py-3">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-primary)]">
+              패치 평가
+            </p>
+            <p className="mt-2 text-xs leading-5 text-[var(--color-foreground)]/86">{evaluation}</p>
+          </div>
+        ) : null}
       </div>
     </article>
   );
