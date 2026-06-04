@@ -14,6 +14,7 @@ const ROLES: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러",
 export interface PatchCharacterMetric {
   characterNum: number;
   name: string;
+  roles: CharacterRole[];
   totalGames: number;
   pickRate: number;
   winRate: number;
@@ -33,6 +34,7 @@ export interface PatchCharacterDelta {
   deltaTop3Rate: number;
   deltaAverageRP: number;
   changeTypes: ChangeType[];
+  roles: CharacterRole[];
 }
 
 export interface PatchRoleMetric {
@@ -67,6 +69,7 @@ interface CharacterAccumulator {
   totalWins: number;
   totalTop3: number;
   totalRP: number;
+  roles: Set<CharacterRole>;
 }
 
 interface RoleAccumulator {
@@ -80,6 +83,7 @@ function emptyMetric(characterNum: number): PatchCharacterMetric {
   return {
     characterNum,
     name: getCharacterName(characterNum),
+    roles: [],
     totalGames: 0,
     pickRate: 0,
     winRate: 0,
@@ -99,7 +103,11 @@ function aggregateCharacters(rankings: CharacterRankingData[]) {
       totalWins: 0,
       totalTop3: 0,
       totalRP: 0,
+      roles: new Set<CharacterRole>(),
     };
+    for (const role of getComboRoles(row.characterNum, row.bestWeapon)) {
+      cur.roles.add(role);
+    }
     cur.totalGames += row.totalGames;
     cur.totalWins += (row.winRate / 100) * row.totalGames;
     cur.totalTop3 += (row.top3Rate / 100) * row.totalGames;
@@ -112,6 +120,7 @@ function aggregateCharacters(rankings: CharacterRankingData[]) {
     metrics.set(acc.characterNum, {
       characterNum: acc.characterNum,
       name: getCharacterName(acc.characterNum),
+      roles: sortRoles([...acc.roles]),
       totalGames: acc.totalGames,
       pickRate: totalMatches > 0 ? (acc.totalGames / totalMatches) * 100 : 0,
       winRate: acc.totalGames > 0 ? (acc.totalWins / acc.totalGames) * 100 : 0,
@@ -121,6 +130,10 @@ function aggregateCharacters(rankings: CharacterRankingData[]) {
   }
 
   return { totalMatches, metrics };
+}
+
+function sortRoles(roles: CharacterRole[]) {
+  return [...new Set(roles)].sort((a, b) => ROLES.indexOf(a) - ROLES.indexOf(b));
 }
 
 function aggregateRoles(
@@ -184,6 +197,7 @@ function buildDelta(
   const currentSafe = current ?? emptyMetric(note.characterCode);
   const previousSafe = previous ?? emptyMetric(note.characterCode);
   const changeTypes = [...new Set(note.changes.map((change) => change.changeType))];
+  const roles = sortRoles([...(current?.roles ?? []), ...(previous?.roles ?? [])]);
 
   return {
     characterNum: note.characterCode,
@@ -197,6 +211,7 @@ function buildDelta(
     deltaTop3Rate: currentSafe.top3Rate - previousSafe.top3Rate,
     deltaAverageRP: currentSafe.averageRP - previousSafe.averageRP,
     changeTypes,
+    roles,
   };
 }
 

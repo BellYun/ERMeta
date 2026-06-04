@@ -4,6 +4,7 @@ import Image from "next/image";
 import type { ReactNode } from "react";
 import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeBadgeStatic";
 import {
+  type CharacterRole,
   getCharacterImageUrl,
   getCharacterMiniWebpUrl,
   getCharacterName,
@@ -19,6 +20,8 @@ import { cn } from "@/lib/utils";
 
 export const dynamic = "force-static";
 export const revalidate = 21600;
+
+const ROLE_ORDER: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -144,6 +147,14 @@ function CharacterDeltaCard({ entry }: { entry: PatchCharacterDelta }) {
                 type={type}
                 label={type === "buff" ? "버프" : type === "nerf" ? "너프" : "조정"}
               />
+            ))}
+            {entry.roles.slice(0, 2).map((role) => (
+              <span
+                key={role}
+                className="rounded-full border border-[var(--color-border)] bg-[rgba(255,255,255,0.035)] px-2 py-1 text-[10px] font-semibold text-[var(--color-muted-foreground)]"
+              >
+                {role}
+              </span>
             ))}
           </div>
           <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
@@ -357,6 +368,7 @@ function CharacterSection({
   entries: PatchCharacterDelta[];
 }) {
   if (entries.length === 0) return null;
+  const groups = groupEntriesByRole(entries);
 
   return (
     <section className="dashboard-panel p-4 lg:p-6">
@@ -373,13 +385,46 @@ function CharacterSection({
           {entries.length}명
         </span>
       </div>
-      <div className="mt-4 grid gap-3 xl:grid-cols-2">
-        {entries.map((entry) => (
-          <CharacterDeltaCard key={entry.characterNum} entry={entry} />
+      <div className="mt-4 flex flex-col gap-5">
+        {groups.map((group) => (
+          <div key={group.role} className="flex flex-col gap-3">
+            <div className="flex items-center justify-between gap-3 border-b border-[var(--color-border)] pb-2">
+              <h3 className="text-sm font-black tracking-[-0.03em] text-[var(--color-foreground)]">
+                {group.role}
+              </h3>
+              <span className="rounded-full border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-muted-foreground)]">
+                {group.entries.length}명
+              </span>
+            </div>
+            <div className="grid gap-3 xl:grid-cols-2">
+              {group.entries.map((entry) => (
+                <CharacterDeltaCard key={`${group.role}-${entry.characterNum}`} entry={entry} />
+              ))}
+            </div>
+          </div>
         ))}
       </div>
     </section>
   );
+}
+
+function groupEntriesByRole(entries: PatchCharacterDelta[]) {
+  const map = new Map<string, PatchCharacterDelta[]>();
+
+  for (const entry of entries) {
+    const role = entry.roles[0] ?? "역할 미분류";
+    const group = map.get(role) ?? [];
+    group.push(entry);
+    map.set(role, group);
+  }
+
+  return [...map.entries()]
+    .map(([role, groupEntries]) => ({ role, entries: groupEntries }))
+    .sort((a, b) => {
+      const aIndex = ROLE_ORDER.indexOf(a.role as CharacterRole);
+      const bIndex = ROLE_ORDER.indexOf(b.role as CharacterRole);
+      return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
+    });
 }
 
 export default async function PatchAnalysisPage() {
