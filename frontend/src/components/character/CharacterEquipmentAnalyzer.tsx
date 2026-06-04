@@ -568,7 +568,7 @@ export function CharacterEquipmentAnalyzer({
   if (isEmpty) {
     return (
       <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-8 text-center text-sm text-[var(--color-muted-foreground)]">
-        아이템 빌드 데이터가 없습니다.
+        아이템 빌드 표본을 확인 중입니다.
       </div>
     );
   }

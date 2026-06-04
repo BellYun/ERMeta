@@ -696,7 +696,7 @@ export function CharacterDetailedAnalyzer({
     );
   }
 
-  // ── 데이터 없음 ──────────────────────────────────────────────────────────────
+  // ── 표본 확인 중 ─────────────────────────────────────────────────────────────
   if (traitBuilds.length === 0) {
     return (
       <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-8 flex flex-col items-center gap-2 text-[var(--color-muted-foreground)]">

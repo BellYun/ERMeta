@@ -61,7 +61,7 @@ function PatchColumn({ patch, entries }: PatchTopGroup) {
 
       {entries.length === 0 ? (
         <div className="flex min-h-[220px] items-center justify-center rounded-2xl border border-dashed border-[var(--color-border)] text-xs text-[var(--color-muted-foreground)]">
-          데이터 없음
+          표본 확인 중
         </div>
       ) : (
         <ol className="flex flex-col gap-2">

@@ -95,7 +95,7 @@ function RPTooltip({
           </p>
         </>
       ) : (
-        <p className="mt-1 text-[10px] text-[var(--color-muted-foreground)]">데이터 없음</p>
+        <p className="mt-1 text-[10px] text-[var(--color-muted-foreground)]">표본 확인 중</p>
       )}
     </div>
   );
