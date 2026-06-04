@@ -126,7 +126,7 @@ function DeltaBadge({ value, suffix = "" }: { value: number; suffix?: string }) 
 
 function CharacterDeltaCard({ entry }: { entry: PatchCharacterDelta }) {
   const firstChanges = entry.note.changes.slice(0, 3);
-  const weaponNames = getEntryWeaponNames(entry);
+  const weaponNames = entry.isAggregate ? getEntryWeaponNames(entry) : [];
 
   return (
     <article className="metric-card flex h-full flex-col gap-4 px-4 py-4 sm:px-5 sm:py-5">
@@ -152,6 +152,16 @@ function CharacterDeltaCard({ entry }: { entry: PatchCharacterDelta }) {
                 label={type === "buff" ? "버프" : type === "nerf" ? "너프" : "조정"}
               />
             ))}
+            <span
+              className={cn(
+                "rounded-full border px-2 py-1 text-[10px] font-black",
+                entry.isAggregate
+                  ? "border-[rgba(251,191,36,0.24)] bg-[rgba(251,191,36,0.1)] text-[var(--color-accent-gold)]"
+                  : "border-[rgba(96,165,250,0.24)] bg-[rgba(96,165,250,0.1)] text-[var(--color-primary)]"
+              )}
+            >
+              {entry.scopeLabel}
+            </span>
             {weaponNames.slice(0, 3).map((weaponName) => (
               <span
                 key={weaponName}
@@ -323,7 +333,7 @@ function DeltaRanking({
       <div className="mt-4 grid gap-2">
         {entries.map((entry, index) => (
           <div
-            key={`${entry.characterNum}-${index}`}
+            key={`${entry.characterNum}-${entry.scopeKey}-${index}`}
             className="flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.025)] px-3 py-3"
           >
             <span className="w-6 text-center text-sm font-black text-[var(--color-muted-foreground)] tabular-nums">
@@ -341,6 +351,9 @@ function DeltaRanking({
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-[var(--color-foreground)]">
                 {entry.name}
+                <span className="ml-1 font-medium text-[var(--color-muted-foreground)]">
+                  {entry.scopeLabel}
+                </span>
               </p>
               <p className="text-xs text-[var(--color-muted-foreground)]">
                 {entry.previous ? formatSigned(entry.previous.averageRP, 1) : "-"} →{" "}
@@ -386,7 +399,7 @@ function CharacterSection({
           </p>
         </div>
         <span className="rounded-full border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-3 py-1 text-xs text-[var(--color-muted-foreground)]">
-          {entries.length}명
+          {entries.length}건
         </span>
       </div>
       <div className="mt-4 flex flex-col gap-5">
@@ -397,12 +410,15 @@ function CharacterSection({
                 {group.role}
               </h3>
               <span className="rounded-full border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-muted-foreground)]">
-                {group.entries.length}명
+                {group.entries.length}건
               </span>
             </div>
             <div className="grid gap-3 xl:grid-cols-2">
               {group.entries.map((entry) => (
-                <CharacterDeltaCard key={`${group.role}-${entry.characterNum}`} entry={entry} />
+                <CharacterDeltaCard
+                  key={`${group.role}-${entry.characterNum}-${entry.scopeKey}`}
+                  entry={entry}
+                />
               ))}
             </div>
           </div>
@@ -495,14 +511,14 @@ export default async function PatchAnalysisPage() {
             <MetricCard
               icon={<TrendingUp className="h-5 w-5" strokeWidth={2} />}
               label="버프 추적"
-              value={`${data.buffed.length}명`}
+              value={`${data.buffed.length}건`}
               body="패치노트 기준 버프 대상"
               tone="gold"
             />
             <MetricCard
               icon={<Swords className="h-5 w-5" strokeWidth={2} />}
               label="너프 추적"
-              value={`${data.nerfed.length}명`}
+              value={`${data.nerfed.length}건`}
               body="패치노트 기준 너프 대상"
               tone="danger"
             />

@@ -56,6 +56,9 @@ export interface PatchCharacterDelta {
   changeTypes: ChangeType[];
   weaponCodes: number[];
   weaponNames: string[];
+  scopeKey: string;
+  scopeLabel: string;
+  isAggregate: boolean;
   roles: CharacterRole[];
 }
 
@@ -275,20 +278,17 @@ function aggregateRoleMap(rankings: CharacterRankingData[]) {
   return map;
 }
 
-function buildDelta(
+function buildDeltaForScope(
   note: CharacterPatchNote,
   currentRankings: CharacterRankingData[],
   previousRankings: CharacterRankingData[],
   totalMatches: number,
-  previousTotalMatches: number
+  previousTotalMatches: number,
+  weaponCodes: number[],
+  scopeLabel: string,
+  isAggregate: boolean
 ): PatchCharacterDelta {
   const changeTypes = [...new Set(note.changes.map((change) => change.changeType))];
-  const noteWeaponCodes = getNoteWeaponCodes(note);
-  const statWeaponCodes = sortWeaponCodes([
-    ...collectCharacterWeaponCodes(note.characterCode, currentRankings),
-    ...collectCharacterWeaponCodes(note.characterCode, previousRankings),
-  ]);
-  const weaponCodes = noteWeaponCodes.length > 0 ? noteWeaponCodes : statWeaponCodes;
   const current = buildCharacterMetric(
     note.characterCode,
     currentRankings,
@@ -318,8 +318,66 @@ function buildDelta(
     changeTypes,
     weaponCodes,
     weaponNames: weaponCodes.map((weaponCode) => resolveWeaponName(weaponCode)),
+    scopeKey: isAggregate ? "aggregate" : `weapon-${weaponCodes[0] ?? "unknown"}`,
+    scopeLabel,
+    isAggregate,
     roles: getCharacterRoles(note.characterCode, weaponCodes),
   };
+}
+
+function buildDeltas(
+  note: CharacterPatchNote,
+  currentRankings: CharacterRankingData[],
+  previousRankings: CharacterRankingData[],
+  totalMatches: number,
+  previousTotalMatches: number
+): PatchCharacterDelta[] {
+  const noteWeaponCodes = getNoteWeaponCodes(note);
+  const statWeaponCodes = sortWeaponCodes([
+    ...collectCharacterWeaponCodes(note.characterCode, currentRankings),
+    ...collectCharacterWeaponCodes(note.characterCode, previousRankings),
+  ]);
+  const weaponCodes = noteWeaponCodes.length > 0 ? noteWeaponCodes : statWeaponCodes;
+
+  if (weaponCodes.length <= 1) {
+    return [
+      buildDeltaForScope(
+        note,
+        currentRankings,
+        previousRankings,
+        totalMatches,
+        previousTotalMatches,
+        weaponCodes,
+        weaponCodes[0] ? resolveWeaponName(weaponCodes[0]) : "통합",
+        weaponCodes.length === 0
+      ),
+    ];
+  }
+
+  return [
+    buildDeltaForScope(
+      note,
+      currentRankings,
+      previousRankings,
+      totalMatches,
+      previousTotalMatches,
+      weaponCodes,
+      "통합",
+      true
+    ),
+    ...weaponCodes.map((weaponCode) =>
+      buildDeltaForScope(
+        note,
+        currentRankings,
+        previousRankings,
+        totalMatches,
+        previousTotalMatches,
+        [weaponCode],
+        resolveWeaponName(weaponCode),
+        false
+      )
+    ),
+  ];
 }
 
 function buildAsOfLabel() {
@@ -358,8 +416,8 @@ async function fetchPatchAnalysisData(): Promise<PatchAnalysisData> {
   const { totalMatches } = aggregateCharacters(rankingData.rankings);
   const { totalMatches: previousTotalMatches } = aggregateCharacters(rankingData.previousRankings);
   const notes = getNotesByPatch(currentPatch);
-  const deltas = notes.map((note) =>
-    buildDelta(
+  const deltas = notes.flatMap((note) =>
+    buildDeltas(
       note,
       rankingData.rankings,
       rankingData.previousRankings,
