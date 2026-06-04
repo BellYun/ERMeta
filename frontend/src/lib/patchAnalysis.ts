@@ -56,7 +56,7 @@ export interface PatchCharacterDelta {
   changeTypes: ChangeType[];
   weaponCodes: number[];
   weaponNames: string[];
-  traitLabels: string[];
+  roles: CharacterRole[];
 }
 
 export interface PatchRoleMetric {
@@ -210,21 +210,18 @@ function buildCharacterMetric(
   };
 }
 
-function getTraitLabels(characterNum: number, weaponCodes: number[]) {
-  const labels = new Set<string>();
+function getCharacterRoles(characterNum: number, weaponCodes: number[]) {
+  const roles = new Set<CharacterRole>();
 
   for (const data of LAB_ROLE_DATA) {
-    const groupById = new Map(data.groups.map((group) => [group.id, group.label]));
     for (const character of data.characters) {
       if (character.characterCode !== characterNum) continue;
       if (weaponCodes.length > 0 && !weaponCodes.includes(character.weapon)) continue;
-
-      const label = character.groupId == null ? null : groupById.get(character.groupId);
-      if (label) labels.add(`${data.role} · ${label}`);
+      roles.add(data.role as CharacterRole);
     }
   }
 
-  return [...labels].sort((a, b) => a.localeCompare(b, "ko-KR"));
+  return [...roles].sort((a, b) => ROLES.indexOf(a) - ROLES.indexOf(b));
 }
 
 function aggregateRoles(
@@ -321,7 +318,7 @@ function buildDelta(
     changeTypes,
     weaponCodes,
     weaponNames: weaponCodes.map((weaponCode) => resolveWeaponName(weaponCode)),
-    traitLabels: getTraitLabels(note.characterCode, weaponCodes),
+    roles: getCharacterRoles(note.characterCode, weaponCodes),
   };
 }
 
