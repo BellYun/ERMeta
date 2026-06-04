@@ -9,16 +9,8 @@ const CONTENT_PATH_PREFIXES = [
   "/about",
   "/methodology",
   "/character/",
-  "/character-lab",
-  "/lab",
-  "/trio-lab",
-  "/synergy",
-  "/synergy-detail",
   "/patches",
   "/season10-recap",
-  "/updates",
-  "/privacy",
-  "/terms",
 ];
 
 function stripLocale(pathname: string) {
