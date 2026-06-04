@@ -7,9 +7,24 @@ import {
 } from "@/data/patch-notes";
 import { type CharacterRole, getComboRoles, getCharacterName } from "@/lib/characterMap";
 import { type CharacterRankingData, getCachedRankingData } from "@/lib/ranking";
+import assassinsData from "../../public/data/lab/assassins.json";
+import rangersData from "../../public/data/lab/rangers.json";
+import skilldealersData from "../../public/data/lab/skilldealers.json";
+import supportsData from "../../public/data/lab/supports.json";
+import tanksData from "../../public/data/lab/tanks.json";
+import warriorsData from "../../public/data/lab/warriors.json";
 
 const ANALYSIS_TIER = "DIAMOND_PLUS";
 const ROLES: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
+const LAB_ROLE_DATA = [
+  tanksData,
+  warriorsData,
+  assassinsData,
+  skilldealersData,
+  rangersData,
+  supportsData,
+] as Array<{ role: CharacterRole; characters: Array<{ characterCode: number }> }>;
+const CHARACTER_LAB_ROLES = buildCharacterLabRoles();
 
 export interface PatchCharacterMetric {
   characterNum: number;
@@ -83,7 +98,7 @@ function emptyMetric(characterNum: number): PatchCharacterMetric {
   return {
     characterNum,
     name: getCharacterName(characterNum),
-    roles: [],
+    roles: getCharacterLabRoles(characterNum),
     totalGames: 0,
     pickRate: 0,
     winRate: 0,
@@ -105,7 +120,7 @@ function aggregateCharacters(rankings: CharacterRankingData[]) {
       totalRP: 0,
       roles: new Set<CharacterRole>(),
     };
-    for (const role of getComboRoles(row.characterNum, row.bestWeapon)) {
+    for (const role of getCharacterLabRoles(row.characterNum)) {
       cur.roles.add(role);
     }
     cur.totalGames += row.totalGames;
@@ -134,6 +149,24 @@ function aggregateCharacters(rankings: CharacterRankingData[]) {
 
 function sortRoles(roles: CharacterRole[]) {
   return [...new Set(roles)].sort((a, b) => ROLES.indexOf(a) - ROLES.indexOf(b));
+}
+
+function buildCharacterLabRoles() {
+  const map = new Map<number, Set<CharacterRole>>();
+
+  for (const data of LAB_ROLE_DATA) {
+    for (const character of data.characters) {
+      const roles = map.get(character.characterCode) ?? new Set<CharacterRole>();
+      roles.add(data.role);
+      map.set(character.characterCode, roles);
+    }
+  }
+
+  return new Map([...map.entries()].map(([code, roles]) => [code, sortRoles([...roles])]));
+}
+
+function getCharacterLabRoles(characterNum: number) {
+  return CHARACTER_LAB_ROLES.get(characterNum) ?? [];
 }
 
 function aggregateRoles(

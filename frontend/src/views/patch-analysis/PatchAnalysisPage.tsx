@@ -414,10 +414,12 @@ function groupEntriesByRole(entries: PatchCharacterDelta[]) {
   const map = new Map<string, PatchCharacterDelta[]>();
 
   for (const entry of entries) {
-    const role = getEntryRoles(entry)[0] ?? "역할 미분류";
-    const group = map.get(role) ?? [];
-    group.push(entry);
-    map.set(role, group);
+    const roles = getEntryRoles(entry);
+    for (const role of roles.length > 0 ? roles : ["역할 미분류"]) {
+      const group = map.get(role) ?? [];
+      group.push(entry);
+      map.set(role, group);
+    }
   }
 
   return [...map.entries()]
