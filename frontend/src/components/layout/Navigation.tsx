@@ -3,6 +3,7 @@
 import {
   BarChart3,
   FlaskConical,
+  Gauge,
   Layers,
   MessageSquarePlus,
   Network,
@@ -87,6 +88,12 @@ export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
       label: t("patchNotes"),
       icon: NotebookText,
       isActive: normalizedPathname.startsWith("/patches"),
+    },
+    {
+      href: withCurrentRouteLocale(pathname, "/patch-analysis"),
+      label: "패치 분석",
+      icon: Gauge,
+      isActive: normalizedPathname.startsWith("/patch-analysis"),
     },
     {
       href: withCurrentRouteLocale(pathname, "/season10-recap"),

@@ -10,6 +10,7 @@ const CONTENT_PATH_PREFIXES = [
   "/methodology",
   "/character/",
   "/patches",
+  "/patch-analysis",
   "/season10-recap",
 ];
 
