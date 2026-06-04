@@ -6,7 +6,11 @@ import {
   type ChangeType,
 } from "@/data/patch-notes";
 import { type CharacterRole, getComboRoles, getCharacterName } from "@/lib/characterMap";
-import { type CharacterRankingData, getCachedRankingData } from "@/lib/ranking";
+import {
+  type CharacterRankingData,
+  getCachedRankingData,
+  type RankingResponse,
+} from "@/lib/ranking";
 import { resolveWeaponName, WEAPON_KOR_BY_CODE } from "@/lib/weaponMap";
 import assassinsData from "../../public/data/lab/assassins.json";
 import rangersData from "../../public/data/lab/rangers.json";
@@ -33,6 +37,39 @@ const LAB_ROLE_DATA = [
   groups: Array<{ id: number; label: string }>;
   characters: Array<{ characterCode: number; weapon: number; groupId: number | null }>;
 }>;
+
+function emptyRankingData(
+  patchVersion: string,
+  previousPatch: string | null,
+  tier: string
+): RankingResponse {
+  return {
+    rankings: [],
+    previousRankings: [],
+    patchVersion,
+    previousPatch,
+    tier,
+  };
+}
+
+async function getPatchRankingData(
+  currentPatch: string,
+  previousPatch: string
+): Promise<RankingResponse> {
+  try {
+    return await getCachedRankingData(currentPatch, ANALYSIS_TIER);
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message.includes("Supabase environment variables are missing")
+    ) {
+      console.warn("[patch-analysis] Supabase env missing; using empty ranking fallback.");
+      return emptyRankingData(currentPatch, previousPatch, ANALYSIS_TIER);
+    }
+
+    throw error;
+  }
+}
 
 export interface PatchCharacterMetric {
   characterNum: number;
@@ -409,7 +446,7 @@ async function fetchPatchAnalysisData(): Promise<PatchAnalysisData> {
     };
   }
 
-  const rankingData = await getCachedRankingData(currentPatch, ANALYSIS_TIER);
+  const rankingData = await getPatchRankingData(currentPatch, previousPatch);
   const { totalMatches } = aggregateCharacters(rankingData.rankings);
   const { totalMatches: previousTotalMatches } = aggregateCharacters(rankingData.previousRankings);
   const notes = getNotesByPatch(currentPatch);
