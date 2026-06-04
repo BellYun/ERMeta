@@ -7,6 +7,7 @@ import {
 } from "@/data/patch-notes";
 import { type CharacterRole, getComboRoles, getCharacterName } from "@/lib/characterMap";
 import { type CharacterRankingData, getCachedRankingData } from "@/lib/ranking";
+import { resolveWeaponName, WEAPON_KOR_BY_CODE } from "@/lib/weaponMap";
 import assassinsData from "../../public/data/lab/assassins.json";
 import rangersData from "../../public/data/lab/rangers.json";
 import skilldealersData from "../../public/data/lab/skilldealers.json";
@@ -16,6 +17,7 @@ import warriorsData from "../../public/data/lab/warriors.json";
 
 const ANALYSIS_TIER = "DIAMOND_PLUS";
 const ROLES: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
+const WEAPON_ORDER = Object.keys(WEAPON_KOR_BY_CODE).map(Number);
 const LAB_ROLE_DATA = [
   tanksData,
   warriorsData,
@@ -23,13 +25,16 @@ const LAB_ROLE_DATA = [
   skilldealersData,
   rangersData,
   supportsData,
-] as Array<{ role: CharacterRole; characters: Array<{ characterCode: number }> }>;
-const CHARACTER_LAB_ROLES = buildCharacterLabRoles();
+] as Array<{
+  role: string;
+  groups: Array<{ id: number; label: string }>;
+  characters: Array<{ characterCode: number; weapon: number; groupId: number | null }>;
+}>;
 
 export interface PatchCharacterMetric {
   characterNum: number;
   name: string;
-  roles: CharacterRole[];
+  weaponCodes: number[];
   totalGames: number;
   pickRate: number;
   winRate: number;
@@ -49,7 +54,9 @@ export interface PatchCharacterDelta {
   deltaTop3Rate: number;
   deltaAverageRP: number;
   changeTypes: ChangeType[];
-  roles: CharacterRole[];
+  weaponCodes: number[];
+  weaponNames: string[];
+  traitLabels: string[];
 }
 
 export interface PatchRoleMetric {
@@ -84,7 +91,7 @@ interface CharacterAccumulator {
   totalWins: number;
   totalTop3: number;
   totalRP: number;
-  roles: Set<CharacterRole>;
+  weaponCodes: Set<number>;
 }
 
 interface RoleAccumulator {
@@ -98,7 +105,7 @@ function emptyMetric(characterNum: number): PatchCharacterMetric {
   return {
     characterNum,
     name: getCharacterName(characterNum),
-    roles: getCharacterLabRoles(characterNum),
+    weaponCodes: [],
     totalGames: 0,
     pickRate: 0,
     winRate: 0,
@@ -118,10 +125,10 @@ function aggregateCharacters(rankings: CharacterRankingData[]) {
       totalWins: 0,
       totalTop3: 0,
       totalRP: 0,
-      roles: new Set<CharacterRole>(),
+      weaponCodes: new Set<number>(),
     };
-    for (const role of getCharacterLabRoles(row.characterNum)) {
-      cur.roles.add(role);
+    if (row.bestWeapon > 0) {
+      cur.weaponCodes.add(row.bestWeapon);
     }
     cur.totalGames += row.totalGames;
     cur.totalWins += (row.winRate / 100) * row.totalGames;
@@ -135,7 +142,7 @@ function aggregateCharacters(rankings: CharacterRankingData[]) {
     metrics.set(acc.characterNum, {
       characterNum: acc.characterNum,
       name: getCharacterName(acc.characterNum),
-      roles: sortRoles([...acc.roles]),
+      weaponCodes: sortWeaponCodes([...acc.weaponCodes]),
       totalGames: acc.totalGames,
       pickRate: totalMatches > 0 ? (acc.totalGames / totalMatches) * 100 : 0,
       winRate: acc.totalGames > 0 ? (acc.totalWins / acc.totalGames) * 100 : 0,
@@ -147,26 +154,77 @@ function aggregateCharacters(rankings: CharacterRankingData[]) {
   return { totalMatches, metrics };
 }
 
-function sortRoles(roles: CharacterRole[]) {
-  return [...new Set(roles)].sort((a, b) => ROLES.indexOf(a) - ROLES.indexOf(b));
+function sortWeaponCodes(weaponCodes: number[]) {
+  return [...new Set(weaponCodes)].sort((a, b) => {
+    const aIndex = WEAPON_ORDER.indexOf(a);
+    const bIndex = WEAPON_ORDER.indexOf(b);
+    return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
+  });
 }
 
-function buildCharacterLabRoles() {
-  const map = new Map<number, Set<CharacterRole>>();
+function getNoteWeaponCodes(note: CharacterPatchNote) {
+  return sortWeaponCodes(
+    note.changes.flatMap((change) =>
+      Object.entries(WEAPON_KOR_BY_CODE)
+        .filter(([, weaponName]) => change.target.includes(`${weaponName} 무기`))
+        .map(([weaponCode]) => Number(weaponCode))
+    )
+  );
+}
+
+function collectCharacterWeaponCodes(characterNum: number, rankings: CharacterRankingData[]) {
+  return sortWeaponCodes(
+    rankings
+      .filter((row) => row.characterNum === characterNum && row.bestWeapon > 0)
+      .map((row) => row.bestWeapon)
+  );
+}
+
+function buildCharacterMetric(
+  characterNum: number,
+  rankings: CharacterRankingData[],
+  totalMatches: number,
+  weaponCodes: number[]
+): PatchCharacterMetric | null {
+  const rows = rankings.filter(
+    (row) =>
+      row.characterNum === characterNum &&
+      (weaponCodes.length === 0 || weaponCodes.includes(row.bestWeapon))
+  );
+  if (rows.length === 0) return null;
+
+  const totalGames = rows.reduce((sum, row) => sum + row.totalGames, 0);
+  const totalWins = rows.reduce((sum, row) => sum + (row.winRate / 100) * row.totalGames, 0);
+  const totalTop3 = rows.reduce((sum, row) => sum + (row.top3Rate / 100) * row.totalGames, 0);
+  const totalRP = rows.reduce((sum, row) => sum + row.averageRP * row.totalGames, 0);
+
+  return {
+    characterNum,
+    name: getCharacterName(characterNum),
+    weaponCodes: sortWeaponCodes(rows.map((row) => row.bestWeapon).filter((weapon) => weapon > 0)),
+    totalGames,
+    pickRate: totalMatches > 0 ? (totalGames / totalMatches) * 100 : 0,
+    winRate: totalGames > 0 ? (totalWins / totalGames) * 100 : 0,
+    top3Rate: totalGames > 0 ? (totalTop3 / totalGames) * 100 : 0,
+    averageRP: totalGames > 0 ? totalRP / totalGames : 0,
+  };
+}
+
+function getTraitLabels(characterNum: number, weaponCodes: number[]) {
+  const labels = new Set<string>();
 
   for (const data of LAB_ROLE_DATA) {
+    const groupById = new Map(data.groups.map((group) => [group.id, group.label]));
     for (const character of data.characters) {
-      const roles = map.get(character.characterCode) ?? new Set<CharacterRole>();
-      roles.add(data.role);
-      map.set(character.characterCode, roles);
+      if (character.characterCode !== characterNum) continue;
+      if (weaponCodes.length > 0 && !weaponCodes.includes(character.weapon)) continue;
+
+      const label = character.groupId == null ? null : groupById.get(character.groupId);
+      if (label) labels.add(`${data.role} · ${label}`);
     }
   }
 
-  return new Map([...map.entries()].map(([code, roles]) => [code, sortRoles([...roles])]));
-}
-
-function getCharacterLabRoles(characterNum: number) {
-  return CHARACTER_LAB_ROLES.get(characterNum) ?? [];
+  return [...labels].sort((a, b) => a.localeCompare(b, "ko-KR"));
 }
 
 function aggregateRoles(
@@ -222,15 +280,32 @@ function aggregateRoleMap(rankings: CharacterRankingData[]) {
 
 function buildDelta(
   note: CharacterPatchNote,
-  currentMetrics: Map<number, PatchCharacterMetric>,
-  previousMetrics: Map<number, PatchCharacterMetric>
+  currentRankings: CharacterRankingData[],
+  previousRankings: CharacterRankingData[],
+  totalMatches: number,
+  previousTotalMatches: number
 ): PatchCharacterDelta {
-  const current = currentMetrics.get(note.characterCode) ?? null;
-  const previous = previousMetrics.get(note.characterCode) ?? null;
+  const changeTypes = [...new Set(note.changes.map((change) => change.changeType))];
+  const noteWeaponCodes = getNoteWeaponCodes(note);
+  const statWeaponCodes = sortWeaponCodes([
+    ...collectCharacterWeaponCodes(note.characterCode, currentRankings),
+    ...collectCharacterWeaponCodes(note.characterCode, previousRankings),
+  ]);
+  const weaponCodes = noteWeaponCodes.length > 0 ? noteWeaponCodes : statWeaponCodes;
+  const current = buildCharacterMetric(
+    note.characterCode,
+    currentRankings,
+    totalMatches,
+    weaponCodes
+  );
+  const previous = buildCharacterMetric(
+    note.characterCode,
+    previousRankings,
+    previousTotalMatches,
+    weaponCodes
+  );
   const currentSafe = current ?? emptyMetric(note.characterCode);
   const previousSafe = previous ?? emptyMetric(note.characterCode);
-  const changeTypes = [...new Set(note.changes.map((change) => change.changeType))];
-  const roles = sortRoles([...(current?.roles ?? []), ...(previous?.roles ?? [])]);
 
   return {
     characterNum: note.characterCode,
@@ -244,7 +319,9 @@ function buildDelta(
     deltaTop3Rate: currentSafe.top3Rate - previousSafe.top3Rate,
     deltaAverageRP: currentSafe.averageRP - previousSafe.averageRP,
     changeTypes,
-    roles,
+    weaponCodes,
+    weaponNames: weaponCodes.map((weaponCode) => resolveWeaponName(weaponCode)),
+    traitLabels: getTraitLabels(note.characterCode, weaponCodes),
   };
 }
 
@@ -281,12 +358,18 @@ async function fetchPatchAnalysisData(): Promise<PatchAnalysisData> {
   }
 
   const rankingData = await getCachedRankingData(currentPatch, ANALYSIS_TIER);
-  const { totalMatches, metrics: currentMetrics } = aggregateCharacters(rankingData.rankings);
-  const { totalMatches: previousTotalMatches, metrics: previousMetrics } = aggregateCharacters(
-    rankingData.previousRankings
-  );
+  const { totalMatches } = aggregateCharacters(rankingData.rankings);
+  const { totalMatches: previousTotalMatches } = aggregateCharacters(rankingData.previousRankings);
   const notes = getNotesByPatch(currentPatch);
-  const deltas = notes.map((note) => buildDelta(note, currentMetrics, previousMetrics));
+  const deltas = notes.map((note) =>
+    buildDelta(
+      note,
+      rankingData.rankings,
+      rankingData.previousRankings,
+      totalMatches,
+      previousTotalMatches
+    )
+  );
 
   const buffed = deltas
     .filter((entry) => entry.changeTypes.includes("buff") && !entry.changeTypes.includes("nerf"))
