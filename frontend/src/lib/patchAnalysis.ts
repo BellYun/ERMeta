@@ -156,19 +156,6 @@ interface RoleAccumulator {
   totalRP: number;
 }
 
-function emptyMetric(characterNum: number): PatchCharacterMetric {
-  return {
-    characterNum,
-    name: getCharacterName(characterNum),
-    weaponCodes: [],
-    totalGames: 0,
-    pickRate: 0,
-    winRate: 0,
-    top3Rate: 0,
-    averageRP: 0,
-  };
-}
-
 function aggregateCharacters(rankings: CharacterRankingData[]) {
   const totalMatches = rankings.reduce((sum, row) => sum + row.totalGames, 0);
   const map = new Map<number, CharacterAccumulator>();
@@ -359,8 +346,7 @@ function buildDeltaForScope(
     previousTotalMatches,
     weaponCodes
   );
-  const currentSafe = current ?? emptyMetric(note.characterCode);
-  const previousSafe = previous ?? emptyMetric(note.characterCode);
+  const hasComparableMetrics = current !== null && previous !== null;
 
   return {
     characterNum: note.characterCode,
@@ -368,11 +354,11 @@ function buildDeltaForScope(
     note,
     current,
     previous,
-    deltaGames: currentSafe.totalGames - previousSafe.totalGames,
-    deltaPickRate: currentSafe.pickRate - previousSafe.pickRate,
-    deltaWinRate: currentSafe.winRate - previousSafe.winRate,
-    deltaTop3Rate: currentSafe.top3Rate - previousSafe.top3Rate,
-    deltaAverageRP: currentSafe.averageRP - previousSafe.averageRP,
+    deltaGames: hasComparableMetrics ? current.totalGames - previous.totalGames : 0,
+    deltaPickRate: hasComparableMetrics ? current.pickRate - previous.pickRate : 0,
+    deltaWinRate: hasComparableMetrics ? current.winRate - previous.winRate : 0,
+    deltaTop3Rate: hasComparableMetrics ? current.top3Rate - previous.top3Rate : 0,
+    deltaAverageRP: hasComparableMetrics ? current.averageRP - previous.averageRP : 0,
     changeTypes,
     weaponCodes,
     weaponNames: weaponCodes.map((weaponCode) => resolveWeaponName(weaponCode)),
