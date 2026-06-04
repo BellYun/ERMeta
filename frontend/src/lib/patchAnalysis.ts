@@ -52,10 +52,22 @@ function emptyRankingData(
   };
 }
 
+function hasSupabaseEnv() {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+  );
+}
+
 async function getPatchRankingData(
   currentPatch: string,
   previousPatch: string
 ): Promise<RankingResponse> {
+  if (!hasSupabaseEnv()) {
+    console.warn("[patch-analysis] Supabase env missing; using empty ranking fallback.");
+    return emptyRankingData(currentPatch, previousPatch, ANALYSIS_TIER);
+  }
+
   try {
     return await getCachedRankingData(currentPatch, ANALYSIS_TIER);
   } catch (error) {
