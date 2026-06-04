@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+const hasSupabase = !!process.env.NEXT_PUBLIC_SUPABASE_URL;
+
 test.describe("홈 페이지 스모크", () => {
   test("루트가 200을 반환하고 메타 분석 히어로를 렌더한다", async ({ page }) => {
     const response = await page.goto("/");
@@ -11,6 +13,8 @@ test.describe("홈 페이지 스모크", () => {
   });
 
   test("GlobalFilter가 patch select + tier 버튼 세그먼트를 노출한다", async ({ page }) => {
+    test.skip(!hasSupabase, "NEXT_PUBLIC_SUPABASE_URL 미주입 → 홈 통계 대시보드 미노출");
+
     await page.goto("/");
 
     const patchSelect = page.getByRole("combobox", { name: "패치 선택" });
@@ -23,6 +27,8 @@ test.describe("홈 페이지 스모크", () => {
   });
 
   test("티어 랭킹과 꿀챔 섹션이 순차 스트리밍되어 나타난다", async ({ page }) => {
+    test.skip(!hasSupabase, "NEXT_PUBLIC_SUPABASE_URL 미주입 → 홈 통계 대시보드 미노출");
+
     await page.goto("/");
 
     await expect(page.getByRole("heading", { name: /이번 패치 떡상/ })).toBeVisible({

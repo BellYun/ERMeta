@@ -28,7 +28,6 @@
     "seasonRecap": "Season Recap",
     "feedback": "Send Feedback",
     "patchPanel": "Patch {patch}",
-    "patchPanelFallback": "Patch unavailable",
     "updateStatus": "Update: live refresh"
   },
   "mobileTab": {
@@ -63,6 +62,43 @@
       "buff": "Buff",
       "nerf": "Nerf",
       "rework": "Rework"
+    }
+  },
+  "patchAnalysis": {
+    "evaluations": {
+      "3": "Fiora was already posting strong numbers before the nerf. Average RP moved up, but win rate and Top 3 rate fell.",
+      "5": "Zahir took a meaningful throwing-weapon mastery nerf, but his current meta numbers are still holding up well.",
+      "6": "Crossbow Nadine was already in a solid position, and the attack speed mastery buff pushed her numbers higher. Pick rate, win rate, and average RP are all strong, so she remains a good ranged carry option.",
+      "8": "The per-level attack power buff has not produced a meaningful statistical change. The rise of Katja, Adriana, and other characters that can punish Hart in poke standoffs is likely affecting the result.",
+      "13": "Shoichi received a Q slow-duration buff, but his early elimination risk remains a major issue. His aggregate numbers are still weak.",
+      "15": "Sissela's early durability buff improved her early fights, reducing the chance of being eliminated before stabilizing.",
+      "17": "Adriana's average RP rose sharply after the mobility cooldown buff. The change improved both her survival tools and her fight control.",
+      "18": "Shoichi received an E damage buff, but assassin metrics are broadly weak in the current environment, so the island still looks difficult for him.",
+      "21": "The intent to reduce Rozzi's control over melee opponents seems to have landed, but she is still a strong pick.",
+      "29": "Leon received a favorable buff this season. The passive movement speed increase lifted his aggregate numbers, with glove Leon reacting more strongly.",
+      "33": "Nicky received her first buff in a while. The passive and E buffs appear meaningful for a character that struggled throughout last season, with RP, win rate, and pick rate all trending upward.",
+      "35": "Tonfa Yuki received a second consecutive buff. With tonfa Yuki's average RP rising, players who moved to glove Yuki may want to reconsider tonfa.",
+      "38": "The passive cooldown reduction did not directly affect combat enough to move Jenny's numbers meaningfully.",
+      "45": "Mai's Exclusive buff does not appear to have a major impact in solo ranked play.",
+      "47": "Laura received a baseline stat buff through movement speed and skill amplification per level. Her numbers were already reasonable, and this should help her more against bruisers and ranged carries.",
+      "51": "Priya was buffed, but the change has not produced a meaningful statistical signal.",
+      "52": "Adina gained movement speed, but the change does not look like a meaningful buff by itself.",
+      "55": "Estelle was already posting good metrics, and the damage buff is reinforcing that trend. She looks worth choosing when the team needs a tank.",
+      "56": "Piolo has been nerfed twice in a row. His damage keeps being trimmed, but his utility is still preventing average RP from falling meaningfully.",
+      "59": "Isaac received another buff through attack power per level and passive damage. Even with a pick-rate increase that likely brought in less experienced players, his average RP improved, so he needs more observation through the next patch.",
+      "61": "Irem received a passive buff alongside a new skin. The skin effect appears to have raised pick rate and brought in many less experienced players, so her real trend needs more time.",
+      "63": "Ian was already in a decent position and received a useful buff. The W damage increase is pushing every major metric upward.",
+      "66": "Arda was performing well in high-tier games before the nerf. The ultimate cooldown increase is serious, but his numbers are still serviceable for now.",
+      "69": "Leni's defense and stun-duration nerfs are showing up in stability. Her average RP has fallen.",
+      "70": "Tsubame was weak before the patch, and this buff has not been enough to lift her numbers.",
+      "71": "Kenneth received a second consecutive buff. His previous buff did not fix the metrics much, but the added W damage-reduction buff has improved every major number.",
+      "72": "Katja received a per-level attack power buff and is showing good numbers. Despite a pick-rate increase that likely brought in less experienced players, average RP and win rate rose slightly.",
+      "74": "Darko is having a difficult season. The buff seems to respond to concerns about his value compared with Bihyung, but the late shield increase still looks insufficient.",
+      "77": "Yumin's Q damage was nerfed after she had been posting stable numbers. There is no major impact yet, so the rest of the patch should be watched.",
+      "83": "Henry only received a simple per-level health nerf. His average RP dipped slightly, but the overall impact is limited.",
+      "84": "Blair was nerfed for the first time in a while after a strong season start. Average RP rose, but win rate fell, suggesting the Q scaling nerf is having some effect.",
+      "87": "Coreline's empowered mirror projectile speed was nerfed. She had been stable across tiers, and this appears to have had some impact.",
+      "88": "Bihyung's strong baseline stats were nerfed again. It may be time to move him out of the OP tier."
     }
   },
   "layout": {
@@ -128,6 +164,16 @@
       "cautionTitle": "Caution rules",
       "cautionBody": "Low-pick or low-sample data can be biased toward specialists, so tier lists and recommendations should be read conservatively."
     },
+    "fallback": {
+      "subtitle": "Analyzing Diamond+ ranked data for patch {patch}.",
+      "kicker": "Patch {patch} analysis baseline",
+      "title": "Current patch meta is summarized with ranked decision metrics, not win rate alone",
+      "body": "ER&GG organizes Eternal Return ranked data across character tiers, trio compositions, weapon choices, and patch-to-patch movement. Win rate is treated as first-place conversion, Top 3 rate as placement stability, average RP as climb efficiency, and pick rate with sample size as context for reliability. The same character can read differently by patch, tier, team role, and weapon choice, so the current patch is used as the default baseline. Character pages and patch notes connect live statistics with the latest balance changes.",
+      "characterCta": "Character analysis",
+      "patchCta": "Patch notes",
+      "recapCta": "Season recap",
+      "methodologyCta": "Methodology"
+    },
     "preseasonNotice": "Patch 11.0 uses preseason data and is not provided.",
     "filterCta": "Open filters",
     "topFiveTitle": "Patch Risers Top 5",
@@ -191,7 +237,7 @@
       "winRate": "Rate of finishing 1st with this character. Expected baseline: 12.5%.",
       "averageRp": "Average rank points gained per game. Positive values mean climbing."
     },
-    "empty": "No data",
+    "empty": "Checking samples for the selected conditions",
     "patchNoteTitle": "Patch {patch} changes",
     "patchNoteButton": "View patch {patch} changes",
     "mobileSort": "Sort",
@@ -252,7 +298,7 @@
     "averageRank": "Avg Rank",
     "averageRp": "Avg RP",
     "weaponSub": "Weapon {value}%",
-    "emptyPatchData": "No data for this patch.",
+    "emptyPatchData": "Checking samples for this patch.",
     "loadingPatchInfo": "Loading patch data...",
     "tiers": {
       "PLATINUM": "Platinum",
@@ -286,7 +332,7 @@
     "loadingPatches": "Loading patch data...",
     "current": "Current",
     "noChanges": "No changes",
-    "noData": "No data available.",
+    "noData": "Checking samples for the selected conditions.",
     "notEnoughData": "Not enough patch data to compare.",
     "minTwoPatches": "At least two patches are required.",
     "patchTrend": "Patch Trend",
@@ -355,7 +401,7 @@
     "infoPair": "Click a comp to see the trait breakdown",
     "more": "Show more ({visible}/{total})",
     "emptyFiltered": "No comps match your current character pool. Try widening the pool.",
-    "emptyNoData": "No data is available for this team setup.",
+    "emptyNoData": "Checking samples for this team setup.",
     "clearAllies": "Clear allies",
     "timeout": "The request timed out. Please try again.",
     "genericError": "Something went wrong."
@@ -430,7 +476,7 @@
     },
     "empty": {
       "builds": "No trait build data is available.",
-      "cell": "No data"
+      "cell": "Checking sample"
     }
   },
   "focusWeaponPool": {
@@ -487,7 +533,7 @@
     "loading": "Loading team data...",
     "infoSingle": "Add one more ally for more accurate recommendations",
     "emptyFiltered": "No comps match your character pool. Try widening the pool.",
-    "emptyNoData": "No data is available for this team setup.",
+    "emptyNoData": "Checking samples for this team setup.",
     "clearAllies": "Clear allies",
     "timeout": "The request timed out. Please try again.",
     "genericError": "Something went wrong."

@@ -12,7 +12,7 @@ interface HomePageContentProps {
 }
 
 function formatMetricNumber(value: number) {
-  if (!Number.isFinite(value) || value <= 0) return "0";
+  if (!Number.isFinite(value) || value <= 0) return "";
   return new Intl.NumberFormat("en-US").format(Math.round(value));
 }
 
@@ -39,7 +39,9 @@ export async function HomePageContent({
   const t = await getTranslations({ locale, namespace: "home" });
   const defaultPatch = patches[0] ?? "";
   const totalMatches = rankingData.rankings.reduce((sum, row) => sum + row.totalGames, 0);
-  const trackedMatches = formatMetricNumber(totalMatches);
+  const hasRankingData = rankingData.rankings.length > 0 && totalMatches > 0;
+  const trackedMatches = hasRankingData ? formatMetricNumber(totalMatches) : "";
+  const fallbackPatch = defaultPatch || "11.3";
   const topBracket = rankingData.rankings.slice(0, 10);
   const averageWinRate =
     topBracket.length > 0
@@ -91,7 +93,9 @@ export async function HomePageContent({
               {t("guide.body")}
             </p>
             <p className="mt-1.5 text-xs text-[var(--color-muted-foreground)] sm:text-sm">
-              {t("subtitle", { count: trackedMatches })}
+              {hasRankingData
+                ? t("subtitle", { count: trackedMatches })
+                : t("fallback.subtitle", { patch: fallbackPatch })}
             </p>
             <a
               href={`/${locale}/methodology`}
@@ -102,77 +106,113 @@ export async function HomePageContent({
             </a>
           </div>
 
-          <div className="metric-card col-span-2 flex min-h-[126px] flex-col justify-between px-4 py-4 sm:min-h-[150px] sm:px-5 sm:py-5 lg:px-6">
-            <div>
-              <p className="metric-value text-[1.65rem] sm:text-[2.1rem] lg:text-[2.45rem]">
-                {trackedMatches}
-              </p>
-              <p className="mt-1 text-[11px] text-[var(--color-muted-foreground)] sm:text-sm">
-                {t("matchMetric")}
-              </p>
-            </div>
-            <div className="mt-3 grid h-[52px] grid-cols-10 items-end gap-1.5 sm:hidden">
-              {mobileVolumeBars.map((height, index) => (
-                <span
-                  key={`mobile-${height}-${index}`}
-                  className="min-w-0 rounded-full bg-[linear-gradient(180deg,rgba(37,99,235,0.22),rgba(59,130,246,0.88))]"
-                  style={{ height: Math.max(14, Math.round(height * 0.72)) }}
-                />
-              ))}
-            </div>
-            <div className="mt-4 hidden h-[70px] items-end gap-1 sm:flex">
-              {volumeBars.map((height, index) => (
-                <span
-                  key={`desktop-${height}-${index}`}
-                  className="w-2 flex-1 rounded-full bg-[linear-gradient(180deg,rgba(37,99,235,0.24),rgba(59,130,246,0.9))]"
-                  style={{ height: Math.max(12, Math.round(height * 0.8)) }}
-                />
-              ))}
-            </div>
-          </div>
+          {hasRankingData ? (
+            <>
+              <div className="metric-card col-span-2 flex min-h-[126px] flex-col justify-between px-4 py-4 sm:min-h-[150px] sm:px-5 sm:py-5 lg:px-6">
+                <div>
+                  <p className="metric-value text-[1.65rem] sm:text-[2.1rem] lg:text-[2.45rem]">
+                    {trackedMatches}
+                  </p>
+                  <p className="mt-1 text-[11px] text-[var(--color-muted-foreground)] sm:text-sm">
+                    {t("matchMetric")}
+                  </p>
+                </div>
+                <div className="mt-3 grid h-[52px] grid-cols-10 items-end gap-1.5 sm:hidden">
+                  {mobileVolumeBars.map((height, index) => (
+                    <span
+                      key={`mobile-${height}-${index}`}
+                      className="min-w-0 rounded-full bg-[linear-gradient(180deg,rgba(37,99,235,0.22),rgba(59,130,246,0.88))]"
+                      style={{ height: Math.max(14, Math.round(height * 0.72)) }}
+                    />
+                  ))}
+                </div>
+                <div className="mt-4 hidden h-[70px] items-end gap-1 sm:flex">
+                  {volumeBars.map((height, index) => (
+                    <span
+                      key={`desktop-${height}-${index}`}
+                      className="w-2 flex-1 rounded-full bg-[linear-gradient(180deg,rgba(37,99,235,0.24),rgba(59,130,246,0.9))]"
+                      style={{ height: Math.max(12, Math.round(height * 0.8)) }}
+                    />
+                  ))}
+                </div>
+              </div>
 
-          <div className="metric-card flex min-h-[116px] flex-col gap-4 px-4 py-4 sm:min-h-[150px] sm:gap-6 sm:px-5 sm:py-5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[rgba(168,85,247,0.22)] bg-[rgba(139,92,246,0.12)] text-[#8b5cf6] sm:h-12 sm:w-12">
-              <Activity className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2} />
-            </div>
-            <div>
-              <p className="metric-value text-[1.35rem] sm:text-[2rem]">
-                {averageWinRate.toFixed(1)}%
-              </p>
-              <p className="mt-1 text-[11px] text-[var(--color-muted-foreground)] sm:text-sm">
-                {t("winRateMetric")}
-              </p>
-            </div>
-          </div>
+              <div className="metric-card flex min-h-[116px] flex-col gap-4 px-4 py-4 sm:min-h-[150px] sm:gap-6 sm:px-5 sm:py-5">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[rgba(168,85,247,0.22)] bg-[rgba(139,92,246,0.12)] text-[#8b5cf6] sm:h-12 sm:w-12">
+                  <Activity className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={2} />
+                </div>
+                <div>
+                  <p className="metric-value text-[1.35rem] sm:text-[2rem]">
+                    {averageWinRate.toFixed(1)}%
+                  </p>
+                  <p className="mt-1 text-[11px] text-[var(--color-muted-foreground)] sm:text-sm">
+                    {t("winRateMetric")}
+                  </p>
+                </div>
+              </div>
 
-          <div className="metric-card flex min-h-[116px] flex-col gap-4 px-4 py-4 sm:min-h-[150px] sm:justify-between sm:px-5 sm:py-5">
-            <div className="flex items-start justify-between gap-4">
+              <div className="metric-card flex min-h-[116px] flex-col gap-4 px-4 py-4 sm:min-h-[150px] sm:justify-between sm:px-5 sm:py-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="metric-value text-[1.35rem] sm:text-[2rem]">
+                      {formatSigned(averageRp, 2)}
+                    </p>
+                    <p className="mt-1 text-[11px] text-[var(--color-muted-foreground)] sm:text-sm">
+                      {t("rpMetric")}
+                    </p>
+                  </div>
+                  <div
+                    className="relative h-12 w-12 shrink-0 rounded-full sm:h-16 sm:w-16"
+                    style={{
+                      background: `conic-gradient(var(--color-primary) ${positiveRatio * 360}deg, rgba(255,255,255,0.08) 0deg)`,
+                    }}
+                  >
+                    <div className="absolute inset-[6px] rounded-full bg-[rgba(8,13,26,0.96)] sm:inset-[8px]" />
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="metric-card col-span-2 flex min-h-[260px] flex-col justify-between px-4 py-4 sm:px-5 sm:py-5 lg:px-6 xl:col-span-3 2xl:col-span-3">
               <div>
-                <p className="metric-value text-[1.35rem] sm:text-[2rem]">
-                  {formatSigned(averageRp, 2)}
+                <p className="text-xs font-bold uppercase text-[var(--color-primary)]">
+                  {t("fallback.kicker", { patch: fallbackPatch })}
                 </p>
-                <p className="mt-1 text-[11px] text-[var(--color-muted-foreground)] sm:text-sm">
-                  {t("rpMetric")}
+                <h2 className="mt-2 text-[1.35rem] font-black text-[var(--color-foreground)] sm:text-[1.65rem]">
+                  {t("fallback.title")}
+                </h2>
+                <p className="mt-3 max-w-[62rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem] sm:leading-7">
+                  {t("fallback.body")}
                 </p>
               </div>
-              <div
-                className="relative h-12 w-12 shrink-0 rounded-full sm:h-16 sm:w-16"
-                style={{
-                  background: `conic-gradient(var(--color-primary) ${positiveRatio * 360}deg, rgba(255,255,255,0.08) 0deg)`,
-                }}
-              >
-                <div className="absolute inset-[6px] rounded-full bg-[rgba(8,13,26,0.96)] sm:inset-[8px]" />
+              <div className="mt-4 flex flex-wrap gap-2">
+                {[
+                  { href: `/${locale}/character/1`, label: t("fallback.characterCta") },
+                  { href: `/${locale}/patches`, label: t("fallback.patchCta") },
+                  { href: `/${locale}/season10-recap`, label: t("fallback.recapCta") },
+                  { href: `/${locale}/methodology`, label: t("fallback.methodologyCta") },
+                ].map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    className="rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-xs font-semibold text-[var(--color-foreground)] hover:border-[var(--color-border-light)]"
+                  >
+                    {link.label}
+                  </a>
+                ))}
               </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
-      <HomeDashboardSections
-        patches={patches}
-        homeMetaStats={homeMetaStats}
-        defaultPatch={defaultPatch}
-      />
+      {hasRankingData ? (
+        <HomeDashboardSections
+          patches={patches}
+          homeMetaStats={homeMetaStats}
+          defaultPatch={defaultPatch}
+        />
+      ) : null}
     </div>
   );
 }

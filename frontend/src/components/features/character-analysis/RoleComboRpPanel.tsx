@@ -189,7 +189,7 @@ export function RoleComboRpPanel({ characterCode, selectedWeapon }: RoleComboRpP
         </div>
       ) : !data ? (
         <div className="mx-4 mb-4 flex min-h-[180px] items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] bg-[rgba(255,255,255,0.025)] px-4 text-center text-xs text-[var(--color-muted-foreground)]">
-          역할 조합 데이터 없음
+          역할 조합 표본 확인 중
         </div>
       ) : (
         <>

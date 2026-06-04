@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getAllPatchVersions } from "@/data/patch-notes";
+import { getAllPatchVersions, getStatsPatchVersions } from "@/data/patch-notes";
 import {
   buildSeoAlternateLanguages,
   prefixSeoLocalePath,
@@ -16,6 +16,10 @@ const CHARACTER_CODES: number[] = [
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = (process.env.NEXT_PUBLIC_BASE_URL ?? "https://erwagg.com").replace(/\/$/, "");
   const now = new Date();
+  const latestStatsPatch = getStatsPatchVersions()[0];
+  const patchAnalysisPath = latestStatsPatch
+    ? `/patch-analysis/${latestStatsPatch}`
+    : "/patch-analysis";
 
   const buildAlternates = (pathname: string) => {
     const languages = buildSeoAlternateLanguages(pathname);
@@ -50,6 +54,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     buildLocalizedEntry("/synergy", "daily", 0.8),
     buildLocalizedEntry("/synergy-detail", "daily", 0.75),
     buildLocalizedEntry("/patches", "weekly", 0.7),
+    buildLocalizedEntry(patchAnalysisPath, "daily", 0.82),
     buildLocalizedEntry("/season10-recap", "weekly", 0.8),
     buildLocalizedEntry("/privacy", "monthly", 0.35),
     buildLocalizedEntry("/terms", "monthly", 0.35),
@@ -117,6 +122,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.65,
       alternates: buildAlternates("/patches"),
+    },
+    {
+      url: `${base}${prefixSeoLocalePath(patchAnalysisPath, SEO_TARGET_LOCALE)}`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.72,
+      alternates: buildAlternates(patchAnalysisPath),
     },
     {
       url: `${base}${prefixSeoLocalePath("/season10-recap", SEO_TARGET_LOCALE)}`,

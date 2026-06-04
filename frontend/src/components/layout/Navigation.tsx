@@ -3,6 +3,7 @@
 import {
   BarChart3,
   FlaskConical,
+  Gauge,
   Layers,
   MessageSquarePlus,
   Network,
@@ -34,6 +35,7 @@ interface NavigationLink {
 export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
   const pathname = usePathname();
   const normalizedPathname = stripRouteLocaleFromPathname(pathname);
+  const patchAnalysisPath = currentPatch ? `/patch-analysis/${currentPatch}` : "/patch-analysis";
   const t = useTranslations("navigation");
   const tHeader = useTranslations("header");
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
@@ -87,6 +89,12 @@ export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
       label: t("patchNotes"),
       icon: NotebookText,
       isActive: normalizedPathname.startsWith("/patches"),
+    },
+    {
+      href: withCurrentRouteLocale(pathname, patchAnalysisPath),
+      label: "패치 분석",
+      icon: Gauge,
+      isActive: normalizedPathname.startsWith("/patch-analysis"),
     },
     {
       href: withCurrentRouteLocale(pathname, "/season10-recap"),
@@ -154,21 +162,23 @@ export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
         })}
 
         <div className="mt-auto flex flex-col gap-3 pt-4">
-          <div className="rounded-[20px] border border-[var(--color-border)] bg-[rgba(16,24,44,0.84)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-sm font-semibold text-[var(--color-foreground)]">
-                {currentPatch ? t("patchPanel", { patch: currentPatch }) : t("patchPanelFallback")}
-              </p>
-              <div className="flex items-center gap-1 text-[var(--color-muted-foreground)]">
-                <span className="text-xs">⌄</span>
-                <span className="text-xs">⌃</span>
+          {currentPatch ? (
+            <div className="rounded-[20px] border border-[var(--color-border)] bg-[rgba(16,24,44,0.84)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-semibold text-[var(--color-foreground)]">
+                  {t("patchPanel", { patch: currentPatch })}
+                </p>
+                <div className="flex items-center gap-1 text-[var(--color-muted-foreground)]">
+                  <span className="text-xs">⌄</span>
+                  <span className="text-xs">⌃</span>
+                </div>
+              </div>
+              <div className="mt-3 flex items-center gap-2 text-xs text-[var(--color-muted-foreground)]">
+                <span className="h-2 w-2 rounded-full bg-[var(--color-success)] shadow-[0_0_10px_rgba(74,222,128,0.7)]" />
+                <span>{t("updateStatus")}</span>
               </div>
             </div>
-            <div className="mt-3 flex items-center gap-2 text-xs text-[var(--color-muted-foreground)]">
-              <span className="h-2 w-2 rounded-full bg-[var(--color-success)] shadow-[0_0_10px_rgba(74,222,128,0.7)]" />
-              <span>{t("updateStatus")}</span>
-            </div>
-          </div>
+          ) : null}
 
           <button
             type="button"

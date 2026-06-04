@@ -60,7 +60,7 @@ export function SeasonHallOfFameBlock({
         <div className="overflow-hidden rounded-[20px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)]">
           {entries.length === 0 ? (
             <div className="py-16 text-center text-sm text-[var(--color-muted-foreground)]">
-              데이터 없음
+              표본 확인 중
             </div>
           ) : (
             <ol className="divide-y divide-[var(--color-border)]/40">

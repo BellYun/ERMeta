@@ -132,9 +132,26 @@
       "label": "아웃라이어-블레어-쌍검",
       "curated": true,
       "characterKeys": ["84_18"]
+    },
+    {
+      "id": 25,
+      "label": "아웃라이어-비형-방망이",
+      "curated": true,
+      "characterKeys": ["88_3"]
     }
   ],
   "characters": [
+    {
+      "characterCode": 88,
+      "characterName": "비형",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "totalGames": 0,
+      "ownMeanRP": 0,
+      "groupId": 25,
+      "strong": [],
+      "weak": []
+    },
     {
       "characterCode": 65,
       "characterName": "데비&마를렌",

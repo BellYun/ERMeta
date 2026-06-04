@@ -5,6 +5,7 @@ import { AppFrame } from "@/components/AppFrame";
 import FeedbackWidget from "@/components/features/FeedbackWidget";
 import { L10nProvider } from "@/components/L10nProvider";
 import { RootDocumentExtras } from "@/components/RootDocumentExtras";
+import { getStatsPatchVersions } from "@/data/patch-notes";
 import { DEFAULT_ROUTE_LOCALE } from "@/i18n/routing";
 import { DEFAULT_LANGUAGE } from "@/lib/detectLanguage";
 import { loadL10nRecord } from "@/lib/serverL10n";
@@ -19,6 +20,7 @@ export default async function DefaultLayout({ children }: { children: ReactNode 
   const initialMessages = await loadIntlMessages(DEFAULT_LANGUAGE);
   const initialL10n = loadL10nRecord(DEFAULT_LANGUAGE);
   const structuredData = await buildWebsiteStructuredData(DEFAULT_LANGUAGE, DEFAULT_ROUTE_LOCALE);
+  const currentPatch = getStatsPatchVersions()[0] ?? "";
 
   return (
     <html lang={HTML_LANG_BY_LANGUAGE[DEFAULT_LANGUAGE] ?? "ko"}>
@@ -28,7 +30,11 @@ export default async function DefaultLayout({ children }: { children: ReactNode 
           initialMessages={initialMessages}
           initialLanguage={DEFAULT_LANGUAGE}
         >
-          <AppFrame shellId="default-ko-shell" messages={initialMessages} currentPatch="">
+          <AppFrame
+            shellId="default-ko-shell"
+            messages={initialMessages}
+            currentPatch={currentPatch}
+          >
             {children}
           </AppFrame>
           <FeedbackWidget />
