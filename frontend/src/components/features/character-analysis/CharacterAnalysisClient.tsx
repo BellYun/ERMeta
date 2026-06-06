@@ -113,32 +113,6 @@ export function CharacterAnalysisClient({
       ? (allPatchStats[selectedPatchIndex + 1] ?? null)
       : null;
 
-  // 나머지 패치 데이터 로드 (idle 시)
-  React.useEffect(() => {
-    if (patches.length <= 2) return;
-    const remainingPatches = patches.slice(2);
-    const fetchRemaining = () =>
-      Promise.all(remainingPatches.map((p) => fetchStats(code, p, selectedTier))).then(
-        (restResults) => {
-          setAllPatchStats((prev) => {
-            const merged =
-              prev.length === patches.length ? [...prev] : Array(patches.length).fill(null);
-            restResults.forEach((r, i) => {
-              merged[i + 2] = r;
-            });
-            return merged;
-          });
-        }
-      );
-    if (typeof requestIdleCallback !== "undefined") {
-      requestIdleCallback(() => {
-        fetchRemaining();
-      });
-    } else {
-      setTimeout(fetchRemaining, 200);
-    }
-  }, [patches, code, selectedTier]);
-
   React.useEffect(() => {
     if (!selectablePatches.length) return;
     setSelectedPatch((current) =>
