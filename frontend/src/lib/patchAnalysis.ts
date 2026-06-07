@@ -1,4 +1,3 @@
-import { unstable_cache } from "next/cache";
 import {
   getNotesByPatch,
   getStatsPatchVersions,
@@ -6,11 +5,7 @@ import {
   type ChangeType,
 } from "@/data/patch-notes";
 import { type CharacterRole, getComboRoles, getCharacterName } from "@/lib/characterMap";
-import {
-  type CharacterRankingData,
-  getCachedRankingData,
-  type RankingResponse,
-} from "@/lib/ranking";
+import { fetchRankingData, type CharacterRankingData, type RankingResponse } from "@/lib/ranking";
 import { resolveWeaponName, WEAPON_KOR_BY_CODE } from "@/lib/weaponMap";
 import assassinsData from "../../public/data/lab/assassins.json";
 import rangersData from "../../public/data/lab/rangers.json";
@@ -25,6 +20,7 @@ const WEAPON_ORDER = Object.keys(WEAPON_KOR_BY_CODE).map(Number);
 const WEAPON_ALIASES: Partial<Record<number, string[]>> = {
   18: ["쌍날검"],
 };
+const patchAnalysisDataCache = new Map<string, Promise<PatchAnalysisData>>();
 const LAB_ROLE_DATA = [
   tanksData,
   warriorsData,
@@ -69,7 +65,7 @@ async function getPatchRankingData(
   }
 
   try {
-    return await getCachedRankingData(currentPatch, ANALYSIS_TIER);
+    return await fetchRankingData(currentPatch, ANALYSIS_TIER);
   } catch (error) {
     if (
       error instanceof Error &&
@@ -502,13 +498,10 @@ async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAna
 
 export async function getPatchAnalysisData(version?: string): Promise<PatchAnalysisData> {
   const patchVersion = version ?? getStatsPatchVersions()[0] ?? "";
+  const cached = patchAnalysisDataCache.get(patchVersion);
+  if (cached) return cached;
 
-  return unstable_cache(
-    () => fetchPatchAnalysisData(patchVersion),
-    ["patch-analysis", ANALYSIS_TIER, patchVersion],
-    {
-      revalidate: 21600,
-      tags: ["patch-analysis", `patch-analysis:${ANALYSIS_TIER}`, `patch-analysis:${patchVersion}`],
-    }
-  )();
+  const promise = fetchPatchAnalysisData(patchVersion);
+  patchAnalysisDataCache.set(patchVersion, promise);
+  return promise;
 }

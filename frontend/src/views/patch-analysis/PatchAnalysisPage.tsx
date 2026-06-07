@@ -20,7 +20,6 @@ import { BASE_URL } from "@/lib/siteMetadata";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-static";
-export const revalidate = 21600;
 
 const ROLE_ORDER: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
 const AGGREGATE_ONLY_CHARACTERS = new Set([3, 13, 15, 29]);
