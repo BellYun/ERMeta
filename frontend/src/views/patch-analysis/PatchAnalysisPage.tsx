@@ -25,7 +25,7 @@ const ROLE_ORDER: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜
 const AGGREGATE_ONLY_CHARACTERS = new Set([3, 13, 15, 29]);
 const EVALUATED_CHARACTER_NUMS = [
   3, 5, 6, 8, 13, 15, 17, 18, 21, 29, 33, 35, 38, 45, 47, 51, 52, 55, 56, 59, 61, 63, 66, 69, 70,
-  71, 72, 74, 77, 83, 84, 87, 88,
+  71, 72, 73, 74, 77, 83, 84, 87, 88,
 ];
 
 interface PatchAnalysisPageProps {
