@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import {
   CharacterDetailGrid,
-  MetricsBlock,
   SimilarBlock,
   TraitComboBlock,
   type CharacterDetailData,
@@ -183,7 +182,6 @@ export async function TrioLabDetailContent({
         tier={TIER_LABEL}
       />
       <div className="flex min-w-0 flex-col gap-5">
-        <MetricsBlock combo={combo} />
         <CharacterDetailGrid rows={characterDetails} />
         <TraitComboBlock combo={combo} rows={trioRows} traitNames={traitNames} />
         <SimilarBlock

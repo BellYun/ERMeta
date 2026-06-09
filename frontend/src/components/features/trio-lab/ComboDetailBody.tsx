@@ -171,55 +171,6 @@ function MemberAvatar({ member, size = "h-16 w-16" }: { member: TrioWeaponMember
   );
 }
 
-function MetricTile({
-  label,
-  value,
-  sublabel,
-}: {
-  label: string;
-  value: string;
-  sublabel?: string;
-}) {
-  return (
-    <div className="metric-card p-4">
-      <p className="metric-label">{label}</p>
-      <p className="metric-value mt-1.5">{value}</p>
-      {sublabel && (
-        <p className="mt-1 font-mono text-xs font-semibold tabular-nums text-[var(--color-muted-foreground)]">
-          {sublabel}
-        </p>
-      )}
-    </div>
-  );
-}
-
-export function MetricsBlock({ combo }: { combo: TrioWeaponCombo }) {
-  return (
-    <section className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-      <MetricTile
-        label="평균 승률"
-        value={`${combo.winRate.toFixed(1)}%`}
-        sublabel="trio-weapon 단위"
-      />
-      <MetricTile
-        label="평균 RP"
-        value={`${combo.averageRP >= 0 ? "+" : ""}${combo.averageRP.toFixed(1)}`}
-        sublabel="3인 평균"
-      />
-      <MetricTile
-        label="평균 순위"
-        value={`#${combo.averageRank.toFixed(1)}`}
-        sublabel="낮을수록 좋음"
-      />
-      <MetricTile
-        label="표본 수"
-        value={combo.totalGames.toLocaleString("ko-KR")}
-        sublabel="누적 매치"
-      />
-    </section>
-  );
-}
-
 function ItemThumb({ code, label }: { code: number | null; label: string }) {
   const name = itemNameOf(code);
   return (
