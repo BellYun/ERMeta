@@ -1,5 +1,6 @@
 import { ChevronRight, TrendingUp } from "lucide-react";
 import Image from "next/image";
+import * as React from "react";
 import { Link } from "@/i18n/navigation";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
 import { characterDisplayName, comboTier, weaponDisplayName, type TrioWeaponCombo } from "./types";
@@ -12,46 +13,75 @@ const SCORE_COLOR: Record<string, string> = {
   C: "text-[var(--color-accent-purple)]",
   D: "text-[var(--color-muted-foreground)]",
 };
+const SMALL_SAMPLE_THRESHOLD = 10;
 
 interface ComboGalleryCardProps {
   combo: TrioWeaponCombo;
   detailHref: string;
+  characterOrder?: number[];
   rank: number;
 }
 
-export function ComboGalleryCard({ combo, detailHref, rank }: ComboGalleryCardProps) {
+export function ComboGalleryCard({
+  combo,
+  detailHref,
+  characterOrder = [],
+  rank,
+}: ComboGalleryCardProps) {
   const score = comboTier(combo.winRate, combo.averageRP, combo.averageRank, combo.totalGames);
   const positiveRP = combo.averageRP > 0;
+  const isSmallSample = combo.totalGames < SMALL_SAMPLE_THRESHOLD;
+  const orderedMembers = React.useMemo(
+    () =>
+      combo.members
+        .map((member, index) => ({ member, index }))
+        .sort((a, b) => {
+          const orderA = characterOrder.indexOf(a.member.character);
+          const orderB = characterOrder.indexOf(b.member.character);
+          const rankA = orderA === -1 ? Number.MAX_SAFE_INTEGER : orderA;
+          const rankB = orderB === -1 ? Number.MAX_SAFE_INTEGER : orderB;
+          return rankA - rankB || a.index - b.index;
+        })
+        .map(({ member }) => member),
+    [characterOrder, combo.members]
+  );
 
   return (
-    <article className="char-card group relative flex h-full flex-col gap-4 p-4 sm:p-5">
-      <header className="flex items-start justify-between">
-        <span className="font-mono text-[11px] font-semibold tracking-[0.16em] text-[var(--color-muted-foreground)]">
-          #{String(rank).padStart(2, "0")}
-        </span>
-        <span
-          className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold tabular-nums ${
+    <article className="char-card group relative flex h-full flex-col gap-3.5 p-4 transition-colors hover:border-[rgba(96,165,250,0.34)] sm:p-4">
+      <header className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className="inline-flex h-7 min-w-8 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 font-mono text-[11px] font-bold text-[var(--color-muted-foreground)]">
+            #{String(rank).padStart(2, "0")}
+          </span>
+          {isSmallSample && (
+            <span className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--color-muted-foreground)]">
+              소표본
+            </span>
+          )}
+        </div>
+        <div
+          className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-[12px] font-bold tabular-nums ${
             positiveRP
               ? "border-[rgba(74,222,128,0.22)] bg-[rgba(74,222,128,0.10)] text-[var(--color-stat-up)]"
               : "border-[rgba(248,113,113,0.22)] bg-[rgba(248,113,113,0.10)] text-[var(--color-stat-down)]"
           }`}
         >
-          <TrendingUp className="h-3 w-3" strokeWidth={2.4} />
+          <TrendingUp className="h-3.5 w-3.5" strokeWidth={2.4} />
           {positiveRP ? "+" : ""}
-          {combo.averageRP.toFixed(0)} RP
-        </span>
+          {combo.averageRP.toFixed(1)} RP
+        </div>
       </header>
 
-      <div className="flex items-end gap-2">
-        {combo.members.map((m) => (
+      <div className="grid grid-cols-3 gap-2 rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.025)] p-2.5">
+        {orderedMembers.map((m) => (
           <div
             key={`${m.character}-${m.weapon}`}
-            className="flex flex-1 flex-col items-center gap-1.5"
+            className="flex min-w-0 flex-col items-center gap-1.5"
           >
             <Link
               href={`/character/${m.character}`}
               aria-label={`${characterDisplayName(m.character)} 캐릭터 페이지`}
-              className="relative block h-14 w-14 overflow-hidden rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] ring-1 ring-transparent transition-all hover:ring-[rgba(96,165,250,0.32)] sm:h-16 sm:w-16"
+              className="relative block h-12 w-12 overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] ring-1 ring-transparent transition-all hover:ring-[rgba(96,165,250,0.32)] sm:h-14 sm:w-14"
             >
               <Image
                 src={getCharacterMiniWebpUrl(m.character)}
@@ -62,11 +92,11 @@ export function ComboGalleryCard({ combo, detailHref, rank }: ComboGalleryCardPr
                 unoptimized
               />
             </Link>
-            <div className="text-center leading-tight">
-              <p className="text-xs font-semibold text-[var(--color-foreground)]">
+            <div className="min-w-0 text-center leading-tight">
+              <p className="truncate text-xs font-semibold text-[var(--color-foreground)]">
                 {characterDisplayName(m.character)}
               </p>
-              <p className="text-[10px] text-[var(--color-muted-foreground)]">
+              <p className="truncate text-[10px] text-[var(--color-muted-foreground)]">
                 {weaponDisplayName(m.weapon)}
               </p>
             </div>
@@ -74,13 +104,13 @@ export function ComboGalleryCard({ combo, detailHref, rank }: ComboGalleryCardPr
         ))}
       </div>
 
-      <div className="flex items-baseline justify-between border-t border-[var(--color-border)] pt-3">
+      <div className="flex items-center justify-between border-t border-[var(--color-border)] pt-3">
         <span
-          className={`font-mono text-lg font-extrabold tracking-tight ${SCORE_COLOR[score] ?? ""}`}
+          className={`inline-flex h-8 min-w-10 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 font-mono text-lg font-extrabold ${SCORE_COLOR[score] ?? ""}`}
         >
           {score}
         </span>
-        <span className="text-[10px] uppercase tracking-widest text-[var(--color-muted-foreground)]">
+        <span className="rounded-md bg-[var(--color-surface-3)] px-2 py-1 text-[10px] font-semibold uppercase text-[var(--color-muted-foreground)]">
           {combo.totalGames.toLocaleString("ko-KR")} 매치
         </span>
       </div>
@@ -100,7 +130,7 @@ export function ComboGalleryCard({ combo, detailHref, rank }: ComboGalleryCardPr
           </dt>
           <dd className="mt-0.5 font-mono text-sm font-bold tabular-nums text-[var(--color-foreground)]">
             {combo.averageRP >= 0 ? "+" : ""}
-            {combo.averageRP.toFixed(0)}
+            {combo.averageRP.toFixed(1)}
           </dd>
         </div>
         <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] px-1 py-2">
@@ -117,7 +147,7 @@ export function ComboGalleryCard({ combo, detailHref, rank }: ComboGalleryCardPr
         <Link
           href={detailHref}
           scroll={false}
-          className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-[rgba(251,191,36,0.28)] bg-[rgba(251,191,36,0.10)] py-2 text-xs font-bold text-[var(--color-accent-gold)] transition-colors hover:bg-[rgba(251,191,36,0.18)]"
+          className="flex min-h-[40px] w-full items-center justify-center gap-1.5 rounded-xl border border-[rgba(251,191,36,0.28)] bg-[rgba(251,191,36,0.10)] py-2 text-xs font-bold text-[var(--color-accent-gold)] transition-colors hover:bg-[rgba(251,191,36,0.18)]"
         >
           조합 상세 보기
           <ChevronRight className="h-3.5 w-3.5" strokeWidth={2.4} />

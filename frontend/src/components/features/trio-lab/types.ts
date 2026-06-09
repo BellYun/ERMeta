@@ -131,6 +131,11 @@ export const SORT_LABELS: Record<TrioSortBy, string> = {
   totalGames: "표본순",
 };
 
+const TIER_RP_WEIGHT = 0.6;
+const TIER_WIN_WEIGHT = 0.3;
+const TIER_RANK_WEIGHT = 0.1;
+const TIER_MIN_GAMES = 10;
+
 function clamp01(value: number): number {
   return Math.max(0, Math.min(1, value));
 }
@@ -141,14 +146,18 @@ export function comboQualityScore(
   averageRank: number,
   games: number
 ): number {
-  if (games < 20) return 0;
+  if (games < TIER_MIN_GAMES) return 0;
 
   const winScore = clamp01((winRate - 8) / 8);
   const rpScore = clamp01((averageRP + 5) / 15);
   const rankScore = clamp01((5.5 - averageRank) / 2.5);
   const samplePenalty = games < 100 ? 0.9 : 1;
 
-  return (winScore * 0.45 + rpScore * 0.4 + rankScore * 0.15) * samplePenalty * 100;
+  return (
+    (rpScore * TIER_RP_WEIGHT + winScore * TIER_WIN_WEIGHT + rankScore * TIER_RANK_WEIGHT) *
+    samplePenalty *
+    100
+  );
 }
 
 export function comboTier(
@@ -157,7 +166,7 @@ export function comboTier(
   averageRank: number,
   games: number
 ): "S+" | "S" | "A" | "B" | "C" | "D" {
-  if (games < 20) return "D";
+  if (games < TIER_MIN_GAMES) return "D";
   const score = comboQualityScore(winRate, averageRP, averageRank, games);
   if (score >= 78) return "S+";
   if (score >= 68) return "S";
