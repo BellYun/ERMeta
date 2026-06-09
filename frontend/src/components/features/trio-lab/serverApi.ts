@@ -1,5 +1,11 @@
 import { headers } from "next/headers";
-import type { TopEquipmentBuild, TopTraitBuild } from "./ComboDetailBody";
+import { getTraitGroup } from "@/utils/traitCodes";
+import type {
+  TopEquipmentBuild,
+  TopTraitBuild,
+  TraitSecondaryInfo,
+  TraitSubOption,
+} from "./ComboDetailBody";
 import type { ApiTrioWeaponRow } from "./types";
 
 async function resolveInternalBaseUrl(): Promise<string> {
@@ -52,6 +58,26 @@ interface TraitSecondaryRaw {
   optionTrait2Options: TraitSubOptionRaw[];
 }
 
+function normalizeTraitOption(option: TraitSubOptionRaw): TraitSubOption {
+  return {
+    code: option.code,
+    totalGames: option.totalGames,
+    pickRate: option.pickRate,
+    winRate: option.winRate,
+  };
+}
+
+function normalizeSecondary(sec: TraitSecondaryRaw): TraitSecondaryInfo {
+  return {
+    secGroup: sec.secGroup,
+    totalGames: sec.totalGames,
+    pickRate: sec.pickRate,
+    winRate: sec.winRate,
+    optionTrait1Options: sec.optionTrait1Options.map(normalizeTraitOption),
+    optionTrait2Options: sec.optionTrait2Options.map(normalizeTraitOption),
+  };
+}
+
 interface TraitMainGroupRaw {
   mainGroup: "havoc" | "fortification" | "support" | "chaos" | "unknown";
   totalGames: number;
@@ -83,7 +109,8 @@ function pickByWin(options: TraitSubOptionRaw[]): TraitSubOptionRaw | null {
 export async function fetchTopTraitBuild(
   characterCode: number,
   weaponCode: number,
-  patchVersion: string
+  patchVersion: string,
+  preferredMainCore?: number | null
 ): Promise<TopTraitBuild | null> {
   const base = await resolveInternalBaseUrl();
   const qs = new URLSearchParams({
@@ -100,8 +127,14 @@ export async function fetchTopTraitBuild(
     const groups = data.builds ?? [];
     if (groups.length === 0) return null;
 
-    // 메인 그룹은 픽률 (대표성), 그 안에서 코어/서브는 승률 (성과)
-    const top = [...groups].sort((a, b) => b.groupPickRate - a.groupPickRate)[0];
+    // 메인 그룹은 기본적으로 픽률(대표성)을 쓰되, 조합 row의 메인 코어가 있으면
+    // 해당 그룹을 우선한다. 그래야 평균 RP 상위 특성 조합과 부특성 렌더링이 맞물린다.
+    const preferredGroup = getTraitGroup(preferredMainCore ?? null);
+    const preferredTop =
+      preferredGroup !== "unknown"
+        ? groups.find((group) => group.mainGroup === preferredGroup)
+        : null;
+    const top = preferredTop ?? [...groups].sort((a, b) => b.groupPickRate - a.groupPickRate)[0];
     const mainCorePopular = pickByPick(top.mainCoreOptions);
     const mainCoreBest = pickByWin(top.mainCoreOptions);
     const sub1Best = pickByWin(top.sub1Options);
@@ -110,7 +143,11 @@ export async function fetchTopTraitBuild(
     // 부특성 (secondary): 메인 그룹 안에서 픽률 최고인 sub-group + 그 안의 옵션 픽률 최고 조합
     const secondaries = top.secondaries ?? [];
     const topSec =
-      secondaries.length > 0 ? [...secondaries].sort((a, b) => b.pickRate - a.pickRate)[0] : null;
+      secondaries.length > 0
+        ? [...secondaries]
+            .filter((secondary) => secondary.secGroup !== top.mainGroup)
+            .sort((a, b) => b.pickRate - a.pickRate)[0]
+        : null;
     const subOpt1 = topSec ? pickByPick(topSec.optionTrait1Options) : null;
     const subOpt2 = topSec ? pickByPick(topSec.optionTrait2Options) : null;
 
@@ -140,6 +177,12 @@ export async function fetchTopTraitBuild(
       secondaryOpt2: subOpt2?.code ?? null,
       secondaryOpt2PickRate: subOpt2?.pickRate ?? 0,
       secondaryOpt2WinRate: subOpt2?.winRate ?? 0,
+      mainCoreOptions: top.mainCoreOptions.map(normalizeTraitOption),
+      sub1Options: top.sub1Options.map(normalizeTraitOption),
+      sub2Options: top.sub2Options.map(normalizeTraitOption),
+      secondaries: secondaries
+        .filter((secondary) => secondary.secGroup !== top.mainGroup && secondary.totalGames > 0)
+        .map(normalizeSecondary),
     };
   } catch {
     return null;
@@ -157,6 +200,7 @@ export async function fetchTopEquipmentBuild(
     characterCode: String(characterCode),
     bestWeapon: String(weaponCode),
     patchVersion,
+    legendOnly: "1",
   };
   if (mainCore != null) params.mainCore = String(mainCore);
   const qs = new URLSearchParams(params).toString();

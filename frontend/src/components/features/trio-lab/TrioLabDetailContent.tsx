@@ -25,15 +25,18 @@ import { getStatsPatchVersions } from "@/data/patch-notes";
 import { LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
 import { loadL10nRecord } from "@/lib/serverL10n";
 import { getTraitGroup } from "@/utils/traitCodes";
+import { filterRowsByPool } from "./searchRequests";
 
 const TIER_LABEL = "다이아+";
+const DETAIL_TRIO_ROW_LIMIT = "5000";
 
 function findExactMatch(
   rows: ApiTrioWeaponRow[],
   members: TrioWeaponMember[]
 ): TrioWeaponCombo | null {
   const wantedId = buildComboId(members);
-  return mergeApiRowsByComboId(rows).find((combo) => combo.id === wantedId) ?? null;
+  const row = rows.find((candidate) => apiRowToCombo(candidate).id === wantedId);
+  return row ? apiRowToCombo(row) : null;
 }
 
 function sortMembersByCharacter(members: TrioWeaponMember[]): TrioWeaponMember[] {
@@ -41,27 +44,34 @@ function sortMembersByCharacter(members: TrioWeaponMember[]): TrioWeaponMember[]
 }
 
 async function loadComboData(members: TrioWeaponMember[]) {
-  const [m1, m2] = sortMembersByCharacter(members);
-  const trioRows = await fetchTrioWeaponRows({
+  const [m1, m2, m3] = sortMembersByCharacter(members);
+  const similarRows = await fetchTrioWeaponRows({
     character1: String(m1.character),
     weapon1: String(m1.weapon),
     character2: String(m2.character),
     weapon2: String(m2.weapon),
     sortBy: "totalGames",
-    limit: "60",
+    limit: DETAIL_TRIO_ROW_LIMIT,
   });
+  const detailRows = filterRowsByPool(similarRows, [m1.character, m2.character, m3.character]);
 
-  let combo = findExactMatch(trioRows, members);
+  let combo = findExactMatch(detailRows, members);
+  let comboRows = detailRows;
+  if (!combo) {
+    combo = findExactMatch(similarRows, members);
+    comboRows = similarRows;
+  }
   if (!combo) {
     const fallback = await fetchTrioWeaponRows({
       character1: String(m1.character),
       sortBy: "totalGames",
-      limit: "200",
+      limit: DETAIL_TRIO_ROW_LIMIT,
     });
     combo = findExactMatch(fallback, members);
+    if (combo) comboRows = fallback;
   }
 
-  return { combo, trioRows };
+  return { combo, trioRows: comboRows, similarRows };
 }
 
 function buildSimilarCombos(rows: ApiTrioWeaponRow[], currentId: string): TrioWeaponCombo[] {
@@ -119,14 +129,19 @@ export async function TrioLabDetailContent({
     }
   }
 
-  const { combo, trioRows } = await loadComboData(members);
+  const { combo, trioRows, similarRows } = await loadComboData(members);
   if (!combo) notFound();
   const topTraitRow = findTopTraitRow(trioRows, normalizedId);
 
   const memberDetails = await Promise.all(
     combo.members.map(async (member) => {
-      const trait = await fetchTopTraitBuild(member.character, member.weapon, patchVersion);
       const comboMainCore = getMainCoreForMember(topTraitRow, member);
+      const trait = await fetchTopTraitBuild(
+        member.character,
+        member.weapon,
+        patchVersion,
+        comboMainCore
+      );
       const displayTrait =
         trait && comboMainCore != null
           ? {
@@ -157,7 +172,7 @@ export async function TrioLabDetailContent({
     traitNames,
   }));
 
-  const similar = buildSimilarCombos(trioRows, normalizedId);
+  const similar = buildSimilarCombos(similarRows, normalizedId);
 
   return (
     <>

@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import itemGradeMap from "@/../const/itemGradeMap.json";
 import weaponItemTypeMap from "@/../const/weaponItemTypeMap.json";
 import { getCacheHeaders } from "@/lib/cache";
 import { createServerClient } from "@/lib/supabase";
 import { expandCumulativeTier } from "@/utils/tier";
 
+const ITEM_GRADE = itemGradeMap as Record<string, string>;
 const WEAPON_ITEM_TYPE = weaponItemTypeMap as Record<string, number>;
 
 export const revalidate = 1800; // L1: 30분 서버 캐시
@@ -61,6 +63,21 @@ type EquipmentRow = {
   totalRP: number;
 };
 
+function isLegendItem(code: number | null): boolean {
+  if (code == null) return false;
+  return ITEM_GRADE[String(code)] === "Legend";
+}
+
+function isFullLegendBuild(row: EquipmentRow): boolean {
+  return (
+    isLegendItem(row.weapon) &&
+    isLegendItem(row.chest) &&
+    isLegendItem(row.head) &&
+    isLegendItem(row.arm) &&
+    isLegendItem(row.leg)
+  );
+}
+
 function aggregateSlot(
   rows: EquipmentRow[],
   slot: keyof Pick<EquipmentRow, "weapon" | "chest" | "head" | "arm" | "leg">,
@@ -97,6 +114,7 @@ export async function GET(request: NextRequest) {
   const patchVersion = searchParams.get("patchVersion") ?? "";
   const mainCoreParam = searchParams.get("mainCore");
   const bestWeaponParam = searchParams.get("bestWeapon");
+  const legendOnly = searchParams.get("legendOnly") === "1";
 
   if (!characterCode || isNaN(characterCode)) {
     return NextResponse.json<EquipmentBuildResult>({
@@ -125,7 +143,9 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const { data, error } = await query.order("totalGames", { ascending: false }).limit(200);
+    const { data, error } = await query
+      .order("totalGames", { ascending: false })
+      .limit(legendOnly ? 1000 : 200);
 
     if (error) {
       console.error("[builds/equipment] DB error:", error);
@@ -153,6 +173,10 @@ export async function GET(request: NextRequest) {
         if (r.weapon == null) return false;
         return WEAPON_ITEM_TYPE[String(r.weapon)] === targetType;
       });
+    }
+
+    if (legendOnly) {
+      rows = rows.filter(isFullLegendBuild);
     }
 
     if (rows.length === 0) {
