@@ -1,12 +1,4 @@
-import {
-  AlertTriangle,
-  ArrowDown,
-  ArrowUp,
-  BarChart3,
-  CalendarDays,
-  Swords,
-  TrendingUp,
-} from "lucide-react";
+import { ArrowDown, ArrowUp, BarChart3, CalendarDays, Swords, TrendingUp } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
@@ -22,8 +14,6 @@ import {
   getPatchAnalysisData,
   type PatchCharacterDelta,
   type PatchCharacterMetric,
-  type PatchCharacterTrend,
-  type PatchRiskSignal,
   type PatchRoleMetric,
 } from "@/lib/patchAnalysis";
 import { BASE_URL } from "@/lib/siteMetadata";
@@ -74,12 +64,6 @@ function formatPercent(value: number, digits = 1) {
 function formatSigned(value: number, digits = 1, suffix = "") {
   if (!Number.isFinite(value)) return `0.0${suffix}`;
   return `${value >= 0 ? "+" : ""}${value.toFixed(digits)}${suffix}`;
-}
-
-function subjectParticle(value: string) {
-  const lastChar = value.charCodeAt(value.length - 1);
-  if (lastChar < 0xac00 || lastChar > 0xd7a3) return "가";
-  return (lastChar - 0xac00) % 28 === 0 ? "가" : "이";
 }
 
 function MetricCard({
@@ -331,218 +315,6 @@ function DeltaMetric({
         {formatSigned(value, 1, suffix)}
       </p>
     </div>
-  );
-}
-
-function MetaSnapshot({ takeaways }: { takeaways: string[] }) {
-  if (takeaways.length === 0) return null;
-
-  return (
-    <section className="dashboard-panel p-4 lg:p-6">
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,0.65fr)_minmax(0,1.35fr)] lg:items-start">
-        <div>
-          <p className="dashboard-kicker">What To Play</p>
-          <h2 className="mt-2 text-[1.45rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.8rem]">
-            이번 패치에서 먼저 볼 것
-          </h2>
-          <p className="mt-2 text-sm leading-6 text-[var(--color-muted-foreground)]">
-            패치노트와 실제 랭크 지표를 함께 보고, 지금 바로 확인할 만한 상승/하락/주의 대상을
-            압축했습니다.
-          </p>
-        </div>
-        <div className="grid gap-2">
-          {takeaways.map((takeaway, index) => (
-            <div
-              key={takeaway}
-              className="flex gap-3 rounded-2xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.025)] px-3 py-3"
-            >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-[rgba(251,191,36,0.2)] bg-[rgba(251,191,36,0.1)] font-mono text-xs font-black text-[var(--color-accent-gold)]">
-                {index + 1}
-              </span>
-              <p className="text-sm leading-6 text-[var(--color-foreground)]/88">{takeaway}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function TrendCard({
-  entry,
-  tone,
-  index,
-}: {
-  entry: PatchCharacterTrend;
-  tone: "up" | "down";
-  index: number;
-}) {
-  const positive = tone === "up";
-
-  return (
-    <div className="rounded-2xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.025)] px-3 py-3">
-      <div className="flex items-center gap-3">
-        <span className="w-6 text-center text-sm font-black text-[var(--color-muted-foreground)] tabular-nums">
-          {index + 1}
-        </span>
-        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)]">
-          <Image
-            src={getCharacterImageUrl(entry.characterNum)}
-            alt={entry.name}
-            fill
-            className="object-cover"
-            sizes="40px"
-          />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-[var(--color-foreground)]">
-            {entry.name}
-            {entry.roles[0] ? (
-              <span className="ml-1 font-medium text-[var(--color-muted-foreground)]">
-                {entry.roles[0]}
-              </span>
-            ) : null}
-          </p>
-          <p className="text-xs text-[var(--color-muted-foreground)]">
-            RP {formatSigned(entry.previous.averageRP, 1)} →{" "}
-            {formatSigned(entry.current.averageRP, 1)}
-          </p>
-        </div>
-        <span
-          className={cn(
-            "text-sm font-black tabular-nums",
-            positive ? "text-[var(--color-success)]" : "text-[var(--color-danger)]"
-          )}
-        >
-          {formatSigned(entry.deltaAverageRP, 1)}
-        </span>
-      </div>
-      <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-        <MiniMetric label="승률" value={formatSigned(entry.deltaWinRate, 1, "%p")} />
-        <MiniMetric label="Top3" value={formatSigned(entry.deltaTop3Rate, 1, "%p")} />
-        <MiniMetric label="픽률" value={formatSigned(entry.deltaPickRate, 2, "%p")} />
-      </div>
-    </div>
-  );
-}
-
-function MiniMetric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 py-2">
-      <p className="text-[10px] text-[var(--color-muted-foreground)]">{label}</p>
-      <p className="mt-0.5 font-mono text-xs font-black tabular-nums text-[var(--color-foreground)]">
-        {value}
-      </p>
-    </div>
-  );
-}
-
-function MetaTrendBoard({
-  risers,
-  fallers,
-}: {
-  risers: PatchCharacterTrend[];
-  fallers: PatchCharacterTrend[];
-}) {
-  if (risers.length === 0 && fallers.length === 0) return null;
-
-  return (
-    <section className="grid gap-5 xl:grid-cols-2">
-      <div className="dashboard-panel p-4 lg:p-6">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="dashboard-kicker">Rising Meta</p>
-            <h2 className="mt-2 text-[1.25rem] font-black tracking-[-0.04em] text-[var(--color-foreground)]">
-              패치 후 급상승 캐릭터
-            </h2>
-          </div>
-          <TrendingUp className="h-5 w-5 text-[var(--color-success)]" />
-        </div>
-        <div className="mt-4 grid gap-2">
-          {risers.slice(0, 5).map((entry, index) => (
-            <TrendCard key={entry.characterNum} entry={entry} index={index} tone="up" />
-          ))}
-        </div>
-      </div>
-
-      <div className="dashboard-panel p-4 lg:p-6">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="dashboard-kicker">Falling Meta</p>
-            <h2 className="mt-2 text-[1.25rem] font-black tracking-[-0.04em] text-[var(--color-foreground)]">
-              패치 후 급락 캐릭터
-            </h2>
-          </div>
-          <ArrowDown className="h-5 w-5 text-[var(--color-danger)]" />
-        </div>
-        <div className="mt-4 grid gap-2">
-          {fallers.slice(0, 5).map((entry, index) => (
-            <TrendCard key={entry.characterNum} entry={entry} index={index} tone="down" />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function RiskSignalPanel({ signals }: { signals: PatchRiskSignal[] }) {
-  if (signals.length === 0) return null;
-
-  return (
-    <section className="dashboard-panel p-4 lg:p-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="dashboard-kicker">Early Warning</p>
-          <h2 className="mt-2 text-[1.35rem] font-black tracking-[-0.04em] text-[var(--color-foreground)]">
-            표본 적지만 위험 신호 있는 캐릭터
-          </h2>
-          <p className="mt-1 text-sm leading-6 text-[var(--color-muted-foreground)]">
-            아직 확정 평가는 어렵지만, 낮은 RP/승률/Top3나 급락 지표가 같이 보이는 후보입니다.
-          </p>
-        </div>
-        <AlertTriangle className="hidden h-6 w-6 text-[var(--color-accent-gold)] sm:block" />
-      </div>
-
-      <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-        {signals.map((signal) => (
-          <article
-            key={signal.characterNum}
-            className="rounded-2xl border border-[rgba(251,191,36,0.18)] bg-[rgba(251,191,36,0.06)] px-3 py-3"
-          >
-            <div className="flex items-center gap-3">
-              <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)]">
-                <Image
-                  src={getCharacterMiniWebpUrl(signal.characterNum)}
-                  alt={signal.name}
-                  fill
-                  className="object-cover"
-                  sizes="44px"
-                />
-              </div>
-              <div className="min-w-0">
-                <h3 className="truncate text-sm font-black text-[var(--color-foreground)]">
-                  {signal.name}
-                </h3>
-                <p className="text-xs text-[var(--color-muted-foreground)]">
-                  {formatNumber(signal.current.totalGames)}판 · RP{" "}
-                  {formatSigned(signal.current.averageRP, 1)}
-                </p>
-              </div>
-            </div>
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {signal.reasons.map((reason) => (
-                <span
-                  key={reason}
-                  className="rounded-md border border-[rgba(251,191,36,0.2)] bg-[rgba(8,13,27,0.35)] px-2 py-1 text-[10px] font-semibold text-[var(--color-accent-gold)]"
-                >
-                  {reason}
-                </span>
-              ))}
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
   );
 }
 
@@ -812,10 +584,9 @@ export default async function PatchAnalysisPage({ version }: PatchAnalysisPagePr
             </p>
             {bestRole && worstRole ? (
               <p className="mt-3 max-w-[44rem] text-sm leading-6 text-[var(--color-muted-foreground)]">
-                현재 역할군 평균 RP는 {bestRole.role}
-                {subjectParticle(bestRole.role)} 가장 높고 {worstRole.role}
-                {subjectParticle(worstRole.role)} 가장 낮습니다. 단순 승률보다 평균 RP와 Top 3
-                비율을 같이 보는 편이 이번 패치 운영 방향을 잡기 쉽습니다.
+                현재 역할군 평균 RP는 {bestRole.role}이 가장 높고 {worstRole.role}이 가장 낮습니다.
+                단순 승률보다 평균 RP와 Top 3 비율을 같이 보는 편이 이번 패치 운영 방향을 잡기
+                쉽습니다.
               </p>
             ) : null}
           </div>
@@ -852,17 +623,11 @@ export default async function PatchAnalysisPage({ version }: PatchAnalysisPagePr
         </div>
       </section>
 
-      <MetaSnapshot takeaways={data.takeaways} />
-
-      <MetaTrendBoard risers={data.metaRisers} fallers={data.metaFallers} />
-
-      <RiskSignalPanel signals={data.riskSignals} />
-
       <RoleTable roles={data.roleMetrics} />
 
       <div className="grid gap-5 xl:grid-cols-2">
-        <DeltaRanking title="패치노트 대상 RP 상승 반응" entries={data.rising} tone="up" />
-        <DeltaRanking title="패치노트 대상 RP 하락 반응" entries={data.falling} tone="down" />
+        <DeltaRanking title="평균 RP 상승폭 TOP" entries={data.rising} tone="up" />
+        <DeltaRanking title="평균 RP 하락폭 TOP" entries={data.falling} tone="down" />
       </div>
 
       <CharacterSection
