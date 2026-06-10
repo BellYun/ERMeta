@@ -121,6 +121,28 @@ export interface PatchRoleMetric {
   deltaAverageRP: number | null;
 }
 
+export interface PatchCharacterTrend {
+  characterNum: number;
+  name: string;
+  current: PatchCharacterMetric;
+  previous: PatchCharacterMetric;
+  deltaGames: number;
+  deltaPickRate: number;
+  deltaWinRate: number;
+  deltaTop3Rate: number;
+  deltaAverageRP: number;
+  roles: CharacterRole[];
+}
+
+export interface PatchRiskSignal {
+  characterNum: number;
+  name: string;
+  current: PatchCharacterMetric;
+  previous: PatchCharacterMetric | null;
+  reasons: string[];
+  roles: CharacterRole[];
+}
+
 export interface PatchAnalysisData {
   currentPatch: string;
   previousPatch: string;
@@ -134,6 +156,10 @@ export interface PatchAnalysisData {
   roleMetrics: PatchRoleMetric[];
   rising: PatchCharacterDelta[];
   falling: PatchCharacterDelta[];
+  metaRisers: PatchCharacterTrend[];
+  metaFallers: PatchCharacterTrend[];
+  riskSignals: PatchRiskSignal[];
+  takeaways: string[];
 }
 
 interface CharacterAccumulator {
@@ -326,6 +352,134 @@ function aggregateRoleMap(rankings: CharacterRankingData[]) {
   return map;
 }
 
+function buildCharacterTrends(
+  currentMetrics: Map<number, PatchCharacterMetric>,
+  previousMetrics: Map<number, PatchCharacterMetric>
+): PatchCharacterTrend[] {
+  const trends: PatchCharacterTrend[] = [];
+
+  for (const [characterNum, current] of currentMetrics.entries()) {
+    const previous = previousMetrics.get(characterNum);
+    if (!previous) continue;
+    if (current.totalGames < 20 || previous.totalGames < 20) continue;
+
+    trends.push({
+      characterNum,
+      name: current.name,
+      current,
+      previous,
+      deltaGames: current.totalGames - previous.totalGames,
+      deltaPickRate: current.pickRate - previous.pickRate,
+      deltaWinRate: current.winRate - previous.winRate,
+      deltaTop3Rate: current.top3Rate - previous.top3Rate,
+      deltaAverageRP: current.averageRP - previous.averageRP,
+      roles: getCharacterRoles(characterNum, current.weaponCodes),
+    });
+  }
+
+  return trends;
+}
+
+function buildRiskSignals(
+  currentMetrics: Map<number, PatchCharacterMetric>,
+  previousMetrics: Map<number, PatchCharacterMetric>
+): PatchRiskSignal[] {
+  const signals: PatchRiskSignal[] = [];
+
+  for (const [characterNum, current] of currentMetrics.entries()) {
+    if (current.totalGames < 8 || current.totalGames >= 70) continue;
+    const previous = previousMetrics.get(characterNum) ?? null;
+    const reasons: string[] = [];
+
+    if (current.averageRP <= -5) reasons.push(`평균 RP ${current.averageRP.toFixed(1)}`);
+    if (current.winRate <= 9) reasons.push(`승률 ${current.winRate.toFixed(1)}%`);
+    if (current.top3Rate <= 32) reasons.push(`Top 3 ${current.top3Rate.toFixed(1)}%`);
+    if (previous && current.averageRP - previous.averageRP <= -7) {
+      reasons.push(`RP ${formatSignedForData(current.averageRP - previous.averageRP)} 하락`);
+    }
+
+    if (reasons.length === 0) continue;
+    signals.push({
+      characterNum,
+      name: current.name,
+      current,
+      previous,
+      reasons: reasons.slice(0, 3),
+      roles: getCharacterRoles(characterNum, current.weaponCodes),
+    });
+  }
+
+  return signals
+    .sort((a, b) => {
+      const aDrop = a.previous ? a.current.averageRP - a.previous.averageRP : a.current.averageRP;
+      const bDrop = b.previous ? b.current.averageRP - b.previous.averageRP : b.current.averageRP;
+      return aDrop - bDrop || a.current.totalGames - b.current.totalGames;
+    })
+    .slice(0, 6);
+}
+
+function formatSignedForData(value: number) {
+  return `${value >= 0 ? "+" : ""}${value.toFixed(1)}`;
+}
+
+function buildTakeaways({
+  roleMetrics,
+  metaRisers,
+  metaFallers,
+  buffed,
+  nerfed,
+  riskSignals,
+}: {
+  roleMetrics: PatchRoleMetric[];
+  metaRisers: PatchCharacterTrend[];
+  metaFallers: PatchCharacterTrend[];
+  buffed: PatchCharacterDelta[];
+  nerfed: PatchCharacterDelta[];
+  riskSignals: PatchRiskSignal[];
+}) {
+  const takeaways: string[] = [];
+  const bestRole = roleMetrics[0];
+  const bestRiser = metaRisers[0];
+  const worstFaller = metaFallers[0];
+  const buffWinner = buffed.find(
+    (entry) => entry.current && entry.previous && entry.deltaAverageRP > 0
+  );
+  const nerfSurvivor = nerfed.find((entry) => entry.current && entry.current.averageRP > 0);
+
+  if (bestRiser) {
+    takeaways.push(
+      `${bestRiser.name}는 평균 RP가 ${formatSignedForData(bestRiser.deltaAverageRP)} 올라 패치 직후 상승폭이 가장 큽니다.`
+    );
+  }
+  if (worstFaller) {
+    takeaways.push(
+      `${worstFaller.name}는 평균 RP가 ${formatSignedForData(worstFaller.deltaAverageRP)} 내려 우선 점검이 필요합니다.`
+    );
+  }
+  if (bestRole) {
+    takeaways.push(
+      `역할군 기준으로는 ${bestRole.role}의 평균 RP가 ${formatSignedForData(bestRole.averageRP)}로 가장 높습니다.`
+    );
+  }
+  if (buffWinner) {
+    takeaways.push(
+      `버프 대상 중 ${buffWinner.name}는 실제 RP가 ${formatSignedForData(buffWinner.deltaAverageRP)} 반응했습니다.`
+    );
+  }
+  if (nerfSurvivor) {
+    takeaways.push(
+      `너프 대상 중 ${nerfSurvivor.name}는 현재도 평균 RP ${formatSignedForData(nerfSurvivor.current?.averageRP ?? 0)}로 양수권입니다.`
+    );
+  }
+  if (riskSignals[0]) {
+    takeaways.push(
+      `${riskSignals[0].name}는 표본은 작지만 ${riskSignals[0].reasons[0]} 신호가 있어 추적 대상입니다.`
+    );
+  }
+
+  return takeaways.slice(0, 4);
+}
+
 function buildDeltaForScope(
   note: CharacterPatchNote,
   currentRankings: CharacterRankingData[],
@@ -451,12 +605,18 @@ async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAna
       roleMetrics: [],
       rising: [],
       falling: [],
+      metaRisers: [],
+      metaFallers: [],
+      riskSignals: [],
+      takeaways: [],
     };
   }
 
   const rankingData = await getPatchRankingData(currentPatch, previousPatch);
-  const { totalMatches } = aggregateCharacters(rankingData.rankings);
-  const { totalMatches: previousTotalMatches } = aggregateCharacters(rankingData.previousRankings);
+  const { totalMatches, metrics: currentMetrics } = aggregateCharacters(rankingData.rankings);
+  const { totalMatches: previousTotalMatches, metrics: previousMetrics } = aggregateCharacters(
+    rankingData.previousRankings
+  );
   const notes = getNotesByPatch(currentPatch);
   const deltas = notes.flatMap((note) =>
     buildDeltas(
@@ -479,6 +639,15 @@ async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAna
     .sort((a, b) => b.deltaAverageRP - a.deltaAverageRP);
 
   const comparable = deltas.filter((entry) => entry.current && entry.previous);
+  const roleMetrics = aggregateRoles(rankingData.rankings, rankingData.previousRankings);
+  const characterTrends = buildCharacterTrends(currentMetrics, previousMetrics);
+  const metaRisers = [...characterTrends]
+    .sort((a, b) => b.deltaAverageRP - a.deltaAverageRP)
+    .slice(0, 8);
+  const metaFallers = [...characterTrends]
+    .sort((a, b) => a.deltaAverageRP - b.deltaAverageRP)
+    .slice(0, 8);
+  const riskSignals = buildRiskSignals(currentMetrics, previousMetrics);
 
   return {
     currentPatch,
@@ -490,9 +659,20 @@ async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAna
     buffed,
     nerfed,
     mixed,
-    roleMetrics: aggregateRoles(rankingData.rankings, rankingData.previousRankings),
+    roleMetrics,
     rising: [...comparable].sort((a, b) => b.deltaAverageRP - a.deltaAverageRP).slice(0, 6),
     falling: [...comparable].sort((a, b) => a.deltaAverageRP - b.deltaAverageRP).slice(0, 6),
+    metaRisers,
+    metaFallers,
+    riskSignals,
+    takeaways: buildTakeaways({
+      roleMetrics,
+      metaRisers,
+      metaFallers,
+      buffed,
+      nerfed,
+      riskSignals,
+    }),
   };
 }
 
