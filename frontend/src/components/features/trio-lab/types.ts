@@ -99,6 +99,7 @@ export function sortTrioWeaponCombos(
   sortBy: TrioSortBy
 ): TrioWeaponCombo[] {
   return [...combos].sort((a, b) => {
+    if (sortBy === "recommended") return recommendationScore(b) - recommendationScore(a);
     if (sortBy === "averageRP") return b.averageRP - a.averageRP;
     if (sortBy === "winRate") return b.winRate - a.winRate;
     if (sortBy === "averageRank") return a.averageRank - b.averageRank;
@@ -122,14 +123,23 @@ export function trioName(combo: TrioWeaponCombo): string {
   return combo.members.map((m) => characterDisplayName(m.character)).join(" + ");
 }
 
-export type TrioSortBy = "winRate" | "averageRP" | "averageRank" | "totalGames";
+export type TrioSortBy = "recommended" | "winRate" | "averageRP" | "averageRank" | "totalGames";
 
 export const SORT_LABELS: Record<TrioSortBy, string> = {
+  recommended: "추천순",
   averageRP: "평균 RP순",
   winRate: "승률순",
   averageRank: "평균 순위순",
   totalGames: "표본순",
 };
+
+export function recommendationScore(combo: TrioWeaponCombo): number {
+  const confidence = Math.min(1, Math.log10(combo.totalGames + 1) / 2);
+  const rpScore = Math.max(0, Math.min(1, (combo.averageRP + 10) / 30));
+  const winScore = Math.max(0, Math.min(1, (combo.winRate - 8) / 14));
+  const rankScore = Math.max(0, Math.min(1, (6 - combo.averageRank) / 3));
+  return (rpScore * 0.58 + winScore * 0.24 + rankScore * 0.18) * (0.55 + confidence * 0.45);
+}
 
 const TIER_RP_WEIGHT = 0.6;
 const TIER_WIN_WEIGHT = 0.3;

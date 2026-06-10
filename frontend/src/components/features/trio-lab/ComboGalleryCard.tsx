@@ -14,6 +14,7 @@ const SCORE_COLOR: Record<string, string> = {
   D: "text-[var(--color-muted-foreground)]",
 };
 const SMALL_SAMPLE_THRESHOLD = 10;
+const VERIFIED_SAMPLE_THRESHOLD = 50;
 
 interface ComboGalleryCardProps {
   combo: TrioWeaponCombo;
@@ -31,6 +32,7 @@ export function ComboGalleryCard({
   const score = comboTier(combo.winRate, combo.averageRP, combo.averageRank, combo.totalGames);
   const positiveRP = combo.averageRP > 0;
   const isSmallSample = combo.totalGames < SMALL_SAMPLE_THRESHOLD;
+  const selectedSet = React.useMemo(() => new Set(characterOrder), [characterOrder]);
   const orderedMembers = React.useMemo(
     () =>
       combo.members
@@ -45,6 +47,12 @@ export function ComboGalleryCard({
         .map(({ member }) => member),
     [characterOrder, combo.members]
   );
+  const recommendationReasons = React.useMemo(() => buildRecommendationReasons(combo), [combo]);
+  const sampleLabel = isSmallSample
+    ? "참고용"
+    : combo.totalGames >= VERIFIED_SAMPLE_THRESHOLD
+      ? "검증됨"
+      : "보통 표본";
 
   return (
     <article className="char-card group relative flex h-full flex-col gap-3.5 p-4 transition-colors hover:border-[rgba(96,165,250,0.34)] sm:p-4">
@@ -56,6 +64,11 @@ export function ComboGalleryCard({
           {isSmallSample && (
             <span className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--color-muted-foreground)]">
               소표본
+            </span>
+          )}
+          {!isSmallSample && (
+            <span className="rounded-md border border-[rgba(96,165,250,0.24)] bg-[rgba(96,165,250,0.10)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--color-primary-hover)]">
+              {sampleLabel}
             </span>
           )}
         </div>
@@ -81,7 +94,11 @@ export function ComboGalleryCard({
             <Link
               href={`/character/${m.character}`}
               aria-label={`${characterDisplayName(m.character)} 캐릭터 페이지`}
-              className="relative block h-12 w-12 overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] ring-1 ring-transparent transition-all hover:ring-[rgba(96,165,250,0.32)] sm:h-14 sm:w-14"
+              className={`relative block h-12 w-12 overflow-hidden rounded-xl border bg-[var(--color-surface-2)] ring-1 transition-all hover:ring-[rgba(96,165,250,0.32)] sm:h-14 sm:w-14 ${
+                selectedSet.has(m.character)
+                  ? "border-[rgba(96,165,250,0.48)] ring-[rgba(96,165,250,0.28)]"
+                  : "border-[rgba(251,191,36,0.34)] ring-[rgba(251,191,36,0.22)]"
+              }`}
             >
               <Image
                 src={getCharacterMiniWebpUrl(m.character)}
@@ -93,6 +110,15 @@ export function ComboGalleryCard({
               />
             </Link>
             <div className="min-w-0 text-center leading-tight">
+              <p
+                className={`mx-auto mb-1 w-fit rounded px-1.5 py-0.5 text-[9px] font-bold ${
+                  selectedSet.has(m.character)
+                    ? "bg-[rgba(96,165,250,0.14)] text-[var(--color-primary-hover)]"
+                    : "bg-[rgba(251,191,36,0.14)] text-[var(--color-accent-gold)]"
+                }`}
+              >
+                {selectedSet.has(m.character) ? "선택" : "추천 후보"}
+              </p>
               <p className="truncate text-xs font-semibold text-[var(--color-foreground)]">
                 {characterDisplayName(m.character)}
               </p>
@@ -143,6 +169,17 @@ export function ComboGalleryCard({
         </div>
       </dl>
 
+      <div className="flex flex-wrap gap-1.5">
+        {recommendationReasons.map((reason) => (
+          <span
+            key={reason}
+            className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 py-1 text-[10px] font-semibold text-[var(--color-muted-foreground)]"
+          >
+            {reason}
+          </span>
+        ))}
+      </div>
+
       <footer className="mt-auto pt-1">
         <Link
           href={detailHref}
@@ -155,4 +192,22 @@ export function ComboGalleryCard({
       </footer>
     </article>
   );
+}
+
+function buildRecommendationReasons(combo: TrioWeaponCombo): string[] {
+  const reasons: string[] = [];
+
+  if (combo.averageRP >= 10) reasons.push("RP 효율 높음");
+  else if (combo.averageRP >= 3) reasons.push("RP 양수권");
+  else if (combo.averageRP < 0) reasons.push("RP 주의");
+
+  if (combo.totalGames >= VERIFIED_SAMPLE_THRESHOLD) reasons.push("표본 충분");
+  else if (combo.totalGames < SMALL_SAMPLE_THRESHOLD) reasons.push("표본 적음");
+
+  if (combo.winRate >= 18) reasons.push("1위 전환 좋음");
+  else if (combo.winRate >= 14) reasons.push("승률 준수");
+
+  if (combo.averageRank <= 3.5) reasons.push("순방 안정");
+
+  return reasons.slice(0, 3);
 }

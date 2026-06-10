@@ -109,6 +109,18 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
     [sortedCombos, visibleCount]
   );
   const hasMore = visibleCount < sortedCombos.length;
+  const selectedLabel = React.useMemo(
+    () => pool.map((character) => getCharName(character)).join(" + "),
+    [getCharName, pool]
+  );
+  const recommendationContext =
+    pool.length === 0
+      ? "캐릭터를 선택하면 조건에 맞는 추천 조합이 표시됩니다"
+      : pool.length === 1
+        ? `${selectedLabel} 기준으로 함께 쓰기 좋은 2명을 추천 중`
+        : pool.length === 2
+          ? `${selectedLabel} 기준으로 세 번째 픽을 추천 중`
+          : `${selectedLabel} 조합의 무기 후보를 비교 중`;
 
   const replaceUrlState = React.useCallback(
     (nextState: TrioLabUrlState) => {
@@ -239,16 +251,12 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
     <>
       <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-3 backdrop-blur-sm sm:p-4">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-baseline gap-2">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-2">
             <p className="text-xs font-semibold text-[var(--color-foreground)]">
-              조합 검색 · {pool.length}/{MAX_POOL} 슬롯
+              조합 탐색 · {pool.length}/{MAX_POOL} 슬롯
             </p>
             <p className="text-[11px] text-[var(--color-muted-foreground)]">
-              {pool.length === 0
-                ? "캐릭터를 최대 3명까지 채워 trio 조합을 검색하세요"
-                : pool.length < MAX_POOL
-                  ? `${pool.length}명이 모두 포함된 trio 표시 중`
-                  : "선택한 3명의 trio 조합만 표시 중"}
+              {recommendationContext}
             </p>
           </div>
           {pool.length > 0 && (
@@ -272,7 +280,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                   key={`empty-${idx}`}
                   className="flex min-h-[112px] items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface-3)]/40 px-2 text-center text-[11px] text-[var(--color-muted-foreground)]"
                 >
-                  캐릭터 {idx + 1}
+                  {idx === 0 ? "캐릭터 선택" : idx === 1 ? "추가 캐릭터" : "마지막 캐릭터"}
                 </div>
               );
             }
@@ -385,17 +393,22 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
       )}
 
       <div className="flex items-center justify-between gap-3 border-b border-[var(--color-border)] pb-3 text-xs text-[var(--color-muted-foreground)]">
-        <p>
-          {loading ? "조합 로드 중…" : `${visibleCombos.length}/${combos.length}개 조합`}
+        <div className="min-w-0">
+          <p className="truncate">
+            {loading ? "추천 조합 로드 중…" : `${visibleCombos.length}/${combos.length}개 추천`}
+            {pool.length > 0 && (
+              <>
+                {" · "}
+                <span className="text-[var(--color-foreground)]">{selectedLabel}</span>
+              </>
+            )}
+          </p>
           {pool.length > 0 && (
-            <>
-              {" · 검색 "}
-              <span className="text-[var(--color-foreground)]">
-                {pool.map((character) => getCharName(character)).join(" + ")}
-              </span>
-            </>
+            <p className="mt-1 text-[11px] text-[var(--color-muted-foreground)]">
+              평균 RP와 표본 신뢰도를 우선 반영해 정렬합니다.
+            </p>
           )}
-        </p>
+        </div>
         <label className="flex items-center gap-2">
           정렬
           <select
@@ -436,8 +449,8 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
       ) : combos.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface-3)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
           {pool.length === 0
-            ? "캐릭터를 선택하면 조합 목록이 표시됩니다."
-            : "조건에 맞는 조합이 없습니다. 검색 슬롯의 캐릭터를 다시 골라보세요."}
+            ? "캐릭터를 선택하면 조건에 맞는 추천 조합이 표시됩니다."
+            : "조건에 맞는 추천 조합이 없습니다. 선택한 캐릭터나 무기를 조정해보세요."}
         </div>
       ) : (
         <>

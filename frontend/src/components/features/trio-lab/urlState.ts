@@ -1,8 +1,14 @@
 import type { TrioSortBy } from "./types";
 
 const MAX_POOL = 3;
-const DEFAULT_SORT: TrioSortBy = "averageRP";
-const VALID_SORTS = new Set<TrioSortBy>(["winRate", "averageRP", "averageRank", "totalGames"]);
+const DEFAULT_SORT: TrioSortBy = "recommended";
+const VALID_SORTS = new Set<TrioSortBy>([
+  "recommended",
+  "winRate",
+  "averageRP",
+  "averageRank",
+  "totalGames",
+]);
 
 type ParamsRecord = Record<string, string | string[] | undefined>;
 type ParamsLike = URLSearchParams | { get(name: string): string | null } | ParamsRecord;

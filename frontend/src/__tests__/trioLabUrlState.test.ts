@@ -37,7 +37,7 @@ describe("trioLabUrlState", () => {
     const params = buildTrioLabSearchParams({
       pool: [],
       weaponFilters: {},
-      sort: "averageRP",
+      sort: "recommended",
       search: "   ",
     });
 
