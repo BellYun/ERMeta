@@ -4,6 +4,7 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeBadgeStatic";
+import { Link } from "@/i18n/navigation";
 import {
   type CharacterRole,
   getCharacterImageUrl,
@@ -12,6 +13,7 @@ import {
 } from "@/lib/characterMap";
 import {
   getPatchAnalysisData,
+  getPatchAnalysisVersions,
   type PatchCharacterDelta,
   type PatchCharacterMetric,
   type PatchRoleMetric,
@@ -20,13 +22,12 @@ import { BASE_URL } from "@/lib/siteMetadata";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-static";
-export const revalidate = 21600;
 
 const ROLE_ORDER: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
 const AGGREGATE_ONLY_CHARACTERS = new Set([3, 13, 15, 29]);
 const EVALUATED_CHARACTER_NUMS = [
   3, 5, 6, 8, 13, 15, 17, 18, 21, 29, 33, 35, 38, 45, 47, 51, 52, 55, 56, 59, 61, 63, 66, 69, 70,
-  71, 72, 74, 77, 83, 84, 87, 88,
+  71, 72, 73, 74, 77, 83, 84, 87, 88,
 ];
 
 interface PatchAnalysisPageProps {
@@ -551,6 +552,7 @@ function getEntryRoles(entry: PatchCharacterDelta) {
 export default async function PatchAnalysisPage({ version }: PatchAnalysisPageProps = {}) {
   const data = await getPatchAnalysisData(version);
   const tEvaluations = await getTranslations("patchAnalysis.evaluations");
+  const analysisVersions = getPatchAnalysisVersions();
   const evaluations = Object.fromEntries(
     EVALUATED_CHARACTER_NUMS.map((characterNum) => [
       characterNum,
@@ -590,6 +592,27 @@ export default async function PatchAnalysisPage({ version }: PatchAnalysisPagePr
                 쉽습니다.
               </p>
             ) : null}
+
+            <nav className="mt-5 flex flex-wrap gap-2" aria-label="패치 분석 버전 선택">
+              {analysisVersions.map((candidate) => {
+                const isActive = candidate === data.currentPatch;
+                return (
+                  <Link
+                    key={candidate}
+                    href={`/patch-analysis/${candidate}`}
+                    aria-current={isActive ? "page" : undefined}
+                    className={cn(
+                      "rounded-xl border px-3 py-2 text-sm font-semibold transition",
+                      isActive
+                        ? "border-[rgba(96,165,250,0.28)] bg-[rgba(96,165,250,0.12)] text-[var(--color-primary-hover)]"
+                        : "border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:bg-[rgba(255,255,255,0.06)] hover:text-[var(--color-foreground)]"
+                    )}
+                  >
+                    {candidate} 분석
+                  </Link>
+                );
+              })}
+            </nav>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">

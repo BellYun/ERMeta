@@ -18,7 +18,7 @@ const PARALLEL_FETCH_LIMIT = 5000;
 const FULL_FETCH_LIMIT = 5000;
 const EXACT_PAIR_WEAPON_FETCH_LIMIT = 20000;
 const MAX_RESPONSE_LIMIT = FULL_FETCH_LIMIT;
-const TRIO_WEAPON_CACHE_VERSION = "v3";
+const TRIO_WEAPON_CACHE_VERSION = "v6";
 
 // L1 캐시 TTL — source 가 사전 집계 테이블(v2_CharacterTrioWeapon* / _p10)이고
 // tag-based invalidation 으로 즉시 갱신되므로 7d. 카디널리티가 가장 큰 라우트라

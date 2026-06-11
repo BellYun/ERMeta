@@ -13,6 +13,7 @@ export function ComboCard({
   rank,
   getCharName,
   selectedAllies,
+  isFocusPoolCombo = false,
   compact = false,
   priorityImages = false,
   onNavigateAnalysis,
@@ -21,6 +22,7 @@ export function ComboCard({
   rank: number;
   getCharName: (code: number) => string;
   selectedAllies: number[];
+  isFocusPoolCombo?: boolean;
   compact?: boolean;
   /** true면 이미지를 priority로 즉시 로드 (상위 카드용) */
   priorityImages?: boolean;
@@ -43,7 +45,13 @@ export function ComboCard({
   const isSmallSample = rec.totalGames < SMALL_SAMPLE_THRESHOLD;
 
   return (
-    <div className="group flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 px-3 py-2.5 hover:bg-[var(--color-primary)]/[0.04] hover:border-[var(--color-primary)]/20 transition-all duration-200">
+    <div
+      className={cn(
+        "group flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 px-3 py-2.5 transition-all duration-200 hover:bg-[var(--color-primary)]/[0.04] hover:border-[var(--color-primary)]/20",
+        isFocusPoolCombo &&
+          "border-[rgba(216,180,254,0.42)] bg-[linear-gradient(135deg,rgba(168,85,247,0.08),rgba(17,25,46,0.82)_48%)] shadow-[inset_0_1px_0_rgba(216,180,254,0.08)]"
+      )}
+    >
       {/* 순위 */}
       <span className="w-5 shrink-0 text-center text-xs font-bold text-[var(--color-muted-foreground)] group-hover:text-[var(--color-primary)]">
         {rank}

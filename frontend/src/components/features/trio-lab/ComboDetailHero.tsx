@@ -21,50 +21,87 @@ interface ComboDetailHeroProps {
 export function ComboDetailHero({ combo, listHref, patchVersion, tier }: ComboDetailHeroProps) {
   const trioName = combo.members.map((m) => characterDisplayName(m.character)).join(" + ");
   const score = comboTier(combo.winRate, combo.averageRP, combo.averageRank, combo.totalGames);
+  const rpText = `${combo.averageRP >= 0 ? "+" : ""}${combo.averageRP.toFixed(1)}`;
 
   return (
-    <header className="analysis-hero flex flex-col gap-3 p-5 sm:p-7">
-      <nav className="flex items-center gap-1.5 text-xs text-[var(--color-muted-foreground)]">
+    <header className="analysis-hero flex flex-col gap-5 p-4 sm:p-5 lg:p-6">
+      <nav className="flex min-w-0 items-center gap-1.5 text-xs text-[var(--color-muted-foreground)]">
         <Link
           href={listHref}
           scroll={false}
-          className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-[rgba(255,255,255,0.04)] hover:text-[var(--color-foreground)]"
+          className="inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-[rgba(255,255,255,0.04)] hover:text-[var(--color-foreground)]"
         >
           <ArrowLeft className="h-3 w-3" strokeWidth={2.4} />
           조합 실험실
         </Link>
         <span className="text-[var(--color-border-light)]">/</span>
-        <span className="text-[var(--color-foreground)]">{trioName}</span>
+        <span className="truncate text-[var(--color-foreground)]">{trioName}</span>
       </nav>
 
-      <div className="flex flex-wrap items-center gap-2 text-xs">
-        <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 py-0.5 font-medium text-[var(--color-muted-foreground)]">
-          패치 {patchVersion} · {tier} · {combo.totalGames.toLocaleString("ko-KR")} 매치
-        </span>
-      </div>
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,0.78fr)_minmax(420px,1fr)] lg:items-end">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 py-1 font-medium text-[var(--color-muted-foreground)]">
+              패치 {patchVersion}
+            </span>
+            <span className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 py-1 font-medium text-[var(--color-muted-foreground)]">
+              {tier}
+            </span>
+            <span className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 py-1 font-mono font-semibold text-[var(--color-foreground)]">
+              {combo.totalGames.toLocaleString("ko-KR")} 매치
+            </span>
+          </div>
+          <h1 className="mt-3 text-2xl font-black leading-tight text-[var(--color-foreground)] sm:text-3xl">
+            {trioName}
+          </h1>
+        </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="flex items-end gap-3">
-          <span
-            className={`font-mono text-[3rem] font-black leading-none tracking-tighter sm:text-[3.5rem] ${SCORE_COLOR[score] ?? ""}`}
-          >
-            {score}
-          </span>
-          <div className="pb-1">
-            <h1 className="text-2xl font-extrabold leading-tight tracking-[-0.04em] text-[var(--color-foreground)] sm:text-3xl">
-              {trioName}
-            </h1>
-            <p className="mt-1 text-sm text-[var(--color-muted-foreground)]">
-              trio-weapon 통계 기반 · 평균 RP {combo.averageRP >= 0 ? "+" : ""}
-              {combo.averageRP.toFixed(0)} · 평균 #{combo.averageRank.toFixed(1)}
-            </p>
-            <p className="mt-2 max-w-[42rem] text-sm leading-6 text-[var(--color-muted-foreground)]">
-              ER&GG는 이 조합의 승률, 평균 RP, 평균 순위, 표본 수를 함께 비교해 실제 랭크에서 유지할
-              만한 3인 구도인지 확인합니다.
-            </p>
+        <div className="rounded-2xl border border-[var(--color-border)] bg-[rgba(8,13,27,0.58)] p-4 sm:p-5">
+          <div className="grid gap-4 sm:grid-cols-[132px_1fr] sm:items-stretch">
+            <div className="flex flex-col justify-between rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.035)] p-4">
+              <p className="text-[11px] font-mono font-semibold uppercase tracking-widest text-[var(--color-muted-foreground)]">
+                조합 등급
+              </p>
+              <p
+                className={`mt-2 font-mono text-[4.2rem] font-black leading-none sm:text-[4.8rem] ${SCORE_COLOR[score] ?? ""}`}
+              >
+                {score}
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <HeroMetric label="승률" value={`${combo.winRate.toFixed(1)}%`} />
+              <HeroMetric label="평균 RP" value={rpText} tone="gold" />
+              <HeroMetric label="평균 순위" value={`#${combo.averageRank.toFixed(1)}`} />
+              <HeroMetric label="표본" value={combo.totalGames.toLocaleString("ko-KR")} />
+            </div>
           </div>
         </div>
       </div>
     </header>
+  );
+}
+
+function HeroMetric({
+  label,
+  value,
+  tone = "default",
+}: {
+  label: string;
+  value: string;
+  tone?: "default" | "gold";
+}) {
+  return (
+    <div className="rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.035)] p-3">
+      <p className="text-[10px] font-mono font-semibold uppercase tracking-widest text-[var(--color-muted-foreground)]">
+        {label}
+      </p>
+      <p
+        className={`mt-2 font-mono text-2xl font-black leading-none tabular-nums sm:text-3xl ${
+          tone === "gold" ? "text-[var(--color-accent-gold)]" : "text-[var(--color-foreground)]"
+        }`}
+      >
+        {value}
+      </p>
+    </div>
   );
 }

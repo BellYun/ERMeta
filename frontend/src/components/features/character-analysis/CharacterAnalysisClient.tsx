@@ -1,18 +1,17 @@
 "use client";
 
-import { BarChart2, ChevronRight, FileText, Loader2, Users, Zap } from "lucide-react";
+import { BarChart2, FileText, Loader2, Zap } from "lucide-react";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import { Suspense } from "react";
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route";
 import { useL10n } from "@/components/L10nProvider";
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
 import { CharacterHeader } from "./CharacterHeader";
 import { RoleComboRpPanel } from "./RoleComboRpPanel";
 import { SynergyPartnersSection } from "./SynergyPartnersSection";
-import { assignCharTier, fetchStats } from "./utils";
+import { assignCharTier, fetchStats, fetchStatsHistory } from "./utils";
 
 // 탭 콘텐츠: lazy import (코드 스플릿)
 const PatchComparisonTab = React.lazy(() =>
@@ -61,7 +60,7 @@ export function CharacterAnalysisClient({
   const { l10n } = useL10n();
   const t = useTranslations("characterAnalysis");
   const patches = React.useMemo(() => initialPatches ?? [], [initialPatches]);
-  const selectablePatches = React.useMemo(() => patches.slice(0, 2), [patches]);
+  const selectablePatches = patches;
 
   const [selectedTier, setSelectedTier] = React.useState<string>("DIAMOND_PLUS");
   const [selectedPatch, setSelectedPatch] = React.useState<string | null>(() => patches[0] ?? null);
@@ -113,32 +112,6 @@ export function CharacterAnalysisClient({
       ? (allPatchStats[selectedPatchIndex + 1] ?? null)
       : null;
 
-  // 나머지 패치 데이터 로드 (idle 시)
-  React.useEffect(() => {
-    if (patches.length <= 2) return;
-    const remainingPatches = patches.slice(2);
-    const fetchRemaining = () =>
-      Promise.all(remainingPatches.map((p) => fetchStats(code, p, selectedTier))).then(
-        (restResults) => {
-          setAllPatchStats((prev) => {
-            const merged =
-              prev.length === patches.length ? [...prev] : Array(patches.length).fill(null);
-            restResults.forEach((r, i) => {
-              merged[i + 2] = r;
-            });
-            return merged;
-          });
-        }
-      );
-    if (typeof requestIdleCallback !== "undefined") {
-      requestIdleCallback(() => {
-        fetchRemaining();
-      });
-    } else {
-      setTimeout(fetchRemaining, 200);
-    }
-  }, [patches, code, selectedTier]);
-
   React.useEffect(() => {
     if (!selectablePatches.length) return;
     setSelectedPatch((current) =>
@@ -181,11 +154,14 @@ export function CharacterAnalysisClient({
       const current = priorityResults[0] ?? null;
       setSelectedWeapon(readWeaponFromLocation() ?? current?.weapons?.[0]?.bestWeapon ?? null);
 
-      const initial: (CharacterStatsResponse | null)[] = Array(patches.length).fill(null);
-      priorityResults.forEach((result, index) => {
-        initial[index] = result;
+      setAllPatchStats((prev) => {
+        const merged =
+          prev.length === patches.length ? [...prev] : Array(patches.length).fill(null);
+        priorityResults.forEach((result, index) => {
+          merged[index] = result;
+        });
+        return merged;
       });
-      setAllPatchStats(initial);
       setLoading(false);
     };
 
@@ -200,6 +176,32 @@ export function CharacterAnalysisClient({
       cancelled = true;
     };
   }, [code, initialPrevStats, initialStats, patches, selectedTier]);
+
+  React.useEffect(() => {
+    if (!patches.length) return;
+
+    let cancelled = false;
+
+    const fetchPatchHistory = async () => {
+      const history = await fetchStatsHistory(code, patches, selectedTier);
+      if (cancelled || !history) return;
+
+      setAllPatchStats((prev) => {
+        const merged =
+          prev.length === patches.length ? [...prev] : Array(patches.length).fill(null);
+        history.forEach((stat, index) => {
+          merged[index] = stat;
+        });
+        return merged;
+      });
+    };
+
+    void fetchPatchHistory();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [code, patches, selectedTier]);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -391,17 +393,6 @@ export function CharacterAnalysisClient({
                   {(stats?.pickRate ?? displayStat.pickRate).toFixed(1)}%
                 </span>
               </div>
-            </div>
-
-            <div className="mt-3 flex justify-stretch sm:mt-4 sm:justify-end">
-              <Link
-                href={`/synergy-detail?ally1=${code}${selectedWeapon != null ? `&w1=${selectedWeapon}` : ""}`}
-                className="inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-3.5 py-2.5 text-xs font-semibold text-[var(--color-primary-hover)] transition-colors hover:bg-[var(--color-primary)]/20 sm:min-h-0 sm:w-auto"
-              >
-                <Users className="h-3.5 w-3.5" />
-                {t("synergyCta")}
-                <ChevronRight className="h-3 w-3" />
-              </Link>
             </div>
           </section>
         )}

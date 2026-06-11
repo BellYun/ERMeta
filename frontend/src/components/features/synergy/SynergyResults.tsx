@@ -76,6 +76,38 @@ function sortCharacterPair(characters: number[]): number[] {
   return [...characters].sort((a, b) => a - b);
 }
 
+function isFocusResult(rec: TrioResult, selectedAllies: number[], focusCharacters: number[]) {
+  if (focusCharacters.length === 0) return false;
+  const focusSet = new Set(focusCharacters);
+
+  if (selectedAllies.length === 2) {
+    const third = getThirdCharacter(rec, selectedAllies[0], selectedAllies[1]);
+    return third != null && focusSet.has(third);
+  }
+
+  if (selectedAllies.length === 1) {
+    const selected = selectedAllies[0];
+    return [rec.character1, rec.character2, rec.character3]
+      .filter((code) => code !== selected)
+      .some((code) => focusSet.has(code));
+  }
+
+  return false;
+}
+
+function prioritizeFocusResults(
+  results: TrioResult[],
+  selectedAllies: number[],
+  focusCharacters: number[]
+): TrioResult[] {
+  if (focusCharacters.length === 0) return results;
+
+  return [
+    ...results.filter((rec) => isFocusResult(rec, selectedAllies, focusCharacters)),
+    ...results.filter((rec) => !isFocusResult(rec, selectedAllies, focusCharacters)),
+  ];
+}
+
 /**
  * 시너지 결과 Island — URL params(ally1,ally2) + localStorage(focusCharacters) 기반
  * SynergyClient에서 분리된 독립 Client Component
@@ -171,27 +203,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
   const recommendations = React.useMemo(() => {
     if (selectedAllies.length === 0) return [];
 
-    let scopedResults = trioResults;
-    if (focusCharacters.length > 0) {
-      const focusSet = new Set(focusCharacters);
-      if (selectedAllies.length === 2) {
-        const [allyA, allyB] = selectedAllies;
-        scopedResults = trioResults.filter((rec) => {
-          const third = getThirdCharacter(rec, allyA, allyB);
-          return third != null && focusSet.has(third);
-        });
-      } else if (selectedAllies.length === 1) {
-        const selected = selectedAllies[0];
-        scopedResults = trioResults.filter((rec) => {
-          const others = [rec.character1, rec.character2, rec.character3].filter(
-            (c) => c !== selected
-          );
-          return others.some((c) => focusSet.has(c));
-        });
-      }
-    }
-
-    const deduped = deduplicateResults(scopedResults, selectedAllies, sortBy);
+    const deduped = deduplicateResults(trioResults, selectedAllies, sortBy);
     const sorted = [
       ...deduped.filter((r) => r.averageRP >= 0),
       ...deduped.filter((r) => r.averageRP < 0),
@@ -203,7 +215,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
             ...sorted.filter((r) => r.totalGames >= MIN_MEANINGFUL_GAMES),
             ...sorted.filter((r) => r.totalGames < MIN_MEANINGFUL_GAMES),
           ];
-    return sampleAwareSorted.slice(0, 20);
+    return prioritizeFocusResults(sampleAwareSorted, selectedAllies, focusCharacters).slice(0, 20);
   }, [trioResults, selectedAllies, focusCharacters, sortBy]);
 
   const clearAllies = React.useCallback(() => {
@@ -388,6 +400,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                   rank={i + 1}
                   getCharName={getCharName}
                   selectedAllies={selectedAllies}
+                  isFocusPoolCombo={isFocusResult(rec, selectedAllies, focusCharacters)}
                   compact={compact}
                   priorityImages={i < 5}
                   onNavigateAnalysis={(code) => {
@@ -407,9 +420,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
         ) : (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
             <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
-            <p className="text-sm text-[var(--color-muted-foreground)]">
-              {focusCharacters.length > 0 ? t("emptyFiltered") : t("emptyNoData")}
-            </p>
+            <p className="text-sm text-[var(--color-muted-foreground)]">{t("emptyNoData")}</p>
             <button
               onClick={clearAllies}
               className="mt-3 text-xs text-[var(--color-primary)] hover:underline"

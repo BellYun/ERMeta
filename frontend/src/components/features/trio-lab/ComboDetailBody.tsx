@@ -4,18 +4,8 @@ import itemNameMap from "@/../const/itemNameMap.json";
 import { ItemIcon } from "@/components/character/shared";
 import { Link } from "@/i18n/navigation";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
-const ITEM_NAMES = itemNameMap as Record<string, string>;
-function itemNameOf(code: number | null | undefined): string {
-  if (code == null) return "";
-  return ITEM_NAMES[String(code)] ?? `#${code}`;
-}
-function traitNameOf(
-  names: Record<number, string> | undefined,
-  code: number | null | undefined
-): string {
-  if (code == null) return "";
-  return names?.[code] ?? `#${code}`;
-}
+import { cn } from "@/lib/utils";
+import { TRAIT_CORES, TRAIT_SUBS_SLOT1, TRAIT_SUBS_SLOT2 } from "@/utils/traitCodes";
 import {
   characterDisplayName,
   apiRowToCombo,
@@ -25,6 +15,21 @@ import {
   type TrioWeaponCombo,
   type TrioWeaponMember,
 } from "./types";
+
+const ITEM_NAMES = itemNameMap as Record<string, string>;
+
+function itemNameOf(code: number | null | undefined): string {
+  if (code == null) return "";
+  return ITEM_NAMES[String(code)] ?? `#${code}`;
+}
+
+function traitNameOf(
+  names: Record<number, string> | undefined,
+  code: number | null | undefined
+): string {
+  if (code == null) return "";
+  return names?.[code] ?? `#${code}`;
+}
 
 const SCORE_COLOR: Record<string, string> = {
   "S+": "text-[var(--color-accent-gold)]",
@@ -53,6 +58,22 @@ export interface TopEquipmentBuild {
   totalGames: number;
   pickRate: number;
   winRate: number;
+}
+
+export interface TraitSubOption {
+  code: number | null;
+  totalGames: number;
+  pickRate: number;
+  winRate: number;
+}
+
+export interface TraitSecondaryInfo {
+  secGroup: "havoc" | "fortification" | "support" | "chaos" | "unknown";
+  totalGames: number;
+  pickRate: number;
+  winRate: number;
+  optionTrait1Options: TraitSubOption[];
+  optionTrait2Options: TraitSubOption[];
 }
 
 export interface TopTraitBuild {
@@ -84,34 +105,48 @@ export interface TopTraitBuild {
   secondaryOpt2: number | null;
   secondaryOpt2PickRate: number;
   secondaryOpt2WinRate: number;
+  mainCoreOptions?: TraitSubOption[];
+  sub1Options?: TraitSubOption[];
+  sub2Options?: TraitSubOption[];
+  secondaries?: TraitSecondaryInfo[];
 }
 
 const TRAIT_GROUP_META: Record<
   TopTraitBuild["mainGroup"],
-  { label: string; color: string; ring: string }
+  { label: string; letter: string; bg: string; color: string; ring: string }
 > = {
   havoc: {
-    label: "혼돈",
+    label: "파괴",
+    letter: "파",
+    bg: "bg-red-500/20",
     color: "text-[#f87171]",
     ring: "border-[rgba(248,113,113,0.36)] bg-[rgba(248,113,113,0.12)]",
   },
   fortification: {
-    label: "방어",
+    label: "저항",
+    letter: "저",
+    bg: "bg-blue-500/20",
     color: "text-[#60a5fa]",
     ring: "border-[rgba(96,165,250,0.36)] bg-[rgba(96,165,250,0.12)]",
   },
   support: {
     label: "지원",
+    letter: "지",
+    bg: "bg-emerald-500/20",
     color: "text-[#4ade80]",
     ring: "border-[rgba(74,222,128,0.36)] bg-[rgba(74,222,128,0.12)]",
   },
   chaos: {
     label: "혼돈",
+    letter: "혼",
+    bg: "bg-purple-500/20",
     color: "text-[#a78bfa]",
     ring: "border-[rgba(167,139,250,0.36)] bg-[rgba(167,139,250,0.12)]",
   },
   unknown: {
     label: "기타",
+    letter: "?",
+    bg: "bg-[var(--color-surface-2)]",
     color: "text-[var(--color-muted-foreground)]",
     ring: "border-[var(--color-border)] bg-[var(--color-surface-3)]",
   },
@@ -133,55 +168,6 @@ function MemberAvatar({ member, size = "h-16 w-16" }: { member: TrioWeaponMember
         unoptimized
       />
     </Link>
-  );
-}
-
-function MetricTile({
-  label,
-  value,
-  sublabel,
-}: {
-  label: string;
-  value: string;
-  sublabel?: string;
-}) {
-  return (
-    <div className="metric-card p-4">
-      <p className="metric-label">{label}</p>
-      <p className="metric-value mt-1.5">{value}</p>
-      {sublabel && (
-        <p className="mt-1 font-mono text-xs font-semibold tabular-nums text-[var(--color-muted-foreground)]">
-          {sublabel}
-        </p>
-      )}
-    </div>
-  );
-}
-
-export function MetricsBlock({ combo }: { combo: TrioWeaponCombo }) {
-  return (
-    <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <MetricTile
-        label="평균 승률"
-        value={`${combo.winRate.toFixed(1)}%`}
-        sublabel="trio-weapon 단위"
-      />
-      <MetricTile
-        label="평균 RP"
-        value={`${combo.averageRP >= 0 ? "+" : ""}${combo.averageRP.toFixed(0)}`}
-        sublabel="3인 평균"
-      />
-      <MetricTile
-        label="평균 순위"
-        value={`#${combo.averageRank.toFixed(1)}`}
-        sublabel="낮을수록 좋음"
-      />
-      <MetricTile
-        label="표본 수"
-        value={combo.totalGames.toLocaleString("ko-KR")}
-        sublabel="누적 매치"
-      />
-    </section>
   );
 }
 
@@ -247,6 +233,107 @@ function TraitThumb({
   );
 }
 
+function TraitIconSmall({ code, size = 24 }: { code: number; size?: number }) {
+  return (
+    <Image
+      src={`/TraitSkill/TraitSkillIcon_${code}.png`}
+      alt={String(code)}
+      width={size}
+      height={size}
+      className="shrink-0 rounded-sm"
+      unoptimized
+    />
+  );
+}
+
+function buildOptionGrid(
+  codes: number[] | undefined,
+  options: TraitSubOption[] | undefined,
+  selected: number | null,
+  selectedPickRate = 0,
+  selectedWinRate = 0,
+  selectedGames = 0
+): TraitSubOption[] {
+  if (!codes) return [];
+
+  const byCode = new Map((options ?? []).filter((o) => o.code != null).map((o) => [o.code, o]));
+  return codes.map((code) => {
+    const current = byCode.get(code);
+    if (current) return current;
+    return {
+      code,
+      totalGames: code === selected ? selectedGames : 0,
+      pickRate: code === selected ? selectedPickRate : 0,
+      winRate: code === selected ? selectedWinRate : 0,
+    };
+  });
+}
+
+function TraitTreeRow({
+  options,
+  traitNames,
+  group,
+}: {
+  options: TraitSubOption[];
+  traitNames?: Record<number, string>;
+  group: TopTraitBuild["mainGroup"];
+}) {
+  const meta = TRAIT_GROUP_META[group];
+  const maxPick = Math.max(...options.map((o) => o.pickRate));
+  return (
+    <div className="flex w-full items-start justify-center gap-1.5 sm:gap-3">
+      {options.map((opt) => {
+        if (opt.code == null) return null;
+        const isTop = opt.pickRate === maxPick && maxPick > 0;
+        return (
+          <div key={opt.code} className="flex shrink-0 flex-col items-center gap-1">
+            <div
+              className={cn(
+                "rounded-full transition-all",
+                isTop ? `p-0.5 ring-2 ${meta.ring}` : "opacity-35 grayscale"
+              )}
+            >
+              <TraitIconSmall code={opt.code} size={isTop ? 36 : 28} />
+            </div>
+            <span
+              className={cn(
+                "max-w-[44px] truncate text-center text-[10px] font-medium sm:max-w-[56px]",
+                isTop ? "text-[var(--color-foreground)]" : "text-[var(--color-muted-foreground)]"
+              )}
+            >
+              {traitNameOf(traitNames, opt.code)}
+            </span>
+            <div className="flex gap-1 sm:gap-1.5">
+              <span
+                className={cn(
+                  "font-mono text-[9px]",
+                  isTop ? "text-[var(--color-primary)]" : "text-[var(--color-muted-foreground)]"
+                )}
+              >
+                {opt.pickRate.toFixed(1)}%
+              </span>
+              <span
+                className={cn(
+                  "font-mono text-[9px]",
+                  opt.winRate >= 12.5
+                    ? "text-[var(--color-accent-gold)]"
+                    : "text-[var(--color-danger)]"
+                )}
+              >
+                {opt.winRate.toFixed(1)}%
+              </span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function topByPick(options: TraitSubOption[]): TraitSubOption | null {
+  return [...options].sort((a, b) => b.pickRate - a.pickRate)[0] ?? null;
+}
+
 function TraitBlock({
   trait,
   traitNames,
@@ -258,134 +345,162 @@ function TraitBlock({
     return <p className="text-xs text-[var(--color-muted-foreground)]">특성 표본이 부족합니다.</p>;
   }
   const meta = TRAIT_GROUP_META[trait.mainGroup];
-  const showsPopularComparison = trait.popularCore != null && trait.popularCore !== trait.mainCore;
-  const isComboCore = trait.mainCoreSource === "combo";
+  const mainCoreOptions = buildOptionGrid(
+    TRAIT_CORES[trait.mainGroup],
+    trait.mainCoreOptions,
+    trait.mainCore,
+    trait.mainCorePickRate,
+    trait.mainCoreWinRate,
+    trait.mainCoreGames
+  );
+  const sub1Options = buildOptionGrid(
+    TRAIT_SUBS_SLOT1[trait.mainGroup],
+    trait.sub1Options,
+    trait.sub1,
+    0,
+    trait.sub1WinRate
+  );
+  const sub2Options = buildOptionGrid(
+    TRAIT_SUBS_SLOT2[trait.mainGroup],
+    trait.sub2Options,
+    trait.sub2,
+    0,
+    trait.sub2WinRate
+  );
+  const topMainCore = trait.mainCore ?? topByPick(mainCoreOptions)?.code ?? null;
+  const secondaries =
+    trait.secondaries && trait.secondaries.length > 0
+      ? [
+          [...trait.secondaries]
+            .filter(
+              (secondary) => secondary.secGroup !== trait.mainGroup && secondary.totalGames > 0
+            )
+            .sort((a, b) => b.pickRate - a.pickRate)[0],
+        ].filter((secondary): secondary is TraitSecondaryInfo => secondary != null)
+      : trait.secondaryGroup && trait.secondaryGroup !== trait.mainGroup
+        ? [
+            {
+              secGroup: trait.secondaryGroup,
+              totalGames: 0,
+              pickRate: trait.secondaryPickRate,
+              winRate: trait.secondaryWinRate,
+              optionTrait1Options: buildOptionGrid(
+                TRAIT_SUBS_SLOT1[trait.secondaryGroup],
+                undefined,
+                trait.secondaryOpt1,
+                trait.secondaryOpt1PickRate,
+                trait.secondaryOpt1WinRate
+              ),
+              optionTrait2Options: buildOptionGrid(
+                TRAIT_SUBS_SLOT2[trait.secondaryGroup],
+                undefined,
+                trait.secondaryOpt2,
+                trait.secondaryOpt2PickRate,
+                trait.secondaryOpt2WinRate
+              ),
+            },
+          ]
+        : [];
 
   return (
-    <>
-      <div className="flex flex-wrap items-center gap-2">
-        <span
-          className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold ${meta.ring} ${meta.color}`}
-        >
-          {meta.label} 메인
-        </span>
-        <span className="font-mono text-[11px] text-[var(--color-muted-foreground)]">
-          그룹 픽률 {trait.groupPickRate.toFixed(1)}% · 그룹 승률{" "}
-          <span className="font-bold text-[var(--color-foreground)]">
-            {trait.groupWinRate.toFixed(1)}%
-          </span>
-        </span>
-      </div>
-
-      <div className="mt-3 grid grid-cols-3 gap-3">
-        <div className="flex flex-col items-center gap-1.5">
-          <TraitThumb
-            code={trait.mainCore}
-            label={isComboCore ? "조합 코어" : "고승률 코어"}
-            size={48}
-            traitNames={traitNames}
-          />
-          <p className="font-mono text-[11px] tabular-nums text-[var(--color-stat-up)]">
-            승률 {trait.mainCoreWinRate.toFixed(1)}%
-          </p>
-          <p className="font-mono text-[10px] text-[var(--color-muted-foreground)]">
-            {trait.mainCoreGames.toLocaleString("ko-KR")}판
-            {!isComboCore && ` · 픽률 ${trait.mainCorePickRate.toFixed(1)}%`}
-          </p>
-        </div>
-        <div className="flex flex-col items-center gap-1.5">
-          <TraitThumb code={trait.sub1} label="서브 1" traitNames={traitNames} />
-          <p className="font-mono text-[10px] text-[var(--color-muted-foreground)]">
-            승률 {trait.sub1WinRate.toFixed(1)}%
-          </p>
-        </div>
-        <div className="flex flex-col items-center gap-1.5">
-          <TraitThumb code={trait.sub2} label="서브 2" traitNames={traitNames} />
-          <p className="font-mono text-[10px] text-[var(--color-muted-foreground)]">
-            승률 {trait.sub2WinRate.toFixed(1)}%
-          </p>
+    <div className="space-y-3">
+      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-4 sm:p-5">
+        <div className="flex flex-col items-center gap-3">
+          {topMainCore != null && (
+            <div className={cn("rounded-full p-1 ring-2", meta.ring)}>
+              <TraitIconSmall code={topMainCore} size={40} />
+            </div>
+          )}
+          <TraitTreeRow options={mainCoreOptions} traitNames={traitNames} group={trait.mainGroup} />
+          <TraitTreeRow options={sub1Options} traitNames={traitNames} group={trait.mainGroup} />
+          <TraitTreeRow options={sub2Options} traitNames={traitNames} group={trait.mainGroup} />
         </div>
       </div>
 
-      {showsPopularComparison && (
-        <div className="mt-3 flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] p-2">
-          <TraitThumb
-            code={trait.popularCore}
-            label="인기 코어"
-            size={32}
-            traitNames={traitNames}
-          />
-          <div className="min-w-0 flex-1">
-            <p className="text-[10px] uppercase tracking-wide text-[var(--color-muted-foreground)]">
-              가장 많이 쓰는 코어 (비교용)
-            </p>
-            <p className="font-mono text-[11px] tabular-nums text-[var(--color-muted-foreground)]">
-              픽률{" "}
-              <span className="font-bold text-[var(--color-foreground)]">
-                {trait.popularCorePickRate.toFixed(1)}%
-              </span>
-              {" · "}승률{" "}
-              <span className="font-bold text-[var(--color-foreground)]">
-                {trait.popularCoreWinRate.toFixed(1)}%
-              </span>
-            </p>
+      {secondaries.length > 0 && (
+        <div className="overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80">
+          <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60 px-3 py-2 sm:px-4">
+            <span className="text-[11px] font-semibold text-[var(--color-muted-foreground)] sm:text-xs">
+              부특성 조합
+            </span>
           </div>
-        </div>
-      )}
-
-      {trait.secondaryGroup && (trait.secondaryOpt1 != null || trait.secondaryOpt2 != null) && (
-        <div className="mt-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] p-2.5">
-          <div className="flex flex-wrap items-center gap-2">
-            <span
-              className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold ${TRAIT_GROUP_META[trait.secondaryGroup].ring} ${TRAIT_GROUP_META[trait.secondaryGroup].color}`}
+          <div className="overflow-x-auto pb-1">
+            <div
+              className={cn(
+                "flex min-w-max gap-px bg-[var(--color-border)]/30 sm:grid sm:min-w-0",
+                secondaries.length === 1 && "sm:grid-cols-1",
+                secondaries.length === 2 && "sm:grid-cols-2",
+                secondaries.length >= 3 && "sm:grid-cols-3"
+              )}
             >
-              {TRAIT_GROUP_META[trait.secondaryGroup].label} 부특성 · 픽률 1위
-            </span>
-            <span className="font-mono text-[11px] tabular-nums text-[var(--color-muted-foreground)]">
-              부특성 픽률{" "}
-              <span className="font-bold text-[var(--color-foreground)]">
-                {trait.secondaryPickRate.toFixed(1)}%
-              </span>
-              {" · "}승률{" "}
-              <span className="font-bold text-[var(--color-foreground)]">
-                {trait.secondaryWinRate.toFixed(1)}%
-              </span>
-            </span>
-          </div>
-          <div className="mt-2 flex items-end gap-3">
-            <div className="flex flex-col items-center gap-1">
-              <TraitThumb
-                code={trait.secondaryOpt1}
-                label="옵션 1"
-                size={36}
-                traitNames={traitNames}
-              />
-              <p className="font-mono text-[10px] text-[var(--color-muted-foreground)]">
-                픽 {trait.secondaryOpt1PickRate.toFixed(1)}%
-              </p>
-            </div>
-            <div className="flex flex-col items-center gap-1">
-              <TraitThumb
-                code={trait.secondaryOpt2}
-                label="옵션 2"
-                size={36}
-                traitNames={traitNames}
-              />
-              <p className="font-mono text-[10px] text-[var(--color-muted-foreground)]">
-                픽 {trait.secondaryOpt2PickRate.toFixed(1)}%
-              </p>
+              {secondaries.map((sec) => {
+                const secMeta = TRAIT_GROUP_META[sec.secGroup];
+                const opt1 = buildOptionGrid(
+                  TRAIT_SUBS_SLOT1[sec.secGroup],
+                  sec.optionTrait1Options,
+                  null
+                );
+                const opt2 = buildOptionGrid(
+                  TRAIT_SUBS_SLOT2[sec.secGroup],
+                  sec.optionTrait2Options,
+                  null
+                );
+                return (
+                  <div
+                    key={sec.secGroup}
+                    className="min-w-[220px] overflow-hidden bg-[var(--color-surface)]/80 p-3 sm:min-w-0 sm:p-4"
+                  >
+                    <div className="mb-3 flex min-w-0 items-center justify-between gap-2">
+                      <div className="flex min-w-0 items-center gap-2">
+                        <div
+                          className={cn(
+                            "flex h-6 w-6 shrink-0 items-center justify-center rounded-full",
+                            secMeta.bg
+                          )}
+                        >
+                          <span className={cn("text-xs font-black", secMeta.color)}>
+                            {secMeta.letter}
+                          </span>
+                        </div>
+                        <span className={cn("truncate text-xs font-bold", secMeta.color)}>
+                          {secMeta.label}
+                        </span>
+                      </div>
+                      <div className="flex shrink-0 gap-1.5 font-mono text-[10px] sm:gap-2">
+                        <span className="whitespace-nowrap text-[var(--color-muted-foreground)]">
+                          픽 {sec.pickRate.toFixed(0)}%
+                        </span>
+                        <span
+                          className={cn(
+                            "whitespace-nowrap",
+                            sec.winRate >= 12.5
+                              ? "text-[var(--color-accent-gold)]"
+                              : "text-[var(--color-danger)]"
+                          )}
+                        >
+                          승 {sec.winRate.toFixed(1)}%
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex min-w-0 flex-col items-center gap-2">
+                      <TraitTreeRow options={opt1} traitNames={traitNames} group={sec.secGroup} />
+                      <TraitTreeRow options={opt2} traitNames={traitNames} group={sec.secGroup} />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
 function CharacterDetailCard({ data }: { data: CharacterDetailData }) {
   const { member, patchVersion, topTrait, topBuild, traitNames } = data;
   return (
-    <article className="char-card flex flex-col gap-3 p-4">
+    <article className="char-card flex flex-col gap-3 p-3 sm:p-4">
       <header className="flex items-center gap-3 border-b border-[var(--color-border)] pb-3">
         <MemberAvatar member={member} size="h-14 w-14" />
         <div className="min-w-0 flex-1">
@@ -398,7 +513,7 @@ function CharacterDetailCard({ data }: { data: CharacterDetailData }) {
         </div>
         <Link
           href={`/character/${member.character}`}
-          className="inline-flex items-center gap-1 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-foreground)] transition-colors hover:border-[rgba(96,165,250,0.32)] hover:bg-[rgba(96,165,250,0.08)] hover:text-[var(--color-primary-hover)]"
+          className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-foreground)] transition-colors hover:border-[rgba(96,165,250,0.32)] hover:bg-[rgba(96,165,250,0.08)] hover:text-[var(--color-primary-hover)]"
         >
           빌드
           <ChevronRight className="h-3 w-3" strokeWidth={2.4} />
@@ -459,7 +574,7 @@ export function CharacterDetailGrid({ rows }: { rows: CharacterDetailData[] }) {
           무기군별 호출
         </p>
       </div>
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
         {rows.map((row) => (
           <CharacterDetailCard key={`${row.member.character}-${row.member.weapon}`} data={row} />
         ))}
@@ -495,7 +610,7 @@ export function TraitComboBlock({
   if (topRows.length === 0) return null;
 
   return (
-    <section className="dashboard-panel flex flex-col gap-3 p-5">
+    <section className="dashboard-panel flex flex-col gap-3 p-4 sm:p-5">
       <div className="flex items-center justify-between border-l-2 border-[var(--color-primary)] pl-3">
         <h2 className="text-sm font-bold text-[var(--color-foreground)]">상위 특성 조합</h2>
         <p className="text-[11px] font-mono uppercase tracking-widest text-[var(--color-muted-foreground)]">
@@ -506,16 +621,16 @@ export function TraitComboBlock({
         {topRows.map((row, index) => (
           <div
             key={`${row.mainCore1}-${row.mainCore2}-${row.mainCore3}-${index}`}
-            className="flex flex-wrap items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/72 p-3"
+            className="grid gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/72 p-3 md:grid-cols-[44px_1fr_auto] md:items-center"
           >
-            <span className="w-8 font-mono text-sm font-black text-[var(--color-muted-foreground)]">
+            <span className="font-mono text-sm font-black text-[var(--color-muted-foreground)]">
               #{index + 1}
             </span>
-            <div className="flex flex-wrap gap-3">
+            <div className="grid gap-2 sm:grid-cols-3">
               {combo.members.map((member) => (
                 <div
                   key={`${member.character}-${member.weapon}`}
-                  className="flex items-center gap-2"
+                  className="flex min-w-0 items-center gap-2 rounded-lg bg-[rgba(8,13,27,0.35)] px-2 py-1.5"
                 >
                   <MemberAvatar member={member} size="h-8 w-8" />
                   <TraitThumb
@@ -527,7 +642,7 @@ export function TraitComboBlock({
                 </div>
               ))}
             </div>
-            <div className="ml-auto flex items-center gap-4 font-mono text-xs tabular-nums text-[var(--color-muted-foreground)]">
+            <div className="flex items-center justify-between gap-3 font-mono text-xs tabular-nums text-[var(--color-muted-foreground)] md:justify-end">
               <span>{row.totalGames.toLocaleString("ko-KR")}판</span>
               <span>승률 {row.winRate.toFixed(1)}%</span>
               <span className="font-bold text-[var(--color-accent-gold)]">
@@ -602,7 +717,7 @@ export function SimilarBlock({
   const top = similar.slice(0, 4);
   if (top.length === 0) return null;
   return (
-    <section className="dashboard-panel flex flex-col gap-3 p-5">
+    <section className="dashboard-panel flex flex-col gap-3 p-4 sm:p-5">
       <div className="flex items-center justify-between border-l-2 border-[var(--color-primary)] pl-3">
         <h2 className="text-sm font-bold text-[var(--color-foreground)]">
           비슷한 조합 {top.length}개
@@ -616,7 +731,7 @@ export function SimilarBlock({
           <ArrowRight className="h-3 w-3" strokeWidth={2.4} />
         </Link>
       </div>
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {top.map((c) => (
           <MiniComboCard key={c.id} combo={c} detailHrefQueryString={detailHrefQueryString} />
         ))}
@@ -656,7 +771,7 @@ export function StickySidebar({ combo }: { combo: TrioWeaponCombo }) {
             <dt className="text-[var(--color-muted-foreground)]">평균 RP</dt>
             <dd className="font-mono font-bold tabular-nums text-[var(--color-foreground)]">
               {combo.averageRP >= 0 ? "+" : ""}
-              {combo.averageRP.toFixed(0)}
+              {combo.averageRP.toFixed(1)}
             </dd>
           </div>
           <div className="flex items-baseline justify-between">

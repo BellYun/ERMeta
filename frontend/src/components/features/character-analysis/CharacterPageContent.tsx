@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { BarChart3, Info } from "lucide-react";
+import { ArrowRight, BarChart3, GitBranch, Info, Network, TrendingUp } from "lucide-react";
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route";
@@ -19,7 +20,10 @@ import {
   resolveCharacterName,
   type CharacterRole,
 } from "@/lib/characterMap";
+import { getPatchAnalysisVersions } from "@/lib/patchAnalysis";
+import { localizeRoutePath } from "@/lib/seoLocales";
 import { loadL10nMap } from "@/lib/serverL10n";
+import { BASE_URL } from "@/lib/siteMetadata";
 import { resolveWeaponName } from "@/lib/weaponMap";
 
 interface CharacterPageContentProps {
@@ -265,6 +269,267 @@ function buildServerSummary(
   }`;
 }
 
+function formatPercent(value: number) {
+  return `${value.toFixed(1)}%`;
+}
+
+function buildCharacterSeoJsonLd(
+  locale: RouteLocale,
+  code: number,
+  characterName: string,
+  stats: CharacterStatsResponse,
+  topWeaponName: string | null
+) {
+  const path = localizeRoutePath(`/character/${code}`, locale);
+  const inLanguage = locale === "ja" ? "ja-JP" : locale === "ko" ? "ko-KR" : "en-US";
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    name:
+      locale === "ko"
+        ? `${characterName} 이터널리턴 ${stats.patchVersion} 통계`
+        : `${characterName} Eternal Return ${stats.patchVersion} stats`,
+    description:
+      locale === "ko"
+        ? `${characterName}의 승률, 픽률, 평균 RP, 추천 무기, 조합 분석 데이터입니다.`
+        : `${characterName} win rate, pick rate, average RP, recommended weapon, and team composition stats.`,
+    url: `${BASE_URL}${path}`,
+    inLanguage,
+    keywords: [
+      characterName,
+      "Eternal Return",
+      "이터널리턴",
+      "build",
+      "traits",
+      "weapon",
+      stats.patchVersion,
+      topWeaponName,
+    ].filter(Boolean),
+    variableMeasured: [
+      { "@type": "PropertyValue", name: "Win rate", value: formatPercent(stats.winRate) },
+      { "@type": "PropertyValue", name: "Pick rate", value: formatPercent(stats.pickRate) },
+      { "@type": "PropertyValue", name: "Average RP", value: stats.averageRP.toFixed(1) },
+      { "@type": "PropertyValue", name: "Top 3 rate", value: formatPercent(stats.top3Rate) },
+      { "@type": "PropertyValue", name: "Sample size", value: stats.totalGames },
+      ...(topWeaponName
+        ? [{ "@type": "PropertyValue", name: "Recommended weapon", value: topWeaponName }]
+        : []),
+    ],
+  };
+}
+
+function CharacterSeoSection({
+  locale,
+  code,
+  stats,
+}: {
+  locale: RouteLocale;
+  code: number;
+  stats: CharacterStatsResponse;
+}) {
+  if (stats.totalGames <= 0) return null;
+
+  const language = LANGUAGE_BY_ROUTE_LOCALE[locale];
+  const l10n = loadL10nMap(language);
+  const characterName = resolveCharacterName(code, l10n, buildFallbackMap());
+  const topWeapon = stats.weapons[0] ?? null;
+  const topWeaponName = topWeapon ? resolveWeaponName(topWeapon.bestWeapon, l10n) : null;
+  const tierLabel = formatTierLabel(locale, stats.tier);
+  const trioHref = `${localizeRoutePath("/trio-lab", locale)}?pool=${code}`;
+  const patchAnalysisVersion = getPatchAnalysisVersions()[0] ?? null;
+  const patchHref = localizeRoutePath(
+    patchAnalysisVersion ? `/patch-analysis/${patchAnalysisVersion}` : "/patch-analysis",
+    locale
+  );
+  const labHref = localizeRoutePath("/character-lab", locale);
+  const jsonLd = buildCharacterSeoJsonLd(locale, code, characterName, stats, topWeaponName);
+
+  const copy =
+    locale === "ko"
+      ? {
+          eyebrow: "검색 요약",
+          title: `${characterName} 빌드/특성/무기 통계`,
+          body: `${characterName}는 패치 ${stats.patchVersion} ${tierLabel} 기준 승률 ${formatPercent(
+            stats.winRate
+          )}, 픽률 ${formatPercent(stats.pickRate)}, 평균 RP ${stats.averageRP.toFixed(
+            1
+          )}를 기록했습니다. 추천 무기와 특성, 장비 빌드는 아래 상세 분석에서 표본 수와 함께 비교하세요.`,
+          weapon: "추천 무기",
+          noWeapon: "무기 표본 확인 중",
+          winRate: "승률",
+          pickRate: "픽률",
+          averageRp: "평균 RP",
+          sample: "분석 표본",
+          sampleSuffix: "판",
+          actionTitle: "다음 분석",
+          trio: `${characterName} 조합 찾기`,
+          trioDesc: "내 캐릭터 풀에 맞는 3인 조합",
+          patch: patchAnalysisVersion ? `${patchAnalysisVersion} 패치 분석` : "패치 분석",
+          patchDesc: "제공 중인 패치 메타 분석",
+          lab: "역할군 비교",
+          labDesc: "같은 역할군 안에서 성과 비교",
+        }
+      : locale === "ja"
+        ? {
+            eyebrow: "検索サマリー",
+            title: `${characterName} ビルド・特性・武器統計`,
+            body: `${characterName}はパッチ${stats.patchVersion}の${tierLabel}基準で、勝率${formatPercent(
+              stats.winRate
+            )}、ピック率${formatPercent(stats.pickRate)}、平均RP ${stats.averageRP.toFixed(
+              1
+            )}を記録しています。おすすめ武器、特性、装備ビルドは、下の詳細分析でサンプル数とあわせて比較できます。`,
+            weapon: "おすすめ武器",
+            noWeapon: "武器標本を確認中",
+            winRate: "勝率",
+            pickRate: "ピック率",
+            averageRp: "平均RP",
+            sample: "分析標本",
+            sampleSuffix: "試合",
+            actionTitle: "次の分析",
+            trio: `${characterName}の構成を探す`,
+            trioDesc: "このキャラを含む3人構成",
+            patch: patchAnalysisVersion ? `パッチ${patchAnalysisVersion}分析` : "パッチ分析",
+            patchDesc: "提供中のパッチメタ分析",
+            lab: "ロール比較",
+            labDesc: "同じロール内の成績比較",
+          }
+        : {
+            eyebrow: "Search Summary",
+            title: `${characterName} Build, Traits, and Weapon Stats`,
+            body: `${characterName} has a ${formatPercent(
+              stats.winRate
+            )} win rate, ${formatPercent(stats.pickRate)} pick rate, and ${stats.averageRP.toFixed(
+              1
+            )} average RP on patch ${stats.patchVersion} in ${tierLabel}. Compare recommended weapons, traits, equipment builds, and sample size in the detailed analysis below.`,
+            weapon: "Recommended weapon",
+            noWeapon: "Checking weapon samples",
+            winRate: "Win rate",
+            pickRate: "Pick rate",
+            averageRp: "Average RP",
+            sample: "Sample",
+            sampleSuffix: "matches",
+            actionTitle: "Next Analysis",
+            trio: `Find ${characterName} comps`,
+            trioDesc: "Trio recommendations with this character",
+            patch: patchAnalysisVersion
+              ? `Patch ${patchAnalysisVersion} analysis`
+              : "Patch analysis",
+            patchDesc: "Available patch meta analysis",
+            lab: "Role comparison",
+            labDesc: "Compare performance in the same role",
+          };
+
+  const cards = [
+    { label: copy.weapon, value: topWeaponName ?? copy.noWeapon },
+    { label: copy.winRate, value: formatPercent(stats.winRate) },
+    { label: copy.pickRate, value: formatPercent(stats.pickRate) },
+    { label: copy.averageRp, value: stats.averageRP.toFixed(1) },
+    { label: copy.sample, value: `${formatNumber(stats.totalGames)} ${copy.sampleSuffix}` },
+  ];
+  const links = [
+    {
+      href: trioHref,
+      label: copy.trio,
+      description: copy.trioDesc,
+      Icon: Network,
+      primary: true,
+    },
+    {
+      href: patchHref,
+      label: copy.patch,
+      description: copy.patchDesc,
+      Icon: TrendingUp,
+      primary: false,
+    },
+    {
+      href: labHref,
+      label: copy.lab,
+      description: copy.labDesc,
+      Icon: GitBranch,
+      primary: false,
+    },
+  ];
+
+  return (
+    <section className="dashboard-panel p-4 lg:p-5">
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)] lg:items-start">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[var(--color-primary)]">
+            {copy.eyebrow}
+          </p>
+          <h2 className="mt-2 text-[1.35rem] font-black text-[var(--color-foreground)] sm:text-[1.55rem]">
+            {copy.title}
+          </h2>
+          <p className="mt-2 max-w-[58rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem] sm:leading-7">
+            {copy.body}
+          </p>
+        </div>
+
+        <nav
+          className="rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.025)] p-2"
+          aria-label={copy.title}
+        >
+          <p className="px-2 pb-1.5 text-xs font-bold text-[var(--color-muted-foreground)]">
+            {copy.actionTitle}
+          </p>
+          <div className="grid gap-1.5">
+            {links.map(({ href, label, description, Icon, primary }) => (
+              <Link
+                key={href}
+                href={href}
+                className={`group grid grid-cols-[2rem_minmax(0,1fr)_1.25rem] items-center gap-2 rounded-lg border px-2.5 py-2.5 transition ${
+                  primary
+                    ? "border-[rgba(96,165,250,0.25)] bg-[rgba(96,165,250,0.08)] hover:border-[rgba(96,165,250,0.42)]"
+                    : "border-transparent bg-transparent hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.035)]"
+                }`}
+              >
+                <span
+                  className={`flex h-8 w-8 items-center justify-center rounded-lg border ${
+                    primary
+                      ? "border-[rgba(96,165,250,0.26)] bg-[rgba(96,165,250,0.12)] text-[var(--color-primary)]"
+                      : "border-[var(--color-border)] bg-[rgba(255,255,255,0.035)] text-[var(--color-muted-foreground)]"
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block truncate text-sm font-black text-[var(--color-foreground)]">
+                    {label}
+                  </span>
+                  <span className="mt-0.5 block truncate text-xs text-[var(--color-muted-foreground)]">
+                    {description}
+                  </span>
+                </span>
+                <ArrowRight className="h-4 w-4 text-[var(--color-muted-foreground)] transition group-hover:translate-x-0.5 group-hover:text-[var(--color-foreground)]" />
+              </Link>
+            ))}
+          </div>
+        </nav>
+      </div>
+
+      <dl className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+        {cards.map((card) => (
+          <div
+            key={card.label}
+            className="rounded-lg border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-3 py-2"
+          >
+            <dt className="text-xs text-[var(--color-muted-foreground)]">{card.label}</dt>
+            <dd className="mt-1 truncate text-sm font-black text-[var(--color-foreground)]">
+              {card.value}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
+}
+
 function buildInsight(
   locale: RouteLocale,
   code: number,
@@ -401,6 +666,10 @@ export async function CharacterPageContent({
           ) : null}
         </div>
       </section>
+
+      {initialStats ? (
+        <CharacterSeoSection locale={locale} code={code} stats={initialStats} />
+      ) : null}
 
       {insight ? <CharacterInsightSection insight={insight} /> : null}
 

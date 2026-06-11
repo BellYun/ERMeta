@@ -7,7 +7,7 @@ export type HomeBaseTier = "DIAMOND" | "METEORITE" | "MITHRIL";
 export type HomePlusTier = "DIAMOND_PLUS" | "METEORITE_PLUS" | "MITHRIL_PLUS";
 export type HomeSelectableTier = HomeBaseTier | HomePlusTier;
 
-export const DEFAULT_HOME_TIER: HomePlusTier = "MITHRIL_PLUS";
+export const DEFAULT_HOME_TIER: HomePlusTier = "DIAMOND_PLUS";
 export const HOME_BASE_TIERS: HomeBaseTier[] = ["DIAMOND", "METEORITE", "MITHRIL"];
 
 export const HOME_PLUS_TIER_MAP: Record<HomePlusTier, HomeBaseTier[]> = {

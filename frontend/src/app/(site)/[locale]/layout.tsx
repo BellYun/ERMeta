@@ -10,6 +10,7 @@ import { RootDocumentExtras } from "@/components/RootDocumentExtras";
 import { getStatsPatchVersions } from "@/data/patch-notes";
 import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
 import { geistSans } from "@/lib/geistFont";
+import { getPatchAnalysisVersions } from "@/lib/patchAnalysis";
 import { loadL10nRecord } from "@/lib/serverL10n";
 import { buildSiteMetadata, buildWebsiteStructuredData } from "@/lib/siteMetadata";
 import { HTML_LANG_BY_LANGUAGE, loadIntlMessages } from "@/lib/staticIntl";
@@ -48,6 +49,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   const htmlLang = HTML_LANG_BY_LANGUAGE[language] ?? "ko";
   const structuredData = await buildWebsiteStructuredData(language, locale);
   const currentPatch = getStatsPatchVersions()[0] ?? "";
+  const patchAnalysisPatch = getPatchAnalysisVersions()[0] ?? "";
 
   return (
     <html lang={htmlLang} className={geistSans.variable}>
@@ -61,6 +63,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
             shellId={`locale-shell-${locale}`}
             messages={initialMessages}
             currentPatch={currentPatch}
+            patchAnalysisPatch={patchAnalysisPatch}
           >
             {children}
           </AppFrame>

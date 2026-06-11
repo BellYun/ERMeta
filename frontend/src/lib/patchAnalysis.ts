@@ -1,4 +1,3 @@
-import { unstable_cache } from "next/cache";
 import {
   getNotesByPatch,
   getStatsPatchVersions,
@@ -6,11 +5,7 @@ import {
   type ChangeType,
 } from "@/data/patch-notes";
 import { type CharacterRole, getComboRoles, getCharacterName } from "@/lib/characterMap";
-import {
-  type CharacterRankingData,
-  getCachedRankingData,
-  type RankingResponse,
-} from "@/lib/ranking";
+import { fetchRankingData, type CharacterRankingData, type RankingResponse } from "@/lib/ranking";
 import { resolveWeaponName, WEAPON_KOR_BY_CODE } from "@/lib/weaponMap";
 import assassinsData from "../../public/data/lab/assassins.json";
 import rangersData from "../../public/data/lab/rangers.json";
@@ -20,11 +15,13 @@ import tanksData from "../../public/data/lab/tanks.json";
 import warriorsData from "../../public/data/lab/warriors.json";
 
 const ANALYSIS_TIER = "DIAMOND_PLUS";
+const PATCH_ANALYSIS_VERSIONS = ["11.3"] as const;
 const ROLES: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
 const WEAPON_ORDER = Object.keys(WEAPON_KOR_BY_CODE).map(Number);
 const WEAPON_ALIASES: Partial<Record<number, string[]>> = {
   18: ["쌍날검"],
 };
+const patchAnalysisDataCache = new Map<string, Promise<PatchAnalysisData>>();
 const LAB_ROLE_DATA = [
   tanksData,
   warriorsData,
@@ -69,7 +66,7 @@ async function getPatchRankingData(
   }
 
   try {
-    return await getCachedRankingData(currentPatch, ANALYSIS_TIER);
+    return await fetchRankingData(currentPatch, ANALYSIS_TIER);
   } catch (error) {
     if (
       error instanceof Error &&
@@ -429,9 +426,9 @@ function buildAsOfLabel() {
   return formatter.format(new Date());
 }
 
-export function getPatchAnalysisVersions() {
-  const patches = getStatsPatchVersions();
-  return patches.filter((_, index) => Boolean(patches[index + 1]));
+export function getPatchAnalysisVersions(): string[] {
+  const patches = new Set(getStatsPatchVersions());
+  return PATCH_ANALYSIS_VERSIONS.filter((patch) => patches.has(patch));
 }
 
 async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAnalysisData> {
@@ -501,14 +498,11 @@ async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAna
 }
 
 export async function getPatchAnalysisData(version?: string): Promise<PatchAnalysisData> {
-  const patchVersion = version ?? getStatsPatchVersions()[0] ?? "";
+  const patchVersion = version ?? getPatchAnalysisVersions()[0] ?? "";
+  const cached = patchAnalysisDataCache.get(patchVersion);
+  if (cached) return cached;
 
-  return unstable_cache(
-    () => fetchPatchAnalysisData(patchVersion),
-    ["patch-analysis", ANALYSIS_TIER, patchVersion],
-    {
-      revalidate: 21600,
-      tags: ["patch-analysis", `patch-analysis:${ANALYSIS_TIER}`, `patch-analysis:${patchVersion}`],
-    }
-  )();
+  const promise = fetchPatchAnalysisData(patchVersion);
+  patchAnalysisDataCache.set(patchVersion, promise);
+  return promise;
 }

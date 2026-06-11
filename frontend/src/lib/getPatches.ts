@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { STATS_EXCLUDED_PATCHES } from "@/data/patch-notes";
+import { STATS_EXCLUDED_PATCHES, getStatsPatchVersions } from "@/data/patch-notes";
 import { createServerClient } from "@/lib/supabase";
 
 /**
@@ -18,15 +18,19 @@ export const getPatches = unstable_cache(
         .order("startDate", { ascending: false })
         .limit(10);
 
+      const localPatchVersions = getStatsPatchVersions();
       if (!error && data && data.length > 0) {
-        return data.map((p) => p.version).filter((v) => !STATS_EXCLUDED_PATCHES.has(v));
+        const activePatchVersions = data
+          .map((p) => p.version)
+          .filter((v) => !STATS_EXCLUDED_PATCHES.has(v));
+        return Array.from(new Set([...localPatchVersions, ...activePatchVersions]));
       }
-      return [];
+      return localPatchVersions;
     } catch {
-      return [];
+      return getStatsPatchVersions();
     }
   },
-  ["patches"],
+  ["patches", "patch-notes-v2"],
   {
     revalidate: 21600,
     tags: ["patches"],

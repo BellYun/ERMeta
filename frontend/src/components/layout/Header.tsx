@@ -13,9 +13,10 @@ import { stripRouteLocaleFromPathname, withCurrentRouteLocale } from "@/lib/loca
 
 interface HeaderProps {
   currentPatch: string;
+  patchAnalysisPatch?: string;
 }
 
-export function Header({ currentPatch }: HeaderProps) {
+export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
   const t = useTranslations("header");
   const pathname = usePathname();
   const normalizedPathname = stripRouteLocaleFromPathname(pathname);
@@ -173,7 +174,11 @@ export function Header({ currentPatch }: HeaderProps) {
               <X className="h-4.5 w-4.5" strokeWidth={2.2} />
             </button>
             <div className="min-h-0 flex-1 overflow-y-auto">
-              <Navigation currentPatch={currentPatch} onNavigate={() => setMobileMenuOpen(false)} />
+              <Navigation
+                currentPatch={currentPatch}
+                patchAnalysisPatch={patchAnalysisPatch}
+                onNavigate={() => setMobileMenuOpen(false)}
+              />
             </div>
             <div className="border-t border-[var(--color-border)] bg-[rgba(8,12,26,0.96)] px-4 py-4">
               <LanguageSwitcher />

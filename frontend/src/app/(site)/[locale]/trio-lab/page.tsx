@@ -25,12 +25,16 @@ interface LocalePageProps {
 
 async function fetchInitialCombos(searchParams: Awaited<SearchParams>) {
   const state = parseTrioLabUrlState(searchParams);
+  if (state.pool.length === 0) return [];
+
   const rowGroups = await Promise.all(
-    buildTrioWeaponSearchRequests(state.pool).map((params) => fetchTrioWeaponRows(params))
+    buildTrioWeaponSearchRequests(state.pool, state.weaponFilters).map((params) =>
+      fetchTrioWeaponRows(params)
+    )
   );
   const rows = rowGroups.flat();
   return sortTrioWeaponCombos(
-    mergeApiRowsByComboId(filterRowsByPool(rows, state.pool)),
+    mergeApiRowsByComboId(filterRowsByPool(rows, state.pool, state.weaponFilters)),
     state.sort
   );
 }

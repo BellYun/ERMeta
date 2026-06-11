@@ -98,6 +98,45 @@ function sortAllyPair<T extends { charCode: number }>(allies: T[]): T[] {
   return [...allies].sort((a, b) => a.charCode - b.charCode);
 }
 
+function prioritizeFocusGroups(
+  groups: GroupedCombo[],
+  selectedCharCodes: number[],
+  focusCharWeapons: { charCode: number; weaponCode: number }[]
+): GroupedCombo[] {
+  if (focusCharWeapons.length === 0) return groups;
+
+  const matchesFocus = (charCode: number, weaponType: number) =>
+    focusCharWeapons.some(
+      (focus) =>
+        focus.charCode === charCode && (focus.weaponCode === 0 || focus.weaponCode === weaponType)
+    );
+
+  const matchesGroup = (group: GroupedCombo) => {
+    const members = [
+      { c: group.character1, w: group.weaponType1 },
+      { c: group.character2, w: group.weaponType2 },
+      { c: group.character3, w: group.weaponType3 },
+    ];
+
+    if (selectedCharCodes.length === 2) {
+      const [allyA, allyB] = selectedCharCodes;
+      const third = members.find((member) => member.c !== allyA && member.c !== allyB);
+      return third !== undefined && matchesFocus(third.c, third.w);
+    }
+
+    if (selectedCharCodes.length === 1) {
+      const selected = selectedCharCodes[0];
+      return members
+        .filter((member) => member.c !== selected)
+        .some((member) => matchesFocus(member.c, member.w));
+    }
+
+    return false;
+  };
+
+  return [...groups.filter(matchesGroup), ...groups.filter((group) => !matchesGroup(group))];
+}
+
 export function SynergyDetailResults() {
   const { l10n } = useL10n();
   const t = useTranslations("synergyResults");
@@ -197,6 +236,39 @@ export function SynergyDetailResults() {
   );
   const getWeaponName = React.useCallback((code: number) => resolveWeaponName(code, l10n), [l10n]);
   const getTraitName = React.useCallback((code: number) => traitNames[code] ?? null, [traitNames]);
+  const isFocusPoolCombo = React.useCallback(
+    (group: GroupedCombo) => {
+      if (focusCharWeapons.length === 0) return false;
+
+      const matchesFocus = (charCode: number, weaponCode: number) =>
+        focusCharWeapons.some(
+          (focus) =>
+            focus.charCode === charCode &&
+            (focus.weaponCode === 0 || focus.weaponCode === weaponCode)
+        );
+      const members = [
+        { c: group.character1, w: group.weaponType1 },
+        { c: group.character2, w: group.weaponType2 },
+        { c: group.character3, w: group.weaponType3 },
+      ];
+
+      if (deferredCharCodes.length === 2) {
+        const [allyA, allyB] = deferredCharCodes;
+        const third = members.find((member) => member.c !== allyA && member.c !== allyB);
+        return third !== undefined && matchesFocus(third.c, third.w);
+      }
+
+      if (deferredCharCodes.length === 1) {
+        const selected = deferredCharCodes[0];
+        return members
+          .filter((member) => member.c !== selected)
+          .some((member) => matchesFocus(member.c, member.w));
+      }
+
+      return false;
+    },
+    [deferredCharCodes, focusCharWeapons]
+  );
 
   // API 호출 — deferredAllies 기반 (아군 선택 탭 즉시성 확보). 정렬은 클라이언트에서 처리해 CDN 키를 줄인다.
   React.useEffect(() => {
@@ -291,46 +363,12 @@ export function SynergyDetailResults() {
     return () => cic(id);
   }, [visibleCount, results.length]);
 
-  // Two-level aggregation + filtering — deferred 기반
+  // Two-level aggregation + focus-priority sorting — deferred 기반
   const recommendations = React.useMemo(() => {
     if (deferredAllies.length === 0) return [];
 
-    let scopedResults = results;
-
-    // 포커스 캐릭터+무기 풀 필터
-    if (focusCharWeapons.length > 0) {
-      const matchesFocus = (charCode: number, weaponType: number) =>
-        focusCharWeapons.some(
-          (f) => f.charCode === charCode && (f.weaponCode === 0 || f.weaponCode === weaponType)
-        );
-
-      if (deferredCharCodes.length === 2) {
-        const [allyA, allyB] = deferredCharCodes;
-        scopedResults = results.filter((rec) => {
-          const members = [
-            { c: rec.character1, w: rec.weaponType1 },
-            { c: rec.character2, w: rec.weaponType2 },
-            { c: rec.character3, w: rec.weaponType3 },
-          ];
-          const third = members.find((m) => m.c !== allyA && m.c !== allyB);
-          return third !== undefined && matchesFocus(third.c, third.w);
-        });
-      } else if (deferredCharCodes.length === 1) {
-        const selected = deferredCharCodes[0];
-        scopedResults = results.filter((rec) => {
-          const members = [
-            { c: rec.character1, w: rec.weaponType1 },
-            { c: rec.character2, w: rec.weaponType2 },
-            { c: rec.character3, w: rec.weaponType3 },
-          ];
-          const others = members.filter((m) => m.c !== selected);
-          return others.some((m) => matchesFocus(m.c, m.w));
-        });
-      }
-    }
-
     // Group by character+weapon (Level 1)
-    const grouped = groupByCharWeapon(scopedResults);
+    const grouped = groupByCharWeapon(results);
 
     // Sort
     if (sortBy === "averageRP") {
@@ -343,11 +381,15 @@ export function SynergyDetailResults() {
       grouped.sort((a, b) => b.totalGames - a.totalGames);
     }
 
-    if (sortBy === "totalGames") return grouped;
-    return [
-      ...grouped.filter((group) => group.totalGames >= MIN_MEANINGFUL_GAMES),
-      ...grouped.filter((group) => group.totalGames < MIN_MEANINGFUL_GAMES),
-    ];
+    const sampleAwareGroups =
+      sortBy === "totalGames"
+        ? grouped
+        : [
+            ...grouped.filter((group) => group.totalGames >= MIN_MEANINGFUL_GAMES),
+            ...grouped.filter((group) => group.totalGames < MIN_MEANINGFUL_GAMES),
+          ];
+
+    return prioritizeFocusGroups(sampleAwareGroups, deferredCharCodes, focusCharWeapons);
   }, [results, deferredAllies, deferredCharCodes, focusCharWeapons, sortBy]);
 
   const clearAllies = React.useCallback(() => {
@@ -577,6 +619,7 @@ export function SynergyDetailResults() {
                 getWeaponName={getWeaponName}
                 getTraitName={getTraitName}
                 selectedCharCodes={deferredCharCodes}
+                isFocusPoolCombo={isFocusPoolCombo(group)}
                 onRecommendationClick={onRecommendationClick}
               />
             ))}
@@ -597,7 +640,7 @@ export function SynergyDetailResults() {
               strokeWidth={1.75}
             />
             <p className="text-[14px] font-medium text-[var(--color-foreground)]/80">
-              {focusCharWeapons.length > 0 ? t("emptyFiltered") : t("emptyNoData")}
+              {t("emptyNoData")}
             </p>
             <button
               onClick={clearAllies}

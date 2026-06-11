@@ -66,6 +66,7 @@ interface ComboWeaponCardProps {
   getWeaponName: (code: number) => string;
   getTraitName: (code: number) => string | null;
   selectedCharCodes: number[];
+  isFocusPoolCombo?: boolean;
   /** 추천(gold ring) 캐릭터 Link 클릭 시 호출. 부모가 analytics 발화. 메모이제이션 유지를 위해 ref-stable하게 전달할 것. */
   onRecommendationClick?: (pickedCode: number, pickedRank: number) => void;
 }
@@ -82,6 +83,7 @@ function ComboWeaponCardImpl({
   getWeaponName,
   getTraitName,
   selectedCharCodes,
+  isFocusPoolCombo = false,
   onRecommendationClick,
 }: ComboWeaponCardProps) {
   const t = useTranslations("synergyComboCard");
@@ -123,7 +125,9 @@ function ComboWeaponCardImpl({
         "rounded-xl border bg-[var(--color-surface)]/85 transition-all duration-200",
         rank <= 3
           ? "border-[var(--color-accent-gold)]/22 shadow-[inset_0_1px_0_rgba(251,191,36,0.06),0_8px_22px_-22px_rgba(251,191,36,0.45)]"
-          : "border-[var(--color-border)]"
+          : "border-[var(--color-border)]",
+        isFocusPoolCombo &&
+          "border-[rgba(216,180,254,0.42)] bg-[linear-gradient(135deg,rgba(168,85,247,0.08),rgba(17,25,46,0.84)_46%)] shadow-[inset_0_1px_0_rgba(216,180,254,0.08)]"
       )}
       style={{ contentVisibility: "auto", containIntrinsicSize: "auto 56px" }}
     >
