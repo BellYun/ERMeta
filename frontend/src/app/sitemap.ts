@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
-import { getAllPatchVersions, getStatsPatchVersions } from "@/data/patch-notes";
+import { getAllPatchVersions } from "@/data/patch-notes";
+import { getPatchAnalysisVersions } from "@/lib/patchAnalysis";
 import {
   buildSeoAlternateLanguages,
   prefixSeoLocalePath,
@@ -16,9 +17,9 @@ const CHARACTER_CODES: number[] = [
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = (process.env.NEXT_PUBLIC_BASE_URL ?? "https://erwagg.com").replace(/\/$/, "");
   const now = new Date();
-  const latestStatsPatch = getStatsPatchVersions()[0];
-  const patchAnalysisPath = latestStatsPatch
-    ? `/patch-analysis/${latestStatsPatch}`
+  const latestPatchAnalysisVersion = getPatchAnalysisVersions()[0];
+  const patchAnalysisPath = latestPatchAnalysisVersion
+    ? `/patch-analysis/${latestPatchAnalysisVersion}`
     : "/patch-analysis";
 
   const buildAlternates = (pathname: string) => {

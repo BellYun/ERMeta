@@ -20,6 +20,7 @@ import {
   resolveCharacterName,
   type CharacterRole,
 } from "@/lib/characterMap";
+import { getPatchAnalysisVersions } from "@/lib/patchAnalysis";
 import { localizeRoutePath } from "@/lib/seoLocales";
 import { loadL10nMap } from "@/lib/serverL10n";
 import { BASE_URL } from "@/lib/siteMetadata";
@@ -336,7 +337,11 @@ function CharacterSeoSection({
   const topWeaponName = topWeapon ? resolveWeaponName(topWeapon.bestWeapon, l10n) : null;
   const tierLabel = formatTierLabel(locale, stats.tier);
   const trioHref = `${localizeRoutePath("/trio-lab", locale)}?pool=${code}`;
-  const patchHref = localizeRoutePath(`/patch-analysis/${stats.patchVersion}`, locale);
+  const patchAnalysisVersion = getPatchAnalysisVersions()[0] ?? null;
+  const patchHref = localizeRoutePath(
+    patchAnalysisVersion ? `/patch-analysis/${patchAnalysisVersion}` : "/patch-analysis",
+    locale
+  );
   const labHref = localizeRoutePath("/character-lab", locale);
   const jsonLd = buildCharacterSeoJsonLd(locale, code, characterName, stats, topWeaponName);
 
@@ -360,8 +365,8 @@ function CharacterSeoSection({
           actionTitle: "다음 분석",
           trio: `${characterName} 조합 찾기`,
           trioDesc: "내 캐릭터 풀에 맞는 3인 조합",
-          patch: `${stats.patchVersion} 패치 분석`,
-          patchDesc: "이번 패치 상승/하락 흐름",
+          patch: patchAnalysisVersion ? `${patchAnalysisVersion} 패치 분석` : "패치 분석",
+          patchDesc: "제공 중인 패치 메타 분석",
           lab: "역할군 비교",
           labDesc: "같은 역할군 안에서 성과 비교",
         }
@@ -384,8 +389,8 @@ function CharacterSeoSection({
             actionTitle: "次の分析",
             trio: `${characterName}の構成を探す`,
             trioDesc: "このキャラを含む3人構成",
-            patch: `パッチ${stats.patchVersion}分析`,
-            patchDesc: "今回のパッチ変化を見る",
+            patch: patchAnalysisVersion ? `パッチ${patchAnalysisVersion}分析` : "パッチ分析",
+            patchDesc: "提供中のパッチメタ分析",
             lab: "ロール比較",
             labDesc: "同じロール内の成績比較",
           }
@@ -407,8 +412,10 @@ function CharacterSeoSection({
             actionTitle: "Next Analysis",
             trio: `Find ${characterName} comps`,
             trioDesc: "Trio recommendations with this character",
-            patch: `Patch ${stats.patchVersion} analysis`,
-            patchDesc: "Current patch movement and context",
+            patch: patchAnalysisVersion
+              ? `Patch ${patchAnalysisVersion} analysis`
+              : "Patch analysis",
+            patchDesc: "Available patch meta analysis",
             lab: "Role comparison",
             labDesc: "Compare performance in the same role",
           };

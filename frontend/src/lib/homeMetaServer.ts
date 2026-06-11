@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { STATS_EXCLUDED_PATCHES } from "@/data/patch-notes";
+import { STATS_EXCLUDED_PATCHES, getStatsPatchVersions } from "@/data/patch-notes";
 import { createServerClient } from "@/lib/supabase";
 import {
   HOME_BASE_TIERS,
@@ -45,7 +45,12 @@ async function fetchHomeMetaStats(patchVersion: string): Promise<HomeMetaStats> 
     .order("startDate", { ascending: false })
     .limit(50);
 
-  const patchList = (patches ?? []).map((patch: { version: string }) => patch.version);
+  const patchList = Array.from(
+    new Set([
+      ...getStatsPatchVersions(),
+      ...(patches ?? []).map((patch: { version: string }) => patch.version),
+    ])
+  );
   const currentIndex = patchList.indexOf(patchVersion);
   let previousPatch: string | null = null;
 
