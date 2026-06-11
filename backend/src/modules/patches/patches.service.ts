@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { SupabaseService } from '../../common/database/supabase.service';
 
+const STATS_PATCH_FALLBACK_LIMIT = 1000;
+
 export interface PatchHistoryResult {
   patches: string[];
   latestStartDate?: string | null;
@@ -39,7 +41,10 @@ export class PatchesService {
 
     const { data: statsData, error: statsError } = await client
       .from('v2_CharacterStats')
-      .select('patchVersion');
+      .select('patchVersion')
+      .not('patchVersion', 'is', null)
+      .order('patchVersion', { ascending: false })
+      .limit(STATS_PATCH_FALLBACK_LIMIT);
 
     if (statsError) return { patches: [] };
 

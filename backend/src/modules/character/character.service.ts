@@ -545,16 +545,7 @@ export class CharacterService {
   ) {
     const client = this.supabase.getClient();
 
-    const { data: patches } = await client
-      .from('PatchVersion')
-      .select('version')
-      .order('startDate', { ascending: false })
-      .limit(50);
-
-    const patchList = (patches ?? [])
-      .map((patch: { version: string }) => patch.version)
-      .filter((version) => !STATS_EXCLUDED_PATCHES.has(version));
-    const effectivePatch = patchVersion || patchList[0] || '';
+    const effectivePatch = patchVersion || (await this.getStatsPatchList())[0] || '';
     const emptyResponse = buildEmptyCharacterStats(characterCode, effectivePatch, tier);
 
     const tiers = expandCumulativeTier(tier);

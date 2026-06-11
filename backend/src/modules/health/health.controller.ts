@@ -27,7 +27,7 @@ export class HealthController {
     const redisStatus = this.redis.isConnected() ? 'up' : 'down';
 
     return {
-      status: dbStatus === 'up' ? 'ok' : 'degraded',
+      status: dbStatus === 'up' && redisStatus === 'up' ? 'ok' : 'degraded',
       timestamp: new Date().toISOString(),
       uptime: Math.floor(process.uptime()),
       dependencies: {
