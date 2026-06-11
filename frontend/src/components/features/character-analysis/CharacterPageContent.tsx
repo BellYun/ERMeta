@@ -374,11 +374,11 @@ function CharacterSeoSection({
         ? {
             eyebrow: "検索サマリー",
             title: `${characterName} ビルド・特性・武器統計`,
-            body: `${characterName}はパッチ${stats.patchVersion}の${tierLabel}基準で勝率${formatPercent(
+            body: `${characterName}はパッチ${stats.patchVersion}の${tierLabel}基準で、勝率${formatPercent(
               stats.winRate
             )}、ピック率${formatPercent(stats.pickRate)}、平均RP ${stats.averageRP.toFixed(
               1
-            )}を記録しています。おすすめ武器、特性、装備ビルドは下の詳細分析で標本数と一緒に比較できます。`,
+            )}を記録しています。おすすめ武器、特性、装備ビルドは、下の詳細分析でサンプル数とあわせて比較できます。`,
             weapon: "おすすめ武器",
             noWeapon: "武器標本を確認中",
             winRate: "勝率",
