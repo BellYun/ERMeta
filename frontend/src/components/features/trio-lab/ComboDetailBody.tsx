@@ -247,13 +247,15 @@ function TraitIconSmall({ code, size = 24 }: { code: number; size?: number }) {
 }
 
 function buildOptionGrid(
-  codes: number[],
+  codes: number[] | undefined,
   options: TraitSubOption[] | undefined,
   selected: number | null,
   selectedPickRate = 0,
   selectedWinRate = 0,
   selectedGames = 0
 ): TraitSubOption[] {
+  if (!codes) return [];
+
   const byCode = new Map((options ?? []).filter((o) => o.code != null).map((o) => [o.code, o]));
   return codes.map((code) => {
     const current = byCode.get(code);

@@ -39,7 +39,7 @@ export function normalizeTrioLabPool(codes: number[]): number[] {
 }
 
 export function normalizeTrioLabWeaponFilters(
-  filters: Record<number, number>,
+  filters: Record<number, number> = {},
   pool: number[]
 ): Record<number, number> {
   const poolSet = new Set(pool);
