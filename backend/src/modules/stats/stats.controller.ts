@@ -19,17 +19,6 @@ export class TriosWeaponQueryDto extends TriosQueryDto {
 export class StatsController {
   constructor(private readonly statsService: StatsService) {}
 
-  @Get('trios')
-  @UseInterceptors(CacheControlInterceptor('frequent'))
-  async getTrios(@Query() query: TriosQueryDto): Promise<unknown> {
-    return this.statsService.getTrios(
-      (query.sortBy ?? 'averageRP') as 'averageRP' | 'winRate' | 'averageRank' | 'totalGames' | 'recommended',
-      query.limit ? parseInt(query.limit, 10) : 100,
-      query.character1 ? parseInt(query.character1, 10) : null,
-      query.character2 ? parseInt(query.character2, 10) : null,
-    );
-  }
-
   @Get('trios-weapon')
   @UseInterceptors(CacheControlInterceptor('slow'))
   async getTriosWeapon(@Query() query: TriosWeaponQueryDto): Promise<unknown> {

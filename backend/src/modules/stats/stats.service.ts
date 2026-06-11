@@ -3,12 +3,8 @@ import { SupabaseService } from '../../common/database/supabase.service';
 import { RedisService } from '../../common/redis/redis.service';
 
 const DIAMOND_PLUS_TIERS = ['DIAMOND', 'METEORITE', 'MITHRIL'];
-const TRIO_MEMBER_COUNT = 3;
 const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]);
 const BAYESIAN_K = 50;
-
-const TRIO_PARALLEL_FETCH_LIMIT = 2000;
-const TRIO_FULL_FETCH_LIMIT = 5000;
 
 const TRIO_WEAPON_SEARCH_P10_TABLE = 'v2_CharacterTrioWeaponSearch_p10';
 const TRIO_WEAPON_TABLE = 'v2_CharacterTrioWeapon';
@@ -25,27 +21,6 @@ type SortBy = 'averageRP' | 'winRate' | 'averageRank' | 'totalGames' | 'recommen
 interface SupabaseErrorLike {
   code?: string;
   message?: string;
-}
-
-interface TrioRow {
-  tier: string;
-  character1: number;
-  character2: number;
-  character3: number;
-  winRate: number;
-  averageRP: number;
-  totalGames: number;
-  averageRank: number;
-}
-
-export interface AggregatedTrio {
-  character1: number;
-  character2: number;
-  character3: number;
-  totalGames: number;
-  winRate: number;
-  averageRP: number;
-  averageRank: number;
 }
 
 interface TrioWeaponRow {
@@ -167,44 +142,6 @@ function recommendedScore(
   const span = rpRange.max - rpRange.min || 1;
   const normRP = Math.max(0, Math.min(1, (bRP - rpRange.min) / span));
   return 0.6 * normRP + 0.3 * wilsonLower(rec.winRate, rec.totalGames) + 0.1 * rankScore(rec.averageRank);
-}
-
-function aggregateByTrio(rows: TrioRow[]): AggregatedTrio[] {
-  const map = new Map<string, {
-    c1: number; c2: number; c3: number; totalGames: number;
-    winRateWeighted: number; averageRPWeighted: number; averageRankWeighted: number;
-  }>();
-
-  for (const row of rows) {
-    const key = `${row.character1}-${row.character2}-${row.character3}`;
-    const existing = map.get(key);
-    if (!existing) {
-      map.set(key, {
-        c1: row.character1,
-        c2: row.character2,
-        c3: row.character3,
-        totalGames: row.totalGames,
-        winRateWeighted: row.winRate * row.totalGames,
-        averageRPWeighted: row.averageRP * row.totalGames,
-        averageRankWeighted: row.averageRank * row.totalGames,
-      });
-    } else {
-      existing.totalGames += row.totalGames;
-      existing.winRateWeighted += row.winRate * row.totalGames;
-      existing.averageRPWeighted += row.averageRP * row.totalGames;
-      existing.averageRankWeighted += row.averageRank * row.totalGames;
-    }
-  }
-
-  return [...map.values()].map((v) => ({
-    character1: v.c1,
-    character2: v.c2,
-    character3: v.c3,
-    totalGames: v.totalGames,
-    winRate: v.totalGames > 0 ? v.winRateWeighted / v.totalGames : 0,
-    averageRP: v.totalGames > 0 ? v.averageRPWeighted / v.totalGames / TRIO_MEMBER_COUNT : 0,
-    averageRank: v.totalGames > 0 ? v.averageRankWeighted / v.totalGames : 0,
-  }));
 }
 
 function sortAggregated<T extends { averageRP: number; winRate: number; averageRank: number; totalGames: number }>(
@@ -401,7 +338,7 @@ function mergeAggregatedResults(results: AggregatedTrioWeapon[]): AggregatedTrio
   }));
 }
 
-function hasExcludedTrio(row: AggregatedTrio | AggregatedTrioWeapon): boolean {
+function hasExcludedTrio(row: { character1: number; character2: number; character3: number }): boolean {
   return (
     EXCLUDED_CHARACTER_CODES.has(row.character1) ||
     EXCLUDED_CHARACTER_CODES.has(row.character2) ||
@@ -451,36 +388,6 @@ export class StatsService {
     private readonly supabase: SupabaseService,
     private readonly redis: RedisService,
   ) {}
-
-  async getTrios(sortBy: SortBy, limit: number, char1: number | null, char2: number | null) {
-    this.validateCharacters(char1, char2);
-    if (this.hasExcludedSelection(char1, char2)) return { results: [] };
-
-    const safeLimit = normalizeLimit(limit, 200);
-    let normalizedChar1 = char1;
-    let normalizedChar2 = char2;
-    if (normalizedChar1 !== null && normalizedChar2 !== null && normalizedChar1 > normalizedChar2) {
-      [normalizedChar1, normalizedChar2] = [normalizedChar2, normalizedChar1];
-    }
-
-    const cacheKey = `trios:aggregated:${normalizedChar1 ?? 'none'}:${normalizedChar2 ?? 'none'}`;
-    let aggregated: AggregatedTrio[];
-    try {
-      aggregated = await this.redis.getOrSet(cacheKey, 7 * 24 * 3600, () =>
-        this.fetchAndAggregateTrios(normalizedChar1, normalizedChar2),
-      );
-    } catch (error) {
-      if (isMissingRelationError(error)) {
-        this.logger.warn(`Trio stats table is not available: ${getErrorMessage(error)}`);
-        return { results: [] };
-      }
-      throw error;
-    }
-
-    const sorted = [...aggregated];
-    sortAggregated(sorted, sortBy);
-    return { results: sorted.slice(0, safeLimit) };
-  }
 
   async getTriosWeapon(
     sortBy: SortBy,
@@ -553,58 +460,6 @@ export class StatsService {
       (char1 !== null && EXCLUDED_CHARACTER_CODES.has(char1)) ||
       (char2 !== null && EXCLUDED_CHARACTER_CODES.has(char2))
     );
-  }
-
-  private async fetchAndAggregateTrios(char1: number | null, char2: number | null) {
-    const client = this.supabase.getClient();
-    const select = 'tier,character1,character2,character3,winRate,averageRP,totalGames,averageRank';
-    const baseQuery = (perQueryLimit: number) =>
-      client
-        .from('v2_CharacterTrio')
-        .select(select)
-        .in('tier', DIAMOND_PLUS_TIERS)
-        .order('totalGames', { ascending: false })
-        .limit(perQueryLimit);
-
-    let rows: TrioRow[] = [];
-
-    if (char1 !== null && char2 !== null) {
-      const results = await Promise.all([
-        baseQuery(TRIO_PARALLEL_FETCH_LIMIT).eq('character1', char1).eq('character2', char2),
-        baseQuery(TRIO_PARALLEL_FETCH_LIMIT).eq('character1', char1).eq('character3', char2),
-        baseQuery(TRIO_PARALLEL_FETCH_LIMIT).eq('character2', char1).eq('character3', char2),
-      ]);
-      rows = this.mergeTrioRows(results);
-    } else if (char1 !== null) {
-      const results = await Promise.all([
-        baseQuery(TRIO_PARALLEL_FETCH_LIMIT).eq('character1', char1),
-        baseQuery(TRIO_PARALLEL_FETCH_LIMIT).eq('character2', char1),
-        baseQuery(TRIO_PARALLEL_FETCH_LIMIT).eq('character3', char1),
-      ]);
-      rows = this.mergeTrioRows(results);
-    } else {
-      const { data, error } = await baseQuery(TRIO_FULL_FETCH_LIMIT);
-      if (error) throw error;
-      rows = (data ?? []) as TrioRow[];
-    }
-
-    return aggregateByTrio(rows).filter((row) => !hasExcludedTrio(row));
-  }
-
-  private mergeTrioRows(results: Array<{ data: unknown[] | null; error: unknown }>) {
-    const rows: TrioRow[] = [];
-    for (const result of results) {
-      if (result.error) throw result.error;
-      rows.push(...((result.data ?? []) as TrioRow[]));
-    }
-
-    const seen = new Set<string>();
-    return rows.filter((row) => {
-      const key = `${row.tier}|${row.character1}|${row.character2}|${row.character3}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
   }
 
   private cachedTrioWeaponPair(char1: number, char2: number) {

@@ -2,12 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { RedisService } from '../../common/redis/redis.service';
 import { CharacterService } from '../character/character.service';
-import { StatsService } from '../stats/stats.service';
 import { MetaService } from '../meta/meta.service';
 import { SupabaseService } from '../../common/database/supabase.service';
 
 const TIERS = ['DIAMOND', 'METEORITE', 'MITHRIL', 'IN1000'] as const;
-const SORT_OPTIONS = ['recommended', 'averageRP', 'winRate'] as const;
 
 @Injectable()
 export class CacheWarmingService {
@@ -16,7 +14,6 @@ export class CacheWarmingService {
   constructor(
     private readonly redis: RedisService,
     private readonly characterService: CharacterService,
-    private readonly statsService: StatsService,
     private readonly metaService: MetaService,
     private readonly supabase: SupabaseService,
   ) {}
@@ -48,13 +45,6 @@ export class CacheWarmingService {
         ));
         tasks.push(this.warmSafely(`honey:${patchVersion}:${tier}`, () =>
           this.metaService.getHoneyPicks(patchVersion, tier),
-        ));
-      }
-
-      // Trios (3 sort options = 3 tasks)
-      for (const sortBy of SORT_OPTIONS) {
-        tasks.push(this.warmSafely(`trios:${sortBy}:100:all:all`, () =>
-          this.statsService.getTrios(sortBy, 100, null, null),
         ));
       }
 
