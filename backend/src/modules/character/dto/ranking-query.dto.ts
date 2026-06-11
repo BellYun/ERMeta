@@ -30,3 +30,9 @@ export class CharacterStatsQueryDto {
   @IsOptional()
   tier?: TierGroup = TierGroup.DIAMOND;
 }
+
+export class CharacterInsightQueryDto extends CharacterStatsQueryDto {
+  @IsString()
+  @IsOptional()
+  locale?: string;
+}

@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query, UseInterceptors } from '@nestjs/common';
 import { CharacterService } from './character.service';
-import { RankingQueryDto, CharacterStatsQueryDto } from './dto/ranking-query.dto';
+import { RankingQueryDto, CharacterStatsQueryDto, CharacterInsightQueryDto } from './dto/ranking-query.dto';
 import { CacheControlInterceptor } from '../../common/interceptors/cache-control.interceptor';
 
 @Controller('character')
@@ -26,6 +26,20 @@ export class CharacterController {
       parseInt(characterCode, 10),
       query.patchVersion ?? '',
       query.tier ?? 'DIAMOND',
+    );
+  }
+
+  @Get('insights/:characterCode')
+  @UseInterceptors(CacheControlInterceptor('daily'))
+  async getInsights(
+    @Param('characterCode') characterCode: string,
+    @Query() query: CharacterInsightQueryDto,
+  ): Promise<unknown> {
+    return this.characterService.getCharacterInsight(
+      parseInt(characterCode, 10),
+      query.patchVersion ?? '',
+      query.tier ?? 'DIAMOND_PLUS',
+      query.locale ?? 'ko',
     );
   }
 }
