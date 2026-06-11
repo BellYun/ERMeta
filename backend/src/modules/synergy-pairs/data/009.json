@@ -1,0 +1,304 @@
+{
+  "characterCode": 9,
+  "characterName": "아이솔",
+  "patchScope": "10.x",
+  "tierScope": "DIAMOND+",
+  "minSampleGames": 40,
+  "confidenceThresholds": {
+    "high": 500,
+    "medium": 200
+  },
+  "builtAt": "2026-05-07T03:44:40.539Z",
+  "weapons": [
+    {
+      "weapon": 10,
+      "weaponName": "돌격 소총",
+      "soloBaseline": {
+        "games": 66460,
+        "winRate": 14.42,
+        "avgRP": 5.07,
+        "avgRank": 4.25
+      },
+      "topSynergy": [
+        {
+          "partnerCode": 5,
+          "partnerName": "자히르",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "games": 645,
+          "winRate": 25.12,
+          "avgRP": 7.15,
+          "avgRank": 3.7,
+          "rpLift": 2.08,
+          "winRateLift": 10.7,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 29,
+          "partnerName": "레온",
+          "partnerWeapon": 1,
+          "partnerWeaponName": "글러브",
+          "games": 3573,
+          "winRate": 16.04,
+          "avgRP": 5.29,
+          "avgRank": 4.15,
+          "rpLift": 0.22,
+          "winRateLift": 1.62,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 21,
+          "partnerName": "로지",
+          "partnerWeapon": 9,
+          "partnerWeaponName": "권총",
+          "games": 708,
+          "winRate": 14.83,
+          "avgRP": 5.13,
+          "avgRank": 4.12,
+          "rpLift": 0.06,
+          "winRateLift": 0.41,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 28,
+          "partnerName": "수아",
+          "partnerWeapon": 3,
+          "partnerWeaponName": "방망이",
+          "games": 1638,
+          "winRate": 12.82,
+          "avgRP": 5.04,
+          "avgRank": 4.18,
+          "rpLift": -0.03,
+          "winRateLift": -1.6,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 27,
+          "partnerName": "알렉스",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "games": 849,
+          "winRate": 10.95,
+          "avgRP": 4.85,
+          "avgRank": 4.06,
+          "rpLift": -0.22,
+          "winRateLift": -3.47,
+          "confidence": "high"
+        }
+      ],
+      "topAnti": [
+        {
+          "partnerCode": 23,
+          "partnerName": "캐시",
+          "partnerWeapon": 18,
+          "partnerWeaponName": "쌍검",
+          "games": 360,
+          "winRate": 15.83,
+          "avgRP": -11.1,
+          "avgRank": 4.01,
+          "rpLift": -16.17,
+          "winRateLift": 1.41,
+          "confidence": "medium"
+        },
+        {
+          "partnerCode": 12,
+          "partnerName": "혜진",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "games": 357,
+          "winRate": 15.13,
+          "avgRP": -7.43,
+          "avgRank": 4.33,
+          "rpLift": -12.5,
+          "winRateLift": 0.71,
+          "confidence": "medium"
+        },
+        {
+          "partnerCode": 8,
+          "partnerName": "하트",
+          "partnerWeapon": 22,
+          "partnerWeaponName": "기타",
+          "games": 471,
+          "winRate": 11.46,
+          "avgRP": -7.04,
+          "avgRank": 4.59,
+          "rpLift": -12.11,
+          "winRateLift": -2.96,
+          "confidence": "medium"
+        },
+        {
+          "partnerCode": 73,
+          "partnerName": "샬럿",
+          "partnerWeapon": 24,
+          "partnerWeaponName": "아르카나",
+          "games": 624,
+          "winRate": 17.31,
+          "avgRP": -6.98,
+          "avgRank": 4.46,
+          "rpLift": -12.05,
+          "winRateLift": 2.89,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 32,
+          "partnerName": "윌리엄",
+          "partnerWeapon": 5,
+          "partnerWeaponName": "투척",
+          "games": 240,
+          "winRate": 10,
+          "avgRP": -5.8,
+          "avgRank": 4.73,
+          "rpLift": -10.87,
+          "winRateLift": -4.42,
+          "confidence": "medium"
+        }
+      ],
+      "eligiblePairs": 112
+    },
+    {
+      "weapon": 9,
+      "weaponName": "권총",
+      "soloBaseline": {
+        "games": 34744,
+        "winRate": 12.97,
+        "avgRP": -2.18,
+        "avgRank": 4.19
+      },
+      "topSynergy": [
+        {
+          "partnerCode": 34,
+          "partnerName": "나타폰",
+          "partnerWeapon": 23,
+          "partnerWeaponName": "카메라",
+          "games": 894,
+          "winRate": 18.46,
+          "avgRP": 6.22,
+          "avgRank": 3.78,
+          "rpLift": 8.4,
+          "winRateLift": 5.49,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 5,
+          "partnerName": "자히르",
+          "partnerWeapon": 5,
+          "partnerWeaponName": "투척",
+          "games": 297,
+          "winRate": 18.18,
+          "avgRP": 5.2,
+          "avgRank": 3.79,
+          "rpLift": 7.38,
+          "winRateLift": 5.21,
+          "confidence": "medium"
+        },
+        {
+          "partnerCode": 27,
+          "partnerName": "알렉스",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "games": 441,
+          "winRate": 12.93,
+          "avgRP": 5.17,
+          "avgRank": 3.82,
+          "rpLift": 7.35,
+          "winRateLift": -0.04,
+          "confidence": "medium"
+        },
+        {
+          "partnerCode": 60,
+          "partnerName": "타지아",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "games": 615,
+          "winRate": 16.59,
+          "avgRP": 4.21,
+          "avgRank": 4.1,
+          "rpLift": 6.39,
+          "winRateLift": 3.62,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 6,
+          "partnerName": "나딘",
+          "partnerWeapon": 8,
+          "partnerWeaponName": "석궁",
+          "games": 1440,
+          "winRate": 16.46,
+          "avgRP": 4.1,
+          "avgRank": 3.86,
+          "rpLift": 6.28,
+          "winRateLift": 3.49,
+          "confidence": "high"
+        }
+      ],
+      "topAnti": [
+        {
+          "partnerCode": 69,
+          "partnerName": "레니",
+          "partnerWeapon": 9,
+          "partnerWeaponName": "권총",
+          "games": 273,
+          "winRate": 6.59,
+          "avgRP": -25.47,
+          "avgRank": 4.65,
+          "rpLift": -23.29,
+          "winRateLift": -6.38,
+          "confidence": "medium"
+        },
+        {
+          "partnerCode": 57,
+          "partnerName": "마르티나",
+          "partnerWeapon": 23,
+          "partnerWeaponName": "카메라",
+          "games": 543,
+          "winRate": 18.78,
+          "avgRP": -14.92,
+          "avgRank": 3.97,
+          "rpLift": -12.74,
+          "winRateLift": 5.81,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 19,
+          "partnerName": "엠마",
+          "partnerWeapon": 24,
+          "partnerWeaponName": "아르카나",
+          "games": 372,
+          "winRate": 13.71,
+          "avgRP": -8.75,
+          "avgRank": 4.21,
+          "rpLift": -6.57,
+          "winRateLift": 0.74,
+          "confidence": "medium"
+        },
+        {
+          "partnerCode": 24,
+          "partnerName": "아델라",
+          "partnerWeapon": 3,
+          "partnerWeaponName": "방망이",
+          "games": 330,
+          "winRate": 8.18,
+          "avgRP": -8.6,
+          "avgRank": 4.48,
+          "rpLift": -6.42,
+          "winRateLift": -4.79,
+          "confidence": "medium"
+        },
+        {
+          "partnerCode": 38,
+          "partnerName": "제니",
+          "partnerWeapon": 9,
+          "partnerWeaponName": "권총",
+          "games": 396,
+          "winRate": 15.15,
+          "avgRP": -8.52,
+          "avgRank": 4.07,
+          "rpLift": -6.34,
+          "winRateLift": 2.18,
+          "confidence": "medium"
+        }
+      ],
+      "eligiblePairs": 110
+    }
+  ]
+}

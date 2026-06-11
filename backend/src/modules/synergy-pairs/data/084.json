@@ -1,0 +1,159 @@
+{
+  "characterCode": 84,
+  "characterName": "블레어",
+  "patchScope": "10.x",
+  "tierScope": "DIAMOND+",
+  "minSampleGames": 40,
+  "confidenceThresholds": {
+    "high": 500,
+    "medium": 200
+  },
+  "builtAt": "2026-05-07T03:44:40.601Z",
+  "weapons": [
+    {
+      "weapon": 18,
+      "weaponName": "쌍검",
+      "soloBaseline": {
+        "games": 102752,
+        "winRate": 12.46,
+        "avgRP": -0.59,
+        "avgRank": 4.39
+      },
+      "topSynergy": [
+        {
+          "partnerCode": 24,
+          "partnerName": "아델라",
+          "partnerWeapon": 21,
+          "partnerWeaponName": "레이피어",
+          "games": 1653,
+          "winRate": 15.25,
+          "avgRP": 4.79,
+          "avgRank": 4.07,
+          "rpLift": 5.38,
+          "winRateLift": 2.79,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 60,
+          "partnerName": "타지아",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "games": 1944,
+          "winRate": 16.82,
+          "avgRP": 4.27,
+          "avgRank": 4.27,
+          "rpLift": 4.86,
+          "winRateLift": 4.36,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 29,
+          "partnerName": "레온",
+          "partnerWeapon": 2,
+          "partnerWeaponName": "톤파",
+          "games": 1161,
+          "winRate": 14.99,
+          "avgRP": 4.2,
+          "avgRank": 4.17,
+          "rpLift": 4.79,
+          "winRateLift": 2.53,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 5,
+          "partnerName": "자히르",
+          "partnerWeapon": 5,
+          "partnerWeaponName": "투척",
+          "games": 1077,
+          "winRate": 12.26,
+          "avgRP": 3.58,
+          "avgRank": 4.23,
+          "rpLift": 4.17,
+          "winRateLift": -0.2,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 27,
+          "partnerName": "알렉스",
+          "partnerWeapon": 2,
+          "partnerWeaponName": "톤파",
+          "games": 1608,
+          "winRate": 11.19,
+          "avgRP": 3.57,
+          "avgRank": 4.16,
+          "rpLift": 4.16,
+          "winRateLift": -1.27,
+          "confidence": "high"
+        }
+      ],
+      "topAnti": [
+        {
+          "partnerCode": 27,
+          "partnerName": "알렉스",
+          "partnerWeapon": 16,
+          "partnerWeaponName": "양손검",
+          "games": 2847,
+          "winRate": 11.49,
+          "avgRP": -6.17,
+          "avgRank": 4.33,
+          "rpLift": -5.58,
+          "winRateLift": -0.97,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 3,
+          "partnerName": "피오라",
+          "partnerWeapon": 16,
+          "partnerWeaponName": "양손검",
+          "games": 1107,
+          "winRate": 13.55,
+          "avgRP": -3.88,
+          "avgRank": 4.46,
+          "rpLift": -3.29,
+          "winRateLift": 1.09,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 19,
+          "partnerName": "엠마",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "games": 2718,
+          "winRate": 12.36,
+          "avgRP": -3.71,
+          "avgRank": 4.37,
+          "rpLift": -3.12,
+          "winRateLift": -0.1,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 57,
+          "partnerName": "마르티나",
+          "partnerWeapon": 23,
+          "partnerWeaponName": "카메라",
+          "games": 1956,
+          "winRate": 14.11,
+          "avgRP": -3.32,
+          "avgRank": 4.35,
+          "rpLift": -2.73,
+          "winRateLift": 1.65,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 11,
+          "partnerName": "유키",
+          "partnerWeapon": 16,
+          "partnerWeaponName": "양손검",
+          "games": 5754,
+          "winRate": 10.9,
+          "avgRP": -3.2,
+          "avgRank": 4.42,
+          "rpLift": -2.61,
+          "winRateLift": -1.56,
+          "confidence": "high"
+        }
+      ],
+      "eligiblePairs": 114
+    }
+  ]
+}
