@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { SupabaseService } from '../../common/database/supabase.service';
 import { RedisService } from '../../common/redis/redis.service';
 
@@ -21,6 +21,11 @@ const MAX_TRIO_WEAPON_RESPONSE_LIMIT = TRIO_WEAPON_FULL_FETCH_LIMIT;
 const TRIO_WEAPON_CACHE_VERSION = 'v6';
 
 type SortBy = 'averageRP' | 'winRate' | 'averageRank' | 'totalGames' | 'recommended';
+
+interface SupabaseErrorLike {
+  code?: string;
+  message?: string;
+}
 
 interface TrioRow {
   tier: string;
@@ -417,8 +422,31 @@ function normalizeLimit(limit: number, max: number): number {
   return Math.min(limit, max);
 }
 
+function isMissingRelationError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+  const supabaseError = error as SupabaseErrorLike;
+  if (supabaseError.code === 'PGRST205' || supabaseError.code === '42P01') return true;
+
+  const message = supabaseError.message ?? '';
+  return (
+    message.includes('Could not find the table') ||
+    message.includes('schema cache') ||
+    (message.includes('relation') && message.includes('does not exist'))
+  );
+}
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === 'object' && 'message' in error) {
+    return String((error as SupabaseErrorLike).message);
+  }
+  return String(error);
+}
+
 @Injectable()
 export class StatsService {
+  private readonly logger = new Logger(StatsService.name);
+
   constructor(
     private readonly supabase: SupabaseService,
     private readonly redis: RedisService,
@@ -436,9 +464,19 @@ export class StatsService {
     }
 
     const cacheKey = `trios:aggregated:${normalizedChar1 ?? 'none'}:${normalizedChar2 ?? 'none'}`;
-    const aggregated = await this.redis.getOrSet(cacheKey, 7 * 24 * 3600, () =>
-      this.fetchAndAggregateTrios(normalizedChar1, normalizedChar2),
-    );
+    let aggregated: AggregatedTrio[];
+    try {
+      aggregated = await this.redis.getOrSet(cacheKey, 7 * 24 * 3600, () =>
+        this.fetchAndAggregateTrios(normalizedChar1, normalizedChar2),
+      );
+    } catch (error) {
+      if (isMissingRelationError(error)) {
+        this.logger.warn(`Trio stats table is not available: ${getErrorMessage(error)}`);
+        return { results: [] };
+      }
+      throw error;
+    }
+
     const sorted = [...aggregated];
     sortAggregated(sorted, sortBy);
     return { results: sorted.slice(0, safeLimit) };
@@ -468,15 +506,23 @@ export class StatsService {
     let aggregated: AggregatedTrioWeapon[];
     let isExactPairWeaponSearch = false;
 
-    if (char1 !== null && char2 !== null && weapon1 !== null && weapon2 !== null) {
-      isExactPairWeaponSearch = true;
-      aggregated = await this.cachedTrioWeaponPairWeaponExact(char1, weapon1, char2, weapon2);
-    } else if (char1 !== null && char2 !== null) {
-      aggregated = await this.cachedTrioWeaponPair(char1, char2);
-    } else if (char1 !== null) {
-      aggregated = await this.cachedTrioWeaponSingle(char1);
-    } else {
-      aggregated = await this.cachedTrioWeaponAll();
+    try {
+      if (char1 !== null && char2 !== null && weapon1 !== null && weapon2 !== null) {
+        isExactPairWeaponSearch = true;
+        aggregated = await this.cachedTrioWeaponPairWeaponExact(char1, weapon1, char2, weapon2);
+      } else if (char1 !== null && char2 !== null) {
+        aggregated = await this.cachedTrioWeaponPair(char1, char2);
+      } else if (char1 !== null) {
+        aggregated = await this.cachedTrioWeaponSingle(char1);
+      } else {
+        aggregated = await this.cachedTrioWeaponAll();
+      }
+    } catch (error) {
+      if (isMissingRelationError(error)) {
+        this.logger.warn(`Trio weapon stats table is not available: ${getErrorMessage(error)}`);
+        return { results: [] };
+      }
+      throw error;
     }
 
     let filtered = aggregated;
