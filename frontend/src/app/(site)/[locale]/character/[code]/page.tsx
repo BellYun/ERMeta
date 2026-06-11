@@ -35,14 +35,32 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const code = parseInt(rawCode, 10);
   const t = await getStaticTranslator("characterMetadata", language);
+  const currentPatch = getStatsPatchVersions()[0];
   const name =
     !Number.isNaN(code) && CHARACTER_CODES.includes(code)
       ? resolveCharacterName(code, loadL10nMap(language), buildFallbackMap())
       : null;
 
   if (name && !name.startsWith("코드:")) {
-    const title = t("titleWithName", { name });
-    const description = t("descriptionWithName", { name });
+    const stats = currentPatch
+      ? await getCachedCharacterStats(code, currentPatch, "DIAMOND_PLUS")
+      : null;
+    const title =
+      locale === "ko" && currentPatch
+        ? `${name} 빌드/특성/무기 통계 - 이터널리턴 ${currentPatch}`
+        : locale === "ja" && currentPatch
+          ? `${name} ビルド/特性/武器統計 - Eternal Return ${currentPatch}`
+          : currentPatch
+            ? `${name} Build, Traits, Weapon Stats - Eternal Return ${currentPatch}`
+            : t("titleWithName", { name });
+    const description =
+      locale === "ko" && stats && stats.totalGames > 0
+        ? `이터널리턴 ${name} ${currentPatch} 패치 다이아 이상 통계. 승률 ${stats.winRate.toFixed(1)}%, 픽률 ${stats.pickRate.toFixed(1)}%, 평균 RP ${stats.averageRP.toFixed(1)}, 추천 무기와 조합을 확인하세요.`
+        : locale === "ja" && stats && stats.totalGames > 0
+          ? `Eternal Return ${name} パッチ${currentPatch}のダイヤ以上統計。勝率${stats.winRate.toFixed(1)}%、ピック率${stats.pickRate.toFixed(1)}%、平均RP ${stats.averageRP.toFixed(1)}、おすすめ武器とチーム構成を確認できます。`
+          : stats && stats.totalGames > 0
+            ? `Eternal Return ${name} stats for patch ${currentPatch} in Diamond+. Win rate ${stats.winRate.toFixed(1)}%, pick rate ${stats.pickRate.toFixed(1)}%, average RP ${stats.averageRP.toFixed(1)}, recommended weapons and team comps.`
+            : t("descriptionWithName", { name });
 
     return {
       metadataBase: new URL(BASE_URL),
@@ -51,6 +69,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       keywords: [
         t("keywords.character", { name }),
         t("keywords.build", { name }),
+        locale === "ko" ? `${name} 특성` : locale === "ja" ? `${name} 特性` : `${name} traits`,
+        locale === "ko" ? `${name} 무기` : locale === "ja" ? `${name} 武器` : `${name} weapons`,
+        locale === "ko" ? `${name} 조합` : locale === "ja" ? `${name} 構成` : `${name} team comps`,
+        locale === "ko"
+          ? `이터널리턴 ${name} 빌드`
+          : locale === "ja"
+            ? `Eternal Return ${name} ビルド`
+            : `Eternal Return ${name} build`,
+        locale === "ko"
+          ? `이터널리턴 ${name} 특성`
+          : locale === "ja"
+            ? `Eternal Return ${name} 特性`
+            : `Eternal Return ${name} traits`,
+        locale === "ko"
+          ? `이터널리턴 ${name} 무기`
+          : locale === "ja"
+            ? `Eternal Return ${name} 武器`
+            : `Eternal Return ${name} weapons`,
+        currentPatch
+          ? locale === "ko"
+            ? `이터널리턴 ${currentPatch} ${name}`
+            : locale === "ja"
+              ? `Eternal Return ${currentPatch} ${name}`
+              : `Eternal Return ${currentPatch} ${name}`
+          : t("keywords.character", { name }),
         t("keywords.winRate", { name }),
         t("keywords.stats", { name }),
         t("keywords.brand"),

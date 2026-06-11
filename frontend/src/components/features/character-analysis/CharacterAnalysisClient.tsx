@@ -1,12 +1,11 @@
 "use client";
 
-import { BarChart2, ChevronRight, FileText, Loader2, Users, Zap } from "lucide-react";
+import { BarChart2, FileText, Loader2, Zap } from "lucide-react";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import { Suspense } from "react";
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route";
 import { useL10n } from "@/components/L10nProvider";
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
 import { CharacterHeader } from "./CharacterHeader";
@@ -365,17 +364,6 @@ export function CharacterAnalysisClient({
                   {(stats?.pickRate ?? displayStat.pickRate).toFixed(1)}%
                 </span>
               </div>
-            </div>
-
-            <div className="mt-3 flex justify-stretch sm:mt-4 sm:justify-end">
-              <Link
-                href={`/synergy-detail?ally1=${code}${selectedWeapon != null ? `&w1=${selectedWeapon}` : ""}`}
-                className="inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-3.5 py-2.5 text-xs font-semibold text-[var(--color-primary-hover)] transition-colors hover:bg-[var(--color-primary)]/20 sm:min-h-0 sm:w-auto"
-              >
-                <Users className="h-3.5 w-3.5" />
-                {t("synergyCta")}
-                <ChevronRight className="h-3 w-3" />
-              </Link>
             </div>
           </section>
         )}
