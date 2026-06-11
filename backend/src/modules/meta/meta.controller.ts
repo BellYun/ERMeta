@@ -4,8 +4,8 @@ import { MetaService } from './meta.service';
 import { CacheControlInterceptor } from '../../common/interceptors/cache-control.interceptor';
 
 export class HoneyPicksQueryDto {
-  @IsString() @IsOptional() patchVersion?: string = '10.4';
-  @IsString() @IsOptional() tier?: string = 'MITHRIL';
+  @IsString() @IsOptional() patchVersion?: string;
+  @IsString() @IsOptional() tier?: string = 'DIAMOND';
 }
 
 @Controller('meta')
@@ -16,8 +16,8 @@ export class MetaController {
   @UseInterceptors(CacheControlInterceptor('daily'))
   async getHoneyPicks(@Query() query: HoneyPicksQueryDto) {
     return this.metaService.getHoneyPicks(
-      query.patchVersion ?? '10.4',
-      query.tier ?? 'MITHRIL',
+      query.patchVersion,
+      query.tier ?? 'DIAMOND',
     );
   }
 }
