@@ -1,11 +1,15 @@
 import { promises as fs } from "node:fs";
 import { join } from "node:path";
 import { NextResponse } from "next/server";
+import { tryNestApiProxy } from "@/lib/server/nestProxy";
 
 export const revalidate = 3600;
 
-export async function GET(_request: Request, { params }: { params: Promise<{ code: string }> }) {
+export async function GET(request: Request, { params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
+  const proxied = await tryNestApiProxy(request, `/synergy-pairs/${code}`);
+  if (proxied) return proxied;
+
   if (!/^\d+$/.test(code)) {
     return NextResponse.json({ error: "invalid code" }, { status: 400 });
   }

@@ -1,6 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { getCacheHeaders, SERVER_ERROR_HEADERS, withCacheObservability } from "@/lib/cache";
+import { tryNestApiProxy } from "@/lib/server/nestProxy";
 import { createServerClient } from "@/lib/supabase";
 import { TierGroup } from "@/utils/tier";
 
@@ -266,6 +267,9 @@ function sortAggregated(aggregated: AggregatedTrio[], sortBy: SortBy): void {
 }
 
 export async function GET(request: NextRequest) {
+  const proxied = await tryNestApiProxy(request, "/stats/trios");
+  if (proxied) return proxied;
+
   const { searchParams } = new URL(request.url);
 
   const sortByParam = (searchParams.get("sortBy") ?? "averageRP") as SortBy;
