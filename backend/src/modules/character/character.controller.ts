@@ -24,7 +24,7 @@ export class CharacterController {
   ) {
     return this.characterService.getCharacterStats(
       parseInt(characterCode, 10),
-      query.patchVersion ?? '10.4',
+      query.patchVersion ?? '',
       query.tier ?? 'DIAMOND',
     );
   }
