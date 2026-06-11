@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
-import { getStatsPatchVersions } from "@/data/patch-notes";
 import { isRouteLocale } from "@/i18n/routing";
+import { getPatchAnalysisVersions } from "@/lib/patchAnalysis";
 import { localizeRoutePath } from "@/lib/seoLocales";
 
 interface LocalePageProps {
@@ -16,7 +16,7 @@ export default async function LocalizedPatchAnalysisRedirectPage({ params }: Loc
     notFound();
   }
 
-  const latestPatch = getStatsPatchVersions()[0];
+  const latestPatch = getPatchAnalysisVersions()[0];
   if (!latestPatch) notFound();
   redirect(localizeRoutePath(`/patch-analysis/${latestPatch}`, locale));
 }

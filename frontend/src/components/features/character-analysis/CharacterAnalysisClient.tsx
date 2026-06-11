@@ -11,7 +11,7 @@ import { resolveWeaponName } from "@/lib/weaponMap";
 import { CharacterHeader } from "./CharacterHeader";
 import { RoleComboRpPanel } from "./RoleComboRpPanel";
 import { SynergyPartnersSection } from "./SynergyPartnersSection";
-import { assignCharTier, fetchStats } from "./utils";
+import { assignCharTier, fetchStats, fetchStatsHistory } from "./utils";
 
 // 탭 콘텐츠: lazy import (코드 스플릿)
 const PatchComparisonTab = React.lazy(() =>
@@ -60,7 +60,7 @@ export function CharacterAnalysisClient({
   const { l10n } = useL10n();
   const t = useTranslations("characterAnalysis");
   const patches = React.useMemo(() => initialPatches ?? [], [initialPatches]);
-  const selectablePatches = React.useMemo(() => patches.slice(0, 2), [patches]);
+  const selectablePatches = patches;
 
   const [selectedTier, setSelectedTier] = React.useState<string>("DIAMOND_PLUS");
   const [selectedPatch, setSelectedPatch] = React.useState<string | null>(() => patches[0] ?? null);
@@ -154,11 +154,14 @@ export function CharacterAnalysisClient({
       const current = priorityResults[0] ?? null;
       setSelectedWeapon(readWeaponFromLocation() ?? current?.weapons?.[0]?.bestWeapon ?? null);
 
-      const initial: (CharacterStatsResponse | null)[] = Array(patches.length).fill(null);
-      priorityResults.forEach((result, index) => {
-        initial[index] = result;
+      setAllPatchStats((prev) => {
+        const merged =
+          prev.length === patches.length ? [...prev] : Array(patches.length).fill(null);
+        priorityResults.forEach((result, index) => {
+          merged[index] = result;
+        });
+        return merged;
       });
-      setAllPatchStats(initial);
       setLoading(false);
     };
 
@@ -173,6 +176,32 @@ export function CharacterAnalysisClient({
       cancelled = true;
     };
   }, [code, initialPrevStats, initialStats, patches, selectedTier]);
+
+  React.useEffect(() => {
+    if (!patches.length) return;
+
+    let cancelled = false;
+
+    const fetchPatchHistory = async () => {
+      const history = await fetchStatsHistory(code, patches, selectedTier);
+      if (cancelled || !history) return;
+
+      setAllPatchStats((prev) => {
+        const merged =
+          prev.length === patches.length ? [...prev] : Array(patches.length).fill(null);
+        history.forEach((stat, index) => {
+          merged[index] = stat;
+        });
+        return merged;
+      });
+    };
+
+    void fetchPatchHistory();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [code, patches, selectedTier]);
 
   React.useEffect(() => {
     let cancelled = false;

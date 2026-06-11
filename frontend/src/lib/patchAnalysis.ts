@@ -21,6 +21,7 @@ const WEAPON_ALIASES: Partial<Record<number, string[]>> = {
   18: ["쌍날검"],
 };
 const patchAnalysisDataCache = new Map<string, Promise<PatchAnalysisData>>();
+const PATCH_ANALYSIS_EXCLUDED_PATCHES = new Set(["11.4"]);
 const LAB_ROLE_DATA = [
   tanksData,
   warriorsData,
@@ -427,11 +428,15 @@ function buildAsOfLabel() {
 
 export function getPatchAnalysisVersions() {
   const patches = getStatsPatchVersions();
-  return patches.filter((_, index) => Boolean(patches[index + 1]));
+  return patches.filter(
+    (patch, index) => !PATCH_ANALYSIS_EXCLUDED_PATCHES.has(patch) && Boolean(patches[index + 1])
+  );
 }
 
 async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAnalysisData> {
-  const patches = getStatsPatchVersions();
+  const patches = getStatsPatchVersions().filter(
+    (patch) => !PATCH_ANALYSIS_EXCLUDED_PATCHES.has(patch)
+  );
   const requestedIndex = requestedPatch ? patches.indexOf(requestedPatch) : 0;
   const currentIndex = requestedIndex >= 0 ? requestedIndex : 0;
   const currentPatch = patches[currentIndex] ?? "";
@@ -497,7 +502,7 @@ async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAna
 }
 
 export async function getPatchAnalysisData(version?: string): Promise<PatchAnalysisData> {
-  const patchVersion = version ?? getStatsPatchVersions()[0] ?? "";
+  const patchVersion = version ?? getPatchAnalysisVersions()[0] ?? "";
   const cached = patchAnalysisDataCache.get(patchVersion);
   if (cached) return cached;
 

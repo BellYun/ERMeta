@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 
 interface NavigationProps {
   currentPatch: string;
+  patchAnalysisPatch?: string;
   onNavigate?: () => void;
 }
 
@@ -32,10 +33,12 @@ interface NavigationLink {
   badge?: string;
 }
 
-export function Navigation({ currentPatch, onNavigate }: NavigationProps) {
+export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: NavigationProps) {
   const pathname = usePathname();
   const normalizedPathname = stripRouteLocaleFromPathname(pathname);
-  const patchAnalysisPath = currentPatch ? `/patch-analysis/${currentPatch}` : "/patch-analysis";
+  const patchAnalysisPath = patchAnalysisPatch
+    ? `/patch-analysis/${patchAnalysisPatch}`
+    : "/patch-analysis";
   const t = useTranslations("navigation");
   const tHeader = useTranslations("header");
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);

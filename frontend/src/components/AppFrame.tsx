@@ -8,6 +8,7 @@ interface AppFrameProps {
   children: ReactNode;
   messages: IntlMessages;
   currentPatch?: string;
+  patchAnalysisPatch?: string;
   shellId?: string;
   seoLocaleShell?: boolean;
   mainId?: string;
@@ -17,6 +18,7 @@ export function AppFrame({
   children,
   messages,
   currentPatch = "",
+  patchAnalysisPatch = "",
   shellId,
   seoLocaleShell = false,
   mainId = "main",
@@ -34,12 +36,12 @@ export function AppFrame({
         {getMessage(messages, "layout.skipToMain")}
       </a>
       <aside className="hidden lg:fixed lg:inset-y-4 lg:left-4 lg:z-40 lg:block lg:w-[220px] xl:w-[228px] lg:overflow-hidden lg:rounded-[30px] lg:border lg:border-[var(--color-border)] lg:bg-[rgba(8,13,27,0.92)] lg:shadow-[0_40px_90px_-60px_rgba(0,0,0,0.92)]">
-        <Navigation currentPatch={currentPatch} />
+        <Navigation currentPatch={currentPatch} patchAnalysisPatch={patchAnalysisPatch} />
       </aside>
 
       <div className="min-h-screen overflow-hidden lg:ml-[236px] xl:ml-[244px] lg:min-h-[calc(100vh-2rem)] lg:rounded-[30px] lg:border lg:border-[var(--color-border)] lg:bg-[rgba(6,10,22,0.88)] lg:shadow-[0_44px_100px_-64px_rgba(0,0,0,0.88)]">
         <div className="min-w-0 flex flex-col">
-          <Header currentPatch={currentPatch} />
+          <Header currentPatch={currentPatch} patchAnalysisPatch={patchAnalysisPatch} />
           <main
             id={mainId}
             className="flex-1 px-3 pt-4 pb-8 sm:px-4 sm:pt-5 sm:pb-10 lg:px-6 lg:pt-5 lg:pb-8"

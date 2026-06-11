@@ -4,6 +4,7 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeBadgeStatic";
+import { Link } from "@/i18n/navigation";
 import {
   type CharacterRole,
   getCharacterImageUrl,
@@ -12,6 +13,7 @@ import {
 } from "@/lib/characterMap";
 import {
   getPatchAnalysisData,
+  getPatchAnalysisVersions,
   type PatchCharacterDelta,
   type PatchCharacterMetric,
   type PatchRoleMetric,
@@ -550,6 +552,7 @@ function getEntryRoles(entry: PatchCharacterDelta) {
 export default async function PatchAnalysisPage({ version }: PatchAnalysisPageProps = {}) {
   const data = await getPatchAnalysisData(version);
   const tEvaluations = await getTranslations("patchAnalysis.evaluations");
+  const analysisVersions = getPatchAnalysisVersions();
   const evaluations = Object.fromEntries(
     EVALUATED_CHARACTER_NUMS.map((characterNum) => [
       characterNum,
@@ -589,6 +592,27 @@ export default async function PatchAnalysisPage({ version }: PatchAnalysisPagePr
                 쉽습니다.
               </p>
             ) : null}
+
+            <nav className="mt-5 flex flex-wrap gap-2" aria-label="패치 분석 버전 선택">
+              {analysisVersions.map((candidate) => {
+                const isActive = candidate === data.currentPatch;
+                return (
+                  <Link
+                    key={candidate}
+                    href={`/patch-analysis/${candidate}`}
+                    aria-current={isActive ? "page" : undefined}
+                    className={cn(
+                      "rounded-xl border px-3 py-2 text-sm font-semibold transition",
+                      isActive
+                        ? "border-[rgba(96,165,250,0.28)] bg-[rgba(96,165,250,0.12)] text-[var(--color-primary-hover)]"
+                        : "border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:bg-[rgba(255,255,255,0.06)] hover:text-[var(--color-foreground)]"
+                    )}
+                  >
+                    {candidate} 분석
+                  </Link>
+                );
+              })}
+            </nav>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
