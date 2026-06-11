@@ -22,7 +22,7 @@ import { CollectModule } from './modules/collect/collect.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env', '../frontend/.env'],
+      envFilePath: ['.env', '.env.local', '../frontend/.env', '../frontend/.env.local'],
     }),
     ScheduleModule.forRoot(),
     EventEmitterModule.forRoot(),
