@@ -16,6 +16,7 @@ export class BuildsController {
       query.patchVersion ?? '',
       query.mainCore,
       query.bestWeapon,
+      query.legendOnly === '1',
     );
   }
 

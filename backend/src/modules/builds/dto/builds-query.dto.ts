@@ -19,6 +19,10 @@ export class EquipmentQueryDto {
   @IsString()
   @IsOptional()
   bestWeapon?: string;
+
+  @IsString()
+  @IsOptional()
+  legendOnly?: string;
 }
 
 export class TraitsMainQueryDto {

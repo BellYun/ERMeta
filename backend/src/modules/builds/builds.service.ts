@@ -1,6 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import itemGradeMap from './data/itemGradeMap.json';
+import weaponItemTypeMap from './data/weaponItemTypeMap.json';
 import { SupabaseService } from '../../common/database/supabase.service';
 import { RedisService } from '../../common/redis/redis.service';
+
+const ITEM_GRADE = itemGradeMap as Record<string, string>;
+const WEAPON_ITEM_TYPE = weaponItemTypeMap as Record<string, number>;
+const TIER_CUMULATIVE: Record<string, string[]> = {
+  PLATINUM_PLUS: ['PLATINUM', 'DIAMOND', 'METEORITE', 'MITHRIL'],
+  DIAMOND_PLUS: ['DIAMOND', 'METEORITE', 'MITHRIL'],
+  METEORITE_PLUS: ['METEORITE', 'MITHRIL'],
+  MITHRIL_PLUS: ['MITHRIL'],
+  IN1000_PLUS: ['IN1000'],
+};
 
 type EquipmentRow = {
   mainCore: number | null;
@@ -16,6 +28,25 @@ type EquipmentRow = {
 };
 
 type SlotKey = 'weapon' | 'chest' | 'head' | 'arm' | 'leg';
+
+function expandCumulativeTier(tier: string): string[] {
+  return TIER_CUMULATIVE[tier] ?? [tier];
+}
+
+function isLegendItem(code: number | null): boolean {
+  if (code == null) return false;
+  return ITEM_GRADE[String(code)] === 'Legend';
+}
+
+function isFullLegendBuild(row: EquipmentRow): boolean {
+  return (
+    isLegendItem(row.weapon) &&
+    isLegendItem(row.chest) &&
+    isLegendItem(row.head) &&
+    isLegendItem(row.arm) &&
+    isLegendItem(row.leg)
+  );
+}
 
 function aggregateSlot(
   rows: EquipmentRow[],
@@ -103,6 +134,7 @@ export class BuildsService {
     patchVersion: string,
     mainCoreParam?: string,
     bestWeaponParam?: string,
+    legendOnly = false,
   ) {
     const empty = {
       topBuilds: [],
@@ -112,9 +144,16 @@ export class BuildsService {
 
     if (!characterCode || isNaN(characterCode)) return empty;
 
-    const cacheKey = `builds:equip:${characterCode}:${tier}:${patchVersion}:${mainCoreParam ?? 'all'}:${bestWeaponParam ?? 'all'}`;
+    const cacheKey = `builds:equip:${characterCode}:${tier}:${patchVersion}:${mainCoreParam ?? 'all'}:${bestWeaponParam ?? 'all'}:${legendOnly ? 'legend' : 'all'}`;
     return this.redis.getOrSet(cacheKey, 1800, () =>
-      this._getEquipmentBuilds(characterCode, tier, patchVersion, mainCoreParam, bestWeaponParam),
+      this._getEquipmentBuilds(
+        characterCode,
+        tier,
+        patchVersion,
+        mainCoreParam,
+        bestWeaponParam,
+        legendOnly,
+      ),
     );
   }
 
@@ -124,6 +163,7 @@ export class BuildsService {
     patchVersion: string,
     mainCoreParam?: string,
     bestWeaponParam?: string,
+    legendOnly = false,
   ) {
     const empty = {
       topBuilds: [],
@@ -134,10 +174,10 @@ export class BuildsService {
     const client = this.supabase.getClient();
 
     let query = client
-      .from('CharacterEquipmentBuildStats')
+      .from('v2_CharacterEquipmentBuildStats')
       .select('mainCore,weapon,chest,head,arm,leg,totalGames,totalWins,rankSum,totalRP')
       .eq('characterNum', characterCode)
-      .eq('tier', tier)
+      .in('tier', expandCumulativeTier(tier))
       .eq('patchVersion', patchVersion);
 
     if (mainCoreParam != null) {
@@ -150,11 +190,26 @@ export class BuildsService {
 
     const { data, error } = await query
       .order('totalGames', { ascending: false })
-      .limit(200);
+      .limit(legendOnly ? 1000 : 200);
 
     if (error || !data || data.length === 0) return empty;
 
-    const rows = data as EquipmentRow[];
+    let rows = data as EquipmentRow[];
+
+    if (bestWeaponParam != null) {
+      const targetType = Number(bestWeaponParam);
+      rows = rows.filter((row) => {
+        if (row.weapon == null) return false;
+        return WEAPON_ITEM_TYPE[String(row.weapon)] === targetType;
+      });
+    }
+
+    if (legendOnly) {
+      rows = rows.filter(isFullLegendBuild);
+    }
+
+    if (rows.length === 0) return empty;
+
     const grandTotal = rows.reduce((s, r) => s + r.totalGames, 0);
 
     // topBuilds
