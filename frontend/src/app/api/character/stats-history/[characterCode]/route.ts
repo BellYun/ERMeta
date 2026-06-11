@@ -14,10 +14,14 @@ function parseRequestedPatches(raw: string | null): string[] {
   const allowed = new Set(getStatsPatchVersions());
   if (!raw) return getStatsPatchVersions();
 
-  const requested = raw
-    .split(",")
-    .map((patch) => patch.trim())
-    .filter((patch) => allowed.has(patch));
+  const requested = Array.from(
+    new Set(
+      raw
+        .split(",")
+        .map((patch) => patch.trim())
+        .filter((patch) => allowed.has(patch))
+    )
+  );
 
   return requested.length > 0 ? requested : getStatsPatchVersions();
 }
