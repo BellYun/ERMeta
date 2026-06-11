@@ -36,7 +36,7 @@ export class ItemsService {
       for (const [key, value] of Object.entries(l10n)) {
         if (key.startsWith('Item/Name/')) items[key.replace('Item/Name/', '')] = value;
       }
-      return { items };
+      return { names: items };
     });
   }
 
@@ -51,7 +51,7 @@ export class ItemsService {
       for (const [key, value] of Object.entries(l10n)) {
         if (key.startsWith('Trait/Name/')) traits[key.replace('Trait/Name/', '')] = value;
       }
-      return { traits };
+      return { names: traits };
     });
   }
 }
