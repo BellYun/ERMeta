@@ -3,6 +3,7 @@ import { SupabaseService } from '../../common/database/supabase.service';
 import { RedisService } from '../../common/redis/redis.service';
 
 const TIER_FALLBACK_ORDER = ['DIAMOND', 'METEORITE', 'MITHRIL', 'IN1000'];
+const HOME_BASE_TIERS = ['DIAMOND', 'METEORITE', 'MITHRIL'] as const;
 const STATS_EXCLUDED_PATCHES = new Set(['11.0']);
 const PLAYERS_PER_MATCH = 24;
 const CURRENT_PATCH_MIN_MATCH_RATIO = 0.1;
@@ -30,6 +31,44 @@ interface StatRow {
   totalTop3: number;
   tier: string;
   patchVersion: string;
+}
+
+type HomeBaseTier = typeof HOME_BASE_TIERS[number];
+
+interface HomeMetaStatRow {
+  characterNum: number;
+  bestWeapon: number;
+  totalGames: number;
+  totalWins: number;
+  totalRP: number;
+  totalTop3: number;
+  averageRank: number;
+  tier: HomeBaseTier;
+  patchVersion: string;
+}
+
+function isHomeBaseTier(value: string): value is HomeBaseTier {
+  return (HOME_BASE_TIERS as readonly string[]).includes(value);
+}
+
+function normalizeHomeRows(rows: unknown[]): HomeMetaStatRow[] {
+  return rows.flatMap((raw) => {
+    const row = raw as Partial<HomeMetaStatRow>;
+    if (!row.tier || !isHomeBaseTier(row.tier)) return [];
+    if (!row.patchVersion) return [];
+
+    return [{
+      characterNum: Number(row.characterNum),
+      bestWeapon: Number(row.bestWeapon ?? 0),
+      totalGames: Number(row.totalGames ?? 0),
+      totalWins: Number(row.totalWins ?? 0),
+      totalRP: Number(row.totalRP ?? 0),
+      totalTop3: Number(row.totalTop3 ?? 0),
+      averageRank: Number(row.averageRank ?? 0),
+      tier: row.tier,
+      patchVersion: row.patchVersion,
+    }];
+  });
 }
 
 function computeRates(rows: StatRow[]) {
@@ -135,6 +174,78 @@ export class MetaService {
     return this.redis.getOrSet(cacheKey, 1800, () =>
       this._getHoneyPicks(patchVersion, requestedTier),
     );
+  }
+
+  async getHomeStats(patchVersion: string | undefined) {
+    const cacheKey = `home-meta:${patchVersion ?? 'latest'}`;
+    return this.redis.getOrSet(cacheKey, 1800, () => this._getHomeStats(patchVersion));
+  }
+
+  private async _getHomeStats(patchVersion: string | undefined) {
+    const client = this.supabase.getClient();
+    const { data: patches } = await client
+      .from('PatchVersion')
+      .select('version')
+      .order('startDate', { ascending: false })
+      .limit(50);
+
+    const patchList = (patches ?? [])
+      .map((patch: { version: string }) => patch.version)
+      .filter((version) => !STATS_EXCLUDED_PATCHES.has(version));
+    const currentPatch = patchVersion ?? patchList[0] ?? '';
+
+    if (!currentPatch) {
+      return { patchVersion: '', previousPatch: null, rows: [] };
+    }
+
+    const currentIndex = patchList.indexOf(currentPatch);
+    let previousPatch: string | null = null;
+
+    if (currentIndex >= 0) {
+      for (let i = currentIndex + 1; i < patchList.length; i++) {
+        const candidate = patchList[i];
+        if (!STATS_EXCLUDED_PATCHES.has(candidate)) {
+          previousPatch = candidate;
+          break;
+        }
+      }
+    }
+
+    const patchVersions = previousPatch ? [currentPatch, previousPatch] : [currentPatch];
+    const selectCols =
+      'characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank,tier,patchVersion';
+    const queryResult = await client
+      .from('v2_CharacterStats')
+      .select(selectCols)
+      .in('patchVersion', patchVersions)
+      .in('tier', HOME_BASE_TIERS);
+
+    let { data } = queryResult;
+    const { error } = queryResult;
+
+    if (previousPatch && data) {
+      const hasV2Prev = data.some(
+        (row: { patchVersion: string }) => row.patchVersion === previousPatch,
+      );
+      if (!hasV2Prev) {
+        const { data: oldData } = await client
+          .from('CharacterStats')
+          .select(selectCols)
+          .eq('patchVersion', previousPatch)
+          .in('tier', HOME_BASE_TIERS);
+        if (oldData && oldData.length > 0) data = [...data, ...oldData];
+      }
+    }
+
+    if (error || !data) {
+      return { patchVersion: currentPatch, previousPatch, rows: [] };
+    }
+
+    return {
+      patchVersion: currentPatch,
+      previousPatch,
+      rows: normalizeHomeRows(data),
+    };
   }
 
   private async _getHoneyPicks(patchVersion: string | undefined, requestedTier: string) {
