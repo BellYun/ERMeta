@@ -50,6 +50,7 @@
 
   html {
     background: var(--color-background);
+    font-size: 80%;
   }
 
   body {
