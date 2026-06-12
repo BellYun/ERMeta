@@ -4,6 +4,7 @@ import { isRouteLocale, LANGUAGE_BY_ROUTE_LOCALE } from "@/i18n/routing";
 import { buildCharacterInsight } from "@/lib/characterInsights";
 import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
 import { getCachedCharacterStats } from "@/lib/characterStats";
+import { tryNestApiProxy } from "@/lib/server/nestProxy";
 import { loadL10nMap } from "@/lib/serverL10n";
 import { resolveWeaponName } from "@/lib/weaponMap";
 
@@ -13,6 +14,9 @@ interface RouteContext {
 
 export async function GET(request: NextRequest, { params }: RouteContext) {
   const { characterCode } = await params;
+  const proxied = await tryNestApiProxy(request, `/character/insights/${characterCode}`);
+  if (proxied) return proxied;
+
   const code = Number.parseInt(characterCode, 10);
 
   if (!Number.isFinite(code)) {

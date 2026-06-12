@@ -2,6 +2,23 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 
+function getAllowedOrigins(): string[] {
+  const configured = process.env.FRONTEND_ORIGINS;
+  if (configured) {
+    return configured
+      .split(',')
+      .map((origin) => origin.trim())
+      .filter(Boolean);
+  }
+
+  return [
+    'https://erwagg.com',
+    'https://www.erwagg.com',
+    'http://localhost:3000',
+    'http://localhost:3001',
+  ];
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -16,12 +33,7 @@ async function bootstrap() {
 
   // CORS 설정
   app.enableCors({
-    origin: [
-      'https://erwagg.com',
-      'https://www.erwagg.com',
-      'http://localhost:3000',
-      'http://localhost:3001',
-    ],
+    origin: getAllowedOrigins(),
     methods: ['GET', 'POST', 'OPTIONS'],
     credentials: true,
   });

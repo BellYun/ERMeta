@@ -16,13 +16,23 @@ export class ItemsService {
   private async fetchL10n(): Promise<Record<string, string> | null> {
     if (!this.bserApiKey) return null;
 
-    const res = await fetch('https://open-api.bser.io/v1/l10n/Korean', {
-      headers: { 'x-api-key': this.bserApiKey },
-    });
+    let res: Response;
+    try {
+      res = await fetch('https://open-api.bser.io/v1/l10n/Korean', {
+        headers: { 'x-api-key': this.bserApiKey },
+      });
+    } catch {
+      return null;
+    }
+
     if (!res.ok) return null;
 
-    const json = (await res.json()) as { data?: Record<string, string> };
-    return json.data ?? {};
+    try {
+      const json = (await res.json()) as { data?: Record<string, string> };
+      return json.data ?? {};
+    } catch {
+      return null;
+    }
   }
 
   async getItemNames() {
@@ -36,7 +46,7 @@ export class ItemsService {
       for (const [key, value] of Object.entries(l10n)) {
         if (key.startsWith('Item/Name/')) items[key.replace('Item/Name/', '')] = value;
       }
-      return { items };
+      return { names: items };
     });
   }
 
@@ -51,7 +61,7 @@ export class ItemsService {
       for (const [key, value] of Object.entries(l10n)) {
         if (key.startsWith('Trait/Name/')) traits[key.replace('Trait/Name/', '')] = value;
       }
-      return { traits };
+      return { names: traits };
     });
   }
 }

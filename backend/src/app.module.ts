@@ -17,12 +17,13 @@ import { StatsModule } from './modules/stats/stats.module';
 import { ItemsModule } from './modules/items/items.module';
 import { FeedbackModule } from './modules/feedback/feedback.module';
 import { CollectModule } from './modules/collect/collect.module';
+import { SynergyPairsModule } from './modules/synergy-pairs/synergy-pairs.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env', '../frontend/.env'],
+      envFilePath: ['.env', '.env.local', '../frontend/.env', '../frontend/.env.local'],
     }),
     ScheduleModule.forRoot(),
     EventEmitterModule.forRoot(),
@@ -35,6 +36,7 @@ import { CollectModule } from './modules/collect/collect.module';
     StatsModule,
     ItemsModule,
     FeedbackModule,
+    SynergyPairsModule,
     CollectModule,
   ],
   controllers: [HealthController],

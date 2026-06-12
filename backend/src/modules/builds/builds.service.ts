@@ -1,6 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import itemGradeMap from './data/itemGradeMap.json';
+import weaponItemTypeMap from './data/weaponItemTypeMap.json';
 import { SupabaseService } from '../../common/database/supabase.service';
 import { RedisService } from '../../common/redis/redis.service';
+
+const ITEM_GRADE = itemGradeMap as Record<string, string>;
+const WEAPON_ITEM_TYPE = weaponItemTypeMap as Record<string, number>;
+const TIER_CUMULATIVE: Record<string, string[]> = {
+  PLATINUM_PLUS: ['PLATINUM', 'DIAMOND', 'METEORITE', 'MITHRIL'],
+  DIAMOND_PLUS: ['DIAMOND', 'METEORITE', 'MITHRIL'],
+  METEORITE_PLUS: ['METEORITE', 'MITHRIL'],
+  MITHRIL_PLUS: ['MITHRIL'],
+  IN1000_PLUS: ['IN1000'],
+};
 
 type EquipmentRow = {
   mainCore: number | null;
@@ -16,6 +28,25 @@ type EquipmentRow = {
 };
 
 type SlotKey = 'weapon' | 'chest' | 'head' | 'arm' | 'leg';
+
+function expandCumulativeTier(tier: string): string[] {
+  return TIER_CUMULATIVE[tier] ?? [tier];
+}
+
+function isLegendItem(code: number | null): boolean {
+  if (code == null) return false;
+  return ITEM_GRADE[String(code)] === 'Legend';
+}
+
+function isFullLegendBuild(row: EquipmentRow): boolean {
+  return (
+    isLegendItem(row.weapon) &&
+    isLegendItem(row.chest) &&
+    isLegendItem(row.head) &&
+    isLegendItem(row.arm) &&
+    isLegendItem(row.leg)
+  );
+}
 
 function aggregateSlot(
   rows: EquipmentRow[],
@@ -47,6 +78,7 @@ function aggregateSlot(
 }
 
 type TraitGroupRow = {
+  mainCore: number | null;
   sub1: number | null;
   sub2: number | null;
   optionTrait1: number | null;
@@ -55,39 +87,89 @@ type TraitGroupRow = {
   totalWins: number;
 };
 
-type TraitSubKey = 'sub1' | 'sub2' | 'optionTrait1' | 'optionTrait2';
+type TraitGroup = 'havoc' | 'fortification' | 'support' | 'chaos' | 'unknown';
+type TraitKey = 'mainCore' | 'sub1' | 'sub2' | 'optionTrait1' | 'optionTrait2';
 
-function aggregateSubOptions(
+const TRAIT_CORES: Record<TraitGroup, number[]> = {
+  havoc: [7000201, 7000401, 7000601, 7000701],
+  fortification: [7100101, 7100201, 7100401, 7100501],
+  support: [7200101, 7200201, 7200301, 7200501],
+  chaos: [7000501, 7300101, 7300201, 7300301],
+  unknown: [],
+};
+
+const TRAIT_SUBS_SLOT1: Record<TraitGroup, number[]> = {
+  havoc: [7010501, 7010901, 7011001, 7011501],
+  fortification: [7110101, 7111001, 7110701, 7111101],
+  support: [7211001, 7210101, 7211401, 7211301],
+  chaos: [7310201, 7010701, 7310401, 7310601],
+  unknown: [],
+};
+
+const TRAIT_SUBS_SLOT2: Record<TraitGroup, number[]> = {
+  havoc: [7011101, 7011201, 7011301, 7011401],
+  fortification: [7110401, 7110601, 7110201, 7111201],
+  support: [7210401, 7211101, 7210801, 7110801],
+  chaos: [7310101, 7310301, 7310501],
+  unknown: [],
+};
+
+function getTraitGroup(code: number | null): TraitGroup {
+  if (code == null) return 'unknown';
+  if (code === 7000501) return 'chaos';
+  const sub = Math.floor(code / 100);
+  if (sub === 70107) return 'chaos';
+  if (sub === 71108) return 'support';
+  const prefix = Math.floor(code / 100000);
+  if (prefix === 70) return 'havoc';
+  if (prefix === 71) return 'fortification';
+  if (prefix === 72) return 'support';
+  if (prefix === 73) return 'chaos';
+  return 'unknown';
+}
+
+function aggregateTraitOptions(
   rows: TraitGroupRow[],
-  subKey: TraitSubKey,
+  keys: TraitKey | TraitKey[],
   groupTotalGames: number,
-  options: { excludeNull?: boolean; limit?: number } = {},
+  options: { excludeNull?: boolean; allCodes?: number[] } = {},
 ) {
-  const { excludeNull = false, limit = 5 } = options;
-  const subMap = new Map<string, { code: number | null; games: number; wins: number }>();
+  const { excludeNull = false, allCodes } = options;
+  const codeSet = allCodes ? new Set(allCodes.map(String)) : null;
+  const map = new Map<string, { code: number | null; games: number; wins: number }>();
 
-  for (const row of rows) {
-    const code = row[subKey];
-    if (excludeNull && code == null) continue;
-    const key = String(code ?? 'null');
-    const existing = subMap.get(key);
-    if (existing) {
-      existing.games += row.totalGames;
-      existing.wins += row.totalWins;
-    } else {
-      subMap.set(key, { code, games: row.totalGames, wins: row.totalWins });
+  if (allCodes) {
+    for (const code of allCodes) {
+      map.set(String(code), { code, games: 0, wins: 0 });
     }
   }
 
-  return [...subMap.values()]
-    .sort((a, b) => b.games - a.games)
-    .slice(0, limit)
-    .map((o) => ({
+  const keyList = Array.isArray(keys) ? keys : [keys];
+
+  for (const row of rows) {
+    for (const key of keyList) {
+      const code = row[key];
+      if (excludeNull && code == null) continue;
+
+      const mapKey = String(code ?? 'null');
+      if (codeSet && !codeSet.has(mapKey)) continue;
+
+      const existing = map.get(mapKey);
+      if (existing) {
+        existing.games += row.totalGames;
+        existing.wins += row.totalWins;
+      } else if (!codeSet) {
+        map.set(mapKey, { code, games: row.totalGames, wins: row.totalWins });
+      }
+    }
+  }
+
+  return [...map.values()].map((o) => ({
       code: o.code,
       totalGames: o.games,
       pickRate: groupTotalGames > 0 ? (o.games / groupTotalGames) * 100 : 0,
       winRate: o.games > 0 ? (o.wins / o.games) * 100 : 0,
-    }));
+  }));
 }
 
 @Injectable()
@@ -103,6 +185,7 @@ export class BuildsService {
     patchVersion: string,
     mainCoreParam?: string,
     bestWeaponParam?: string,
+    legendOnly = false,
   ) {
     const empty = {
       topBuilds: [],
@@ -112,9 +195,16 @@ export class BuildsService {
 
     if (!characterCode || isNaN(characterCode)) return empty;
 
-    const cacheKey = `builds:equip:${characterCode}:${tier}:${patchVersion}:${mainCoreParam ?? 'all'}:${bestWeaponParam ?? 'all'}`;
+    const cacheKey = `builds:equip:${characterCode}:${tier}:${patchVersion}:${mainCoreParam ?? 'all'}:${bestWeaponParam ?? 'all'}:${legendOnly ? 'legend' : 'all'}`;
     return this.redis.getOrSet(cacheKey, 1800, () =>
-      this._getEquipmentBuilds(characterCode, tier, patchVersion, mainCoreParam, bestWeaponParam),
+      this._getEquipmentBuilds(
+        characterCode,
+        tier,
+        patchVersion,
+        mainCoreParam,
+        bestWeaponParam,
+        legendOnly,
+      ),
     );
   }
 
@@ -124,6 +214,7 @@ export class BuildsService {
     patchVersion: string,
     mainCoreParam?: string,
     bestWeaponParam?: string,
+    legendOnly = false,
   ) {
     const empty = {
       topBuilds: [],
@@ -134,10 +225,10 @@ export class BuildsService {
     const client = this.supabase.getClient();
 
     let query = client
-      .from('CharacterEquipmentBuildStats')
+      .from('v2_CharacterEquipmentBuildStats')
       .select('mainCore,weapon,chest,head,arm,leg,totalGames,totalWins,rankSum,totalRP')
       .eq('characterNum', characterCode)
-      .eq('tier', tier)
+      .in('tier', expandCumulativeTier(tier))
       .eq('patchVersion', patchVersion);
 
     if (mainCoreParam != null) {
@@ -150,11 +241,26 @@ export class BuildsService {
 
     const { data, error } = await query
       .order('totalGames', { ascending: false })
-      .limit(200);
+      .limit(legendOnly ? 1000 : 200);
 
     if (error || !data || data.length === 0) return empty;
 
-    const rows = data as EquipmentRow[];
+    let rows = data as EquipmentRow[];
+
+    if (bestWeaponParam != null) {
+      const targetType = Number(bestWeaponParam);
+      rows = rows.filter((row) => {
+        if (row.weapon == null) return false;
+        return WEAPON_ITEM_TYPE[String(row.weapon)] === targetType;
+      });
+    }
+
+    if (legendOnly) {
+      rows = rows.filter(isFullLegendBuild);
+    }
+
+    if (rows.length === 0) return empty;
+
     const grandTotal = rows.reduce((s, r) => s + r.totalGames, 0);
 
     // topBuilds
@@ -255,13 +361,12 @@ export class BuildsService {
     const client = this.supabase.getClient();
 
     let query = client
-      .from('CharacterTraitBuildStats')
+      .from('v2_CharacterTraitBuildStats')
       .select('*')
       .eq('characterNum', characterCode)
       .eq('patchVersion', patchVersion)
-      .eq('tier', tier)
-      .order('totalGames', { ascending: false })
-      .limit(50);
+      .in('tier', expandCumulativeTier(tier))
+      .order('totalGames', { ascending: false });
 
     if (bestWeapon) query = query.eq('bestWeapon', Number(bestWeapon));
 
@@ -272,11 +377,11 @@ export class BuildsService {
       (sum: number, r: Record<string, unknown>) => sum + ((r.totalGames as number) ?? 0), 0,
     );
 
-    const coreMap = new Map<string, { mainCore: number | null; rows: TraitGroupRow[] }>();
+    const mainMap = new Map<TraitGroup, TraitGroupRow[]>();
 
     for (const r of data as Record<string, unknown>[]) {
-      const mainCore = (r.mainCore as number | null) ?? null;
       const row: TraitGroupRow = {
+        mainCore: (r.mainCore as number | null) ?? null,
         sub1: (r.sub1 as number | null) ?? null,
         sub2: (r.sub2 as number | null) ?? null,
         optionTrait1: (r.optionTrait1 as number | null) ?? null,
@@ -285,29 +390,79 @@ export class BuildsService {
         totalWins: (r.totalWins as number) ?? 0,
       };
 
-      const key = String(mainCore ?? 'null');
-      const existing = coreMap.get(key);
-      if (existing) {
-        existing.rows.push(row);
-      } else {
-        coreMap.set(key, { mainCore, rows: [row] });
-      }
+      const mainGroup = getTraitGroup(row.mainCore);
+      const existing = mainMap.get(mainGroup);
+      if (existing) existing.push(row);
+      else mainMap.set(mainGroup, [row]);
     }
 
     const builds = [];
-    for (const group of coreMap.values()) {
-      const groupTotalGames = group.rows.reduce((s, r) => s + r.totalGames, 0);
-      const groupTotalWins = group.rows.reduce((s, r) => s + r.totalWins, 0);
+    for (const [mainGroup, rows] of mainMap) {
+      const mainTotal = rows.reduce((s, r) => s + r.totalGames, 0);
+      const mainWins = rows.reduce((s, r) => s + r.totalWins, 0);
+      const secMap = new Map<TraitGroup, TraitGroupRow[]>();
+
+      for (const row of rows) {
+        const secGroup = getTraitGroup(row.optionTrait1);
+        const existing = secMap.get(secGroup);
+        if (existing) existing.push(row);
+        else secMap.set(secGroup, [row]);
+      }
+
+      const allGroups = (['havoc', 'fortification', 'support', 'chaos'] as TraitGroup[])
+        .filter((group) => group !== mainGroup);
+      const secondaries = [];
+
+      for (const secGroup of allGroups) {
+        const secRows = secMap.get(secGroup);
+        if (secRows && secRows.length > 0) {
+          const secTotal = secRows.reduce((s, r) => s + r.totalGames, 0);
+          const secWins = secRows.reduce((s, r) => s + r.totalWins, 0);
+          secondaries.push({
+            secGroup,
+            totalGames: secTotal,
+            pickRate: mainTotal > 0 ? (secTotal / mainTotal) * 100 : 0,
+            winRate: secTotal > 0 ? (secWins / secTotal) * 100 : 0,
+            optionTrait1Options: aggregateTraitOptions(
+              secRows,
+              ['optionTrait1', 'optionTrait2'],
+              secTotal,
+              { excludeNull: true, allCodes: TRAIT_SUBS_SLOT1[secGroup] },
+            ),
+            optionTrait2Options: aggregateTraitOptions(
+              secRows,
+              ['optionTrait1', 'optionTrait2'],
+              secTotal,
+              { excludeNull: true, allCodes: TRAIT_SUBS_SLOT2[secGroup] },
+            ),
+          });
+        } else {
+          secondaries.push({
+            secGroup,
+            totalGames: 0,
+            pickRate: 0,
+            winRate: 0,
+            optionTrait1Options: [],
+            optionTrait2Options: [],
+          });
+        }
+      }
 
       builds.push({
-        mainCore: group.mainCore,
-        totalGames: groupTotalGames,
-        groupPickRate: grandTotal > 0 ? (groupTotalGames / grandTotal) * 100 : 0,
-        groupWinRate: groupTotalGames > 0 ? (groupTotalWins / groupTotalGames) * 100 : 0,
-        sub1Options: aggregateSubOptions(group.rows, 'sub1', groupTotalGames),
-        sub2Options: aggregateSubOptions(group.rows, 'sub2', groupTotalGames),
-        sub3Options: aggregateSubOptions(group.rows, 'optionTrait1', groupTotalGames, { excludeNull: true }),
-        sub4Options: aggregateSubOptions(group.rows, 'optionTrait2', groupTotalGames, { excludeNull: true }),
+        mainGroup,
+        totalGames: mainTotal,
+        groupPickRate: grandTotal > 0 ? (mainTotal / grandTotal) * 100 : 0,
+        groupWinRate: mainTotal > 0 ? (mainWins / mainTotal) * 100 : 0,
+        mainCoreOptions: aggregateTraitOptions(rows, 'mainCore', mainTotal, {
+          allCodes: TRAIT_CORES[mainGroup],
+        }),
+        sub1Options: aggregateTraitOptions(rows, ['sub1', 'sub2'], mainTotal, {
+          allCodes: TRAIT_SUBS_SLOT1[mainGroup],
+        }),
+        sub2Options: aggregateTraitOptions(rows, ['sub1', 'sub2'], mainTotal, {
+          allCodes: TRAIT_SUBS_SLOT2[mainGroup],
+        }),
+        secondaries,
       });
     }
 
@@ -340,13 +495,13 @@ export class BuildsService {
     const client = this.supabase.getClient();
 
     let query = client
-      .from('CharacterTraitBuildStats')
+      .from('v2_CharacterTraitBuildStats')
       .select('*')
       .eq('characterNum', characterCode)
       .eq('patchVersion', patchVersion)
-      .eq('tier', tier)
+      .in('tier', expandCumulativeTier(tier))
       .order('totalGames', { ascending: false })
-      .limit(50);
+      .limit(100);
 
     if (bestWeapon) query = query.eq('bestWeapon', Number(bestWeapon));
     if (mainCore != null) {
@@ -360,16 +515,41 @@ export class BuildsService {
     const { data, error } = await query;
     if (error || !data || data.length === 0) return { options: [] };
 
-    const rows = data as TraitGroupRow[];
-    const groupTotalGames = rows.reduce((s, r) => s + r.totalGames, 0);
+    const grandTotal = data.reduce(
+      (sum: number, r: Record<string, unknown>) => sum + ((r.totalGames as number) ?? 0),
+      0,
+    );
 
-    return {
-      options: {
-        sub1: aggregateSubOptions(rows, 'sub1', groupTotalGames),
-        sub2: aggregateSubOptions(rows, 'sub2', groupTotalGames),
-        sub3: aggregateSubOptions(rows, 'optionTrait1', groupTotalGames, { excludeNull: true }),
-        sub4: aggregateSubOptions(rows, 'optionTrait2', groupTotalGames, { excludeNull: true }),
-      },
-    };
+    const grouped = new Map<string, { traits: number[]; games: number; wins: number }>();
+    for (const row of data as Record<string, unknown>[]) {
+      const traits: number[] = [];
+      for (let i = 1; i <= 2; i++) {
+        const code = row[`optionTrait${i}`] as number | null | undefined;
+        if (code) traits.push(code);
+      }
+
+      const key = traits.join(':');
+      const games = (row.totalGames as number) ?? 0;
+      const wins = (row.totalWins as number) ?? 0;
+      const existing = grouped.get(key);
+      if (existing) {
+        existing.games += games;
+        existing.wins += wins;
+      } else {
+        grouped.set(key, { traits, games, wins });
+      }
+    }
+
+    const options = [...grouped.values()]
+      .sort((a, b) => b.games - a.games)
+      .slice(0, 10)
+      .map((option) => ({
+        traits: option.traits,
+        totalGames: option.games,
+        pickRate: grandTotal > 0 ? (option.games / grandTotal) * 100 : 0,
+        winRate: option.games > 0 ? (option.wins / option.games) * 100 : 0,
+      }));
+
+    return { options };
   }
 }

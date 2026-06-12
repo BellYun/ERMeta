@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStatsPatchVersions } from "@/data/patch-notes";
 import { getCacheHeaders } from "@/lib/cache";
+import { tryNestApiProxy } from "@/lib/server/nestProxy";
 import { createServerClient } from "@/lib/supabase";
 import { expandCumulativeTier } from "@/utils/tier";
 import {
@@ -103,6 +104,9 @@ function aggregateOptions(
 // ─── 핸들러 ───────────────────────────────────────────────────────────────────
 
 export async function GET(request: NextRequest) {
+  const proxied = await tryNestApiProxy(request, "/builds/traits/main");
+  if (proxied) return proxied;
+
   const { searchParams } = new URL(request.url);
   const characterCode = Number(searchParams.get("characterCode"));
   const tier = searchParams.get("tier") ?? "DIAMOND";

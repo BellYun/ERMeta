@@ -1,0 +1,159 @@
+{
+  "characterCode": 86,
+  "characterName": "펜리르",
+  "patchScope": "10.x",
+  "tierScope": "DIAMOND+",
+  "minSampleGames": 40,
+  "confidenceThresholds": {
+    "high": 500,
+    "medium": 200
+  },
+  "builtAt": "2026-05-07T03:44:40.602Z",
+  "weapons": [
+    {
+      "weapon": 1,
+      "weaponName": "글러브",
+      "soloBaseline": {
+        "games": 84661,
+        "winRate": 11.14,
+        "avgRP": 2.59,
+        "avgRank": 4.39
+      },
+      "topSynergy": [
+        {
+          "partnerCode": 13,
+          "partnerName": "쇼우",
+          "partnerWeapon": 19,
+          "partnerWeaponName": "창",
+          "games": 582,
+          "winRate": 13.92,
+          "avgRP": 4.86,
+          "avgRank": 4.18,
+          "rpLift": 2.27,
+          "winRateLift": 2.78,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 5,
+          "partnerName": "자히르",
+          "partnerWeapon": 6,
+          "partnerWeaponName": "암기",
+          "games": 1014,
+          "winRate": 15.38,
+          "avgRP": 4.64,
+          "avgRank": 4.22,
+          "rpLift": 2.05,
+          "winRateLift": 4.24,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 23,
+          "partnerName": "캐시",
+          "partnerWeapon": 18,
+          "partnerWeaponName": "쌍검",
+          "games": 468,
+          "winRate": 11.54,
+          "avgRP": 4.05,
+          "avgRank": 4.33,
+          "rpLift": 1.46,
+          "winRateLift": 0.4,
+          "confidence": "medium"
+        },
+        {
+          "partnerCode": 28,
+          "partnerName": "수아",
+          "partnerWeapon": 3,
+          "partnerWeaponName": "방망이",
+          "games": 1695,
+          "winRate": 11.33,
+          "avgRP": 3.92,
+          "avgRank": 4.27,
+          "rpLift": 1.33,
+          "winRateLift": 0.19,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 28,
+          "partnerName": "수아",
+          "partnerWeapon": 13,
+          "partnerWeaponName": "망치",
+          "games": 1188,
+          "winRate": 13.38,
+          "avgRP": 3.63,
+          "avgRank": 4.37,
+          "rpLift": 1.04,
+          "winRateLift": 2.24,
+          "confidence": "high"
+        }
+      ],
+      "topAnti": [
+        {
+          "partnerCode": 3,
+          "partnerName": "피오라",
+          "partnerWeapon": 16,
+          "partnerWeaponName": "양손검",
+          "games": 939,
+          "winRate": 6.07,
+          "avgRP": -8.96,
+          "avgRank": 4.64,
+          "rpLift": -11.55,
+          "winRateLift": -5.07,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 1,
+          "partnerName": "재키",
+          "partnerWeapon": 14,
+          "partnerWeaponName": "도끼",
+          "games": 711,
+          "winRate": 5.91,
+          "avgRP": -8.82,
+          "avgRank": 4.72,
+          "rpLift": -11.41,
+          "winRateLift": -5.23,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 8,
+          "partnerName": "하트",
+          "partnerWeapon": 22,
+          "partnerWeaponName": "기타",
+          "games": 1332,
+          "winRate": 8.33,
+          "avgRP": -4.64,
+          "avgRank": 4.58,
+          "rpLift": -7.23,
+          "winRateLift": -2.81,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 6,
+          "partnerName": "나딘",
+          "partnerWeapon": 7,
+          "partnerWeaponName": "활",
+          "games": 1677,
+          "winRate": 9.12,
+          "avgRP": -3.85,
+          "avgRank": 4.36,
+          "rpLift": -6.44,
+          "winRateLift": -2.02,
+          "confidence": "high"
+        },
+        {
+          "partnerCode": 53,
+          "partnerName": "마커스",
+          "partnerWeapon": 14,
+          "partnerWeaponName": "도끼",
+          "games": 2943,
+          "winRate": 9.99,
+          "avgRP": -3.5,
+          "avgRank": 4.5,
+          "rpLift": -6.09,
+          "winRateLift": -1.15,
+          "confidence": "high"
+        }
+      ],
+      "eligiblePairs": 114
+    }
+  ]
+}

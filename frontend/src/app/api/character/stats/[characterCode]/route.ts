@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getStatsPatchVersions } from "@/data/patch-notes";
 import { getCacheHeaders, SERVER_ERROR_HEADERS, withCacheObservability } from "@/lib/cache";
 import { getCachedCharacterStats, type CharacterStatsResponse } from "@/lib/characterStats";
+import { tryNestApiProxy } from "@/lib/server/nestProxy";
 
 export type { CharacterStatsResponse, WeaponStatItem } from "@/lib/characterStats";
 
@@ -10,6 +11,9 @@ export async function GET(
   { params }: { params: Promise<{ characterCode: string }> }
 ) {
   const { characterCode: characterCodeStr } = await params;
+  const proxied = await tryNestApiProxy(request, `/character/stats/${characterCodeStr}`);
+  if (proxied) return proxied;
+
   const characterCode = Number(characterCodeStr);
 
   if (!characterCode || isNaN(characterCode)) {

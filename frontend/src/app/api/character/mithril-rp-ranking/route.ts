@@ -2,10 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
 import { getPatches } from "@/lib/getPatches";
 import { getCachedRankingData } from "@/lib/ranking";
+import { tryNestApiProxy } from "@/lib/server/nestProxy";
 
 export type { CharacterRankingData } from "@/lib/ranking";
 
 export async function GET(request: NextRequest) {
+  const proxied = await tryNestApiProxy(request, "/character/ranking");
+  if (proxied) return proxied;
+
   const { searchParams } = new URL(request.url);
   const latestPatch = (await getPatches())[0] ?? "";
   const patchVersion = searchParams.get("patchVersion") ?? latestPatch;

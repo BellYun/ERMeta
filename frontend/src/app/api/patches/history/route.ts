@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
+import { tryNestApiProxy } from "@/lib/server/nestProxy";
 import { createServerClient } from "@/lib/supabase";
 
 export const revalidate = 3600; // L1: 1시간 서버 캐시
 
 export async function GET(request: NextRequest) {
+  const proxied = await tryNestApiProxy(request, "/patches/history");
+  if (proxied) return proxied;
+
   const { searchParams } = new URL(request.url);
   const limit = Math.min(Number(searchParams.get("limit") ?? "10"), 50);
   const includeInactive = searchParams.get("includeInactive") === "true";

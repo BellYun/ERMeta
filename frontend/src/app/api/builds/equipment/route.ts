@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import itemGradeMap from "@/../const/itemGradeMap.json";
 import weaponItemTypeMap from "@/../const/weaponItemTypeMap.json";
 import { getCacheHeaders } from "@/lib/cache";
+import { tryNestApiProxy } from "@/lib/server/nestProxy";
 import { createServerClient } from "@/lib/supabase";
 import { expandCumulativeTier } from "@/utils/tier";
 
@@ -108,6 +109,9 @@ function aggregateSlot(
 }
 
 export async function GET(request: NextRequest) {
+  const proxied = await tryNestApiProxy(request, "/builds/equipment");
+  if (proxied) return proxied;
+
   const { searchParams } = new URL(request.url);
   const characterCode = Number(searchParams.get("characterCode"));
   const tier = searchParams.get("tier") ?? "DIAMOND";

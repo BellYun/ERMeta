@@ -9,13 +9,12 @@ export class PatchesController {
   @Get('history')
   @UseInterceptors(CacheControlInterceptor('slow'))
   async getHistory(
-    @Query('limit') limit?: number,
-    @Query('includeInactive') includeInactive?: boolean,
+    @Query('limit') limit?: string,
+    @Query('includeInactive') includeInactive?: string,
   ) {
-    const patches = await this.patchesService.getPatchHistory(
-      limit ?? 50,
-      includeInactive ?? false,
+    return this.patchesService.getPatchHistory(
+      Math.min(Number(limit ?? '10'), 50),
+      includeInactive === 'true',
     );
-    return { patches };
   }
 }
