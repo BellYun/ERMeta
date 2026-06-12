@@ -10,6 +10,7 @@ import {
   NotebookText,
   Search,
   Trophy,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -77,6 +78,13 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
       label: "조합 실험실",
       icon: FlaskConical,
       isActive: normalizedPathname.startsWith("/trio-lab"),
+    },
+    {
+      href: withCurrentRouteLocale(pathname, "/multi-search"),
+      label: "팀원 멀티서치",
+      icon: Users,
+      isActive: normalizedPathname.startsWith("/multi-search"),
+      badge: "new",
     },
     {
       href: withCurrentRouteLocale(pathname, "/character-lab"),
