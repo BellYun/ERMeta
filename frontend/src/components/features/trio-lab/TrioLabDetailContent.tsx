@@ -28,6 +28,7 @@ import { filterRowsByPool } from "./searchRequests";
 
 const TIER_LABEL = "다이아+";
 const DETAIL_TRIO_ROW_LIMIT = "5000";
+const DETAIL_FETCH_REVALIDATE_SEC = 3600;
 
 function findExactMatch(
   rows: ApiTrioWeaponRow[],
@@ -44,14 +45,17 @@ function sortMembersByCharacter(members: TrioWeaponMember[]): TrioWeaponMember[]
 
 async function loadComboData(members: TrioWeaponMember[]) {
   const [m1, m2, m3] = sortMembersByCharacter(members);
-  const similarRows = await fetchTrioWeaponRows({
-    character1: String(m1.character),
-    weapon1: String(m1.weapon),
-    character2: String(m2.character),
-    weapon2: String(m2.weapon),
-    sortBy: "totalGames",
-    limit: DETAIL_TRIO_ROW_LIMIT,
-  });
+  const similarRows = await fetchTrioWeaponRows(
+    {
+      character1: String(m1.character),
+      weapon1: String(m1.weapon),
+      character2: String(m2.character),
+      weapon2: String(m2.weapon),
+      sortBy: "totalGames",
+      limit: DETAIL_TRIO_ROW_LIMIT,
+    },
+    { revalidate: DETAIL_FETCH_REVALIDATE_SEC }
+  );
   const detailRows = filterRowsByPool(similarRows, [m1.character, m2.character, m3.character]);
 
   let combo = findExactMatch(detailRows, members);
@@ -61,11 +65,14 @@ async function loadComboData(members: TrioWeaponMember[]) {
     comboRows = similarRows;
   }
   if (!combo) {
-    const fallback = await fetchTrioWeaponRows({
-      character1: String(m1.character),
-      sortBy: "totalGames",
-      limit: DETAIL_TRIO_ROW_LIMIT,
-    });
+    const fallback = await fetchTrioWeaponRows(
+      {
+        character1: String(m1.character),
+        sortBy: "totalGames",
+        limit: DETAIL_TRIO_ROW_LIMIT,
+      },
+      { revalidate: DETAIL_FETCH_REVALIDATE_SEC }
+    );
     combo = findExactMatch(fallback, members);
     if (combo) comboRows = fallback;
   }
@@ -100,17 +107,10 @@ function getMainCoreForMember(row: ApiTrioWeaponRow | null, member: TrioWeaponMe
 
 interface TrioLabDetailContentProps {
   comboId: string;
-  detailHrefQueryString: string;
-  listHref: string;
   locale: RouteLocale;
 }
 
-export async function TrioLabDetailContent({
-  comboId,
-  detailHrefQueryString,
-  listHref,
-  locale,
-}: TrioLabDetailContentProps) {
+export async function TrioLabDetailContent({ comboId, locale }: TrioLabDetailContentProps) {
   const members = parseComboId(comboId);
   if (!members) notFound();
 
@@ -139,7 +139,8 @@ export async function TrioLabDetailContent({
         member.character,
         member.weapon,
         patchVersion,
-        comboMainCore
+        comboMainCore,
+        { revalidate: DETAIL_FETCH_REVALIDATE_SEC }
       );
       const displayTrait =
         trait && comboMainCore != null
@@ -157,7 +158,8 @@ export async function TrioLabDetailContent({
         member.character,
         member.weapon,
         patchVersion,
-        comboMainCore ?? trait?.mainCore ?? null
+        comboMainCore ?? trait?.mainCore ?? null,
+        { revalidate: DETAIL_FETCH_REVALIDATE_SEC }
       );
       return { member, topTrait: displayTrait, topBuild: build };
     })
@@ -175,20 +177,11 @@ export async function TrioLabDetailContent({
 
   return (
     <>
-      <ComboDetailHero
-        combo={combo}
-        listHref={listHref}
-        patchVersion={patchVersion}
-        tier={TIER_LABEL}
-      />
+      <ComboDetailHero combo={combo} patchVersion={patchVersion} tier={TIER_LABEL} />
       <div className="flex min-w-0 flex-col gap-5">
         <CharacterDetailGrid rows={characterDetails} />
         <TraitComboBlock combo={combo} rows={trioRows} traitNames={traitNames} />
-        <SimilarBlock
-          detailHrefQueryString={detailHrefQueryString}
-          listHref={listHref}
-          similar={similar}
-        />
+        <SimilarBlock similar={similar} />
       </div>
     </>
   );

@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
 import { cn } from "@/lib/utils";
 import { TRAIT_CORES, TRAIT_SUBS_SLOT1, TRAIT_SUBS_SLOT2 } from "@/utils/traitCodes";
+import { TrioLabDetailLink, TrioLabListLink } from "./TrioLabStatefulLink";
 import {
   characterDisplayName,
   apiRowToCombo,
@@ -657,19 +658,12 @@ export function TraitComboBlock({
   );
 }
 
-function MiniComboCard({
-  combo,
-  detailHrefQueryString,
-}: {
-  combo: TrioWeaponCombo;
-  detailHrefQueryString: string;
-}) {
+function MiniComboCard({ combo }: { combo: TrioWeaponCombo }) {
   const score = comboTier(combo.winRate, combo.averageRP, combo.averageRank, combo.totalGames);
   return (
-    <Link
-      href={`/trio-lab/${combo.id}${detailHrefQueryString}`}
+    <TrioLabDetailLink
+      comboId={combo.id}
       prefetch={false}
-      scroll={false}
       className="char-card group flex flex-col gap-2 p-3"
     >
       <div className="flex items-center justify-between">
@@ -701,19 +695,11 @@ function MiniComboCard({
       <p className="font-mono text-[11px] text-[var(--color-muted-foreground)]">
         승률 {combo.winRate.toFixed(1)}% · #{combo.averageRank.toFixed(1)}
       </p>
-    </Link>
+    </TrioLabDetailLink>
   );
 }
 
-export function SimilarBlock({
-  detailHrefQueryString,
-  listHref,
-  similar,
-}: {
-  detailHrefQueryString: string;
-  listHref: string;
-  similar: TrioWeaponCombo[];
-}) {
+export function SimilarBlock({ similar }: { similar: TrioWeaponCombo[] }) {
   const top = similar.slice(0, 4);
   if (top.length === 0) return null;
   return (
@@ -722,18 +708,14 @@ export function SimilarBlock({
         <h2 className="text-sm font-bold text-[var(--color-foreground)]">
           비슷한 조합 {top.length}개
         </h2>
-        <Link
-          href={listHref}
-          scroll={false}
-          className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-primary)] transition-colors hover:text-[var(--color-primary-hover)]"
-        >
+        <TrioLabListLink className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-primary)] transition-colors hover:text-[var(--color-primary-hover)]">
           실험실에서 더 보기
           <ArrowRight className="h-3 w-3" strokeWidth={2.4} />
-        </Link>
+        </TrioLabListLink>
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {top.map((c) => (
-          <MiniComboCard key={c.id} combo={c} detailHrefQueryString={detailHrefQueryString} />
+          <MiniComboCard key={c.id} combo={c} />
         ))}
       </div>
     </section>

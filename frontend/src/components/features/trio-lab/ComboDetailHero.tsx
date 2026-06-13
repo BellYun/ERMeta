@@ -1,5 +1,5 @@
 import { ArrowLeft } from "lucide-react";
-import { Link } from "@/i18n/navigation";
+import { TrioLabListLink } from "./TrioLabStatefulLink";
 import { characterDisplayName, comboTier, type TrioWeaponCombo } from "./types";
 
 const SCORE_COLOR: Record<string, string> = {
@@ -13,12 +13,11 @@ const SCORE_COLOR: Record<string, string> = {
 
 interface ComboDetailHeroProps {
   combo: TrioWeaponCombo;
-  listHref: string;
   patchVersion: string;
   tier: string;
 }
 
-export function ComboDetailHero({ combo, listHref, patchVersion, tier }: ComboDetailHeroProps) {
+export function ComboDetailHero({ combo, patchVersion, tier }: ComboDetailHeroProps) {
   const trioName = combo.members.map((m) => characterDisplayName(m.character)).join(" + ");
   const score = comboTier(combo.winRate, combo.averageRP, combo.averageRank, combo.totalGames);
   const rpText = `${combo.averageRP >= 0 ? "+" : ""}${combo.averageRP.toFixed(1)}`;
@@ -26,14 +25,10 @@ export function ComboDetailHero({ combo, listHref, patchVersion, tier }: ComboDe
   return (
     <header className="analysis-hero flex flex-col gap-5 p-4 sm:p-5 lg:p-6">
       <nav className="flex min-w-0 items-center gap-1.5 text-xs text-[var(--color-muted-foreground)]">
-        <Link
-          href={listHref}
-          scroll={false}
-          className="inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-[rgba(255,255,255,0.04)] hover:text-[var(--color-foreground)]"
-        >
+        <TrioLabListLink className="inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-[rgba(255,255,255,0.04)] hover:text-[var(--color-foreground)]">
           <ArrowLeft className="h-3 w-3" strokeWidth={2.4} />
           조합 실험실
-        </Link>
+        </TrioLabListLink>
         <span className="text-[var(--color-border-light)]">/</span>
         <span className="truncate text-[var(--color-foreground)]">{trioName}</span>
       </nav>
