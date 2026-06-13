@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { SupabaseService } from '../../common/database/supabase.service';
@@ -18,10 +19,15 @@ export class CollectService {
     private readonly bserApi: BserApiService,
     private readonly parser: ParserService,
     private readonly eventEmitter: EventEmitter2,
+    private readonly config: ConfigService,
   ) {}
 
   @Cron(CronExpression.EVERY_5_MINUTES)
   async handleCron() {
+    if (this.config.get<string>('ENABLE_COLLECTOR') !== 'true') {
+      return;
+    }
+
     if (this.isRunning) {
       this.logger.warn('이전 수집 사이클 진행 중 — 스킵');
       return;

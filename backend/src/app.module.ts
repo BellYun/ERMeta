@@ -18,6 +18,7 @@ import { ItemsModule } from './modules/items/items.module';
 import { FeedbackModule } from './modules/feedback/feedback.module';
 import { CollectModule } from './modules/collect/collect.module';
 import { SynergyPairsModule } from './modules/synergy-pairs/synergy-pairs.module';
+import { MultiSearchModule } from './modules/multi-search/multi-search.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { SynergyPairsModule } from './modules/synergy-pairs/synergy-pairs.module
     ItemsModule,
     FeedbackModule,
     SynergyPairsModule,
+    MultiSearchModule,
     CollectModule,
   ],
   controllers: [HealthController],

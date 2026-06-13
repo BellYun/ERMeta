@@ -10,5 +10,6 @@ import { CacheWarmingService } from './cache-warming.service';
 @Module({
   imports: [CharacterModule, StatsModule, MetaModule],
   providers: [CollectService, BserApiService, ParserService, CacheWarmingService],
+  exports: [BserApiService],
 })
 export class CollectModule {}
