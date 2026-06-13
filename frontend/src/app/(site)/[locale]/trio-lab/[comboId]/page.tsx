@@ -3,14 +3,22 @@ import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { TrioLabDetailContent } from "@/components/features/trio-lab/TrioLabDetailContent";
 import { characterDisplayName, parseComboId } from "@/components/features/trio-lab/types";
+import {
+  buildTrioLabListHref,
+  buildTrioLabQueryString,
+  parseTrioLabUrlState,
+} from "@/components/features/trio-lab/urlState";
 import { isRouteLocale } from "@/i18n/routing";
 import { BASE_URL } from "@/lib/siteMetadata";
 
-export const dynamic = "force-static";
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
+export const revalidate = 600;
+
+type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 interface PageProps {
   params: Promise<{ locale: string; comboId: string }>;
+  searchParams: SearchParams;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -33,17 +41,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function TrioLabDetailPage({ params }: PageProps) {
-  const { locale, comboId } = await params;
+export default async function TrioLabDetailPage({ params, searchParams }: PageProps) {
+  const [{ locale, comboId }, query] = await Promise.all([params, searchParams]);
   if (!isRouteLocale(locale)) notFound();
   setRequestLocale(locale);
 
   const members = parseComboId(comboId);
   if (!members) notFound();
 
+  const state = parseTrioLabUrlState(query);
+  const listHref = buildTrioLabListHref(state);
+  const detailHrefQueryString = buildTrioLabQueryString(state);
+
   return (
     <main className="page-shell mx-auto flex max-w-6xl flex-col gap-5 px-3 py-6 sm:px-5 sm:py-8 lg:gap-6">
-      <TrioLabDetailContent comboId={comboId} locale={locale} />
+      <TrioLabDetailContent
+        comboId={comboId}
+        detailHrefQueryString={detailHrefQueryString}
+        listHref={listHref}
+        locale={locale}
+      />
     </main>
   );
 }

@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { getTraitGroup } from "@/utils/traitCodes";
 import type {
   TopEquipmentBuild,
@@ -7,26 +8,31 @@ import type {
 } from "./ComboDetailBody";
 import type { ApiTrioWeaponRow } from "./types";
 
-interface ServerApiFetchOptions {
-  revalidate?: number;
-}
-
-function resolveInternalBaseUrl(): string {
+async function resolveInternalBaseUrl(): Promise<string> {
   if (process.env.NEXT_PUBLIC_BASE_URL) return process.env.NEXT_PUBLIC_BASE_URL;
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  try {
+    const h = await headers();
+    const host = h.get("host");
+    if (host) {
+      const proto = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
+      return `${proto}://${host}`;
+    }
+  } catch {
+    /* outside request scope */
+  }
   if (process.env.NODE_ENV === "development") return `http://localhost:${process.env.PORT ?? 3000}`;
   return "https://erwagg.com";
 }
 
 export async function fetchTrioWeaponRows(
-  searchParams: Record<string, string>,
-  options: ServerApiFetchOptions = {}
+  searchParams: Record<string, string>
 ): Promise<ApiTrioWeaponRow[]> {
-  const base = resolveInternalBaseUrl();
+  const base = await resolveInternalBaseUrl();
   const qs = new URLSearchParams(searchParams).toString();
   try {
     const res = await fetch(`${base}/api/stats/trios-weapon?${qs}`, {
-      next: { revalidate: options.revalidate ?? 600, tags: ["trios-weapon"] },
+      next: { revalidate: 600, tags: ["trios-weapon"] },
     });
     if (!res.ok) return [];
     const data = (await res.json()) as { results?: ApiTrioWeaponRow[] };
@@ -104,10 +110,9 @@ export async function fetchTopTraitBuild(
   characterCode: number,
   weaponCode: number,
   patchVersion: string,
-  preferredMainCore?: number | null,
-  options: ServerApiFetchOptions = {}
+  preferredMainCore?: number | null
 ): Promise<TopTraitBuild | null> {
-  const base = resolveInternalBaseUrl();
+  const base = await resolveInternalBaseUrl();
   const qs = new URLSearchParams({
     characterCode: String(characterCode),
     bestWeapon: String(weaponCode),
@@ -115,10 +120,7 @@ export async function fetchTopTraitBuild(
   }).toString();
   try {
     const res = await fetch(`${base}/api/builds/traits/main?${qs}`, {
-      next: {
-        revalidate: options.revalidate ?? 1800,
-        tags: [`builds-traits:${characterCode}:${weaponCode}`],
-      },
+      next: { revalidate: 1800, tags: [`builds-traits:${characterCode}:${weaponCode}`] },
     });
     if (!res.ok) return null;
     const data = (await res.json()) as { builds?: TraitMainGroupRaw[] };
@@ -191,10 +193,9 @@ export async function fetchTopEquipmentBuild(
   characterCode: number,
   weaponCode: number,
   patchVersion: string,
-  mainCore: number | null,
-  options: ServerApiFetchOptions = {}
+  mainCore: number | null
 ): Promise<TopEquipmentBuild | null> {
-  const base = resolveInternalBaseUrl();
+  const base = await resolveInternalBaseUrl();
   const params: Record<string, string> = {
     characterCode: String(characterCode),
     bestWeapon: String(weaponCode),
@@ -206,7 +207,7 @@ export async function fetchTopEquipmentBuild(
   try {
     const res = await fetch(`${base}/api/builds/equipment?${qs}`, {
       next: {
-        revalidate: options.revalidate ?? 1800,
+        revalidate: 1800,
         tags: [`builds-equipment:${characterCode}:${weaponCode}`],
       },
     });
