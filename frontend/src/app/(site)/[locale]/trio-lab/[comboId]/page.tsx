@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description,
     openGraph: { title, description, url: `/trio-lab/${comboId}` },
     twitter: { title, description },
-    robots: { index: true, follow: true },
+    robots: { index: false, follow: true },
   };
 }
 
