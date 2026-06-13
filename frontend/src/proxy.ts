@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { DEFAULT_ROUTE_LOCALE, LANGUAGE_BY_ROUTE_LOCALE } from "@/i18n/routing";
+import { DEFAULT_ROUTE_LOCALE, LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES } from "@/i18n/routing";
 import { LANGUAGE_COOKIE } from "@/lib/detectLanguage";
 import { getRouteLocaleSegmentFromPathname } from "@/lib/localizedPath";
 
 const COOKIE_MAX_AGE = 365 * 24 * 60 * 60; // 1년
 const TRAINING_CRAWLER_USER_AGENTS = ["GPTBot"];
-const TRIO_LAB_DETAIL_PATH_RE = /^\/(?:(?:ko|en|ja|zh-Hans|zh-Hant)\/)?trio-lab\/[^/?#]+\/?$/;
+const ROUTE_LOCALE_PATTERN = ROUTE_LOCALES.map((locale) =>
+  locale.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+).join("|");
+const TRIO_LAB_DETAIL_PATH_RE = new RegExp(
+  `^\\/(?:(?:${ROUTE_LOCALE_PATTERN})\\/)?trio-lab\\/[^/?#]+\\/?$`
+);
 
 function applyLanguageCookie(response: NextResponse, cookieLanguage: string) {
   response.cookies.set(LANGUAGE_COOKIE, cookieLanguage, {

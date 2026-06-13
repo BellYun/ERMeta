@@ -1,14 +1,11 @@
 import type { MetadataRoute } from "next";
+import { ROUTE_LOCALES } from "@/i18n/routing";
 
 export default function robots(): MetadataRoute.Robots {
   const base = (process.env.NEXT_PUBLIC_BASE_URL ?? "https://erwagg.com").replace(/\/$/, "");
   const trioLabDetailPaths = [
     "/trio-lab/",
-    "/ko/trio-lab/",
-    "/en/trio-lab/",
-    "/ja/trio-lab/",
-    "/zh-Hans/trio-lab/",
-    "/zh-Hant/trio-lab/",
+    ...ROUTE_LOCALES.map((locale) => `/${locale}/trio-lab/`),
   ];
 
   return {
