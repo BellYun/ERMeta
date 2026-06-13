@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { MultiSearchClient } from "@/components/features/multi-search/MultiSearchClient";
 import { isRouteLocale } from "@/i18n/routing";
+import { isMultiSearchEnabled } from "@/lib/featureFlags";
 import { BASE_URL } from "@/lib/siteMetadata";
 
 interface LocalePageProps {
@@ -30,6 +31,7 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
 export default async function MultiSearchPage({ params }: LocalePageProps) {
   const { locale } = await params;
   if (!isRouteLocale(locale)) notFound();
+  if (!isMultiSearchEnabled()) notFound();
   setRequestLocale(locale);
 
   return (

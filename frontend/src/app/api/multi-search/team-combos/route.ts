@@ -7,6 +7,7 @@ import {
   type TrioWeaponMember,
   type TrioWeaponCombo,
 } from "@/components/features/trio-lab/types";
+import { isMultiSearchEnabled } from "@/lib/featureFlags";
 
 const TEAM_SIZE = 3;
 const MAX_POOL_SIZE = 3;
@@ -195,6 +196,10 @@ function buildPickRankings(combos: TrioWeaponCombo[], myPool: number[]): PickRan
 }
 
 export async function POST(request: NextRequest) {
+  if (!isMultiSearchEnabled()) {
+    return NextResponse.json({ error: "not_found" }, { status: 404, headers: NO_STORE_HEADERS });
+  }
+
   let body: TeamCombosBody;
   try {
     body = (await request.json()) as TeamCombosBody;
