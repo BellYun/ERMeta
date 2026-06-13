@@ -1,7 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from '../../common/redis/redis.service';
-import { BserApiService, BSERUserByNickname, BSERUserSeasonStats } from '../collect/bser-api.service';
+import {
+  BserApiService,
+  BSERLookupResult,
+  BSERUserByNickname,
+  BSERUserSeasonStats,
+  BSERUserStatsResult,
+} from '../collect/bser-api.service';
 
 const DEFAULT_SEASON_ID = 39;
 const DEFAULT_MATCHING_MODE = 3;
@@ -18,9 +24,18 @@ type StatsCache =
   | { status: 'found'; stats: BSERUserSeasonStats }
   | { status: 'not_found' };
 
-interface PlayerSearchResult {
+export type MultiSearchPlayerStatus = 'ok' | 'not_found' | 'no_stats' | 'error';
+
+export type MultiSearchFailureReason =
+  | 'nickname_not_found'
+  | 'season_stats_not_found'
+  | 'bser_api_key_missing'
+  | 'bser_api_unavailable'
+  | 'unknown_error';
+
+export interface MultiSearchPlayerResult {
   input: string;
-  status: 'ok' | 'not_found' | 'no_stats' | 'error';
+  status: MultiSearchPlayerStatus;
   nickname?: string;
   seasonId?: number;
   matchingMode?: number;
@@ -45,7 +60,24 @@ interface PlayerSearchResult {
     averageRank: number;
     maxKillings: number;
   }>;
-  reason?: string;
+  reason?: MultiSearchFailureReason;
+}
+
+export interface MultiSearchPlayersResponse {
+  seasonId: number;
+  matchingMode: number;
+  results: MultiSearchPlayerResult[];
+  summary: {
+    requested: number;
+    ok: number;
+    failed: number;
+  };
+}
+
+class MultiSearchUpstreamError extends Error {
+  constructor(readonly reason: MultiSearchFailureReason) {
+    super(reason);
+  }
 }
 
 @Injectable()
@@ -58,24 +90,42 @@ export class MultiSearchService {
     private readonly redis: RedisService,
     config: ConfigService,
   ) {
-    this.defaultSeasonId = config.get<number>('MULTI_SEARCH_SEASON_ID', DEFAULT_SEASON_ID);
-    this.defaultMatchingMode = config.get<number>('MULTI_SEARCH_MATCHING_MODE', DEFAULT_MATCHING_MODE);
+    this.defaultSeasonId = config.get<number>(
+      'MULTI_SEARCH_SEASON_ID',
+      DEFAULT_SEASON_ID,
+    );
+    this.defaultMatchingMode = config.get<number>(
+      'MULTI_SEARCH_MATCHING_MODE',
+      DEFAULT_MATCHING_MODE,
+    );
   }
 
-  async searchPlayers(nicknames: string[], seasonId?: number, matchingMode?: number) {
+  async searchPlayers(
+    nicknames: string[],
+    seasonId?: number,
+    matchingMode?: number,
+  ): Promise<MultiSearchPlayersResponse> {
     const normalizedNicknames = this.normalizeNicknames(nicknames);
     const targetSeasonId = seasonId ?? this.defaultSeasonId;
     const targetMatchingMode = matchingMode ?? this.defaultMatchingMode;
 
-    const results: PlayerSearchResult[] = [];
+    const results: MultiSearchPlayerResult[] = [];
     for (const nickname of normalizedNicknames) {
-      results.push(await this.searchPlayer(nickname, targetSeasonId, targetMatchingMode));
+      results.push(
+        await this.searchPlayer(nickname, targetSeasonId, targetMatchingMode),
+      );
     }
+    const ok = results.filter((result) => result.status === 'ok').length;
 
     return {
       seasonId: targetSeasonId,
       matchingMode: targetMatchingMode,
       results,
+      summary: {
+        requested: normalizedNicknames.length,
+        ok,
+        failed: results.length - ok,
+      },
     };
   }
 
@@ -95,7 +145,9 @@ export class MultiSearchService {
       throw new BadRequestException('검색할 닉네임을 입력해주세요.');
     }
     if (normalized.length > MAX_NICKNAMES) {
-      throw new BadRequestException(`닉네임은 최대 ${MAX_NICKNAMES}개까지 검색할 수 있습니다.`);
+      throw new BadRequestException(
+        `닉네임은 최대 ${MAX_NICKNAMES}개까지 검색할 수 있습니다.`,
+      );
     }
 
     return normalized;
@@ -105,14 +157,22 @@ export class MultiSearchService {
     nickname: string,
     seasonId: number,
     matchingMode: number,
-  ): Promise<PlayerSearchResult> {
+  ): Promise<MultiSearchPlayerResult> {
     try {
       const user = await this.findUser(nickname);
       if (!user) {
-        return { input: nickname, status: 'not_found', reason: 'nickname_not_found' };
+        return {
+          input: nickname,
+          status: 'not_found',
+          reason: 'nickname_not_found',
+        };
       }
 
-      const stats = await this.fetchUserStats(user.userId, seasonId, matchingMode);
+      const stats = await this.fetchUserStats(
+        user.userId,
+        seasonId,
+        matchingMode,
+      );
       if (!stats) {
         return {
           input: nickname,
@@ -127,17 +187,24 @@ export class MultiSearchService {
       return {
         input: nickname,
         status: 'error',
-        reason: error instanceof Error ? error.message : 'unknown_error',
+        reason:
+          error instanceof MultiSearchUpstreamError
+            ? error.reason
+            : 'unknown_error',
       };
     }
   }
 
   private async findUser(nickname: string) {
     const cacheKey = `bser:nickname:${this.cacheKeyPart(nickname)}`;
-    const cached = await this.redis.getOrSet<LookupCache>(cacheKey, NICKNAME_CACHE_TTL_SEC, async () => {
-      const user = await this.bserApi.findUserByNickname(nickname);
-      return user ? { status: 'found', user } : { status: 'not_found' };
-    });
+    const cached = await this.redis.getOrSet<LookupCache>(
+      cacheKey,
+      NICKNAME_CACHE_TTL_SEC,
+      async () => {
+        const result = await this.bserApi.findUserByNicknameDetailed(nickname);
+        return toLookupCache(result);
+      },
+    );
 
     if (cached.status === 'not_found') {
       await this.redis.set(cacheKey, cached, NOT_FOUND_CACHE_TTL_SEC);
@@ -147,12 +214,24 @@ export class MultiSearchService {
     return cached.user;
   }
 
-  private async fetchUserStats(userId: string, seasonId: number, matchingMode: number) {
+  private async fetchUserStats(
+    userId: string,
+    seasonId: number,
+    matchingMode: number,
+  ) {
     const cacheKey = `bser:user-stats:${this.cacheKeyPart(userId)}:${seasonId}:${matchingMode}`;
-    const cached = await this.redis.getOrSet<StatsCache>(cacheKey, USER_STATS_CACHE_TTL_SEC, async () => {
-      const stats = await this.bserApi.fetchUserStats(userId, seasonId, matchingMode);
-      return stats ? { status: 'found', stats } : { status: 'not_found' };
-    });
+    const cached = await this.redis.getOrSet<StatsCache>(
+      cacheKey,
+      USER_STATS_CACHE_TTL_SEC,
+      async () => {
+        const result = await this.bserApi.fetchUserStatsDetailed(
+          userId,
+          seasonId,
+          matchingMode,
+        );
+        return toStatsCache(result);
+      },
+    );
 
     return cached.status === 'found' ? cached.stats : null;
   }
@@ -161,7 +240,7 @@ export class MultiSearchService {
     input: string,
     user: BSERUserByNickname,
     stats: BSERUserSeasonStats,
-  ): PlayerSearchResult {
+  ): MultiSearchPlayerResult {
     return {
       input,
       status: 'ok',
@@ -203,4 +282,21 @@ export class MultiSearchService {
 function toPercent(numerator: number, denominator: number) {
   if (!denominator) return 0;
   return Math.round((numerator / denominator) * 10000) / 100;
+}
+
+function toLookupCache(result: BSERLookupResult): LookupCache {
+  if (result.status === 'found') return { status: 'found', user: result.user };
+  if (result.status === 'not_found') return { status: 'not_found' };
+  if (result.status === 'not_configured')
+    throw new MultiSearchUpstreamError('bser_api_key_missing');
+  throw new MultiSearchUpstreamError('bser_api_unavailable');
+}
+
+function toStatsCache(result: BSERUserStatsResult): StatsCache {
+  if (result.status === 'found')
+    return { status: 'found', stats: result.stats };
+  if (result.status === 'not_found') return { status: 'not_found' };
+  if (result.status === 'not_configured')
+    throw new MultiSearchUpstreamError('bser_api_key_missing');
+  throw new MultiSearchUpstreamError('bser_api_unavailable');
 }

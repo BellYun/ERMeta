@@ -1,7 +1,10 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { RateLimit } from '../../common/guards/rate-limit.guard';
 import { MultiSearchPlayersDto } from './dto/multi-search-players.dto';
-import { MultiSearchService } from './multi-search.service';
+import {
+  MultiSearchPlayersResponse,
+  MultiSearchService,
+} from './multi-search.service';
 
 @Controller('multi-search')
 export class MultiSearchController {
@@ -10,7 +13,13 @@ export class MultiSearchController {
   @Post('players')
   @HttpCode(200)
   @RateLimit(30, 60)
-  searchPlayers(@Body() body: MultiSearchPlayersDto): Promise<unknown> {
-    return this.multiSearchService.searchPlayers(body.nicknames, body.seasonId, body.matchingMode);
+  searchPlayers(
+    @Body() body: MultiSearchPlayersDto,
+  ): Promise<MultiSearchPlayersResponse> {
+    return this.multiSearchService.searchPlayers(
+      body.nicknames,
+      body.seasonId,
+      body.matchingMode,
+    );
   }
 }

@@ -22,6 +22,11 @@ interface MultiSearchResponse {
   seasonId: number;
   matchingMode: number;
   results: PlayerResult[];
+  summary?: {
+    requested: number;
+    ok: number;
+    failed: number;
+  };
 }
 
 interface PlayerResult {
@@ -51,7 +56,12 @@ interface PlayerResult {
     averageRank: number;
     maxKillings: number;
   }>;
-  reason?: string;
+  reason?:
+    | "nickname_not_found"
+    | "season_stats_not_found"
+    | "bser_api_key_missing"
+    | "bser_api_unavailable"
+    | "unknown_error";
 }
 
 interface PickRanking {
@@ -74,12 +84,11 @@ const MY_NICKNAME_STORAGE_KEY = "ermeta:multi-search:my-nickname";
 
 export function MultiSearchClient() {
   const [myNickname, setMyNickname] = useState("");
-  const [teammateInput, setTeammateInput] = useState("");
+  const [teammateInputs, setTeammateInputs] = useState<[string, string]>(["", ""]);
   const [myProfile, setMyProfile] = useState<PlayerResult | null>(null);
   const [myWeaponFilters, setMyWeaponFilters] = useState<Record<number, number>>({});
   const [data, setData] = useState<MultiSearchResponse | null>(null);
   const [teamCombos, setTeamCombos] = useState<TrioWeaponCombo[]>([]);
-  const [pickRankings, setPickRankings] = useState<PickRanking[]>([]);
   const [teammateCharacterFilters, setTeammateCharacterFilters] = useState<Array<number | null>>([
     null,
     null,
@@ -92,12 +101,9 @@ export function MultiSearchClient() {
   const characterNames = useMemo(() => getFallbackMap(), []);
 
   const teammateNicknames = useMemo(() => {
-    return teammateInput
-      .split(",")
-      .map((value) => value.trim())
-      .filter(Boolean)
-      .slice(0, 2);
-  }, [teammateInput]);
+    return buildTeammateNicknames(teammateInputs);
+  }, [teammateInputs]);
+  const searchSummary = useMemo(() => buildSearchSummary(data?.results ?? []), [data]);
 
   useEffect(() => {
     try {
@@ -127,7 +133,6 @@ export function MultiSearchClient() {
       const players = data?.results.filter((result) => result.status === "ok") ?? [];
       if (players.length !== 3) {
         setTeamCombos([]);
-        setPickRankings([]);
         setComboError(null);
         setIsComboLoading(false);
         return;
@@ -136,7 +141,6 @@ export function MultiSearchClient() {
       const pools = players.map((player) => getTopCharacterCodes(player));
       if (pools.some((pool) => pool.length === 0)) {
         setTeamCombos([]);
-        setPickRankings([]);
         setComboError("팀원별 주력 캐릭터 표본이 부족해 조합을 추천할 수 없습니다.");
         setIsComboLoading(false);
         return;
@@ -150,14 +154,12 @@ export function MultiSearchClient() {
         if (cancelled) return;
 
         setTeamCombos(recommendations.results);
-        setPickRankings(recommendations.pickRankings);
         setComboError(
           recommendations.results.length === 0 ? "조건에 맞는 조합 실험실 표본이 없습니다." : null
         );
       } catch {
         if (!cancelled) {
           setTeamCombos([]);
-          setPickRankings([]);
           setComboError("팀 조합 추천 데이터를 불러오지 못했습니다.");
         }
       } finally {
@@ -179,7 +181,6 @@ export function MultiSearchClient() {
       setMyProfile(null);
       setData(null);
       setTeamCombos([]);
-      setPickRankings([]);
       return;
     }
 
@@ -197,14 +198,12 @@ export function MultiSearchClient() {
       setMyProfile(profile);
       setData(null);
       setTeamCombos([]);
-      setPickRankings([]);
       setTeammateCharacterFilters([null, null]);
       setMyWeaponFilters(buildDefaultWeaponFilters(profile));
     } catch (err) {
       setMyProfile(null);
       setData(null);
       setTeamCombos([]);
-      setPickRankings([]);
       setTeammateCharacterFilters([null, null]);
       setMyWeaponFilters({});
       setError(err instanceof Error ? err.message : "내 정보 검색에 실패했습니다.");
@@ -220,10 +219,16 @@ export function MultiSearchClient() {
       return;
     }
     if (teammateNicknames.length < 2) {
-      setError("팀원 닉네임 2명을 쉼표로 구분해 입력해주세요.");
+      setError("팀원 닉네임 2명을 모두 입력해주세요.");
       setData(null);
       setTeamCombos([]);
-      setPickRankings([]);
+      setTeammateCharacterFilters([null, null]);
+      return;
+    }
+    if (hasDuplicateNicknames([myProfile.nickname ?? myProfile.input, ...teammateNicknames])) {
+      setError("내 닉네임과 팀원 닉네임은 서로 달라야 합니다.");
+      setData(null);
+      setTeamCombos([]);
       setTeammateCharacterFilters([null, null]);
       return;
     }
@@ -240,7 +245,6 @@ export function MultiSearchClient() {
     } catch (err) {
       setData(null);
       setTeamCombos([]);
-      setPickRankings([]);
       setTeammateCharacterFilters([null, null]);
       setError(err instanceof Error ? err.message : "멀티서치 요청에 실패했습니다.");
     } finally {
@@ -263,6 +267,26 @@ export function MultiSearchClient() {
         index === teammateIndex ? (selected === characterCode ? null : characterCode) : selected
       )
     );
+  }
+
+  function updateTeammateInput(index: number, value: string) {
+    setTeammateInputs((current) => {
+      const split = splitNicknameInput(value);
+      if (split.length > 1) {
+        const next: [string, string] = [current[0], current[1]];
+        next[index] = split[0] ?? "";
+        if (index === 0) next[1] = split[1] ?? next[1];
+        return next;
+      }
+
+      const next: [string, string] = [current[0], current[1]];
+      next[index] = value;
+      return next;
+    });
+    setData(null);
+    setTeamCombos([]);
+    setComboError(null);
+    setTeammateCharacterFilters([null, null]);
   }
 
   return (
@@ -313,21 +337,23 @@ export function MultiSearchClient() {
         onSubmit={handleTeamSubmit}
         className="rounded-2xl border border-[var(--color-border)] bg-[rgba(15,23,42,0.58)] p-3 shadow-[0_20px_48px_-36px_rgba(0,0,0,0.58)] sm:p-4"
       >
-        <div className="grid gap-2 lg:grid-cols-[1fr_auto]">
-          <label className="min-w-0">
-            <span className="sr-only">팀원 닉네임</span>
-            <input
-              value={teammateInput}
-              onChange={(event) => setTeammateInput(event.target.value)}
-              autoComplete="off"
-              placeholder="팀원 2명 닉네임, 쉼표로 구분"
-              className="h-10 w-full min-w-0 rounded-xl border border-[var(--color-border)] bg-[rgba(8,13,25,0.86)] px-3 text-sm font-semibold text-[var(--color-foreground)] outline-none transition focus:border-[rgba(96,165,250,0.52)] focus:ring-2 focus:ring-[rgba(96,165,250,0.16)]"
-            />
-          </label>
+        <div className="grid gap-2 lg:grid-cols-[1fr_1fr_auto]">
+          {[0, 1].map((index) => (
+            <label key={index} className="min-w-0">
+              <span className="sr-only">팀원 {index + 1} 닉네임</span>
+              <input
+                value={teammateInputs[index]}
+                onChange={(event) => updateTeammateInput(index, event.target.value)}
+                autoComplete="off"
+                placeholder={`팀원 ${index + 1} 닉네임`}
+                className="h-10 w-full min-w-0 rounded-xl border border-[var(--color-border)] bg-[rgba(8,13,25,0.86)] px-3 text-sm font-semibold text-[var(--color-foreground)] outline-none transition focus:border-[rgba(96,165,250,0.52)] focus:ring-2 focus:ring-[rgba(96,165,250,0.16)]"
+              />
+            </label>
+          ))}
           <Button
             type="submit"
             size="lg"
-            disabled={isTeamLoading || !myProfile}
+            disabled={isTeamLoading || !myProfile || teammateNicknames.length < 2}
             className="h-10 md:min-w-24"
           >
             {isTeamLoading ? (
@@ -347,20 +373,23 @@ export function MultiSearchClient() {
       </form>
 
       {data && (
-        <section className="grid gap-3 lg:grid-cols-3">
-          {data.results.map((result, index) => (
-            <PlayerCard
-              key={result.input}
-              result={result}
-              selectedCharacter={index > 0 ? (teammateCharacterFilters[index - 1] ?? null) : null}
-              onToggleCharacter={
-                index > 0
-                  ? (characterCode) => toggleTeammateCharacterFilter(index - 1, characterCode)
-                  : undefined
-              }
-              getCharacterName={(code) => characterNames.get(code) ?? `#${code}`}
-            />
-          ))}
+        <section className="flex flex-col gap-3">
+          {searchSummary && <SearchSummary summary={searchSummary} />}
+          <div className="grid gap-3 lg:grid-cols-3">
+            {data.results.map((result, index) => (
+              <PlayerCard
+                key={`${index}-${result.input}`}
+                result={result}
+                selectedCharacter={index > 0 ? (teammateCharacterFilters[index - 1] ?? null) : null}
+                onToggleCharacter={
+                  index > 0
+                    ? (characterCode) => toggleTeammateCharacterFilter(index - 1, characterCode)
+                    : undefined
+                }
+                getCharacterName={(code) => characterNames.get(code) ?? `#${code}`}
+              />
+            ))}
+          </div>
         </section>
       )}
 
@@ -402,12 +431,12 @@ function PlayerCard({
                 {result.input}
               </p>
               <p className="text-xs font-semibold text-[var(--color-muted-foreground)]">
-                {statusText(result.status)}
+                {playerStatusText(result)}
               </p>
             </div>
           </div>
           <p className="text-xs leading-5 text-[var(--color-muted-foreground)]">
-            닉네임 또는 시즌 39 랭크 기록을 확인해주세요.
+            {playerStatusDescription(result)}
           </p>
         </CardContent>
       </Card>
@@ -490,6 +519,50 @@ function PlayerCard({
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+interface SearchSummaryState {
+  okCount: number;
+  failed: PlayerResult[];
+}
+
+function buildSearchSummary(results: PlayerResult[]): SearchSummaryState | null {
+  if (results.length === 0) return null;
+  const failed = results.filter((result) => result.status !== "ok");
+  if (failed.length === 0) return null;
+
+  return {
+    okCount: results.length - failed.length,
+    failed,
+  };
+}
+
+function SearchSummary({ summary }: { summary: SearchSummaryState }) {
+  return (
+    <div className="flex flex-col gap-2 rounded-xl border border-[rgba(251,191,36,0.24)] bg-[rgba(251,191,36,0.08)] px-3 py-2 text-sm text-[var(--color-foreground)]">
+      <div className="flex items-start gap-2">
+        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent-gold)]" />
+        <div className="min-w-0">
+          <p className="font-bold">일부 플레이어 정보를 불러오지 못했습니다.</p>
+          <p className="mt-0.5 text-xs leading-5 text-[var(--color-muted-foreground)]">
+            성공 {summary.okCount}명 · 실패 {summary.failed.length}명. 세 명 모두 시즌 기록이
+            확인되어야 조합 추천을 계산합니다.
+          </p>
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-1.5">
+        {summary.failed.map((result) => (
+          <span
+            key={result.input}
+            className="inline-flex items-center gap-1 rounded-lg border border-[rgba(251,191,36,0.18)] bg-[rgba(8,13,25,0.38)] px-2 py-1 text-xs font-semibold text-[var(--color-muted-foreground)]"
+          >
+            <span className="max-w-32 truncate text-[var(--color-foreground)]">{result.input}</span>
+            <span>{playerStatusText(result)}</span>
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -601,15 +674,50 @@ function Metric({
   );
 }
 
-function statusText(status: PlayerResult["status"]) {
-  if (status === "not_found") return "닉네임을 찾을 수 없습니다.";
-  if (status === "no_stats") return "시즌 통계가 없습니다.";
+function playerStatusText(result: PlayerResult) {
+  if (result.status === "not_found") return "닉네임을 찾을 수 없습니다.";
+  if (result.status === "no_stats") return "시즌 통계가 없습니다.";
+  if (result.reason === "bser_api_key_missing") return "API 설정이 필요합니다.";
+  if (result.reason === "bser_api_unavailable") return "전적 API가 응답하지 않습니다.";
   return "검색 중 오류가 발생했습니다.";
+}
+
+function playerStatusDescription(result: PlayerResult) {
+  if (result.reason === "bser_api_key_missing") {
+    return "서버의 BSER API 키 설정을 확인해야 합니다.";
+  }
+  if (result.reason === "bser_api_unavailable") {
+    return "외부 전적 API 지연 또는 장애로 조회하지 못했습니다. 잠시 뒤 다시 시도해주세요.";
+  }
+  return "닉네임 또는 시즌 39 랭크 기록을 확인해주세요.";
 }
 
 function formatNumber(value: number | undefined) {
   if (value == null || Number.isNaN(value)) return "-";
   return new Intl.NumberFormat("ko-KR", { maximumFractionDigits: 2 }).format(value);
+}
+
+function splitNicknameInput(value: string): string[] {
+  return value
+    .split(/[,\n]/)
+    .map((nickname) => nickname.trim())
+    .filter(Boolean)
+    .slice(0, 2);
+}
+
+function buildTeammateNicknames(inputs: [string, string]): string[] {
+  return inputs.map((nickname) => nickname.trim()).filter(Boolean);
+}
+
+function hasDuplicateNicknames(nicknames: string[]): boolean {
+  const seen = new Set<string>();
+  for (const nickname of nicknames) {
+    const key = nickname.trim().toLocaleLowerCase("ko-KR");
+    if (!key) continue;
+    if (seen.has(key)) return true;
+    seen.add(key);
+  }
+  return false;
 }
 
 function getTopCharacterCodes(player: PlayerResult): number[] {
@@ -703,7 +811,9 @@ function TeamComboRecommendations({
   loading: boolean;
   error: string | null;
 }) {
-  const isReady = players.filter((player) => player.status === "ok").length === 3;
+  const okPlayers = players.filter((player) => player.status === "ok");
+  const failedPlayers = players.filter((player) => player.status !== "ok");
+  const isReady = okPlayers.length === 3;
   const activeWeaponFilterCount = Object.keys(myWeaponFilters).length;
   const recommendedCombos = useMemo(
     () =>
@@ -714,10 +824,6 @@ function TeamComboRecommendations({
     activeWeaponFilterCount > 0
       ? "팀원 후보 조합별 최적 내 픽"
       : "팀원 후보군에 맞는 내 캐릭터/무기";
-
-  if (!isReady) {
-    return null;
-  }
 
   return (
     <section className="flex flex-col gap-3 rounded-2xl border border-[var(--color-border)] bg-[rgba(15,23,42,0.58)] p-3 sm:p-4">
@@ -742,20 +848,32 @@ function TeamComboRecommendations({
         )}
       </div>
 
-      {error && !loading && (
+      {!isReady && (
+        <div className="flex items-start gap-2 rounded-xl border border-[rgba(251,191,36,0.24)] bg-[rgba(251,191,36,0.08)] px-3 py-2 text-sm text-[var(--color-muted-foreground)]">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent-gold)]" />
+          <span>
+            현재 검색 성공 {okPlayers.length}명입니다.{" "}
+            {failedPlayers.length > 0
+              ? `${failedPlayers.map((player) => player.input).join(", ")} 정보를 확인한 뒤 다시 검색해주세요.`
+              : "세 명의 시즌 기록이 모두 필요합니다."}
+          </span>
+        </div>
+      )}
+
+      {isReady && error && !loading && (
         <div className="flex items-start gap-2 rounded-xl border border-[rgba(248,113,113,0.24)] bg-[rgba(127,29,29,0.16)] px-3 py-2 text-sm text-[var(--color-danger)]">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
-      {!loading && !error && recommendedCombos.length === 0 && combos.length > 0 && (
+      {isReady && !loading && !error && recommendedCombos.length === 0 && combos.length > 0 && (
         <div className="rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.035)] px-3 py-2 text-sm text-[var(--color-muted-foreground)]">
           설정한 캐릭터별 무기군과 맞는 표본이 없습니다.
         </div>
       )}
 
-      {!loading && !error && recommendedCombos.length > 0 && (
+      {isReady && !loading && !error && recommendedCombos.length > 0 && (
         <div className="grid gap-2 lg:grid-cols-3">
           {recommendedCombos.map((recommendation, index) => (
             <MyPickComboCard
