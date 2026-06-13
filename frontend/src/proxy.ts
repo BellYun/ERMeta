@@ -4,6 +4,17 @@ import { LANGUAGE_COOKIE } from "@/lib/detectLanguage";
 import { getRouteLocaleSegmentFromPathname } from "@/lib/localizedPath";
 
 const COOKIE_MAX_AGE = 365 * 24 * 60 * 60; // 1년
+const AI_CRAWLER_USER_AGENTS = [
+  "GPTBot",
+  "ChatGPT-User",
+  "CCBot",
+  "ClaudeBot",
+  "anthropic-ai",
+  "PerplexityBot",
+  "Bytespider",
+  "Amazonbot",
+];
+const TRIO_LAB_DETAIL_PATH_RE = /^\/(?:(?:ko|en|ja|zh-Hans|zh-Hant)\/)?trio-lab\/[^/?#]+\/?$/;
 
 function applyLanguageCookie(response: NextResponse, cookieLanguage: string) {
   response.cookies.set(LANGUAGE_COOKIE, cookieLanguage, {
@@ -13,11 +24,26 @@ function applyLanguageCookie(response: NextResponse, cookieLanguage: string) {
   });
 }
 
+function isAiCrawler(userAgent: string | null): boolean {
+  if (!userAgent) return false;
+  const normalized = userAgent.toLowerCase();
+  return AI_CRAWLER_USER_AGENTS.some((crawler) => normalized.includes(crawler.toLowerCase()));
+}
+
 export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   if (pathname === "/synergy-detail/opengraph-image") {
     return NextResponse.next();
+  }
+
+  if (TRIO_LAB_DETAIL_PATH_RE.test(pathname) && isAiCrawler(request.headers.get("user-agent"))) {
+    return new NextResponse("Blocked", {
+      status: 403,
+      headers: {
+        "X-Robots-Tag": "noindex, nofollow",
+      },
+    });
   }
 
   const routeLocale = getRouteLocaleSegmentFromPathname(pathname);
