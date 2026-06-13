@@ -64,18 +64,7 @@ interface PlayerResult {
     | "unknown_error";
 }
 
-interface PickRanking {
-  character: number;
-  weapon: number;
-  totalGames: number;
-  winRate: number;
-  averageRP: number;
-  averageRank: number;
-  bestComboIds: string[];
-}
-
 interface TeamCombosResponse {
-  pickRankings: PickRanking[];
   results: TrioWeaponCombo[];
 }
 
@@ -773,7 +762,6 @@ async function fetchTeamCombos(pools: number[][]): Promise<TeamCombosResponse> {
 
   const payload = (await response.json()) as Partial<TeamCombosResponse>;
   return {
-    pickRankings: payload.pickRankings ?? [],
     results: payload.results ?? [],
   };
 }

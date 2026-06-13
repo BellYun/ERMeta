@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   mergeApiRowsByComboId,
-  recommendationScore,
   sortTrioWeaponCombos,
   type ApiTrioWeaponRow,
-  type TrioWeaponMember,
   type TrioWeaponCombo,
 } from "@/components/features/trio-lab/types";
 import { isMultiSearchEnabled } from "@/lib/featureFlags";
@@ -18,16 +16,6 @@ const NO_STORE_HEADERS = {
 
 interface TeamCombosBody {
   pools?: unknown;
-}
-
-interface PickRanking {
-  character: number;
-  weapon: number;
-  totalGames: number;
-  winRate: number;
-  averageRP: number;
-  averageRank: number;
-  bestComboIds: string[];
 }
 
 function normalizePools(pools: unknown): number[][] | null {
@@ -97,6 +85,10 @@ async function fetchTeamComboRows(origin: string, pools: number[][]): Promise<Ap
             })
               .then((response) => (response.ok ? response.json() : { results: [] }))
               .then((payload: { results?: ApiTrioWeaponRow[] }) => payload.results ?? [])
+              .catch((err) => {
+                console.error(`[multi-search/team-combos] stats fetch failed ${pairKey}:`, err);
+                return [];
+              })
           );
         }
       }
@@ -105,94 +97,6 @@ async function fetchTeamComboRows(origin: string, pools: number[][]): Promise<Ap
 
   const settled = await Promise.all(requests);
   return settled.flat();
-}
-
-function findMyMember(combo: TrioWeaponCombo, myPool: number[]): TrioWeaponMember | null {
-  return combo.members.find((member) => myPool.includes(member.character)) ?? null;
-}
-
-function buildPickRankings(combos: TrioWeaponCombo[], myPool: number[]): PickRanking[] {
-  const rankings = new Map<
-    string,
-    PickRanking & { rpSum: number; rankSum: number; winSum: number }
-  >();
-
-  for (const combo of combos) {
-    const myMember = findMyMember(combo, myPool);
-    if (!myMember) continue;
-
-    const key = `${myMember.character}:${myMember.weapon}`;
-    const current = rankings.get(key) ?? {
-      character: myMember.character,
-      weapon: myMember.weapon,
-      totalGames: 0,
-      winRate: 0,
-      averageRP: 0,
-      averageRank: 0,
-      bestComboIds: [],
-      rpSum: 0,
-      rankSum: 0,
-      winSum: 0,
-    };
-
-    current.totalGames += combo.totalGames;
-    current.rpSum += combo.averageRP * combo.totalGames;
-    current.rankSum += combo.averageRank * combo.totalGames;
-    current.winSum += combo.winRate * combo.totalGames;
-    rankings.set(key, current);
-  }
-
-  return Array.from(rankings.values())
-    .map((ranking) => {
-      const bestComboIds = combos
-        .filter((combo) =>
-          combo.members.some(
-            (member) => member.character === ranking.character && member.weapon === ranking.weapon
-          )
-        )
-        .sort(
-          (a, b) =>
-            b.averageRP - a.averageRP || b.totalGames - a.totalGames || b.winRate - a.winRate
-        )
-        .map((combo) => combo.id);
-
-      return {
-        character: ranking.character,
-        weapon: ranking.weapon,
-        totalGames: ranking.totalGames,
-        winRate: ranking.totalGames > 0 ? ranking.winSum / ranking.totalGames : 0,
-        averageRP: ranking.totalGames > 0 ? ranking.rpSum / ranking.totalGames : 0,
-        averageRank: ranking.totalGames > 0 ? ranking.rankSum / ranking.totalGames : 0,
-        bestComboIds,
-      };
-    })
-    .sort(
-      (a, b) =>
-        recommendationScore({
-          id: `${b.character}-${b.weapon}`,
-          members: [
-            { character: b.character, weapon: b.weapon, mainCore: null },
-            { character: 0, weapon: 0, mainCore: null },
-            { character: 0, weapon: 0, mainCore: null },
-          ],
-          totalGames: b.totalGames,
-          winRate: b.winRate,
-          averageRP: b.averageRP,
-          averageRank: b.averageRank,
-        }) -
-        recommendationScore({
-          id: `${a.character}-${a.weapon}`,
-          members: [
-            { character: a.character, weapon: a.weapon, mainCore: null },
-            { character: 0, weapon: 0, mainCore: null },
-            { character: 0, weapon: 0, mainCore: null },
-          ],
-          totalGames: a.totalGames,
-          winRate: a.winRate,
-          averageRP: a.averageRP,
-          averageRank: a.averageRank,
-        })
-    );
 }
 
 export async function POST(request: NextRequest) {
@@ -224,9 +128,8 @@ export async function POST(request: NextRequest) {
       mergeApiRowsByComboId(rows).filter((combo) => comboMatchesTeamPools(combo, pools)),
       "recommended"
     );
-    const pickRankings = buildPickRankings(results, pools[0]);
 
-    return NextResponse.json({ pickRankings, results }, { headers: NO_STORE_HEADERS });
+    return NextResponse.json({ results }, { headers: NO_STORE_HEADERS });
   } catch (err) {
     console.error("[multi-search/team-combos] 예외:", err);
     return NextResponse.json(

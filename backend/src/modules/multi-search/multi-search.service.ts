@@ -197,21 +197,22 @@ export class MultiSearchService {
 
   private async findUser(nickname: string) {
     const cacheKey = `bser:nickname:${this.cacheKeyPart(nickname)}`;
-    const cached = await this.redis.getOrSet<LookupCache>(
-      cacheKey,
-      NICKNAME_CACHE_TTL_SEC,
-      async () => {
-        const result = await this.bserApi.findUserByNicknameDetailed(nickname);
-        return toLookupCache(result);
-      },
-    );
-
-    if (cached.status === 'not_found') {
-      await this.redis.set(cacheKey, cached, NOT_FOUND_CACHE_TTL_SEC);
-      return null;
+    const cached = await this.redis.get<LookupCache>(cacheKey);
+    if (cached) {
+      return cached.status === 'found' ? cached.user : null;
     }
 
-    return cached.user;
+    const result = await this.bserApi.findUserByNicknameDetailed(nickname);
+    const cacheValue = toLookupCache(result);
+    await this.redis.set(
+      cacheKey,
+      cacheValue,
+      cacheValue.status === 'found'
+        ? NICKNAME_CACHE_TTL_SEC
+        : NOT_FOUND_CACHE_TTL_SEC,
+    );
+
+    return cacheValue.status === 'found' ? cacheValue.user : null;
   }
 
   private async fetchUserStats(
