@@ -106,11 +106,31 @@ export class BserApiService {
   private readonly baseUrl = 'https://open-api.bser.io';
   private readonly timeoutMs: number;
   private readonly maxRetries: number;
+  private readonly rateLimitRps: number;
+  private readonly rateLimitBurst: number;
+  private readonly rateLimitQueueMax: number;
+  private readonly rateLimitQueue: Array<() => void> = [];
+  private rateLimitTokens: number;
+  private rateLimitRefilledAt = Date.now();
+  private rateLimitTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(private config: ConfigService) {
     this.apiKey = this.config.get<string>('BSER_API_KEY', '');
     this.timeoutMs = this.config.get<number>('BSER_API_TIMEOUT_MS', 4_000);
     this.maxRetries = this.config.get<number>('BSER_API_RETRIES', 1);
+    this.rateLimitRps = Math.max(
+      0,
+      this.config.get<number>('BSER_API_RATE_LIMIT_RPS', 4),
+    );
+    this.rateLimitBurst = Math.max(
+      1,
+      this.config.get<number>('BSER_API_RATE_LIMIT_BURST', this.rateLimitRps),
+    );
+    this.rateLimitQueueMax = Math.max(
+      1,
+      this.config.get<number>('BSER_API_RATE_LIMIT_QUEUE_MAX', 50),
+    );
+    this.rateLimitTokens = this.rateLimitBurst;
   }
 
   async fetchGame(gameId: number): Promise<BSERGameResponse | null> {
@@ -120,9 +140,12 @@ export class BserApiService {
     }
 
     try {
-      const res = await fetch(`${this.baseUrl}/v1/games/${gameId}`, {
-        headers: { 'x-api-key': this.apiKey },
-      });
+      const res = await this.fetchWithRetry(
+        `${this.baseUrl}/v1/games/${gameId}`,
+        {
+          headers: { 'x-api-key': this.apiKey },
+        },
+      );
 
       if (res.status === 404) return null;
       if (!res.ok) {
@@ -144,7 +167,7 @@ export class BserApiService {
     if (!this.apiKey) return null;
 
     try {
-      const res = await fetch(
+      const res = await this.fetchWithRetry(
         `${this.baseUrl}/v1/rank/top/${seasonId}/${matchingTeamMode}`,
         { headers: { 'x-api-key': this.apiKey } },
       );
@@ -249,6 +272,8 @@ export class BserApiService {
     input: Parameters<typeof fetch>[0],
     init: Parameters<typeof fetch>[1],
   ): Promise<Response> {
+    await this.waitForRateLimitToken();
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
 
@@ -275,12 +300,72 @@ export class BserApiService {
         return response;
       } catch (err) {
         lastError = err;
+        if (err instanceof BserRateLimitQueueError) break;
         if (attempt >= this.maxRetries) break;
         await sleep(150 * (attempt + 1));
       }
     }
 
     throw lastError;
+  }
+
+  private waitForRateLimitToken(): Promise<void> {
+    if (this.rateLimitRps <= 0) return Promise.resolve();
+
+    return new Promise((resolve) => {
+      if (this.rateLimitQueue.length >= this.rateLimitQueueMax) {
+        throw new BserRateLimitQueueError(this.rateLimitQueue.length);
+      }
+
+      this.rateLimitQueue.push(resolve);
+      this.drainRateLimitQueue();
+    });
+  }
+
+  private drainRateLimitQueue(): void {
+    if (this.rateLimitTimer) return;
+
+    this.refillRateLimitTokens();
+
+    while (this.rateLimitTokens >= 1 && this.rateLimitQueue.length > 0) {
+      this.rateLimitTokens -= 1;
+      this.rateLimitQueue.shift()?.();
+    }
+
+    if (this.rateLimitQueue.length === 0) return;
+
+    const delayMs = Math.max(
+      1,
+      Math.ceil(1000 / this.rateLimitRps) -
+        (Date.now() - this.rateLimitRefilledAt),
+    );
+
+    this.rateLimitTimer = setTimeout(() => {
+      this.rateLimitTimer = null;
+      this.drainRateLimitQueue();
+    }, delayMs);
+  }
+
+  private refillRateLimitTokens(): void {
+    const now = Date.now();
+    const elapsedMs = now - this.rateLimitRefilledAt;
+    const tokensToAdd = Math.floor((elapsedMs * this.rateLimitRps) / 1000);
+
+    if (tokensToAdd <= 0) return;
+
+    this.rateLimitTokens = Math.min(
+      this.rateLimitBurst,
+      this.rateLimitTokens + tokensToAdd,
+    );
+    this.rateLimitRefilledAt += Math.floor(
+      (tokensToAdd * 1000) / this.rateLimitRps,
+    );
+  }
+}
+
+class BserRateLimitQueueError extends Error {
+  constructor(queueLength: number) {
+    super(`BSER rate limit queue is full (${queueLength})`);
   }
 }
 
