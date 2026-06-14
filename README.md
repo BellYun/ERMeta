@@ -33,6 +33,7 @@ ER&GG(이리와지지)는 **이터널리턴(Eternal Return)** 게임의 실시�
 | **상세 조합 분석** | 선택한 조합의 무기·특성 상세 빌드 가이드 |
 | **패치 비교** | 이전 패치 대비 변동폭 시각화 |
 | **패치 업데이트** | 패치별 밸런스 변경사항 확인 |
+| **플레이어 멀티서치** | 닉네임 기반 시즌 통계 조회와 주력 캐릭터 기반 팀 조합 추천 |
 | **OG 이미지 생성** | 조합 결과를 소셜 공유용 이미지로 자동 생성 |
 
 ## Tech Stack
@@ -43,7 +44,7 @@ Backend      NestJS 11 · Node.js · TypeScript
 Styling      Tailwind CSS v4 · CSS Variables · Dark Theme
 Database     Supabase (PostgreSQL + RLS)
 Cache        Redis (L1 In-Memory + L2 Redis 2-Tier)
-Data         BSER Open API · 5분 주기 자동 수집
+Data         BSER Open API · Supabase Edge Function 주기 수집
 Charts       Recharts 3
 Virtualize   TanStack Virtual 3
 Analytics    Vercel Analytics · Amplitude · Google Analytics
@@ -129,6 +130,13 @@ GOOGLE_SHEETS_WEBHOOK_URL=  # 피드백 수집
 NEXT_PUBLIC_GA_ID=          # Google Analytics
 ```
 
+멀티서치 페이지는 feature flag로 제어합니다.
+
+```bash
+ENABLE_MULTI_SEARCH=true
+MULTI_SEARCH_API_BASE_URL=https://<nest-api-host>
+```
+
 ### Run
 
 ```bash
@@ -160,6 +168,8 @@ npm run lint
 | `/api/traits/names` | GET | 특성 이름 조회 |
 | `/api/stats/trios` | GET | 3인 조합 통계 |
 | `/api/stats/trios-weapon` | GET | 조합별 무기 통계 |
+| `/api/multi-search/players` | POST | 플레이어 멀티서치 프록시 |
+| `/api/multi-search/team-combos` | POST | 멀티서치 기반 팀 조합 추천 |
 | `/api/og/synergy` | GET | 조합 OG 이미지 생성 |
 | `/api/auth/steam` | GET | Steam 인증 |
 | `/api/auth/me` | GET | 현재 유저 정보 |
@@ -177,6 +187,32 @@ npm run start:dev     # 개발 모드
 npm run build         # 프로덕션 빌드
 npm run start:prod    # 프로덕션 실행
 ```
+
+멀티서치 백엔드는 Redis 캐시와 BSER Open API 요청 제한을 사용합니다.
+
+```bash
+BSER_API_KEY=your-bser-api-key
+BSER_API_RATE_LIMIT_RPS=4
+BSER_API_RATE_LIMIT_BURST=4
+BSER_API_RATE_LIMIT_QUEUE_MAX=50
+
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=
+
+ENABLE_COLLECTOR=false
+MULTI_SEARCH_SEASON_ID=39
+MULTI_SEARCH_MATCHING_MODE=3
+FRONTEND_ORIGINS=https://erwagg.com,https://www.erwagg.com
+```
+
+운영 기준:
+
+- Supabase Edge Function은 게임 데이터 수집을 담당합니다.
+- NestJS 서버는 멀티서치 사용자 요청을 담당합니다.
+- Standard Key 5RPS 기준으로 Supabase 수집 1RPS, Nest 멀티서치 4RPS를 예산으로 둡니다.
+- NestJS 서버는 Redis 캐시를 사용해 `nickname -> userId`는 24시간, 유저 시즌 통계는 10분 동안 재사용합니다.
+- NestJS 인스턴스를 여러 개로 늘리면 프로세스별 rate limiter가 각각 동작하므로, 분산 rate limiter를 도입하기 전까지는 단일 인스턴스 운영을 기본으로 합니다.
 
 ## Desktop App
 
