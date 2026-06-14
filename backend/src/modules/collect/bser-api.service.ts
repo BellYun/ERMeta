@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 export interface BSERGameResponse {
@@ -100,7 +100,7 @@ export interface BSERPlayerData {
 }
 
 @Injectable()
-export class BserApiService {
+export class BserApiService implements OnModuleDestroy {
   private readonly logger = new Logger(BserApiService.name);
   private readonly apiKey: string;
   private readonly baseUrl = 'https://open-api.bser.io';
@@ -311,12 +311,11 @@ export class BserApiService {
 
   private waitForRateLimitToken(): Promise<void> {
     if (this.rateLimitRps <= 0) return Promise.resolve();
+    if (this.rateLimitQueue.length >= this.rateLimitQueueMax) {
+      throw new BserRateLimitQueueError(this.rateLimitQueue.length);
+    }
 
     return new Promise((resolve) => {
-      if (this.rateLimitQueue.length >= this.rateLimitQueueMax) {
-        throw new BserRateLimitQueueError(this.rateLimitQueue.length);
-      }
-
       this.rateLimitQueue.push(resolve);
       this.drainRateLimitQueue();
     });
@@ -357,9 +356,14 @@ export class BserApiService {
       this.rateLimitBurst,
       this.rateLimitTokens + tokensToAdd,
     );
-    this.rateLimitRefilledAt += Math.floor(
-      (tokensToAdd * 1000) / this.rateLimitRps,
-    );
+    this.rateLimitRefilledAt += (tokensToAdd * 1000) / this.rateLimitRps;
+  }
+
+  onModuleDestroy() {
+    if (this.rateLimitTimer) {
+      clearTimeout(this.rateLimitTimer);
+      this.rateLimitTimer = null;
+    }
   }
 }
 
