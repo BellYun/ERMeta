@@ -6,9 +6,12 @@
 --     현재 수집된 v2_CharacterTrioWeapon 전체 데이터에서 새 테이블로 재생성한다.
 --   - 프론트엔드는 이 테이블로 먼저 마이그레이션하고, 기존 p10 테이블은
 --     배포 확인 후 별도 수동 SQL로 제거한다.
+--   - 대용량 적재는 SQL Editor timeout을 피하기 위해
+--     backend/manual_sql/backfill_trio_weapon_search_all_stepwise.sql 에서
+--     patch_version/tier 단위로 분리 실행한다.
 --
 -- 집계 기준:
---   - tier IN ('DIAMOND', 'METEORITE', 'MITHRIL')
+--   - tier IN ('DIAMOND', 'METEORITE', 'MITHRIL', 'IN1000')
 --   - 제외 캐릭터 9998, 9999 제외
 --   - 정렬된 trio 조합 1개당 search row 1개 생성
 -- ============================================================
@@ -63,55 +66,6 @@ FROM anon, authenticated;
 GRANT SELECT
 ON "v2_CharacterTrioWeaponSearch_all"
 TO anon, authenticated;
-
-TRUNCATE TABLE "v2_CharacterTrioWeaponSearch_all";
-
-INSERT INTO "v2_CharacterTrioWeaponSearch_all" (
-  ally1_char,
-  ally1_weapon,
-  ally1_core,
-  ally2_char,
-  ally2_weapon,
-  ally2_core,
-  third_char,
-  third_weapon,
-  third_core,
-  total_games,
-  total_wins,
-  total_rp,
-  rank_sum,
-  last_updated
-)
-SELECT
-  character1 AS ally1_char,
-  weapon_type1 AS ally1_weapon,
-  COALESCE(main_core1, 0) AS ally1_core,
-  character2 AS ally2_char,
-  weapon_type2 AS ally2_weapon,
-  COALESCE(main_core2, 0) AS ally2_core,
-  character3 AS third_char,
-  weapon_type3 AS third_weapon,
-  COALESCE(main_core3, 0) AS third_core,
-  SUM(total_games)::INTEGER,
-  SUM(total_wins)::INTEGER,
-  SUM(total_rp),
-  SUM(rank_sum),
-  NOW()
-FROM "v2_CharacterTrioWeapon"
-WHERE tier IN ('DIAMOND', 'METEORITE', 'MITHRIL')
-  AND character1 NOT IN (9998, 9999)
-  AND character2 NOT IN (9998, 9999)
-  AND character3 NOT IN (9998, 9999)
-GROUP BY
-  character1,
-  weapon_type1,
-  COALESCE(main_core1, 0),
-  character2,
-  weapon_type2,
-  COALESCE(main_core2, 0),
-  character3,
-  weapon_type3,
-  COALESCE(main_core3, 0);
 
 CREATE INDEX IF NOT EXISTS idx_v2_trio_weapon_search_all_pair
 ON "v2_CharacterTrioWeaponSearch_all" (
@@ -181,7 +135,5 @@ ON "v2_CharacterTrioWeaponSearch_all" (
 
 CREATE INDEX IF NOT EXISTS idx_v2_trio_weapon_search_all_total_games
 ON "v2_CharacterTrioWeaponSearch_all" (total_games DESC);
-
-ANALYZE "v2_CharacterTrioWeaponSearch_all";
 
 COMMIT;

@@ -1,0 +1,7308 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>유형분석 그룹 리포트</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f7f4;
+      --panel: #ffffff;
+      --ink: #1c1f23;
+      --muted: #69717c;
+      --line: #dfe3e8;
+      --green: #176a46;
+      --red: #a23c3c;
+      --blue: #245d8f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.45;
+    }
+    header.hero {
+      padding: 36px clamp(20px, 4vw, 56px) 18px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+    h1, h2, h3, h4, p { margin: 0; }
+    h1 { font-size: clamp(28px, 4vw, 44px); letter-spacing: 0; }
+    .hero p { margin-top: 10px; color: var(--muted); max-width: 920px; }
+    nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 14px clamp(20px, 4vw, 56px);
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+    nav a {
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      background: #fdfdfb;
+      padding: 8px 11px;
+      border-radius: 8px;
+      font-weight: 650;
+    }
+    nav small { color: var(--muted); margin-left: 4px; }
+    main { padding: 22px clamp(20px, 4vw, 56px) 48px; }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .summary-card, .group-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .summary-card { padding: 14px 16px; }
+    .summary-card span, .summary-card small { display: block; color: var(--muted); }
+    .summary-card b { display: block; margin: 4px 0; }
+    .role-section { margin-top: 36px; }
+    .role-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 12px;
+    }
+    .role-heading h2 { font-size: 28px; }
+    .role-heading p, .group-card p { color: var(--muted); margin-top: 4px; }
+    .role-metrics, .metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    .role-metrics span, .metrics span {
+      border: 1px solid var(--line);
+      background: #fbfbf8;
+      padding: 6px 9px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+    .cards { display: grid; gap: 14px; }
+    .group-card { padding: 16px; }
+    .group-card > header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: start;
+      margin-bottom: 14px;
+    }
+    .group-card h3 { font-size: 20px; }
+    .member-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: -2px 0 14px;
+    }
+    .member-chips span {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 5px;
+      max-width: 100%;
+      border: 1px solid var(--line);
+      background: #fbfbf8;
+      border-radius: 8px;
+      padding: 6px 8px;
+      white-space: nowrap;
+    }
+    .member-chips small {
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    h4 { font-size: 14px; margin-bottom: 8px; color: var(--blue); }
+    .entry-list {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .entry-list li { margin: 5px 0; }
+    .entry-name { font-weight: 650; }
+    .entry-meta { color: var(--muted); margin-left: 6px; }
+    .strong .entry-meta { color: var(--green); }
+    .weak .entry-meta { color: var(--red); }
+    .empty { color: var(--muted); font-size: 14px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      border-top: 1px solid var(--line);
+      padding: 8px 7px;
+      text-align: left;
+    }
+    th { color: var(--muted); font-weight: 650; }
+    td:nth-child(3), td:nth-child(4), th:nth-child(3), th:nth-child(4) { text-align: right; }
+    @media (max-width: 760px) {
+      .role-heading, .group-card > header { display: block; }
+      .role-metrics, .metrics { justify-content: flex-start; margin-top: 10px; }
+      .grid { grid-template-columns: 1fr; }
+      nav { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <h1>유형분석 그룹 리포트</h1>
+    <p>현재 Lab JSON의 그룹 라벨과 멤버를 기준으로, 새 사전집계 테이블에서 재계산된 게임 수, 평균 RP, 강한/약한 조합 유형을 묶어 본 검토용 HTML입니다.</p>
+  </header>
+  
+    <nav>
+      
+            <a href="#tanks">
+              탱커
+              <small>9</small>
+            </a>
+          
+            <a href="#warriors">
+              전사
+              <small>22</small>
+            </a>
+          
+            <a href="#assassins">
+              암살자
+              <small>1</small>
+            </a>
+          
+            <a href="#skilldealers">
+              스킬딜러
+              <small>11</small>
+            </a>
+          
+            <a href="#rangers">
+              원거리 딜러
+              <small>9</small>
+            </a>
+          
+            <a href="#supports">
+              지원가
+              <small>3</small>
+            </a>
+          
+    </nav>
+  
+  <main>
+    
+    <section class="summary">
+      
+            <div class="summary-card">
+              <span>탱커</span>
+              <b>9 그룹 · 14명</b>
+              <small>819,597판 · 최대 세컨탱-지원 연계형</small>
+            </div>
+          
+            <div class="summary-card">
+              <span>전사</span>
+              <b>22 그룹 · 46명</b>
+              <small>3,142,494판 · 최대 스증 연계 전사</small>
+            </div>
+          
+            <div class="summary-card">
+              <span>암살자</span>
+              <b>1 그룹 · 4명</b>
+              <small>213,325판 · 최대 암살자 전체</small>
+            </div>
+          
+            <div class="summary-card">
+              <span>스킬딜러</span>
+              <b>11 그룹 · 33명</b>
+              <small>1,709,493판 · 최대 지원가 포킹 연계형</small>
+            </div>
+          
+            <div class="summary-card">
+              <span>원거리 딜러</span>
+              <b>9 그룹 · 14명</b>
+              <small>1,076,948판 · 최대 변수 캐리형</small>
+            </div>
+          
+            <div class="summary-card">
+              <span>지원가</span>
+              <b>3 그룹 · 3명</b>
+              <small>110,023판 · 최대 탱커 연계 지원가</small>
+            </div>
+          
+    </section>
+  
+    
+    <section class="role-section" id="tanks">
+      <div class="role-heading">
+        <div>
+          <h2>탱커</h2>
+          <p>v2_CharacterTrioWeaponSearch_all · 2026-06-15 · minGames 30</p>
+        </div>
+        <div class="role-metrics">
+          <span>9 그룹</span>
+          <span>14명</span>
+          <span>819,597판</span>
+        </div>
+      </div>
+      <div class="cards">
+        
+    <article class="group-card" id="group-0">
+      <header>
+        <div>
+          <h3>딜러 보호 파트너형</h3>
+          <p>그룹 0 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>2</b>명</span>
+          <span><b>136,843</b>판</span>
+          <span><b>0.791</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="20_4">
+              <b>레녹스</b>
+              <small>채찍</small>
+            </span>
+          
+            <span title="50_21">
+              <b>엘레나</b>
+              <small>레이피어</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 전사 + 지원가</span>
+              <span class="entry-meta">+3.438 · 264판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 전사</span>
+              <span class="entry-meta">+1.828 · 295판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+1.185 · 220판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+0.925 · 45판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 원거리 딜러</span>
+              <span class="entry-meta">+0.894 · 12,648판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-27.672 · 40판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 지원가</span>
+              <span class="entry-meta">-9.444 · 66판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 원거리 딜러</span>
+              <span class="entry-meta">-8.684 · 840판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 암살자</span>
+              <span class="entry-meta">-7.874 · 44판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 전사</span>
+              <span class="entry-meta">-5.148 · 99판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>레녹스</td>
+                <td>채찍</td>
+                <td>93,406</td>
+                <td>1.040</td>
+              </tr>
+            
+              <tr>
+                <td>엘레나</td>
+                <td>레이피어</td>
+                <td>43,437</td>
+                <td>0.255</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-1">
+      <header>
+        <div>
+          <h3>암살자 대응형</h3>
+          <p>그룹 1 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>2</b>명</span>
+          <span><b>101,432</b>판</span>
+          <span><b>0.738</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="4_13">
+              <b>매그너스</b>
+              <small>망치</small>
+            </span>
+          
+            <span title="13_15">
+              <b>쇼우</b>
+              <small>단검</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 탱커</span>
+              <span class="entry-meta">+6.011 · 43판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 암살자</span>
+              <span class="entry-meta">+3.345 · 147판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+2.739 · 1,146판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">+0.914 · 2,614판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">+0.770 · 1,939판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-14.420 · 274판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-11.454 · 102판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 암살자</span>
+              <span class="entry-meta">-5.937 · 74판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">-4.612 · 550판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">-2.830 · 457판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>매그너스</td>
+                <td>망치</td>
+                <td>75,346</td>
+                <td>0.658</td>
+              </tr>
+            
+              <tr>
+                <td>쇼우</td>
+                <td>단검</td>
+                <td>26,086</td>
+                <td>0.971</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-2">
+      <header>
+        <div>
+          <h3>전사-딜러 연계형</h3>
+          <p>그룹 2 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>2</b>명</span>
+          <span><b>144,380</b>판</span>
+          <span><b>1.043</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="55_14">
+              <b>에스텔</b>
+              <small>도끼</small>
+            </span>
+          
+            <span title="30_13">
+              <b>일레븐</b>
+              <small>망치</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 암살자</span>
+              <span class="entry-meta">+4.573 · 31판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 지원가</span>
+              <span class="entry-meta">+3.035 · 144판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 전사</span>
+              <span class="entry-meta">+2.783 · 238판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 전사</span>
+              <span class="entry-meta">+2.126 · 3,501판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+1.710 · 3,680판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 암살자</span>
+              <span class="entry-meta">-19.407 · 39판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-11.517 · 52판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 스킬딜러</span>
+              <span class="entry-meta">-4.112 · 656판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 전사</span>
+              <span class="entry-meta">-3.044 · 206판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 원거리 딜러</span>
+              <span class="entry-meta">-2.559 · 363판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>에스텔</td>
+                <td>도끼</td>
+                <td>74,695</td>
+                <td>1.102</td>
+              </tr>
+            
+              <tr>
+                <td>일레븐</td>
+                <td>망치</td>
+                <td>69,685</td>
+                <td>0.979</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-3">
+      <header>
+        <div>
+          <h3>전사-지원 특화형</h3>
+          <p>그룹 3 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>35,640</b>판</span>
+          <span><b>0.001</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="45_4">
+              <b>마이</b>
+              <small>채찍</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 전사 + 전사</span>
+              <span class="entry-meta">+2.664 · 1,553판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.172 · 1,889판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 전사</span>
+              <span class="entry-meta">+1.104 · 99판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+0.664 · 1,295판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 스킬딜러</span>
+              <span class="entry-meta">+0.632 · 6,965판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-27.794 · 104판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 스킬딜러</span>
+              <span class="entry-meta">-15.433 · 152판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 원거리 딜러</span>
+              <span class="entry-meta">-5.960 · 145판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 지원가</span>
+              <span class="entry-meta">-3.240 · 102판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">-2.818 · 1,083판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>마이</td>
+                <td>채찍</td>
+                <td>35,640</td>
+                <td>0.001</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-4">
+      <header>
+        <div>
+          <h3>세컨탱-지원 연계형</h3>
+          <p>그룹 4 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>2</b>명</span>
+          <span><b>152,826</b>판</span>
+          <span><b>0.364</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="76_3">
+              <b>가넷</b>
+              <small>방망이</small>
+            </span>
+          
+            <span title="53_14">
+              <b>마커스</b>
+              <small>도끼</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 지원가</span>
+              <span class="entry-meta">+3.384 · 85판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 스킬딜러</span>
+              <span class="entry-meta">+2.554 · 539판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 암살자</span>
+              <span class="entry-meta">+2.494 · 30판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 암살자</span>
+              <span class="entry-meta">+2.242 · 30판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 지원가</span>
+              <span class="entry-meta">+1.881 · 376판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 지원가</span>
+              <span class="entry-meta">-17.019 · 38판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 암살자</span>
+              <span class="entry-meta">-8.763 · 42판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 전사</span>
+              <span class="entry-meta">-4.104 · 742판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 원거리 딜러</span>
+              <span class="entry-meta">-3.475 · 1,188판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 지원가</span>
+              <span class="entry-meta">-3.269 · 718판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>가넷</td>
+                <td>방망이</td>
+                <td>84,231</td>
+                <td>0.539</td>
+              </tr>
+            
+              <tr>
+                <td>마커스</td>
+                <td>도끼</td>
+                <td>68,595</td>
+                <td>0.149</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-5">
+      <header>
+        <div>
+          <h3>암살자 동반 진입형</h3>
+          <p>그룹 5 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>2</b>명</span>
+          <span><b>150,698</b>판</span>
+          <span><b>0.403</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="85_13">
+              <b>미르카</b>
+              <small>망치</small>
+            </span>
+          
+            <span title="68_1">
+              <b>알론소</b>
+              <small>글러브</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 지원가</span>
+              <span class="entry-meta">+4.155 · 51판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 암살자</span>
+              <span class="entry-meta">+3.706 · 47판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 전사</span>
+              <span class="entry-meta">+1.226 · 6,820판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+0.971 · 1,997판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 스킬딜러</span>
+              <span class="entry-meta">+0.808 · 14,479판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-10.973 · 190판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 원거리 딜러</span>
+              <span class="entry-meta">-6.593 · 933판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 스킬딜러</span>
+              <span class="entry-meta">-4.303 · 775판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 전사</span>
+              <span class="entry-meta">-2.373 · 637판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-1.385 · 518판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>미르카</td>
+                <td>망치</td>
+                <td>84,053</td>
+                <td>-0.009</td>
+              </tr>
+            
+              <tr>
+                <td>알론소</td>
+                <td>글러브</td>
+                <td>66,645</td>
+                <td>0.923</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-6">
+      <header>
+        <div>
+          <h3>세컨탱 유지형</h3>
+          <p>그룹 6 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>53,230</b>판</span>
+          <span><b>0.134</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="53_13">
+              <b>마커스</b>
+              <small>망치</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 탱커</span>
+              <span class="entry-meta">+8.881 · 37판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+2.468 · 208판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 지원가</span>
+              <span class="entry-meta">+2.208 · 115판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 암살자</span>
+              <span class="entry-meta">+1.101 · 52판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+0.963 · 8,800판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 원거리 딜러</span>
+              <span class="entry-meta">-3.215 · 530판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 전사</span>
+              <span class="entry-meta">-1.162 · 534판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">-0.891 · 2,720판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 스킬딜러</span>
+              <span class="entry-meta">-0.370 · 13,930판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 원거리 딜러</span>
+              <span class="entry-meta">-0.204 · 13,779판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>마커스</td>
+                <td>망치</td>
+                <td>53,230</td>
+                <td>0.134</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-7">
+      <header>
+        <div>
+          <h3>원딜-지원 돌진형</h3>
+          <p>그룹 7 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>29,745</b>판</span>
+          <span><b>0.377</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="4_3">
+              <b>매그너스</b>
+              <small>방망이</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+4.915 · 140판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+1.679 · 463판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 원거리 딜러</span>
+              <span class="entry-meta">+0.822 · 6,448판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 전사</span>
+              <span class="entry-meta">+0.780 · 4,163판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 암살자</span>
+              <span class="entry-meta">+0.686 · 100판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-24.488 · 72판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">-3.414 · 624판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-2.616 · 335판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 원거리 딜러</span>
+              <span class="entry-meta">-2.505 · 1,335판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 지원가</span>
+              <span class="entry-meta">-2.431 · 70판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>매그너스</td>
+                <td>방망이</td>
+                <td>29,745</td>
+                <td>0.377</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-8">
+      <header>
+        <div>
+          <h3>원딜 보조 딜탱형</h3>
+          <p>그룹 8 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>14,803</b>판</span>
+          <span><b>0.696</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="13_19">
+              <b>쇼우</b>
+              <small>창</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 스킬딜러</span>
+              <span class="entry-meta">+2.652 · 119판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.893 · 786판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+1.322 · 314판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+0.697 · 4,243판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 스킬딜러</span>
+              <span class="entry-meta">+0.254 · 3,030판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 전사</span>
+              <span class="entry-meta">-7.858 · 74판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">-4.375 · 189판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 전사</span>
+              <span class="entry-meta">-2.423 · 737판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 원거리 딜러</span>
+              <span class="entry-meta">-2.287 · 114판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">-1.544 · 1,108판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>쇼우</td>
+                <td>창</td>
+                <td>14,803</td>
+                <td>0.696</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+      </div>
+    </section>
+  
+    <section class="role-section" id="warriors">
+      <div class="role-heading">
+        <div>
+          <h2>전사</h2>
+          <p>v2_CharacterTrioWeaponSearch_all · 2026-06-15 · minGames 100</p>
+        </div>
+        <div class="role-metrics">
+          <span>22 그룹</span>
+          <span>46명</span>
+          <span>3,142,494판</span>
+        </div>
+      </div>
+      <div class="cards">
+        
+    <article class="group-card" id="group-0">
+      <header>
+        <div>
+          <h3>스증 연계 전사</h3>
+          <p>그룹 0 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>5</b>명</span>
+          <span><b>442,860</b>판</span>
+          <span><b>0.238</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="78_16">
+              <b>히스이</b>
+              <small>양손검</small>
+            </span>
+          
+            <span title="22_3">
+              <b>루크</b>
+              <small>방망이</small>
+            </span>
+          
+            <span title="56_20">
+              <b>피올로</b>
+              <small>쌍절곤</small>
+            </span>
+          
+            <span title="11_18">
+              <b>유키</b>
+              <small>쌍검</small>
+            </span>
+          
+            <span title="28_13">
+              <b>수아</b>
+              <small>망치</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+2.907 · 1,201판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+1.790 · 312판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 지원가</span>
+              <span class="entry-meta">+1.729 · 244판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">+1.689 · 314판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">+1.327 · 12,357판 · 5명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-5.706 · 1,453판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 지원가</span>
+              <span class="entry-meta">-3.426 · 800판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-1.864 · 2,246판 · 4명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">-1.727 · 1,599판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 지원가</span>
+              <span class="entry-meta">-1.709 · 714판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>히스이</td>
+                <td>양손검</td>
+                <td>159,626</td>
+                <td>0.032</td>
+              </tr>
+            
+              <tr>
+                <td>루크</td>
+                <td>방망이</td>
+                <td>134,399</td>
+                <td>-0.217</td>
+              </tr>
+            
+              <tr>
+                <td>피올로</td>
+                <td>쌍절곤</td>
+                <td>72,450</td>
+                <td>1.427</td>
+              </tr>
+            
+              <tr>
+                <td>유키</td>
+                <td>쌍검</td>
+                <td>53,751</td>
+                <td>0.118</td>
+              </tr>
+            
+              <tr>
+                <td>수아</td>
+                <td>망치</td>
+                <td>22,634</td>
+                <td>0.872</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-1">
+      <header>
+        <div>
+          <h3>원딜 연계 전사</h3>
+          <p>그룹 1 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>3</b>명</span>
+          <span><b>330,506</b>판</span>
+          <span><b>0.840</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="67_14">
+              <b>아비게일</b>
+              <small>도끼</small>
+            </span>
+          
+            <span title="59_2">
+              <b>아이작</b>
+              <small>톤파</small>
+            </span>
+          
+            <span title="11_16">
+              <b>유키</b>
+              <small>양손검</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+2.006 · 1,201판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.738 · 22,154판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.659 · 827판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">+1.311 · 280판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+0.934 · 143판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 전사</span>
+              <span class="entry-meta">-4.637 · 122판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 지원가</span>
+              <span class="entry-meta">-3.837 · 308판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 지원가</span>
+              <span class="entry-meta">-2.689 · 343판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">-1.783 · 839판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-1.692 · 2,309판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>아비게일</td>
+                <td>도끼</td>
+                <td>140,438</td>
+                <td>0.758</td>
+              </tr>
+            
+              <tr>
+                <td>아이작</td>
+                <td>톤파</td>
+                <td>98,780</td>
+                <td>0.602</td>
+              </tr>
+            
+              <tr>
+                <td>유키</td>
+                <td>양손검</td>
+                <td>91,288</td>
+                <td>1.223</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-2">
+      <header>
+        <div>
+          <h3>단독 캐리형 전사</h3>
+          <p>그룹 2 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>89,852</b>판</span>
+          <span><b>1.064</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="64_24">
+              <b>바냐</b>
+              <small>아르카나</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 전사 + 지원가</span>
+              <span class="entry-meta">+2.178 · 172판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 전사</span>
+              <span class="entry-meta">+2.064 · 3,846판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">+1.610 · 1,424판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 지원가</span>
+              <span class="entry-meta">+0.936 · 2,653판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+0.771 · 296판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">전사 + 암살자 + 지원가</span>
+              <span class="entry-meta">-7.254 · 129판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-2.962 · 598판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-2.495 · 509판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">-2.330 · 884판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">-1.783 · 2,870판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>바냐</td>
+                <td>아르카나</td>
+                <td>89,852</td>
+                <td>1.064</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-3">
+      <header>
+        <div>
+          <h3>선진입 전사</h3>
+          <p>그룹 3 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>3</b>명</span>
+          <span><b>249,185</b>판</span>
+          <span><b>0.602</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="86_1">
+              <b>펜리르</b>
+              <small>글러브</small>
+            </span>
+          
+            <span title="80_19">
+              <b>이슈트반</b>
+              <small>창</small>
+            </span>
+          
+            <span title="33_1">
+              <b>니키</b>
+              <small>글러브</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+2.294 · 379판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">+2.228 · 884판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+1.944 · 297판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+1.659 · 1,226판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+1.320 · 976판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">전사 + 암살자 + 지원가</span>
+              <span class="entry-meta">-11.767 · 241판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-2.554 · 308판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">-2.536 · 2,326판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 암살자</span>
+              <span class="entry-meta">-2.070 · 6,513판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 지원가</span>
+              <span class="entry-meta">-1.614 · 3,135판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>펜리르</td>
+                <td>글러브</td>
+                <td>89,186</td>
+                <td>0.858</td>
+              </tr>
+            
+              <tr>
+                <td>이슈트반</td>
+                <td>창</td>
+                <td>80,368</td>
+                <td>0.619</td>
+              </tr>
+            
+              <tr>
+                <td>니키</td>
+                <td>글러브</td>
+                <td>79,631</td>
+                <td>0.297</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-4">
+      <header>
+        <div>
+          <h3>암살 연계 전사</h3>
+          <p>그룹 4 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>3</b>명</span>
+          <span><b>37,559</b>판</span>
+          <span><b>0.325</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="1_18">
+              <b>재키</b>
+              <small>쌍검</small>
+            </span>
+          
+            <span title="1_14">
+              <b>재키</b>
+              <small>도끼</small>
+            </span>
+          
+            <span title="3_19">
+              <b>피오라</b>
+              <small>창</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">전사 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">+3.652 · 406판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 원거리 딜러</span>
+              <span class="entry-meta">+2.394 · 593판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 전사</span>
+              <span class="entry-meta">+2.038 · 343판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.970 · 718판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 암살자</span>
+              <span class="entry-meta">+1.940 · 699판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 전사 + 지원가</span>
+              <span class="entry-meta">-7.908 · 138판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">-5.367 · 151판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-4.811 · 101판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">-4.033 · 634판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 암살자</span>
+              <span class="entry-meta">-2.519 · 239판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>재키</td>
+                <td>쌍검</td>
+                <td>20,385</td>
+                <td>0.302</td>
+              </tr>
+            
+              <tr>
+                <td>재키</td>
+                <td>도끼</td>
+                <td>9,648</td>
+                <td>-0.148</td>
+              </tr>
+            
+              <tr>
+                <td>피오라</td>
+                <td>창</td>
+                <td>7,526</td>
+                <td>0.992</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-6">
+      <header>
+        <div>
+          <h3>크랙형 전사</h3>
+          <p>그룹 6 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>3</b>명</span>
+          <span><b>98,637</b>판</span>
+          <span><b>-0.098</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="35_2">
+              <b>얀</b>
+              <small>톤파</small>
+            </span>
+          
+            <span title="10_20">
+              <b>리 다이린</b>
+              <small>쌍절곤</small>
+            </span>
+          
+            <span title="7_2">
+              <b>현우</b>
+              <small>톤파</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">전사 + 전사 + 암살자</span>
+              <span class="entry-meta">+2.976 · 388판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+2.826 · 798판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+2.150 · 131판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+1.867 · 1,298판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 지원가</span>
+              <span class="entry-meta">+1.448 · 1,175판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">-5.468 · 165판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 암살자</span>
+              <span class="entry-meta">-2.910 · 2,140판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">-2.659 · 1,440판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-1.698 · 160판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 스킬딜러</span>
+              <span class="entry-meta">-1.693 · 3,113판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>얀</td>
+                <td>톤파</td>
+                <td>51,952</td>
+                <td>0.175</td>
+              </tr>
+            
+              <tr>
+                <td>리 다이린</td>
+                <td>쌍절곤</td>
+                <td>32,120</td>
+                <td>0.134</td>
+              </tr>
+            
+              <tr>
+                <td>현우</td>
+                <td>톤파</td>
+                <td>14,565</td>
+                <td>-1.582</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-7">
+      <header>
+        <div>
+          <h3>탱커 연계 전사</h3>
+          <p>그룹 7 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>3</b>명</span>
+          <span><b>245,939</b>판</span>
+          <span><b>0.380</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="74_3">
+              <b>다르코</b>
+              <small>방망이</small>
+            </span>
+          
+            <span title="14_21">
+              <b>키아라</b>
+              <small>레이피어</small>
+            </span>
+          
+            <span title="44_25">
+              <b>에키온</b>
+              <small>VF의수</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+2.687 · 135판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">+2.526 · 852판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 전사</span>
+              <span class="entry-meta">+1.742 · 6,729판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 지원가</span>
+              <span class="entry-meta">+1.611 · 100판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.591 · 3,761판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">전사 + 암살자 + 지원가</span>
+              <span class="entry-meta">-4.553 · 123판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-4.376 · 548판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-4.288 · 782판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 지원가</span>
+              <span class="entry-meta">-2.764 · 169판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">-2.500 · 1,522판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>다르코</td>
+                <td>방망이</td>
+                <td>123,102</td>
+                <td>0.360</td>
+              </tr>
+            
+              <tr>
+                <td>키아라</td>
+                <td>레이피어</td>
+                <td>66,107</td>
+                <td>0.662</td>
+              </tr>
+            
+              <tr>
+                <td>에키온</td>
+                <td>VF의수</td>
+                <td>56,730</td>
+                <td>0.094</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-8">
+      <header>
+        <div>
+          <h3>지원가 연계 전사</h3>
+          <p>그룹 8 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>2</b>명</span>
+          <span><b>128,834</b>판</span>
+          <span><b>0.858</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="46_16">
+              <b>에이든</b>
+              <small>양손검</small>
+            </span>
+          
+            <span title="39_18">
+              <b>카밀로</b>
+              <small>쌍검</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 전사 + 지원가</span>
+              <span class="entry-meta">+2.947 · 514판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+2.868 · 558판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">+2.207 · 765판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 지원가</span>
+              <span class="entry-meta">+1.928 · 6,280판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+1.719 · 297판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">-3.695 · 1,104판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 암살자</span>
+              <span class="entry-meta">-2.187 · 3,210판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 지원가</span>
+              <span class="entry-meta">-1.966 · 166판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">-1.587 · 2,048판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-1.269 · 455판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>에이든</td>
+                <td>양손검</td>
+                <td>89,839</td>
+                <td>0.760</td>
+              </tr>
+            
+              <tr>
+                <td>카밀로</td>
+                <td>쌍검</td>
+                <td>38,995</td>
+                <td>1.083</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-9">
+      <header>
+        <div>
+          <h3>핑퐁형 전사</h3>
+          <p>그룹 9 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>3</b>명</span>
+          <span><b>204,333</b>판</span>
+          <span><b>0.879</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="27_null">
+              <b>알렉스</b>
+              <small>톤파 / 암기 / 권총 / 양손검</small>
+            </span>
+          
+            <span title="10_1">
+              <b>리 다이린</b>
+              <small>글러브</small>
+            </span>
+          
+            <span title="35_1">
+              <b>얀</b>
+              <small>글러브</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+3.706 · 324판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+2.448 · 131판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+2.061 · 279판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">+1.884 · 565판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+1.744 · 3,043판 · 3명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-9.323 · 448판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 지원가</span>
+              <span class="entry-meta">-6.445 · 101판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">-4.065 · 152판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-2.328 · 112판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 지원가</span>
+              <span class="entry-meta">-1.861 · 2,237판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>알렉스</td>
+                <td>톤파 / 암기 / 권총 / 양손검</td>
+                <td>104,494</td>
+                <td>1.019</td>
+              </tr>
+            
+              <tr>
+                <td>리 다이린</td>
+                <td>글러브</td>
+                <td>56,052</td>
+                <td>0.893</td>
+              </tr>
+            
+              <tr>
+                <td>얀</td>
+                <td>글러브</td>
+                <td>43,787</td>
+                <td>0.525</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-11">
+      <header>
+        <div>
+          <h3>아웃라이어-레온-글러브</h3>
+          <p>그룹 11 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>74,304</b>판</span>
+          <span><b>1.369</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="29_1">
+              <b>레온</b>
+              <small>글러브</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">전사 + 전사 + 지원가</span>
+              <span class="entry-meta">+2.003 · 1,325판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">+1.866 · 1,292판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+1.650 · 227판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.465 · 388판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 원거리 딜러</span>
+              <span class="entry-meta">+0.681 · 16,502판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-7.143 · 123판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 원거리 딜러</span>
+              <span class="entry-meta">-1.394 · 5,873판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">-0.821 · 321판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">-0.596 · 819판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">-0.366 · 1,932판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>레온</td>
+                <td>글러브</td>
+                <td>74,304</td>
+                <td>1.369</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-13">
+      <header>
+        <div>
+          <h3>탱커 선진입 캐미</h3>
+          <p>그룹 13 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>4</b>명</span>
+          <span><b>268,297</b>판</span>
+          <span><b>0.776</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="88_3">
+              <b>비형</b>
+              <small>방망이</small>
+            </span>
+          
+            <span title="82_21">
+              <b>슈린</b>
+              <small>레이피어</small>
+            </span>
+          
+            <span title="1_16">
+              <b>재키</b>
+              <small>양손검</small>
+            </span>
+          
+            <span title="49_19">
+              <b>펠릭스</b>
+              <small>창</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">전사 + 암살자 + 지원가</span>
+              <span class="entry-meta">+3.856 · 554판 · 4명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">+2.784 · 926판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+2.235 · 575판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">+1.398 · 2,190판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 전사</span>
+              <span class="entry-meta">+1.307 · 7,060판 · 3명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-6.707 · 691판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-4.491 · 1,343판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-2.989 · 1,299판 · 4명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 원거리 딜러</span>
+              <span class="entry-meta">-2.245 · 7,275판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">-1.958 · 2,704판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>비형</td>
+                <td>방망이</td>
+                <td>73,759</td>
+                <td>1.398</td>
+              </tr>
+            
+              <tr>
+                <td>슈린</td>
+                <td>레이피어</td>
+                <td>71,562</td>
+                <td>0.628</td>
+              </tr>
+            
+              <tr>
+                <td>재키</td>
+                <td>양손검</td>
+                <td>62,199</td>
+                <td>0.541</td>
+              </tr>
+            
+              <tr>
+                <td>펠릭스</td>
+                <td>창</td>
+                <td>60,777</td>
+                <td>0.438</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-14">
+      <header>
+        <div>
+          <h3>플렉스 교전 전사</h3>
+          <p>그룹 14 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>3</b>명</span>
+          <span><b>264,406</b>판</span>
+          <span><b>0.294</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="65_16">
+              <b>데비&amp;마를렌</b>
+              <small>양손검</small>
+            </span>
+          
+            <span title="61_5">
+              <b>이렘</b>
+              <small>투척</small>
+            </span>
+          
+            <span title="28_3">
+              <b>수아</b>
+              <small>방망이</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">전사 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">+3.632 · 829판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">+3.311 · 597판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+2.797 · 532판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+2.081 · 597판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+1.932 · 440판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-8.798 · 158판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">-3.283 · 522판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-2.034 · 1,091판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">-1.209 · 4,241판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 지원가</span>
+              <span class="entry-meta">-1.059 · 475판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>데비&amp;마를렌</td>
+                <td>양손검</td>
+                <td>163,863</td>
+                <td>-0.079</td>
+              </tr>
+            
+              <tr>
+                <td>이렘</td>
+                <td>투척</td>
+                <td>61,076</td>
+                <td>0.705</td>
+              </tr>
+            
+              <tr>
+                <td>수아</td>
+                <td>방망이</td>
+                <td>39,467</td>
+                <td>1.207</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-16">
+      <header>
+        <div>
+          <h3>선진입 딜브루저</h3>
+          <p>그룹 16 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>3</b>명</span>
+          <span><b>161,431</b>판</span>
+          <span><b>1.381</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="39_21">
+              <b>카밀로</b>
+              <small>레이피어</small>
+            </span>
+          
+            <span title="63_15">
+              <b>이안</b>
+              <small>단검</small>
+            </span>
+          
+            <span title="3_21">
+              <b>피오라</b>
+              <small>레이피어</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+3.049 · 545판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 지원가</span>
+              <span class="entry-meta">+2.345 · 142판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+2.171 · 248판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">+1.191 · 1,970판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 스킬딜러</span>
+              <span class="entry-meta">+1.184 · 7,747판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">-6.621 · 765판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 지원가</span>
+              <span class="entry-meta">-5.467 · 429판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">-4.020 · 1,750판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">-2.065 · 959판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">-1.592 · 3,050판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>카밀로</td>
+                <td>레이피어</td>
+                <td>57,109</td>
+                <td>1.237</td>
+              </tr>
+            
+              <tr>
+                <td>이안</td>
+                <td>단검</td>
+                <td>56,600</td>
+                <td>1.793</td>
+              </tr>
+            
+              <tr>
+                <td>피오라</td>
+                <td>레이피어</td>
+                <td>47,722</td>
+                <td>1.065</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-17">
+      <header>
+        <div>
+          <h3>아웃라이어-케네스-도끼</h3>
+          <p>그룹 17 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>74,680</b>판</span>
+          <span><b>-0.358</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="71_14">
+              <b>케네스</b>
+              <small>도끼</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 전사 + 전사</span>
+              <span class="entry-meta">+2.098 · 1,086판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.924 · 5,741판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 스킬딜러</span>
+              <span class="entry-meta">+1.385 · 2,773판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+0.849 · 631판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 지원가</span>
+              <span class="entry-meta">+0.743 · 6,953판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">-7.606 · 164판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-6.833 · 814판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 지원가</span>
+              <span class="entry-meta">-4.355 · 367판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 지원가</span>
+              <span class="entry-meta">-1.120 · 306판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 원거리 딜러</span>
+              <span class="entry-meta">-0.904 · 3,254판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>케네스</td>
+                <td>도끼</td>
+                <td>74,680</td>
+                <td>-0.358</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-18">
+      <header>
+        <div>
+          <h3>아웃라이어-재키-단검</h3>
+          <p>그룹 18 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>30,776</b>판</span>
+          <span><b>0.825</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="1_15">
+              <b>재키</b>
+              <small>단검</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+4.063 · 109판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 스킬딜러</span>
+              <span class="entry-meta">+1.167 · 2,792판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 스킬딜러</span>
+              <span class="entry-meta">+1.158 · 8,844판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 암살자</span>
+              <span class="entry-meta">+0.969 · 729판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+0.488 · 205판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">전사 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">-3.897 · 350판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 원거리 딜러</span>
+              <span class="entry-meta">-2.252 · 2,652판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 원거리 딜러</span>
+              <span class="entry-meta">-1.565 · 5,303판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">-1.040 · 173판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 지원가</span>
+              <span class="entry-meta">-0.809 · 618판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>재키</td>
+                <td>단검</td>
+                <td>30,776</td>
+                <td>0.825</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-19">
+      <header>
+        <div>
+          <h3>아웃라이어-실비아-권총</h3>
+          <p>그룹 19 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>66,349</b>판</span>
+          <span><b>0.834</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="16_9">
+              <b>실비아</b>
+              <small>권총</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">전사 + 전사 + 원거리 딜러</span>
+              <span class="entry-meta">+0.910 · 11,201판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">+0.608 · 1,866판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">+0.603 · 779판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 스킬딜러</span>
+              <span class="entry-meta">+0.521 · 14,781판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">+0.375 · 550판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-8.484 · 300판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 지원가</span>
+              <span class="entry-meta">-1.519 · 441판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 전사</span>
+              <span class="entry-meta">-1.210 · 4,568판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-1.011 · 2,545판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 암살자</span>
+              <span class="entry-meta">-0.449 · 2,271판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>실비아</td>
+                <td>권총</td>
+                <td>66,349</td>
+                <td>0.834</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-20">
+      <header>
+        <div>
+          <h3>아웃라이어-피오라-양손검</h3>
+          <p>그룹 20 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>22,826</b>판</span>
+          <span><b>0.450</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="3_16">
+              <b>피오라</b>
+              <small>양손검</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 전사 + 스킬딜러</span>
+              <span class="entry-meta">+1.622 · 1,680판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 스킬딜러</span>
+              <span class="entry-meta">+1.272 · 7,128판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 원거리 딜러</span>
+              <span class="entry-meta">+1.075 · 1,701판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">+1.012 · 565판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 지원가</span>
+              <span class="entry-meta">+0.610 · 578판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-8.250 · 106판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">-4.935 · 371판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 암살자</span>
+              <span class="entry-meta">-3.318 · 601판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 전사</span>
+              <span class="entry-meta">-2.876 · 3,098판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">-2.153 · 231판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>피오라</td>
+                <td>양손검</td>
+                <td>22,826</td>
+                <td>0.450</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-21">
+      <header>
+        <div>
+          <h3>아웃라이어-현우-글러브</h3>
+          <p>그룹 21 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>92,720</b>판</span>
+          <span><b>0.315</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="7_1">
+              <b>현우</b>
+              <small>글러브</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">전사 + 암살자 + 지원가</span>
+              <span class="entry-meta">+3.026 · 304판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 지원가</span>
+              <span class="entry-meta">+2.494 · 1,836판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">+1.723 · 2,953판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+0.758 · 1,297판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 스킬딜러</span>
+              <span class="entry-meta">+0.359 · 26,233판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">-5.523 · 324판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 전사</span>
+              <span class="entry-meta">-3.610 · 288판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-1.986 · 540판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 암살자</span>
+              <span class="entry-meta">-0.930 · 2,051판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 전사</span>
+              <span class="entry-meta">-0.797 · 2,512판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>현우</td>
+                <td>글러브</td>
+                <td>92,720</td>
+                <td>0.315</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-22">
+      <header>
+        <div>
+          <h3>아웃라이어-레온-톤파</h3>
+          <p>그룹 22 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>17,799</b>판</span>
+          <span><b>1.400</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="29_2">
+              <b>레온</b>
+              <small>톤파</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.359 · 538판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 원거리 딜러</span>
+              <span class="entry-meta">+0.850 · 856판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+0.751 · 2,984판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 스킬딜러</span>
+              <span class="entry-meta">+0.400 · 4,269판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 전사</span>
+              <span class="entry-meta">+0.171 · 2,068판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">전사 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">-5.323 · 265판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 스킬딜러</span>
+              <span class="entry-meta">-2.408 · 548판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 전사</span>
+              <span class="entry-meta">-1.835 · 322판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">-0.944 · 226판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 암살자</span>
+              <span class="entry-meta">-0.868 · 394판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>레온</td>
+                <td>톤파</td>
+                <td>17,799</td>
+                <td>1.400</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-23">
+      <header>
+        <div>
+          <h3>아웃라이어-라우라-채찍</h3>
+          <p>그룹 23 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>63,671</b>판</span>
+          <span><b>0.683</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="47_4">
+              <b>라우라</b>
+              <small>채찍</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+1.635 · 122판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 암살자</span>
+              <span class="entry-meta">+1.152 · 1,654판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 스킬딜러</span>
+              <span class="entry-meta">+1.029 · 3,502판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 지원가</span>
+              <span class="entry-meta">+0.841 · 1,332판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">+0.730 · 1,366판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-5.823 · 221판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 원거리 딜러</span>
+              <span class="entry-meta">-1.316 · 4,016판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">-1.200 · 849판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-0.956 · 348판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">-0.899 · 220판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>라우라</td>
+                <td>채찍</td>
+                <td>63,671</td>
+                <td>0.683</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-24">
+      <header>
+        <div>
+          <h3>아웃라이어-블레어-쌍검</h3>
+          <p>그룹 24 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>102,850</b>판</span>
+          <span><b>0.194</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="84_18">
+              <b>블레어</b>
+              <small>쌍검</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">전사 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">+2.624 · 1,554판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+1.965 · 1,238판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+1.421 · 922판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+0.829 · 901판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 암살자</span>
+              <span class="entry-meta">+0.651 · 2,392판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">-4.079 · 622판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-1.687 · 466판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">-1.124 · 2,156판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 원거리 딜러</span>
+              <span class="entry-meta">-0.687 · 18,015판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-0.322 · 3,343판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>블레어</td>
+                <td>쌍검</td>
+                <td>102,850</td>
+                <td>0.194</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-26">
+      <header>
+        <div>
+          <h3>흡혈 진입 브루저</h3>
+          <p>그룹 26 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>74,680</b>판</span>
+          <span><b>1.105</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="42_24">
+              <b>비앙카</b>
+              <small>아르카나</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 전사 + 암살자</span>
+              <span class="entry-meta">+0.950 · 546판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 원거리 딜러</span>
+              <span class="entry-meta">+0.865 · 14,343판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 전사</span>
+              <span class="entry-meta">+0.550 · 25,517판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">전사 + 전사 + 지원가</span>
+              <span class="entry-meta">-13.079 · 225판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">-2.602 · 679판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 스킬딜러</span>
+              <span class="entry-meta">-1.739 · 2,728판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 암살자</span>
+              <span class="entry-meta">-1.332 · 3,886판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-1.129 · 1,592판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>비앙카</td>
+                <td>아르카나</td>
+                <td>74,680</td>
+                <td>1.105</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+      </div>
+    </section>
+  
+    <section class="role-section" id="assassins">
+      <div class="role-heading">
+        <div>
+          <h2>암살자</h2>
+          <p>v2_CharacterTrioWeaponSearch_all · 2026-06-15 · minGames 30</p>
+        </div>
+        <div class="role-metrics">
+          <span>1 그룹</span>
+          <span>4명</span>
+          <span>213,325판</span>
+        </div>
+      </div>
+      <div class="cards">
+        
+    <article class="group-card" id="group-0">
+      <header>
+        <div>
+          <h3>암살자 전체</h3>
+          <p>그룹 0 · 자동/임시 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>4</b>명</span>
+          <span><b>213,325</b>판</span>
+          <span><b>-0.099</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="18_15">
+              <b>쇼이치</b>
+              <small>단검</small>
+            </span>
+          
+            <span title="37_15">
+              <b>다니엘</b>
+              <small>단검</small>
+            </span>
+          
+            <span title="23_15">
+              <b>캐시</b>
+              <small>단검</small>
+            </span>
+          
+            <span title="23_18">
+              <b>캐시</b>
+              <small>쌍검</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 암살자</span>
+              <span class="entry-meta">+5.698 · 41판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+2.264 · 90판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 암살자</span>
+              <span class="entry-meta">+1.408 · 2,075판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+1.297 · 469판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 지원가</span>
+              <span class="entry-meta">+1.210 · 531판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">암살자 + 암살자 + 지원가</span>
+              <span class="entry-meta">-14.500 · 41판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-6.509 · 555판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 암살자</span>
+              <span class="entry-meta">-4.837 · 3,196판 · 4명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 암살자 + 암살자</span>
+              <span class="entry-meta">-4.583 · 144판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">-2.741 · 345판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>쇼이치</td>
+                <td>단검</td>
+                <td>121,763</td>
+                <td>-0.508</td>
+              </tr>
+            
+              <tr>
+                <td>다니엘</td>
+                <td>단검</td>
+                <td>45,989</td>
+                <td>0.158</td>
+              </tr>
+            
+              <tr>
+                <td>캐시</td>
+                <td>단검</td>
+                <td>31,947</td>
+                <td>0.739</td>
+              </tr>
+            
+              <tr>
+                <td>캐시</td>
+                <td>쌍검</td>
+                <td>13,626</td>
+                <td>0.731</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+      </div>
+    </section>
+  
+    <section class="role-section" id="skilldealers">
+      <div class="role-heading">
+        <div>
+          <h2>스킬딜러</h2>
+          <p>v2_CharacterTrioWeaponSearch_all · 2026-06-15 · minGames 30</p>
+        </div>
+        <div class="role-metrics">
+          <span>11 그룹</span>
+          <span>33명</span>
+          <span>1,709,493판</span>
+        </div>
+      </div>
+      <div class="cards">
+        
+    <article class="group-card" id="group-0">
+      <header>
+        <div>
+          <h3>설치 포킹형</h3>
+          <p>그룹 0 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>3</b>명</span>
+          <span><b>293,152</b>판</span>
+          <span><b>0.255</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="87_24">
+              <b>코렐라인</b>
+              <small>아르카나</small>
+            </span>
+          
+            <span title="26_9">
+              <b>바바라</b>
+              <small>권총</small>
+            </span>
+          
+            <span title="83_6">
+              <b>헨리</b>
+              <small>암기</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">암살자 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">+2.813 · 57판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">+1.492 · 1,452판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+0.960 · 409판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 스킬딜러</span>
+              <span class="entry-meta">+0.884 · 81판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+0.738 · 537판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-22.869 · 106판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-8.628 · 198판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 스킬딜러</span>
+              <span class="entry-meta">-5.751 · 318판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">-4.436 · 667판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-4.435 · 205판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>코렐라인</td>
+                <td>아르카나</td>
+                <td>101,759</td>
+                <td>-1.012</td>
+              </tr>
+            
+              <tr>
+                <td>바바라</td>
+                <td>권총</td>
+                <td>96,332</td>
+                <td>0.499</td>
+              </tr>
+            
+              <tr>
+                <td>헨리</td>
+                <td>암기</td>
+                <td>95,061</td>
+                <td>1.364</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-1">
+      <header>
+        <div>
+          <h3>지원가 포킹 연계형</h3>
+          <p>그룹 1 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>6</b>명</span>
+          <span><b>341,647</b>판</span>
+          <span><b>1.042</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="75_22">
+              <b>르노어</b>
+              <small>기타</small>
+            </span>
+          
+            <span title="36_5">
+              <b>이바</b>
+              <small>투척</small>
+            </span>
+          
+            <span title="34_23">
+              <b>나타폰</b>
+              <small>카메라</small>
+            </span>
+          
+            <span title="2_9">
+              <b>아야</b>
+              <small>권총</small>
+            </span>
+          
+            <span title="54_8">
+              <b>칼라</b>
+              <small>석궁</small>
+            </span>
+          
+            <span title="12_7">
+              <b>혜진</b>
+              <small>활</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+4.342 · 451판 · 4명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 스킬딜러</span>
+              <span class="entry-meta">+2.417 · 405판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+2.077 · 233판 · 4명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.320 · 936판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">+1.146 · 2,866판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-13.875 · 163판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-8.126 · 85판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 스킬딜러</span>
+              <span class="entry-meta">-5.308 · 383판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-4.908 · 165판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-4.754 · 1,279판 · 6명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>르노어</td>
+                <td>기타</td>
+                <td>79,603</td>
+                <td>1.403</td>
+              </tr>
+            
+              <tr>
+                <td>이바</td>
+                <td>투척</td>
+                <td>63,280</td>
+                <td>0.695</td>
+              </tr>
+            
+              <tr>
+                <td>나타폰</td>
+                <td>카메라</td>
+                <td>55,002</td>
+                <td>1.678</td>
+              </tr>
+            
+              <tr>
+                <td>아야</td>
+                <td>권총</td>
+                <td>51,966</td>
+                <td>1.136</td>
+              </tr>
+            
+              <tr>
+                <td>칼라</td>
+                <td>석궁</td>
+                <td>48,215</td>
+                <td>0.310</td>
+              </tr>
+            
+              <tr>
+                <td>혜진</td>
+                <td>활</td>
+                <td>43,581</td>
+                <td>0.778</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-2">
+      <header>
+        <div>
+          <h3>전사 변수 교전형</h3>
+          <p>그룹 2 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>2</b>명</span>
+          <span><b>127,425</b>판</span>
+          <span><b>0.772</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="16_9">
+              <b>실비아</b>
+              <small>권총</small>
+            </span>
+          
+            <span title="61_5">
+              <b>이렘</b>
+              <small>투척</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+3.582 · 229판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+2.797 · 532판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 전사</span>
+              <span class="entry-meta">+2.685 · 64판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">+2.165 · 1,608판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 지원가</span>
+              <span class="entry-meta">+1.707 · 35판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">전사 + 암살자 + 암살자</span>
+              <span class="entry-meta">-25.721 · 42판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 전사</span>
+              <span class="entry-meta">-11.234 · 50판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-8.484 · 300판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-6.958 · 94판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 지원가</span>
+              <span class="entry-meta">-4.360 · 44판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>실비아</td>
+                <td>권총</td>
+                <td>66,349</td>
+                <td>0.834</td>
+              </tr>
+            
+              <tr>
+                <td>이렘</td>
+                <td>투척</td>
+                <td>61,076</td>
+                <td>0.705</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-3">
+      <header>
+        <div>
+          <h3>암살 폭딜 연계형</h3>
+          <p>그룹 3 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>4</b>명</span>
+          <span><b>131,252</b>판</span>
+          <span><b>1.118</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="52_24">
+              <b>아디나</b>
+              <small>아르카나</small>
+            </span>
+          
+            <span title="43_5">
+              <b>셀린</b>
+              <small>투척</small>
+            </span>
+          
+            <span title="5_6">
+              <b>자히르</b>
+              <small>암기</small>
+            </span>
+          
+            <span title="19_24">
+              <b>엠마</b>
+              <small>아르카나</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+5.599 · 197판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+4.346 · 81판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+3.260 · 337판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+3.117 · 444판 · 4명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">+3.060 · 593판 · 3명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">-9.527 · 116판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-9.433 · 34판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-5.534 · 480판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 스킬딜러</span>
+              <span class="entry-meta">-5.098 · 269판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">-3.637 · 700판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>아디나</td>
+                <td>아르카나</td>
+                <td>46,657</td>
+                <td>1.100</td>
+              </tr>
+            
+              <tr>
+                <td>셀린</td>
+                <td>투척</td>
+                <td>44,842</td>
+                <td>1.048</td>
+              </tr>
+            
+              <tr>
+                <td>자히르</td>
+                <td>암기</td>
+                <td>21,539</td>
+                <td>2.002</td>
+              </tr>
+            
+              <tr>
+                <td>엠마</td>
+                <td>아르카나</td>
+                <td>18,214</td>
+                <td>0.291</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-4">
+      <header>
+        <div>
+          <h3>스증 중첩 견제형</h3>
+          <p>그룹 4 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>3</b>명</span>
+          <span><b>110,314</b>판</span>
+          <span><b>0.081</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="19_6">
+              <b>엠마</b>
+              <small>암기</small>
+            </span>
+          
+            <span title="15_6">
+              <b>시셀라</b>
+              <small>암기</small>
+            </span>
+          
+            <span title="15_5">
+              <b>시셀라</b>
+              <small>투척</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 스킬딜러</span>
+              <span class="entry-meta">+3.588 · 173판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+2.594 · 57판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+2.539 · 332판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">+2.492 · 140판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+2.414 · 835판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-19.313 · 39판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-6.221 · 258판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-5.226 · 185판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-3.757 · 98판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">-2.636 · 626판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>엠마</td>
+                <td>암기</td>
+                <td>41,055</td>
+                <td>-0.074</td>
+              </tr>
+            
+              <tr>
+                <td>시셀라</td>
+                <td>암기</td>
+                <td>37,681</td>
+                <td>0.368</td>
+              </tr>
+            
+              <tr>
+                <td>시셀라</td>
+                <td>투척</td>
+                <td>31,578</td>
+                <td>-0.059</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-5">
+      <header>
+        <div>
+          <h3>암살 연계 교전형</h3>
+          <p>그룹 5 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>2</b>명</span>
+          <span><b>56,403</b>판</span>
+          <span><b>1.288</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="24_21">
+              <b>아델라</b>
+              <small>레이피어</small>
+            </span>
+          
+            <span title="60_6">
+              <b>타지아</b>
+              <small>암기</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+3.730 · 130판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+3.464 · 378판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+2.517 · 361판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">+2.028 · 543판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+1.579 · 100판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">-4.755 · 459판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">-3.998 · 1,401판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-2.818 · 31판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">-2.384 · 3,691판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-1.377 · 71판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>아델라</td>
+                <td>레이피어</td>
+                <td>28,400</td>
+                <td>1.621</td>
+              </tr>
+            
+              <tr>
+                <td>타지아</td>
+                <td>암기</td>
+                <td>28,003</td>
+                <td>0.950</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-6">
+      <header>
+        <div>
+          <h3>전사 유틸 교전형</h3>
+          <p>그룹 6 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>3</b>명</span>
+          <span><b>179,400</b>판</span>
+          <span><b>0.024</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="79_8">
+              <b>유스티나</b>
+              <small>석궁</small>
+            </span>
+          
+            <span title="66_24">
+              <b>아르다</b>
+              <small>아르카나</small>
+            </span>
+          
+            <span title="9_9">
+              <b>아이솔</b>
+              <small>권총</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">암살자 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">+5.467 · 42판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+1.738 · 127판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">+1.338 · 1,780판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 스킬딜러</span>
+              <span class="entry-meta">+1.241 · 215판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.182 · 5,095판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-19.188 · 115판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-7.156 · 307판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-3.734 · 34판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">-3.531 · 1,897판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">-2.923 · 724판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>유스티나</td>
+                <td>석궁</td>
+                <td>78,148</td>
+                <td>-0.821</td>
+              </tr>
+            
+              <tr>
+                <td>아르다</td>
+                <td>아르카나</td>
+                <td>66,310</td>
+                <td>1.195</td>
+              </tr>
+            
+              <tr>
+                <td>아이솔</td>
+                <td>권총</td>
+                <td>34,942</td>
+                <td>-0.306</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-7">
+      <header>
+        <div>
+          <h3>전사-지원 연계형</h3>
+          <p>그룹 7 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>2</b>명</span>
+          <span><b>148,689</b>판</span>
+          <span><b>0.784</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="77_24">
+              <b>유민</b>
+              <small>아르카나</small>
+            </span>
+          
+            <span title="6_7">
+              <b>나딘</b>
+              <small>활</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">암살자 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">+4.532 · 45판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+2.166 · 62판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+1.226 · 233판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">+1.150 · 4,243판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">+0.988 · 3,137판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 스킬딜러</span>
+              <span class="entry-meta">-7.713 · 69판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-6.416 · 444판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">-2.304 · 3,756판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-1.923 · 718판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">-1.349 · 831판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>유민</td>
+                <td>아르카나</td>
+                <td>118,411</td>
+                <td>1.001</td>
+              </tr>
+            
+              <tr>
+                <td>나딘</td>
+                <td>활</td>
+                <td>30,278</td>
+                <td>-0.065</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-8">
+      <header>
+        <div>
+          <h3>전열 CC 견제형</h3>
+          <p>그룹 8 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>2</b>명</span>
+          <span><b>121,051</b>판</span>
+          <span><b>0.755</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="48_3">
+              <b>띠아</b>
+              <small>방망이</small>
+            </span>
+          
+            <span title="17_5">
+              <b>아드리아나</b>
+              <small>투척</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+2.877 · 205판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.920 · 601판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.533 · 487판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 스킬딜러</span>
+              <span class="entry-meta">+1.430 · 5,124판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+0.990 · 465판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-10.845 · 87판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 스킬딜러</span>
+              <span class="entry-meta">-5.162 · 115판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-3.859 · 231판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">-3.394 · 1,341판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">-3.193 · 753판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>띠아</td>
+                <td>방망이</td>
+                <td>63,374</td>
+                <td>1.050</td>
+              </tr>
+            
+              <tr>
+                <td>아드리아나</td>
+                <td>투척</td>
+                <td>57,677</td>
+                <td>0.430</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-9">
+      <header>
+        <div>
+          <h3>암살 변수 포킹형</h3>
+          <p>그룹 9 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>3</b>명</span>
+          <span><b>101,919</b>판</span>
+          <span><b>0.770</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="81_9">
+              <b>니아</b>
+              <small>권총</small>
+            </span>
+          
+            <span title="5_5">
+              <b>자히르</b>
+              <small>투척</small>
+            </span>
+          
+            <span title="12_6">
+              <b>혜진</b>
+              <small>암기</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 스킬딜러</span>
+              <span class="entry-meta">+9.003 · 48판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+3.151 · 154판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">+2.952 · 476판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">+2.072 · 1,694판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+2.050 · 44판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-27.012 · 66판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-20.936 · 75판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-12.574 · 76판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 스킬딜러</span>
+              <span class="entry-meta">-7.951 · 175판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-5.615 · 247판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>니아</td>
+                <td>권총</td>
+                <td>75,503</td>
+                <td>0.581</td>
+              </tr>
+            
+              <tr>
+                <td>자히르</td>
+                <td>투척</td>
+                <td>15,978</td>
+                <td>1.546</td>
+              </tr>
+            
+              <tr>
+                <td>혜진</td>
+                <td>암기</td>
+                <td>10,438</td>
+                <td>0.946</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-10">
+      <header>
+        <div>
+          <h3>지원 변수 포킹형</h3>
+          <p>그룹 10 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>3</b>명</span>
+          <span><b>98,241</b>판</span>
+          <span><b>0.273</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="2_11">
+              <b>아야</b>
+              <small>저격총</small>
+            </span>
+          
+            <span title="51_22">
+              <b>프리야</b>
+              <small>기타</small>
+            </span>
+          
+            <span title="24_3">
+              <b>아델라</b>
+              <small>방망이</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">+3.691 · 326판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 스킬딜러</span>
+              <span class="entry-meta">+3.576 · 302판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+3.008 · 58판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.749 · 432판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 스킬딜러</span>
+              <span class="entry-meta">+1.641 · 1,588판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-13.381 · 118판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-4.478 · 81판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-3.472 · 1,125판 · 3명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 스킬딜러</span>
+              <span class="entry-meta">-3.258 · 115판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-2.717 · 41판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>아야</td>
+                <td>저격총</td>
+                <td>53,776</td>
+                <td>0.396</td>
+              </tr>
+            
+              <tr>
+                <td>프리야</td>
+                <td>기타</td>
+                <td>29,917</td>
+                <td>-0.035</td>
+              </tr>
+            
+              <tr>
+                <td>아델라</td>
+                <td>방망이</td>
+                <td>14,548</td>
+                <td>0.452</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+      </div>
+    </section>
+  
+    <section class="role-section" id="rangers">
+      <div class="role-heading">
+        <div>
+          <h2>원거리 딜러</h2>
+          <p>v2_CharacterTrioWeaponSearch_all · 2026-06-15 · minGames 30</p>
+        </div>
+        <div class="role-metrics">
+          <span>9 그룹</span>
+          <span>14명</span>
+          <span>1,076,948판</span>
+        </div>
+      </div>
+      <div class="cards">
+        
+    <article class="group-card" id="group-0">
+      <header>
+        <div>
+          <h3>쌍포-다원딜형</h3>
+          <p>그룹 0 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>196,126</b>판</span>
+          <span><b>0.172</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="72_11">
+              <b>카티야</b>
+              <small>저격총</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+2.104 · 358판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+0.610 · 3,717판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+0.583 · 416판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+0.501 · 42,051판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+0.435 · 31,195판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">암살자 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-26.548 · 52판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">-22.871 · 34판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-6.781 · 175판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-6.693 · 128판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 원거리 딜러</span>
+              <span class="entry-meta">-4.833 · 712판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>카티야</td>
+                <td>저격총</td>
+                <td>196,126</td>
+                <td>0.172</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-1">
+      <header>
+        <div>
+          <h3>전열-스증 압박형</h3>
+          <p>그룹 1 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>2</b>명</span>
+          <span><b>168,269</b>판</span>
+          <span><b>1.280</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="70_6">
+              <b>츠바메</b>
+              <small>암기</small>
+            </span>
+          
+            <span title="9_10">
+              <b>아이솔</b>
+              <small>돌격 소총</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">암살자 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+2.449 · 47판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+2.037 · 1,108판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+0.819 · 26,585판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 원거리 딜러</span>
+              <span class="entry-meta">+0.605 · 15,317판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 원거리 딜러</span>
+              <span class="entry-meta">+0.437 · 262판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-11.121 · 207판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-6.826 · 143판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-5.484 · 304판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-3.507 · 189판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-3.241 · 394판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>츠바메</td>
+                <td>암기</td>
+                <td>95,613</td>
+                <td>1.050</td>
+              </tr>
+            
+              <tr>
+                <td>아이솔</td>
+                <td>돌격 소총</td>
+                <td>72,656</td>
+                <td>1.582</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-2">
+      <header>
+        <div>
+          <h3>변수 캐리형</h3>
+          <p>그룹 2 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>2</b>명</span>
+          <span><b>206,545</b>판</span>
+          <span><b>0.308</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="31_7">
+              <b>리오</b>
+              <small>활</small>
+            </span>
+          
+            <span title="32_5">
+              <b>윌리엄</b>
+              <small>투척</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+2.642 · 549판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+2.271 · 31판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.815 · 645판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.628 · 64판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.572 · 931판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-14.411 · 91판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-10.874 · 174판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-2.385 · 5,733판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-2.361 · 186판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-2.100 · 2,012판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>리오</td>
+                <td>활</td>
+                <td>149,887</td>
+                <td>0.231</td>
+              </tr>
+            
+              <tr>
+                <td>윌리엄</td>
+                <td>투척</td>
+                <td>56,658</td>
+                <td>0.512</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-3">
+      <header>
+        <div>
+          <h3>다원딜 받아치기형</h3>
+          <p>그룹 3 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>2</b>명</span>
+          <span><b>108,625</b>판</span>
+          <span><b>0.747</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="2_10">
+              <b>아야</b>
+              <small>돌격 소총</small>
+            </span>
+          
+            <span title="8_22">
+              <b>하트</b>
+              <small>기타</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+4.928 · 88판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+3.164 · 400판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+2.539 · 43판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+2.424 · 311판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.748 · 163판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-9.290 · 306판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 원거리 딜러</span>
+              <span class="entry-meta">-8.651 · 323판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-3.322 · 1,270판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-3.121 · 606판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-2.396 · 75판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>아야</td>
+                <td>돌격 소총</td>
+                <td>72,050</td>
+                <td>0.939</td>
+              </tr>
+            
+              <tr>
+                <td>하트</td>
+                <td>기타</td>
+                <td>36,575</td>
+                <td>0.369</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-4">
+      <header>
+        <div>
+          <h3>전사-암살 변수형</h3>
+          <p>그룹 4 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>2</b>명</span>
+          <span><b>91,059</b>판</span>
+          <span><b>0.733</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="6_8">
+              <b>나딘</b>
+              <small>석궁</small>
+            </span>
+          
+            <span title="38_9">
+              <b>제니</b>
+              <small>권총</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+4.476 · 269판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+2.999 · 95판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.162 · 4,019판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+1.093 · 851판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+0.850 · 4,276판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">암살자 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-9.467 · 127판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-7.856 · 131판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-5.444 · 1,296판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-2.153 · 3,887판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 원거리 딜러</span>
+              <span class="entry-meta">-2.129 · 234판 · 2명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>나딘</td>
+                <td>석궁</td>
+                <td>62,655</td>
+                <td>0.867</td>
+              </tr>
+            
+              <tr>
+                <td>제니</td>
+                <td>권총</td>
+                <td>28,404</td>
+                <td>0.437</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-5">
+      <header>
+        <div>
+          <h3>기동 포킹형</h3>
+          <p>그룹 5 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>2</b>명</span>
+          <span><b>132,165</b>판</span>
+          <span><b>0.783</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="21_9">
+              <b>로지</b>
+              <small>권총</small>
+            </span>
+          
+            <span title="57_23">
+              <b>마르티나</b>
+              <small>카메라</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 원거리 딜러</span>
+              <span class="entry-meta">+2.729 · 63판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+2.658 · 68판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+2.170 · 148판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+2.140 · 170판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.442 · 846판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-12.351 · 283판 · 2명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-10.261 · 212판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-6.152 · 204판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-5.702 · 78판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 원거리 딜러</span>
+              <span class="entry-meta">-2.352 · 3,585판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>로지</td>
+                <td>권총</td>
+                <td>105,336</td>
+                <td>0.873</td>
+              </tr>
+            
+              <tr>
+                <td>마르티나</td>
+                <td>카메라</td>
+                <td>26,829</td>
+                <td>0.428</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-6">
+      <header>
+        <div>
+          <h3>저격 견제형</h3>
+          <p>그룹 6 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>63,577</b>판</span>
+          <span><b>0.398</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="25_11">
+              <b>버니스</b>
+              <small>저격총</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+4.746 · 97판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+2.382 · 129판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+2.263 · 837판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.260 · 484판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+1.189 · 4,173판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">암살자 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-8.594 · 107판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-2.673 · 198판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">-2.504 · 2,277판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 원거리 딜러</span>
+              <span class="entry-meta">-2.021 · 132판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-1.543 · 1,269판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>버니스</td>
+                <td>저격총</td>
+                <td>63,577</td>
+                <td>0.398</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-7">
+      <header>
+        <div>
+          <h3>전열 유지 견제형</h3>
+          <p>그룹 7 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>63,508</b>판</span>
+          <span><b>1.044</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="62_11">
+              <b>테오도르</b>
+              <small>저격총</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">암살자 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+3.487 · 63판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+3.125 · 61판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+2.457 · 119판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+1.232 · 391판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+0.932 · 299판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-6.240 · 151판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-5.887 · 31판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 원거리 딜러</span>
+              <span class="entry-meta">-3.379 · 277판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">-2.278 · 924판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-2.124 · 2,615판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>테오도르</td>
+                <td>저격총</td>
+                <td>63,508</td>
+                <td>1.044</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-8">
+      <header>
+        <div>
+          <h3>교전 브루저형</h3>
+          <p>그룹 8 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>47,074</b>판</span>
+          <span><b>1.649</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="40_6">
+              <b>클로에</b>
+              <small>암기</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">암살자 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">+3.054 · 108판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+2.947 · 75판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+2.668 · 784판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+1.687 · 86판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 원거리 딜러</span>
+              <span class="entry-meta">+1.039 · 624판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">암살자 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-22.066 · 33판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 원거리 딜러</span>
+              <span class="entry-meta">-13.466 · 96판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-3.942 · 163판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-3.706 · 127판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 스킬딜러 + 원거리 딜러</span>
+              <span class="entry-meta">-1.546 · 410판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>클로에</td>
+                <td>암기</td>
+                <td>47,074</td>
+                <td>1.649</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+      </div>
+    </section>
+  
+    <section class="role-section" id="supports">
+      <div class="role-heading">
+        <div>
+          <h2>지원가</h2>
+          <p>v2_CharacterTrioWeaponSearch_all · 2026-06-15 · minGames 30</p>
+        </div>
+        <div class="role-metrics">
+          <span>3 그룹</span>
+          <span>3명</span>
+          <span>110,023판</span>
+        </div>
+      </div>
+      <div class="cards">
+        
+    <article class="group-card" id="group-0">
+      <header>
+        <div>
+          <h3>탱커 연계 지원가</h3>
+          <p>그룹 0 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>68,408</b>판</span>
+          <span><b>0.029</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="69_9">
+              <b>레니</b>
+              <small>권총</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">탱커 + 탱커 + 지원가</span>
+              <span class="entry-meta">+1.753 · 313판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 지원가</span>
+              <span class="entry-meta">+0.612 · 41,959판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+0.502 · 154판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 전사 + 지원가</span>
+              <span class="entry-meta">+0.211 · 7,187판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">원거리 딜러 + 지원가 + 지원가</span>
+              <span class="entry-meta">-33.780 · 46판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 암살자 + 지원가</span>
+              <span class="entry-meta">-19.524 · 33판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 지원가 + 지원가</span>
+              <span class="entry-meta">-12.228 · 129판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-10.790 · 289판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 지원가 + 지원가</span>
+              <span class="entry-meta">-7.565 · 51판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>레니</td>
+                <td>권총</td>
+                <td>68,408</td>
+                <td>0.029</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-1">
+      <header>
+        <div>
+          <h3>딜러 연계 지원가</h3>
+          <p>그룹 1 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>23,939</b>판</span>
+          <span><b>0.924</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="41_24">
+              <b>요한</b>
+              <small>아르카나</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">스킬딜러 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+1.959 · 245판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 지원가</span>
+              <span class="entry-meta">+1.845 · 51판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+1.138 · 6,640판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+0.468 · 3,160판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+0.154 · 1,261판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">탱커 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">-8.705 · 300판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 지원가 + 지원가</span>
+              <span class="entry-meta">-5.177 · 50판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-4.619 · 124판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-3.065 · 1,268판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-1.514 · 281판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>요한</td>
+                <td>아르카나</td>
+                <td>23,939</td>
+                <td>0.924</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+    <article class="group-card" id="group-2">
+      <header>
+        <div>
+          <h3>전열 보조 지원가</h3>
+          <p>그룹 2 · 수동 라벨</p>
+        </div>
+        <div class="metrics">
+          <span><b>1</b>명</span>
+          <span><b>17,676</b>판</span>
+          <span><b>-1.799</b> RP</span>
+        </div>
+      </header>
+      
+    <div class="member-chips">
+      
+            <span title="73_24">
+              <b>샬럿</b>
+              <small>아르카나</small>
+            </span>
+          
+    </div>
+  
+      <div class="grid">
+        <section>
+          <h4>강한 조합 유형</h4>
+          
+    <ol class="entry-list strong">
+      
+            <li>
+              <span class="entry-name">원거리 딜러 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+5.416 · 313판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 전사 + 지원가</span>
+              <span class="entry-meta">+1.104 · 5,356판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 스킬딜러 + 지원가</span>
+              <span class="entry-meta">+1.032 · 2,323판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">+0.116 · 5,124판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+        <section>
+          <h4>약한 조합 유형</h4>
+          
+    <ol class="entry-list weak">
+      
+            <li>
+              <span class="entry-name">원거리 딜러 + 지원가 + 지원가</span>
+              <span class="entry-meta">-32.222 · 47판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">탱커 + 암살자 + 지원가</span>
+              <span class="entry-meta">-16.213 · 53판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">전사 + 지원가 + 지원가</span>
+              <span class="entry-meta">-10.332 · 121판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">암살자 + 원거리 딜러 + 지원가</span>
+              <span class="entry-meta">-8.376 · 213판 · 1명</span>
+            </li>
+          
+            <li>
+              <span class="entry-name">스킬딜러 + 지원가 + 지원가</span>
+              <span class="entry-meta">-6.264 · 44판 · 1명</span>
+            </li>
+          
+    </ol>
+  
+        </section>
+      </div>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>실험체</th>
+          <th>무기</th>
+          <th>게임</th>
+          <th>평균 RP</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+              <tr>
+                <td>샬럿</td>
+                <td>아르카나</td>
+                <td>17,676</td>
+                <td>-1.799</td>
+              </tr>
+            
+      </tbody>
+    </table>
+  
+    </article>
+  
+      </div>
+    </section>
+  
+  </main>
+</body>
+</html>
