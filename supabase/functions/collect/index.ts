@@ -2,7 +2,7 @@
  * ER&GG v2.2 수집 Edge Function
  *
  * pg_cron으로 3분마다 호출.
- * 듀얼 워커: forward (신규 게임 → old + v2_) / backfill (과거 → v2_ only)
+ * forward worker: 신규 게임 → old + v2_
  *
  * v2.2: BULK RPC 최적화
  *   - 게임당 1 RPC → 사이클당 1~2 RPC (패치버전별 그룹)
@@ -14,22 +14,19 @@ import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createSupabaseClient } from "../_shared/supabase.ts";
 import {
   fetchGame,
-  fetchGamesForward,
-  fetchGamesBackward,
   fetchTopRanks,
 } from "../_shared/bser-api.ts";
-import { getCollectableTiers, TierGroup } from "../_shared/tier-utils.ts";
+import { getCollectableTiers } from "../_shared/tier-utils.ts";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // ── 상수 ──────────────────────────────────────────────────
 const SEASON_ID = 39;
 const TEAM_MODE = 3; // 스쿼드
-const TOTAL_BUDGET_MS = 135_000; // Edge Function 총 예산 135초 (2분 15초)
-const FORWARD2_BUDGET_MS = 135_000; // forward2 최대 (RECENT 도달 시 즉시 중단)
-const FORWARD2_START_GAME = 58540099;
+const FORWARD_BUDGET_MS = 135_000; // forward 최대 (RECENT 도달 시 즉시 중단)
+const FORWARD_START_GAME = 58540099;
 const BATCH_LIMIT = 150;
-const STABLE_DELAY_MS = 1 * 60 * 60 * 1000; // 최근 1시간 이내 게임은 중단 → 백필 전환
+const STABLE_DELAY_MS = 1 * 60 * 60 * 1000; // 최근 1시간 이내 게임은 아직 변동 가능하므로 중단
 
 // ── 타입 ──────────────────────────────────────────────────
 interface Participant {
@@ -71,6 +68,19 @@ interface ParsedGame {
   patchVersion: string;
   participants: any[];
   trios: any[];
+}
+
+interface PatchVersionRow {
+  version: string;
+  startDate: string;
+  endDate?: string | null;
+  isActive?: boolean | null;
+}
+
+interface PatchInterval {
+  version: string;
+  start: Date;
+  end: Date;
 }
 
 // ── 유틸 ──────────────────────────────────────────────────
@@ -170,17 +180,68 @@ function skillOrderToArray(info: Record<string, number>): number[] {
     .map(([, v]) => v);
 }
 
+function normalizePatchVersion(value: unknown): string | null {
+  if (value === null || value === undefined) return null;
+  const raw = String(value).trim();
+  const match = raw.match(/(\d{1,2})\.(\d{1,2})/);
+  return match ? `${Number(match[1])}.${Number(match[2])}` : null;
+}
+
+function extractGamePatchVersion(gameDetail: any): string | null {
+  const first = Array.isArray(gameDetail?.userGames) ? gameDetail.userGames[0] : null;
+  const sources = [
+    gameDetail?.patchVersion,
+    gameDetail?.patch_version,
+    first?.patchVersion,
+    first?.patch_version,
+  ];
+
+  for (const source of sources) {
+    const normalized = normalizePatchVersion(source);
+    if (normalized) return normalized;
+  }
+
+  return null;
+}
+
+function buildPatchIntervals(patchRows: PatchVersionRow[]): PatchInterval[] {
+  const sorted = patchRows
+    .map((patch) => ({
+      version: patch.version,
+      start: new Date(patch.startDate),
+      explicitEnd: patch.endDate ? new Date(patch.endDate) : null,
+    }))
+    .filter((patch) => patch.version && !isNaN(patch.start.getTime()))
+    .sort((a, b) => a.start.getTime() - b.start.getTime());
+
+  return sorted.map((patch, index) => {
+    const nextStart = sorted[index + 1]?.start ?? null;
+    const explicitEnd =
+      patch.explicitEnd && !isNaN(patch.explicitEnd.getTime()) ? patch.explicitEnd : null;
+    const end = nextStart ?? explicitEnd ?? new Date("2099-12-31T00:00:00.000Z");
+    return { version: patch.version, start: patch.start, end };
+  });
+}
+
 /**
- * 패치 버전 결정: startDtm → PatchVersion 테이블에서 매칭
+ * 패치 버전 결정:
+ * 1) 게임 payload의 패치 필드가 있으면 우선 사용
+ * 2) 없으면 startDtm을 PatchVersion startDate half-open interval로 매칭
+ *
+ * endDate가 비어 있는 과거 row가 있어도 다음 patch startDate로 닫아서 active patch 오분류를 막는다.
  */
 function resolvePatchVersion(
+  gameDetail: any,
   startDate: Date,
-  patchCache: any[]
+  patchIntervals: PatchInterval[]
 ): string | null {
-  for (const p of patchCache) {
-    const start = new Date(p.startDate);
-    const end = p.endDate ? new Date(p.endDate) : new Date("2099-12-31");
-    if (startDate >= start && startDate <= end) return p.version;
+  const fromPayload = extractGamePatchVersion(gameDetail);
+  if (fromPayload && patchIntervals.some((patch) => patch.version === fromPayload)) {
+    return fromPayload;
+  }
+
+  for (const patch of patchIntervals) {
+    if (startDate >= patch.start && startDate < patch.end) return patch.version;
   }
   return null;
 }
@@ -211,7 +272,7 @@ function extractLegendarySlots(
 
 function parseGameData(
   gameDetail: any,
-  patchCache: any[],
+  patchIntervals: PatchInterval[],
   rank1000MMR: number | null,
   isForward: boolean
 ): ParsedGame | null | "RECENT" {
@@ -230,7 +291,7 @@ function parseGameData(
     return "RECENT";
   }
 
-  const patchVersion = resolvePatchVersion(startDate, patchCache);
+  const patchVersion = resolvePatchVersion(gameDetail, startDate, patchIntervals);
   if (!patchVersion) return null;
 
   // 참가자 파싱
@@ -388,6 +449,11 @@ serve(async (req: Request) => {
       return new Response(JSON.stringify({ error: "패치 버전 없음" }), { status: 500 });
     }
 
+    const patchIntervals = buildPatchIntervals(patchCache as PatchVersionRow[]);
+    if (patchIntervals.length === 0) {
+      return new Response(JSON.stringify({ error: "유효한 패치 버전 범위 없음" }), { status: 500 });
+    }
+
     const currentPatch = patchCache.find((p: any) => p.isActive)?.version ?? patchCache[0].version;
     console.log(`[Collect] 현재 패치: ${currentPatch}, 총 ${patchCache.length}개`);
 
@@ -429,75 +495,47 @@ serve(async (req: Request) => {
       .from("v2_CollectionStatus")
       .select("*");
 
-    const oldForwardStatus = statuses?.find((s: any) => s.worker_type === "forward");
-    let forward2Status = statuses?.find((s: any) => s.worker_type === "forward2");
-    let gapBackfillStatus = statuses?.find((s: any) => s.worker_type === "gap_backfill");
-    let backfillStatus = statuses?.find((s: any) => s.worker_type === "backfill");
+    let forwardStatus = statuses?.find((s: any) => s.worker_type === "forward");
 
-    // 기존 forward의 마지막 위치 (gap_backfill 목표선)
-    const oldForwardGameNumber = oldForwardStatus?.last_game_number ?? 0;
-    if (oldForwardGameNumber > 0) {
-      console.log(`[Collect] 기존 forward 위치: ${oldForwardGameNumber} (gap_backfill 목표선)`);
-    }
-
-    // forward2 워커 초기화
-    if (!forward2Status) {
+    if (!forwardStatus) {
       const { data } = await supabase
         .from("v2_CollectionStatus")
         .insert({
-          worker_type: "forward2",
-          last_game_number: FORWARD2_START_GAME,
+          worker_type: "forward",
+          last_game_number: FORWARD_START_GAME,
           current_patch_version: currentPatch,
           status: "active",
         })
         .select()
         .single();
-      forward2Status = data;
-      console.log(`[Collect] forward2 워커 초기화: gameNumber=${FORWARD2_START_GAME}`);
+      forwardStatus = data;
+      console.log(`[Forward] 워커 초기화: gameNumber=${FORWARD_START_GAME}`);
     }
 
-    // gap_backfill 워커 초기화 (58540099 → 기존 forward 위치까지 역방향)
-    if (!gapBackfillStatus) {
-      const { data } = await supabase
-        .from("v2_CollectionStatus")
-        .insert({
-          worker_type: "gap_backfill",
-          last_game_number: FORWARD2_START_GAME,
-          current_patch_version: currentPatch,
-          status: oldForwardGameNumber > 0 ? "active" : "completed",
-        })
-        .select()
-        .single();
-      gapBackfillStatus = data;
-      console.log(`[Collect] gap_backfill 워커 초기화: gameNumber=${FORWARD2_START_GAME}, 목표=${oldForwardGameNumber}`);
-    }
+    // ── 4. Forward 워커 (신규 게임 → v2_) ─────────────────
+    let forwardCollected = 0;
+    let forwardSkipped = 0;
+    let forwardFailed = 0;
+    let forwardHitRecent = false;
 
-    // ── 4b. Forward2 워커 (58540099부터 → v2_, 메인) ────
-    let forward2Collected = 0;
-    let forward2Skipped = 0;
-    let forward2Failed = 0;
-    let forward2HitRecent = false;
-    let forward2RemainingMs = 0;
-
-    if (forward2Status?.status === "active") {
-      const forward2StartMs = Date.now();
-      let currentGame = (forward2Status.last_game_number ?? FORWARD2_START_GAME) + 1;
-      console.log(`[Forward2] 시작: gameNumber=${currentGame}`);
+    if (forwardStatus?.status === "active") {
+      const forwardStartMs = Date.now();
+      let currentGame = (forwardStatus.last_game_number ?? FORWARD_START_GAME) + 1;
+      console.log(`[Forward] 시작: gameNumber=${currentGame}`);
 
       const byPatch = new Map<string, { participants: any[]; trios: any[] }>();
       let lastGameNumber = currentGame - 1;
 
       for (let i = 0; i < BATCH_LIMIT; i++) {
-        if (Date.now() - forward2StartMs >= FORWARD2_BUDGET_MS) break;
+        if (Date.now() - forwardStartMs >= FORWARD_BUDGET_MS) break;
 
         try {
           const game = await fetchGame(currentGame);
           if (game !== null) {
-            const parsed = parseGameData(game, patchCache, rank1000MMR, true);
+            const parsed = parseGameData(game, patchIntervals, rank1000MMR, true);
             if (parsed === "RECENT") {
-              forward2HitRecent = true;
-              forward2RemainingMs = FORWARD2_BUDGET_MS - (Date.now() - forward2StartMs);
-              console.log(`[Forward2] 최근 1시간 이내 게임 도달, 남은 ${Math.round(forward2RemainingMs / 1000)}초를 백필에 전환`);
+              forwardHitRecent = true;
+              console.log("[Forward] 최근 1시간 이내 게임 도달, 수집 중단");
               lastGameNumber = currentGame;
               break;
             }
@@ -506,14 +544,14 @@ serve(async (req: Request) => {
               group.participants.push(...parsed.participants);
               group.trios.push(...parsed.trios);
               byPatch.set(parsed.patchVersion, group);
-              forward2Collected++;
+              forwardCollected++;
             } else {
-              forward2Skipped++;
+              forwardSkipped++;
             }
           }
         } catch (e) {
-          forward2Failed++;
-          console.error("[Forward2] parseGameData error:", e);
+          forwardFailed++;
+          console.error("[Forward] parseGameData error:", e);
         }
 
         lastGameNumber = currentGame;
@@ -522,9 +560,9 @@ serve(async (req: Request) => {
       }
 
       if (byPatch.size > 0) {
-        console.log(`[Forward2] 배치 RPC: ${byPatch.size}개 패치, 총 ${[...byPatch.values()].reduce((s, g) => s + g.participants.length, 0)}명 참가자`);
+        console.log(`[Forward] 배치 RPC: ${byPatch.size}개 패치, 총 ${[...byPatch.values()].reduce((s, g) => s + g.participants.length, 0)}명 참가자`);
         const { fail } = await flushBatchRPC(supabase, byPatch, true);
-        forward2Failed += fail;
+        forwardFailed += fail;
       }
 
       await supabase
@@ -533,171 +571,27 @@ serve(async (req: Request) => {
           last_game_number: lastGameNumber,
           last_game_id: String(lastGameNumber),
           current_patch_version: currentPatch,
-          total_collected: (forward2Status.total_collected ?? 0) + forward2Collected,
-          total_skipped: (forward2Status.total_skipped ?? 0) + forward2Skipped,
-          consecutive_failures: forward2Failed > 0 ? (forward2Status.consecutive_failures ?? 0) + forward2Failed : 0,
+          total_collected: (forwardStatus.total_collected ?? 0) + forwardCollected,
+          total_skipped: (forwardStatus.total_skipped ?? 0) + forwardSkipped,
+          consecutive_failures: forwardFailed > 0 ? (forwardStatus.consecutive_failures ?? 0) + forwardFailed : 0,
           updated_at: new Date().toISOString(),
         })
-        .eq("worker_type", "forward2");
+        .eq("worker_type", "forward");
 
-      console.log(`[Forward2] 완료: collected=${forward2Collected}, skipped=${forward2Skipped}, failed=${forward2Failed}, lastGame=${lastGameNumber}, hitRecent=${forward2HitRecent}`);
+      console.log(`[Forward] 완료: collected=${forwardCollected}, skipped=${forwardSkipped}, failed=${forwardFailed}, lastGame=${lastGameNumber}, hitRecent=${forwardHitRecent}`);
     }
 
-    // ── 5. Backfill (forward2 잔여 시간에만 실행) ──────
-    let backfillCollected = 0;
-    let backfillSkipped = 0;
-    let backfillFailed = 0;
-    let backfillPhase = "";
-
-    const elapsedMs = Date.now() - startTime;
-    const backfillTotalBudgetMs = forward2HitRecent
-      ? Math.max(0, TOTAL_BUDGET_MS - elapsedMs - 5_000) // 총 예산 - forward2 소모 - 5초 여유
-      : 0;
-
-    if (backfillTotalBudgetMs > 0) {
-      // Phase 1: gap_backfill (58540099 → 기존 forward 위치)
-      if (gapBackfillStatus?.status === "active" && oldForwardGameNumber > 0) {
-        backfillPhase = "gap";
-        const beforeGame = gapBackfillStatus.last_game_number ?? FORWARD2_START_GAME;
-        console.log(`[GapBackfill] 시작: ${beforeGame} → 목표 ${oldForwardGameNumber}, budget=${Math.round(backfillTotalBudgetMs / 1000)}초`);
-
-        if (beforeGame <= oldForwardGameNumber) {
-          // 갭 채우기 완료
-          await supabase
-            .from("v2_CollectionStatus")
-            .update({ status: "completed", updated_at: new Date().toISOString() })
-            .eq("worker_type", "gap_backfill");
-          console.log("[GapBackfill] 완료: 기존 forward 위치 도달");
-        } else {
-          const { games, lastGameNumber } = await fetchGamesBackward(
-            beforeGame,
-            BATCH_LIMIT,
-            backfillTotalBudgetMs
-          );
-
-          const byPatch = new Map<string, { participants: any[]; trios: any[] }>();
-          for (const game of games) {
-            try {
-              const parsed = parseGameData(game, patchCache, rank1000MMR, false);
-              if (parsed) {
-                const group = byPatch.get(parsed.patchVersion) || { participants: [], trios: [] };
-                group.participants.push(...parsed.participants);
-                group.trios.push(...parsed.trios);
-                byPatch.set(parsed.patchVersion, group);
-                backfillCollected++;
-              } else {
-                backfillSkipped++;
-              }
-            } catch (e) {
-              backfillFailed++;
-              console.error("[GapBackfill] parseGameData error:", e);
-            }
-          }
-
-          if (byPatch.size > 0) {
-            console.log(`[GapBackfill] 배치 RPC: ${byPatch.size}개 패치, 총 ${[...byPatch.values()].reduce((s, g) => s + g.participants.length, 0)}명 참가자`);
-            const { fail } = await flushBatchRPC(supabase, byPatch, false);
-            backfillFailed += fail;
-          }
-
-          // 목표 도달 체크
-          const reachedTarget = lastGameNumber <= oldForwardGameNumber;
-          await supabase
-            .from("v2_CollectionStatus")
-            .update({
-              last_game_number: lastGameNumber,
-              last_game_id: String(lastGameNumber),
-              current_patch_version: currentPatch,
-              total_collected: (gapBackfillStatus.total_collected ?? 0) + backfillCollected,
-              total_skipped: (gapBackfillStatus.total_skipped ?? 0) + backfillSkipped,
-              consecutive_failures: backfillFailed > 0 ? (gapBackfillStatus.consecutive_failures ?? 0) + backfillFailed : 0,
-              status: reachedTarget ? "completed" : "active",
-              updated_at: new Date().toISOString(),
-            })
-            .eq("worker_type", "gap_backfill");
-
-          console.log(`[GapBackfill] 완료: collected=${backfillCollected}, lastGame=${lastGameNumber}, 목표도달=${reachedTarget}`);
-        }
-      }
-      // Phase 2: 기존 backfill (gap 완료 후, 기존 위치에서 계속 역방향)
-      else if (backfillStatus?.status === "active") {
-        backfillPhase = "deep";
-        const beforeGame = backfillStatus.last_game_number ?? 0;
-        console.log(`[Backfill] Deep 시작: beforeGameNumber=${beforeGame}, budget=${Math.round(backfillTotalBudgetMs / 1000)}초`);
-
-        if (beforeGame <= 1) {
-          await supabase
-            .from("v2_CollectionStatus")
-            .update({ status: "completed", updated_at: new Date().toISOString() })
-            .eq("worker_type", "backfill");
-          console.log("[Backfill] 완료: 더 이상 과거 데이터 없음");
-        } else {
-          const { games, lastGameNumber } = await fetchGamesBackward(
-            beforeGame,
-            BATCH_LIMIT,
-            backfillTotalBudgetMs
-          );
-
-          const byPatch = new Map<string, { participants: any[]; trios: any[] }>();
-          for (const game of games) {
-            try {
-              const parsed = parseGameData(game, patchCache, rank1000MMR, false);
-              if (parsed) {
-                const group = byPatch.get(parsed.patchVersion) || { participants: [], trios: [] };
-                group.participants.push(...parsed.participants);
-                group.trios.push(...parsed.trios);
-                byPatch.set(parsed.patchVersion, group);
-                backfillCollected++;
-              } else {
-                backfillSkipped++;
-              }
-            } catch (e) {
-              backfillFailed++;
-              console.error("[Backfill] parseGameData error:", e);
-            }
-          }
-
-          if (byPatch.size > 0) {
-            console.log(`[Backfill] 배치 RPC: ${byPatch.size}개 패치, 총 ${[...byPatch.values()].reduce((s, g) => s + g.participants.length, 0)}명 참가자`);
-            const { fail } = await flushBatchRPC(supabase, byPatch, false);
-            backfillFailed += fail;
-          }
-
-          await supabase
-            .from("v2_CollectionStatus")
-            .update({
-              last_game_number: lastGameNumber,
-              last_game_id: String(lastGameNumber),
-              current_patch_version: currentPatch,
-              total_collected: (backfillStatus.total_collected ?? 0) + backfillCollected,
-              total_skipped: (backfillStatus.total_skipped ?? 0) + backfillSkipped,
-              consecutive_failures: backfillFailed > 0 ? (backfillStatus.consecutive_failures ?? 0) + backfillFailed : 0,
-              updated_at: new Date().toISOString(),
-            })
-            .eq("worker_type", "backfill");
-
-          console.log(`[Backfill] Deep 완료: collected=${backfillCollected}, lastGame=${lastGameNumber}`);
-        }
-      }
-    }
-
-    // ── 6. 결과 반환 ────────────────────────────────────
+    // ── 5. 결과 반환 ────────────────────────────────────
     const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
     const result = {
       success: true,
       totalTime: `${totalTime}s`,
       currentPatch,
       rank1000MMR,
-      forward2: {
-        collected: forward2Collected,
-        skipped: forward2Skipped,
-        failed: forward2Failed,
-      },
-      backfill: {
-        phase: backfillPhase || "skipped",
-        collected: backfillCollected,
-        skipped: backfillSkipped,
-        failed: backfillFailed,
+      forward: {
+        collected: forwardCollected,
+        skipped: forwardSkipped,
+        failed: forwardFailed,
       },
     };
 

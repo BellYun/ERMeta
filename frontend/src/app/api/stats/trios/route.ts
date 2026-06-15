@@ -2,21 +2,18 @@ import { unstable_cache } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { getCacheHeaders, SERVER_ERROR_HEADERS, withCacheObservability } from "@/lib/cache";
 import { createServerClient } from "@/lib/supabase";
-import { TierGroup } from "@/utils/tier";
 
-// 다이아 이상 티어 전체
-const DIAMOND_PLUS_TIERS: TierGroup[] = [TierGroup.DIAMOND, TierGroup.METEORITE, TierGroup.MITHRIL];
 const TRIO_MEMBER_COUNT = 3;
 const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]); // Dr. 하나, 나쟈
+const TRIO_WEAPON_SEARCH_TABLE = "v2_CharacterTrioWeaponSearch_all";
+const SEARCH_SELECT = "ally1_char,ally2_char,third_char,total_games,total_wins,total_rp,rank_sum";
+const TRIOS_CACHE_VERSION = "v2";
 
-// .or() 한 번에 character1/2/3 세 컬럼 OR 절을 던지면 인기 캐릭(예: 자히르=1)에서
-// PostgREST statement_timeout 초과 → 500. 컬럼당 단일 인덱스만 쓰는 .eq() 3쿼리
-// Promise.all 병렬로 분해.
-const PARALLEL_FETCH_LIMIT = 2000;
+const DB_PAGE_SIZE = 1000;
+const PARALLEL_FETCH_LIMIT = 5000;
 const FULL_FETCH_LIMIT = 5000;
 
-// L1 캐시 TTL — source 가 사전 집계 테이블(v2_CharacterTrio)이고 tag-based
-// invalidation 으로 즉시 갱신되므로 7d 로 매우 길게. TTL 은 webhook 실패 시 safety net.
+// L1 캐시 TTL — source 가 사전 집계 검색 테이블이고 tag-based invalidation 으로 갱신됨.
 const L1_REVALIDATE_SEC = 7 * 24 * 3600;
 
 type SortBy = "averageRP" | "winRate" | "averageRank" | "totalGames" | "recommended";
@@ -72,16 +69,27 @@ function recommendedScore(
   return 0.6 * normalizedRP + 0.3 * wilson + 0.1 * rScore;
 }
 
-interface TrioRow {
-  tier: string;
-  character1: number;
-  character2: number;
-  character3: number;
-  winRate: number;
-  averageRP: number;
-  totalGames: number;
-  averageRank: number;
+interface TrioSearchRow {
+  ally1_char: number;
+  ally2_char: number;
+  third_char: number;
+  total_games: number;
+  total_wins: number;
+  total_rp: number;
+  rank_sum: number;
 }
+
+type SearchPositionColumn = "ally1_char" | "ally2_char" | "third_char";
+type TrioSearchPairPosition = {
+  charColumn1: SearchPositionColumn;
+  charColumn2: SearchPositionColumn;
+};
+
+const TRIO_SEARCH_PAIR_POSITIONS: readonly TrioSearchPairPosition[] = [
+  { charColumn1: "ally1_char", charColumn2: "ally2_char" },
+  { charColumn1: "ally1_char", charColumn2: "third_char" },
+  { charColumn1: "ally2_char", charColumn2: "third_char" },
+];
 
 interface AggregatedTrio {
   character1: number;
@@ -93,7 +101,23 @@ interface AggregatedTrio {
   averageRank: number;
 }
 
-function aggregateByTrio(rows: TrioRow[]): AggregatedTrio[] {
+function normalizeCharacters(row: TrioSearchRow): [number, number, number] {
+  return [row.ally1_char, row.ally2_char, row.third_char].sort((a, b) => a - b) as [
+    number,
+    number,
+    number,
+  ];
+}
+
+function trioKeyFromCharacters(characters: readonly [number, number, number]): string {
+  return characters.join("-");
+}
+
+function searchRowKey(row: TrioSearchRow): string {
+  return `${row.ally1_char}|${row.ally2_char}|${row.third_char}`;
+}
+
+function aggregateByTrio(rows: TrioSearchRow[]): AggregatedTrio[] {
   const map = new Map<
     string,
     {
@@ -101,30 +125,31 @@ function aggregateByTrio(rows: TrioRow[]): AggregatedTrio[] {
       c2: number;
       c3: number;
       totalGames: number;
-      winRateWeighted: number;
-      avgRPWeighted: number;
-      avgRankWeighted: number;
+      totalWins: number;
+      totalRP: number;
+      rankSum: number;
     }
   >();
 
   for (const row of rows) {
-    const key = `${row.character1}-${row.character2}-${row.character3}`;
+    const [c1, c2, c3] = normalizeCharacters(row);
+    const key = trioKeyFromCharacters([c1, c2, c3]);
     const existing = map.get(key);
     if (!existing) {
       map.set(key, {
-        c1: row.character1,
-        c2: row.character2,
-        c3: row.character3,
-        totalGames: row.totalGames,
-        winRateWeighted: row.winRate * row.totalGames,
-        avgRPWeighted: row.averageRP * row.totalGames,
-        avgRankWeighted: row.averageRank * row.totalGames,
+        c1,
+        c2,
+        c3,
+        totalGames: row.total_games,
+        totalWins: row.total_wins,
+        totalRP: row.total_rp,
+        rankSum: row.rank_sum,
       });
     } else {
-      existing.totalGames += row.totalGames;
-      existing.winRateWeighted += row.winRate * row.totalGames;
-      existing.avgRPWeighted += row.averageRP * row.totalGames;
-      existing.avgRankWeighted += row.averageRank * row.totalGames;
+      existing.totalGames += row.total_games;
+      existing.totalWins += row.total_wins;
+      existing.totalRP += row.total_rp;
+      existing.rankSum += row.rank_sum;
     }
   }
 
@@ -133,14 +158,40 @@ function aggregateByTrio(rows: TrioRow[]): AggregatedTrio[] {
     character2: v.c2,
     character3: v.c3,
     totalGames: v.totalGames,
-    winRate: v.totalGames > 0 ? v.winRateWeighted / v.totalGames : 0,
-    averageRP: v.totalGames > 0 ? v.avgRPWeighted / v.totalGames / TRIO_MEMBER_COUNT : 0,
-    averageRank: v.totalGames > 0 ? v.avgRankWeighted / v.totalGames : 0,
+    winRate: v.totalGames > 0 ? (v.totalWins / v.totalGames) * 100 : 0,
+    averageRP: v.totalGames > 0 ? v.totalRP / v.totalGames / TRIO_MEMBER_COUNT : 0,
+    averageRank: v.totalGames > 0 ? v.rankSum / v.totalGames : 0,
   }));
 }
 
-function rowKey(row: TrioRow): string {
-  return `${row.tier}|${row.character1}|${row.character2}|${row.character3}`;
+function hasExcludedCharacter(row: TrioSearchRow): boolean {
+  return (
+    EXCLUDED_CHARACTER_CODES.has(row.ally1_char) ||
+    EXCLUDED_CHARACTER_CODES.has(row.ally2_char) ||
+    EXCLUDED_CHARACTER_CODES.has(row.third_char)
+  );
+}
+
+async function fetchSearchRows(
+  fetchPage: (
+    offset: number,
+    pageEnd: number
+  ) => PromiseLike<{ data: unknown[] | null; error: unknown }>,
+  fetchLimit: number
+): Promise<TrioSearchRow[]> {
+  const rows: TrioSearchRow[] = [];
+
+  for (let offset = 0; offset < fetchLimit; offset += DB_PAGE_SIZE) {
+    const pageEnd = Math.min(offset + DB_PAGE_SIZE, fetchLimit) - 1;
+    const { data, error } = await fetchPage(offset, pageEnd);
+    if (error) throw error;
+
+    const pageRows = (data ?? []) as TrioSearchRow[];
+    rows.push(...pageRows);
+    if (pageRows.length < DB_PAGE_SIZE) break;
+  }
+
+  return rows;
 }
 
 /**
@@ -154,64 +205,77 @@ async function fetchAndAggregateTrios(
   char2: number | null
 ): Promise<AggregatedTrio[]> {
   const supabase = createServerClient();
-  const select = "tier,character1,character2,character3,winRate,averageRP,totalGames,averageRank";
-
-  const baseQuery = (perQueryLimit: number) =>
-    supabase
-      .from("v2_CharacterTrio")
-      .select(select)
-      .in("tier", DIAMOND_PLUS_TIERS)
-      .order("totalGames", { ascending: false })
-      .limit(perQueryLimit);
-
-  let rows: TrioRow[] = [];
+  let rows: TrioSearchRow[] = [];
 
   if (char1 != null && char2 != null) {
-    const results = await Promise.all([
-      baseQuery(PARALLEL_FETCH_LIMIT).eq("character1", char1).eq("character2", char2),
-      baseQuery(PARALLEL_FETCH_LIMIT).eq("character1", char1).eq("character3", char2),
-      baseQuery(PARALLEL_FETCH_LIMIT).eq("character2", char1).eq("character3", char2),
-    ]);
-    for (const r of results) {
-      if (r.error) throw r.error;
-      rows.push(...((r.data ?? []) as TrioRow[]));
-    }
-    const seen = new Set<string>();
-    rows = rows.filter((row) => {
-      const k = rowKey(row);
-      if (seen.has(k)) return false;
-      seen.add(k);
-      return true;
-    });
+    rows = (
+      await Promise.all(
+        TRIO_SEARCH_PAIR_POSITIONS.map((position) =>
+          fetchSearchRows(
+            (offset, pageEnd) =>
+              supabase
+                .from(TRIO_WEAPON_SEARCH_TABLE)
+                .select(SEARCH_SELECT)
+                .eq(position.charColumn1, char1)
+                .eq(position.charColumn2, char2)
+                .order("total_games", { ascending: false })
+                .range(offset, pageEnd),
+            FULL_FETCH_LIMIT
+          )
+        )
+      )
+    ).flat();
   } else if (char1 != null) {
     const results = await Promise.all([
-      baseQuery(PARALLEL_FETCH_LIMIT).eq("character1", char1),
-      baseQuery(PARALLEL_FETCH_LIMIT).eq("character2", char1),
-      baseQuery(PARALLEL_FETCH_LIMIT).eq("character3", char1),
+      fetchSearchRows(
+        (offset, pageEnd) =>
+          supabase
+            .from(TRIO_WEAPON_SEARCH_TABLE)
+            .select(SEARCH_SELECT)
+            .eq("ally1_char", char1)
+            .range(offset, pageEnd),
+        PARALLEL_FETCH_LIMIT
+      ),
+      fetchSearchRows(
+        (offset, pageEnd) =>
+          supabase
+            .from(TRIO_WEAPON_SEARCH_TABLE)
+            .select(SEARCH_SELECT)
+            .eq("ally2_char", char1)
+            .range(offset, pageEnd),
+        PARALLEL_FETCH_LIMIT
+      ),
+      fetchSearchRows(
+        (offset, pageEnd) =>
+          supabase
+            .from(TRIO_WEAPON_SEARCH_TABLE)
+            .select(SEARCH_SELECT)
+            .eq("third_char", char1)
+            .range(offset, pageEnd),
+        PARALLEL_FETCH_LIMIT
+      ),
     ]);
-    for (const r of results) {
-      if (r.error) throw r.error;
-      rows.push(...((r.data ?? []) as TrioRow[]));
-    }
+    rows = results.flat();
     const seen = new Set<string>();
     rows = rows.filter((row) => {
-      const k = rowKey(row);
+      const k = searchRowKey(row);
       if (seen.has(k)) return false;
       seen.add(k);
       return true;
     });
   } else {
-    const { data, error } = await baseQuery(FULL_FETCH_LIMIT);
-    if (error) throw error;
-    rows = (data ?? []) as TrioRow[];
+    rows = await fetchSearchRows(
+      (offset, pageEnd) =>
+        supabase
+          .from(TRIO_WEAPON_SEARCH_TABLE)
+          .select(SEARCH_SELECT)
+          .order("total_games", { ascending: false })
+          .range(offset, pageEnd),
+      FULL_FETCH_LIMIT
+    );
   }
 
-  const filteredRows = rows.filter(
-    (row) =>
-      !EXCLUDED_CHARACTER_CODES.has(row.character1) &&
-      !EXCLUDED_CHARACTER_CODES.has(row.character2) &&
-      !EXCLUDED_CHARACTER_CODES.has(row.character3)
-  );
+  const filteredRows = rows.filter((row) => !hasExcludedCharacter(row));
 
   return aggregateByTrio(filteredRows);
 }
@@ -232,7 +296,7 @@ function getCachedAggregatedTrios(
 
   return unstable_cache(
     () => fetchAndAggregateTrios(char1, char2),
-    ["trios-aggregated", c1Key, c2Key],
+    ["trios-aggregated", TRIOS_CACHE_VERSION, c1Key, c2Key],
     {
       revalidate: L1_REVALIDATE_SEC,
       tags,

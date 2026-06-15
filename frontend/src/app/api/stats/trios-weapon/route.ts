@@ -7,7 +7,7 @@ import { TierGroup } from "@/utils/tier";
 
 const DIAMOND_PLUS_TIERS: TierGroup[] = [TierGroup.DIAMOND, TierGroup.METEORITE, TierGroup.MITHRIL];
 const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]);
-const TRIO_WEAPON_SEARCH_P10_TABLE = "v2_CharacterTrioWeaponSearch_p10";
+const TRIO_WEAPON_SEARCH_TABLE = "v2_CharacterTrioWeaponSearch_all";
 const TRIO_WEAPON_TABLE = "v2_CharacterTrioWeapon";
 const SUPPLEMENTAL_PATCH_VERSIONS = ["11.1", "11.2", "11.3"];
 
@@ -19,9 +19,9 @@ const PARALLEL_FETCH_LIMIT = 5000;
 const FULL_FETCH_LIMIT = 5000;
 const EXACT_PAIR_WEAPON_FETCH_LIMIT = 20000;
 const MAX_RESPONSE_LIMIT = FULL_FETCH_LIMIT;
-const TRIO_WEAPON_CACHE_VERSION = "v6";
+const TRIO_WEAPON_CACHE_VERSION = "v7";
 
-// L1 캐시 TTL — source 가 사전 집계 테이블(v2_CharacterTrioWeapon* / _p10)이고
+// L1 캐시 TTL — source 가 사전 집계 테이블(v2_CharacterTrioWeapon* / search_all)이고
 // tag-based invalidation 으로 즉시 갱신되므로 7d. 카디널리티가 가장 큰 라우트라
 // 한번 채워진 항목을 최대한 오래 유지해 hit rate 극대화. 무기/sortBy/limit 은 캐시 외부.
 const L1_REVALIDATE_SEC = 7 * 24 * 3600;
@@ -124,6 +124,13 @@ interface TrioWeaponMember {
 }
 
 type SearchPositionColumn = "ally1_char" | "ally2_char" | "third_char";
+type SearchColumn = keyof TrioWeaponSearchRow;
+type TrioWeaponSearchPairPosition = {
+  charColumn1: SearchPositionColumn;
+  weaponColumn1: SearchColumn;
+  charColumn2: SearchPositionColumn;
+  weaponColumn2: SearchColumn;
+};
 type TrioWeaponPositionColumn = "character1" | "character2" | "character3";
 type TrioWeaponColumn = keyof TrioWeaponRow;
 type TrioWeaponPairPosition = {
@@ -135,6 +142,27 @@ type TrioWeaponPairPosition = {
 
 const TRIO_WEAPON_SELECT =
   "tier,character1,weapon_type1,character2,weapon_type2,character3,weapon_type3,main_core1,main_core2,main_core3,total_games,total_wins,total_rp,rank_sum";
+
+const TRIO_WEAPON_SEARCH_PAIR_POSITIONS: readonly TrioWeaponSearchPairPosition[] = [
+  {
+    charColumn1: "ally1_char",
+    weaponColumn1: "ally1_weapon",
+    charColumn2: "ally2_char",
+    weaponColumn2: "ally2_weapon",
+  },
+  {
+    charColumn1: "ally1_char",
+    weaponColumn1: "ally1_weapon",
+    charColumn2: "third_char",
+    weaponColumn2: "third_weapon",
+  },
+  {
+    charColumn1: "ally2_char",
+    weaponColumn1: "ally2_weapon",
+    charColumn2: "third_char",
+    weaponColumn2: "third_weapon",
+  },
+];
 
 const TRIO_WEAPON_PAIR_POSITIONS: readonly TrioWeaponPairPosition[] = [
   {
@@ -532,10 +560,32 @@ async function safeFetchSupplemental(
   }
 }
 
+async function fetchSearchRows(
+  fetchPage: (
+    offset: number,
+    pageEnd: number
+  ) => PromiseLike<{ data: unknown[] | null; error: unknown }>,
+  fetchLimit: number
+): Promise<TrioWeaponSearchRow[]> {
+  const rows: TrioWeaponSearchRow[] = [];
+
+  for (let offset = 0; offset < fetchLimit; offset += DB_PAGE_SIZE) {
+    const pageEnd = Math.min(offset + DB_PAGE_SIZE, fetchLimit) - 1;
+    const { data, error } = await fetchPage(offset, pageEnd);
+    if (error) throw error;
+
+    const pageRows = (data ?? []) as TrioWeaponSearchRow[];
+    rows.push(...pageRows);
+    if (pageRows.length < DB_PAGE_SIZE) break;
+  }
+
+  return rows;
+}
+
 // ─── DB fetch + 집계 — 기본 분기는 무기 필터를 캐시 외부에서 적용해 L1 키 카디널리티 압축 ──
 
 /**
- * 페어(char1+char2) — p10 테이블에서 (char1, char2) 위치 매칭만으로 fetch.
+ * 페어(char1+char2) — all 검색 테이블에서 (char1, char2) 위치 매칭만으로 fetch.
  * 무기 필터는 캐시 외부에서 JS-side 로 적용.
  * char1 < char2 정규화 후 호출.
  */
@@ -543,23 +593,23 @@ async function fetchTrioWeaponPair(char1: number, char2: number): Promise<Aggreg
   const supabase = createServerClient();
   const searchSelect =
     "ally1_char,ally1_weapon,ally1_core,ally2_char,ally2_weapon,ally2_core,third_char,third_weapon,third_core,total_games,total_wins,total_rp,rank_sum";
-  const rows: TrioWeaponSearchRow[] = [];
-
-  for (let offset = 0; offset < FULL_FETCH_LIMIT; offset += DB_PAGE_SIZE) {
-    const pageEnd = Math.min(offset + DB_PAGE_SIZE, FULL_FETCH_LIMIT) - 1;
-    const { data, error } = await supabase
-      .from(TRIO_WEAPON_SEARCH_P10_TABLE)
-      .select(searchSelect)
-      .eq("ally1_char", char1)
-      .eq("ally2_char", char2)
-      .order("total_games", { ascending: false })
-      .range(offset, pageEnd);
-
-    if (error) throw error;
-    const pageRows = (data ?? []) as TrioWeaponSearchRow[];
-    rows.push(...pageRows);
-    if (pageRows.length < DB_PAGE_SIZE) break;
-  }
+  const rows = (
+    await Promise.all(
+      TRIO_WEAPON_SEARCH_PAIR_POSITIONS.map((position) =>
+        fetchSearchRows(
+          (offset, pageEnd) =>
+            supabase
+              .from(TRIO_WEAPON_SEARCH_TABLE)
+              .select(searchSelect)
+              .eq(position.charColumn1, char1)
+              .eq(position.charColumn2, char2)
+              .order("total_games", { ascending: false })
+              .range(offset, pageEnd),
+          FULL_FETCH_LIMIT
+        )
+      )
+    )
+  ).flat();
 
   const baseResults = aggregateSearchRows(rows).filter((r) => !hasExcludedChar(r));
   const supplementalResults = await safeFetchSupplemental(`pair:${char1}:${char2}`, () =>
@@ -581,25 +631,25 @@ async function fetchTrioWeaponPairWeaponExact(
   const supabase = createServerClient();
   const searchSelect =
     "ally1_char,ally1_weapon,ally1_core,ally2_char,ally2_weapon,ally2_core,third_char,third_weapon,third_core,total_games,total_wins,total_rp,rank_sum";
-  const rows: TrioWeaponSearchRow[] = [];
-
-  for (let offset = 0; offset < EXACT_PAIR_WEAPON_FETCH_LIMIT; offset += DB_PAGE_SIZE) {
-    const pageEnd = Math.min(offset + DB_PAGE_SIZE, EXACT_PAIR_WEAPON_FETCH_LIMIT) - 1;
-    const { data, error } = await supabase
-      .from(TRIO_WEAPON_SEARCH_P10_TABLE)
-      .select(searchSelect)
-      .eq("ally1_char", char1)
-      .eq("ally1_weapon", weapon1)
-      .eq("ally2_char", char2)
-      .eq("ally2_weapon", weapon2)
-      .order("total_games", { ascending: false })
-      .range(offset, pageEnd);
-
-    if (error) throw error;
-    const pageRows = (data ?? []) as TrioWeaponSearchRow[];
-    rows.push(...pageRows);
-    if (pageRows.length < DB_PAGE_SIZE) break;
-  }
+  const rows = (
+    await Promise.all(
+      TRIO_WEAPON_SEARCH_PAIR_POSITIONS.map((position) =>
+        fetchSearchRows(
+          (offset, pageEnd) =>
+            supabase
+              .from(TRIO_WEAPON_SEARCH_TABLE)
+              .select(searchSelect)
+              .eq(position.charColumn1, char1)
+              .eq(position.weaponColumn1, weapon1)
+              .eq(position.charColumn2, char2)
+              .eq(position.weaponColumn2, weapon2)
+              .order("total_games", { ascending: false })
+              .range(offset, pageEnd),
+          EXACT_PAIR_WEAPON_FETCH_LIMIT
+        )
+      )
+    )
+  ).flat();
 
   const baseResults = aggregateSearchRows(rows).filter((r) => !hasExcludedChar(r));
   const supplementalResults = await safeFetchSupplemental(
@@ -628,7 +678,7 @@ async function fetchTrioWeaponSinglePosition(
   for (let offset = 0; offset < PARALLEL_FETCH_LIMIT; offset += DB_PAGE_SIZE) {
     const pageEnd = Math.min(offset + DB_PAGE_SIZE, PARALLEL_FETCH_LIMIT) - 1;
     const { data, error } = await supabase
-      .from(TRIO_WEAPON_SEARCH_P10_TABLE)
+      .from(TRIO_WEAPON_SEARCH_TABLE)
       .select(searchSelect)
       .eq(column, char1)
       .range(offset, pageEnd);
@@ -642,7 +692,7 @@ async function fetchTrioWeaponSinglePosition(
   return rows;
 }
 
-/** 단일 캐릭터 — p10 테이블에서 ally1/ally2/third 3 위치별 fetch 후 trio 단위 dedup. */
+/** 단일 캐릭터 — all 검색 테이블에서 ally1/ally2/third 3 위치별 fetch 후 trio 단위 dedup. */
 async function fetchTrioWeaponSingle(char1: number): Promise<AggregatedTrioWeapon[]> {
   const results = await Promise.all([
     fetchTrioWeaponSinglePosition(char1, "ally1_char"),
@@ -670,7 +720,7 @@ async function fetchTrioWeaponSingle(char1: number): Promise<AggregatedTrioWeapo
   return aggregateSearchRows(dedupedRows).filter((r) => !hasExcludedChar(r));
 }
 
-/** [임시 검증] 캐릭터 미지정 — p10 search 테이블 top N (migration 024 인덱스 효과 측정용) */
+/** 캐릭터 미지정 — all 검색 테이블 top N */
 async function fetchTrioWeaponAll(): Promise<AggregatedTrioWeapon[]> {
   const supabase = createServerClient();
   const select =
@@ -680,7 +730,7 @@ async function fetchTrioWeaponAll(): Promise<AggregatedTrioWeapon[]> {
   for (let offset = 0; offset < FULL_FETCH_LIMIT; offset += DB_PAGE_SIZE) {
     const pageEnd = Math.min(offset + DB_PAGE_SIZE, FULL_FETCH_LIMIT) - 1;
     const { data, error } = await supabase
-      .from(TRIO_WEAPON_SEARCH_P10_TABLE)
+      .from(TRIO_WEAPON_SEARCH_TABLE)
       .select(select)
       .order("total_games", { ascending: false })
       .range(offset, pageEnd);
