@@ -225,6 +225,41 @@ describe("analytics — P0 helpers", () => {
     });
   });
 
+  describe("ad slot events", () => {
+    it("ad_slot_rendered 에 슬롯명과 광고 슬롯 ID 를 전달한다", async () => {
+      analytics.adSlotRendered({
+        slotName: "synergy_detail_top",
+        adSlotId: "8139813658",
+        pagePath: "/ko/synergy-detail",
+      });
+      await flushAsync();
+      expect(trackMock).toHaveBeenCalledWith("ad_slot_rendered", {
+        slot_name: "synergy_detail_top",
+        ad_slot_id: "8139813658",
+        page_path: "/ko/synergy-detail",
+      });
+    });
+
+    it("ad_slot_viewed 에 슬롯명과 viewport 정보를 전달한다", async () => {
+      Object.defineProperty(window, "innerWidth", { configurable: true, value: 390 });
+      Object.defineProperty(window, "innerHeight", { configurable: true, value: 844 });
+
+      analytics.adSlotViewed({
+        slotName: "home_ranking",
+        adSlotId: "8139813658",
+        pagePath: "/ko",
+      });
+      await flushAsync();
+      expect(trackMock).toHaveBeenCalledWith("ad_slot_viewed", {
+        slot_name: "home_ranking",
+        ad_slot_id: "8139813658",
+        page_path: "/ko",
+        viewport_width: 390,
+        viewport_height: 844,
+      });
+    });
+  });
+
   describe("setSessionProperties (Identify API)", () => {
     it("Identify 인스턴스로 amplitude.identify 를 호출한다", async () => {
       analytics.setSessionProperties({

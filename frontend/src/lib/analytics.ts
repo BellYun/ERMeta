@@ -44,6 +44,8 @@ export type SynergySortBy = "averageRP" | "winRate" | "averageRank" | "totalGame
 
 export type SessionSource = "organic_search" | "community" | "direct" | "social" | "internal";
 
+export type AdSlotName = "home_ranking" | "synergy_detail_top";
+
 export interface SessionProperties {
   session_source?: SessionSource;
   is_patch_day?: boolean;
@@ -240,6 +242,36 @@ export const analytics = {
     method: "native" | "clipboard" | null;
   }) {
     track("synergy_link_landed", args);
+  },
+
+  /** 광고 슬롯 DOM 렌더링 — 실제 광고 fill 여부와 무관하게 슬롯 노출 후보를 측정한다. */
+  adSlotRendered(args: { slotName: AdSlotName; adSlotId: string; pagePath?: string }) {
+    track("ad_slot_rendered", {
+      slot_name: args.slotName,
+      ad_slot_id: args.adSlotId,
+      page_path:
+        args.pagePath ?? (typeof window !== "undefined" ? window.location.pathname : undefined),
+    });
+  },
+
+  /** 광고 슬롯이 viewport 에 50% 이상 1초 머문 경우. 클릭 추적은 AdSense 정책상 하지 않는다. */
+  adSlotViewed(args: { slotName: AdSlotName; adSlotId: string; pagePath?: string }) {
+    const viewport =
+      typeof window !== "undefined"
+        ? {
+            width: window.innerWidth,
+            height: window.innerHeight,
+          }
+        : undefined;
+
+    track("ad_slot_viewed", {
+      slot_name: args.slotName,
+      ad_slot_id: args.adSlotId,
+      page_path:
+        args.pagePath ?? (typeof window !== "undefined" ? window.location.pathname : undefined),
+      viewport_width: viewport?.width,
+      viewport_height: viewport?.height,
+    });
   },
 
   // ── Identify (User / Session Properties) ───────────────────────────────────

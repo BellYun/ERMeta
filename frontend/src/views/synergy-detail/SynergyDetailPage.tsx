@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
+import { ADSENSE_SLOTS, canRenderAdSlot } from "@/components/ads/adsenseConfig";
+import { AdSlot } from "@/components/ads/AdSlot";
 import { SynergyDetailClient } from "@/components/features/synergy-detail/SynergyDetailClient";
 import { getCharacterName } from "@/lib/characterMap";
 import { BASE_URL } from "@/lib/siteMetadata";
@@ -195,6 +197,15 @@ export default function SynergyDetailPage() {
           </div>
         </div>
       </section>
+
+      {canRenderAdSlot(ADSENSE_SLOTS.synergyDetail) ? (
+        <AdSlot
+          slot={ADSENSE_SLOTS.synergyDetail}
+          slotName="synergy_detail_top"
+          className="dashboard-panel px-3 py-2.5 sm:px-4"
+          minHeight={120}
+        />
+      ) : null}
 
       <SynergyDetailClient />
     </div>
