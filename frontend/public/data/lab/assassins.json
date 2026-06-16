@@ -2,10 +2,10 @@
   "role": "암살자",
   "roleSlug": "assassins",
   "groupK": 1,
-  "minGames": 1000,
+  "minGames": 30,
   "cumulative": true,
-  "generatedFrom": "DATA/trio-role-combinations/raw_character_multiset.json",
-  "generatedAt": "2026-05-22",
+  "generatedFrom": "v2_CharacterTrioWeaponSearch_all",
+  "generatedAt": "2026-06-15",
   "groups": [
     {
       "id": 0,
@@ -20,61 +20,111 @@
       "characterName": "쇼이치",
       "weapon": 15,
       "weaponName": "단검",
-      "totalGames": 276312,
-      "ownMeanRP": -0.674,
+      "totalGames": 121763,
+      "ownMeanRP": -0.508,
       "groupId": 0,
       "strong": [
         {
-          "multiset": "암살자 + 암살자 + 탱커",
-          "delta": 3.016,
-          "games": 687
+          "multiset": "암살자 + 암살자 + 원거리 딜러",
+          "delta": 1.694,
+          "games": 330
         },
         {
-          "multiset": "스킬딜러 + 암살자 + 암살자",
-          "delta": 2.005,
-          "games": 1698
+          "multiset": "탱커 + 암살자 + 원거리 딜러",
+          "delta": 1.368,
+          "games": 11393
         },
         {
-          "multiset": "암살자 + 원거리 딜러 + 원거리 딜러",
-          "delta": 1.548,
-          "games": 1479
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": 0.722,
+          "games": 673
         },
         {
-          "multiset": "암살자 + 전사 + 탱커",
-          "delta": 0.961,
-          "games": 19989
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": 0.673,
+          "games": 9388
         },
         {
-          "multiset": "암살자 + 원거리 딜러 + 탱커",
-          "delta": 0.96,
-          "games": 23625
+          "multiset": "탱커 + 암살자 + 암살자",
+          "delta": 0.42,
+          "games": 299
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 0.357,
+          "games": 11790
+        },
+        {
+          "multiset": "탱커 + 암살자 + 지원가",
+          "delta": 0.273,
+          "games": 516
+        },
+        {
+          "multiset": "전사 + 암살자 + 원거리 딜러",
+          "delta": 0.113,
+          "games": 19993
         }
       ],
       "weak": [
         {
           "multiset": "암살자 + 암살자 + 지원가",
-          "delta": -26.707,
-          "games": 84
+          "delta": -14.5,
+          "games": 41
         },
         {
           "multiset": "암살자 + 원거리 딜러 + 지원가",
-          "delta": -6.869,
-          "games": 903
+          "delta": -7.739,
+          "games": 443
         },
         {
-          "multiset": "암살자 + 암살자 + 전사",
-          "delta": -4.959,
-          "games": 2889
+          "multiset": "전사 + 암살자 + 암살자",
+          "delta": -5.809,
+          "games": 1344
         },
         {
           "multiset": "암살자 + 암살자 + 암살자",
-          "delta": -4.429,
-          "games": 117
+          "delta": -3.75,
+          "games": 52
         },
         {
-          "multiset": "스킬딜러 + 암살자 + 지원가",
-          "delta": -1.834,
-          "games": 747
+          "multiset": "탱커 + 탱커 + 암살자",
+          "delta": -2.443,
+          "games": 236
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 지원가",
+          "delta": -1.953,
+          "games": 345
+        },
+        {
+          "multiset": "암살자 + 원거리 딜러 + 원거리 딜러",
+          "delta": -1.096,
+          "games": 441
+        },
+        {
+          "multiset": "전사 + 암살자 + 지원가",
+          "delta": -1.005,
+          "games": 4546
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": -0.737,
+          "games": 2570
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.415,
+          "games": 3396
+        },
+        {
+          "multiset": "전사 + 전사 + 암살자",
+          "delta": -0.348,
+          "games": 21599
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -0.015,
+          "games": 32359
         }
       ]
     },
@@ -83,61 +133,101 @@
       "characterName": "다니엘",
       "weapon": 15,
       "weaponName": "단검",
-      "totalGames": 105573,
-      "ownMeanRP": 0.097,
+      "totalGames": 45989,
+      "ownMeanRP": 0.158,
       "groupId": 0,
       "strong": [
         {
-          "multiset": "암살자 + 탱커 + 탱커",
-          "delta": 7.894,
-          "games": 78
+          "multiset": "탱커 + 탱커 + 암살자",
+          "delta": 5.698,
+          "games": 41
         },
         {
-          "multiset": "암살자 + 원거리 딜러 + 원거리 딜러",
-          "delta": 2.666,
-          "games": 627
+          "multiset": "탱커 + 암살자 + 암살자",
+          "delta": 1.527,
+          "games": 201
         },
         {
-          "multiset": "암살자 + 전사 + 지원가",
-          "delta": 2.177,
-          "games": 765
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": 0.949,
+          "games": 1171
         },
         {
-          "multiset": "암살자 + 암살자 + 탱커",
-          "delta": 1.765,
-          "games": 486
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": 0.871,
+          "games": 13438
         },
         {
-          "multiset": "스킬딜러 + 암살자 + 전사",
-          "delta": 1.073,
-          "games": 32700
+          "multiset": "전사 + 암살자 + 원거리 딜러",
+          "delta": 0.577,
+          "games": 8448
+        },
+        {
+          "multiset": "전사 + 암살자 + 지원가",
+          "delta": 0.535,
+          "games": 352
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": 0.076,
+          "games": 455
         }
       ],
       "weak": [
         {
-          "multiset": "암살자 + 암살자 + 지원가",
-          "delta": -55.526,
-          "games": 42
-        },
-        {
-          "multiset": "암살자 + 지원가 + 탱커",
-          "delta": -47.16,
-          "games": 48
+          "multiset": "전사 + 암살자 + 암살자",
+          "delta": -5.77,
+          "games": 970
         },
         {
           "multiset": "암살자 + 암살자 + 암살자",
-          "delta": -5.2,
-          "games": 117
+          "delta": -4.417,
+          "games": 52
         },
         {
-          "multiset": "암살자 + 암살자 + 전사",
-          "delta": -5.124,
-          "games": 2139
+          "multiset": "암살자 + 원거리 딜러 + 지원가",
+          "delta": -2.15,
+          "games": 80
         },
         {
-          "multiset": "스킬딜러 + 암살자 + 지원가",
-          "delta": -2.605,
-          "games": 168
+          "multiset": "암살자 + 암살자 + 원거리 딜러",
+          "delta": -1.839,
+          "games": 246
+        },
+        {
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": -1.106,
+          "games": 2381
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -1.058,
+          "games": 3336
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 지원가",
+          "delta": -0.942,
+          "games": 58
+        },
+        {
+          "multiset": "암살자 + 원거리 딜러 + 원거리 딜러",
+          "delta": -0.584,
+          "games": 188
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.557,
+          "games": 1783
+        },
+        {
+          "multiset": "탱커 + 암살자 + 원거리 딜러",
+          "delta": -0.547,
+          "games": 3652
+        },
+        {
+          "multiset": "전사 + 전사 + 암살자",
+          "delta": -0.126,
+          "games": 9098
         }
       ]
     },
@@ -146,61 +236,96 @@
       "characterName": "캐시",
       "weapon": 15,
       "weaponName": "단검",
-      "totalGames": 72561,
-      "ownMeanRP": 0.267,
+      "totalGames": 31947,
+      "ownMeanRP": 0.739,
       "groupId": 0,
       "strong": [
         {
-          "multiset": "암살자 + 암살자 + 탱커",
-          "delta": 4.098,
-          "games": 273
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": 1.508,
+          "games": 672
         },
         {
-          "multiset": "암살자 + 탱커 + 탱커",
-          "delta": 3.955,
-          "games": 42
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": 1.283,
+          "games": 1577
+        },
+        {
+          "multiset": "전사 + 암살자 + 원거리 딜러",
+          "delta": 0.76,
+          "games": 6543
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.453,
+          "games": 969
+        },
+        {
+          "multiset": "암살자 + 암살자 + 원거리 딜러",
+          "delta": 0.356,
+          "games": 139
+        },
+        {
+          "multiset": "탱커 + 암살자 + 원거리 딜러",
+          "delta": 0.154,
+          "games": 2697
         },
         {
           "multiset": "암살자 + 원거리 딜러 + 지원가",
-          "delta": 1.796,
-          "games": 63
-        },
-        {
-          "multiset": "암살자 + 전사 + 탱커",
-          "delta": 1.468,
-          "games": 3273
-        },
-        {
-          "multiset": "암살자 + 원거리 딜러 + 전사",
-          "delta": 1.129,
-          "games": 14292
+          "delta": 0.122,
+          "games": 32
         }
       ],
       "weak": [
         {
-          "multiset": "암살자 + 전사 + 지원가",
-          "delta": -7.441,
-          "games": 357
-        },
-        {
-          "multiset": "스킬딜러 + 암살자 + 지원가",
-          "delta": -6.974,
-          "games": 75
-        },
-        {
           "multiset": "암살자 + 암살자 + 암살자",
-          "delta": -5.836,
-          "games": 102
+          "delta": -5.881,
+          "games": 40
         },
         {
-          "multiset": "암살자 + 암살자 + 전사",
-          "delta": -3.282,
-          "games": 1317
+          "multiset": "전사 + 암살자 + 지원가",
+          "delta": -5.55,
+          "games": 176
         },
         {
-          "multiset": "암살자 + 원거리 딜러 + 탱커",
-          "delta": -0.991,
-          "games": 5730
+          "multiset": "암살자 + 스킬딜러 + 지원가",
+          "delta": -4.861,
+          "games": 32
+        },
+        {
+          "multiset": "암살자 + 원거리 딜러 + 원거리 딜러",
+          "delta": -2.835,
+          "games": 117
+        },
+        {
+          "multiset": "탱커 + 암살자 + 암살자",
+          "delta": -2.168,
+          "games": 118
+        },
+        {
+          "multiset": "전사 + 암살자 + 암살자",
+          "delta": -2.157,
+          "games": 594
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": -1.852,
+          "games": 289
+        },
+        {
+          "multiset": "전사 + 전사 + 암살자",
+          "delta": -0.42,
+          "games": 5856
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -0.249,
+          "games": 9626
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -0.195,
+          "games": 2426
         }
       ]
     },
@@ -209,61 +334,199 @@
       "characterName": "캐시",
       "weapon": 18,
       "weaponName": "쌍검",
-      "totalGames": 18000,
-      "ownMeanRP": 0.349,
+      "totalGames": 13626,
+      "ownMeanRP": 0.731,
       "groupId": 0,
       "strong": [
         {
-          "multiset": "스킬딜러 + 암살자 + 지원가",
-          "delta": 9.66,
-          "games": 36
+          "multiset": "전사 + 암살자 + 지원가",
+          "delta": 2.536,
+          "games": 179
         },
         {
           "multiset": "암살자 + 원거리 딜러 + 원거리 딜러",
-          "delta": 4.474,
-          "games": 192
+          "delta": 2.264,
+          "games": 90
         },
         {
-          "multiset": "암살자 + 원거리 딜러 + 탱커",
-          "delta": 2.849,
-          "games": 1056
+          "multiset": "전사 + 전사 + 암살자",
+          "delta": 1.408,
+          "games": 2075
         },
         {
-          "multiset": "암살자 + 암살자 + 원거리 딜러",
-          "delta": 2.758,
-          "games": 165
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 0.76,
+          "games": 738
         },
         {
-          "multiset": "암살자 + 암살자 + 전사",
-          "delta": 2.006,
-          "games": 381
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": 0.704,
+          "games": 4310
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.042,
+          "games": 718
         }
       ],
       "weak": [
         {
-          "multiset": "암살자 + 전사 + 탱커",
-          "delta": -11.791,
-          "games": 462
+          "multiset": "암살자 + 암살자 + 원거리 딜러",
+          "delta": -4.982,
+          "games": 99
         },
         {
-          "multiset": "스킬딜러 + 암살자 + 탱커",
-          "delta": -5.311,
-          "games": 1041
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": -3.998,
+          "games": 415
         },
         {
-          "multiset": "스킬딜러 + 암살자 + 원거리 딜러",
-          "delta": -4.912,
-          "games": 1179
+          "multiset": "탱커 + 암살자 + 암살자",
+          "delta": -3.673,
+          "games": 42
         },
         {
-          "multiset": "스킬딜러 + 암살자 + 암살자",
-          "delta": -4.57,
-          "games": 405
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": -3.2,
+          "games": 205
         },
         {
-          "multiset": "암살자 + 암살자 + 탱커",
-          "delta": -2.273,
-          "games": 66
+          "multiset": "탱커 + 암살자 + 원거리 딜러",
+          "delta": -2.972,
+          "games": 855
+        },
+        {
+          "multiset": "전사 + 암살자 + 암살자",
+          "delta": -2.683,
+          "games": 288
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": -2.387,
+          "games": 460
+        },
+        {
+          "multiset": "암살자 + 원거리 딜러 + 지원가",
+          "delta": -0.387,
+          "games": 32
+        },
+        {
+          "multiset": "전사 + 암살자 + 원거리 딜러",
+          "delta": -0.037,
+          "games": 3052
+        }
+      ]
+    },
+    {
+      "characterCode": 82,
+      "characterName": "슈린",
+      "weapon": 21,
+      "weaponName": "레이피어",
+      "totalGames": 71562,
+      "ownMeanRP": 0.628,
+      "groupId": null,
+      "strong": [
+        {
+          "multiset": "전사 + 암살자 + 지원가",
+          "delta": 5.218,
+          "games": 102
+        },
+        {
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": 2.082,
+          "games": 385
+        },
+        {
+          "multiset": "전사 + 암살자 + 암살자",
+          "delta": 2.051,
+          "games": 36
+        },
+        {
+          "multiset": "전사 + 암살자 + 원거리 딜러",
+          "delta": 1.313,
+          "games": 647
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": 0.568,
+          "games": 5651
+        },
+        {
+          "multiset": "탱커 + 전사 + 지원가",
+          "delta": 0.473,
+          "games": 205
+        },
+        {
+          "multiset": "전사 + 전사 + 지원가",
+          "delta": 0.424,
+          "games": 3040
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.403,
+          "games": 22168
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": 0.328,
+          "games": 1212
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.243,
+          "games": 2286
+        },
+        {
+          "multiset": "탱커 + 전사 + 원거리 딜러",
+          "delta": 0.165,
+          "games": 5627
+        },
+        {
+          "multiset": "전사 + 전사 + 전사",
+          "delta": 0.107,
+          "games": 9014
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "전사 + 원거리 딜러 + 지원가",
+          "delta": -9.724,
+          "games": 324
+        },
+        {
+          "multiset": "전사 + 원거리 딜러 + 원거리 딜러",
+          "delta": -9.7,
+          "games": 269
+        },
+        {
+          "multiset": "탱커 + 탱커 + 전사",
+          "delta": -6.084,
+          "games": 57
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": -3.024,
+          "games": 1490
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -2.967,
+          "games": 213
+        },
+        {
+          "multiset": "탱커 + 전사 + 전사",
+          "delta": -0.431,
+          "games": 3008
+        },
+        {
+          "multiset": "전사 + 전사 + 원거리 딜러",
+          "delta": -0.407,
+          "games": 13982
+        },
+        {
+          "multiset": "전사 + 전사 + 암살자",
+          "delta": -0.184,
+          "games": 1842
         }
       ]
     }

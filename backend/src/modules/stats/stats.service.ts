@@ -2,42 +2,22 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { SupabaseService } from '../../common/database/supabase.service';
 import { RedisService } from '../../common/redis/redis.service';
 
-const DIAMOND_PLUS_TIERS = ['DIAMOND', 'METEORITE', 'MITHRIL'];
 const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]);
 const BAYESIAN_K = 50;
 
-const TRIO_WEAPON_SEARCH_P10_TABLE = 'v2_CharacterTrioWeaponSearch_p10';
-const TRIO_WEAPON_TABLE = 'v2_CharacterTrioWeapon';
-const SUPPLEMENTAL_PATCH_VERSIONS = ['11.1', '11.2', '11.3'];
+const TRIO_WEAPON_SEARCH_TABLE = 'v2_CharacterTrioWeaponSearch_all';
 const DB_PAGE_SIZE = 1000;
 const TRIO_WEAPON_PARALLEL_FETCH_LIMIT = 5000;
 const TRIO_WEAPON_FULL_FETCH_LIMIT = 5000;
 const EXACT_PAIR_WEAPON_FETCH_LIMIT = 20000;
 const MAX_TRIO_WEAPON_RESPONSE_LIMIT = TRIO_WEAPON_FULL_FETCH_LIMIT;
-const TRIO_WEAPON_CACHE_VERSION = 'v6';
+const TRIO_WEAPON_CACHE_VERSION = 'v8';
 
 type SortBy = 'averageRP' | 'winRate' | 'averageRank' | 'totalGames' | 'recommended';
 
 interface SupabaseErrorLike {
   code?: string;
   message?: string;
-}
-
-interface TrioWeaponRow {
-  tier: string;
-  character1: number;
-  weapon_type1: number;
-  character2: number;
-  weapon_type2: number;
-  character3: number;
-  weapon_type3: number;
-  main_core1: number | null;
-  main_core2: number | null;
-  main_core3: number | null;
-  total_games: number;
-  total_wins: number;
-  total_rp: number;
-  rank_sum: number;
 }
 
 interface TrioWeaponSearchRow {
@@ -79,38 +59,48 @@ interface TrioWeaponMember {
 }
 
 type SearchPositionColumn = 'ally1_char' | 'ally2_char' | 'third_char';
-type TrioWeaponPositionColumn = 'character1' | 'character2' | 'character3';
-type TrioWeaponColumn = keyof TrioWeaponRow;
-type TrioWeaponPairPosition = {
-  charColumn1: TrioWeaponPositionColumn;
-  weaponColumn1: TrioWeaponColumn;
-  charColumn2: TrioWeaponPositionColumn;
-  weaponColumn2: TrioWeaponColumn;
+type SearchColumn = keyof TrioWeaponSearchRow;
+type TrioWeaponSearchPairPosition = {
+  charColumn1: SearchPositionColumn;
+  weaponColumn1: SearchColumn;
+  charColumn2: SearchPositionColumn;
+  weaponColumn2: SearchColumn;
 };
 
-const TRIO_WEAPON_SELECT =
-  'tier,character1,weapon_type1,character2,weapon_type2,character3,weapon_type3,main_core1,main_core2,main_core3,total_games,total_wins,total_rp,rank_sum';
+function normalizeCharacterPair(char1: number, char2: number): [number, number] {
+  return char1 <= char2 ? [char1, char2] : [char2, char1];
+}
+
+function normalizeCharacterWeaponPair(
+  char1: number,
+  weapon1: number,
+  char2: number,
+  weapon2: number,
+): [number, number, number, number] {
+  return char1 <= char2 ? [char1, weapon1, char2, weapon2] : [char2, weapon2, char1, weapon1];
+}
+
 const TRIO_WEAPON_SEARCH_SELECT =
   'ally1_char,ally1_weapon,ally1_core,ally2_char,ally2_weapon,ally2_core,third_char,third_weapon,third_core,total_games,total_wins,total_rp,rank_sum';
 
-const TRIO_WEAPON_PAIR_POSITIONS: readonly TrioWeaponPairPosition[] = [
+const TRIO_WEAPON_SEARCH_PAIR_POSITIONS: readonly TrioWeaponSearchPairPosition[] = [
   {
-    charColumn1: 'character1',
-    weaponColumn1: 'weapon_type1',
-    charColumn2: 'character2',
-    weaponColumn2: 'weapon_type2',
+    charColumn1: 'ally1_char',
+    weaponColumn1: 'ally1_weapon',
+    charColumn2: 'ally2_char',
+    weaponColumn2: 'ally2_weapon',
   },
   {
-    charColumn1: 'character1',
-    weaponColumn1: 'weapon_type1',
-    charColumn2: 'character3',
-    weaponColumn2: 'weapon_type3',
+    charColumn1: 'ally1_char',
+    weaponColumn1: 'ally1_weapon',
+    charColumn2: 'third_char',
+    weaponColumn2: 'third_weapon',
   },
   {
-    charColumn1: 'character2',
-    weaponColumn1: 'weapon_type2',
-    charColumn2: 'character3',
-    weaponColumn2: 'weapon_type3',
+    charColumn1: 'ally2_char',
+    weaponColumn1: 'ally2_weapon',
+    charColumn2: 'third_char',
+    weaponColumn2: 'third_weapon',
   },
 ];
 
@@ -199,19 +189,6 @@ function buildNormalizedMembersFromSearchRow(
   ]);
 }
 
-function buildNormalizedMembersFromTrioRow(
-  row: Pick<TrioWeaponRow,
-    'character1' | 'weapon_type1' | 'main_core1' |
-    'character2' | 'weapon_type2' | 'main_core2' |
-    'character3' | 'weapon_type3' | 'main_core3'>,
-): [TrioWeaponMember, TrioWeaponMember, TrioWeaponMember] {
-  return normalizeTrioMembersByCharacter([
-    { character: row.character1, weapon: row.weapon_type1, mainCore: row.main_core1 },
-    { character: row.character2, weapon: row.weapon_type2, mainCore: row.main_core2 },
-    { character: row.character3, weapon: row.weapon_type3, mainCore: row.main_core3 },
-  ]);
-}
-
 function mapSearchRowToAggregated(row: TrioWeaponSearchRow): AggregatedTrioWeapon {
   const [m1, m2, m3] = buildNormalizedMembersFromSearchRow(row);
   return {
@@ -246,96 +223,6 @@ function aggregateSearchRows(rows: TrioWeaponSearchRow[]): AggregatedTrioWeapon[
     }
   }
   return [...grouped.values()].map(mapSearchRowToAggregated);
-}
-
-function aggregateByTrioWeapon(rows: TrioWeaponRow[]): AggregatedTrioWeapon[] {
-  const map = new Map<string, {
-    c1: number; w1: number; c2: number; w2: number; c3: number; w3: number;
-    mc1: number | null; mc2: number | null; mc3: number | null;
-    totalGames: number; totalWins: number; totalRP: number; rankSum: number;
-  }>();
-
-  for (const row of rows) {
-    const [m1, m2, m3] = buildNormalizedMembersFromTrioRow(row);
-    const key = trioWeaponKeyFromMembers([m1, m2, m3]);
-    const existing = map.get(key);
-    if (!existing) {
-      map.set(key, {
-        c1: m1.character, w1: m1.weapon,
-        c2: m2.character, w2: m2.weapon,
-        c3: m3.character, w3: m3.weapon,
-        mc1: m1.mainCore, mc2: m2.mainCore, mc3: m3.mainCore,
-        totalGames: row.total_games,
-        totalWins: row.total_wins,
-        totalRP: row.total_rp,
-        rankSum: row.rank_sum,
-      });
-    } else {
-      existing.totalGames += row.total_games;
-      existing.totalWins += row.total_wins;
-      existing.totalRP += row.total_rp;
-      existing.rankSum += row.rank_sum;
-    }
-  }
-
-  return [...map.values()].map((v) => ({
-    character1: v.c1,
-    weaponType1: v.w1,
-    character2: v.c2,
-    weaponType2: v.w2,
-    character3: v.c3,
-    weaponType3: v.w3,
-    mainCore1: v.mc1,
-    mainCore2: v.mc2,
-    mainCore3: v.mc3,
-    totalGames: v.totalGames,
-    winRate: v.totalGames > 0 ? (v.totalWins / v.totalGames) * 100 : 0,
-    averageRP: v.totalGames > 0 ? v.totalRP / v.totalGames / 3 : 0,
-    averageRank: v.totalGames > 0 ? v.rankSum / v.totalGames : 0,
-  }));
-}
-
-function aggregateKey(row: AggregatedTrioWeapon): string {
-  return trioWeaponKeyFromMembers(
-    normalizeTrioMembersByCharacter([
-      { character: row.character1, weapon: row.weaponType1, mainCore: row.mainCore1 },
-      { character: row.character2, weapon: row.weaponType2, mainCore: row.mainCore2 },
-      { character: row.character3, weapon: row.weaponType3, mainCore: row.mainCore3 },
-    ]),
-  );
-}
-
-function mergeAggregatedResults(results: AggregatedTrioWeapon[]): AggregatedTrioWeapon[] {
-  const merged = new Map<string, {
-    row: AggregatedTrioWeapon;
-    totalWins: number;
-    totalRP: number;
-    rankSum: number;
-  }>();
-
-  for (const result of results) {
-    const key = aggregateKey(result);
-    const totalWins = (result.winRate * result.totalGames) / 100;
-    const totalRP = result.averageRP * result.totalGames * 3;
-    const rankSum = result.averageRank * result.totalGames;
-    const existing = merged.get(key);
-    if (!existing) {
-      merged.set(key, { row: { ...result }, totalWins, totalRP, rankSum });
-      continue;
-    }
-
-    existing.row.totalGames += result.totalGames;
-    existing.totalWins += totalWins;
-    existing.totalRP += totalRP;
-    existing.rankSum += rankSum;
-  }
-
-  return [...merged.values()].map(({ row, totalWins, totalRP, rankSum }) => ({
-    ...row,
-    winRate: row.totalGames > 0 ? (totalWins / row.totalGames) * 100 : 0,
-    averageRP: row.totalGames > 0 ? totalRP / row.totalGames / 3 : 0,
-    averageRank: row.totalGames > 0 ? rankSum / row.totalGames : 0,
-  }));
 }
 
 function hasExcludedTrio(row: { character1: number; character2: number; character3: number }): boolean {
@@ -463,18 +350,20 @@ export class StatsService {
   }
 
   private cachedTrioWeaponPair(char1: number, char2: number) {
+    const [c1, c2] = normalizeCharacterPair(char1, char2);
     return this.redis.getOrSet(
-      `trio-weapon-pair:${TRIO_WEAPON_CACHE_VERSION}:${char1}:${char2}`,
+      `trio-weapon-pair:${TRIO_WEAPON_CACHE_VERSION}:${c1}:${c2}`,
       7 * 24 * 3600,
-      () => this.fetchTrioWeaponPair(char1, char2),
+      () => this.fetchTrioWeaponPair(c1, c2),
     );
   }
 
   private cachedTrioWeaponPairWeaponExact(char1: number, weapon1: number, char2: number, weapon2: number) {
+    const [c1, w1, c2, w2] = normalizeCharacterWeaponPair(char1, weapon1, char2, weapon2);
     return this.redis.getOrSet(
-      `trio-weapon-pair-weapon-exact:${TRIO_WEAPON_CACHE_VERSION}:${char1}:${weapon1}:${char2}:${weapon2}`,
+      `trio-weapon-pair-weapon-exact:${TRIO_WEAPON_CACHE_VERSION}:${c1}:${w1}:${c2}:${w2}`,
       7 * 24 * 3600,
-      () => this.fetchTrioWeaponPairWeaponExact(char1, weapon1, char2, weapon2),
+      () => this.fetchTrioWeaponPairWeaponExact(c1, w1, c2, w2),
     );
   }
 
@@ -496,44 +385,52 @@ export class StatsService {
 
   private async fetchTrioWeaponPair(char1: number, char2: number) {
     const client = this.supabase.getClient();
-    const rows = await this.fetchSearchPages((offset, pageEnd) =>
-      client
-        .from(TRIO_WEAPON_SEARCH_P10_TABLE)
-        .select(TRIO_WEAPON_SEARCH_SELECT)
-        .eq('ally1_char', char1)
-        .eq('ally2_char', char2)
-        .order('total_games', { ascending: false })
-        .range(offset, pageEnd),
-      TRIO_WEAPON_FULL_FETCH_LIMIT,
-    );
+    const [c1, c2] = normalizeCharacterPair(char1, char2);
+    const rows = (
+      await Promise.all(
+        TRIO_WEAPON_SEARCH_PAIR_POSITIONS.map((position) =>
+          this.fetchSearchPages(
+            (offset, pageEnd) =>
+              client
+                .from(TRIO_WEAPON_SEARCH_TABLE)
+                .select(TRIO_WEAPON_SEARCH_SELECT)
+                .eq(position.charColumn1, c1)
+                .eq(position.charColumn2, c2)
+                .order('total_games', { ascending: false })
+                .range(offset, pageEnd),
+            TRIO_WEAPON_FULL_FETCH_LIMIT,
+          ),
+        ),
+      )
+    ).flat();
 
-    const baseResults = aggregateSearchRows(rows).filter((row) => !hasExcludedTrio(row));
-    const supplementalResults = await this.safeFetchSupplemental(() =>
-      this.fetchSupplementalTrioWeaponPair(char1, char2, TRIO_WEAPON_FULL_FETCH_LIMIT),
-    );
-    return mergeAggregatedResults([...baseResults, ...supplementalResults]);
+    return aggregateSearchRows(rows).filter((row) => !hasExcludedTrio(row));
   }
 
   private async fetchTrioWeaponPairWeaponExact(char1: number, weapon1: number, char2: number, weapon2: number) {
     const client = this.supabase.getClient();
-    const rows = await this.fetchSearchPages((offset, pageEnd) =>
-      client
-        .from(TRIO_WEAPON_SEARCH_P10_TABLE)
-        .select(TRIO_WEAPON_SEARCH_SELECT)
-        .eq('ally1_char', char1)
-        .eq('ally1_weapon', weapon1)
-        .eq('ally2_char', char2)
-        .eq('ally2_weapon', weapon2)
-        .order('total_games', { ascending: false })
-        .range(offset, pageEnd),
-      EXACT_PAIR_WEAPON_FETCH_LIMIT,
-    );
+    const [c1, w1, c2, w2] = normalizeCharacterWeaponPair(char1, weapon1, char2, weapon2);
+    const rows = (
+      await Promise.all(
+        TRIO_WEAPON_SEARCH_PAIR_POSITIONS.map((position) =>
+          this.fetchSearchPages(
+            (offset, pageEnd) =>
+              client
+                .from(TRIO_WEAPON_SEARCH_TABLE)
+                .select(TRIO_WEAPON_SEARCH_SELECT)
+                .eq(position.charColumn1, c1)
+                .eq(position.weaponColumn1, w1)
+                .eq(position.charColumn2, c2)
+                .eq(position.weaponColumn2, w2)
+                .order('total_games', { ascending: false })
+                .range(offset, pageEnd),
+            EXACT_PAIR_WEAPON_FETCH_LIMIT,
+          ),
+        ),
+      )
+    ).flat();
 
-    const baseResults = aggregateSearchRows(rows).filter((row) => !hasExcludedTrio(row));
-    const supplementalResults = await this.safeFetchSupplemental(() =>
-      this.fetchSupplementalTrioWeaponExactPair(char1, weapon1, char2, weapon2, EXACT_PAIR_WEAPON_FETCH_LIMIT),
-    );
-    return mergeAggregatedResults([...baseResults, ...supplementalResults]);
+    return aggregateSearchRows(rows).filter((row) => !hasExcludedTrio(row));
   }
 
   private async fetchTrioWeaponSingle(char1: number) {
@@ -557,7 +454,7 @@ export class StatsService {
     const client = this.supabase.getClient();
     return this.fetchSearchPages((offset, pageEnd) =>
       client
-        .from(TRIO_WEAPON_SEARCH_P10_TABLE)
+        .from(TRIO_WEAPON_SEARCH_TABLE)
         .select(TRIO_WEAPON_SEARCH_SELECT)
         .eq(column, char1)
         .range(offset, pageEnd),
@@ -569,7 +466,7 @@ export class StatsService {
     const client = this.supabase.getClient();
     const rows = await this.fetchSearchPages((offset, pageEnd) =>
       client
-        .from(TRIO_WEAPON_SEARCH_P10_TABLE)
+        .from(TRIO_WEAPON_SEARCH_TABLE)
         .select(TRIO_WEAPON_SEARCH_SELECT)
         .order('total_games', { ascending: false })
         .range(offset, pageEnd),
@@ -594,99 +491,4 @@ export class StatsService {
     return rows;
   }
 
-  private async fetchSupplementalTrioWeaponPair(char1: number, char2: number, fetchLimit: number) {
-    const rows = (
-      await Promise.all(
-        TRIO_WEAPON_PAIR_POSITIONS.map((position) =>
-          this.fetchSupplementalTrioWeaponPairPosition(char1, char2, position, fetchLimit),
-        ),
-      )
-    ).flat();
-    return aggregateByTrioWeapon(rows).filter((row) => !hasExcludedTrio(row));
-  }
-
-  private async fetchSupplementalTrioWeaponExactPair(
-    char1: number,
-    weapon1: number,
-    char2: number,
-    weapon2: number,
-    fetchLimit: number,
-  ) {
-    const rows = (
-      await Promise.all(
-        TRIO_WEAPON_PAIR_POSITIONS.map((position) =>
-          this.fetchSupplementalTrioWeaponExactPairPosition(char1, weapon1, char2, weapon2, position, fetchLimit),
-        ),
-      )
-    ).flat();
-    return aggregateByTrioWeapon(rows).filter((row) => !hasExcludedTrio(row));
-  }
-
-  private async fetchSupplementalTrioWeaponPairPosition(
-    char1: number,
-    char2: number,
-    position: TrioWeaponPairPosition,
-    fetchLimit: number,
-  ) {
-    const client = this.supabase.getClient();
-    return this.fetchTrioWeaponPages((offset, pageEnd) =>
-      client
-        .from(TRIO_WEAPON_TABLE)
-        .select(TRIO_WEAPON_SELECT)
-        .in('patch_version', SUPPLEMENTAL_PATCH_VERSIONS)
-        .in('tier', DIAMOND_PLUS_TIERS)
-        .eq(position.charColumn1, char1)
-        .eq(position.charColumn2, char2)
-        .range(offset, pageEnd),
-      fetchLimit,
-    );
-  }
-
-  private async fetchSupplementalTrioWeaponExactPairPosition(
-    char1: number,
-    weapon1: number,
-    char2: number,
-    weapon2: number,
-    position: TrioWeaponPairPosition,
-    fetchLimit: number,
-  ) {
-    const client = this.supabase.getClient();
-    return this.fetchTrioWeaponPages((offset, pageEnd) =>
-      client
-        .from(TRIO_WEAPON_TABLE)
-        .select(TRIO_WEAPON_SELECT)
-        .in('patch_version', SUPPLEMENTAL_PATCH_VERSIONS)
-        .in('tier', DIAMOND_PLUS_TIERS)
-        .eq(position.charColumn1, char1)
-        .eq(position.weaponColumn1, weapon1)
-        .eq(position.charColumn2, char2)
-        .eq(position.weaponColumn2, weapon2)
-        .range(offset, pageEnd),
-      fetchLimit,
-    );
-  }
-
-  private async fetchTrioWeaponPages(
-    fetchPage: (offset: number, pageEnd: number) => PromiseLike<{ data: unknown[] | null; error: unknown }>,
-    fetchLimit: number,
-  ): Promise<TrioWeaponRow[]> {
-    const rows: TrioWeaponRow[] = [];
-    for (let offset = 0; offset < fetchLimit; offset += DB_PAGE_SIZE) {
-      const pageEnd = Math.min(offset + DB_PAGE_SIZE, fetchLimit) - 1;
-      const { data, error } = await fetchPage(offset, pageEnd);
-      if (error) throw error;
-      const pageRows = (data ?? []) as TrioWeaponRow[];
-      rows.push(...pageRows);
-      if (pageRows.length < DB_PAGE_SIZE) break;
-    }
-    return rows;
-  }
-
-  private async safeFetchSupplemental(fetcher: () => Promise<AggregatedTrioWeapon[]>) {
-    try {
-      return await fetcher();
-    } catch {
-      return [];
-    }
-  }
 }
