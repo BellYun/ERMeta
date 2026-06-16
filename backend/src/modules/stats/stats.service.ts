@@ -67,6 +67,19 @@ type TrioWeaponSearchPairPosition = {
   weaponColumn2: SearchColumn;
 };
 
+function normalizeCharacterPair(char1: number, char2: number): [number, number] {
+  return char1 <= char2 ? [char1, char2] : [char2, char1];
+}
+
+function normalizeCharacterWeaponPair(
+  char1: number,
+  weapon1: number,
+  char2: number,
+  weapon2: number,
+): [number, number, number, number] {
+  return char1 <= char2 ? [char1, weapon1, char2, weapon2] : [char2, weapon2, char1, weapon1];
+}
+
 const TRIO_WEAPON_SEARCH_SELECT =
   'ally1_char,ally1_weapon,ally1_core,ally2_char,ally2_weapon,ally2_core,third_char,third_weapon,third_core,total_games,total_wins,total_rp,rank_sum';
 
@@ -337,18 +350,20 @@ export class StatsService {
   }
 
   private cachedTrioWeaponPair(char1: number, char2: number) {
+    const [c1, c2] = normalizeCharacterPair(char1, char2);
     return this.redis.getOrSet(
-      `trio-weapon-pair:${TRIO_WEAPON_CACHE_VERSION}:${char1}:${char2}`,
+      `trio-weapon-pair:${TRIO_WEAPON_CACHE_VERSION}:${c1}:${c2}`,
       7 * 24 * 3600,
-      () => this.fetchTrioWeaponPair(char1, char2),
+      () => this.fetchTrioWeaponPair(c1, c2),
     );
   }
 
   private cachedTrioWeaponPairWeaponExact(char1: number, weapon1: number, char2: number, weapon2: number) {
+    const [c1, w1, c2, w2] = normalizeCharacterWeaponPair(char1, weapon1, char2, weapon2);
     return this.redis.getOrSet(
-      `trio-weapon-pair-weapon-exact:${TRIO_WEAPON_CACHE_VERSION}:${char1}:${weapon1}:${char2}:${weapon2}`,
+      `trio-weapon-pair-weapon-exact:${TRIO_WEAPON_CACHE_VERSION}:${c1}:${w1}:${c2}:${w2}`,
       7 * 24 * 3600,
-      () => this.fetchTrioWeaponPairWeaponExact(char1, weapon1, char2, weapon2),
+      () => this.fetchTrioWeaponPairWeaponExact(c1, w1, c2, w2),
     );
   }
 
@@ -370,6 +385,7 @@ export class StatsService {
 
   private async fetchTrioWeaponPair(char1: number, char2: number) {
     const client = this.supabase.getClient();
+    const [c1, c2] = normalizeCharacterPair(char1, char2);
     const rows = (
       await Promise.all(
         TRIO_WEAPON_SEARCH_PAIR_POSITIONS.map((position) =>
@@ -378,8 +394,8 @@ export class StatsService {
               client
                 .from(TRIO_WEAPON_SEARCH_TABLE)
                 .select(TRIO_WEAPON_SEARCH_SELECT)
-                .eq(position.charColumn1, char1)
-                .eq(position.charColumn2, char2)
+                .eq(position.charColumn1, c1)
+                .eq(position.charColumn2, c2)
                 .order('total_games', { ascending: false })
                 .range(offset, pageEnd),
             TRIO_WEAPON_FULL_FETCH_LIMIT,
@@ -393,6 +409,7 @@ export class StatsService {
 
   private async fetchTrioWeaponPairWeaponExact(char1: number, weapon1: number, char2: number, weapon2: number) {
     const client = this.supabase.getClient();
+    const [c1, w1, c2, w2] = normalizeCharacterWeaponPair(char1, weapon1, char2, weapon2);
     const rows = (
       await Promise.all(
         TRIO_WEAPON_SEARCH_PAIR_POSITIONS.map((position) =>
@@ -401,10 +418,10 @@ export class StatsService {
               client
                 .from(TRIO_WEAPON_SEARCH_TABLE)
                 .select(TRIO_WEAPON_SEARCH_SELECT)
-                .eq(position.charColumn1, char1)
-                .eq(position.weaponColumn1, weapon1)
-                .eq(position.charColumn2, char2)
-                .eq(position.weaponColumn2, weapon2)
+                .eq(position.charColumn1, c1)
+                .eq(position.weaponColumn1, w1)
+                .eq(position.charColumn2, c2)
+                .eq(position.weaponColumn2, w2)
                 .order('total_games', { ascending: false })
                 .range(offset, pageEnd),
             EXACT_PAIR_WEAPON_FETCH_LIMIT,
