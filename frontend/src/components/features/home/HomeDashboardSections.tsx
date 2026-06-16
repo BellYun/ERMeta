@@ -114,6 +114,7 @@ function HomeDashboardSectionsBody({
 
       <AdSlot
         slot={ADSENSE_SLOTS.homeRanking}
+        slotName="home_ranking"
         className="dashboard-panel px-3 py-2.5 sm:px-4"
         minHeight={120}
       />

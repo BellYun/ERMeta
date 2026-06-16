@@ -200,6 +200,7 @@ export default function SynergyDetailPage() {
 
       <AdSlot
         slot={ADSENSE_SLOTS.synergyDetail}
+        slotName="synergy_detail_top"
         className="dashboard-panel px-3 py-2.5 sm:px-4"
         minHeight={120}
       />
