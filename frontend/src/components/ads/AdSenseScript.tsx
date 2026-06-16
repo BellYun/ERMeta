@@ -2,8 +2,8 @@
 
 import { usePathname } from "next/navigation";
 import Script from "next/script";
+import { ADSENSE_CLIENT } from "@/components/ads/adsenseConfig";
 
-const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
 const CONTENT_PATH_PREFIXES = [
   "/",
   "/about",
@@ -12,6 +12,7 @@ const CONTENT_PATH_PREFIXES = [
   "/patches",
   "/patch-analysis",
   "/season10-recap",
+  "/synergy-detail",
 ];
 
 function stripLocale(pathname: string) {
