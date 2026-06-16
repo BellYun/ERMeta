@@ -536,7 +536,6 @@ serve(async (req: Request) => {
             if (parsed === "RECENT") {
               forwardHitRecent = true;
               console.log("[Forward] 최근 1시간 이내 게임 도달, 수집 중단");
-              lastGameNumber = currentGame;
               break;
             }
             if (parsed) {
