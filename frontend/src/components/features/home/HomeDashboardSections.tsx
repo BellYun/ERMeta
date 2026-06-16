@@ -2,6 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import * as React from "react";
+import { ADSENSE_SLOTS } from "@/components/ads/adsenseConfig";
+import { AdSlot } from "@/components/ads/AdSlot";
 import { FilterProvider, useFilter } from "@/components/features/FilterContext";
 import { GlobalFilter } from "@/components/features/GlobalFilter";
 import { HomeFilterAside } from "@/components/features/HomeFilterAside";
@@ -109,6 +111,12 @@ function HomeDashboardSectionsBody({
       </section>
 
       <HomeFilterAside anchorId="home-top-filter" />
+
+      <AdSlot
+        slot={ADSENSE_SLOTS.homeRanking}
+        className="dashboard-panel px-3 py-2.5 sm:px-4"
+        minHeight={120}
+      />
 
       <section className="dashboard-panel p-4 lg:p-5">
         <div className="mb-4 flex flex-wrap items-end gap-x-4 gap-y-2">
