@@ -355,6 +355,36 @@
   color: var(--color-foreground);
 }
 
+.ad-placement {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.ad-placement-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--color-muted-foreground);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.ad-placement-preview-box {
+  display: grid;
+  min-height: 96px;
+  place-items: center;
+  border: 1px dashed rgba(148, 163, 184, 0.36);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--color-muted-foreground);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .role-pill {
   position: relative;
   padding: 9px 14px;

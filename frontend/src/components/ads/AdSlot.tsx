@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-
-const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
+import { ADSENSE_CLIENT, ADSENSE_PREVIEW } from "@/components/ads/adsenseConfig";
 
 declare global {
   interface Window {
@@ -32,27 +31,39 @@ export function AdSlot({
   const pushed = useRef(false);
 
   useEffect(() => {
-    if (!ADSENSE_CLIENT || pushed.current) return;
+    if (ADSENSE_PREVIEW || !ADSENSE_CLIENT || !slot || pushed.current) return;
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
       pushed.current = true;
     } catch {
       // adsbygoogle may not be loaded yet; loader script will retry on script load
     }
-  }, []);
+  }, [slot]);
 
-  if (!ADSENSE_CLIENT) return null;
+  if (ADSENSE_PREVIEW) {
+    return (
+      <div className={`ad-placement ad-placement-preview ${className ?? ""}`} style={{ minHeight }}>
+        <span className="ad-placement-label">Advertisement</span>
+        <div className="ad-placement-preview-box">AdSense preview</div>
+      </div>
+    );
+  }
+
+  if (!ADSENSE_CLIENT || !slot) return null;
 
   return (
-    <ins
-      className={`adsbygoogle block ${className ?? ""}`}
-      style={{ display: "block", minHeight, width: "100%" }}
-      data-ad-client={ADSENSE_CLIENT}
-      data-ad-slot={slot}
-      data-ad-format={format}
-      data-ad-layout={layout}
-      data-ad-layout-key={layoutKey}
-      data-full-width-responsive={responsive ? "true" : "false"}
-    />
+    <div className={`ad-placement ${className ?? ""}`} style={{ minHeight }}>
+      <span className="ad-placement-label">Advertisement</span>
+      <ins
+        className="adsbygoogle block"
+        style={{ display: "block", minHeight, width: "100%" }}
+        data-ad-client={ADSENSE_CLIENT}
+        data-ad-slot={slot}
+        data-ad-format={format}
+        data-ad-layout={layout}
+        data-ad-layout-key={layoutKey}
+        data-full-width-responsive={responsive ? "true" : "false"}
+      />
+    </div>
   );
 }
