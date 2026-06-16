@@ -32,6 +32,19 @@ function parseIntOrNull(param: string | null): number | null {
   return isNaN(n) ? null : n;
 }
 
+function normalizeCharacterPair(char1: number, char2: number): [number, number] {
+  return char1 <= char2 ? [char1, char2] : [char2, char1];
+}
+
+function normalizeCharacterWeaponPair(
+  char1: number,
+  weapon1: number,
+  char2: number,
+  weapon2: number
+): [number, number, number, number] {
+  return char1 <= char2 ? [char1, weapon1, char2, weapon2] : [char2, weapon2, char1, weapon1];
+}
+
 function bayesianRP(averageRP: number, totalGames: number, globalAvgRP: number): number {
   return (totalGames * averageRP + BAYESIAN_K * globalAvgRP) / (totalGames + BAYESIAN_K);
 }
@@ -290,6 +303,7 @@ async function fetchSearchRows(
  */
 async function fetchTrioWeaponPair(char1: number, char2: number): Promise<AggregatedTrioWeapon[]> {
   const supabase = createServerClient();
+  const [c1, c2] = normalizeCharacterPair(char1, char2);
   const searchSelect =
     "ally1_char,ally1_weapon,ally1_core,ally2_char,ally2_weapon,ally2_core,third_char,third_weapon,third_core,total_games,total_wins,total_rp,rank_sum";
   const rows = (
@@ -300,8 +314,8 @@ async function fetchTrioWeaponPair(char1: number, char2: number): Promise<Aggreg
             supabase
               .from(TRIO_WEAPON_SEARCH_TABLE)
               .select(searchSelect)
-              .eq(position.charColumn1, char1)
-              .eq(position.charColumn2, char2)
+              .eq(position.charColumn1, c1)
+              .eq(position.charColumn2, c2)
               .order("total_games", { ascending: false })
               .range(offset, pageEnd),
           FULL_FETCH_LIMIT
@@ -324,6 +338,7 @@ async function fetchTrioWeaponPairWeaponExact(
   weapon2: number
 ): Promise<AggregatedTrioWeapon[]> {
   const supabase = createServerClient();
+  const [c1, w1, c2, w2] = normalizeCharacterWeaponPair(char1, weapon1, char2, weapon2);
   const searchSelect =
     "ally1_char,ally1_weapon,ally1_core,ally2_char,ally2_weapon,ally2_core,third_char,third_weapon,third_core,total_games,total_wins,total_rp,rank_sum";
   const rows = (
@@ -334,10 +349,10 @@ async function fetchTrioWeaponPairWeaponExact(
             supabase
               .from(TRIO_WEAPON_SEARCH_TABLE)
               .select(searchSelect)
-              .eq(position.charColumn1, char1)
-              .eq(position.weaponColumn1, weapon1)
-              .eq(position.charColumn2, char2)
-              .eq(position.weaponColumn2, weapon2)
+              .eq(position.charColumn1, c1)
+              .eq(position.weaponColumn1, w1)
+              .eq(position.charColumn2, c2)
+              .eq(position.weaponColumn2, w2)
               .order("total_games", { ascending: false })
               .range(offset, pageEnd),
           EXACT_PAIR_WEAPON_FETCH_LIMIT
@@ -430,12 +445,13 @@ async function fetchTrioWeaponAll(): Promise<AggregatedTrioWeapon[]> {
 // ─── L1 캐시 래퍼 — 키는 정규화된 캐릭터 코드만. 무기/sortBy/limit 은 외부 적용. ──
 
 function getCachedTrioWeaponPair(char1: number, char2: number) {
+  const [c1, c2] = normalizeCharacterPair(char1, char2);
   return unstable_cache(
-    () => fetchTrioWeaponPair(char1, char2),
-    ["trio-weapon-pair", TRIO_WEAPON_CACHE_VERSION, String(char1), String(char2)],
+    () => fetchTrioWeaponPair(c1, c2),
+    ["trio-weapon-pair", TRIO_WEAPON_CACHE_VERSION, String(c1), String(c2)],
     {
       revalidate: L1_REVALIDATE_SEC,
-      tags: ["trios-weapon", `trios-weapon:char:${char1}`, `trios-weapon:char:${char2}`],
+      tags: ["trios-weapon", `trios-weapon:char:${c1}`, `trios-weapon:char:${c2}`],
     }
   )();
 }
@@ -446,19 +462,20 @@ function getCachedTrioWeaponPairWeaponExact(
   char2: number,
   weapon2: number
 ) {
+  const [c1, w1, c2, w2] = normalizeCharacterWeaponPair(char1, weapon1, char2, weapon2);
   return unstable_cache(
-    () => fetchTrioWeaponPairWeaponExact(char1, weapon1, char2, weapon2),
+    () => fetchTrioWeaponPairWeaponExact(c1, w1, c2, w2),
     [
       "trio-weapon-pair-weapon-exact",
       TRIO_WEAPON_CACHE_VERSION,
-      String(char1),
-      String(weapon1),
-      String(char2),
-      String(weapon2),
+      String(c1),
+      String(w1),
+      String(c2),
+      String(w2),
     ],
     {
       revalidate: L1_REVALIDATE_SEC,
-      tags: ["trios-weapon", `trios-weapon:char:${char1}`, `trios-weapon:char:${char2}`],
+      tags: ["trios-weapon", `trios-weapon:char:${c1}`, `trios-weapon:char:${c2}`],
     }
   )();
 }
