@@ -45,12 +45,14 @@ jobs:
           NEXT_PUBLIC_BASE_URL: http://localhost:3000
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_ADSENSE_DISABLED: "true"
         run: npm run build
 
       - name: Start server
         run: npm run start &
         env:
           PORT: 3000
+          NEXT_PUBLIC_ADSENSE_DISABLED: "true"
 
       - name: Wait for server
         run: npx --yes wait-on http://localhost:3000 -t 60000
