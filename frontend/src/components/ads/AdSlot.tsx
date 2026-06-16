@@ -31,16 +31,19 @@ export function AdSlot({
   className,
   minHeight = 100,
 }: AdSlotProps) {
-  const pushed = useRef(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const insRef = useRef<HTMLModElement | null>(null);
+  const pushedElement = useRef<HTMLModElement | null>(null);
   const renderedTracked = useRef(false);
   const viewedTracked = useRef(false);
 
   useEffect(() => {
-    if (ADSENSE_PREVIEW || !ADSENSE_CLIENT || !slot || pushed.current) return;
+    const element = insRef.current;
+    if (ADSENSE_PREVIEW || !ADSENSE_CLIENT || !slot || !element) return;
+    if (pushedElement.current === element) return;
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
-      pushed.current = true;
+      pushedElement.current = element;
     } catch {
       // adsbygoogle may not be loaded yet; loader script will retry on script load
     }
@@ -109,6 +112,8 @@ export function AdSlot({
     <div ref={rootRef} className={`ad-placement ${className ?? ""}`} style={{ minHeight }}>
       <span className="ad-placement-label">Advertisement</span>
       <ins
+        key={`${slotName}:${slot}`}
+        ref={insRef}
         className="adsbygoogle block"
         style={{ display: "block", minHeight, width: "100%" }}
         data-ad-client={ADSENSE_CLIENT}
