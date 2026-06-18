@@ -188,7 +188,7 @@ function groupAvgAffinity(
   return sum;
 }
 
-// ───────── 1) 그룹 핑거프린트 레이더 ─────────
+// ───────── 1) 그룹 성향 요약 ─────────
 function RadarChart({
   values,
   size = 160,
@@ -267,7 +267,7 @@ function RadarChart({
   );
 }
 
-// ───────── 2) 어피니티 히트맵 ─────────
+// ───────── 2) 파트너 역할 분포 ─────────
 function Heatmap({
   characters,
   focusRole,
@@ -478,7 +478,7 @@ function DivergingStack({
   );
 }
 
-// ───────── 7) 세분화 핑거프린트 (파트너 페어 축) ─────────
+// ───────── 7) 파트너 역할 궁합 ─────────
 
 // 모든 (partnerA, partnerB) 페어 (정렬, 중복 허용)
 const PARTNER_PAIRS: [PartnerRole, PartnerRole][] = (() => {
@@ -644,7 +644,7 @@ function DenseRadar({
   );
 }
 
-// ───────── 8) 그룹 응집도 검증 (멤버 핑거프린트 오버레이) ─────────
+// ───────── 8) 그룹 내 유사도 검증 ─────────
 
 function computeMemberPairAffinity(
   char: LabCharacter,
@@ -842,7 +842,7 @@ function GroupCohesionRadar({
   );
 }
 
-// ───────── 5) 트리오 슬롯 카드 (3인 조합 강조) ─────────
+// ───────── 5) 트리오 구성 요약 ─────────
 function RoleChip({ role, size = "md" }: { role: string; size?: "sm" | "md" }) {
   const color = ROLE_COLOR[role as PartnerRole] ?? "#94a3b8";
   const short = ROLE_SHORT[role as PartnerRole] ?? role.slice(0, 2);
@@ -999,7 +999,7 @@ function TrioMatrixRow({
   );
 }
 
-// ───────── 4) 캐릭터 산점도 (2D PCA-like, naive) ─────────
+// ───────── 4) 캐릭터 위치 비교 ─────────
 function ScatterPlot({
   characters,
   focusRole,
@@ -1169,9 +1169,9 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
         </p>
       </header>
 
-      {/* 그룹 핑거프린트 */}
+      {/* 그룹 성향 요약 */}
       <section className="dashboard-panel p-5">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">그룹 핑거프린트</h2>
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">그룹별 성향 요약</h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
           각 그룹이 어떤 파트너 역할에서 RP 이득을 내는지 비교합니다.
         </p>
@@ -1192,9 +1192,9 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
         </div>
       </section>
 
-      {/* 파트너 역할 히트맵 */}
+      {/* 파트너 역할 분포 */}
       <section className="dashboard-panel p-5">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">파트너 역할 히트맵</h2>
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">파트너 역할 분포</h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
           캐릭터별로 어떤 파트너 역할과 함께할 때 RP가 좋아지는지 보여줍니다.
         </p>
@@ -1221,7 +1221,7 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
 
       {/* 그룹 응집도 */}
       <section className="dashboard-panel p-5">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">그룹 응집도</h2>
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">그룹 내 유사도</h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
           그룹 대표 패턴과 각 캐릭터의 패턴을 겹쳐서 같은 유형으로 묶이는지 확인합니다. 응집도는
           패턴 유사도를 100점 기준으로 환산합니다.
@@ -1272,9 +1272,9 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
         </div>
       </section>
 
-      {/* 파트너 페어 핑거프린트 */}
+      {/* 파트너 역할 궁합 */}
       <section className="dashboard-panel p-5">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">파트너 페어 핑거프린트</h2>
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">파트너 역할 궁합</h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
           두 파트너 역할이 함께 들어간 트리오의 평균 RP를 기준으로 세부 성향을 비교합니다. 표본이
           적은 축은 제외합니다.
@@ -1292,9 +1292,9 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
         </div>
       </section>
 
-      {/* 트리오 슬롯 카드 */}
+      {/* 트리오 구성 요약 */}
       <section className="dashboard-panel p-5">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">트리오 슬롯 카드</h2>
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">트리오 구성 요약</h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
           역할 조합을 3개 슬롯으로 나눠 실제 트리오 구성을 빠르게 비교합니다.
         </p>
@@ -1305,9 +1305,9 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
         </div>
       </section>
 
-      {/* 트리오 슬롯 매트릭스 */}
+      {/* 트리오 성과 비교 */}
       <section className="dashboard-panel p-5">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">트리오 슬롯 매트릭스</h2>
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">트리오 성과 비교</h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
           그룹마다 성과가 좋은 트리오와 낮은 트리오를 나란히 비교합니다.
         </p>
@@ -1318,9 +1318,9 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
         </div>
       </section>
 
-      {/* 캐릭터 산점도 */}
+      {/* 캐릭터 위치 비교 */}
       <section className="dashboard-panel p-5">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">캐릭터 산점도</h2>
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">캐릭터 위치 비교</h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
           같은 그룹의 캐릭터들이 어느 정도 가까운 위치에 모이는지 비교합니다.
         </p>

@@ -141,28 +141,28 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
         {showSeasonRecapBanner && (
           <Link
             href={withCurrentRouteLocale(pathname, "/season10-recap")}
-            className="group flex items-center justify-between gap-3 border-b border-[rgba(183,121,31,0.14)] bg-[#fffbeb] px-3 py-2.5 transition-colors hover:bg-[#fff7d6] sm:px-4 lg:px-6"
+            className="group flex items-center justify-between gap-3 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 transition-colors hover:bg-white sm:px-4 lg:px-6"
           >
             <div className="flex min-w-0 items-start gap-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[rgba(183,121,31,0.18)] bg-white text-[var(--color-accent-gold)]">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]">
                 <Trophy className="h-4.5 w-4.5" strokeWidth={2} />
               </span>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-[10px] font-semibold text-[var(--color-muted-foreground)]">
+                  <span className="text-[10px] font-medium text-[var(--color-muted-foreground)]">
                     {t("seasonRecapBadge")}
                   </span>
-                  <p className="text-sm font-semibold  text-[var(--color-foreground)]">
+                  <p className="text-sm font-semibold text-[var(--color-foreground)]">
                     {t("seasonRecapTitle")}
                   </p>
                 </div>
-                <p className="mt-1 text-xs leading-5 text-[var(--color-foreground)]/76 sm:text-sm">
+                <p className="mt-0.5 text-xs leading-5 text-[var(--color-muted-foreground)] sm:text-sm">
                   {t("seasonRecapBody")}
                 </p>
               </div>
             </div>
 
-            <span className="hidden shrink-0 items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-white px-3 py-1.5 text-sm font-medium text-[var(--color-foreground)] transition group-hover:border-[var(--color-border-light)] group-hover:bg-[var(--color-surface-2)] sm:inline-flex">
+            <span className="hidden shrink-0 items-center gap-1.5 text-sm font-medium text-[var(--color-muted-foreground)] transition group-hover:text-[var(--color-foreground)] sm:inline-flex">
               {t("seasonRecapCta")}
               <ArrowRight className="h-4 w-4" strokeWidth={2} />
             </span>
@@ -194,7 +194,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
               title={currentPatch ? `${t("patchPrefix")}${currentPatch}` : t("logoTitle")}
               className="flex min-w-0 items-center gap-2.5"
             >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-sm font-bold text-[var(--color-primary)]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-white text-sm font-bold text-[var(--color-primary)]">
                 ER
               </div>
               <div className="min-w-0">

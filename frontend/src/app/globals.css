@@ -1,21 +1,21 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #f7f8fb;
+  --color-background: #ffffff;
   --color-surface: #ffffff;
-  --color-surface-2: #f2f5f9;
-  --color-surface-3: #e8edf4;
-  --color-surface-4: #edf5ff;
+  --color-surface-2: #f8fafc;
+  --color-surface-3: #eef2f6;
+  --color-surface-4: #f5f7fa;
 
-  --color-border: rgba(15, 23, 42, 0.1);
-  --color-border-light: rgba(15, 23, 42, 0.16);
+  --color-border: #e5e7eb;
+  --color-border-light: #d1d5db;
 
   --color-foreground: #172033;
   --color-muted-foreground: #687386;
 
   --color-primary: #2563eb;
   --color-primary-hover: #1d4ed8;
-  --color-primary-glow: rgba(37, 99, 235, 0.14);
+  --color-primary-glow: rgba(37, 99, 235, 0.08);
 
   --color-accent-gold: #b7791f;
   --color-accent-purple: #7c3aed;
@@ -142,18 +142,18 @@
 
 @keyframes revealUp {
   from {
-    opacity: 0;
-    transform: translateY(12px);
+    opacity: 1;
+    transform: none;
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
   }
 }
 
 .reveal {
-  animation: revealUp 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: none;
 }
 
 .reveal-d1 {
@@ -219,7 +219,7 @@
 .dashboard-panel {
   position: relative;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 6px;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   box-shadow: none;
@@ -236,7 +236,7 @@
 .analysis-hero {
   position: relative;
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: 6px;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   box-shadow: none;
@@ -264,8 +264,8 @@
 }
 
 .dashboard-title {
-  font-size: clamp(1.75rem, 3vw, 2.5rem);
-  line-height: 1.12;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  line-height: 1.18;
   font-weight: 700;
   letter-spacing: 0;
   color: var(--color-foreground);
@@ -279,17 +279,17 @@
 .dashboard-subtitle {
   max-width: 54rem;
   color: var(--color-muted-foreground);
-  font-size: clamp(0.98rem, 1.55vw, 1.08rem);
-  line-height: 1.78;
+  font-size: 0.95rem;
+  line-height: 1.65;
 }
 
 .metric-card,
 .metric-tile {
   position: relative;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: 4px;
   border: 1px solid var(--color-border);
-  background: var(--color-surface-2);
+  background: var(--color-surface);
 }
 
 .metric-label {
@@ -303,7 +303,7 @@
 
 .metric-value {
   font-family: var(--font-plex-mono), monospace;
-  font-size: clamp(1.45rem, 2vw, 2.1rem);
+  font-size: clamp(1.25rem, 1.7vw, 1.75rem);
   font-weight: 700;
   letter-spacing: 0;
   color: var(--color-foreground);
@@ -332,7 +332,7 @@
   min-height: 96px;
   place-items: center;
   border: 1px dashed rgba(148, 163, 184, 0.36);
-  border-radius: 12px;
+  border-radius: 4px;
   background: var(--color-surface-2);
   color: var(--color-muted-foreground);
   font-size: 12px;
@@ -341,8 +341,8 @@
 
 .role-pill {
   position: relative;
-  padding: 9px 14px;
-  border-radius: 999px;
+  padding: 8px 12px;
+  border-radius: 4px;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   color: var(--color-muted-foreground);
@@ -350,7 +350,7 @@
   font-family: var(--font-plex-mono), monospace;
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
   transition:
     border-color 0.2s ease,
     background-color 0.2s ease,
@@ -370,7 +370,7 @@
   }
 
   .dashboard-panel {
-    border-radius: 10px;
+    border-radius: 6px;
     box-shadow: none;
   }
 
@@ -378,7 +378,7 @@
   .hero-gradient,
   .synergy-hero,
   .analysis-hero {
-    border-radius: 12px;
+    border-radius: 6px;
     box-shadow: none;
   }
 
@@ -391,7 +391,7 @@
 
   .metric-card,
   .metric-tile {
-    border-radius: 10px;
+    border-radius: 4px;
   }
 
   .metric-value {
@@ -405,9 +405,9 @@
 }
 
 .role-pill[data-active="true"] {
-  border-color: rgba(37, 99, 235, 0.22);
-  background: rgba(37, 99, 235, 0.1);
-  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background: var(--color-surface-2);
+  color: var(--color-foreground);
 }
 
 .section-divider {
@@ -419,7 +419,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border-radius: 999px;
+  border-radius: 4px;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   padding: 6px 12px;
@@ -427,13 +427,13 @@
   font-family: var(--font-plex-mono), monospace;
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
 }
 
 .char-card {
   position: relative;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: 6px;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   transition:
@@ -452,16 +452,12 @@
 .spotlight-card {
   position: relative;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 6px;
   border: 1px solid rgba(37, 99, 235, 0.16);
   background: var(--color-surface);
   box-shadow: none;
 }
 
 .spotlight-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-top: 2px solid rgba(147, 197, 253, 0.24);
+  content: none;
 }

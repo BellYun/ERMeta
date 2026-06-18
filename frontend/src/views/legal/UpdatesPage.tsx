@@ -222,7 +222,7 @@ const localizedUpdates: Record<
           "Character analysis now includes role-combo RP movement",
           "Team Lab coverage and detail views expanded",
           "Team sorting and tier rules adjusted",
-          "Unnecessary beta and explanatory labels cleaned up",
+          "Unnecessary status and helper labels cleaned up",
         ],
       },
       {
