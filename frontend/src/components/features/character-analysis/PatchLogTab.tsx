@@ -1,8 +1,9 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
 import { getCharacterPatchNote } from "@/data/patch-notes";
+import type { RouteLocale } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { CHANGE_TYPE_CONFIG } from "./constants";
 import { ChangeTypeBadge } from "./PatchNoteComponents";
@@ -12,12 +13,43 @@ interface PatchLogTabProps {
   selectedCode: number;
 }
 
+const COPY: Record<
+  RouteLocale,
+  {
+    summaryTitle: (count: number) => string;
+    summaryBody: string;
+  }
+> = {
+  ko: {
+    summaryTitle: (count) => `${count}개 변경`,
+    summaryBody: "",
+  },
+  en: {
+    summaryTitle: (count) => `${count} balance ${count === 1 ? "change" : "changes"}`,
+    summaryBody: "Change details are based on the Korean patch-note source.",
+  },
+  ja: {
+    summaryTitle: (count) => `${count}件のバランス変更`,
+    summaryBody: "変更内容は韓国語パッチノート原文を基準に集計しています。",
+  },
+  "zh-Hans": {
+    summaryTitle: (count) => `${count} 项平衡调整`,
+    summaryBody: "变更内容以韩文版本说明原文为基准汇总。",
+  },
+  "zh-Hant": {
+    summaryTitle: (count) => `${count} 項平衡調整`,
+    summaryBody: "變更內容以韓文版本說明原文為基準彙整。",
+  },
+};
+
 export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
   const t = useTranslations("characterPatch");
+  const locale = useLocale() as RouteLocale;
+  const copy = COPY[locale] ?? COPY.ko;
 
   if (patches.length === 0) {
     return (
-      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-8 text-center text-sm text-[var(--color-muted-foreground)]">
+      <div className="rounded-lg border border-[var(--color-border)] bg-white p-8 text-center text-sm text-[var(--color-muted-foreground)]">
         {t("loadingPatches")}
       </div>
     );
@@ -30,7 +62,7 @@ export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
         return (
           <div
             key={patch}
-            className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden min-w-0"
+            className="rounded-lg border border-[var(--color-border)] bg-white overflow-hidden min-w-0"
           >
             {/* 패치 버전 헤더 */}
             <div className="flex items-center gap-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 sm:px-4 py-2">
@@ -45,6 +77,22 @@ export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
             {!note || note.changes.length === 0 ? (
               <div className="px-3 sm:px-4 py-2 sm:py-3 text-xs text-[var(--color-muted-foreground)]">
                 {t("noChanges")}
+              </div>
+            ) : locale !== "ko" ? (
+              <div className="px-3 sm:px-4 py-2 sm:py-3">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {Array.from(new Set(note.changes.map((change) => change.changeType))).map(
+                    (type) => (
+                      <ChangeTypeBadge key={type} type={type} />
+                    )
+                  )}
+                  <span className="text-[13px] sm:text-sm font-medium text-[var(--color-foreground)]">
+                    {copy.summaryTitle(note.changes.length)}
+                  </span>
+                </div>
+                <p className="mt-1 text-[11px] sm:text-xs text-[var(--color-muted-foreground)]">
+                  {copy.summaryBody}
+                </p>
               </div>
             ) : (
               <div className="divide-y divide-[var(--color-border)]">

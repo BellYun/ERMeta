@@ -62,7 +62,7 @@ export function CharacterGrid({
   );
 
   return (
-    <div className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm overflow-hidden">
+    <div className="w-full overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
       {/* Header */}
       <div className="px-3 py-2.5 border-b border-[var(--color-border)]/60">
         <div className="flex items-center gap-2">
@@ -103,7 +103,7 @@ export function CharacterGrid({
               }
             }}
             placeholder={t("placeholder")}
-            className="w-full rounded-lg bg-[var(--color-surface-2)] pl-8 pr-8 py-2 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] placeholder:text-[var(--color-muted-foreground)] outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]/30 transition-all"
+            className="w-full rounded-lg bg-[var(--color-surface-2)] pl-8 pr-8 py-2 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] placeholder:text-[var(--color-muted-foreground)] outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]/30 transition-colors"
           />
           {searchQuery && (
             <button

@@ -1,10 +1,10 @@
 "use client";
 
 import { AlertTriangle, RefreshCw, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { NoIndexMeta } from "@/components/seo/NoIndexMeta";
-import { Link } from "@/i18n/navigation";
 import { captureException } from "@/lib/sentry-client";
 
 export default function CharacterError({

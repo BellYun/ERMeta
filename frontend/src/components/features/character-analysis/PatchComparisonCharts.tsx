@@ -132,9 +132,9 @@ export default function PatchComparisonCharts({
               />
               <Line
                 dataKey="averageRP"
-                stroke="var(--color-accent-gold)"
+                stroke="var(--color-stat-up)"
                 strokeWidth={2}
-                dot={{ r: 3, fill: "var(--color-accent-gold)" }}
+                dot={{ r: 3, fill: "var(--color-stat-up)" }}
                 activeDot={{ r: 5 }}
               />
             </LineChart>

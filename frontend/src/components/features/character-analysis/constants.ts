@@ -22,8 +22,8 @@ export const TIER_LABELS: Record<TierGroup, string> = {
 export const CHANGE_TYPE_CONFIG = {
   buff: {
     labelKey: "buff",
-    colorClass: "text-[var(--color-accent-gold)]",
-    bgClass: "bg-[var(--color-accent-gold)]/15 border-[var(--color-accent-gold)]/30",
+    colorClass: "text-[var(--color-stat-up)]",
+    bgClass: "bg-[var(--color-stat-up)]/15 border-[var(--color-stat-up)]/30",
     Icon: TrendingUp,
   },
   nerf: {

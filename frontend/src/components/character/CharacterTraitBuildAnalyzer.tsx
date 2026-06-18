@@ -133,7 +133,7 @@ function TraitIcon({
       <div
         className={cn(
           "relative rounded-md p-0.5",
-          !isEmpty && pickRate >= 30 ? "ring-1 ring-[var(--color-accent-gold)]/60" : ""
+          !isEmpty && pickRate >= 30 ? "ring-1 ring-[var(--color-stat-up)]/60" : ""
         )}
       >
         {!imgError ? (
@@ -167,7 +167,7 @@ function TraitIcon({
           isEmpty
             ? "text-[var(--color-muted-foreground)]"
             : pickRate >= 30
-              ? "text-[var(--color-accent-gold)]"
+              ? "text-[var(--color-stat-up)]"
               : "text-[var(--color-primary)]"
         )}
       >
@@ -259,7 +259,7 @@ export function CharacterTraitBuildAnalyzer({
 
   if (builds.length === 0) {
     return (
-      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-6 text-center text-sm text-[var(--color-muted-foreground)]">
+      <div className="rounded-lg border border-[var(--color-border)] bg-white p-6 text-center text-sm text-[var(--color-muted-foreground)]">
         {t("empty.builds")}
       </div>
     );
@@ -274,8 +274,8 @@ export function CharacterTraitBuildAnalyzer({
           <div
             key={gi}
             className={cn(
-              "rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden",
-              gi === 0 && "ring-1 ring-[var(--color-accent-gold)]/30"
+              "rounded-lg border border-[var(--color-border)] bg-white overflow-hidden",
+              gi === 0 && "ring-1 ring-[var(--color-stat-up)]/30"
             )}
           >
             {/* 주특성 헤더 */}
@@ -287,7 +287,9 @@ export function CharacterTraitBuildAnalyzer({
             >
               <div className="flex items-center gap-2">
                 {gi === 0 && (
-                  <span className="text-xs font-bold text-[var(--color-accent-gold)]">#1</span>
+                  <span className="text-xs font-medium text-[var(--color-muted-foreground)]">
+                    {gi + 1}
+                  </span>
                 )}
                 <span className={cn("text-sm font-bold", mainConfig.text)}>{mainConfig.label}</span>
                 <span className="text-[10px] text-[var(--color-muted-foreground)]">
@@ -304,7 +306,7 @@ export function CharacterTraitBuildAnalyzer({
                   className={cn(
                     "font-semibold",
                     group.groupWinRate >= 55
-                      ? "text-[var(--color-accent-gold)]"
+                      ? "text-[var(--color-stat-up)]"
                       : "text-[var(--color-foreground)]"
                   )}
                 >
@@ -359,7 +361,7 @@ export function CharacterTraitBuildAnalyzer({
                         <div
                           key={si}
                           className={cn(
-                            "min-w-[220px] overflow-hidden bg-[var(--color-surface)]/80 p-3 sm:min-w-0",
+                            "min-w-[220px] overflow-hidden bg-white p-3 sm:min-w-0",
                             isEmpty && "opacity-40"
                           )}
                         >
@@ -372,7 +374,7 @@ export function CharacterTraitBuildAnalyzer({
                                   secConfig.bg
                                 )}
                               >
-                                <span className={cn("text-[10px] font-black", secConfig.text)}>
+                                <span className={cn("text-[10px] font-bold", secConfig.text)}>
                                   {secConfig.letter}
                                 </span>
                               </div>
@@ -389,7 +391,7 @@ export function CharacterTraitBuildAnalyzer({
                                   className={cn(
                                     "whitespace-nowrap",
                                     sec.winRate >= 55
-                                      ? "text-[var(--color-accent-gold)]"
+                                      ? "text-[var(--color-stat-up)]"
                                       : "text-[var(--color-muted-foreground)]"
                                   )}
                                 >

@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart2, FileText, Loader2, Zap } from "lucide-react";
+import { BarChart2, FileText, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import { Suspense } from "react";
@@ -327,21 +327,20 @@ export function CharacterAnalysisClient({
         {!loading && displayStat && displayStat.totalGames > 0 && (
           <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
             <div className="mb-3 flex items-center gap-2 sm:mb-4">
-              <Zap className="h-4 w-4 text-[var(--color-primary)]" />
-              <h2 className="text-[1.1rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.25rem]">
+              <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.18rem]">
                 {t("quickSummary")}
               </h2>
             </div>
-            <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+            <div className="overflow-hidden rounded-lg border border-[var(--color-border)]">
               {/* Tier */}
-              <div className="flex flex-col items-center gap-1.5 rounded-[16px] bg-[rgba(255,255,255,0.04)] p-3 sm:rounded-[18px] sm:p-4">
-                <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
+              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-white px-3 py-2.5">
+                <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
                   {t("summary.tier")}
                 </span>
                 {charTier && (
                   <span
                     className={cn(
-                      "text-2xl font-black",
+                      "text-lg font-bold",
                       charTier === "S"
                         ? "text-[var(--color-tier-s)]"
                         : charTier === "A"
@@ -358,13 +357,13 @@ export function CharacterAnalysisClient({
                 )}
               </div>
               {/* Win Rate */}
-              <div className="flex flex-col items-center gap-1.5 rounded-[16px] bg-[rgba(255,255,255,0.04)] p-3 sm:rounded-[18px] sm:p-4">
-                <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
+              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-white px-3 py-2.5">
+                <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
                   {t("summary.winRate")}
                 </span>
                 <span
                   className={cn(
-                    "text-2xl font-black tabular-nums",
+                    "text-lg font-bold tabular-nums",
                     displayStat.winRate > 12.5
                       ? "text-[var(--color-stat-up)]"
                       : "text-[var(--color-stat-down)]"
@@ -374,8 +373,8 @@ export function CharacterAnalysisClient({
                 </span>
               </div>
               {/* Best Weapon */}
-              <div className="flex flex-col items-center gap-1.5 rounded-[16px] bg-[rgba(255,255,255,0.04)] p-3 sm:rounded-[18px] sm:p-4">
-                <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
+              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-white px-3 py-2.5">
+                <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
                   {t("summary.recommendedWeapon")}
                 </span>
                 <span className="text-sm font-bold text-[var(--color-foreground)]">
@@ -385,11 +384,11 @@ export function CharacterAnalysisClient({
                 </span>
               </div>
               {/* Pick Rate */}
-              <div className="flex flex-col items-center gap-1.5 rounded-[16px] bg-[rgba(255,255,255,0.04)] p-3 sm:rounded-[18px] sm:p-4">
-                <span className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
+              <div className="flex items-center justify-between bg-white px-3 py-2.5">
+                <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
                   {t("summary.pickRate")}
                 </span>
-                <span className="text-2xl font-black tabular-nums text-[var(--color-foreground)]">
+                <span className="text-lg font-bold tabular-nums text-[var(--color-foreground)]">
                   {(stats?.pickRate ?? displayStat.pickRate).toFixed(1)}%
                 </span>
               </div>
@@ -406,7 +405,7 @@ export function CharacterAnalysisClient({
       <div className="pt-0.5 sm:pt-1">
         <div className="mb-3 flex items-center gap-2 sm:mb-4">
           <div className="h-px flex-1 bg-[var(--color-border)]" />
-          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)] sm:text-[11px]">
+          <span className="text-[10px] font-semibold text-[var(--color-muted-foreground)] sm:text-[11px]">
             {t("deepDive")}
           </span>
           <div className="h-px flex-1 bg-[var(--color-border)]" />
@@ -415,8 +414,8 @@ export function CharacterAnalysisClient({
         <div className="grid gap-5 xl:grid-cols-2">
           <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
             <div className="mb-3 flex items-center gap-2 sm:mb-4">
-              <BarChart2 className="h-4 w-4 text-[var(--color-primary)]" />
-              <h2 className="text-[1.1rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.25rem]">
+              <BarChart2 className="h-4 w-4 text-[var(--color-muted-foreground)]" />
+              <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.18rem]">
                 {t("patchComparison")}
               </h2>
             </div>
@@ -432,8 +431,8 @@ export function CharacterAnalysisClient({
 
           <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
             <div className="mb-3 flex items-center gap-2 sm:mb-4">
-              <FileText className="h-4 w-4 text-[var(--color-primary)]" />
-              <h2 className="text-[1.1rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.25rem]">
+              <FileText className="h-4 w-4 text-[var(--color-muted-foreground)]" />
+              <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.18rem]">
                 {t("patchNotes")}
               </h2>
             </div>
@@ -444,8 +443,8 @@ export function CharacterAnalysisClient({
 
           <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5 xl:col-span-2">
             <div className="mb-3 flex items-center gap-2 sm:mb-4">
-              <BarChart2 className="h-4 w-4 text-[var(--color-accent-gold)]" />
-              <h2 className="text-[1.1rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.25rem]">
+              <BarChart2 className="h-4 w-4 text-[var(--color-muted-foreground)]" />
+              <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.18rem]">
                 {t("stats")}
               </h2>
             </div>

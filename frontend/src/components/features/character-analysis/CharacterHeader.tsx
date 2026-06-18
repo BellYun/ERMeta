@@ -40,11 +40,6 @@ interface CharacterHeaderProps {
   hasPreviousData: boolean;
 }
 
-const TIER_GLOW: Record<string, string> = {
-  S: "shadow-[0_0_20px_-6px] shadow-[var(--color-tier-s)]/20",
-  A: "shadow-[0_0_16px_-6px] shadow-[var(--color-tier-a)]/15",
-};
-
 /** WAI-ARIA Radio Group 키보드 네비게이션 — 화살표/Home/End */
 function radioGroupKeyIndex(key: string, index: number, total: number): number | null {
   switch (key) {
@@ -128,28 +123,17 @@ export function CharacterHeader({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* ── Character Identity ── */}
-      <div
-        className={cn(
-          "relative overflow-hidden rounded-[20px] border border-[var(--color-border)] bg-[rgba(17,25,46,0.72)] p-3 sm:rounded-[24px] sm:p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
-          charTier && TIER_GLOW[charTier]
-        )}
-      >
-        {/* Subtle gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/[0.03] via-transparent to-[var(--color-accent-purple)]/[0.02] pointer-events-none" />
-
-        <div className="relative flex items-start gap-3 sm:gap-5">
-          {/* Character Image - larger and more prominent */}
+      <div className="rounded-lg border border-[var(--color-border)] bg-white p-3 sm:p-4">
+        <div className="flex items-start gap-3 sm:gap-4">
           <div className="relative shrink-0">
             <div
               className={cn(
-                "relative h-20 w-20 sm:h-24 sm:w-24 overflow-hidden rounded-xl bg-[var(--color-surface-2)] ring-2",
-                "h-16 w-16 sm:h-24 sm:w-24",
+                "relative h-16 w-16 overflow-hidden rounded-md border bg-[var(--color-surface-2)] sm:h-24 sm:w-24",
                 charTier === "S"
-                  ? "ring-[var(--color-tier-s)]/40"
+                  ? "border-[var(--color-tier-s)]/45"
                   : charTier === "A"
-                    ? "ring-[var(--color-tier-a)]/30"
-                    : "ring-[var(--color-border)]"
+                    ? "border-[var(--color-tier-a)]/40"
+                    : "border-[var(--color-border)]"
               )}
             >
               <Image
@@ -162,7 +146,6 @@ export function CharacterHeader({
                 unoptimized
               />
             </div>
-            {/* Tier badge overlaid on image corner */}
             {charTier && (
               <div className="absolute -bottom-1.5 -right-1.5">
                 <TierBadge tier={charTier} />
@@ -170,32 +153,30 @@ export function CharacterHeader({
             )}
           </div>
 
-          {/* Character Info */}
           <div className="flex min-w-0 flex-1 flex-col gap-2">
             <div>
-              <h2 className="text-[1.1rem] font-black leading-tight tracking-tight text-[var(--color-foreground)] sm:text-2xl">
+              <h2 className="text-[1.15rem] font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
                 {characterName}
               </h2>
               <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                 {currentPatch && (
-                  <span className="rounded-md border border-[var(--color-primary)]/20 bg-[var(--color-primary)]/10 px-2 py-0.5 text-[9px] font-medium text-[var(--color-primary)] sm:text-[10px]">
+                  <span className="rounded border border-[var(--color-border)] px-2 py-0.5 text-[10px] font-medium text-[var(--color-muted-foreground)]">
                     {t("patch", { patch: currentPatch })}
                   </span>
                 )}
                 {displayStat && displayStat.totalGames > 0 && (
-                  <span className="rounded-md bg-[var(--color-surface-3)] px-2 py-0.5 text-[9px] text-[var(--color-muted-foreground)] sm:text-[10px]">
+                  <span className="rounded bg-[var(--color-surface-2)] px-2 py-0.5 text-[10px] text-[var(--color-muted-foreground)]">
                     {t("games", { count: displayStat.totalGames.toLocaleString() })}
                   </span>
                 )}
               </div>
             </div>
 
-            {/* Tier selector — WAI-ARIA radiogroup */}
             <div className="flex flex-wrap items-center gap-2">
               <div
                 role="radiogroup"
                 aria-label={t("tierSelectorAria")}
-                className="flex w-fit items-center gap-1 rounded-[14px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] p-1 sm:rounded-[16px]"
+                className="flex w-fit items-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] p-1"
               >
                 {tierOptionsList.map((opt, i) => {
                   const isSelected = selectedTier === opt.value;
@@ -215,10 +196,10 @@ export function CharacterHeader({
                       }}
                       onKeyDown={(e) => handleTierKey(e, i)}
                       className={cn(
-                        "rounded-lg px-2.5 py-1.5 text-[10px] font-medium whitespace-nowrap transition-all sm:rounded-xl sm:px-3 sm:text-[11px]",
+                        "rounded px-2.5 py-1.5 text-[10px] font-medium whitespace-nowrap transition-colors sm:px-3 sm:text-[11px]",
                         "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
                         isSelected
-                          ? "bg-[var(--color-primary)]/15 text-[var(--color-primary)] shadow-sm"
+                          ? "bg-white text-[var(--color-primary)]"
                           : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
                       )}
                     >
@@ -229,7 +210,7 @@ export function CharacterHeader({
               </div>
 
               {patches.length > 0 && (
-                <label className="flex min-h-[34px] items-center gap-1.5 rounded-[14px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-2.5 text-[10px] font-medium text-[var(--color-muted-foreground)] sm:rounded-[16px] sm:text-[11px]">
+                <label className="flex min-h-[34px] items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 text-[10px] font-medium text-[var(--color-muted-foreground)] sm:text-[11px]">
                   <span>패치</span>
                   <select
                     value={selectedPatch ?? patches[0]}
@@ -248,10 +229,9 @@ export function CharacterHeader({
           </div>
         </div>
 
-        {/* ── Weapon Selector ── */}
         {!loading && stats?.weapons && stats.weapons.length > 0 && (
-          <div className="relative mt-3.5 border-t border-[var(--color-border)]/60 pt-3 sm:mt-4 sm:pt-3.5">
-            <span className="absolute -top-2.5 left-3 bg-[rgba(17,25,46,0.92)] px-2 text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider">
+          <div className="mt-3.5 border-t border-[var(--color-border)] pt-3 sm:mt-4">
+            <span className="mb-2 block text-[10px] font-medium text-[var(--color-muted-foreground)]">
               {t("weapon")}
             </span>
             <div
@@ -270,11 +250,11 @@ export function CharacterHeader({
                 onClick={() => setSelectedWeapon(null)}
                 onKeyDown={(e) => handleWeaponKey(e, 0)}
                 className={cn(
-                  "flex shrink-0 items-center gap-1.5 rounded-lg border px-2.5 py-2 text-[11px] font-medium transition-all sm:rounded-xl sm:px-3 sm:text-xs",
+                  "flex shrink-0 items-center gap-1.5 rounded-md border px-2.5 py-2 text-[11px] font-medium transition-colors sm:px-3 sm:text-xs",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
                   selectedWeapon == null
-                    ? "border-[var(--color-primary)]/50 bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
-                    : "border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/30"
+                    ? "border-[var(--color-primary)] bg-white text-[var(--color-primary)]"
+                    : "border-[var(--color-border)] bg-white text-[var(--color-foreground)] hover:border-[var(--color-primary)]/30"
                 )}
               >
                 {t("all")}
@@ -302,11 +282,11 @@ export function CharacterHeader({
                     }}
                     onKeyDown={(e) => handleWeaponKey(e, weaponIndex)}
                     className={cn(
-                      "flex min-w-[88px] shrink-0 flex-col rounded-lg border px-2.5 py-2 text-[11px] transition-all sm:min-w-[96px] sm:rounded-xl sm:px-3 sm:text-xs",
+                      "flex min-w-[88px] shrink-0 flex-col rounded-md border px-2.5 py-2 text-[11px] transition-colors sm:min-w-[96px] sm:px-3 sm:text-xs",
                       "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
                       isSelected
-                        ? "border-[var(--color-primary)]/50 bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
-                        : "border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] text-[var(--color-foreground)] hover:border-[var(--color-primary)]/30"
+                        ? "border-[var(--color-primary)] bg-white text-[var(--color-primary)]"
+                        : "border-[var(--color-border)] bg-white text-[var(--color-foreground)] hover:border-[var(--color-primary)]/30"
                     )}
                   >
                     <div className="flex items-center justify-between gap-2 w-full">
@@ -330,7 +310,7 @@ export function CharacterHeader({
                     >
                       <div
                         className={cn(
-                          "h-full rounded-full transition-all duration-300",
+                          "h-full rounded-full transition-colors duration-300",
                           isSelected
                             ? "bg-[var(--color-primary)]"
                             : "bg-[var(--color-muted-foreground)]/50"
@@ -346,7 +326,6 @@ export function CharacterHeader({
         )}
       </div>
 
-      {/* ── Stat Cards ── */}
       {loading ? (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
           {[...Array(4)].map((_, i) => (
@@ -399,7 +378,7 @@ export function CharacterHeader({
           />
         </div>
       ) : (
-        <div className="rounded-[22px] border border-dashed border-[var(--color-border)] bg-[rgba(255,255,255,0.02)] px-4 py-8 text-center">
+        <div className="rounded-lg border border-dashed border-[var(--color-border)] bg-white px-4 py-8 text-center">
           <p className="text-sm text-[var(--color-muted-foreground)]">
             {currentPatch ? t("emptyPatchData") : t("loadingPatchInfo")}
           </p>

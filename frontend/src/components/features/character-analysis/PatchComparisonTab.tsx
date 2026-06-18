@@ -39,7 +39,7 @@ export function PatchComparisonTab({
 
   if (!stats || stats.totalGames === 0) {
     return (
-      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-8 flex flex-col items-center gap-2 text-[var(--color-muted-foreground)]">
+      <div className="rounded-lg border border-[var(--color-border)] bg-white p-8 flex flex-col items-center gap-2 text-[var(--color-muted-foreground)]">
         <BarChart2 className="h-8 w-8 opacity-40" />
         <p className="text-sm">{t("noData")}</p>
       </div>
@@ -47,7 +47,7 @@ export function PatchComparisonTab({
   }
 
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-3 sm:p-5 space-y-3 sm:space-y-4 overflow-hidden">
+    <div className="rounded-lg border border-[var(--color-border)] bg-white p-3 sm:p-5 space-y-3 sm:space-y-4 overflow-hidden">
       {/* 멀티 패치 트렌드 차트 */}
       {chartData.length < 2 ? (
         <div className="flex flex-col items-center gap-2 py-6 sm:py-8 text-[var(--color-muted-foreground)]">
@@ -108,7 +108,7 @@ export function PatchComparisonTab({
                       className={cn(
                         "px-2 sm:px-3 py-1.5 text-right font-medium",
                         d.winRate > 12.5
-                          ? "text-[var(--color-accent-gold)]"
+                          ? "text-[var(--color-stat-up)]"
                           : "text-[var(--color-danger)]"
                       )}
                     >

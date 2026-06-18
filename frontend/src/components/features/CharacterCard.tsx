@@ -15,7 +15,7 @@ interface CharacterCardProps {
 const CHANGE_LABEL: Record<PatchChange["changeType"], { label: string; className: string }> = {
   buff: { label: "버프", className: "text-[var(--color-accent-gold)]" },
   nerf: { label: "너프", className: "text-[var(--color-danger)]" },
-  rework: { label: "변경", className: "text-blue-400" },
+  rework: { label: "변경", className: "text-[var(--color-primary)]" },
 };
 
 const baseClass =
@@ -49,8 +49,8 @@ function CardContent({
       </div>
 
       {hasChanges && (
-        <div className="pointer-events-none absolute bottom-full left-0 right-0 z-50 mb-2 opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 ease-out">
-          <div className="rounded-xl border border-white/10 bg-[var(--color-surface)]/80 backdrop-blur-md px-3 py-2.5 shadow-lg shadow-black/30 flex flex-col gap-2">
+        <div className="pointer-events-none absolute bottom-full left-0 right-0 z-50 mb-2 opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-colors duration-200 ease-out">
+          <div className="flex flex-col gap-2 rounded-lg border border-[var(--color-border)] bg-white px-3 py-2.5">
             {patchChanges.map((change, i) => {
               const { label, className: labelClass } = CHANGE_LABEL[change.changeType];
               return (

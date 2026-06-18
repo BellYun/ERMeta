@@ -186,9 +186,9 @@ export function CharacterSearchCombobox({
           onKeyDown={handleKeyDown}
           placeholder={t("placeholder")}
           className={cn(
-            "w-full rounded-[16px] border bg-[rgba(17,25,46,0.72)] py-2.5 pl-10 pr-4 text-sm text-[var(--color-foreground)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] sm:rounded-[18px] sm:py-3",
+            "w-full rounded-lg border bg-white py-2.5 pl-10 pr-4 text-sm text-[var(--color-foreground)] sm:py-3",
             "placeholder:text-[var(--color-muted-foreground)]",
-            "outline-none transition-all",
+            "outline-none transition-colors",
             open
               ? "rounded-b-[0px] border-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/30"
               : "border-[var(--color-border)] hover:border-[var(--color-primary)]/40"
@@ -202,7 +202,7 @@ export function CharacterSearchCombobox({
           id={listboxId}
           role="listbox"
           aria-label={t("listAria")}
-          className="absolute top-full right-0 z-50 max-h-[70vh] w-full overflow-y-auto rounded-b-[16px] border border-t-0 border-[var(--color-primary)] bg-[rgba(15,23,42,0.98)] shadow-[0_28px_60px_-36px_rgba(0,0,0,0.9)] sm:max-h-[320px] sm:rounded-b-[18px]"
+          className="absolute right-0 top-full z-50 max-h-[70vh] w-full overflow-y-auto rounded-b-lg border border-t-0 border-[var(--color-border)] bg-white sm:max-h-[320px]"
         >
           {filtered.length === 0 ? (
             <div

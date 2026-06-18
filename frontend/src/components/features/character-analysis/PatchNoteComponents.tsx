@@ -47,7 +47,7 @@ export function PatchTooltip({
   const note = patchLabel ? getCharacterPatchNote(selectedCode, patchLabel) : undefined;
 
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-3 text-xs shadow-lg max-w-[220px]">
+    <div className="max-w-[220px] rounded-lg border border-[var(--color-border)] bg-white p-3 text-xs">
       <p className="mb-1 font-semibold text-[var(--color-foreground)]">{patchLabel || "-"}</p>
       <p className="text-[var(--color-muted-foreground)]">
         {metricLabel}:{" "}
