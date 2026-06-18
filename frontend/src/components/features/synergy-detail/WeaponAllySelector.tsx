@@ -164,7 +164,7 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
       className={cn(
         "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors touch-manipulation",
         selected
-          ? "bg-[rgba(37,99,235,0.07)] outline outline-1 outline-[var(--color-primary)]/35"
+          ? "bg-white outline outline-1 outline-[var(--color-border-light)]"
           : disabled
             ? "opacity-25 cursor-not-allowed"
             : "hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80"
@@ -511,8 +511,8 @@ function SlotWeaponFilled({
   onRemove: () => void;
 }) {
   return (
-    <div className="flex w-full items-center gap-3 rounded-lg border border-[var(--color-primary)]/30 bg-[rgba(37,99,235,0.04)] px-4 py-3">
-      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-md bg-[var(--color-border)] outline outline-1 outline-[var(--color-primary)]/35">
+    <div className="flex w-full items-center gap-3 rounded-md border border-[var(--color-border-light)] bg-white px-4 py-3">
+      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded bg-[var(--color-border)] outline outline-1 outline-[var(--color-border)]">
         <Image
           src={getCharacterMiniWebpUrl(code)}
           alt={name}

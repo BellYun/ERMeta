@@ -119,17 +119,17 @@ function SeasonRow({
         className={cn(
           "group flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors sm:px-4 sm:py-3",
           isOpen ? "bg-white" : "hover:bg-[var(--color-surface-2)]",
-          isTopRow && !isOpen && "bg-[rgba(251,191,36,0.04)]"
+          isTopRow && !isOpen && "bg-white"
         )}
       >
         <span
           className={cn(
             "flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-sm font-semibold tabular-nums sm:h-9 sm:w-9 sm:text-base",
             rank === 1
-              ? "bg-[rgba(251,191,36,0.18)] text-[var(--color-accent-gold)]"
+              ? "border border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
               : isTopRow
-                ? "bg-[rgba(96,165,250,0.16)] text-[var(--color-primary)]"
-                : "bg-white text-[var(--color-muted-foreground)]"
+                ? "border border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
+                : "border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]"
           )}
         >
           {rank}

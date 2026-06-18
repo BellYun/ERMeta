@@ -403,7 +403,7 @@ export default function UpdatesPage({ locale = "ko" }: { locale?: RouteLocale })
                 {entry.date}
               </time>
               {entry.version && (
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--color-primary)]/15 text-[var(--color-primary)] font-medium">
+                <span className="text-[10px] px-2 py-0.5 rounded border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] font-medium">
                   {entry.version}
                 </span>
               )}
@@ -414,7 +414,7 @@ export default function UpdatesPage({ locale = "ko" }: { locale?: RouteLocale })
                   key={i}
                   className="text-sm text-[var(--color-muted-foreground)] leading-relaxed flex items-start gap-2"
                 >
-                  <span className="text-[var(--color-primary)] mt-1.5 shrink-0 w-1 h-1 rounded-full bg-[var(--color-primary)]" />
+                  <span className="mt-1.5 shrink-0 w-1 h-1 rounded bg-[var(--color-muted-foreground)]" />
                   {change}
                 </li>
               ))}

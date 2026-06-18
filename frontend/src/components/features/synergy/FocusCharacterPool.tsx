@@ -54,7 +54,7 @@ export function FocusCharacterPool() {
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium text-[var(--color-foreground)]">{t("title")}</span>
           {focusCharacters.length > 0 && (
-            <span className="rounded-full bg-[var(--color-primary)]/20 px-1.5 py-0.5 text-[10px] font-medium text-[var(--color-primary)]">
+            <span className="rounded border border-[var(--color-border)] bg-white px-1.5 py-0.5 text-[10px] font-medium text-[var(--color-muted-foreground)]">
               {t("count", { count: focusCharacters.length })}
             </span>
           )}
@@ -89,7 +89,7 @@ export function FocusCharacterPool() {
             <button
               key={`focus-chip-${code}`}
               onClick={() => toggleFocus(code)}
-              className="inline-flex items-center gap-1 rounded-md border border-[var(--color-primary)]/40 bg-[var(--color-primary)]/10 px-2 py-1 text-[10px] text-[var(--color-foreground)] hover:bg-[var(--color-primary)]/20 transition-colors"
+              className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-white px-2 py-1 text-[10px] text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
             >
               <span className="relative h-4 w-4 shrink-0 overflow-hidden rounded">
                 <Image

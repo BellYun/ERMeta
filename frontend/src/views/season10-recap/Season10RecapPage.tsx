@@ -178,9 +178,9 @@ function HeroMetricCard({
 }) {
   const iconTone =
     tone === "gold"
-      ? "border-[rgba(251,191,36,0.18)] bg-[rgba(251,191,36,0.12)] text-[var(--color-accent-gold)]"
+      ? "border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
       : tone === "blue"
-        ? "border-[rgba(96,165,250,0.18)] bg-[rgba(96,165,250,0.12)] text-[var(--color-primary)]"
+        ? "border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
         : "border-[var(--color-border)] bg-white text-[var(--color-foreground)]";
 
   return (
@@ -297,13 +297,13 @@ export default async function SeasonRecapPage({ locale = "ko" }: { locale?: Rout
               {copy.title}
             </h1>
             <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[var(--color-muted-foreground)] sm:text-sm">
-              <span className="rounded-full border border-[var(--color-border)] bg-white px-2.5 py-1">
+              <span className="rounded border border-[var(--color-border)] bg-white px-2.5 py-1">
                 {copy.trackedPatches} {copy.trackedPatchesValue(patches.length)}
               </span>
-              <span className="rounded-full border border-[var(--color-border)] bg-white px-2.5 py-1">
+              <span className="rounded border border-[var(--color-border)] bg-white px-2.5 py-1">
                 {copy.trackedCombos} {copy.trackedCombosValue(formatMetricNumber(trackedCombos))}
               </span>
-              <span className="rounded-full border border-[var(--color-border)] bg-white px-2.5 py-1">
+              <span className="rounded border border-[var(--color-border)] bg-white px-2.5 py-1">
                 {copy.totalSample} {copy.totalSampleValue(formatMetricNumber(totalMatches))}
               </span>
             </div>

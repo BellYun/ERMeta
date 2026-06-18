@@ -447,7 +447,7 @@ export function SynergyDetailResults() {
             </h2>
           )}
           {focusCharWeapons.length > 0 && (
-            <span className="rounded-full border border-[var(--color-accent-purple)]/30 bg-[var(--color-accent-purple)]/10 px-2.5 py-1 text-[11.5px] font-semibold text-[var(--color-accent-purple)]">
+            <span className="rounded border border-[var(--color-border)] bg-white px-2.5 py-1 text-[11.5px] font-semibold text-[var(--color-muted-foreground)]">
               {t("focusFilter", { count: focusCharWeapons.length })}
             </span>
           )}
@@ -497,7 +497,7 @@ export function SynergyDetailResults() {
                     });
                   });
                 }}
-                className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1 rounded-lg border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-3 py-2 text-xs font-medium text-[var(--color-primary-hover)] hover:bg-[var(--color-primary)]/18 transition-colors"
+                className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-xs font-medium text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
               >
                 <Share2 className="h-3 w-3" />
                 {copied ? t("copied") : t("share")}
@@ -599,7 +599,7 @@ export function SynergyDetailResults() {
         ) : recommendations.length > 0 ? (
           <div data-sr-block className="flex flex-col gap-2">
             {selectedAllies.length === 1 && (
-              <p className="flex items-center gap-2 rounded-lg border border-[rgba(96,165,250,0.18)] bg-[rgba(96,165,250,0.08)] px-3 py-2 text-[12px] font-medium text-[var(--color-foreground)]/82">
+              <p className="flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-[12px] font-medium text-[var(--color-muted-foreground)]">
                 <Info
                   className="h-3.5 w-3.5 shrink-0 text-[var(--color-primary-hover)]"
                   strokeWidth={2.4}
@@ -608,7 +608,7 @@ export function SynergyDetailResults() {
               </p>
             )}
             {selectedAllies.length === 2 && (
-              <p className="flex items-center gap-2 rounded-lg border border-[rgba(96,165,250,0.18)] bg-[rgba(96,165,250,0.08)] px-3 py-2 text-[12px] font-medium text-[var(--color-foreground)]/82">
+              <p className="flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-[12px] font-medium text-[var(--color-muted-foreground)]">
                 <Info
                   className="h-3.5 w-3.5 shrink-0 text-[var(--color-primary-hover)]"
                   strokeWidth={2.4}
@@ -633,7 +633,7 @@ export function SynergyDetailResults() {
               <button
                 type="button"
                 onClick={() => setVisibleCount((prev) => prev + 30)}
-                className="w-full min-h-[44px] rounded-[18px] border border-[var(--color-border-light)] bg-[rgba(96,165,250,0.06)] py-3 text-[13.5px] font-semibold text-[var(--color-foreground)]/85 hover:text-[var(--color-foreground)] hover:bg-[rgba(96,165,250,0.12)] hover:border-[var(--color-primary)]/35 transition-colors"
+                className="w-full min-h-[44px] rounded-md border border-[var(--color-border)] bg-white py-3 text-[13.5px] font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
               >
                 {t("more", { visible: visibleCount, total: recommendations.length })}
               </button>

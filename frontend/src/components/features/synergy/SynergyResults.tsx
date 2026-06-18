@@ -322,7 +322,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                     });
                   });
                 }}
-                className="inline-flex items-center gap-1 shrink-0 rounded-md border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 hover:border-[var(--color-primary)]/50 transition-colors"
+                className="inline-flex items-center gap-1 shrink-0 rounded border border-[var(--color-border)] bg-white px-2.5 py-1 text-xs font-medium text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
               >
                 <Share2 className="h-3 w-3" />
                 {copied ? t("copied") : t("share")}

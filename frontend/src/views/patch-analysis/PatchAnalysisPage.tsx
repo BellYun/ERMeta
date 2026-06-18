@@ -446,11 +446,11 @@ function MetricCard({
 }) {
   const toneClass =
     tone === "gold"
-      ? "border-[rgba(251,191,36,0.18)] bg-[rgba(251,191,36,0.12)] text-[var(--color-accent-gold)]"
+      ? "border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
       : tone === "blue"
-        ? "border-[rgba(96,165,250,0.18)] bg-[rgba(96,165,250,0.12)] text-[var(--color-primary)]"
+        ? "border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
         : tone === "danger"
-          ? "border-[rgba(248,113,113,0.18)] bg-[rgba(248,113,113,0.1)] text-[var(--color-danger)]"
+          ? "border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
           : "border-[var(--color-border)] bg-white text-[var(--color-foreground)]";
 
   return (
@@ -507,10 +507,10 @@ function DeltaBadge({ value, suffix = "" }: { value: number; suffix?: string }) 
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold tabular-nums",
+        "inline-flex items-center gap-1 rounded border bg-white px-2 py-0.5 text-[11px] font-semibold tabular-nums",
         positive
-          ? "border-[rgba(74,222,128,0.2)] bg-[rgba(74,222,128,0.08)] text-[var(--color-success)]"
-          : "border-[rgba(248,113,113,0.2)] bg-[rgba(248,113,113,0.08)] text-[var(--color-danger)]"
+          ? "border-[var(--color-border)] text-[var(--color-success)]"
+          : "border-[var(--color-border)] text-[var(--color-danger)]"
       )}
     >
       {positive ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
@@ -572,10 +572,10 @@ function CharacterDeltaCard({
               ))}
               <span
                 className={cn(
-                  "rounded-md border px-2 py-1 text-[10px] font-semibold",
+                  "rounded border bg-white px-2 py-1 text-[10px] font-semibold",
                   entry.isAggregate
-                    ? "border-[rgba(251,191,36,0.24)] bg-[rgba(251,191,36,0.1)] text-[var(--color-accent-gold)]"
-                    : "border-[rgba(96,165,250,0.24)] bg-[rgba(96,165,250,0.1)] text-[var(--color-primary)]"
+                    ? "border-[var(--color-border)] text-[var(--color-foreground)]"
+                    : "border-[var(--color-border)] text-[var(--color-muted-foreground)]"
                 )}
               >
                 {scopeLabel}
@@ -1030,9 +1030,9 @@ export default async function PatchAnalysisPage({
                     href={`/patch-analysis/${candidate}`}
                     aria-current={isActive ? "page" : undefined}
                     className={cn(
-                      "rounded-lg border px-3 py-2 text-sm font-semibold transition",
+                      "rounded-md border px-3 py-2 text-sm font-semibold transition",
                       isActive
-                        ? "border-[rgba(96,165,250,0.28)] bg-[rgba(96,165,250,0.12)] text-[var(--color-primary-hover)]"
+                        ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
                         : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
                     )}
                   >

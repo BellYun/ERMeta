@@ -145,9 +145,9 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                     key={candidate}
                     href={`/patches/${candidate}`}
                     aria-current={isActive ? "page" : undefined}
-                    className={`rounded-lg border px-3 py-2 text-sm font-medium transition ${
+                    className={`rounded-md border px-3 py-2 text-sm font-medium transition ${
                       isActive
-                        ? "border-[rgba(37,99,235,0.28)] bg-[rgba(37,99,235,0.1)] text-[var(--color-primary)]"
+                        ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
                         : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
                     }`}
                   >
@@ -232,13 +232,13 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                     </p>
                   </div>
 
-                  <span className="rounded-full border border-[var(--color-border)] bg-white px-2.5 py-1 text-[11px] font-medium text-[var(--color-muted-foreground)]">
+                  <span className="rounded border border-[var(--color-border)] bg-white px-2.5 py-1 text-[11px] font-medium text-[var(--color-muted-foreground)]">
                     {t("totalChanges", { count: note.changes.length })}
                   </span>
                 </div>
 
                 {locale === "ko" ? (
-                  <ul className="mt-4 divide-y divide-[var(--color-border)] rounded-[18px] border border-[var(--color-border)] bg-white">
+                  <ul className="mt-4 divide-y divide-[var(--color-border)] rounded-md border border-[var(--color-border)] bg-white">
                     {note.changes.map((change, changeIndex) => {
                       const detailText = change.description.join(" ");
 
@@ -277,7 +277,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                     })}
                   </ul>
                 ) : (
-                  <div className="mt-4 rounded-[18px] border border-[var(--color-border)] bg-white px-3.5 py-3 sm:px-4">
+                  <div className="mt-4 rounded-md border border-[var(--color-border)] bg-white px-3.5 py-3 sm:px-4">
                     <div className="flex flex-wrap items-center gap-2">
                       {changeTypes.map((type) => (
                         <ChangeTypeBadgeStatic

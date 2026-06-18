@@ -48,7 +48,7 @@ export function ComboCard({
     <div
       className={cn(
         "group flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-white px-3 py-2.5 transition-colors duration-200 hover:bg-[var(--color-surface-2)] hover:border-[var(--color-border-light)]",
-        isFocusPoolCombo && "border-[var(--color-primary)]/30 bg-[rgba(37,99,235,0.04)]"
+        isFocusPoolCombo && "border-[var(--color-border-light)] bg-white"
       )}
     >
       {/* 순위 */}
@@ -65,7 +65,7 @@ export function ComboCard({
               <div
                 className={cn(
                   "relative h-8 w-8 overflow-hidden rounded-md bg-[var(--color-border)]",
-                  isRecommended && "border border-[var(--color-primary)]/40"
+                  isRecommended && "border border-[var(--color-border-light)]"
                 )}
               >
                 <Image
@@ -103,7 +103,7 @@ export function ComboCard({
                 >
                   {charContent}
                   {rest.length === 1 && (
-                    <span className="rounded-md border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-1.5 py-0.5 text-[9px] font-medium text-[var(--color-primary)] group-hover/char:bg-[var(--color-primary)]/20 group-hover/char:border-[var(--color-primary)]/50 transition-colors whitespace-nowrap">
+                    <span className="rounded border border-[var(--color-border)] bg-white px-1.5 py-0.5 text-[9px] font-medium text-[var(--color-foreground)] transition-colors whitespace-nowrap group-hover/char:border-[var(--color-border-light)]">
                       분석보기
                     </span>
                   )}

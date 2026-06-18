@@ -79,7 +79,7 @@ export function SynergyDetailInteractiveSkeleton() {
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
         <section className="w-full lg:w-[340px] shrink-0">
           <div className="flex items-center gap-2 mb-2.5">
-            <span className="flex items-center justify-center h-5 w-5 rounded-md bg-[var(--color-primary)]/15 text-[10px] font-bold text-[var(--color-primary)]">
+            <span className="flex items-center justify-center h-5 w-5 rounded border border-[var(--color-border)] bg-white text-[10px] font-bold text-[var(--color-muted-foreground)]">
               2
             </span>
             <h2 className="text-sm font-bold text-[var(--color-foreground)]">{t("alliesTitle")}</h2>

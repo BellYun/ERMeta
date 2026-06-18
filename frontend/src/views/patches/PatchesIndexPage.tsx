@@ -165,7 +165,7 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
                 href={`/patches/${summary.patch}`}
                 className={`metric-card group flex h-full flex-col gap-4 px-4 py-4 transition-colors sm:px-5 sm:py-5 ${
                   index === 0
-                    ? "border-[rgba(37,99,235,0.24)] bg-[rgba(37,99,235,0.08)]"
+                    ? "border-[var(--color-border-light)] bg-white"
                     : "hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
                 }`}
               >

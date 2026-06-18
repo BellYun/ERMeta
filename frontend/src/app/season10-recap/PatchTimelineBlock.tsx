@@ -90,7 +90,7 @@ function PatchRankRow({ rank, entry }: { rank: number; entry: PatchTopGroup["ent
         className={cn(
           "group flex items-center gap-2.5 rounded-lg border px-2.5 py-2 transition-colors",
           rank === 1
-            ? "border-[rgba(251,191,36,0.22)] bg-[rgba(251,191,36,0.08)]"
+            ? "border-[var(--color-border-light)] bg-white"
             : "border-[var(--color-border)] bg-white hover:bg-[var(--color-surface-2)]"
         )}
       >
@@ -98,10 +98,10 @@ function PatchRankRow({ rank, entry }: { rank: number; entry: PatchTopGroup["ent
           className={cn(
             "flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[11px] font-semibold tabular-nums",
             rank === 1
-              ? "bg-[rgba(251,191,36,0.18)] text-[var(--color-accent-gold)]"
+              ? "border border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
               : rank <= 3
-                ? "bg-[rgba(96,165,250,0.12)] text-[var(--color-primary)]"
-                : "bg-white text-[var(--color-muted-foreground)]"
+                ? "border border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
+                : "border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]"
           )}
         >
           {rank}

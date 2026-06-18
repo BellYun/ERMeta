@@ -52,7 +52,7 @@ const FocusCell = React.memo(function FocusCell({
       className={cn(
         "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors touch-manipulation",
         selected
-          ? "bg-[rgba(37,99,235,0.07)] outline outline-1 outline-[var(--color-primary)]/35"
+          ? "bg-white outline outline-1 outline-[var(--color-border-light)]"
           : "hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80"
       )}
     >
@@ -190,7 +190,7 @@ export function FocusWeaponPool() {
             {t("title")}
           </span>
           {focusCharWeapons.length > 0 && (
-            <span className="rounded-full border border-[var(--color-accent-purple)]/30 bg-[var(--color-accent-purple)]/10 px-2 py-0.5 text-[10.5px] font-bold text-[var(--color-accent-purple)]">
+            <span className="rounded border border-[var(--color-border)] bg-white px-2 py-0.5 text-[10.5px] font-bold text-[var(--color-muted-foreground)]">
               {t("count", { count: focusCharWeapons.length })}
             </span>
           )}

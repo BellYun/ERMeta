@@ -31,10 +31,26 @@ function useLocalizedItemNames(l10n: Map<string, string>): Record<number, string
 type TraitGroup = "havoc" | "fortification" | "support" | "chaos" | "unknown";
 
 const GROUP_CONFIG: Record<TraitGroup, { letter: string; bg: string; text: string }> = {
-  havoc: { letter: "파", bg: "bg-red-500/20", text: "text-red-400" },
-  fortification: { letter: "저", bg: "bg-blue-500/20", text: "text-blue-400" },
-  support: { letter: "지", bg: "bg-emerald-500/20", text: "text-emerald-400" },
-  chaos: { letter: "혼", bg: "bg-purple-500/20", text: "text-purple-400" },
+  havoc: {
+    letter: "파",
+    bg: "bg-[var(--color-surface-2)]",
+    text: "text-[var(--color-foreground)]",
+  },
+  fortification: {
+    letter: "저",
+    bg: "bg-[var(--color-surface-2)]",
+    text: "text-[var(--color-foreground)]",
+  },
+  support: {
+    letter: "지",
+    bg: "bg-[var(--color-surface-2)]",
+    text: "text-[var(--color-foreground)]",
+  },
+  chaos: {
+    letter: "혼",
+    bg: "bg-[var(--color-surface-2)]",
+    text: "text-[var(--color-foreground)]",
+  },
   unknown: {
     letter: "?",
     bg: "bg-[var(--color-surface-2)]",
@@ -134,7 +150,7 @@ function TopBuildsTable({
                   #{i + 1}
                 </span>
                 {b.mainCore != null && (
-                  <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium bg-[var(--color-primary)]/20 text-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/40">
+                  <span className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-white px-1.5 py-0.5 text-[10px] font-medium text-[var(--color-foreground)]">
                     <TraitIconSmall code={b.mainCore} size={16} />
                     {traitNames[b.mainCore] ?? b.mainCore}
                   </span>
@@ -207,7 +223,7 @@ function TopBuildsTable({
                 </td>
                 <td className="px-1.5 py-1.5 text-center">
                   {b.mainCore != null ? (
-                    <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium bg-[var(--color-primary)]/20 text-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/40 whitespace-nowrap">
+                    <span className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-white px-1.5 py-0.5 text-[10px] font-medium text-[var(--color-foreground)] whitespace-nowrap">
                       <TraitIconSmall code={b.mainCore} size={16} />
                       {traitNames[b.mainCore] ?? b.mainCore}
                     </span>
@@ -279,7 +295,7 @@ function TopBuildsTable({
                 {/* 메인특성 */}
                 <td className="px-2 py-2 text-center">
                   {b.mainCore != null ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-medium bg-[var(--color-primary)]/20 text-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/40 whitespace-nowrap">
+                    <span className="inline-flex items-center gap-1.5 rounded border border-[var(--color-border)] bg-white px-2 py-0.5 text-xs font-medium text-[var(--color-foreground)] whitespace-nowrap">
                       <TraitIconSmall code={b.mainCore} size={20} />
                       {traitNames[b.mainCore] ?? b.mainCore}
                     </span>

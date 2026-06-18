@@ -716,8 +716,8 @@ export function CharacterDetailedAnalyzer({
                 className={cn(
                   "flex flex-col rounded-lg border px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs transition-colors min-w-[90px] sm:min-w-[100px] shrink-0 sm:shrink touch-manipulation",
                   isSelected
-                    ? "border-[var(--color-primary)] bg-white text-[var(--color-primary)]"
-                    : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] active:border-[var(--color-primary)]/50 sm:hover:border-[var(--color-primary)]/50"
+                    ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
+                    : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] active:border-[var(--color-border-light)] sm:hover:border-[var(--color-border-light)]"
                 )}
               >
                 <div className="flex items-center gap-1.5">

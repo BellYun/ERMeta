@@ -124,7 +124,7 @@ function ComboWeaponCardImpl({
       className={cn(
         "rounded-lg border bg-white transition-colors duration-200",
         rank <= 3 ? "border-[var(--color-border-light)]" : "border-[var(--color-border)]",
-        isFocusPoolCombo && "border-[var(--color-primary)]/30 bg-[rgba(37,99,235,0.04)]"
+        isFocusPoolCombo && "border-[var(--color-border-light)] bg-white"
       )}
       style={{ contentVisibility: "auto", containIntrinsicSize: "auto 56px" }}
     >
