@@ -49,7 +49,7 @@ class SectionErrorBoundaryInner extends React.Component<Props & BoundaryMessages
     if (this.state.hasError) {
       return (
         <div
-          className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-12 text-center"
+          className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] py-12 text-center"
           style={{ minHeight: this.props.fallbackHeight }}
         >
           <AlertTriangle className="mb-3 h-8 w-8 text-[var(--color-danger)]" />

@@ -187,7 +187,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
       </div>
 
       {/* ── Table ── */}
-      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]">
         {/* Desktop Table */}
         <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-sm">
@@ -326,9 +326,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                                       patch: char.patchNote.patch,
                                     })}
                                     onClick={(e) => togglePatchNote(e, key)}
-                                    className="shrink-0 rounded-md border border-[rgba(96,165,250,0.3)] bg-[rgba(96,165,250,0.1)] px-1.5 py-0.5 text-[9px] font-black tracking-[0.08em] text-[var(--color-primary)] transition-colors hover:bg-[rgba(96,165,250,0.16)]"
+                                    className="shrink-0 rounded border border-[var(--color-border)] bg-white px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-surface-2)]"
                                   >
-                                    PATCH
+                                    패치
                                   </button>
                                 )}
                               </span>
@@ -464,7 +464,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                     {/* Rank */}
                     <span
                       className={cn(
-                        "w-5 text-center text-[0.95rem] font-black tabular-nums",
+                        "w-5 text-center text-[0.95rem] font-bold tabular-nums",
                         char.rank <= 3
                           ? "text-[var(--color-accent-gold)]"
                           : "text-[var(--color-muted-foreground)]"
@@ -497,9 +497,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                               type="button"
                               aria-label={t("patchNoteButton", { patch: char.patchNote.patch })}
                               onClick={(e) => togglePatchNote(e, key)}
-                              className="shrink-0 rounded-md border border-[rgba(96,165,250,0.28)] bg-[rgba(96,165,250,0.1)] px-1 py-0.5 text-[8px] font-black tracking-[0.06em] text-[var(--color-primary)]"
+                              className="shrink-0 rounded border border-[var(--color-border)] bg-white px-1 py-0.5 text-[8px] font-semibold text-[var(--color-muted-foreground)]"
                             >
-                              PATCH
+                              패치
                             </button>
                           )}
                         </div>
@@ -591,7 +591,7 @@ function SortableHead({
             >
               <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2.5a1 1 0 110 2 1 1 0 010-2zM6.5 7h2v4.5h-2V7z" />
             </svg>
-            <span className="fixed hidden group-hover/tip:block px-2.5 py-1.5 rounded-lg bg-[var(--color-surface-3)] border border-[var(--color-border)] text-[10px] text-[var(--color-foreground)] font-normal whitespace-nowrap shadow-lg z-[9999] -translate-x-1/2 mt-1">
+            <span className="fixed z-[9999] mt-1 hidden -translate-x-1/2 whitespace-nowrap rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2.5 py-1.5 text-[10px] font-normal text-[var(--color-foreground)] group-hover/tip:block">
               {tooltip}
             </span>
           </span>
@@ -606,7 +606,7 @@ function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
   return (
     <svg
       className={cn(
-        "w-3 h-3 transition-all",
+        "w-3 h-3 transition-colors",
         active ? "opacity-100" : "opacity-0 group-hover/th:opacity-40"
       )}
       viewBox="0 0 12 12"

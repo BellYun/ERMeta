@@ -9,15 +9,27 @@ export function PatchNoteTooltip({ patchNote }: { patchNote: CharacterPatchNote 
 
   const changeTypeLabel = (type: string): { text: string; color: string } => {
     if (type === "buff")
-      return { text: "BUFF", color: "text-green-400 bg-green-400/10 border-green-400/20" };
+      return {
+        text: "상향",
+        color:
+          "text-[var(--color-stat-up)] bg-[var(--color-stat-up)]/10 border-[var(--color-stat-up)]/20",
+      };
     if (type === "nerf")
-      return { text: "NERF", color: "text-red-400 bg-red-400/10 border-red-400/20" };
-    return { text: "REWORK", color: "text-blue-400 bg-blue-400/10 border-blue-400/20" };
+      return {
+        text: "하향",
+        color:
+          "text-[var(--color-stat-down)] bg-[var(--color-stat-down)]/10 border-[var(--color-stat-down)]/20",
+      };
+    return {
+      text: "조정",
+      color:
+        "text-[var(--color-primary)] bg-[var(--color-primary)]/10 border-[var(--color-primary)]/20",
+    };
   };
 
   return (
     <div
-      className="absolute z-50 left-0 sm:left-0 right-0 sm:right-auto top-full mt-1 w-auto sm:w-96 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3 sm:p-4 shadow-2xl shadow-black/40 pointer-events-auto sm:pointer-events-none"
+      className="pointer-events-auto absolute left-0 right-0 top-full z-50 mt-1 w-auto rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3 sm:left-0 sm:right-auto sm:w-96 sm:p-4 sm:pointer-events-none"
       onClick={(e) => e.stopPropagation()}
     >
       <p className="text-xs font-medium text-[var(--color-muted-foreground)] mb-3">

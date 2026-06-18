@@ -64,6 +64,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
             messages={initialMessages}
             currentPatch={currentPatch}
             patchAnalysisPatch={patchAnalysisPatch}
+            routeLocale={locale}
           >
             {children}
           </AppFrame>

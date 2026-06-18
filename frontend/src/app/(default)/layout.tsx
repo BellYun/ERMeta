@@ -37,6 +37,7 @@ export default async function DefaultLayout({ children }: { children: ReactNode 
             messages={initialMessages}
             currentPatch={currentPatch}
             patchAnalysisPatch={patchAnalysisPatch}
+            routeLocale={DEFAULT_ROUTE_LOCALE}
           >
             {children}
           </AppFrame>

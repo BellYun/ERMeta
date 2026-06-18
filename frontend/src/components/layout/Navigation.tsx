@@ -74,13 +74,13 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
     },
     {
       href: withCurrentRouteLocale(pathname, "/trio-lab"),
-      label: "조합 실험실",
+      label: t("trioLab"),
       icon: FlaskConical,
       isActive: normalizedPathname.startsWith("/trio-lab"),
     },
     {
       href: withCurrentRouteLocale(pathname, "/character-lab"),
-      label: "캐릭터 유형 분석",
+      label: t("characterLab"),
       icon: Layers,
       isActive:
         normalizedPathname.startsWith("/character-lab") ||
@@ -95,7 +95,7 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
     },
     {
       href: withCurrentRouteLocale(pathname, patchAnalysisPath),
-      label: "패치 분석",
+      label: t("patchAnalysisNav"),
       icon: Gauge,
       isActive: normalizedPathname.startsWith("/patch-analysis"),
     },
@@ -108,17 +108,17 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
   ];
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-[linear-gradient(180deg,rgba(7,13,29,0.96),rgba(8,12,26,0.96))] px-4 py-5">
+    <div className="flex h-full min-h-0 flex-col bg-white px-4 py-5">
       <Link
         href={withCurrentRouteLocale(pathname, "/")}
         onClick={onNavigate}
         className="flex items-center gap-3 px-2"
       >
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[linear-gradient(180deg,#5fa8ff,#3266d6)] text-sm font-black text-white shadow-[0_14px_30px_-16px_rgba(96,165,250,1)]">
+        <div className="flex h-11 w-11 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-sm font-bold text-[var(--color-primary)]">
           ER
         </div>
         <div className="min-w-0">
-          <p className="text-[1.35rem] font-black tracking-[-0.04em] text-[var(--color-foreground)]">
+          <p className="text-[1.25rem] font-bold text-[var(--color-foreground)]">
             {tHeader("logoTitle")}
           </p>
           <p className="text-[11px] text-[var(--color-muted-foreground)]">
@@ -138,25 +138,25 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
               onClick={onNavigate}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "group flex items-center gap-3 rounded-[18px] border px-4 py-3 text-sm font-medium transition-all",
+                "group flex items-center gap-3 rounded-[18px] border px-4 py-3 text-sm font-medium transition-colors",
                 isActive
-                  ? "border-[rgba(96,165,250,0.38)] bg-[linear-gradient(180deg,rgba(28,48,88,0.88),rgba(17,30,58,0.88))] text-[var(--color-foreground)] shadow-[0_18px_32px_-20px_rgba(96,165,250,0.85)]"
-                  : "border-transparent text-[var(--color-muted-foreground)] hover:border-[var(--color-border)] hover:bg-[rgba(17,25,46,0.72)] hover:text-[var(--color-foreground)]"
+                  ? "border-[rgba(37,99,235,0.24)] bg-[rgba(37,99,235,0.08)] text-[var(--color-foreground)]"
+                  : "border-transparent text-[var(--color-muted-foreground)] hover:border-[var(--color-border)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
               )}
             >
               <span
                 className={cn(
-                  "flex h-9 w-9 items-center justify-center rounded-xl border transition-colors",
+                  "flex h-9 w-9 items-center justify-center rounded-lg border transition-colors",
                   isActive
-                    ? "border-[rgba(96,165,250,0.3)] bg-[rgba(96,165,250,0.14)] text-[var(--color-primary)]"
-                    : "border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.03)] text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]"
+                    ? "border-[rgba(37,99,235,0.22)] bg-white text-[var(--color-primary)]"
+                    : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]"
                 )}
               >
                 <Icon className="h-[18px] w-[18px]" strokeWidth={1.9} />
               </span>
-              <span className="tracking-[-0.02em]">{label}</span>
+              <span className="">{label}</span>
               {badge && (
-                <span className="ml-auto rounded-full border border-[rgba(251,191,36,0.32)] bg-[rgba(251,191,36,0.12)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-[var(--color-accent-gold)]">
+                <span className="ml-auto text-[9px] font-semibold text-[var(--color-muted-foreground)]">
                   {badge}
                 </span>
               )}
@@ -166,7 +166,7 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
 
         <div className="mt-auto flex flex-col gap-3 pt-4">
           {currentPatch ? (
-            <div className="rounded-[20px] border border-[var(--color-border)] bg-[rgba(16,24,44,0.84)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+            <div className="rounded-[18px] border border-[var(--color-border)] bg-[var(--color-surface-2)] p-4">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm font-semibold text-[var(--color-foreground)]">
                   {t("patchPanel", { patch: currentPatch })}
@@ -177,7 +177,7 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
                 </div>
               </div>
               <div className="mt-3 flex items-center gap-2 text-xs text-[var(--color-muted-foreground)]">
-                <span className="h-2 w-2 rounded-full bg-[var(--color-success)] shadow-[0_0_10px_rgba(74,222,128,0.7)]" />
+                <span className="h-2 w-2 rounded-full bg-[var(--color-success)]" />
                 <span>{t("updateStatus")}</span>
               </div>
             </div>
@@ -195,16 +195,16 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
             className={cn(
               "flex items-center gap-3 rounded-[18px] border px-4 py-3 text-sm font-medium transition-colors",
               isFeedbackOpen
-                ? "border-[rgba(96,165,250,0.34)] bg-[linear-gradient(180deg,rgba(28,48,88,0.88),rgba(17,30,58,0.88))] text-[var(--color-foreground)] shadow-[0_18px_32px_-20px_rgba(96,165,250,0.7)]"
-                : "border-[var(--color-border)] bg-[rgba(14,20,36,0.9)] text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[rgba(21,31,54,0.94)]"
+                ? "border-[rgba(37,99,235,0.24)] bg-[rgba(37,99,235,0.08)] text-[var(--color-foreground)]"
+                : "border-[var(--color-border)] bg-white text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
             )}
           >
             <span
               className={cn(
-                "flex h-9 w-9 items-center justify-center rounded-xl border transition-colors",
+                "flex h-9 w-9 items-center justify-center rounded-lg border transition-colors",
                 isFeedbackOpen
-                  ? "border-[rgba(96,165,250,0.28)] bg-[rgba(96,165,250,0.14)] text-[var(--color-primary)]"
-                  : "border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.03)] text-[var(--color-muted-foreground)]"
+                  ? "border-[rgba(37,99,235,0.22)] bg-white text-[var(--color-primary)]"
+                  : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]"
               )}
             >
               <MessageSquarePlus className="h-[18px] w-[18px]" strokeWidth={1.9} />

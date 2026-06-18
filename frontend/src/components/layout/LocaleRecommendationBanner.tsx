@@ -83,7 +83,7 @@ export function LocaleRecommendationBanner() {
   return (
     <div className="flex items-center justify-between gap-3 border-b border-[rgba(96,165,250,0.14)] bg-[rgba(59,130,246,0.08)] px-3 py-2 text-sm text-[var(--color-foreground)] sm:px-4 lg:px-6">
       <div className="flex min-w-0 items-center gap-2.5">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[rgba(96,165,250,0.18)] bg-[rgba(96,165,250,0.12)] text-[var(--color-primary)]">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[rgba(96,165,250,0.18)] bg-[rgba(96,165,250,0.12)] text-[var(--color-primary)]">
           <Globe2 className="h-4 w-4" strokeWidth={2} />
         </span>
         <p className="min-w-0 text-xs leading-5 text-[var(--color-foreground)]/86 sm:text-sm">

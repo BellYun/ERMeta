@@ -1,31 +1,31 @@
-"use client"
+"use client";
 
-import { AlertTriangle } from "lucide-react"
-import React from "react"
+import { AlertTriangle } from "lucide-react";
+import React from "react";
 
 interface Props {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 interface State {
-  hasError: boolean
-  error: Error | null
+  hasError: boolean;
+  error: Error | null;
 }
 
 export class ResultErrorBoundary extends React.Component<Props, State> {
   constructor(props: Props) {
-    super(props)
-    this.state = { hasError: false, error: null }
+    super(props);
+    this.state = { hasError: false, error: null };
   }
 
   static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error }
+    return { hasError: true, error };
   }
 
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
+        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] py-16 text-center">
           <AlertTriangle className="mb-3 h-10 w-10 text-[var(--color-danger)]" />
           <p className="text-sm font-medium text-[var(--color-foreground)]">
             조합 결과를 표시하는 중 오류가 발생했습니다
@@ -40,9 +40,9 @@ export class ResultErrorBoundary extends React.Component<Props, State> {
             다시 시도
           </button>
         </div>
-      )
+      );
     }
 
-    return this.props.children
+    return this.props.children;
   }
 }

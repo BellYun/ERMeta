@@ -41,7 +41,7 @@ export function PatchNoteBottomSheet({
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className="absolute inset-x-0 bottom-0 rounded-t-2xl border-t border-[var(--color-border)]/60 bg-[var(--color-surface)] backdrop-blur-xl animate-[slideUp_300ms_ease-out] max-h-[70vh] flex flex-col focus:outline-none"
+        className="absolute inset-x-0 bottom-0 flex max-h-[70vh] flex-col rounded-t-lg border-t border-[var(--color-border)]/60 bg-[var(--color-surface)] animate-[slideUp_300ms_ease-out] focus:outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 핸들 */}

@@ -84,7 +84,7 @@ function HomeDashboardSectionsBody({
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
             <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
-              <h2 className="text-[1.5rem] font-black tracking-[-0.05em] text-[var(--color-foreground)] sm:text-[1.9rem]">
+              <h2 className="text-[1.3rem] font-bold text-[var(--color-foreground)] sm:text-[1.6rem]">
                 {t("honeyPicksTitle")}
               </h2>
               <p className="pb-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">
@@ -97,7 +97,7 @@ function HomeDashboardSectionsBody({
           </div>
 
           {isPreseasonPatch ? (
-            <div className="rounded-2xl border border-[rgba(251,191,36,0.24)] bg-[rgba(251,191,36,0.08)] px-3.5 py-3 text-sm font-medium text-[var(--color-accent-gold)] sm:px-4">
+            <div className="rounded-md border border-[var(--color-border)] bg-white px-3.5 py-3 text-sm font-medium text-[var(--color-muted-foreground)] sm:px-4">
               {t("preseasonNotice")}
             </div>
           ) : null}
@@ -123,7 +123,7 @@ function HomeDashboardSectionsBody({
 
       <section className="dashboard-panel p-4 lg:p-5">
         <div className="mb-4 flex flex-wrap items-end gap-x-4 gap-y-2">
-          <h2 className="text-[1.45rem] font-black tracking-[-0.05em] text-[var(--color-foreground)] sm:text-[1.85rem]">
+          <h2 className="text-[1.3rem] font-bold text-[var(--color-foreground)] sm:text-[1.6rem]">
             {t("rankingTitle")}
           </h2>
           <p className="pb-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">

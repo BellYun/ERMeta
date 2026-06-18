@@ -3,18 +3,18 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-xl border text-sm font-semibold tracking-[-0.03em] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/24 focus-visible:ring-offset-0 disabled:pointer-events-none disabled:opacity-40",
+  "inline-flex items-center justify-center gap-2 rounded-lg border text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/24 focus-visible:ring-offset-0 disabled:pointer-events-none disabled:opacity-40",
   {
     variants: {
       variant: {
         default:
-          "border-[rgba(96,165,250,0.22)] bg-[rgba(96,165,250,0.14)] text-[var(--color-primary-hover)] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] hover:border-[rgba(147,197,253,0.32)] hover:bg-[rgba(96,165,250,0.2)]",
+          "border-[rgba(37,99,235,0.22)] bg-[rgba(37,99,235,0.1)] text-[var(--color-primary)] hover:border-[rgba(37,99,235,0.32)] hover:bg-[rgba(37,99,235,0.14)]",
         outline:
-          "border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[rgba(255,255,255,0.06)]",
+          "border-[var(--color-border)] bg-white text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]",
         ghost:
-          "border-transparent bg-transparent text-[var(--color-muted-foreground)] hover:border-[var(--color-border)] hover:bg-[rgba(255,255,255,0.05)] hover:text-[var(--color-foreground)]",
+          "border-transparent bg-transparent text-[var(--color-muted-foreground)] hover:border-[var(--color-border)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]",
         secondary:
-          "border-[var(--color-border)] bg-[rgba(255,255,255,0.04)] text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[rgba(255,255,255,0.07)]",
+          "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]",
       },
       size: {
         default: "h-10 px-4 py-2",

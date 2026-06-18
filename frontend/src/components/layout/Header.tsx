@@ -1,6 +1,20 @@
 "use client";
 
-import { ArrowRight, Menu, Search, Trophy, X } from "lucide-react";
+import {
+  ArrowRight,
+  BarChart3,
+  FlaskConical,
+  Gauge,
+  Layers,
+  Menu,
+  MessageSquarePlus,
+  Network,
+  NotebookText,
+  Search,
+  Trophy,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -10,6 +24,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { LocaleRecommendationBanner } from "@/components/layout/LocaleRecommendationBanner";
 import { Navigation } from "@/components/layout/Navigation";
 import { stripRouteLocaleFromPathname, withCurrentRouteLocale } from "@/lib/localizedPath";
+import { cn } from "@/lib/utils";
 
 interface HeaderProps {
   currentPatch: string;
@@ -18,15 +33,89 @@ interface HeaderProps {
 
 export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
   const t = useTranslations("header");
+  const tNav = useTranslations("navigation");
   const pathname = usePathname();
   const normalizedPathname = stripRouteLocaleFromPathname(pathname);
   const [mobileSearchOpen, setMobileSearchOpen] = React.useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = React.useState(false);
   const showSeasonRecapBanner = !normalizedPathname.startsWith("/season10-recap");
+  const patchAnalysisPath = patchAnalysisPatch
+    ? `/patch-analysis/${patchAnalysisPatch}`
+    : "/patch-analysis";
+
+  const navLinks: Array<{
+    href: string;
+    label: string;
+    icon: LucideIcon;
+    isActive: boolean;
+  }> = [
+    {
+      href: withCurrentRouteLocale(pathname, "/"),
+      label: tNav("metaAnalysis"),
+      icon: BarChart3,
+      isActive: normalizedPathname === "/",
+    },
+    {
+      href: withCurrentRouteLocale(pathname, "/character/1"),
+      label: tNav("characterAnalysis"),
+      icon: Search,
+      isActive: normalizedPathname.startsWith("/character/"),
+    },
+    {
+      href: withCurrentRouteLocale(pathname, "/synergy-detail"),
+      label: tNav("synergyRecommendation"),
+      icon: Network,
+      isActive: normalizedPathname === "/synergy-detail",
+    },
+    {
+      href: withCurrentRouteLocale(pathname, "/trio-lab"),
+      label: tNav("trioLab"),
+      icon: FlaskConical,
+      isActive: normalizedPathname.startsWith("/trio-lab"),
+    },
+    {
+      href: withCurrentRouteLocale(pathname, "/character-lab"),
+      label: tNav("characterLab"),
+      icon: Layers,
+      isActive:
+        normalizedPathname.startsWith("/character-lab") ||
+        normalizedPathname === "/lab" ||
+        normalizedPathname.startsWith("/lab/"),
+    },
+    {
+      href: withCurrentRouteLocale(pathname, "/patches"),
+      label: tNav("patchNotes"),
+      icon: NotebookText,
+      isActive: normalizedPathname.startsWith("/patches"),
+    },
+    {
+      href: withCurrentRouteLocale(pathname, patchAnalysisPath),
+      label: tNav("patchAnalysisNav"),
+      icon: Gauge,
+      isActive: normalizedPathname.startsWith("/patch-analysis"),
+    },
+    {
+      href: withCurrentRouteLocale(pathname, "/season10-recap"),
+      label: tNav("seasonRecap"),
+      icon: Trophy,
+      isActive: normalizedPathname.startsWith("/season10-recap"),
+    },
+  ];
 
   React.useEffect(() => {
     setMobileMenuOpen(false);
   }, [pathname]);
+
+  React.useEffect(() => {
+    const handleFeedbackState = (event: Event) => {
+      const detail = (event as CustomEvent<{ open?: boolean }>).detail;
+      setIsFeedbackOpen(Boolean(detail?.open));
+    };
+
+    window.addEventListener("ergg:feedback-state", handleFeedbackState);
+    return () => window.removeEventListener("ergg:feedback-state", handleFeedbackState);
+  }, []);
 
   React.useEffect(() => {
     if (!mobileMenuOpen) return;
@@ -46,24 +135,24 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[rgba(6,11,24,0.86)] backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-white">
         <LocaleRecommendationBanner />
 
         {showSeasonRecapBanner && (
           <Link
             href={withCurrentRouteLocale(pathname, "/season10-recap")}
-            className="group flex items-center justify-between gap-3 border-b border-[rgba(251,191,36,0.16)] bg-[linear-gradient(90deg,rgba(251,191,36,0.12),rgba(96,165,250,0.08))] px-3 py-2.5 transition-colors hover:bg-[linear-gradient(90deg,rgba(251,191,36,0.16),rgba(96,165,250,0.12))] sm:px-4 lg:px-6"
+            className="group flex items-center justify-between gap-3 border-b border-[rgba(183,121,31,0.14)] bg-[#fffbeb] px-3 py-2.5 transition-colors hover:bg-[#fff7d6] sm:px-4 lg:px-6"
           >
             <div className="flex min-w-0 items-start gap-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-[rgba(251,191,36,0.18)] bg-[rgba(251,191,36,0.12)] text-[var(--color-accent-gold)]">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[rgba(183,121,31,0.18)] bg-white text-[var(--color-accent-gold)]">
                 <Trophy className="h-4.5 w-4.5" strokeWidth={2} />
               </span>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full border border-[rgba(251,191,36,0.2)] bg-[rgba(251,191,36,0.14)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--color-accent-gold)]">
+                  <span className="text-[10px] font-semibold text-[var(--color-muted-foreground)]">
                     {t("seasonRecapBadge")}
                   </span>
-                  <p className="text-sm font-semibold tracking-[-0.03em] text-[var(--color-foreground)]">
+                  <p className="text-sm font-semibold  text-[var(--color-foreground)]">
                     {t("seasonRecapTitle")}
                   </p>
                 </div>
@@ -73,25 +162,25 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
               </div>
             </div>
 
-            <span className="hidden shrink-0 items-center gap-1.5 rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.05)] px-3 py-1.5 text-sm font-medium text-[var(--color-foreground)] transition group-hover:border-[rgba(255,255,255,0.14)] group-hover:bg-[rgba(255,255,255,0.08)] sm:inline-flex">
+            <span className="hidden shrink-0 items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-white px-3 py-1.5 text-sm font-medium text-[var(--color-foreground)] transition group-hover:border-[var(--color-border-light)] group-hover:bg-[var(--color-surface-2)] sm:inline-flex">
               {t("seasonRecapCta")}
               <ArrowRight className="h-4 w-4" strokeWidth={2} />
             </span>
           </Link>
         )}
 
-        <div className="px-3 py-3 sm:px-4 lg:px-6 lg:py-0">
-          <div className="flex min-h-[54px] items-center gap-2.5 lg:min-h-[78px]">
+        <div className="mx-auto w-full max-w-[1440px] px-3 py-3 sm:px-4 lg:px-6 lg:py-0">
+          <div className="flex min-h-[54px] items-center gap-2.5 lg:min-h-[64px]">
             <button
               type="button"
-              aria-label={mobileMenuOpen ? "메뉴 닫기" : "메뉴 열기"}
+              aria-label={mobileMenuOpen ? t("closeMenu") : t("openMenu")}
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-navigation-drawer"
               onClick={() => {
                 setMobileSearchOpen(false);
                 setMobileMenuOpen((prev) => !prev);
               }}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[rgba(255,255,255,0.05)] lg:hidden"
+              className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--color-border)] bg-white text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] lg:hidden"
             >
               {mobileMenuOpen ? (
                 <X className="h-4.5 w-4.5" strokeWidth={2.2} />
@@ -103,20 +192,45 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
             <Link
               href={withCurrentRouteLocale(pathname, "/")}
               title={currentPatch ? `${t("patchPrefix")}${currentPatch}` : t("logoTitle")}
-              className="flex min-w-0 items-center gap-2.5 lg:hidden"
+              className="flex min-w-0 items-center gap-2.5"
             >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[linear-gradient(180deg,#5fa8ff,#3266d6)] text-sm font-black text-white shadow-[0_12px_24px_-14px_rgba(96,165,250,0.9)]">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-sm font-bold text-[var(--color-primary)]">
                 ER
               </div>
               <div className="min-w-0">
-                <p className="truncate text-[1.05rem] font-black tracking-[-0.04em] text-[var(--color-foreground)]">
+                <p className="truncate text-[1.05rem] font-bold text-[var(--color-foreground)]">
                   {t("logoTitle")}
+                </p>
+                <p className="hidden truncate text-[11px] text-[var(--color-muted-foreground)] lg:block">
+                  {currentPatch ? `${t("patchPrefix")}${currentPatch}` : t("logoSubtitle")}
                 </p>
               </div>
             </Link>
 
-            <div className="hidden flex-1 lg:flex">
-              <CharacterSearchCombobox className="max-w-[34rem]" />
+            <nav
+              aria-label={tNav("ariaMain")}
+              className="hidden min-w-0 flex-1 items-center gap-1 overflow-x-auto px-2 scrollbar-hide lg:flex"
+            >
+              {navLinks.map(({ href, label, icon: Icon, isActive }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={cn(
+                    "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors xl:px-3 xl:text-[13px]",
+                    isActive
+                      ? "border-[rgba(37,99,235,0.24)] bg-[rgba(37,99,235,0.08)] text-[var(--color-primary)]"
+                      : "border-transparent text-[var(--color-muted-foreground)] hover:border-[var(--color-border)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+                  )}
+                >
+                  <Icon className="h-3.5 w-3.5" strokeWidth={2} />
+                  <span>{label}</span>
+                </Link>
+              ))}
+            </nav>
+
+            <div className="hidden w-[min(28vw,24rem)] shrink-0 lg:flex">
+              <CharacterSearchCombobox className="max-w-none" />
             </div>
 
             <div className="ml-auto flex items-center gap-2 lg:gap-3">
@@ -127,7 +241,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                   setMobileMenuOpen(false);
                   setMobileSearchOpen((prev) => !prev);
                 }}
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[rgba(255,255,255,0.05)] lg:hidden"
+                className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--color-border)] bg-white text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] lg:hidden"
               >
                 {mobileSearchOpen ? (
                   <X className="h-4.5 w-4.5" strokeWidth={2.2} />
@@ -139,6 +253,25 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
               <div className="hidden lg:block">
                 <LanguageSwitcher />
               </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  window.dispatchEvent(new Event("ergg:feedback-toggle"));
+                }}
+                aria-controls="feedback-panel"
+                aria-expanded={isFeedbackOpen}
+                aria-pressed={isFeedbackOpen}
+                className={cn(
+                  "hidden h-9 shrink-0 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors lg:inline-flex",
+                  isFeedbackOpen
+                    ? "border-[rgba(37,99,235,0.24)] bg-[rgba(37,99,235,0.08)] text-[var(--color-primary)]"
+                    : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+                )}
+              >
+                <MessageSquarePlus className="h-3.5 w-3.5" strokeWidth={2} />
+                <span>{tNav("feedback")}</span>
+              </button>
             </div>
           </div>
 
@@ -154,22 +287,22 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
         <div className="fixed inset-0 z-[100] lg:hidden">
           <button
             type="button"
-            aria-label="메뉴 닫기"
-            className="absolute inset-0 bg-black/62 backdrop-blur-sm"
+            aria-label={t("closeMenu")}
+            className="absolute inset-0 bg-slate-900/24"
             onClick={() => setMobileMenuOpen(false)}
           />
           <div
             id="mobile-navigation-drawer"
             role="dialog"
             aria-modal="true"
-            aria-label="모바일 메뉴"
-            className="absolute inset-y-0 left-0 flex h-dvh w-[min(21rem,calc(100vw-2rem))] max-w-full flex-col overflow-hidden border-r border-[var(--color-border)] bg-[rgba(8,12,26,0.98)] shadow-[32px_0_90px_-42px_rgba(0,0,0,0.95)]"
+            aria-label={t("mobileMenu")}
+            className="absolute inset-y-0 left-0 flex h-dvh w-[min(21rem,calc(100vw-2rem))] max-w-full flex-col overflow-hidden border-r border-[var(--color-border)] bg-white"
           >
             <button
               type="button"
-              aria-label="메뉴 닫기"
+              aria-label={t("closeMenu")}
               onClick={() => setMobileMenuOpen(false)}
-              className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.05)] text-[var(--color-foreground)]"
+              className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
             >
               <X className="h-4.5 w-4.5" strokeWidth={2.2} />
             </button>
@@ -180,7 +313,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                 onNavigate={() => setMobileMenuOpen(false)}
               />
             </div>
-            <div className="border-t border-[var(--color-border)] bg-[rgba(8,12,26,0.96)] px-4 py-4">
+            <div className="border-t border-[var(--color-border)] bg-white px-4 py-4">
               <LanguageSwitcher />
             </div>
           </div>

@@ -1,10 +1,10 @@
 /**
- * ER&GG Analytics Dashboard Design System
+ * ER&GG interface tokens
  *
- * 리브랜딩 방향:
- * - 게임 UI가 아니라 데이터 제품처럼 보이는 어두운 분석 대시보드
+ * 방향:
+ * - 게임 UI가 아니라 데이터 제품처럼 보이는 절제된 통계 화면
  * - 숫자와 표가 가장 먼저 읽히는 정보 계층
- * - subtle glassmorphism 위에 절제된 블루 액센트
+ * - 과한 장식보다 테두리, 여백, 명확한 대비 우선
  *
  * CSS 변수(globals.css @theme)와 1:1 대응.
  */

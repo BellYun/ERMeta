@@ -77,8 +77,8 @@ export function L10nProvider({
   const [language, setLanguageState] = useState<SupportedLanguage>(serverLanguage);
   const [messages, setMessages] = useState<IntlMessages>(initialMessages);
   const [l10nState, l10nDispatch] = React.useReducer(l10nReducer, {
-    l10n: new Map(),
-    loading: true,
+    l10n: initialL10nMap ?? new Map(),
+    loading: !initialL10nMap,
     error: null,
   });
   const { l10n, loading, error } = l10nState;

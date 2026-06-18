@@ -77,7 +77,7 @@ export function GlobalFilter() {
               analytics.patchSelected(e.target.value);
             }}
             className={cn(
-              "h-14 w-full appearance-none rounded-[18px] border border-[var(--color-border)] bg-[rgba(17,25,46,0.82)] px-3 pr-8 text-[13px] font-medium text-[var(--color-foreground)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
+              "h-14 w-full appearance-none rounded-[18px] border border-[var(--color-border)] bg-white px-3 pr-8 text-[13px] font-medium text-[var(--color-foreground)]",
               "focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]/30"
             )}
           >
@@ -126,11 +126,11 @@ export function GlobalFilter() {
                 onClick={() => selectTier(value)}
                 onKeyDown={(e) => handleTierKeyDown(e, index)}
                 className={cn(
-                  "flex h-14 min-w-0 items-center justify-center rounded-[18px] border px-2 text-center text-[12px] font-medium leading-4 tracking-[-0.02em] transition-all",
+                  "flex h-14 min-w-0 items-center justify-center rounded-[18px] border px-2 text-center text-[12px] font-medium leading-4  transition-colors",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
                   isSelected
-                    ? "border-[var(--color-primary)]/55 bg-[var(--color-primary)]/12 text-[var(--color-primary)] shadow-[0_18px_30px_-24px_rgba(96,165,250,0.9)]"
-                    : "border-[var(--color-border)] bg-[rgba(17,25,46,0.82)] text-[var(--color-muted-foreground)]"
+                    ? "border-[var(--color-primary)]/55 bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
+                    : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]"
                 )}
               >
                 <span className="truncate">{label}</span>
@@ -157,7 +157,7 @@ export function GlobalFilter() {
               "text-sm font-medium text-[var(--color-foreground)]",
               "hover:border-[var(--color-border-light)]",
               "focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]/30",
-              "transition-all cursor-pointer"
+              "transition-colors cursor-pointer"
             )}
           >
             {patches.map((p) => (
@@ -205,11 +205,11 @@ export function GlobalFilter() {
                 onClick={() => selectTier(value)}
                 onKeyDown={(e) => handleTierKeyDown(e, index)}
                 className={cn(
-                  "px-3 py-1.5 rounded-md text-xs sm:text-[13px] font-medium transition-all whitespace-nowrap",
+                  "px-3 py-1.5 rounded-md text-xs sm:text-[13px] font-medium transition-colors whitespace-nowrap",
                   "min-h-[32px] touch-manipulation",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
                   isSelected
-                    ? "bg-[var(--color-primary)]/15 text-[var(--color-primary)] shadow-sm"
+                    ? "bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
                     : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
                 )}
               >

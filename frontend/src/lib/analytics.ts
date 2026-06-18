@@ -44,7 +44,11 @@ export type SynergySortBy = "averageRP" | "winRate" | "averageRank" | "totalGame
 
 export type SessionSource = "organic_search" | "community" | "direct" | "social" | "internal";
 
-export type AdSlotName = "home_ranking" | "synergy_detail_top";
+export type AdSlotName =
+  | "home_ranking"
+  | "synergy_detail_top"
+  | "site_rail_left"
+  | "site_rail_right";
 
 export interface SessionProperties {
   session_source?: SessionSource;
