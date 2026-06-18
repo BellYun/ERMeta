@@ -255,7 +255,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
               className={cn(
                 "px-2.5 py-1 rounded-md text-xs font-medium transition-colors",
                 sortBy === value
-                  ? "bg-[var(--color-primary)] text-white"
+                  ? "bg-white text-[var(--color-foreground)] ring-1 ring-[var(--color-border)]"
                   : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]"
               )}
             >
@@ -355,7 +355,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
         ) : loading ? (
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2 py-2">
-              <Loader2 className="h-4 w-4 animate-spin text-[var(--color-primary)]" />
+              <Loader2 className="h-4 w-4 animate-spin text-[var(--color-muted-foreground)]" />
               <p className="text-sm text-[var(--color-muted-foreground)]">{t("loading")}</p>
             </div>
             {Array.from({ length: 5 }).map((_, i) => (
@@ -423,7 +423,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
             <p className="text-sm text-[var(--color-muted-foreground)]">{t("emptyNoData")}</p>
             <button
               onClick={clearAllies}
-              className="mt-3 text-xs text-[var(--color-primary)] hover:underline"
+              className="mt-3 text-xs text-[var(--color-foreground)] hover:underline"
             >
               {t("clearAllies")}
             </button>

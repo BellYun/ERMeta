@@ -223,7 +223,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                   <div className="min-w-0 flex-1">
                     <Link
                       href={`/character/${note.characterCode}`}
-                      className="block truncate text-[1rem] font-bold text-[var(--color-foreground)] transition hover:text-[var(--color-primary)] sm:text-[1.05rem]"
+                      className="block truncate text-[1rem] font-bold text-[var(--color-foreground)] transition-colors hover:text-[var(--color-foreground)] sm:text-[1.05rem]"
                     >
                       {name}
                     </Link>
@@ -258,7 +258,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                               <p className="min-w-0 flex-1 text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">
                                 <span className="font-semibold">{change.target}</span>
                                 {change.valueSummary ? (
-                                  <span className="font-mono text-[var(--color-primary)]">
+                                  <span className="font-mono text-[var(--color-foreground)]">
                                     {" "}
                                     · {change.valueSummary}
                                   </span>

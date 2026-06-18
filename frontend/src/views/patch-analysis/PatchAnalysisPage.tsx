@@ -628,7 +628,7 @@ function CharacterDeltaCard({
 
         {evaluation ? (
           <div className="rounded-lg border border-[var(--color-border)] bg-white px-3 py-3">
-            <p className="text-[11px] font-semibold text-[var(--color-primary)]">
+            <p className="text-[11px] font-semibold text-[var(--color-foreground)]">
               {copy.evaluation}
             </p>
             <p className="mt-2 text-xs leading-5 text-[var(--color-foreground)]/86">{evaluation}</p>

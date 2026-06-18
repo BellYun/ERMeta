@@ -195,7 +195,7 @@ export default function FeedbackWidget() {
         className={[
           "w-[calc(100vw-2rem)] max-w-sm sm:w-80 lg:w-[17.5rem] xl:w-[18rem]",
           "rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]",
-          "transition-colors duration-200 origin-bottom-right focus:outline-none lg:origin-bottom-left",
+          "transition-colors origin-bottom-right focus:outline-none lg:origin-bottom-left",
           isOpen
             ? "opacity-100 translate-y-0 pointer-events-auto"
             : "opacity-0 translate-y-4 pointer-events-none",
@@ -283,8 +283,8 @@ export default function FeedbackWidget() {
               className={[
                 "w-full rounded-md py-2 text-sm font-medium text-white transition-colors",
                 formState === "submitting" || message.trim().length < 5
-                  ? "bg-[var(--color-primary)] opacity-50 cursor-not-allowed"
-                  : "bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)]",
+                  ? "bg-[var(--color-foreground)] opacity-50 cursor-not-allowed"
+                  : "bg-[var(--color-foreground)] hover:bg-[var(--color-primary-hover)]",
               ].join(" ")}
             >
               {formState === "submitting" ? copy.submitting : copy.submit}

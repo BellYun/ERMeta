@@ -135,15 +135,15 @@ export default function AboutPage({ locale }: { locale: RouteLocale }) {
 
       <div className="mt-8 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
         <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
-          <Link href="/methodology" className="text-[var(--color-primary)] hover:underline">
+          <Link href="/methodology" className="text-[var(--color-foreground)] hover:underline">
             {labels.methodology}
           </Link>
           {" / "}
-          <Link href="/privacy" className="text-[var(--color-primary)] hover:underline">
+          <Link href="/privacy" className="text-[var(--color-foreground)] hover:underline">
             {labels.privacy}
           </Link>
           {" / "}
-          <Link href="/terms" className="text-[var(--color-primary)] hover:underline">
+          <Link href="/terms" className="text-[var(--color-foreground)] hover:underline">
             {labels.terms}
           </Link>
         </p>

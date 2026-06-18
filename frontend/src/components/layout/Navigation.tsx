@@ -114,7 +114,7 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
         onClick={onNavigate}
         className="flex items-center gap-3 px-2"
       >
-        <div className="flex h-11 w-11 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-sm font-bold text-[var(--color-primary)]">
+        <div className="flex h-11 w-11 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-sm font-bold text-[var(--color-foreground)]">
           ER
         </div>
         <div className="min-w-0">

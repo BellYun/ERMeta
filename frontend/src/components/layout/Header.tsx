@@ -194,7 +194,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
               title={currentPatch ? `${t("patchPrefix")}${currentPatch}` : t("logoTitle")}
               className="flex min-w-0 items-center gap-2.5"
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-white text-sm font-bold text-[var(--color-primary)]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-white text-sm font-bold text-[var(--color-foreground)]">
                 ER
               </div>
               <div className="min-w-0">

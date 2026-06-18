@@ -59,7 +59,7 @@ const FocusCell = React.memo(function FocusCell({
       <div
         className={cn(
           "relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
-          selected && "outline outline-1 outline-[var(--color-primary)]/35"
+          selected && "outline outline-1 outline-[var(--color-border-light)]"
         )}
       >
         <Image

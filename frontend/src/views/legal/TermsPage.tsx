@@ -356,7 +356,10 @@ export default function TermsPage({ locale = "ko" }: { locale?: RouteLocale }) {
                 {section.privacy ? (
                   <>
                     {paragraph}{" "}
-                    <Link href="/privacy" className="text-[var(--color-primary)] hover:underline">
+                    <Link
+                      href="/privacy"
+                      className="text-[var(--color-foreground)] hover:underline"
+                    >
                       {copy.privacyLink}
                     </Link>
                   </>

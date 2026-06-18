@@ -237,7 +237,7 @@ function PatchBreakdown({
         </span>
         <Link
           href={href}
-          className="text-[11px] font-medium text-[var(--color-primary)] hover:underline"
+          className="text-[11px] font-medium text-[var(--color-foreground)] hover:underline"
         >
           {characterName} 상세 →
         </Link>

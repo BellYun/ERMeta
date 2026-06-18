@@ -292,7 +292,7 @@ function LocalizedComboSummary({
         <p className="text-sm text-[var(--color-muted-foreground)]">{copy.dataNote}</p>
         <Link
           href={localizedListHref}
-          className="inline-flex h-10 items-center justify-center rounded-md bg-[var(--color-primary)] px-4 text-sm font-bold text-[var(--color-primary-foreground)]"
+          className="inline-flex h-10 items-center justify-center rounded-md bg-[var(--color-foreground)] px-4 text-sm font-bold text-white"
         >
           {copy.back}
         </Link>

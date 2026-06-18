@@ -35,7 +35,7 @@ export class ResultErrorBoundary extends React.Component<Props, State> {
           </p>
           <button
             onClick={() => this.setState({ hasError: false, error: null })}
-            className="mt-4 rounded-lg bg-[var(--color-primary)] px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity"
+            className="mt-4 rounded-lg bg-[var(--color-foreground)] px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity"
           >
             다시 시도
           </button>

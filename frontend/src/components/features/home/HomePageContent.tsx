@@ -89,7 +89,7 @@ export async function HomePageContent({
           ) : (
             <div className="rounded-lg border border-[var(--color-border)] bg-white px-4 py-4">
               <div>
-                <p className="text-xs font-medium text-[var(--color-primary)]">
+                <p className="text-xs font-medium text-[var(--color-foreground)]">
                   {t("fallback.kicker", { patch: fallbackPatch })}
                 </p>
                 <h2 className="mt-2 text-[1.25rem] font-bold text-[var(--color-foreground)]">

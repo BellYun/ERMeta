@@ -233,7 +233,7 @@ export default async function CharacterLabPage({ params }: LocalePageProps) {
       </header>
 
       <section className="flex flex-col gap-3">
-        <div className="flex items-center justify-between border-l-2 border-[var(--color-primary)] pl-3">
+        <div className="flex items-center justify-between border-l-2 border-[var(--color-border-light)] pl-3">
           <h2 className="text-sm font-bold text-[var(--color-foreground)]">{copy.sectionTitle}</h2>
           <p className="text-[11px] text-[var(--color-muted-foreground)]">{copy.sectionMeta}</p>
         </div>
@@ -251,7 +251,7 @@ export default async function CharacterLabPage({ params }: LocalePageProps) {
                       {copy.groupType}
                     </span>
                     <ArrowRight
-                      className="h-4 w-4 text-[var(--color-muted-foreground)] transition-transform group-hover:translate-x-1 group-hover:text-[var(--color-primary)]"
+                      className="h-4 w-4 text-[var(--color-muted-foreground)] transition-colors group-hover:text-[var(--color-foreground)]"
                       strokeWidth={2.2}
                     />
                   </header>

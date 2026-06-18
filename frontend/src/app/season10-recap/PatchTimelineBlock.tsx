@@ -110,7 +110,7 @@ function PatchRankRow({ rank, entry }: { rank: number; entry: PatchTopGroup["ent
           <Image src={imageUrl} alt={name} fill className="object-cover" sizes="36px" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-[var(--color-foreground)] group-hover:text-[var(--color-primary)]">
+          <p className="truncate text-sm font-semibold text-[var(--color-foreground)] group-hover:text-[var(--color-foreground)]">
             {name}
           </p>
           <p className="truncate text-[11px] text-[var(--color-muted-foreground)]">{weaponName}</p>

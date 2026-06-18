@@ -284,7 +284,7 @@ function TraitTreeRow({
               className={cn(
                 "rounded-full transition-colors",
                 isTop
-                  ? "p-0.5 outline outline-1 outline-[var(--color-primary)]/35"
+                  ? "p-0.5 outline outline-1 outline-[var(--color-border-light)]"
                   : "opacity-35 grayscale"
               )}
             >
@@ -302,7 +302,7 @@ function TraitTreeRow({
               <span
                 className={cn(
                   "font-mono text-[9px]",
-                  isTop ? "text-[var(--color-primary)]" : "text-[var(--color-muted-foreground)]"
+                  isTop ? "text-[var(--color-foreground)]" : "text-[var(--color-muted-foreground)]"
                 )}
               >
                 {opt.pickRate.toFixed(1)}%
@@ -562,7 +562,7 @@ function CharacterDetailCard({ data }: { data: CharacterDetailData }) {
 export function CharacterDetailGrid({ rows }: { rows: CharacterDetailData[] }) {
   return (
     <section className="flex flex-col gap-3">
-      <div className="flex items-center justify-between border-l-2 border-[var(--color-primary)] pl-3">
+      <div className="flex items-center justify-between border-l-2 border-[var(--color-border-light)] pl-3">
         <h2 className="text-sm font-bold text-[var(--color-foreground)]">캐릭터별 주요 빌드</h2>
         <p className="text-[11px] text-[var(--color-muted-foreground)]">무기군별 호출</p>
       </div>
@@ -603,7 +603,7 @@ export function TraitComboBlock({
 
   return (
     <section className="dashboard-panel flex flex-col gap-3 p-4 sm:p-5">
-      <div className="flex items-center justify-between border-l-2 border-[var(--color-primary)] pl-3">
+      <div className="flex items-center justify-between border-l-2 border-[var(--color-border-light)] pl-3">
         <h2 className="text-sm font-bold text-[var(--color-foreground)]">상위 특성 조합</h2>
         <p className="text-[11px] text-[var(--color-muted-foreground)]">평균 RP 기준</p>
       </div>
@@ -706,14 +706,14 @@ export function SimilarBlock({
   if (top.length === 0) return null;
   return (
     <section className="dashboard-panel flex flex-col gap-3 p-4 sm:p-5">
-      <div className="flex items-center justify-between border-l-2 border-[var(--color-primary)] pl-3">
+      <div className="flex items-center justify-between border-l-2 border-[var(--color-border-light)] pl-3">
         <h2 className="text-sm font-bold text-[var(--color-foreground)]">
           비슷한 조합 {top.length}개
         </h2>
         <Link
           href={listHref}
           scroll={false}
-          className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-primary)] transition-colors hover:text-[var(--color-primary-hover)]"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-foreground)] transition-colors hover:text-[var(--color-foreground)]"
         >
           실험실에서 더 보기
           <ArrowRight className="h-3 w-3" strokeWidth={2.4} />

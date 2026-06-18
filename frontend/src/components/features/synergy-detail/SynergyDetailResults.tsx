@@ -525,7 +525,7 @@ export function SynergyDetailResults() {
               className={cn(
                 "flex min-h-[40px] shrink-0 items-center rounded-lg px-3 py-2 text-[12px] font-semibold transition-colors",
                 sortBy === value
-                  ? "bg-[var(--color-primary)] text-white"
+                  ? "bg-white text-[var(--color-foreground)] ring-1 ring-[var(--color-border)]"
                   : "text-[var(--color-foreground)]/72 hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
               )}
             >

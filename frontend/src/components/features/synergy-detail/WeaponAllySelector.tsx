@@ -173,7 +173,7 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
       <div
         className={cn(
           "relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
-          selected && "outline outline-1 outline-[var(--color-primary)]/35"
+          selected && "outline outline-1 outline-[var(--color-border-light)]"
         )}
       >
         <Image
@@ -196,7 +196,7 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
         <span
           className={cn(
             "w-full truncate text-center text-[10px] font-medium",
-            selected ? "text-[var(--color-primary)]/90" : "text-[var(--color-foreground)]/60"
+            selected ? "text-[var(--color-foreground)]" : "text-[var(--color-foreground)]/60"
           )}
         >
           {localizedWeaponLabel}

@@ -477,7 +477,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                       onClick={() => selectWeaponFilter(code, null)}
                       className={`rounded border px-1.5 py-1 text-[10px] font-semibold transition-colors ${
                         selectedWeapon == null
-                          ? "border-[var(--color-primary)] bg-white text-[var(--color-foreground)]"
+                          ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
                           : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
                       }`}
                     >
@@ -490,7 +490,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                         onClick={() => selectWeaponFilter(code, weapon.weaponCode)}
                         className={`rounded border px-1.5 py-1 text-[10px] font-semibold transition-colors ${
                           selectedWeapon === weapon.weaponCode
-                            ? "border-[var(--color-primary)] bg-white text-[var(--color-foreground)]"
+                            ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
                             : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
                         }`}
                       >

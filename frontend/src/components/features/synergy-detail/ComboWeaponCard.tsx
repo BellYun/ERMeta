@@ -122,7 +122,7 @@ function ComboWeaponCardImpl({
   return (
     <div
       className={cn(
-        "rounded-lg border bg-white transition-colors duration-200",
+        "rounded-lg border bg-white transition-colors",
         rank <= 3 ? "border-[var(--color-border-light)]" : "border-[var(--color-border)]",
         isFocusPoolCombo && "border-[var(--color-border-light)] bg-white"
       )}
@@ -169,7 +169,7 @@ function ComboWeaponCardImpl({
                     className={cn(
                       "relative h-8 w-8 sm:h-10 sm:w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
                       isRecommended
-                        ? "outline outline-1 outline-[var(--color-primary)]/35"
+                        ? "outline outline-1 outline-[var(--color-border-light)]"
                         : "ring-1 ring-[rgba(255,255,255,0.08)]"
                     )}
                   >
@@ -259,7 +259,7 @@ function ComboWeaponCardImpl({
 
           <ChevronRight
             className={cn(
-              "h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-[var(--color-foreground)]/55 transition-transform duration-200",
+              "h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-[var(--color-foreground)]/55 transition-transform",
               showTraits && "rotate-90 text-[var(--color-primary-hover)]"
             )}
             strokeWidth={2.4}

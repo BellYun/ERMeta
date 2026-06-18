@@ -316,7 +316,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                             </div>
                             <div className="min-w-0">
                               <span className="flex items-center gap-1.5">
-                                <span className="text-sm font-medium text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors truncate block">
+                                <span className="text-sm font-medium text-[var(--color-foreground)] transition-colors truncate block">
                                   {char.name}
                                 </span>
                                 {char.patchNote && (
@@ -395,7 +395,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
               className={cn(
                 "text-right transition-colors",
                 sortKey === "winRate"
-                  ? "text-[var(--color-primary)]"
+                  ? "text-[var(--color-foreground)]"
                   : "text-[var(--color-muted-foreground)]"
               )}
             >
@@ -407,7 +407,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
               className={cn(
                 "text-right transition-colors",
                 sortKey === "pickRate"
-                  ? "text-[var(--color-primary)]"
+                  ? "text-[var(--color-foreground)]"
                   : "text-[var(--color-muted-foreground)]"
               )}
             >
@@ -419,7 +419,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
               className={cn(
                 "text-right transition-colors",
                 sortKey === "averageRP"
-                  ? "text-[var(--color-primary)]"
+                  ? "text-[var(--color-foreground)]"
                   : "text-[var(--color-muted-foreground)]"
               )}
             >
@@ -574,7 +574,7 @@ function SortableHead({
       className={cn(
         "px-3 py-2.5 text-xs font-medium select-none cursor-pointer transition-colors group/th",
         isActive
-          ? "text-[var(--color-primary)]"
+          ? "text-[var(--color-foreground)]"
           : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]",
         className
       )}

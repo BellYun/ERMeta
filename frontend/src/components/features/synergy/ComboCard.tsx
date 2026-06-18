@@ -47,12 +47,12 @@ export function ComboCard({
   return (
     <div
       className={cn(
-        "group flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-white px-3 py-2.5 transition-colors duration-200 hover:bg-[var(--color-surface-2)] hover:border-[var(--color-border-light)]",
+        "group flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-white px-3 py-2.5 transition-colors hover:bg-[var(--color-surface-2)] hover:border-[var(--color-border-light)]",
         isFocusPoolCombo && "border-[var(--color-border-light)] bg-white"
       )}
     >
       {/* 순위 */}
-      <span className="w-5 shrink-0 text-center text-xs font-bold text-[var(--color-muted-foreground)] group-hover:text-[var(--color-primary)]">
+      <span className="w-5 shrink-0 text-center text-xs font-bold text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]">
         {rank}
       </span>
 
@@ -83,7 +83,7 @@ export function ComboCard({
                   className={cn(
                     "w-10 truncate text-center text-[9px]",
                     isRecommended
-                      ? "text-[var(--color-accent-gold)] group-hover/char:text-[var(--color-primary)]"
+                      ? "text-[var(--color-foreground)] group-hover/char:text-[var(--color-foreground)]"
                       : "text-[var(--color-muted-foreground)]"
                   )}
                 >

@@ -189,7 +189,7 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
                     </p>
                   </div>
 
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] transition group-hover:text-[var(--color-primary)]">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] transition-colors group-hover:text-[var(--color-foreground)]">
                     <ArrowUpRight className="h-4.5 w-4.5" strokeWidth={2} />
                   </span>
                 </div>
@@ -220,7 +220,7 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
 
                 <div className="mt-auto flex items-center justify-between border-t border-[var(--color-border)] pt-3 text-xs">
                   <span className="text-[var(--color-muted-foreground)]">{t("viewDetail")}</span>
-                  <span className="font-medium text-[var(--color-primary)]">
+                  <span className="font-medium text-[var(--color-foreground)]">
                     {t("patchPrefix")} {summary.patch}
                   </span>
                 </div>
