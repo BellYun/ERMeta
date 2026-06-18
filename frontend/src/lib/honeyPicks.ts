@@ -251,7 +251,7 @@ export async function fetchHoneyPicksServer(
       tier: usedTier,
     };
   } catch (err) {
-    console.error("[honeyPicks] 서버 fetch 예외:", err);
+    console.error("[honeyPicks] server fetch failed:", err);
     return empty;
   }
 }

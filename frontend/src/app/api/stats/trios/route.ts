@@ -282,7 +282,7 @@ async function fetchAndAggregateTrios(
 
 /**
  * L1 캐시 래퍼 — 키는 정규화된 (char1, char2) 만 사용. sortBy/limit 은 키에서 제외.
- * tag 무효화: ERmangho 수집 webhook → revalidateTag("trios") | revalidateTag(`trios:char:${n}`)
+ * tag 무효화: stats ingestion webhook → revalidateTag("trios") | revalidateTag(`trios:char:${n}`)
  */
 function getCachedAggregatedTrios(
   char1: number | null,
@@ -340,18 +340,12 @@ export async function GET(request: NextRequest) {
 
   // character2만 단독 전달 금지
   if (rawChar2 != null && rawChar1 == null) {
-    return NextResponse.json(
-      { error: "character2는 character1 없이 사용할 수 없습니다." },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "missing_character1" }, { status: 400 });
   }
 
   // 동일 캐릭터 금지
   if (rawChar1 != null && rawChar2 != null && rawChar1 === rawChar2) {
-    return NextResponse.json(
-      { error: "character1과 character2는 달라야 합니다." },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "duplicate_characters" }, { status: 400 });
   }
 
   // 제외 캐릭터 선택 시 빈 결과
@@ -387,9 +381,9 @@ export async function GET(request: NextRequest) {
       { headers: withCacheObservability(getCacheHeaders("frequent"), latencyMs) }
     );
   } catch (err) {
-    console.error("[stats/trios] 예외:", err);
+    console.error("[stats/trios] request failed:", err);
     return NextResponse.json(
-      { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
+      { error: "temporary_unavailable" },
       { status: 500, headers: SERVER_ERROR_HEADERS }
     );
   }

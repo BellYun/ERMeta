@@ -163,7 +163,8 @@ function renderDefaultOG() {
   return (
     <div
       style={{
-        background: "#0f0f14",
+        background: "#f8fafc",
+        border: "1px solid #d5dbe5",
         width: "100%",
         height: "100%",
         display: "flex",
@@ -171,7 +172,7 @@ function renderDefaultOG() {
         position: "relative",
       }}
     >
-      <div style={{ width: "100%", height: "4px", background: "#f59e0b", display: "flex" }} />
+      <div style={{ width: "100%", height: "4px", background: "#d5dbe5", display: "flex" }} />
       <div
         style={{
           display: "flex",
@@ -186,23 +187,22 @@ function renderDefaultOG() {
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
           <div
             style={{
-              background: "#6366f1",
-              borderRadius: "12px",
+              background: "#ffffff",
+              border: "1px solid #d5dbe5",
+              borderRadius: "10px",
               width: "56px",
               height: "56px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               fontSize: "32px",
-              fontWeight: 800,
-              color: "white",
+              fontWeight: 700,
+              color: "#1d4ed8",
             }}
           >
             E
           </div>
-          <span
-            style={{ fontSize: "40px", fontWeight: 800, color: "#e2e8f0", letterSpacing: "-1px" }}
-          >
+          <span style={{ fontSize: "40px", fontWeight: 700, color: "#0f172a", letterSpacing: "0" }}>
             ER&GG
           </span>
         </div>
@@ -210,17 +210,17 @@ function renderDefaultOG() {
           style={{
             display: "flex",
             fontSize: "56px",
-            fontWeight: 800,
-            color: "#e2e8f0",
-            letterSpacing: "-2px",
+            fontWeight: 700,
+            color: "#0f172a",
+            letterSpacing: "0",
           }}
         >
-          3인 조합 추천
+          3인 조합 데이터
         </div>
-        <div style={{ display: "flex", fontSize: "24px", color: "#94a3b8" }}>
-          베이지안 통계 기반 최적 팀 조합 분석
+        <div style={{ display: "flex", fontSize: "24px", color: "#475569" }}>
+          무기와 특성을 포함한 조합 표본 지표
         </div>
-        <div style={{ display: "flex", fontSize: "18px", color: "#6366f1", marginTop: "8px" }}>
+        <div style={{ display: "flex", fontSize: "18px", color: "#1d4ed8", marginTop: "8px" }}>
           erwagg.com
         </div>
       </div>
@@ -228,7 +228,7 @@ function renderDefaultOG() {
         style={{
           display: "flex",
           height: "3px",
-          background: "linear-gradient(90deg, #6366f1 0%, #f59e0b 100%)",
+          background: "#d5dbe5",
         }}
       />
     </div>
@@ -243,7 +243,8 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
   return (
     <div
       style={{
-        background: "#0f0f14",
+        background: "#f8fafc",
+        border: "1px solid #d5dbe5",
         width: "100%",
         height: "100%",
         display: "flex",
@@ -251,8 +252,7 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
         position: "relative",
       }}
     >
-      {/* 상단 골드 라인 */}
-      <div style={{ width: "100%", height: "4px", background: "#f59e0b", display: "flex" }} />
+      <div style={{ width: "100%", height: "4px", background: "#d5dbe5", display: "flex" }} />
 
       <div style={{ display: "flex", flex: 1, flexDirection: "column", padding: "40px 60px 30px" }}>
         {/* 헤더 */}
@@ -267,7 +267,8 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
           <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
             <div
               style={{
-                background: "#6366f1",
+                background: "#ffffff",
+                border: "1px solid #d5dbe5",
                 borderRadius: "10px",
                 width: "44px",
                 height: "44px",
@@ -275,19 +276,19 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
                 alignItems: "center",
                 justifyContent: "center",
                 fontSize: "26px",
-                fontWeight: 800,
-                color: "white",
+                fontWeight: 700,
+                color: "#1d4ed8",
               }}
             >
               E
             </div>
             <span
-              style={{ fontSize: "32px", fontWeight: 800, color: "#e2e8f0", letterSpacing: "-1px" }}
+              style={{ fontSize: "32px", fontWeight: 700, color: "#0f172a", letterSpacing: "0" }}
             >
               ER&GG
             </span>
           </div>
-          <span style={{ fontSize: "16px", color: "#6366f1" }}>erwagg.com</span>
+          <span style={{ fontSize: "16px", color: "#1d4ed8" }}>erwagg.com</span>
         </div>
 
         {/* 타이틀 */}
@@ -295,33 +296,31 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
           <div
             style={{
               display: "flex",
-              background: "rgba(99,102,241,0.12)",
-              border: "1px solid rgba(99,102,241,0.3)",
-              borderRadius: "12px",
+              background: "#ffffff",
+              border: "1px solid #d5dbe5",
+              borderRadius: "10px",
               padding: "10px 20px",
             }}
           >
-            <span style={{ fontSize: "28px", fontWeight: 800, color: "#e2e8f0" }}>{allyLabel}</span>
+            <span style={{ fontSize: "28px", fontWeight: 700, color: "#0f172a" }}>{allyLabel}</span>
           </div>
-          <span style={{ fontSize: "24px", fontWeight: 700, color: "#94a3b8" }}>
-            추천 조합 TOP 3
-          </span>
+          <span style={{ fontSize: "24px", fontWeight: 700, color: "#475569" }}>조합 데이터</span>
         </div>
 
-        {/* TOP 3 카드 */}
+        {/* 조합 카드 */}
         <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1 }}>
           {trios.map((trio, i) => {
             const chars = [trio.character1, trio.character2, trio.character3];
-            // 아군을 앞에, 추천 캐릭터를 뒤에
+            // 아군을 앞에, 후보 캐릭터를 뒤에
             const allySet = new Set(allies);
             const allyChars = chars.filter((c) => allySet.has(c));
             const recChars = chars.filter((c) => !allySet.has(c));
             const ordered = [...allyChars, ...recChars];
 
             const isFirst = i === 0;
-            const bgColor = isFirst ? "rgba(251,191,36,0.08)" : "rgba(255,255,255,0.04)";
-            const borderColor = isFirst ? "rgba(251,191,36,0.25)" : "#1e293b";
-            const rankColor = isFirst ? "#fbbf24" : i === 1 ? "#e2e8f0" : "#94a3b8";
+            const bgColor = isFirst ? "#ffffff" : "#f8fafc";
+            const borderColor = isFirst ? "#94a3b8" : "#d5dbe5";
+            const rankColor = isFirst ? "#1d4ed8" : i === 1 ? "#334155" : "#64748b";
 
             return (
               <div
@@ -331,7 +330,7 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
                   alignItems: "center",
                   background: bgColor,
                   border: `2px solid ${borderColor}`,
-                  borderRadius: "16px",
+                  borderRadius: "10px",
                   padding: "14px 24px",
                   gap: "20px",
                 }}
@@ -340,7 +339,7 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
                 <span
                   style={{
                     fontSize: "32px",
-                    fontWeight: 900,
+                    fontWeight: 700,
                     color: rankColor,
                     width: "44px",
                     textAlign: "center",
@@ -369,10 +368,10 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
                               display: "flex",
                               width: "56px",
                               height: "56px",
-                              borderRadius: "12px",
-                              background: "#1e293b",
+                              borderRadius: "10px",
+                              background: "#ffffff",
                               overflow: "hidden",
-                              border: isRec ? "3px solid #fbbf24" : "2px solid #334155",
+                              border: isRec ? "2px solid #1d4ed8" : "1px solid #d5dbe5",
                               alignItems: "center",
                               justifyContent: "center",
                             }}
@@ -391,7 +390,7 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
                                 style={{
                                   fontSize: "20px",
                                   fontWeight: 700,
-                                  color: isRec ? "#fbbf24" : "#94a3b8",
+                                  color: isRec ? "#1d4ed8" : "#64748b",
                                 }}
                               >
                                 {charName.slice(0, 2)}
@@ -402,7 +401,7 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
                             style={{
                               fontSize: "13px",
                               fontWeight: 600,
-                              color: isRec ? "#fbbf24" : "#cbd5e1",
+                              color: isRec ? "#1d4ed8" : "#334155",
                               maxWidth: "80px",
                               textAlign: "center",
                             }}
@@ -434,13 +433,13 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
                     <span
                       style={{
                         fontSize: "22px",
-                        fontWeight: 800,
+                        fontWeight: 700,
                         color:
                           trio.winRate >= 60
-                            ? "#fbbf24"
+                            ? "#1d4ed8"
                             : trio.winRate >= 55
-                              ? "#e2e8f0"
-                              : "#94a3b8",
+                              ? "#334155"
+                              : "#64748b",
                       }}
                     >
                       {trio.winRate.toFixed(1)}%
@@ -451,10 +450,10 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
                     <span
                       style={{
                         fontSize: "22px",
-                        fontWeight: 800,
+                        fontWeight: 700,
                         color:
                           trio.averageRP > 0
-                            ? "#fbbf24"
+                            ? "#1d4ed8"
                             : trio.averageRP < 0
                               ? "#f87171"
                               : "#94a3b8",
@@ -483,7 +482,7 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
         style={{
           display: "flex",
           height: "3px",
-          background: "linear-gradient(90deg, #6366f1 0%, #f59e0b 100%)",
+          background: "#d5dbe5",
         }}
       />
     </div>

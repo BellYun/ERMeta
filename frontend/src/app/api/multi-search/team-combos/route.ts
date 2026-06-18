@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
     body = (await request.json()) as TeamCombosBody;
   } catch {
     return NextResponse.json(
-      { error: "요청 본문을 확인해주세요." },
+      { error: "invalid_request_body" },
       { status: 400, headers: NO_STORE_HEADERS }
     );
   }
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
   const pools = normalizePools(body.pools);
   if (!pools) {
     return NextResponse.json(
-      { error: "팀원별 주력 캐릭터 1~3개를 전달해주세요." },
+      { error: "invalid_character_pools" },
       { status: 400, headers: NO_STORE_HEADERS }
     );
   }
@@ -131,9 +131,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ results }, { headers: NO_STORE_HEADERS });
   } catch (err) {
-    console.error("[multi-search/team-combos] 예외:", err);
+    console.error("[multi-search/team-combos] request failed:", err);
     return NextResponse.json(
-      { error: "팀 조합 추천 데이터를 불러오지 못했습니다." },
+      { error: "temporary_unavailable" },
       { status: 500, headers: NO_STORE_HEADERS }
     );
   }

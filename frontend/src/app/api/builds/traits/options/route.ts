@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ options }, { headers: getCacheHeaders("daily") });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("[builds/traits/options] 예외:", message);
+    console.error("[builds/traits/options] request failed:", message);
     return NextResponse.json({ options: [] });
   }
 }

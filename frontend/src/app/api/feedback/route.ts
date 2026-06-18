@@ -18,31 +18,29 @@ function checkRateLimit(ip: string): boolean {
 }
 
 function getKSTTimestamp(): string {
-  return new Date().toLocaleString("sv-SE", { timeZone: "Asia/Seoul" }).replace(" ", "T") + "+09:00";
+  return (
+    new Date().toLocaleString("sv-SE", { timeZone: "Asia/Seoul" }).replace(" ", "T") + "+09:00"
+  );
 }
 
 export async function POST(request: Request): Promise<Response> {
-  const ip =
-    request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
 
   if (!checkRateLimit(ip)) {
-    return Response.json(
-      { error: "너무 많은 요청입니다. 잠시 후 다시 시도해주세요." },
-      { status: 429 }
-    );
+    return Response.json({ error: "rate_limited" }, { status: 429 });
   }
 
   let body: { category?: string; message?: string; contact?: string };
   try {
     body = await request.json();
   } catch {
-    return Response.json({ error: "메시지를 입력해주세요." }, { status: 400 });
+    return Response.json({ error: "message_required" }, { status: 400 });
   }
 
   const { category, message, contact } = body;
 
   if (!message || message.trim() === "") {
-    return Response.json({ error: "메시지를 입력해주세요." }, { status: 400 });
+    return Response.json({ error: "message_required" }, { status: 400 });
   }
 
   const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;

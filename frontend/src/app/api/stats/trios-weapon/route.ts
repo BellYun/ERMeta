@@ -516,16 +516,10 @@ export async function GET(request: NextRequest) {
   const rawWeapon2 = parseIntOrNull(searchParams.get("weapon2"));
 
   if (rawChar2 != null && rawChar1 == null) {
-    return NextResponse.json(
-      { error: "character2는 character1 없이 사용할 수 없습니다." },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "missing_character1" }, { status: 400 });
   }
   if (rawChar1 != null && rawChar2 != null && rawChar1 === rawChar2) {
-    return NextResponse.json(
-      { error: "character1과 character2는 달라야 합니다." },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "duplicate_characters" }, { status: 400 });
   }
   if (
     (rawChar1 != null && EXCLUDED_CHARACTER_CODES.has(rawChar1)) ||
@@ -583,9 +577,9 @@ export async function GET(request: NextRequest) {
       { headers: withCacheObservability(getCacheHeaders("stats-long"), latencyMs) }
     );
   } catch (err) {
-    console.error("[stats/trios-weapon] 예외:", err);
+    console.error("[stats/trios-weapon] request failed:", err);
     return NextResponse.json(
-      { error: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요." },
+      { error: "temporary_unavailable" },
       { status: 500, headers: SERVER_ERROR_HEADERS }
     );
   }
