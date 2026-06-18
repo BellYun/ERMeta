@@ -308,7 +308,7 @@ export function MultiSearchClient() {
           </Button>
         </div>
         {error && !myProfile && (
-          <div className="mt-4 flex items-start gap-2 rounded-lg border border-[rgba(220,38,38,0.22)] bg-[rgba(220,38,38,0.06)] px-3 py-2 text-sm text-[var(--color-danger)]">
+          <div className="mt-4 flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm text-[var(--color-danger)]">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -356,7 +356,7 @@ export function MultiSearchClient() {
           </Button>
         </div>
         {error && myProfile && (
-          <div className="mt-4 flex items-start gap-2 rounded-lg border border-[rgba(220,38,38,0.22)] bg-[rgba(220,38,38,0.06)] px-3 py-2 text-sm text-[var(--color-danger)]">
+          <div className="mt-4 flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm text-[var(--color-danger)]">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -414,7 +414,7 @@ function PlayerCard({
       <Card>
         <CardContent className="flex h-full flex-col gap-3 p-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[rgba(220,38,38,0.22)] bg-[rgba(220,38,38,0.06)] text-[var(--color-danger)]">
+            <div className="flex h-8 w-8 items-center justify-center rounded border border-[var(--color-border)] bg-white text-[var(--color-danger)]">
               <AlertTriangle className="h-4 w-4" />
             </div>
             <div className="min-w-0">
@@ -546,7 +546,7 @@ function SearchSummary({ summary }: { summary: SearchSummaryState }) {
         {summary.failed.map((result) => (
           <span
             key={result.input}
-            className="inline-flex items-center gap-1 rounded-lg border border-[rgba(183,121,31,0.18)] bg-white px-2 py-1 text-xs font-semibold text-[var(--color-muted-foreground)]"
+            className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-white px-2 py-1 text-xs font-semibold text-[var(--color-muted-foreground)]"
           >
             <span className="max-w-32 truncate text-[var(--color-foreground)]">{result.input}</span>
             <span>{playerStatusText(result)}</span>
@@ -851,7 +851,7 @@ function TeamComboRecommendations({
       )}
 
       {isReady && error && !loading && (
-        <div className="flex items-start gap-2 rounded-lg border border-[rgba(220,38,38,0.22)] bg-[rgba(220,38,38,0.06)] px-3 py-2 text-sm text-[var(--color-danger)]">
+        <div className="flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm text-[var(--color-danger)]">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
           <span>{error}</span>
         </div>

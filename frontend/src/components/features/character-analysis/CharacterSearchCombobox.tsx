@@ -190,8 +190,8 @@ export function CharacterSearchCombobox({
             "placeholder:text-[var(--color-muted-foreground)]",
             "outline-none transition-colors",
             open
-              ? "rounded-b-[0px] border-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/30"
-              : "border-[var(--color-border)] hover:border-[var(--color-primary)]/40"
+              ? "rounded-b-[0px] border-[var(--color-border-light)] ring-1 ring-[var(--color-border-light)]"
+              : "border-[var(--color-border)] hover:border-[var(--color-border-light)]"
           )}
         />
       </div>
@@ -225,9 +225,9 @@ export function CharacterSearchCombobox({
                 onMouseEnter={() => setHighlightIndex(index)}
                 className={cn(
                   "flex min-h-[48px] w-full items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors sm:min-h-0 sm:py-2",
-                  code === activeCode && "bg-[var(--color-primary)]/5",
+                  code === activeCode && "bg-[var(--color-surface-2)]",
                   highlightIndex === index
-                    ? "bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
+                    ? "bg-[var(--color-surface-2)] text-[var(--color-foreground)]"
                     : "text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]"
                 )}
               >

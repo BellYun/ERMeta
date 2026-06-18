@@ -21,7 +21,7 @@ export function LabCharacterCard({ character }: Props) {
       <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--color-border)]">
         <Link
           href={`/character/${character.characterCode}`}
-          className="group flex min-w-0 flex-1 items-center gap-3 rounded-md outline-none transition focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)]"
+          className="group flex min-w-0 flex-1 items-center gap-3 rounded-md outline-none transition focus-visible:ring-1 focus-visible:ring-[var(--color-border-light)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)]"
           aria-label={`${character.characterName} 분석 페이지로 이동`}
         >
           <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-[var(--color-surface-2)]">

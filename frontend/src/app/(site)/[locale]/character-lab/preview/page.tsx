@@ -957,7 +957,7 @@ function TrioMatrixRow({
           {top.map((t) => (
             <li
               key={`top-${t.multiset}`}
-              className="flex items-center justify-between gap-2 rounded-md bg-[rgba(74,222,128,0.06)] px-2 py-1.5"
+              className="flex items-center justify-between gap-2 rounded border border-[var(--color-border)] bg-white px-2 py-1.5"
             >
               <TrioSlotChips multiset={t.multiset} size="sm" />
               <span className="ml-auto flex items-center gap-1.5">
@@ -980,7 +980,7 @@ function TrioMatrixRow({
           {bot.map((t) => (
             <li
               key={`bot-${t.multiset}`}
-              className="flex items-center justify-between gap-2 rounded-md bg-[rgba(248,113,113,0.06)] px-2 py-1.5"
+              className="flex items-center justify-between gap-2 rounded border border-[var(--color-border)] bg-white px-2 py-1.5"
             >
               <TrioSlotChips multiset={t.multiset} size="sm" />
               <span className="ml-auto flex items-center gap-1.5">

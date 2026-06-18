@@ -311,7 +311,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                                 sizes="32px"
                               />
                               {char.patchNote && (
-                                <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]" />
+                                <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded border border-white bg-[var(--color-muted-foreground)]" />
                               )}
                             </div>
                             <div className="min-w-0">
@@ -484,7 +484,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           sizes="32px"
                         />
                         {char.patchNote && (
-                          <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]" />
+                          <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded border border-white bg-[var(--color-muted-foreground)]" />
                         )}
                       </div>
                       <div className="min-w-0">

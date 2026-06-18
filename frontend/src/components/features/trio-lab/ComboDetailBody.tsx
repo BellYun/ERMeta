@@ -157,7 +157,7 @@ function MemberAvatar({ member, size = "h-16 w-16" }: { member: TrioWeaponMember
     <Link
       href={`/character/${member.character}`}
       aria-label={`${characterDisplayName(member.character)} 캐릭터 페이지`}
-      className={`relative ${size} shrink-0 overflow-hidden rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] ring-1 ring-transparent transition-colors hover:ring-[rgba(96,165,250,0.42)]`}
+      className={`relative ${size} shrink-0 overflow-hidden rounded border border-[var(--color-border)] bg-[var(--color-surface-2)] transition-colors hover:border-[var(--color-border-light)]`}
     >
       <Image
         src={getCharacterMiniWebpUrl(member.character)}
@@ -401,7 +401,7 @@ function TraitBlock({
       <div className="rounded-lg border border-[var(--color-border)] bg-white p-4 sm:p-5">
         <div className="flex flex-col items-center gap-3">
           {topMainCore != null && (
-            <div className="rounded-full p-1 outline outline-1 outline-[var(--color-primary)]/35">
+            <div className="rounded border border-[var(--color-border)] bg-white p-1">
               <TraitIconSmall code={topMainCore} size={40} />
             </div>
           )}

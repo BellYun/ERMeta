@@ -204,8 +204,8 @@ export default function FeedbackWidget() {
       >
         {formState === "success" ? (
           <div className="flex flex-col items-center justify-center gap-3 p-6 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-primary)]">
-              <Check className="h-6 w-6 text-white" />
+            <div className="flex h-12 w-12 items-center justify-center rounded border border-[var(--color-border)] bg-white">
+              <Check className="h-6 w-6 text-[var(--color-foreground)]" />
             </div>
             <p className="text-[var(--color-foreground)] font-medium">{copy.success}</p>
           </div>
@@ -218,7 +218,7 @@ export default function FeedbackWidget() {
                 type="button"
                 onClick={handleClose}
                 aria-label={copy.close}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+                className="inline-flex h-8 w-8 items-center justify-center rounded text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -232,10 +232,10 @@ export default function FeedbackWidget() {
                   type="button"
                   onClick={() => setCategory(cat)}
                   className={[
-                    "rounded-full px-3 py-1 text-xs font-medium border transition-colors",
+                    "rounded px-3 py-1 text-xs font-medium border transition-colors",
                     category === cat
-                      ? "bg-[var(--color-primary)] border-[var(--color-primary)] text-white"
-                      : "bg-transparent border-[var(--color-border)] text-[var(--color-muted-foreground)] hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]",
+                      ? "bg-white border-[var(--color-border-light)] text-[var(--color-foreground)]"
+                      : "bg-transparent border-[var(--color-border)] text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:text-[var(--color-foreground)]",
                   ].join(" ")}
                 >
                   {copy.categories[cat]}
@@ -255,7 +255,7 @@ export default function FeedbackWidget() {
                 "w-full resize-none rounded-md border border-[var(--color-border)]",
                 "bg-[var(--color-surface-2)] text-[var(--color-foreground)] text-sm",
                 "placeholder:text-[var(--color-muted-foreground)]",
-                "px-3 py-2 outline-none focus:border-[var(--color-primary)] transition-colors",
+                "px-3 py-2 outline-none focus:border-[var(--color-border-light)] transition-colors",
               ].join(" ")}
             />
 
@@ -269,7 +269,7 @@ export default function FeedbackWidget() {
                 "w-full rounded-md border border-[var(--color-border)]",
                 "bg-[var(--color-surface-2)] text-[var(--color-foreground)] text-sm",
                 "placeholder:text-[var(--color-muted-foreground)]",
-                "px-3 py-2 outline-none focus:border-[var(--color-primary)] transition-colors",
+                "px-3 py-2 outline-none focus:border-[var(--color-border-light)] transition-colors",
               ].join(" ")}
             />
 
@@ -302,8 +302,8 @@ export default function FeedbackWidget() {
         className={[
           "pointer-events-auto",
           "lg:hidden",
-          "flex h-12 w-12 items-center justify-center rounded-full transition-colors",
-          "bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white",
+          "flex h-12 w-12 items-center justify-center rounded-md border transition-colors",
+          "border-[var(--color-border)] bg-white text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]",
         ].join(" ")}
       >
         {isOpen ? <X className="h-5 w-5" /> : <MessageCircle className="h-5 w-5" />}

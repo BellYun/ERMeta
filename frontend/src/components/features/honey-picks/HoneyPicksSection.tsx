@@ -38,7 +38,7 @@ export const CHANGE_LABEL: Record<string, { text: string; color: string; bg: str
   rework: {
     text: "조정",
     color: "text-[var(--color-primary)]",
-    bg: "bg-[var(--color-primary)]/10",
+    bg: "bg-white border border-[var(--color-border)]",
   },
 };
 

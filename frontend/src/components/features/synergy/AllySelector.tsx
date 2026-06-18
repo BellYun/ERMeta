@@ -138,7 +138,7 @@ export function AllySelector() {
             value={allySearch}
             onChange={(e) => setAllySearch(e.target.value)}
             placeholder="아군 검색 (초성 가능: ㅎㅇ)"
-            className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
+            className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-border-light)] focus:outline-none"
           />
           {allySearch && (
             <button

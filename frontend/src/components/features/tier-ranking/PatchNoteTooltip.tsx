@@ -22,8 +22,7 @@ export function PatchNoteTooltip({ patchNote }: { patchNote: CharacterPatchNote 
       };
     return {
       text: "조정",
-      color:
-        "text-[var(--color-primary)] bg-[var(--color-primary)]/10 border-[var(--color-primary)]/20",
+      color: "text-[var(--color-foreground)] bg-white border-[var(--color-border)]",
     };
   };
 

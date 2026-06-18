@@ -197,9 +197,9 @@ export function CharacterHeader({
                       onKeyDown={(e) => handleTierKey(e, i)}
                       className={cn(
                         "rounded px-2.5 py-1.5 text-[10px] font-medium whitespace-nowrap transition-colors sm:px-3 sm:text-[11px]",
-                        "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
+                        "focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-border-light)]",
                         isSelected
-                          ? "bg-white text-[var(--color-primary)]"
+                          ? "bg-white text-[var(--color-foreground)]"
                           : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
                       )}
                     >
@@ -251,10 +251,10 @@ export function CharacterHeader({
                 onKeyDown={(e) => handleWeaponKey(e, 0)}
                 className={cn(
                   "flex shrink-0 items-center gap-1.5 rounded-md border px-2.5 py-2 text-[11px] font-medium transition-colors sm:px-3 sm:text-xs",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
+                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-border-light)]",
                   selectedWeapon == null
-                    ? "border-[var(--color-primary)] bg-white text-[var(--color-primary)]"
-                    : "border-[var(--color-border)] bg-white text-[var(--color-foreground)] hover:border-[var(--color-primary)]/30"
+                    ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
+                    : "border-[var(--color-border)] bg-white text-[var(--color-foreground)] hover:border-[var(--color-border-light)]"
                 )}
               >
                 {t("all")}
@@ -283,10 +283,10 @@ export function CharacterHeader({
                     onKeyDown={(e) => handleWeaponKey(e, weaponIndex)}
                     className={cn(
                       "flex min-w-[88px] shrink-0 flex-col rounded-md border px-2.5 py-2 text-[11px] transition-colors sm:min-w-[96px] sm:px-3 sm:text-xs",
-                      "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
+                      "focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-border-light)]",
                       isSelected
-                        ? "border-[var(--color-primary)] bg-white text-[var(--color-primary)]"
-                        : "border-[var(--color-border)] bg-white text-[var(--color-foreground)] hover:border-[var(--color-primary)]/30"
+                        ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
+                        : "border-[var(--color-border)] bg-white text-[var(--color-foreground)] hover:border-[var(--color-border-light)]"
                     )}
                   >
                     <div className="flex items-center justify-between gap-2 w-full">

@@ -44,7 +44,7 @@ function TabsList({ className, children }: { className?: string; children: React
   return (
     <div
       className={cn(
-        "flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] p-1 gap-1",
+        "flex items-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] p-1 gap-1",
         "overflow-x-auto scrollbar-hide flex-nowrap",
         "sm:inline-flex",
         "[scroll-snap-type:x_mandatory]",
@@ -72,7 +72,7 @@ function TabsTrigger({ value, className, children }: TabsTriggerProps) {
       className={cn(
         "inline-flex items-center justify-center rounded-md px-3.5 py-2 text-xs font-semibold transition-colors min-h-[38px] sm:min-h-0 touch-manipulation shrink-0 [scroll-snap-align:start]",
         isActive
-          ? "bg-white text-[var(--color-primary)]"
+          ? "bg-white text-[var(--color-foreground)]"
           : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]",
         className
       )}

@@ -103,7 +103,7 @@ export function CharacterGrid({
               }
             }}
             placeholder={t("placeholder")}
-            className="w-full rounded-lg bg-[var(--color-surface-2)] pl-8 pr-8 py-2 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] placeholder:text-[var(--color-muted-foreground)] outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]/30 transition-colors"
+            className="w-full rounded-md bg-[var(--color-surface-2)] pl-8 pr-8 py-2 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] placeholder:text-[var(--color-muted-foreground)] outline-none focus:border-[var(--color-border-light)] focus:ring-1 focus:ring-[var(--color-border-light)] transition-colors"
           />
           {searchQuery && (
             <button

@@ -42,7 +42,7 @@ export function AppFrame({
     >
       <a
         href={`#${mainId}`}
-        className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-md focus:bg-[var(--color-primary)] focus:px-3 focus:py-2 focus:text-white focus:outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-md focus:border focus:border-[var(--color-border)] focus:bg-white focus:px-3 focus:py-2 focus:text-[var(--color-foreground)] focus:outline-none"
       >
         {getMessage(messages, "layout.skipToMain")}
       </a>

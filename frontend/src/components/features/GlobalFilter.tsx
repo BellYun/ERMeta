@@ -77,8 +77,8 @@ export function GlobalFilter() {
               analytics.patchSelected(e.target.value);
             }}
             className={cn(
-              "h-14 w-full appearance-none rounded-[18px] border border-[var(--color-border)] bg-white px-3 pr-8 text-[13px] font-medium text-[var(--color-foreground)]",
-              "focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]/30"
+              "h-14 w-full appearance-none rounded-md border border-[var(--color-border)] bg-white px-3 pr-8 text-[13px] font-medium text-[var(--color-foreground)]",
+              "focus:outline-none focus:border-[var(--color-border-light)]"
             )}
           >
             {patches.map((p) => (
@@ -126,10 +126,10 @@ export function GlobalFilter() {
                 onClick={() => selectTier(value)}
                 onKeyDown={(e) => handleTierKeyDown(e, index)}
                 className={cn(
-                  "flex h-14 min-w-0 items-center justify-center rounded-[18px] border px-2 text-center text-[12px] font-medium leading-4  transition-colors",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
+                  "flex h-14 min-w-0 items-center justify-center rounded-md border px-2 text-center text-[12px] font-medium leading-4  transition-colors",
+                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-border-light)]",
                   isSelected
-                    ? "border-[var(--color-primary)]/55 bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
+                    ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
                     : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]"
                 )}
               >
@@ -156,7 +156,7 @@ export function GlobalFilter() {
               "bg-[var(--color-surface-2)] border border-[var(--color-border)]",
               "text-sm font-medium text-[var(--color-foreground)]",
               "hover:border-[var(--color-border-light)]",
-              "focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]/30",
+              "focus:outline-none focus:border-[var(--color-border-light)] focus:ring-1 focus:ring-[var(--color-border-light)]",
               "transition-colors cursor-pointer"
             )}
           >
@@ -188,7 +188,7 @@ export function GlobalFilter() {
           role="radiogroup"
           aria-label={t("tierAria")}
           aria-orientation="horizontal"
-          className="flex rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] p-0.5"
+          className="flex rounded-md bg-[var(--color-surface-2)] border border-[var(--color-border)] p-0.5"
         >
           {tierOptions.map(({ value, label }, index) => {
             const isSelected = tier === value;
@@ -207,9 +207,9 @@ export function GlobalFilter() {
                 className={cn(
                   "px-3 py-1.5 rounded-md text-xs sm:text-[13px] font-medium transition-colors whitespace-nowrap",
                   "min-h-[32px] touch-manipulation",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
+                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-border-light)]",
                   isSelected
-                    ? "bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
+                    ? "bg-white text-[var(--color-foreground)] border border-[var(--color-border)]"
                     : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
                 )}
               >

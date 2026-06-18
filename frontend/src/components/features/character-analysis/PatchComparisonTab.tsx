@@ -93,13 +93,13 @@ export function PatchComparisonTab({
                     key={d.patch}
                     className={cn(
                       "border-b border-[var(--color-border)]/50 last:border-0",
-                      isCurrent && "bg-[var(--color-primary)]/5"
+                      isCurrent && "bg-[var(--color-surface-2)]"
                     )}
                   >
                     <td className="px-2 sm:px-3 py-1.5 text-left text-[var(--color-foreground)]">
                       {d.patch}
                       {isCurrent && (
-                        <span className="ml-1 sm:ml-1.5 rounded bg-[var(--color-primary)]/20 px-1 py-0.5 text-[9px] text-[var(--color-primary)]">
+                        <span className="ml-1 sm:ml-1.5 rounded border border-[var(--color-border)] bg-white px-1 py-0.5 text-[9px] text-[var(--color-muted-foreground)]">
                           {t("current")}
                         </span>
                       )}

@@ -515,7 +515,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
               })
             }
             placeholder={copy.searchPlaceholder}
-            className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
+            className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-border-light)] focus:outline-none"
           />
           {search && (
             <button
@@ -541,7 +541,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
 
       {loading && (
         <div className="relative h-0.5 overflow-hidden rounded-full bg-[var(--color-surface-3)]">
-          <div className="trio-lab-loader-bar absolute inset-y-0 w-1/3 rounded-full bg-[var(--color-primary)]" />
+          <div className="trio-lab-loader-bar absolute inset-y-0 w-1/3 rounded-full bg-[var(--color-muted-foreground)]" />
         </div>
       )}
 
@@ -570,7 +570,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                 sort: event.target.value as TrioSortBy,
               })
             }
-            className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 py-1.5 text-xs font-medium text-[var(--color-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
+            className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 py-1.5 text-xs font-medium text-[var(--color-foreground)] focus:border-[var(--color-border-light)] focus:outline-none"
             aria-label={copy.sortAria}
           >
             {SORT_KEYS.map((key) => (
@@ -583,7 +583,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
       </div>
 
       {error && (
-        <div className="rounded-lg border border-[rgba(248,113,113,0.24)] bg-[rgba(248,113,113,0.08)] px-3 py-2 text-xs text-[var(--color-danger)]">
+        <div className="rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-xs text-[var(--color-danger)]">
           {error}
         </div>
       )}
@@ -625,7 +625,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                 onClick={() =>
                   setVisibleCount((count) => Math.min(count + PAGE_SIZE, sortedCombos.length))
                 }
-                className="inline-flex min-h-[42px] items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] px-5 text-xs font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)]/10"
+                className="inline-flex min-h-[42px] items-center justify-center rounded-md border border-[var(--color-border)] bg-white px-5 text-xs font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
               >
                 {copy.loadMore(Math.min(PAGE_SIZE, sortedCombos.length - visibleCount))}
               </button>

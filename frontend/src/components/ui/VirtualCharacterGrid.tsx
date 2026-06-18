@@ -1,30 +1,30 @@
-"use client"
+"use client";
 
-import { useVirtualizer } from "@tanstack/react-virtual"
-import Image from "next/image"
-import * as React from "react"
-import { getCharacterMiniWebpUrl } from "@/lib/characterMap"
-import { cn } from "@/lib/utils"
+import { useVirtualizer } from "@tanstack/react-virtual";
+import Image from "next/image";
+import * as React from "react";
+import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
+import { cn } from "@/lib/utils";
 
-const CELL_MIN_WIDTH = 72
-const ROW_HEIGHT = 82
+const CELL_MIN_WIDTH = 72;
+const ROW_HEIGHT = 82;
 
 export interface CharacterCellStats {
-  tier: string
-  winRate: number
+  tier: string;
+  winRate: number;
 }
 
 interface VirtualCharacterGridProps {
-  codes: number[]
-  getCharName: (code: number) => string
-  isSelected: (code: number) => boolean
-  isDisabled?: (code: number) => boolean
-  onSelect: (code: number) => void
-  maxHeight?: string
-  className?: string
-  emptyMessage?: string
-  scrollToCode?: number
-  statsMap?: Map<number, CharacterCellStats>
+  codes: number[];
+  getCharName: (code: number) => string;
+  isSelected: (code: number) => boolean;
+  isDisabled?: (code: number) => boolean;
+  onSelect: (code: number) => void;
+  maxHeight?: string;
+  className?: string;
+  emptyMessage?: string;
+  scrollToCode?: number;
+  statsMap?: Map<number, CharacterCellStats>;
 }
 
 const TIER_COLOR_MAP: Record<string, string> = {
@@ -33,7 +33,7 @@ const TIER_COLOR_MAP: Record<string, string> = {
   B: "var(--color-tier-b)",
   C: "var(--color-tier-c)",
   D: "var(--color-tier-d)",
-}
+};
 
 const CharacterCell = React.memo(function CharacterCell({
   code,
@@ -43,12 +43,12 @@ const CharacterCell = React.memo(function CharacterCell({
   onSelect,
   cellStats,
 }: {
-  code: number
-  name: string
-  selected: boolean
-  disabled: boolean
-  onSelect: (code: number) => void
-  cellStats?: CharacterCellStats
+  code: number;
+  name: string;
+  selected: boolean;
+  disabled: boolean;
+  onSelect: (code: number) => void;
+  cellStats?: CharacterCellStats;
 }) {
   return (
     <button
@@ -58,10 +58,10 @@ const CharacterCell = React.memo(function CharacterCell({
       className={cn(
         "flex flex-col items-center gap-0.5 rounded-lg px-1 py-1.5 transition-colors",
         selected
-          ? "bg-[var(--color-primary)]/20 ring-1 ring-[var(--color-primary)]"
+          ? "bg-white ring-1 ring-[var(--color-border-light)]"
           : disabled
-          ? "opacity-30 cursor-not-allowed"
-          : "hover:bg-[var(--color-surface-2)]"
+            ? "opacity-30 cursor-not-allowed"
+            : "hover:bg-[var(--color-surface-2)]"
       )}
     >
       <div className="relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]">
@@ -101,8 +101,8 @@ const CharacterCell = React.memo(function CharacterCell({
         </span>
       )}
     </button>
-  )
-})
+  );
+});
 
 export function VirtualCharacterGrid({
   codes,
@@ -122,46 +122,46 @@ export function VirtualCharacterGrid({
   // 이 지시어는 해당 경고를 해결하고 UI의 정확성을 보장하기 위해
   // React Compiler에게 이 컴포넌트의 메모이제이션을 건너뛰도록 명시적으로 지시합니다.
   "use no memo";
-  const parentRef = React.useRef<HTMLDivElement>(null)
-  const [columns, setColumns] = React.useState(4)
+  const parentRef = React.useRef<HTMLDivElement>(null);
+  const [columns, setColumns] = React.useState(4);
 
   React.useEffect(() => {
-    const el = parentRef.current
-    if (!el) return
+    const el = parentRef.current;
+    if (!el) return;
     const update = () => {
-      const width = el.clientWidth
-      setColumns(Math.max(1, Math.floor(width / CELL_MIN_WIDTH)))
-    }
-    update()
-    const observer = new ResizeObserver(() => update())
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
+      const width = el.clientWidth;
+      setColumns(Math.max(1, Math.floor(width / CELL_MIN_WIDTH)));
+    };
+    update();
+    const observer = new ResizeObserver(() => update());
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
-  const rowCount = Math.ceil(codes.length / columns)
+  const rowCount = Math.ceil(codes.length / columns);
 
   const virtualizer = useVirtualizer({
     count: rowCount,
     getScrollElement: () => parentRef.current,
     estimateSize: () => ROW_HEIGHT,
     overscan: 3,
-  })
+  });
 
   // Auto-scroll to target code
   React.useEffect(() => {
-    if (scrollToCode == null) return
-    const index = codes.indexOf(scrollToCode)
-    if (index === -1) return
-    const rowIndex = Math.floor(index / columns)
-    virtualizer.scrollToIndex(rowIndex, { align: "center", behavior: "smooth" })
-  }, [scrollToCode, codes, columns, virtualizer])
+    if (scrollToCode == null) return;
+    const index = codes.indexOf(scrollToCode);
+    if (index === -1) return;
+    const rowIndex = Math.floor(index / columns);
+    virtualizer.scrollToIndex(rowIndex, { align: "center", behavior: "smooth" });
+  }, [scrollToCode, codes, columns, virtualizer]);
 
   if (codes.length === 0) {
     return (
       <p className="py-4 text-center text-xs text-[var(--color-muted-foreground)]">
         {emptyMessage}
       </p>
-    )
+    );
   }
 
   return (
@@ -178,8 +178,8 @@ export function VirtualCharacterGrid({
         }}
       >
         {virtualizer.getVirtualItems().map((virtualRow) => {
-          const startIndex = virtualRow.index * columns
-          const rowCodes = codes.slice(startIndex, startIndex + columns)
+          const startIndex = virtualRow.index * columns;
+          const rowCodes = codes.slice(startIndex, startIndex + columns);
           return (
             <div
               key={virtualRow.key}
@@ -207,9 +207,9 @@ export function VirtualCharacterGrid({
                 />
               ))}
             </div>
-          )
+          );
         })}
       </div>
     </div>
-  )
+  );
 }

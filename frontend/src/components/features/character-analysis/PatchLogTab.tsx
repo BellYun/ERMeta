@@ -68,7 +68,7 @@ export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
             <div className="flex items-center gap-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 sm:px-4 py-2">
               <span className="text-xs font-semibold text-[var(--color-foreground)]">{patch}</span>
               {i === 0 && (
-                <span className="rounded bg-[var(--color-primary)]/20 px-1.5 py-0.5 text-[10px] text-[var(--color-primary)]">
+                <span className="rounded border border-[var(--color-border)] bg-white px-1.5 py-0.5 text-[10px] text-[var(--color-muted-foreground)]">
                   {t("current")}
                 </span>
               )}
