@@ -189,7 +189,7 @@ export function ComboGalleryCard({
       : copy.normalSample;
 
   return (
-    <article className="char-card group relative flex h-full flex-col gap-3.5 p-4 transition-colors hover:border-[rgba(96,165,250,0.34)] sm:p-4">
+    <article className="char-card group relative flex h-full flex-col gap-3.5 p-4 transition-colors hover:border-[var(--color-border-light)] sm:p-4">
       <header className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
           <span className="inline-flex h-7 min-w-8 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 font-mono text-[11px] font-bold text-[var(--color-muted-foreground)]">
@@ -201,16 +201,16 @@ export function ComboGalleryCard({
             </span>
           )}
           {!isSmallSample && (
-            <span className="rounded-md border border-[rgba(96,165,250,0.24)] bg-[rgba(96,165,250,0.10)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--color-primary-hover)]">
+            <span className="rounded border border-[var(--color-border)] bg-white px-1.5 py-0.5 text-[10px] font-semibold text-[var(--color-foreground)]">
               {sampleLabel}
             </span>
           )}
         </div>
         <div
-          className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-[12px] font-bold tabular-nums ${
+          className={`inline-flex items-center gap-1 rounded border bg-white px-2.5 py-1 text-[12px] font-bold tabular-nums ${
             positiveRP
-              ? "border-[rgba(74,222,128,0.22)] bg-[rgba(74,222,128,0.10)] text-[var(--color-stat-up)]"
-              : "border-[rgba(248,113,113,0.22)] bg-[rgba(248,113,113,0.10)] text-[var(--color-stat-down)]"
+              ? "border-[var(--color-border)] text-[var(--color-stat-up)]"
+              : "border-[var(--color-border)] text-[var(--color-stat-down)]"
           }`}
         >
           <TrendingUp className="h-3.5 w-3.5" strokeWidth={2.4} />
@@ -228,10 +228,10 @@ export function ComboGalleryCard({
             <Link
               href={`/character/${m.character}`}
               aria-label={copy.characterPage(getCharName(m.character))}
-              className={`relative block h-12 w-12 overflow-hidden rounded-lg border bg-[var(--color-surface-2)] ring-1 transition-colors hover:ring-[rgba(96,165,250,0.32)] sm:h-14 sm:w-14 ${
+              className={`relative block h-12 w-12 overflow-hidden rounded border bg-[var(--color-surface-2)] transition-colors hover:border-[var(--color-border-light)] sm:h-14 sm:w-14 ${
                 selectedSet.has(m.character)
-                  ? "border-[rgba(96,165,250,0.48)] ring-[rgba(96,165,250,0.28)]"
-                  : "border-[rgba(251,191,36,0.34)] ring-[rgba(251,191,36,0.22)]"
+                  ? "border-[var(--color-border-light)]"
+                  : "border-[var(--color-border)]"
               }`}
             >
               <Image
@@ -245,10 +245,10 @@ export function ComboGalleryCard({
             </Link>
             <div className="min-w-0 text-center leading-tight">
               <p
-                className={`mx-auto mb-1 w-fit rounded px-1.5 py-0.5 text-[9px] font-bold ${
+                className={`mx-auto mb-1 w-fit rounded border bg-white px-1.5 py-0.5 text-[9px] font-bold ${
                   selectedSet.has(m.character)
-                    ? "bg-[rgba(96,165,250,0.14)] text-[var(--color-primary-hover)]"
-                    : "bg-[rgba(251,191,36,0.14)] text-[var(--color-accent-gold)]"
+                    ? "border-[var(--color-border-light)] text-[var(--color-foreground)]"
+                    : "border-[var(--color-border)] text-[var(--color-muted-foreground)]"
                 }`}
               >
                 {selectedSet.has(m.character) ? copy.selected : copy.candidate}
@@ -318,7 +318,7 @@ export function ComboGalleryCard({
         <Link
           href={detailHref}
           scroll={false}
-          className="flex min-h-[40px] w-full items-center justify-center gap-1.5 rounded-lg border border-[rgba(251,191,36,0.28)] bg-[rgba(251,191,36,0.10)] py-2 text-xs font-bold text-[var(--color-accent-gold)] transition-colors hover:bg-[rgba(251,191,36,0.18)]"
+          className="flex min-h-[40px] w-full items-center justify-center gap-1.5 rounded-md border border-[var(--color-border)] bg-white py-2 text-xs font-bold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
         >
           {copy.detail}
           <ChevronRight className="h-3.5 w-3.5" strokeWidth={2.4} />

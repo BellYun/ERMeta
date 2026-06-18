@@ -15,9 +15,18 @@ export function getOverallChangeType(patchNote: CharacterPatchNote): "buff" | "n
 }
 
 export const CHANGE_LABEL: Record<string, { text: string; color: string }> = {
-  buff: { text: "상향", color: "text-[var(--color-stat-up)] bg-[var(--color-stat-up)]/10" },
-  nerf: { text: "하향", color: "text-[var(--color-stat-down)] bg-[var(--color-stat-down)]/10" },
-  rework: { text: "조정", color: "text-[var(--color-primary)] bg-[var(--color-primary)]/10" },
+  buff: {
+    text: "상향",
+    color: "border-[var(--color-border)] bg-white text-[var(--color-stat-up)]",
+  },
+  nerf: {
+    text: "하향",
+    color: "border-[var(--color-border)] bg-white text-[var(--color-stat-down)]",
+  },
+  rework: {
+    text: "조정",
+    color: "border-[var(--color-border)] bg-white text-[var(--color-foreground)]",
+  },
 };
 
 interface HoneyPickCardProps {
@@ -50,21 +59,18 @@ export function HoneyPickCard({
     <div className="shrink-0 px-1" style={{ width: `${cardWidth}%` }}>
       <div
         className={cn(
-          "group/card relative cursor-pointer transition-colors duration-500 ease-out rounded-lg",
-          isCenter ? "z-20 overflow-visible" : "brightness-[0.55] overflow-hidden"
+          "group/card relative cursor-pointer rounded-md transition-colors",
+          isCenter ? "z-20 overflow-visible" : "opacity-55 overflow-hidden"
         )}
         onClick={onCardClick}
       >
         {/* Main card */}
-        <div className="relative w-full aspect-[4/5] shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
+        <div className="relative w-full aspect-[4/5] shrink-0 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)]">
           <Image
             src={halfUrl}
             alt={name}
             fill
-            className={cn(
-              "object-cover object-top transition-transform duration-700",
-              isCenter && "group-hover/card:scale-105"
-            )}
+            className="object-cover object-top"
             sizes="33vw"
             priority={isCenter}
           />
@@ -74,10 +80,10 @@ export function HoneyPickCard({
           {/* Rank badge */}
           <div
             className={cn(
-              "absolute top-2 left-2 flex h-6 w-6 items-center justify-center rounded-md text-[11px] font-bold",
+              "absolute top-2 left-2 flex h-6 w-6 items-center justify-center rounded border text-[11px] font-bold",
               isCenter
-                ? "bg-[var(--color-accent-gold)]/20 text-[var(--color-accent-gold)]"
-                : "bg-white/80 text-[var(--color-muted-foreground)]"
+                ? "border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
+                : "border-[var(--color-border)] bg-white/90 text-[var(--color-muted-foreground)]"
             )}
           >
             {rank}
@@ -86,7 +92,12 @@ export function HoneyPickCard({
           {/* Change label */}
           {isCenter && changeLabel && (
             <div className="absolute top-2 right-2">
-              <span className={cn("rounded px-1.5 py-0.5 text-[9px] font-bold", changeLabel.color)}>
+              <span
+                className={cn(
+                  "rounded border px-1.5 py-0.5 text-[9px] font-bold",
+                  changeLabel.color
+                )}
+              >
                 {changeLabel.text}
               </span>
             </div>
@@ -95,7 +106,7 @@ export function HoneyPickCard({
           {/* Info panel */}
           <div
             className={cn(
-              "absolute inset-x-2 bottom-2 rounded-lg transition-colors",
+              "absolute inset-x-2 bottom-2 rounded border border-[var(--color-border)] bg-white/95 transition-colors",
               isCenter ? "p-2.5" : "p-2"
             )}
           >
@@ -179,7 +190,7 @@ export function HoneyPickCard({
         {isCenter && patchNote && (
           <div
             className={cn(
-              "hidden sm:block absolute top-0 left-full h-full w-0 group-hover/card:w-52 overflow-hidden transition-colors duration-500 ease-out rounded-r-xl",
+              "hidden sm:block absolute top-0 left-full h-full w-0 group-hover/card:w-52 overflow-hidden transition-colors rounded-r",
               "bg-[var(--color-surface)] border-l border-[var(--color-border)]"
             )}
           >
@@ -187,7 +198,10 @@ export function HoneyPickCard({
               <div className="flex items-center gap-1.5">
                 {changeLabel && (
                   <span
-                    className={cn("rounded px-1.5 py-0.5 text-[9px] font-bold", changeLabel.color)}
+                    className={cn(
+                      "rounded border px-1.5 py-0.5 text-[9px] font-bold",
+                      changeLabel.color
+                    )}
                   >
                     {changeLabel.text}
                   </span>
@@ -204,7 +218,10 @@ export function HoneyPickCard({
                     <div key={ci} className="flex flex-col gap-0.5">
                       <div className="flex items-center gap-1">
                         <span
-                          className={cn("rounded px-1 py-0.5 text-[8px] font-bold", label.color)}
+                          className={cn(
+                            "rounded border px-1 py-0.5 text-[8px] font-bold",
+                            label.color
+                          )}
                         >
                           {label.text}
                         </span>

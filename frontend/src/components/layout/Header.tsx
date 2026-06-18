@@ -219,7 +219,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                   className={cn(
                     "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors xl:px-3 xl:text-[13px]",
                     isActive
-                      ? "border-[rgba(37,99,235,0.24)] bg-[rgba(37,99,235,0.08)] text-[var(--color-primary)]"
+                      ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
                       : "border-transparent text-[var(--color-muted-foreground)] hover:border-[var(--color-border)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
                   )}
                 >
@@ -265,7 +265,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                 className={cn(
                   "hidden h-9 shrink-0 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors lg:inline-flex",
                   isFeedbackOpen
-                    ? "border-[rgba(37,99,235,0.24)] bg-[rgba(37,99,235,0.08)] text-[var(--color-primary)]"
+                    ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
                     : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
                 )}
               >

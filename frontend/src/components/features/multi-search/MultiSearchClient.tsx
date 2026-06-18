@@ -295,7 +295,7 @@ export function MultiSearchClient() {
               maxLength={16}
               autoComplete="nickname"
               placeholder="내 닉네임"
-              className="h-10 w-full min-w-0 rounded-md border border-[var(--color-border)] bg-white px-3 text-sm font-medium text-[var(--color-foreground)] outline-none transition focus:border-[rgba(37,99,235,0.52)]"
+              className="h-10 w-full min-w-0 rounded-md border border-[var(--color-border)] bg-white px-3 text-sm font-medium text-[var(--color-foreground)] outline-none transition focus:border-[var(--color-border-light)]"
             />
           </label>
           <Button type="submit" size="lg" disabled={isMyLoading} className="h-10 md:min-w-28">
@@ -337,7 +337,7 @@ export function MultiSearchClient() {
                 onChange={(event) => updateTeammateInput(index, event.target.value)}
                 autoComplete="off"
                 placeholder={`팀원 ${index + 1} 닉네임`}
-                className="h-10 w-full min-w-0 rounded-md border border-[var(--color-border)] bg-white px-3 text-sm font-medium text-[var(--color-foreground)] outline-none transition focus:border-[rgba(37,99,235,0.52)]"
+                className="h-10 w-full min-w-0 rounded-md border border-[var(--color-border)] bg-white px-3 text-sm font-medium text-[var(--color-foreground)] outline-none transition focus:border-[var(--color-border-light)]"
               />
             </label>
           ))}
@@ -446,7 +446,7 @@ function PlayerCard({
               #{formatNumber(result.rank)} · MMR {formatNumber(result.mmr)}
             </p>
           </div>
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[rgba(96,165,250,0.26)] bg-[rgba(96,165,250,0.12)] text-[var(--color-primary)]">
+          <div className="flex h-9 w-9 items-center justify-center rounded border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]">
             <Trophy className="h-4 w-4" />
           </div>
         </div>
@@ -471,10 +471,10 @@ function PlayerCard({
                     "grid gap-2 rounded-lg border px-2.5 py-1.5 transition",
                     "grid-cols-[1fr_auto]",
                     selectedCharacter === character.characterCode
-                      ? "border-[rgba(37,99,235,0.52)] bg-[rgba(37,99,235,0.1)]"
+                      ? "border-[var(--color-border-light)] bg-white"
                       : "border-[var(--color-border)] bg-white",
                     onToggleCharacter &&
-                      "hover:border-[rgba(37,99,235,0.32)] hover:bg-[rgba(37,99,235,0.06)]"
+                      "hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
                   )}
                 >
                   <button
@@ -531,7 +531,7 @@ function buildSearchSummary(results: PlayerResult[]): SearchSummaryState | null 
 
 function SearchSummary({ summary }: { summary: SearchSummaryState }) {
   return (
-    <div className="flex flex-col gap-2 rounded-lg border border-[rgba(251,191,36,0.24)] bg-[rgba(251,191,36,0.08)] px-3 py-2 text-sm text-[var(--color-foreground)]">
+    <div className="flex flex-col gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm text-[var(--color-foreground)]">
       <div className="flex items-start gap-2">
         <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent-gold)]" />
         <div className="min-w-0">
@@ -571,7 +571,7 @@ function MyProfileSetupCard({
   if (result.status !== "ok") return null;
 
   return (
-    <Card className="overflow-hidden border-[rgba(96,165,250,0.28)]">
+    <Card className="overflow-hidden border-[var(--color-border)]">
       <CardContent className="flex flex-col gap-3 p-3 sm:p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
@@ -839,7 +839,7 @@ function TeamComboRecommendations({
       </div>
 
       {!isReady && (
-        <div className="flex items-start gap-2 rounded-lg border border-[rgba(251,191,36,0.24)] bg-[rgba(251,191,36,0.08)] px-3 py-2 text-sm text-[var(--color-muted-foreground)]">
+        <div className="flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm text-[var(--color-muted-foreground)]">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent-gold)]" />
           <span>
             현재 검색 성공 {okPlayers.length}명입니다.{" "}
@@ -1031,10 +1031,10 @@ function MyPickComboCard({
     : "D";
 
   return (
-    <div className="flex min-h-[176px] flex-col gap-3 rounded-lg border border-[rgba(96,165,250,0.24)] bg-[rgba(96,165,250,0.055)] p-3">
+    <div className="flex min-h-[176px] flex-col gap-3 rounded-md border border-[var(--color-border)] bg-white p-3">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-[rgba(255,255,255,0.1)] bg-[var(--color-surface-2)]">
+          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded border border-[var(--color-border)] bg-[var(--color-surface-2)]">
             <Image
               src={getCharacterMiniWebpUrl(myMember.character)}
               alt={characterDisplayName(myMember.character)}
@@ -1064,10 +1064,10 @@ function MyPickComboCard({
         {bestCombo && (
           <span
             className={cn(
-              "rounded-md px-2 py-1 font-mono text-sm font-bold",
+              "rounded border bg-white px-2 py-1 font-mono text-sm font-bold",
               bestCombo.averageRP >= 0
-                ? "bg-[rgba(74,222,128,0.10)] text-[var(--color-stat-up)]"
-                : "bg-[rgba(248,113,113,0.10)] text-[var(--color-stat-down)]"
+                ? "border-[var(--color-border)] text-[var(--color-stat-up)]"
+                : "border-[var(--color-border)] text-[var(--color-stat-down)]"
             )}
           >
             {bestCombo.averageRP >= 0 ? "+" : ""}
@@ -1093,7 +1093,7 @@ function MyPickComboCard({
             key={combo.id}
             href={withCurrentRouteLocale(pathname, comboDetailHref(combo))}
             scroll={false}
-            className="flex items-center justify-between gap-2 rounded-lg bg-white px-2 py-1.5 text-[11px] transition hover:bg-[rgba(37,99,235,0.08)]"
+            className="flex items-center justify-between gap-2 rounded border border-transparent bg-white px-2 py-1.5 text-[11px] transition hover:border-[var(--color-border)]"
           >
             <span className="min-w-0 truncate font-bold text-[var(--color-foreground)]">
               {members

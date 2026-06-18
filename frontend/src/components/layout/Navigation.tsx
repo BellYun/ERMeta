@@ -138,17 +138,17 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
               onClick={onNavigate}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "group flex items-center gap-3 rounded-[18px] border px-4 py-3 text-sm font-medium transition-colors",
+                "group flex items-center gap-3 rounded-md border px-4 py-3 text-sm font-medium transition-colors",
                 isActive
-                  ? "border-[rgba(37,99,235,0.24)] bg-[rgba(37,99,235,0.08)] text-[var(--color-foreground)]"
+                  ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
                   : "border-transparent text-[var(--color-muted-foreground)] hover:border-[var(--color-border)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
               )}
             >
               <span
                 className={cn(
-                  "flex h-9 w-9 items-center justify-center rounded-lg border transition-colors",
+                  "flex h-9 w-9 items-center justify-center rounded border transition-colors",
                   isActive
-                    ? "border-[rgba(37,99,235,0.22)] bg-white text-[var(--color-primary)]"
+                    ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
                     : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]"
                 )}
               >
@@ -166,7 +166,7 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
 
         <div className="mt-auto flex flex-col gap-3 pt-4">
           {currentPatch ? (
-            <div className="rounded-[18px] border border-[var(--color-border)] bg-[var(--color-surface-2)] p-4">
+            <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] p-4">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm font-semibold text-[var(--color-foreground)]">
                   {t("patchPanel", { patch: currentPatch })}
@@ -193,17 +193,17 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
             aria-expanded={isFeedbackOpen}
             aria-pressed={isFeedbackOpen}
             className={cn(
-              "flex items-center gap-3 rounded-[18px] border px-4 py-3 text-sm font-medium transition-colors",
+              "flex items-center gap-3 rounded-md border px-4 py-3 text-sm font-medium transition-colors",
               isFeedbackOpen
-                ? "border-[rgba(37,99,235,0.24)] bg-[rgba(37,99,235,0.08)] text-[var(--color-foreground)]"
+                ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
                 : "border-[var(--color-border)] bg-white text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
             )}
           >
             <span
               className={cn(
-                "flex h-9 w-9 items-center justify-center rounded-lg border transition-colors",
+                "flex h-9 w-9 items-center justify-center rounded border transition-colors",
                 isFeedbackOpen
-                  ? "border-[rgba(37,99,235,0.22)] bg-white text-[var(--color-primary)]"
+                  ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
                   : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]"
               )}
             >

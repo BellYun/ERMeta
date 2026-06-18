@@ -118,30 +118,30 @@ const TRAIT_GROUP_META: Record<
   havoc: {
     label: "파괴",
     letter: "파",
-    bg: "bg-red-500/20",
-    color: "text-[#f87171]",
-    ring: "border-[rgba(248,113,113,0.36)] bg-[rgba(248,113,113,0.12)]",
+    bg: "bg-[var(--color-surface-2)]",
+    color: "text-[var(--color-foreground)]",
+    ring: "border-[var(--color-border)] bg-white",
   },
   fortification: {
     label: "저항",
     letter: "저",
-    bg: "bg-blue-500/20",
-    color: "text-[#60a5fa]",
-    ring: "border-[rgba(96,165,250,0.36)] bg-[rgba(96,165,250,0.12)]",
+    bg: "bg-[var(--color-surface-2)]",
+    color: "text-[var(--color-foreground)]",
+    ring: "border-[var(--color-border)] bg-white",
   },
   support: {
     label: "지원",
     letter: "지",
-    bg: "bg-emerald-500/20",
-    color: "text-[#4ade80]",
-    ring: "border-[rgba(74,222,128,0.36)] bg-[rgba(74,222,128,0.12)]",
+    bg: "bg-[var(--color-surface-2)]",
+    color: "text-[var(--color-foreground)]",
+    ring: "border-[var(--color-border)] bg-white",
   },
   chaos: {
     label: "혼돈",
     letter: "혼",
-    bg: "bg-purple-500/20",
-    color: "text-[#64748b]",
-    ring: "border-[rgba(167,139,250,0.36)] bg-[rgba(167,139,250,0.12)]",
+    bg: "bg-[var(--color-surface-2)]",
+    color: "text-[var(--color-foreground)]",
+    ring: "border-[var(--color-border)] bg-white",
   },
   unknown: {
     label: "기타",
@@ -507,7 +507,7 @@ function CharacterDetailCard({ data }: { data: CharacterDetailData }) {
         </div>
         <Link
           href={`/character/${member.character}`}
-          className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-foreground)] transition-colors hover:border-[rgba(96,165,250,0.32)] hover:bg-[rgba(96,165,250,0.08)] hover:text-[var(--color-primary-hover)]"
+          className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-white px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
         >
           빌드
           <ChevronRight className="h-3 w-3" strokeWidth={2.4} />

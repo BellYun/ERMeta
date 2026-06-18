@@ -445,10 +445,10 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
             return (
               <div
                 key={code}
-                className="relative flex min-h-[112px] min-w-0 flex-col gap-2 overflow-hidden rounded-lg border border-[rgba(96,165,250,0.36)] bg-[rgba(96,165,250,0.10)] p-2"
+                className="relative flex min-h-[112px] min-w-0 flex-col gap-2 overflow-hidden rounded-md border border-[var(--color-border)] bg-white p-2"
               >
                 <div className="flex min-w-0 items-center gap-2 pr-6">
-                  <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)]">
+                  <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded border border-[var(--color-border)] bg-[var(--color-surface-2)]">
                     <Image
                       src={getCharacterMiniWebpUrl(code)}
                       alt={getCharName(code)}
@@ -466,7 +466,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                   type="button"
                   onClick={() => removeFromPool(code)}
                   aria-label={copy.remove(getCharName(code))}
-                  className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-md text-[var(--color-muted-foreground)] transition-colors hover:bg-[rgba(248,113,113,0.12)] hover:text-[var(--color-danger)]"
+                  className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-danger)]"
                 >
                   <X className="h-4 w-4" strokeWidth={2.2} />
                 </button>
@@ -475,9 +475,9 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                     <button
                       type="button"
                       onClick={() => selectWeaponFilter(code, null)}
-                      className={`rounded-md border px-1.5 py-1 text-[10px] font-semibold transition-colors ${
+                      className={`rounded border px-1.5 py-1 text-[10px] font-semibold transition-colors ${
                         selectedWeapon == null
-                          ? "border-[rgba(96,165,250,0.38)] bg-[rgba(96,165,250,0.14)] text-[var(--color-primary-hover)]"
+                          ? "border-[var(--color-primary)] bg-white text-[var(--color-foreground)]"
                           : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
                       }`}
                     >
@@ -488,9 +488,9 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                         key={`${code}-${weapon.weaponCode}`}
                         type="button"
                         onClick={() => selectWeaponFilter(code, weapon.weaponCode)}
-                        className={`rounded-md border px-1.5 py-1 text-[10px] font-semibold transition-colors ${
+                        className={`rounded border px-1.5 py-1 text-[10px] font-semibold transition-colors ${
                           selectedWeapon === weapon.weaponCode
-                            ? "border-[rgba(251,191,36,0.36)] bg-[rgba(251,191,36,0.14)] text-[var(--color-accent-gold)]"
+                            ? "border-[var(--color-primary)] bg-white text-[var(--color-foreground)]"
                             : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
                         }`}
                       >
