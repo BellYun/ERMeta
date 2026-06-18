@@ -67,7 +67,7 @@ export function CharacterGrid({
       <div className="px-3 py-2.5 border-b border-[var(--color-border)]/60">
         <div className="flex items-center gap-2">
           <svg
-            className="h-3.5 w-3.5 text-[var(--color-primary)]"
+            className="h-3.5 w-3.5 text-[var(--color-muted-foreground)]"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"

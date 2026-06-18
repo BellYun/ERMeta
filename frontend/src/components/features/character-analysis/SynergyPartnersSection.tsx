@@ -153,7 +153,7 @@ export function SynergyPartnersSection({
   return (
     <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
       <div className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 sm:mb-4">
-        <Users className="h-4 w-4 text-[var(--color-primary)]" />
+        <Users className="h-4 w-4 text-[var(--color-muted-foreground)]" />
         <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.18rem]">
           {copy.title}
         </h2>

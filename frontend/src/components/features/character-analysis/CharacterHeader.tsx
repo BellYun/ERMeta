@@ -129,11 +129,7 @@ export function CharacterHeader({
             <div
               className={cn(
                 "relative h-16 w-16 overflow-hidden rounded-md border bg-[var(--color-surface-2)] sm:h-24 sm:w-24",
-                charTier === "S"
-                  ? "border-[var(--color-tier-s)]/45"
-                  : charTier === "A"
-                    ? "border-[var(--color-tier-a)]/40"
-                    : "border-[var(--color-border)]"
+                charTier ? "border-[var(--color-border-light)]" : "border-[var(--color-border)]"
               )}
             >
               <Image
@@ -297,7 +293,7 @@ export function CharacterHeader({
                         className={cn(
                           "text-[10px] tabular-nums",
                           isSelected
-                            ? "text-[var(--color-primary)]/70"
+                            ? "text-[var(--color-foreground)]"
                             : "text-[var(--color-muted-foreground)]"
                         )}
                       >
@@ -310,9 +306,9 @@ export function CharacterHeader({
                     >
                       <div
                         className={cn(
-                          "h-full rounded-full transition-colors duration-300",
+                          "h-full rounded-full",
                           isSelected
-                            ? "bg-[var(--color-primary)]"
+                            ? "bg-[var(--color-foreground)]"
                             : "bg-[var(--color-muted-foreground)]/50"
                         )}
                         style={{ width: `${w.pickRate}%` }}

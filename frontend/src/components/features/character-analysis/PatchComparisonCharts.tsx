@@ -85,9 +85,9 @@ export default function PatchComparisonCharts({
               />
               <Line
                 dataKey="winRate"
-                stroke="var(--color-primary)"
+                stroke="var(--color-foreground)"
                 strokeWidth={2}
-                dot={{ r: 3, fill: "var(--color-primary)" }}
+                dot={{ r: 3, fill: "var(--color-foreground)" }}
                 activeDot={{ r: 5 }}
               />
             </LineChart>

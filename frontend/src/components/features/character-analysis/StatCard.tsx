@@ -27,20 +27,20 @@ export function SkeletonCard() {
 
 const ACCENT_COLORS = {
   blue: {
-    border: "border-l-[var(--color-primary)]",
-    gauge: "bg-[var(--color-primary)]",
+    border: "border-l-[var(--color-border-light)]",
+    gauge: "bg-[var(--color-foreground)]",
   },
   gold: {
-    border: "border-l-[var(--color-stat-up)]",
-    gauge: "bg-[var(--color-stat-up)]",
+    border: "border-l-[var(--color-border-light)]",
+    gauge: "bg-[var(--color-foreground)]",
   },
   purple: {
-    border: "border-l-[var(--color-accent-purple)]",
-    gauge: "bg-[var(--color-accent-purple)]",
+    border: "border-l-[var(--color-border-light)]",
+    gauge: "bg-[var(--color-foreground)]",
   },
   green: {
-    border: "border-l-[var(--color-success)]",
-    gauge: "bg-[var(--color-success)]",
+    border: "border-l-[var(--color-border-light)]",
+    gauge: "bg-[var(--color-foreground)]",
   },
 };
 
@@ -94,7 +94,7 @@ export function StatCard({
         <div className="relative mt-2 h-1 w-full rounded-full bg-[var(--color-border)]/60">
           <div
             className={cn(
-              "h-full rounded-full transition-colors duration-500",
+              "h-full rounded-full",
               (gauge.inverted ? gauge.current < gauge.expected : gauge.current > gauge.expected)
                 ? colors.gauge
                 : "bg-[var(--color-danger)]"

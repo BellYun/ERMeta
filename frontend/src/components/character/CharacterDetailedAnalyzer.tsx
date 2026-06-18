@@ -215,7 +215,7 @@ function TreeRow({
               <span
                 className={cn(
                   "text-[9px]",
-                  isTop ? "text-[var(--color-primary)]" : "text-[var(--color-muted-foreground)]"
+                  isTop ? "text-[var(--color-foreground)]" : "text-[var(--color-muted-foreground)]"
                 )}
               >
                 {opt.pickRate.toFixed(1)}%
@@ -258,7 +258,7 @@ function SummaryRow({
         <span className="text-[10px] text-[var(--color-muted-foreground)]">{label}</span>
       </div>
       <div className="ml-auto flex items-center gap-2 shrink-0">
-        <span className="text-[10px] text-[var(--color-primary)]">
+        <span className="text-[10px] text-[var(--color-foreground)]">
           {option.pickRate.toFixed(1)}%
         </span>
         <span
@@ -441,7 +441,7 @@ function SlotPopularityGrid({
                     <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-[48px] truncate leading-tight">
                       {itemNames[item.code] ?? item.code}
                     </span>
-                    <span className="text-[9px] text-[var(--color-primary)]">
+                    <span className="text-[9px] text-[var(--color-foreground)]">
                       {item.pickRate.toFixed(1)}%
                     </span>
                     <span className="text-[9px] text-[var(--color-foreground)]">
@@ -483,7 +483,7 @@ function SlotPopularityGrid({
                         <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-full truncate w-full leading-tight">
                           {itemNames[item.code] ?? item.code}
                         </span>
-                        <span className="text-[9px] text-[var(--color-primary)]">
+                        <span className="text-[9px] text-[var(--color-foreground)]">
                           {item.pickRate.toFixed(1)}%
                         </span>
                         <WinRateSpan winRate={item.winRate} />
@@ -521,7 +521,7 @@ function SlotPopularityGrid({
                         <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-full truncate w-full leading-tight">
                           {itemNames[item.code] ?? item.code}
                         </span>
-                        <span className="text-[9px] text-[var(--color-primary)]">
+                        <span className="text-[9px] text-[var(--color-foreground)]">
                           {item.pickRate.toFixed(1)}%
                         </span>
                         <WinRateSpan winRate={item.winRate} />
@@ -563,7 +563,7 @@ function SlotPopularityGrid({
                         <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-full truncate w-full leading-tight">
                           {itemNames[item.code] ?? item.code}
                         </span>
-                        <span className="text-[9px] text-[var(--color-primary)]">
+                        <span className="text-[9px] text-[var(--color-foreground)]">
                           {item.pickRate.toFixed(1)}%
                         </span>
                         <WinRateSpan winRate={item.winRate} />
@@ -729,7 +729,7 @@ export function CharacterDetailedAnalyzer({
                     className={cn(
                       "text-[9px] sm:text-[10px]",
                       isSelected
-                        ? "text-[var(--color-primary)]/80"
+                        ? "text-[var(--color-foreground)]"
                         : "text-[var(--color-muted-foreground)]"
                     )}
                   >
@@ -751,7 +751,7 @@ export function CharacterDetailedAnalyzer({
                     className={cn(
                       "h-full rounded-full transition-colors",
                       isSelected
-                        ? "bg-[var(--color-primary)]"
+                        ? "bg-[var(--color-foreground)]"
                         : "bg-[var(--color-muted-foreground)]"
                     )}
                     style={{ width: `${barWidth}%` }}
@@ -778,7 +778,7 @@ export function CharacterDetailedAnalyzer({
               <span className="text-[10px] sm:text-xs text-[var(--color-muted-foreground)]">
                 {t("stats.pickRate")}
               </span>
-              <span className="text-[10px] sm:text-xs font-bold text-[var(--color-primary)]">
+              <span className="text-[10px] sm:text-xs font-bold text-[var(--color-foreground)]">
                 {selectedGroup.groupPickRate.toFixed(1)}%
               </span>
             </div>

@@ -37,7 +37,7 @@ export const CHANGE_LABEL: Record<string, { text: string; color: string; bg: str
   },
   rework: {
     text: "조정",
-    color: "text-[var(--color-primary)]",
+    color: "text-[var(--color-foreground)]",
     bg: "bg-white border border-[var(--color-border)]",
   },
 };
@@ -168,7 +168,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
 
                 <div className="min-w-0 flex-1 pt-1">
                   <div className="flex items-center gap-2">
-                    <p className="truncate text-[1.05rem] font-bold text-[var(--color-foreground)] transition-colors group-hover:text-[var(--color-primary-hover)]">
+                    <p className="truncate text-[1.05rem] font-bold text-[var(--color-foreground)]">
                       {r.name}
                     </p>
                     {changeLabel && (
@@ -258,7 +258,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
               </div>
 
               {desktopPatchNote && previewChanges.length > 0 && (
-                <div className="pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                <div className="pointer-events-none absolute inset-0 z-10 hidden group-hover:block">
                   <div className="absolute inset-0 bg-white/98" />
                   <div className="absolute inset-0 flex flex-col gap-3 p-4">
                     <div className="flex items-center gap-2 pr-10">
@@ -288,7 +288,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                             {change.target}
                           </p>
                           {change.valueSummary && (
-                            <p className="mt-1 text-[11px] leading-5 text-[var(--color-primary-hover)]">
+                            <p className="mt-1 text-[11px] leading-5 text-[var(--color-muted-foreground)]">
                               {change.valueSummary}
                             </p>
                           )}
@@ -315,7 +315,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
             <div
               key={r.pick.characterNum}
               className={cn(
-                "relative w-[138px] shrink-0 snap-start overflow-hidden rounded-lg border border-[var(--color-border)] bg-white cursor-pointer active:scale-[0.98] transition-transform touch-manipulation"
+                "relative w-[138px] shrink-0 snap-start overflow-hidden rounded-lg border border-[var(--color-border)] bg-white cursor-pointer touch-manipulation"
               )}
               style={{ aspectRatio: "0.72" }}
               onClick={() => {

@@ -244,13 +244,13 @@ export function CharacterSearchCombobox({
                 <span
                   className={cn(
                     "font-medium",
-                    code === activeCode && "text-[var(--color-primary)]"
+                    code === activeCode && "text-[var(--color-foreground)]"
                   )}
                 >
                   {getDisplayName(code)}
                 </span>
                 {code === activeCode && (
-                  <span className="ml-auto text-[10px] font-medium text-[var(--color-primary)]">
+                  <span className="ml-auto text-[10px] font-medium text-[var(--color-muted-foreground)]">
                     {t("current")}
                   </span>
                 )}

@@ -373,7 +373,7 @@ function SlotPopularityGrid({
                     <span className="text-[10px] text-[var(--color-foreground)] text-center max-w-[52px] truncate leading-tight">
                       {itemNames[item.code] ?? item.code}
                     </span>
-                    <span className="text-[10px] text-[var(--color-primary)]">
+                    <span className="text-[10px] text-[var(--color-foreground)]">
                       {item.pickRate.toFixed(1)}%
                     </span>
                     <span className="text-[10px] text-[var(--color-foreground)]">
@@ -415,7 +415,7 @@ function SlotPopularityGrid({
                         <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-full truncate w-full leading-tight">
                           {itemNames[item.code] ?? item.code}
                         </span>
-                        <span className="text-[9px] text-[var(--color-primary)]">
+                        <span className="text-[9px] text-[var(--color-foreground)]">
                           픽률 {item.pickRate.toFixed(1)}%
                         </span>
                         <WinRateSpan winRate={item.winRate} label="승률 " />
@@ -468,7 +468,9 @@ function CoreItemsList({
                 </span>
               </div>
               <div className="flex items-center gap-3 pl-7 text-xs">
-                <span className="text-[var(--color-primary)]">픽 {item.pickRate.toFixed(1)}%</span>
+                <span className="text-[var(--color-foreground)]">
+                  픽 {item.pickRate.toFixed(1)}%
+                </span>
                 <WinRateSpan winRate={item.winRate} label="승 " />
                 <span className="text-[var(--color-muted-foreground)]">
                   {item.totalGames.toLocaleString()}판
@@ -489,7 +491,7 @@ function CoreItemsList({
               <span className="flex-1 text-sm text-[var(--color-foreground)] truncate">
                 {itemNames[item.code] ?? item.code}
               </span>
-              <span className="text-xs text-[var(--color-primary)]">
+              <span className="text-xs text-[var(--color-foreground)]">
                 {item.pickRate.toFixed(1)}%
               </span>
               <WinRateSpan winRate={item.winRate} />
@@ -508,7 +510,7 @@ function CoreItemsList({
               <span className="flex-1 text-sm text-[var(--color-foreground)] truncate">
                 {itemNames[item.code] ?? item.code}
               </span>
-              <span className="text-xs text-[var(--color-primary)]">
+              <span className="text-xs text-[var(--color-foreground)]">
                 픽률 {item.pickRate.toFixed(1)}%
               </span>
               <WinRateSpan winRate={item.winRate} label="승률 " />

@@ -168,7 +168,7 @@ function TraitIcon({
             ? "text-[var(--color-muted-foreground)]"
             : pickRate >= 30
               ? "text-[var(--color-stat-up)]"
-              : "text-[var(--color-primary)]"
+              : "text-[var(--color-foreground)]"
         )}
       >
         {pickRate.toFixed(1)}%

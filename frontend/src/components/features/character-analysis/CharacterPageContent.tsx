@@ -539,14 +539,14 @@ function CharacterSeoSection({
                 href={href}
                 className={`group grid grid-cols-[2rem_minmax(0,1fr)_1.25rem] items-center gap-2 rounded-lg border px-2.5 py-2.5 transition ${
                   primary
-                    ? "border-[var(--color-primary)] bg-white hover:bg-[var(--color-surface-2)]"
+                    ? "border-[var(--color-border-light)] bg-white hover:bg-[var(--color-surface-2)]"
                     : "border-transparent bg-transparent hover:border-[var(--color-border)] hover:bg-[var(--color-surface-2)]"
                 }`}
               >
                 <span
                   className={`flex h-8 w-8 items-center justify-center rounded-lg border ${
                     primary
-                      ? "border-[var(--color-primary)] bg-white text-[var(--color-primary)]"
+                      ? "border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
                       : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]"
                   }`}
                 >
@@ -560,7 +560,7 @@ function CharacterSeoSection({
                     {description}
                   </span>
                 </span>
-                <ArrowRight className="h-4 w-4 text-[var(--color-muted-foreground)] transition group-hover:translate-x-0.5 group-hover:text-[var(--color-foreground)]" />
+                <ArrowRight className="h-4 w-4 text-[var(--color-muted-foreground)] transition-colors group-hover:text-[var(--color-foreground)]" />
               </Link>
             ))}
           </div>
@@ -619,7 +619,7 @@ function CharacterInsightSection({ insight }: { insight: CharacterInsight }) {
   return (
     <section className="dashboard-panel p-4 lg:p-5">
       <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1">
-        <Info className="h-4 w-4 text-[var(--color-primary)]" />
+        <Info className="h-4 w-4 text-[var(--color-muted-foreground)]" />
         <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.18rem]">
           {insight.headline}
         </h2>
@@ -648,7 +648,7 @@ function InsightCard({ title, items }: { title: string; items: string[] }) {
       <ul className="grid gap-1.5 text-sm leading-6 text-[var(--color-muted-foreground)]">
         {items.map((item) => (
           <li key={item} className="flex gap-2">
-            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-primary)]" />
+            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-border-light)]" />
             <span>{item}</span>
           </li>
         ))}
@@ -696,7 +696,7 @@ export async function CharacterPageContent({
           {serverSummary ? (
             <aside className="rounded-lg border border-[var(--color-border)] bg-white p-3.5 sm:p-4">
               <div className="mb-2 flex items-center gap-2">
-                <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] text-[var(--color-primary)]">
+                <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] text-[var(--color-muted-foreground)]">
                   <Info className="h-3.5 w-3.5" />
                 </span>
                 <h2 className="text-sm font-bold text-[var(--color-foreground)]">{summaryTitle}</h2>

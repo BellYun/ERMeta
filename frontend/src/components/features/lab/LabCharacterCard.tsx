@@ -29,12 +29,12 @@ export function LabCharacterCard({ character }: Props) {
               src={imgUrl}
               alt={character.characterName}
               fill
-              className="object-cover transition group-hover:scale-105"
+              className="object-cover"
               sizes="40px"
             />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-[var(--color-foreground)] transition group-hover:text-[var(--color-primary)]">
+            <p className="truncate text-sm font-semibold text-[var(--color-foreground)]">
               {character.characterName}
             </p>
             <p className="truncate text-xs text-[var(--color-muted-foreground)] transition group-hover:text-[var(--color-foreground)]">

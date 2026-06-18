@@ -13,9 +13,9 @@
   --color-foreground: #172033;
   --color-muted-foreground: #687386;
 
-  --color-primary: #2563eb;
-  --color-primary-hover: #1d4ed8;
-  --color-primary-glow: rgba(37, 99, 235, 0.08);
+  --color-primary: #374151;
+  --color-primary-hover: #111827;
+  --color-primary-glow: rgba(17, 24, 39, 0.06);
 
   --color-accent-gold: #b7791f;
   --color-accent-purple: #7c3aed;
@@ -93,7 +93,7 @@
   }
 
   ::selection {
-    background: rgba(37, 99, 235, 0.16);
+    background: rgba(17, 24, 39, 0.14);
     color: var(--color-foreground);
   }
 
@@ -114,7 +114,7 @@
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(37, 99, 235, 0.38);
+    background: rgba(100, 116, 139, 0.42);
   }
 }
 
@@ -156,32 +156,14 @@
   animation: none;
 }
 
-.reveal-d1 {
-  animation-delay: 0.04s;
-}
-
-.reveal-d2 {
-  animation-delay: 0.08s;
-}
-
-.reveal-d3 {
-  animation-delay: 0.12s;
-}
-
-.reveal-d4 {
-  animation-delay: 0.16s;
-}
-
-.reveal-d5 {
-  animation-delay: 0.2s;
-}
-
-.reveal-d6 {
-  animation-delay: 0.24s;
-}
-
+.reveal-d1,
+.reveal-d2,
+.reveal-d3,
+.reveal-d4,
+.reveal-d5,
+.reveal-d6,
 .reveal-d7 {
-  animation-delay: 0.28s;
+  animation-delay: 0s;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -272,7 +254,7 @@
 }
 
 .dashboard-title em {
-  color: var(--color-primary-hover);
+  color: var(--color-foreground);
   font-style: normal;
 }
 
@@ -405,7 +387,7 @@
 }
 
 .role-pill[data-active="true"] {
-  border-color: var(--color-primary);
+  border-color: var(--color-border-light);
   background: var(--color-surface-2);
   color: var(--color-foreground);
 }
@@ -437,15 +419,13 @@
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   transition:
-    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.22s ease,
-    box-shadow 0.22s ease,
-    background-color 0.22s ease;
+    border-color 0.12s ease,
+    background-color 0.12s ease;
 }
 
 .char-card:hover {
   transform: none;
-  border-color: rgba(37, 99, 235, 0.22);
+  border-color: var(--color-border-light);
   box-shadow: none;
 }
 
@@ -453,7 +433,7 @@
   position: relative;
   overflow: hidden;
   border-radius: 6px;
-  border: 1px solid rgba(37, 99, 235, 0.16);
+  border: 1px solid var(--color-border);
   background: var(--color-surface);
   box-shadow: none;
 }
