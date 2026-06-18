@@ -4,20 +4,72 @@
     "logoTitle": "ER&GG",
     "logoSubtitle": "永恒轮回 Meta",
     "patchPrefix": "v",
+    "seasonRecapBadge": "赛季",
+    "seasonRecapTitle": "第 10 赛季回顾已上线",
+    "seasonRecapBody": "查看各版本主要 RP 阵容和完整赛季 Meta 变化。",
+    "seasonRecapCta": "打开回顾",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单",
+    "mobileMenu": "移动端菜单",
+    "openSearch": "打开搜索",
+    "closeSearch": "关闭搜索",
     "localeRecommendationBody": "你的浏览器语言设置为 {language}。要切换到该语言吗？",
     "localeRecommendationCta": "切换语言",
-    "localeRecommendationDismiss": "关闭语言推荐"
+    "localeRecommendationDismiss": "关闭语言提示",
+    "searchPlaceholder": "搜索角色、道具和技能",
+    "searchShortcut": "⌘ /",
+    "notificationsAria": "通知",
+    "profileLabel": "ERGG"
   },
   "navigation": {
     "ariaMain": "主导航",
     "metaAnalysis": "Meta分析",
-    "synergyRecommendation": "阵容推荐",
-    "characterAnalysis": "角色分析"
+    "synergyRecommendation": "阵容数据",
+    "characterAnalysis": "角色分析",
+    "trioLab": "阵容实验室",
+    "characterLab": "角色分组",
+    "dataLab": "数据实验室",
+    "patchNotes": "版本说明",
+    "patchAnalysisNav": "版本分析",
+    "seasonRecap": "赛季回顾",
+    "feedback": "发送反馈",
+    "patchPanel": "版本 {patch}",
+    "updateStatus": "更新: 按版本反映"
   },
   "mobileTab": {
     "meta": "Meta",
     "synergy": "阵容",
-    "character": "角色"
+    "character": "角色",
+    "updates": "更新",
+    "patches": "版本",
+    "recap": "回顾"
+  },
+  "patches": {
+    "indexTitle": "版本说明",
+    "indexSubtitle": "按版本查看 Eternal Return 角色调整记录。",
+    "indexDescription": "整理 Eternal Return 各版本角色强化、削弱和调整记录。",
+    "heroEyebrow": "版本记录",
+    "patchPrefix": "v",
+    "latestBadge": "最新",
+    "trackedPatches": "追踪版本",
+    "adjustedRoster": "调整角色",
+    "recordedChanges": "记录变更",
+    "latestPatchLabel": "最新版本",
+    "archiveTitle": "版本归档",
+    "archiveCaption": "ER&GG 当前整理的角色强化、削弱和调整记录。",
+    "viewDetail": "查看详情",
+    "breadcrumb": "版本说明",
+    "detailTitle": "版本 {patch} 变更",
+    "detailHeading": "版本 {patch}",
+    "detailDescription": "版本 {patch} 角色调整：{buffs} 项强化、{nerfs} 项削弱，共 {count} 名角色被调整。",
+    "detailSourceNotice": "详细变更文本基于韩文版本说明原文汇总。",
+    "characterCount": "{count} 名角色",
+    "totalChanges": "{count} 项变更",
+    "counts": {
+      "buff": "强化",
+      "nerf": "削弱",
+      "rework": "调整"
+    }
   },
   "layout": {
     "skipToMain": "跳转到主要内容",
@@ -33,8 +85,8 @@
   },
   "rootMetadata": {
     "defaultTitle": "ER&GG | Eternal Return Meta分析",
-    "description": "ER&GG 提供基于高分段对局数据的 Eternal Return 角色梯度、三人阵容推荐，以及胜率、选取率、平均 RP 统计分析。",
-    "structuredDescription": "Eternal Return 角色梯度、三人阵容推荐与统计分析服务",
+    "description": "ER&GG 提供基于高分段对局数据的 Eternal Return 角色梯度、三人阵容数据，以及胜率、选取率、平均 RP 统计分析。",
+    "structuredDescription": "Eternal Return 角色梯度、三人阵容数据与统计分析服务",
     "titleTemplate": "%s | ER&GG",
     "siteName": "ER&GG",
     "author": "ER&GG",
@@ -48,7 +100,7 @@
       "gameEn": "Eternal Return",
       "tierList": "永恒轮回 强度榜",
       "meta": "永恒轮回 meta",
-      "synergy": "永恒轮回 阵容推荐",
+      "synergy": "永恒轮回 阵容数据",
       "characterAnalysis": "永恒轮回 角色分析",
       "winRate": "永恒轮回 胜率",
       "pickRate": "永恒轮回 选取率",
@@ -58,28 +110,29 @@
   },
   "home": {
     "title": "Meta分析",
-    "subtitle": "基于 {count} 场对局的实时分析",
+    "subtitle": "基于 {count} 场对局的版本分析",
     "heroDescription": "使用汇总数据分析永恒轮回当前版本环境。",
-    "matchMetric": "汇总对局数",
+    "matchMetric": "当前汇总游戏数",
+    "matchMetricDescription": "基于版本 {patch} 纳入分析的排位游戏总数。",
     "winRateMetric": "高分段平均胜率",
     "rpMetric": "高分段平均 RP",
     "guide": {
       "kicker": "统计解读标准",
       "title": "ER&GG 将永恒轮回排位数据整理成可用于实战判断的内容",
-      "body": "角色梯度、三人阵容和武器选择不会只按胜率排序。ER&GG 会同时比较胜率、选取率、平均 RP、Top 3 率和样本数，并优先展示当前版本数据。",
+      "body": "角色梯度、三人阵容和武器选择不会只按胜率排序。ER&GG 会同时比较胜率、选取率、平均 RP、前三率和样本数，并优先展示当前版本数据。",
       "cta": "查看统计方法",
       "metricsTitle": "指标标准",
-      "metricsBody": "胜率代表第一名转换能力，Top 3 率代表稳定进圈能力，平均 RP 代表排位上分效率。",
+      "metricsBody": "胜率代表第一名转换能力，前三率代表稳定进圈能力，平均 RP 代表排位上分效率。",
       "comboTitle": "阵容判断",
       "comboBody": "好的阵容不只看单一胜率，也要看角色分工、平均 RP 和样本数是否稳定。",
       "cautionTitle": "注意事项",
-      "cautionBody": "低选取率或低样本数据可能偏向熟练玩家，解读梯度表和推荐结果时应保持保守。"
+      "cautionBody": "低选取率或低样本数据可能偏向熟练玩家，解读梯度表和阵容结果时应保持保守。"
     },
     "fallback": {
       "subtitle": "正在分析版本 {patch} 的钻石以上排位数据。",
       "kicker": "版本 {patch} 分析基准",
       "title": "当前版本 Meta 不只看胜率，而是按排位判断指标整理",
-      "body": "ER&GG 会把永恒轮回排位数据按角色梯度、三人阵容、武器选择和版本前后变化一起整理。胜率用于观察第一名转换能力，Top 3 率用于观察排名稳定性，平均 RP 用于判断上分效率，选取率和样本数用于判断数据可信度。同一角色会因为版本、分段、队伍角色和武器选择而出现不同解读，因此本站优先提供当前版本数据，并在角色详情和版本笔记中连接最新统计与平衡改动。",
+      "body": "ER&GG 会把永恒轮回排位数据按角色梯度、三人阵容、武器选择和版本前后变化一起整理。胜率用于观察第一名转换能力，前三率用于观察排名稳定性，平均 RP 用于判断上分效率，选取率和样本数用于判断数据可信度。同一角色会因为版本、分段、队伍角色和武器选择而出现不同解读，因此本站优先提供当前版本数据，并在角色详情和版本笔记中连接最新统计与平衡改动。",
       "characterCta": "角色分析",
       "patchCta": "版本笔记",
       "recapCta": "赛季回顾",
@@ -93,7 +146,7 @@
     "rankingTitle": "角色排名",
     "rankingDescription": "基于 Meta 评分的综合排名",
     "rankingSectionName": "角色排名",
-    "insightTitle": "Meta 洞察",
+    "insightTitle": "Meta 摘要",
     "insightCards": {
       "rising": {
         "title": "上升最快角色",
@@ -105,18 +158,18 @@
       },
       "patchResponse": {
         "title": "增强反馈",
-        "body": "上升 TOP {count} 中有 {buffedCount} 个角色属于本版本增强或调整对象。"
+        "body": "上升前列 {count} 中有 {buffedCount} 个角色属于本版本增强或调整对象。"
       }
     },
     "deepDiveTitle": "需要更深入的分析？",
     "deepDiveBody": "在数据实验室查看更广的统计和 Meta 趋势。",
     "deepDiveCta": "前往数据实验室",
-    "live": "LIVE",
+    "live": "版本",
     "patch": "版本 {patch}"
   },
   "patchAnalysis": {
     "evaluations": {
-      "3": "菲欧拉原本数据就不错，本次削弱后平均 RP 反而上升，但胜率和 Top 3 率下降。",
+      "3": "菲欧拉原本数据就不错，本次削弱后平均 RP 反而上升，但胜率和 前三率下降。",
       "5": "查希尔受到暗器熟练度削弱，幅度不小，但在当前环境中数据仍然保持得不错。",
       "6": "弩纳丁原本数据就不差，攻击速度熟练度增强后表现进一步变好。选取率、胜率和平均 RP 都处于强势区间，是远程输出玩家可以考虑的选择。",
       "8": "哈特获得了每级攻击力增强，但目前没有带来明显数据变化。卡蒂娅、阿德里亚娜等能在拉扯中压制哈特的角色变强，可能也影响了她的表现。",
@@ -143,12 +196,13 @@
       "70": "椿原本数据就偏弱，这次增强仍不足以拉高她的整体表现。",
       "71": "肯尼思连续第二次获得增强。上次增强后数据改善有限，但这次 W 减伤增强让主要指标都提升了。",
       "72": "卡蒂娅获得每级攻击力增强后表现不错。即使选取率上升可能带来不熟练玩家，平均 RP 和胜率仍小幅上升。",
+      "73": "夏洛特在 Q 伤害增强后，胜率、平均 RP 和前三率都有改善。不过当前平均 RP 仍明显为负，因此可以看到增强反馈，但单排上分效率仍然偏低。",
       "74": "达尔科本赛季处境比较困难。这次增强像是回应他相对比亨缺少优势的问题，但后期护盾提升仍显不足。",
       "77": "玉敏原本数据稳定，Q 伤害被削弱。目前影响还不明显，需要继续观察版本剩余时间。",
       "83": "亨利只是受到每级生命值削弱。平均 RP 小幅下降，但整体影响有限。",
       "84": "布莱尔久违地被削弱。赛季初表现过强后 Q 伤害被下调，平均 RP 虽然上升，但胜率下降，说明系数削弱已经有一定影响。",
       "87": "科雷莱恩的强化镜子投射体速度被削弱。她原本各分段数据都比较稳定，但这次改动已经有一定影响。",
-      "88": "比亨优秀的基础性能再次被削弱。现在可能到了从 OP 档位退下来的阶段。"
+      "88": "比亨优秀的基础性能再次被削弱。相比之前，数据优势已经缩小，后续趋势还需要继续观察。"
     }
   },
   "globalFilter": {
@@ -164,35 +218,35 @@
     }
   },
   "synergyMain": {
-    "title": "阵容推荐已升级",
-    "subtitle": "现在可查看包含武器和主特性的详细推荐，获得更准确的队伍组合建议。",
-    "cta": "前往详细阵容推荐"
+    "title": "阵容数据已更新",
+    "subtitle": "可以比较包含武器和主特性的阵容样本。",
+    "cta": "前往详细阵容数据"
   },
   "pageError": {
     "description": "可能是临时的服务器或连接问题。该问题已自动上报。",
     "retry": "重试",
     "home": "首页",
     "characterLoadFailed": "无法加载角色分析数据",
-    "synergyLoadFailed": "无法加载阵容推荐数据",
+    "synergyLoadFailed": "无法加载阵容数据",
     "synergyDetailLoadFailed": "无法加载详细阵容数据"
   },
   "characterPage": {
     "title": "角色分析",
     "subtitle": "ER&GG 按当前版本重新整理各角色的排位指标",
-    "description": "我们会同时查看胜率、选取率、平均 RP、Top 3 率和样本数，判断角色是稳定上分、后期决胜，还是更依赖特定武器或队伍环境。",
+    "description": "我们会同时查看胜率、选取率、平均 RP、前三率和样本数，判断角色是稳定上分、后期决胜，还是更依赖特定武器或队伍环境。",
     "badge": "分析",
-    "beta": "BETA",
-    "patchBase": "开发中 · 基于 {patch} 版本",
+    "beta": "样本确认中",
+    "patchBase": "基于 {patch} 版本",
     "imageNotice": "部分道具图片可能缺失或显示不正确。",
     "sectionName": "角色分析"
   },
   "synergyPage": {
-    "dataNotice": "数据持续积累中 · 样本越大结果越准确",
-    "title": "详细阵容推荐",
+    "dataNotice": "数据持续积累中 · 样本越大越稳定",
+    "title": "详细阵容数据",
     "subtitle": "ER&GG 会根据队友选择和你的角色池重新计算阵容判断",
-    "description": "推荐结果不会只看胜率，也会同时比较武器、主特性、平均 RP 和样本数，展示与当前队友选择实际成立的三人阵容。",
+    "description": "同时比较武器、主特性、平均 RP 和样本数，展示与当前队友选择实际成立的三人阵容。",
     "badge": "进阶",
-    "beta": "BETA",
+    "beta": "样本确认中",
     "steps": {
       "pool": {
         "label": "设置池子",
@@ -211,11 +265,14 @@
   "synergyInteractive": {
     "poolTitle": "我的角色池",
     "alliesTitle": "选择队友",
-    "resultsTitle": "推荐阵容",
+    "resultsTitle": "阵容结果",
     "poolHint": "可选 · 按角色 + 武器筛选",
+    "alliesHint": "最多2名 · 角色 + 武器维度",
+    "resultsHint": "基于所选队友进行详细阵容比较",
     "poolSection": "角色池",
     "alliesSection": "队友",
-    "resultsSection": "推荐阵容"
+    "resultsSection": "阵容结果",
+    "shareLanding": "这是分享的阵容。可以查看当前样本指标。"
   },
   "sectionErrorBoundary": {
     "loadFailed": "无法加载 {section} 数据",
@@ -331,7 +388,7 @@
   },
   "synergyResults": {
     "sort": {
-      "recommended": "推荐",
+      "recommended": "指标排序",
       "averageRP": "平均 RP",
       "winRate": "胜率",
       "totalGames": "场次",
@@ -351,7 +408,7 @@
       "step3": "3. 点击阵容查看特性层级表现"
     },
     "loading": "正在加载阵容数据...",
-    "infoSingle": "再添加一名队友可获得更准确的推荐 · 点击阵容可查看特性拆解",
+    "infoSingle": "再添加一名队友可缩小条件 · 点击阵容可查看特性拆解",
     "infoPair": "点击阵容可查看特性拆解",
     "more": "显示更多 ({visible}/{total})",
     "emptyFiltered": "当前角色池下没有匹配阵容，请尝试扩大角色池。",
@@ -362,13 +419,13 @@
   },
   "synergyMainResults": {
     "sort": {
-      "recommended": "推荐",
+      "recommended": "指标排序",
       "averageRP": "平均 RP",
       "winRate": "胜率",
       "totalGames": "场次",
       "averageRank": "平均名次"
     },
-    "titleSingle": "包含 {ally} 的推荐阵容",
+    "titleSingle": "包含 {ally} 的阵容",
     "titlePair": "{ally1} + {ally2} 的阵容",
     "focusFilter": "优先显示我的角色池 {count} 项",
     "copied": "已复制！",
@@ -376,13 +433,13 @@
     "reset": "重置",
     "sectionName": "阵容结果",
     "empty": {
-      "prompt": "为队友选择寻找最佳阵容",
+      "prompt": "查看符合队友选择的阵容样本",
       "step1": "1. 先设置你的角色池（可选）",
       "step2": "2. 选择 1 到 2 名队友角色",
-      "step3": "3. 系统会推荐你能使用的最佳阵容"
+      "step3": "3. 比较与你角色池重合的阵容"
     },
     "loading": "正在加载阵容数据...",
-    "infoSingle": "再添加一名队友可获得更准确的推荐",
+    "infoSingle": "再添加一名队友可缩小条件",
     "emptyFiltered": "你的角色池没有匹配阵容，请尝试扩大角色池。",
     "emptyNoData": "当前阵容没有可用数据。",
     "clearAllies": "清除队友",
@@ -398,14 +455,14 @@
     "moreTraits": "再显示 {count} 个特性"
   },
   "characterAnalysis": {
-    "quickSummary": "快速摘要",
+    "quickSummary": "摘要",
     "summary": {
       "tier": "梯度",
       "winRate": "胜率",
-      "recommendedWeapon": "最佳武器",
+      "recommendedWeapon": "主要武器",
       "pickRate": "选取率"
     },
-    "synergyCta": "查看该角色的阵容推荐",
+    "synergyCta": "查看该角色的阵容数据",
     "deepDive": "深度分析",
     "patchComparison": "版本对比",
     "patchNotes": "版本说明",
@@ -432,8 +489,8 @@
   "characterMetadata": {
     "titleWithName": "{name} 角色分析",
     "titleFallback": "角色分析",
-    "descriptionWithName": "分析 {name} 在 Eternal Return 中的胜率、选取率、平均 RP 与最佳出装，并查看 {name} 的版本趋势和武器搭配。",
-    "descriptionFallback": "按胜率、选取率、平均 RP 和最佳出装分析 Eternal Return 角色，并查看版本趋势与武器搭配。",
+    "descriptionWithName": "整理 {name} 在 Eternal Return 中的胜率、选取率、平均 RP 与出装统计，并查看 {name} 的版本趋势和武器搭配。",
+    "descriptionFallback": "按胜率、选取率、平均 RP 和出装统计整理 Eternal Return 角色，并查看版本趋势与武器搭配。",
     "keywords": {
       "character": "永恒轮回 {name}",
       "build": "{name} 出装",
@@ -444,34 +501,34 @@
       "analysis": "永恒轮回 角色分析",
       "fallbackBuild": "永恒轮回 角色出装",
       "fallbackStats": "永恒轮回 角色数据",
-      "fallbackWeapon": "永恒轮回 武器推荐"
+      "fallbackWeapon": "永恒轮回 武器数据"
     },
     "openGraphTitle": "{title} | ER&GG",
     "twitterTitle": "{title} | ER&GG",
-    "socialDescription": "Eternal Return 角色胜率、选取率、平均 RP 与最佳出装统计。"
+    "socialDescription": "Eternal Return 角色胜率、选取率、平均 RP 与出装统计。"
   },
   "synergyMetadata": {
-    "headlinePair": "{name1} + {name2} 阵容推荐",
-    "headlineSingle": "包含 {name1} 的阵容推荐",
-    "headlineFallback": "阵容推荐",
-    "descriptionPair": "通过贝叶斯队伍统计分析 {name1} + {name2} 的最佳第三手选择。",
-    "descriptionSingle": "通过贝叶斯队伍统计分析与 {name1} 搭配的最佳第二、第三手选择。",
-    "descriptionFallback": "查看 Eternal Return 三人阵容推荐，并继续进入包含武器与特性的详细分析。",
+    "headlinePair": "{name1} + {name2} 阵容数据",
+    "headlineSingle": "包含 {name1} 的阵容数据",
+    "headlineFallback": "阵容数据",
+    "descriptionPair": "显示 {name1} + {name2} 的第三人候选和样本指标。",
+    "descriptionSingle": "显示包含 {name1} 的双人和三人阵容样本指标。",
+    "descriptionFallback": "查看 Eternal Return 三人阵容样本，并继续进入包含武器与特性的详细数据。",
     "socialTitle": "{headline} | ER&GG"
   },
   "synergyDetailMetadata": {
-    "headlinePair": "{name1} + {name2} 阵容推荐",
-    "headlineSingle": "包含 {name1} 的阵容推荐",
-    "headlineFallback": "详细阵容推荐",
-    "title": "{headline} - 含武器与特性 | ER&GG",
-    "descriptionPair": "通过包含武器与特性的贝叶斯统计分析 {name1} + {name2} 的最佳第三手选择。",
-    "descriptionSingle": "通过贝叶斯队伍统计分析与 {name1} 搭配的最佳第二、第三手选择。",
-    "descriptionFallback": "使用贝叶斯队伍分析查看包含武器与主特性的 Eternal Return 详细三人阵容推荐。",
+    "headlinePair": "{name1} + {name2} 阵容数据",
+    "headlineSingle": "包含 {name1} 的阵容数据",
+    "headlineFallback": "详细阵容数据",
+    "title": "{headline} - 含武器与特性",
+    "descriptionPair": "显示 {name1} + {name2} 的第三人候选，并包含武器与特性指标。",
+    "descriptionSingle": "显示包含 {name1} 的双人和三人阵容武器、特性指标。",
+    "descriptionFallback": "查看包含武器与主特性的 Eternal Return 详细三人阵容数据。",
     "socialTitle": "{headline} | ER&GG",
     "keywords": {
       "brand": "ER&GG",
       "app": "ERGG",
-      "synergy": "永恒轮回 阵容推荐",
+      "synergy": "永恒轮回 阵容数据",
       "weapon": "永恒轮回 武器组合",
       "trait": "永恒轮回 特性组合",
       "detail": "永恒轮回 详细队伍分析",

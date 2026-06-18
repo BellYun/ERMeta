@@ -30,5 +30,5 @@ export default async function LocalizedTermsPage({ params }: LocalePageProps) {
 
   setRequestLocale(locale);
 
-  return <TermsPage />;
+  return <TermsPage locale={locale} />;
 }

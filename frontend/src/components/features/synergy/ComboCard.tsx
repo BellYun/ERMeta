@@ -47,9 +47,8 @@ export function ComboCard({
   return (
     <div
       className={cn(
-        "group flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 px-3 py-2.5 transition-all duration-200 hover:bg-[var(--color-primary)]/[0.04] hover:border-[var(--color-primary)]/20",
-        isFocusPoolCombo &&
-          "border-[rgba(216,180,254,0.42)] bg-[linear-gradient(135deg,rgba(168,85,247,0.08),rgba(17,25,46,0.82)_48%)] shadow-[inset_0_1px_0_rgba(216,180,254,0.08)]"
+        "group flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-white px-3 py-2.5 transition-colors duration-200 hover:bg-[var(--color-surface-2)] hover:border-[var(--color-border-light)]",
+        isFocusPoolCombo && "border-[var(--color-primary)]/30 bg-[rgba(37,99,235,0.04)]"
       )}
     >
       {/* 순위 */}
@@ -66,8 +65,7 @@ export function ComboCard({
               <div
                 className={cn(
                   "relative h-8 w-8 overflow-hidden rounded-md bg-[var(--color-border)]",
-                  isRecommended && "ring-2 ring-[var(--color-accent-gold)]",
-                  isRecommended && "group-hover/char:ring-[var(--color-primary)] transition-all"
+                  isRecommended && "border border-[var(--color-primary)]/40"
                 )}
               >
                 <Image

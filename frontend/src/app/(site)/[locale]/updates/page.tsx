@@ -18,7 +18,19 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
     notFound();
   }
 
-  return localizeMetadata(baseMetadata, "/updates", locale);
+  const localized = localizeMetadata(baseMetadata, "/updates", locale);
+  const titles = {
+    ko: "업데이트 내역",
+    en: "Updates",
+    ja: "更新履歴",
+    "zh-Hans": "更新记录",
+    "zh-Hant": "更新紀錄",
+  } as const;
+
+  return {
+    ...localized,
+    title: titles[locale],
+  };
 }
 
 export default async function LocalizedUpdatesPage({ params }: LocalePageProps) {
@@ -30,5 +42,5 @@ export default async function LocalizedUpdatesPage({ params }: LocalePageProps) 
 
   setRequestLocale(locale);
 
-  return <UpdatesPage />;
+  return <UpdatesPage locale={locale} />;
 }

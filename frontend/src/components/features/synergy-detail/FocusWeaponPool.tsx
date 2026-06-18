@@ -52,14 +52,14 @@ const FocusCell = React.memo(function FocusCell({
       className={cn(
         "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors touch-manipulation",
         selected
-          ? "bg-[var(--color-accent-purple)]/22 ring-2 ring-[var(--color-accent-purple)]/80 shadow-[0_0_0_1px_rgba(167,139,250,0.18)]"
+          ? "bg-[rgba(37,99,235,0.07)] outline outline-1 outline-[var(--color-primary)]/35"
           : "hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80"
       )}
     >
       <div
         className={cn(
           "relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
-          selected && "ring-2 ring-[var(--color-accent-purple)]/60"
+          selected && "outline outline-1 outline-[var(--color-primary)]/35"
         )}
       >
         <Image
@@ -73,7 +73,7 @@ const FocusCell = React.memo(function FocusCell({
       <span
         className={cn(
           "w-full truncate text-center text-[11.5px] font-semibold",
-          selected ? "text-[#d8b4fe]" : "text-[var(--color-foreground)]/92"
+          selected ? "text-[var(--color-accent-purple)]" : "text-[var(--color-foreground)]/92"
         )}
       >
         {charName}
@@ -169,7 +169,7 @@ export function FocusWeaponPool() {
   const headerTapGuard = useTapGuard(toggleExpanded);
 
   return (
-    <div className="overflow-hidden rounded-[22px] border border-[var(--color-border)] bg-[rgba(17,25,46,0.72)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+    <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
       {/* 접이식 헤더 — button 중첩 방지를 위해 div+role 사용 */}
       <div
         role="button"
@@ -183,14 +183,14 @@ export function FocusWeaponPool() {
         }}
         aria-expanded={isExpanded}
         style={{ touchAction: "manipulation" }}
-        className="w-full flex items-center justify-between px-4 py-3 hover:bg-[rgba(255,255,255,0.03)] active:bg-[rgba(255,255,255,0.04)] transition-colors cursor-pointer"
+        className="flex w-full cursor-pointer items-center justify-between px-4 py-3 transition-colors hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)]"
       >
         <div className="flex items-center gap-2.5">
-          <span className="text-[14px] font-bold tracking-[-0.01em] text-[var(--color-foreground)]">
+          <span className="text-[14px] font-bold  text-[var(--color-foreground)]">
             {t("title")}
           </span>
           {focusCharWeapons.length > 0 && (
-            <span className="rounded-full border border-[var(--color-accent-purple)]/40 bg-[var(--color-accent-purple)]/18 px-2 py-0.5 text-[10.5px] font-bold text-[#d8b4fe]">
+            <span className="rounded-full border border-[var(--color-accent-purple)]/30 bg-[var(--color-accent-purple)]/10 px-2 py-0.5 text-[10.5px] font-bold text-[var(--color-accent-purple)]">
               {t("count", { count: focusCharWeapons.length })}
             </span>
           )}
@@ -230,7 +230,7 @@ export function FocusWeaponPool() {
             <button
               key={`${f.charCode}-${f.weaponCode}`}
               onClick={() => toggleFocus(f.charCode, f.weaponCode)}
-              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[var(--color-accent-purple)]/40 bg-[var(--color-accent-purple)]/14 px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-foreground)] hover:bg-[var(--color-accent-purple)]/22 active:bg-[var(--color-accent-purple)]/28 transition-colors"
+              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-[var(--color-accent-purple)]/40 bg-[var(--color-accent-purple)]/14 px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-foreground)] hover:bg-[var(--color-accent-purple)]/22 active:bg-[var(--color-accent-purple)]/28 transition-colors"
             >
               <span className="relative h-4 w-4 shrink-0 overflow-hidden rounded ring-1 ring-[var(--color-accent-purple)]/40">
                 <Image
@@ -257,7 +257,7 @@ export function FocusWeaponPool() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t("searchPlaceholder")}
-              className="w-full rounded-xl border border-[var(--color-border)] bg-[rgba(10,16,31,0.72)] py-2 pl-8 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
+              className="w-full rounded-lg border border-[var(--color-border)] bg-white py-2 pl-8 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
             />
             {search && (
               <button

@@ -140,7 +140,7 @@ const TRAIT_GROUP_META: Record<
     label: "혼돈",
     letter: "혼",
     bg: "bg-purple-500/20",
-    color: "text-[#a78bfa]",
+    color: "text-[#64748b]",
     ring: "border-[rgba(167,139,250,0.36)] bg-[rgba(167,139,250,0.12)]",
   },
   unknown: {
@@ -157,7 +157,7 @@ function MemberAvatar({ member, size = "h-16 w-16" }: { member: TrioWeaponMember
     <Link
       href={`/character/${member.character}`}
       aria-label={`${characterDisplayName(member.character)} 캐릭터 페이지`}
-      className={`relative ${size} shrink-0 overflow-hidden rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] ring-1 ring-transparent transition-all hover:ring-[rgba(96,165,250,0.42)]`}
+      className={`relative ${size} shrink-0 overflow-hidden rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] ring-1 ring-transparent transition-colors hover:ring-[rgba(96,165,250,0.42)]`}
     >
       <Image
         src={getCharacterMiniWebpUrl(member.character)}
@@ -176,9 +176,7 @@ function ItemThumb({ code, label }: { code: number | null; label: string }) {
   return (
     <div className="flex w-16 flex-col items-center gap-1 text-center">
       <ItemIcon code={code} size={40} />
-      <span className="text-[9px] uppercase tracking-wide text-[var(--color-muted-foreground)]">
-        {label}
-      </span>
+      <span className="text-[9px] text-[var(--color-muted-foreground)]">{label}</span>
       {name && (
         <span className="line-clamp-2 text-[10px] leading-tight text-[var(--color-foreground)]">
           {name}
@@ -221,9 +219,7 @@ function TraitThumb({
           </span>
         )}
       </div>
-      <span className="text-[9px] uppercase tracking-wide text-[var(--color-muted-foreground)]">
-        {label}
-      </span>
+      <span className="text-[9px] text-[var(--color-muted-foreground)]">{label}</span>
       {name && (
         <span className="line-clamp-2 text-[10px] leading-tight text-[var(--color-foreground)]">
           {name}
@@ -272,13 +268,10 @@ function buildOptionGrid(
 function TraitTreeRow({
   options,
   traitNames,
-  group,
 }: {
   options: TraitSubOption[];
   traitNames?: Record<number, string>;
-  group: TopTraitBuild["mainGroup"];
 }) {
-  const meta = TRAIT_GROUP_META[group];
   const maxPick = Math.max(...options.map((o) => o.pickRate));
   return (
     <div className="flex w-full items-start justify-center gap-1.5 sm:gap-3">
@@ -289,8 +282,10 @@ function TraitTreeRow({
           <div key={opt.code} className="flex shrink-0 flex-col items-center gap-1">
             <div
               className={cn(
-                "rounded-full transition-all",
-                isTop ? `p-0.5 ring-2 ${meta.ring}` : "opacity-35 grayscale"
+                "rounded-full transition-colors",
+                isTop
+                  ? "p-0.5 outline outline-1 outline-[var(--color-primary)]/35"
+                  : "opacity-35 grayscale"
               )}
             >
               <TraitIconSmall code={opt.code} size={isTop ? 36 : 28} />
@@ -344,7 +339,6 @@ function TraitBlock({
   if (!trait) {
     return <p className="text-xs text-[var(--color-muted-foreground)]">특성 표본이 부족합니다.</p>;
   }
-  const meta = TRAIT_GROUP_META[trait.mainGroup];
   const mainCoreOptions = buildOptionGrid(
     TRAIT_CORES[trait.mainGroup],
     trait.mainCoreOptions,
@@ -404,21 +398,21 @@ function TraitBlock({
 
   return (
     <div className="space-y-3">
-      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-4 sm:p-5">
+      <div className="rounded-lg border border-[var(--color-border)] bg-white p-4 sm:p-5">
         <div className="flex flex-col items-center gap-3">
           {topMainCore != null && (
-            <div className={cn("rounded-full p-1 ring-2", meta.ring)}>
+            <div className="rounded-full p-1 outline outline-1 outline-[var(--color-primary)]/35">
               <TraitIconSmall code={topMainCore} size={40} />
             </div>
           )}
-          <TraitTreeRow options={mainCoreOptions} traitNames={traitNames} group={trait.mainGroup} />
-          <TraitTreeRow options={sub1Options} traitNames={traitNames} group={trait.mainGroup} />
-          <TraitTreeRow options={sub2Options} traitNames={traitNames} group={trait.mainGroup} />
+          <TraitTreeRow options={mainCoreOptions} traitNames={traitNames} />
+          <TraitTreeRow options={sub1Options} traitNames={traitNames} />
+          <TraitTreeRow options={sub2Options} traitNames={traitNames} />
         </div>
       </div>
 
       {secondaries.length > 0 && (
-        <div className="overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80">
+        <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
           <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60 px-3 py-2 sm:px-4">
             <span className="text-[11px] font-semibold text-[var(--color-muted-foreground)] sm:text-xs">
               부특성 조합
@@ -448,7 +442,7 @@ function TraitBlock({
                 return (
                   <div
                     key={sec.secGroup}
-                    className="min-w-[220px] overflow-hidden bg-[var(--color-surface)]/80 p-3 sm:min-w-0 sm:p-4"
+                    className="min-w-[220px] overflow-hidden bg-white p-3 sm:min-w-0 sm:p-4"
                   >
                     <div className="mb-3 flex min-w-0 items-center justify-between gap-2">
                       <div className="flex min-w-0 items-center gap-2">
@@ -458,7 +452,7 @@ function TraitBlock({
                             secMeta.bg
                           )}
                         >
-                          <span className={cn("text-xs font-black", secMeta.color)}>
+                          <span className={cn("text-xs font-bold", secMeta.color)}>
                             {secMeta.letter}
                           </span>
                         </div>
@@ -483,8 +477,8 @@ function TraitBlock({
                       </div>
                     </div>
                     <div className="flex min-w-0 flex-col items-center gap-2">
-                      <TraitTreeRow options={opt1} traitNames={traitNames} group={sec.secGroup} />
-                      <TraitTreeRow options={opt2} traitNames={traitNames} group={sec.secGroup} />
+                      <TraitTreeRow options={opt1} traitNames={traitNames} />
+                      <TraitTreeRow options={opt2} traitNames={traitNames} />
                     </div>
                   </div>
                 );
@@ -504,7 +498,7 @@ function CharacterDetailCard({ data }: { data: CharacterDetailData }) {
       <header className="flex items-center gap-3 border-b border-[var(--color-border)] pb-3">
         <MemberAvatar member={member} size="h-14 w-14" />
         <div className="min-w-0 flex-1">
-          <p className="text-base font-extrabold leading-tight text-[var(--color-foreground)]">
+          <p className="text-base font-bold leading-tight text-[var(--color-foreground)]">
             {characterDisplayName(member.character)}
           </p>
           <p className="text-xs text-[var(--color-muted-foreground)]">
@@ -521,8 +515,8 @@ function CharacterDetailCard({ data }: { data: CharacterDetailData }) {
       </header>
 
       <section>
-        <h3 className="text-[11px] font-mono font-semibold uppercase tracking-[0.14em] text-[var(--color-muted-foreground)]">
-          추천 특성 · 패치 {patchVersion}
+        <h3 className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
+          주요 특성 · 패치 {patchVersion}
         </h3>
         <div className="mt-2">
           <TraitBlock trait={topTrait} traitNames={traitNames} />
@@ -530,8 +524,8 @@ function CharacterDetailCard({ data }: { data: CharacterDetailData }) {
       </section>
 
       <section className="border-t border-[var(--color-border)] pt-3">
-        <h3 className="text-[11px] font-mono font-semibold uppercase tracking-[0.14em] text-[var(--color-muted-foreground)]">
-          추천 아이템
+        <h3 className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
+          주요 아이템
         </h3>
         {!topBuild ? (
           <p className="mt-2 text-xs text-[var(--color-muted-foreground)]">
@@ -569,10 +563,8 @@ export function CharacterDetailGrid({ rows }: { rows: CharacterDetailData[] }) {
   return (
     <section className="flex flex-col gap-3">
       <div className="flex items-center justify-between border-l-2 border-[var(--color-primary)] pl-3">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">캐릭터별 추천 빌드</h2>
-        <p className="text-[11px] font-mono uppercase tracking-widest text-[var(--color-muted-foreground)]">
-          무기군별 호출
-        </p>
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">캐릭터별 주요 빌드</h2>
+        <p className="text-[11px] text-[var(--color-muted-foreground)]">무기군별 호출</p>
       </div>
       <div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
         {rows.map((row) => (
@@ -613,24 +605,22 @@ export function TraitComboBlock({
     <section className="dashboard-panel flex flex-col gap-3 p-4 sm:p-5">
       <div className="flex items-center justify-between border-l-2 border-[var(--color-primary)] pl-3">
         <h2 className="text-sm font-bold text-[var(--color-foreground)]">상위 특성 조합</h2>
-        <p className="text-[11px] font-mono uppercase tracking-widest text-[var(--color-muted-foreground)]">
-          평균 RP 기준
-        </p>
+        <p className="text-[11px] text-[var(--color-muted-foreground)]">평균 RP 기준</p>
       </div>
       <div className="flex flex-col gap-2">
         {topRows.map((row, index) => (
           <div
             key={`${row.mainCore1}-${row.mainCore2}-${row.mainCore3}-${index}`}
-            className="grid gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/72 p-3 md:grid-cols-[44px_1fr_auto] md:items-center"
+            className="grid gap-3 rounded-lg border border-[var(--color-border)] bg-white p-3 md:grid-cols-[44px_1fr_auto] md:items-center"
           >
-            <span className="font-mono text-sm font-black text-[var(--color-muted-foreground)]">
+            <span className="font-mono text-sm font-bold text-[var(--color-muted-foreground)]">
               #{index + 1}
             </span>
             <div className="grid gap-2 sm:grid-cols-3">
               {combo.members.map((member) => (
                 <div
                   key={`${member.character}-${member.weapon}`}
-                  className="flex min-w-0 items-center gap-2 rounded-lg bg-[rgba(8,13,27,0.35)] px-2 py-1.5"
+                  className="flex min-w-0 items-center gap-2 rounded-lg bg-white px-2 py-1.5"
                 >
                   <MemberAvatar member={member} size="h-8 w-8" />
                   <TraitThumb
@@ -673,9 +663,7 @@ function MiniComboCard({
       className="char-card group flex flex-col gap-2 p-3"
     >
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-mono uppercase tracking-widest text-[var(--color-muted-foreground)]">
-          유사 조합
-        </span>
+        <span className="text-[10px] text-[var(--color-muted-foreground)]">유사 조합</span>
         <span className={`font-mono text-sm font-bold ${SCORE_COLOR[score] ?? ""}`}>{score}</span>
       </div>
       <div className="flex items-center gap-1.5">
@@ -746,13 +734,11 @@ export function StickySidebar({ combo }: { combo: TrioWeaponCombo }) {
     <aside className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
       <section className="dashboard-panel flex flex-col gap-3 p-5">
         <div className="flex items-center justify-between">
-          <p className="text-[11px] font-mono uppercase tracking-widest text-[var(--color-muted-foreground)]">
-            조합 점수
-          </p>
+          <p className="text-[11px] text-[var(--color-muted-foreground)]">조합 점수</p>
         </div>
         <div className="flex items-baseline gap-3">
           <span
-            className={`font-mono text-[3.4rem] font-black leading-none tracking-tighter ${SCORE_COLOR[score] ?? ""}`}
+            className={`font-mono text-[2.8rem] font-bold leading-none ${SCORE_COLOR[score] ?? ""}`}
           >
             {score}
           </span>
@@ -785,7 +771,7 @@ export function StickySidebar({ combo }: { combo: TrioWeaponCombo }) {
 
       <div
         aria-label="광고 슬롯"
-        className="flex h-[250px] items-center justify-center rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface-3)] text-[11px] uppercase tracking-widest text-[var(--color-muted-foreground)]"
+        className="flex h-[250px] items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-surface-3)] text-[11px] text-[var(--color-muted-foreground)]"
       >
         AD · 300×250 · STICKY
       </div>

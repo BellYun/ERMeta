@@ -44,7 +44,7 @@ export function FocusCharacterPool() {
   );
 
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm overflow-hidden">
+    <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
       {/* 접이식 헤더 */}
       <button
         onClick={() => setIsFocusExpanded((prev) => !prev)}

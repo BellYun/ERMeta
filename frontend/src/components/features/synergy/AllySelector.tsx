@@ -1,107 +1,106 @@
-"use client"
+"use client";
 
-import { X, Search } from "lucide-react"
-import { useSearchParams, useRouter, usePathname } from "next/navigation"
-import * as React from "react"
-import { useL10n } from "@/components/L10nProvider"
-import { VirtualCharacterGrid } from "@/components/ui/VirtualCharacterGrid"
-import { analytics } from "@/lib/analytics"
-import { resolveCharacterName } from "@/lib/characterMap"
-import { getAllCharacterCodes, getFallbackMap } from "./constants"
-import { SlotEmpty } from "./SlotEmpty"
-import { SlotFilled } from "./SlotFilled"
-import { matchesChosungSearch } from "./utils"
+import { X, Search } from "lucide-react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import * as React from "react";
+import { useL10n } from "@/components/L10nProvider";
+import { VirtualCharacterGrid } from "@/components/ui/VirtualCharacterGrid";
+import { analytics } from "@/lib/analytics";
+import { resolveCharacterName } from "@/lib/characterMap";
+import { getAllCharacterCodes, getFallbackMap } from "./constants";
+import { SlotEmpty } from "./SlotEmpty";
+import { SlotFilled } from "./SlotFilled";
+import { matchesChosungSearch } from "./utils";
 
 /**
  * 아군 선택 Island — URL searchParams 기반 독립 Client Component
  * ally1, ally2를 URL에 직접 읽고 씀 → 다른 Island(SynergyResults)과 자동 동기화
  */
 export function AllySelector() {
-  const { l10n } = useL10n()
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const pathname = usePathname()
-  const [allySearch, setAllySearch] = React.useState("")
+  const { l10n } = useL10n();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [allySearch, setAllySearch] = React.useState("");
 
   // 유휴 시간에 미리 초기화 → 첫 터치 시 이미 준비 완료
   React.useEffect(() => {
     const id = requestIdleCallback(() => {
-      getFallbackMap()
-      getAllCharacterCodes()
-    })
-    return () => cancelIdleCallback(id)
-  }, [])
+      getFallbackMap();
+      getAllCharacterCodes();
+    });
+    return () => cancelIdleCallback(id);
+  }, []);
 
   const getCharName = React.useCallback(
     (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
     [l10n]
-  )
+  );
 
   // URL에서 아군 읽기
   const selectedAllies = React.useMemo(() => {
-    const allies: number[] = []
-    const a1 = searchParams.get("ally1")
-    const a2 = searchParams.get("ally2")
+    const allies: number[] = [];
+    const a1 = searchParams.get("ally1");
+    const a2 = searchParams.get("ally2");
     if (a1) {
-      const code = parseInt(a1, 10)
-      if (!isNaN(code) && getAllCharacterCodes().includes(code)) allies.push(code)
+      const code = parseInt(a1, 10);
+      if (!isNaN(code) && getAllCharacterCodes().includes(code)) allies.push(code);
     }
     if (a2) {
-      const code = parseInt(a2, 10)
-      if (!isNaN(code) && getAllCharacterCodes().includes(code) && !allies.includes(code)) allies.push(code)
+      const code = parseInt(a2, 10);
+      if (!isNaN(code) && getAllCharacterCodes().includes(code) && !allies.includes(code))
+        allies.push(code);
     }
-    return allies
-  }, [searchParams])
+    return allies;
+  }, [searchParams]);
 
   // URL에 아군 쓰기
   const updateAllies = React.useCallback(
     (newAllies: number[]) => {
-      const params = new URLSearchParams()
-      if (newAllies[0] !== undefined) params.set("ally1", String(newAllies[0]))
-      if (newAllies[1] !== undefined) params.set("ally2", String(newAllies[1]))
-      const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
-      router.replace(newUrl, { scroll: false })
+      const params = new URLSearchParams();
+      if (newAllies[0] !== undefined) params.set("ally1", String(newAllies[0]));
+      if (newAllies[1] !== undefined) params.set("ally2", String(newAllies[1]));
+      const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+      router.replace(newUrl, { scroll: false });
     },
     [pathname, router]
-  )
+  );
 
   const toggleAlly = React.useCallback(
     (code: number) => {
       if (selectedAllies.includes(code)) {
-        updateAllies(selectedAllies.filter((c) => c !== code))
+        updateAllies(selectedAllies.filter((c) => c !== code));
       } else if (selectedAllies.length < 2) {
-        const slot = selectedAllies.length === 0 ? "A" : "B"
-        analytics.synergyAllySelected(slot, code, getCharName(code))
-        updateAllies([...selectedAllies, code])
+        const slot = selectedAllies.length === 0 ? "A" : "B";
+        analytics.synergyAllySelected(slot, code, getCharName(code));
+        updateAllies([...selectedAllies, code]);
       }
     },
     [selectedAllies, updateAllies, getCharName]
-  )
+  );
 
   const removeAlly = React.useCallback(
     (code: number) => updateAllies(selectedAllies.filter((c) => c !== code)),
     [selectedAllies, updateAllies]
-  )
+  );
 
-  const deferredSearch = React.useDeferredValue(allySearch)
+  const deferredSearch = React.useDeferredValue(allySearch);
 
   const filteredAllyCodes = React.useMemo(() => {
-    if (!deferredSearch.trim()) return getAllCharacterCodes()
-    const q = deferredSearch.trim()
-    return getAllCharacterCodes().filter((code) =>
-      matchesChosungSearch(getCharName(code), q)
-    )
-  }, [deferredSearch, getCharName])
+    if (!deferredSearch.trim()) return getAllCharacterCodes();
+    const q = deferredSearch.trim();
+    return getAllCharacterCodes().filter((code) => matchesChosungSearch(getCharName(code), q));
+  }, [deferredSearch, getCharName]);
 
   const isSelected = React.useCallback(
     (code: number) => selectedAllies.includes(code),
     [selectedAllies]
-  )
+  );
 
   const isDisabled = React.useCallback(
     (code: number) => !selectedAllies.includes(code) && selectedAllies.length >= 2,
     [selectedAllies]
-  )
+  );
 
   return (
     <>
@@ -128,7 +127,7 @@ export function AllySelector() {
       </div>
 
       {/* 검색 + 가상화 그리드 */}
-      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm p-2">
+      <div className="rounded-lg border border-[var(--color-border)] bg-white p-2">
         <p className="mb-2 px-1 text-xs text-[var(--color-muted-foreground)]">
           아군 선택 (최대 2명)
         </p>
@@ -161,5 +160,5 @@ export function AllySelector() {
         />
       </div>
     </>
-  )
+  );
 }

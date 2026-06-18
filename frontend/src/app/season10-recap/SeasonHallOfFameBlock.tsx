@@ -41,23 +41,23 @@ export function SeasonHallOfFameBlock({
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-primary)]/88">
-              Season Board
+            <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
+              시즌 누적
             </p>
-            <h2 className="mt-2 text-[1.35rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.7rem]">
+            <h2 className="mt-2 text-[1.25rem] font-bold text-[var(--color-foreground)] sm:text-[1.55rem]">
               시즌 누적 랭킹
             </h2>
             <p className="mt-1 text-xs leading-6 text-[var(--color-muted-foreground)] sm:text-sm">
-              시즌 전체 평균 RP 기준 순위입니다. 행을 열면 해당 조합의 패치별 RP 흐름을 바로 볼 수
+              시즌 전체 평균 RP 기준 순위입니다. 행을 열면 해당 조합의 패치별 RP 흐름을 확인할 수
               있습니다.
             </p>
           </div>
-          <span className="inline-flex items-center rounded-full border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-3 py-1 text-xs font-medium text-[var(--color-muted-foreground)]">
+          <span className="text-xs font-medium text-[var(--color-muted-foreground)]">
             전체 {entries.length}개 조합
           </span>
         </div>
 
-        <div className="overflow-hidden rounded-[20px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)]">
+        <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
           {entries.length === 0 ? (
             <div className="py-16 text-center text-sm text-[var(--color-muted-foreground)]">
               표본 확인 중
@@ -118,24 +118,24 @@ function SeasonRow({
         aria-expanded={isOpen}
         className={cn(
           "group flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors sm:px-4 sm:py-3",
-          isOpen ? "bg-[rgba(255,255,255,0.05)]" : "hover:bg-[rgba(255,255,255,0.04)]",
+          isOpen ? "bg-white" : "hover:bg-[var(--color-surface-2)]",
           isTopRow && !isOpen && "bg-[rgba(251,191,36,0.04)]"
         )}
       >
         <span
           className={cn(
-            "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-black tabular-nums sm:h-9 sm:w-9 sm:text-base",
+            "flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-sm font-semibold tabular-nums sm:h-9 sm:w-9 sm:text-base",
             rank === 1
               ? "bg-[rgba(251,191,36,0.18)] text-[var(--color-accent-gold)]"
               : isTopRow
                 ? "bg-[rgba(96,165,250,0.16)] text-[var(--color-primary)]"
-                : "bg-[rgba(255,255,255,0.06)] text-[var(--color-muted-foreground)]"
+                : "bg-white text-[var(--color-muted-foreground)]"
           )}
         >
           {rank}
         </span>
 
-        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-[var(--color-surface-2)] sm:h-11 sm:w-11">
+        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)] sm:h-11 sm:w-11">
           <Image
             src={imageUrl}
             alt={name}
@@ -169,7 +169,7 @@ function SeasonRow({
         <div className="shrink-0 text-right">
           <p
             className={cn(
-              "text-base font-black tabular-nums sm:text-lg",
+              "text-base font-semibold tabular-nums sm:text-lg",
               entry.averageRP >= 0
                 ? "text-[var(--color-accent-gold)]"
                 : "text-[var(--color-danger)]"
@@ -230,10 +230,10 @@ function PatchBreakdown({
   });
 
   return (
-    <div className="border-t border-[var(--color-border)]/40 bg-[rgba(255,255,255,0.03)] px-3 py-3 sm:px-4">
+    <div className="border-t border-[var(--color-border)]/40 bg-white px-3 py-3 sm:px-4">
       <div className="mb-3 flex items-center justify-between gap-3">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted-foreground)]">
-          Patch Breakdown
+        <span className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
+          패치별 흐름
         </span>
         <Link
           href={href}
@@ -263,10 +263,10 @@ function AppearanceBadge({
     <span
       className={cn(
         "font-medium tabular-nums",
-        isPerfect ? "text-[var(--color-accent-gold)]" : "text-[var(--color-muted-foreground)]"
+        isPerfect ? "text-[var(--color-stat-up)]" : "text-[var(--color-muted-foreground)]"
       )}
     >
-      TOP 5 {appearances}/{totalPatches}
+      주요권 {appearances}/{totalPatches}
     </span>
   );
 }

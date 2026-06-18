@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
   }
 
   return localizeMetadata(
-    await generateBaseMetadata({ params: Promise.resolve({ version }) }),
+    await generateBaseMetadata({ params: Promise.resolve({ version }), locale }),
     `/patches/${version}`,
     locale
   );
@@ -44,5 +44,5 @@ export default async function LocalizedPatchDetailPage({ params }: LocalePagePro
 
   setRequestLocale(locale);
 
-  return <PatchDetailPage params={Promise.resolve({ version })} />;
+  return <PatchDetailPage params={Promise.resolve({ version })} locale={locale} />;
 }

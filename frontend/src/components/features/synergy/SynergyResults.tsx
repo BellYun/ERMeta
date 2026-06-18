@@ -244,7 +244,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
     <>
       {/* 정렬 기준 + 헤더 */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <div className="flex items-center gap-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-1">
+        <div className="flex items-center gap-1 rounded-lg border border-[var(--color-border)] bg-white p-1">
           {SORT_OPTIONS.map(({ value, labelKey }) => (
             <button
               key={value}
@@ -343,7 +343,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
       {/* 결과 목록 */}
       <SectionErrorBoundary sectionName={t("sectionName")}>
         {selectedAllies.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] py-16 text-center">
             <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
             <p className="text-sm text-[var(--color-muted-foreground)]">{t("empty.prompt")}</p>
             <div className="flex flex-col gap-1 mt-3 text-xs text-[var(--color-muted-foreground)]">
@@ -361,7 +361,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
             {Array.from({ length: 5 }).map((_, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-3 animate-pulse"
+                className="flex items-center gap-3 rounded-lg border border-[var(--color-border)] bg-white p-3 animate-pulse"
               >
                 <div className="h-6 w-6 rounded-full bg-[var(--color-surface-2)]" />
                 <div className="flex gap-2">
@@ -377,7 +377,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
             ))}
           </div>
         ) : error ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16">
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] py-16">
             <p className="text-sm text-[var(--color-danger)]">{error}</p>
           </div>
         ) : recommendations.length > 0 ? (
@@ -390,7 +390,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
             )}
             <React.Suspense
               fallback={
-                <div className="h-64 rounded-xl bg-[var(--color-surface-2)] animate-pulse" />
+                <div className="h-64 rounded-lg bg-[var(--color-surface-2)] animate-pulse" />
               }
             >
               {recommendations.map((rec, i) => (
@@ -418,7 +418,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
             </React.Suspense>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] py-16 text-center">
             <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
             <p className="text-sm text-[var(--color-muted-foreground)]">{t("emptyNoData")}</p>
             <button

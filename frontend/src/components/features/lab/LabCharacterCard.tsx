@@ -16,7 +16,7 @@ export function LabCharacterCard({ character }: Props) {
   const imgUrl = getCharacterMiniWebpUrl(character.characterCode);
 
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[rgba(15,23,42,0.72)] backdrop-blur-xl overflow-hidden">
+    <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
       {/* Card header */}
       <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--color-border)]">
         <Link

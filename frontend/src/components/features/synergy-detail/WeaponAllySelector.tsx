@@ -164,7 +164,7 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
       className={cn(
         "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors touch-manipulation",
         selected
-          ? "bg-[var(--color-primary)]/28 ring-2 ring-[var(--color-primary)] shadow-[0_0_0_1px_rgba(96,165,250,0.18)]"
+          ? "bg-[rgba(37,99,235,0.07)] outline outline-1 outline-[var(--color-primary)]/35"
           : disabled
             ? "opacity-25 cursor-not-allowed"
             : "hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80"
@@ -173,7 +173,7 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
       <div
         className={cn(
           "relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
-          selected && "ring-2 ring-[var(--color-primary-hover)]/60"
+          selected && "outline outline-1 outline-[var(--color-primary)]/35"
         )}
       >
         <Image
@@ -418,7 +418,7 @@ export function WeaponAllySelector() {
       </div>
 
       {/* 검색 + 가상화 그리드 */}
-      <div className="rounded-[22px] border border-[var(--color-border)] bg-[rgba(17,25,46,0.72)] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+      <div className="rounded-lg border border-[var(--color-border)] bg-white p-3">
         <p className="mb-3 px-1 text-[12px] font-medium text-[var(--color-foreground)]/72">
           {t("heading")}
         </p>
@@ -429,7 +429,7 @@ export function WeaponAllySelector() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("searchPlaceholder")}
-            className="w-full rounded-xl border border-[var(--color-border)] bg-[rgba(10,16,31,0.72)] py-2 pl-8 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
+            className="w-full rounded-lg border border-[var(--color-border)] bg-white py-2 pl-8 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
           />
           {search && (
             <button
@@ -511,8 +511,8 @@ function SlotWeaponFilled({
   onRemove: () => void;
 }) {
   return (
-    <div className="flex w-full items-center gap-3 rounded-[18px] border border-[var(--color-primary)]/45 bg-[linear-gradient(135deg,rgba(96,165,250,0.22),rgba(37,99,235,0.1)_70%)] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_24px_-18px_rgba(96,165,250,0.6)]">
-      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-[var(--color-border)] ring-2 ring-[var(--color-primary)]/45">
+    <div className="flex w-full items-center gap-3 rounded-lg border border-[var(--color-primary)]/30 bg-[rgba(37,99,235,0.04)] px-4 py-3">
+      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-md bg-[var(--color-border)] outline outline-1 outline-[var(--color-primary)]/35">
         <Image
           src={getCharacterMiniWebpUrl(code)}
           alt={name}
@@ -522,7 +522,7 @@ function SlotWeaponFilled({
         />
       </div>
       <div className="flex flex-col flex-1 min-w-0">
-        <span className="truncate text-[15px] font-bold tracking-[-0.01em] text-[var(--color-foreground)]">
+        <span className="truncate text-[15px] font-bold  text-[var(--color-foreground)]">
           {name}
         </span>
         <span className="truncate text-[11.5px] font-semibold text-[var(--color-primary-hover)]">
@@ -532,7 +532,7 @@ function SlotWeaponFilled({
       <button
         onClick={onRemove}
         aria-label={`${name} 제거`}
-        className="rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-foreground)]/70 hover:bg-[rgba(255,255,255,0.08)] active:bg-[rgba(255,255,255,0.12)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] transition-colors"
+        className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-[var(--color-foreground)]/70 transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)] active:bg-[var(--color-surface-3)] active:text-[var(--color-foreground)]"
       >
         <X className="h-4 w-4" strokeWidth={2.4} />
       </button>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import type { LabCharacter, LabData, LabGroup } from "@/components/features/lab/types";
-import { isRouteLocale } from "@/i18n/routing";
+import { isRouteLocale, type RouteLocale } from "@/i18n/routing";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
 import { BASE_URL } from "@/lib/siteMetadata";
 import rangersData from "../../../../../../public/data/lab/rangers.json";
@@ -15,6 +15,72 @@ export const dynamic = "force-static";
 interface LocalePageProps {
   params: Promise<{ locale: string }>;
 }
+
+const PREVIEW_METADATA = {
+  ko: {
+    title: "시너지 그룹 분석",
+    description: "캐릭터 유형별 파트너 역할과 트리오 성과를 비교합니다.",
+  },
+  en: {
+    title: "Synergy Group Analysis",
+    description: "Compare partner roles and trio performance by character group.",
+  },
+  ja: {
+    title: "シナジーグループ分析",
+    description: "キャラクタータイプ別に相性役割とトリオ成績を比較します。",
+  },
+  "zh-Hans": {
+    title: "协同分组分析",
+    description: "按角色类型比较队友职责与三人组表现。",
+  },
+  "zh-Hant": {
+    title: "協同分組分析",
+    description: "依角色類型比較隊友定位與三人組表現。",
+  },
+} as const;
+
+const PREVIEW_COPY: Record<
+  RouteLocale,
+  {
+    back: string;
+    kicker: string;
+    summary: string;
+    metrics: [string, string, string];
+  }
+> = {
+  ko: {
+    back: "캐릭터 유형 분석",
+    kicker: "원거리 딜러 기준",
+    summary: "원거리 딜러 기준으로 파트너 역할, 역할 조합, 트리오 성과를 함께 비교합니다.",
+    metrics: ["그룹", "캐릭터", "최소 표본"],
+  },
+  en: {
+    back: "Role Groups",
+    kicker: "Ranged carry baseline",
+    summary:
+      "This preview summarizes partner-role patterns and trio performance without exposing untranslated source labels.",
+    metrics: ["Groups", "Characters", "Minimum sample"],
+  },
+  ja: {
+    back: "ロールグループ",
+    kicker: "遠距離キャリー基準",
+    summary:
+      "このプレビューでは、未翻訳の元データラベルを表示せず、相性役割とトリオ成績の概要を確認できます。",
+    metrics: ["グループ", "キャラクター", "最小サンプル"],
+  },
+  "zh-Hans": {
+    back: "角色分组",
+    kicker: "远程输出基准",
+    summary: "此预览会汇总队友定位与三人组表现，不直接显示未翻译的源数据标签。",
+    metrics: ["分组", "角色", "最小样本"],
+  },
+  "zh-Hant": {
+    back: "角色分組",
+    kicker: "遠程輸出基準",
+    summary: "此預覽會彙整隊友定位與三人組表現，不直接顯示未翻譯的來源資料標籤。",
+    metrics: ["分組", "角色", "最小樣本"],
+  },
+};
 
 const PARTNER_ROLES = ["탱커", "원거리 딜러", "스킬딜러", "전사", "지원가", "암살자"] as const;
 type PartnerRole = (typeof PARTNER_ROLES)[number];
@@ -31,7 +97,7 @@ const ROLE_SHORT: Record<PartnerRole, string> = {
 const ROLE_COLOR: Record<PartnerRole, string> = {
   탱커: "#60a5fa",
   "원거리 딜러": "#34d399",
-  스킬딜러: "#a78bfa",
+  스킬딜러: "#64748b",
   전사: "#f87171",
   지원가: "#fbbf24",
   암살자: "#94a3b8",
@@ -40,11 +106,11 @@ const ROLE_COLOR: Record<PartnerRole, string> = {
 export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
   const { locale } = await params;
   if (!isRouteLocale(locale)) notFound();
-  const title = "시너지 그룹 시각화 프리뷰 | ER&GG";
+  const { title, description } = PREVIEW_METADATA[locale];
   return {
     metadataBase: new URL(BASE_URL),
     title,
-    description: "캐릭터 유형 분석 그룹 시각화 4가지 비교 (레이더 / 히트맵 / 다이버징 / 산점도).",
+    description,
     robots: { index: false, follow: false },
   };
 }
@@ -247,7 +313,7 @@ function Heatmap({
         <tr key={`sep-${g}`}>
           <td
             colSpan={PARTNER_ROLES.length + 1}
-            className="border-b border-[var(--color-primary)]/30 px-2 pt-2 pb-1 text-[10px] uppercase tracking-widest text-[var(--color-primary)]"
+            className="border-b border-[var(--color-border)] px-2 pt-2 pb-1 text-[10px] font-medium text-[var(--color-muted-foreground)]"
           >
             GROUP {g}
           </td>
@@ -256,7 +322,7 @@ function Heatmap({
     }
 
     rows.push(
-      <tr key={key} className="hover:bg-[rgba(255,255,255,0.03)]">
+      <tr key={key} className="hover:bg-[var(--color-surface-2)]">
         <td className="sticky left-0 bg-[var(--color-surface)] px-2 py-1.5">
           <div className="flex items-center gap-2">
             <span className="relative h-6 w-6 overflow-hidden rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)]">
@@ -301,13 +367,13 @@ function Heatmap({
       <table className="w-full min-w-[600px] border-separate border-spacing-y-0.5 font-mono text-xs">
         <thead>
           <tr>
-            <th className="sticky left-0 z-10 bg-[var(--color-surface)] px-2 py-2 text-left text-[10px] uppercase tracking-widest text-[var(--color-muted-foreground)]">
+            <th className="sticky left-0 z-10 bg-[var(--color-surface)] px-2 py-2 text-left text-[10px] font-medium text-[var(--color-muted-foreground)]">
               캐릭터+무기
             </th>
             {PARTNER_ROLES.map((role) => (
               <th
                 key={role}
-                className="px-2 py-2 text-center text-[10px] uppercase tracking-widest"
+                className="px-2 py-2 text-center text-[10px] font-medium"
                 style={{ color: ROLE_COLOR[role] }}
               >
                 {ROLE_SHORT[role]}
@@ -318,8 +384,8 @@ function Heatmap({
         <tbody>{matrixRows}</tbody>
       </table>
       <p className="mt-2 text-[10px] text-[var(--color-muted-foreground)]">
-        셀 값 = 그 파트너 역할이 들어간 멀티셋 평균 RP delta (게임 수 가중). 초록 = 친화, 빨강 =
-        약점.
+        셀 값은 해당 파트너 역할이 포함된 역할 조합의 평균 RP 변화입니다. 초록은 양전, 빨강은 음전
+        구간입니다.
       </p>
     </div>
   );
@@ -364,8 +430,8 @@ function DivergingStack({
   return (
     <div className="space-y-3">
       <div>
-        <p className="mb-1.5 text-[10px] font-mono uppercase tracking-widest text-[var(--color-success)]">
-          강한 멀티셋 Top 4
+        <p className="mb-1.5 text-[10px] font-semibold text-[var(--color-success)]">
+          성과가 좋은 역할 조합
         </p>
         <ul className="space-y-1">
           {top.map((c) => (
@@ -387,8 +453,8 @@ function DivergingStack({
         </ul>
       </div>
       <div>
-        <p className="mb-1.5 text-[10px] font-mono uppercase tracking-widest text-[var(--color-danger)]">
-          약한 멀티셋 Top 4
+        <p className="mb-1.5 text-[10px] font-semibold text-[var(--color-danger)]">
+          성과가 낮은 역할 조합
         </p>
         <ul className="space-y-1">
           {bot.map((c) => (
@@ -885,8 +951,8 @@ function TrioMatrixRow({
         </p>
       </div>
       <div>
-        <p className="mb-1.5 text-[10px] font-mono uppercase tracking-widest text-[var(--color-success)]">
-          ✓ 강한 트리오 Top 3
+        <p className="mb-1.5 text-[10px] font-semibold text-[var(--color-success)]">
+          성과가 좋은 트리오
         </p>
         <ul className="space-y-1">
           {top.map((t) => (
@@ -908,8 +974,8 @@ function TrioMatrixRow({
         </ul>
       </div>
       <div>
-        <p className="mb-1.5 text-[10px] font-mono uppercase tracking-widest text-[var(--color-danger)]">
-          ✗ 약한 트리오 Top 3
+        <p className="mb-1.5 text-[10px] font-semibold text-[var(--color-danger)]">
+          성과가 낮은 트리오
         </p>
         <ul className="space-y-1">
           {bot.map((t) => (
@@ -962,7 +1028,7 @@ function ScatterPlot({
   const pad = 40;
   const projX = (x: number) => pad + ((x - xMin) / (xMax - xMin || 1)) * (W - pad * 2);
   const projY = (y: number) => H - pad - ((y - yMin) / (yMax - yMin || 1)) * (H - pad * 2);
-  const groupColors = ["#60a5fa", "#34d399", "#fbbf24", "#a78bfa", "#f87171", "#94a3b8", "#22d3ee"];
+  const groupColors = ["#60a5fa", "#34d399", "#fbbf24", "#64748b", "#f87171", "#94a3b8", "#22d3ee"];
 
   return (
     <div className="overflow-x-auto">
@@ -1023,6 +1089,54 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
   setRequestLocale(locale);
 
   const data = rangersData as LabData;
+  const meta = PREVIEW_METADATA[locale];
+  const copy = PREVIEW_COPY[locale];
+
+  if (locale !== "ko") {
+    return (
+      <main className="page-shell mx-auto flex max-w-6xl flex-col gap-6 px-3 py-6 sm:px-5 sm:py-8">
+        <nav className="flex items-center gap-1.5 text-xs text-[var(--color-muted-foreground)]">
+          <Link
+            href="/character-lab"
+            className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+          >
+            <ArrowLeft className="h-3 w-3" strokeWidth={2.4} />
+            {copy.back}
+          </Link>
+        </nav>
+
+        <header className="dashboard-panel p-5">
+          <span className="dashboard-kicker">{copy.kicker}</span>
+          <h1 className="mt-2 text-[1.75rem] font-bold leading-tight text-[var(--color-foreground)] sm:text-[2.1rem]">
+            {meta.title}
+          </h1>
+          <p className="mt-2 max-w-[54rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem]">
+            {copy.summary}
+          </p>
+        </header>
+
+        <section className="grid gap-3 sm:grid-cols-3">
+          <div className="metric-card px-4 py-4">
+            <p className="text-xs text-[var(--color-muted-foreground)]">{copy.metrics[0]}</p>
+            <p className="mt-2 text-2xl font-bold text-[var(--color-foreground)]">{data.groupK}</p>
+          </div>
+          <div className="metric-card px-4 py-4">
+            <p className="text-xs text-[var(--color-muted-foreground)]">{copy.metrics[1]}</p>
+            <p className="mt-2 text-2xl font-bold text-[var(--color-foreground)]">
+              {data.characters.length}
+            </p>
+          </div>
+          <div className="metric-card px-4 py-4">
+            <p className="text-xs text-[var(--color-muted-foreground)]">{copy.metrics[2]}</p>
+            <p className="mt-2 text-2xl font-bold text-[var(--color-foreground)]">
+              {data.minGames}+
+            </p>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   const charactersByKey = new Map<string, LabCharacter>();
   const groupIdByKey = new Map<string, number>();
   for (const ch of data.characters) {
@@ -1037,32 +1151,30 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
       <nav className="flex items-center gap-1.5 text-xs text-[var(--color-muted-foreground)]">
         <Link
           href="/character-lab"
-          className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-[rgba(255,255,255,0.04)] hover:text-[var(--color-foreground)]"
+          className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
         >
           <ArrowLeft className="h-3 w-3" strokeWidth={2.4} />
           캐릭터 유형 분석
         </Link>
         <span className="text-[var(--color-border-light)]">/</span>
-        <span className="text-[var(--color-foreground)]">시각화 프리뷰</span>
+        <span className="text-[var(--color-foreground)]">그룹 분석</span>
       </nav>
 
-      <header className="dashboard-hero p-5 sm:p-7">
-        <span className="dashboard-kicker">PREVIEW · {data.role}</span>
-        <h1 className="dashboard-title mt-2">
-          시너지 그룹 <em>시각화</em>
+      <header className="dashboard-panel p-5">
+        <span className="dashboard-kicker">{data.role} 기준</span>
+        <h1 className="mt-2 text-[1.75rem] font-bold leading-tight text-[var(--color-foreground)] sm:text-[2.1rem]">
+          시너지 그룹 분석
         </h1>
-        <p className="dashboard-subtitle mt-2">
-          {data.role} 기준 4가지 시각화 비교 — 어떤 패턴이 가장 직관적인지 확인하세요.
+        <p className="mt-2 max-w-[54rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem]">
+          {data.role} 기준으로 파트너 역할, 역할 조합, 트리오 성과를 함께 비교합니다.
         </p>
       </header>
 
-      {/* 1. 그룹 핑거프린트 레이더 */}
+      {/* 그룹 핑거프린트 */}
       <section className="dashboard-panel p-5">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">
-          1) 그룹 핑거프린트 레이더
-        </h2>
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">그룹 핑거프린트</h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
-          각 그룹의 6개 파트너 역할별 평균 RP delta 를 레이더로. 차트 모양 = 그룹 정체성.
+          각 그룹이 어떤 파트너 역할에서 RP 이득을 내는지 비교합니다.
         </p>
         <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
           {data.groups.map((g) => (
@@ -1081,26 +1193,22 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
         </div>
       </section>
 
-      {/* 2. 어피니티 히트맵 */}
+      {/* 파트너 역할 히트맵 */}
       <section className="dashboard-panel p-5">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">
-          2) 파트너 어피니티 히트맵
-        </h2>
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">파트너 역할 히트맵</h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
-          행 = 캐릭터, 열 = 파트너 역할. 그룹 단위로 정렬되어 색 블록이 자연스럽게 형성.
+          캐릭터별로 어떤 파트너 역할과 함께할 때 RP가 좋아지는지 보여줍니다.
         </p>
         <div className="mt-3">
           <Heatmap characters={data.characters} focusRole={data.role} groupIdByKey={groupIdByKey} />
         </div>
       </section>
 
-      {/* 3. 그룹 다이버징 풀스택 */}
+      {/* 그룹별 역할 조합 */}
       <section className="dashboard-panel p-5">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">
-          3) 그룹 멀티셋 다이버징 풀스택
-        </h2>
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">그룹별 역할 조합</h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
-          그룹별 강한 멀티셋 Top 4 + 약한 멀티셋 Top 4. 게임 수 가중 평균.
+          그룹별로 성과가 좋았던 역할 조합과 낮았던 역할 조합을 게임 수 기준으로 비교합니다.
         </p>
         <div className="mt-4 grid gap-4 lg:grid-cols-2">
           {data.groups.slice(0, 4).map((g) => (
@@ -1112,12 +1220,12 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
         </div>
       </section>
 
-      {/* 8. 그룹 응집도 검증 (멤버 오버레이) — 그룹 분류 자체가 맞는지 확인 */}
+      {/* 그룹 응집도 */}
       <section className="dashboard-panel p-5">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">8) 그룹 응집도 검증</h2>
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">그룹 응집도</h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
-          그룹 centroid (파란 채움) 위에 각 멤버 핑거프린트 (얇은 선) 오버레이. 모양이 모두 비슷하면
-          잘 묶인 그룹. 한 명만 튀면 misclassified 후보. 응집도 = (1 − 평균 cosine distance) × 100.
+          그룹 대표 패턴과 각 캐릭터의 패턴을 겹쳐서 같은 유형으로 묶이는지 확인합니다. 응집도는
+          패턴 유사도를 100점 기준으로 환산합니다.
           <span className="ml-2 inline-flex items-center gap-1 align-middle text-[10px]">
             <span
               className="inline-block h-2 w-3 rounded"
@@ -1165,14 +1273,12 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
         </div>
       </section>
 
-      {/* 7. 세분화 핑거프린트 (파트너 페어 21축) */}
+      {/* 파트너 페어 핑거프린트 */}
       <section className="dashboard-panel p-5">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">
-          7) 세분화 핑거프린트 (파트너 페어 축)
-        </h2>
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">파트너 페어 핑거프린트</h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
-          단일 직업 6축 → 파트너 페어 21축으로 세분화. 각 축 = &quot;(파트너A + 파트너B) 들어간
-          트리오의 평균 RP delta&quot;. 표본 100판 미만 축은 자동 제외.
+          두 파트너 역할이 함께 들어간 트리오의 평균 RP를 기준으로 세부 성향을 비교합니다. 표본이
+          적은 축은 제외합니다.
         </p>
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {data.groups.map((g) => (
@@ -1187,14 +1293,11 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
         </div>
       </section>
 
-      {/* 5. 트리오 슬롯 카드 ← 3인 조합 강조 */}
+      {/* 트리오 슬롯 카드 */}
       <section className="dashboard-panel p-5">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">
-          5) 트리오 슬롯 카드 (3인 조합 강조)
-        </h2>
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">트리오 슬롯 카드</h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
-          각 멀티셋을 3-슬롯 칩으로 렌더 — &quot;[탱][원][스]&quot; 처럼 3인 트리오라는 게 한눈에.
-          색 = 직업.
+          역할 조합을 3개 슬롯으로 나눠 실제 트리오 구성을 빠르게 비교합니다.
         </p>
         <div className="mt-4 grid gap-4 lg:grid-cols-2">
           {data.groups.slice(0, 4).map((g) => (
@@ -1203,14 +1306,11 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
         </div>
       </section>
 
-      {/* 6. 트리오 슬롯 매트릭스 — 다른 변형 */}
+      {/* 트리오 슬롯 매트릭스 */}
       <section className="dashboard-panel p-5">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">
-          6) 트리오 슬롯 매트릭스 (그룹별 강·약점 비교)
-        </h2>
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">트리오 슬롯 매트릭스</h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
-          그룹마다 강한 트리오 3개 (좌, 초록 막대) + 약한 트리오 3개 (우, 빨강 막대). 트리오는 3개의
-          직업 칩으로.
+          그룹마다 성과가 좋은 트리오와 낮은 트리오를 나란히 비교합니다.
         </p>
         <div className="mt-4 space-y-3">
           {data.groups.map((g) => (
@@ -1219,13 +1319,11 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
         </div>
       </section>
 
-      {/* 4. 캐릭터 산점도 */}
+      {/* 캐릭터 산점도 */}
       <section className="dashboard-panel p-5">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">
-          4) 캐릭터 산점도 (그룹 클러스터)
-        </h2>
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">캐릭터 산점도</h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
-          2D 투영. 같은 그룹의 캐릭터들이 가까이 모이는지 시각적 검증.
+          같은 그룹의 캐릭터들이 어느 정도 가까운 위치에 모이는지 비교합니다.
         </p>
         <div className="mt-4 char-card p-4">
           <ScatterPlot

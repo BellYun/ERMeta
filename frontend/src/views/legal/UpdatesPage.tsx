@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { RouteLocale } from "@/i18n/routing";
 
 export const metadata: Metadata = {
   title: "업데이트 내역",
@@ -20,13 +21,13 @@ const updates: UpdateEntry[] = [
       "홈/캐릭터 분석 티어 필터에서 단일 미스릴 옵션 제거",
       "캐릭터 분석 페이지에 캐릭터 조합/역할 조합별 RP 추가 획득량 추가",
       "조합 실험실 상세보기와 목록 노출 범위 확장",
-      "조합 추천 정렬과 티어 산정 기준 개편",
-      "조합 추천에서 캐릭터/무기 조건에 맞는 후보 노출 개선",
+      "조합 정렬과 티어 산정 기준 개편",
+      "조합 데이터에서 캐릭터/무기 조건에 맞는 후보 노출 개선",
       "조합 실험실을 무기 조합 기준으로 조회하도록 개선",
       "조합 상세보기 화면 구조와 핵심 지표 표시 개선",
       "11.1~11.3 조합 데이터를 함께 활용해 최신 실험체 조합 보강",
       "조합 실험실 일부 조건에서 500 오류가 발생하던 문제 수정",
-      "메인/실험실 화면의 베타 표시와 불필요한 설명 문구 정리",
+      "메인/실험실 화면의 상태 표시와 불필요한 설명 문구 정리",
     ],
   },
   {
@@ -76,7 +77,7 @@ const updates: UpdateEntry[] = [
   },
   {
     date: "2026-05-03",
-    changes: ["조합 추천 데이터 정확도 개선", "소표본 기준을 20판으로 상향"],
+    changes: ["조합 데이터 정확도 개선", "소표본 기준을 20판으로 상향"],
   },
   {
     date: "2026-05-02",
@@ -87,7 +88,7 @@ const updates: UpdateEntry[] = [
     changes: [
       "시즌 리캡 기능 추가",
       "패치노트 기능 추가",
-      "URL 우선 locale 라우팅과 언어 추천 배너 적용",
+      "URL 우선 locale 라우팅과 언어 안내 배너 적용",
       "공유 링크와 언어별 메타데이터 표시 개선",
       "프리시즌/구버전 지표 노출 정리",
     ],
@@ -131,7 +132,7 @@ const updates: UpdateEntry[] = [
   },
   {
     date: "2026-04-12",
-    changes: ["메인페이지 로딩 속도 개선", "꿀챔 소표본 제거", "움직임 줄이기 설정 대응"],
+    changes: ["메인페이지 로딩 속도 개선", "상승 캐릭터 소표본 제거", "움직임 줄이기 설정 대응"],
   },
   {
     date: "2026-04-04",
@@ -140,7 +141,7 @@ const updates: UpdateEntry[] = [
   {
     date: "2026-04-02",
     changes: [
-      "캐릭터 분석/조합 추천 플로우 다국어화",
+      "캐릭터 분석/조합 데이터 플로우 다국어화",
       "홈 대시보드와 랭킹 UI 다국어화",
       "언어 전환 및 전역 메타데이터 연결",
     ],
@@ -150,7 +151,7 @@ const updates: UpdateEntry[] = [
     changes: [
       "캐릭터 분석 페이지 초기 로딩 성능 개선",
       "나머지 패치 데이터 fetch 지연 로딩",
-      "Recharts 번들 최적화",
+      "차트 번들 크기 조정",
     ],
   },
   {
@@ -164,8 +165,8 @@ const updates: UpdateEntry[] = [
   {
     date: "2026-03-25",
     changes: [
-      "시너지 페이지 레이아웃 개선 (아군 선택/추천 조합 좌우 배치)",
-      "상세 조합 추천 페이지 레이아웃 개선",
+      "시너지 페이지 레이아웃 개선 (아군 선택/조합 결과 좌우 배치)",
+      "상세 조합 페이지 레이아웃 개선",
       "상세 조합 특성 브레이크다운 UI 개선 (특성 아이콘 추가, 클릭으로 펼치기)",
       "로딩 스켈레톤 UI 개선",
       "더보기 버튼 추가 (30개 단위 로드)",
@@ -196,8 +197,8 @@ const updates: UpdateEntry[] = [
     date: "2026-03-10",
     changes: [
       "캐릭터 분석 페이지 추가 (장비/특성 빌드, 스킬 빌드)",
-      "꿀챔(트렌딩) 섹션 추가",
-      "3인 조합(시너지) 추천 페이지 추가",
+      "상승 캐릭터 섹션 추가",
+      "3인 조합(시너지) 데이터 페이지 추가",
     ],
   },
   {
@@ -206,19 +207,196 @@ const updates: UpdateEntry[] = [
   },
 ];
 
-export default function UpdatesPage() {
+const localizedUpdates: Record<
+  Exclude<RouteLocale, "ko">,
+  { title: string; intro: string; entries: UpdateEntry[] }
+> = {
+  en: {
+    title: "Updates",
+    intro: "Recent ER&GG service changes.",
+    entries: [
+      {
+        date: "2026-05-29",
+        changes: [
+          "Patch 11.3 data added",
+          "Character analysis now includes role-combo RP movement",
+          "Team Lab coverage and detail views expanded",
+          "Team sorting and tier rules adjusted",
+          "Unnecessary beta and explanatory labels cleaned up",
+        ],
+      },
+      {
+        date: "2026-05-24",
+        changes: [
+          "Character type analysis page added",
+          "Team Lab page added",
+          "Character build statistics standardized to cumulative tier filters",
+        ],
+      },
+      {
+        date: "2026-04-30",
+        changes: [
+          "Season recap and patch note pages added",
+          "Locale routing and language notice applied",
+          "Old and preseason metric exposure cleaned up",
+        ],
+      },
+      {
+        date: "2026-03-25",
+        changes: [
+          "Team data layout improved",
+          "Detailed team trait breakdown added",
+          "Loading states and mobile scrolling refined",
+        ],
+      },
+      {
+        date: "2026-03-10",
+        changes: [
+          "Character analysis page added",
+          "Rising character section added",
+          "Three-character team data page added",
+        ],
+      },
+    ],
+  },
+  ja: {
+    title: "更新履歴",
+    intro: "ER&GG の主なサービス変更です。",
+    entries: [
+      {
+        date: "2026-05-29",
+        changes: [
+          "パッチ11.3データを反映",
+          "キャラクター分析に役割編成別RP変化を追加",
+          "編成ラボの表示範囲と詳細画面を拡張",
+          "編成ソートとティア算出基準を調整",
+          "不要な状態表示と説明文を整理",
+        ],
+      },
+      {
+        date: "2026-05-24",
+        changes: [
+          "キャラクタータイプ分析ページを追加",
+          "編成ラボページを追加",
+          "キャラクタービルド統計を累積ティア基準に統一",
+        ],
+      },
+      {
+        date: "2026-04-30",
+        changes: [
+          "シーズンリキャップとパッチノートページを追加",
+          "URL基準の言語ルーティングと案内を適用",
+          "旧バージョンとプレシーズン指標の表示を整理",
+        ],
+      },
+      {
+        date: "2026-03-25",
+        changes: [
+          "編成データ画面のレイアウトを改善",
+          "詳細編成の特性内訳を追加",
+          "ローディング状態とモバイルスクロールを調整",
+        ],
+      },
+      {
+        date: "2026-03-10",
+        changes: [
+          "キャラクター分析ページを追加",
+          "上昇キャラクターセクションを追加",
+          "3人編成データページを追加",
+        ],
+      },
+    ],
+  },
+  "zh-Hans": {
+    title: "更新记录",
+    intro: "ER&GG 近期服务变更。",
+    entries: [
+      {
+        date: "2026-05-29",
+        changes: [
+          "加入 11.3 版本数据",
+          "角色分析新增角色定位组合 RP 变化",
+          "扩展阵容实验室覆盖范围和详情页",
+          "调整阵容排序和梯度计算规则",
+          "整理不必要的状态标记和说明文案",
+        ],
+      },
+      {
+        date: "2026-05-24",
+        changes: ["新增角色类型分析页面", "新增阵容实验室页面", "角色出装统计统一为累计段位筛选"],
+      },
+      {
+        date: "2026-04-30",
+        changes: [
+          "新增赛季回顾和版本说明页面",
+          "应用基于 URL 的语言路由和语言提示",
+          "整理旧版本和季前赛指标显示",
+        ],
+      },
+      {
+        date: "2026-03-25",
+        changes: ["改进阵容数据页面布局", "新增详细阵容特性拆解", "调整加载状态和移动端滚动体验"],
+      },
+      {
+        date: "2026-03-10",
+        changes: ["新增角色分析页面", "新增上升角色区块", "新增三人阵容数据页面"],
+      },
+    ],
+  },
+  "zh-Hant": {
+    title: "更新紀錄",
+    intro: "ER&GG 近期服務變更。",
+    entries: [
+      {
+        date: "2026-05-29",
+        changes: [
+          "加入 11.3 版本資料",
+          "角色分析新增角色定位組合 RP 變化",
+          "擴展陣容實驗室覆蓋範圍和詳情頁",
+          "調整陣容排序和梯度計算規則",
+          "整理不必要的狀態標記和說明文案",
+        ],
+      },
+      {
+        date: "2026-05-24",
+        changes: ["新增角色類型分析頁面", "新增陣容實驗室頁面", "角色出裝統計統一為累計牌位篩選"],
+      },
+      {
+        date: "2026-04-30",
+        changes: [
+          "新增賽季回顧和版本說明頁面",
+          "套用基於 URL 的語言路由和語言提示",
+          "整理舊版本和季前賽指標顯示",
+        ],
+      },
+      {
+        date: "2026-03-25",
+        changes: ["改進陣容資料頁面版面", "新增詳細陣容特性拆解", "調整載入狀態和行動端捲動體驗"],
+      },
+      {
+        date: "2026-03-10",
+        changes: ["新增角色分析頁面", "新增上升角色區塊", "新增三人陣容資料頁面"],
+      },
+    ],
+  },
+};
+
+export default function UpdatesPage({ locale = "ko" }: { locale?: RouteLocale }) {
+  const localized = locale === "ko" ? null : localizedUpdates[locale];
+  const title = localized?.title ?? "업데이트 내역";
+  const intro = localized?.intro ?? "이리와지지(ER&GG) 서비스 변경 사항을 안내합니다.";
+  const entries = localized?.entries ?? updates;
+
   return (
     <article className="max-w-3xl mx-auto py-8">
-      <h1 className="text-xl font-bold text-[var(--color-foreground)] mb-2">업데이트 내역</h1>
-      <p className="text-xs text-[var(--color-muted-foreground)] mb-8">
-        이리와지지(ER&GG) 서비스 변경 사항을 안내합니다.
-      </p>
+      <h1 className="text-xl font-bold text-[var(--color-foreground)] mb-2">{title}</h1>
+      <p className="text-xs text-[var(--color-muted-foreground)] mb-8">{intro}</p>
 
       <div className="space-y-6">
-        {updates.map((entry) => (
+        {entries.map((entry) => (
           <section
             key={entry.date}
-            className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
+            className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
           >
             <div className="flex items-center gap-3 mb-3">
               <time className="text-sm font-semibold text-[var(--color-foreground)]">

@@ -30,5 +30,5 @@ export default async function LocalizedPrivacyPage({ params }: LocalePageProps) 
 
   setRequestLocale(locale);
 
-  return <PrivacyPage />;
+  return <PrivacyPage locale={locale} />;
 }

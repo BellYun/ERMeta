@@ -122,12 +122,9 @@ function ComboWeaponCardImpl({
   return (
     <div
       className={cn(
-        "rounded-xl border bg-[var(--color-surface)]/85 transition-all duration-200",
-        rank <= 3
-          ? "border-[var(--color-accent-gold)]/22 shadow-[inset_0_1px_0_rgba(251,191,36,0.06),0_8px_22px_-22px_rgba(251,191,36,0.45)]"
-          : "border-[var(--color-border)]",
-        isFocusPoolCombo &&
-          "border-[rgba(216,180,254,0.42)] bg-[linear-gradient(135deg,rgba(168,85,247,0.08),rgba(17,25,46,0.84)_46%)] shadow-[inset_0_1px_0_rgba(216,180,254,0.08)]"
+        "rounded-lg border bg-white transition-colors duration-200",
+        rank <= 3 ? "border-[var(--color-border-light)]" : "border-[var(--color-border)]",
+        isFocusPoolCombo && "border-[var(--color-primary)]/30 bg-[rgba(37,99,235,0.04)]"
       )}
       style={{ contentVisibility: "auto", containIntrinsicSize: "auto 56px" }}
     >
@@ -143,12 +140,12 @@ function ComboWeaponCardImpl({
           }
         }}
         style={{ touchAction: "manipulation" }}
-        className="w-full flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-2 sm:py-2.5 text-left cursor-pointer rounded-xl hover:bg-[var(--color-surface-2)]/60 active:bg-[var(--color-surface-2)]/80 transition-colors"
+        className="w-full flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-2 sm:py-2.5 text-left cursor-pointer rounded-lg hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)] transition-colors"
       >
         {/* 순위 */}
         <span
           className={cn(
-            "w-5 sm:w-6 shrink-0 text-center text-xs sm:text-sm font-black",
+            "w-5 sm:w-6 shrink-0 text-center text-xs sm:text-sm font-bold",
             rank === 1
               ? "text-[var(--color-accent-gold)]"
               : rank === 2
@@ -172,7 +169,7 @@ function ComboWeaponCardImpl({
                     className={cn(
                       "relative h-8 w-8 sm:h-10 sm:w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
                       isRecommended
-                        ? "ring-2 ring-[var(--color-accent-gold)] shadow-[0_0_0_1px_rgba(251,191,36,0.22)]"
+                        ? "outline outline-1 outline-[var(--color-primary)]/35"
                         : "ring-1 ring-[rgba(255,255,255,0.08)]"
                     )}
                   >
@@ -186,7 +183,7 @@ function ComboWeaponCardImpl({
                   </div>
                   <span
                     className={cn(
-                      "w-10 sm:w-14 truncate text-center text-[9.5px] sm:text-[11.5px] font-bold tracking-[-0.01em]",
+                      "w-10 sm:w-14 truncate text-center text-[9.5px] sm:text-[11.5px] font-bold ",
                       isRecommended
                         ? "text-[var(--color-accent-gold)]"
                         : "text-[var(--color-foreground)]/82"
@@ -218,7 +215,7 @@ function ComboWeaponCardImpl({
                     onPointerDown={(e) => e.stopPropagation()}
                     onPointerUp={(e) => e.stopPropagation()}
                     aria-label={`${getCharName(m.char)} 상세 보기`}
-                    className="mt-0.5 inline-flex h-[18px] w-[18px] items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]/80 text-[var(--color-muted-foreground)] transition-colors hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)] active:bg-[var(--color-surface-2)] sm:h-5 sm:w-5"
+                    className="mt-0.5 inline-flex h-[18px] w-[18px] items-center justify-center rounded-full border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] transition-colors hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)] active:bg-[var(--color-surface-2)] sm:h-5 sm:w-5"
                   >
                     <ArrowUpRight className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                   </Link>
@@ -272,11 +269,11 @@ function ComboWeaponCardImpl({
 
       {/* 특성 브레이크다운 */}
       {showTraits && (
-        <div className="px-2 sm:px-3 py-2.5 flex flex-col gap-1.5 bg-[linear-gradient(180deg,rgba(96,165,250,0.06),rgba(255,255,255,0.02))] border-t border-[var(--color-primary)]/22">
+        <div className="px-2 sm:px-3 py-2.5 flex flex-col gap-1.5 bg-[var(--color-surface-2)] border-t border-[var(--color-border)]">
           {visibleVariants.map((v, vi) => (
             <div
               key={`${v.mainCore1}-${v.mainCore2}-${v.mainCore3}-${vi}`}
-              className="flex items-center gap-1.5 sm:gap-2 rounded-lg bg-[var(--color-surface)]/72 px-2 sm:px-3 py-1.5 sm:py-2 border border-[var(--color-border-light)]"
+              className="flex items-center gap-1.5 sm:gap-2 rounded-lg bg-white px-2 sm:px-3 py-1.5 sm:py-2 border border-[var(--color-border-light)]"
             >
               {/* 순위 열과 동일한 오프셋 */}
               <span className="w-1 sm:w-2 shrink-0" />

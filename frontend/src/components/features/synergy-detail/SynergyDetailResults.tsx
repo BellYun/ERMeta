@@ -437,7 +437,7 @@ export function SynergyDetailResults() {
       <div className="mb-4 flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
           {selectedAllies.length > 0 && (
-            <h2 className="text-[1.05rem] font-bold tracking-[-0.03em] text-[var(--color-foreground)] sm:text-[1.1rem]">
+            <h2 className="text-[1.05rem] font-bold  text-[var(--color-foreground)] sm:text-[1.1rem]">
               {selectedCharCodes.length === 1
                 ? t("titleSingle", { ally: getCharName(selectedCharCodes[0]) })
                 : t("titlePair", {
@@ -447,7 +447,7 @@ export function SynergyDetailResults() {
             </h2>
           )}
           {focusCharWeapons.length > 0 && (
-            <span className="rounded-full border border-[var(--color-accent-purple)]/45 bg-[var(--color-accent-purple)]/16 px-2.5 py-1 text-[11.5px] font-semibold text-[#d8b4fe]">
+            <span className="rounded-full border border-[var(--color-accent-purple)]/30 bg-[var(--color-accent-purple)]/10 px-2.5 py-1 text-[11.5px] font-semibold text-[var(--color-accent-purple)]">
               {t("focusFilter", { count: focusCharWeapons.length })}
             </span>
           )}
@@ -497,7 +497,7 @@ export function SynergyDetailResults() {
                     });
                   });
                 }}
-                className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1 rounded-xl border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-3 py-2 text-xs font-medium text-[var(--color-primary-hover)] hover:bg-[var(--color-primary)]/18 transition-colors"
+                className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1 rounded-lg border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-3 py-2 text-xs font-medium text-[var(--color-primary-hover)] hover:bg-[var(--color-primary)]/18 transition-colors"
               >
                 <Share2 className="h-3 w-3" />
                 {copied ? t("copied") : t("share")}
@@ -505,7 +505,7 @@ export function SynergyDetailResults() {
               <button
                 type="button"
                 onClick={clearAllies}
-                className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1 rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-3 py-2 text-xs font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[rgba(255,255,255,0.05)] transition-colors"
+                className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1 rounded-lg border border-[var(--color-border)] bg-white px-3 py-2 text-xs font-medium text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
               >
                 <X className="h-3 w-3" />
                 {t("reset")}
@@ -514,7 +514,7 @@ export function SynergyDetailResults() {
           )}
         </div>
 
-        <div className="flex w-full items-center gap-1 overflow-x-auto rounded-[16px] border border-[var(--color-border-light)] bg-[rgba(8,12,24,0.55)] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] xl:w-auto">
+        <div className="flex w-full items-center gap-1 overflow-x-auto rounded-[16px] border border-[var(--color-border-light)] bg-[var(--color-surface-2)] p-1 xl:w-auto">
           {SORT_OPTIONS.map(({ value, labelKey }) => (
             <button
               key={value}
@@ -523,10 +523,10 @@ export function SynergyDetailResults() {
                 analytics.synergySortChanged(value);
               }}
               className={cn(
-                "flex min-h-[40px] shrink-0 items-center rounded-xl px-3 py-2 text-[12px] font-semibold transition-colors",
+                "flex min-h-[40px] shrink-0 items-center rounded-lg px-3 py-2 text-[12px] font-semibold transition-colors",
                 sortBy === value
-                  ? "bg-[var(--color-primary)] text-white shadow-[0_6px_16px_-10px_rgba(96,165,250,0.9)]"
-                  : "text-[var(--color-foreground)]/72 hover:text-[var(--color-foreground)] hover:bg-[rgba(255,255,255,0.06)]"
+                  ? "bg-[var(--color-primary)] text-white"
+                  : "text-[var(--color-foreground)]/72 hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
               )}
             >
               {t(`sort.${labelKey}`)}
@@ -538,8 +538,8 @@ export function SynergyDetailResults() {
       {/* 결과 목록 */}
       <SectionErrorBoundary sectionName={t("sectionName")}>
         {selectedAllies.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-[22px] border border-dashed border-[rgba(96,165,250,0.28)] bg-[linear-gradient(180deg,rgba(96,165,250,0.05),rgba(255,255,255,0.02)_60%)] py-14 px-6 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
-            <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-[rgba(96,165,250,0.28)] bg-[rgba(96,165,250,0.12)] text-[var(--color-primary-hover)]">
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] bg-white px-6 py-14 text-center">
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]">
               <Users className="h-7 w-7" strokeWidth={2} />
             </div>
             <p className="text-[15px] font-semibold text-[var(--color-foreground)]/92">
@@ -547,15 +547,21 @@ export function SynergyDetailResults() {
             </p>
             <ol className="mt-4 flex flex-col gap-1.5 text-[12.5px] font-medium text-[var(--color-foreground)]/72">
               <li className="flex items-center justify-center gap-2">
-                <span className="text-[11px] font-black text-[#d8b4fe]/90">1.</span>
+                <span className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
+                  1.
+                </span>
                 <span>{t("empty.step1")}</span>
               </li>
               <li className="flex items-center justify-center gap-2">
-                <span className="text-[11px] font-black text-[#93c5fd]/90">2.</span>
+                <span className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
+                  2.
+                </span>
                 <span>{t("empty.step2")}</span>
               </li>
               <li className="flex items-center justify-center gap-2">
-                <span className="text-[11px] font-black text-[#fcd34d]/90">3.</span>
+                <span className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
+                  3.
+                </span>
                 <span>{t("empty.step3")}</span>
               </li>
             </ol>
@@ -571,7 +577,7 @@ export function SynergyDetailResults() {
             {Array.from({ length: 5 }).map((_, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 rounded-[20px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] p-3 animate-pulse"
+                className="flex animate-pulse items-center gap-3 rounded-lg border border-[var(--color-border)] bg-white p-3"
               >
                 <div className="h-6 w-6 rounded-full bg-[var(--color-surface-2)]" />
                 <div className="flex gap-2">
@@ -587,13 +593,13 @@ export function SynergyDetailResults() {
             ))}
           </div>
         ) : error ? (
-          <div className="flex flex-col items-center justify-center rounded-[22px] border border-dashed border-[var(--color-border)] bg-[rgba(255,255,255,0.02)] py-16">
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] bg-white py-16">
             <p className="text-sm text-[var(--color-danger)]">{error}</p>
           </div>
         ) : recommendations.length > 0 ? (
           <div data-sr-block className="flex flex-col gap-2">
             {selectedAllies.length === 1 && (
-              <p className="flex items-center gap-2 rounded-xl border border-[rgba(96,165,250,0.18)] bg-[rgba(96,165,250,0.08)] px-3 py-2 text-[12px] font-medium text-[var(--color-foreground)]/82">
+              <p className="flex items-center gap-2 rounded-lg border border-[rgba(96,165,250,0.18)] bg-[rgba(96,165,250,0.08)] px-3 py-2 text-[12px] font-medium text-[var(--color-foreground)]/82">
                 <Info
                   className="h-3.5 w-3.5 shrink-0 text-[var(--color-primary-hover)]"
                   strokeWidth={2.4}
@@ -602,7 +608,7 @@ export function SynergyDetailResults() {
               </p>
             )}
             {selectedAllies.length === 2 && (
-              <p className="flex items-center gap-2 rounded-xl border border-[rgba(96,165,250,0.18)] bg-[rgba(96,165,250,0.08)] px-3 py-2 text-[12px] font-medium text-[var(--color-foreground)]/82">
+              <p className="flex items-center gap-2 rounded-lg border border-[rgba(96,165,250,0.18)] bg-[rgba(96,165,250,0.08)] px-3 py-2 text-[12px] font-medium text-[var(--color-foreground)]/82">
                 <Info
                   className="h-3.5 w-3.5 shrink-0 text-[var(--color-primary-hover)]"
                   strokeWidth={2.4}
@@ -634,7 +640,7 @@ export function SynergyDetailResults() {
             )}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-[22px] border border-dashed border-[rgba(255,255,255,0.18)] bg-[rgba(255,255,255,0.025)] py-14 px-6 text-center">
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] bg-white px-6 py-14 text-center">
             <Users
               className="mb-3 h-10 w-10 text-[var(--color-foreground)]/35"
               strokeWidth={1.75}

@@ -1,15 +1,116 @@
 "use client";
 
 import { Check, MessageCircle, X } from "lucide-react";
+import { useLocale } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import type { RouteLocale } from "@/i18n/routing";
 
 type Category = "버그 신고" | "기능 제안" | "일반 문의";
 type FormState = "idle" | "submitting" | "success" | "error";
 
 const CATEGORIES: Category[] = ["버그 신고", "기능 제안", "일반 문의"];
 
+const COPY: Record<
+  RouteLocale,
+  {
+    title: string;
+    close: string;
+    success: string;
+    categories: Record<Category, string>;
+    messagePlaceholder: string;
+    contactPlaceholder: string;
+    error: string;
+    submitting: string;
+    submit: string;
+    collapse: string;
+  }
+> = {
+  ko: {
+    title: "피드백 보내기",
+    close: "피드백 닫기",
+    success: "소중한 의견 감사합니다!",
+    categories: {
+      "버그 신고": "버그 신고",
+      "기능 제안": "기능 제안",
+      "일반 문의": "일반 문의",
+    },
+    messagePlaceholder: "의견을 자유롭게 남겨주세요",
+    contactPlaceholder: "답변받을 연락처 (선택)",
+    error: "전송에 실패했습니다. 다시 시도해주세요.",
+    submitting: "보내는 중...",
+    submit: "보내기",
+    collapse: "피드백 패널 접기",
+  },
+  en: {
+    title: "Send Feedback",
+    close: "Close feedback",
+    success: "Thanks for the feedback.",
+    categories: {
+      "버그 신고": "Bug report",
+      "기능 제안": "Feature request",
+      "일반 문의": "General",
+    },
+    messagePlaceholder: "Share your feedback",
+    contactPlaceholder: "Contact for reply (optional)",
+    error: "Could not send feedback. Try again.",
+    submitting: "Sending...",
+    submit: "Send",
+    collapse: "Collapse feedback panel",
+  },
+  ja: {
+    title: "フィードバック",
+    close: "フィードバックを閉じる",
+    success: "フィードバックありがとうございます。",
+    categories: {
+      "버그 신고": "不具合報告",
+      "기능 제안": "機能提案",
+      "일반 문의": "一般問い合わせ",
+    },
+    messagePlaceholder: "内容を入力してください",
+    contactPlaceholder: "返信先（任意）",
+    error: "送信できませんでした。もう一度お試しください。",
+    submitting: "送信中...",
+    submit: "送信",
+    collapse: "フィードバックパネルを閉じる",
+  },
+  "zh-Hans": {
+    title: "发送反馈",
+    close: "关闭反馈",
+    success: "感谢你的反馈。",
+    categories: {
+      "버그 신고": "错误报告",
+      "기능 제안": "功能建议",
+      "일반 문의": "一般咨询",
+    },
+    messagePlaceholder: "填写你的反馈",
+    contactPlaceholder: "回复联系方式（可选）",
+    error: "发送失败，请重试。",
+    submitting: "发送中...",
+    submit: "发送",
+    collapse: "收起反馈面板",
+  },
+  "zh-Hant": {
+    title: "傳送回饋",
+    close: "關閉回饋",
+    success: "感謝你的回饋。",
+    categories: {
+      "버그 신고": "錯誤回報",
+      "기능 제안": "功能建議",
+      "일반 문의": "一般諮詢",
+    },
+    messagePlaceholder: "填寫你的回饋",
+    contactPlaceholder: "回覆聯絡方式（可選）",
+    error: "傳送失敗，請重試。",
+    submitting: "傳送中...",
+    submit: "傳送",
+    collapse: "收合回饋面板",
+  },
+};
+
 export default function FeedbackWidget() {
+  const locale = useLocale() as RouteLocale;
+  const copy = COPY[locale] ?? COPY.ko;
   const [isOpen, setIsOpen] = useState(false);
   const [category, setCategory] = useState<Category>("일반 문의");
   const [message, setMessage] = useState("");
@@ -88,13 +189,13 @@ export default function FeedbackWidget() {
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label="피드백 보내기"
+        aria-label={copy.title}
         inert={!isOpen}
         tabIndex={-1}
         className={[
           "w-[calc(100vw-2rem)] max-w-sm sm:w-80 lg:w-[17.5rem] xl:w-[18rem]",
-          "rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xl",
-          "transition-all duration-200 origin-bottom-right focus:outline-none lg:origin-bottom-left",
+          "rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]",
+          "transition-colors duration-200 origin-bottom-right focus:outline-none lg:origin-bottom-left",
           isOpen
             ? "opacity-100 translate-y-0 pointer-events-auto"
             : "opacity-0 translate-y-4 pointer-events-none",
@@ -106,17 +207,17 @@ export default function FeedbackWidget() {
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-primary)]">
               <Check className="h-6 w-6 text-white" />
             </div>
-            <p className="text-[var(--color-foreground)] font-medium">소중한 의견 감사합니다!</p>
+            <p className="text-[var(--color-foreground)] font-medium">{copy.success}</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="p-4 flex flex-col gap-4">
             {/* Header */}
             <div className="flex items-center justify-between gap-3">
-              <p className="text-sm font-semibold text-[var(--color-foreground)]">피드백 보내기</p>
+              <p className="text-sm font-semibold text-[var(--color-foreground)]">{copy.title}</p>
               <button
                 type="button"
                 onClick={handleClose}
-                aria-label="피드백 닫기"
+                aria-label={copy.close}
                 className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
               >
                 <X className="h-4 w-4" />
@@ -137,7 +238,7 @@ export default function FeedbackWidget() {
                       : "bg-transparent border-[var(--color-border)] text-[var(--color-muted-foreground)] hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]",
                   ].join(" ")}
                 >
-                  {cat}
+                  {copy.categories[cat]}
                 </button>
               ))}
             </div>
@@ -146,7 +247,7 @@ export default function FeedbackWidget() {
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="의견을 자유롭게 남겨주세요"
+              placeholder={copy.messagePlaceholder}
               required
               minLength={5}
               rows={4}
@@ -163,7 +264,7 @@ export default function FeedbackWidget() {
               type="text"
               value={contact}
               onChange={(e) => setContact(e.target.value)}
-              placeholder="답변받을 연락처 (선택)"
+              placeholder={copy.contactPlaceholder}
               className={[
                 "w-full rounded-md border border-[var(--color-border)]",
                 "bg-[var(--color-surface-2)] text-[var(--color-foreground)] text-sm",
@@ -173,9 +274,7 @@ export default function FeedbackWidget() {
             />
 
             {/* Error */}
-            {formState === "error" && (
-              <p className="text-xs text-red-400">전송에 실패했습니다. 다시 시도해주세요.</p>
-            )}
+            {formState === "error" && <p className="text-xs text-red-400">{copy.error}</p>}
 
             {/* Submit */}
             <button
@@ -188,7 +287,7 @@ export default function FeedbackWidget() {
                   : "bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)]",
               ].join(" ")}
             >
-              {formState === "submitting" ? "보내는 중..." : "보내기"}
+              {formState === "submitting" ? copy.submitting : copy.submit}
             </button>
           </form>
         )}
@@ -199,11 +298,11 @@ export default function FeedbackWidget() {
           누락 시 "의견 보내기 버튼 안 눌림" 회귀. 원칙은 feedback_fixed_wrapper_pointer_events.md. */}
       <button
         onClick={handleToggle}
-        aria-label={isOpen ? "피드백 패널 접기" : "피드백 보내기"}
+        aria-label={isOpen ? copy.collapse : copy.title}
         className={[
           "pointer-events-auto",
           "lg:hidden",
-          "flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-colors",
+          "flex h-12 w-12 items-center justify-center rounded-full transition-colors",
           "bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white",
         ].join(" ")}
       >

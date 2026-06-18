@@ -3,16 +3,19 @@
     "logoTitle": "ER&GG",
     "logoSubtitle": "Eternal Return Meta",
     "patchPrefix": "v",
-    "seasonRecapBadge": "NEW",
+    "seasonRecapBadge": "Season",
     "seasonRecapTitle": "Season 10 recap is live",
     "seasonRecapBody": "Review per-patch top RP comps and the full season meta flow in one place.",
     "seasonRecapCta": "Open recap",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "mobileMenu": "Mobile menu",
     "openSearch": "Open search",
     "closeSearch": "Close search",
     "languageSelectAria": "Select language",
     "localeRecommendationBody": "Your browser language is set to {language}. Switch to that language?",
     "localeRecommendationCta": "Switch language",
-    "localeRecommendationDismiss": "Dismiss language recommendation",
+    "localeRecommendationDismiss": "Dismiss language notice",
     "searchPlaceholder": "Search characters, items, and skills",
     "searchShortcut": "⌘ /",
     "notificationsAria": "Notifications",
@@ -21,14 +24,17 @@
   "navigation": {
     "ariaMain": "Main navigation",
     "metaAnalysis": "Meta Analysis",
-    "synergyRecommendation": "Team Recommender",
+    "synergyRecommendation": "Team Data",
     "characterAnalysis": "Character Analysis",
+    "trioLab": "Team Lab",
+    "characterLab": "Role Groups",
     "dataLab": "Data Lab",
     "patchNotes": "Patch Notes",
+    "patchAnalysisNav": "Patch Analysis",
     "seasonRecap": "Season Recap",
     "feedback": "Send Feedback",
     "patchPanel": "Patch {patch}",
-    "updateStatus": "Update: live refresh"
+    "updateStatus": "Update: patch-based"
   },
   "mobileTab": {
     "meta": "Meta",
@@ -42,7 +48,7 @@
     "indexTitle": "Patch Notes",
     "indexSubtitle": "Browse character changes patch by patch in Eternal Return.",
     "indexDescription": "Eternal Return patch 10.1–10.7 character buff/nerf changes. See all adjusted characters at a glance.",
-    "heroEyebrow": "Patch Archive",
+    "heroEyebrow": "Patch records",
     "patchPrefix": "v",
     "latestBadge": "Latest",
     "trackedPatches": "Tracked patches",
@@ -53,9 +59,10 @@
     "archiveCaption": "Every character buff, nerf, and rework entry currently indexed in ER&GG.",
     "viewDetail": "View detail",
     "breadcrumb": "Patch Notes",
-    "detailTitle": "Patch {patch} Changes - ER&GG",
+    "detailTitle": "Patch {patch} Changes",
     "detailHeading": "Patch {patch}",
     "detailDescription": "Character adjustments in patch {patch}: {buffs} buffs, {nerfs} nerfs across {count} characters.",
+    "detailSourceNotice": "Detailed change text is summarized from the Korean patch-note source.",
     "characterCount": "{count} characters",
     "totalChanges": "{count} changes",
     "counts": {
@@ -66,7 +73,7 @@
   },
   "patchAnalysis": {
     "evaluations": {
-      "3": "Fiora was already posting strong numbers before the nerf. Average RP moved up, but win rate and Top 3 rate fell.",
+      "3": "Fiora was already posting strong numbers before the nerf. Average RP moved up, but win rate and placement rate fell.",
       "5": "Zahir took a meaningful throwing-weapon mastery nerf, but his current meta numbers are still holding up well.",
       "6": "Crossbow Nadine was already in a solid position, and the attack speed mastery buff pushed her numbers higher. Pick rate, win rate, and average RP are all strong, so she remains a good ranged carry option.",
       "8": "The per-level attack power buff has not produced a meaningful statistical change. The rise of Katja, Adriana, and other characters that can punish Hart in poke standoffs is likely affecting the result.",
@@ -93,12 +100,13 @@
       "70": "Tsubame was weak before the patch, and this buff has not been enough to lift her numbers.",
       "71": "Kenneth received a second consecutive buff. His previous buff did not fix the metrics much, but the added W damage-reduction buff has improved every major number.",
       "72": "Katja received a per-level attack power buff and is showing good numbers. Despite a pick-rate increase that likely brought in less experienced players, average RP and win rate rose slightly.",
+      "73": "Charlotte improved in win rate, average RP, and placement rate after the Q damage buff. Her average RP is still deeply negative, so the buff response is visible but the pick remains inefficient for climbing in solo ranked.",
       "74": "Darko is having a difficult season. The buff seems to respond to concerns about his value compared with Bihyung, but the late shield increase still looks insufficient.",
       "77": "Yumin's Q damage was nerfed after she had been posting stable numbers. There is no major impact yet, so the rest of the patch should be watched.",
       "83": "Henry only received a simple per-level health nerf. His average RP dipped slightly, but the overall impact is limited.",
       "84": "Blair was nerfed for the first time in a while after a strong season start. Average RP rose, but win rate fell, suggesting the Q scaling nerf is having some effect.",
       "87": "Coreline's empowered mirror projectile speed was nerfed. She had been stable across tiers, and this appears to have had some impact.",
-      "88": "Bihyung's strong baseline stats were nerfed again. It may be time to move him out of the OP tier."
+      "88": "Bihyung's strong baseline stats were nerfed again. His metric lead has narrowed, so the next trend needs more observation."
     }
   },
   "layout": {
@@ -114,13 +122,13 @@
     "copyright": "© {year} ER&GG"
   },
   "rootMetadata": {
-    "defaultTitle": "ER&GG | Eternal Return Meta Analytics",
+    "defaultTitle": "ER&GG | Eternal Return Meta Analysis",
     "titleTemplate": "%s | ER&GG",
-    "description": "ER&GG provides Eternal Return character tiers, trio recommendations, and win rate, pick rate, and average RP statistics based on high-rank match data.",
+    "description": "ER&GG provides Eternal Return character tiers, trio data, and win rate, pick rate, and average RP statistics based on high-rank match data.",
     "siteName": "ER&GG",
     "author": "ER&GG",
     "creator": "ER&GG",
-    "structuredDescription": "Eternal Return character tiers, trio recommendations, and statistics analysis service",
+    "structuredDescription": "Eternal Return character tiers, trio data, and statistics analysis service",
     "keywords": {
       "brand": "ER&GG",
       "brandAlt": "ERGG",
@@ -130,7 +138,7 @@
       "gameEn": "Eternal Return",
       "tierList": "Eternal Return tier list",
       "meta": "Eternal Return meta",
-      "synergy": "Eternal Return team recommendations",
+      "synergy": "Eternal Return team data",
       "characterAnalysis": "Eternal Return character analysis",
       "winRate": "Eternal Return win rate",
       "pickRate": "Eternal Return pick rate",
@@ -144,31 +152,32 @@
     "retry": "Try again"
   },
   "home": {
-    "live": "LIVE",
+    "live": "Patch",
     "patch": "Patch {patch}",
     "title": "Meta Analysis",
     "subtitle": "Meta analysis based on {count} aggregated matches",
     "heroDescription": "Analyze the current Eternal Return meta through aggregated match data.",
-    "matchMetric": "Aggregated matches",
-    "winRateMetric": "Top bracket avg win rate",
-    "rpMetric": "Top bracket avg RP",
+    "matchMetric": "Current tracked games",
+    "matchMetricDescription": "Total ranked games included in the analysis for patch {patch}.",
+    "winRateMetric": "High-rank avg win rate",
+    "rpMetric": "High-rank avg RP",
     "guide": {
       "kicker": "How to read the stats",
       "title": "ER&GG turns Eternal Return ranked data into practical meta context",
-      "body": "Character tiers, trio compositions, and weapon choices are not ranked by win rate alone. ER&GG compares win rate, pick rate, average RP, Top 3 rate, and sample size together, with the current patch as the default context.",
+      "body": "Character tiers, trio compositions, and weapon choices are not ranked by win rate alone. ER&GG compares win rate, pick rate, average RP, placement rate, and sample size together, with the current patch as the default context.",
       "cta": "Open the methodology",
       "metricsTitle": "Metric rules",
-      "metricsBody": "Win rate measures first-place conversion, Top 3 rate measures placement stability, and average RP reflects ranked climb efficiency.",
+      "metricsBody": "Win rate measures first-place conversion, placement rate measures placement stability, and average RP reflects ranked climb efficiency.",
       "comboTitle": "Composition rules",
       "comboBody": "A strong composition should have role coverage, stable average RP, and enough sample size instead of only one high metric.",
       "cautionTitle": "Caution rules",
-      "cautionBody": "Low-pick or low-sample data can be biased toward specialists, so tier lists and recommendations should be read conservatively."
+      "cautionBody": "Low-pick or low-sample data can be biased toward specialists, so tier lists and team results should be read conservatively."
     },
     "fallback": {
       "subtitle": "Analyzing Diamond+ ranked data for patch {patch}.",
       "kicker": "Patch {patch} analysis baseline",
       "title": "Current patch meta is summarized with ranked decision metrics, not win rate alone",
-      "body": "ER&GG organizes Eternal Return ranked data across character tiers, trio compositions, weapon choices, and patch-to-patch movement. Win rate is treated as first-place conversion, Top 3 rate as placement stability, average RP as climb efficiency, and pick rate with sample size as context for reliability. The same character can read differently by patch, tier, team role, and weapon choice, so the current patch is used as the default baseline. Character pages and patch notes connect live statistics with the latest balance changes.",
+      "body": "ER&GG organizes Eternal Return ranked data across character tiers, trio compositions, weapon choices, and patch changes. Win rate is treated as first-place conversion, placement rate as placement stability, average RP as climb efficiency, and pick rate with sample size as context for reliability. The same character can read differently by patch, tier, team role, and weapon choice, so the current patch is used as the default baseline. Character pages and patch notes connect current statistics with balance changes.",
       "characterCta": "Character analysis",
       "patchCta": "Patch notes",
       "recapCta": "Season recap",
@@ -176,15 +185,15 @@
     },
     "preseasonNotice": "Patch 11.0 uses preseason data and is not provided.",
     "filterCta": "Open filters",
-    "topFiveTitle": "Patch Risers Top 5",
+    "topFiveTitle": "Patch risers",
     "honeyPicksTitle": "Patch Risers",
     "honeyPicksDescription": "Characters climbing after buffs with rising pick and win rates",
     "honeySectionName": "Patch Risers",
-    "topFiveCaption": "Top characters by win rate, pick rate, and RP movement",
+    "topFiveCaption": "Characters by win rate, pick rate, and RP movement",
     "rankingTitle": "Character Rankings",
     "rankingDescription": "Overall rankings based on meta score",
     "rankingSectionName": "Character Rankings",
-    "insightTitle": "Meta Insights",
+    "insightTitle": "Meta summary",
     "insightCards": {
       "rising": {
         "title": "Fastest riser",
@@ -199,8 +208,8 @@
         "body": "{buffedCount} of the top {count} risers were buffed or adjusted this patch."
       }
     },
-    "deepDiveTitle": "Need a deeper breakdown?",
-    "deepDiveBody": "Open the Data Lab to inspect broader stats and meta trends.",
+    "deepDiveTitle": "Additional Analysis",
+    "deepDiveBody": "Data Lab provides role-level metrics and meta trend views.",
     "deepDiveCta": "Open Data Lab"
   },
   "globalFilter": {
@@ -265,12 +274,12 @@
     "detailAnalysis": "Open detailed analysis"
   },
   "characterPage": {
-    "badge": "Analytics",
-    "beta": "BETA",
-    "patchBase": "In development · based on patch {patch}",
+    "badge": "Analysis",
+    "beta": "Sample review",
+    "patchBase": "Based on patch {patch}",
     "title": "Character Analysis",
     "subtitle": "ER&GG reframes character ranked stats around the current patch",
-    "description": "Win rate, pick rate, average RP, Top 3 rate, and sample size are read together to explain whether a character is stable, converts late fights well, or depends on specific weapons and team context.",
+    "description": "Win rate, pick rate, average RP, placement rate, and sample size are read together to explain whether a character is stable, converts late fights well, or depends on specific weapons and team context.",
     "imageNotice": "Some item images may be missing or displayed incorrectly.",
     "sectionName": "Character Analysis",
     "metrics": {
@@ -305,16 +314,16 @@
       "DIAMOND": "Diamond",
       "METEORITE": "Meteorite",
       "MITHRIL": "Mithril+",
-      "IN1000": "Top 1000",
+      "IN1000": "Rank 1000",
       "DIAMOND_BELOW": "Diamond and below"
     }
   },
   "characterAnalysis": {
-    "quickSummary": "Quick Summary",
+    "quickSummary": "Summary",
     "summary": {
       "tier": "Tier",
       "winRate": "Win Rate",
-      "recommendedWeapon": "Best Weapon",
+      "recommendedWeapon": "Primary Weapon",
       "pickRate": "Pick Rate"
     },
     "synergyCta": "Find team comps with this character",
@@ -342,12 +351,12 @@
     "patch": "Patch"
   },
   "synergyPage": {
-    "badge": "Advanced",
-    "beta": "BETA",
+    "badge": "Team context",
+    "beta": "Sample review",
     "dataNotice": "Collecting data · accuracy improves as the sample grows",
-    "title": "Detailed Team Recommender",
+    "title": "Detailed Team Data",
     "subtitle": "ER&GG recalculates ally picks and your pool as practical team context",
-    "description": "Recommendations are not based on win rate alone. Weapons, main traits, average RP, and sample size are compared together to show which three-character setups actually fit the selected allies.",
+    "description": "Weapons, main traits, average RP, and sample size are compared together to show which three-character setups match the selected allies.",
     "steps": {
       "pool": {
         "label": "Set Pool",
@@ -358,7 +367,7 @@
         "sublabel": "Character + weapon"
       },
       "analysis": {
-        "label": "Deep Analysis",
+        "label": "Detailed analysis",
         "sublabel": "Trait comparison"
       }
     }
@@ -368,16 +377,16 @@
     "poolHint": "Optional · filter by character + weapon",
     "poolSection": "Character Pool",
     "alliesTitle": "Select Allies",
-    "alliesHint": "Up to 2 allies · character + weapon scope",
+    "alliesHint": "Up to two allies · character and weapon filters",
     "alliesSection": "Allies",
-    "resultsTitle": "Recommended Comps",
+    "resultsTitle": "Team Results",
     "resultsHint": "Detailed comparison for the selected allies",
-    "resultsSection": "Recommendations",
-    "shareLanding": "This team comp was shared with you. Check it against the current meta."
+    "resultsSection": "Team Results",
+    "shareLanding": "A team comp was shared with you. Review its current sample metrics."
   },
   "synergyResults": {
     "sort": {
-      "recommended": "Recommended",
+      "recommended": "Metric order",
       "averageRP": "Avg RP",
       "winRate": "Win Rate",
       "totalGames": "Games",
@@ -397,8 +406,8 @@
       "step3": "3. Click a comp to inspect trait-level performance"
     },
     "loading": "Loading team data...",
-    "infoSingle": "Add one more ally for more accurate recommendations · click a comp to see the trait breakdown",
-    "infoPair": "Click a comp to see the trait breakdown",
+    "infoSingle": "Add one more ally to narrow the condition · click a comp to see trait metrics",
+    "infoPair": "Click a comp to see trait metrics",
     "more": "Show more ({visible}/{total})",
     "emptyFiltered": "No comps match your current character pool. Try widening the pool.",
     "emptyNoData": "Checking samples for this team setup.",
@@ -427,7 +436,7 @@
       "leg": "Leg"
     },
     "sections": {
-      "topBuilds": "TOP BUILDS",
+      "topBuilds": "Key builds",
       "slotPopularity": "Popular Items by Slot",
       "itemBuilds": "Item Builds",
       "secondaryTraits": "Secondary Trait Combos"
@@ -482,7 +491,7 @@
   "focusWeaponPool": {
     "title": "My Character Pool",
     "count": "{count} picks",
-    "hint": "Preselect the character + weapon combinations you can actually play.",
+    "hint": "Set playable character + weapon combinations.",
     "reset": "Reset",
     "searchPlaceholder": "Search characters or weapons",
     "noResults": "No search results",
@@ -500,24 +509,24 @@
   "focusCharacterPool": {
     "title": "My Character Pool",
     "count": "{count} characters",
-    "hint": "Preselect the characters you can actually play.",
+    "hint": "Set playable characters.",
     "reset": "Reset",
     "searchPlaceholder": "Search characters"
   },
   "synergyMain": {
-    "title": "Team Recommendations Have Been Upgraded",
-    "subtitle": "Move to detailed recommendations with weapons and main traits for more accurate team comps.",
-    "cta": "Open detailed team recommendations"
+    "title": "Detailed Team Data",
+    "subtitle": "Review team metrics that include weapons and main traits.",
+    "cta": "Open detailed team data"
   },
   "synergyMainResults": {
     "sort": {
-      "recommended": "Recommended",
+      "recommended": "Metric order",
       "averageRP": "Avg RP",
       "winRate": "Win Rate",
       "totalGames": "Games",
       "averageRank": "Avg Rank"
     },
-    "titleSingle": "Recommended comps with {ally}",
+    "titleSingle": "Comps with {ally}",
     "titlePair": "Comp for {ally1} + {ally2}",
     "focusFilter": "Prioritizing {count} pool picks",
     "copied": "Copied!",
@@ -525,13 +534,13 @@
     "reset": "Reset",
     "sectionName": "Team Results",
     "empty": {
-      "prompt": "Find the best comp for your allies' picks",
+      "prompt": "Review team samples for your allies' picks",
       "step1": "1. Set your character pool first (optional)",
       "step2": "2. Select 1 to 2 ally characters",
-      "step3": "3. We recommend the best comp you can play"
+      "step3": "3. Compare comps that overlap with your pool"
     },
     "loading": "Loading team data...",
-    "infoSingle": "Add one more ally for more accurate recommendations",
+    "infoSingle": "Add one more ally to narrow the condition",
     "emptyFiltered": "No comps match your character pool. Try widening the pool.",
     "emptyNoData": "Checking samples for this team setup.",
     "clearAllies": "Clear allies",
@@ -551,14 +560,14 @@
     "retry": "Try again",
     "home": "Home",
     "characterLoadFailed": "Failed to load character analysis data",
-    "synergyLoadFailed": "Failed to load team recommendation data",
+    "synergyLoadFailed": "Failed to load team data",
     "synergyDetailLoadFailed": "Failed to load detailed team data"
   },
   "characterMetadata": {
     "titleWithName": "{name} Character Analysis",
-    "descriptionWithName": "Analyze {name}'s Eternal Return win rate, pick rate, average RP, and optimal builds. Review patch trends and weapon pairings for {name}.",
+    "descriptionWithName": "Eternal Return {name} win rate, pick rate, average RP, build stats, patch trends, and weapon pairings.",
     "titleFallback": "Character Analysis",
-    "descriptionFallback": "Analyze Eternal Return characters by win rate, pick rate, average RP, and optimal builds. Review patch trends and weapon pairings.",
+    "descriptionFallback": "Eternal Return character win rate, pick rate, average RP, build stats, patch trends, and weapon pairings.",
     "keywords": {
       "character": "Eternal Return {name}",
       "build": "{name} build",
@@ -569,34 +578,34 @@
       "analysis": "Eternal Return character analysis",
       "fallbackBuild": "Eternal Return character builds",
       "fallbackStats": "Eternal Return character stats",
-      "fallbackWeapon": "Eternal Return weapon recommendations"
+      "fallbackWeapon": "Eternal Return weapon stats"
     },
     "openGraphTitle": "{title} | ERWAGG ER&GG",
     "twitterTitle": "{title} | ER&GG",
-    "socialDescription": "Eternal Return character win rate, pick rate, average RP, and optimal build statistics."
+    "socialDescription": "Eternal Return character win rate, pick rate, average RP, and build statistics."
   },
   "synergyMetadata": {
-    "headlinePair": "{name1} + {name2} Team Recommendations",
-    "headlineSingle": "Team Recommendations with {name1}",
-    "headlineFallback": "Team Recommendations",
-    "descriptionPair": "Analyze the optimal third pick for {name1} + {name2} with Bayesian team statistics.",
-    "descriptionSingle": "Analyze the best second and third picks to pair with {name1} using Bayesian team statistics.",
-    "descriptionFallback": "Explore Eternal Return trio recommendations and continue to the detailed analysis with weapons and traits.",
+    "headlinePair": "{name1} + {name2} Team Data",
+    "headlineSingle": "Team Data with {name1}",
+    "headlineFallback": "Team Data",
+    "descriptionPair": "Third-pick candidates and sample metrics for {name1} + {name2}.",
+    "descriptionSingle": "Two- and three-character sample metrics with {name1}.",
+    "descriptionFallback": "Eternal Return trio samples with detailed weapon and trait data.",
     "socialTitle": "{headline} | ERWAGG ER&GG"
   },
   "synergyDetailMetadata": {
-    "headlinePair": "{name1} + {name2} Team Recommendations",
-    "headlineSingle": "Team Recommendations with {name1}",
-    "headlineFallback": "Detailed Team Recommendations",
-    "descriptionPair": "Analyze the optimal third pick for {name1} + {name2} with Bayesian statistics, including weapons and traits.",
-    "descriptionSingle": "Analyze the best second and third picks to pair with {name1} using Bayesian team statistics.",
-    "descriptionFallback": "Explore detailed Eternal Return trio recommendations with weapons and main traits using Bayesian team analysis.",
-    "title": "{headline} - With Weapons and Traits | ERWAGG ER&GG",
+    "headlinePair": "{name1} + {name2} Team Data",
+    "headlineSingle": "Team Data with {name1}",
+    "headlineFallback": "Detailed Team Data",
+    "descriptionPair": "Third-pick candidates plus weapon and trait metrics for {name1} + {name2}.",
+    "descriptionSingle": "Weapon and trait metrics for two- and three-character samples with {name1}.",
+    "descriptionFallback": "Detailed Eternal Return trio sample data with weapons and main traits.",
+    "title": "{headline} - With Weapons and Traits",
     "socialTitle": "{headline} | ERWAGG ER&GG",
     "keywords": {
       "brand": "ERWAGG",
       "app": "ERGG",
-      "synergy": "Eternal Return team recommendations",
+      "synergy": "Eternal Return team data",
       "weapon": "Eternal Return weapon combinations",
       "trait": "Eternal Return trait combinations",
       "detail": "Eternal Return detailed team analysis",

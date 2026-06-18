@@ -58,7 +58,7 @@ const copy = {
   default: {
     title: "About ER&GG",
     updated: "Last updated: May 31, 2026",
-    lead: "ER&GG is an unofficial Eternal Return analytics service that explains character meta, weapon choices, and trio composition trends from ranked match data.",
+    lead: "ER&GG is an unofficial Eternal Return analysis service that explains character meta, weapon choices, and trio composition trends from ranked match data.",
     sections: [
       {
         title: "What this site provides",
@@ -80,13 +80,37 @@ const copy = {
   },
 };
 
+const linkLabels = {
+  ko: {
+    methodology: "데이터 방법론",
+    privacy: "개인정보처리방침",
+    terms: "이용약관",
+  },
+  ja: {
+    methodology: "データ方法論",
+    privacy: "プライバシーポリシー",
+    terms: "利用規約",
+  },
+  default: {
+    methodology: "Methodology",
+    privacy: "Privacy",
+    terms: "Terms",
+  },
+};
+
 function getCopy(locale: RouteLocale) {
   if (locale === "ko" || locale === "ja") return copy[locale];
   return copy.default;
 }
 
+function getLinkLabels(locale: RouteLocale) {
+  if (locale === "ko" || locale === "ja") return linkLabels[locale];
+  return linkLabels.default;
+}
+
 export default function AboutPage({ locale }: { locale: RouteLocale }) {
   const content = getCopy(locale);
+  const labels = getLinkLabels(locale);
 
   return (
     <article className="prose-custom mx-auto max-w-3xl py-8">
@@ -109,18 +133,18 @@ export default function AboutPage({ locale }: { locale: RouteLocale }) {
         ))}
       </div>
 
-      <div className="mt-8 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+      <div className="mt-8 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
         <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
           <Link href="/methodology" className="text-[var(--color-primary)] hover:underline">
-            Methodology
+            {labels.methodology}
           </Link>
           {" / "}
           <Link href="/privacy" className="text-[var(--color-primary)] hover:underline">
-            Privacy
+            {labels.privacy}
           </Link>
           {" / "}
           <Link href="/terms" className="text-[var(--color-primary)] hover:underline">
-            Terms
+            {labels.terms}
           </Link>
         </p>
       </div>

@@ -4,20 +4,72 @@
     "logoTitle": "ER&GG",
     "logoSubtitle": "Eternal Returnメタ",
     "patchPrefix": "v",
+    "seasonRecapBadge": "シーズン",
+    "seasonRecapTitle": "シーズン10リキャップ公開",
+    "seasonRecapBody": "パッチ別の主要RP編成とシーズン全体のメタ推移を確認できます。",
+    "seasonRecapCta": "開く",
+    "openMenu": "メニューを開く",
+    "closeMenu": "メニューを閉じる",
+    "mobileMenu": "モバイルメニュー",
+    "openSearch": "検索を開く",
+    "closeSearch": "検索を閉じる",
     "localeRecommendationBody": "ブラウザの言語は {language} に設定されています。この言語で表示しますか？",
     "localeRecommendationCta": "言語を切り替え",
-    "localeRecommendationDismiss": "言語の案内を閉じる"
+    "localeRecommendationDismiss": "言語の案内を閉じる",
+    "searchPlaceholder": "キャラクター、アイテム、スキルを検索",
+    "searchShortcut": "⌘ /",
+    "notificationsAria": "通知",
+    "profileLabel": "ERGG"
   },
   "navigation": {
     "ariaMain": "メインナビゲーション",
     "metaAnalysis": "メタ分析",
-    "synergyRecommendation": "編成おすすめ",
-    "characterAnalysis": "キャラクター分析"
+    "synergyRecommendation": "編成データ",
+    "characterAnalysis": "キャラクター分析",
+    "trioLab": "チームラボ",
+    "characterLab": "ロールグループ",
+    "dataLab": "データラボ",
+    "patchNotes": "パッチノート",
+    "patchAnalysisNav": "パッチ分析",
+    "seasonRecap": "シーズンリキャップ",
+    "feedback": "フィードバック",
+    "patchPanel": "パッチ {patch}",
+    "updateStatus": "更新: パッチ基準"
   },
   "mobileTab": {
     "meta": "メタ",
     "synergy": "編成",
-    "character": "キャラ"
+    "character": "キャラ",
+    "updates": "更新",
+    "patches": "パッチ",
+    "recap": "リキャップ"
+  },
+  "patches": {
+    "indexTitle": "パッチノート",
+    "indexSubtitle": "Eternal Return のキャラクター変更をパッチ別に確認できます。",
+    "indexDescription": "Eternal Return のパッチ別キャラクター調整、バフ、ナーフ履歴を整理しています。",
+    "heroEyebrow": "パッチ記録",
+    "patchPrefix": "v",
+    "latestBadge": "最新",
+    "trackedPatches": "追跡パッチ",
+    "adjustedRoster": "調整キャラクター",
+    "recordedChanges": "記録された変更",
+    "latestPatchLabel": "最新パッチ",
+    "archiveTitle": "パッチアーカイブ",
+    "archiveCaption": "ER&GG に整理されたキャラクターのバフ、ナーフ、調整履歴です。",
+    "viewDetail": "詳細を見る",
+    "breadcrumb": "パッチノート",
+    "detailTitle": "パッチ {patch} 変更内容",
+    "detailHeading": "パッチ {patch}",
+    "detailDescription": "パッチ {patch} のキャラクター調整。バフ {buffs}件、ナーフ {nerfs}件、合計 {count}体のキャラクターが調整されました。",
+    "detailSourceNotice": "詳細な変更文は韓国語パッチノート原文を基準に要約しています。",
+    "characterCount": "{count}体",
+    "totalChanges": "{count}件の変更",
+    "counts": {
+      "buff": "バフ",
+      "nerf": "ナーフ",
+      "rework": "調整"
+    }
   },
   "layout": {
     "skipToMain": "メインコンテンツへ移動",
@@ -33,8 +85,8 @@
   },
   "rootMetadata": {
     "defaultTitle": "ER&GG | エターナルリターン メタ分析",
-    "description": "ER&GG は高ランク対戦データに基づくエターナルリターンのキャラクターティア、3人編成おすすめ、勝率・ピック率・平均 RP 統計を提供します。",
-    "structuredDescription": "エターナルリターンのキャラクターティア、3人編成おすすめ、統計分析サービス",
+    "description": "ER&GG は高ランク対戦データに基づくエターナルリターンのキャラクターティア、3人編成データ、勝率・ピック率・平均 RP 統計を提供します。",
+    "structuredDescription": "エターナルリターンのキャラクターティア、3人編成データ、統計分析サービス",
     "titleTemplate": "%s | ER&GG",
     "siteName": "ER&GG",
     "author": "ER&GG",
@@ -48,7 +100,7 @@
       "gameEn": "Eternal Return",
       "tierList": "Eternal Return ティアリスト",
       "meta": "Eternal Return メタ",
-      "synergy": "Eternal Return チームおすすめ",
+      "synergy": "Eternal Return 編成データ",
       "characterAnalysis": "Eternal Return キャラクター分析",
       "winRate": "Eternal Return 勝率",
       "pickRate": "Eternal Return ピック率",
@@ -58,28 +110,29 @@
   },
   "home": {
     "title": "メタ分析",
-    "subtitle": "{count}試合データに基づくリアルタイム分析",
+    "subtitle": "{count}試合データに基づくパッチ別分析",
     "heroDescription": "エターナルリターンの現在のメタを集計データで分析します。",
-    "matchMetric": "集計試合数",
+    "matchMetric": "現在の集計ゲーム数",
+    "matchMetricDescription": "パッチ {patch} 基準で分析に反映されたランクゲームの総数です。",
     "winRateMetric": "上位帯の平均勝率",
     "rpMetric": "上位帯の平均RP",
     "guide": {
       "kicker": "統計の読み方",
       "title": "ER&GGはランクデータを実戦判断に使える形で整理します",
-      "body": "キャラクターティア、3人編成、武器選択を勝率だけで並べず、勝率、ピック率、平均RP、Top 3率、サンプル数を合わせて比較します。パッチやティア条件によって解釈が変わるため、現在パッチを基準に表示します。",
+      "body": "キャラクターティア、3人編成、武器選択を勝率だけで並べず、勝率、ピック率、平均RP、入賞率、サンプル数を合わせて比較します。パッチやティア条件によって解釈が変わるため、現在パッチを基準に表示します。",
       "cta": "データ方法論を見る",
       "metricsTitle": "指標の基準",
-      "metricsBody": "勝率は1位への変換力、Top 3率は安定性、平均RPはランク上昇効率を見る指標です。",
+      "metricsBody": "勝率は1位への変換力、入賞率は安定性、平均RPはランク上昇効率を見る指標です。",
       "comboTitle": "編成判断",
       "comboBody": "良い編成は勝率だけでなく、役割分担、平均RP、サンプル数が安定しているかで判断します。",
       "cautionTitle": "注意点",
-      "cautionBody": "ピック率やサンプルが低いデータは熟練者に偏る可能性があるため、ティア表やおすすめは慎重に読む必要があります。"
+      "cautionBody": "ピック率やサンプルが低いデータは熟練者に偏る可能性があるため、ティア表や編成結果は慎重に読む必要があります。"
     },
     "fallback": {
       "subtitle": "パッチ {patch} 基準のダイヤ以上ランクデータを分析しています。",
       "kicker": "パッチ {patch} 分析基準",
       "title": "現在パッチのメタを勝率だけでなくランク判断用の指標で整理します",
-      "body": "ER&GGはエターナルリターンのランクデータを、キャラクターティア、3人編成、武器選択、パッチ前後の変化まで合わせて整理します。勝率は1位への変換力、Top 3率は順位安定性、平均RPはランク上昇効率、ピック率とサンプル数は信頼度を判断するための文脈として扱います。同じキャラクターでもパッチ、ティア、チーム内の役割、武器選択によって解釈が変わるため、現在パッチを基準にし、キャラクター詳細とパッチノートで最新統計と変更点を確認できるようにしています。",
+      "body": "ER&GGはエターナルリターンのランクデータを、キャラクターティア、3人編成、武器選択、パッチ前後の変化まで合わせて整理します。勝率は1位への変換力、入賞率は順位安定性、平均RPはランク上昇効率、ピック率とサンプル数は信頼度を判断するための文脈として扱います。同じキャラクターでもパッチ、ティア、チーム内の役割、武器選択によって解釈が変わるため、現在パッチを基準にし、キャラクター詳細とパッチノートで最新統計と変更点を確認できるようにしています。",
       "characterCta": "キャラクター分析",
       "patchCta": "パッチノート",
       "recapCta": "シーズンリキャップ",
@@ -93,7 +146,7 @@
     "rankingTitle": "キャラクターランキング",
     "rankingDescription": "メタスコアに基づく総合ランキング",
     "rankingSectionName": "キャラクターランキング",
-    "insightTitle": "メタインサイト",
+    "insightTitle": "メタ要約",
     "insightCards": {
       "rising": {
         "title": "最大上昇キャラクター",
@@ -105,18 +158,18 @@
       },
       "patchResponse": {
         "title": "バフ反応",
-        "body": "上昇TOP {count} のうち {buffedCount} 体が今回のバフまたは調整対象です。"
+        "body": "上昇上位 {count} のうち {buffedCount} 体が今回のバフまたは調整対象です。"
       }
     },
     "deepDiveTitle": "さらに詳しい分析が必要ですか？",
     "deepDiveBody": "データラボでより広い統計とメタ傾向を確認できます。",
     "deepDiveCta": "データラボへ",
-    "live": "LIVE",
+    "live": "パッチ",
     "patch": "パッチ {patch}"
   },
   "patchAnalysis": {
     "evaluations": {
-      "3": "フィオラは以前から指標が良かった状態でナーフされました。平均RPは上がりましたが、勝率とTop 3率は下がっています。",
+      "3": "フィオラは以前から指標が良かった状態でナーフされました。平均RPは上がりましたが、勝率と入賞率は下がっています。",
       "5": "暗器熟練度のナーフは大きいものの、ザヒルは現在のメタでもまだ良い指標を維持しています。",
       "6": "石弓ナディンは以前から悪くない指標で、攻撃速度熟練度バフ後はさらに良い数値を見せています。ピック率、勝率、平均RPがそろって強く、遠距離DPSの選択肢として有力です。",
       "8": "レベルごとの攻撃力バフは、現時点では大きな指標変化につながっていません。カティアやアドリアナなど、ハート相手に有利を取りやすい実験体の台頭も影響していると考えられます。",
@@ -143,12 +196,13 @@
       "70": "ツバメは以前から指標が弱く、今回のバフだけでは数値を押し上げるには不足しています。",
       "71": "ケネスは2連続バフです。前回のバフでは指標改善が限定的でしたが、今回のW被ダメージ減少バフで主要指標が改善しました。",
       "72": "カティアはレベルごとの攻撃力バフを受け、良い指標を見せています。ピック率上昇で不慣れなプレイヤーが増えた可能性がある中でも、平均RPと勝率が小幅に上がっています。",
+      "73": "シャーロットはQダメージバフ後、勝率・平均RP・入賞率が改善しました。ただし平均RPはまだ大きくマイナスで、バフへの反応はありますがソロランクの上昇効率はまだ低い状態です。",
       "74": "ダルコは今シーズン苦しい状況です。ビヒョンとの差別化不足を意識したバフに見えますが、後半のシールド強化だけではまだ足りない印象です。",
       "77": "ユミンは安定した指標を出していた中でQダメージがナーフされました。現時点で大きな影響はなく、残り期間の推移を見る必要があります。",
       "83": "ヘンリーはレベルごとの体力低下のみのナーフです。平均RPは小幅に下がりましたが、影響は限定的です。",
       "84": "ブレアは久しぶりにナーフされました。シーズン序盤の強さを受けてQダメージが下がり、平均RPは上がった一方で勝率が落ちているため、係数ナーフの影響は出ていそうです。",
       "87": "コレラインは強化鏡の投射体速度がナーフされました。全体的に安定した指標を出していましたが、一定の影響が見えます。",
-      "88": "高い基礎性能を持っていたビヒョンが再びナーフされました。OP帯からは下がるタイミングに入ったと見ています。"
+      "88": "高い基礎性能を持っていたビヒョンが再びナーフされました。以前ほどの指標優位は小さくなっており、今後の推移を確認する必要があります。"
     }
   },
   "globalFilter": {
@@ -164,35 +218,35 @@
     }
   },
   "synergyMain": {
-    "title": "編成おすすめがアップグレードされました",
-    "subtitle": "武器とメイン特性を含む詳細なおすすめで、より正確なチーム編成を確認できます。",
-    "cta": "詳細編成おすすめへ"
+    "title": "編成データを更新しました",
+    "subtitle": "武器とメイン特性を含む編成サンプルを比較できます。",
+    "cta": "詳細編成データへ"
   },
   "pageError": {
     "description": "一時的なサーバーまたは接続の問題の可能性があります。問題は自動的に報告されました。",
     "retry": "再試行",
     "home": "ホーム",
     "characterLoadFailed": "キャラクター分析データを読み込めませんでした",
-    "synergyLoadFailed": "編成おすすめデータを読み込めませんでした",
+    "synergyLoadFailed": "編成データを読み込めませんでした",
     "synergyDetailLoadFailed": "詳細編成データを読み込めませんでした"
   },
   "characterPage": {
     "title": "キャラクター分析",
     "subtitle": "ER&GGはキャラクター別ランク指標を現在パッチ基準で整理します",
-    "description": "勝率、ピック率、平均RP、Top 3率、サンプル数を合わせて見て、そのキャラクターが安定型か、終盤戦で伸びる型か、特定の武器や編成に依存するかを解釈します。",
+    "description": "勝率、ピック率、平均RP、入賞率、サンプル数を合わせて見て、そのキャラクターが安定型か、終盤戦で伸びる型か、特定の武器や編成に依存するかを解釈します。",
     "badge": "分析",
-    "beta": "BETA",
-    "patchBase": "開発中 · パッチ {patch}基準",
+    "beta": "標本確認中",
+    "patchBase": "パッチ {patch}基準",
     "imageNotice": "一部のアイテム画像が欠落しているか、正しく表示されない場合があります。",
     "sectionName": "キャラクター分析"
   },
   "synergyPage": {
     "dataNotice": "データ収集中 · サンプルが増えるほど精度が向上します",
-    "title": "詳細編成おすすめ",
+    "title": "詳細編成データ",
     "subtitle": "ER&GGは味方ピックと自分のプールを編成判断用に再計算します",
-    "description": "勝率だけでおすすめするのではなく、武器、メイン特性、平均RP、サンプル数を合わせて比較し、選択した味方と実際に成立する3人編成を表示します。",
+    "description": "武器、メイン特性、平均RP、サンプル数を合わせて比較し、選択した味方と実際に成立する3人編成を表示します。",
     "badge": "詳細",
-    "beta": "BETA",
+    "beta": "標本確認中",
     "steps": {
       "pool": {
         "label": "プール設定",
@@ -211,11 +265,14 @@
   "synergyInteractive": {
     "poolTitle": "自分のキャラプール",
     "alliesTitle": "味方を選択",
-    "resultsTitle": "おすすめ編成",
+    "resultsTitle": "編成結果",
     "poolHint": "任意 · キャラクター + 武器で絞り込み",
+    "alliesHint": "最大2人 · キャラクター + 武器単位",
+    "resultsHint": "選択した味方を基準に詳細編成を比較",
     "poolSection": "キャラクタープール",
     "alliesSection": "味方",
-    "resultsSection": "おすすめ"
+    "resultsSection": "編成結果",
+    "shareLanding": "共有された編成です。現在のサンプル指標を確認できます。"
   },
   "sectionErrorBoundary": {
     "loadFailed": "{section} のデータを読み込めませんでした",
@@ -331,7 +388,7 @@
   },
   "synergyResults": {
     "sort": {
-      "recommended": "おすすめ",
+      "recommended": "指標順",
       "averageRP": "平均RP",
       "winRate": "勝率",
       "totalGames": "試合数",
@@ -351,7 +408,7 @@
       "step3": "3. 編成をクリックして特性ごとの性能を確認します"
     },
     "loading": "編成データを読み込み中...",
-    "infoSingle": "味方をもう1人追加すると、より正確なおすすめになります · 編成をクリックすると特性内訳を確認できます",
+    "infoSingle": "味方をもう1人追加すると条件を絞り込めます · 編成をクリックすると特性内訳を確認できます",
     "infoPair": "編成をクリックすると特性内訳を確認できます",
     "more": "もっと見る ({visible}/{total})",
     "emptyFiltered": "現在のキャラプールに一致する編成がありません。プールを広げてください。",
@@ -362,13 +419,13 @@
   },
   "synergyMainResults": {
     "sort": {
-      "recommended": "おすすめ",
+      "recommended": "指標順",
       "averageRP": "平均RP",
       "winRate": "勝率",
       "totalGames": "試合数",
       "averageRank": "平均順位"
     },
-    "titleSingle": "{ally} を含むおすすめ編成",
+    "titleSingle": "{ally} を含む編成",
     "titlePair": "{ally1} + {ally2} の編成",
     "focusFilter": "自分のプール {count}件を優先表示",
     "copied": "コピーしました！",
@@ -376,13 +433,13 @@
     "reset": "初期化",
     "sectionName": "編成結果",
     "empty": {
-      "prompt": "味方のピックに合う最適な編成を探しましょう",
+      "prompt": "味方のピックに合う編成サンプルを確認します",
       "step1": "1. 自分のキャラプールを設定します (任意)",
       "step2": "2. 味方キャラクターを1〜2人選択します",
-      "step3": "3. 自分が使える中で最適な編成をおすすめします"
+      "step3": "3. 自分のプールと重なる編成を比較します"
     },
     "loading": "編成データを読み込み中...",
-    "infoSingle": "味方をもう1人追加すると、より正確なおすすめになります",
+    "infoSingle": "味方をもう1人追加すると条件を絞り込めます",
     "emptyFiltered": "キャラプールに一致する編成がありません。プールを広げてください。",
     "emptyNoData": "この編成データはありません。",
     "clearAllies": "味方をクリア",
@@ -398,11 +455,11 @@
     "moreTraits": "特性をさらに {count} 件表示"
   },
   "characterAnalysis": {
-    "quickSummary": "クイックサマリー",
+    "quickSummary": "要約",
     "summary": {
       "tier": "ティア",
       "winRate": "勝率",
-      "recommendedWeapon": "おすすめ武器",
+      "recommendedWeapon": "主武器",
       "pickRate": "ピック率"
     },
     "synergyCta": "このキャラクターで編成を探す",
@@ -432,8 +489,8 @@
   "characterMetadata": {
     "titleWithName": "{name} キャラクター分析",
     "titleFallback": "キャラクター分析",
-    "descriptionWithName": "Eternal Returnにおける{name}の勝率、ピック率、平均RP、最適ビルドを分析します。{name}のパッチ傾向と武器組み合わせも確認できます。",
-    "descriptionFallback": "Eternal Returnのキャラクターごとの勝率、ピック率、平均RP、最適ビルドを分析します。パッチ傾向と武器組み合わせも確認できます。",
+    "descriptionWithName": "Eternal Returnにおける{name}の勝率、ピック率、平均RP、ビルド統計を整理します。{name}のパッチ傾向と武器組み合わせも確認できます。",
+    "descriptionFallback": "Eternal Returnのキャラクターごとの勝率、ピック率、平均RP、ビルド統計を整理します。パッチ傾向と武器組み合わせも確認できます。",
     "keywords": {
       "character": "Eternal Return {name}",
       "build": "{name} ビルド",
@@ -444,34 +501,34 @@
       "analysis": "Eternal Return キャラクター分析",
       "fallbackBuild": "Eternal Return キャラクタービルド",
       "fallbackStats": "Eternal Return キャラクター統計",
-      "fallbackWeapon": "Eternal Return 武器おすすめ"
+      "fallbackWeapon": "Eternal Return 武器統計"
     },
     "openGraphTitle": "{title} | ER&GG",
     "twitterTitle": "{title} | ER&GG",
-    "socialDescription": "Eternal Returnのキャラクター別勝率、ピック率、平均RP、最適ビルド統計。"
+    "socialDescription": "Eternal Returnのキャラクター別勝率、ピック率、平均RP、ビルド統計。"
   },
   "synergyMetadata": {
-    "headlinePair": "{name1} + {name2} 編成おすすめ",
-    "headlineSingle": "{name1} を含む編成おすすめ",
-    "headlineFallback": "編成おすすめ",
-    "descriptionPair": "{name1} + {name2} の最適な3人目ピックをベイズチーム統計で分析します。",
-    "descriptionSingle": "{name1}と組む最適な2人目・3人目ピックをベイズチーム統計で分析します。",
-    "descriptionFallback": "Eternal Returnの3人編成おすすめを確認し、武器と特性を含む詳細分析に進めます。",
+    "headlinePair": "{name1} + {name2} 編成データ",
+    "headlineSingle": "{name1} を含む編成データ",
+    "headlineFallback": "編成データ",
+    "descriptionPair": "{name1} + {name2} の3人目候補とサンプル指標を表示します。",
+    "descriptionSingle": "{name1}を含む2人・3人編成のサンプル指標を表示します。",
+    "descriptionFallback": "Eternal Returnの3人編成サンプルを、武器と特性を含めて確認できます。",
     "socialTitle": "{headline} | ER&GG"
   },
   "synergyDetailMetadata": {
-    "headlinePair": "{name1} + {name2} 編成おすすめ",
-    "headlineSingle": "{name1} を含む編成おすすめ",
-    "headlineFallback": "詳細編成おすすめ",
-    "title": "{headline} - 武器・特性込み | ER&GG",
-    "descriptionPair": "{name1} + {name2} の最適な3人目ピックを、武器と特性を含むベイズ統計で分析します。",
-    "descriptionSingle": "{name1}と組む最適な2人目・3人目ピックをベイズチーム統計で分析します。",
-    "descriptionFallback": "武器とメイン特性を含むEternal Returnの詳細な3人編成おすすめを、ベイズチーム分析で確認できます。",
+    "headlinePair": "{name1} + {name2} 編成データ",
+    "headlineSingle": "{name1} を含む編成データ",
+    "headlineFallback": "詳細編成データ",
+    "title": "{headline} - 武器・特性込み",
+    "descriptionPair": "{name1} + {name2} の3人目候補を、武器と特性を含む統計で表示します。",
+    "descriptionSingle": "{name1}を含む2人・3人編成の武器と特性指標を表示します。",
+    "descriptionFallback": "武器とメイン特性を含むEternal Returnの詳細な3人編成データを確認できます。",
     "socialTitle": "{headline} | ER&GG",
     "keywords": {
       "brand": "ER&GG",
       "app": "ERGG",
-      "synergy": "Eternal Return チームおすすめ",
+      "synergy": "Eternal Return 編成データ",
       "weapon": "Eternal Return 武器組み合わせ",
       "trait": "Eternal Return 特性組み合わせ",
       "detail": "Eternal Return 詳細チーム分析",

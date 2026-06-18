@@ -21,14 +21,16 @@ export default function GlobalError({
     <html lang="ko">
       <body>
         <NoIndexMeta />
-        <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#0a0a0f] text-white">
-          <h2 className="text-lg font-semibold">예기치 못한 오류가 발생했습니다</h2>
-          <p className="text-sm text-gray-400">문제가 자동으로 보고되었습니다</p>
+        <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[var(--color-background)] text-[var(--color-foreground)]">
+          <h2 className="text-lg font-semibold">서비스를 불러오지 못했습니다</h2>
+          <p className="text-sm text-[var(--color-muted-foreground)]">
+            잠시 후 다시 시도해 주세요.
+          </p>
           <button
             onClick={reset}
-            className="rounded-md border border-gray-700 px-4 py-2 text-sm hover:bg-gray-800 transition-colors"
+            className="rounded-md border border-[var(--color-border)] px-4 py-2 text-sm transition-colors hover:bg-[var(--color-surface-2)]"
           >
-            다시 시도
+            새로고침
           </button>
         </div>
       </body>
