@@ -36,7 +36,7 @@ export const revalidate = 86400;
 const COPY = {
   ko: {
     emptyTitle: "시즌 10 리캡",
-    emptyBody: "데이터를 준비 중입니다. 잠시 후 다시 확인해주세요.",
+    emptyBody: "현재 표시할 시즌 데이터가 없습니다.",
     kicker: "시즌 10 마무리",
     tierScope: "미스릴+ 집계",
     title: "시즌 10 리캡",
@@ -50,14 +50,14 @@ const COPY = {
     leaderPatchCount: (count: number, total: number) => `주요권 ${count}/${total} 패치`,
     integrated: "통합 집계",
     seasonAverageRp: "시즌 평균 RP",
-    preparing: "시즌 누적 주요 조합 데이터를 준비 중입니다.",
+    preparing: "시즌 누적 주요 조합 데이터가 아직 집계되지 않았습니다.",
     basisKicker: "데이터 기준",
     basisTitle: "공식 API 기반 시즌 누적 집계입니다.",
     basisBody:
       "미스릴 / 메테오라이트 / 다이아몬드 / 상위 1000위 티어 통합 통계이며, 평균 RP 획득량 기준으로 정렬했습니다. 알렉스처럼 무기 통합 집계가 필요한 캐릭터는 단일 조합으로 합산했습니다.",
     back: "메타 분석으로 돌아가기",
     nonKoSummary:
-      "Season 10 detailed rankings use Korean-source character and weapon labels. This localized overview keeps the season-level metrics visible without showing untranslated source rows.",
+      "This localized overview highlights the season-level metrics and leading compositions.",
   },
   en: {
     emptyTitle: "Season 10 Recap",
@@ -81,8 +81,7 @@ const COPY = {
     basisBody:
       "The recap combines Mithril, Meteorite, Diamond, and top-1000 ranked tiers, then sorts teams by average RP. Weapon-agnostic characters are merged into a single aggregate row.",
     back: "Back to Meta Analysis",
-    nonKoSummary:
-      "Detailed row labels are based on Korean source data, so this localized page shows season-level metrics without exposing untranslated rows.",
+    nonKoSummary: "This localized page focuses on season-level metrics and leading compositions.",
   },
   ja: {
     emptyTitle: "シーズン10リキャップ",

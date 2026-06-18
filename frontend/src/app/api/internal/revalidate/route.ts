@@ -47,9 +47,9 @@ function isNumberArray(value: unknown): value is number[] {
 export async function POST(request: NextRequest) {
   const expected = process.env.INTERNAL_REVALIDATE_SECRET;
   if (!expected) {
-    console.error("[internal/revalidate] INTERNAL_REVALIDATE_SECRET 미설정");
+    console.error("[internal/revalidate] missing secret");
     return NextResponse.json(
-      { error: "server misconfigured" },
+      { error: "temporary_unavailable" },
       { status: 500, headers: { "Cache-Control": "no-store" } }
     );
   }
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     body = (await request.json()) as RevalidateBody;
   } catch {
     return NextResponse.json(
-      { error: "invalid JSON body" },
+      { error: "invalid_request_body" },
       { status: 400, headers: { "Cache-Control": "no-store" } }
     );
   }

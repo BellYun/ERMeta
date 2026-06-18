@@ -58,26 +58,25 @@ const PREVIEW_COPY: Record<
     back: "Role Groups",
     kicker: "Ranged carry baseline",
     summary:
-      "This preview summarizes partner-role patterns and trio performance without exposing untranslated source labels.",
+      "This preview summarizes partner-role patterns and trio performance for ranged carries.",
     metrics: ["Groups", "Characters", "Minimum sample"],
   },
   ja: {
     back: "ロールグループ",
     kicker: "遠距離キャリー基準",
-    summary:
-      "このプレビューでは、未翻訳の元データラベルを表示せず、相性役割とトリオ成績の概要を確認できます。",
+    summary: "遠距離キャリーを基準に、相性役割とトリオ成績の概要を確認できます。",
     metrics: ["グループ", "キャラクター", "最小サンプル"],
   },
   "zh-Hans": {
     back: "角色分组",
     kicker: "远程输出基准",
-    summary: "此预览会汇总队友定位与三人组表现，不直接显示未翻译的源数据标签。",
+    summary: "此预览会按远程输出基准汇总队友定位与三人组表现。",
     metrics: ["分组", "角色", "最小样本"],
   },
   "zh-Hant": {
     back: "角色分組",
     kicker: "遠程輸出基準",
-    summary: "此預覽會彙整隊友定位與三人組表現，不直接顯示未翻譯的來源資料標籤。",
+    summary: "此預覽會依遠程輸出基準彙整隊友定位與三人組表現。",
     metrics: ["分組", "角色", "最小樣本"],
   },
 };

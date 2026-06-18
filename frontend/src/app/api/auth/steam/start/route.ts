@@ -17,7 +17,7 @@ function isAllowedRedirectUri(redirectUri: string): boolean {
 
 export async function GET(request: NextRequest) {
   if (!isDesktopAuthEnabled()) {
-    return NextResponse.json({ error: "Desktop auth feature is disabled." }, { status: 404 });
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
 
   const url = new URL(request.url);

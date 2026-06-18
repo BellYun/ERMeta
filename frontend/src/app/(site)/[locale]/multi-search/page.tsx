@@ -31,8 +31,8 @@ const COPY: Record<
     kicker: "시즌 39 기준",
     subtitle: "닉네임 3개를 동시에 검색해 현재 시즌 랭크 지표와 주력 캐릭터를 비교합니다.",
     body: "BSER 공식 API 기반으로 MMR, 순위, 승률, 순방률, 캐릭터별 기록을 정리합니다.",
-    disabledTitle: "멀티서치 준비 중",
-    disabledBody: "현재 이 기능은 운영 설정에서 비활성화되어 있습니다.",
+    disabledTitle: "멀티서치를 제공하지 않습니다",
+    disabledBody: "팀원 검색은 현재 이용할 수 없습니다.",
   },
   en: {
     title: "Team Multi Search",
@@ -41,8 +41,8 @@ const COPY: Record<
     kicker: "Season 39 baseline",
     subtitle: "Search three nicknames at once and compare current ranked indicators.",
     body: "Uses the BSER official API to summarize MMR, rank, win rate, placement rate, and main characters.",
-    disabledTitle: "Multi Search is unavailable",
-    disabledBody: "This feature is currently disabled in the service configuration.",
+    disabledTitle: "Team Multi Search is unavailable",
+    disabledBody: "Team search is not available right now.",
   },
   ja: {
     title: "チーム複数検索",
@@ -51,8 +51,8 @@ const COPY: Record<
     kicker: "シーズン39基準",
     subtitle: "3つのニックネームを同時に検索し、現在シーズンのランク指標を比較します。",
     body: "BSER公式APIをもとにMMR、順位、勝率、入賞率、主力キャラクターを整理します。",
-    disabledTitle: "複数検索は現在利用できません",
-    disabledBody: "この機能は現在、サービス設定で無効化されています。",
+    disabledTitle: "チーム複数検索は利用できません",
+    disabledBody: "現在、チーム検索は利用できません。",
   },
   "zh-Hans": {
     title: "队友多重搜索",
@@ -61,8 +61,8 @@ const COPY: Record<
     kicker: "第 39 赛季基准",
     subtitle: "同时搜索三个昵称，比较当前赛季排位指标。",
     body: "基于 BSER 官方 API 汇总 MMR、排名、胜率、前三率和主力角色。",
-    disabledTitle: "多重搜索暂不可用",
-    disabledBody: "该功能目前在服务配置中处于关闭状态。",
+    disabledTitle: "队友多重搜索暂不可用",
+    disabledBody: "当前无法使用队友搜索。",
   },
   "zh-Hant": {
     title: "隊友多重搜尋",
@@ -71,8 +71,8 @@ const COPY: Record<
     kicker: "第 39 賽季基準",
     subtitle: "同時搜尋三個暱稱，比較目前賽季牌位指標。",
     body: "基於 BSER 官方 API 彙總 MMR、排名、勝率、前三率和主力角色。",
-    disabledTitle: "多重搜尋暫不可用",
-    disabledBody: "此功能目前在服務設定中處於關閉狀態。",
+    disabledTitle: "隊友多重搜尋暫不可用",
+    disabledBody: "目前無法使用隊友搜尋。",
   },
 };
 
