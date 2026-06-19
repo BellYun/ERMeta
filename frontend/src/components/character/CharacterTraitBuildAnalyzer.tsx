@@ -251,7 +251,7 @@ export function CharacterTraitBuildAnalyzer({
     return (
       <div className="space-y-2">
         {[...Array(2)].map((_, i) => (
-          <div key={i} className="h-32 rounded-lg bg-[var(--color-surface)] animate-pulse" />
+          <div key={i} className="h-32 rounded-lg bg-[var(--color-surface)]" />
         ))}
       </div>
     );

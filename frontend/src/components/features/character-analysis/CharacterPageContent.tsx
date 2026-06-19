@@ -39,12 +39,12 @@ function CharacterAnalysisFallback() {
     <div className="flex flex-col gap-5 sm:gap-6">
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_340px]">
         <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
-          <div className="animate-pulse">
+          <div>
             <div className="h-40 rounded-lg bg-[var(--color-surface-2)] sm:h-48" />
           </div>
         </section>
         <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
-          <div className="animate-pulse">
+          <div>
             <div className="h-48 rounded-lg bg-[var(--color-surface-2)]" />
           </div>
         </section>
@@ -52,19 +52,19 @@ function CharacterAnalysisFallback() {
 
       <div className="grid gap-5 xl:grid-cols-2">
         <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
-          <div className="animate-pulse">
+          <div>
             <div className="mb-4 h-6 w-28 rounded bg-[var(--color-surface-2)]" />
             <div className="h-64 rounded-lg bg-[var(--color-surface-2)]" />
           </div>
         </section>
         <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
-          <div className="animate-pulse">
+          <div>
             <div className="mb-4 h-6 w-24 rounded bg-[var(--color-surface-2)]" />
             <div className="h-64 rounded-lg bg-[var(--color-surface-2)]" />
           </div>
         </section>
         <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5 xl:col-span-2">
-          <div className="animate-pulse">
+          <div>
             <div className="mb-4 h-6 w-16 rounded bg-[var(--color-surface-2)]" />
             <div className="h-80 rounded-lg bg-[var(--color-surface-2)]" />
           </div>

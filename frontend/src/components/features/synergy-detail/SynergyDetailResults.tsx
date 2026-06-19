@@ -577,7 +577,7 @@ export function SynergyDetailResults() {
             {Array.from({ length: 5 }).map((_, i) => (
               <div
                 key={i}
-                className="flex animate-pulse items-center gap-3 rounded-lg border border-[var(--color-border)] bg-white p-3"
+                className="flex items-center gap-3 rounded-lg border border-[var(--color-border)] bg-white p-3"
               >
                 <div className="h-6 w-6 rounded-full bg-[var(--color-surface-2)]" />
                 <div className="flex gap-2">

@@ -666,9 +666,9 @@ export function CharacterDetailedAnalyzer({
   if (traitLoading) {
     return (
       <div className="space-y-3">
-        <div className="h-10 rounded-lg bg-[var(--color-surface)] animate-pulse" />
-        <div className="h-40 rounded-lg bg-[var(--color-surface)] animate-pulse" />
-        <div className="h-40 rounded-lg bg-[var(--color-surface)] animate-pulse" />
+        <div className="h-10 rounded-lg bg-[var(--color-surface)]" />
+        <div className="h-40 rounded-lg bg-[var(--color-surface)]" />
+        <div className="h-40 rounded-lg bg-[var(--color-surface)]" />
       </div>
     );
   }
@@ -969,8 +969,8 @@ export function CharacterDetailedAnalyzer({
           {/* 아이템 빌드 */}
           {equipLoading ? (
             <div className="space-y-3">
-              <div className="h-40 rounded-lg bg-[var(--color-surface)] animate-pulse" />
-              <div className="h-60 rounded-lg bg-[var(--color-surface)] animate-pulse" />
+              <div className="h-40 rounded-lg bg-[var(--color-surface)]" />
+              <div className="h-60 rounded-lg bg-[var(--color-surface)]" />
             </div>
           ) : hasEquipData ? (
             <div className="space-y-4">

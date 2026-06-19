@@ -351,8 +351,8 @@ export function RoleComboRpPanel({ characterCode, selectedWeapon }: RoleComboRpP
 
       {loading ? (
         <div className="grid gap-2 px-4 pb-4">
-          <div className="h-9 animate-pulse rounded-lg bg-[var(--color-surface-2)]" />
-          <div className="h-48 animate-pulse rounded-lg bg-[var(--color-surface-2)]" />
+          <div className="h-9 rounded-lg bg-[var(--color-surface-2)]" />
+          <div className="h-48 rounded-lg bg-[var(--color-surface-2)]" />
         </div>
       ) : !data ? (
         <div className="mx-4 mb-4 flex min-h-[180px] items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] bg-white px-4 text-center text-xs text-[var(--color-muted-foreground)]">

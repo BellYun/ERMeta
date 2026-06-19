@@ -562,7 +562,7 @@ export function CharacterEquipmentAnalyzer({
     return (
       <div className="space-y-4">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-40 rounded-lg bg-[var(--color-surface)] animate-pulse" />
+          <div key={i} className="h-40 rounded-lg bg-[var(--color-surface)]" />
         ))}
       </div>
     );

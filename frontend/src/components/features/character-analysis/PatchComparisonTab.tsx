@@ -12,8 +12,8 @@ const PatchComparisonCharts = dynamic(() => import("./PatchComparisonCharts"), {
   ssr: false,
   loading: () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-      <div className="h-[160px] sm:h-[220px] animate-pulse rounded-lg bg-[var(--color-surface-2)]" />
-      <div className="h-[160px] sm:h-[220px] animate-pulse rounded-lg bg-[var(--color-surface-2)]" />
+      <div className="h-[160px] sm:h-[220px] rounded-lg bg-[var(--color-surface-2)]" />
+      <div className="h-[160px] sm:h-[220px] rounded-lg bg-[var(--color-surface-2)]" />
     </div>
   ),
 });
@@ -34,7 +34,7 @@ export function PatchComparisonTab({
   const t = useTranslations("characterPatch");
 
   if (loading) {
-    return <div className="h-40 rounded-lg bg-[var(--color-surface)] animate-pulse" />;
+    return <div className="h-40 rounded-lg bg-[var(--color-surface)]" />;
   }
 
   if (!stats || stats.totalGames === 0) {

@@ -21,7 +21,7 @@ export function DeltaBadge({ delta, inverted = false }: { delta: number; inverte
 
 export function SkeletonCard() {
   return (
-    <div className="h-[88px] rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] animate-pulse" />
+    <div className="h-[88px] rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)]" />
   );
 }
 

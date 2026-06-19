@@ -154,7 +154,7 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
               >
                 <Icon className="h-[18px] w-[18px]" strokeWidth={1.9} />
               </span>
-              <span className="">{label}</span>
+              <span>{label}</span>
               {badge && (
                 <span className="ml-auto text-[9px] font-semibold text-[var(--color-muted-foreground)]">
                   {badge}

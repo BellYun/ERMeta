@@ -361,7 +361,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
             {Array.from({ length: 5 }).map((_, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 rounded-lg border border-[var(--color-border)] bg-white p-3 animate-pulse"
+                className="flex items-center gap-3 rounded-lg border border-[var(--color-border)] bg-white p-3"
               >
                 <div className="h-6 w-6 rounded-full bg-[var(--color-surface-2)]" />
                 <div className="flex gap-2">
@@ -389,9 +389,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
               </p>
             )}
             <React.Suspense
-              fallback={
-                <div className="h-64 rounded-lg bg-[var(--color-surface-2)] animate-pulse" />
-              }
+              fallback={<div className="h-64 rounded-lg bg-[var(--color-surface-2)]" />}
             >
               {recommendations.map((rec, i) => (
                 <ComboCard

@@ -129,9 +129,7 @@ export function FocusCharacterPool() {
           </div>
 
           <React.Suspense
-            fallback={
-              <div className="h-[300px] rounded-lg bg-[var(--color-surface-2)] animate-pulse" />
-            }
+            fallback={<div className="h-[300px] rounded-lg bg-[var(--color-surface-2)]" />}
           >
             <VirtualCharacterGrid
               codes={filteredFocusCodes}

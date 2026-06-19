@@ -121,9 +121,7 @@ export default async function TrioLabGalleryPage({ params, searchParams }: Local
         </p>
       </header>
 
-      <Suspense
-        fallback={<div className="h-96 animate-pulse rounded-lg bg-[var(--color-surface-3)]" />}
-      >
+      <Suspense fallback={<div className="h-96 rounded-lg bg-[var(--color-surface-3)]" />}>
         <TrioLabGalleryClient initialCombos={initialCombos} />
       </Suspense>
     </main>

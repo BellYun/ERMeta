@@ -170,7 +170,7 @@ function ComboWeaponCardImpl({
                       "relative h-8 w-8 sm:h-10 sm:w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
                       isRecommended
                         ? "outline outline-1 outline-[var(--color-border-light)]"
-                        : "ring-1 ring-[rgba(255,255,255,0.08)]"
+                        : "ring-1 ring-[var(--color-border)]"
                     )}
                   >
                     <Image

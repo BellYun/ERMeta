@@ -14,9 +14,7 @@ import type { ChartDatum } from "./SeasonHallOfFameChart";
 // dynamic import 가 자연스럽다. ssr:false 로 차트 마크업이 hydrate 시점에만 평가된다.
 const SeasonHallOfFameChart = dynamic(() => import("./SeasonHallOfFameChart"), {
   ssr: false,
-  loading: () => (
-    <div className="h-full w-full animate-pulse rounded-lg bg-[var(--color-surface-2)]" />
-  ),
+  loading: () => <div className="h-full w-full rounded-lg bg-[var(--color-surface-2)]" />,
 });
 
 interface SeasonHallOfFameBlockProps {

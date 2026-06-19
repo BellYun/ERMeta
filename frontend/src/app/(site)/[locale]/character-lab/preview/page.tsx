@@ -223,7 +223,7 @@ function RadarChart({
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       {grid.map((g, i) => (
-        <polygon key={i} points={g} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={1} />
+        <polygon key={i} points={g} fill="none" stroke="rgba(100,116,139,0.2)" strokeWidth={1} />
       ))}
       {/* 중앙선 (zero level) */}
       <polygon
@@ -232,7 +232,7 @@ function RadarChart({
           return `${cx + Math.cos(angle) * maxR * 0.5},${cy + Math.sin(angle) * maxR * 0.5}`;
         }).join(" ")}
         fill="none"
-        stroke="rgba(255,255,255,0.18)"
+        stroke="rgba(100,116,139,0.34)"
         strokeWidth={1}
         strokeDasharray="2 3"
       />
@@ -255,7 +255,7 @@ function RadarChart({
             x={lx}
             y={ly}
             fontSize={10}
-            fill="rgba(255,255,255,0.6)"
+            fill="rgba(104,115,134,0.9)"
             textAnchor="middle"
             dominantBaseline="middle"
           >
@@ -576,7 +576,7 @@ function DenseRadar({
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       {grids.map((g, i) => (
-        <polygon key={i} points={g} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth={1} />
+        <polygon key={i} points={g} fill="none" stroke="rgba(100,116,139,0.16)" strokeWidth={1} />
       ))}
       {/* zero level */}
       <polygon
@@ -587,7 +587,7 @@ function DenseRadar({
           })
           .join(" ")}
         fill="none"
-        stroke="rgba(255,255,255,0.22)"
+        stroke="rgba(100,116,139,0.34)"
         strokeWidth={1}
         strokeDasharray="2 3"
       />
@@ -767,7 +767,7 @@ function GroupCohesionRadar({
               })
               .join(" ")}
             fill="none"
-            stroke="rgba(255,255,255,0.05)"
+            stroke="rgba(100,116,139,0.16)"
             strokeWidth={1}
           />
         ))}
@@ -780,7 +780,7 @@ function GroupCohesionRadar({
             })
             .join(" ")}
           fill="none"
-          stroke="rgba(255,255,255,0.22)"
+          stroke="rgba(100,116,139,0.34)"
           strokeWidth={1}
           strokeDasharray="2 3"
         />
@@ -1032,19 +1032,19 @@ function ScatterPlot({
   return (
     <div className="overflow-x-auto">
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
-        <rect x={0} y={0} width={W} height={H} fill="rgba(15,23,42,0.4)" rx={8} />
-        <line x1={pad} y1={H - pad} x2={W - pad} y2={H - pad} stroke="rgba(255,255,255,0.12)" />
-        <line x1={pad} y1={pad} x2={pad} y2={H - pad} stroke="rgba(255,255,255,0.12)" />
+        <rect x={0} y={0} width={W} height={H} fill="rgba(248,250,252,0.9)" rx={6} />
+        <line x1={pad} y1={H - pad} x2={W - pad} y2={H - pad} stroke="rgba(100,116,139,0.26)" />
+        <line x1={pad} y1={pad} x2={pad} y2={H - pad} stroke="rgba(100,116,139,0.26)" />
         <text
           x={W - pad}
           y={H - pad + 18}
           fontSize={9}
-          fill="rgba(255,255,255,0.5)"
+          fill="rgba(104,115,134,0.85)"
           textAnchor="end"
         >
           → 탱·전·지 친화
         </text>
-        <text x={pad - 6} y={pad - 6} fontSize={9} fill="rgba(255,255,255,0.5)" textAnchor="start">
+        <text x={pad - 6} y={pad - 6} fontSize={9} fill="rgba(104,115,134,0.85)" textAnchor="start">
           ↑ 종합 친화
         </text>
         {points.map((p) => {
@@ -1066,7 +1066,7 @@ function ScatterPlot({
                 x={projX(p.x)}
                 y={projY(p.y) + 22}
                 fontSize={9}
-                fill="rgba(255,255,255,0.7)"
+                fill="rgba(104,115,134,0.9)"
                 textAnchor="middle"
               >
                 {p.char.characterName}

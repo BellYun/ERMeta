@@ -166,15 +166,15 @@ function RoleCell({
   const intensity = Math.min(Math.abs(stat.averageRP) / maxAbs, 1);
   const isPositive = stat.averageRP >= 0;
   const backgroundColor = isPositive
-    ? `rgba(251, 191, 36, ${0.05 + intensity * 0.3})`
-    : `rgba(248, 113, 113, ${0.05 + intensity * 0.28})`;
+    ? `rgba(21, 128, 61, ${0.04 + intensity * 0.18})`
+    : `rgba(220, 38, 38, ${0.04 + intensity * 0.16})`;
 
   return (
     <td
       className={cn(
         "border-b border-[var(--color-border)]/30 px-2 py-3 text-center font-semibold tabular-nums",
         isSeason && "border-l border-[var(--color-border)]",
-        isPositive ? "text-[var(--color-accent-gold)]" : "text-[var(--color-danger)]"
+        isPositive ? "text-[var(--color-success)]" : "text-[var(--color-danger)]"
       )}
       style={{ backgroundColor }}
       title={`${stat.totalGames.toLocaleString()}게임`}

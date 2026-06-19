@@ -593,7 +593,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
           {Array.from({ length: 6 }).map((_, index) => (
             <div
               key={`skeleton-${index}`}
-              className="h-72 animate-pulse rounded-lg bg-[var(--color-surface-3)]"
+              className="h-72 rounded-lg bg-[var(--color-surface-3)]"
             />
           ))}
         </div>
