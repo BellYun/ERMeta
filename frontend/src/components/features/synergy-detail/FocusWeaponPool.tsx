@@ -186,9 +186,7 @@ export function FocusWeaponPool() {
         className="flex w-full cursor-pointer items-center justify-between px-4 py-3 transition-colors hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)]"
       >
         <div className="flex items-center gap-2.5">
-          <span className="text-[14px] font-bold  text-[var(--color-foreground)]">
-            {t("title")}
-          </span>
+          <span className="text-[14px] font-bold text-[var(--color-foreground)]">{t("title")}</span>
           {focusCharWeapons.length > 0 && (
             <span className="rounded border border-[var(--color-border)] bg-white px-2 py-0.5 text-[10.5px] font-bold text-[var(--color-muted-foreground)]">
               {t("count", { count: focusCharWeapons.length })}

@@ -299,12 +299,8 @@ export function MultiSearchClient() {
             />
           </label>
           <Button type="submit" size="lg" disabled={isMyLoading} className="h-10 md:min-w-28">
-            {isMyLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Search className="h-4 w-4" />
-            )}
-            내 정보 검색
+            {isMyLoading ? <Loader2 className="h-4 w-4" /> : <Search className="h-4 w-4" />}내 정보
+            검색
           </Button>
         </div>
         {error && !myProfile && (
@@ -347,11 +343,7 @@ export function MultiSearchClient() {
             disabled={isTeamLoading || !myProfile || teammateNicknames.length < 2}
             className="h-10 md:min-w-24"
           >
-            {isTeamLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Search className="h-4 w-4" />
-            )}
+            {isTeamLoading ? <Loader2 className="h-4 w-4" /> : <Search className="h-4 w-4" />}
             팀원 검색
           </Button>
         </div>
@@ -832,7 +824,7 @@ function TeamComboRecommendations({
         </div>
         {loading && (
           <span className="inline-flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-xs font-semibold text-[var(--color-muted-foreground)]">
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <Loader2 className="h-4 w-4" />
             지표 계산 중
           </span>
         )}

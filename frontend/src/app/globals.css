@@ -15,10 +15,7 @@
 
   --color-primary: #374151;
   --color-primary-hover: #111827;
-  --color-primary-glow: rgba(17, 24, 39, 0.06);
-
   --color-accent-gold: #374151;
-  --color-accent-purple: #687386;
 
   --color-danger: #dc2626;
   --color-success: #15803d;
@@ -125,45 +122,6 @@
   &::-webkit-scrollbar {
     display: none;
   }
-}
-
-@keyframes trioLabLoaderSlide {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(400%);
-  }
-}
-
-.trio-lab-loader-bar {
-  animation: trioLabLoaderSlide 1.1s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-}
-
-@keyframes revealUp {
-  from {
-    opacity: 1;
-    transform: none;
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.reveal {
-  animation: none;
-}
-
-.reveal-d1,
-.reveal-d2,
-.reveal-d3,
-.reveal-d4,
-.reveal-d5,
-.reveal-d6,
-.reveal-d7 {
-  animation-delay: 0s;
 }
 
 @media (prefers-reduced-motion: reduce) {

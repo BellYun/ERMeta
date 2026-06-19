@@ -355,7 +355,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
         ) : loading ? (
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2 py-2">
-              <Loader2 className="h-4 w-4 animate-spin text-[var(--color-muted-foreground)]" />
+              <Loader2 className="h-4 w-4 text-[var(--color-muted-foreground)]" />
               <p className="text-sm text-[var(--color-muted-foreground)]">{t("loading")}</p>
             </div>
             {Array.from({ length: 5 }).map((_, i) => (

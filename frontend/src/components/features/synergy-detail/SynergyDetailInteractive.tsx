@@ -24,7 +24,7 @@ export function SynergyDetailInteractive() {
         </div>
       )}
 
-      <section className="dashboard-panel reveal reveal-d1 p-3.5 sm:p-4 lg:p-5">
+      <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
         <div className="mb-3.5 flex flex-wrap items-center gap-x-3 gap-y-2 sm:mb-4">
           <div className="flex items-center gap-2.5">
             <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-xs font-semibold text-[var(--color-muted-foreground)]">
@@ -42,7 +42,7 @@ export function SynergyDetailInteractive() {
       </section>
 
       <div className="grid gap-5 xl:grid-cols-[360px_minmax(0,1fr)]">
-        <section className="dashboard-panel reveal reveal-d2 p-3.5 sm:p-4 lg:p-5">
+        <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
           <div className="mb-3.5 flex flex-wrap items-center gap-x-3 gap-y-2 sm:mb-4">
             <div className="flex items-center gap-2.5">
               <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-xs font-semibold text-[var(--color-muted-foreground)]">
@@ -59,7 +59,7 @@ export function SynergyDetailInteractive() {
           </SectionErrorBoundary>
         </section>
 
-        <section className="dashboard-panel reveal reveal-d3 min-w-0 p-3.5 sm:p-4 lg:p-5">
+        <section className="dashboard-panel min-w-0 p-3.5 sm:p-4 lg:p-5">
           <div className="mb-3.5 flex flex-wrap items-center gap-x-3 gap-y-2 sm:mb-4">
             <div className="flex items-center gap-2.5">
               <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-xs font-semibold text-[var(--color-muted-foreground)]">

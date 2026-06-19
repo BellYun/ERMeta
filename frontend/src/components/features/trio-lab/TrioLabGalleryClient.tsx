@@ -541,7 +541,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
 
       {loading && (
         <div className="relative h-0.5 overflow-hidden rounded-full bg-[var(--color-surface-3)]">
-          <div className="trio-lab-loader-bar absolute inset-y-0 w-1/3 rounded-full bg-[var(--color-muted-foreground)]" />
+          <div className="absolute inset-y-0 w-1/3 rounded-full bg-[var(--color-muted-foreground)]" />
         </div>
       )}
 

@@ -522,7 +522,7 @@ function SlotWeaponFilled({
         />
       </div>
       <div className="flex flex-col flex-1 min-w-0">
-        <span className="truncate text-[15px] font-bold  text-[var(--color-foreground)]">
+        <span className="truncate text-[15px] font-bold text-[var(--color-foreground)]">
           {name}
         </span>
         <span className="truncate text-[11.5px] font-semibold text-[var(--color-primary-hover)]">

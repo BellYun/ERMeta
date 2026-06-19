@@ -437,7 +437,7 @@ export function SynergyDetailResults() {
       <div className="mb-4 flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
           {selectedAllies.length > 0 && (
-            <h2 className="text-[1.05rem] font-bold  text-[var(--color-foreground)] sm:text-[1.1rem]">
+            <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.1rem]">
               {selectedCharCodes.length === 1
                 ? t("titleSingle", { ally: getCharName(selectedCharCodes[0]) })
                 : t("titlePair", {
@@ -569,7 +569,7 @@ export function SynergyDetailResults() {
         ) : showLoading ? (
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2 py-2">
-              <Loader2 className="h-4 w-4 animate-spin text-[var(--color-primary-hover)]" />
+              <Loader2 className="h-4 w-4 text-[var(--color-primary-hover)]" />
               <p className="text-sm font-medium text-[var(--color-foreground)]/82">
                 {t("loading")}
               </p>

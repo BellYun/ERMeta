@@ -59,7 +59,7 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
 
   return (
     <main className="page-shell flex flex-col gap-5 lg:gap-6">
-      <section className="dashboard-panel reveal px-4 py-4 lg:px-5">
+      <section className="dashboard-panel px-4 py-4 lg:px-5">
         <div className="grid gap-3 xl:grid-cols-[minmax(0,1.08fr)_minmax(340px,0.92fr)]">
           <div className="flex flex-col justify-center">
             <div className="flex flex-wrap items-center gap-2.5">
@@ -136,7 +136,7 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
         </div>
       </section>
 
-      <section className="dashboard-panel reveal reveal-d1 p-4 lg:p-5">
+      <section className="dashboard-panel p-4 lg:p-5">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>

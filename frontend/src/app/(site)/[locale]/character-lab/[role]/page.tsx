@@ -186,7 +186,7 @@ export default async function CharacterLabRolePage({ params }: Props) {
 
       <div className="mb-6 flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-xl font-bold  text-[var(--color-foreground)]">
+          <h1 className="text-xl font-bold text-[var(--color-foreground)]">
             {copy.title(roleLabel)}
           </h1>
           <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 py-0.5 text-[11px] text-[var(--color-muted-foreground)]">
