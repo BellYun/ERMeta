@@ -197,7 +197,6 @@
   }
 }
 
-.glass-card,
 .dashboard-panel {
   position: relative;
   overflow: hidden;
@@ -207,27 +206,7 @@
   box-shadow: none;
 }
 
-.glass-card::before,
 .dashboard-panel::before {
-  content: none;
-}
-
-.dashboard-hero,
-.hero-gradient,
-.synergy-hero,
-.analysis-hero {
-  position: relative;
-  overflow: hidden;
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  box-shadow: none;
-}
-
-.dashboard-hero::before,
-.hero-gradient::before,
-.synergy-hero::before,
-.analysis-hero::before {
   content: none;
 }
 
@@ -356,21 +335,6 @@
     box-shadow: none;
   }
 
-  .dashboard-hero,
-  .hero-gradient,
-  .synergy-hero,
-  .analysis-hero {
-    border-radius: 6px;
-    box-shadow: none;
-  }
-
-  .dashboard-hero::before,
-  .hero-gradient::before,
-  .synergy-hero::before,
-  .analysis-hero::before {
-    content: none;
-  }
-
   .metric-card,
   .metric-tile {
     border-radius: 4px;
@@ -427,17 +391,4 @@
   transform: none;
   border-color: var(--color-border-light);
   box-shadow: none;
-}
-
-.spotlight-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  box-shadow: none;
-}
-
-.spotlight-card::after {
-  content: none;
 }

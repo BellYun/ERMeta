@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "이터널리턴 캐릭터 티어, 3인 조합, 빌드 통계 분석 서비스",
     start_url: "/",
     display: "standalone",
-    background_color: "#0a0a0f",
-    theme_color: "#7c6af7",
+    background_color: "#ffffff",
+    theme_color: "#172033",
     lang: "ko",
     icons: [
       {

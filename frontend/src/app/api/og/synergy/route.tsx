@@ -197,7 +197,7 @@ function renderDefaultOG() {
               justifyContent: "center",
               fontSize: "32px",
               fontWeight: 700,
-              color: "#1d4ed8",
+              color: "#172033",
             }}
           >
             E
@@ -220,7 +220,7 @@ function renderDefaultOG() {
         <div style={{ display: "flex", fontSize: "24px", color: "#475569" }}>
           무기와 특성을 포함한 조합 표본 지표
         </div>
-        <div style={{ display: "flex", fontSize: "18px", color: "#1d4ed8", marginTop: "8px" }}>
+        <div style={{ display: "flex", fontSize: "18px", color: "#172033", marginTop: "8px" }}>
           erwagg.com
         </div>
       </div>
@@ -277,7 +277,7 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
                 justifyContent: "center",
                 fontSize: "26px",
                 fontWeight: 700,
-                color: "#1d4ed8",
+                color: "#172033",
               }}
             >
               E
@@ -288,7 +288,7 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
               ER&GG
             </span>
           </div>
-          <span style={{ fontSize: "16px", color: "#1d4ed8" }}>erwagg.com</span>
+          <span style={{ fontSize: "16px", color: "#172033" }}>erwagg.com</span>
         </div>
 
         {/* 타이틀 */}
@@ -320,7 +320,7 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
             const isFirst = i === 0;
             const bgColor = isFirst ? "#ffffff" : "#f8fafc";
             const borderColor = isFirst ? "#94a3b8" : "#d5dbe5";
-            const rankColor = isFirst ? "#1d4ed8" : i === 1 ? "#334155" : "#64748b";
+            const rankColor = isFirst ? "#172033" : i === 1 ? "#334155" : "#64748b";
 
             return (
               <div
@@ -371,7 +371,7 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
                               borderRadius: "10px",
                               background: "#ffffff",
                               overflow: "hidden",
-                              border: isRec ? "2px solid #1d4ed8" : "1px solid #d5dbe5",
+                              border: isRec ? "2px solid #172033" : "1px solid #d5dbe5",
                               alignItems: "center",
                               justifyContent: "center",
                             }}
@@ -390,7 +390,7 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
                                 style={{
                                   fontSize: "20px",
                                   fontWeight: 700,
-                                  color: isRec ? "#1d4ed8" : "#64748b",
+                                  color: isRec ? "#172033" : "#64748b",
                                 }}
                               >
                                 {charName.slice(0, 2)}
@@ -401,7 +401,7 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
                             style={{
                               fontSize: "13px",
                               fontWeight: 600,
-                              color: isRec ? "#1d4ed8" : "#334155",
+                              color: isRec ? "#172033" : "#334155",
                               maxWidth: "80px",
                               textAlign: "center",
                             }}
@@ -436,7 +436,7 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
                         fontWeight: 700,
                         color:
                           trio.winRate >= 60
-                            ? "#1d4ed8"
+                            ? "#172033"
                             : trio.winRate >= 55
                               ? "#334155"
                               : "#64748b",
@@ -453,9 +453,9 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
                         fontWeight: 700,
                         color:
                           trio.averageRP > 0
-                            ? "#1d4ed8"
+                            ? "#172033"
                             : trio.averageRP < 0
-                              ? "#f87171"
+                              ? "#dc2626"
                               : "#94a3b8",
                       }}
                     >

@@ -149,9 +149,9 @@ function ComboWeaponCardImpl({
             rank === 1
               ? "text-[var(--color-accent-gold)]"
               : rank === 2
-                ? "text-[#e5e7eb]"
+                ? "text-[var(--color-foreground)]"
                 : rank === 3
-                  ? "text-[#f0a44a]"
+                  ? "text-[var(--color-muted-foreground)]"
                   : "text-[var(--color-foreground)]/55"
           )}
         >

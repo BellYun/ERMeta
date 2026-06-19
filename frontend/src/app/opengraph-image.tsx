@@ -53,7 +53,7 @@ export default function OGImage() {
                 justifyContent: "center",
                 fontSize: "28px",
                 fontWeight: 700,
-                color: "#1d4ed8",
+                color: "#172033",
               }}
             >
               ER
@@ -83,7 +83,7 @@ export default function OGImage() {
                 display: "flex",
                 fontSize: "58px",
                 fontWeight: 700,
-                color: "#1d4ed8",
+                color: "#172033",
                 lineHeight: 1.12,
                 letterSpacing: "0",
               }}

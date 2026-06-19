@@ -31,7 +31,7 @@ export async function HomePageContent({
 
   return (
     <div className="page-shell flex flex-col gap-4 lg:gap-5">
-      <section className="dashboard-hero px-4 py-4 lg:px-5">
+      <section className="dashboard-panel px-4 py-4 lg:px-5">
         <div className="flex flex-col gap-4">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">

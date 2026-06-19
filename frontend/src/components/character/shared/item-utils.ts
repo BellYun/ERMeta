@@ -3,20 +3,20 @@ import itemGradeMap from "@/../const/itemGradeMap.json";
 export type ItemGrade = "Common" | "Uncommon" | "Rare" | "Epic" | "Legend" | "Mythic";
 
 export const GRADE_BORDER: Record<ItemGrade, string> = {
-  Mythic: "border border-red-400/50",
-  Legend: "border border-amber-400/50",
-  Epic: "border border-purple-400/45",
-  Rare: "border border-blue-400/40",
-  Uncommon: "border border-green-400/35",
+  Mythic: "border border-[var(--color-border-light)]",
+  Legend: "border border-[var(--color-border-light)]",
+  Epic: "border border-[var(--color-border)]",
+  Rare: "border border-[var(--color-border)]",
+  Uncommon: "border border-[var(--color-border)]",
   Common: "",
 };
 
 export const GRADE_BG: Record<ItemGrade, string> = {
-  Mythic: "bg-[#5c1a1a]",
-  Legend: "bg-[#5c4a0a]",
-  Epic: "bg-[#3b1a5c]",
-  Rare: "bg-[#0f2e5c]",
-  Uncommon: "bg-[#1a3d1a]",
+  Mythic: "bg-[var(--color-surface-3)]",
+  Legend: "bg-[var(--color-surface-3)]",
+  Epic: "bg-[var(--color-surface-2)]",
+  Rare: "bg-[var(--color-surface-2)]",
+  Uncommon: "bg-[var(--color-surface-2)]",
   Common: "bg-[var(--color-surface-2)]",
 };
 
