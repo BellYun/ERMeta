@@ -11,40 +11,40 @@
 
 export const colors = {
   // 배경 계층
-  background: "#0b0f1a",
-  surface: "rgba(15, 23, 42, 0.74)",
-  surface2: "rgba(30, 41, 59, 0.58)",
-  surface3: "rgba(51, 65, 85, 0.42)",
-  surface4: "rgba(96, 165, 250, 0.10)",
-  border: "rgba(255, 255, 255, 0.08)",
-  borderLight: "rgba(255, 255, 255, 0.14)",
+  background: "#ffffff",
+  surface: "#ffffff",
+  surface2: "#f8fafc",
+  surface3: "#eef2f6",
+  surface4: "#f5f7fa",
+  border: "#e5e7eb",
+  borderLight: "#d1d5db",
 
   // 텍스트
-  foreground: "#e5e7eb",
-  mutedForeground: "#9ca3af",
+  foreground: "#172033",
+  mutedForeground: "#687386",
 
   // 액센트
-  primary: "#60a5fa",
-  primaryHover: "#93c5fd",
-  accentGold: "#fbbf24",
-  accentPurple: "#a78bfa",
+  primary: "#374151",
+  primaryHover: "#111827",
+  accentGold: "#374151",
+  accentPurple: "#687386",
 
   // Semantic
-  danger: "#f87171",
-  success: "#4ade80",
-  warning: "#fbbf24",
+  danger: "#dc2626",
+  success: "#15803d",
+  warning: "#374151",
 
   // 스탯
-  statUp: "#4ade80",
-  statDown: "#f87171",
+  statUp: "#15803d",
+  statDown: "#dc2626",
 
   // 티어
   tier: {
-    S: "#fbbf24",
-    A: "#60a5fa",
-    B: "#34d399",
-    C: "#a78bfa",
-    D: "#94a3b8",
+    S: "#374151",
+    A: "#374151",
+    B: "#687386",
+    C: "#687386",
+    D: "#64748b",
   },
 } as const;
 
@@ -56,10 +56,10 @@ export const spacing = {
 } as const;
 
 export const borderRadius = {
-  sm: "0.5rem",
-  md: "0.75rem",
-  lg: "1rem",
-  xl: "1.5rem",
+  sm: "0.25rem",
+  md: "0.375rem",
+  lg: "0.5rem",
+  xl: "0.5rem",
   full: "9999px",
 } as const;
 
@@ -76,8 +76,8 @@ export const typography = {
 } as const;
 
 export const elevation = {
-  panel: "0 28px 60px -40px rgba(0, 0, 0, 0.72)",
-  soft: "0 20px 40px -32px rgba(0, 0, 0, 0.56)",
+  panel: "none",
+  soft: "none",
 } as const;
 
 export type Tier = keyof typeof colors.tier;

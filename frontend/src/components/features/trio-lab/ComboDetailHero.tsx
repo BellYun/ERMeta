@@ -59,7 +59,7 @@ export function ComboDetailHero({ combo, listHref, patchVersion, tier }: ComboDe
             </div>
             <div className="grid grid-cols-2 gap-2">
               <HeroMetric label="승률" value={`${combo.winRate.toFixed(1)}%`} />
-              <HeroMetric label="평균 RP" value={rpText} tone="gold" />
+              <HeroMetric label="평균 RP" value={rpText} />
               <HeroMetric label="평균 순위" value={`#${combo.averageRank.toFixed(1)}`} />
               <HeroMetric label="표본" value={combo.totalGames.toLocaleString("ko-KR")} />
             </div>
@@ -70,23 +70,11 @@ export function ComboDetailHero({ combo, listHref, patchVersion, tier }: ComboDe
   );
 }
 
-function HeroMetric({
-  label,
-  value,
-  tone = "default",
-}: {
-  label: string;
-  value: string;
-  tone?: "default" | "gold";
-}) {
+function HeroMetric({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md border border-[var(--color-border)] bg-white p-3">
       <p className="text-[10px] font-medium text-[var(--color-muted-foreground)]">{label}</p>
-      <p
-        className={`mt-2 font-mono text-xl font-bold leading-none tabular-nums sm:text-2xl ${
-          tone === "gold" ? "text-[var(--color-accent-gold)]" : "text-[var(--color-foreground)]"
-        }`}
-      >
+      <p className="mt-2 font-mono text-xl font-bold leading-none tabular-nums text-[var(--color-foreground)] sm:text-2xl">
         {value}
       </p>
     </div>

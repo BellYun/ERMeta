@@ -32,11 +32,11 @@ function traitNameOf(
 }
 
 const SCORE_COLOR: Record<string, string> = {
-  "S+": "text-[var(--color-accent-gold)]",
-  S: "text-[var(--color-accent-gold)]",
-  A: "text-[var(--color-primary-hover)]",
-  B: "text-[#34d399]",
-  C: "text-[var(--color-accent-purple)]",
+  "S+": "text-[var(--color-foreground)]",
+  S: "text-[var(--color-foreground)]",
+  A: "text-[var(--color-foreground)]",
+  B: "text-[var(--color-muted-foreground)]",
+  C: "text-[var(--color-muted-foreground)]",
   D: "text-[var(--color-muted-foreground)]",
 };
 

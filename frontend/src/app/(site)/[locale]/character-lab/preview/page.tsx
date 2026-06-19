@@ -94,11 +94,11 @@ const ROLE_SHORT: Record<PartnerRole, string> = {
 };
 
 const ROLE_COLOR: Record<PartnerRole, string> = {
-  탱커: "#60a5fa",
-  "원거리 딜러": "#34d399",
+  탱커: "#374151",
+  "원거리 딜러": "#4b5563",
   스킬딜러: "#64748b",
-  전사: "#f87171",
-  지원가: "#fbbf24",
+  전사: "#6b7280",
+  지원가: "#687386",
   암살자: "#94a3b8",
 };
 
@@ -243,7 +243,7 @@ function RadarChart({
         strokeWidth={1.5}
       />
       {points.map((p) => (
-        <circle key={p.role} cx={p.x} cy={p.y} r={2.5} fill="#60a5fa" />
+        <circle key={p.role} cx={p.x} cy={p.y} r={2.5} fill="#64748b" />
       ))}
       {PARTNER_ROLES.map((role, i) => {
         const angle = (Math.PI * 2 * i) / numAxes - Math.PI / 2;
@@ -605,7 +605,7 @@ function DenseRadar({
             cx={p.x}
             cy={p.y}
             r={2}
-            fill={positive ? "#4ade80" : "#f87171"}
+            fill={positive ? "#15803d" : "#dc2626"}
           />
         );
       })}
@@ -1027,7 +1027,7 @@ function ScatterPlot({
   const pad = 40;
   const projX = (x: number) => pad + ((x - xMin) / (xMax - xMin || 1)) * (W - pad * 2);
   const projY = (y: number) => H - pad - ((y - yMin) / (yMax - yMin || 1)) * (H - pad * 2);
-  const groupColors = ["#60a5fa", "#34d399", "#fbbf24", "#64748b", "#f87171", "#94a3b8", "#22d3ee"];
+  const groupColors = ["#374151", "#4b5563", "#64748b", "#6b7280", "#687386", "#94a3b8", "#9ca3af"];
 
   return (
     <div className="overflow-x-auto">

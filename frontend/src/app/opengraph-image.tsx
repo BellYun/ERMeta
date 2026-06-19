@@ -10,7 +10,7 @@ const BARS = [
   { h: 360, color: "#94a3b8", op: 1 },
   { h: 300, color: "#cbd5e1", op: 1 },
   { h: 240, color: "#dbe4f0", op: 1 },
-  { h: 400, color: "#2563eb", op: 1 },
+  { h: 400, color: "#64748b", op: 1 },
   { h: 320, color: "#94a3b8", op: 1 },
 ];
 

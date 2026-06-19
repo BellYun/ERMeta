@@ -73,7 +73,7 @@ const FocusCell = React.memo(function FocusCell({
       <span
         className={cn(
           "w-full truncate text-center text-[11.5px] font-semibold",
-          selected ? "text-[var(--color-accent-purple)]" : "text-[var(--color-foreground)]/92"
+          selected ? "text-[var(--color-foreground)]" : "text-[var(--color-foreground)]/92"
         )}
       >
         {charName}
@@ -82,7 +82,7 @@ const FocusCell = React.memo(function FocusCell({
         <span
           className={cn(
             "w-full truncate text-center text-[10px] font-medium",
-            selected ? "text-[var(--color-accent-purple)]/90" : "text-[var(--color-foreground)]/60"
+            selected ? "text-[var(--color-foreground)]" : "text-[var(--color-foreground)]/60"
           )}
         >
           {localizedWeaponLabel}
@@ -230,9 +230,9 @@ export function FocusWeaponPool() {
             <button
               key={`${f.charCode}-${f.weaponCode}`}
               onClick={() => toggleFocus(f.charCode, f.weaponCode)}
-              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-[var(--color-accent-purple)]/40 bg-[var(--color-accent-purple)]/14 px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-foreground)] hover:bg-[var(--color-accent-purple)]/22 active:bg-[var(--color-accent-purple)]/28 transition-colors"
+              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-[var(--color-border)] bg-white px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors"
             >
-              <span className="relative h-4 w-4 shrink-0 overflow-hidden rounded ring-1 ring-[var(--color-accent-purple)]/40">
+              <span className="relative h-4 w-4 shrink-0 overflow-hidden rounded ring-1 ring-[var(--color-border)]">
                 <Image
                   src={getCharacterMiniWebpUrl(f.charCode)}
                   alt={getCharName(f.charCode)}

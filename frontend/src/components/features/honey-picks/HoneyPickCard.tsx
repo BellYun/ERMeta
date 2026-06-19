@@ -75,7 +75,7 @@ export function HoneyPickCard({
             priority={isCenter}
           />
 
-          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-white/90" />
+          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-white" />
 
           {/* Rank badge */}
           <div
@@ -83,7 +83,7 @@ export function HoneyPickCard({
               "absolute top-2 left-2 flex h-6 w-6 items-center justify-center rounded border text-[11px] font-bold",
               isCenter
                 ? "border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
-                : "border-[var(--color-border)] bg-white/90 text-[var(--color-muted-foreground)]"
+                : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]"
             )}
           >
             {rank}
@@ -106,7 +106,7 @@ export function HoneyPickCard({
           {/* Info panel */}
           <div
             className={cn(
-              "absolute inset-x-2 bottom-2 rounded border border-[var(--color-border)] bg-white/95 transition-colors",
+              "absolute inset-x-2 bottom-2 rounded border border-[var(--color-border)] bg-white transition-colors",
               isCenter ? "p-2.5" : "p-2"
             )}
           >

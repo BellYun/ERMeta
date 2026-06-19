@@ -17,20 +17,20 @@
   --color-primary-hover: #111827;
   --color-primary-glow: rgba(17, 24, 39, 0.06);
 
-  --color-accent-gold: #b7791f;
-  --color-accent-purple: #7c3aed;
+  --color-accent-gold: #374151;
+  --color-accent-purple: #687386;
 
   --color-danger: #dc2626;
   --color-success: #15803d;
-  --color-warning: #b7791f;
+  --color-warning: #374151;
 
   --color-stat-up: #15803d;
   --color-stat-down: #dc2626;
 
-  --color-tier-s: #b7791f;
-  --color-tier-a: #2563eb;
-  --color-tier-b: #059669;
-  --color-tier-c: #7c3aed;
+  --color-tier-s: #374151;
+  --color-tier-a: #374151;
+  --color-tier-b: #687386;
+  --color-tier-c: #687386;
   --color-tier-d: #64748b;
 }
 

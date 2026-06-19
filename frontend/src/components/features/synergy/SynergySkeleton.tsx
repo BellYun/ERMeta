@@ -67,7 +67,7 @@ export function SynergyDetailInteractiveSkeleton() {
     <div className="flex flex-col gap-5 sm:gap-6 mt-5 sm:mt-7">
       <section>
         <div className="flex items-center gap-2 mb-2.5">
-          <span className="flex items-center justify-center h-5 w-5 rounded-md bg-[var(--color-accent-purple)]/15 text-[10px] font-bold text-[var(--color-accent-purple)]">
+          <span className="flex items-center justify-center h-5 w-5 rounded border border-[var(--color-border)] bg-white text-[10px] font-bold text-[var(--color-muted-foreground)]">
             1
           </span>
           <h2 className="text-sm font-bold text-[var(--color-foreground)]">{t("poolTitle")}</h2>
@@ -89,7 +89,7 @@ export function SynergyDetailInteractiveSkeleton() {
 
         <section className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2.5">
-            <span className="flex items-center justify-center h-5 w-5 rounded-md bg-[var(--color-accent-gold)]/15 text-[10px] font-bold text-[var(--color-accent-gold)]">
+            <span className="flex items-center justify-center h-5 w-5 rounded border border-[var(--color-border)] bg-white text-[10px] font-bold text-[var(--color-muted-foreground)]">
               3
             </span>
             <h2 className="text-sm font-bold text-[var(--color-foreground)]">

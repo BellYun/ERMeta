@@ -259,7 +259,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
 
               {desktopPatchNote && previewChanges.length > 0 && (
                 <div className="pointer-events-none absolute inset-0 z-10 hidden group-hover:block">
-                  <div className="absolute inset-0 bg-white/98" />
+                  <div className="absolute inset-0 bg-white" />
                   <div className="absolute inset-0 flex flex-col gap-3 p-4">
                     <div className="flex items-center gap-2 pr-10">
                       {changeLabel && (
@@ -344,7 +344,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                 sizes="138px"
                 priority={i < 1}
               />
-              <div className="absolute inset-0 bg-white/90" />
+              <div className="absolute inset-0 bg-white" />
 
               {/* Rank + badge */}
               <div className="absolute left-2.5 top-2.5 flex items-center gap-1.5">
