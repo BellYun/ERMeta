@@ -110,7 +110,7 @@ function FlowCard({
 }) {
   return (
     <div
-      className={`rounded-lg border border-[var(--color-border)] bg-white px-3 py-3 ${edgeClass}`}
+      className={`rounded-md border border-[var(--color-border)] bg-white px-3 py-3 ${edgeClass}`}
     >
       <div className="flex items-center justify-between">
         <div

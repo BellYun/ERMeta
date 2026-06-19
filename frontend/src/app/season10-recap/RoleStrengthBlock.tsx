@@ -68,7 +68,7 @@ export function RoleStrengthBlock({ roleStats, patches }: RoleStrengthBlockProps
           </div>
         )}
 
-        <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
+        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
           <div className="overflow-x-auto pb-2 overscroll-x-contain">
             <table className="w-full min-w-[860px] border-separate border-spacing-0 text-xs sm:min-w-[940px] sm:text-sm xl:min-w-[1040px]">
               <thead>
@@ -123,7 +123,7 @@ function SummaryCard({
 }) {
   const isPositive = tone === "positive";
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-white px-4 py-3">
+    <div className="rounded-md border border-[var(--color-border)] bg-white px-4 py-3">
       <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">{label}</p>
       <div className="mt-2 flex items-end justify-between gap-4">
         <p className="text-lg font-bold text-[var(--color-foreground)]">{role}</p>

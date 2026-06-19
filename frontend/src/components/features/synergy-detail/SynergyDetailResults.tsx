@@ -497,7 +497,7 @@ export function SynergyDetailResults() {
                     });
                   });
                 }}
-                className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-xs font-medium text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
+                className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-xs font-medium text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
               >
                 <Share2 className="h-3 w-3" />
                 {copied ? t("copied") : t("share")}
@@ -505,7 +505,7 @@ export function SynergyDetailResults() {
               <button
                 type="button"
                 onClick={clearAllies}
-                className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1 rounded-lg border border-[var(--color-border)] bg-white px-3 py-2 text-xs font-medium text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+                className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-xs font-medium text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
               >
                 <X className="h-3 w-3" />
                 {t("reset")}
@@ -523,7 +523,7 @@ export function SynergyDetailResults() {
                 analytics.synergySortChanged(value);
               }}
               className={cn(
-                "flex min-h-[40px] shrink-0 items-center rounded-lg px-3 py-2 text-[12px] font-semibold transition-colors",
+                "flex min-h-[40px] shrink-0 items-center rounded-md px-3 py-2 text-[12px] font-semibold",
                 sortBy === value
                   ? "bg-white text-[var(--color-foreground)] ring-1 ring-[var(--color-border)]"
                   : "text-[var(--color-foreground)]/72 hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
@@ -538,7 +538,7 @@ export function SynergyDetailResults() {
       {/* 결과 목록 */}
       <SectionErrorBoundary sectionName={t("sectionName")}>
         {selectedAllies.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] bg-white px-6 py-14 text-center">
+          <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-[var(--color-border)] bg-white px-6 py-14 text-center">
             <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]">
               <Users className="h-7 w-7" strokeWidth={2} />
             </div>
@@ -577,7 +577,7 @@ export function SynergyDetailResults() {
             {Array.from({ length: 5 }).map((_, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 rounded-lg border border-[var(--color-border)] bg-white p-3"
+                className="flex items-center gap-3 rounded-md border border-[var(--color-border)] bg-white p-3"
               >
                 <div className="h-6 w-6 rounded-full bg-[var(--color-surface-2)]" />
                 <div className="flex gap-2">
@@ -593,7 +593,7 @@ export function SynergyDetailResults() {
             ))}
           </div>
         ) : error ? (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] bg-white py-16">
+          <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-[var(--color-border)] bg-white py-16">
             <p className="text-sm text-[var(--color-danger)]">{error}</p>
           </div>
         ) : recommendations.length > 0 ? (
@@ -633,14 +633,14 @@ export function SynergyDetailResults() {
               <button
                 type="button"
                 onClick={() => setVisibleCount((prev) => prev + 30)}
-                className="w-full min-h-[44px] rounded-md border border-[var(--color-border)] bg-white py-3 text-[13.5px] font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
+                className="w-full min-h-[44px] rounded-md border border-[var(--color-border)] bg-white py-3 text-[13.5px] font-semibold text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
               >
                 {t("more", { visible: visibleCount, total: recommendations.length })}
               </button>
             )}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] bg-white px-6 py-14 text-center">
+          <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-[var(--color-border)] bg-white px-6 py-14 text-center">
             <Users
               className="mb-3 h-10 w-10 text-[var(--color-foreground)]/35"
               strokeWidth={1.75}

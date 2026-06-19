@@ -65,7 +65,7 @@ export function AppFrame({
                       slotName="site_rail_left"
                       format="vertical"
                       responsive={false}
-                      className="rounded-lg border border-[var(--color-border)] bg-white px-2 py-2"
+                      className="rounded-md border border-[var(--color-border)] bg-white px-2 py-2"
                       minHeight={600}
                     />
                   </div>
@@ -84,7 +84,7 @@ export function AppFrame({
                       slotName="site_rail_right"
                       format="vertical"
                       responsive={false}
-                      className="rounded-lg border border-[var(--color-border)] bg-white px-2 py-2"
+                      className="rounded-md border border-[var(--color-border)] bg-white px-2 py-2"
                       minHeight={600}
                     />
                   </div>

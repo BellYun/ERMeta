@@ -162,7 +162,7 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
       title={localizedWeaponLabel ? `${charName} (${localizedWeaponLabel})` : charName}
       style={{ touchAction: "manipulation" }}
       className={cn(
-        "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors touch-manipulation",
+        "flex flex-col items-center gap-1 rounded-md px-1 py-2 touch-manipulation",
         selected
           ? "bg-white outline outline-1 outline-[var(--color-border-light)]"
           : disabled
@@ -418,7 +418,7 @@ export function WeaponAllySelector() {
       </div>
 
       {/* 검색 + 가상화 그리드 */}
-      <div className="rounded-lg border border-[var(--color-border)] bg-white p-3">
+      <div className="rounded-md border border-[var(--color-border)] bg-white p-3">
         <p className="mb-3 px-1 text-[12px] font-medium text-[var(--color-foreground)]/72">
           {t("heading")}
         </p>
@@ -434,7 +434,7 @@ export function WeaponAllySelector() {
           {search && (
             <button
               onClick={() => setSearch("")}
-              className="absolute right-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] transition-colors"
+              className="absolute right-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)]"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -532,7 +532,7 @@ function SlotWeaponFilled({
       <button
         onClick={onRemove}
         aria-label={`${name} 제거`}
-        className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-[var(--color-foreground)]/70 transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)] active:bg-[var(--color-surface-3)] active:text-[var(--color-foreground)]"
+        className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md text-[var(--color-foreground)]/70 hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)] active:bg-[var(--color-surface-3)] active:text-[var(--color-foreground)]"
       >
         <X className="h-4 w-4" strokeWidth={2.4} />
       </button>

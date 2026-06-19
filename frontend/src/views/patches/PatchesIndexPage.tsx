@@ -150,7 +150,7 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
             {latestSummary ? (
               <Link
                 href={`/patches/${latestSummary.patch}`}
-                className="inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm font-medium text-[var(--color-foreground)] transition hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
+                className="inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm font-medium text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
               >
                 <span>{t("viewDetail")}</span>
                 <ArrowUpRight className="h-4 w-4" strokeWidth={2} />
@@ -163,7 +163,7 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
               <Link
                 key={summary.patch}
                 href={`/patches/${summary.patch}`}
-                className={`metric-card group flex h-full flex-col gap-4 px-4 py-4 transition-colors sm:px-5 sm:py-5 ${
+                className={`metric-card group flex h-full flex-col gap-4 px-4 py-4 sm:px-5 sm:py-5 ${
                   index === 0
                     ? "border-[var(--color-border-light)] bg-white"
                     : "hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
@@ -189,7 +189,7 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
                     </p>
                   </div>
 
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] transition-colors group-hover:text-[var(--color-foreground)]">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]">
                     <ArrowUpRight className="h-4.5 w-4.5" strokeWidth={2} />
                   </span>
                 </div>

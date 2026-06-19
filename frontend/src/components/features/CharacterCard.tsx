@@ -19,7 +19,7 @@ const CHANGE_LABEL: Record<PatchChange["changeType"], { label: string; className
 };
 
 const baseClass =
-  "group relative flex items-center gap-3 rounded-lg bg-[var(--color-surface-2)] px-3 py-2.5 hover:bg-[var(--color-border)] transition-colors";
+  "group relative flex items-center gap-3 rounded-md bg-[var(--color-surface-2)] px-3 py-2.5";
 
 function CardContent({
   name,
@@ -50,7 +50,7 @@ function CardContent({
 
       {hasChanges && (
         <div className="pointer-events-none absolute bottom-full left-0 right-0 z-50 mb-2 hidden group-hover:block">
-          <div className="flex flex-col gap-2 rounded-lg border border-[var(--color-border)] bg-white px-3 py-2.5">
+          <div className="flex flex-col gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2.5">
             {patchChanges.map((change, i) => {
               const { label, className: labelClass } = CHANGE_LABEL[change.changeType];
               return (

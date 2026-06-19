@@ -33,14 +33,14 @@ export default function CharacterError({
       <div className="flex items-center gap-3 mt-2">
         <button
           onClick={reset}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-foreground)] hover:bg-[var(--color-surface)] transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-md bg-[var(--color-surface-2)] border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-foreground)]"
         >
           <RefreshCw className="h-3.5 w-3.5" />
           {t("retry")}
         </button>
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--color-border)] px-4 py-2 text-sm text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-md border border-[var(--color-border)] px-4 py-2 text-sm text-[var(--color-muted-foreground)]"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           {t("home")}

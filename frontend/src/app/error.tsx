@@ -28,7 +28,7 @@ export default function Error({
       <p className="text-xs text-[var(--color-muted-foreground)]">잠시 후 다시 시도해 주세요.</p>
       <button
         onClick={reset}
-        className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-foreground)] hover:bg-[var(--color-surface)] transition-colors"
+        className="inline-flex items-center gap-1.5 rounded-md bg-[var(--color-surface-2)] border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-foreground)]"
       >
         <RefreshCw className="h-3.5 w-3.5" />
         새로고침

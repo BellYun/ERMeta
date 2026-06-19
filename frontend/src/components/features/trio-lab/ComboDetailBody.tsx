@@ -157,7 +157,7 @@ function MemberAvatar({ member, size = "h-16 w-16" }: { member: TrioWeaponMember
     <Link
       href={`/character/${member.character}`}
       aria-label={`${characterDisplayName(member.character)} 캐릭터 페이지`}
-      className={`relative ${size} shrink-0 overflow-hidden rounded border border-[var(--color-border)] bg-[var(--color-surface-2)] transition-colors hover:border-[var(--color-border-light)]`}
+      className={`relative ${size} shrink-0 overflow-hidden rounded border border-[var(--color-border)] bg-[var(--color-surface-2)] hover:border-[var(--color-border-light)]`}
     >
       <Image
         src={getCharacterMiniWebpUrl(member.character)}
@@ -282,7 +282,7 @@ function TraitTreeRow({
           <div key={opt.code} className="flex shrink-0 flex-col items-center gap-1">
             <div
               className={cn(
-                "rounded-full transition-colors",
+                "rounded-full",
                 isTop
                   ? "p-0.5 outline outline-1 outline-[var(--color-border-light)]"
                   : "opacity-35 grayscale"
@@ -398,7 +398,7 @@ function TraitBlock({
 
   return (
     <div className="space-y-3">
-      <div className="rounded-lg border border-[var(--color-border)] bg-white p-4 sm:p-5">
+      <div className="rounded-md border border-[var(--color-border)] bg-white p-4 sm:p-5">
         <div className="flex flex-col items-center gap-3">
           {topMainCore != null && (
             <div className="rounded border border-[var(--color-border)] bg-white p-1">
@@ -412,7 +412,7 @@ function TraitBlock({
       </div>
 
       {secondaries.length > 0 && (
-        <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
+        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
           <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60 px-3 py-2 sm:px-4">
             <span className="text-[11px] font-semibold text-[var(--color-muted-foreground)] sm:text-xs">
               부특성 조합
@@ -507,7 +507,7 @@ function CharacterDetailCard({ data }: { data: CharacterDetailData }) {
         </div>
         <Link
           href={`/character/${member.character}`}
-          className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-white px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
+          className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-white px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
         >
           빌드
           <ChevronRight className="h-3 w-3" strokeWidth={2.4} />
@@ -611,7 +611,7 @@ export function TraitComboBlock({
         {topRows.map((row, index) => (
           <div
             key={`${row.mainCore1}-${row.mainCore2}-${row.mainCore3}-${index}`}
-            className="grid gap-3 rounded-lg border border-[var(--color-border)] bg-white p-3 md:grid-cols-[44px_1fr_auto] md:items-center"
+            className="grid gap-3 rounded-md border border-[var(--color-border)] bg-white p-3 md:grid-cols-[44px_1fr_auto] md:items-center"
           >
             <span className="font-mono text-sm font-bold text-[var(--color-muted-foreground)]">
               #{index + 1}
@@ -620,7 +620,7 @@ export function TraitComboBlock({
               {combo.members.map((member) => (
                 <div
                   key={`${member.character}-${member.weapon}`}
-                  className="flex min-w-0 items-center gap-2 rounded-lg bg-white px-2 py-1.5"
+                  className="flex min-w-0 items-center gap-2 rounded-md bg-white px-2 py-1.5"
                 >
                   <MemberAvatar member={member} size="h-8 w-8" />
                   <TraitThumb
@@ -713,7 +713,7 @@ export function SimilarBlock({
         <Link
           href={listHref}
           scroll={false}
-          className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-foreground)] transition-colors hover:text-[var(--color-foreground)]"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-foreground)] hover:text-[var(--color-foreground)]"
         >
           실험실에서 더 보기
           <ArrowRight className="h-3 w-3" strokeWidth={2.4} />
@@ -771,7 +771,7 @@ export function StickySidebar({ combo }: { combo: TrioWeaponCombo }) {
 
       <div
         aria-label="광고 슬롯"
-        className="flex h-[250px] items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-surface-3)] text-[11px] text-[var(--color-muted-foreground)]"
+        className="flex h-[250px] items-center justify-center rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface-3)] text-[11px] text-[var(--color-muted-foreground)]"
       >
         AD · 300×250 · STICKY
       </div>

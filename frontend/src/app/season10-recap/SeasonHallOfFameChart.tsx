@@ -75,7 +75,7 @@ function RPTooltip({
   const datum = payload[0].payload;
 
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-white px-3 py-2">
+    <div className="rounded-md border border-[var(--color-border)] bg-white px-3 py-2">
       <p className="text-[11px] font-semibold text-[var(--color-foreground)]">{datum.patch} 패치</p>
       {datum.hasData ? (
         <>

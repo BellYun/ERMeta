@@ -14,7 +14,7 @@ import type { ChartDatum } from "./SeasonHallOfFameChart";
 // dynamic import 가 자연스럽다. ssr:false 로 차트 마크업이 hydrate 시점에만 평가된다.
 const SeasonHallOfFameChart = dynamic(() => import("./SeasonHallOfFameChart"), {
   ssr: false,
-  loading: () => <div className="h-full w-full rounded-lg bg-[var(--color-surface-2)]" />,
+  loading: () => <div className="h-full w-full rounded-md bg-[var(--color-surface-2)]" />,
 });
 
 interface SeasonHallOfFameBlockProps {
@@ -55,7 +55,7 @@ export function SeasonHallOfFameBlock({
           </span>
         </div>
 
-        <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
+        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
           {entries.length === 0 ? (
             <div className="py-16 text-center text-sm text-[var(--color-muted-foreground)]">
               표본 확인 중
@@ -115,7 +115,7 @@ function SeasonRow({
         onClick={onToggle}
         aria-expanded={isOpen}
         className={cn(
-          "group flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors sm:px-4 sm:py-3",
+          "group flex w-full items-center gap-3 px-3 py-2.5 text-left sm:px-4 sm:py-3",
           isOpen ? "bg-white" : "hover:bg-[var(--color-surface-2)]",
           isTopRow && !isOpen && "bg-white"
         )}
@@ -133,7 +133,7 @@ function SeasonRow({
           {rank}
         </span>
 
-        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)] sm:h-11 sm:w-11">
+        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-[var(--color-surface-2)] sm:h-11 sm:w-11">
           <Image
             src={imageUrl}
             alt={name}
@@ -181,7 +181,7 @@ function SeasonRow({
 
         <svg
           className={cn(
-            "h-4 w-4 shrink-0 text-[var(--color-muted-foreground)] transition-transform",
+            "h-4 w-4 shrink-0 text-[var(--color-muted-foreground)]",
             isOpen && "rotate-180"
           )}
           viewBox="0 0 16 16"

@@ -6,7 +6,7 @@ export default function Loading() {
           <div className="h-7 w-40 rounded-md bg-[var(--color-surface-2)]" />
           <div className="mt-1 h-4 w-72 rounded-md bg-[var(--color-surface-2)]" />
         </div>
-        <div className="h-96 rounded-lg bg-[var(--color-surface-2)]" />
+        <div className="h-96 rounded-md bg-[var(--color-surface-2)]" />
       </section>
     </div>
   );

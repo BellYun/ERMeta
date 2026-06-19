@@ -50,7 +50,7 @@ const FocusCell = React.memo(function FocusCell({
       title={localizedWeaponLabel ? `${charName} (${localizedWeaponLabel})` : charName}
       style={{ touchAction: "manipulation" }}
       className={cn(
-        "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors touch-manipulation",
+        "flex flex-col items-center gap-1 rounded-md px-1 py-2 touch-manipulation",
         selected
           ? "bg-white outline outline-1 outline-[var(--color-border-light)]"
           : "hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80"
@@ -169,7 +169,7 @@ export function FocusWeaponPool() {
   const headerTapGuard = useTapGuard(toggleExpanded);
 
   return (
-    <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
+    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
       {/* 접이식 헤더 — button 중첩 방지를 위해 div+role 사용 */}
       <div
         role="button"
@@ -183,7 +183,7 @@ export function FocusWeaponPool() {
         }}
         aria-expanded={isExpanded}
         style={{ touchAction: "manipulation" }}
-        className="flex w-full cursor-pointer items-center justify-between px-4 py-3 transition-colors hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)]"
+        className="flex w-full cursor-pointer items-center justify-between px-4 py-3 hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)]"
       >
         <div className="flex items-center gap-2.5">
           <span className="text-[14px] font-bold text-[var(--color-foreground)]">{t("title")}</span>
@@ -208,7 +208,7 @@ export function FocusWeaponPool() {
               onTouchEnd={(e) => e.stopPropagation()}
               onPointerDown={(e) => e.stopPropagation()}
               onPointerUp={(e) => e.stopPropagation()}
-              className="text-[11px] font-medium text-[var(--color-foreground)]/70 hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg hover:bg-[var(--color-surface-2)]"
+              className="text-[11px] font-medium text-[var(--color-foreground)]/70 hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] min-h-[44px] min-w-[44px] flex items-center justify-center rounded-md hover:bg-[var(--color-surface-2)]"
             >
               {t("reset")}
             </button>
@@ -228,7 +228,7 @@ export function FocusWeaponPool() {
             <button
               key={`${f.charCode}-${f.weaponCode}`}
               onClick={() => toggleFocus(f.charCode, f.weaponCode)}
-              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-[var(--color-border)] bg-white px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors"
+              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-white px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)]"
             >
               <span className="relative h-4 w-4 shrink-0 overflow-hidden rounded ring-1 ring-[var(--color-border)]">
                 <Image
@@ -260,7 +260,7 @@ export function FocusWeaponPool() {
             {search && (
               <button
                 onClick={() => setSearch("")}
-                className="absolute right-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] transition-colors"
+                className="absolute right-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)]"
               >
                 <X className="h-3.5 w-3.5" />
               </button>

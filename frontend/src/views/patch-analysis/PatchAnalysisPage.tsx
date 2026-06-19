@@ -545,7 +545,7 @@ function CharacterDeltaCard({
     <article className="metric-card grid gap-4 px-4 py-4 sm:px-5 sm:py-5 lg:grid-cols-[minmax(260px,0.9fr)_minmax(0,1.55fr)] lg:items-start">
       <div className="flex flex-col gap-3 lg:sticky lg:top-24">
         <div className="flex items-start gap-3">
-          <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)]">
+          <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)]">
             <Image
               src={getCharacterMiniWebpUrl(entry.characterNum)}
               alt={displayName}
@@ -607,7 +607,7 @@ function CharacterDeltaCard({
       </div>
 
       <div className="flex flex-col gap-3">
-        <div className="rounded-lg border border-[var(--color-border)] bg-white px-3 py-3">
+        <div className="rounded-md border border-[var(--color-border)] bg-white px-3 py-3">
           <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
             {copy.patchHistory}
           </p>
@@ -627,7 +627,7 @@ function CharacterDeltaCard({
         </div>
 
         {evaluation ? (
-          <div className="rounded-lg border border-[var(--color-border)] bg-white px-3 py-3">
+          <div className="rounded-md border border-[var(--color-border)] bg-white px-3 py-3">
             <p className="text-[11px] font-semibold text-[var(--color-foreground)]">
               {copy.evaluation}
             </p>
@@ -702,7 +702,7 @@ function DeltaMetric({
   suffix?: string;
 }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-white px-3 py-2">
+    <div className="rounded-md border border-[var(--color-border)] bg-white px-3 py-2">
       <p className="text-[10px] font-medium text-[var(--color-muted-foreground)]">{label}</p>
       <p
         className={cn(
@@ -748,7 +748,7 @@ function RoleTable({
           </span>
         </div>
 
-        <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
+        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[760px] border-separate border-spacing-0 text-sm">
               <thead>
@@ -835,12 +835,12 @@ function DeltaRanking({
           return (
             <div
               key={`${entry.characterNum}-${entry.scopeKey}-${index}`}
-              className="flex items-center gap-3 rounded-lg border border-[var(--color-border)] bg-white px-3 py-3"
+              className="flex items-center gap-3 rounded-md border border-[var(--color-border)] bg-white px-3 py-3"
             >
               <span className="w-6 text-center text-sm font-bold text-[var(--color-muted-foreground)] tabular-nums">
                 {index + 1}
               </span>
-              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)]">
+              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)]">
                 <Image
                   src={getCharacterImageUrl(entry.characterNum)}
                   alt={displayName}
@@ -1030,7 +1030,7 @@ export default async function PatchAnalysisPage({
                     href={`/patch-analysis/${candidate}`}
                     aria-current={isActive ? "page" : undefined}
                     className={cn(
-                      "rounded-md border px-3 py-2 text-sm font-semibold transition",
+                      "rounded-md border px-3 py-2 text-sm font-semibold ",
                       isActive
                         ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
                         : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"

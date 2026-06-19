@@ -402,7 +402,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
 
   return (
     <>
-      <section className="rounded-lg border border-[var(--color-border)] bg-white p-3 sm:p-4">
+      <section className="rounded-md border border-[var(--color-border)] bg-white p-3 sm:p-4">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-2">
             <p className="text-xs font-semibold text-[var(--color-foreground)]">
@@ -416,7 +416,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
             <button
               type="button"
               onClick={clearPool}
-              className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 py-1 text-[11px] font-semibold text-[var(--color-muted-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:text-[var(--color-foreground)]"
+              className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 py-1 text-[11px] font-semibold text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:text-[var(--color-foreground)]"
             >
               <X className="h-3 w-3" strokeWidth={2.4} />
               {copy.clear}
@@ -431,7 +431,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
               return (
                 <div
                   key={`empty-${idx}`}
-                  className="flex min-h-[112px] items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-surface-3)]/40 px-2 text-center text-[11px] text-[var(--color-muted-foreground)]"
+                  className="flex min-h-[112px] items-center justify-center rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface-3)]/40 px-2 text-center text-[11px] text-[var(--color-muted-foreground)]"
                 >
                   {copy.slotLabels[idx]}
                 </div>
@@ -466,7 +466,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                   type="button"
                   onClick={() => removeFromPool(code)}
                   aria-label={copy.remove(getCharName(code))}
-                  className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-danger)]"
+                  className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-danger)]"
                 >
                   <X className="h-4 w-4" strokeWidth={2.2} />
                 </button>
@@ -475,7 +475,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                     <button
                       type="button"
                       onClick={() => selectWeaponFilter(code, null)}
-                      className={`rounded border px-1.5 py-1 text-[10px] font-semibold transition-colors ${
+                      className={`rounded border px-1.5 py-1 text-[10px] font-semibold ${
                         selectedWeapon == null
                           ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
                           : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
@@ -488,7 +488,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                         key={`${code}-${weapon.weaponCode}`}
                         type="button"
                         onClick={() => selectWeaponFilter(code, weapon.weaponCode)}
-                        className={`rounded border px-1.5 py-1 text-[10px] font-semibold transition-colors ${
+                        className={`rounded border px-1.5 py-1 text-[10px] font-semibold ${
                           selectedWeapon === weapon.weaponCode
                             ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
                             : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
@@ -522,7 +522,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
               type="button"
               onClick={() => replaceUrlState({ ...currentState, search: "" })}
               aria-label={copy.clearSearch}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--color-foreground)]"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
             >
               <X className="h-3.5 w-3.5" strokeWidth={2.4} />
             </button>
@@ -593,12 +593,12 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
           {Array.from({ length: 6 }).map((_, index) => (
             <div
               key={`skeleton-${index}`}
-              className="h-72 rounded-lg bg-[var(--color-surface-3)]"
+              className="h-72 rounded-md bg-[var(--color-surface-3)]"
             />
           ))}
         </div>
       ) : combos.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-surface-3)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
+        <div className="rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface-3)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
           {pool.length === 0 ? copy.emptyNoPool : copy.emptyWithPool}
         </div>
       ) : (
@@ -625,7 +625,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                 onClick={() =>
                   setVisibleCount((count) => Math.min(count + PAGE_SIZE, sortedCombos.length))
                 }
-                className="inline-flex min-h-[42px] items-center justify-center rounded-md border border-[var(--color-border)] bg-white px-5 text-xs font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
+                className="inline-flex min-h-[42px] items-center justify-center rounded-md border border-[var(--color-border)] bg-white px-5 text-xs font-semibold text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
               >
                 {copy.loadMore(Math.min(PAGE_SIZE, sortedCombos.length - visibleCount))}
               </button>

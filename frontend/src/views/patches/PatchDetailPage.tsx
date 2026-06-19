@@ -94,7 +94,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
             <div className="flex flex-wrap items-center gap-2.5">
               <Link
                 href="/patches"
-                className="dashboard-kicker transition hover:text-[var(--color-foreground)]"
+                className="dashboard-kicker hover:text-[var(--color-foreground)]"
               >
                 {t("breadcrumb")}
               </Link>
@@ -145,7 +145,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                     key={candidate}
                     href={`/patches/${candidate}`}
                     aria-current={isActive ? "page" : undefined}
-                    className={`rounded-md border px-3 py-2 text-sm font-medium transition ${
+                    className={`rounded-md border px-3 py-2 text-sm font-medium ${
                       isActive
                         ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
                         : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
@@ -196,7 +196,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
           </div>
           <Link
             href="/patches"
-            className="inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm font-medium text-[var(--color-foreground)] transition hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
+            className="inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm font-medium text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
           >
             {t("breadcrumb")}
           </Link>
@@ -223,7 +223,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                   <div className="min-w-0 flex-1">
                     <Link
                       href={`/character/${note.characterCode}`}
-                      className="block truncate text-[1rem] font-bold text-[var(--color-foreground)] transition-colors hover:text-[var(--color-foreground)] sm:text-[1.05rem]"
+                      className="block truncate text-[1rem] font-bold text-[var(--color-foreground)] hover:text-[var(--color-foreground)] sm:text-[1.05rem]"
                     >
                       {name}
                     </Link>

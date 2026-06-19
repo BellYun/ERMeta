@@ -20,7 +20,7 @@ export function ComboDetailHero({ combo, listHref, patchVersion, tier }: ComboDe
         <Link
           href={listHref}
           scroll={false}
-          className="inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+          className="inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
         >
           <ArrowLeft className="h-3 w-3" strokeWidth={2.4} />
           조합 실험실

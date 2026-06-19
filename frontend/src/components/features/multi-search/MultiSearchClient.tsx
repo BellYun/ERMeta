@@ -284,7 +284,7 @@ export function MultiSearchClient() {
     <div className="flex flex-col gap-5">
       <form
         onSubmit={handleMySubmit}
-        className="rounded-lg border border-[var(--color-border)] bg-white p-3 sm:p-4"
+        className="rounded-md border border-[var(--color-border)] bg-white p-3 sm:p-4"
       >
         <div className="grid gap-2 lg:grid-cols-[minmax(180px,0.45fr)_auto]">
           <label className="min-w-0">
@@ -295,7 +295,7 @@ export function MultiSearchClient() {
               maxLength={16}
               autoComplete="nickname"
               placeholder="내 닉네임"
-              className="h-10 w-full min-w-0 rounded-md border border-[var(--color-border)] bg-white px-3 text-sm font-medium text-[var(--color-foreground)] outline-none transition focus:border-[var(--color-border-light)]"
+              className="h-10 w-full min-w-0 rounded-md border border-[var(--color-border)] bg-white px-3 text-sm font-medium text-[var(--color-foreground)] outline-none focus:border-[var(--color-border-light)]"
             />
           </label>
           <Button type="submit" size="lg" disabled={isMyLoading} className="h-10 md:min-w-28">
@@ -322,7 +322,7 @@ export function MultiSearchClient() {
 
       <form
         onSubmit={handleTeamSubmit}
-        className="rounded-lg border border-[var(--color-border)] bg-white p-3 sm:p-4"
+        className="rounded-md border border-[var(--color-border)] bg-white p-3 sm:p-4"
       >
         <div className="grid gap-2 lg:grid-cols-[1fr_1fr_auto]">
           {[0, 1].map((index) => (
@@ -333,7 +333,7 @@ export function MultiSearchClient() {
                 onChange={(event) => updateTeammateInput(index, event.target.value)}
                 autoComplete="off"
                 placeholder={`팀원 ${index + 1} 닉네임`}
-                className="h-10 w-full min-w-0 rounded-md border border-[var(--color-border)] bg-white px-3 text-sm font-medium text-[var(--color-foreground)] outline-none transition focus:border-[var(--color-border-light)]"
+                className="h-10 w-full min-w-0 rounded-md border border-[var(--color-border)] bg-white px-3 text-sm font-medium text-[var(--color-foreground)] outline-none focus:border-[var(--color-border-light)]"
               />
             </label>
           ))}
@@ -460,7 +460,7 @@ function PlayerCard({
                 <div
                   key={character.characterCode}
                   className={cn(
-                    "grid gap-2 rounded-lg border px-2.5 py-1.5 transition",
+                    "grid gap-2 rounded-md border px-2.5 py-1.5",
                     "grid-cols-[1fr_auto]",
                     selectedCharacter === character.characterCode
                       ? "border-[var(--color-border-light)] bg-white"
@@ -587,10 +587,10 @@ function MyProfileSetupCard({
             return (
               <div
                 key={character.characterCode}
-                className="grid gap-2 rounded-lg border border-[var(--color-border)] bg-white p-2.5"
+                className="grid gap-2 rounded-md border border-[var(--color-border)] bg-white p-2.5"
               >
                 <div className="grid grid-cols-[36px_1fr] items-center gap-2">
-                  <div className="relative h-9 w-9 overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)]">
+                  <div className="relative h-9 w-9 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)]">
                     <Image
                       src={getCharacterMiniWebpUrl(character.characterCode)}
                       alt={getCharacterName(character.characterCode)}
@@ -614,7 +614,7 @@ function MyProfileSetupCard({
                   onChange={(event) =>
                     onWeaponChange(character.characterCode, Number(event.target.value))
                   }
-                  className="h-9 rounded-lg border border-[var(--color-border)] bg-white px-2 text-xs font-semibold text-[var(--color-foreground)] outline-none"
+                  className="h-9 rounded-md border border-[var(--color-border)] bg-white px-2 text-xs font-semibold text-[var(--color-foreground)] outline-none"
                   aria-label={`${getCharacterName(character.characterCode)} 무기군`}
                 >
                   <option value={0}>전체 무기</option>
@@ -643,7 +643,7 @@ function Metric({
   strong?: boolean;
 }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-white px-2 py-1.5">
+    <div className="rounded-md border border-[var(--color-border)] bg-white px-2 py-1.5">
       <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">{label}</p>
       <p
         className={cn(
@@ -808,7 +808,7 @@ function TeamComboRecommendations({
       : "팀원 후보군에 맞는 내 캐릭터/무기";
 
   return (
-    <section className="flex flex-col gap-3 rounded-lg border border-[var(--color-border)] bg-white p-3 sm:p-4">
+    <section className="flex flex-col gap-3 rounded-md border border-[var(--color-border)] bg-white p-3 sm:p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold text-[var(--color-muted-foreground)]">
@@ -823,7 +823,7 @@ function TeamComboRecommendations({
           </p>
         </div>
         {loading && (
-          <span className="inline-flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-xs font-semibold text-[var(--color-muted-foreground)]">
+          <span className="inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-xs font-semibold text-[var(--color-muted-foreground)]">
             <Loader2 className="h-4 w-4" />
             지표 계산 중
           </span>
@@ -850,7 +850,7 @@ function TeamComboRecommendations({
       )}
 
       {isReady && !loading && !error && recommendedCombos.length === 0 && combos.length > 0 && (
-        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-muted-foreground)]">
+        <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-muted-foreground)]">
           설정한 캐릭터별 무기군과 맞는 표본이 없습니다.
         </div>
       )}
@@ -1085,7 +1085,7 @@ function MyPickComboCard({
             key={combo.id}
             href={withCurrentRouteLocale(pathname, comboDetailHref(combo))}
             scroll={false}
-            className="flex items-center justify-between gap-2 rounded border border-transparent bg-white px-2 py-1.5 text-[11px] transition hover:border-[var(--color-border)]"
+            className="flex items-center justify-between gap-2 rounded border border-transparent bg-white px-2 py-1.5 text-[11px] hover:border-[var(--color-border)]"
           >
             <span className="min-w-0 truncate font-bold text-[var(--color-foreground)]">
               {members

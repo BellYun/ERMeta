@@ -122,7 +122,7 @@ function ComboWeaponCardImpl({
   return (
     <div
       className={cn(
-        "rounded-lg border bg-white transition-colors",
+        "rounded-md border bg-white",
         rank <= 3 ? "border-[var(--color-border-light)]" : "border-[var(--color-border)]",
         isFocusPoolCombo && "border-[var(--color-border-light)] bg-white"
       )}
@@ -140,7 +140,7 @@ function ComboWeaponCardImpl({
           }
         }}
         style={{ touchAction: "manipulation" }}
-        className="w-full flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-2 sm:py-2.5 text-left cursor-pointer rounded-lg hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)] transition-colors"
+        className="w-full flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-2 sm:py-2.5 text-left cursor-pointer rounded-md hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]"
       >
         {/* 순위 */}
         <span
@@ -215,7 +215,7 @@ function ComboWeaponCardImpl({
                     onPointerDown={(e) => e.stopPropagation()}
                     onPointerUp={(e) => e.stopPropagation()}
                     aria-label={`${getCharName(m.char)} 상세 보기`}
-                    className="mt-0.5 inline-flex h-[18px] w-[18px] items-center justify-center rounded border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:text-[var(--color-foreground)] active:bg-[var(--color-surface-2)] sm:h-5 sm:w-5"
+                    className="mt-0.5 inline-flex h-[18px] w-[18px] items-center justify-center rounded border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:text-[var(--color-foreground)] active:bg-[var(--color-surface-2)] sm:h-5 sm:w-5"
                   >
                     <ArrowUpRight className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                   </Link>
@@ -259,7 +259,7 @@ function ComboWeaponCardImpl({
 
           <ChevronRight
             className={cn(
-              "h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-[var(--color-foreground)]/55 transition-transform",
+              "h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-[var(--color-foreground)]/55",
               showTraits && "rotate-90 text-[var(--color-primary-hover)]"
             )}
             strokeWidth={2.4}
@@ -273,7 +273,7 @@ function ComboWeaponCardImpl({
           {visibleVariants.map((v, vi) => (
             <div
               key={`${v.mainCore1}-${v.mainCore2}-${v.mainCore3}-${vi}`}
-              className="flex items-center gap-1.5 sm:gap-2 rounded-lg bg-white px-2 sm:px-3 py-1.5 sm:py-2 border border-[var(--color-border-light)]"
+              className="flex items-center gap-1.5 sm:gap-2 rounded-md bg-white px-2 sm:px-3 py-1.5 sm:py-2 border border-[var(--color-border-light)]"
             >
               {/* 순위 열과 동일한 오프셋 */}
               <span className="w-1 sm:w-2 shrink-0" />
@@ -359,7 +359,7 @@ function MoreButton({ label, onActivate }: { label: string; onActivate: () => vo
       type="button"
       {...tapGuard}
       onClick={(e) => e.stopPropagation()}
-      className="mt-1 text-[10px] sm:text-xs text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] py-1.5 px-2 rounded bg-[var(--color-surface)]/40 hover:bg-[var(--color-surface)]/70 transition-colors"
+      className="mt-1 text-[10px] sm:text-xs text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] py-1.5 px-2 rounded bg-[var(--color-surface)]/40 hover:bg-[var(--color-surface)]/70"
       style={{ touchAction: "manipulation" }}
     >
       {label}

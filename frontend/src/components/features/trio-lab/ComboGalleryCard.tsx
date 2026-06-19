@@ -189,10 +189,10 @@ export function ComboGalleryCard({
       : copy.normalSample;
 
   return (
-    <article className="char-card group relative flex h-full flex-col gap-3.5 p-4 transition-colors hover:border-[var(--color-border-light)] sm:p-4">
+    <article className="char-card group relative flex h-full flex-col gap-3.5 p-4 hover:border-[var(--color-border-light)] sm:p-4">
       <header className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
-          <span className="inline-flex h-7 min-w-8 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 font-mono text-[11px] font-bold text-[var(--color-muted-foreground)]">
+          <span className="inline-flex h-7 min-w-8 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 font-mono text-[11px] font-bold text-[var(--color-muted-foreground)]">
             #{String(rank).padStart(2, "0")}
           </span>
           {isSmallSample && (
@@ -219,7 +219,7 @@ export function ComboGalleryCard({
         </div>
       </header>
 
-      <div className="grid grid-cols-3 gap-2 rounded-lg border border-[var(--color-border)] bg-white p-2.5">
+      <div className="grid grid-cols-3 gap-2 rounded-md border border-[var(--color-border)] bg-white p-2.5">
         {orderedMembers.map((m) => (
           <div
             key={`${m.character}-${m.weapon}`}
@@ -228,7 +228,7 @@ export function ComboGalleryCard({
             <Link
               href={`/character/${m.character}`}
               aria-label={copy.characterPage(getCharName(m.character))}
-              className={`relative block h-12 w-12 overflow-hidden rounded border bg-[var(--color-surface-2)] transition-colors hover:border-[var(--color-border-light)] sm:h-14 sm:w-14 ${
+              className={`relative block h-12 w-12 overflow-hidden rounded border bg-[var(--color-surface-2)] hover:border-[var(--color-border-light)] sm:h-14 sm:w-14 ${
                 selectedSet.has(m.character)
                   ? "border-[var(--color-border-light)]"
                   : "border-[var(--color-border)]"
@@ -266,7 +266,7 @@ export function ComboGalleryCard({
 
       <div className="flex items-center justify-between border-t border-[var(--color-border)] pt-3">
         <span
-          className={`inline-flex h-8 min-w-10 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 font-mono text-lg font-bold ${SCORE_COLOR[score] ?? ""}`}
+          className={`inline-flex h-8 min-w-10 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 font-mono text-lg font-bold ${SCORE_COLOR[score] ?? ""}`}
         >
           {score}
         </span>
@@ -276,7 +276,7 @@ export function ComboGalleryCard({
       </div>
 
       <dl className="grid grid-cols-3 gap-2 text-center">
-        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] px-1 py-2">
+        <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-1 py-2">
           <dt className="text-[10px] font-medium text-[var(--color-muted-foreground)]">
             {copy.winRate}
           </dt>
@@ -284,7 +284,7 @@ export function ComboGalleryCard({
             {combo.winRate.toFixed(1)}%
           </dd>
         </div>
-        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] px-1 py-2">
+        <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-1 py-2">
           <dt className="text-[10px] font-medium text-[var(--color-muted-foreground)]">
             {copy.averageRP}
           </dt>
@@ -293,7 +293,7 @@ export function ComboGalleryCard({
             {combo.averageRP.toFixed(1)}
           </dd>
         </div>
-        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] px-1 py-2">
+        <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-1 py-2">
           <dt className="text-[10px] font-medium text-[var(--color-muted-foreground)]">
             {copy.averageRank}
           </dt>
@@ -318,7 +318,7 @@ export function ComboGalleryCard({
         <Link
           href={detailHref}
           scroll={false}
-          className="flex min-h-[40px] w-full items-center justify-center gap-1.5 rounded-md border border-[var(--color-border)] bg-white py-2 text-xs font-bold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
+          className="flex min-h-[40px] w-full items-center justify-center gap-1.5 rounded-md border border-[var(--color-border)] bg-white py-2 text-xs font-bold text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
         >
           {copy.detail}
           <ChevronRight className="h-3.5 w-3.5" strokeWidth={2.4} />

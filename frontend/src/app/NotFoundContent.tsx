@@ -49,7 +49,7 @@ export function NotFoundContent() {
       <p className="text-sm text-[var(--color-muted-foreground)]">{copy.body}</p>
       <Link
         href="/"
-        className="rounded-md border border-[var(--color-border)] px-4 py-2 text-sm text-[var(--color-foreground)] transition-colors hover:bg-[var(--color-surface-2)]"
+        className="rounded-md border border-[var(--color-border)] px-4 py-2 text-sm text-[var(--color-foreground)]"
       >
         {copy.home}
       </Link>

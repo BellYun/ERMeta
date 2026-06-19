@@ -222,7 +222,7 @@ function LeaderCard({
 
   return (
     <div className="metric-card col-span-2 flex min-h-[132px] items-center gap-4 px-4 py-4 sm:min-h-[150px] sm:px-5 sm:py-5">
-      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] sm:h-20 sm:w-20">
+      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] sm:h-20 sm:w-20">
         <Image src={imageUrl} alt={name} fill className="object-cover" sizes="80px" />
       </div>
       <div className="min-w-0 flex-1">
@@ -381,7 +381,7 @@ export default async function SeasonRecapPage({ locale = "ko" }: { locale?: Rout
           </div>
           <Link
             href="/"
-            className="inline-flex items-center justify-center rounded-lg border border-[var(--color-border)] bg-white px-3 py-2 text-sm font-medium text-[var(--color-foreground)] transition hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
+            className="inline-flex items-center justify-center rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm font-medium text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
           >
             {copy.back}
           </Link>

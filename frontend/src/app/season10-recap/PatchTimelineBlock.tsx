@@ -44,7 +44,7 @@ export function PatchTimelineBlock({ perPatchTop }: PatchTimelineBlockProps) {
 
 function PatchColumn({ patch, entries }: PatchTopGroup) {
   return (
-    <div className="flex w-[252px] shrink-0 flex-col gap-3 rounded-lg border border-[var(--color-border)] bg-white p-3.5 sm:w-[264px]">
+    <div className="flex w-[252px] shrink-0 flex-col gap-3 rounded-md border border-[var(--color-border)] bg-white p-3.5 sm:w-[264px]">
       <div className="flex items-center justify-between border-b border-[var(--color-border)] pb-2.5">
         <div>
           <p className="text-[11px] text-[var(--color-muted-foreground)]">패치</p>
@@ -56,7 +56,7 @@ function PatchColumn({ patch, entries }: PatchTopGroup) {
       </div>
 
       {entries.length === 0 ? (
-        <div className="flex min-h-[220px] items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] text-xs text-[var(--color-muted-foreground)]">
+        <div className="flex min-h-[220px] items-center justify-center rounded-md border border-dashed border-[var(--color-border)] text-xs text-[var(--color-muted-foreground)]">
           표본 확인 중
         </div>
       ) : (
@@ -88,7 +88,7 @@ function PatchRankRow({ rank, entry }: { rank: number; entry: PatchTopGroup["ent
       <Link
         href={href}
         className={cn(
-          "group flex items-center gap-2.5 rounded-lg border px-2.5 py-2 transition-colors",
+          "group flex items-center gap-2.5 rounded-md border px-2.5 py-2",
           rank === 1
             ? "border-[var(--color-border-light)] bg-white"
             : "border-[var(--color-border)] bg-white hover:bg-[var(--color-surface-2)]"
@@ -106,7 +106,7 @@ function PatchRankRow({ rank, entry }: { rank: number; entry: PatchTopGroup["ent
         >
           {rank}
         </span>
-        <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
+        <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md bg-[var(--color-surface-2)]">
           <Image src={imageUrl} alt={name} fill className="object-cover" sizes="36px" />
         </div>
         <div className="min-w-0 flex-1">

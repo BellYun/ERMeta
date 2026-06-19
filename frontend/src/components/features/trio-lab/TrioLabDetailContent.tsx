@@ -245,7 +245,7 @@ function LocalizedComboSummary({
             return (
               <div
                 key={`${member.character}-${member.weapon}`}
-                className="rounded-lg border border-[var(--color-border)] bg-[var(--surface-2)] px-4 py-4"
+                className="rounded-md border border-[var(--color-border)] bg-[var(--surface-2)] px-4 py-4"
               >
                 <div className="text-xs font-semibold uppercase text-[var(--color-muted-foreground)]">
                   {copy.members}
@@ -257,7 +257,7 @@ function LocalizedComboSummary({
           })}
         </div>
 
-        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--surface-2)] p-4">
+        <div className="rounded-md border border-[var(--color-border)] bg-[var(--surface-2)] p-4">
           <dl className="grid grid-cols-2 gap-3 text-sm">
             <div>
               <dt className="text-[var(--color-muted-foreground)]">{copy.winRate}</dt>
