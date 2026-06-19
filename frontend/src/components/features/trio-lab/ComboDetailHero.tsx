@@ -15,7 +15,7 @@ export function ComboDetailHero({ combo, listHref, patchVersion, tier }: ComboDe
   const rpText = `${combo.averageRP >= 0 ? "+" : ""}${combo.averageRP.toFixed(1)}`;
 
   return (
-    <header className="dashboard-panel flex flex-col gap-5 p-4 sm:p-5">
+    <header className="dashboard-panel flex flex-col gap-4 p-4">
       <nav className="flex min-w-0 items-center gap-1.5 text-xs text-[var(--color-muted-foreground)]">
         <Link
           href={listHref}
@@ -42,12 +42,12 @@ export function ComboDetailHero({ combo, listHref, patchVersion, tier }: ComboDe
               {combo.totalGames.toLocaleString("ko-KR")} 매치
             </span>
           </div>
-          <h1 className="mt-3 text-2xl font-bold leading-tight text-[var(--color-foreground)] sm:text-3xl">
+          <h1 className="mt-3 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
             {trioName}
           </h1>
         </div>
 
-        <div className="rounded-lg border border-[var(--color-border)] bg-white p-4 sm:p-5">
+        <div className="rounded-md border border-[var(--color-border)] bg-white p-4">
           <div className="grid gap-4 sm:grid-cols-[132px_1fr] sm:items-stretch">
             <div className="flex flex-col justify-between rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] p-4">
               <p className="text-[11px] font-medium text-[var(--color-muted-foreground)]">

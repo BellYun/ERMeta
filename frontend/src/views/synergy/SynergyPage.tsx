@@ -1,4 +1,4 @@
-import { ArrowRight, Network, Sparkles } from "lucide-react";
+import { ArrowRight, Network } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { SynergyClient } from "@/components/features/SynergyClient";
@@ -36,7 +36,7 @@ export default async function SynergyPage() {
               </span>
             </div>
 
-            <h1 className="mt-2 text-[1.75rem] font-bold leading-tight text-[var(--color-foreground)] sm:text-[2.1rem]">
+            <h1 className="mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
               {tNav("synergyRecommendation")}
             </h1>
             <p className="mt-2 max-w-[42rem] text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">
@@ -47,14 +47,9 @@ export default async function SynergyPage() {
             </p>
           </div>
 
-          <div className="rounded-lg border border-[var(--color-border)] bg-white px-4 py-4 sm:px-5">
+          <div className="rounded-md border border-[var(--color-border)] bg-white px-4 py-4 sm:px-5">
             <div>
-              <div className="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] text-[var(--color-muted-foreground)]">
-                <Sparkles className="h-5 w-5" strokeWidth={2} />
-              </div>
-              <p className="mt-3 text-base font-bold text-[var(--color-foreground)]">
-                {tPage("title")}
-              </p>
+              <p className="text-base font-bold text-[var(--color-foreground)]">{tPage("title")}</p>
               <p className="mt-2 text-sm leading-6 text-[var(--color-muted-foreground)]">
                 {tPage("steps.analysis.sublabel")}
               </p>

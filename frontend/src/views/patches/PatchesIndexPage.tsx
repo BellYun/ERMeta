@@ -71,7 +71,7 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
               ) : null}
             </div>
 
-            <h1 className="mt-2 text-[1.75rem] font-bold leading-tight text-[var(--color-foreground)] sm:text-[2.1rem]">
+            <h1 className="mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
               {t("indexTitle")}
             </h1>
             <p className="mt-2 max-w-[38rem] text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">

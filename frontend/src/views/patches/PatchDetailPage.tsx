@@ -103,7 +103,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
               </span>
             </div>
 
-            <h1 className="mt-2 text-[1.75rem] font-bold leading-tight text-[var(--color-foreground)] sm:text-[2.1rem]">
+            <h1 className="mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
               {t("detailHeading", { patch: version })}
             </h1>
             <p className="mt-2 max-w-[40rem] text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">

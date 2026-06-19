@@ -293,7 +293,7 @@ export default async function SeasonRecapPage({ locale = "ko" }: { locale?: Rout
               </span>
             </div>
 
-            <h1 className="mt-2 text-[1.75rem] font-bold leading-tight text-[var(--color-foreground)] sm:text-[2.1rem]">
+            <h1 className="mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
               {copy.title}
             </h1>
             <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[var(--color-muted-foreground)] sm:text-sm">

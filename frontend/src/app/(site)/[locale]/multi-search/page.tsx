@@ -102,11 +102,11 @@ export default async function MultiSearchPage({ params }: LocalePageProps) {
 
   return (
     <main className="page-shell mx-auto flex max-w-6xl flex-col gap-5 px-3 py-6 sm:px-5 sm:py-8 lg:gap-6">
-      <header className="dashboard-panel flex flex-col gap-3 p-5">
+      <header className="dashboard-panel flex flex-col gap-3 p-4">
         <div className="flex flex-wrap items-center gap-2">
           <span className="dashboard-kicker">{copy.kicker}</span>
         </div>
-        <h1 className="text-[1.75rem] font-bold leading-tight text-[var(--color-foreground)] sm:text-[2.1rem]">
+        <h1 className="text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
           {copy.title}
         </h1>
         <p className="max-w-[46rem] text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">

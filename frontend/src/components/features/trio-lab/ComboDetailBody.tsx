@@ -602,7 +602,7 @@ export function TraitComboBlock({
   if (topRows.length === 0) return null;
 
   return (
-    <section className="dashboard-panel flex flex-col gap-3 p-4 sm:p-5">
+    <section className="dashboard-panel flex flex-col gap-3 p-4 sm:p-4">
       <div className="flex items-center justify-between border-l-2 border-[var(--color-border-light)] pl-3">
         <h2 className="text-sm font-bold text-[var(--color-foreground)]">상위 특성 조합</h2>
         <p className="text-[11px] text-[var(--color-muted-foreground)]">평균 RP 기준</p>
@@ -705,7 +705,7 @@ export function SimilarBlock({
   const top = similar.slice(0, 4);
   if (top.length === 0) return null;
   return (
-    <section className="dashboard-panel flex flex-col gap-3 p-4 sm:p-5">
+    <section className="dashboard-panel flex flex-col gap-3 p-4 sm:p-4">
       <div className="flex items-center justify-between border-l-2 border-[var(--color-border-light)] pl-3">
         <h2 className="text-sm font-bold text-[var(--color-foreground)]">
           비슷한 조합 {top.length}개
@@ -732,7 +732,7 @@ export function StickySidebar({ combo }: { combo: TrioWeaponCombo }) {
   const score = comboTier(combo.winRate, combo.averageRP, combo.averageRank, combo.totalGames);
   return (
     <aside className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
-      <section className="dashboard-panel flex flex-col gap-3 p-5">
+      <section className="dashboard-panel flex flex-col gap-3 p-4">
         <div className="flex items-center justify-between">
           <p className="text-[11px] text-[var(--color-muted-foreground)]">조합 점수</p>
         </div>

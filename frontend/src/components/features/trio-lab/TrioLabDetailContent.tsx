@@ -214,7 +214,7 @@ function LocalizedComboSummary({
   const localizedListHref = localizeRoutePath(listHref, locale);
 
   return (
-    <section className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-card)]">
+    <section className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-card)]">
       <div className="border-b border-[var(--color-border)] bg-[var(--surface-1)] px-5 py-5">
         <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-[var(--color-muted-foreground)]">
           <span>{copy.kicker}</span>
@@ -229,7 +229,7 @@ function LocalizedComboSummary({
             {combo.totalGames.toLocaleString(locale)} {copy.matches}
           </span>
         </div>
-        <h1 className="mt-3 text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
+        <h1 className="mt-3 text-xl font-bold text-[var(--color-foreground)] sm:text-2xl">
           {copy.title}
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--color-muted-foreground)]">

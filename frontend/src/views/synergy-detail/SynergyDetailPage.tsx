@@ -1,4 +1,4 @@
-import { Crosshair, Sparkles, Swords, Users2 } from "lucide-react";
+import { Crosshair, Swords, Users2 } from "lucide-react";
 import type { Metadata } from "next";
 import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
@@ -137,8 +137,7 @@ export default function SynergyDetailPage() {
         <div className="grid gap-3 xl:grid-cols-[minmax(0,1.08fr)_180px_180px_180px]">
           <div className="flex flex-col justify-center xl:pr-4">
             <div className="flex flex-wrap items-center gap-2.5">
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-muted-foreground)]">
-                <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" strokeWidth={2.1} />
+              <span className="text-xs font-medium text-[var(--color-muted-foreground)]">
                 {t("badge")}
               </span>
               <span className="text-xs text-[var(--color-muted-foreground)]">
@@ -146,7 +145,7 @@ export default function SynergyDetailPage() {
               </span>
             </div>
 
-            <h1 className="mt-2 text-[1.75rem] font-bold leading-tight text-[var(--color-foreground)] sm:text-[2.1rem]">
+            <h1 className="mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
               {t("title")}
             </h1>
             <p className="mt-2 max-w-[42rem] text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">
