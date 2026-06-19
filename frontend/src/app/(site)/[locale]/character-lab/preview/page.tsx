@@ -238,8 +238,8 @@ function RadarChart({
       />
       <polygon
         points={polygon}
-        fill="rgba(96,165,250,0.22)"
-        stroke="rgba(96,165,250,0.85)"
+        fill="rgba(100,116,139,0.18)"
+        stroke="rgba(100,116,139,0.85)"
         strokeWidth={1.5}
       />
       {points.map((p) => (
@@ -291,10 +291,10 @@ function Heatmap({
     const norm = Math.max(-1.5, Math.min(1.5, v)) / 1.5;
     if (norm > 0) {
       const alpha = norm * 0.85;
-      return `rgba(74, 222, 128, ${alpha})`;
+      return `rgba(21, 128, 61, ${alpha})`;
     }
     const alpha = -norm * 0.85;
-    return `rgba(248, 113, 113, ${alpha})`;
+    return `rgba(220, 38, 38, ${alpha})`;
   };
 
   const matrixRows = sorted.flatMap((char, index) => {
@@ -593,8 +593,8 @@ function DenseRadar({
       />
       <polygon
         points={polygon}
-        fill="rgba(96,165,250,0.20)"
-        stroke="rgba(96,165,250,0.85)"
+        fill="rgba(100,116,139,0.18)"
+        stroke="rgba(100,116,139,0.85)"
         strokeWidth={1.4}
       />
       {points.map((p) => {
@@ -745,12 +745,12 @@ function GroupCohesionRadar({
     memberData.length > 0 ? memberData.reduce((s, d) => s + d.dist, 0) / memberData.length : 0;
   const cohesion = Math.max(0, Math.min(100, (1 - avgDist) * 100));
 
-  // 멤버 색: 응집도 좋으면 청록, 멀면 빨강 강조
+  // 멤버 색: 응집도 좋으면 옅은 녹색, 멀면 빨강 강조
   const memberColor = (dist: number) => {
-    if (dist < 0.15) return "rgba(74,222,128,0.42)";
-    if (dist < 0.3) return "rgba(96,165,250,0.42)";
-    if (dist < 0.5) return "rgba(251,191,36,0.55)";
-    return "rgba(248,113,113,0.7)";
+    if (dist < 0.15) return "rgba(21,128,61,0.36)";
+    if (dist < 0.3) return "rgba(100,116,139,0.36)";
+    if (dist < 0.5) return "rgba(104,115,134,0.5)";
+    return "rgba(220,38,38,0.58)";
   };
 
   return (
@@ -797,8 +797,8 @@ function GroupCohesionRadar({
         {/* 그룹 centroid polygon (filled) */}
         <polygon
           points={centroidPolygon}
-          fill="rgba(96,165,250,0.16)"
-          stroke="rgba(96,165,250,0.95)"
+          fill="rgba(100,116,139,0.16)"
+          stroke="rgba(100,116,139,0.85)"
           strokeWidth={1.8}
         />
       </svg>
@@ -1228,22 +1228,22 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
           <span className="ml-2 inline-flex items-center gap-1 align-middle text-[10px]">
             <span
               className="inline-block h-2 w-3 rounded"
-              style={{ background: "rgba(74,222,128,0.42)" }}
+              style={{ background: "rgba(21,128,61,0.36)" }}
             />{" "}
             ≤ 0.15
             <span
               className="inline-block h-2 w-3 rounded"
-              style={{ background: "rgba(96,165,250,0.42)" }}
+              style={{ background: "rgba(100,116,139,0.36)" }}
             />{" "}
             ≤ 0.30
             <span
               className="inline-block h-2 w-3 rounded"
-              style={{ background: "rgba(251,191,36,0.55)" }}
+              style={{ background: "rgba(104,115,134,0.5)" }}
             />{" "}
             ≤ 0.50
             <span
               className="inline-block h-2 w-3 rounded"
-              style={{ background: "rgba(248,113,113,0.7)" }}
+              style={{ background: "rgba(220,38,38,0.58)" }}
             />{" "}
             &gt; 0.50 (이상치)
           </span>
