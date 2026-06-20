@@ -59,7 +59,7 @@ export function HoneyPickCard({
     <div className="shrink-0 px-1" style={{ width: `${cardWidth}%` }}>
       <div
         className={cn(
-          "group/card relative cursor-pointer rounded-md transition-colors",
+          "group/card relative cursor-pointer rounded-md",
           isCenter ? "z-20 overflow-visible" : "opacity-55 overflow-hidden"
         )}
         onClick={onCardClick}
@@ -106,7 +106,7 @@ export function HoneyPickCard({
           {/* Info panel */}
           <div
             className={cn(
-              "absolute inset-x-2 bottom-2 rounded border border-[var(--color-border)] bg-white transition-colors",
+              "absolute inset-x-2 bottom-2 rounded border border-[var(--color-border)] bg-white",
               isCenter ? "p-2.5" : "p-2"
             )}
           >
@@ -190,7 +190,7 @@ export function HoneyPickCard({
         {isCenter && patchNote && (
           <div
             className={cn(
-              "hidden sm:block absolute top-0 left-full h-full w-0 group-hover/card:w-52 overflow-hidden transition-colors rounded-r",
+              "hidden sm:block absolute top-0 left-full h-full w-0 group-hover/card:w-52 overflow-hidden rounded-r",
               "bg-[var(--color-surface)] border-l border-[var(--color-border)]"
             )}
           >

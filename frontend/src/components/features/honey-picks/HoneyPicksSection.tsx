@@ -168,7 +168,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
 
                 <div className="min-w-0 flex-1 pt-1">
                   <div className="flex items-center gap-2">
-                    <p className="truncate text-[1.05rem] font-bold text-[var(--color-foreground)]">
+                    <p className="truncate text-base font-bold text-[var(--color-foreground)]">
                       {r.name}
                     </p>
                     {changeLabel && (
@@ -194,7 +194,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                   <p className="text-[10px] font-medium text-[var(--color-muted-foreground)]">
                     {t("stats.winRate")}
                   </p>
-                  <p className="mt-1 text-[1.05rem] font-bold tabular-nums text-[var(--color-foreground)]">
+                  <p className="mt-1 text-base font-bold tabular-nums text-[var(--color-foreground)]">
                     {r.pick.winRate.toFixed(1)}%
                   </p>
                   <p
@@ -213,7 +213,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                   <p className="text-[10px] font-medium text-[var(--color-muted-foreground)]">
                     {t("stats.pickRate")}
                   </p>
-                  <p className="mt-1 text-[1.05rem] font-bold tabular-nums text-[var(--color-foreground)]">
+                  <p className="mt-1 text-base font-bold tabular-nums text-[var(--color-foreground)]">
                     {r.pick.pickRate.toFixed(1)}%
                   </p>
                   <p
@@ -234,7 +234,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                   </p>
                   <p
                     className={cn(
-                      "mt-1 text-[1.05rem] font-bold tabular-nums",
+                      "mt-1 text-base font-bold tabular-nums",
                       r.pick.averageRP >= 0
                         ? "text-[var(--color-accent-gold)]"
                         : "text-[var(--color-muted-foreground)]"
@@ -282,7 +282,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                       {previewChanges.map((change, changeIndex) => (
                         <div
                           key={`${change.target}-${changeIndex}`}
-                          className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2"
+                          className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2"
                         >
                           <p className="text-[11px] font-semibold leading-5 text-[var(--color-foreground)]">
                             {change.target}
@@ -315,7 +315,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
             <div
               key={r.pick.characterNum}
               className={cn(
-                "relative w-[138px] shrink-0 snap-start overflow-hidden rounded-lg border border-[var(--color-border)] bg-white cursor-pointer touch-manipulation"
+                "relative w-[138px] shrink-0 snap-start overflow-hidden rounded-md border border-[var(--color-border)] bg-white cursor-pointer touch-manipulation"
               )}
               style={{ aspectRatio: "0.72" }}
               onClick={() => {
@@ -372,7 +372,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
 
               {/* Info */}
               <div className="absolute inset-x-0 bottom-0 p-3">
-                <p className="truncate text-[1.05rem] font-bold text-[var(--color-foreground)]">
+                <p className="truncate text-base font-bold text-[var(--color-foreground)]">
                   {r.name}
                 </p>
                 <p className="truncate text-[11px] text-[var(--color-muted-foreground)]">

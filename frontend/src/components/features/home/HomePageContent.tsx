@@ -36,7 +36,7 @@ export async function HomePageContent({
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                <h1 className="text-[1.65rem] font-bold leading-tight text-[var(--color-foreground)] sm:text-[2rem]">
+                <h1 className="text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
                   {t("title")}
                 </h1>
                 {defaultPatch ? (
@@ -71,13 +71,13 @@ export async function HomePageContent({
           </div>
 
           {hasRankingData ? (
-            <div className="rounded-lg border border-[var(--color-border)] bg-white px-4 py-4 sm:px-5 sm:py-5">
+            <div className="rounded-md border border-[var(--color-border)] bg-white px-4 py-4 sm:px-5">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                   <p className="text-xs font-medium text-[var(--color-muted-foreground)]">
                     {t("matchMetric")}
                   </p>
-                  <p className="mt-1 font-mono text-[2.15rem] font-bold leading-none text-[var(--color-foreground)] sm:text-[2.6rem]">
+                  <p className="mt-1 font-mono text-[1.8rem] font-bold leading-none text-[var(--color-foreground)] sm:text-[2.15rem]">
                     {trackedMatches}
                   </p>
                 </div>
@@ -87,12 +87,12 @@ export async function HomePageContent({
               </div>
             </div>
           ) : (
-            <div className="rounded-lg border border-[var(--color-border)] bg-white px-4 py-4">
+            <div className="rounded-md border border-[var(--color-border)] bg-white px-4 py-4">
               <div>
                 <p className="text-xs font-medium text-[var(--color-foreground)]">
                   {t("fallback.kicker", { patch: fallbackPatch })}
                 </p>
-                <h2 className="mt-2 text-[1.25rem] font-bold text-[var(--color-foreground)]">
+                <h2 className="mt-2 text-base font-bold text-[var(--color-foreground)]">
                   {t("fallback.title")}
                 </h2>
                 <p className="mt-3 max-w-[62rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem] sm:leading-7">

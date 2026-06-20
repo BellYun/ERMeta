@@ -459,9 +459,7 @@ function MetricCard({
         {icon}
       </div>
       <div>
-        <p className="text-[1.3rem] font-bold text-[var(--color-foreground)] sm:text-[1.6rem]">
-          {value}
-        </p>
+        <p className="text-lg font-bold text-[var(--color-foreground)] sm:text-xl">{value}</p>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">{label}</p>
         {body ? (
           <p className="mt-2 text-xs leading-5 text-[var(--color-muted-foreground)]">{body}</p>
@@ -736,7 +734,7 @@ function RoleTable({
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="dashboard-kicker">{copy.role.kicker}</p>
-            <h2 className="mt-2 text-[1.3rem] font-bold text-[var(--color-foreground)] sm:text-[1.6rem]">
+            <h2 className="mt-2 text-base font-bold text-[var(--color-foreground)] sm:text-lg">
               {copy.role.title}
             </h2>
             <p className="mt-1 text-sm leading-6 text-[var(--color-muted-foreground)]">
@@ -826,7 +824,7 @@ function DeltaRanking({
 }) {
   return (
     <section className="dashboard-panel p-4 lg:p-6">
-      <h2 className="text-[1.25rem] font-bold text-[var(--color-foreground)]">{title}</h2>
+      <h2 className="text-base font-bold text-[var(--color-foreground)]">{title}</h2>
       <div className="mt-4 grid gap-2">
         {entries.map((entry, index) => {
           const displayName = getEntryDisplayName(entry, l10n, fallbackMap);
@@ -903,9 +901,7 @@ function CharacterSection({
     <section className="dashboard-panel p-4 lg:p-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-[1.3rem] font-bold text-[var(--color-foreground)] sm:text-[1.6rem]">
-            {title}
-          </h2>
+          <h2 className="text-base font-bold text-[var(--color-foreground)] sm:text-lg">{title}</h2>
           <p className="mt-1 text-sm leading-6 text-[var(--color-muted-foreground)]">
             {description}
           </p>
@@ -1134,9 +1130,7 @@ export default async function PatchAnalysisPage({
       <section className="dashboard-panel p-4 lg:p-6">
         <div className="flex flex-col gap-2">
           <p className="dashboard-kicker">{copy.guideKicker}</p>
-          <h2 className="text-[1.25rem] font-bold text-[var(--color-foreground)]">
-            {copy.guideTitle}
-          </h2>
+          <h2 className="text-base font-bold text-[var(--color-foreground)]">{copy.guideTitle}</h2>
           <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">{copy.guideBody}</p>
         </div>
       </section>

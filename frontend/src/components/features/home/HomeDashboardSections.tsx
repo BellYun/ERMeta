@@ -84,7 +84,7 @@ function HomeDashboardSectionsBody({
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
             <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
-              <h2 className="text-[1.3rem] font-bold text-[var(--color-foreground)] sm:text-[1.6rem]">
+              <h2 className="text-base font-bold text-[var(--color-foreground)] sm:text-lg">
                 {t("honeyPicksTitle")}
               </h2>
               <p className="pb-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">
@@ -123,7 +123,7 @@ function HomeDashboardSectionsBody({
 
       <section className="dashboard-panel p-4 lg:p-5">
         <div className="mb-4 flex flex-wrap items-end gap-x-4 gap-y-2">
-          <h2 className="text-[1.3rem] font-bold text-[var(--color-foreground)] sm:text-[1.6rem]">
+          <h2 className="text-base font-bold text-[var(--color-foreground)] sm:text-lg">
             {t("rankingTitle")}
           </h2>
           <p className="pb-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">

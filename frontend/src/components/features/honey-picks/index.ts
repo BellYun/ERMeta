@@ -1,1 +1,1 @@
-export { HoneyPicksSection } from "./HoneyPicksSection"
+export { HoneyPicksSection } from "./HoneyPicksSection";
