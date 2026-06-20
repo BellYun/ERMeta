@@ -56,7 +56,7 @@ const CharacterCell = React.memo(function CharacterCell({
       disabled={disabled}
       title={name}
       className={cn(
-        "flex flex-col items-center gap-0.5 rounded-lg px-1 py-1.5 transition-colors",
+        "flex flex-col items-center gap-0.5 rounded-md px-1 py-1.5",
         selected
           ? "bg-white ring-1 ring-[var(--color-border-light)]"
           : disabled
