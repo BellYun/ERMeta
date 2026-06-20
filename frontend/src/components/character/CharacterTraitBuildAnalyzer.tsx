@@ -251,7 +251,7 @@ export function CharacterTraitBuildAnalyzer({
     return (
       <div className="space-y-2">
         {[...Array(2)].map((_, i) => (
-          <div key={i} className="h-32 rounded-lg bg-[var(--color-surface)]" />
+          <div key={i} className="h-32 rounded-md bg-[var(--color-surface)]" />
         ))}
       </div>
     );
@@ -259,7 +259,7 @@ export function CharacterTraitBuildAnalyzer({
 
   if (builds.length === 0) {
     return (
-      <div className="rounded-lg border border-[var(--color-border)] bg-white p-6 text-center text-sm text-[var(--color-muted-foreground)]">
+      <div className="rounded-md border border-[var(--color-border)] bg-white p-6 text-center text-sm text-[var(--color-muted-foreground)]">
         {t("empty.builds")}
       </div>
     );
@@ -274,7 +274,7 @@ export function CharacterTraitBuildAnalyzer({
           <div
             key={gi}
             className={cn(
-              "rounded-lg border border-[var(--color-border)] bg-white overflow-hidden",
+              "rounded-md border border-[var(--color-border)] bg-white overflow-hidden",
               gi === 0 && "ring-1 ring-[var(--color-stat-up)]/30"
             )}
           >

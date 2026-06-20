@@ -186,9 +186,9 @@ export function CharacterSearchCombobox({
           onKeyDown={handleKeyDown}
           placeholder={t("placeholder")}
           className={cn(
-            "w-full rounded-lg border bg-white py-2.5 pl-10 pr-4 text-sm text-[var(--color-foreground)] sm:py-3",
+            "w-full rounded-md border bg-white py-2.5 pl-10 pr-4 text-sm text-[var(--color-foreground)] sm:py-3",
             "placeholder:text-[var(--color-muted-foreground)]",
-            "outline-none transition-colors",
+            "outline-none",
             open
               ? "rounded-b-[0px] border-[var(--color-border-light)] ring-1 ring-[var(--color-border-light)]"
               : "border-[var(--color-border)] hover:border-[var(--color-border-light)]"
@@ -224,7 +224,7 @@ export function CharacterSearchCombobox({
                 }}
                 onMouseEnter={() => setHighlightIndex(index)}
                 className={cn(
-                  "flex min-h-[48px] w-full items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors sm:min-h-0 sm:py-2",
+                  "flex min-h-[48px] w-full items-center gap-3 px-3 py-2.5 text-left text-sm sm:min-h-0 sm:py-2",
                   code === activeCode && "bg-[var(--color-surface-2)]",
                   highlightIndex === index
                     ? "bg-[var(--color-surface-2)] text-[var(--color-foreground)]"

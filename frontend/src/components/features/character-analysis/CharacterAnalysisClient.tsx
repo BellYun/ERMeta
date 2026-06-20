@@ -327,11 +327,11 @@ export function CharacterAnalysisClient({
         {!loading && displayStat && displayStat.totalGames > 0 && (
           <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
             <div className="mb-3 flex items-center gap-2 sm:mb-4">
-              <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.18rem]">
+              <h2 className="text-sm font-bold text-[var(--color-foreground)]">
                 {t("quickSummary")}
               </h2>
             </div>
-            <div className="overflow-hidden rounded-lg border border-[var(--color-border)]">
+            <div className="overflow-hidden rounded-md border border-[var(--color-border)]">
               {/* Tier */}
               <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-white px-3 py-2.5">
                 <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
@@ -415,7 +415,7 @@ export function CharacterAnalysisClient({
           <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
             <div className="mb-3 flex items-center gap-2 sm:mb-4">
               <BarChart2 className="h-4 w-4 text-[var(--color-muted-foreground)]" />
-              <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.18rem]">
+              <h2 className="text-sm font-bold text-[var(--color-foreground)]">
                 {t("patchComparison")}
               </h2>
             </div>
@@ -432,7 +432,7 @@ export function CharacterAnalysisClient({
           <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
             <div className="mb-3 flex items-center gap-2 sm:mb-4">
               <FileText className="h-4 w-4 text-[var(--color-muted-foreground)]" />
-              <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.18rem]">
+              <h2 className="text-sm font-bold text-[var(--color-foreground)]">
                 {t("patchNotes")}
               </h2>
             </div>
@@ -444,9 +444,7 @@ export function CharacterAnalysisClient({
           <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5 xl:col-span-2">
             <div className="mb-3 flex items-center gap-2 sm:mb-4">
               <BarChart2 className="h-4 w-4 text-[var(--color-muted-foreground)]" />
-              <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.18rem]">
-                {t("stats")}
-              </h2>
+              <h2 className="text-sm font-bold text-[var(--color-foreground)]">{t("stats")}</h2>
             </div>
             <Suspense fallback={<TabFallback />}>
               <CharacterDetailedAnalyzer

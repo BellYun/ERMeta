@@ -49,7 +49,7 @@ export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
 
   if (patches.length === 0) {
     return (
-      <div className="rounded-lg border border-[var(--color-border)] bg-white p-8 text-center text-sm text-[var(--color-muted-foreground)]">
+      <div className="rounded-md border border-[var(--color-border)] bg-white p-8 text-center text-sm text-[var(--color-muted-foreground)]">
         {t("loadingPatches")}
       </div>
     );
@@ -62,7 +62,7 @@ export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
         return (
           <div
             key={patch}
-            className="rounded-lg border border-[var(--color-border)] bg-white overflow-hidden min-w-0"
+            className="rounded-md border border-[var(--color-border)] bg-white overflow-hidden min-w-0"
           >
             {/* 패치 버전 헤더 */}
             <div className="flex items-center gap-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 sm:px-4 py-2">
@@ -101,7 +101,7 @@ export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
                   return (
                     <div
                       key={idx}
-                      className="flex gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 hover:bg-[var(--color-surface-2)] transition-colors overflow-hidden"
+                      className="flex gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 hover:bg-[var(--color-surface-2)] overflow-hidden"
                     >
                       <div className="pt-0.5 shrink-0">
                         <ChangeTypeBadge type={change.changeType} />

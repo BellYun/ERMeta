@@ -1,1 +1,1 @@
-export { CharacterAnalysisClient } from "./CharacterAnalysisClient"
+export { CharacterAnalysisClient } from "./CharacterAnalysisClient";

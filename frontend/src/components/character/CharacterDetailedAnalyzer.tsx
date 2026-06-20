@@ -195,7 +195,7 @@ function TreeRow({
           <div key={i} className="flex flex-col items-center shrink-0 gap-1">
             <div
               className={cn(
-                "rounded-full transition-colors",
+                "rounded-full",
                 isTop
                   ? "outline outline-1 outline-[var(--color-border)] p-0.5"
                   : "opacity-45 grayscale"
@@ -286,7 +286,7 @@ function TopBuildsTableFiltered({
   const t = useTranslations("characterDetailed");
   const slotLabels = React.useMemo(() => createSlotLabels(t), [t]);
   return (
-    <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
+    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
         <span className="text-xs font-semibold text-[var(--color-foreground)]">
           {t("sections.topBuilds")}
@@ -353,7 +353,7 @@ function TopBuildsTableFiltered({
               <tr
                 key={i}
                 className={cn(
-                  "border-b border-[var(--color-border)] last:border-0 transition-colors hover:bg-[var(--color-surface-2)]"
+                  "border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-surface-2)]"
                 )}
               >
                 <td className="px-3 py-2 text-left">
@@ -411,7 +411,7 @@ function SlotPopularityGrid({
   const t = useTranslations("characterDetailed");
   const slotLabels = React.useMemo(() => createSlotLabels(t), [t]);
   return (
-    <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
+    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
         <span className="text-xs font-semibold text-[var(--color-foreground)]">
           {t("sections.slotPopularity")}
@@ -433,7 +433,7 @@ function SlotPopularityGrid({
                   <div
                     key={item.code}
                     className={cn(
-                      "flex flex-col items-center gap-0.5 rounded-lg px-1.5 py-1.5 min-w-[52px] shrink-0",
+                      "flex flex-col items-center gap-0.5 rounded-md px-1.5 py-1.5 min-w-[52px] shrink-0",
                       i === 0 && "bg-[var(--color-surface-2)] ring-1 ring-[var(--color-border)]"
                     )}
                   >
@@ -475,7 +475,7 @@ function SlotPopularityGrid({
                       <div
                         key={item.code}
                         className={cn(
-                          "flex flex-col items-center gap-0.5 px-1.5 py-1.5 transition-colors hover:bg-[var(--color-surface-2)]",
+                          "flex flex-col items-center gap-0.5 px-1.5 py-1.5 hover:bg-[var(--color-surface-2)]",
                           i === 0 && "bg-[var(--color-surface-2)]"
                         )}
                       >
@@ -513,7 +513,7 @@ function SlotPopularityGrid({
                       <div
                         key={item.code}
                         className={cn(
-                          "flex flex-col items-center gap-0.5 px-1.5 py-1.5 transition-colors hover:bg-[var(--color-surface-2)]",
+                          "flex flex-col items-center gap-0.5 px-1.5 py-1.5 hover:bg-[var(--color-surface-2)]",
                           i === 0 && "bg-[var(--color-surface-2)]"
                         )}
                       >
@@ -555,7 +555,7 @@ function SlotPopularityGrid({
                       <div
                         key={item.code}
                         className={cn(
-                          "flex flex-col items-center gap-1 px-2 py-2 transition-colors hover:bg-[var(--color-surface-2)]",
+                          "flex flex-col items-center gap-1 px-2 py-2 hover:bg-[var(--color-surface-2)]",
                           i === 0 && "bg-[var(--color-surface-2)]"
                         )}
                       >
@@ -666,9 +666,9 @@ export function CharacterDetailedAnalyzer({
   if (traitLoading) {
     return (
       <div className="space-y-3">
-        <div className="h-10 rounded-lg bg-[var(--color-surface)]" />
-        <div className="h-40 rounded-lg bg-[var(--color-surface)]" />
-        <div className="h-40 rounded-lg bg-[var(--color-surface)]" />
+        <div className="h-10 rounded-md bg-[var(--color-surface)]" />
+        <div className="h-40 rounded-md bg-[var(--color-surface)]" />
+        <div className="h-40 rounded-md bg-[var(--color-surface)]" />
       </div>
     );
   }
@@ -676,7 +676,7 @@ export function CharacterDetailedAnalyzer({
   // ── 표본 확인 중 ─────────────────────────────────────────────────────────────
   if (traitBuilds.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-2 rounded-lg border border-[var(--color-border)] bg-white p-8 text-[var(--color-muted-foreground)]">
+      <div className="flex flex-col items-center gap-2 rounded-md border border-[var(--color-border)] bg-white p-8 text-[var(--color-muted-foreground)]">
         <Layers className="h-8 w-8 opacity-40" />
         <p className="text-sm">{t("empty.detailed")}</p>
       </div>
@@ -695,7 +695,7 @@ export function CharacterDetailedAnalyzer({
   return (
     <div className="space-y-4">
       {/* 주특성 그룹 선택 */}
-      <div className="rounded-lg border border-[var(--color-border)] bg-white p-2.5 sm:p-4">
+      <div className="rounded-md border border-[var(--color-border)] bg-white p-2.5 sm:p-4">
         <p className="mb-1.5 sm:mb-3 text-[11px] sm:text-xs font-semibold text-[var(--color-muted-foreground)]">
           {t("stats.primaryTrait")}
         </p>
@@ -714,7 +714,7 @@ export function CharacterDetailedAnalyzer({
                 key={i}
                 onClick={() => setSelectedComboIdx(i)}
                 className={cn(
-                  "flex flex-col rounded-lg border px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs transition-colors min-w-[90px] sm:min-w-[100px] shrink-0 sm:shrink touch-manipulation",
+                  "flex flex-col rounded-md border px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs min-w-[90px] sm:min-w-[100px] shrink-0 sm:shrink touch-manipulation",
                   isSelected
                     ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
                     : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] active:border-[var(--color-border-light)] sm:hover:border-[var(--color-border-light)]"
@@ -749,7 +749,7 @@ export function CharacterDetailedAnalyzer({
                 <div className="mt-0.5 sm:mt-1 h-0.5 sm:h-1 w-full rounded-full bg-[var(--color-border)]">
                   <div
                     className={cn(
-                      "h-full rounded-full transition-colors",
+                      "h-full rounded-full",
                       isSelected
                         ? "bg-[var(--color-foreground)]"
                         : "bg-[var(--color-muted-foreground)]"
@@ -818,7 +818,7 @@ export function CharacterDetailedAnalyzer({
                 <div className="space-y-4">
                   <div className="flex flex-col lg:flex-row gap-4">
                     {/* 왼쪽: 주특성 트리 */}
-                    <div className="flex-1 rounded-lg border border-[var(--color-border)] bg-white p-4 sm:p-5">
+                    <div className="flex-1 rounded-md border border-[var(--color-border)] bg-white p-4 sm:p-5">
                       {hasPrimaryTraits && (
                         <div className="flex flex-col items-center gap-3">
                           {topMainCore != null && (
@@ -837,7 +837,7 @@ export function CharacterDetailedAnalyzer({
                     </div>
 
                     {/* 오른쪽: 주특성 요약 */}
-                    <div className="shrink-0 overflow-hidden rounded-lg border border-[var(--color-border)] bg-white self-start lg:w-[240px]">
+                    <div className="shrink-0 overflow-hidden rounded-md border border-[var(--color-border)] bg-white self-start lg:w-[240px]">
                       {hasPrimaryTraits && (
                         <>
                           <div
@@ -884,7 +884,7 @@ export function CharacterDetailedAnalyzer({
 
                   {/* 부특성 3열 동시 표시 */}
                   {hasSecondaryTraits && (
-                    <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
+                    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
                       <div className="px-3 sm:px-4 py-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60">
                         <span className="text-[11px] sm:text-xs font-semibold text-[var(--color-muted-foreground)]">
                           {t("sections.secondaryTraits")}
@@ -969,8 +969,8 @@ export function CharacterDetailedAnalyzer({
           {/* 아이템 빌드 */}
           {equipLoading ? (
             <div className="space-y-3">
-              <div className="h-40 rounded-lg bg-[var(--color-surface)]" />
-              <div className="h-60 rounded-lg bg-[var(--color-surface)]" />
+              <div className="h-40 rounded-md bg-[var(--color-surface)]" />
+              <div className="h-60 rounded-md bg-[var(--color-surface)]" />
             </div>
           ) : hasEquipData ? (
             <div className="space-y-4">
@@ -986,7 +986,7 @@ export function CharacterDetailedAnalyzer({
               )}
             </div>
           ) : (
-            <div className="rounded-lg border border-[var(--color-border)] bg-white p-6 text-center text-sm text-[var(--color-muted-foreground)]">
+            <div className="rounded-md border border-[var(--color-border)] bg-white p-6 text-center text-sm text-[var(--color-muted-foreground)]">
               {t("empty.itemBuilds")}
             </div>
           )}

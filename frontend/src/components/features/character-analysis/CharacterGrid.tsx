@@ -62,7 +62,7 @@ export function CharacterGrid({
   );
 
   return (
-    <div className="w-full overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
+    <div className="w-full overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
       {/* Header */}
       <div className="px-3 py-2.5 border-b border-[var(--color-border)]/60">
         <div className="flex items-center gap-2">
@@ -103,12 +103,12 @@ export function CharacterGrid({
               }
             }}
             placeholder={t("placeholder")}
-            className="w-full rounded-md bg-[var(--color-surface-2)] pl-8 pr-8 py-2 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] placeholder:text-[var(--color-muted-foreground)] outline-none focus:border-[var(--color-border-light)] focus:ring-1 focus:ring-[var(--color-border-light)] transition-colors"
+            className="w-full rounded-md bg-[var(--color-surface-2)] pl-8 pr-8 py-2 text-xs text-[var(--color-foreground)] border border-[var(--color-border)] placeholder:text-[var(--color-muted-foreground)] outline-none focus:border-[var(--color-border-light)] focus:ring-1 focus:ring-[var(--color-border-light)]"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
             >
               <X className="h-3.5 w-3.5" />
             </button>

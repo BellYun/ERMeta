@@ -123,7 +123,7 @@ export function CharacterHeader({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="rounded-lg border border-[var(--color-border)] bg-white p-3 sm:p-4">
+      <div className="rounded-md border border-[var(--color-border)] bg-white p-3 sm:p-4">
         <div className="flex items-start gap-3 sm:gap-4">
           <div className="relative shrink-0">
             <div
@@ -151,7 +151,7 @@ export function CharacterHeader({
 
           <div className="flex min-w-0 flex-1 flex-col gap-2">
             <div>
-              <h2 className="text-[1.15rem] font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
+              <h2 className="text-[1.15rem] font-bold leading-tight text-[var(--color-foreground)] sm:text-xl">
                 {characterName}
               </h2>
               <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
@@ -192,7 +192,7 @@ export function CharacterHeader({
                       }}
                       onKeyDown={(e) => handleTierKey(e, i)}
                       className={cn(
-                        "rounded px-2.5 py-1.5 text-[10px] font-medium whitespace-nowrap transition-colors sm:px-3 sm:text-[11px]",
+                        "rounded px-2.5 py-1.5 text-[10px] font-medium whitespace-nowrap sm:px-3 sm:text-[11px]",
                         "focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-border-light)]",
                         isSelected
                           ? "bg-white text-[var(--color-foreground)]"
@@ -246,7 +246,7 @@ export function CharacterHeader({
                 onClick={() => setSelectedWeapon(null)}
                 onKeyDown={(e) => handleWeaponKey(e, 0)}
                 className={cn(
-                  "flex shrink-0 items-center gap-1.5 rounded-md border px-2.5 py-2 text-[11px] font-medium transition-colors sm:px-3 sm:text-xs",
+                  "flex shrink-0 items-center gap-1.5 rounded-md border px-2.5 py-2 text-[11px] font-medium sm:px-3 sm:text-xs",
                   "focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-border-light)]",
                   selectedWeapon == null
                     ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
@@ -278,7 +278,7 @@ export function CharacterHeader({
                     }}
                     onKeyDown={(e) => handleWeaponKey(e, weaponIndex)}
                     className={cn(
-                      "flex min-w-[88px] shrink-0 flex-col rounded-md border px-2.5 py-2 text-[11px] transition-colors sm:min-w-[96px] sm:px-3 sm:text-xs",
+                      "flex min-w-[88px] shrink-0 flex-col rounded-md border px-2.5 py-2 text-[11px] sm:min-w-[96px] sm:px-3 sm:text-xs",
                       "focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-border-light)]",
                       isSelected
                         ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
@@ -374,7 +374,7 @@ export function CharacterHeader({
           />
         </div>
       ) : (
-        <div className="rounded-lg border border-dashed border-[var(--color-border)] bg-white px-4 py-8 text-center">
+        <div className="rounded-md border border-dashed border-[var(--color-border)] bg-white px-4 py-8 text-center">
           <p className="text-sm text-[var(--color-muted-foreground)]">
             {currentPatch ? t("emptyPatchData") : t("loadingPatchInfo")}
           </p>

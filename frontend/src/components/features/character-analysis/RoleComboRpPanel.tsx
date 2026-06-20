@@ -351,17 +351,17 @@ export function RoleComboRpPanel({ characterCode, selectedWeapon }: RoleComboRpP
 
       {loading ? (
         <div className="grid gap-2 px-4 pb-4">
-          <div className="h-9 rounded-lg bg-[var(--color-surface-2)]" />
-          <div className="h-48 rounded-lg bg-[var(--color-surface-2)]" />
+          <div className="h-9 rounded-md bg-[var(--color-surface-2)]" />
+          <div className="h-48 rounded-md bg-[var(--color-surface-2)]" />
         </div>
       ) : !data ? (
-        <div className="mx-4 mb-4 flex min-h-[180px] items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] bg-white px-4 text-center text-xs text-[var(--color-muted-foreground)]">
+        <div className="mx-4 mb-4 flex min-h-[180px] items-center justify-center rounded-md border border-dashed border-[var(--color-border)] bg-white px-4 text-center text-xs text-[var(--color-muted-foreground)]">
           {copy.sampleChecking}
         </div>
       ) : (
         <>
           {data.group ? (
-            <div className="mx-4 mb-3 rounded-lg border border-[var(--color-border)] bg-white px-3 py-2">
+            <div className="mx-4 mb-3 rounded-md border border-[var(--color-border)] bg-white px-3 py-2">
               <div className="text-xs font-semibold text-[var(--color-foreground)]">
                 {localizeRoleText(data.group.label, locale)}
               </div>
@@ -380,7 +380,7 @@ export function RoleComboRpPanel({ characterCode, selectedWeapon }: RoleComboRpP
             </div>
           ) : null}
 
-          <div className="mx-4 mb-3 rounded-lg border border-[var(--color-border)] bg-white px-3 py-2.5">
+          <div className="mx-4 mb-3 rounded-md border border-[var(--color-border)] bg-white px-3 py-2.5">
             <p className="text-[11px] font-semibold text-[var(--color-foreground)]">
               {copy.pickCondition}
             </p>
@@ -401,12 +401,10 @@ export function RoleComboRpPanel({ characterCode, selectedWeapon }: RoleComboRpP
             <button
               type="button"
               onClick={() => setExpanded((value) => !value)}
-              className="flex min-h-[40px] items-center justify-center gap-1.5 border-t border-[var(--color-border)] px-4 text-xs font-semibold text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+              className="flex min-h-[40px] items-center justify-center gap-1.5 border-t border-[var(--color-border)] px-4 text-xs font-semibold text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
             >
               {expanded ? copy.collapse : copy.more}
-              <ChevronDown
-                className={cn("h-3.5 w-3.5 transition-transform", expanded && "rotate-180")}
-              />
+              <ChevronDown className={cn("h-3.5 w-3.5", expanded && "rotate-180")} />
             </button>
           ) : null}
         </>

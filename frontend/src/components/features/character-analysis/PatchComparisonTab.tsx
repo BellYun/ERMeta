@@ -12,8 +12,8 @@ const PatchComparisonCharts = dynamic(() => import("./PatchComparisonCharts"), {
   ssr: false,
   loading: () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-      <div className="h-[160px] sm:h-[220px] rounded-lg bg-[var(--color-surface-2)]" />
-      <div className="h-[160px] sm:h-[220px] rounded-lg bg-[var(--color-surface-2)]" />
+      <div className="h-[160px] sm:h-[220px] rounded-md bg-[var(--color-surface-2)]" />
+      <div className="h-[160px] sm:h-[220px] rounded-md bg-[var(--color-surface-2)]" />
     </div>
   ),
 });
@@ -34,12 +34,12 @@ export function PatchComparisonTab({
   const t = useTranslations("characterPatch");
 
   if (loading) {
-    return <div className="h-40 rounded-lg bg-[var(--color-surface)]" />;
+    return <div className="h-40 rounded-md bg-[var(--color-surface)]" />;
   }
 
   if (!stats || stats.totalGames === 0) {
     return (
-      <div className="rounded-lg border border-[var(--color-border)] bg-white p-8 flex flex-col items-center gap-2 text-[var(--color-muted-foreground)]">
+      <div className="rounded-md border border-[var(--color-border)] bg-white p-8 flex flex-col items-center gap-2 text-[var(--color-muted-foreground)]">
         <BarChart2 className="h-8 w-8 opacity-40" />
         <p className="text-sm">{t("noData")}</p>
       </div>
@@ -47,7 +47,7 @@ export function PatchComparisonTab({
   }
 
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-white p-3 sm:p-5 space-y-3 sm:space-y-4 overflow-hidden">
+    <div className="rounded-md border border-[var(--color-border)] bg-white p-3 sm:p-5 space-y-3 sm:space-y-4 overflow-hidden">
       {/* 멀티 패치 트렌드 차트 */}
       {chartData.length < 2 ? (
         <div className="flex flex-col items-center gap-2 py-6 sm:py-8 text-[var(--color-muted-foreground)]">

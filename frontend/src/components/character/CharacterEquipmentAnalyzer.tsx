@@ -129,7 +129,7 @@ function TopBuildsTable({
   traitNames: Record<number, string>;
 }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
+    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
       <SectionHeader title="주요 빌드" />
 
       {/* 모바일 카드 레이아웃 (<640px) */}
@@ -205,7 +205,7 @@ function TopBuildsTable({
               <tr
                 key={i}
                 className={cn(
-                  "border-b border-[var(--color-border)] last:border-0 transition-colors hover:bg-[var(--color-surface-2)]",
+                  "border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-surface-2)]",
                   i === 0 && "bg-[var(--color-stat-up)]/5"
                 )}
               >
@@ -276,7 +276,7 @@ function TopBuildsTable({
               <tr
                 key={i}
                 className={cn(
-                  "border-b border-[var(--color-border)] last:border-0 transition-colors hover:bg-[var(--color-surface-2)]",
+                  "border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-surface-2)]",
                   i === 0 && "bg-[var(--color-stat-up)]/5"
                 )}
               >
@@ -347,7 +347,7 @@ function SlotPopularityGrid({
   itemNames: Record<number, string>;
 }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
+    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
       <SectionHeader title="슬롯별 인기 아이템" />
 
       {/* 모바일: 슬롯별 가로 리스트 (스크롤 없음) */}
@@ -365,7 +365,7 @@ function SlotPopularityGrid({
                   <div
                     key={item.code}
                     className={cn(
-                      "flex flex-col items-center gap-0.5 rounded-lg px-2 py-1.5 min-w-[56px] shrink-0",
+                      "flex flex-col items-center gap-0.5 rounded-md px-2 py-1.5 min-w-[56px] shrink-0",
                       i === 0 && "bg-[var(--color-stat-up)]/5 ring-1 ring-[var(--color-stat-up)]/20"
                     )}
                   >
@@ -407,7 +407,7 @@ function SlotPopularityGrid({
                       <div
                         key={item.code}
                         className={cn(
-                          "flex flex-col items-center gap-1 px-2 py-2 transition-colors hover:bg-[var(--color-surface-2)]",
+                          "flex flex-col items-center gap-1 px-2 py-2 hover:bg-[var(--color-surface-2)]",
                           i === 0 && "bg-[var(--color-stat-up)]/5"
                         )}
                       >
@@ -440,14 +440,14 @@ function CoreItemsList({
   itemNames: Record<number, string>;
 }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
+    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
       <SectionHeader title="코어 아이템" />
       <div className="divide-y divide-[var(--color-border)]">
         {coreItems.map((item, i) => (
           <div
             key={item.code}
             className={cn(
-              "px-3 md:px-4 py-2.5 hover:bg-[var(--color-surface-2)] transition-colors",
+              "px-3 md:px-4 py-2.5 hover:bg-[var(--color-surface-2)]",
               i === 0 && "bg-[var(--color-stat-up)]/5"
             )}
           >
@@ -562,7 +562,7 @@ export function CharacterEquipmentAnalyzer({
     return (
       <div className="space-y-4">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-40 rounded-lg bg-[var(--color-surface)]" />
+          <div key={i} className="h-40 rounded-md bg-[var(--color-surface)]" />
         ))}
       </div>
     );
@@ -576,7 +576,7 @@ export function CharacterEquipmentAnalyzer({
 
   if (isEmpty) {
     return (
-      <div className="rounded-lg border border-[var(--color-border)] bg-white p-8 text-center text-sm text-[var(--color-muted-foreground)]">
+      <div className="rounded-md border border-[var(--color-border)] bg-white p-8 text-center text-sm text-[var(--color-muted-foreground)]">
         아이템 빌드 표본을 확인 중입니다.
       </div>
     );

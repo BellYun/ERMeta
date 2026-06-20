@@ -154,9 +154,7 @@ export function SynergyPartnersSection({
     <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
       <div className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 sm:mb-4">
         <Users className="h-4 w-4 text-[var(--color-muted-foreground)]" />
-        <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.18rem]">
-          {copy.title}
-        </h2>
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">{copy.title}</h2>
         <span className="text-[10px] text-[var(--color-muted-foreground)]">
           {characterName}({weaponName}) {copy.basedOn} · {data.patchScope} · {data.tierScope}
         </span>
@@ -210,7 +208,7 @@ function PartnerList({
         <span className="text-xs font-semibold text-[var(--color-foreground)]">{title}</span>
       </div>
       {partners.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-[var(--color-border)] bg-white p-3 text-center text-xs text-[var(--color-muted-foreground)]">
+        <div className="rounded-md border border-dashed border-[var(--color-border)] bg-white p-3 text-center text-xs text-[var(--color-muted-foreground)]">
           {copy.insufficientSample}
         </div>
       ) : (
@@ -251,7 +249,7 @@ function PartnerCard({
   const partnerWeaponName = resolveWeaponName(p.partnerWeapon, l10n);
 
   return (
-    <li className="flex items-center gap-3 rounded-lg border border-[var(--color-border)] bg-white p-2.5">
+    <li className="flex items-center gap-3 rounded-md border border-[var(--color-border)] bg-white p-2.5">
       <Image
         src={getCharacterMiniWebpUrl(p.partnerCode)}
         alt={partnerName}
