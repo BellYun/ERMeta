@@ -43,7 +43,7 @@ export const CHANGE_LABEL: Record<string, { text: string; color: string; bg: str
 };
 
 const RANK_STYLE: Record<number, string> = {
-  1: "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]",
+  1: "border-[var(--color-accent)] bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]",
   2: "border-[var(--color-border)] bg-white text-[var(--color-foreground)]",
   3: "border-[var(--color-border)] bg-white text-[var(--color-foreground)]",
 };
@@ -134,6 +134,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
             <div
               key={r.pick.characterNum}
               className="char-card group cursor-pointer p-4"
+              data-accent={i === 0 ? "true" : undefined}
               onClick={() => {
                 trackHoneyClick(r, i + 1);
                 router.push(
@@ -315,8 +316,9 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
             <div
               key={r.pick.characterNum}
               className={cn(
-                "relative w-[138px] shrink-0 snap-start overflow-hidden rounded-md border border-[var(--color-border)] bg-white cursor-pointer touch-manipulation"
+                "char-card relative w-[138px] shrink-0 snap-start cursor-pointer touch-manipulation bg-white"
               )}
+              data-accent={i === 0 ? "true" : undefined}
               style={{ aspectRatio: "0.72" }}
               onClick={() => {
                 trackHoneyClick(r, i + 1);

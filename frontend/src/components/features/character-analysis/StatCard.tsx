@@ -27,20 +27,20 @@ export function SkeletonCard() {
 
 const ACCENT_COLORS = {
   blue: {
-    border: "border-l-[var(--color-border-light)]",
-    gauge: "bg-[var(--color-foreground)]",
+    border: "border-l-[var(--color-accent)]",
+    gauge: "bg-[var(--color-accent)]",
   },
   gold: {
-    border: "border-l-[var(--color-border-light)]",
-    gauge: "bg-[var(--color-foreground)]",
+    border: "border-l-[var(--color-accent)]",
+    gauge: "bg-[var(--color-accent)]",
   },
   purple: {
-    border: "border-l-[var(--color-border-light)]",
-    gauge: "bg-[var(--color-foreground)]",
+    border: "border-l-[var(--color-accent)]",
+    gauge: "bg-[var(--color-accent)]",
   },
   green: {
-    border: "border-l-[var(--color-border-light)]",
-    gauge: "bg-[var(--color-foreground)]",
+    border: "border-l-[var(--color-accent)]",
+    gauge: "bg-[var(--color-accent)]",
   },
 };
 

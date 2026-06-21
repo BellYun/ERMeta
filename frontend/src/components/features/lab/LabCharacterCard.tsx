@@ -16,12 +16,12 @@ export function LabCharacterCard({ character }: Props) {
   const imgUrl = getCharacterMiniWebpUrl(character.characterCode);
 
   return (
-    <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
+    <div className="metric-card overflow-hidden">
       {/* Card header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--color-border)]">
+      <div className="flex items-center gap-3 border-b border-[var(--color-border)] px-4 py-3">
         <Link
           href={`/character/${character.characterCode}`}
-          className="group flex min-w-0 flex-1 items-center gap-3 rounded-md outline-none transition focus-visible:ring-1 focus-visible:ring-[var(--color-border-light)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)]"
+          className="group flex min-w-0 flex-1 items-center gap-3 rounded-md outline-none transition focus-visible:ring-2 focus-visible:ring-[var(--color-accent-muted)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)]"
           aria-label={`${character.characterName} 분석 페이지로 이동`}
         >
           <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-[var(--color-surface-2)]">
@@ -42,7 +42,7 @@ export function LabCharacterCard({ character }: Props) {
             </p>
           </div>
         </Link>
-        <div className="text-right shrink-0">
+        <div className="shrink-0 text-right">
           <p className="text-[11px] text-[var(--color-muted-foreground)]">표본</p>
           <p className="text-xs font-semibold tabular-nums text-[var(--color-foreground)]">
             {formatGames(character.totalGames)}

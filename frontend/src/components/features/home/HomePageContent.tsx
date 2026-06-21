@@ -36,13 +36,11 @@ export async function HomePageContent({
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                <h1 className="text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
+                <h1 className="dashboard-section-title text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
                   {t("title")}
                 </h1>
                 {defaultPatch ? (
-                  <span className="text-xs font-medium text-[var(--color-muted-foreground)]">
-                    {t("patch", { patch: defaultPatch })}
-                  </span>
+                  <span className="dashboard-kicker">{t("patch", { patch: defaultPatch })}</span>
                 ) : null}
               </div>
               <p className="mt-2 max-w-[54rem] text-sm leading-6 text-[var(--color-muted-foreground)]">
@@ -71,13 +69,13 @@ export async function HomePageContent({
           </div>
 
           {hasRankingData ? (
-            <div className="rounded-md border border-[var(--color-border)] bg-white px-4 py-4 sm:px-5">
+            <div className="metric-card px-4 py-4 sm:px-5" data-accent="true">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                   <p className="text-xs font-medium text-[var(--color-muted-foreground)]">
                     {t("matchMetric")}
                   </p>
-                  <p className="mt-1 font-mono text-[1.8rem] font-bold leading-none text-[var(--color-foreground)] sm:text-[2.15rem]">
+                  <p className="mt-1 font-mono text-[1.8rem] font-bold leading-none text-[var(--color-accent-foreground)] sm:text-[2.15rem]">
                     {trackedMatches}
                   </p>
                 </div>

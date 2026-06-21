@@ -114,7 +114,9 @@ export default function AboutPage({ locale }: { locale: RouteLocale }) {
 
   return (
     <article className="prose-custom mx-auto max-w-3xl py-8">
-      <h1 className="mb-4 text-xl font-bold text-[var(--color-foreground)]">{content.title}</h1>
+      <h1 className="dashboard-section-title mb-4 text-xl font-bold text-[var(--color-foreground)]">
+        {content.title}
+      </h1>
       <p className="mb-8 text-xs text-[var(--color-muted-foreground)]">{content.updated}</p>
       <p className="mb-8 text-sm leading-relaxed text-[var(--color-muted-foreground)]">
         {content.lead}
@@ -123,7 +125,7 @@ export default function AboutPage({ locale }: { locale: RouteLocale }) {
       <div className="space-y-8">
         {content.sections.map((section) => (
           <section key={section.title}>
-            <h2 className="mb-3 text-base font-semibold text-[var(--color-foreground)]">
+            <h2 className="dashboard-section-title mb-3 text-base font-semibold text-[var(--color-foreground)]">
               {section.title}
             </h2>
             <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
@@ -133,17 +135,26 @@ export default function AboutPage({ locale }: { locale: RouteLocale }) {
         ))}
       </div>
 
-      <div className="mt-8 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+      <div className="metric-card mt-8 p-4" data-accent="true">
         <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
-          <Link href="/methodology" className="text-[var(--color-foreground)] hover:underline">
+          <Link
+            href="/methodology"
+            className="font-semibold text-[var(--color-accent-foreground)] hover:underline"
+          >
             {labels.methodology}
           </Link>
           {" / "}
-          <Link href="/privacy" className="text-[var(--color-foreground)] hover:underline">
+          <Link
+            href="/privacy"
+            className="font-semibold text-[var(--color-accent-foreground)] hover:underline"
+          >
             {labels.privacy}
           </Link>
           {" / "}
-          <Link href="/terms" className="text-[var(--color-foreground)] hover:underline">
+          <Link
+            href="/terms"
+            className="font-semibold text-[var(--color-accent-foreground)] hover:underline"
+          >
             {labels.terms}
           </Link>
         </p>

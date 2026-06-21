@@ -123,13 +123,13 @@ export function CharacterHeader({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="rounded-md border border-[var(--color-border)] bg-white p-3 sm:p-4">
+      <div className="metric-card p-3 sm:p-4" data-accent={charTier ? "true" : undefined}>
         <div className="flex items-start gap-3 sm:gap-4">
           <div className="relative shrink-0">
             <div
               className={cn(
                 "relative h-16 w-16 overflow-hidden rounded-md border bg-[var(--color-surface-2)] sm:h-24 sm:w-24",
-                charTier ? "border-[var(--color-border-light)]" : "border-[var(--color-border)]"
+                charTier ? "border-[var(--color-accent)]" : "border-[var(--color-border)]"
               )}
             >
               <Image
@@ -151,7 +151,7 @@ export function CharacterHeader({
 
           <div className="flex min-w-0 flex-1 flex-col gap-2">
             <div>
-              <h2 className="text-[1.15rem] font-bold leading-tight text-[var(--color-foreground)] sm:text-xl">
+              <h2 className="dashboard-section-title text-[1.15rem] font-bold leading-tight text-[var(--color-foreground)] sm:text-xl">
                 {characterName}
               </h2>
               <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
@@ -192,12 +192,9 @@ export function CharacterHeader({
                       }}
                       onKeyDown={(e) => handleTierKey(e, i)}
                       className={cn(
-                        "rounded px-2.5 py-1.5 text-[10px] font-medium whitespace-nowrap sm:px-3 sm:text-[11px]",
-                        "focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-border-light)]",
-                        isSelected
-                          ? "bg-white text-[var(--color-foreground)]"
-                          : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
+                        "dashboard-tab min-h-[30px] whitespace-nowrap px-2.5 py-1.5 text-[10px] sm:px-3 sm:text-[11px]"
                       )}
+                      data-active={isSelected ? "true" : undefined}
                     >
                       {opt.label}
                     </button>
@@ -246,12 +243,9 @@ export function CharacterHeader({
                 onClick={() => setSelectedWeapon(null)}
                 onKeyDown={(e) => handleWeaponKey(e, 0)}
                 className={cn(
-                  "flex shrink-0 items-center gap-1.5 rounded-md border px-2.5 py-2 text-[11px] font-medium sm:px-3 sm:text-xs",
-                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-border-light)]",
-                  selectedWeapon == null
-                    ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
-                    : "border-[var(--color-border)] bg-white text-[var(--color-foreground)] hover:border-[var(--color-border-light)]"
+                  "dashboard-tab shrink-0 gap-1.5 px-2.5 py-2 text-[11px] sm:px-3 sm:text-xs"
                 )}
+                data-active={selectedWeapon == null ? "true" : undefined}
               >
                 {t("all")}
               </button>
@@ -278,12 +272,9 @@ export function CharacterHeader({
                     }}
                     onKeyDown={(e) => handleWeaponKey(e, weaponIndex)}
                     className={cn(
-                      "flex min-w-[88px] shrink-0 flex-col rounded-md border px-2.5 py-2 text-[11px] sm:min-w-[96px] sm:px-3 sm:text-xs",
-                      "focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-border-light)]",
-                      isSelected
-                        ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
-                        : "border-[var(--color-border)] bg-white text-[var(--color-foreground)] hover:border-[var(--color-border-light)]"
+                      "dashboard-tab min-w-[88px] shrink-0 flex-col px-2.5 py-2 text-[11px] sm:min-w-[96px] sm:px-3 sm:text-xs"
                     )}
+                    data-active={isSelected ? "true" : undefined}
                   >
                     <div className="flex items-center justify-between gap-2 w-full">
                       <span className="font-medium">
@@ -293,7 +284,7 @@ export function CharacterHeader({
                         className={cn(
                           "text-[10px] tabular-nums",
                           isSelected
-                            ? "text-[var(--color-foreground)]"
+                            ? "text-[var(--color-accent-foreground)]"
                             : "text-[var(--color-muted-foreground)]"
                         )}
                       >
@@ -308,7 +299,7 @@ export function CharacterHeader({
                         className={cn(
                           "h-full rounded-full",
                           isSelected
-                            ? "bg-[var(--color-foreground)]"
+                            ? "bg-[var(--color-accent)]"
                             : "bg-[var(--color-muted-foreground)]/50"
                         )}
                         style={{ width: `${w.pickRate}%` }}

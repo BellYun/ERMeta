@@ -18,7 +18,7 @@ export function PatchTimelineBlock({ perPatchTop }: PatchTimelineBlockProps) {
             <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
               패치 흐름
             </p>
-            <h2 className="mt-2 text-[1.25rem] font-bold text-[var(--color-foreground)] sm:text-[1.55rem]">
+            <h2 className="dashboard-section-title mt-2 text-[1.25rem] font-bold text-[var(--color-foreground)] sm:text-[1.55rem]">
               패치별 평균 RP 주요 조합
             </h2>
             <p className="mt-1 text-xs leading-6 text-[var(--color-muted-foreground)] sm:text-sm">
@@ -44,7 +44,7 @@ export function PatchTimelineBlock({ perPatchTop }: PatchTimelineBlockProps) {
 
 function PatchColumn({ patch, entries }: PatchTopGroup) {
   return (
-    <div className="flex w-[252px] shrink-0 flex-col gap-3 rounded-md border border-[var(--color-border)] bg-white p-3.5 sm:w-[264px]">
+    <div className="metric-card flex w-[252px] shrink-0 flex-col gap-3 p-3.5 sm:w-[264px]">
       <div className="flex items-center justify-between border-b border-[var(--color-border)] pb-2.5">
         <div>
           <p className="text-[11px] text-[var(--color-muted-foreground)]">패치</p>
@@ -90,15 +90,15 @@ function PatchRankRow({ rank, entry }: { rank: number; entry: PatchTopGroup["ent
         className={cn(
           "group flex items-center gap-2.5 rounded-md border px-2.5 py-2",
           rank === 1
-            ? "border-[var(--color-border-light)] bg-white"
-            : "border-[var(--color-border)] bg-white hover:bg-[var(--color-surface-2)]"
+            ? "border-[var(--color-accent)] bg-[var(--color-accent-muted)]"
+            : "border-[var(--color-border)] bg-white hover:border-[var(--color-accent)] hover:bg-[var(--color-surface-2)]"
         )}
       >
         <span
           className={cn(
             "flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[11px] font-semibold tabular-nums",
             rank === 1
-              ? "border border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
+              ? "border border-[var(--color-accent)] bg-white text-[var(--color-accent-foreground)]"
               : rank <= 3
                 ? "border border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
                 : "border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]"

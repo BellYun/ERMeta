@@ -169,7 +169,9 @@ function TraitIconSmall({ code, size = 24 }: { code: number; size?: number }) {
 function SectionDivider({ title }: { title: string }) {
   return (
     <div className="flex items-center gap-2 py-1">
-      <span className="text-xs font-semibold text-[var(--color-foreground)]">{title}</span>
+      <span className="dashboard-section-title text-xs font-semibold text-[var(--color-foreground)]">
+        {title}
+      </span>
       <div className="flex-1 h-px bg-[var(--color-border)]" />
     </div>
   );
@@ -288,7 +290,7 @@ function TopBuildsTableFiltered({
   return (
     <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
-        <span className="text-xs font-semibold text-[var(--color-foreground)]">
+        <span className="dashboard-section-title text-xs font-semibold text-[var(--color-foreground)]">
           {t("sections.topBuilds")}
         </span>
       </div>
@@ -413,7 +415,7 @@ function SlotPopularityGrid({
   return (
     <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
-        <span className="text-xs font-semibold text-[var(--color-foreground)]">
+        <span className="dashboard-section-title text-xs font-semibold text-[var(--color-foreground)]">
           {t("sections.slotPopularity")}
         </span>
       </div>
@@ -676,7 +678,7 @@ export function CharacterDetailedAnalyzer({
   // ── 표본 확인 중 ─────────────────────────────────────────────────────────────
   if (traitBuilds.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-2 rounded-md border border-[var(--color-border)] bg-white p-8 text-[var(--color-muted-foreground)]">
+      <div className="metric-card flex flex-col items-center gap-2 p-8 text-[var(--color-muted-foreground)]">
         <Layers className="h-8 w-8 opacity-40" />
         <p className="text-sm">{t("empty.detailed")}</p>
       </div>
@@ -695,8 +697,8 @@ export function CharacterDetailedAnalyzer({
   return (
     <div className="space-y-4">
       {/* 주특성 그룹 선택 */}
-      <div className="rounded-md border border-[var(--color-border)] bg-white p-2.5 sm:p-4">
-        <p className="mb-1.5 sm:mb-3 text-[11px] sm:text-xs font-semibold text-[var(--color-muted-foreground)]">
+      <div className="metric-card p-2.5 sm:p-4">
+        <p className="dashboard-section-title mb-1.5 text-[11px] font-semibold text-[var(--color-foreground)] sm:mb-3 sm:text-xs">
           {t("stats.primaryTrait")}
         </p>
 
@@ -716,8 +718,8 @@ export function CharacterDetailedAnalyzer({
                 className={cn(
                   "flex flex-col rounded-md border px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs min-w-[90px] sm:min-w-[100px] shrink-0 sm:shrink touch-manipulation",
                   isSelected
-                    ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
-                    : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] active:border-[var(--color-border-light)] sm:hover:border-[var(--color-border-light)]"
+                    ? "border-[var(--color-accent)] bg-[var(--color-accent-muted)] text-[var(--color-foreground)]"
+                    : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] active:border-[var(--color-accent)] sm:hover:border-[var(--color-accent)]"
                 )}
               >
                 <div className="flex items-center gap-1.5">
@@ -750,9 +752,7 @@ export function CharacterDetailedAnalyzer({
                   <div
                     className={cn(
                       "h-full rounded-full",
-                      isSelected
-                        ? "bg-[var(--color-foreground)]"
-                        : "bg-[var(--color-muted-foreground)]"
+                      isSelected ? "bg-[var(--color-accent)]" : "bg-[var(--color-muted-foreground)]"
                     )}
                     style={{ width: `${barWidth}%` }}
                   />
@@ -764,7 +764,7 @@ export function CharacterDetailedAnalyzer({
 
         {/* 선택된 조합 요약 */}
         {selectedGroup && (
-          <div className="mt-2 sm:mt-3 flex items-center justify-between sm:justify-start gap-2 sm:gap-4 rounded-md bg-[var(--color-surface-2)] border border-[var(--color-border)] px-2.5 sm:px-4 py-2">
+          <div className="mt-2 flex items-center justify-between gap-2 rounded-md border border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-2.5 py-2 sm:mt-3 sm:justify-start sm:gap-4 sm:px-4">
             <div className="flex items-center gap-1">
               <span className="text-[10px] sm:text-xs text-[var(--color-muted-foreground)]">
                 {t("stats.total")}
@@ -818,7 +818,7 @@ export function CharacterDetailedAnalyzer({
                 <div className="space-y-4">
                   <div className="flex flex-col lg:flex-row gap-4">
                     {/* 왼쪽: 주특성 트리 */}
-                    <div className="flex-1 rounded-md border border-[var(--color-border)] bg-white p-4 sm:p-5">
+                    <div className="metric-card flex-1 p-4 sm:p-5">
                       {hasPrimaryTraits && (
                         <div className="flex flex-col items-center gap-3">
                           {topMainCore != null && (
@@ -837,7 +837,7 @@ export function CharacterDetailedAnalyzer({
                     </div>
 
                     {/* 오른쪽: 주특성 요약 */}
-                    <div className="shrink-0 overflow-hidden rounded-md border border-[var(--color-border)] bg-white self-start lg:w-[240px]">
+                    <div className="metric-card shrink-0 overflow-hidden self-start lg:w-[240px]">
                       {hasPrimaryTraits && (
                         <>
                           <div
@@ -884,9 +884,9 @@ export function CharacterDetailedAnalyzer({
 
                   {/* 부특성 3열 동시 표시 */}
                   {hasSecondaryTraits && (
-                    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
+                    <div className="metric-card overflow-hidden">
                       <div className="px-3 sm:px-4 py-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60">
-                        <span className="text-[11px] sm:text-xs font-semibold text-[var(--color-muted-foreground)]">
+                        <span className="dashboard-section-title text-[11px] font-semibold text-[var(--color-foreground)] sm:text-xs">
                           {t("sections.secondaryTraits")}
                         </span>
                       </div>
@@ -986,7 +986,7 @@ export function CharacterDetailedAnalyzer({
               )}
             </div>
           ) : (
-            <div className="rounded-md border border-[var(--color-border)] bg-white p-6 text-center text-sm text-[var(--color-muted-foreground)]">
+            <div className="metric-card p-6 text-center text-sm text-[var(--color-muted-foreground)]">
               {t("empty.itemBuilds")}
             </div>
           )}

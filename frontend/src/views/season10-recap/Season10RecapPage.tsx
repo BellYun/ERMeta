@@ -176,15 +176,16 @@ function HeroMetricCard({
   value: string;
   tone?: "default" | "gold" | "blue";
 }) {
-  const iconTone =
-    tone === "gold"
-      ? "border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
-      : tone === "blue"
-        ? "border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
-        : "border-[var(--color-border)] bg-white text-[var(--color-foreground)]";
+  const isAccent = tone !== "default";
+  const iconTone = isAccent
+    ? "border-[var(--color-accent)] bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]"
+    : "border-[var(--color-border)] bg-white text-[var(--color-foreground)]";
 
   return (
-    <div className="metric-card flex min-h-[118px] flex-col gap-4 px-4 py-4 sm:min-h-[150px] sm:gap-6 sm:px-5 sm:py-5">
+    <div
+      className="metric-card flex min-h-[118px] flex-col gap-4 px-4 py-4 sm:min-h-[150px] sm:gap-6 sm:px-5 sm:py-5"
+      data-accent={isAccent ? "true" : undefined}
+    >
       <div
         className={cn(
           "flex h-9 w-9 items-center justify-center rounded-md border sm:h-10 sm:w-10",
@@ -221,13 +222,16 @@ function LeaderCard({
   const imageUrl = getCharacterImageUrl(characterCode);
 
   return (
-    <div className="metric-card col-span-2 flex min-h-[132px] items-center gap-4 px-4 py-4 sm:min-h-[150px] sm:px-5 sm:py-5">
+    <div
+      className="metric-card col-span-2 flex min-h-[132px] items-center gap-4 px-4 py-4 sm:min-h-[150px] sm:px-5 sm:py-5"
+      data-accent="true"
+    >
       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] sm:h-20 sm:w-20">
         <Image src={imageUrl} alt={name} fill className="object-cover" sizes="80px" />
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[var(--color-muted-foreground)]">
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[var(--color-accent-foreground)]">
             <Trophy className="h-3.5 w-3.5" strokeWidth={2} />
             {copy.leaderTitle}
           </span>
@@ -241,7 +245,7 @@ function LeaderCard({
         <p className="mt-1 text-sm text-[var(--color-muted-foreground)]">{weaponName}</p>
       </div>
       <div className="shrink-0 text-right">
-        <p className="text-[1.35rem] font-bold text-[var(--color-foreground)] sm:text-[1.7rem]">
+        <p className="text-[1.35rem] font-bold text-[var(--color-accent-foreground)] sm:text-[1.7rem]">
           +{averageRP.toFixed(1)}
         </p>
         <p className="mt-1 text-[11px] text-[var(--color-muted-foreground)] sm:text-sm">
@@ -262,7 +266,9 @@ export default async function SeasonRecapPage({ locale = "ko" }: { locale?: Rout
     return (
       <main className="page-shell flex flex-col gap-5 lg:gap-6">
         <section className="dashboard-panel p-8 text-center">
-          <h1 className="text-xl font-bold text-[var(--color-foreground)]">{copy.emptyTitle}</h1>
+          <h1 className="dashboard-section-title text-xl font-bold text-[var(--color-foreground)]">
+            {copy.emptyTitle}
+          </h1>
           <p className="mt-2 text-sm text-[var(--color-muted-foreground)]">{copy.emptyBody}</p>
         </section>
       </main>
@@ -293,11 +299,11 @@ export default async function SeasonRecapPage({ locale = "ko" }: { locale?: Rout
               </span>
             </div>
 
-            <h1 className="mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
+            <h1 className="dashboard-section-title mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
               {copy.title}
             </h1>
             <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[var(--color-muted-foreground)] sm:text-sm">
-              <span className="rounded border border-[var(--color-border)] bg-white px-2.5 py-1">
+              <span className="rounded border border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-2.5 py-1 font-semibold text-[var(--color-accent-foreground)]">
                 {copy.trackedPatches} {copy.trackedPatchesValue(patches.length)}
               </span>
               <span className="rounded border border-[var(--color-border)] bg-white px-2.5 py-1">
@@ -374,14 +380,16 @@ export default async function SeasonRecapPage({ locale = "ko" }: { locale?: Rout
             <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
               {copy.basisKicker}
             </p>
-            <p className="mt-2 text-sm text-[var(--color-foreground)]">{copy.basisTitle}</p>
+            <p className="dashboard-section-title mt-2 text-sm text-[var(--color-foreground)]">
+              {copy.basisTitle}
+            </p>
             <p className="mt-1 text-xs leading-6 text-[var(--color-muted-foreground)] sm:text-sm">
               {copy.basisBody}
             </p>
           </div>
           <Link
             href="/"
-            className="inline-flex items-center justify-center rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm font-medium text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
+            className="dashboard-tab inline-flex items-center justify-center px-3 py-2 text-sm font-medium"
           >
             {copy.back}
           </Link>

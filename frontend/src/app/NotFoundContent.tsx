@@ -45,12 +45,11 @@ export function NotFoundContent() {
 
   return (
     <div className="flex flex-col items-center justify-center gap-4 py-20">
-      <h2 className="text-lg font-semibold text-[var(--color-foreground)]">{copy.title}</h2>
+      <h2 className="dashboard-section-title text-lg font-semibold text-[var(--color-foreground)]">
+        {copy.title}
+      </h2>
       <p className="text-sm text-[var(--color-muted-foreground)]">{copy.body}</p>
-      <Link
-        href="/"
-        className="rounded-md border border-[var(--color-border)] px-4 py-2 text-sm text-[var(--color-foreground)]"
-      >
+      <Link href="/" className="dashboard-tab px-4 py-2 text-sm" data-active="true">
         {copy.home}
       </Link>
     </div>

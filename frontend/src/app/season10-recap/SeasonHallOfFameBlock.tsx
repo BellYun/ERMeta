@@ -42,7 +42,7 @@ export function SeasonHallOfFameBlock({
             <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
               시즌 누적
             </p>
-            <h2 className="mt-2 text-[1.25rem] font-bold text-[var(--color-foreground)] sm:text-[1.55rem]">
+            <h2 className="dashboard-section-title mt-2 text-[1.25rem] font-bold text-[var(--color-foreground)] sm:text-[1.55rem]">
               시즌 누적 랭킹
             </h2>
             <p className="mt-1 text-xs leading-6 text-[var(--color-muted-foreground)] sm:text-sm">
@@ -117,14 +117,15 @@ function SeasonRow({
         className={cn(
           "group flex w-full items-center gap-3 px-3 py-2.5 text-left sm:px-4 sm:py-3",
           isOpen ? "bg-white" : "hover:bg-[var(--color-surface-2)]",
-          isTopRow && !isOpen && "bg-white"
+          rank === 1 && !isOpen && "bg-[var(--color-accent-muted)]",
+          isTopRow && rank !== 1 && !isOpen && "bg-white"
         )}
       >
         <span
           className={cn(
             "flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-sm font-semibold tabular-nums sm:h-9 sm:w-9 sm:text-base",
             rank === 1
-              ? "border border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
+              ? "border border-[var(--color-accent)] bg-white text-[var(--color-accent-foreground)]"
               : isTopRow
                 ? "border border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
                 : "border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]"

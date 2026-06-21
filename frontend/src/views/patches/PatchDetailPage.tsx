@@ -21,14 +21,19 @@ function DetailMetricCard({
   icon,
   label,
   value,
+  accent = false,
 }: {
   icon: ReactNode;
   label: string;
   value: string;
+  accent?: boolean;
 }) {
   return (
-    <div className="metric-card flex min-h-[110px] flex-col gap-3 px-4 py-4 sm:min-h-[126px] sm:px-5">
-      <div className="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]">
+    <div
+      className="metric-card flex min-h-[110px] flex-col gap-3 px-4 py-4 sm:min-h-[126px] sm:px-5"
+      data-accent={accent ? "true" : undefined}
+    >
+      <div className="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-[var(--color-accent-foreground)]">
         {icon}
       </div>
       <div>
@@ -103,7 +108,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
               </span>
             </div>
 
-            <h1 className="mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
+            <h1 className="dashboard-section-title mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
               {t("detailHeading", { patch: version })}
             </h1>
             <p className="mt-2 max-w-[40rem] text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">
@@ -145,11 +150,8 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                     key={candidate}
                     href={`/patches/${candidate}`}
                     aria-current={isActive ? "page" : undefined}
-                    className={`rounded-md border px-3 py-2 text-sm font-medium ${
-                      isActive
-                        ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
-                        : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
-                    }`}
+                    className="dashboard-tab"
+                    data-active={isActive ? "true" : undefined}
                   >
                     {t("patchPrefix")} {candidate}
                   </Link>
@@ -163,11 +165,13 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
               icon={<Layers3 className="h-5 w-5" strokeWidth={2} />}
               label={t("characterCount", { count: summary.characterCount })}
               value={`${summary.characterCount}`}
+              accent
             />
             <DetailMetricCard
               icon={<NotebookText className="h-5 w-5" strokeWidth={2} />}
               label={t("totalChanges", { count: summary.totalChanges })}
               value={`${summary.totalChanges}`}
+              accent
             />
             <DetailMetricCard
               icon={<TrendingUp className="h-5 w-5" strokeWidth={2} />}
@@ -186,7 +190,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
       <section className="dashboard-panel p-4 lg:p-5">
         <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-[1.3rem] font-bold text-[var(--color-foreground)] sm:text-[1.6rem]">
+            <h2 className="dashboard-section-title text-[1.3rem] font-bold text-[var(--color-foreground)] sm:text-[1.6rem]">
               {t("detailHeading", { patch: version })}
             </h2>
             <p className="mt-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">
@@ -194,10 +198,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
               {t("totalChanges", { count: summary.totalChanges })}
             </p>
           </div>
-          <Link
-            href="/patches"
-            className="inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm font-medium text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
-          >
+          <Link href="/patches" className="dashboard-tab">
             {t("breadcrumb")}
           </Link>
         </div>
@@ -214,6 +215,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
               <article
                 key={note.characterCode}
                 className="metric-card overflow-hidden px-4 py-4 sm:px-5 sm:py-5"
+                data-accent={note.characterCode === notes[0]?.characterCode ? "true" : undefined}
               >
                 <div className="flex items-center gap-3">
                   <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)]">

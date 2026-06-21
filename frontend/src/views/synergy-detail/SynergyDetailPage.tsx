@@ -110,7 +110,8 @@ function FlowCard({
 }) {
   return (
     <div
-      className={`rounded-md border border-[var(--color-border)] bg-white px-3 py-3 ${edgeClass}`}
+      className={`metric-card px-3 py-3 ${edgeClass}`}
+      data-accent={step === 1 ? "true" : undefined}
     >
       <div className="flex items-center justify-between">
         <div
@@ -137,15 +138,13 @@ export default function SynergyDetailPage() {
         <div className="grid gap-3 xl:grid-cols-[minmax(0,1.08fr)_180px_180px_180px]">
           <div className="flex flex-col justify-center xl:pr-4">
             <div className="flex flex-wrap items-center gap-2.5">
-              <span className="text-xs font-medium text-[var(--color-muted-foreground)]">
-                {t("badge")}
-              </span>
+              <span className="dashboard-kicker">{t("badge")}</span>
               <span className="text-xs text-[var(--color-muted-foreground)]">
                 {t("dataNotice")}
               </span>
             </div>
 
-            <h1 className="mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
+            <h1 className="dashboard-section-title mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
               {t("title")}
             </h1>
             <p className="mt-2 max-w-[42rem] text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">
@@ -167,9 +166,9 @@ export default function SynergyDetailPage() {
               }
               label={t("steps.pool.label")}
               sublabel={t("steps.pool.sublabel")}
-              accentClass="border-[var(--color-border)] text-[var(--color-muted-foreground)]"
-              stepClass="text-[var(--color-muted-foreground)]"
-              edgeClass="border-l-2 border-l-[var(--color-border-light)]"
+              accentClass="border-[var(--color-accent-muted)] bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]"
+              stepClass="text-[var(--color-accent-foreground)]"
+              edgeClass="border-l-2 border-l-[var(--color-accent)]"
             />
             <FlowCard
               step={2}
@@ -183,7 +182,7 @@ export default function SynergyDetailPage() {
               sublabel={t("steps.allies.sublabel")}
               accentClass="border-[var(--color-border)] text-[var(--color-muted-foreground)]"
               stepClass="text-[var(--color-muted-foreground)]"
-              edgeClass="border-l-2 border-l-[var(--color-border-light)]"
+              edgeClass="border-l-2 border-l-[var(--color-border)]"
             />
             <FlowCard
               step={3}
@@ -197,7 +196,7 @@ export default function SynergyDetailPage() {
               sublabel={t("steps.analysis.sublabel")}
               accentClass="border-[var(--color-border)] text-[var(--color-muted-foreground)]"
               stepClass="text-[var(--color-muted-foreground)]"
-              edgeClass="border-l-2 border-l-[var(--color-border-light)]"
+              edgeClass="border-l-2 border-l-[var(--color-border)]"
             />
           </div>
         </div>

@@ -78,7 +78,7 @@ export function GlobalFilter() {
             }}
             className={cn(
               "h-14 w-full appearance-none rounded-md border border-[var(--color-border)] bg-white px-3 pr-8 text-[13px] font-medium text-[var(--color-foreground)]",
-              "focus:outline-none focus:border-[var(--color-border-light)]"
+              "focus:outline-none focus:border-[var(--color-accent)]"
             )}
           >
             {patches.map((p) => (
@@ -125,13 +125,8 @@ export function GlobalFilter() {
                 tabIndex={isSelected ? 0 : -1}
                 onClick={() => selectTier(value)}
                 onKeyDown={(e) => handleTierKeyDown(e, index)}
-                className={cn(
-                  "flex h-14 min-w-0 items-center justify-center rounded-md border px-2 text-center text-[12px] font-medium leading-4  transition-colors",
-                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-border-light)]",
-                  isSelected
-                    ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
-                    : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]"
-                )}
+                className="dashboard-tab h-14 min-w-0 px-2 text-center text-[12px] leading-4"
+                data-active={isSelected ? "true" : undefined}
               >
                 <span className="truncate">{label}</span>
               </button>
@@ -152,11 +147,11 @@ export function GlobalFilter() {
             className={cn(
               "appearance-none w-full sm:w-auto",
               "px-3 py-2 pr-8",
-              "rounded-lg",
+              "rounded-md",
               "bg-[var(--color-surface-2)] border border-[var(--color-border)]",
               "text-sm font-medium text-[var(--color-foreground)]",
               "hover:border-[var(--color-border-light)]",
-              "focus:outline-none focus:border-[var(--color-border-light)] focus:ring-1 focus:ring-[var(--color-border-light)]",
+              "focus:outline-none focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)]",
               "transition-colors cursor-pointer"
             )}
           >
@@ -204,14 +199,8 @@ export function GlobalFilter() {
                 tabIndex={isSelected ? 0 : -1}
                 onClick={() => selectTier(value)}
                 onKeyDown={(e) => handleTierKeyDown(e, index)}
-                className={cn(
-                  "px-3 py-1.5 rounded-md text-xs sm:text-[13px] font-medium transition-colors whitespace-nowrap",
-                  "min-h-[32px] touch-manipulation",
-                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-border-light)]",
-                  isSelected
-                    ? "bg-white text-[var(--color-foreground)] border border-[var(--color-border)]"
-                    : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
-                )}
+                className="dashboard-tab min-h-[32px] whitespace-nowrap px-3 py-1.5 text-xs sm:text-[13px]"
+                data-active={isSelected ? "true" : undefined}
               >
                 {label}
               </button>

@@ -562,8 +562,10 @@ function CharacterDetailCard({ data }: { data: CharacterDetailData }) {
 export function CharacterDetailGrid({ rows }: { rows: CharacterDetailData[] }) {
   return (
     <section className="flex flex-col gap-3">
-      <div className="flex items-center justify-between border-l-2 border-[var(--color-border-light)] pl-3">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">캐릭터별 주요 빌드</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
+          캐릭터별 주요 빌드
+        </h2>
         <p className="text-[11px] text-[var(--color-muted-foreground)]">무기군별 호출</p>
       </div>
       <div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
@@ -603,15 +605,18 @@ export function TraitComboBlock({
 
   return (
     <section className="dashboard-panel flex flex-col gap-3 p-4 sm:p-4">
-      <div className="flex items-center justify-between border-l-2 border-[var(--color-border-light)] pl-3">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">상위 특성 조합</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
+          상위 특성 조합
+        </h2>
         <p className="text-[11px] text-[var(--color-muted-foreground)]">평균 RP 기준</p>
       </div>
       <div className="flex flex-col gap-2">
         {topRows.map((row, index) => (
           <div
             key={`${row.mainCore1}-${row.mainCore2}-${row.mainCore3}-${index}`}
-            className="grid gap-3 rounded-md border border-[var(--color-border)] bg-white p-3 md:grid-cols-[44px_1fr_auto] md:items-center"
+            className="metric-card grid gap-3 p-3 md:grid-cols-[44px_1fr_auto] md:items-center"
+            data-accent={index === 0 ? "true" : undefined}
           >
             <span className="font-mono text-sm font-bold text-[var(--color-muted-foreground)]">
               #{index + 1}
@@ -706,8 +711,8 @@ export function SimilarBlock({
   if (top.length === 0) return null;
   return (
     <section className="dashboard-panel flex flex-col gap-3 p-4 sm:p-4">
-      <div className="flex items-center justify-between border-l-2 border-[var(--color-border-light)] pl-3">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">
+      <div className="flex items-center justify-between">
+        <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
           비슷한 조합 {top.length}개
         </h2>
         <Link

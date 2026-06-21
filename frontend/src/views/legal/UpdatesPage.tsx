@@ -388,22 +388,25 @@ export default function UpdatesPage({ locale = "ko" }: { locale?: RouteLocale })
   const entries = localized?.entries ?? updates;
 
   return (
-    <article className="max-w-3xl mx-auto py-8">
-      <h1 className="text-xl font-bold text-[var(--color-foreground)] mb-2">{title}</h1>
-      <p className="text-xs text-[var(--color-muted-foreground)] mb-8">{intro}</p>
+    <article className="mx-auto max-w-3xl py-8">
+      <h1 className="dashboard-section-title mb-2 text-xl font-bold text-[var(--color-foreground)]">
+        {title}
+      </h1>
+      <p className="mb-8 text-xs text-[var(--color-muted-foreground)]">{intro}</p>
 
       <div className="space-y-6">
         {entries.map((entry) => (
           <section
             key={entry.date}
-            className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
+            className="metric-card p-5"
+            data-accent={entry === entries[0] ? "true" : undefined}
           >
-            <div className="flex items-center gap-3 mb-3">
-              <time className="text-sm font-semibold text-[var(--color-foreground)]">
+            <div className="mb-3 flex items-center gap-3">
+              <time className="text-sm font-semibold text-[var(--color-accent-foreground)]">
                 {entry.date}
               </time>
               {entry.version && (
-                <span className="text-[10px] px-2 py-0.5 rounded border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] font-medium">
+                <span className="rounded border border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-2 py-0.5 text-[10px] font-medium text-[var(--color-accent-foreground)]">
                   {entry.version}
                 </span>
               )}
@@ -412,9 +415,9 @@ export default function UpdatesPage({ locale = "ko" }: { locale?: RouteLocale })
               {entry.changes.map((change, i) => (
                 <li
                   key={i}
-                  className="text-sm text-[var(--color-muted-foreground)] leading-relaxed flex items-start gap-2"
+                  className="flex items-start gap-2 text-sm leading-relaxed text-[var(--color-muted-foreground)]"
                 >
-                  <span className="mt-1.5 shrink-0 w-1 h-1 rounded bg-[var(--color-muted-foreground)]" />
+                  <span className="mt-1.5 h-1 w-1 shrink-0 rounded bg-[var(--color-accent)]" />
                   {change}
                 </li>
               ))}

@@ -58,7 +58,7 @@ const CharacterCell = React.memo(function CharacterCell({
       className={cn(
         "flex flex-col items-center gap-0.5 rounded-md px-1 py-1.5",
         selected
-          ? "bg-white ring-1 ring-[var(--color-border-light)]"
+          ? "bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)] ring-1 ring-[var(--color-accent)]"
           : disabled
             ? "opacity-30 cursor-not-allowed"
             : "hover:bg-[var(--color-surface-2)]"
@@ -86,7 +86,12 @@ const CharacterCell = React.memo(function CharacterCell({
           </span>
         )}
       </div>
-      <span className="w-full truncate text-center text-[11px] font-medium text-[var(--color-foreground)]">
+      <span
+        className={cn(
+          "w-full truncate text-center text-[11px] font-medium",
+          selected ? "text-[var(--color-accent-foreground)]" : "text-[var(--color-foreground)]"
+        )}
+      >
         {name}
       </span>
       {cellStats && (

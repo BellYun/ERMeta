@@ -270,12 +270,14 @@ export default function PrivacyPage({ locale = "ko" }: { locale?: RouteLocale })
 
   return (
     <article className="prose-custom mx-auto max-w-3xl py-8">
-      <h1 className="mb-6 text-xl font-bold text-[var(--color-foreground)]">{copy.title}</h1>
+      <h1 className="dashboard-section-title mb-6 text-xl font-bold text-[var(--color-foreground)]">
+        {copy.title}
+      </h1>
       <p className="mb-8 text-xs text-[var(--color-muted-foreground)]">{copy.effectiveDate}</p>
 
       {copy.sections.map((section) => (
         <section key={section.title} className="mb-8">
-          <h2 className="mb-3 text-base font-semibold text-[var(--color-foreground)]">
+          <h2 className="dashboard-section-title mb-3 text-base font-semibold text-[var(--color-foreground)]">
             {section.title}
           </h2>
           {section.body?.map((paragraph) => (
@@ -287,10 +289,13 @@ export default function PrivacyPage({ locale = "ko" }: { locale?: RouteLocale })
             </p>
           ))}
           {section.items ? (
-            <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-              <ul className="list-inside list-disc space-y-1.5 text-sm leading-relaxed text-[var(--color-muted-foreground)]">
+            <div className="metric-card p-4">
+              <ul className="space-y-1.5 text-sm leading-relaxed text-[var(--color-muted-foreground)]">
                 {section.items.map((item) => (
-                  <li key={item}>{item}</li>
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent)]" />
+                    <span>{item}</span>
+                  </li>
                 ))}
               </ul>
             </div>

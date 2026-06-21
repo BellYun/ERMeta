@@ -42,18 +42,18 @@ export function ComboDetailHero({ combo, listHref, patchVersion, tier }: ComboDe
               {combo.totalGames.toLocaleString("ko-KR")} 매치
             </span>
           </div>
-          <h1 className="mt-3 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
+          <h1 className="dashboard-section-title mt-3 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
             {trioName}
           </h1>
         </div>
 
-        <div className="rounded-md border border-[var(--color-border)] bg-white p-4">
+        <div className="metric-card p-4" data-accent="true">
           <div className="grid gap-4 sm:grid-cols-[132px_1fr] sm:items-stretch">
-            <div className="flex flex-col justify-between rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] p-4">
+            <div className="flex flex-col justify-between rounded-md border border-[var(--color-accent)] bg-[var(--color-accent-muted)] p-4">
               <p className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
                 조합 등급
               </p>
-              <p className="mt-2 font-mono text-[3.2rem] font-bold leading-none text-[var(--color-foreground)] sm:text-[3.8rem]">
+              <p className="mt-2 font-mono text-[3.2rem] font-bold leading-none text-[var(--color-accent-foreground)] sm:text-[3.8rem]">
                 {score}
               </p>
             </div>

@@ -72,6 +72,8 @@ interface TeamCombosResponse {
 
 const TOP_CHARACTER_LIMIT = 3;
 const MY_NICKNAME_STORAGE_KEY = "ermeta:multi-search:my-nickname";
+const inputClassName =
+  "h-10 w-full min-w-0 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 text-sm font-medium text-[var(--color-foreground)] outline-none transition-colors placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-muted)]";
 
 export function MultiSearchClient() {
   const [myNickname, setMyNickname] = useState("");
@@ -282,10 +284,7 @@ export function MultiSearchClient() {
 
   return (
     <div className="flex flex-col gap-5">
-      <form
-        onSubmit={handleMySubmit}
-        className="rounded-md border border-[var(--color-border)] bg-white p-3 sm:p-4"
-      >
+      <form onSubmit={handleMySubmit} className="dashboard-panel p-3 sm:p-4">
         <div className="grid gap-2 lg:grid-cols-[minmax(180px,0.45fr)_auto]">
           <label className="min-w-0">
             <span className="sr-only">내 닉네임</span>
@@ -295,7 +294,7 @@ export function MultiSearchClient() {
               maxLength={16}
               autoComplete="nickname"
               placeholder="내 닉네임"
-              className="h-10 w-full min-w-0 rounded-md border border-[var(--color-border)] bg-white px-3 text-sm font-medium text-[var(--color-foreground)] outline-none focus:border-[var(--color-border-light)]"
+              className={inputClassName}
             />
           </label>
           <Button type="submit" size="lg" disabled={isMyLoading} className="h-10 md:min-w-28">
@@ -304,7 +303,7 @@ export function MultiSearchClient() {
           </Button>
         </div>
         {error && !myProfile && (
-          <div className="mt-4 flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm text-[var(--color-danger)]">
+          <div className="mt-4 flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-danger)]">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -320,10 +319,7 @@ export function MultiSearchClient() {
         />
       )}
 
-      <form
-        onSubmit={handleTeamSubmit}
-        className="rounded-md border border-[var(--color-border)] bg-white p-3 sm:p-4"
-      >
+      <form onSubmit={handleTeamSubmit} className="dashboard-panel p-3 sm:p-4">
         <div className="grid gap-2 lg:grid-cols-[1fr_1fr_auto]">
           {[0, 1].map((index) => (
             <label key={index} className="min-w-0">
@@ -333,7 +329,7 @@ export function MultiSearchClient() {
                 onChange={(event) => updateTeammateInput(index, event.target.value)}
                 autoComplete="off"
                 placeholder={`팀원 ${index + 1} 닉네임`}
-                className="h-10 w-full min-w-0 rounded-md border border-[var(--color-border)] bg-white px-3 text-sm font-medium text-[var(--color-foreground)] outline-none focus:border-[var(--color-border-light)]"
+                className={inputClassName}
               />
             </label>
           ))}
@@ -348,7 +344,7 @@ export function MultiSearchClient() {
           </Button>
         </div>
         {error && myProfile && (
-          <div className="mt-4 flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm text-[var(--color-danger)]">
+          <div className="mt-4 flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-danger)]">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -363,6 +359,7 @@ export function MultiSearchClient() {
               <PlayerCard
                 key={`${index}-${result.input}`}
                 result={result}
+                accent={index === 0}
                 selectedCharacter={index > 0 ? (teammateCharacterFilters[index - 1] ?? null) : null}
                 onToggleCharacter={
                   index > 0
@@ -392,21 +389,23 @@ export function MultiSearchClient() {
 
 function PlayerCard({
   result,
+  accent,
   selectedCharacter,
   onToggleCharacter,
   getCharacterName,
 }: {
   result: PlayerResult;
+  accent?: boolean;
   selectedCharacter: number | null;
   onToggleCharacter?: (characterCode: number) => void;
   getCharacterName: (code: number) => string;
 }) {
   if (result.status !== "ok") {
     return (
-      <Card>
+      <Card data-accent={accent ? "true" : undefined}>
         <CardContent className="flex h-full flex-col gap-3 p-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded border border-[var(--color-border)] bg-white text-[var(--color-danger)]">
+            <div className="flex h-8 w-8 items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-danger)]">
               <AlertTriangle className="h-4 w-4" />
             </div>
             <div className="min-w-0">
@@ -427,7 +426,7 @@ function PlayerCard({
   }
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden" data-accent={accent ? "true" : undefined}>
       <CardContent className="flex flex-col gap-3 p-3">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
@@ -438,7 +437,7 @@ function PlayerCard({
               #{formatNumber(result.rank)} · MMR {formatNumber(result.mmr)}
             </p>
           </div>
-          <div className="flex h-9 w-9 items-center justify-center rounded border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]">
+          <div className="flex h-9 w-9 items-center justify-center rounded border border-[var(--color-accent)] bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]">
             <Trophy className="h-4 w-4" />
           </div>
         </div>
@@ -463,10 +462,10 @@ function PlayerCard({
                     "grid gap-2 rounded-md border px-2.5 py-1.5",
                     "grid-cols-[1fr_auto]",
                     selectedCharacter === character.characterCode
-                      ? "border-[var(--color-border-light)] bg-white"
-                      : "border-[var(--color-border)] bg-white",
+                      ? "border-[var(--color-accent)] bg-[var(--color-accent-muted)]"
+                      : "border-[var(--color-border)] bg-[var(--color-surface)]",
                     onToggleCharacter &&
-                      "hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
+                      "hover:border-[var(--color-accent)] hover:bg-[var(--color-surface-2)]"
                   )}
                 >
                   <button
@@ -523,7 +522,7 @@ function buildSearchSummary(results: PlayerResult[]): SearchSummaryState | null 
 
 function SearchSummary({ summary }: { summary: SearchSummaryState }) {
   return (
-    <div className="flex flex-col gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm text-[var(--color-foreground)]">
+    <div className="flex flex-col gap-2 rounded-md border border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-3 py-2 text-sm text-[var(--color-foreground)]">
       <div className="flex items-start gap-2">
         <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent-gold)]" />
         <div className="min-w-0">
@@ -538,7 +537,7 @@ function SearchSummary({ summary }: { summary: SearchSummaryState }) {
         {summary.failed.map((result) => (
           <span
             key={result.input}
-            className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-white px-2 py-1 text-xs font-semibold text-[var(--color-muted-foreground)]"
+            className="inline-flex items-center gap-1 rounded border border-[var(--color-accent)] bg-white px-2 py-1 text-xs font-semibold text-[var(--color-muted-foreground)]"
           >
             <span className="max-w-32 truncate text-[var(--color-foreground)]">{result.input}</span>
             <span>{playerStatusText(result)}</span>
@@ -563,14 +562,14 @@ function MyProfileSetupCard({
   if (result.status !== "ok") return null;
 
   return (
-    <Card className="overflow-hidden border-[var(--color-border)]">
+    <Card className="overflow-hidden border-[var(--color-border)]" data-accent="true">
       <CardContent className="flex flex-col gap-3 p-3 sm:p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="text-xs font-semibold text-[var(--color-muted-foreground)]">
               내 캐릭터 정보
             </p>
-            <h2 className="mt-1 truncate text-lg font-bold text-[var(--color-foreground)]">
+            <h2 className="dashboard-section-title mt-1 truncate text-lg font-bold text-[var(--color-foreground)]">
               {result.nickname}
             </h2>
           </div>
@@ -587,7 +586,7 @@ function MyProfileSetupCard({
             return (
               <div
                 key={character.characterCode}
-                className="grid gap-2 rounded-md border border-[var(--color-border)] bg-white p-2.5"
+                className="grid gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-2.5"
               >
                 <div className="grid grid-cols-[36px_1fr] items-center gap-2">
                   <div className="relative h-9 w-9 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)]">
@@ -614,7 +613,7 @@ function MyProfileSetupCard({
                   onChange={(event) =>
                     onWeaponChange(character.characterCode, Number(event.target.value))
                   }
-                  className="h-9 rounded-md border border-[var(--color-border)] bg-white px-2 text-xs font-semibold text-[var(--color-foreground)] outline-none"
+                  className="h-9 rounded-md border border-[var(--color-border)] bg-white px-2 text-xs font-semibold text-[var(--color-foreground)] outline-none transition-colors focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-muted)]"
                   aria-label={`${getCharacterName(character.characterCode)} 무기군`}
                 >
                   <option value={0}>전체 무기</option>
@@ -643,7 +642,7 @@ function Metric({
   strong?: boolean;
 }) {
   return (
-    <div className="rounded-md border border-[var(--color-border)] bg-white px-2 py-1.5">
+    <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1.5">
       <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">{label}</p>
       <p
         className={cn(
@@ -808,13 +807,13 @@ function TeamComboRecommendations({
       : "팀원 후보군에 맞는 내 캐릭터/무기";
 
   return (
-    <section className="flex flex-col gap-3 rounded-md border border-[var(--color-border)] bg-white p-3 sm:p-4">
+    <section className="dashboard-panel flex flex-col gap-3 p-3 sm:p-4" data-accent="true">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold text-[var(--color-muted-foreground)]">
             <Swords className="h-4 w-4" />내 픽 지표
           </div>
-          <h2 className="mt-1 text-lg font-bold text-[var(--color-foreground)]">
+          <h2 className="dashboard-section-title mt-1 text-lg font-bold text-[var(--color-foreground)]">
             {recommendationTitle}
           </h2>
           <p className="mt-1 max-w-3xl text-xs leading-5 text-[var(--color-muted-foreground)]">
@@ -831,7 +830,7 @@ function TeamComboRecommendations({
       </div>
 
       {!isReady && (
-        <div className="flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm text-[var(--color-muted-foreground)]">
+        <div className="flex items-start gap-2 rounded-md border border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-3 py-2 text-sm text-[var(--color-muted-foreground)]">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent-gold)]" />
           <span>
             현재 검색 성공 {okPlayers.length}명입니다.{" "}
@@ -843,7 +842,7 @@ function TeamComboRecommendations({
       )}
 
       {isReady && error && !loading && (
-        <div className="flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm text-[var(--color-danger)]">
+        <div className="flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-danger)]">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
           <span>{error}</span>
         </div>
@@ -1023,7 +1022,10 @@ function MyPickComboCard({
     : "D";
 
   return (
-    <div className="flex min-h-[176px] flex-col gap-3 rounded-md border border-[var(--color-border)] bg-white p-3">
+    <div
+      className="metric-card flex min-h-[176px] flex-col gap-3 p-3"
+      data-accent={rank === 1 ? "true" : undefined}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded border border-[var(--color-border)] bg-[var(--color-surface-2)]">
@@ -1038,7 +1040,14 @@ function MyPickComboCard({
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
-              <span className="inline-flex h-6 min-w-7 items-center justify-center rounded-md bg-[var(--color-surface-3)] px-1.5 font-mono text-[10px] font-bold text-[var(--color-muted-foreground)]">
+              <span
+                className={cn(
+                  "inline-flex h-6 min-w-7 items-center justify-center rounded-md px-1.5 font-mono text-[10px] font-bold",
+                  rank === 1
+                    ? "bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]"
+                    : "bg-[var(--color-surface-3)] text-[var(--color-muted-foreground)]"
+                )}
+              >
                 #{rank}
               </span>
               <span className="inline-flex h-6 min-w-7 items-center justify-center rounded-md border border-[var(--color-border)] bg-white px-1.5 font-mono text-xs font-bold text-[var(--color-foreground)]">
@@ -1085,7 +1094,7 @@ function MyPickComboCard({
             key={combo.id}
             href={withCurrentRouteLocale(pathname, comboDetailHref(combo))}
             scroll={false}
-            className="flex items-center justify-between gap-2 rounded border border-transparent bg-white px-2 py-1.5 text-[11px] hover:border-[var(--color-border)]"
+            className="flex items-center justify-between gap-2 rounded border border-transparent bg-white px-2 py-1.5 text-[11px] hover:border-[var(--color-accent)] hover:bg-[var(--color-accent-muted)]"
           >
             <span className="min-w-0 truncate font-bold text-[var(--color-foreground)]">
               {members

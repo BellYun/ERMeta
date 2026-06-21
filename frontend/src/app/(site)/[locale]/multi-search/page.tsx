@@ -106,7 +106,7 @@ export default async function MultiSearchPage({ params }: LocalePageProps) {
         <div className="flex flex-wrap items-center gap-2">
           <span className="dashboard-kicker">{copy.kicker}</span>
         </div>
-        <h1 className="text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
+        <h1 className="dashboard-section-title text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
           {copy.title}
         </h1>
         <p className="max-w-[46rem] text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">
@@ -121,7 +121,7 @@ export default async function MultiSearchPage({ params }: LocalePageProps) {
         <MultiSearchClient />
       ) : (
         <section className="dashboard-panel p-6 text-center">
-          <h2 className="text-base font-bold text-[var(--color-foreground)]">
+          <h2 className="dashboard-section-title text-base font-bold text-[var(--color-foreground)]">
             {copy.disabledTitle}
           </h2>
           <p className="mt-2 text-sm text-[var(--color-muted-foreground)]">{copy.disabledBody}</p>

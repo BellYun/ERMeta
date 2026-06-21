@@ -15,7 +15,10 @@
 
   --color-primary: #374151;
   --color-primary-hover: #111827;
-  --color-accent-gold: #374151;
+  --color-accent: #2563eb;
+  --color-accent-muted: #dbeafe;
+  --color-accent-foreground: #1d4ed8;
+  --color-accent-gold: #2563eb;
 
   --color-danger: #dc2626;
   --color-success: #15803d;
@@ -175,7 +178,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--color-muted-foreground);
+  color: var(--color-accent-foreground);
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0;
@@ -211,6 +214,11 @@
   background: var(--color-surface);
 }
 
+.metric-card[data-accent="true"],
+.metric-tile[data-accent="true"] {
+  border-color: color-mix(in srgb, var(--color-accent) 28%, var(--color-border));
+}
+
 .metric-label {
   color: var(--color-muted-foreground);
   font-size: 11px;
@@ -225,6 +233,51 @@
   font-weight: 700;
   letter-spacing: 0;
   color: var(--color-foreground);
+}
+
+.dashboard-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dashboard-section-title::before {
+  content: "";
+  display: block;
+  width: 3px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--color-accent);
+}
+
+.dashboard-tab {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  padding: 8px 12px;
+  color: var(--color-muted-foreground);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.dashboard-tab:hover {
+  border-color: var(--color-border-light);
+  background: var(--color-surface-2);
+  color: var(--color-foreground);
+}
+
+.dashboard-tab[data-active="true"] {
+  border-color: var(--color-accent);
+  background: var(--color-accent-muted);
+  color: var(--color-accent-foreground);
+}
+
+.data-table-highlight {
+  background: color-mix(in srgb, var(--color-accent-muted) 52%, white);
 }
 
 .ad-placement {
@@ -304,9 +357,9 @@
 }
 
 .role-pill[data-active="true"] {
-  border-color: var(--color-border-light);
-  background: var(--color-surface-2);
-  color: var(--color-foreground);
+  border-color: var(--color-accent);
+  background: var(--color-accent-muted);
+  color: var(--color-accent-foreground);
 }
 
 .section-divider {
@@ -337,8 +390,17 @@
   background: var(--color-surface);
 }
 
+.char-card[data-accent="true"] {
+  border-color: color-mix(in srgb, var(--color-accent) 28%, var(--color-border));
+}
+
 .char-card:hover {
   transform: none;
   border-color: var(--color-border);
   box-shadow: none;
+}
+
+.combo-card[data-accent="true"] {
+  border-color: color-mix(in srgb, var(--color-accent) 28%, var(--color-border));
+  background: color-mix(in srgb, var(--color-accent-muted) 30%, white);
 }

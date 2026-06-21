@@ -148,6 +148,7 @@ interface ComboGalleryCardProps {
   copyLocale: RouteLocale;
   getCharName: (code: number) => string;
   getWeaponName: (code: number) => string;
+  isFeatured?: boolean;
 }
 
 export function ComboGalleryCard({
@@ -158,6 +159,7 @@ export function ComboGalleryCard({
   copyLocale,
   getCharName,
   getWeaponName,
+  isFeatured = false,
 }: ComboGalleryCardProps) {
   const copy = COPY[copyLocale] ?? COPY.ko;
   const score = comboTier(combo.winRate, combo.averageRP, combo.averageRank, combo.totalGames);
@@ -189,10 +191,19 @@ export function ComboGalleryCard({
       : copy.normalSample;
 
   return (
-    <article className="char-card group relative flex h-full flex-col gap-3.5 p-4 hover:border-[var(--color-border-light)] sm:p-4">
+    <article
+      className="char-card group relative flex h-full flex-col gap-3.5 p-4 hover:border-[var(--color-border-light)] sm:p-4"
+      data-accent={isFeatured ? "true" : undefined}
+    >
       <header className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
-          <span className="inline-flex h-7 min-w-8 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 font-mono text-[11px] font-bold text-[var(--color-muted-foreground)]">
+          <span
+            className={`inline-flex h-7 min-w-8 items-center justify-center rounded-md border px-2 font-mono text-[11px] font-bold ${
+              isFeatured
+                ? "border-[var(--color-accent)] bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]"
+                : "border-[var(--color-border)] bg-[var(--color-surface-3)] text-[var(--color-muted-foreground)]"
+            }`}
+          >
             #{String(rank).padStart(2, "0")}
           </span>
           {isSmallSample && (
@@ -230,7 +241,7 @@ export function ComboGalleryCard({
               aria-label={copy.characterPage(getCharName(m.character))}
               className={`relative block h-12 w-12 overflow-hidden rounded border bg-[var(--color-surface-2)] hover:border-[var(--color-border-light)] sm:h-14 sm:w-14 ${
                 selectedSet.has(m.character)
-                  ? "border-[var(--color-border-light)]"
+                  ? "border-[var(--color-accent)]"
                   : "border-[var(--color-border)]"
               }`}
             >
@@ -247,7 +258,7 @@ export function ComboGalleryCard({
               <p
                 className={`mx-auto mb-1 w-fit rounded border bg-white px-1.5 py-0.5 text-[9px] font-bold ${
                   selectedSet.has(m.character)
-                    ? "border-[var(--color-border-light)] text-[var(--color-foreground)]"
+                    ? "border-[var(--color-accent)] text-[var(--color-accent-foreground)]"
                     : "border-[var(--color-border)] text-[var(--color-muted-foreground)]"
                 }`}
               >
@@ -318,7 +329,8 @@ export function ComboGalleryCard({
         <Link
           href={detailHref}
           scroll={false}
-          className="flex min-h-[40px] w-full items-center justify-center gap-1.5 rounded-md border border-[var(--color-border)] bg-white py-2 text-xs font-bold text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
+          className="dashboard-tab w-full gap-1.5 py-2 text-xs font-bold"
+          data-active={isFeatured ? "true" : undefined}
         >
           {copy.detail}
           <ChevronRight className="h-3.5 w-3.5" strokeWidth={2.4} />

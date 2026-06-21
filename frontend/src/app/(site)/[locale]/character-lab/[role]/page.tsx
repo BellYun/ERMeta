@@ -175,7 +175,7 @@ export default async function CharacterLabRolePage({ params }: Props) {
       <nav className="mb-4 flex items-center gap-1.5 text-xs text-[var(--color-muted-foreground)]">
         <Link
           href="/character-lab"
-          className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+          className="dashboard-tab inline-flex items-center gap-1 px-2 py-1"
         >
           <ArrowLeft className="h-3 w-3" strokeWidth={2.4} />
           {copy.back}
@@ -186,10 +186,10 @@ export default async function CharacterLabRolePage({ params }: Props) {
 
       <div className="mb-6 flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-xl font-bold text-[var(--color-foreground)]">
+          <h1 className="dashboard-section-title text-xl font-bold text-[var(--color-foreground)]">
             {copy.title(roleLabel)}
           </h1>
-          <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 py-0.5 text-[11px] text-[var(--color-muted-foreground)]">
+          <span className="rounded-full border border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--color-accent-foreground)]">
             {copy.badge}
           </span>
         </div>
@@ -200,9 +200,9 @@ export default async function CharacterLabRolePage({ params }: Props) {
         <LabPageContent data={data} />
       ) : (
         <section className="grid gap-3 sm:grid-cols-3">
-          <div className="metric-card px-4 py-4">
+          <div className="metric-card px-4 py-4" data-accent="true">
             <p className="text-xs text-[var(--color-muted-foreground)]">{copy.back}</p>
-            <p className="mt-2 text-2xl font-bold text-[var(--color-foreground)]">
+            <p className="mt-2 text-2xl font-bold text-[var(--color-accent-foreground)]">
               {data.characters.length}
             </p>
           </div>

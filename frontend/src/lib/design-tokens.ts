@@ -26,7 +26,10 @@ export const colors = {
   // 액센트
   primary: "#374151",
   primaryHover: "#111827",
-  accentGold: "#374151",
+  accent: "#2563eb",
+  accentMuted: "#dbeafe",
+  accentForeground: "#1d4ed8",
+  accentGold: "#2563eb",
   accentPurple: "#687386",
 
   // Semantic

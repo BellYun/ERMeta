@@ -154,7 +154,9 @@ export function SynergyPartnersSection({
     <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
       <div className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 sm:mb-4">
         <Users className="h-4 w-4 text-[var(--color-muted-foreground)]" />
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">{copy.title}</h2>
+        <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
+          {copy.title}
+        </h2>
         <span className="text-[10px] text-[var(--color-muted-foreground)]">
           {characterName}({weaponName}) {copy.basedOn} · {data.patchScope} · {data.tierScope}
         </span>
@@ -213,11 +215,12 @@ function PartnerList({
         </div>
       ) : (
         <ul className="flex flex-col gap-1.5">
-          {partners.map((p) => (
+          {partners.map((p, index) => (
             <PartnerCard
               key={`${p.partnerCode}-${p.partnerWeapon}`}
               partner={p}
               variant={variant}
+              featured={index === 0 && variant === "synergy"}
               copy={copy}
               l10n={l10n}
               fallbackMap={fallbackMap}
@@ -232,12 +235,14 @@ function PartnerList({
 function PartnerCard({
   partner: p,
   variant,
+  featured = false,
   copy,
   l10n,
   fallbackMap,
 }: {
   partner: SynergyPartner;
   variant: "synergy" | "anti";
+  featured?: boolean;
   copy: Copy;
   l10n: Map<string, string>;
   fallbackMap: Map<number, string>;
@@ -249,7 +254,10 @@ function PartnerCard({
   const partnerWeaponName = resolveWeaponName(p.partnerWeapon, l10n);
 
   return (
-    <li className="flex items-center gap-3 rounded-md border border-[var(--color-border)] bg-white p-2.5">
+    <li
+      className="metric-card flex items-center gap-3 p-2.5"
+      data-accent={featured ? "true" : undefined}
+    >
       <Image
         src={getCharacterMiniWebpUrl(p.partnerCode)}
         alt={partnerName}

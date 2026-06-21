@@ -1097,7 +1097,7 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
         <nav className="flex items-center gap-1.5 text-xs text-[var(--color-muted-foreground)]">
           <Link
             href="/character-lab"
-            className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+            className="dashboard-tab inline-flex items-center gap-1 px-2 py-1"
           >
             <ArrowLeft className="h-3 w-3" strokeWidth={2.4} />
             {copy.back}
@@ -1106,7 +1106,7 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
 
         <header className="dashboard-panel p-4">
           <span className="dashboard-kicker">{copy.kicker}</span>
-          <h1 className="mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
+          <h1 className="dashboard-section-title mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
             {meta.title}
           </h1>
           <p className="mt-2 max-w-[54rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem]">
@@ -1115,9 +1115,11 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
         </header>
 
         <section className="grid gap-3 sm:grid-cols-3">
-          <div className="metric-card px-4 py-4">
+          <div className="metric-card px-4 py-4" data-accent="true">
             <p className="text-xs text-[var(--color-muted-foreground)]">{copy.metrics[0]}</p>
-            <p className="mt-2 text-2xl font-bold text-[var(--color-foreground)]">{data.groupK}</p>
+            <p className="mt-2 text-2xl font-bold text-[var(--color-accent-foreground)]">
+              {data.groupK}
+            </p>
           </div>
           <div className="metric-card px-4 py-4">
             <p className="text-xs text-[var(--color-muted-foreground)]">{copy.metrics[1]}</p>
@@ -1150,7 +1152,7 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
       <nav className="flex items-center gap-1.5 text-xs text-[var(--color-muted-foreground)]">
         <Link
           href="/character-lab"
-          className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+          className="dashboard-tab inline-flex items-center gap-1 px-2 py-1"
         >
           <ArrowLeft className="h-3 w-3" strokeWidth={2.4} />
           캐릭터 유형 분석
@@ -1161,7 +1163,7 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
 
       <header className="dashboard-panel p-4">
         <span className="dashboard-kicker">{data.role} 기준</span>
-        <h1 className="mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
+        <h1 className="dashboard-section-title mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
           시너지 그룹 분석
         </h1>
         <p className="mt-2 max-w-[54rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem]">
@@ -1171,13 +1173,19 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
 
       {/* 그룹 성향 요약 */}
       <section className="dashboard-panel p-4">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">그룹별 성향 요약</h2>
+        <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
+          그룹별 성향 요약
+        </h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
           각 그룹이 어떤 파트너 역할에서 RP 이득을 내는지 비교합니다.
         </p>
         <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {data.groups.map((g) => (
-            <div key={g.id} className="char-card flex flex-col items-center gap-2 p-4">
+          {data.groups.map((g, index) => (
+            <div
+              key={g.id}
+              className="char-card flex flex-col items-center gap-2 p-4"
+              data-accent={index === 0 ? "true" : undefined}
+            >
               <p className="text-xs font-bold text-[var(--color-foreground)]">{g.label}</p>
               <p className="text-[10px] text-[var(--color-muted-foreground)]">
                 {g.characterKeys.length}명 · 합산{" "}
@@ -1194,7 +1202,9 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
 
       {/* 파트너 역할 분포 */}
       <section className="dashboard-panel p-4">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">파트너 역할 분포</h2>
+        <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
+          파트너 역할 분포
+        </h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
           캐릭터별로 어떤 파트너 역할과 함께할 때 RP가 좋아지는지 보여줍니다.
         </p>
@@ -1205,7 +1215,9 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
 
       {/* 그룹별 역할 조합 */}
       <section className="dashboard-panel p-4">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">그룹별 역할 조합</h2>
+        <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
+          그룹별 역할 조합
+        </h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
           그룹별로 성과가 좋았던 역할 조합과 낮았던 역할 조합을 게임 수 기준으로 비교합니다.
         </p>
@@ -1221,7 +1233,9 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
 
       {/* 그룹 응집도 */}
       <section className="dashboard-panel p-4">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">그룹 내 유사도</h2>
+        <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
+          그룹 내 유사도
+        </h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
           그룹 대표 패턴과 각 캐릭터의 패턴을 겹쳐서 같은 유형으로 묶이는지 확인합니다. 응집도는
           패턴 유사도를 100점 기준으로 환산합니다.
@@ -1274,7 +1288,9 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
 
       {/* 파트너 역할 궁합 */}
       <section className="dashboard-panel p-4">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">파트너 역할 궁합</h2>
+        <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
+          파트너 역할 궁합
+        </h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
           두 파트너 역할이 함께 들어간 트리오의 평균 RP를 기준으로 세부 성향을 비교합니다. 표본이
           적은 축은 제외합니다.
@@ -1294,7 +1310,9 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
 
       {/* 트리오 구성 요약 */}
       <section className="dashboard-panel p-4">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">트리오 구성 요약</h2>
+        <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
+          트리오 구성 요약
+        </h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
           역할 조합을 3개 슬롯으로 나눠 실제 트리오 구성을 빠르게 비교합니다.
         </p>
@@ -1307,7 +1325,9 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
 
       {/* 트리오 성과 비교 */}
       <section className="dashboard-panel p-4">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">트리오 성과 비교</h2>
+        <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
+          트리오 성과 비교
+        </h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
           그룹마다 성과가 좋은 트리오와 낮은 트리오를 나란히 비교합니다.
         </p>
@@ -1320,7 +1340,9 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
 
       {/* 캐릭터 위치 비교 */}
       <section className="dashboard-panel p-4">
-        <h2 className="text-sm font-bold text-[var(--color-foreground)]">캐릭터 위치 비교</h2>
+        <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
+          캐릭터 위치 비교
+        </h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
           같은 그룹의 캐릭터들이 어느 정도 가까운 위치에 모이는지 비교합니다.
         </p>

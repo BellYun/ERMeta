@@ -14,6 +14,7 @@ export function ComboCard({
   getCharName,
   selectedAllies,
   isFocusPoolCombo = false,
+  isTopResult = false,
   compact = false,
   priorityImages = false,
   onNavigateAnalysis,
@@ -23,6 +24,7 @@ export function ComboCard({
   getCharName: (code: number) => string;
   selectedAllies: number[];
   isFocusPoolCombo?: boolean;
+  isTopResult?: boolean;
   compact?: boolean;
   /** true면 이미지를 priority로 즉시 로드 (상위 카드용) */
   priorityImages?: boolean;
@@ -47,12 +49,20 @@ export function ComboCard({
   return (
     <div
       className={cn(
-        "group flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-white px-3 py-2.5 transition-colors hover:bg-[var(--color-surface-2)] hover:border-[var(--color-border-light)]",
-        isFocusPoolCombo && "border-[var(--color-border-light)] bg-white"
+        "combo-card",
+        "group flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-white px-3 py-2.5 transition-colors hover:bg-[var(--color-surface-2)] hover:border-[var(--color-border-light)]"
       )}
+      data-accent={isFocusPoolCombo || isTopResult ? "true" : undefined}
     >
       {/* 순위 */}
-      <span className="w-5 shrink-0 text-center text-xs font-bold text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]">
+      <span
+        className={cn(
+          "w-5 shrink-0 text-center text-xs font-bold group-hover:text-[var(--color-foreground)]",
+          isTopResult
+            ? "text-[var(--color-accent-foreground)]"
+            : "text-[var(--color-muted-foreground)]"
+        )}
+      >
         {rank}
       </span>
 
@@ -65,7 +75,10 @@ export function ComboCard({
               <div
                 className={cn(
                   "relative h-8 w-8 overflow-hidden rounded-md bg-[var(--color-border)]",
-                  isRecommended && "border border-[var(--color-border-light)]"
+                  isRecommended &&
+                    (isTopResult
+                      ? "border border-[var(--color-accent)]"
+                      : "border border-[var(--color-border-light)]")
                 )}
               >
                 <Image

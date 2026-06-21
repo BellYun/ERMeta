@@ -201,7 +201,7 @@ export default async function CharacterLabPage({ params }: LocalePageProps) {
         <div className="flex flex-wrap items-center gap-2">
           <span className="dashboard-kicker">{copy.kicker}</span>
         </div>
-        <h1 className="text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
+        <h1 className="dashboard-section-title text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
           {copy.title}
         </h1>
         <p className="max-w-[46rem] text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">
@@ -211,9 +211,9 @@ export default async function CharacterLabPage({ params }: LocalePageProps) {
           {copy.body}
         </p>
         <dl className="mt-2 flex flex-wrap gap-4 text-xs">
-          <div className="flex items-baseline gap-2">
+          <div className="flex items-baseline gap-2 rounded-md border border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-2.5 py-1">
             <dt className="text-[var(--color-muted-foreground)]">{copy.analyzedCharacters}</dt>
-            <dd className="font-mono font-bold tabular-nums text-[var(--color-foreground)]">
+            <dd className="font-mono font-bold tabular-nums text-[var(--color-accent-foreground)]">
               {totalCharacters}
             </dd>
           </div>
@@ -233,25 +233,28 @@ export default async function CharacterLabPage({ params }: LocalePageProps) {
       </header>
 
       <section className="flex flex-col gap-3">
-        <div className="flex items-center justify-between border-l-2 border-[var(--color-border-light)] pl-3">
-          <h2 className="text-sm font-bold text-[var(--color-foreground)]">{copy.sectionTitle}</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
+            {copy.sectionTitle}
+          </h2>
           <p className="text-[11px] text-[var(--color-muted-foreground)]">{copy.sectionMeta}</p>
         </div>
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {ROLES.map(({ slug, data }) => {
+          {ROLES.map(({ slug, data }, index) => {
             const curatedGroups = data.groups.filter((g) => g.curated).length;
             return (
               <li key={slug}>
                 <Link
                   href={`/character-lab/${slug}`}
                   className="char-card group flex h-full flex-col gap-3 p-5 transition-colors"
+                  data-accent={index === 0 ? "true" : undefined}
                 >
                   <header className="flex items-center justify-between">
                     <span className="text-[11px] text-[var(--color-muted-foreground)]">
                       {copy.groupType}
                     </span>
                     <ArrowRight
-                      className="h-4 w-4 text-[var(--color-muted-foreground)] transition-colors group-hover:text-[var(--color-foreground)]"
+                      className="h-4 w-4 text-[var(--color-muted-foreground)] transition-colors group-hover:text-[var(--color-accent-foreground)]"
                       strokeWidth={2.2}
                     />
                   </header>

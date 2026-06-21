@@ -446,20 +446,31 @@ function MetricCard({
 }) {
   const toneClass =
     tone === "gold"
-      ? "border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
+      ? "border-[var(--color-accent-muted)] bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]"
       : tone === "blue"
-        ? "border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
+        ? "border-[var(--color-accent-muted)] bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]"
         : tone === "danger"
-          ? "border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
+          ? "border-red-100 bg-red-50 text-[var(--color-danger)]"
           : "border-[var(--color-border)] bg-white text-[var(--color-foreground)]";
+  const isAccent = tone === "gold" || tone === "blue";
 
   return (
-    <div className="metric-card flex min-h-[120px] flex-col justify-between gap-3 px-4 py-4 sm:px-5">
+    <div
+      className="metric-card flex min-h-[120px] flex-col justify-between gap-3 px-4 py-4 sm:px-5"
+      data-accent={isAccent ? "true" : undefined}
+    >
       <div className={cn("flex h-9 w-9 items-center justify-center rounded-md border", toneClass)}>
         {icon}
       </div>
       <div>
-        <p className="text-lg font-bold text-[var(--color-foreground)] sm:text-xl">{value}</p>
+        <p
+          className={cn(
+            "text-lg font-bold sm:text-xl",
+            isAccent ? "text-[var(--color-accent-foreground)]" : "text-[var(--color-foreground)]"
+          )}
+        >
+          {value}
+        </p>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">{label}</p>
         {body ? (
           <p className="mt-2 text-xs leading-5 text-[var(--color-muted-foreground)]">{body}</p>
@@ -734,7 +745,7 @@ function RoleTable({
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="dashboard-kicker">{copy.role.kicker}</p>
-            <h2 className="mt-2 text-base font-bold text-[var(--color-foreground)] sm:text-lg">
+            <h2 className="dashboard-section-title mt-2 text-base font-bold text-[var(--color-foreground)] sm:text-lg">
               {copy.role.title}
             </h2>
             <p className="mt-1 text-sm leading-6 text-[var(--color-muted-foreground)]">
@@ -772,8 +783,8 @@ function RoleTable({
                 </tr>
               </thead>
               <tbody>
-                {roles.map((role) => (
-                  <tr key={role.role}>
+                {roles.map((role, index) => (
+                  <tr key={role.role} className={index === 0 ? "data-table-highlight" : undefined}>
                     <th className="border-b border-[var(--color-border)]/30 px-4 py-3 text-left font-semibold text-[var(--color-foreground)]">
                       {getRoleLabel(locale, role.role)}
                     </th>
@@ -824,7 +835,9 @@ function DeltaRanking({
 }) {
   return (
     <section className="dashboard-panel p-4 lg:p-6">
-      <h2 className="text-base font-bold text-[var(--color-foreground)]">{title}</h2>
+      <h2 className="dashboard-section-title text-base font-bold text-[var(--color-foreground)]">
+        {title}
+      </h2>
       <div className="mt-4 grid gap-2">
         {entries.map((entry, index) => {
           const displayName = getEntryDisplayName(entry, l10n, fallbackMap);
@@ -835,7 +848,14 @@ function DeltaRanking({
               key={`${entry.characterNum}-${entry.scopeKey}-${index}`}
               className="flex items-center gap-3 rounded-md border border-[var(--color-border)] bg-white px-3 py-3"
             >
-              <span className="w-6 text-center text-sm font-bold text-[var(--color-muted-foreground)] tabular-nums">
+              <span
+                className={cn(
+                  "w-6 text-center text-sm font-bold tabular-nums",
+                  index < 3
+                    ? "text-[var(--color-accent-foreground)]"
+                    : "text-[var(--color-muted-foreground)]"
+                )}
+              >
                 {index + 1}
               </span>
               <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)]">
@@ -901,7 +921,9 @@ function CharacterSection({
     <section className="dashboard-panel p-4 lg:p-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-base font-bold text-[var(--color-foreground)] sm:text-lg">{title}</h2>
+          <h2 className="dashboard-section-title text-base font-bold text-[var(--color-foreground)] sm:text-lg">
+            {title}
+          </h2>
           <p className="mt-1 text-sm leading-6 text-[var(--color-muted-foreground)]">
             {description}
           </p>
@@ -1025,12 +1047,8 @@ export default async function PatchAnalysisPage({
                     key={candidate}
                     href={`/patch-analysis/${candidate}`}
                     aria-current={isActive ? "page" : undefined}
-                    className={cn(
-                      "rounded-md border px-3 py-2 text-sm font-semibold ",
-                      isActive
-                        ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
-                        : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
-                    )}
+                    className="dashboard-tab"
+                    data-active={isActive ? "true" : undefined}
                   >
                     {copy.navLabel(candidate)}
                   </Link>

@@ -12,7 +12,6 @@ import { resolveCharacterName } from "@/lib/characterMap";
 import { isMobileDevice } from "@/lib/device";
 import { FetchHttpError, FetchRetriesExhaustedError, fetchWithRetry } from "@/lib/fetchWithRetry";
 import { withCurrentRouteLocale } from "@/lib/localizedPath";
-import { cn } from "@/lib/utils";
 import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "./constants";
 import type { TrioResult, SortBy } from "./types";
 import { getThirdCharacter, deduplicateResults } from "./utils";
@@ -244,7 +243,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
     <>
       {/* 정렬 기준 + 헤더 */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <div className="flex items-center gap-1 rounded-lg border border-[var(--color-border)] bg-white p-1">
+        <div className="flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white p-1">
           {SORT_OPTIONS.map(({ value, labelKey }) => (
             <button
               key={value}
@@ -252,12 +251,8 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                 setSortBy(value);
                 analytics.synergySortChanged(value);
               }}
-              className={cn(
-                "px-2.5 py-1 rounded-md text-xs font-medium transition-colors",
-                sortBy === value
-                  ? "bg-white text-[var(--color-foreground)] ring-1 ring-[var(--color-border)]"
-                  : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]"
-              )}
+              className="dashboard-tab min-h-[30px] px-2.5 py-1 text-xs"
+              data-active={sortBy === value ? "true" : undefined}
             >
               {t(`sort.${labelKey}`)}
             </button>
@@ -267,7 +262,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
         <div className="flex items-center gap-3">
           {selectedAllies.length > 0 && (
             <>
-              <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
+              <h2 className="dashboard-section-title text-sm font-semibold text-[var(--color-foreground)]">
                 {selectedAllies.length === 1
                   ? t("titleSingle", { ally: getCharName(selectedAllies[0]) })
                   : t("titlePair", {
@@ -399,6 +394,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                   getCharName={getCharName}
                   selectedAllies={selectedAllies}
                   isFocusPoolCombo={isFocusResult(rec, selectedAllies, focusCharacters)}
+                  isTopResult={i < 3}
                   compact={compact}
                   priorityImages={i < 5}
                   onNavigateAnalysis={(code) => {

@@ -33,7 +33,7 @@ export function RoleStrengthBlock({ roleStats, patches }: RoleStrengthBlockProps
             <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
               직업군 흐름
             </p>
-            <h2 className="mt-2 text-[1.25rem] font-bold text-[var(--color-foreground)] sm:text-[1.55rem]">
+            <h2 className="dashboard-section-title mt-2 text-[1.25rem] font-bold text-[var(--color-foreground)] sm:text-[1.55rem]">
               직업군별 평균 RP
             </h2>
             <p className="mt-1 text-xs leading-6 text-[var(--color-muted-foreground)] sm:text-sm">
@@ -84,7 +84,7 @@ export function RoleStrengthBlock({ roleStats, patches }: RoleStrengthBlockProps
                       {patch}
                     </th>
                   ))}
-                  <th className="border-b border-l border-[var(--color-border)] px-3 py-3 text-center font-semibold text-[var(--color-foreground)] tabular-nums">
+                  <th className="border-b border-l border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-3 py-3 text-center font-semibold text-[var(--color-accent-foreground)] tabular-nums">
                     시즌
                   </th>
                 </tr>
@@ -123,14 +123,14 @@ function SummaryCard({
 }) {
   const isPositive = tone === "positive";
   return (
-    <div className="rounded-md border border-[var(--color-border)] bg-white px-4 py-3">
+    <div className="metric-card px-4 py-3" data-accent={isPositive ? "true" : undefined}>
       <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">{label}</p>
       <div className="mt-2 flex items-end justify-between gap-4">
         <p className="text-lg font-bold text-[var(--color-foreground)]">{role}</p>
         <p
           className={cn(
             "text-lg font-semibold tabular-nums",
-            isPositive ? "text-[var(--color-foreground)]" : "text-[var(--color-danger)]"
+            isPositive ? "text-[var(--color-accent-foreground)]" : "text-[var(--color-danger)]"
           )}
         >
           {value >= 0 ? "+" : ""}
@@ -173,7 +173,7 @@ function RoleCell({
     <td
       className={cn(
         "border-b border-[var(--color-border)]/30 px-2 py-3 text-center font-semibold tabular-nums",
-        isSeason && "border-l border-[var(--color-border)]",
+        isSeason && "border-l border-[var(--color-accent)]",
         isPositive ? "text-[var(--color-success)]" : "text-[var(--color-danger)]"
       )}
       style={{ backgroundColor }}

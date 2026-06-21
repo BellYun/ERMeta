@@ -327,7 +327,7 @@ export function CharacterAnalysisClient({
         {!loading && displayStat && displayStat.totalGames > 0 && (
           <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
             <div className="mb-3 flex items-center gap-2 sm:mb-4">
-              <h2 className="text-sm font-bold text-[var(--color-foreground)]">
+              <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
                 {t("quickSummary")}
               </h2>
             </div>
@@ -405,9 +405,7 @@ export function CharacterAnalysisClient({
       <div className="pt-0.5 sm:pt-1">
         <div className="mb-3 flex items-center gap-2 sm:mb-4">
           <div className="h-px flex-1 bg-[var(--color-border)]" />
-          <span className="text-[10px] font-semibold text-[var(--color-muted-foreground)] sm:text-[11px]">
-            {t("deepDive")}
-          </span>
+          <span className="dashboard-kicker text-[10px] sm:text-[11px]">{t("deepDive")}</span>
           <div className="h-px flex-1 bg-[var(--color-border)]" />
         </div>
 
@@ -415,7 +413,7 @@ export function CharacterAnalysisClient({
           <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
             <div className="mb-3 flex items-center gap-2 sm:mb-4">
               <BarChart2 className="h-4 w-4 text-[var(--color-muted-foreground)]" />
-              <h2 className="text-sm font-bold text-[var(--color-foreground)]">
+              <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
                 {t("patchComparison")}
               </h2>
             </div>
@@ -432,7 +430,7 @@ export function CharacterAnalysisClient({
           <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
             <div className="mb-3 flex items-center gap-2 sm:mb-4">
               <FileText className="h-4 w-4 text-[var(--color-muted-foreground)]" />
-              <h2 className="text-sm font-bold text-[var(--color-foreground)]">
+              <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
                 {t("patchNotes")}
               </h2>
             </div>
@@ -444,7 +442,9 @@ export function CharacterAnalysisClient({
           <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5 xl:col-span-2">
             <div className="mb-3 flex items-center gap-2 sm:mb-4">
               <BarChart2 className="h-4 w-4 text-[var(--color-muted-foreground)]" />
-              <h2 className="text-sm font-bold text-[var(--color-foreground)]">{t("stats")}</h2>
+              <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
+                {t("stats")}
+              </h2>
             </div>
             <Suspense fallback={<TabFallback />}>
               <CharacterDetailedAnalyzer

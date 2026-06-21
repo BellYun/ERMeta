@@ -402,10 +402,10 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
 
   return (
     <>
-      <section className="rounded-md border border-[var(--color-border)] bg-white p-3 sm:p-4">
+      <section className="dashboard-panel p-3 sm:p-4">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-2">
-            <p className="text-xs font-semibold text-[var(--color-foreground)]">
+            <p className="dashboard-section-title text-xs font-semibold text-[var(--color-foreground)]">
               {copy.explore} · {pool.length}/{MAX_POOL} {copy.slots}
             </p>
             <p className="text-[11px] text-[var(--color-muted-foreground)]">
@@ -416,7 +416,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
             <button
               type="button"
               onClick={clearPool}
-              className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 py-1 text-[11px] font-semibold text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:text-[var(--color-foreground)]"
+              className="dashboard-tab min-h-[30px] gap-1 px-2 py-1 text-[11px]"
             >
               <X className="h-3 w-3" strokeWidth={2.4} />
               {copy.clear}
@@ -445,7 +445,8 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
             return (
               <div
                 key={code}
-                className="relative flex min-h-[112px] min-w-0 flex-col gap-2 overflow-hidden rounded-md border border-[var(--color-border)] bg-white p-2"
+                className="metric-card relative flex min-h-[112px] min-w-0 flex-col gap-2 p-2"
+                data-accent="true"
               >
                 <div className="flex min-w-0 items-center gap-2 pr-6">
                   <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded border border-[var(--color-border)] bg-[var(--color-surface-2)]">
@@ -477,7 +478,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                       onClick={() => selectWeaponFilter(code, null)}
                       className={`rounded border px-1.5 py-1 text-[10px] font-semibold ${
                         selectedWeapon == null
-                          ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
+                          ? "border-[var(--color-accent)] bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]"
                           : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
                       }`}
                     >
@@ -490,7 +491,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                         onClick={() => selectWeaponFilter(code, weapon.weaponCode)}
                         className={`rounded border px-1.5 py-1 text-[10px] font-semibold ${
                           selectedWeapon === weapon.weaponCode
-                            ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
+                            ? "border-[var(--color-accent)] bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]"
                             : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
                         }`}
                       >
@@ -515,7 +516,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
               })
             }
             placeholder={copy.searchPlaceholder}
-            className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-border-light)] focus:outline-none"
+            className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-accent)] focus:outline-none"
           />
           {search && (
             <button
@@ -541,7 +542,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
 
       {loading && (
         <div className="relative h-0.5 overflow-hidden rounded-full bg-[var(--color-surface-3)]">
-          <div className="absolute inset-y-0 w-1/3 rounded-full bg-[var(--color-muted-foreground)]" />
+          <div className="absolute inset-y-0 w-1/3 rounded-full bg-[var(--color-accent)]" />
         </div>
       )}
 
@@ -570,7 +571,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                 sort: event.target.value as TrioSortBy,
               })
             }
-            className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 py-1.5 text-xs font-medium text-[var(--color-foreground)] focus:border-[var(--color-border-light)] focus:outline-none"
+            className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 py-1.5 text-xs font-medium text-[var(--color-foreground)] focus:border-[var(--color-accent)] focus:outline-none"
             aria-label={copy.sortAria}
           >
             {SORT_KEYS.map((key) => (
@@ -614,6 +615,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                 copyLocale={locale}
                 getCharName={getCharName}
                 getWeaponName={getWeaponName}
+                isFeatured={idx < 3}
               />
             ))}
           </section>

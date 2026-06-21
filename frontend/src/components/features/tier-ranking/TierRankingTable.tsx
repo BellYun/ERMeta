@@ -270,7 +270,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                         key={key}
                         className={cn(
                           "border-b border-[var(--color-border)]/30 last:border-b-0 cursor-pointer group",
-                          "hover:bg-[var(--color-surface-2)]"
+                          char.rank <= 3
+                            ? "data-table-highlight"
+                            : "hover:bg-[var(--color-surface-2)]"
                         )}
                         onClick={() => {
                           navigateToCharacter(char);
@@ -395,7 +397,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
               className={cn(
                 "text-right",
                 sortKey === "winRate"
-                  ? "text-[var(--color-foreground)]"
+                  ? "text-[var(--color-accent-foreground)]"
                   : "text-[var(--color-muted-foreground)]"
               )}
             >
@@ -407,7 +409,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
               className={cn(
                 "text-right",
                 sortKey === "pickRate"
-                  ? "text-[var(--color-foreground)]"
+                  ? "text-[var(--color-accent-foreground)]"
                   : "text-[var(--color-muted-foreground)]"
               )}
             >
@@ -419,7 +421,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
               className={cn(
                 "text-right",
                 sortKey === "averageRP"
-                  ? "text-[var(--color-foreground)]"
+                  ? "text-[var(--color-accent-foreground)]"
                   : "text-[var(--color-muted-foreground)]"
               )}
             >
@@ -456,7 +458,10 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                 return (
                   <div
                     key={key}
-                    className="relative grid grid-cols-[30px_minmax(0,1.7fr)_50px_50px_64px] items-center gap-1.5 px-3 py-2.5 cursor-pointer active:bg-[var(--color-surface-2)] touch-manipulation"
+                    className={cn(
+                      "relative grid grid-cols-[30px_minmax(0,1.7fr)_50px_50px_64px] items-center gap-1.5 px-3 py-2.5 cursor-pointer active:bg-[var(--color-surface-2)] touch-manipulation",
+                      char.rank <= 3 && "data-table-highlight"
+                    )}
                     onClick={() => {
                       navigateToCharacter(char);
                     }}
@@ -574,7 +579,7 @@ function SortableHead({
       className={cn(
         "px-3 py-2.5 text-xs font-medium select-none cursor-pointer group/th",
         isActive
-          ? "text-[var(--color-foreground)]"
+          ? "text-[var(--color-accent-foreground)]"
           : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]",
         className
       )}

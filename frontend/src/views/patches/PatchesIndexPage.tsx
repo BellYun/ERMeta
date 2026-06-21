@@ -13,14 +13,19 @@ function SummaryMetricCard({
   icon,
   label,
   value,
+  accent = false,
 }: {
   icon: ReactNode;
   label: string;
   value: string;
+  accent?: boolean;
 }) {
   return (
-    <div className="metric-card flex min-h-[110px] flex-col gap-3 px-4 py-4 sm:min-h-[126px] sm:px-5">
-      <div className="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]">
+    <div
+      className="metric-card flex min-h-[110px] flex-col gap-3 px-4 py-4 sm:min-h-[126px] sm:px-5"
+      data-accent={accent ? "true" : undefined}
+    >
+      <div className="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-[var(--color-accent-foreground)]">
         {icon}
       </div>
       <div>
@@ -71,7 +76,7 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
               ) : null}
             </div>
 
-            <h1 className="mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
+            <h1 className="dashboard-section-title mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
               {t("indexTitle")}
             </h1>
             <p className="mt-2 max-w-[38rem] text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">
@@ -116,6 +121,7 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
               icon={<Layers3 className="h-5 w-5" strokeWidth={2} />}
               label={t("trackedPatches")}
               value={`${summaries.length}`}
+              accent
             />
             <SummaryMetricCard
               icon={<Users className="h-5 w-5" strokeWidth={2} />}
@@ -131,6 +137,7 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
               icon={<NotebookText className="h-5 w-5" strokeWidth={2} />}
               label={t("latestPatchLabel")}
               value={latestSummary ? `${t("patchPrefix")} ${latestSummary.patch}` : "-"}
+              accent
             />
           </div>
         </div>
@@ -140,7 +147,7 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 className="text-[1.3rem] font-bold text-[var(--color-foreground)] sm:text-[1.6rem]">
+              <h2 className="dashboard-section-title text-[1.3rem] font-bold text-[var(--color-foreground)] sm:text-[1.6rem]">
                 {t("archiveTitle")}
               </h2>
               <p className="mt-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">
@@ -150,7 +157,8 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
             {latestSummary ? (
               <Link
                 href={`/patches/${latestSummary.patch}`}
-                className="inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm font-medium text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
+                className="dashboard-tab gap-2"
+                data-active="true"
               >
                 <span>{t("viewDetail")}</span>
                 <ArrowUpRight className="h-4 w-4" strokeWidth={2} />
@@ -163,17 +171,14 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
               <Link
                 key={summary.patch}
                 href={`/patches/${summary.patch}`}
-                className={`metric-card group flex h-full flex-col gap-4 px-4 py-4 sm:px-5 sm:py-5 ${
-                  index === 0
-                    ? "border-[var(--color-border-light)] bg-white"
-                    : "hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
-                }`}
+                className="metric-card group flex h-full flex-col gap-4 px-4 py-4 hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] sm:px-5 sm:py-5"
+                data-accent={index === 0 ? "true" : undefined}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       {index === 0 ? (
-                        <span className="rounded border border-[var(--color-border)] bg-white px-2.5 py-1 text-[10px] font-semibold text-[var(--color-muted-foreground)]">
+                        <span className="rounded border border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-2.5 py-1 text-[10px] font-semibold text-[var(--color-accent-foreground)]">
                           {t("latestBadge")}
                         </span>
                       ) : null}
