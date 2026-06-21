@@ -72,7 +72,7 @@ function TabsTrigger({ value, className, children }: TabsTriggerProps) {
       className={cn(
         "inline-flex items-center justify-center rounded px-3 py-1.5 text-xs font-semibold min-h-8 sm:min-h-0 touch-manipulation shrink-0 [scroll-snap-align:start]",
         isActive
-          ? "bg-white text-[var(--color-foreground)]"
+          ? "bg-[var(--color-surface)] text-[var(--color-foreground)]"
           : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]",
         className
       )}

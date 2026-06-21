@@ -62,7 +62,7 @@ export function CharacterGrid({
   );
 
   return (
-    <div className="w-full overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
+    <div className="w-full overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
       {/* Header */}
       <div className="px-3 py-2.5 border-b border-[var(--color-border)]/60">
         <div className="flex items-center gap-2">

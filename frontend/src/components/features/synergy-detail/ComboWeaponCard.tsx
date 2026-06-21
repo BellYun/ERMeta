@@ -122,9 +122,9 @@ function ComboWeaponCardImpl({
   return (
     <div
       className={cn(
-        "rounded-md border bg-white",
+        "rounded-md border bg-[var(--color-surface)]",
         rank <= 3 ? "border-[var(--color-border-light)]" : "border-[var(--color-border)]",
-        isFocusPoolCombo && "border-[var(--color-border-light)] bg-white"
+        isFocusPoolCombo && "border-[var(--color-border-light)] bg-[var(--color-surface)]"
       )}
       style={{ contentVisibility: "auto", containIntrinsicSize: "auto 56px" }}
     >
@@ -215,7 +215,7 @@ function ComboWeaponCardImpl({
                     onPointerDown={(e) => e.stopPropagation()}
                     onPointerUp={(e) => e.stopPropagation()}
                     aria-label={`${getCharName(m.char)} 상세 보기`}
-                    className="mt-0.5 inline-flex h-[18px] w-[18px] items-center justify-center rounded border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:text-[var(--color-foreground)] active:bg-[var(--color-surface-2)] sm:h-5 sm:w-5"
+                    className="mt-0.5 inline-flex h-[18px] w-[18px] items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:text-[var(--color-foreground)] active:bg-[var(--color-surface-2)] sm:h-5 sm:w-5"
                   >
                     <ArrowUpRight className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                   </Link>
@@ -273,7 +273,7 @@ function ComboWeaponCardImpl({
           {visibleVariants.map((v, vi) => (
             <div
               key={`${v.mainCore1}-${v.mainCore2}-${v.mainCore3}-${vi}`}
-              className="flex items-center gap-1.5 sm:gap-2 rounded-md bg-white px-2 sm:px-3 py-1.5 sm:py-2 border border-[var(--color-border-light)]"
+              className="flex items-center gap-1.5 sm:gap-2 rounded-md bg-[var(--color-surface)] px-2 sm:px-3 py-1.5 sm:py-2 border border-[var(--color-border-light)]"
             >
               {/* 순위 열과 동일한 오프셋 */}
               <span className="w-1 sm:w-2 shrink-0" />
@@ -359,7 +359,7 @@ function MoreButton({ label, onActivate }: { label: string; onActivate: () => vo
       type="button"
       {...tapGuard}
       onClick={(e) => e.stopPropagation()}
-      className="mt-1 text-[10px] sm:text-xs text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] py-1.5 px-2 rounded bg-[var(--color-surface)]/40 hover:bg-[var(--color-surface)]/70"
+      className="mt-1 rounded bg-[color-mix(in_srgb,var(--color-surface)_40%,transparent)] px-2 py-1.5 text-[10px] text-[var(--color-muted-foreground)] hover:bg-[color-mix(in_srgb,var(--color-surface)_70%,transparent)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] sm:text-xs"
       style={{ touchAction: "manipulation" }}
     >
       {label}

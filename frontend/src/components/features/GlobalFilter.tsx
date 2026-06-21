@@ -77,7 +77,7 @@ export function GlobalFilter() {
               analytics.patchSelected(e.target.value);
             }}
             className={cn(
-              "h-14 w-full appearance-none rounded-md border border-[var(--color-border)] bg-white px-3 pr-8 text-[13px] font-medium text-[var(--color-foreground)]",
+              "h-14 w-full appearance-none rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 pr-6 text-[12px] font-medium text-[var(--color-foreground)]",
               "focus:outline-none focus:border-[var(--color-accent)]"
             )}
           >
@@ -92,7 +92,7 @@ export function GlobalFilter() {
               </option>
             )}
           </select>
-          <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
+          <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
             <svg
               className="h-3.5 w-3.5 text-[var(--color-muted-foreground)]"
               fill="none"

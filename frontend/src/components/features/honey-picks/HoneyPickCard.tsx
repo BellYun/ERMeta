@@ -17,15 +17,15 @@ export function getOverallChangeType(patchNote: CharacterPatchNote): "buff" | "n
 export const CHANGE_LABEL: Record<string, { text: string; color: string }> = {
   buff: {
     text: "상향",
-    color: "border-[var(--color-border)] bg-white text-[var(--color-stat-up)]",
+    color: "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-stat-up)]",
   },
   nerf: {
     text: "하향",
-    color: "border-[var(--color-border)] bg-white text-[var(--color-stat-down)]",
+    color: "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-stat-down)]",
   },
   rework: {
     text: "조정",
-    color: "border-[var(--color-border)] bg-white text-[var(--color-foreground)]",
+    color: "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]",
   },
 };
 
@@ -75,15 +75,15 @@ export function HoneyPickCard({
             priority={isCenter}
           />
 
-          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-white" />
+          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-[var(--color-surface)]" />
 
           {/* Rank badge */}
           <div
             className={cn(
               "absolute top-2 left-2 flex h-6 w-6 items-center justify-center rounded border text-[11px] font-bold",
               isCenter
-                ? "border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
-                : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]"
+                ? "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
+                : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]"
             )}
           >
             {rank}
@@ -106,7 +106,7 @@ export function HoneyPickCard({
           {/* Info panel */}
           <div
             className={cn(
-              "absolute inset-x-2 bottom-2 rounded border border-[var(--color-border)] bg-white",
+              "absolute inset-x-2 bottom-2 rounded border border-[var(--color-border)] bg-[var(--color-surface)]",
               isCenter ? "p-2.5" : "p-2"
             )}
           >

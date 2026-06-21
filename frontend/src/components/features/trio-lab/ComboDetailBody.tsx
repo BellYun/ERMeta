@@ -120,28 +120,28 @@ const TRAIT_GROUP_META: Record<
     letter: "파",
     bg: "bg-[var(--color-surface-2)]",
     color: "text-[var(--color-foreground)]",
-    ring: "border-[var(--color-border)] bg-white",
+    ring: "border-[var(--color-border)] bg-[var(--color-surface)]",
   },
   fortification: {
     label: "저항",
     letter: "저",
     bg: "bg-[var(--color-surface-2)]",
     color: "text-[var(--color-foreground)]",
-    ring: "border-[var(--color-border)] bg-white",
+    ring: "border-[var(--color-border)] bg-[var(--color-surface)]",
   },
   support: {
     label: "지원",
     letter: "지",
     bg: "bg-[var(--color-surface-2)]",
     color: "text-[var(--color-foreground)]",
-    ring: "border-[var(--color-border)] bg-white",
+    ring: "border-[var(--color-border)] bg-[var(--color-surface)]",
   },
   chaos: {
     label: "혼돈",
     letter: "혼",
     bg: "bg-[var(--color-surface-2)]",
     color: "text-[var(--color-foreground)]",
-    ring: "border-[var(--color-border)] bg-white",
+    ring: "border-[var(--color-border)] bg-[var(--color-surface)]",
   },
   unknown: {
     label: "기타",
@@ -398,10 +398,10 @@ function TraitBlock({
 
   return (
     <div className="space-y-3">
-      <div className="rounded-md border border-[var(--color-border)] bg-white p-4 sm:p-5">
+      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:p-5">
         <div className="flex flex-col items-center gap-3">
           {topMainCore != null && (
-            <div className="rounded border border-[var(--color-border)] bg-white p-1">
+            <div className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] p-1">
               <TraitIconSmall code={topMainCore} size={40} />
             </div>
           )}
@@ -412,7 +412,7 @@ function TraitBlock({
       </div>
 
       {secondaries.length > 0 && (
-        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
+        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
           <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60 px-3 py-2 sm:px-4">
             <span className="text-[11px] font-semibold text-[var(--color-muted-foreground)] sm:text-xs">
               부특성 조합
@@ -442,7 +442,7 @@ function TraitBlock({
                 return (
                   <div
                     key={sec.secGroup}
-                    className="min-w-[220px] overflow-hidden bg-white p-3 sm:min-w-0 sm:p-4"
+                    className="min-w-[220px] overflow-hidden bg-[var(--color-surface)] p-3 sm:min-w-0 sm:p-4"
                   >
                     <div className="mb-3 flex min-w-0 items-center justify-between gap-2">
                       <div className="flex min-w-0 items-center gap-2">
@@ -507,7 +507,7 @@ function CharacterDetailCard({ data }: { data: CharacterDetailData }) {
         </div>
         <Link
           href={`/character/${member.character}`}
-          className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-white px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
+          className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
         >
           빌드
           <ChevronRight className="h-3 w-3" strokeWidth={2.4} />
@@ -625,7 +625,7 @@ export function TraitComboBlock({
               {combo.members.map((member) => (
                 <div
                   key={`${member.character}-${member.weapon}`}
-                  className="flex min-w-0 items-center gap-2 rounded-md bg-white px-2 py-1.5"
+                  className="flex min-w-0 items-center gap-2 rounded-md bg-[var(--color-surface)] px-2 py-1.5"
                 >
                   <MemberAvatar member={member} size="h-8 w-8" />
                   <TraitThumb

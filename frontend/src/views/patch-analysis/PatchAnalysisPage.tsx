@@ -451,7 +451,7 @@ function MetricCard({
         ? "border-[var(--color-accent-muted)] bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]"
         : tone === "danger"
           ? "border-red-100 bg-red-50 text-[var(--color-danger)]"
-          : "border-[var(--color-border)] bg-white text-[var(--color-foreground)]";
+          : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]";
   const isAccent = tone === "gold" || tone === "blue";
 
   return (
@@ -516,7 +516,7 @@ function DeltaBadge({ value, suffix = "" }: { value: number; suffix?: string }) 
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded border bg-white px-2 py-0.5 text-[11px] font-semibold tabular-nums",
+        "inline-flex items-center gap-1 rounded border bg-[var(--color-surface)] px-2 py-0.5 text-[11px] font-semibold tabular-nums",
         positive
           ? "border-[var(--color-border)] text-[var(--color-success)]"
           : "border-[var(--color-border)] text-[var(--color-danger)]"
@@ -581,7 +581,7 @@ function CharacterDeltaCard({
               ))}
               <span
                 className={cn(
-                  "rounded border bg-white px-2 py-1 text-[10px] font-semibold",
+                  "rounded border bg-[var(--color-surface)] px-2 py-1 text-[10px] font-semibold",
                   entry.isAggregate
                     ? "border-[var(--color-border)] text-[var(--color-foreground)]"
                     : "border-[var(--color-border)] text-[var(--color-muted-foreground)]"
@@ -592,7 +592,7 @@ function CharacterDeltaCard({
               {weaponNames.map((weaponName) => (
                 <span
                   key={weaponName}
-                  className="rounded-md border border-[var(--color-border)] bg-white px-2 py-1 text-[10px] font-medium text-[var(--color-muted-foreground)]"
+                  className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1 text-[10px] font-medium text-[var(--color-muted-foreground)]"
                 >
                   {weaponName}
                 </span>
@@ -616,7 +616,7 @@ function CharacterDeltaCard({
       </div>
 
       <div className="flex flex-col gap-3">
-        <div className="rounded-md border border-[var(--color-border)] bg-white px-3 py-3">
+        <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-3">
           <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
             {copy.patchHistory}
           </p>
@@ -636,7 +636,7 @@ function CharacterDeltaCard({
         </div>
 
         {evaluation ? (
-          <div className="rounded-md border border-[var(--color-border)] bg-white px-3 py-3">
+          <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-3">
             <p className="text-[11px] font-semibold text-[var(--color-foreground)]">
               {copy.evaluation}
             </p>
@@ -711,7 +711,7 @@ function DeltaMetric({
   suffix?: string;
 }) {
   return (
-    <div className="rounded-md border border-[var(--color-border)] bg-white px-3 py-2">
+    <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2">
       <p className="text-[10px] font-medium text-[var(--color-muted-foreground)]">{label}</p>
       <p
         className={cn(
@@ -752,12 +752,12 @@ function RoleTable({
               {copy.role.body(bestLabel, worstLabel)}
             </p>
           </div>
-          <span className="rounded border border-[var(--color-border)] bg-white px-3 py-1 text-xs text-[var(--color-muted-foreground)]">
+          <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1 text-xs text-[var(--color-muted-foreground)]">
             {copy.role.rankScope}
           </span>
         </div>
 
-        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
+        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[760px] border-separate border-spacing-0 text-sm">
               <thead>
@@ -846,7 +846,7 @@ function DeltaRanking({
           return (
             <div
               key={`${entry.characterNum}-${entry.scopeKey}-${index}`}
-              className="flex items-center gap-3 rounded-md border border-[var(--color-border)] bg-white px-3 py-3"
+              className="flex items-center gap-3 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-3"
             >
               <span
                 className={cn(

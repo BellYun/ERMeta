@@ -12,6 +12,8 @@
     "mobileMenu": "Mobile menu",
     "openSearch": "Open search",
     "closeSearch": "Close search",
+    "switchToDarkTheme": "Switch to dark mode",
+    "switchToLightTheme": "Switch to light mode",
     "languageSelectAria": "Select language",
     "localeRecommendationBody": "Your browser language is set to {language}. Switch to that language?",
     "localeRecommendationCta": "Switch language",

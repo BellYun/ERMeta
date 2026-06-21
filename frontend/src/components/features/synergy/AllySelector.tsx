@@ -127,7 +127,7 @@ export function AllySelector() {
       </div>
 
       {/* 검색 + 가상화 그리드 */}
-      <div className="rounded-md border border-[var(--color-border)] bg-white p-2">
+      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
         <p className="mb-2 px-1 text-xs text-[var(--color-muted-foreground)]">
           아군 선택 (최대 2명)
         </p>

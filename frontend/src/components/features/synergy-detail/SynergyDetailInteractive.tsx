@@ -27,7 +27,7 @@ export function SynergyDetailInteractive() {
       <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
         <div className="mb-3.5 flex flex-wrap items-center gap-x-3 gap-y-2 sm:mb-4">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-xs font-semibold text-[var(--color-muted-foreground)]">
+            <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-[var(--color-muted-foreground)]">
               1
             </span>
             <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.18rem]">
@@ -45,7 +45,7 @@ export function SynergyDetailInteractive() {
         <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
           <div className="mb-3.5 flex flex-wrap items-center gap-x-3 gap-y-2 sm:mb-4">
             <div className="flex items-center gap-2.5">
-              <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-xs font-semibold text-[var(--color-muted-foreground)]">
+              <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-[var(--color-muted-foreground)]">
                 2
               </span>
               <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.18rem]">
@@ -62,7 +62,7 @@ export function SynergyDetailInteractive() {
         <section className="dashboard-panel min-w-0 p-3.5 sm:p-4 lg:p-5">
           <div className="mb-3.5 flex flex-wrap items-center gap-x-3 gap-y-2 sm:mb-4">
             <div className="flex items-center gap-2.5">
-              <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-xs font-semibold text-[var(--color-muted-foreground)]">
+              <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-[var(--color-muted-foreground)]">
                 3
               </span>
               <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.18rem]">

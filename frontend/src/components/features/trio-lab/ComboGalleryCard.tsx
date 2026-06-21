@@ -212,13 +212,13 @@ export function ComboGalleryCard({
             </span>
           )}
           {!isSmallSample && (
-            <span className="rounded border border-[var(--color-border)] bg-white px-1.5 py-0.5 text-[10px] font-semibold text-[var(--color-foreground)]">
+            <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--color-foreground)]">
               {sampleLabel}
             </span>
           )}
         </div>
         <div
-          className={`inline-flex items-center gap-1 rounded border bg-white px-2.5 py-1 text-[12px] font-bold tabular-nums ${
+          className={`inline-flex items-center gap-1 rounded border bg-[var(--color-surface)] px-2.5 py-1 text-[12px] font-bold tabular-nums ${
             positiveRP
               ? "border-[var(--color-border)] text-[var(--color-stat-up)]"
               : "border-[var(--color-border)] text-[var(--color-stat-down)]"
@@ -230,7 +230,7 @@ export function ComboGalleryCard({
         </div>
       </header>
 
-      <div className="grid grid-cols-3 gap-2 rounded-md border border-[var(--color-border)] bg-white p-2.5">
+      <div className="grid grid-cols-3 gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-2.5">
         {orderedMembers.map((m) => (
           <div
             key={`${m.character}-${m.weapon}`}
@@ -256,7 +256,7 @@ export function ComboGalleryCard({
             </Link>
             <div className="min-w-0 text-center leading-tight">
               <p
-                className={`mx-auto mb-1 w-fit rounded border bg-white px-1.5 py-0.5 text-[9px] font-bold ${
+                className={`mx-auto mb-1 w-fit rounded border bg-[var(--color-surface)] px-1.5 py-0.5 text-[9px] font-bold ${
                   selectedSet.has(m.character)
                     ? "border-[var(--color-accent)] text-[var(--color-accent-foreground)]"
                     : "border-[var(--color-border)] text-[var(--color-muted-foreground)]"

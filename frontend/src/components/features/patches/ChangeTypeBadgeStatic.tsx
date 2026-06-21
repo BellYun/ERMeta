@@ -12,17 +12,17 @@ const CONFIG: Record<
 > = {
   buff: {
     colorClass: "text-[var(--color-success)]",
-    bgClass: "bg-white border-[var(--color-border)]",
+    bgClass: "bg-[var(--color-surface)] border-[var(--color-border)]",
     Icon: TrendingUp,
   },
   nerf: {
     colorClass: "text-[var(--color-danger)]",
-    bgClass: "bg-white border-[var(--color-border)]",
+    bgClass: "bg-[var(--color-surface)] border-[var(--color-border)]",
     Icon: TrendingDown,
   },
   rework: {
     colorClass: "text-[var(--color-foreground)]",
-    bgClass: "bg-white border-[var(--color-border)]",
+    bgClass: "bg-[var(--color-surface)] border-[var(--color-border)]",
     Icon: RefreshCw,
   },
 };

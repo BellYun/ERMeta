@@ -127,7 +127,7 @@ export function PatchNoteBottomSheet({
           </div>
           <button
             onClick={onNavigate}
-            className="w-full rounded-md border border-[var(--color-border)] bg-white py-2.5 text-sm font-semibold text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
+            className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] py-2.5 text-sm font-semibold text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
           >
             {t("detailAnalysis")}
           </button>

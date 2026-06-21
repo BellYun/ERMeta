@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 
 export function FocusPoolSkeleton() {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-white overflow-hidden">
+    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
       <div className="flex items-center justify-between px-3 py-2.5">
         <div className="h-4 w-24 rounded bg-[var(--color-surface-2)]" />
         <div className="h-4 w-4 rounded bg-[var(--color-surface-2)]" />
@@ -26,7 +26,7 @@ export function AllySelectorSkeleton() {
           />
         ))}
       </div>
-      <div className="rounded-lg border border-[var(--color-border)] bg-white p-2">
+      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
         <div className="h-4 w-28 rounded bg-[var(--color-surface-2)] mb-2 ml-1" />
         <div className="h-8 w-full rounded-md bg-[var(--color-surface-2)] mb-2" />
         <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-1">
@@ -46,7 +46,10 @@ export function ResultSkeleton() {
   return (
     <div className="flex flex-col gap-2">
       {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="h-14 rounded-lg border border-[var(--color-border)] bg-white" />
+        <div
+          key={i}
+          className="h-14 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]"
+        />
       ))}
     </div>
   );
@@ -64,7 +67,7 @@ export function SynergyDetailInteractiveSkeleton() {
     <div className="flex flex-col gap-5 sm:gap-6 mt-5 sm:mt-7">
       <section>
         <div className="flex items-center gap-2 mb-2.5">
-          <span className="flex items-center justify-center h-5 w-5 rounded border border-[var(--color-border)] bg-white text-[10px] font-bold text-[var(--color-muted-foreground)]">
+          <span className="flex items-center justify-center h-5 w-5 rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[10px] font-bold text-[var(--color-muted-foreground)]">
             1
           </span>
           <h2 className="text-sm font-bold text-[var(--color-foreground)]">{t("poolTitle")}</h2>
@@ -76,7 +79,7 @@ export function SynergyDetailInteractiveSkeleton() {
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
         <section className="w-full lg:w-[340px] shrink-0">
           <div className="flex items-center gap-2 mb-2.5">
-            <span className="flex items-center justify-center h-5 w-5 rounded border border-[var(--color-border)] bg-white text-[10px] font-bold text-[var(--color-muted-foreground)]">
+            <span className="flex items-center justify-center h-5 w-5 rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[10px] font-bold text-[var(--color-muted-foreground)]">
               2
             </span>
             <h2 className="text-sm font-bold text-[var(--color-foreground)]">{t("alliesTitle")}</h2>
@@ -86,7 +89,7 @@ export function SynergyDetailInteractiveSkeleton() {
 
         <section className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2.5">
-            <span className="flex items-center justify-center h-5 w-5 rounded border border-[var(--color-border)] bg-white text-[10px] font-bold text-[var(--color-muted-foreground)]">
+            <span className="flex items-center justify-center h-5 w-5 rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[10px] font-bold text-[var(--color-muted-foreground)]">
               3
             </span>
             <h2 className="text-sm font-bold text-[var(--color-foreground)]">

@@ -2,7 +2,7 @@
 
 export function CharacterGridSkeleton() {
   return (
-    <div className="w-full lg:w-[260px] lg:shrink-0 rounded-md border border-[var(--color-border)] bg-white p-2">
+    <div className="w-full lg:w-[260px] lg:shrink-0 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
       <div className="h-8 w-full rounded bg-[var(--color-surface-2)] mb-2" />
       <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-3 gap-1 max-h-[320px] lg:max-h-[620px] overflow-hidden">
         {Array.from({ length: 18 }).map((_, i) => (
@@ -18,7 +18,7 @@ export function CharacterGridSkeleton() {
 
 export function CharacterHeaderSkeleton() {
   return (
-    <div className="flex gap-3 sm:gap-4 rounded-md border border-[var(--color-border)] bg-white p-3 sm:p-5 items-start">
+    <div className="flex gap-3 sm:gap-4 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3 sm:p-5 items-start">
       <div className="h-20 w-20 shrink-0 rounded-md bg-[var(--color-surface-2)]" />
       <div className="flex flex-1 flex-col gap-3 min-w-0">
         <div className="flex items-center gap-2">

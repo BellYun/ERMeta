@@ -210,7 +210,7 @@ function PartnerList({
         <span className="text-xs font-semibold text-[var(--color-foreground)]">{title}</span>
       </div>
       {partners.length === 0 ? (
-        <div className="rounded-md border border-dashed border-[var(--color-border)] bg-white p-3 text-center text-xs text-[var(--color-muted-foreground)]">
+        <div className="rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] p-3 text-center text-xs text-[var(--color-muted-foreground)]">
           {copy.insufficientSample}
         </div>
       ) : (

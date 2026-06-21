@@ -72,7 +72,7 @@ export function ComboDetailHero({ combo, listHref, patchVersion, tier }: ComboDe
 
 function HeroMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-[var(--color-border)] bg-white p-3">
+    <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
       <p className="text-[10px] font-medium text-[var(--color-muted-foreground)]">{label}</p>
       <p className="mt-2 font-mono text-xl font-bold leading-none tabular-nums text-[var(--color-foreground)] sm:text-2xl">
         {value}

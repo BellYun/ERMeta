@@ -50,7 +50,7 @@ function CardContent({
 
       {hasChanges && (
         <div className="pointer-events-none absolute bottom-full left-0 right-0 z-50 mb-2 hidden group-hover:block">
-          <div className="flex flex-col gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2.5">
+          <div className="flex flex-col gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5">
             {patchChanges.map((change, i) => {
               const { label, className: labelClass } = CHANGE_LABEL[change.changeType];
               return (

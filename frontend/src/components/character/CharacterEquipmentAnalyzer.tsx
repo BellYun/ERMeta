@@ -129,7 +129,7 @@ function TopBuildsTable({
   traitNames: Record<number, string>;
 }) {
   return (
-    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
+    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
       <SectionHeader title="주요 빌드" />
 
       {/* 모바일 카드 레이아웃 (<640px) */}
@@ -150,7 +150,7 @@ function TopBuildsTable({
                   #{i + 1}
                 </span>
                 {b.mainCore != null && (
-                  <span className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-white px-1.5 py-0.5 text-[10px] font-medium text-[var(--color-foreground)]">
+                  <span className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--color-foreground)]">
                     <TraitIconSmall code={b.mainCore} size={16} />
                     {traitNames[b.mainCore] ?? b.mainCore}
                   </span>
@@ -223,7 +223,7 @@ function TopBuildsTable({
                 </td>
                 <td className="px-1.5 py-1.5 text-center">
                   {b.mainCore != null ? (
-                    <span className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-white px-1.5 py-0.5 text-[10px] font-medium text-[var(--color-foreground)] whitespace-nowrap">
+                    <span className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--color-foreground)] whitespace-nowrap">
                       <TraitIconSmall code={b.mainCore} size={16} />
                       {traitNames[b.mainCore] ?? b.mainCore}
                     </span>
@@ -295,7 +295,7 @@ function TopBuildsTable({
                 {/* 메인특성 */}
                 <td className="px-2 py-2 text-center">
                   {b.mainCore != null ? (
-                    <span className="inline-flex items-center gap-1.5 rounded border border-[var(--color-border)] bg-white px-2 py-0.5 text-xs font-medium text-[var(--color-foreground)] whitespace-nowrap">
+                    <span className="inline-flex items-center gap-1.5 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-0.5 text-xs font-medium text-[var(--color-foreground)] whitespace-nowrap">
                       <TraitIconSmall code={b.mainCore} size={20} />
                       {traitNames[b.mainCore] ?? b.mainCore}
                     </span>
@@ -347,7 +347,7 @@ function SlotPopularityGrid({
   itemNames: Record<number, string>;
 }) {
   return (
-    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
+    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
       <SectionHeader title="슬롯별 인기 아이템" />
 
       {/* 모바일: 슬롯별 가로 리스트 (스크롤 없음) */}
@@ -440,7 +440,7 @@ function CoreItemsList({
   itemNames: Record<number, string>;
 }) {
   return (
-    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
+    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
       <SectionHeader title="코어 아이템" />
       <div className="divide-y divide-[var(--color-border)]">
         {coreItems.map((item, i) => (
@@ -576,7 +576,7 @@ export function CharacterEquipmentAnalyzer({
 
   if (isEmpty) {
     return (
-      <div className="rounded-md border border-[var(--color-border)] bg-white p-8 text-center text-sm text-[var(--color-muted-foreground)]">
+      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
         아이템 빌드 표본을 확인 중입니다.
       </div>
     );

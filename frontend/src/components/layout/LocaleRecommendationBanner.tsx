@@ -83,7 +83,7 @@ export function LocaleRecommendationBanner() {
   return (
     <div className="flex items-center justify-between gap-3 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-foreground)] sm:px-4 lg:px-6">
       <div className="flex min-w-0 items-center gap-2.5">
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]">
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]">
           <Globe2 className="h-4 w-4" strokeWidth={2} />
         </span>
         <p className="min-w-0 text-xs leading-5 text-[var(--color-muted-foreground)] sm:text-sm">
@@ -97,7 +97,7 @@ export function LocaleRecommendationBanner() {
         <button
           type="button"
           onClick={handleSwitch}
-          className="rounded border border-[var(--color-border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] sm:text-sm"
+          className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] sm:text-sm"
         >
           {t("localeRecommendationCta")}
         </button>

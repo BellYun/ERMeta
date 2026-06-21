@@ -479,7 +479,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                       className={`rounded border px-1.5 py-1 text-[10px] font-semibold ${
                         selectedWeapon == null
                           ? "border-[var(--color-accent)] bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]"
-                          : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
+                          : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
                       }`}
                     >
                       {copy.allWeapons}
@@ -492,7 +492,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                         className={`rounded border px-1.5 py-1 text-[10px] font-semibold ${
                           selectedWeapon === weapon.weaponCode
                             ? "border-[var(--color-accent)] bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]"
-                            : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
+                            : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
                         }`}
                       >
                         {getWeaponName(weapon.weaponCode)}
@@ -584,7 +584,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
       </div>
 
       {error && (
-        <div className="rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-xs text-[var(--color-danger)]">
+        <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-xs text-[var(--color-danger)]">
           {error}
         </div>
       )}
@@ -627,7 +627,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                 onClick={() =>
                   setVisibleCount((count) => Math.min(count + PAGE_SIZE, sortedCombos.length))
                 }
-                className="inline-flex min-h-[42px] items-center justify-center rounded-md border border-[var(--color-border)] bg-white px-5 text-xs font-semibold text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
+                className="inline-flex min-h-[42px] items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-5 text-xs font-semibold text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
               >
                 {copy.loadMore(Math.min(PAGE_SIZE, sortedCombos.length - visibleCount))}
               </button>

@@ -108,13 +108,13 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
   ];
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-white px-4 py-5">
+    <div className="flex h-full min-h-0 flex-col bg-[var(--color-surface)] px-4 py-5">
       <Link
         href={withCurrentRouteLocale(pathname, "/")}
         onClick={onNavigate}
         className="flex items-center gap-3 px-2"
       >
-        <div className="flex h-11 w-11 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-sm font-bold text-[var(--color-foreground)]">
+        <div className="flex h-11 w-11 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] text-sm font-bold text-[var(--color-foreground)]">
           ER
         </div>
         <div className="min-w-0">
@@ -140,7 +140,7 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
               className={cn(
                 "group flex items-center gap-3 rounded-md border px-4 py-3 text-sm font-medium transition-colors",
                 isActive
-                  ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
+                  ? "border-[var(--color-border-light)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
                   : "border-transparent text-[var(--color-muted-foreground)] hover:border-[var(--color-border)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
               )}
             >
@@ -148,8 +148,8 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
                 className={cn(
                   "flex h-9 w-9 items-center justify-center rounded border transition-colors",
                   isActive
-                    ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
-                    : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]"
+                    ? "border-[var(--color-border-light)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
+                    : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]"
                 )}
               >
                 <Icon className="h-[18px] w-[18px]" strokeWidth={1.9} />
@@ -195,16 +195,16 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
             className={cn(
               "flex items-center gap-3 rounded-md border px-4 py-3 text-sm font-medium transition-colors",
               isFeedbackOpen
-                ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
-                : "border-[var(--color-border)] bg-white text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
+                ? "border-[var(--color-border-light)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
+                : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
             )}
           >
             <span
               className={cn(
                 "flex h-9 w-9 items-center justify-center rounded border transition-colors",
                 isFeedbackOpen
-                  ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
-                  : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]"
+                  ? "border-[var(--color-border-light)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
+                  : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]"
               )}
             >
               <MessageSquarePlus className="h-[18px] w-[18px]" strokeWidth={1.9} />

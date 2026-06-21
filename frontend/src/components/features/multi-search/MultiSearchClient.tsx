@@ -537,7 +537,7 @@ function SearchSummary({ summary }: { summary: SearchSummaryState }) {
         {summary.failed.map((result) => (
           <span
             key={result.input}
-            className="inline-flex items-center gap-1 rounded border border-[var(--color-accent)] bg-white px-2 py-1 text-xs font-semibold text-[var(--color-muted-foreground)]"
+            className="inline-flex items-center gap-1 rounded border border-[var(--color-accent)] bg-[var(--color-surface)] px-2 py-1 text-xs font-semibold text-[var(--color-muted-foreground)]"
           >
             <span className="max-w-32 truncate text-[var(--color-foreground)]">{result.input}</span>
             <span>{playerStatusText(result)}</span>
@@ -613,7 +613,7 @@ function MyProfileSetupCard({
                   onChange={(event) =>
                     onWeaponChange(character.characterCode, Number(event.target.value))
                   }
-                  className="h-9 rounded-md border border-[var(--color-border)] bg-white px-2 text-xs font-semibold text-[var(--color-foreground)] outline-none transition-colors focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-muted)]"
+                  className="h-9 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-xs font-semibold text-[var(--color-foreground)] outline-none transition-colors focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-muted)]"
                   aria-label={`${getCharacterName(character.characterCode)} 무기군`}
                 >
                   <option value={0}>전체 무기</option>
@@ -1050,7 +1050,7 @@ function MyPickComboCard({
               >
                 #{rank}
               </span>
-              <span className="inline-flex h-6 min-w-7 items-center justify-center rounded-md border border-[var(--color-border)] bg-white px-1.5 font-mono text-xs font-bold text-[var(--color-foreground)]">
+              <span className="inline-flex h-6 min-w-7 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 font-mono text-xs font-bold text-[var(--color-foreground)]">
                 {tier}
               </span>
             </div>
@@ -1065,7 +1065,7 @@ function MyPickComboCard({
         {bestCombo && (
           <span
             className={cn(
-              "rounded border bg-white px-2 py-1 font-mono text-sm font-bold",
+              "rounded border bg-[var(--color-surface)] px-2 py-1 font-mono text-sm font-bold",
               bestCombo.averageRP >= 0
                 ? "border-[var(--color-border)] text-[var(--color-stat-up)]"
                 : "border-[var(--color-border)] text-[var(--color-stat-down)]"
@@ -1094,7 +1094,7 @@ function MyPickComboCard({
             key={combo.id}
             href={withCurrentRouteLocale(pathname, comboDetailHref(combo))}
             scroll={false}
-            className="flex items-center justify-between gap-2 rounded border border-transparent bg-white px-2 py-1.5 text-[11px] hover:border-[var(--color-accent)] hover:bg-[var(--color-accent-muted)]"
+            className="flex items-center justify-between gap-2 rounded border border-transparent bg-[var(--color-surface)] px-2 py-1.5 text-[11px] hover:border-[var(--color-accent)] hover:bg-[var(--color-accent-muted)]"
           >
             <span className="min-w-0 truncate font-bold text-[var(--color-foreground)]">
               {members
@@ -1115,7 +1115,7 @@ function MyPickComboCard({
 
 function CompactMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="min-w-0 rounded-md bg-white px-1 py-1">
+    <div className="min-w-0 rounded-md bg-[var(--color-surface)] px-1 py-1">
       <p className="text-[9px] font-semibold text-[var(--color-muted-foreground)]">{label}</p>
       <p className="truncate font-mono text-[11px] font-bold text-[var(--color-foreground)]">
         {value}

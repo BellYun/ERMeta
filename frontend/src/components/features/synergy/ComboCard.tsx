@@ -50,7 +50,7 @@ export function ComboCard({
     <div
       className={cn(
         "combo-card",
-        "group flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-white px-3 py-2.5 transition-colors hover:bg-[var(--color-surface-2)] hover:border-[var(--color-border-light)]"
+        "group flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 transition-colors hover:bg-[var(--color-surface-2)] hover:border-[var(--color-border-light)]"
       )}
       data-accent={isFocusPoolCombo || isTopResult ? "true" : undefined}
     >
@@ -116,7 +116,7 @@ export function ComboCard({
                 >
                   {charContent}
                   {rest.length === 1 && (
-                    <span className="rounded border border-[var(--color-border)] bg-white px-1.5 py-0.5 text-[9px] font-medium text-[var(--color-foreground)] transition-colors whitespace-nowrap group-hover/char:border-[var(--color-border-light)]">
+                    <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[9px] font-medium text-[var(--color-foreground)] transition-colors whitespace-nowrap group-hover/char:border-[var(--color-border-light)]">
                       분석보기
                     </span>
                   )}

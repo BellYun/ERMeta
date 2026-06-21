@@ -68,30 +68,30 @@ function createGroupConfig(t: (key: string) => string) {
     havoc: {
       letter: t("groups.havoc.letter"),
       name: t("groups.havoc.name"),
-      bg: "bg-red-50",
-      text: "text-red-700",
-      ring: "ring-red-200",
+      bg: "bg-[color-mix(in_srgb,var(--color-danger-readable)_12%,var(--color-surface))]",
+      text: "text-[var(--color-danger-readable)]",
+      ring: "ring-[color-mix(in_srgb,var(--color-danger-readable)_36%,var(--color-border))]",
     },
     fortification: {
       letter: t("groups.fortification.letter"),
       name: t("groups.fortification.name"),
-      bg: "bg-blue-50",
-      text: "text-blue-700",
-      ring: "ring-blue-200",
+      bg: "bg-[color-mix(in_srgb,var(--color-accent)_12%,var(--color-surface))]",
+      text: "text-[var(--color-accent-foreground)]",
+      ring: "ring-[color-mix(in_srgb,var(--color-accent)_36%,var(--color-border))]",
     },
     support: {
       letter: t("groups.support.letter"),
       name: t("groups.support.name"),
-      bg: "bg-emerald-50",
-      text: "text-emerald-700",
-      ring: "ring-emerald-200",
+      bg: "bg-[color-mix(in_srgb,var(--color-success)_12%,var(--color-surface))]",
+      text: "text-[var(--color-success)]",
+      ring: "ring-[color-mix(in_srgb,var(--color-success)_36%,var(--color-border))]",
     },
     chaos: {
       letter: t("groups.chaos.letter"),
       name: t("groups.chaos.name"),
-      bg: "bg-violet-50",
-      text: "text-violet-700",
-      ring: "ring-violet-200",
+      bg: "bg-[color-mix(in_srgb,var(--color-trait-chaos)_12%,var(--color-surface))]",
+      text: "text-[var(--color-trait-chaos)]",
+      ring: "ring-[color-mix(in_srgb,var(--color-trait-chaos)_36%,var(--color-border))]",
     },
     unknown: {
       letter: t("groups.unknown.letter"),
@@ -288,7 +288,7 @@ function TopBuildsTableFiltered({
   const t = useTranslations("characterDetailed");
   const slotLabels = React.useMemo(() => createSlotLabels(t), [t]);
   return (
-    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
+    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
         <span className="dashboard-section-title text-xs font-semibold text-[var(--color-foreground)]">
           {t("sections.topBuilds")}
@@ -413,7 +413,7 @@ function SlotPopularityGrid({
   const t = useTranslations("characterDetailed");
   const slotLabels = React.useMemo(() => createSlotLabels(t), [t]);
   return (
-    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
+    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
         <span className="dashboard-section-title text-xs font-semibold text-[var(--color-foreground)]">
           {t("sections.slotPopularity")}
@@ -904,7 +904,7 @@ export function CharacterDetailedAnalyzer({
                             return (
                               <div
                                 key={si}
-                                className="min-w-[220px] overflow-hidden bg-white p-3 sm:min-w-0 sm:p-4"
+                                className="min-w-[220px] overflow-hidden bg-[var(--color-surface)] p-3 sm:min-w-0 sm:p-4"
                               >
                                 {/* 부특성 그룹 헤더 */}
                                 <div className="mb-3 flex min-w-0 items-center justify-between gap-2">

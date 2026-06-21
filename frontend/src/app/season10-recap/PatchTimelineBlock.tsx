@@ -91,17 +91,17 @@ function PatchRankRow({ rank, entry }: { rank: number; entry: PatchTopGroup["ent
           "group flex items-center gap-2.5 rounded-md border px-2.5 py-2",
           rank === 1
             ? "border-[var(--color-accent)] bg-[var(--color-accent-muted)]"
-            : "border-[var(--color-border)] bg-white hover:border-[var(--color-accent)] hover:bg-[var(--color-surface-2)]"
+            : "border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)] hover:bg-[var(--color-surface-2)]"
         )}
       >
         <span
           className={cn(
             "flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[11px] font-semibold tabular-nums",
             rank === 1
-              ? "border border-[var(--color-accent)] bg-white text-[var(--color-accent-foreground)]"
+              ? "border border-[var(--color-accent)] bg-[var(--color-surface)] text-[var(--color-accent-foreground)]"
               : rank <= 3
-                ? "border border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
-                : "border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]"
+                ? "border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
+                : "border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]"
           )}
         >
           {rank}
@@ -120,7 +120,7 @@ function PatchRankRow({ rank, entry }: { rank: number; entry: PatchTopGroup["ent
             className={cn(
               "text-sm font-bold tabular-nums",
               entry.averageRP >= 0
-                ? "text-[var(--color-accent-gold)]"
+                ? "text-[var(--color-accent-foreground)]"
                 : "text-[var(--color-danger)]"
             )}
           >

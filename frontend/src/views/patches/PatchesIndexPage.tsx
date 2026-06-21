@@ -25,7 +25,7 @@ function SummaryMetricCard({
       className="metric-card flex min-h-[110px] flex-col gap-3 px-4 py-4 sm:min-h-[126px] sm:px-5"
       data-accent={accent ? "true" : undefined}
     >
-      <div className="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-[var(--color-accent-foreground)]">
+      <div className="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-accent-foreground)]">
         {icon}
       </div>
       <div>
@@ -85,10 +85,10 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
 
             {latestSummary ? (
               <div className="mt-4 flex flex-wrap items-center gap-2 text-xs sm:text-sm">
-                <span className="rounded border border-[var(--color-border)] bg-white px-2.5 py-1 text-[var(--color-muted-foreground)]">
+                <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-[var(--color-muted-foreground)]">
                   {t("characterCount", { count: latestSummary.characterCount })}
                 </span>
-                <span className="rounded border border-[var(--color-border)] bg-white px-2.5 py-1 text-[var(--color-muted-foreground)]">
+                <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-[var(--color-muted-foreground)]">
                   {t("totalChanges", { count: latestSummary.totalChanges })}
                 </span>
                 {latestSummary.buffs > 0 ? (
@@ -194,7 +194,7 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
                     </p>
                   </div>
 
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]">
                     <ArrowUpRight className="h-4.5 w-4.5" strokeWidth={2} />
                   </span>
                 </div>

@@ -14,7 +14,7 @@ export function MiniStat({
   gold?: boolean;
 }) {
   return (
-    <div className="rounded-md bg-white px-1.5 py-1.5 text-center">
+    <div className="rounded-md bg-[var(--color-surface)] px-1.5 py-1.5 text-center">
       <p className="text-[8px] leading-none text-[var(--color-muted-foreground)]">{label}</p>
       <p
         className={cn(

@@ -55,7 +55,7 @@ export function SeasonHallOfFameBlock({
           </span>
         </div>
 
-        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
+        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
           {entries.length === 0 ? (
             <div className="py-16 text-center text-sm text-[var(--color-muted-foreground)]">
               표본 확인 중
@@ -116,19 +116,19 @@ function SeasonRow({
         aria-expanded={isOpen}
         className={cn(
           "group flex w-full items-center gap-3 px-3 py-2.5 text-left sm:px-4 sm:py-3",
-          isOpen ? "bg-white" : "hover:bg-[var(--color-surface-2)]",
+          isOpen ? "bg-[var(--color-surface)]" : "hover:bg-[var(--color-surface-2)]",
           rank === 1 && !isOpen && "bg-[var(--color-accent-muted)]",
-          isTopRow && rank !== 1 && !isOpen && "bg-white"
+          isTopRow && rank !== 1 && !isOpen && "bg-[var(--color-surface)]"
         )}
       >
         <span
           className={cn(
             "flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-sm font-semibold tabular-nums sm:h-9 sm:w-9 sm:text-base",
             rank === 1
-              ? "border border-[var(--color-accent)] bg-white text-[var(--color-accent-foreground)]"
+              ? "border border-[var(--color-accent)] bg-[var(--color-surface)] text-[var(--color-accent-foreground)]"
               : isTopRow
-                ? "border border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
-                : "border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]"
+                ? "border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
+                : "border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]"
           )}
         >
           {rank}
@@ -170,7 +170,7 @@ function SeasonRow({
             className={cn(
               "text-base font-semibold tabular-nums sm:text-lg",
               entry.averageRP >= 0
-                ? "text-[var(--color-accent-gold)]"
+                ? "text-[var(--color-accent-foreground)]"
                 : "text-[var(--color-danger)]"
             )}
           >
@@ -229,7 +229,7 @@ function PatchBreakdown({
   });
 
   return (
-    <div className="border-t border-[var(--color-border)]/40 bg-white px-3 py-3 sm:px-4">
+    <div className="border-t border-[var(--color-border)]/40 bg-[var(--color-surface)] px-3 py-3 sm:px-4">
       <div className="mb-3 flex items-center justify-between gap-3">
         <span className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
           패치별 흐름

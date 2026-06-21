@@ -7,6 +7,7 @@ import { AppFrame } from "@/components/AppFrame";
 import FeedbackWidget from "@/components/features/FeedbackWidget";
 import { L10nProvider } from "@/components/L10nProvider";
 import { RootDocumentExtras } from "@/components/RootDocumentExtras";
+import { ThemeInitScript } from "@/components/ThemeInitScript";
 import { getStatsPatchVersions } from "@/data/patch-notes";
 import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
 import { geistSans } from "@/lib/geistFont";
@@ -52,7 +53,10 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   const patchAnalysisPatch = getPatchAnalysisVersions()[0] ?? "";
 
   return (
-    <html lang={htmlLang} className={geistSans.variable}>
+    <html lang={htmlLang} className={geistSans.variable} suppressHydrationWarning>
+      <head>
+        <ThemeInitScript />
+      </head>
       <body>
         <L10nProvider
           initialL10n={initialL10n}

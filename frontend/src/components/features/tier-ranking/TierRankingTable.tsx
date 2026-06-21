@@ -313,7 +313,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                                 sizes="32px"
                               />
                               {char.patchNote && (
-                                <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded border border-white bg-[var(--color-muted-foreground)]" />
+                                <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded border border-[var(--color-surface)] bg-[var(--color-muted-foreground)]" />
                               )}
                             </div>
                             <div className="min-w-0">
@@ -328,7 +328,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                                       patch: char.patchNote.patch,
                                     })}
                                     onClick={(e) => togglePatchNote(e, key)}
-                                    className="shrink-0 rounded border border-[var(--color-border)] bg-white px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)]"
+                                    className="shrink-0 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)]"
                                   >
                                     패치
                                   </button>
@@ -489,7 +489,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           sizes="32px"
                         />
                         {char.patchNote && (
-                          <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded border border-white bg-[var(--color-muted-foreground)]" />
+                          <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded border border-[var(--color-surface)] bg-[var(--color-muted-foreground)]" />
                         )}
                       </div>
                       <div className="min-w-0">
@@ -502,7 +502,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                               type="button"
                               aria-label={t("patchNoteButton", { patch: char.patchNote.patch })}
                               onClick={(e) => togglePatchNote(e, key)}
-                              className="shrink-0 rounded border border-[var(--color-border)] bg-white px-1 py-0.5 text-[8px] font-semibold text-[var(--color-muted-foreground)]"
+                              className="shrink-0 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1 py-0.5 text-[8px] font-semibold text-[var(--color-muted-foreground)]"
                             >
                               패치
                             </button>

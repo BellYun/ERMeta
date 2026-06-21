@@ -186,7 +186,7 @@ export function CharacterSearchCombobox({
           onKeyDown={handleKeyDown}
           placeholder={t("placeholder")}
           className={cn(
-            "w-full rounded-md border bg-white py-2.5 pl-10 pr-4 text-sm text-[var(--color-foreground)] sm:py-3",
+            "w-full rounded-md border bg-[var(--color-surface)] py-2.5 pl-10 pr-4 text-sm text-[var(--color-foreground)] sm:py-3",
             "placeholder:text-[var(--color-muted-foreground)]",
             "outline-none",
             open
@@ -202,7 +202,7 @@ export function CharacterSearchCombobox({
           id={listboxId}
           role="listbox"
           aria-label={t("listAria")}
-          className="absolute right-0 top-full z-50 max-h-[70vh] w-full overflow-y-auto rounded-b-lg border border-t-0 border-[var(--color-border)] bg-white sm:max-h-[320px]"
+          className="absolute right-0 top-full z-50 max-h-[70vh] w-full overflow-y-auto rounded-b-lg border border-t-0 border-[var(--color-border)] bg-[var(--color-surface)] sm:max-h-[320px]"
         >
           {filtered.length === 0 ? (
             <div

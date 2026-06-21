@@ -68,7 +68,7 @@ export function StatCard({
   return (
     <div
       className={cn(
-        "flex flex-col justify-between rounded-md border border-[var(--color-border)] border-l-2 overflow-hidden bg-white",
+        "flex flex-col justify-between rounded-md border border-[var(--color-border)] border-l-2 overflow-hidden bg-[var(--color-surface)]",
         "px-3 sm:px-4 py-2.5 sm:py-3 min-h-[80px]",
         colors.border
       )}

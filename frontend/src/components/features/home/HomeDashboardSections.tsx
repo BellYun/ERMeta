@@ -76,13 +76,13 @@ function HomeDashboardSectionsBody({
 
   return (
     <>
-      <section id="home-mobile-filter" className="dashboard-panel p-3 sm:hidden">
+      <section id="home-mobile-filter" className="dashboard-panel home-filter-panel p-3 sm:hidden">
         <GlobalFilter />
       </section>
 
-      <section className="dashboard-panel p-4 lg:p-5">
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+      <section className="dashboard-panel home-section-panel p-4 sm:p-5 lg:p-6">
+        <div className="flex flex-col gap-5">
+          <div className="home-section-header flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
             <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
               <h2 className="dashboard-section-title text-base font-bold text-[var(--color-foreground)] sm:text-lg">
                 {t("honeyPicksTitle")}
@@ -97,7 +97,7 @@ function HomeDashboardSectionsBody({
           </div>
 
           {isPreseasonPatch ? (
-            <div className="rounded-md border border-[var(--color-border)] bg-white px-3.5 py-3 text-sm font-medium text-[var(--color-muted-foreground)] sm:px-4">
+            <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-3 text-sm font-medium text-[var(--color-muted-foreground)] sm:px-4">
               {t("preseasonNotice")}
             </div>
           ) : null}
@@ -121,8 +121,8 @@ function HomeDashboardSectionsBody({
         />
       ) : null}
 
-      <section className="dashboard-panel p-4 lg:p-5">
-        <div className="mb-4 flex flex-wrap items-end gap-x-4 gap-y-2">
+      <section className="dashboard-panel home-section-panel p-4 sm:p-5 lg:p-6">
+        <div className="home-section-header mb-5 flex flex-wrap items-end gap-x-4 gap-y-2">
           <h2 className="dashboard-section-title text-base font-bold text-[var(--color-foreground)] sm:text-lg">
             {t("rankingTitle")}
           </h2>

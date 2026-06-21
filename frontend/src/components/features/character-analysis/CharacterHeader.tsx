@@ -365,7 +365,7 @@ export function CharacterHeader({
           />
         </div>
       ) : (
-        <div className="rounded-md border border-dashed border-[var(--color-border)] bg-white px-4 py-8 text-center">
+        <div className="rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-8 text-center">
           <p className="text-sm text-[var(--color-muted-foreground)]">
             {currentPatch ? t("emptyPatchData") : t("loadingPatchInfo")}
           </p>

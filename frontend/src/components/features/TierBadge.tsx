@@ -2,11 +2,11 @@ import type { Tier } from "@/lib/design-tokens";
 import { cn } from "@/lib/utils";
 
 const tierStyles: Record<Tier, string> = {
-  S: "bg-white text-[var(--color-foreground)] ring-[var(--color-border)]",
-  A: "bg-white text-[var(--color-foreground)] ring-[var(--color-border)]",
-  B: "bg-white text-[var(--color-foreground)] ring-[var(--color-border)]",
-  C: "bg-white text-[var(--color-foreground)] ring-[var(--color-border)]",
-  D: "bg-white text-[var(--color-muted-foreground)] ring-[var(--color-border)]",
+  S: "bg-[var(--color-surface)] text-[var(--color-foreground)] ring-[var(--color-border)]",
+  A: "bg-[var(--color-surface)] text-[var(--color-foreground)] ring-[var(--color-border)]",
+  B: "bg-[var(--color-surface)] text-[var(--color-foreground)] ring-[var(--color-border)]",
+  C: "bg-[var(--color-surface)] text-[var(--color-foreground)] ring-[var(--color-border)]",
+  D: "bg-[var(--color-surface)] text-[var(--color-muted-foreground)] ring-[var(--color-border)]",
 };
 
 interface TierBadgeProps {

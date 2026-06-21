@@ -49,7 +49,7 @@ export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
 
   if (patches.length === 0) {
     return (
-      <div className="rounded-md border border-[var(--color-border)] bg-white p-8 text-center text-sm text-[var(--color-muted-foreground)]">
+      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
         {t("loadingPatches")}
       </div>
     );
@@ -62,13 +62,13 @@ export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
         return (
           <div
             key={patch}
-            className="rounded-md border border-[var(--color-border)] bg-white overflow-hidden min-w-0"
+            className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden min-w-0"
           >
             {/* 패치 버전 헤더 */}
             <div className="flex items-center gap-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 sm:px-4 py-2">
               <span className="text-xs font-semibold text-[var(--color-foreground)]">{patch}</span>
               {i === 0 && (
-                <span className="rounded border border-[var(--color-border)] bg-white px-1.5 py-0.5 text-[10px] text-[var(--color-muted-foreground)]">
+                <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[10px] text-[var(--color-muted-foreground)]">
                   {t("current")}
                 </span>
               )}

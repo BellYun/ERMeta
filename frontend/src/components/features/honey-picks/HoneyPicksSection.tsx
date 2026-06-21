@@ -38,14 +38,14 @@ export const CHANGE_LABEL: Record<string, { text: string; color: string; bg: str
   rework: {
     text: "조정",
     color: "text-[var(--color-foreground)]",
-    bg: "bg-white border border-[var(--color-border)]",
+    bg: "bg-[var(--color-surface)] border border-[var(--color-border)]",
   },
 };
 
 const RANK_STYLE: Record<number, string> = {
   1: "border-[var(--color-accent)] bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]",
-  2: "border-[var(--color-border)] bg-white text-[var(--color-foreground)]",
-  3: "border-[var(--color-border)] bg-white text-[var(--color-foreground)]",
+  2: "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]",
+  3: "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]",
 };
 
 interface ResolvedPick {
@@ -149,7 +149,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                 className={cn(
                   "absolute left-4 top-4 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border text-sm font-bold",
                   RANK_STYLE[i + 1] ??
-                    "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]"
+                    "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]"
                 )}
               >
                 {i + 1}
@@ -260,7 +260,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
 
               {desktopPatchNote && previewChanges.length > 0 && (
                 <div className="pointer-events-none absolute inset-0 z-10 hidden group-hover:block">
-                  <div className="absolute inset-0 bg-white" />
+                  <div className="absolute inset-0 bg-[var(--color-surface)]" />
                   <div className="absolute inset-0 flex flex-col gap-3 p-4">
                     <div className="flex items-center gap-2 pr-10">
                       {changeLabel && (
@@ -316,7 +316,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
             <div
               key={r.pick.characterNum}
               className={cn(
-                "char-card relative w-[138px] shrink-0 snap-start cursor-pointer touch-manipulation bg-white"
+                "char-card relative w-[138px] shrink-0 snap-start cursor-pointer touch-manipulation bg-[var(--color-surface)]"
               )}
               data-accent={i === 0 ? "true" : undefined}
               style={{ aspectRatio: "0.72" }}
@@ -346,7 +346,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                 sizes="138px"
                 priority={i < 1}
               />
-              <div className="absolute inset-0 bg-white" />
+              <div className="absolute inset-0 bg-[var(--color-surface)]" />
 
               {/* Rank + badge */}
               <div className="absolute left-2.5 top-2.5 flex items-center gap-1.5">
@@ -354,7 +354,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                   className={cn(
                     "flex h-6 w-6 items-center justify-center rounded-md border text-[10px] font-bold",
                     RANK_STYLE[i + 1] ??
-                      "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]"
+                      "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]"
                   )}
                 >
                   {i + 1}

@@ -7,12 +7,16 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-[var(--color-border)] bg-white text-[var(--color-foreground)]",
-        secondary: "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]",
-        outline: "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]",
-        gold: "border-[var(--color-border)] bg-white text-[var(--color-foreground)]",
-        success: "border-[var(--color-border)] bg-white text-[var(--color-success)]",
-        danger: "border-[var(--color-border)] bg-white text-[var(--color-danger)]",
+        default:
+          "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]",
+        secondary:
+          "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]",
+        outline:
+          "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]",
+        gold: "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]",
+        success:
+          "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-success)]",
+        danger: "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-danger)]",
       },
     },
     defaultVariants: {

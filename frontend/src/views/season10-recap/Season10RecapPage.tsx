@@ -179,7 +179,7 @@ function HeroMetricCard({
   const isAccent = tone !== "default";
   const iconTone = isAccent
     ? "border-[var(--color-accent)] bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]"
-    : "border-[var(--color-border)] bg-white text-[var(--color-foreground)]";
+    : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]";
 
   return (
     <div
@@ -306,10 +306,10 @@ export default async function SeasonRecapPage({ locale = "ko" }: { locale?: Rout
               <span className="rounded border border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-2.5 py-1 font-semibold text-[var(--color-accent-foreground)]">
                 {copy.trackedPatches} {copy.trackedPatchesValue(patches.length)}
               </span>
-              <span className="rounded border border-[var(--color-border)] bg-white px-2.5 py-1">
+              <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1">
                 {copy.trackedCombos} {copy.trackedCombosValue(formatMetricNumber(trackedCombos))}
               </span>
-              <span className="rounded border border-[var(--color-border)] bg-white px-2.5 py-1">
+              <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1">
                 {copy.totalSample} {copy.totalSampleValue(formatMetricNumber(totalMatches))}
               </span>
             </div>

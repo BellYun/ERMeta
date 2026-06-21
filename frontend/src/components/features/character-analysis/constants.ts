@@ -23,19 +23,19 @@ export const CHANGE_TYPE_CONFIG = {
   buff: {
     labelKey: "buff",
     colorClass: "text-[var(--color-stat-up)]",
-    bgClass: "bg-white border-[var(--color-border)]",
+    bgClass: "bg-[var(--color-surface)] border-[var(--color-border)]",
     Icon: TrendingUp,
   },
   nerf: {
     labelKey: "nerf",
     colorClass: "text-[var(--color-danger)]",
-    bgClass: "bg-white border-[var(--color-border)]",
+    bgClass: "bg-[var(--color-surface)] border-[var(--color-border)]",
     Icon: TrendingDown,
   },
   rework: {
     labelKey: "rework",
     colorClass: "text-[var(--color-foreground)]",
-    bgClass: "bg-white border-[var(--color-border)]",
+    bgClass: "bg-[var(--color-surface)] border-[var(--color-border)]",
     Icon: RefreshCw,
   },
 } satisfies Record<

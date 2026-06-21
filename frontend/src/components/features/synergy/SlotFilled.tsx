@@ -14,7 +14,7 @@ export function SlotFilled({
   onRemove: () => void;
 }) {
   return (
-    <div className="flex flex-1 items-center gap-3 rounded-md border border-[var(--color-border-light)] bg-white px-4 py-3">
+    <div className="flex flex-1 items-center gap-3 rounded-md border border-[var(--color-border-light)] bg-[var(--color-surface)] px-4 py-3">
       <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-[var(--color-border)]">
         <Image
           src={getCharacterMiniWebpUrl(code)}

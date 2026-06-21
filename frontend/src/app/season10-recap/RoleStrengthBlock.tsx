@@ -68,7 +68,7 @@ export function RoleStrengthBlock({ roleStats, patches }: RoleStrengthBlockProps
           </div>
         )}
 
-        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-white">
+        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
           <div className="overflow-x-auto pb-2 overscroll-x-contain">
             <table className="w-full min-w-[860px] border-separate border-spacing-0 text-xs sm:min-w-[940px] sm:text-sm xl:min-w-[1040px]">
               <thead>
@@ -92,7 +92,7 @@ export function RoleStrengthBlock({ roleStats, patches }: RoleStrengthBlockProps
               <tbody>
                 {roleStats.map(({ role, perPatch, season }) => (
                   <tr key={role}>
-                    <th className="sticky left-0 z-10 border-b border-[var(--color-border)]/30 bg-white px-3 py-3 text-left font-semibold text-[var(--color-foreground)]">
+                    <th className="sticky left-0 z-10 border-b border-[var(--color-border)]/30 bg-[var(--color-surface)] px-3 py-3 text-left font-semibold text-[var(--color-foreground)]">
                       {role}
                     </th>
                     {perPatch.map(({ patch, stat }) => (

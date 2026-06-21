@@ -355,13 +355,13 @@ export function RoleComboRpPanel({ characterCode, selectedWeapon }: RoleComboRpP
           <div className="h-48 rounded-md bg-[var(--color-surface-2)]" />
         </div>
       ) : !data ? (
-        <div className="mx-4 mb-4 flex min-h-[180px] items-center justify-center rounded-md border border-dashed border-[var(--color-border)] bg-white px-4 text-center text-xs text-[var(--color-muted-foreground)]">
+        <div className="mx-4 mb-4 flex min-h-[180px] items-center justify-center rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] px-4 text-center text-xs text-[var(--color-muted-foreground)]">
           {copy.sampleChecking}
         </div>
       ) : (
         <>
           {data.group ? (
-            <div className="mx-4 mb-3 rounded-md border border-[var(--color-border)] bg-white px-3 py-2">
+            <div className="mx-4 mb-3 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2">
               <div className="text-xs font-semibold text-[var(--color-foreground)]">
                 {localizeRoleText(data.group.label, locale)}
               </div>
@@ -380,7 +380,7 @@ export function RoleComboRpPanel({ characterCode, selectedWeapon }: RoleComboRpP
             </div>
           ) : null}
 
-          <div className="mx-4 mb-3 rounded-md border border-[var(--color-border)] bg-white px-3 py-2.5">
+          <div className="mx-4 mb-3 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5">
             <p className="text-[11px] font-semibold text-[var(--color-foreground)]">
               {copy.pickCondition}
             </p>

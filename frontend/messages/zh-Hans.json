@@ -13,6 +13,8 @@
     "mobileMenu": "移动端菜单",
     "openSearch": "打开搜索",
     "closeSearch": "关闭搜索",
+    "switchToDarkTheme": "切换到深色模式",
+    "switchToLightTheme": "切换到浅色模式",
     "localeRecommendationBody": "你的浏览器语言设置为 {language}。要切换到该语言吗？",
     "localeRecommendationCta": "切换语言",
     "localeRecommendationDismiss": "关闭语言提示",

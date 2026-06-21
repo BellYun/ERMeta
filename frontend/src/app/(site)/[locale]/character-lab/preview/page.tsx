@@ -94,13 +94,53 @@ const ROLE_SHORT: Record<PartnerRole, string> = {
 };
 
 const ROLE_COLOR: Record<PartnerRole, string> = {
-  탱커: "#374151",
-  "원거리 딜러": "#4b5563",
-  스킬딜러: "#64748b",
-  전사: "#6b7280",
-  지원가: "#687386",
-  암살자: "#94a3b8",
+  탱커: "var(--color-foreground)",
+  "원거리 딜러": "var(--color-accent-foreground)",
+  스킬딜러: "var(--color-muted-foreground)",
+  전사: "var(--color-foreground)",
+  지원가: "var(--color-success)",
+  암살자: "var(--color-trait-chaos)",
 };
+
+function roleTint(role: PartnerRole, amount = 14) {
+  return `color-mix(in srgb, ${ROLE_COLOR[role]} ${amount}%, var(--color-surface))`;
+}
+
+function deltaCellStyle(value: number): { backgroundColor: string; color: string } {
+  const abs = Math.min(1, Math.abs(value) / 1.5);
+  if (value > 0.05) {
+    const amount = 6 + abs * 18;
+    return {
+      backgroundColor: `color-mix(in srgb, var(--color-success) ${amount}%, var(--color-surface))`,
+      color: "var(--color-success)",
+    };
+  }
+  if (value < -0.05) {
+    const amount = 4 + abs * 10;
+    return {
+      backgroundColor: `color-mix(in srgb, var(--color-danger-readable) ${amount}%, var(--color-surface))`,
+      color: "var(--color-danger-readable)",
+    };
+  }
+  return {
+    backgroundColor: "var(--color-surface-2)",
+    color: "var(--color-muted-foreground)",
+  };
+}
+
+function memberStrokeColor(dist: number) {
+  if (dist < 0.15) return "color-mix(in srgb, var(--color-success) 58%, transparent)";
+  if (dist < 0.3) return "color-mix(in srgb, var(--color-muted-foreground) 58%, transparent)";
+  if (dist < 0.5) return "color-mix(in srgb, var(--color-accent-foreground) 62%, transparent)";
+  return "color-mix(in srgb, var(--color-danger-readable) 68%, transparent)";
+}
+
+function memberTextColor(dist: number) {
+  if (dist < 0.15) return "var(--color-success)";
+  if (dist < 0.3) return "var(--color-muted-foreground)";
+  if (dist < 0.5) return "var(--color-accent-foreground)";
+  return "var(--color-danger-readable)";
+}
 
 export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
   const { locale } = await params;
@@ -287,16 +327,6 @@ function Heatmap({
     return b.totalGames - a.totalGames;
   });
 
-  const cellColor = (v: number): string => {
-    const norm = Math.max(-1.5, Math.min(1.5, v)) / 1.5;
-    if (norm > 0) {
-      const alpha = norm * 0.85;
-      return `rgba(21, 128, 61, ${alpha})`;
-    }
-    const alpha = -norm * 0.85;
-    return `rgba(220, 38, 38, ${alpha})`;
-  };
-
   const matrixRows = sorted.flatMap((char, index) => {
     const key = `${char.characterCode}_${char.weapon}`;
     const g = groupIdByKey.get(key) ?? -1;
@@ -347,8 +377,8 @@ function Heatmap({
           return (
             <td
               key={role}
-              className="px-1 py-1.5 text-center text-[10px] tabular-nums"
-              style={{ backgroundColor: cellColor(v), color: "white" }}
+              className="px-1 py-1.5 text-center text-[10px] font-semibold tabular-nums"
+              style={deltaCellStyle(v)}
               title={`${role}: ${v.toFixed(2)} RP`}
             >
               {v.toFixed(1)}
@@ -372,7 +402,7 @@ function Heatmap({
             {PARTNER_ROLES.map((role) => (
               <th
                 key={role}
-                className="px-2 py-2 text-center text-[10px] font-medium"
+                className="px-2 py-2 text-center text-[10px] font-semibold"
                 style={{ color: ROLE_COLOR[role] }}
               >
                 {ROLE_SHORT[role]}
@@ -620,8 +650,8 @@ function DenseRadar({
               width={20}
               height={11}
               rx={2}
-              fill={`${ROLE_COLOR[p.a]}28`}
-              stroke={`${ROLE_COLOR[p.a]}88`}
+              fill={roleTint(p.a, 14)}
+              stroke={roleTint(p.a, 48)}
             />
             <text x={10} y={8} fontSize={7.5} fill={ROLE_COLOR[p.a]} textAnchor="middle">
               {ROLE_SHORT[p.a]}
@@ -631,8 +661,8 @@ function DenseRadar({
               width={20}
               height={11}
               rx={2}
-              fill={`${ROLE_COLOR[p.b]}28`}
-              stroke={`${ROLE_COLOR[p.b]}88`}
+              fill={roleTint(p.b, 14)}
+              stroke={roleTint(p.b, 48)}
             />
             <text x={32} y={8} fontSize={7.5} fill={ROLE_COLOR[p.b]} textAnchor="middle">
               {ROLE_SHORT[p.b]}
@@ -745,14 +775,6 @@ function GroupCohesionRadar({
     memberData.length > 0 ? memberData.reduce((s, d) => s + d.dist, 0) / memberData.length : 0;
   const cohesion = Math.max(0, Math.min(100, (1 - avgDist) * 100));
 
-  // 멤버 색: 응집도 좋으면 옅은 녹색, 멀면 빨강 강조
-  const memberColor = (dist: number) => {
-    if (dist < 0.15) return "rgba(21,128,61,0.36)";
-    if (dist < 0.3) return "rgba(100,116,139,0.36)";
-    if (dist < 0.5) return "rgba(104,115,134,0.5)";
-    return "rgba(220,38,38,0.58)";
-  };
-
   return (
     <div>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
@@ -790,7 +812,7 @@ function GroupCohesionRadar({
             key={`${m.char.characterCode}_${m.char.weapon}`}
             points={m.polygon}
             fill="none"
-            stroke={memberColor(m.dist)}
+            stroke={memberStrokeColor(m.dist)}
             strokeWidth={1.2}
           />
         ))}
@@ -823,7 +845,7 @@ function GroupCohesionRadar({
             <li
               key={`${m.char.characterCode}_${m.char.weapon}`}
               className="flex items-center justify-between gap-2 text-[10px]"
-              style={{ color: memberColor(m.dist).replace(/[\d.]+\)$/, "0.95)") }}
+              style={{ color: memberTextColor(m.dist) }}
             >
               <span className="min-w-0 truncate">
                 {m.char.characterName}
@@ -957,7 +979,7 @@ function TrioMatrixRow({
           {top.map((t) => (
             <li
               key={`top-${t.multiset}`}
-              className="flex items-center justify-between gap-2 rounded border border-[var(--color-border)] bg-white px-2 py-1.5"
+              className="flex items-center justify-between gap-2 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1.5"
             >
               <TrioSlotChips multiset={t.multiset} size="sm" />
               <span className="ml-auto flex items-center gap-1.5">
@@ -980,7 +1002,7 @@ function TrioMatrixRow({
           {bot.map((t) => (
             <li
               key={`bot-${t.multiset}`}
-              className="flex items-center justify-between gap-2 rounded border border-[var(--color-border)] bg-white px-2 py-1.5"
+              className="flex items-center justify-between gap-2 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1.5"
             >
               <TrioSlotChips multiset={t.multiset} size="sm" />
               <span className="ml-auto flex items-center gap-1.5">
@@ -1242,22 +1264,33 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
           <span className="ml-2 inline-flex items-center gap-1 align-middle text-[10px]">
             <span
               className="inline-block h-2 w-3 rounded"
-              style={{ background: "rgba(21,128,61,0.36)" }}
+              style={{
+                background: "color-mix(in srgb, var(--color-success) 28%, var(--color-surface))",
+              }}
             />{" "}
             ≤ 0.15
             <span
               className="inline-block h-2 w-3 rounded"
-              style={{ background: "rgba(100,116,139,0.36)" }}
+              style={{
+                background:
+                  "color-mix(in srgb, var(--color-muted-foreground) 28%, var(--color-surface))",
+              }}
             />{" "}
             ≤ 0.30
             <span
               className="inline-block h-2 w-3 rounded"
-              style={{ background: "rgba(104,115,134,0.5)" }}
+              style={{
+                background:
+                  "color-mix(in srgb, var(--color-accent-foreground) 28%, var(--color-surface))",
+              }}
             />{" "}
             ≤ 0.50
             <span
               className="inline-block h-2 w-3 rounded"
-              style={{ background: "rgba(220,38,38,0.58)" }}
+              style={{
+                background:
+                  "color-mix(in srgb, var(--color-danger-readable) 30%, var(--color-surface))",
+              }}
             />{" "}
             &gt; 0.50 (이상치)
           </span>

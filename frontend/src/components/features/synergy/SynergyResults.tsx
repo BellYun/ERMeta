@@ -243,7 +243,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
     <>
       {/* 정렬 기준 + 헤더 */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <div className="flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white p-1">
+        <div className="flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-1">
           {SORT_OPTIONS.map(({ value, labelKey }) => (
             <button
               key={value}
@@ -317,7 +317,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                     });
                   });
                 }}
-                className="inline-flex items-center gap-1 shrink-0 rounded border border-[var(--color-border)] bg-white px-2.5 py-1 text-xs font-medium text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
+                className="inline-flex items-center gap-1 shrink-0 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-xs font-medium text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
               >
                 <Share2 className="h-3 w-3" />
                 {copied ? t("copied") : t("share")}
@@ -356,7 +356,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
             {Array.from({ length: 5 }).map((_, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 rounded-lg border border-[var(--color-border)] bg-white p-3"
+                className="flex items-center gap-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3"
               >
                 <div className="h-6 w-6 rounded-full bg-[var(--color-surface-2)]" />
                 <div className="flex gap-2">

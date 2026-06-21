@@ -11,42 +11,77 @@
 
 export const colors = {
   // 배경 계층
-  background: "#ffffff",
+  background: "#f8fafc",
   surface: "#ffffff",
-  surface2: "#f8fafc",
-  surface3: "#eef2f6",
-  surface4: "#f5f7fa",
-  border: "#e5e7eb",
-  borderLight: "#d1d5db",
+  surface2: "#f1f5f9",
+  surface3: "#e2e8f0",
+  surface4: "#eef2f7",
+  border: "#cbd5e1",
+  borderLight: "#94a3b8",
 
   // 텍스트
   foreground: "#172033",
-  mutedForeground: "#687386",
+  mutedForeground: "#475569",
 
   // 액센트
   primary: "#374151",
   primaryHover: "#111827",
-  accent: "#2563eb",
+  accent: "#1d4ed8",
   accentMuted: "#dbeafe",
-  accentForeground: "#1d4ed8",
-  accentGold: "#2563eb",
-  accentPurple: "#687386",
+  accentForeground: "#1e40af",
+  accentGold: "#1d4ed8",
+  accentPurple: "#475569",
+  traitChaos: "#6d28d9",
+  dangerReadable: "#b91c1c",
 
   // Semantic
-  danger: "#dc2626",
-  success: "#15803d",
+  danger: "#b91c1c",
+  success: "#116b34",
   warning: "#374151",
 
   // 스탯
-  statUp: "#15803d",
-  statDown: "#dc2626",
+  statUp: "#116b34",
+  statDown: "#b91c1c",
 
   // 티어
   tier: {
     S: "#374151",
     A: "#374151",
-    B: "#687386",
-    C: "#687386",
+    B: "#475569",
+    C: "#475569",
+    D: "#475569",
+  },
+} as const;
+
+export const darkColors = {
+  background: "#0b1220",
+  surface: "#111827",
+  surface2: "#172033",
+  surface3: "#1f2937",
+  surface4: "#243244",
+  border: "#334155",
+  borderLight: "#475569",
+  foreground: "#e5e7eb",
+  mutedForeground: "#94a3b8",
+  primary: "#e5e7eb",
+  primaryHover: "#f8fafc",
+  accent: "#60a5fa",
+  accentMuted: "rgba(37, 99, 235, 0.2)",
+  accentForeground: "#93c5fd",
+  accentGold: "#60a5fa",
+  accentPurple: "#94a3b8",
+  traitChaos: "#c4b5fd",
+  dangerReadable: "#fca5a5",
+  danger: "#f87171",
+  success: "#4ade80",
+  warning: "#fbbf24",
+  statUp: "#4ade80",
+  statDown: "#f87171",
+  tier: {
+    S: "#e5e7eb",
+    A: "#d1d5db",
+    B: "#94a3b8",
+    C: "#94a3b8",
     D: "#64748b",
   },
 } as const;

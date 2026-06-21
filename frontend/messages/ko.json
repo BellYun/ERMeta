@@ -12,6 +12,8 @@
     "mobileMenu": "모바일 메뉴",
     "openSearch": "검색 열기",
     "closeSearch": "검색 닫기",
+    "switchToDarkTheme": "다크모드로 전환",
+    "switchToLightTheme": "라이트모드로 전환",
     "languageSelectAria": "언어 선택",
     "localeRecommendationBody": "브라우저 언어가 {language}로 설정되어 있습니다. 해당 언어로 볼까요?",
     "localeRecommendationCta": "언어 바꾸기",

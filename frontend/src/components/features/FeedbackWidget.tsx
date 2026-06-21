@@ -204,7 +204,7 @@ export default function FeedbackWidget() {
       >
         {formState === "success" ? (
           <div className="flex flex-col items-center justify-center gap-3 p-6 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded border border-[var(--color-border)] bg-white">
+            <div className="flex h-12 w-12 items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface)]">
               <Check className="h-6 w-6 text-[var(--color-foreground)]" />
             </div>
             <p className="text-[var(--color-foreground)] font-medium">{copy.success}</p>
@@ -234,7 +234,7 @@ export default function FeedbackWidget() {
                   className={[
                     "rounded px-3 py-1 text-xs font-medium border transition-colors",
                     category === cat
-                      ? "bg-white border-[var(--color-border-light)] text-[var(--color-foreground)]"
+                      ? "bg-[var(--color-surface)] border-[var(--color-border-light)] text-[var(--color-foreground)]"
                       : "bg-transparent border-[var(--color-border)] text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:text-[var(--color-foreground)]",
                   ].join(" ")}
                 >
@@ -303,7 +303,7 @@ export default function FeedbackWidget() {
           "pointer-events-auto",
           "lg:hidden",
           "flex h-12 w-12 items-center justify-center rounded-md border transition-colors",
-          "border-[var(--color-border)] bg-white text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]",
+          "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]",
         ].join(" ")}
       >
         {isOpen ? <X className="h-5 w-5" /> : <MessageCircle className="h-5 w-5" />}

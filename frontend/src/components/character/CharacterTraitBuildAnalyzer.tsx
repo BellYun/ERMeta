@@ -259,7 +259,7 @@ export function CharacterTraitBuildAnalyzer({
 
   if (builds.length === 0) {
     return (
-      <div className="rounded-md border border-[var(--color-border)] bg-white p-6 text-center text-sm text-[var(--color-muted-foreground)]">
+      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center text-sm text-[var(--color-muted-foreground)]">
         {t("empty.builds")}
       </div>
     );
@@ -274,7 +274,7 @@ export function CharacterTraitBuildAnalyzer({
           <div
             key={gi}
             className={cn(
-              "rounded-md border border-[var(--color-border)] bg-white overflow-hidden",
+              "rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden",
               gi === 0 && "ring-1 ring-[var(--color-stat-up)]/30"
             )}
           >
@@ -361,7 +361,7 @@ export function CharacterTraitBuildAnalyzer({
                         <div
                           key={si}
                           className={cn(
-                            "min-w-[220px] overflow-hidden bg-white p-3 sm:min-w-0",
+                            "min-w-[220px] overflow-hidden bg-[var(--color-surface)] p-3 sm:min-w-0",
                             isEmpty && "opacity-40"
                           )}
                         >

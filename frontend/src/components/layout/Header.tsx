@@ -8,9 +8,11 @@ import {
   Layers,
   Menu,
   MessageSquarePlus,
+  Moon,
   Network,
   NotebookText,
   Search,
+  Sun,
   Trophy,
   X,
   type LucideIcon,
@@ -39,6 +41,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
   const [mobileSearchOpen, setMobileSearchOpen] = React.useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = React.useState(false);
+  const [theme, setTheme] = React.useState<"light" | "dark">("light");
   const showSeasonRecapBanner = !normalizedPathname.startsWith("/season10-recap");
   const patchAnalysisPath = patchAnalysisPatch
     ? `/patch-analysis/${patchAnalysisPatch}`
@@ -108,6 +111,25 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
   }, [pathname]);
 
   React.useEffect(() => {
+    const currentTheme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+    setTheme(currentTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    setTheme((current) => {
+      const nextTheme = current === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = nextTheme;
+      document.documentElement.style.colorScheme = nextTheme;
+      try {
+        localStorage.setItem("ergg-theme", nextTheme);
+      } catch {
+        // localStorage may be unavailable in private or restricted contexts.
+      }
+      return nextTheme;
+    });
+  };
+
+  React.useEffect(() => {
     const handleFeedbackState = (event: Event) => {
       const detail = (event as CustomEvent<{ open?: boolean }>).detail;
       setIsFeedbackOpen(Boolean(detail?.open));
@@ -135,16 +157,16 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-white">
+      <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[var(--color-surface)]">
         <LocaleRecommendationBanner />
 
         {showSeasonRecapBanner && (
           <Link
             href={withCurrentRouteLocale(pathname, "/season10-recap")}
-            className="group flex items-center justify-between gap-3 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 transition-colors hover:bg-white sm:px-4 lg:px-6"
+            className="group flex items-center justify-between gap-3 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 transition-colors hover:bg-[var(--color-surface)] sm:px-4 lg:px-6"
           >
             <div className="flex min-w-0 items-start gap-3">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)]">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]">
                 <Trophy className="h-4.5 w-4.5" strokeWidth={2} />
               </span>
               <div className="min-w-0">
@@ -180,7 +202,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                 setMobileSearchOpen(false);
                 setMobileMenuOpen((prev) => !prev);
               }}
-              className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--color-border)] bg-white text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] lg:hidden"
+              className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] lg:hidden"
             >
               {mobileMenuOpen ? (
                 <X className="h-4.5 w-4.5" strokeWidth={2.2} />
@@ -194,7 +216,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
               title={currentPatch ? `${t("patchPrefix")}${currentPatch}` : t("logoTitle")}
               className="flex min-w-0 items-center gap-2.5"
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-white text-sm font-bold text-[var(--color-foreground)]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-sm font-bold text-[var(--color-foreground)]">
                 ER
               </div>
               <div className="min-w-0">
@@ -219,7 +241,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                   className={cn(
                     "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors xl:px-3 xl:text-[13px]",
                     isActive
-                      ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
+                      ? "border-[var(--color-border-light)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
                       : "border-transparent text-[var(--color-muted-foreground)] hover:border-[var(--color-border)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
                   )}
                 >
@@ -241,7 +263,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                   setMobileMenuOpen(false);
                   setMobileSearchOpen((prev) => !prev);
                 }}
-                className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--color-border)] bg-white text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] lg:hidden"
+                className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] lg:hidden"
               >
                 {mobileSearchOpen ? (
                   <X className="h-4.5 w-4.5" strokeWidth={2.2} />
@@ -256,6 +278,21 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
 
               <button
                 type="button"
+                onClick={toggleTheme}
+                aria-label={theme === "dark" ? t("switchToLightTheme") : t("switchToDarkTheme")}
+                aria-pressed={theme === "dark"}
+                title={theme === "dark" ? t("switchToLightTheme") : t("switchToDarkTheme")}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)] lg:h-9 lg:w-9 lg:rounded-md"
+              >
+                {theme === "dark" ? (
+                  <Sun className="h-4.5 w-4.5 lg:h-3.5 lg:w-3.5" strokeWidth={2} />
+                ) : (
+                  <Moon className="h-4.5 w-4.5 lg:h-3.5 lg:w-3.5" strokeWidth={2} />
+                )}
+              </button>
+
+              <button
+                type="button"
                 onClick={() => {
                   window.dispatchEvent(new Event("ergg:feedback-toggle"));
                 }}
@@ -265,8 +302,8 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                 className={cn(
                   "hidden h-9 shrink-0 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors lg:inline-flex",
                   isFeedbackOpen
-                    ? "border-[var(--color-border-light)] bg-white text-[var(--color-foreground)]"
-                    : "border-[var(--color-border)] bg-white text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+                    ? "border-[var(--color-border-light)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
+                    : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
                 )}
               >
                 <MessageSquarePlus className="h-3.5 w-3.5" strokeWidth={2} />
@@ -296,13 +333,13 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
             role="dialog"
             aria-modal="true"
             aria-label={t("mobileMenu")}
-            className="absolute inset-y-0 left-0 flex h-dvh w-[min(21rem,calc(100vw-2rem))] max-w-full flex-col overflow-hidden border-r border-[var(--color-border)] bg-white"
+            className="absolute inset-y-0 left-0 flex h-dvh w-[min(21rem,calc(100vw-2rem))] max-w-full flex-col overflow-hidden border-r border-[var(--color-border)] bg-[var(--color-surface)]"
           >
             <button
               type="button"
               aria-label={t("closeMenu")}
               onClick={() => setMobileMenuOpen(false)}
-              className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--color-border)] bg-white text-[var(--color-foreground)]"
+              className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
             >
               <X className="h-4.5 w-4.5" strokeWidth={2.2} />
             </button>
@@ -313,8 +350,26 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                 onNavigate={() => setMobileMenuOpen(false)}
               />
             </div>
-            <div className="border-t border-[var(--color-border)] bg-white px-4 py-4">
-              <LanguageSwitcher />
+            <div className="border-t border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-4">
+              <div className="flex items-center gap-2">
+                <div className="min-w-0 flex-1">
+                  <LanguageSwitcher />
+                </div>
+                <button
+                  type="button"
+                  onClick={toggleTheme}
+                  aria-label={theme === "dark" ? t("switchToLightTheme") : t("switchToDarkTheme")}
+                  aria-pressed={theme === "dark"}
+                  title={theme === "dark" ? t("switchToLightTheme") : t("switchToDarkTheme")}
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+                >
+                  {theme === "dark" ? (
+                    <Sun className="h-4.5 w-4.5" strokeWidth={2} />
+                  ) : (
+                    <Moon className="h-4.5 w-4.5" strokeWidth={2} />
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>

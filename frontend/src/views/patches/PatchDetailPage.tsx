@@ -33,7 +33,7 @@ function DetailMetricCard({
       className="metric-card flex min-h-[110px] flex-col gap-3 px-4 py-4 sm:min-h-[126px] sm:px-5"
       data-accent={accent ? "true" : undefined}
     >
-      <div className="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] bg-white text-[var(--color-accent-foreground)]">
+      <div className="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-accent-foreground)]">
         {icon}
       </div>
       <div>
@@ -134,10 +134,10 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                   label={t("counts.rework")}
                 />
               ) : null}
-              <span className="rounded border border-[var(--color-border)] bg-white px-2.5 py-1 text-[var(--color-muted-foreground)]">
+              <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-[var(--color-muted-foreground)]">
                 {t("characterCount", { count: summary.characterCount })}
               </span>
-              <span className="rounded border border-[var(--color-border)] bg-white px-2.5 py-1 text-[var(--color-muted-foreground)]">
+              <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-[var(--color-muted-foreground)]">
                 {t("totalChanges", { count: summary.totalChanges })}
               </span>
             </div>
@@ -234,13 +234,13 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                     </p>
                   </div>
 
-                  <span className="rounded border border-[var(--color-border)] bg-white px-2.5 py-1 text-[11px] font-medium text-[var(--color-muted-foreground)]">
+                  <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-muted-foreground)]">
                     {t("totalChanges", { count: note.changes.length })}
                   </span>
                 </div>
 
                 {locale === "ko" ? (
-                  <ul className="mt-4 divide-y divide-[var(--color-border)] rounded-md border border-[var(--color-border)] bg-white">
+                  <ul className="mt-4 divide-y divide-[var(--color-border)] rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
                     {note.changes.map((change, changeIndex) => {
                       const detailText = change.description.join(" ");
 
@@ -279,7 +279,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                     })}
                   </ul>
                 ) : (
-                  <div className="mt-4 rounded-md border border-[var(--color-border)] bg-white px-3.5 py-3 sm:px-4">
+                  <div className="mt-4 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-3 sm:px-4">
                     <div className="flex flex-wrap items-center gap-2">
                       {changeTypes.map((type) => (
                         <ChangeTypeBadgeStatic

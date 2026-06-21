@@ -42,7 +42,7 @@ export function AppFrame({
     >
       <a
         href={`#${mainId}`}
-        className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-md focus:border focus:border-[var(--color-border)] focus:bg-white focus:px-3 focus:py-2 focus:text-[var(--color-foreground)] focus:outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-md focus:border focus:border-[var(--color-border)] focus:bg-[var(--color-surface)] focus:px-3 focus:py-2 focus:text-[var(--color-foreground)] focus:outline-none"
       >
         {getMessage(messages, "layout.skipToMain")}
       </a>
@@ -65,7 +65,7 @@ export function AppFrame({
                       slotName="site_rail_left"
                       format="vertical"
                       responsive={false}
-                      className="rounded-md border border-[var(--color-border)] bg-white px-2 py-2"
+                      className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-2"
                       minHeight={600}
                     />
                   </div>
@@ -84,7 +84,7 @@ export function AppFrame({
                       slotName="site_rail_right"
                       format="vertical"
                       responsive={false}
-                      className="rounded-md border border-[var(--color-border)] bg-white px-2 py-2"
+                      className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-2"
                       minHeight={600}
                     />
                   </div>
@@ -92,7 +92,7 @@ export function AppFrame({
               </aside>
             ) : null}
           </div>
-          <footer className="border-t border-[var(--color-border)] bg-white">
+          <footer className="border-t border-[var(--color-border)] bg-[var(--color-surface)]">
             <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-2.5 px-4 py-5 text-[11px] leading-relaxed text-[var(--color-muted-foreground)] lg:px-6">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <Link
@@ -139,7 +139,7 @@ export function AppFrame({
               </div>
               <p>{getMessage(messages, "layout.apiAttribution")}</p>
               <p>{getMessage(messages, "layout.disclaimer")}</p>
-              <p className="text-[var(--color-foreground)]/60">
+              <p className="text-[var(--color-muted-foreground)]">
                 {getMessage(messages, "layout.copyright").replace(
                   "{year}",
                   String(new Date().getFullYear())

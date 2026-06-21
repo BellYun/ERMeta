@@ -13,6 +13,8 @@
     "mobileMenu": "モバイルメニュー",
     "openSearch": "検索を開く",
     "closeSearch": "検索を閉じる",
+    "switchToDarkTheme": "ダークモードに切り替え",
+    "switchToLightTheme": "ライトモードに切り替え",
     "localeRecommendationBody": "ブラウザの言語は {language} に設定されています。この言語で表示しますか？",
     "localeRecommendationCta": "言語を切り替え",
     "localeRecommendationDismiss": "言語の案内を閉じる",

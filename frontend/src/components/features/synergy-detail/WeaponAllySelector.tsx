@@ -164,7 +164,7 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
       className={cn(
         "flex flex-col items-center gap-1 rounded-md px-1 py-2 touch-manipulation",
         selected
-          ? "bg-white outline outline-1 outline-[var(--color-border-light)]"
+          ? "bg-[var(--color-surface)] outline outline-1 outline-[var(--color-border-light)]"
           : disabled
             ? "opacity-25 cursor-not-allowed"
             : "hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80"
@@ -196,7 +196,7 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
         <span
           className={cn(
             "w-full truncate text-center text-[10px] font-medium",
-            selected ? "text-[var(--color-foreground)]" : "text-[var(--color-foreground)]/60"
+            selected ? "text-[var(--color-foreground)]" : "text-[var(--color-muted-foreground)]"
           )}
         >
           {localizedWeaponLabel}
@@ -418,7 +418,7 @@ export function WeaponAllySelector() {
       </div>
 
       {/* 검색 + 가상화 그리드 */}
-      <div className="rounded-md border border-[var(--color-border)] bg-white p-3">
+      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
         <p className="mb-3 px-1 text-[12px] font-medium text-[var(--color-foreground)]/72">
           {t("heading")}
         </p>
@@ -429,7 +429,7 @@ export function WeaponAllySelector() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("searchPlaceholder")}
-            className="w-full rounded-md border border-[var(--color-border)] bg-white py-2 pl-8 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-border-light)] focus:outline-none"
+            className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] py-2 pl-8 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-border-light)] focus:outline-none"
           />
           {search && (
             <button
@@ -511,7 +511,7 @@ function SlotWeaponFilled({
   onRemove: () => void;
 }) {
   return (
-    <div className="flex w-full items-center gap-3 rounded-md border border-[var(--color-border-light)] bg-white px-4 py-3">
+    <div className="flex w-full items-center gap-3 rounded-md border border-[var(--color-border-light)] bg-[var(--color-surface)] px-4 py-3">
       <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded bg-[var(--color-border)] outline outline-1 outline-[var(--color-border)]">
         <Image
           src={getCharacterMiniWebpUrl(code)}
@@ -532,7 +532,7 @@ function SlotWeaponFilled({
       <button
         onClick={onRemove}
         aria-label={`${name} 제거`}
-        className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md text-[var(--color-foreground)]/70 hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)] active:bg-[var(--color-surface-3)] active:text-[var(--color-foreground)]"
+        className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)] active:bg-[var(--color-surface-3)] active:text-[var(--color-foreground)]"
       >
         <X className="h-4 w-4" strokeWidth={2.4} />
       </button>

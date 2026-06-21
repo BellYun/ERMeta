@@ -333,7 +333,7 @@ export function CharacterAnalysisClient({
             </div>
             <div className="overflow-hidden rounded-md border border-[var(--color-border)]">
               {/* Tier */}
-              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-white px-3 py-2.5">
+              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5">
                 <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
                   {t("summary.tier")}
                 </span>
@@ -357,7 +357,7 @@ export function CharacterAnalysisClient({
                 )}
               </div>
               {/* Win Rate */}
-              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-white px-3 py-2.5">
+              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5">
                 <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
                   {t("summary.winRate")}
                 </span>
@@ -373,7 +373,7 @@ export function CharacterAnalysisClient({
                 </span>
               </div>
               {/* Best Weapon */}
-              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-white px-3 py-2.5">
+              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5">
                 <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
                   {t("summary.recommendedWeapon")}
                 </span>
@@ -384,7 +384,7 @@ export function CharacterAnalysisClient({
                 </span>
               </div>
               {/* Pick Rate */}
-              <div className="flex items-center justify-between bg-white px-3 py-2.5">
+              <div className="flex items-center justify-between bg-[var(--color-surface)] px-3 py-2.5">
                 <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
                   {t("summary.pickRate")}
                 </span>
