@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import * as React from "react";
+import { createPortal } from "react-dom";
 import type { CharacterPatchNote } from "@/data/patch-notes";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import type { HoneyPickData } from "@/lib/honeyPicks";
@@ -28,9 +29,14 @@ export function PatchNoteBottomSheet({
   const sheetRef = useFocusTrap<HTMLDivElement>({ active: true, onClose });
   const titleId = React.useId();
   const t = useTranslations("honeyPicks");
+  const [mounted, setMounted] = React.useState(false);
 
-  return (
-    <div className="fixed inset-0 z-[100] sm:hidden" onClick={onClose}>
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const sheet = (
+    <div className="fixed inset-0 z-[2147483647] sm:hidden" onClick={onClose}>
       {/* 어두운 배경 */}
       <div className="absolute inset-0 bg-black/70" />
 
@@ -41,7 +47,7 @@ export function PatchNoteBottomSheet({
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className="absolute inset-x-0 bottom-0 flex max-h-[70vh] flex-col rounded-t-lg border-t border-[var(--color-border)]/60 bg-[var(--color-surface)] focus:outline-none"
+        className="absolute inset-x-0 bottom-0 flex max-h-[calc(70vh-env(safe-area-inset-bottom))] flex-col rounded-t-lg border-t border-[var(--color-border)]/60 bg-[var(--color-surface)] pb-[env(safe-area-inset-bottom)] focus:outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 핸들 */}
@@ -135,4 +141,8 @@ export function PatchNoteBottomSheet({
       </div>
     </div>
   );
+
+  if (!mounted) return null;
+
+  return createPortal(sheet, document.body);
 }
