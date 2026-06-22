@@ -1,26 +1,18 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
-import { TrioLabDetailContent } from "@/components/features/trio-lab/TrioLabDetailContent";
+import { Suspense } from "react";
+import { TrioLabDetailClient } from "@/components/features/trio-lab/TrioLabDetailClient";
 import { characterDisplayName, parseComboId } from "@/components/features/trio-lab/types";
-import {
-  buildTrioLabListHref,
-  buildTrioLabQueryString,
-  parseTrioLabUrlState,
-} from "@/components/features/trio-lab/urlState";
 import { LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale, isRouteLocale } from "@/i18n/routing";
 import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
 import { loadL10nMap } from "@/lib/serverL10n";
 import { BASE_URL } from "@/lib/siteMetadata";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 600;
-
-type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+export const dynamic = "force-static";
 
 interface PageProps {
   params: Promise<{ locale: string; comboId: string }>;
-  searchParams: SearchParams;
 }
 
 const META_COPY: Record<RouteLocale, { missing: string; suffix: string; description: string }> = {
@@ -80,26 +72,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function TrioLabDetailPage({ params, searchParams }: PageProps) {
-  const [{ locale, comboId }, query] = await Promise.all([params, searchParams]);
+export default async function TrioLabDetailPage({ params }: PageProps) {
+  const { locale, comboId } = await params;
   if (!isRouteLocale(locale)) notFound();
   setRequestLocale(locale);
 
   const members = parseComboId(comboId);
   if (!members) notFound();
 
-  const state = parseTrioLabUrlState(query);
-  const listHref = buildTrioLabListHref(state);
-  const detailHrefQueryString = buildTrioLabQueryString(state);
-
   return (
     <main className="page-shell mx-auto flex max-w-6xl flex-col gap-5 px-3 py-6 sm:px-5 sm:py-8 lg:gap-6">
-      <TrioLabDetailContent
-        comboId={comboId}
-        detailHrefQueryString={detailHrefQueryString}
-        listHref={listHref}
-        locale={locale}
-      />
+      <Suspense
+        fallback={
+          <div className="h-96 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)]" />
+        }
+      >
+        <TrioLabDetailClient comboId={comboId} />
+      </Suspense>
     </main>
   );
 }
