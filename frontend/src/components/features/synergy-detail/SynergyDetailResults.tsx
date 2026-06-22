@@ -17,6 +17,11 @@ import { resolveWeaponName } from "@/lib/weaponMap";
 import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "../synergy/constants";
 import { ComboWeaponCard, type GroupedCombo } from "./ComboWeaponCard";
 import type { TrioWeaponResult, SortBy } from "./types";
+import {
+  SYNERGY_DETAIL_ALLIES_CHANGED_EVENT,
+  type AllySelection,
+  type SynergyDetailAlliesChangedDetail,
+} from "./WeaponAllySelector";
 
 const MIN_MEANINGFUL_GAMES = 10;
 
@@ -144,9 +149,12 @@ export function SynergyDetailResults() {
   const router = useRouter();
   const pathname = usePathname();
   const { focusCharWeapons } = useFocusCharWeapons();
+  const [localAllies, setLocalAllies] = React.useState<
+    [AllySelection | null, AllySelection | null]
+  >([null, null]);
 
   // URL에서 아군+무기 읽기
-  const selectedAllies = React.useMemo(() => {
+  const urlAllies = React.useMemo(() => {
     const allies: { charCode: number; weaponCode: number | null }[] = [];
     const a1 = searchParams.get("ally1") ?? searchParams.get("a");
     const w1 = searchParams.get("w1");
@@ -170,6 +178,22 @@ export function SynergyDetailResults() {
     }
     return allies;
   }, [searchParams]);
+
+  React.useEffect(() => {
+    const handleAlliesChanged = (event: Event) => {
+      const detail = (event as CustomEvent<SynergyDetailAlliesChangedDetail>).detail;
+      setLocalAllies([detail.ally1, detail.ally2]);
+    };
+
+    window.addEventListener(SYNERGY_DETAIL_ALLIES_CHANGED_EVENT, handleAlliesChanged);
+    return () =>
+      window.removeEventListener(SYNERGY_DETAIL_ALLIES_CHANGED_EVENT, handleAlliesChanged);
+  }, []);
+
+  const selectedAllies = React.useMemo(() => {
+    const local = localAllies.filter(Boolean) as AllySelection[];
+    return local.length > 0 ? local : urlAllies;
+  }, [localAllies, urlAllies]);
 
   const selectedCharCodes = React.useMemo(
     () => selectedAllies.map((a) => a.charCode),
@@ -393,6 +417,7 @@ export function SynergyDetailResults() {
   }, [results, deferredAllies, deferredCharCodes, focusCharWeapons, sortBy]);
 
   const clearAllies = React.useCallback(() => {
+    setLocalAllies([null, null]);
     router.replace(pathname, { scroll: false });
   }, [router, pathname]);
 

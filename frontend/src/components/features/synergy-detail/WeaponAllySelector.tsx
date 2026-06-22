@@ -3,7 +3,7 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { X, Search } from "lucide-react";
 import Image from "next/image";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import characterBestWeapons from "@/../const/characterBestWeapons.json";
@@ -71,6 +71,13 @@ export function getAllCharWeaponItems(): CharWeaponItem[] {
 export interface AllySelection {
   charCode: number;
   weaponCode: number | null;
+}
+
+export const SYNERGY_DETAIL_ALLIES_CHANGED_EVENT = "synergy-detail:allies-changed";
+
+export interface SynergyDetailAlliesChangedDetail {
+  ally1: AllySelection | null;
+  ally2: AllySelection | null;
 }
 
 export function parseAllyFromParams(
@@ -212,7 +219,6 @@ export function WeaponAllySelector() {
   const { l10n } = useL10n();
   const t = useTranslations("weaponAllySelector");
   const searchParams = useSearchParams();
-  const router = useRouter();
   const pathname = usePathname();
   const [search, setSearch] = React.useState("");
   const parentRef = React.useRef<HTMLDivElement>(null);
@@ -286,12 +292,14 @@ export function WeaponAllySelector() {
         if (a2.weaponCode) params.set("w2", String(a2.weaponCode));
       }
       const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
-      // startTransition: URL 업데이트를 비긴급 작업으로 마킹 → 탭 응답성이 블로킹되지 않음
-      React.startTransition(() => {
-        router.replace(newUrl, { scroll: false });
-      });
+      window.history.replaceState(window.history.state, "", newUrl);
+      window.dispatchEvent(
+        new CustomEvent<SynergyDetailAlliesChangedDetail>(SYNERGY_DETAIL_ALLIES_CHANGED_EVENT, {
+          detail: { ally1: a1, ally2: a2 },
+        })
+      );
     },
-    [pathname, router]
+    [pathname]
   );
 
   const isSelected = React.useCallback(

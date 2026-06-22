@@ -6,7 +6,7 @@ test.describe("Synergy 페이지", () => {
     expect(res?.status()).toBeLessThan(400);
 
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await expect(page.getByRole("link", { name: /상세 조합 추천/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /^상세 조합$/ })).toBeVisible();
   });
 
   test("/synergy-detail 200 응답 + h1 노출", async ({ page }) => {
