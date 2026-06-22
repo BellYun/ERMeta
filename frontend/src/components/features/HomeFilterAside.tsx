@@ -13,6 +13,8 @@ interface FloatingFilterLayout {
   width: number;
 }
 
+const FLOATING_FILTER_TOP = 120;
+
 export function HomeFilterAside({ anchorId }: HomeFilterAsideProps) {
   const [layout, setLayout] = React.useState<FloatingFilterLayout>({
     isVisible: false,
@@ -38,9 +40,8 @@ export function HomeFilterAside({ anchorId }: HomeFilterAsideProps) {
       }
 
       const rect = anchor.getBoundingClientRect();
-      const topOffset = 88;
       setLayout({
-        isVisible: rect.bottom < topOffset,
+        isVisible: rect.bottom < FLOATING_FILTER_TOP,
         left: Math.max(16, rect.left),
         width: Math.max(320, Math.round(rect.width)),
       });
@@ -62,8 +63,8 @@ export function HomeFilterAside({ anchorId }: HomeFilterAsideProps) {
 
   return (
     <section
-      className="fixed top-[5.5rem] z-50 hidden xl:block"
-      style={{ left: layout.left, width: layout.width }}
+      className="fixed z-30 hidden xl:block"
+      style={{ left: layout.left, top: FLOATING_FILTER_TOP, width: layout.width }}
     >
       <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
         <GlobalFilter />
