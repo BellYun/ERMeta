@@ -46,7 +46,7 @@ export function AppFrame({
       >
         {getMessage(messages, "layout.skipToMain")}
       </a>
-      <div className="min-h-screen overflow-hidden bg-[var(--color-background)]">
+      <div className="min-h-screen overflow-x-clip bg-[var(--color-background)]">
         <div className="min-w-0 flex flex-col">
           <Header currentPatch={currentPatch} patchAnalysisPatch={patchAnalysisPatch} />
           <div
