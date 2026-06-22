@@ -52,14 +52,14 @@ export function AppFrame({
           <div
             className={
               showRailAds
-                ? "mx-auto grid w-full max-w-[1720px] grid-cols-1 gap-4 px-3 pt-4 pb-8 sm:px-4 sm:pt-5 sm:pb-10 lg:px-6 lg:pt-5 lg:pb-8 2xl:grid-cols-[160px_minmax(0,1fr)_160px]"
+                ? "mx-auto grid w-full max-w-[1720px] grid-cols-1 gap-4 px-3 pt-4 pb-8 sm:px-4 sm:pt-5 sm:pb-10 lg:px-6 lg:pt-5 lg:pb-8 min-[1400px]:grid-cols-[160px_minmax(0,1fr)_160px]"
                 : "mx-auto w-full max-w-[1440px] px-3 pt-4 pb-8 sm:px-4 sm:pt-5 sm:pb-10 lg:px-6 lg:pt-5 lg:pb-8"
             }
           >
             {showRailAds ? (
-              <aside className="hidden 2xl:block" aria-label="Left advertisement">
+              <aside className="hidden min-[1400px]:block" aria-label="Left advertisement">
                 {showLeftRailAd ? (
-                  <div className="fixed top-[8.5rem] left-[max(1.5rem,calc((100vw-1720px)/2+1.5rem))] z-20 w-40">
+                  <div className="sticky top-[8.5rem] w-full">
                     <AdSlot
                       slot={ADSENSE_SLOTS.siteRailLeft}
                       slotName="site_rail_left"
@@ -76,9 +76,9 @@ export function AppFrame({
               {children}
             </main>
             {showRailAds ? (
-              <aside className="hidden 2xl:block" aria-label="Right advertisement">
+              <aside className="hidden min-[1400px]:block" aria-label="Right advertisement">
                 {showRightRailAd ? (
-                  <div className="fixed top-[8.5rem] right-[max(1.5rem,calc((100vw-1720px)/2+1.5rem))] z-20 w-40">
+                  <div className="sticky top-[8.5rem] w-full">
                     <AdSlot
                       slot={ADSENSE_SLOTS.siteRailRight}
                       slotName="site_rail_right"
