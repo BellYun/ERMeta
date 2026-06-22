@@ -45,11 +45,11 @@ export const colors = {
 
   // 티어
   tier: {
-    S: "#374151",
-    A: "#374151",
-    B: "#475569",
-    C: "#475569",
-    D: "#475569",
+    S: "#7c3aed",
+    A: "#1d4ed8",
+    B: "#047857",
+    C: "#b45309",
+    D: "#b91c1c",
   },
 } as const;
 
@@ -78,11 +78,11 @@ export const darkColors = {
   statUp: "#4ade80",
   statDown: "#f87171",
   tier: {
-    S: "#e5e7eb",
-    A: "#d1d5db",
-    B: "#94a3b8",
-    C: "#94a3b8",
-    D: "#64748b",
+    S: "#8b5cf6",
+    A: "#2563eb",
+    B: "#059669",
+    C: "#d97706",
+    D: "#dc2626",
   },
 } as const;
 

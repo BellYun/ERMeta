@@ -3,17 +3,17 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] font-semibold",
+  "inline-flex items-center rounded-[5px] border px-2 py-0.5 font-mono text-[10px] font-bold",
   {
     variants: {
       variant: {
         default:
-          "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]",
+          "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)]",
         secondary:
-          "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]",
+          "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-muted-foreground)]",
         outline:
           "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]",
-        gold: "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]",
+        gold: "border-[var(--color-accent)] bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]",
         success:
           "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-success)]",
         danger: "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-danger)]",
