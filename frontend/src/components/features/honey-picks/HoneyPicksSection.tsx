@@ -346,7 +346,8 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
                 sizes="138px"
                 priority={i < 1}
               />
-              <div className="absolute inset-0 bg-[var(--color-surface)]" />
+              <div className="absolute inset-x-0 bottom-0 h-[68%] bg-[var(--color-surface)]/96" />
+              <div className="absolute inset-x-0 bottom-[68%] h-10 bg-gradient-to-t from-[var(--color-surface)]/96 to-transparent" />
 
               {/* Rank + badge */}
               <div className="absolute left-2.5 top-2.5 flex items-center gap-1.5">
