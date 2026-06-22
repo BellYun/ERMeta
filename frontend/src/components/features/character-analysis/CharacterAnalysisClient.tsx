@@ -303,7 +303,7 @@ export function CharacterAnalysisClient({
   return (
     <div className="flex flex-col gap-5 sm:gap-6">
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_340px]">
-        <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
+        <section className="dashboard-panel character-analysis-panel p-3.5 sm:p-4">
           <CharacterHeader
             selectedCode={code}
             selectedTier={selectedTier}
@@ -325,7 +325,7 @@ export function CharacterAnalysisClient({
         </section>
 
         {!loading && displayStat && displayStat.totalGames > 0 && (
-          <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
+          <section className="dashboard-panel character-analysis-panel p-3.5 sm:p-4">
             <div className="mb-3 flex items-center gap-2 sm:mb-4">
               <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
                 {t("quickSummary")}
@@ -333,14 +333,14 @@ export function CharacterAnalysisClient({
             </div>
             <div className="overflow-hidden rounded-md border border-[var(--color-border)]">
               {/* Tier */}
-              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5">
+              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2">
                 <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
                   {t("summary.tier")}
                 </span>
                 {charTier && (
                   <span
                     className={cn(
-                      "text-lg font-bold",
+                      "font-mono text-lg font-bold",
                       charTier === "S"
                         ? "text-[var(--color-tier-s)]"
                         : charTier === "A"
@@ -357,13 +357,13 @@ export function CharacterAnalysisClient({
                 )}
               </div>
               {/* Win Rate */}
-              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5">
+              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2">
                 <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
                   {t("summary.winRate")}
                 </span>
                 <span
                   className={cn(
-                    "text-lg font-bold tabular-nums",
+                    "font-mono text-lg font-bold tabular-nums",
                     displayStat.winRate > 12.5
                       ? "text-[var(--color-stat-up)]"
                       : "text-[var(--color-stat-down)]"
@@ -373,7 +373,7 @@ export function CharacterAnalysisClient({
                 </span>
               </div>
               {/* Best Weapon */}
-              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5">
+              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2">
                 <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
                   {t("summary.recommendedWeapon")}
                 </span>
@@ -384,11 +384,11 @@ export function CharacterAnalysisClient({
                 </span>
               </div>
               {/* Pick Rate */}
-              <div className="flex items-center justify-between bg-[var(--color-surface)] px-3 py-2.5">
+              <div className="flex items-center justify-between bg-[var(--color-surface)] px-3 py-2">
                 <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
                   {t("summary.pickRate")}
                 </span>
-                <span className="text-lg font-bold tabular-nums text-[var(--color-foreground)]">
+                <span className="font-mono text-lg font-bold tabular-nums text-[var(--color-foreground)]">
                   {(stats?.pickRate ?? displayStat.pickRate).toFixed(1)}%
                 </span>
               </div>
@@ -410,7 +410,7 @@ export function CharacterAnalysisClient({
         </div>
 
         <div className="grid gap-5 xl:grid-cols-2">
-          <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
+          <section className="dashboard-panel character-analysis-panel p-3.5 sm:p-4">
             <div className="mb-3 flex items-center gap-2 sm:mb-4">
               <BarChart2 className="h-4 w-4 text-[var(--color-muted-foreground)]" />
               <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
@@ -427,7 +427,7 @@ export function CharacterAnalysisClient({
             </Suspense>
           </section>
 
-          <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
+          <section className="dashboard-panel character-analysis-panel p-3.5 sm:p-4">
             <div className="mb-3 flex items-center gap-2 sm:mb-4">
               <FileText className="h-4 w-4 text-[var(--color-muted-foreground)]" />
               <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
@@ -439,7 +439,7 @@ export function CharacterAnalysisClient({
             </Suspense>
           </section>
 
-          <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5 xl:col-span-2">
+          <section className="dashboard-panel character-analysis-panel p-3.5 sm:p-4 xl:col-span-2">
             <div className="mb-3 flex items-center gap-2 sm:mb-4">
               <BarChart2 className="h-4 w-4 text-[var(--color-muted-foreground)]" />
               <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">

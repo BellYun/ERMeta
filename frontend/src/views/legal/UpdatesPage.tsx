@@ -388,17 +388,19 @@ export default function UpdatesPage({ locale = "ko" }: { locale?: RouteLocale })
   const entries = localized?.entries ?? updates;
 
   return (
-    <article className="mx-auto max-w-3xl py-8">
-      <h1 className="dashboard-section-title mb-2 text-xl font-bold text-[var(--color-foreground)]">
-        {title}
-      </h1>
-      <p className="mb-8 text-xs text-[var(--color-muted-foreground)]">{intro}</p>
+    <article className="mx-auto flex max-w-3xl flex-col gap-5 py-8">
+      <header className="dashboard-panel p-4">
+        <span className="dashboard-kicker">{intro}</span>
+        <h1 className="dashboard-section-title mt-2 text-xl font-bold text-[var(--color-foreground)]">
+          {title}
+        </h1>
+      </header>
 
-      <div className="space-y-6">
+      <div className="grid gap-3">
         {entries.map((entry) => (
           <section
             key={entry.date}
-            className="metric-card p-5"
+            className="metric-card p-4"
             data-accent={entry === entries[0] ? "true" : undefined}
           >
             <div className="mb-3 flex items-center gap-3">

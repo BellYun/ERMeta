@@ -456,7 +456,7 @@ function MetricCard({
 
   return (
     <div
-      className="metric-card flex min-h-[120px] flex-col justify-between gap-3 px-4 py-4 sm:px-5"
+      className="metric-card flex min-h-[104px] flex-col justify-between gap-2.5 px-3.5 py-3.5 sm:px-4"
       data-accent={isAccent ? "true" : undefined}
     >
       <div className={cn("flex h-9 w-9 items-center justify-center rounded-md border", toneClass)}>
@@ -465,7 +465,7 @@ function MetricCard({
       <div>
         <p
           className={cn(
-            "text-lg font-bold sm:text-xl",
+            "font-mono text-lg font-bold leading-none sm:text-xl",
             isAccent ? "text-[var(--color-accent-foreground)]" : "text-[var(--color-foreground)]"
           )}
         >
@@ -551,7 +551,7 @@ function CharacterDeltaCard({
   const scopeLabel = getScopeLabel(entry, copy, l10n);
 
   return (
-    <article className="metric-card grid gap-4 px-4 py-4 sm:px-5 sm:py-5 lg:grid-cols-[minmax(260px,0.9fr)_minmax(0,1.55fr)] lg:items-start">
+    <article className="metric-card grid gap-4 px-4 py-4 lg:grid-cols-[minmax(260px,0.9fr)_minmax(0,1.55fr)] lg:items-start">
       <div className="flex flex-col gap-3 lg:sticky lg:top-24">
         <div className="flex items-start gap-3">
           <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)]">
@@ -712,7 +712,7 @@ function DeltaMetric({
 }) {
   return (
     <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2">
-      <p className="text-[10px] font-medium text-[var(--color-muted-foreground)]">{label}</p>
+      <p className="text-[10px] font-semibold text-[var(--color-muted-foreground)]">{label}</p>
       <p
         className={cn(
           "mt-1 text-sm font-semibold tabular-nums",
@@ -757,27 +757,27 @@ function RoleTable({
           </span>
         </div>
 
-        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
+        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[0_1px_1px_rgba(15,23,42,0.03)]">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] border-separate border-spacing-0 text-sm">
+            <table className="w-full min-w-[760px] border-separate border-spacing-0 text-sm tabular-nums">
               <thead>
-                <tr className="bg-[var(--color-surface-2)]/60">
-                  <th className="border-b border-[var(--color-border)] px-4 py-3 text-left font-medium text-[var(--color-muted-foreground)]">
+                <tr className="bg-[var(--color-surface-2)]">
+                  <th className="border-b border-[var(--color-border)] px-4 py-2.5 text-left text-[10px] font-bold uppercase text-[var(--color-muted-foreground)]">
                     {copy.role.columns[0]}
                   </th>
-                  <th className="border-b border-[var(--color-border)] px-3 py-3 text-right font-medium text-[var(--color-muted-foreground)]">
+                  <th className="border-b border-[var(--color-border)] px-3 py-2.5 text-right text-[10px] font-bold uppercase text-[var(--color-muted-foreground)]">
                     {copy.role.columns[1]}
                   </th>
-                  <th className="border-b border-[var(--color-border)] px-3 py-3 text-right font-medium text-[var(--color-muted-foreground)]">
+                  <th className="border-b border-[var(--color-border)] px-3 py-2.5 text-right text-[10px] font-bold uppercase text-[var(--color-muted-foreground)]">
                     {copy.role.columns[2]}
                   </th>
-                  <th className="border-b border-[var(--color-border)] px-3 py-3 text-right font-medium text-[var(--color-muted-foreground)]">
+                  <th className="border-b border-[var(--color-border)] px-3 py-2.5 text-right text-[10px] font-bold uppercase text-[var(--color-muted-foreground)]">
                     {copy.role.columns[3]}
                   </th>
-                  <th className="border-b border-[var(--color-border)] px-3 py-3 text-right font-medium text-[var(--color-muted-foreground)]">
+                  <th className="border-b border-[var(--color-border)] px-3 py-2.5 text-right text-[10px] font-bold uppercase text-[var(--color-muted-foreground)]">
                     {copy.role.columns[4]}
                   </th>
-                  <th className="border-b border-[var(--color-border)] px-4 py-3 text-right font-medium text-[var(--color-muted-foreground)]">
+                  <th className="border-b border-[var(--color-border)] px-4 py-2.5 text-right text-[10px] font-bold uppercase text-[var(--color-muted-foreground)]">
                     {copy.role.columns[5]}
                   </th>
                 </tr>
@@ -785,26 +785,26 @@ function RoleTable({
               <tbody>
                 {roles.map((role, index) => (
                   <tr key={role.role} className={index === 0 ? "data-table-highlight" : undefined}>
-                    <th className="border-b border-[var(--color-border)]/30 px-4 py-3 text-left font-semibold text-[var(--color-foreground)]">
+                    <th className="border-b border-[var(--color-border)]/30 px-4 py-2.5 text-left font-semibold text-[var(--color-foreground)]">
                       {getRoleLabel(locale, role.role)}
                     </th>
-                    <td className="border-b border-[var(--color-border)]/30 px-3 py-3 text-right font-semibold tabular-nums text-[var(--color-foreground)]">
+                    <td className="border-b border-[var(--color-border)]/30 px-3 py-2.5 text-right font-semibold text-[var(--color-foreground)]">
                       {formatSigned(role.averageRP, 1)}
                     </td>
-                    <td className="border-b border-[var(--color-border)]/30 px-3 py-3 text-right">
+                    <td className="border-b border-[var(--color-border)]/30 px-3 py-2.5 text-right">
                       {role.deltaAverageRP == null ? (
                         <span className="text-[var(--color-muted-foreground)]">-</span>
                       ) : (
                         <DeltaBadge value={role.deltaAverageRP} />
                       )}
                     </td>
-                    <td className="border-b border-[var(--color-border)]/30 px-3 py-3 text-right tabular-nums text-[var(--color-muted-foreground)]">
+                    <td className="border-b border-[var(--color-border)]/30 px-3 py-2.5 text-right text-[var(--color-muted-foreground)]">
                       {formatPercent(role.winRate)}
                     </td>
-                    <td className="border-b border-[var(--color-border)]/30 px-3 py-3 text-right tabular-nums text-[var(--color-muted-foreground)]">
+                    <td className="border-b border-[var(--color-border)]/30 px-3 py-2.5 text-right text-[var(--color-muted-foreground)]">
                       {formatPercent(role.top3Rate)}
                     </td>
-                    <td className="border-b border-[var(--color-border)]/30 px-4 py-3 text-right tabular-nums text-[var(--color-muted-foreground)]">
+                    <td className="border-b border-[var(--color-border)]/30 px-4 py-2.5 text-right text-[var(--color-muted-foreground)]">
                       {formatNumber(role.totalGames)}
                     </td>
                   </tr>
@@ -835,9 +835,11 @@ function DeltaRanking({
 }) {
   return (
     <section className="dashboard-panel p-4 lg:p-6">
-      <h2 className="dashboard-section-title text-base font-bold text-[var(--color-foreground)]">
-        {title}
-      </h2>
+      <div className="home-section-header pb-3">
+        <h2 className="dashboard-section-title text-base font-bold text-[var(--color-foreground)]">
+          {title}
+        </h2>
+      </div>
       <div className="mt-4 grid gap-2">
         {entries.map((entry, index) => {
           const displayName = getEntryDisplayName(entry, l10n, fallbackMap);
@@ -919,7 +921,7 @@ function CharacterSection({
 
   return (
     <section className="dashboard-panel p-4 lg:p-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div className="home-section-header flex flex-col gap-2 pb-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="dashboard-section-title text-base font-bold text-[var(--color-foreground)] sm:text-lg">
             {title}

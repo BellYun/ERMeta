@@ -497,7 +497,7 @@ export function SynergyDetailResults() {
                     });
                   });
                 }}
-                className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-xs font-medium text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
+                className="inline-flex min-h-[34px] shrink-0 items-center justify-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
               >
                 <Share2 className="h-3 w-3" />
                 {copied ? t("copied") : t("share")}
@@ -505,7 +505,7 @@ export function SynergyDetailResults() {
               <button
                 type="button"
                 onClick={clearAllies}
-                className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-xs font-medium text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+                className="inline-flex min-h-[34px] shrink-0 items-center justify-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
               >
                 <X className="h-3 w-3" />
                 {t("reset")}
@@ -514,7 +514,7 @@ export function SynergyDetailResults() {
           )}
         </div>
 
-        <div className="flex w-full items-center gap-1 overflow-x-auto rounded-[16px] border border-[var(--color-border-light)] bg-[var(--color-surface-2)] p-1 xl:w-auto">
+        <div className="flex w-full items-center gap-1 overflow-x-auto rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] p-0.5 xl:w-auto">
           {SORT_OPTIONS.map(({ value, labelKey }) => (
             <button
               key={value}
@@ -523,11 +523,12 @@ export function SynergyDetailResults() {
                 analytics.synergySortChanged(value);
               }}
               className={cn(
-                "flex min-h-[40px] shrink-0 items-center rounded-md px-3 py-2 text-[12px] font-semibold",
+                "dashboard-tab flex min-h-[30px] shrink-0 items-center px-3 py-1 text-[12px] font-semibold",
                 sortBy === value
-                  ? "bg-[var(--color-surface)] text-[var(--color-foreground)] ring-1 ring-[var(--color-border)]"
-                  : "text-[var(--color-foreground)]/72 hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+                  ? ""
+                  : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
               )}
+              data-active={sortBy === value ? "true" : undefined}
             >
               {t(`sort.${labelKey}`)}
             </button>

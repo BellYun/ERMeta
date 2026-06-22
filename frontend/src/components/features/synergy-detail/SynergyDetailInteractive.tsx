@@ -24,10 +24,10 @@ export function SynergyDetailInteractive() {
         </div>
       )}
 
-      <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
-        <div className="mb-3.5 flex flex-wrap items-center gap-x-3 gap-y-2 sm:mb-4">
+      <section className="dashboard-panel p-3.5 sm:p-4">
+        <div className="home-section-header mb-3.5 flex flex-wrap items-center gap-x-3 gap-y-2 pb-3 sm:mb-4">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-[var(--color-muted-foreground)]">
+            <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-accent)] bg-[var(--color-accent-muted)] font-mono text-xs font-bold text-[var(--color-accent-foreground)]">
               1
             </span>
             <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.18rem]">
@@ -42,10 +42,10 @@ export function SynergyDetailInteractive() {
       </section>
 
       <div className="grid gap-5 xl:grid-cols-[360px_minmax(0,1fr)]">
-        <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
-          <div className="mb-3.5 flex flex-wrap items-center gap-x-3 gap-y-2 sm:mb-4">
+        <section className="dashboard-panel p-3.5 sm:p-4">
+          <div className="home-section-header mb-3.5 flex flex-wrap items-center gap-x-3 gap-y-2 pb-3 sm:mb-4">
             <div className="flex items-center gap-2.5">
-              <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-[var(--color-muted-foreground)]">
+              <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-accent)] bg-[var(--color-accent-muted)] font-mono text-xs font-bold text-[var(--color-accent-foreground)]">
                 2
               </span>
               <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.18rem]">
@@ -59,10 +59,10 @@ export function SynergyDetailInteractive() {
           </SectionErrorBoundary>
         </section>
 
-        <section className="dashboard-panel min-w-0 p-3.5 sm:p-4 lg:p-5">
-          <div className="mb-3.5 flex flex-wrap items-center gap-x-3 gap-y-2 sm:mb-4">
+        <section className="dashboard-panel min-w-0 p-3.5 sm:p-4">
+          <div className="home-section-header mb-3.5 flex flex-wrap items-center gap-x-3 gap-y-2 pb-3 sm:mb-4">
             <div className="flex items-center gap-2.5">
-              <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-[var(--color-muted-foreground)]">
+              <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-accent)] bg-[var(--color-accent-muted)] font-mono text-xs font-bold text-[var(--color-accent-foreground)]">
                 3
               </span>
               <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.18rem]">

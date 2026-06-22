@@ -403,7 +403,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
   return (
     <>
       <section className="dashboard-panel p-3 sm:p-4">
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <div className="home-section-header mb-3 flex flex-wrap items-center justify-between gap-2 pb-3">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-2">
             <p className="dashboard-section-title text-xs font-semibold text-[var(--color-foreground)]">
               {copy.explore} · {pool.length}/{MAX_POOL} {copy.slots}
@@ -431,7 +431,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
               return (
                 <div
                   key={`empty-${idx}`}
-                  className="flex min-h-[112px] items-center justify-center rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface-3)]/40 px-2 text-center text-[11px] text-[var(--color-muted-foreground)]"
+                  className="flex min-h-[112px] items-center justify-center rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface-2)] px-2 text-center text-[11px] font-semibold text-[var(--color-muted-foreground)]"
                 >
                   {copy.slotLabels[idx]}
                 </div>
@@ -516,7 +516,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
               })
             }
             placeholder={copy.searchPlaceholder}
-            className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-accent)] focus:outline-none"
+            className="h-8 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs font-medium text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-muted)]"
           />
           {search && (
             <button
@@ -546,7 +546,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
         </div>
       )}
 
-      <div className="flex items-center justify-between gap-3 border-b border-[var(--color-border)] pb-3 text-xs text-[var(--color-muted-foreground)]">
+      <div className="dashboard-panel flex items-center justify-between gap-3 p-3 text-xs text-[var(--color-muted-foreground)]">
         <div className="min-w-0">
           <p className="truncate">
             {loading ? copy.loading : copy.comboCount(visibleCombos.length, combos.length)}
@@ -571,7 +571,7 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
                 sort: event.target.value as TrioSortBy,
               })
             }
-            className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2 py-1.5 text-xs font-medium text-[var(--color-foreground)] focus:border-[var(--color-accent)] focus:outline-none"
+            className="h-8 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2 text-xs font-semibold text-[var(--color-foreground)] focus:border-[var(--color-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-muted)]"
             aria-label={copy.sortAria}
           >
             {SORT_KEYS.map((key) => (
@@ -594,12 +594,12 @@ export function TrioLabGalleryClient({ initialCombos }: TrioLabGalleryClientProp
           {Array.from({ length: 6 }).map((_, index) => (
             <div
               key={`skeleton-${index}`}
-              className="h-72 rounded-md bg-[var(--color-surface-3)]"
+              className="h-72 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)]"
             />
           ))}
         </div>
       ) : combos.length === 0 ? (
-        <div className="rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface-3)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
+        <div className="rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
           {pool.length === 0 ? copy.emptyNoPool : copy.emptyWithPool}
         </div>
       ) : (

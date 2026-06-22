@@ -113,19 +113,21 @@ export default function AboutPage({ locale }: { locale: RouteLocale }) {
   const labels = getLinkLabels(locale);
 
   return (
-    <article className="prose-custom mx-auto max-w-3xl py-8">
-      <h1 className="dashboard-section-title mb-4 text-xl font-bold text-[var(--color-foreground)]">
-        {content.title}
-      </h1>
-      <p className="mb-8 text-xs text-[var(--color-muted-foreground)]">{content.updated}</p>
-      <p className="mb-8 text-sm leading-relaxed text-[var(--color-muted-foreground)]">
-        {content.lead}
-      </p>
+    <article className="mx-auto flex max-w-3xl flex-col gap-5 py-8">
+      <header className="dashboard-panel p-4">
+        <span className="dashboard-kicker">{content.updated}</span>
+        <h1 className="dashboard-section-title mt-2 text-xl font-bold text-[var(--color-foreground)]">
+          {content.title}
+        </h1>
+        <p className="mt-3 text-sm leading-relaxed text-[var(--color-muted-foreground)]">
+          {content.lead}
+        </p>
+      </header>
 
-      <div className="space-y-8">
+      <div className="grid gap-3">
         {content.sections.map((section) => (
-          <section key={section.title}>
-            <h2 className="dashboard-section-title mb-3 text-base font-semibold text-[var(--color-foreground)]">
+          <section key={section.title} className="metric-card p-4">
+            <h2 className="dashboard-section-title mb-2 text-base font-semibold text-[var(--color-foreground)]">
               {section.title}
             </h2>
             <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
@@ -135,7 +137,7 @@ export default function AboutPage({ locale }: { locale: RouteLocale }) {
         ))}
       </div>
 
-      <div className="metric-card mt-8 p-4" data-accent="true">
+      <div className="metric-card p-4" data-accent="true">
         <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
           <Link
             href="/methodology"

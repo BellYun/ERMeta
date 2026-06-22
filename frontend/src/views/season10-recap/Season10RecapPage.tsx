@@ -183,7 +183,7 @@ function HeroMetricCard({
 
   return (
     <div
-      className="metric-card flex min-h-[118px] flex-col gap-4 px-4 py-4 sm:min-h-[150px] sm:gap-6 sm:px-5 sm:py-5"
+      className="metric-card flex min-h-[96px] flex-col gap-3 px-3.5 py-3.5 sm:min-h-[112px] sm:px-4"
       data-accent={isAccent ? "true" : undefined}
     >
       <div
@@ -195,7 +195,7 @@ function HeroMetricCard({
         {icon}
       </div>
       <div>
-        <p className="metric-value text-[1.45rem] sm:text-[1.95rem]">{value}</p>
+        <p className="metric-value text-[1.3rem] sm:text-[1.65rem]">{value}</p>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">{label}</p>
       </div>
     </div>
@@ -223,7 +223,7 @@ function LeaderCard({
 
   return (
     <div
-      className="metric-card col-span-2 flex min-h-[132px] items-center gap-4 px-4 py-4 sm:min-h-[150px] sm:px-5 sm:py-5"
+      className="metric-card col-span-2 flex min-h-[120px] items-center gap-4 px-4 py-4 sm:min-h-[132px]"
       data-accent="true"
     >
       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] sm:h-20 sm:w-20">
@@ -367,15 +367,15 @@ export default async function SeasonRecapPage({ locale = "ko" }: { locale?: Rout
           />
         </>
       ) : (
-        <section className="dashboard-panel p-4 lg:p-6 xl:p-7">
+        <section className="dashboard-panel p-4">
           <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">
             {copy.nonKoSummary}
           </p>
         </section>
       )}
 
-      <section className="dashboard-panel p-4 lg:p-6 xl:p-7">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+      <section className="dashboard-panel p-4">
+        <div className="home-section-header flex flex-col gap-2 pb-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
               {copy.basisKicker}

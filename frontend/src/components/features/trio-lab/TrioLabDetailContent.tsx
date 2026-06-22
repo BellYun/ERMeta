@@ -214,8 +214,8 @@ function LocalizedComboSummary({
   const localizedListHref = localizeRoutePath(listHref, locale);
 
   return (
-    <section className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-card)]">
-      <div className="border-b border-[var(--color-border)] bg-[var(--surface-1)] px-5 py-5">
+    <section className="dashboard-panel overflow-hidden">
+      <div className="home-section-header px-4 py-4">
         <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-[var(--color-muted-foreground)]">
           <span>{copy.kicker}</span>
           <span aria-hidden="true">/</span>
@@ -237,7 +237,7 @@ function LocalizedComboSummary({
         </p>
       </div>
 
-      <div className="grid gap-4 px-5 py-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="grid gap-4 px-4 py-4 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="grid gap-3 sm:grid-cols-3">
           {combo.members.map((member) => {
             const name = resolveCharacterName(member.character, l10n, fallbackMap);
@@ -245,7 +245,7 @@ function LocalizedComboSummary({
             return (
               <div
                 key={`${member.character}-${member.weapon}`}
-                className="rounded-md border border-[var(--color-border)] bg-[var(--surface-2)] px-4 py-4"
+                className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-4"
               >
                 <div className="text-xs font-semibold uppercase text-[var(--color-muted-foreground)]">
                   {copy.members}
@@ -257,30 +257,30 @@ function LocalizedComboSummary({
           })}
         </div>
 
-        <div className="rounded-md border border-[var(--color-border)] bg-[var(--surface-2)] p-4">
+        <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] p-4">
           <dl className="grid grid-cols-2 gap-3 text-sm">
             <div>
               <dt className="text-[var(--color-muted-foreground)]">{copy.winRate}</dt>
-              <dd className="mt-1 text-lg font-bold text-[var(--color-foreground)]">
+              <dd className="mt-1 font-mono text-lg font-bold text-[var(--color-foreground)]">
                 {combo.winRate.toFixed(1)}%
               </dd>
             </div>
             <div>
               <dt className="text-[var(--color-muted-foreground)]">{copy.averageRP}</dt>
-              <dd className="mt-1 text-lg font-bold text-[var(--color-foreground)]">
+              <dd className="mt-1 font-mono text-lg font-bold text-[var(--color-foreground)]">
                 {combo.averageRP > 0 ? "+" : ""}
                 {combo.averageRP.toFixed(2)}
               </dd>
             </div>
             <div>
               <dt className="text-[var(--color-muted-foreground)]">{copy.averageRank}</dt>
-              <dd className="mt-1 text-lg font-bold text-[var(--color-foreground)]">
+              <dd className="mt-1 font-mono text-lg font-bold text-[var(--color-foreground)]">
                 #{combo.averageRank.toFixed(1)}
               </dd>
             </div>
             <div>
               <dt className="text-[var(--color-muted-foreground)]">{copy.sample}</dt>
-              <dd className="mt-1 text-lg font-bold text-[var(--color-foreground)]">
+              <dd className="mt-1 font-mono text-lg font-bold text-[var(--color-foreground)]">
                 {combo.totalGames.toLocaleString(locale)}
               </dd>
             </div>
@@ -288,11 +288,12 @@ function LocalizedComboSummary({
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 border-t border-[var(--color-border)] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 border-t border-[var(--color-border)] px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-[var(--color-muted-foreground)]">{copy.dataNote}</p>
         <Link
           href={localizedListHref}
-          className="inline-flex h-10 items-center justify-center rounded-md bg-[var(--color-foreground)] px-4 text-sm font-bold text-white"
+          className="dashboard-tab inline-flex items-center justify-center px-4 py-2 text-sm font-bold"
+          data-active="true"
         >
           {copy.back}
         </Link>

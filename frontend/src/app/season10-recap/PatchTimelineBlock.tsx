@@ -11,9 +11,9 @@ interface PatchTimelineBlockProps {
 
 export function PatchTimelineBlock({ perPatchTop }: PatchTimelineBlockProps) {
   return (
-    <section className="dashboard-panel p-4 lg:p-6 xl:p-7">
+    <section className="dashboard-panel p-4">
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div className="home-section-header flex flex-col gap-2 pb-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
               패치 흐름
@@ -30,7 +30,7 @@ export function PatchTimelineBlock({ perPatchTop }: PatchTimelineBlockProps) {
           </span>
         </div>
 
-        <div className="-mx-4 overflow-x-auto px-4 pb-2 overscroll-x-contain lg:-mx-6 lg:px-6 xl:-mx-7 xl:px-7">
+        <div className="-mx-4 overflow-x-auto px-4 pb-2 overscroll-x-contain">
           <div className="flex min-w-max gap-3 pr-1 lg:gap-4">
             {perPatchTop.map(({ patch, entries }) => (
               <PatchColumn key={patch} patch={patch} entries={entries} />

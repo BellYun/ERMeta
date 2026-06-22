@@ -122,13 +122,16 @@ export function CharacterHeader({
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="metric-card p-3 sm:p-4" data-accent={charTier ? "true" : undefined}>
+    <div className="character-workspace flex flex-col gap-3.5">
+      <div
+        className="metric-card character-header-card p-3.5 sm:p-4"
+        data-accent={charTier ? "true" : undefined}
+      >
         <div className="flex items-start gap-3 sm:gap-4">
           <div className="relative shrink-0">
             <div
               className={cn(
-                "relative h-16 w-16 overflow-hidden rounded-md border bg-[var(--color-surface-2)] sm:h-24 sm:w-24",
+                "relative h-16 w-16 overflow-hidden rounded-md border bg-[var(--color-surface-2)] sm:h-20 sm:w-20",
                 charTier ? "border-[var(--color-accent)]" : "border-[var(--color-border)]"
               )}
             >
@@ -149,7 +152,7 @@ export function CharacterHeader({
             )}
           </div>
 
-          <div className="flex min-w-0 flex-1 flex-col gap-2">
+          <div className="flex min-w-0 flex-1 flex-col gap-3">
             <div>
               <h2 className="dashboard-section-title text-[1.15rem] font-bold leading-tight text-[var(--color-foreground)] sm:text-xl">
                 {characterName}
@@ -161,18 +164,18 @@ export function CharacterHeader({
                   </span>
                 )}
                 {displayStat && displayStat.totalGames > 0 && (
-                  <span className="rounded bg-[var(--color-surface-2)] px-2 py-0.5 text-[10px] text-[var(--color-muted-foreground)]">
+                  <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2 py-0.5 text-[10px] text-[var(--color-muted-foreground)]">
                     {t("games", { count: displayStat.totalGames.toLocaleString() })}
                   </span>
                 )}
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 border-t border-[var(--color-border)] pt-3">
               <div
                 role="radiogroup"
                 aria-label={t("tierSelectorAria")}
-                className="flex w-fit items-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] p-1"
+                className="flex w-fit items-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] p-0.5"
               >
                 {tierOptionsList.map((opt, i) => {
                   const isSelected = selectedTier === opt.value;
@@ -192,7 +195,7 @@ export function CharacterHeader({
                       }}
                       onKeyDown={(e) => handleTierKey(e, i)}
                       className={cn(
-                        "dashboard-tab min-h-[30px] whitespace-nowrap px-2.5 py-1.5 text-[10px] sm:px-3 sm:text-[11px]"
+                        "dashboard-tab min-h-[30px] whitespace-nowrap px-2.5 py-1 text-[10px] sm:px-3 sm:text-[11px]"
                       )}
                       data-active={isSelected ? "true" : undefined}
                     >
@@ -203,7 +206,7 @@ export function CharacterHeader({
               </div>
 
               {patches.length > 0 && (
-                <label className="flex min-h-[34px] items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 text-[10px] font-medium text-[var(--color-muted-foreground)] sm:text-[11px]">
+                <label className="flex min-h-[32px] items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 text-[10px] font-medium text-[var(--color-muted-foreground)] sm:text-[11px]">
                   <span>패치</span>
                   <select
                     value={selectedPatch ?? patches[0]}
@@ -223,8 +226,8 @@ export function CharacterHeader({
         </div>
 
         {!loading && stats?.weapons && stats.weapons.length > 0 && (
-          <div className="mt-3.5 border-t border-[var(--color-border)] pt-3 sm:mt-4">
-            <span className="mb-2 block text-[10px] font-medium text-[var(--color-muted-foreground)]">
+          <div className="mt-3 border-t border-[var(--color-border)] pt-3">
+            <span className="mb-2 block text-[10px] font-semibold text-[var(--color-muted-foreground)]">
               {t("weapon")}
             </span>
             <div
@@ -243,7 +246,7 @@ export function CharacterHeader({
                 onClick={() => setSelectedWeapon(null)}
                 onKeyDown={(e) => handleWeaponKey(e, 0)}
                 className={cn(
-                  "dashboard-tab shrink-0 gap-1.5 px-2.5 py-2 text-[11px] sm:px-3 sm:text-xs"
+                  "dashboard-tab shrink-0 gap-1.5 px-2.5 py-1.5 text-[11px] sm:px-3 sm:text-xs"
                 )}
                 data-active={selectedWeapon == null ? "true" : undefined}
               >
@@ -272,7 +275,7 @@ export function CharacterHeader({
                     }}
                     onKeyDown={(e) => handleWeaponKey(e, weaponIndex)}
                     className={cn(
-                      "dashboard-tab min-w-[88px] shrink-0 flex-col px-2.5 py-2 text-[11px] sm:min-w-[96px] sm:px-3 sm:text-xs"
+                      "dashboard-tab min-w-[88px] shrink-0 flex-col px-2.5 py-1.5 text-[11px] sm:min-w-[96px] sm:px-3 sm:text-xs"
                     )}
                     data-active={isSelected ? "true" : undefined}
                   >
@@ -292,7 +295,7 @@ export function CharacterHeader({
                       </span>
                     </div>
                     <div
-                      className="mt-1.5 h-1 w-full rounded-full bg-[var(--color-border)]/60"
+                      className="mt-1.5 h-0.5 w-full rounded-full bg-[var(--color-border)]/70"
                       aria-hidden="true"
                     >
                       <div

@@ -35,9 +35,9 @@ export function SeasonHallOfFameBlock({
   const [openKey, setOpenKey] = useState<string | null>(null);
 
   return (
-    <section className="dashboard-panel p-4 lg:p-6 xl:p-7">
+    <section className="dashboard-panel p-4">
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div className="home-section-header flex flex-col gap-2 pb-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
               시즌 누적
@@ -55,7 +55,7 @@ export function SeasonHallOfFameBlock({
           </span>
         </div>
 
-        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
+        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[0_1px_1px_rgba(15,23,42,0.03)]">
           {entries.length === 0 ? (
             <div className="py-16 text-center text-sm text-[var(--color-muted-foreground)]">
               표본 확인 중

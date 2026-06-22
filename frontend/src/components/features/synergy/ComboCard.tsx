@@ -50,7 +50,7 @@ export function ComboCard({
     <div
       className={cn(
         "combo-card",
-        "group flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 transition-colors hover:bg-[var(--color-surface-2)] hover:border-[var(--color-border-light)]"
+        "group flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
       )}
       data-accent={isFocusPoolCombo || isTopResult ? "true" : undefined}
     >
@@ -116,7 +116,7 @@ export function ComboCard({
                 >
                   {charContent}
                   {rest.length === 1 && (
-                    <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[9px] font-medium text-[var(--color-foreground)] transition-colors whitespace-nowrap group-hover/char:border-[var(--color-border-light)]">
+                    <span className="whitespace-nowrap rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[9px] font-medium text-[var(--color-foreground)] transition-colors group-hover/char:border-[var(--color-border-light)]">
                       분석보기
                     </span>
                   )}
@@ -132,7 +132,7 @@ export function ComboCard({
 
       {/* 소표본 배지 */}
       {isSmallSample && (
-        <span className="text-[9px] bg-[var(--color-surface-2)] text-[var(--color-muted-foreground)] px-1.5 py-0.5 rounded shrink-0">
+        <span className="shrink-0 rounded border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[9px] text-[var(--color-muted-foreground)]">
           소표본
         </span>
       )}
@@ -156,7 +156,7 @@ export function ComboCard({
           </span>
         </div>
       ) : (
-        <div className="ml-auto flex items-center gap-3 sm:gap-6 text-right">
+        <div className="ml-auto flex items-center gap-3 text-right sm:gap-6">
           <div className="flex flex-col">
             <span className="text-[10px] text-[var(--color-muted-foreground)]">승률</span>
             <span className="text-sm font-semibold text-[var(--color-foreground)]">

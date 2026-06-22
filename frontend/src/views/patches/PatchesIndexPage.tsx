@@ -22,14 +22,14 @@ function SummaryMetricCard({
 }) {
   return (
     <div
-      className="metric-card flex min-h-[110px] flex-col gap-3 px-4 py-4 sm:min-h-[126px] sm:px-5"
+      className="metric-card flex min-h-[92px] flex-col gap-2.5 px-3.5 py-3.5 sm:min-h-[104px] sm:px-4"
       data-accent={accent ? "true" : undefined}
     >
       <div className="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-accent-foreground)]">
         {icon}
       </div>
       <div>
-        <p className="text-[1.25rem] font-bold text-[var(--color-foreground)] sm:text-[1.55rem]">
+        <p className="font-mono text-[1.2rem] font-bold leading-none text-[var(--color-foreground)] sm:text-[1.45rem]">
           {value}
         </p>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">{label}</p>
@@ -143,9 +143,9 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
         </div>
       </section>
 
-      <section className="dashboard-panel p-4 lg:p-5">
+      <section className="dashboard-panel p-4">
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div className="home-section-header flex flex-col gap-3 pb-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h2 className="dashboard-section-title text-[1.3rem] font-bold text-[var(--color-foreground)] sm:text-[1.6rem]">
                 {t("archiveTitle")}
@@ -171,7 +171,7 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
               <Link
                 key={summary.patch}
                 href={`/patches/${summary.patch}`}
-                className="metric-card group flex h-full flex-col gap-4 px-4 py-4 hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] sm:px-5 sm:py-5"
+                className="metric-card group flex h-full flex-col gap-3.5 px-4 py-4 hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
                 data-accent={index === 0 ? "true" : undefined}
               >
                 <div className="flex items-start justify-between gap-3">

@@ -26,9 +26,9 @@ export function RoleStrengthBlock({ roleStats, patches }: RoleStrengthBlockProps
   const weakestRole = seasonSorted[seasonSorted.length - 1] ?? null;
 
   return (
-    <section className="dashboard-panel p-4 lg:p-6 xl:p-7">
+    <section className="dashboard-panel p-4">
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div className="home-section-header flex flex-col gap-2 pb-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
               직업군 흐름
@@ -68,23 +68,23 @@ export function RoleStrengthBlock({ roleStats, patches }: RoleStrengthBlockProps
           </div>
         )}
 
-        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
+        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[0_1px_1px_rgba(15,23,42,0.03)]">
           <div className="overflow-x-auto pb-2 overscroll-x-contain">
-            <table className="w-full min-w-[860px] border-separate border-spacing-0 text-xs sm:min-w-[940px] sm:text-sm xl:min-w-[1040px]">
+            <table className="w-full min-w-[860px] border-separate border-spacing-0 text-xs tabular-nums sm:min-w-[940px] sm:text-sm xl:min-w-[1040px]">
               <thead>
-                <tr className="bg-[var(--color-surface-2)]/60">
-                  <th className="sticky left-0 z-10 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-3 text-left font-medium text-[var(--color-muted-foreground)]">
+                <tr className="bg-[var(--color-surface-2)]">
+                  <th className="sticky left-0 z-10 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 text-left text-[10px] font-bold uppercase text-[var(--color-muted-foreground)]">
                     직업군
                   </th>
                   {patches.map((patch) => (
                     <th
                       key={patch}
-                      className="border-b border-[var(--color-border)] px-2 py-3 text-center font-medium text-[var(--color-muted-foreground)] tabular-nums"
+                      className="border-b border-[var(--color-border)] px-2 py-2.5 text-center text-[10px] font-bold uppercase text-[var(--color-muted-foreground)]"
                     >
                       {patch}
                     </th>
                   ))}
-                  <th className="border-b border-l border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-3 py-3 text-center font-semibold text-[var(--color-accent-foreground)] tabular-nums">
+                  <th className="border-b border-l border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-3 py-2.5 text-center text-[10px] font-bold uppercase text-[var(--color-accent-foreground)]">
                     시즌
                   </th>
                 </tr>
@@ -92,7 +92,7 @@ export function RoleStrengthBlock({ roleStats, patches }: RoleStrengthBlockProps
               <tbody>
                 {roleStats.map(({ role, perPatch, season }) => (
                   <tr key={role}>
-                    <th className="sticky left-0 z-10 border-b border-[var(--color-border)]/30 bg-[var(--color-surface)] px-3 py-3 text-left font-semibold text-[var(--color-foreground)]">
+                    <th className="sticky left-0 z-10 border-b border-[var(--color-border)]/30 bg-[var(--color-surface)] px-3 py-2.5 text-left font-semibold text-[var(--color-foreground)]">
                       {role}
                     </th>
                     {perPatch.map(({ patch, stat }) => (
@@ -154,7 +154,7 @@ function RoleCell({
     return (
       <td
         className={cn(
-          "border-b border-[var(--color-border)]/30 px-2 py-3 text-center text-[var(--color-muted-foreground)]/40 tabular-nums",
+          "border-b border-[var(--color-border)]/30 px-2 py-2.5 text-center text-[var(--color-muted-foreground)]/40",
           isSeason && "border-l border-[var(--color-border)]"
         )}
       >
@@ -172,7 +172,7 @@ function RoleCell({
   return (
     <td
       className={cn(
-        "border-b border-[var(--color-border)]/30 px-2 py-3 text-center font-semibold tabular-nums",
+        "border-b border-[var(--color-border)]/30 px-2 py-2.5 text-center font-semibold",
         isSeason && "border-l border-[var(--color-accent)]",
         isPositive ? "text-[var(--color-success)]" : "text-[var(--color-danger)]"
       )}

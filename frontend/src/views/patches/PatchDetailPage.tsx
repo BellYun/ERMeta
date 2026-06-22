@@ -30,14 +30,14 @@ function DetailMetricCard({
 }) {
   return (
     <div
-      className="metric-card flex min-h-[110px] flex-col gap-3 px-4 py-4 sm:min-h-[126px] sm:px-5"
+      className="metric-card flex min-h-[92px] flex-col gap-2.5 px-3.5 py-3.5 sm:min-h-[104px] sm:px-4"
       data-accent={accent ? "true" : undefined}
     >
       <div className="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-accent-foreground)]">
         {icon}
       </div>
       <div>
-        <p className="text-[1.25rem] font-bold text-[var(--color-foreground)] sm:text-[1.55rem]">
+        <p className="font-mono text-[1.2rem] font-bold leading-none text-[var(--color-foreground)] sm:text-[1.45rem]">
           {value}
         </p>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">{label}</p>
@@ -187,8 +187,8 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
         </div>
       </section>
 
-      <section className="dashboard-panel p-4 lg:p-5">
-        <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <section className="dashboard-panel p-4">
+        <div className="home-section-header mb-4 flex flex-col gap-2 pb-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="dashboard-section-title text-[1.3rem] font-bold text-[var(--color-foreground)] sm:text-[1.6rem]">
               {t("detailHeading", { patch: version })}
@@ -214,7 +214,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
             return (
               <article
                 key={note.characterCode}
-                className="metric-card overflow-hidden px-4 py-4 sm:px-5 sm:py-5"
+                className="metric-card overflow-hidden px-4 py-4"
                 data-accent={note.characterCode === notes[0]?.characterCode ? "true" : undefined}
               >
                 <div className="flex items-center gap-3">
@@ -247,7 +247,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                       return (
                         <li
                           key={`${note.characterCode}-${changeIndex}`}
-                          className="px-3.5 py-3 sm:px-4"
+                          className="px-3.5 py-2.5 sm:px-4"
                         >
                           <div className="flex flex-wrap items-start gap-2.5">
                             <div className="shrink-0 pt-0.5">

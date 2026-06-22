@@ -69,19 +69,24 @@ export async function HomePageContent({
           </div>
 
           {hasRankingData ? (
-            <div className="metric-card home-hero-metric px-4 py-4 sm:px-5" data-accent="true">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                <div>
+            <div className="metric-card home-hero-metric p-0" data-accent="true">
+              <div className="home-report-strip">
+                <div className="home-report-primary">
                   <p className="text-xs font-medium text-[var(--color-muted-foreground)]">
                     {t("matchMetric")}
                   </p>
-                  <p className="mt-1 font-mono text-[1.8rem] font-bold leading-none text-[var(--color-accent-foreground)] sm:text-[2.15rem]">
+                  <p className="mt-1 font-mono text-[1.9rem] font-bold leading-none text-[var(--color-accent-foreground)] sm:text-[2.35rem]">
                     {trackedMatches}
                   </p>
                 </div>
-                <p className="max-w-[28rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-right">
-                  {t("matchMetricDescription", { patch: defaultPatch })}
-                </p>
+                <div className="home-report-context">
+                  <p className="text-xs font-semibold text-[var(--color-accent-foreground)]">
+                    {t("patch", { patch: defaultPatch })}
+                  </p>
+                  <p className="mt-1 text-sm leading-6 text-[var(--color-muted-foreground)]">
+                    {t("matchMetricDescription", { patch: defaultPatch })}
+                  </p>
+                </div>
               </div>
             </div>
           ) : (

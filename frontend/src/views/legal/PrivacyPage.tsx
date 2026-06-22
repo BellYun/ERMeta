@@ -269,14 +269,16 @@ export default function PrivacyPage({ locale = "ko" }: { locale?: RouteLocale })
   const copy = COPY[locale] ?? COPY.ko;
 
   return (
-    <article className="prose-custom mx-auto max-w-3xl py-8">
-      <h1 className="dashboard-section-title mb-6 text-xl font-bold text-[var(--color-foreground)]">
-        {copy.title}
-      </h1>
-      <p className="mb-8 text-xs text-[var(--color-muted-foreground)]">{copy.effectiveDate}</p>
+    <article className="mx-auto flex max-w-3xl flex-col gap-3 py-8">
+      <header className="dashboard-panel mb-2 p-4">
+        <span className="dashboard-kicker">{copy.effectiveDate}</span>
+        <h1 className="dashboard-section-title mt-2 text-xl font-bold text-[var(--color-foreground)]">
+          {copy.title}
+        </h1>
+      </header>
 
       {copy.sections.map((section) => (
-        <section key={section.title} className="mb-8">
+        <section key={section.title} className="metric-card p-4">
           <h2 className="dashboard-section-title mb-3 text-base font-semibold text-[var(--color-foreground)]">
             {section.title}
           </h2>
@@ -289,7 +291,7 @@ export default function PrivacyPage({ locale = "ko" }: { locale?: RouteLocale })
             </p>
           ))}
           {section.items ? (
-            <div className="metric-card p-4">
+            <div className="mt-3 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] p-3">
               <ul className="space-y-1.5 text-sm leading-relaxed text-[var(--color-muted-foreground)]">
                 {section.items.map((item) => (
                   <li key={item} className="flex items-start gap-2">

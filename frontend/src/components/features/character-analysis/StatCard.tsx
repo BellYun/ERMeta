@@ -21,7 +21,7 @@ export function DeltaBadge({ delta, inverted = false }: { delta: number; inverte
 
 export function SkeletonCard() {
   return (
-    <div className="h-[88px] rounded-md bg-[var(--color-surface)] border border-[var(--color-border)]" />
+    <div className="h-[78px] rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]" />
   );
 }
 
@@ -68,14 +68,16 @@ export function StatCard({
   return (
     <div
       className={cn(
-        "flex flex-col justify-between rounded-md border border-[var(--color-border)] border-l-2 overflow-hidden bg-[var(--color-surface)]",
-        "px-3 sm:px-4 py-2.5 sm:py-3 min-h-[80px]",
+        "flex min-h-[76px] flex-col justify-between overflow-hidden rounded-md border border-[var(--color-border)] border-l-2 bg-[var(--color-surface)]",
+        "px-3 py-2.5 sm:px-3.5",
         colors.border
       )}
     >
-      <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">{label}</span>
-      <div className="flex items-baseline gap-1.5 mt-1">
-        <span className="text-lg sm:text-xl font-bold text-[var(--color-foreground)] tabular-nums">
+      <span className="text-[10px] font-semibold text-[var(--color-muted-foreground)]">
+        {label}
+      </span>
+      <div className="mt-1 flex items-baseline gap-1.5">
+        <span className="font-mono text-lg font-bold tabular-nums leading-none text-[var(--color-foreground)] sm:text-xl">
           {value}
         </span>
         {delta !== undefined && (

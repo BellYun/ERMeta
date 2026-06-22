@@ -184,7 +184,7 @@ export default async function CharacterLabRolePage({ params }: Props) {
         <span className="text-[var(--color-foreground)]">{roleLabel}</span>
       </nav>
 
-      <div className="mb-6 flex flex-col gap-3">
+      <header className="dashboard-panel mb-5 flex flex-col gap-3 p-4">
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="dashboard-section-title text-xl font-bold text-[var(--color-foreground)]">
             {copy.title(roleLabel)}
@@ -194,7 +194,7 @@ export default async function CharacterLabRolePage({ params }: Props) {
           </span>
         </div>
         <p className="text-sm text-[var(--color-muted-foreground)]">{copy.body(minGames)}</p>
-      </div>
+      </header>
 
       {locale === "ko" ? (
         <LabPageContent data={data} />
