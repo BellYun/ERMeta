@@ -68,30 +68,30 @@ function createGroupConfig(t: (key: string) => string) {
     havoc: {
       letter: t("groups.havoc.letter"),
       name: t("groups.havoc.name"),
-      bg: "bg-red-500/20",
-      text: "text-red-400",
-      ring: "ring-red-400/50",
+      bg: "bg-[color-mix(in_srgb,var(--color-danger-readable)_12%,var(--color-surface))]",
+      text: "text-[var(--color-danger-readable)]",
+      ring: "ring-[color-mix(in_srgb,var(--color-danger-readable)_36%,var(--color-border))]",
     },
     fortification: {
       letter: t("groups.fortification.letter"),
       name: t("groups.fortification.name"),
-      bg: "bg-blue-500/20",
-      text: "text-blue-400",
-      ring: "ring-blue-400/50",
+      bg: "bg-[color-mix(in_srgb,var(--color-accent)_12%,var(--color-surface))]",
+      text: "text-[var(--color-accent-foreground)]",
+      ring: "ring-[color-mix(in_srgb,var(--color-accent)_36%,var(--color-border))]",
     },
     support: {
       letter: t("groups.support.letter"),
       name: t("groups.support.name"),
-      bg: "bg-emerald-500/20",
-      text: "text-emerald-400",
-      ring: "ring-emerald-400/50",
+      bg: "bg-[color-mix(in_srgb,var(--color-success)_12%,var(--color-surface))]",
+      text: "text-[var(--color-success)]",
+      ring: "ring-[color-mix(in_srgb,var(--color-success)_36%,var(--color-border))]",
     },
     chaos: {
       letter: t("groups.chaos.letter"),
       name: t("groups.chaos.name"),
-      bg: "bg-purple-500/20",
-      text: "text-purple-400",
-      ring: "ring-purple-400/50",
+      bg: "bg-[color-mix(in_srgb,var(--color-trait-chaos)_12%,var(--color-surface))]",
+      text: "text-[var(--color-trait-chaos)]",
+      ring: "ring-[color-mix(in_srgb,var(--color-trait-chaos)_36%,var(--color-border))]",
     },
     unknown: {
       letter: t("groups.unknown.letter"),
@@ -115,8 +115,6 @@ function createSlotLabels(t: (key: string) => string): Record<(typeof SLOTS)[num
     leg: t("slots.leg"),
   };
 }
-
-type GroupConfigMap = ReturnType<typeof createGroupConfig>;
 
 function getTraitGroup(code: number): TraitGroup {
   if (code === 7000501) return "chaos"; // 벽력: 혼돈 메인 특성
@@ -171,7 +169,9 @@ function TraitIconSmall({ code, size = 24 }: { code: number; size?: number }) {
 function SectionDivider({ title }: { title: string }) {
   return (
     <div className="flex items-center gap-2 py-1">
-      <span className="text-xs font-semibold text-[var(--color-foreground)]">{title}</span>
+      <span className="dashboard-section-title text-xs font-semibold text-[var(--color-foreground)]">
+        {title}
+      </span>
       <div className="flex-1 h-px bg-[var(--color-border)]" />
     </div>
   );
@@ -182,11 +182,9 @@ function SectionDivider({ title }: { title: string }) {
 function TreeRow({
   options,
   traitNames,
-  groupConfig,
 }: {
   options: TraitSubOption[];
   traitNames: Record<number, string>;
-  groupConfig: GroupConfigMap[TraitGroup];
 }) {
   if (options.length === 0) return null;
   const maxPick = Math.max(...options.map((o) => o.pickRate));
@@ -199,8 +197,10 @@ function TreeRow({
           <div key={i} className="flex flex-col items-center shrink-0 gap-1">
             <div
               className={cn(
-                "rounded-full transition-all",
-                isTop ? `ring-2 ${groupConfig.ring} p-0.5` : "opacity-35 grayscale"
+                "rounded-full",
+                isTop
+                  ? "outline outline-1 outline-[var(--color-border)] p-0.5"
+                  : "opacity-45 grayscale"
               )}
             >
               <TraitIconSmall code={opt.code} size={isTop ? 36 : 28} />
@@ -217,7 +217,7 @@ function TreeRow({
               <span
                 className={cn(
                   "text-[9px]",
-                  isTop ? "text-[var(--color-primary)]" : "text-[var(--color-muted-foreground)]"
+                  isTop ? "text-[var(--color-foreground)]" : "text-[var(--color-muted-foreground)]"
                 )}
               >
                 {opt.pickRate.toFixed(1)}%
@@ -225,9 +225,7 @@ function TreeRow({
               <span
                 className={cn(
                   "text-[9px]",
-                  opt.winRate >= 12.5
-                    ? "text-[var(--color-accent-gold)]"
-                    : "text-[var(--color-danger)]"
+                  opt.winRate >= 12.5 ? "text-[var(--color-stat-up)]" : "text-[var(--color-danger)]"
                 )}
               >
                 {opt.winRate.toFixed(1)}%
@@ -262,15 +260,13 @@ function SummaryRow({
         <span className="text-[10px] text-[var(--color-muted-foreground)]">{label}</span>
       </div>
       <div className="ml-auto flex items-center gap-2 shrink-0">
-        <span className="text-[10px] text-[var(--color-primary)]">
+        <span className="text-[10px] text-[var(--color-foreground)]">
           {option.pickRate.toFixed(1)}%
         </span>
         <span
           className={cn(
             "text-[10px]",
-            option.winRate >= 12.5
-              ? "text-[var(--color-accent-gold)]"
-              : "text-[var(--color-danger)]"
+            option.winRate >= 12.5 ? "text-[var(--color-stat-up)]" : "text-[var(--color-danger)]"
           )}
         >
           {option.winRate.toFixed(1)}%
@@ -280,7 +276,7 @@ function SummaryRow({
   );
 }
 
-// ─── TOP BUILDS (메인특성 컬럼 없는 버전) ─────────────────────────────────────
+// 주요 빌드 표(메인 특성 컬럼 없는 버전)
 
 function TopBuildsTableFiltered({
   builds,
@@ -292,9 +288,9 @@ function TopBuildsTableFiltered({
   const t = useTranslations("characterDetailed");
   const slotLabels = React.useMemo(() => createSlotLabels(t), [t]);
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
+    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
-        <span className="text-xs font-semibold text-[var(--color-foreground)]">
+        <span className="dashboard-section-title text-xs font-semibold text-[var(--color-foreground)]">
           {t("sections.topBuilds")}
         </span>
       </div>
@@ -302,19 +298,9 @@ function TopBuildsTableFiltered({
       {/* 모바일 카드 레이아웃 */}
       <div className="sm:hidden divide-y divide-[var(--color-border)]">
         {builds.map((b, i) => (
-          <div
-            key={i}
-            className={cn("px-2.5 py-2 space-y-1.5", i === 0 && "bg-[var(--color-accent-gold)]/5")}
-          >
+          <div key={i} className="space-y-1.5 px-2.5 py-2">
             <div className="flex items-center justify-between">
-              <span
-                className={cn(
-                  "text-xs font-bold",
-                  i === 0
-                    ? "text-[var(--color-accent-gold)]"
-                    : "text-[var(--color-muted-foreground)]"
-                )}
-              >
+              <span className={cn("text-xs font-semibold text-[var(--color-muted-foreground)]")}>
                 #{i + 1}
               </span>
               <div className="flex items-center gap-2 text-[11px]">
@@ -369,18 +355,12 @@ function TopBuildsTableFiltered({
               <tr
                 key={i}
                 className={cn(
-                  "border-b border-[var(--color-border)] last:border-0 transition-colors hover:bg-[var(--color-surface-2)]",
-                  i === 0 && "bg-[var(--color-accent-gold)]/5"
+                  "border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-surface-2)]"
                 )}
               >
                 <td className="px-3 py-2 text-left">
                   <span
-                    className={cn(
-                      "text-xs font-bold",
-                      i === 0
-                        ? "text-[var(--color-accent-gold)]"
-                        : "text-[var(--color-muted-foreground)]"
-                    )}
+                    className={cn("text-xs font-semibold text-[var(--color-muted-foreground)]")}
                   >
                     {i + 1}
                   </span>
@@ -433,9 +413,9 @@ function SlotPopularityGrid({
   const t = useTranslations("characterDetailed");
   const slotLabels = React.useMemo(() => createSlotLabels(t), [t]);
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
+    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
       <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
-        <span className="text-xs font-semibold text-[var(--color-foreground)]">
+        <span className="dashboard-section-title text-xs font-semibold text-[var(--color-foreground)]">
           {t("sections.slotPopularity")}
         </span>
       </div>
@@ -455,16 +435,15 @@ function SlotPopularityGrid({
                   <div
                     key={item.code}
                     className={cn(
-                      "flex flex-col items-center gap-0.5 rounded-lg px-1.5 py-1.5 min-w-[52px] shrink-0",
-                      i === 0 &&
-                        "bg-[var(--color-accent-gold)]/5 ring-1 ring-[var(--color-accent-gold)]/20"
+                      "flex flex-col items-center gap-0.5 rounded-md px-1.5 py-1.5 min-w-[52px] shrink-0",
+                      i === 0 && "bg-[var(--color-surface-2)] ring-1 ring-[var(--color-border)]"
                     )}
                   >
                     <ItemIcon code={item.code} size={26} />
                     <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-[48px] truncate leading-tight">
                       {itemNames[item.code] ?? item.code}
                     </span>
-                    <span className="text-[9px] text-[var(--color-primary)]">
+                    <span className="text-[9px] text-[var(--color-foreground)]">
                       {item.pickRate.toFixed(1)}%
                     </span>
                     <span className="text-[9px] text-[var(--color-foreground)]">
@@ -498,15 +477,15 @@ function SlotPopularityGrid({
                       <div
                         key={item.code}
                         className={cn(
-                          "flex flex-col items-center gap-0.5 px-1.5 py-1.5 transition-colors hover:bg-[var(--color-surface-2)]",
-                          i === 0 && "bg-[var(--color-accent-gold)]/5"
+                          "flex flex-col items-center gap-0.5 px-1.5 py-1.5 hover:bg-[var(--color-surface-2)]",
+                          i === 0 && "bg-[var(--color-surface-2)]"
                         )}
                       >
                         <ItemIcon code={item.code} size={30} />
                         <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-full truncate w-full leading-tight">
                           {itemNames[item.code] ?? item.code}
                         </span>
-                        <span className="text-[9px] text-[var(--color-primary)]">
+                        <span className="text-[9px] text-[var(--color-foreground)]">
                           {item.pickRate.toFixed(1)}%
                         </span>
                         <WinRateSpan winRate={item.winRate} />
@@ -536,15 +515,15 @@ function SlotPopularityGrid({
                       <div
                         key={item.code}
                         className={cn(
-                          "flex flex-col items-center gap-0.5 px-1.5 py-1.5 transition-colors hover:bg-[var(--color-surface-2)]",
-                          i === 0 && "bg-[var(--color-accent-gold)]/5"
+                          "flex flex-col items-center gap-0.5 px-1.5 py-1.5 hover:bg-[var(--color-surface-2)]",
+                          i === 0 && "bg-[var(--color-surface-2)]"
                         )}
                       >
                         <ItemIcon code={item.code} size={30} />
                         <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-full truncate w-full leading-tight">
                           {itemNames[item.code] ?? item.code}
                         </span>
-                        <span className="text-[9px] text-[var(--color-primary)]">
+                        <span className="text-[9px] text-[var(--color-foreground)]">
                           {item.pickRate.toFixed(1)}%
                         </span>
                         <WinRateSpan winRate={item.winRate} />
@@ -578,15 +557,15 @@ function SlotPopularityGrid({
                       <div
                         key={item.code}
                         className={cn(
-                          "flex flex-col items-center gap-1 px-2 py-2 transition-colors hover:bg-[var(--color-surface-2)]",
-                          i === 0 && "bg-[var(--color-accent-gold)]/5"
+                          "flex flex-col items-center gap-1 px-2 py-2 hover:bg-[var(--color-surface-2)]",
+                          i === 0 && "bg-[var(--color-surface-2)]"
                         )}
                       >
                         <ItemIcon code={item.code} size={34} />
                         <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-full truncate w-full leading-tight">
                           {itemNames[item.code] ?? item.code}
                         </span>
-                        <span className="text-[9px] text-[var(--color-primary)]">
+                        <span className="text-[9px] text-[var(--color-foreground)]">
                           {item.pickRate.toFixed(1)}%
                         </span>
                         <WinRateSpan winRate={item.winRate} />
@@ -689,9 +668,9 @@ export function CharacterDetailedAnalyzer({
   if (traitLoading) {
     return (
       <div className="space-y-3">
-        <div className="h-10 rounded-lg bg-[var(--color-surface)] animate-pulse" />
-        <div className="h-40 rounded-lg bg-[var(--color-surface)] animate-pulse" />
-        <div className="h-40 rounded-lg bg-[var(--color-surface)] animate-pulse" />
+        <div className="h-10 rounded-md bg-[var(--color-surface)]" />
+        <div className="h-40 rounded-md bg-[var(--color-surface)]" />
+        <div className="h-40 rounded-md bg-[var(--color-surface)]" />
       </div>
     );
   }
@@ -699,7 +678,7 @@ export function CharacterDetailedAnalyzer({
   // ── 표본 확인 중 ─────────────────────────────────────────────────────────────
   if (traitBuilds.length === 0) {
     return (
-      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-8 flex flex-col items-center gap-2 text-[var(--color-muted-foreground)]">
+      <div className="metric-card flex flex-col items-center gap-2 p-8 text-[var(--color-muted-foreground)]">
         <Layers className="h-8 w-8 opacity-40" />
         <p className="text-sm">{t("empty.detailed")}</p>
       </div>
@@ -718,8 +697,8 @@ export function CharacterDetailedAnalyzer({
   return (
     <div className="space-y-4">
       {/* 주특성 그룹 선택 */}
-      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-2.5 sm:p-4">
-        <p className="mb-1.5 sm:mb-3 text-[11px] sm:text-xs font-semibold text-[var(--color-muted-foreground)]">
+      <div className="metric-card p-2.5 sm:p-4">
+        <p className="dashboard-section-title mb-1.5 text-[11px] font-semibold text-[var(--color-foreground)] sm:mb-3 sm:text-xs">
           {t("stats.primaryTrait")}
         </p>
 
@@ -737,10 +716,10 @@ export function CharacterDetailedAnalyzer({
                 key={i}
                 onClick={() => setSelectedComboIdx(i)}
                 className={cn(
-                  "flex flex-col rounded-lg border px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs transition-colors min-w-[90px] sm:min-w-[100px] shrink-0 sm:shrink touch-manipulation",
+                  "flex flex-col rounded-md border px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs min-w-[90px] sm:min-w-[100px] shrink-0 sm:shrink touch-manipulation",
                   isSelected
-                    ? "border-[var(--color-primary)] bg-[var(--color-primary)]/15 text-[var(--color-primary)]"
-                    : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] active:border-[var(--color-primary)]/50 sm:hover:border-[var(--color-primary)]/50"
+                    ? "border-[var(--color-accent)] bg-[var(--color-accent-muted)] text-[var(--color-foreground)]"
+                    : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)] active:border-[var(--color-accent)] sm:hover:border-[var(--color-accent)]"
                 )}
               >
                 <div className="flex items-center gap-1.5">
@@ -752,7 +731,7 @@ export function CharacterDetailedAnalyzer({
                     className={cn(
                       "text-[9px] sm:text-[10px]",
                       isSelected
-                        ? "text-[var(--color-primary)]/80"
+                        ? "text-[var(--color-foreground)]"
                         : "text-[var(--color-muted-foreground)]"
                     )}
                   >
@@ -762,7 +741,7 @@ export function CharacterDetailedAnalyzer({
                     className={cn(
                       "text-[9px] sm:text-[10px]",
                       group.groupWinRate >= 12.5
-                        ? "text-[var(--color-accent-gold)]"
+                        ? "text-[var(--color-stat-up)]"
                         : "text-[var(--color-danger)]"
                     )}
                   >
@@ -772,10 +751,8 @@ export function CharacterDetailedAnalyzer({
                 <div className="mt-0.5 sm:mt-1 h-0.5 sm:h-1 w-full rounded-full bg-[var(--color-border)]">
                   <div
                     className={cn(
-                      "h-full rounded-full transition-all",
-                      isSelected
-                        ? "bg-[var(--color-primary)]"
-                        : "bg-[var(--color-muted-foreground)]"
+                      "h-full rounded-full",
+                      isSelected ? "bg-[var(--color-accent)]" : "bg-[var(--color-muted-foreground)]"
                     )}
                     style={{ width: `${barWidth}%` }}
                   />
@@ -787,7 +764,7 @@ export function CharacterDetailedAnalyzer({
 
         {/* 선택된 조합 요약 */}
         {selectedGroup && (
-          <div className="mt-2 sm:mt-3 flex items-center justify-between sm:justify-start gap-2 sm:gap-4 rounded-md bg-[var(--color-surface-2)] border border-[var(--color-border)] px-2.5 sm:px-4 py-2">
+          <div className="mt-2 flex items-center justify-between gap-2 rounded-md border border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-2.5 py-2 sm:mt-3 sm:justify-start sm:gap-4 sm:px-4">
             <div className="flex items-center gap-1">
               <span className="text-[10px] sm:text-xs text-[var(--color-muted-foreground)]">
                 {t("stats.total")}
@@ -801,7 +778,7 @@ export function CharacterDetailedAnalyzer({
               <span className="text-[10px] sm:text-xs text-[var(--color-muted-foreground)]">
                 {t("stats.pickRate")}
               </span>
-              <span className="text-[10px] sm:text-xs font-bold text-[var(--color-primary)]">
+              <span className="text-[10px] sm:text-xs font-bold text-[var(--color-foreground)]">
                 {selectedGroup.groupPickRate.toFixed(1)}%
               </span>
             </div>
@@ -814,7 +791,7 @@ export function CharacterDetailedAnalyzer({
                 className={cn(
                   "text-[10px] sm:text-xs font-bold",
                   selectedGroup.groupWinRate >= 12.5
-                    ? "text-[var(--color-accent-gold)]"
+                    ? "text-[var(--color-stat-up)]"
                     : "text-[var(--color-danger)]"
                 )}
               >
@@ -841,35 +818,26 @@ export function CharacterDetailedAnalyzer({
                 <div className="space-y-4">
                   <div className="flex flex-col lg:flex-row gap-4">
                     {/* 왼쪽: 주특성 트리 */}
-                    <div className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-4 sm:p-5">
+                    <div className="metric-card flex-1 p-4 sm:p-5">
                       {hasPrimaryTraits && (
                         <div className="flex flex-col items-center gap-3">
                           {topMainCore != null && (
-                            <div className={cn("rounded-full p-1 ring-2", mainConfig.ring)}>
+                            <div className="rounded-md p-1 outline outline-1 outline-[var(--color-border)]">
                               <TraitIconSmall code={topMainCore} size={40} />
                             </div>
                           )}
                           <TreeRow
                             options={selectedGroup.mainCoreOptions}
                             traitNames={traitNames}
-                            groupConfig={mainConfig}
                           />
-                          <TreeRow
-                            options={selectedGroup.sub1Options}
-                            traitNames={traitNames}
-                            groupConfig={mainConfig}
-                          />
-                          <TreeRow
-                            options={selectedGroup.sub2Options}
-                            traitNames={traitNames}
-                            groupConfig={mainConfig}
-                          />
+                          <TreeRow options={selectedGroup.sub1Options} traitNames={traitNames} />
+                          <TreeRow options={selectedGroup.sub2Options} traitNames={traitNames} />
                         </div>
                       )}
                     </div>
 
                     {/* 오른쪽: 주특성 요약 */}
-                    <div className="lg:w-[240px] shrink-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden self-start">
+                    <div className="metric-card shrink-0 overflow-hidden self-start lg:w-[240px]">
                       {hasPrimaryTraits && (
                         <>
                           <div
@@ -879,7 +847,7 @@ export function CharacterDetailedAnalyzer({
                             )}
                           >
                             {topMainCore != null && <TraitIconSmall code={topMainCore} size={18} />}
-                            <span className={cn("text-xs font-bold", mainConfig.text)}>
+                            <span className={cn("text-xs font-semibold", mainConfig.text)}>
                               {t("summaries.mainTrait", { name: mainConfig.name })}
                             </span>
                           </div>
@@ -916,9 +884,9 @@ export function CharacterDetailedAnalyzer({
 
                   {/* 부특성 3열 동시 표시 */}
                   {hasSecondaryTraits && (
-                    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
+                    <div className="metric-card overflow-hidden">
                       <div className="px-3 sm:px-4 py-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60">
-                        <span className="text-[11px] sm:text-xs font-semibold text-[var(--color-muted-foreground)]">
+                        <span className="dashboard-section-title text-[11px] font-semibold text-[var(--color-foreground)] sm:text-xs">
                           {t("sections.secondaryTraits")}
                         </span>
                       </div>
@@ -936,7 +904,7 @@ export function CharacterDetailedAnalyzer({
                             return (
                               <div
                                 key={si}
-                                className="min-w-[220px] overflow-hidden bg-[var(--color-surface)]/80 p-3 sm:min-w-0 sm:p-4"
+                                className="min-w-[220px] overflow-hidden bg-[var(--color-surface)] p-3 sm:min-w-0 sm:p-4"
                               >
                                 {/* 부특성 그룹 헤더 */}
                                 <div className="mb-3 flex min-w-0 items-center justify-between gap-2">
@@ -947,12 +915,15 @@ export function CharacterDetailedAnalyzer({
                                         secConfig.bg
                                       )}
                                     >
-                                      <span className={cn("text-xs font-black", secConfig.text)}>
+                                      <span className={cn("text-xs font-semibold", secConfig.text)}>
                                         {secConfig.letter}
                                       </span>
                                     </div>
                                     <span
-                                      className={cn("truncate text-xs font-bold", secConfig.text)}
+                                      className={cn(
+                                        "truncate text-xs font-semibold",
+                                        secConfig.text
+                                      )}
                                     >
                                       {secConfig.name}
                                     </span>
@@ -965,7 +936,7 @@ export function CharacterDetailedAnalyzer({
                                       className={cn(
                                         "whitespace-nowrap",
                                         sec.winRate >= 12.5
-                                          ? "text-[var(--color-accent-gold)]"
+                                          ? "text-[var(--color-stat-up)]"
                                           : "text-[var(--color-danger)]"
                                       )}
                                     >
@@ -978,12 +949,10 @@ export function CharacterDetailedAnalyzer({
                                   <TreeRow
                                     options={sec.optionTrait1Options}
                                     traitNames={traitNames}
-                                    groupConfig={secConfig}
                                   />
                                   <TreeRow
                                     options={sec.optionTrait2Options}
                                     traitNames={traitNames}
-                                    groupConfig={secConfig}
                                   />
                                 </div>
                               </div>
@@ -1000,8 +969,8 @@ export function CharacterDetailedAnalyzer({
           {/* 아이템 빌드 */}
           {equipLoading ? (
             <div className="space-y-3">
-              <div className="h-40 rounded-lg bg-[var(--color-surface)] animate-pulse" />
-              <div className="h-60 rounded-lg bg-[var(--color-surface)] animate-pulse" />
+              <div className="h-40 rounded-md bg-[var(--color-surface)]" />
+              <div className="h-60 rounded-md bg-[var(--color-surface)]" />
             </div>
           ) : hasEquipData ? (
             <div className="space-y-4">
@@ -1017,7 +986,7 @@ export function CharacterDetailedAnalyzer({
               )}
             </div>
           ) : (
-            <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-6 text-center text-sm text-[var(--color-muted-foreground)]">
+            <div className="metric-card p-6 text-center text-sm text-[var(--color-muted-foreground)]">
               {t("empty.itemBuilds")}
             </div>
           )}

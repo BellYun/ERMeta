@@ -17,30 +17,30 @@ function createGroupConfig(t: (key: string) => string) {
     havoc: {
       label: t("groups.havoc.name"),
       letter: t("groups.havoc.letter"),
-      bg: "bg-red-500/20",
-      text: "text-red-400",
-      ring: "ring-red-500/40",
+      bg: "bg-[var(--color-surface-2)]",
+      text: "text-[var(--color-foreground)]",
+      ring: "ring-[var(--color-border)]",
     },
     fortification: {
       label: t("groups.fortification.name"),
       letter: t("groups.fortification.letter"),
-      bg: "bg-blue-500/20",
-      text: "text-blue-400",
-      ring: "ring-blue-500/40",
+      bg: "bg-[var(--color-surface-2)]",
+      text: "text-[var(--color-foreground)]",
+      ring: "ring-[var(--color-border)]",
     },
     support: {
       label: t("groups.support.name"),
       letter: t("groups.support.letter"),
-      bg: "bg-emerald-500/20",
-      text: "text-emerald-400",
-      ring: "ring-emerald-500/40",
+      bg: "bg-[var(--color-surface-2)]",
+      text: "text-[var(--color-foreground)]",
+      ring: "ring-[var(--color-border)]",
     },
     chaos: {
       label: t("groups.chaos.name"),
       letter: t("groups.chaos.letter"),
-      bg: "bg-purple-500/20",
-      text: "text-purple-400",
-      ring: "ring-purple-500/40",
+      bg: "bg-[var(--color-surface-2)]",
+      text: "text-[var(--color-foreground)]",
+      ring: "ring-[var(--color-border)]",
     },
     unknown: {
       label: t("groups.unknown.name"),
@@ -133,7 +133,7 @@ function TraitIcon({
       <div
         className={cn(
           "relative rounded-md p-0.5",
-          !isEmpty && pickRate >= 30 ? "ring-1 ring-[var(--color-accent-gold)]/60" : ""
+          !isEmpty && pickRate >= 30 ? "ring-1 ring-[var(--color-stat-up)]/60" : ""
         )}
       >
         {!imgError ? (
@@ -167,8 +167,8 @@ function TraitIcon({
           isEmpty
             ? "text-[var(--color-muted-foreground)]"
             : pickRate >= 30
-              ? "text-[var(--color-accent-gold)]"
-              : "text-[var(--color-primary)]"
+              ? "text-[var(--color-stat-up)]"
+              : "text-[var(--color-foreground)]"
         )}
       >
         {pickRate.toFixed(1)}%
@@ -251,7 +251,7 @@ export function CharacterTraitBuildAnalyzer({
     return (
       <div className="space-y-2">
         {[...Array(2)].map((_, i) => (
-          <div key={i} className="h-32 rounded-lg bg-[var(--color-surface)] animate-pulse" />
+          <div key={i} className="h-32 rounded-md bg-[var(--color-surface)]" />
         ))}
       </div>
     );
@@ -259,7 +259,7 @@ export function CharacterTraitBuildAnalyzer({
 
   if (builds.length === 0) {
     return (
-      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-6 text-center text-sm text-[var(--color-muted-foreground)]">
+      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center text-sm text-[var(--color-muted-foreground)]">
         {t("empty.builds")}
       </div>
     );
@@ -274,8 +274,8 @@ export function CharacterTraitBuildAnalyzer({
           <div
             key={gi}
             className={cn(
-              "rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden",
-              gi === 0 && "ring-1 ring-[var(--color-accent-gold)]/30"
+              "rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden",
+              gi === 0 && "ring-1 ring-[var(--color-stat-up)]/30"
             )}
           >
             {/* 주특성 헤더 */}
@@ -287,7 +287,9 @@ export function CharacterTraitBuildAnalyzer({
             >
               <div className="flex items-center gap-2">
                 {gi === 0 && (
-                  <span className="text-xs font-bold text-[var(--color-accent-gold)]">#1</span>
+                  <span className="text-xs font-medium text-[var(--color-muted-foreground)]">
+                    {gi + 1}
+                  </span>
                 )}
                 <span className={cn("text-sm font-bold", mainConfig.text)}>{mainConfig.label}</span>
                 <span className="text-[10px] text-[var(--color-muted-foreground)]">
@@ -304,7 +306,7 @@ export function CharacterTraitBuildAnalyzer({
                   className={cn(
                     "font-semibold",
                     group.groupWinRate >= 55
-                      ? "text-[var(--color-accent-gold)]"
+                      ? "text-[var(--color-stat-up)]"
                       : "text-[var(--color-foreground)]"
                   )}
                 >
@@ -359,7 +361,7 @@ export function CharacterTraitBuildAnalyzer({
                         <div
                           key={si}
                           className={cn(
-                            "min-w-[220px] overflow-hidden bg-[var(--color-surface)]/80 p-3 sm:min-w-0",
+                            "min-w-[220px] overflow-hidden bg-[var(--color-surface)] p-3 sm:min-w-0",
                             isEmpty && "opacity-40"
                           )}
                         >
@@ -372,7 +374,7 @@ export function CharacterTraitBuildAnalyzer({
                                   secConfig.bg
                                 )}
                               >
-                                <span className={cn("text-[10px] font-black", secConfig.text)}>
+                                <span className={cn("text-[10px] font-bold", secConfig.text)}>
                                   {secConfig.letter}
                                 </span>
                               </div>
@@ -389,7 +391,7 @@ export function CharacterTraitBuildAnalyzer({
                                   className={cn(
                                     "whitespace-nowrap",
                                     sec.winRate >= 55
-                                      ? "text-[var(--color-accent-gold)]"
+                                      ? "text-[var(--color-stat-up)]"
                                       : "text-[var(--color-muted-foreground)]"
                                   )}
                                 >

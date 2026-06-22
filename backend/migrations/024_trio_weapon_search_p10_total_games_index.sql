@@ -1,32 +1,32 @@
--- ============================================================
--- v2_CharacterTrioWeaponSearch_p10 total_games 단독 인덱스
---
--- 목적:
---   - /api/stats/trios-weapon 의 캐릭터 미지정 분기 (trio-lab gallery
---     첫 로드, character1 없음) 를 v2_CharacterTrioWeapon 풀 테이블
---     → p10 search 테이블로 통합하기 위한 사전 작업.
---   - 기존 p10 인덱스 (013, 018) 는 모두 char prefix (ally1 / ally2 /
---     third) 라서 캐릭터 필터 없이 .order(total_games desc).limit(N)
---     실행 시 full scan + external sort → statement timeout (57014).
---
--- 주의:
---   - CREATE INDEX CONCURRENTLY 는 트랜잭션 밖에서만 실행 가능.
---     Supabase SQL editor 에서 BEGIN/COMMIT 없이 한 statement 만
---     실행할 것.
---   - 인덱스 생성 동안 테이블 lock 없음 (read/write 정상 동작).
---
--- 검증 (apply 후):
---   1) ANALYZE "v2_CharacterTrioWeaponSearch_p10";
---   2) EXPLAIN ANALYZE
---      SELECT ally1_char, ally1_weapon, total_games
---      FROM "v2_CharacterTrioWeaponSearch_p10"
---      ORDER BY total_games DESC LIMIT 5000;
---      → "Index Scan using idx_v2_trio_weapon_search_p10_total_games"
---        이 plan 에 등장해야 함
---
--- 롤백:
---   DROP INDEX CONCURRENTLY IF EXISTS idx_v2_trio_weapon_search_p10_total_games;
--- ============================================================
+    -- ============================================================
+    -- v2_CharacterTrioWeaponSearch_p10 total_games 단독 인덱스
+    --
+    -- 목적:
+    --   - /api/stats/trios-weapon 의 캐릭터 미지정 분기 (trio-lab gallery
+    --     첫 로드, character1 없음) 를 v2_CharacterTrioWeapon 풀 테이블
+    --     → p10 search 테이블로 통합하기 위한 사전 작업.
+    --   - 기존 p10 인덱스 (013, 018) 는 모두 char prefix (ally1 / ally2 /
+    --     third) 라서 캐릭터 필터 없이 .order(total_games desc).limit(N)
+    --     실행 시 full scan + external sort → statement timeout (57014).
+    --
+    -- 주의:
+    --   - CREATE INDEX CONCURRENTLY 는 트랜잭션 밖에서만 실행 가능.
+    --     Supabase SQL editor 에서 BEGIN/COMMIT 없이 한 statement 만
+    --     실행할 것.
+    --   - 인덱스 생성 동안 테이블 lock 없음 (read/write 정상 동작).
+    --
+    -- 검증 (apply 후):
+    --   1) ANALYZE "v2_CharacterTrioWeaponSearch_p10";
+    --   2) EXPLAIN ANALYZE
+    --      SELECT ally1_char, ally1_weapon, total_games
+    --      FROM "v2_CharacterTrioWeaponSearch_p10"
+    --      ORDER BY total_games DESC LIMIT 5000;
+    --      → "Index Scan using idx_v2_trio_weapon_search_p10_total_games"
+    --        이 plan 에 등장해야 함
+    --
+    -- 롤백:
+    --   DROP INDEX CONCURRENTLY IF EXISTS idx_v2_trio_weapon_search_p10_total_games;
+    -- ============================================================
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_v2_trio_weapon_search_p10_total_games
-ON "v2_CharacterTrioWeaponSearch_p10" (total_games DESC);
+    CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_v2_trio_weapon_search_p10_total_games
+    ON "v2_CharacterTrioWeaponSearch_p10" (total_games DESC);

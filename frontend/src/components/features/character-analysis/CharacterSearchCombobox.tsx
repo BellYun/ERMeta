@@ -186,12 +186,12 @@ export function CharacterSearchCombobox({
           onKeyDown={handleKeyDown}
           placeholder={t("placeholder")}
           className={cn(
-            "w-full rounded-[16px] border bg-[rgba(17,25,46,0.72)] py-2.5 pl-10 pr-4 text-sm text-[var(--color-foreground)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] sm:rounded-[18px] sm:py-3",
+            "w-full rounded-md border bg-[var(--color-surface)] py-2.5 pl-10 pr-4 text-sm text-[var(--color-foreground)] sm:py-3",
             "placeholder:text-[var(--color-muted-foreground)]",
-            "outline-none transition-all",
+            "outline-none",
             open
-              ? "rounded-b-[0px] border-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/30"
-              : "border-[var(--color-border)] hover:border-[var(--color-primary)]/40"
+              ? "rounded-b-[0px] border-[var(--color-border-light)] ring-1 ring-[var(--color-border-light)]"
+              : "border-[var(--color-border)] hover:border-[var(--color-border-light)]"
           )}
         />
       </div>
@@ -202,7 +202,7 @@ export function CharacterSearchCombobox({
           id={listboxId}
           role="listbox"
           aria-label={t("listAria")}
-          className="absolute top-full right-0 z-50 max-h-[70vh] w-full overflow-y-auto rounded-b-[16px] border border-t-0 border-[var(--color-primary)] bg-[rgba(15,23,42,0.98)] shadow-[0_28px_60px_-36px_rgba(0,0,0,0.9)] sm:max-h-[320px] sm:rounded-b-[18px]"
+          className="absolute right-0 top-full z-50 max-h-[70vh] w-full overflow-y-auto rounded-b-lg border border-t-0 border-[var(--color-border)] bg-[var(--color-surface)] sm:max-h-[320px]"
         >
           {filtered.length === 0 ? (
             <div
@@ -224,10 +224,10 @@ export function CharacterSearchCombobox({
                 }}
                 onMouseEnter={() => setHighlightIndex(index)}
                 className={cn(
-                  "flex min-h-[48px] w-full items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors sm:min-h-0 sm:py-2",
-                  code === activeCode && "bg-[var(--color-primary)]/5",
+                  "flex min-h-[48px] w-full items-center gap-3 px-3 py-2.5 text-left text-sm sm:min-h-0 sm:py-2",
+                  code === activeCode && "bg-[var(--color-surface-2)]",
                   highlightIndex === index
-                    ? "bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
+                    ? "bg-[var(--color-surface-2)] text-[var(--color-foreground)]"
                     : "text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]"
                 )}
               >
@@ -244,13 +244,13 @@ export function CharacterSearchCombobox({
                 <span
                   className={cn(
                     "font-medium",
-                    code === activeCode && "text-[var(--color-primary)]"
+                    code === activeCode && "text-[var(--color-foreground)]"
                   )}
                 >
                   {getDisplayName(code)}
                 </span>
                 {code === activeCode && (
-                  <span className="ml-auto text-[10px] font-medium text-[var(--color-primary)]">
+                  <span className="ml-auto text-[10px] font-medium text-[var(--color-muted-foreground)]">
                     {t("current")}
                   </span>
                 )}

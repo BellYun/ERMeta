@@ -9,16 +9,17 @@ export async function GET() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #38bdf8, #a78bfa)",
-        borderRadius: "108px",
+        background: "#ffffff",
+        border: "1px solid #d5dbe5",
+        borderRadius: "96px",
       }}
     >
       <div
         style={{
           fontSize: "248px",
-          fontWeight: 900,
-          color: "#ffffff",
-          letterSpacing: "-10px",
+          fontWeight: 700,
+          color: "#172033",
+          letterSpacing: "0",
           lineHeight: 1,
         }}
       >

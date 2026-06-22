@@ -15,6 +15,26 @@ const nextConfig: NextConfig = {
         destination: "/character/1",
         permanent: true,
       },
+      {
+        source: "/character-test",
+        destination: "/character/1",
+        permanent: false,
+      },
+      {
+        source: "/lab",
+        destination: "/character-lab",
+        permanent: true,
+      },
+      {
+        source: "/lab/:role",
+        destination: "/character-lab/:role",
+        permanent: true,
+      },
+      {
+        source: "/landing",
+        destination: "/",
+        permanent: true,
+      },
     ];
   },
 };

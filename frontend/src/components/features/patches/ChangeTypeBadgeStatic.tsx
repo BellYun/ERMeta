@@ -12,17 +12,17 @@ const CONFIG: Record<
 > = {
   buff: {
     colorClass: "text-[var(--color-success)]",
-    bgClass: "bg-[var(--color-success)]/14 border-[var(--color-success)]/28",
+    bgClass: "bg-[var(--color-surface)] border-[var(--color-border)]",
     Icon: TrendingUp,
   },
   nerf: {
     colorClass: "text-[var(--color-danger)]",
-    bgClass: "bg-[var(--color-danger)]/14 border-[var(--color-danger)]/28",
+    bgClass: "bg-[var(--color-surface)] border-[var(--color-border)]",
     Icon: TrendingDown,
   },
   rework: {
-    colorClass: "text-[var(--color-primary)]",
-    bgClass: "bg-[var(--color-primary)]/14 border-[var(--color-primary)]/28",
+    colorClass: "text-[var(--color-foreground)]",
+    bgClass: "bg-[var(--color-surface)] border-[var(--color-border)]",
     Icon: RefreshCw,
   },
 };
@@ -40,7 +40,7 @@ export function ChangeTypeBadgeStatic({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px] font-semibold tracking-[-0.02em]",
+        "inline-flex items-center gap-1 rounded border px-2 py-1 text-[11px] font-semibold ",
         config.bgClass,
         config.colorClass
       )}

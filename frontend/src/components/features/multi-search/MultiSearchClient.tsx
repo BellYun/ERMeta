@@ -2,6 +2,8 @@
 
 import { AlertTriangle, Loader2, Search, Swords, Trophy, Users } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { getFallbackMap } from "@/components/features/synergy/constants";
 import { getCharacterWeaponOptions } from "@/components/features/trio-lab/searchRequests";
@@ -14,8 +16,8 @@ import {
 import { buildTrioLabDetailHref } from "@/components/features/trio-lab/urlState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link } from "@/i18n/navigation";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
+import { withCurrentRouteLocale } from "@/lib/localizedPath";
 import { cn } from "@/lib/utils";
 
 interface MultiSearchResponse {
@@ -70,6 +72,8 @@ interface TeamCombosResponse {
 
 const TOP_CHARACTER_LIMIT = 3;
 const MY_NICKNAME_STORAGE_KEY = "ermeta:multi-search:my-nickname";
+const inputClassName =
+  "h-10 w-full min-w-0 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 text-sm font-medium text-[var(--color-foreground)] outline-none transition-colors placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-muted)]";
 
 export function MultiSearchClient() {
   const [myNickname, setMyNickname] = useState("");
@@ -130,7 +134,7 @@ export function MultiSearchClient() {
       const pools = players.map((player) => getTopCharacterCodes(player));
       if (pools.some((pool) => pool.length === 0)) {
         setTeamCombos([]);
-        setComboError("팀원별 주력 캐릭터 표본이 부족해 조합을 추천할 수 없습니다.");
+        setComboError("팀원별 주력 캐릭터 표본이 부족해 조합을 계산할 수 없습니다.");
         setIsComboLoading(false);
         return;
       }
@@ -149,7 +153,7 @@ export function MultiSearchClient() {
       } catch {
         if (!cancelled) {
           setTeamCombos([]);
-          setComboError("팀 조합 추천 데이터를 불러오지 못했습니다.");
+          setComboError("팀 조합 데이터를 불러오지 못했습니다.");
         }
       } finally {
         if (!cancelled) setIsComboLoading(false);
@@ -280,10 +284,7 @@ export function MultiSearchClient() {
 
   return (
     <div className="flex flex-col gap-5">
-      <form
-        onSubmit={handleMySubmit}
-        className="rounded-2xl border border-[var(--color-border)] bg-[rgba(15,23,42,0.72)] p-3 shadow-[0_20px_48px_-36px_rgba(0,0,0,0.68)] sm:p-4"
-      >
+      <form onSubmit={handleMySubmit} className="dashboard-panel p-3 sm:p-4">
         <div className="grid gap-2 lg:grid-cols-[minmax(180px,0.45fr)_auto]">
           <label className="min-w-0">
             <span className="sr-only">내 닉네임</span>
@@ -293,20 +294,16 @@ export function MultiSearchClient() {
               maxLength={16}
               autoComplete="nickname"
               placeholder="내 닉네임"
-              className="h-10 w-full min-w-0 rounded-xl border border-[var(--color-border)] bg-[rgba(8,13,25,0.86)] px-3 text-sm font-semibold text-[var(--color-foreground)] outline-none transition focus:border-[rgba(96,165,250,0.52)] focus:ring-2 focus:ring-[rgba(96,165,250,0.16)]"
+              className={inputClassName}
             />
           </label>
           <Button type="submit" size="lg" disabled={isMyLoading} className="h-10 md:min-w-28">
-            {isMyLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Search className="h-4 w-4" />
-            )}
-            내 정보 검색
+            {isMyLoading ? <Loader2 className="h-4 w-4" /> : <Search className="h-4 w-4" />}내 정보
+            검색
           </Button>
         </div>
         {error && !myProfile && (
-          <div className="mt-4 flex items-start gap-2 rounded-xl border border-[rgba(248,113,113,0.28)] bg-[rgba(127,29,29,0.18)] px-3 py-2 text-sm text-[var(--color-danger)]">
+          <div className="mt-4 flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-danger)]">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -322,10 +319,7 @@ export function MultiSearchClient() {
         />
       )}
 
-      <form
-        onSubmit={handleTeamSubmit}
-        className="rounded-2xl border border-[var(--color-border)] bg-[rgba(15,23,42,0.58)] p-3 shadow-[0_20px_48px_-36px_rgba(0,0,0,0.58)] sm:p-4"
-      >
+      <form onSubmit={handleTeamSubmit} className="dashboard-panel p-3 sm:p-4">
         <div className="grid gap-2 lg:grid-cols-[1fr_1fr_auto]">
           {[0, 1].map((index) => (
             <label key={index} className="min-w-0">
@@ -335,7 +329,7 @@ export function MultiSearchClient() {
                 onChange={(event) => updateTeammateInput(index, event.target.value)}
                 autoComplete="off"
                 placeholder={`팀원 ${index + 1} 닉네임`}
-                className="h-10 w-full min-w-0 rounded-xl border border-[var(--color-border)] bg-[rgba(8,13,25,0.86)] px-3 text-sm font-semibold text-[var(--color-foreground)] outline-none transition focus:border-[rgba(96,165,250,0.52)] focus:ring-2 focus:ring-[rgba(96,165,250,0.16)]"
+                className={inputClassName}
               />
             </label>
           ))}
@@ -345,16 +339,12 @@ export function MultiSearchClient() {
             disabled={isTeamLoading || !myProfile || teammateNicknames.length < 2}
             className="h-10 md:min-w-24"
           >
-            {isTeamLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Search className="h-4 w-4" />
-            )}
+            {isTeamLoading ? <Loader2 className="h-4 w-4" /> : <Search className="h-4 w-4" />}
             팀원 검색
           </Button>
         </div>
         {error && myProfile && (
-          <div className="mt-4 flex items-start gap-2 rounded-xl border border-[rgba(248,113,113,0.28)] bg-[rgba(127,29,29,0.18)] px-3 py-2 text-sm text-[var(--color-danger)]">
+          <div className="mt-4 flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-danger)]">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -369,6 +359,7 @@ export function MultiSearchClient() {
               <PlayerCard
                 key={`${index}-${result.input}`}
                 result={result}
+                accent={index === 0}
                 selectedCharacter={index > 0 ? (teammateCharacterFilters[index - 1] ?? null) : null}
                 onToggleCharacter={
                   index > 0
@@ -398,21 +389,23 @@ export function MultiSearchClient() {
 
 function PlayerCard({
   result,
+  accent,
   selectedCharacter,
   onToggleCharacter,
   getCharacterName,
 }: {
   result: PlayerResult;
+  accent?: boolean;
   selectedCharacter: number | null;
   onToggleCharacter?: (characterCode: number) => void;
   getCharacterName: (code: number) => string;
 }) {
   if (result.status !== "ok") {
     return (
-      <Card>
+      <Card data-accent={accent ? "true" : undefined}>
         <CardContent className="flex h-full flex-col gap-3 p-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[rgba(248,113,113,0.24)] bg-[rgba(127,29,29,0.18)] text-[var(--color-danger)]">
+            <div className="flex h-8 w-8 items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-danger)]">
               <AlertTriangle className="h-4 w-4" />
             </div>
             <div className="min-w-0">
@@ -433,30 +426,30 @@ function PlayerCard({
   }
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden" data-accent={accent ? "true" : undefined}>
       <CardContent className="flex flex-col gap-3 p-3">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="truncate text-base font-black text-[var(--color-foreground)]">
+            <p className="truncate text-base font-bold text-[var(--color-foreground)]">
               {result.nickname}
             </p>
             <p className="text-xs font-semibold text-[var(--color-muted-foreground)]">
               #{formatNumber(result.rank)} · MMR {formatNumber(result.mmr)}
             </p>
           </div>
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[rgba(96,165,250,0.26)] bg-[rgba(96,165,250,0.12)] text-[var(--color-primary)]">
+          <div className="flex h-9 w-9 items-center justify-center rounded border border-[var(--color-accent)] bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]">
             <Trophy className="h-4 w-4" />
           </div>
         </div>
 
         <div className="grid grid-cols-3 gap-2">
           <Metric label="승률" value={`${formatNumber(result.winRate)}%`} />
-          <Metric label="Top 3" value={`${formatNumber(result.top3Rate)}%`} />
+          <Metric label="순방률" value={`${formatNumber(result.top3Rate)}%`} />
           <Metric label="평균 킬" value={formatNumber(result.averageKills)} />
         </div>
 
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-[var(--color-muted-foreground)]">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-[var(--color-muted-foreground)]">
             <Users className="h-3.5 w-3.5" />
             주력 캐릭터
           </div>
@@ -466,13 +459,13 @@ function PlayerCard({
                 <div
                   key={character.characterCode}
                   className={cn(
-                    "grid gap-2 rounded-lg border px-2.5 py-1.5 transition",
+                    "grid gap-2 rounded-md border px-2.5 py-1.5",
                     "grid-cols-[1fr_auto]",
                     selectedCharacter === character.characterCode
-                      ? "border-[rgba(96,165,250,0.52)] bg-[rgba(96,165,250,0.14)]"
-                      : "border-[var(--color-border)] bg-[rgba(255,255,255,0.03)]",
+                      ? "border-[var(--color-accent)] bg-[var(--color-accent-muted)]"
+                      : "border-[var(--color-border)] bg-[var(--color-surface)]",
                     onToggleCharacter &&
-                      "hover:border-[rgba(96,165,250,0.32)] hover:bg-[rgba(96,165,250,0.06)]"
+                      "hover:border-[var(--color-accent)] hover:bg-[var(--color-surface-2)]"
                   )}
                 >
                   <button
@@ -529,14 +522,14 @@ function buildSearchSummary(results: PlayerResult[]): SearchSummaryState | null 
 
 function SearchSummary({ summary }: { summary: SearchSummaryState }) {
   return (
-    <div className="flex flex-col gap-2 rounded-xl border border-[rgba(251,191,36,0.24)] bg-[rgba(251,191,36,0.08)] px-3 py-2 text-sm text-[var(--color-foreground)]">
+    <div className="flex flex-col gap-2 rounded-md border border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-3 py-2 text-sm text-[var(--color-foreground)]">
       <div className="flex items-start gap-2">
         <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent-gold)]" />
         <div className="min-w-0">
           <p className="font-bold">일부 플레이어 정보를 불러오지 못했습니다.</p>
           <p className="mt-0.5 text-xs leading-5 text-[var(--color-muted-foreground)]">
             성공 {summary.okCount}명 · 실패 {summary.failed.length}명. 세 명 모두 시즌 기록이
-            확인되어야 조합 추천을 계산합니다.
+            확인되어야 조합 지표를 계산합니다.
           </p>
         </div>
       </div>
@@ -544,7 +537,7 @@ function SearchSummary({ summary }: { summary: SearchSummaryState }) {
         {summary.failed.map((result) => (
           <span
             key={result.input}
-            className="inline-flex items-center gap-1 rounded-lg border border-[rgba(251,191,36,0.18)] bg-[rgba(8,13,25,0.38)] px-2 py-1 text-xs font-semibold text-[var(--color-muted-foreground)]"
+            className="inline-flex items-center gap-1 rounded border border-[var(--color-accent)] bg-[var(--color-surface)] px-2 py-1 text-xs font-semibold text-[var(--color-muted-foreground)]"
           >
             <span className="max-w-32 truncate text-[var(--color-foreground)]">{result.input}</span>
             <span>{playerStatusText(result)}</span>
@@ -569,20 +562,20 @@ function MyProfileSetupCard({
   if (result.status !== "ok") return null;
 
   return (
-    <Card className="overflow-hidden border-[rgba(96,165,250,0.28)]">
+    <Card className="overflow-hidden border-[var(--color-border)]" data-accent="true">
       <CardContent className="flex flex-col gap-3 p-3 sm:p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-xs font-bold uppercase tracking-wider text-[var(--color-muted-foreground)]">
+            <p className="text-xs font-semibold text-[var(--color-muted-foreground)]">
               내 캐릭터 정보
             </p>
-            <h2 className="mt-1 truncate text-lg font-black text-[var(--color-foreground)]">
+            <h2 className="dashboard-section-title mt-1 truncate text-lg font-bold text-[var(--color-foreground)]">
               {result.nickname}
             </h2>
           </div>
           <div className="grid grid-cols-3 gap-2 text-center">
             <Metric label="승률" value={`${formatNumber(result.winRate)}%`} />
-            <Metric label="Top 3" value={`${formatNumber(result.top3Rate)}%`} />
+            <Metric label="순방률" value={`${formatNumber(result.top3Rate)}%`} />
             <Metric label="평균 킬" value={formatNumber(result.averageKills)} />
           </div>
         </div>
@@ -593,10 +586,10 @@ function MyProfileSetupCard({
             return (
               <div
                 key={character.characterCode}
-                className="grid gap-2 rounded-lg border border-[var(--color-border)] bg-[rgba(255,255,255,0.035)] p-2.5"
+                className="grid gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-2.5"
               >
                 <div className="grid grid-cols-[36px_1fr] items-center gap-2">
-                  <div className="relative h-9 w-9 overflow-hidden rounded-lg border border-[rgba(255,255,255,0.08)] bg-[var(--color-surface-2)]">
+                  <div className="relative h-9 w-9 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)]">
                     <Image
                       src={getCharacterMiniWebpUrl(character.characterCode)}
                       alt={getCharacterName(character.characterCode)}
@@ -607,7 +600,7 @@ function MyProfileSetupCard({
                     />
                   </div>
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-black text-[var(--color-foreground)]">
+                    <p className="truncate text-sm font-bold text-[var(--color-foreground)]">
                       {getCharacterName(character.characterCode)}
                     </p>
                     <p className="truncate text-xs text-[var(--color-muted-foreground)]">
@@ -620,7 +613,7 @@ function MyProfileSetupCard({
                   onChange={(event) =>
                     onWeaponChange(character.characterCode, Number(event.target.value))
                   }
-                  className="h-9 rounded-lg border border-[var(--color-border)] bg-[rgba(8,13,25,0.88)] px-2 text-xs font-semibold text-[var(--color-foreground)] outline-none"
+                  className="h-9 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-xs font-semibold text-[var(--color-foreground)] outline-none transition-colors focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-muted)]"
                   aria-label={`${getCharacterName(character.characterCode)} 무기군`}
                 >
                   <option value={0}>전체 무기</option>
@@ -649,11 +642,11 @@ function Metric({
   strong?: boolean;
 }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-2 py-1.5">
+    <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1.5">
       <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">{label}</p>
       <p
         className={cn(
-          "mt-1 truncate font-black text-[var(--color-foreground)]",
+          "mt-1 truncate font-bold text-[var(--color-foreground)]",
           strong ? "text-lg" : "text-base"
         )}
       >
@@ -810,34 +803,34 @@ function TeamComboRecommendations({
   );
   const recommendationTitle =
     activeWeaponFilterCount > 0
-      ? "팀원 후보 조합별 최적 내 픽"
+      ? "팀원 후보 조합별 내 픽 지표"
       : "팀원 후보군에 맞는 내 캐릭터/무기";
 
   return (
-    <section className="flex flex-col gap-3 rounded-2xl border border-[var(--color-border)] bg-[rgba(15,23,42,0.58)] p-3 sm:p-4">
+    <section className="dashboard-panel flex flex-col gap-3 p-3 sm:p-4" data-accent="true">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--color-muted-foreground)]">
-            <Swords className="h-4 w-4" />내 픽 추천
+          <div className="flex items-center gap-2 text-xs font-semibold text-[var(--color-muted-foreground)]">
+            <Swords className="h-4 w-4" />내 픽 지표
           </div>
-          <h2 className="mt-1 text-lg font-black text-[var(--color-foreground)]">
+          <h2 className="dashboard-section-title mt-1 text-lg font-bold text-[var(--color-foreground)]">
             {recommendationTitle}
           </h2>
           <p className="mt-1 max-w-3xl text-xs leading-5 text-[var(--color-muted-foreground)]">
-            팀원 2명의 주력 캐릭터 후보 조합마다 내 캐릭터/무기군 조건에서 가장 RP가 높은 픽을
-            하나씩 고르고, 그 조합들을 RP 기준으로 정렬합니다.
+            팀원 2명의 주력 캐릭터 후보 조합마다 내 캐릭터/무기군 조건의 RP 표본을 하나씩 표시하고,
+            조합을 RP 기준으로 정렬합니다.
           </p>
         </div>
         {loading && (
-          <span className="inline-flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-xs font-semibold text-[var(--color-muted-foreground)]">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            추천 계산 중
+          <span className="inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-xs font-semibold text-[var(--color-muted-foreground)]">
+            <Loader2 className="h-4 w-4" />
+            지표 계산 중
           </span>
         )}
       </div>
 
       {!isReady && (
-        <div className="flex items-start gap-2 rounded-xl border border-[rgba(251,191,36,0.24)] bg-[rgba(251,191,36,0.08)] px-3 py-2 text-sm text-[var(--color-muted-foreground)]">
+        <div className="flex items-start gap-2 rounded-md border border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-3 py-2 text-sm text-[var(--color-muted-foreground)]">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent-gold)]" />
           <span>
             현재 검색 성공 {okPlayers.length}명입니다.{" "}
@@ -849,14 +842,14 @@ function TeamComboRecommendations({
       )}
 
       {isReady && error && !loading && (
-        <div className="flex items-start gap-2 rounded-xl border border-[rgba(248,113,113,0.24)] bg-[rgba(127,29,29,0.16)] px-3 py-2 text-sm text-[var(--color-danger)]">
+        <div className="flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-danger)]">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {isReady && !loading && !error && recommendedCombos.length === 0 && combos.length > 0 && (
-        <div className="rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.035)] px-3 py-2 text-sm text-[var(--color-muted-foreground)]">
+        <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-muted-foreground)]">
           설정한 캐릭터별 무기군과 맞는 표본이 없습니다.
         </div>
       )}
@@ -1021,6 +1014,7 @@ function MyPickComboCard({
   recommendation: OrderedComboRecommendation;
   rank: number;
 }) {
+  const pathname = usePathname();
   const { myMember, combos } = recommendation;
   const bestCombo = combos[0]?.combo;
   const tier = bestCombo
@@ -1028,10 +1022,13 @@ function MyPickComboCard({
     : "D";
 
   return (
-    <div className="flex min-h-[176px] flex-col gap-3 rounded-xl border border-[rgba(96,165,250,0.24)] bg-[rgba(96,165,250,0.055)] p-3">
+    <div
+      className="metric-card flex min-h-[176px] flex-col gap-3 p-3"
+      data-accent={rank === 1 ? "true" : undefined}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-[rgba(255,255,255,0.1)] bg-[var(--color-surface-2)]">
+          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded border border-[var(--color-border)] bg-[var(--color-surface-2)]">
             <Image
               src={getCharacterMiniWebpUrl(myMember.character)}
               alt={characterDisplayName(myMember.character)}
@@ -1043,14 +1040,21 @@ function MyPickComboCard({
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
-              <span className="inline-flex h-6 min-w-7 items-center justify-center rounded-md bg-[var(--color-surface-3)] px-1.5 font-mono text-[10px] font-bold text-[var(--color-muted-foreground)]">
+              <span
+                className={cn(
+                  "inline-flex h-6 min-w-7 items-center justify-center rounded-md px-1.5 font-mono text-[10px] font-bold",
+                  rank === 1
+                    ? "bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]"
+                    : "bg-[var(--color-surface-3)] text-[var(--color-muted-foreground)]"
+                )}
+              >
                 #{rank}
               </span>
-              <span className="inline-flex h-6 min-w-7 items-center justify-center rounded-md border border-[rgba(251,191,36,0.24)] bg-[rgba(251,191,36,0.10)] px-1.5 font-mono text-xs font-black text-[var(--color-accent-gold)]">
+              <span className="inline-flex h-6 min-w-7 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 font-mono text-xs font-bold text-[var(--color-foreground)]">
                 {tier}
               </span>
             </div>
-            <p className="mt-1 truncate text-sm font-black text-[var(--color-foreground)]">
+            <p className="mt-1 truncate text-sm font-bold text-[var(--color-foreground)]">
               {memberDisplayName(myMember)}
             </p>
             <p className="truncate text-xs font-semibold text-[var(--color-muted-foreground)]">
@@ -1061,10 +1065,10 @@ function MyPickComboCard({
         {bestCombo && (
           <span
             className={cn(
-              "rounded-lg px-2 py-1 font-mono text-sm font-black",
+              "rounded border bg-[var(--color-surface)] px-2 py-1 font-mono text-sm font-bold",
               bestCombo.averageRP >= 0
-                ? "bg-[rgba(74,222,128,0.10)] text-[var(--color-stat-up)]"
-                : "bg-[rgba(248,113,113,0.10)] text-[var(--color-stat-down)]"
+                ? "border-[var(--color-border)] text-[var(--color-stat-up)]"
+                : "border-[var(--color-border)] text-[var(--color-stat-down)]"
             )}
           >
             {bestCombo.averageRP >= 0 ? "+" : ""}
@@ -1082,15 +1086,15 @@ function MyPickComboCard({
       )}
 
       <div className="mt-auto flex flex-col gap-1.5 border-t border-[var(--color-border)] pt-2">
-        <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-muted-foreground)]">
+        <p className="text-[10px] font-semibold text-[var(--color-muted-foreground)]">
           팀원 픽 순서
         </p>
         {combos.map(({ combo, members }) => (
           <Link
             key={combo.id}
-            href={comboDetailHref(combo)}
+            href={withCurrentRouteLocale(pathname, comboDetailHref(combo))}
             scroll={false}
-            className="flex items-center justify-between gap-2 rounded-lg bg-[rgba(255,255,255,0.035)] px-2 py-1.5 text-[11px] transition hover:bg-[rgba(96,165,250,0.10)]"
+            className="flex items-center justify-between gap-2 rounded border border-transparent bg-[var(--color-surface)] px-2 py-1.5 text-[11px] hover:border-[var(--color-accent)] hover:bg-[var(--color-accent-muted)]"
           >
             <span className="min-w-0 truncate font-bold text-[var(--color-foreground)]">
               {members
@@ -1111,7 +1115,7 @@ function MyPickComboCard({
 
 function CompactMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="min-w-0 rounded-md bg-[rgba(255,255,255,0.035)] px-1 py-1">
+    <div className="min-w-0 rounded-md bg-[var(--color-surface)] px-1 py-1">
       <p className="text-[9px] font-semibold text-[var(--color-muted-foreground)]">{label}</p>
       <p className="truncate font-mono text-[11px] font-bold text-[var(--color-foreground)]">
         {value}

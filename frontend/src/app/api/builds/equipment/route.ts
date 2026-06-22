@@ -291,7 +291,7 @@ export async function GET(request: NextRequest) {
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("[builds/equipment] 예외:", message);
+    console.error("[builds/equipment] request failed:", message);
     return NextResponse.json<EquipmentBuildResult>({
       topBuilds: [],
       slotPopularity: { weapon: [], chest: [], head: [], arm: [], leg: [] },

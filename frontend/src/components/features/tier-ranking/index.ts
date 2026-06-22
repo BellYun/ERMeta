@@ -1,1 +1,1 @@
-export { TierRankingTable } from "./TierRankingTable"
+export { TierRankingTable } from "./TierRankingTable";

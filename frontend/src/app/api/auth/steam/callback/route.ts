@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  issueDesktopSessionToken,
-  verifySteamStateToken,
-} from "@/lib/auth/desktopAuthToken";
+import { issueDesktopSessionToken, verifySteamStateToken } from "@/lib/auth/desktopAuthToken";
 import { isDesktopAuthEnabled } from "@/lib/auth/featureFlags";
 
 export const dynamic = "force-dynamic";
@@ -12,9 +9,7 @@ const DEFAULT_ERROR_REDIRECT = "ermeta://auth/callback";
 
 function parseSteamIdFromClaimedId(claimedId: string | null): string | null {
   if (!claimedId) return null;
-  const match = claimedId.match(
-    /^https?:\/\/steamcommunity\.com\/openid\/id\/(\d+)$/i
-  );
+  const match = claimedId.match(/^https?:\/\/steamcommunity\.com\/openid\/id\/(\d+)$/i);
   return match?.[1] ?? null;
 }
 
@@ -48,9 +43,7 @@ async function fetchPersonaName(steamId: string): Promise<string> {
     return `steam_${steamId.slice(-6)}`;
   }
 
-  const profileUrl = new URL(
-    "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/"
-  );
+  const profileUrl = new URL("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/");
   profileUrl.searchParams.set("key", key);
   profileUrl.searchParams.set("steamids", steamId);
 
@@ -76,10 +69,7 @@ async function fetchPersonaName(steamId: string): Promise<string> {
   return personaname;
 }
 
-function buildRedirectUrl(
-  redirectUri: string,
-  params: Record<string, string>
-): string | null {
+function buildRedirectUrl(redirectUri: string, params: Record<string, string>): string | null {
   try {
     const url = new URL(redirectUri);
     for (const [key, value] of Object.entries(params)) {
@@ -91,11 +81,7 @@ function buildRedirectUrl(
   }
 }
 
-function redirectWithError(
-  redirectUri: string,
-  code: string,
-  detail?: string
-): NextResponse {
+function redirectWithError(redirectUri: string, code: string, detail?: string): NextResponse {
   const url = buildRedirectUrl(redirectUri, {
     error: code,
     ...(detail ? { error_description: detail } : {}),
@@ -104,7 +90,7 @@ function redirectWithError(
     return NextResponse.json(
       {
         error: code,
-        error_description: detail ?? "redirect URI가 유효하지 않습니다.",
+        error_description: detail ?? "Redirect URI is invalid.",
       },
       { status: 400 }
     );
@@ -115,32 +101,20 @@ function redirectWithError(
 
 export async function GET(request: NextRequest) {
   if (!isDesktopAuthEnabled()) {
-    return NextResponse.json(
-      { error: "Desktop auth feature is disabled." },
-      { status: 404 }
-    );
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
 
   const url = new URL(request.url);
   const stateToken = url.searchParams.get("state");
-  const fallbackRedirectUri =
-    url.searchParams.get("redirect") ?? DEFAULT_ERROR_REDIRECT;
+  const fallbackRedirectUri = url.searchParams.get("redirect") ?? DEFAULT_ERROR_REDIRECT;
 
   if (!stateToken) {
-    return redirectWithError(
-      fallbackRedirectUri,
-      "missing_state",
-      "state 파라미터가 없습니다."
-    );
+    return redirectWithError(fallbackRedirectUri, "missing_state", "Missing state parameter.");
   }
 
   const statePayload = verifySteamStateToken(stateToken);
   if (!statePayload) {
-    return redirectWithError(
-      fallbackRedirectUri,
-      "invalid_state",
-      "state 검증에 실패했습니다."
-    );
+    return redirectWithError(fallbackRedirectUri, "invalid_state", "State verification failed.");
   }
 
   const redirectUri = statePayload.redirectUri;
@@ -151,20 +125,14 @@ export async function GET(request: NextRequest) {
       return redirectWithError(
         redirectUri,
         "steam_verification_failed",
-        "Steam OpenID 검증에 실패했습니다."
+        "Steam OpenID verification failed."
       );
     }
 
-    const steamId = parseSteamIdFromClaimedId(
-      url.searchParams.get("openid.claimed_id")
-    );
+    const steamId = parseSteamIdFromClaimedId(url.searchParams.get("openid.claimed_id"));
 
     if (!steamId) {
-      return redirectWithError(
-        redirectUri,
-        "missing_steam_id",
-        "Steam ID를 확인할 수 없습니다."
-      );
+      return redirectWithError(redirectUri, "missing_steam_id", "Steam ID could not be verified.");
     }
 
     const personaName = await fetchPersonaName(steamId);
@@ -184,7 +152,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           error: "invalid_redirect_uri",
-          error_description: "유효하지 않은 redirect URI입니다.",
+          error_description: "Redirect URI is invalid.",
         },
         { status: 400 }
       );
@@ -192,8 +160,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.redirect(successRedirect);
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "알 수 없는 오류가 발생했습니다.";
+    const message = error instanceof Error ? error.message : "Unexpected authentication error.";
     return redirectWithError(redirectUri, "callback_exception", message);
   }
 }

@@ -12,7 +12,6 @@ import { resolveCharacterName } from "@/lib/characterMap";
 import { isMobileDevice } from "@/lib/device";
 import { FetchHttpError, FetchRetriesExhaustedError, fetchWithRetry } from "@/lib/fetchWithRetry";
 import { withCurrentRouteLocale } from "@/lib/localizedPath";
-import { cn } from "@/lib/utils";
 import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "./constants";
 import type { TrioResult, SortBy } from "./types";
 import { getThirdCharacter, deduplicateResults } from "./utils";
@@ -244,7 +243,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
     <>
       {/* 정렬 기준 + 헤더 */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <div className="flex items-center gap-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-1">
+        <div className="flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-1">
           {SORT_OPTIONS.map(({ value, labelKey }) => (
             <button
               key={value}
@@ -252,12 +251,8 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                 setSortBy(value);
                 analytics.synergySortChanged(value);
               }}
-              className={cn(
-                "px-2.5 py-1 rounded-md text-xs font-medium transition-colors",
-                sortBy === value
-                  ? "bg-[var(--color-primary)] text-white"
-                  : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)]"
-              )}
+              className="dashboard-tab min-h-[30px] px-2.5 py-1 text-xs"
+              data-active={sortBy === value ? "true" : undefined}
             >
               {t(`sort.${labelKey}`)}
             </button>
@@ -267,7 +262,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
         <div className="flex items-center gap-3">
           {selectedAllies.length > 0 && (
             <>
-              <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
+              <h2 className="dashboard-section-title text-sm font-semibold text-[var(--color-foreground)]">
                 {selectedAllies.length === 1
                   ? t("titleSingle", { ally: getCharName(selectedAllies[0]) })
                   : t("titlePair", {
@@ -322,7 +317,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                     });
                   });
                 }}
-                className="inline-flex items-center gap-1 shrink-0 rounded-md border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 hover:border-[var(--color-primary)]/50 transition-colors"
+                className="inline-flex items-center gap-1 shrink-0 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-xs font-medium text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
               >
                 <Share2 className="h-3 w-3" />
                 {copied ? t("copied") : t("share")}
@@ -343,10 +338,10 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
       {/* 결과 목록 */}
       <SectionErrorBoundary sectionName={t("sectionName")}>
         {selectedAllies.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
+          <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] py-14 text-center">
             <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
             <p className="text-sm text-[var(--color-muted-foreground)]">{t("empty.prompt")}</p>
-            <div className="flex flex-col gap-1 mt-3 text-xs text-[var(--color-muted-foreground)]">
+            <div className="mt-3 flex flex-col gap-1 text-xs text-[var(--color-muted-foreground)]">
               <span>{t("empty.step1")}</span>
               <span>{t("empty.step2")}</span>
               <span>{t("empty.step3")}</span>
@@ -355,13 +350,13 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
         ) : loading ? (
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2 py-2">
-              <Loader2 className="h-4 w-4 animate-spin text-[var(--color-primary)]" />
+              <Loader2 className="h-4 w-4 text-[var(--color-muted-foreground)]" />
               <p className="text-sm text-[var(--color-muted-foreground)]">{t("loading")}</p>
             </div>
             {Array.from({ length: 5 }).map((_, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-3 animate-pulse"
+                className="flex items-center gap-3 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3"
               >
                 <div className="h-6 w-6 rounded-full bg-[var(--color-surface-2)]" />
                 <div className="flex gap-2">
@@ -377,21 +372,19 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
             ))}
           </div>
         ) : error ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16">
+          <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] py-14">
             <p className="text-sm text-[var(--color-danger)]">{error}</p>
           </div>
         ) : recommendations.length > 0 ? (
           <div data-sr-block className="flex flex-col gap-2">
             {selectedAllies.length === 1 && (
-              <p className="flex items-center gap-1.5 text-[11px] text-[var(--color-muted-foreground)] bg-[var(--color-surface-2)] px-3 py-2 rounded-lg">
+              <p className="flex items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-[11px] text-[var(--color-muted-foreground)]">
                 <Info className="h-3.5 w-3.5 shrink-0" />
                 {t("infoSingle")}
               </p>
             )}
             <React.Suspense
-              fallback={
-                <div className="h-64 rounded-xl bg-[var(--color-surface-2)] animate-pulse" />
-              }
+              fallback={<div className="h-64 rounded-md bg-[var(--color-surface-2)]" />}
             >
               {recommendations.map((rec, i) => (
                 <ComboCard
@@ -401,6 +394,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                   getCharName={getCharName}
                   selectedAllies={selectedAllies}
                   isFocusPoolCombo={isFocusResult(rec, selectedAllies, focusCharacters)}
+                  isTopResult={i < 3}
                   compact={compact}
                   priorityImages={i < 5}
                   onNavigateAnalysis={(code) => {
@@ -418,12 +412,12 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
             </React.Suspense>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-16 text-center">
+          <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] py-14 text-center">
             <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
             <p className="text-sm text-[var(--color-muted-foreground)]">{t("emptyNoData")}</p>
             <button
               onClick={clearAllies}
-              className="mt-3 text-xs text-[var(--color-primary)] hover:underline"
+              className="mt-3 text-xs text-[var(--color-foreground)] hover:underline"
             >
               {t("clearAllies")}
             </button>

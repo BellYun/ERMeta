@@ -50,16 +50,16 @@ const FocusCell = React.memo(function FocusCell({
       title={localizedWeaponLabel ? `${charName} (${localizedWeaponLabel})` : charName}
       style={{ touchAction: "manipulation" }}
       className={cn(
-        "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors touch-manipulation",
+        "flex flex-col items-center gap-1 rounded-md px-1 py-2 touch-manipulation",
         selected
-          ? "bg-[var(--color-accent-purple)]/22 ring-2 ring-[var(--color-accent-purple)]/80 shadow-[0_0_0_1px_rgba(167,139,250,0.18)]"
+          ? "bg-[var(--color-surface)] outline outline-1 outline-[var(--color-border-light)]"
           : "hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80"
       )}
     >
       <div
         className={cn(
           "relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
-          selected && "ring-2 ring-[var(--color-accent-purple)]/60"
+          selected && "outline outline-1 outline-[var(--color-border-light)]"
         )}
       >
         <Image
@@ -73,7 +73,7 @@ const FocusCell = React.memo(function FocusCell({
       <span
         className={cn(
           "w-full truncate text-center text-[11.5px] font-semibold",
-          selected ? "text-[#d8b4fe]" : "text-[var(--color-foreground)]/92"
+          selected ? "text-[var(--color-foreground)]" : "text-[var(--color-foreground)]/92"
         )}
       >
         {charName}
@@ -82,7 +82,7 @@ const FocusCell = React.memo(function FocusCell({
         <span
           className={cn(
             "w-full truncate text-center text-[10px] font-medium",
-            selected ? "text-[var(--color-accent-purple)]/90" : "text-[var(--color-foreground)]/60"
+            selected ? "text-[var(--color-foreground)]" : "text-[var(--color-muted-foreground)]"
           )}
         >
           {localizedWeaponLabel}
@@ -169,7 +169,7 @@ export function FocusWeaponPool() {
   const headerTapGuard = useTapGuard(toggleExpanded);
 
   return (
-    <div className="overflow-hidden rounded-[22px] border border-[var(--color-border)] bg-[rgba(17,25,46,0.72)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
       {/* 접이식 헤더 — button 중첩 방지를 위해 div+role 사용 */}
       <div
         role="button"
@@ -183,19 +183,17 @@ export function FocusWeaponPool() {
         }}
         aria-expanded={isExpanded}
         style={{ touchAction: "manipulation" }}
-        className="w-full flex items-center justify-between px-4 py-3 hover:bg-[rgba(255,255,255,0.03)] active:bg-[rgba(255,255,255,0.04)] transition-colors cursor-pointer"
+        className="flex w-full cursor-pointer items-center justify-between px-4 py-3 hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)]"
       >
         <div className="flex items-center gap-2.5">
-          <span className="text-[14px] font-bold tracking-[-0.01em] text-[var(--color-foreground)]">
-            {t("title")}
-          </span>
+          <span className="text-[14px] font-bold text-[var(--color-foreground)]">{t("title")}</span>
           {focusCharWeapons.length > 0 && (
-            <span className="rounded-full border border-[var(--color-accent-purple)]/40 bg-[var(--color-accent-purple)]/18 px-2 py-0.5 text-[10.5px] font-bold text-[#d8b4fe]">
+            <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-0.5 text-[10.5px] font-bold text-[var(--color-muted-foreground)]">
               {t("count", { count: focusCharWeapons.length })}
             </span>
           )}
           {focusCharWeapons.length === 0 && (
-            <span className="text-[11px] font-medium text-[var(--color-foreground)]/60">
+            <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
               {t("hint")}
             </span>
           )}
@@ -210,15 +208,18 @@ export function FocusWeaponPool() {
               onTouchEnd={(e) => e.stopPropagation()}
               onPointerDown={(e) => e.stopPropagation()}
               onPointerUp={(e) => e.stopPropagation()}
-              className="text-[11px] font-medium text-[var(--color-foreground)]/70 hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg hover:bg-[var(--color-surface-2)]"
+              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md text-[11px] font-medium text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)]"
             >
               {t("reset")}
             </button>
           )}
           {isExpanded ? (
-            <ChevronUp className="h-4 w-4 text-[var(--color-foreground)]/70" strokeWidth={2.4} />
+            <ChevronUp className="h-4 w-4 text-[var(--color-muted-foreground)]" strokeWidth={2.4} />
           ) : (
-            <ChevronDown className="h-4 w-4 text-[var(--color-foreground)]/70" strokeWidth={2.4} />
+            <ChevronDown
+              className="h-4 w-4 text-[var(--color-muted-foreground)]"
+              strokeWidth={2.4}
+            />
           )}
         </div>
       </div>
@@ -230,9 +231,9 @@ export function FocusWeaponPool() {
             <button
               key={`${f.charCode}-${f.weaponCode}`}
               onClick={() => toggleFocus(f.charCode, f.weaponCode)}
-              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[var(--color-accent-purple)]/40 bg-[var(--color-accent-purple)]/14 px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-foreground)] hover:bg-[var(--color-accent-purple)]/22 active:bg-[var(--color-accent-purple)]/28 transition-colors"
+              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)]"
             >
-              <span className="relative h-4 w-4 shrink-0 overflow-hidden rounded ring-1 ring-[var(--color-accent-purple)]/40">
+              <span className="relative h-4 w-4 shrink-0 overflow-hidden rounded ring-1 ring-[var(--color-border)]">
                 <Image
                   src={getCharacterMiniWebpUrl(f.charCode)}
                   alt={getCharName(f.charCode)}
@@ -242,7 +243,7 @@ export function FocusWeaponPool() {
                 />
               </span>
               <span className="max-w-24 truncate">{resolveLabel(f)}</span>
-              <X className="h-3 w-3 text-[var(--color-foreground)]/60" strokeWidth={2.6} />
+              <X className="h-3 w-3 text-[var(--color-muted-foreground)]" strokeWidth={2.6} />
             </button>
           ))}
         </div>
@@ -257,12 +258,12 @@ export function FocusWeaponPool() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t("searchPlaceholder")}
-              className="w-full rounded-xl border border-[var(--color-border)] bg-[rgba(10,16,31,0.72)] py-2 pl-8 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
+              className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] py-2 pl-8 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-border-light)] focus:outline-none"
             />
             {search && (
               <button
                 onClick={() => setSearch("")}
-                className="absolute right-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] transition-colors"
+                className="absolute right-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)]"
               >
                 <X className="h-3.5 w-3.5" />
               </button>

@@ -67,7 +67,7 @@ export function GlobalFilter() {
 
   return (
     <>
-      <div className="grid grid-cols-4 gap-2 sm:hidden">
+      <div className="grid grid-cols-4 gap-1.5 sm:hidden">
         <div className="relative min-w-0">
           <select
             aria-label={t("patchAria")}
@@ -77,8 +77,8 @@ export function GlobalFilter() {
               analytics.patchSelected(e.target.value);
             }}
             className={cn(
-              "h-14 w-full appearance-none rounded-[18px] border border-[var(--color-border)] bg-[rgba(17,25,46,0.82)] px-3 pr-8 text-[13px] font-medium text-[var(--color-foreground)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
-              "focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]/30"
+              "h-12 w-full appearance-none rounded-[5px] border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 pr-6 font-mono text-[12px] font-bold text-[var(--color-foreground)]",
+              "focus:outline-none focus:border-[var(--color-accent)]"
             )}
           >
             {patches.map((p) => (
@@ -92,7 +92,7 @@ export function GlobalFilter() {
               </option>
             )}
           </select>
-          <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
+          <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
             <svg
               className="h-3.5 w-3.5 text-[var(--color-muted-foreground)]"
               fill="none"
@@ -109,7 +109,7 @@ export function GlobalFilter() {
           role="radiogroup"
           aria-label={t("tierAria")}
           aria-orientation="horizontal"
-          className="col-span-3 grid grid-cols-3 gap-2"
+          className="col-span-3 grid grid-cols-3 gap-1.5"
         >
           {tierOptions.map(({ value, label }, index) => {
             const isSelected = tier === value;
@@ -125,13 +125,8 @@ export function GlobalFilter() {
                 tabIndex={isSelected ? 0 : -1}
                 onClick={() => selectTier(value)}
                 onKeyDown={(e) => handleTierKeyDown(e, index)}
-                className={cn(
-                  "flex h-14 min-w-0 items-center justify-center rounded-[18px] border px-2 text-center text-[12px] font-medium leading-4 tracking-[-0.02em] transition-all",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
-                  isSelected
-                    ? "border-[var(--color-primary)]/55 bg-[var(--color-primary)]/12 text-[var(--color-primary)] shadow-[0_18px_30px_-24px_rgba(96,165,250,0.9)]"
-                    : "border-[var(--color-border)] bg-[rgba(17,25,46,0.82)] text-[var(--color-muted-foreground)]"
-                )}
+                className="dashboard-tab h-12 min-w-0 px-2 text-center text-[12px] leading-4"
+                data-active={isSelected ? "true" : undefined}
               >
                 <span className="truncate">{label}</span>
               </button>
@@ -151,13 +146,13 @@ export function GlobalFilter() {
             }}
             className={cn(
               "appearance-none w-full sm:w-auto",
-              "px-3 py-2 pr-8",
-              "rounded-lg",
+              "px-3 py-1.5 pr-8",
+              "rounded-[5px]",
               "bg-[var(--color-surface-2)] border border-[var(--color-border)]",
-              "text-sm font-medium text-[var(--color-foreground)]",
+              "font-mono text-sm font-bold text-[var(--color-foreground)]",
               "hover:border-[var(--color-border-light)]",
-              "focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]/30",
-              "transition-all cursor-pointer"
+              "focus:outline-none focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)]",
+              "transition-colors cursor-pointer"
             )}
           >
             {patches.map((p) => (
@@ -188,7 +183,7 @@ export function GlobalFilter() {
           role="radiogroup"
           aria-label={t("tierAria")}
           aria-orientation="horizontal"
-          className="flex rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] p-0.5"
+          className="flex rounded-[5px] bg-[var(--color-surface-2)] border border-[var(--color-border)] p-0.5"
         >
           {tierOptions.map(({ value, label }, index) => {
             const isSelected = tier === value;
@@ -204,14 +199,8 @@ export function GlobalFilter() {
                 tabIndex={isSelected ? 0 : -1}
                 onClick={() => selectTier(value)}
                 onKeyDown={(e) => handleTierKeyDown(e, index)}
-                className={cn(
-                  "px-3 py-1.5 rounded-md text-xs sm:text-[13px] font-medium transition-all whitespace-nowrap",
-                  "min-h-[32px] touch-manipulation",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50",
-                  isSelected
-                    ? "bg-[var(--color-primary)]/15 text-[var(--color-primary)] shadow-sm"
-                    : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
-                )}
+                className="dashboard-tab min-h-[32px] whitespace-nowrap px-3 py-1.5 text-xs sm:text-[13px]"
+                data-active={isSelected ? "true" : undefined}
               >
                 {label}
               </button>

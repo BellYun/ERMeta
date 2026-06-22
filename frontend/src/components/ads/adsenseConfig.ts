@@ -18,6 +18,12 @@ export const ADSENSE_SLOTS = {
   synergyDetail: ADSENSE_DISABLED
     ? ""
     : (process.env.NEXT_PUBLIC_ADSENSE_SYNERGY_DETAIL_SLOT ?? productionDefault),
+  siteRailLeft: ADSENSE_DISABLED
+    ? ""
+    : (process.env.NEXT_PUBLIC_ADSENSE_SITE_RAIL_LEFT_SLOT ?? productionDefault),
+  siteRailRight: ADSENSE_DISABLED
+    ? ""
+    : (process.env.NEXT_PUBLIC_ADSENSE_SITE_RAIL_RIGHT_SLOT ?? productionDefault),
 } as const;
 
 export function canRenderAdSlot(slot: string) {

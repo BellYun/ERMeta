@@ -4,20 +4,74 @@
     "logoTitle": "ER&GG",
     "logoSubtitle": "永恆輪迴 Meta",
     "patchPrefix": "v",
+    "seasonRecapBadge": "賽季",
+    "seasonRecapTitle": "第 10 賽季回顧已上線",
+    "seasonRecapBody": "查看各版本主要 RP 陣容與完整賽季 Meta 變化。",
+    "seasonRecapCta": "開啟回顧",
+    "openMenu": "開啟選單",
+    "closeMenu": "關閉選單",
+    "mobileMenu": "行動版選單",
+    "openSearch": "開啟搜尋",
+    "closeSearch": "關閉搜尋",
+    "switchToDarkTheme": "切換到深色模式",
+    "switchToLightTheme": "切換到淺色模式",
     "localeRecommendationBody": "你的瀏覽器語言設定為 {language}。要切換到該語言嗎？",
     "localeRecommendationCta": "切換語言",
-    "localeRecommendationDismiss": "關閉語言推薦"
+    "localeRecommendationDismiss": "關閉語言提示",
+    "searchPlaceholder": "搜尋角色、道具和技能",
+    "searchShortcut": "⌘ /",
+    "notificationsAria": "通知",
+    "profileLabel": "ERGG"
   },
   "navigation": {
     "ariaMain": "主導覽",
     "metaAnalysis": "Meta分析",
-    "synergyRecommendation": "陣容推薦",
-    "characterAnalysis": "角色分析"
+    "synergyRecommendation": "陣容資料",
+    "characterAnalysis": "角色分析",
+    "trioLab": "陣容實驗室",
+    "characterLab": "角色分組",
+    "dataLab": "資料實驗室",
+    "patchNotes": "版本說明",
+    "patchAnalysisNav": "版本分析",
+    "seasonRecap": "賽季回顧",
+    "feedback": "傳送回饋",
+    "patchPanel": "版本 {patch}",
+    "updateStatus": "更新: 按版本反映"
   },
   "mobileTab": {
     "meta": "Meta",
     "synergy": "陣容",
-    "character": "角色"
+    "character": "角色",
+    "updates": "更新",
+    "patches": "版本",
+    "recap": "回顧"
+  },
+  "patches": {
+    "indexTitle": "版本說明",
+    "indexSubtitle": "按版本查看 Eternal Return 角色調整紀錄。",
+    "indexDescription": "整理 Eternal Return 各版本角色強化、削弱與調整紀錄。",
+    "heroEyebrow": "版本紀錄",
+    "patchPrefix": "v",
+    "latestBadge": "最新",
+    "trackedPatches": "追蹤版本",
+    "adjustedRoster": "調整角色",
+    "recordedChanges": "記錄變更",
+    "latestPatchLabel": "最新版本",
+    "archiveTitle": "版本歸檔",
+    "archiveCaption": "ER&GG 目前整理的角色強化、削弱與調整紀錄。",
+    "viewDetail": "查看詳情",
+    "breadcrumb": "版本說明",
+    "detailTitle": "版本 {patch} 變更",
+    "detailHeading": "版本 {patch}",
+    "detailDescription": "版本 {patch} 角色調整：{buffs} 項強化、{nerfs} 項削弱，共 {count} 名角色被調整。",
+    "detailSourceNotice": "詳細變更文字基於韓文版本說明原文彙整。",
+    "characterCount": "{count} 名角色",
+    "totalChanges": "{count} 項變更",
+    "counts": {
+      "buff": "強化",
+      "nerf": "削弱",
+      "rework": "調整"
+    }
   },
   "layout": {
     "skipToMain": "跳至主要內容",
@@ -33,8 +87,8 @@
   },
   "rootMetadata": {
     "defaultTitle": "ER&GG | Eternal Return Meta分析",
-    "description": "ER&GG 提供基於高分段對戰數據的 Eternal Return 角色梯度、三人陣容推薦，以及勝率、選取率、平均 RP 統計分析。",
-    "structuredDescription": "Eternal Return 角色梯度、三人陣容推薦與統計分析服務",
+    "description": "ER&GG 提供基於高分段對戰數據的 Eternal Return 角色梯度、三人陣容資料，以及勝率、選取率、平均 RP 統計分析。",
+    "structuredDescription": "Eternal Return 角色梯度、三人陣容資料與統計分析服務",
     "titleTemplate": "%s | ER&GG",
     "siteName": "ER&GG",
     "author": "ER&GG",
@@ -48,7 +102,7 @@
       "gameEn": "Eternal Return",
       "tierList": "永恆輪迴 強度榜",
       "meta": "永恆輪迴 meta",
-      "synergy": "永恆輪迴 陣容推薦",
+      "synergy": "永恆輪迴 陣容資料",
       "characterAnalysis": "永恆輪迴 角色分析",
       "winRate": "永恆輪迴 勝率",
       "pickRate": "永恆輪迴 選取率",
@@ -58,28 +112,29 @@
   },
   "home": {
     "title": "Meta分析",
-    "subtitle": "基於 {count} 場對戰的即時分析",
+    "subtitle": "基於 {count} 場對戰的版本分析",
     "heroDescription": "使用彙總數據分析永恆輪迴目前版本環境。",
-    "matchMetric": "彙總對戰數",
+    "matchMetric": "目前彙總遊戲數",
+    "matchMetricDescription": "基於版本 {patch} 納入分析的牌位遊戲總數。",
     "winRateMetric": "高分段平均勝率",
     "rpMetric": "高分段平均 RP",
     "guide": {
       "kicker": "統計解讀標準",
       "title": "ER&GG 將永恆輪迴牌位數據整理成可用於實戰判斷的內容",
-      "body": "角色梯度、三人陣容與武器選擇不會只按勝率排序。ER&GG 會同時比較勝率、選取率、平均 RP、Top 3 率與樣本數，並優先展示目前版本數據。",
+      "body": "角色梯度、三人陣容與武器選擇不會只按勝率排序。ER&GG 會同時比較勝率、選取率、平均 RP、前三率與樣本數，並優先展示目前版本數據。",
       "cta": "查看統計方法",
       "metricsTitle": "指標標準",
-      "metricsBody": "勝率代表第一名轉換能力，Top 3 率代表穩定進圈能力，平均 RP 代表牌位上分效率。",
+      "metricsBody": "勝率代表第一名轉換能力，前三率代表穩定進圈能力，平均 RP 代表牌位上分效率。",
       "comboTitle": "陣容判斷",
       "comboBody": "好的陣容不只看單一勝率，也要看角色分工、平均 RP 與樣本數是否穩定。",
       "cautionTitle": "注意事項",
-      "cautionBody": "低選取率或低樣本資料可能偏向熟練玩家，解讀梯度表與推薦結果時應保持保守。"
+      "cautionBody": "低選取率或低樣本資料可能偏向熟練玩家，解讀梯度表與陣容結果時應保持保守。"
     },
     "fallback": {
       "subtitle": "正在分析版本 {patch} 的鑽石以上牌位數據。",
       "kicker": "版本 {patch} 分析基準",
       "title": "目前版本 Meta 不只看勝率，而是按牌位判斷指標整理",
-      "body": "ER&GG 會把永恆輪迴牌位數據按角色梯度、三人陣容、武器選擇與版本前後變化一起整理。勝率用於觀察第一名轉換能力，Top 3 率用於觀察排名穩定性，平均 RP 用於判斷上分效率，選取率與樣本數用於判斷資料可信度。同一角色會因為版本、分段、隊伍角色與武器選擇而出現不同解讀，因此本站優先提供目前版本數據，並在角色詳情與版本筆記中連接最新統計與平衡改動。",
+      "body": "ER&GG 會把永恆輪迴牌位數據按角色梯度、三人陣容、武器選擇與版本前後變化一起整理。勝率用於觀察第一名轉換能力，前三率用於觀察排名穩定性，平均 RP 用於判斷上分效率，選取率與樣本數用於判斷資料可信度。同一角色會因為版本、分段、隊伍角色與武器選擇而出現不同解讀，因此本站優先提供目前版本數據，並在角色詳情與版本筆記中連接最新統計與平衡改動。",
       "characterCta": "角色分析",
       "patchCta": "版本筆記",
       "recapCta": "賽季回顧",
@@ -93,7 +148,7 @@
     "rankingTitle": "角色排行",
     "rankingDescription": "基於 Meta 分數的綜合排行",
     "rankingSectionName": "角色排行",
-    "insightTitle": "Meta 洞察",
+    "insightTitle": "Meta 摘要",
     "insightCards": {
       "rising": {
         "title": "上升最快角色",
@@ -105,18 +160,18 @@
       },
       "patchResponse": {
         "title": "強化反應",
-        "body": "上升 TOP {count} 中有 {buffedCount} 個角色屬於本版本強化或調整對象。"
+        "body": "上升前列 {count} 中有 {buffedCount} 個角色屬於本版本強化或調整對象。"
       }
     },
     "deepDiveTitle": "需要更深入的分析？",
     "deepDiveBody": "在資料實驗室查看更廣的統計與 Meta 趨勢。",
     "deepDiveCta": "前往資料實驗室",
-    "live": "LIVE",
+    "live": "版本",
     "patch": "版本 {patch}"
   },
   "patchAnalysis": {
     "evaluations": {
-      "3": "菲歐拉原本數據就不錯，本次削弱後平均 RP 反而上升，但勝率與 Top 3 率下降。",
+      "3": "菲歐拉原本數據就不錯，本次削弱後平均 RP 反而上升，但勝率與 前三率下降。",
       "5": "查希爾受到暗器熟練度削弱，幅度不小，但在目前環境中數據仍然保持得不錯。",
       "6": "弩納丁原本數據就不差，攻擊速度熟練度強化後表現進一步變好。選取率、勝率與平均 RP 都處於強勢區間，是遠程輸出玩家可以考慮的選擇。",
       "8": "哈特獲得了每級攻擊力強化，但目前沒有帶來明顯數據變化。卡蒂婭、阿德里亞娜等能在拉扯中壓制哈特的角色變強，可能也影響了她的表現。",
@@ -143,12 +198,13 @@
       "70": "椿原本數據就偏弱，這次強化仍不足以拉高她的整體表現。",
       "71": "肯尼思連續第二次獲得強化。上次強化後數據改善有限，但這次 W 減傷強化讓主要指標都提升了。",
       "72": "卡蒂婭獲得每級攻擊力強化後表現不錯。即使選取率上升可能帶來不熟練玩家，平均 RP 與勝率仍小幅上升。",
+      "73": "夏洛特在 Q 傷害強化後，勝率、平均 RP 與前三率都有改善。不過目前平均 RP 仍明顯為負，因此可以看到強化反應，但單排上分效率仍然偏低。",
       "74": "達爾科本賽季處境比較困難。這次強化像是回應他相對比亨缺少優勢的問題，但後期護盾提升仍顯不足。",
       "77": "玉敏原本數據穩定，Q 傷害被削弱。目前影響還不明顯，需要繼續觀察版本剩餘時間。",
       "83": "亨利只是受到每級生命值削弱。平均 RP 小幅下降，但整體影響有限。",
       "84": "布萊爾久違地被削弱。賽季初表現過強後 Q 傷害被下調，平均 RP 雖然上升，但勝率下降，說明係數削弱已經有一定影響。",
       "87": "科雷萊恩的強化鏡子投射體速度被削弱。她原本各分段數據都比較穩定，但這次改動已經有一定影響。",
-      "88": "比亨優秀的基礎性能再次被削弱。現在可能到了從 OP 檔位退下來的階段。"
+      "88": "比亨優秀的基礎性能再次被削弱。相比之前，數據優勢已經縮小，後續趨勢還需要繼續觀察。"
     }
   },
   "globalFilter": {
@@ -164,35 +220,35 @@
     }
   },
   "synergyMain": {
-    "title": "陣容推薦已升級",
-    "subtitle": "現在可查看包含武器與主特性的詳細推薦，獲得更精準的隊伍組合建議。",
-    "cta": "前往詳細陣容推薦"
+    "title": "陣容資料已更新",
+    "subtitle": "可以比較包含武器與主特性的陣容樣本。",
+    "cta": "前往詳細陣容資料"
   },
   "pageError": {
     "description": "可能是暫時性的伺服器或連線問題。此問題已自動回報。",
     "retry": "重試",
     "home": "首頁",
     "characterLoadFailed": "無法載入角色分析資料",
-    "synergyLoadFailed": "無法載入陣容推薦資料",
+    "synergyLoadFailed": "無法載入陣容資料",
     "synergyDetailLoadFailed": "無法載入詳細陣容資料"
   },
   "characterPage": {
     "title": "角色分析",
     "subtitle": "ER&GG 會按目前版本重新整理各角色的牌位指標",
-    "description": "我們會同時查看勝率、選取率、平均 RP、Top 3 率與樣本數，判斷角色是穩定上分、後期決勝，還是更依賴特定武器或隊伍環境。",
+    "description": "我們會同時查看勝率、選取率、平均 RP、前三率與樣本數，判斷角色是穩定上分、後期決勝，還是更依賴特定武器或隊伍環境。",
     "badge": "分析",
-    "beta": "BETA",
-    "patchBase": "開發中 · 以 {patch} 版本為準",
+    "beta": "樣本確認中",
+    "patchBase": "以 {patch} 版本為準",
     "imageNotice": "部分道具圖片可能缺失或顯示不正確。",
     "sectionName": "角色分析"
   },
   "synergyPage": {
     "dataNotice": "資料持續累積中 · 樣本越大結果越準確",
-    "title": "詳細陣容推薦",
+    "title": "詳細陣容資料",
     "subtitle": "ER&GG 會根據隊友選擇與你的角色池重新計算陣容判斷",
-    "description": "推薦結果不會只看勝率，也會同時比較武器、主特性、平均 RP 與樣本數，展示與目前隊友選擇實際成立的三人陣容。",
+    "description": "同時比較武器、主特性、平均 RP 與樣本數，展示與目前隊友選擇實際成立的三人陣容。",
     "badge": "進階",
-    "beta": "BETA",
+    "beta": "樣本確認中",
     "steps": {
       "pool": {
         "label": "設定池子",
@@ -211,11 +267,14 @@
   "synergyInteractive": {
     "poolTitle": "我的角色池",
     "alliesTitle": "選擇隊友",
-    "resultsTitle": "推薦陣容",
+    "resultsTitle": "陣容結果",
     "poolHint": "可選 · 依角色 + 武器篩選",
+    "alliesHint": "最多2名 · 角色 + 武器維度",
+    "resultsHint": "根據所選隊友進行詳細陣容比較",
     "poolSection": "角色池",
     "alliesSection": "隊友",
-    "resultsSection": "推薦陣容"
+    "resultsSection": "陣容結果",
+    "shareLanding": "這是分享的陣容。可以查看目前樣本指標。"
   },
   "sectionErrorBoundary": {
     "loadFailed": "無法載入 {section} 資料",
@@ -331,7 +390,7 @@
   },
   "synergyResults": {
     "sort": {
-      "recommended": "推薦",
+      "recommended": "指標排序",
       "averageRP": "平均 RP",
       "winRate": "勝率",
       "totalGames": "場次",
@@ -351,7 +410,7 @@
       "step3": "3. 點擊陣容查看特性層級表現"
     },
     "loading": "正在載入陣容資料...",
-    "infoSingle": "再加入一名隊友可獲得更準確的推薦 · 點擊陣容可查看特性拆解",
+    "infoSingle": "再加入一名隊友可縮小條件 · 點擊陣容可查看特性拆解",
     "infoPair": "點擊陣容可查看特性拆解",
     "more": "顯示更多 ({visible}/{total})",
     "emptyFiltered": "目前角色池沒有符合的陣容，請嘗試擴大角色池。",
@@ -362,13 +421,13 @@
   },
   "synergyMainResults": {
     "sort": {
-      "recommended": "推薦",
+      "recommended": "指標排序",
       "averageRP": "平均 RP",
       "winRate": "勝率",
       "totalGames": "場次",
       "averageRank": "平均名次"
     },
-    "titleSingle": "包含 {ally} 的推薦陣容",
+    "titleSingle": "包含 {ally} 的陣容",
     "titlePair": "{ally1} + {ally2} 的陣容",
     "focusFilter": "優先顯示我的角色池 {count} 項",
     "copied": "已複製！",
@@ -376,13 +435,13 @@
     "reset": "重設",
     "sectionName": "陣容結果",
     "empty": {
-      "prompt": "為隊友選擇尋找最佳陣容",
+      "prompt": "查看符合隊友選擇的陣容樣本",
       "step1": "1. 先設定你的角色池（可選）",
       "step2": "2. 選擇 1 到 2 名隊友角色",
-      "step3": "3. 系統會推薦你能使用的最佳陣容"
+      "step3": "3. 比較與你角色池重合的陣容"
     },
     "loading": "正在載入陣容資料...",
-    "infoSingle": "再加入一名隊友可獲得更準確的推薦",
+    "infoSingle": "再加入一名隊友可縮小條件",
     "emptyFiltered": "你的角色池沒有符合的陣容，請嘗試擴大角色池。",
     "emptyNoData": "目前陣容沒有可用資料。",
     "clearAllies": "清除隊友",
@@ -398,14 +457,14 @@
     "moreTraits": "再顯示 {count} 個特性"
   },
   "characterAnalysis": {
-    "quickSummary": "快速摘要",
+    "quickSummary": "摘要",
     "summary": {
       "tier": "梯度",
       "winRate": "勝率",
-      "recommendedWeapon": "最佳武器",
+      "recommendedWeapon": "主要武器",
       "pickRate": "選取率"
     },
-    "synergyCta": "查看此角色的陣容推薦",
+    "synergyCta": "查看此角色的陣容資料",
     "deepDive": "深度分析",
     "patchComparison": "版本比較",
     "patchNotes": "版本說明",
@@ -432,8 +491,8 @@
   "characterMetadata": {
     "titleWithName": "{name} 角色分析",
     "titleFallback": "角色分析",
-    "descriptionWithName": "分析 {name} 在 Eternal Return 中的勝率、選取率、平均 RP 與最佳出裝，並查看 {name} 的版本趨勢與武器搭配。",
-    "descriptionFallback": "依勝率、選取率、平均 RP 與最佳出裝分析 Eternal Return 角色，並查看版本趨勢與武器搭配。",
+    "descriptionWithName": "整理 {name} 在 Eternal Return 中的勝率、選取率、平均 RP 與出裝統計，並查看 {name} 的版本趨勢與武器搭配。",
+    "descriptionFallback": "依勝率、選取率、平均 RP 與出裝統計整理 Eternal Return 角色，並查看版本趨勢與武器搭配。",
     "keywords": {
       "character": "永恆輪迴 {name}",
       "build": "{name} 出裝",
@@ -444,34 +503,34 @@
       "analysis": "永恆輪迴 角色分析",
       "fallbackBuild": "永恆輪迴 角色出裝",
       "fallbackStats": "永恆輪迴 角色數據",
-      "fallbackWeapon": "永恆輪迴 武器推薦"
+      "fallbackWeapon": "永恆輪迴 武器資料"
     },
     "openGraphTitle": "{title} | ER&GG",
     "twitterTitle": "{title} | ER&GG",
-    "socialDescription": "Eternal Return 角色勝率、選取率、平均 RP 與最佳出裝統計。"
+    "socialDescription": "Eternal Return 角色勝率、選取率、平均 RP 與出裝統計。"
   },
   "synergyMetadata": {
-    "headlinePair": "{name1} + {name2} 陣容推薦",
-    "headlineSingle": "包含 {name1} 的陣容推薦",
-    "headlineFallback": "陣容推薦",
-    "descriptionPair": "透過貝葉斯隊伍統計分析 {name1} + {name2} 的最佳第三手選擇。",
-    "descriptionSingle": "透過貝葉斯隊伍統計分析與 {name1} 搭配的最佳第二、第三手選擇。",
-    "descriptionFallback": "查看 Eternal Return 三人陣容推薦，並前往包含武器與特性的詳細分析。",
+    "headlinePair": "{name1} + {name2} 陣容資料",
+    "headlineSingle": "包含 {name1} 的陣容資料",
+    "headlineFallback": "陣容資料",
+    "descriptionPair": "顯示 {name1} + {name2} 的第三人候選與樣本指標。",
+    "descriptionSingle": "顯示包含 {name1} 的雙人和三人陣容樣本指標。",
+    "descriptionFallback": "查看 Eternal Return 三人陣容樣本，並前往包含武器與特性的詳細資料。",
     "socialTitle": "{headline} | ER&GG"
   },
   "synergyDetailMetadata": {
-    "headlinePair": "{name1} + {name2} 陣容推薦",
-    "headlineSingle": "包含 {name1} 的陣容推薦",
-    "headlineFallback": "詳細陣容推薦",
-    "title": "{headline} - 含武器與特性 | ER&GG",
-    "descriptionPair": "透過包含武器與特性的貝葉斯統計分析 {name1} + {name2} 的最佳第三手選擇。",
-    "descriptionSingle": "透過貝葉斯隊伍統計分析與 {name1} 搭配的最佳第二、第三手選擇。",
-    "descriptionFallback": "使用貝葉斯隊伍分析查看包含武器與主特性的 Eternal Return 詳細三人陣容推薦。",
+    "headlinePair": "{name1} + {name2} 陣容資料",
+    "headlineSingle": "包含 {name1} 的陣容資料",
+    "headlineFallback": "詳細陣容資料",
+    "title": "{headline} - 含武器與特性",
+    "descriptionPair": "顯示 {name1} + {name2} 的第三人候選，並包含武器與特性指標。",
+    "descriptionSingle": "顯示包含 {name1} 的雙人和三人陣容武器、特性指標。",
+    "descriptionFallback": "查看包含武器與主特性的 Eternal Return 詳細三人陣容資料。",
     "socialTitle": "{headline} | ER&GG",
     "keywords": {
       "brand": "ER&GG",
       "app": "ERGG",
-      "synergy": "永恆輪迴 陣容推薦",
+      "synergy": "永恆輪迴 陣容資料",
       "weapon": "永恆輪迴 武器組合",
       "trait": "永恆輪迴 特性組合",
       "detail": "永恆輪迴 詳細隊伍分析",

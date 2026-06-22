@@ -17,22 +17,17 @@ function isAllowedRedirectUri(redirectUri: string): boolean {
 
 export async function GET(request: NextRequest) {
   if (!isDesktopAuthEnabled()) {
-    return NextResponse.json(
-      { error: "Desktop auth feature is disabled." },
-      { status: 404 }
-    );
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
 
   const url = new URL(request.url);
-  const redirectUri =
-    url.searchParams.get("redirect") ?? DEFAULT_DESKTOP_REDIRECT;
+  const redirectUri = url.searchParams.get("redirect") ?? DEFAULT_DESKTOP_REDIRECT;
   const format = url.searchParams.get("format");
 
   if (!isAllowedRedirectUri(redirectUri)) {
     return NextResponse.json(
       {
-        error:
-          "지원되지 않는 redirect URI입니다. ermeta:// 또는 localhost를 사용하세요.",
+        error: "invalid_redirect_uri",
       },
       { status: 400 }
     );
@@ -47,10 +42,8 @@ export async function GET(request: NextRequest) {
     "openid.mode": "checkid_setup",
     "openid.return_to": callbackUrl.toString(),
     "openid.realm": url.origin,
-    "openid.identity":
-      "http://specs.openid.net/auth/2.0/identifier_select",
-    "openid.claimed_id":
-      "http://specs.openid.net/auth/2.0/identifier_select",
+    "openid.identity": "http://specs.openid.net/auth/2.0/identifier_select",
+    "openid.claimed_id": "http://specs.openid.net/auth/2.0/identifier_select",
   });
 
   const loginUrl = `${STEAM_OPENID_ENDPOINT}?${steamParams.toString()}`;

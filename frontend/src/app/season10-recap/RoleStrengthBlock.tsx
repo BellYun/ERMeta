@@ -26,14 +26,14 @@ export function RoleStrengthBlock({ roleStats, patches }: RoleStrengthBlockProps
   const weakestRole = seasonSorted[seasonSorted.length - 1] ?? null;
 
   return (
-    <section className="dashboard-panel p-4 lg:p-6 xl:p-7">
+    <section className="dashboard-panel p-4">
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div className="home-section-header flex flex-col gap-2 pb-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-primary)]/88">
-              Role Heatmap
+            <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
+              직업군 흐름
             </p>
-            <h2 className="mt-2 text-[1.35rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.7rem]">
+            <h2 className="dashboard-section-title mt-2 text-[1.25rem] font-bold text-[var(--color-foreground)] sm:text-[1.55rem]">
               직업군별 평균 RP
             </h2>
             <p className="mt-1 text-xs leading-6 text-[var(--color-muted-foreground)] sm:text-sm">
@@ -42,12 +42,8 @@ export function RoleStrengthBlock({ roleStats, patches }: RoleStrengthBlockProps
             </p>
           </div>
           <div className="flex flex-wrap gap-2 text-xs text-[var(--color-muted-foreground)]">
-            <span className="rounded-full border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-3 py-1">
-              패치 {patches.length}개
-            </span>
-            <span className="rounded-full border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-3 py-1">
-              오른쪽 열은 시즌 전체
-            </span>
+            <span>패치 {patches.length}개</span>
+            <span>오른쪽 열은 시즌 전체</span>
           </div>
         </div>
 
@@ -55,7 +51,7 @@ export function RoleStrengthBlock({ roleStats, patches }: RoleStrengthBlockProps
           <div className="grid gap-3 sm:grid-cols-2">
             {strongestRole && (
               <SummaryCard
-                label="시즌 최고 효율"
+                label="시즌 효율"
                 role={strongestRole.role}
                 value={strongestRole.season.averageRP}
                 tone="positive"
@@ -72,23 +68,23 @@ export function RoleStrengthBlock({ roleStats, patches }: RoleStrengthBlockProps
           </div>
         )}
 
-        <div className="overflow-hidden rounded-[20px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)]">
+        <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[0_1px_1px_rgba(15,23,42,0.03)]">
           <div className="overflow-x-auto pb-2 overscroll-x-contain">
-            <table className="w-full min-w-[860px] border-separate border-spacing-0 text-xs sm:min-w-[940px] sm:text-sm xl:min-w-[1040px]">
+            <table className="w-full min-w-[860px] border-separate border-spacing-0 text-xs tabular-nums sm:min-w-[940px] sm:text-sm xl:min-w-[1040px]">
               <thead>
-                <tr className="bg-[var(--color-surface-2)]/60">
-                  <th className="sticky left-0 z-10 border-b border-[var(--color-border)] bg-[rgba(15,23,42,0.98)] px-3 py-3 text-left font-medium text-[var(--color-muted-foreground)]">
+                <tr className="bg-[var(--color-surface-2)]">
+                  <th className="sticky left-0 z-10 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 text-left text-[10px] font-bold uppercase text-[var(--color-muted-foreground)]">
                     직업군
                   </th>
                   {patches.map((patch) => (
                     <th
                       key={patch}
-                      className="border-b border-[var(--color-border)] px-2 py-3 text-center font-medium text-[var(--color-muted-foreground)] tabular-nums"
+                      className="border-b border-[var(--color-border)] px-2 py-2.5 text-center text-[10px] font-bold uppercase text-[var(--color-muted-foreground)]"
                     >
                       {patch}
                     </th>
                   ))}
-                  <th className="border-b border-l border-[var(--color-border)] px-3 py-3 text-center font-semibold text-[var(--color-foreground)] tabular-nums">
+                  <th className="border-b border-l border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-3 py-2.5 text-center text-[10px] font-bold uppercase text-[var(--color-accent-foreground)]">
                     시즌
                   </th>
                 </tr>
@@ -96,7 +92,7 @@ export function RoleStrengthBlock({ roleStats, patches }: RoleStrengthBlockProps
               <tbody>
                 {roleStats.map(({ role, perPatch, season }) => (
                   <tr key={role}>
-                    <th className="sticky left-0 z-10 border-b border-[var(--color-border)]/30 bg-[rgba(11,15,26,0.96)] px-3 py-3 text-left font-semibold text-[var(--color-foreground)]">
+                    <th className="sticky left-0 z-10 border-b border-[var(--color-border)]/30 bg-[var(--color-surface)] px-3 py-2.5 text-left font-semibold text-[var(--color-foreground)]">
                       {role}
                     </th>
                     {perPatch.map(({ patch, stat }) => (
@@ -127,18 +123,14 @@ function SummaryCard({
 }) {
   const isPositive = tone === "positive";
   return (
-    <div className="rounded-[18px] border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-4 py-3">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted-foreground)]">
-        {label}
-      </p>
+    <div className="metric-card px-4 py-3" data-accent={isPositive ? "true" : undefined}>
+      <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">{label}</p>
       <div className="mt-2 flex items-end justify-between gap-4">
-        <p className="text-lg font-black tracking-[-0.04em] text-[var(--color-foreground)]">
-          {role}
-        </p>
+        <p className="text-lg font-bold text-[var(--color-foreground)]">{role}</p>
         <p
           className={cn(
-            "text-lg font-black tabular-nums",
-            isPositive ? "text-[var(--color-accent-gold)]" : "text-[var(--color-danger)]"
+            "text-lg font-semibold tabular-nums",
+            isPositive ? "text-[var(--color-accent-foreground)]" : "text-[var(--color-danger)]"
           )}
         >
           {value >= 0 ? "+" : ""}
@@ -162,7 +154,7 @@ function RoleCell({
     return (
       <td
         className={cn(
-          "border-b border-[var(--color-border)]/30 px-2 py-3 text-center text-[var(--color-muted-foreground)]/40 tabular-nums",
+          "border-b border-[var(--color-border)]/30 px-2 py-2.5 text-center text-[var(--color-muted-foreground)]/40",
           isSeason && "border-l border-[var(--color-border)]"
         )}
       >
@@ -174,15 +166,15 @@ function RoleCell({
   const intensity = Math.min(Math.abs(stat.averageRP) / maxAbs, 1);
   const isPositive = stat.averageRP >= 0;
   const backgroundColor = isPositive
-    ? `rgba(251, 191, 36, ${0.05 + intensity * 0.3})`
-    : `rgba(248, 113, 113, ${0.05 + intensity * 0.28})`;
+    ? `rgba(21, 128, 61, ${0.04 + intensity * 0.18})`
+    : `rgba(220, 38, 38, ${0.04 + intensity * 0.16})`;
 
   return (
     <td
       className={cn(
-        "border-b border-[var(--color-border)]/30 px-2 py-3 text-center font-semibold tabular-nums",
-        isSeason && "border-l border-[var(--color-border)]",
-        isPositive ? "text-[var(--color-accent-gold)]" : "text-[var(--color-danger)]"
+        "border-b border-[var(--color-border)]/30 px-2 py-2.5 text-center font-semibold",
+        isSeason && "border-l border-[var(--color-accent)]",
+        isPositive ? "text-[var(--color-success)]" : "text-[var(--color-danger)]"
       )}
       style={{ backgroundColor }}
       title={`${stat.totalGames.toLocaleString()}게임`}

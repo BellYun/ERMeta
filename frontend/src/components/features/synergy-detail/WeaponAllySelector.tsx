@@ -3,7 +3,7 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { X, Search } from "lucide-react";
 import Image from "next/image";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import characterBestWeapons from "@/../const/characterBestWeapons.json";
@@ -71,6 +71,13 @@ export function getAllCharWeaponItems(): CharWeaponItem[] {
 export interface AllySelection {
   charCode: number;
   weaponCode: number | null;
+}
+
+export const SYNERGY_DETAIL_ALLIES_CHANGED_EVENT = "synergy-detail:allies-changed";
+
+export interface SynergyDetailAlliesChangedDetail {
+  ally1: AllySelection | null;
+  ally2: AllySelection | null;
 }
 
 export function parseAllyFromParams(
@@ -162,9 +169,9 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
       title={localizedWeaponLabel ? `${charName} (${localizedWeaponLabel})` : charName}
       style={{ touchAction: "manipulation" }}
       className={cn(
-        "flex flex-col items-center gap-1 rounded-lg px-1 py-2 transition-colors touch-manipulation",
+        "flex flex-col items-center gap-1 rounded-md px-1 py-2 touch-manipulation",
         selected
-          ? "bg-[var(--color-primary)]/28 ring-2 ring-[var(--color-primary)] shadow-[0_0_0_1px_rgba(96,165,250,0.18)]"
+          ? "bg-[var(--color-surface)] outline outline-1 outline-[var(--color-border-light)]"
           : disabled
             ? "opacity-25 cursor-not-allowed"
             : "hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80"
@@ -173,7 +180,7 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
       <div
         className={cn(
           "relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
-          selected && "ring-2 ring-[var(--color-primary-hover)]/60"
+          selected && "outline outline-1 outline-[var(--color-border-light)]"
         )}
       >
         <Image
@@ -196,7 +203,7 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
         <span
           className={cn(
             "w-full truncate text-center text-[10px] font-medium",
-            selected ? "text-[var(--color-primary)]/90" : "text-[var(--color-foreground)]/60"
+            selected ? "text-[var(--color-foreground)]" : "text-[var(--color-muted-foreground)]"
           )}
         >
           {localizedWeaponLabel}
@@ -212,7 +219,6 @@ export function WeaponAllySelector() {
   const { l10n } = useL10n();
   const t = useTranslations("weaponAllySelector");
   const searchParams = useSearchParams();
-  const router = useRouter();
   const pathname = usePathname();
   const [search, setSearch] = React.useState("");
   const parentRef = React.useRef<HTMLDivElement>(null);
@@ -286,12 +292,14 @@ export function WeaponAllySelector() {
         if (a2.weaponCode) params.set("w2", String(a2.weaponCode));
       }
       const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
-      // startTransition: URL 업데이트를 비긴급 작업으로 마킹 → 탭 응답성이 블로킹되지 않음
-      React.startTransition(() => {
-        router.replace(newUrl, { scroll: false });
-      });
+      window.history.replaceState(window.history.state, "", newUrl);
+      window.dispatchEvent(
+        new CustomEvent<SynergyDetailAlliesChangedDetail>(SYNERGY_DETAIL_ALLIES_CHANGED_EVENT, {
+          detail: { ally1: a1, ally2: a2 },
+        })
+      );
     },
-    [pathname, router]
+    [pathname]
   );
 
   const isSelected = React.useCallback(
@@ -418,7 +426,7 @@ export function WeaponAllySelector() {
       </div>
 
       {/* 검색 + 가상화 그리드 */}
-      <div className="rounded-[22px] border border-[var(--color-border)] bg-[rgba(17,25,46,0.72)] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
         <p className="mb-3 px-1 text-[12px] font-medium text-[var(--color-foreground)]/72">
           {t("heading")}
         </p>
@@ -429,12 +437,12 @@ export function WeaponAllySelector() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("searchPlaceholder")}
-            className="w-full rounded-xl border border-[var(--color-border)] bg-[rgba(10,16,31,0.72)] py-2 pl-8 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
+            className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] py-2 pl-8 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-border-light)] focus:outline-none"
           />
           {search && (
             <button
               onClick={() => setSearch("")}
-              className="absolute right-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] transition-colors"
+              className="absolute right-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)]"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -511,8 +519,8 @@ function SlotWeaponFilled({
   onRemove: () => void;
 }) {
   return (
-    <div className="flex w-full items-center gap-3 rounded-[18px] border border-[var(--color-primary)]/45 bg-[linear-gradient(135deg,rgba(96,165,250,0.22),rgba(37,99,235,0.1)_70%)] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_24px_-18px_rgba(96,165,250,0.6)]">
-      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-[var(--color-border)] ring-2 ring-[var(--color-primary)]/45">
+    <div className="flex w-full items-center gap-3 rounded-md border border-[var(--color-border-light)] bg-[var(--color-surface)] px-4 py-3">
+      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded bg-[var(--color-border)] outline outline-1 outline-[var(--color-border)]">
         <Image
           src={getCharacterMiniWebpUrl(code)}
           alt={name}
@@ -522,7 +530,7 @@ function SlotWeaponFilled({
         />
       </div>
       <div className="flex flex-col flex-1 min-w-0">
-        <span className="truncate text-[15px] font-bold tracking-[-0.01em] text-[var(--color-foreground)]">
+        <span className="truncate text-[15px] font-bold text-[var(--color-foreground)]">
           {name}
         </span>
         <span className="truncate text-[11.5px] font-semibold text-[var(--color-primary-hover)]">
@@ -532,7 +540,7 @@ function SlotWeaponFilled({
       <button
         onClick={onRemove}
         aria-label={`${name} 제거`}
-        className="rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-foreground)]/70 hover:bg-[rgba(255,255,255,0.08)] active:bg-[rgba(255,255,255,0.12)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)] transition-colors"
+        className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)] active:bg-[var(--color-surface-3)] active:text-[var(--color-foreground)]"
       >
         <X className="h-4 w-4" strokeWidth={2.4} />
       </button>

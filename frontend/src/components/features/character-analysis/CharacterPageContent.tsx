@@ -39,34 +39,34 @@ function CharacterAnalysisFallback() {
     <div className="flex flex-col gap-5 sm:gap-6">
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_340px]">
         <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
-          <div className="animate-pulse">
-            <div className="h-40 rounded-[20px] bg-[rgba(255,255,255,0.04)] sm:h-48" />
+          <div>
+            <div className="h-40 rounded-md bg-[var(--color-surface-2)] sm:h-48" />
           </div>
         </section>
         <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
-          <div className="animate-pulse">
-            <div className="h-48 rounded-[20px] bg-[rgba(255,255,255,0.04)]" />
+          <div>
+            <div className="h-48 rounded-md bg-[var(--color-surface-2)]" />
           </div>
         </section>
       </div>
 
       <div className="grid gap-5 xl:grid-cols-2">
         <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
-          <div className="animate-pulse">
-            <div className="mb-4 h-6 w-28 rounded bg-[rgba(255,255,255,0.06)]" />
-            <div className="h-64 rounded-[20px] bg-[rgba(255,255,255,0.04)]" />
+          <div>
+            <div className="mb-4 h-6 w-28 rounded bg-[var(--color-surface-2)]" />
+            <div className="h-64 rounded-md bg-[var(--color-surface-2)]" />
           </div>
         </section>
         <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
-          <div className="animate-pulse">
-            <div className="mb-4 h-6 w-24 rounded bg-[rgba(255,255,255,0.06)]" />
-            <div className="h-64 rounded-[20px] bg-[rgba(255,255,255,0.04)]" />
+          <div>
+            <div className="mb-4 h-6 w-24 rounded bg-[var(--color-surface-2)]" />
+            <div className="h-64 rounded-md bg-[var(--color-surface-2)]" />
           </div>
         </section>
         <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5 xl:col-span-2">
-          <div className="animate-pulse">
-            <div className="mb-4 h-6 w-16 rounded bg-[rgba(255,255,255,0.06)]" />
-            <div className="h-80 rounded-[20px] bg-[rgba(255,255,255,0.04)]" />
+          <div>
+            <div className="mb-4 h-6 w-16 rounded bg-[var(--color-surface-2)]" />
+            <div className="h-80 rounded-md bg-[var(--color-surface-2)]" />
           </div>
         </section>
       </div>
@@ -82,16 +82,22 @@ function formatTierLabel(locale: RouteLocale, tier: string) {
   if (tier === "MITHRIL_PLUS") {
     if (locale === "ja") return "ミスリル以上";
     if (locale === "ko") return "미스릴 이상";
+    if (locale === "zh-Hans") return "秘银以上";
+    if (locale === "zh-Hant") return "秘銀以上";
     return "Mithril+";
   }
   if (tier === "METEORITE_PLUS") {
     if (locale === "ja") return "メテオライト以上";
     if (locale === "ko") return "메테오라이트 이상";
+    if (locale === "zh-Hans") return "陨石以上";
+    if (locale === "zh-Hant") return "隕石以上";
     return "Meteorite+";
   }
   if (tier === "DIAMOND_PLUS") {
     if (locale === "ja") return "ダイヤ以上";
     if (locale === "ko") return "다이아 이상";
+    if (locale === "zh-Hans") return "钻石以上";
+    if (locale === "zh-Hant") return "鑽石以上";
     return "Diamond+";
   }
   return tier;
@@ -100,6 +106,8 @@ function formatTierLabel(locale: RouteLocale, tier: string) {
 function getSummaryTitle(locale: RouteLocale) {
   if (locale === "ja") return "現在のパッチ概要";
   if (locale === "ko") return "현재 패치 요약";
+  if (locale === "zh-Hans") return "当前版本摘要";
+  if (locale === "zh-Hant") return "目前版本摘要";
   return "Current Patch Summary";
 }
 
@@ -223,7 +231,7 @@ function buildRoleComboInsight(
     .join(", ");
 
   return {
-    pickReason: `${characterName}는 팀에 ${roleText} 역할군이 이미 보일 때 성과가 좋은 편입니다.\n\n역할 조합별 RP에서 ${comboText} 조합이 양전으로 확인됩니다.`,
+    pickReason: `${characterName}는 팀에 ${roleText} 역할군이 있을 때 RP가 높게 나왔습니다.\n\n역할 조합별 RP에서 ${comboText} 조합이 양전으로 확인됩니다.`,
   };
 }
 
@@ -247,25 +255,25 @@ function buildServerSummary(
   const tierLabel = formatTierLabel(locale, stats.tier);
 
   if (locale === "ja") {
-    return `${name}はパッチ${stats.patchVersion}の${tierLabel}基準で${sample}試合の標本があります。勝率は${winRate}%、ピック率は${pickRate}%、平均RPは${averageRp}、Top 3率は${top3Rate}%です。${
+    return `${name}はパッチ${stats.patchVersion}の${tierLabel}基準で${sample}試合の標本があります。勝率は${winRate}%、ピック率は${pickRate}%、平均RPは${averageRp}、入賞率は${top3Rate}%です。${
       topWeaponName
-        ? `最も多く使われた武器は${topWeaponName}で、武器別成績と前パッチ比較を下の分析表で確認できます。`
-        : "武器別成績と前パッチ比較を下の分析表で確認できます。"
+        ? `最も多く使われた武器は${topWeaponName}で、武器別成績と前パッチ比較を下に表示しています。`
+        : "武器別成績と前パッチ比較を下に表示しています。"
     }`;
   }
 
   if (locale !== "ko") {
-    return `${name} has a ${sample}-match sample on patch ${stats.patchVersion} in ${tierLabel}. The current win rate is ${winRate}%, pick rate is ${pickRate}%, average RP is ${averageRp}, and Top 3 rate is ${top3Rate}%. ${
+    return `${name} has a ${sample}-match sample on patch ${stats.patchVersion} in ${tierLabel}. The current win rate is ${winRate}%, pick rate is ${pickRate}%, average RP is ${averageRp}, and placement rate is ${top3Rate}%. ${
       topWeaponName
         ? `The most played weapon is ${topWeaponName}, with weapon performance and patch comparison available in the analysis below.`
         : "Weapon performance and patch comparison are available in the analysis below."
     }`;
   }
 
-  return `${name}는 패치 ${stats.patchVersion} ${tierLabel} 기준 ${sample}판 표본에서 승률 ${winRate}%, 픽률 ${pickRate}%, 평균 RP ${averageRp}, Top 3 비율 ${top3Rate}%를 기록했습니다. ${
+  return `${name}는 패치 ${stats.patchVersion} ${tierLabel} 기준 ${sample}판 표본에서 승률 ${winRate}%, 픽률 ${pickRate}%, 평균 RP ${averageRp}, 순방률 ${top3Rate}%를 기록했습니다. ${
     topWeaponName
-      ? `가장 많이 선택된 무기는 ${topWeaponName}이며, 아래 분석에서 무기별 성과와 이전 패치 대비 변화를 함께 확인할 수 있습니다.`
-      : "아래 분석에서 무기별 성과와 이전 패치 대비 변화를 함께 확인할 수 있습니다."
+      ? `가장 많이 선택된 무기는 ${topWeaponName}이며, 아래에 무기별 성과와 이전 패치 대비 변화를 표시합니다.`
+      : "아래에 무기별 성과와 이전 패치 대비 변화를 표시합니다."
   }`;
 }
 
@@ -292,7 +300,7 @@ function buildCharacterSeoJsonLd(
         : `${characterName} Eternal Return ${stats.patchVersion} stats`,
     description:
       locale === "ko"
-        ? `${characterName}의 승률, 픽률, 평균 RP, 추천 무기, 조합 분석 데이터입니다.`
+        ? `${characterName}의 승률, 픽률, 평균 RP, 무기, 조합 데이터입니다.`
         : `${characterName} win rate, pick rate, average RP, recommended weapon, and team composition stats.`,
     url: `${BASE_URL}${path}`,
     inLanguage,
@@ -310,10 +318,10 @@ function buildCharacterSeoJsonLd(
       { "@type": "PropertyValue", name: "Win rate", value: formatPercent(stats.winRate) },
       { "@type": "PropertyValue", name: "Pick rate", value: formatPercent(stats.pickRate) },
       { "@type": "PropertyValue", name: "Average RP", value: stats.averageRP.toFixed(1) },
-      { "@type": "PropertyValue", name: "Top 3 rate", value: formatPercent(stats.top3Rate) },
+      { "@type": "PropertyValue", name: "Placement rate", value: formatPercent(stats.top3Rate) },
       { "@type": "PropertyValue", name: "Sample size", value: stats.totalGames },
       ...(topWeaponName
-        ? [{ "@type": "PropertyValue", name: "Recommended weapon", value: topWeaponName }]
+        ? [{ "@type": "PropertyValue", name: "Main weapon", value: topWeaponName }]
         : []),
     ],
   };
@@ -354,20 +362,20 @@ function CharacterSeoSection({
             stats.winRate
           )}, 픽률 ${formatPercent(stats.pickRate)}, 평균 RP ${stats.averageRP.toFixed(
             1
-          )}를 기록했습니다. 추천 무기와 특성, 장비 빌드는 아래 상세 분석에서 표본 수와 함께 비교하세요.`,
-          weapon: "추천 무기",
+          )}를 기록했습니다. 무기, 특성, 장비 빌드는 표본 수와 함께 표시됩니다.`,
+          weapon: "주 사용 무기",
           noWeapon: "무기 표본 확인 중",
           winRate: "승률",
           pickRate: "픽률",
           averageRp: "평균 RP",
           sample: "분석 표본",
           sampleSuffix: "판",
-          actionTitle: "다음 분석",
-          trio: `${characterName} 조합 찾기`,
-          trioDesc: "내 캐릭터 풀에 맞는 3인 조합",
+          actionTitle: "연결 데이터",
+          trio: `${characterName} 포함 조합`,
+          trioDesc: "캐릭터 풀 기준 3인 조합",
           patch: patchAnalysisVersion ? `${patchAnalysisVersion} 패치 분석` : "패치 분석",
           patchDesc: "제공 중인 패치 메타 분석",
-          lab: "역할군 비교",
+          lab: "역할 비교",
           labDesc: "같은 역할군 안에서 성과 비교",
         }
       : locale === "ja"
@@ -378,47 +386,95 @@ function CharacterSeoSection({
               stats.winRate
             )}、ピック率${formatPercent(stats.pickRate)}、平均RP ${stats.averageRP.toFixed(
               1
-            )}を記録しています。おすすめ武器、特性、装備ビルドは、下の詳細分析でサンプル数とあわせて比較できます。`,
-            weapon: "おすすめ武器",
+            )}を記録しています。武器、特性、装備ビルドはサンプル数とあわせて表示します。`,
+            weapon: "主な武器",
             noWeapon: "武器標本を確認中",
             winRate: "勝率",
             pickRate: "ピック率",
             averageRp: "平均RP",
             sample: "分析標本",
             sampleSuffix: "試合",
-            actionTitle: "次の分析",
-            trio: `${characterName}の構成を探す`,
-            trioDesc: "このキャラを含む3人構成",
+            actionTitle: "関連データ",
+            trio: `${characterName}を含む構成`,
+            trioDesc: "キャラクタープール基準の3人構成",
             patch: patchAnalysisVersion ? `パッチ${patchAnalysisVersion}分析` : "パッチ分析",
             patchDesc: "提供中のパッチメタ分析",
             lab: "ロール比較",
             labDesc: "同じロール内の成績比較",
           }
-        : {
-            eyebrow: "Search Summary",
-            title: `${characterName} Build, Traits, and Weapon Stats`,
-            body: `${characterName} has a ${formatPercent(
-              stats.winRate
-            )} win rate, ${formatPercent(stats.pickRate)} pick rate, and ${stats.averageRP.toFixed(
-              1
-            )} average RP on patch ${stats.patchVersion} in ${tierLabel}. Compare recommended weapons, traits, equipment builds, and sample size in the detailed analysis below.`,
-            weapon: "Recommended weapon",
-            noWeapon: "Checking weapon samples",
-            winRate: "Win rate",
-            pickRate: "Pick rate",
-            averageRp: "Average RP",
-            sample: "Sample",
-            sampleSuffix: "matches",
-            actionTitle: "Next Analysis",
-            trio: `Find ${characterName} comps`,
-            trioDesc: "Trio recommendations with this character",
-            patch: patchAnalysisVersion
-              ? `Patch ${patchAnalysisVersion} analysis`
-              : "Patch analysis",
-            patchDesc: "Available patch meta analysis",
-            lab: "Role comparison",
-            labDesc: "Compare performance in the same role",
-          };
+        : locale === "zh-Hans"
+          ? {
+              eyebrow: "搜索摘要",
+              title: `${characterName} 出装、特性与武器统计`,
+              body: `${characterName} 在 ${stats.patchVersion} 版本 ${tierLabel} 条件下，胜率 ${formatPercent(
+                stats.winRate
+              )}、选取率 ${formatPercent(stats.pickRate)}、平均 RP ${stats.averageRP.toFixed(
+                1
+              )}。武器、特性和装备统计会与样本数一起显示。`,
+              weapon: "主要武器",
+              noWeapon: "正在确认武器样本",
+              winRate: "胜率",
+              pickRate: "选取率",
+              averageRp: "平均 RP",
+              sample: "分析样本",
+              sampleSuffix: "场",
+              actionTitle: "相关数据",
+              trio: `包含 ${characterName} 的阵容`,
+              trioDesc: "基于角色池的三人阵容",
+              patch: patchAnalysisVersion ? `${patchAnalysisVersion} 版本分析` : "版本分析",
+              patchDesc: "当前提供的版本 Meta 分析",
+              lab: "定位比较",
+              labDesc: "同一定位内的表现比较",
+            }
+          : locale === "zh-Hant"
+            ? {
+                eyebrow: "搜尋摘要",
+                title: `${characterName} 出裝、特性與武器統計`,
+                body: `${characterName} 在 ${stats.patchVersion} 版本 ${tierLabel} 條件下，勝率 ${formatPercent(
+                  stats.winRate
+                )}、選取率 ${formatPercent(stats.pickRate)}、平均 RP ${stats.averageRP.toFixed(
+                  1
+                )}。武器、特性和裝備統計會與樣本數一起顯示。`,
+                weapon: "主要武器",
+                noWeapon: "正在確認武器樣本",
+                winRate: "勝率",
+                pickRate: "選取率",
+                averageRp: "平均 RP",
+                sample: "分析樣本",
+                sampleSuffix: "場",
+                actionTitle: "相關資料",
+                trio: `包含 ${characterName} 的陣容`,
+                trioDesc: "基於角色池的三人陣容",
+                patch: patchAnalysisVersion ? `${patchAnalysisVersion} 版本分析` : "版本分析",
+                patchDesc: "目前提供的版本 Meta 分析",
+                lab: "定位比較",
+                labDesc: "同一定位內的表現比較",
+              }
+            : {
+                eyebrow: "Search Summary",
+                title: `${characterName} Build, Traits, and Weapon Stats`,
+                body: `${characterName} has a ${formatPercent(
+                  stats.winRate
+                )} win rate, ${formatPercent(stats.pickRate)} pick rate, and ${stats.averageRP.toFixed(
+                  1
+                )} average RP on patch ${stats.patchVersion} in ${tierLabel}. Weapons, traits, equipment builds, and sample size are shown below.`,
+                weapon: "Main weapon",
+                noWeapon: "Checking weapon samples",
+                winRate: "Win rate",
+                pickRate: "Pick rate",
+                averageRp: "Average RP",
+                sample: "Sample",
+                sampleSuffix: "matches",
+                actionTitle: "Related data",
+                trio: `${characterName} comps`,
+                trioDesc: "Trio data with this character",
+                patch: patchAnalysisVersion
+                  ? `Patch ${patchAnalysisVersion} analysis`
+                  : "Patch analysis",
+                patchDesc: "Available patch meta analysis",
+                lab: "Role comparison",
+                labDesc: "Compare performance in the same role",
+              };
 
   const cards = [
     { label: copy.weapon, value: topWeaponName ?? copy.noWeapon },
@@ -460,10 +516,8 @@ function CharacterSeoSection({
       />
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)] lg:items-start">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[var(--color-primary)]">
-            {copy.eyebrow}
-          </p>
-          <h2 className="mt-2 text-[1.35rem] font-black text-[var(--color-foreground)] sm:text-[1.55rem]">
+          <p className="text-xs font-medium text-[var(--color-muted-foreground)]">{copy.eyebrow}</p>
+          <h2 className="mt-2 text-[1.25rem] font-bold text-[var(--color-foreground)] sm:text-[1.5rem]">
             {copy.title}
           </h2>
           <p className="mt-2 max-w-[58rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem] sm:leading-7">
@@ -472,7 +526,7 @@ function CharacterSeoSection({
         </div>
 
         <nav
-          className="rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.025)] p-2"
+          className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-2"
           aria-label={copy.title}
         >
           <p className="px-2 pb-1.5 text-xs font-bold text-[var(--color-muted-foreground)]">
@@ -483,30 +537,30 @@ function CharacterSeoSection({
               <Link
                 key={href}
                 href={href}
-                className={`group grid grid-cols-[2rem_minmax(0,1fr)_1.25rem] items-center gap-2 rounded-lg border px-2.5 py-2.5 transition ${
+                className={`group grid grid-cols-[2rem_minmax(0,1fr)_1.25rem] items-center gap-2 rounded-md border px-2.5 py-2.5 ${
                   primary
-                    ? "border-[rgba(96,165,250,0.25)] bg-[rgba(96,165,250,0.08)] hover:border-[rgba(96,165,250,0.42)]"
-                    : "border-transparent bg-transparent hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.035)]"
+                    ? "border-[var(--color-border-light)] bg-[var(--color-surface)] hover:bg-[var(--color-surface-2)]"
+                    : "border-transparent bg-transparent hover:border-[var(--color-border)] hover:bg-[var(--color-surface-2)]"
                 }`}
               >
                 <span
-                  className={`flex h-8 w-8 items-center justify-center rounded-lg border ${
+                  className={`flex h-8 w-8 items-center justify-center rounded-md border ${
                     primary
-                      ? "border-[rgba(96,165,250,0.26)] bg-[rgba(96,165,250,0.12)] text-[var(--color-primary)]"
-                      : "border-[var(--color-border)] bg-[rgba(255,255,255,0.035)] text-[var(--color-muted-foreground)]"
+                      ? "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
+                      : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]"
                   }`}
                 >
                   <Icon className="h-4 w-4" />
                 </span>
                 <span className="min-w-0">
-                  <span className="block truncate text-sm font-black text-[var(--color-foreground)]">
+                  <span className="block truncate text-sm font-bold text-[var(--color-foreground)]">
                     {label}
                   </span>
                   <span className="mt-0.5 block truncate text-xs text-[var(--color-muted-foreground)]">
                     {description}
                   </span>
                 </span>
-                <ArrowRight className="h-4 w-4 text-[var(--color-muted-foreground)] transition group-hover:translate-x-0.5 group-hover:text-[var(--color-foreground)]" />
+                <ArrowRight className="h-4 w-4 text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]" />
               </Link>
             ))}
           </div>
@@ -517,10 +571,10 @@ function CharacterSeoSection({
         {cards.map((card) => (
           <div
             key={card.label}
-            className="rounded-lg border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-3 py-2"
+            className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2"
           >
             <dt className="text-xs text-[var(--color-muted-foreground)]">{card.label}</dt>
-            <dd className="mt-1 truncate text-sm font-black text-[var(--color-foreground)]">
+            <dd className="mt-1 truncate text-sm font-bold text-[var(--color-foreground)]">
               {card.value}
             </dd>
           </div>
@@ -565,16 +619,14 @@ function CharacterInsightSection({ insight }: { insight: CharacterInsight }) {
   return (
     <section className="dashboard-panel p-4 lg:p-5">
       <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1">
-        <Info className="h-4 w-4 text-[var(--color-primary)]" />
-        <h2 className="text-[1.1rem] font-black tracking-[-0.04em] text-[var(--color-foreground)] sm:text-[1.25rem]">
-          {insight.headline}
-        </h2>
+        <Info className="h-4 w-4 text-[var(--color-muted-foreground)]" />
+        <h2 className="text-sm font-bold text-[var(--color-foreground)]">{insight.headline}</h2>
       </div>
 
       <div className="grid gap-3 lg:grid-cols-3">
         <InsightCard title={insight.fitTitle} items={insight.fitPoints} />
         <InsightCard title={insight.metricsTitle} items={insight.metricsPoints} />
-        <div className="rounded-2xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.035)] p-4">
+        <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
           <h3 className="mb-2 text-sm font-bold text-[var(--color-foreground)]">
             {insight.compositionTitle}
           </h3>
@@ -589,12 +641,12 @@ function CharacterInsightSection({ insight }: { insight: CharacterInsight }) {
 
 function InsightCard({ title, items }: { title: string; items: string[] }) {
   return (
-    <div className="rounded-2xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.035)] p-4">
+    <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
       <h3 className="mb-2 text-sm font-bold text-[var(--color-foreground)]">{title}</h3>
       <ul className="grid gap-1.5 text-sm leading-6 text-[var(--color-muted-foreground)]">
         {items.map((item) => (
           <li key={item} className="flex gap-2">
-            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-primary)]" />
+            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-border-light)]" />
             <span>{item}</span>
           </li>
         ))}
@@ -617,49 +669,37 @@ export async function CharacterPageContent({
 
   return (
     <div className="page-shell flex flex-col gap-5 lg:gap-6">
-      <section className="dashboard-hero px-3 py-3 sm:px-4 sm:py-4 lg:px-5 lg:py-5">
-        <div className="grid gap-4 px-1 py-1.5 sm:px-2 sm:py-2 lg:grid-cols-[minmax(0,1fr)_minmax(320px,420px)] lg:items-center lg:px-4">
+      <section className="dashboard-panel px-4 py-4 lg:px-5">
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(320px,420px)] lg:items-start">
           <div className="flex min-w-0 flex-col justify-center">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(59,130,246,0.18)] bg-[rgba(59,130,246,0.08)] px-3 py-1">
-                <BarChart3 className="h-3.5 w-3.5 text-[var(--color-primary)]" />
-                <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--color-primary)] sm:text-[11px]">
-                  {t("badge")}
-                </span>
-              </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-[var(--color-warning)]/10 border border-[var(--color-warning)]/20 px-2 py-0.5">
-                <span className="text-[9px] font-bold text-[var(--color-warning)] uppercase">
-                  {t("beta")}
-                </span>
-              </span>
-              <span className="text-xs text-[var(--color-muted-foreground)] sm:text-sm">
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-muted-foreground)]">
+                <BarChart3 className="h-3.5 w-3.5" />
                 {t("patchBase", { patch: patches[0] ?? "—" })}
               </span>
             </div>
 
-            <h1 className="mt-3 text-[1.9rem] font-black tracking-[-0.055em] text-[var(--color-foreground)] sm:mt-4 sm:text-[2.2rem] lg:text-[3.15rem]">
+            <h1 className="mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
               {t("title")}
             </h1>
-            <p className="mt-2.5 max-w-[46rem] text-[0.95rem] font-semibold leading-6 text-[var(--color-foreground)]/88 sm:mt-3 sm:text-base sm:leading-7 lg:text-[1.05rem]">
+            <p className="mt-2 max-w-[46rem] text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">
               {t("subtitle")}
             </p>
-            <p className="mt-2 max-w-[46rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem] sm:leading-7">
+            <p className="mt-1.5 max-w-[46rem] text-sm leading-6 text-[var(--color-muted-foreground)]">
               {t("description")}
             </p>
-            <p className="mt-2 text-xs text-[var(--color-warning)]/80 sm:text-sm">
-              {t("imageNotice")}
-            </p>
+            <p className="mt-2 text-xs text-[var(--color-muted-foreground)]">{t("imageNotice")}</p>
           </div>
 
           {serverSummary ? (
-            <aside className="rounded-2xl border border-[rgba(96,165,250,0.2)] bg-[rgba(96,165,250,0.08)] p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] sm:p-4 lg:self-stretch">
+            <aside className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3.5 sm:p-4">
               <div className="mb-2 flex items-center gap-2">
-                <span className="flex h-7 w-7 items-center justify-center rounded-xl border border-[rgba(96,165,250,0.22)] bg-[rgba(96,165,250,0.1)] text-[var(--color-primary)]">
+                <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] text-[var(--color-muted-foreground)]">
                   <Info className="h-3.5 w-3.5" />
                 </span>
                 <h2 className="text-sm font-bold text-[var(--color-foreground)]">{summaryTitle}</h2>
               </div>
-              <p className="text-sm leading-6 text-[var(--color-foreground)]/88 sm:text-[0.95rem] sm:leading-7">
+              <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">
                 {serverSummary}
               </p>
             </aside>

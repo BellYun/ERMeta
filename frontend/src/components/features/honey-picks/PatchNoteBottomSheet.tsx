@@ -32,7 +32,7 @@ export function PatchNoteBottomSheet({
   return (
     <div className="fixed inset-0 z-[100] sm:hidden" onClick={onClose}>
       {/* 어두운 배경 */}
-      <div className="absolute inset-0 bg-black/70 animate-[fadeIn_200ms_ease-out]" />
+      <div className="absolute inset-0 bg-black/70" />
 
       {/* 바텀시트 */}
       <div
@@ -41,7 +41,7 @@ export function PatchNoteBottomSheet({
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className="absolute inset-x-0 bottom-0 rounded-t-2xl border-t border-[var(--color-border)]/60 bg-[var(--color-surface)] backdrop-blur-xl animate-[slideUp_300ms_ease-out] max-h-[70vh] flex flex-col focus:outline-none"
+        className="absolute inset-x-0 bottom-0 flex max-h-[70vh] flex-col rounded-t-lg border-t border-[var(--color-border)]/60 bg-[var(--color-surface)] focus:outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 핸들 */}
@@ -127,7 +127,7 @@ export function PatchNoteBottomSheet({
           </div>
           <button
             onClick={onNavigate}
-            className="w-full py-2.5 rounded-lg bg-[var(--color-primary)]/15 text-[var(--color-primary)] text-sm font-semibold hover:bg-[var(--color-primary)]/25 transition-colors"
+            className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] py-2.5 text-sm font-semibold text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
           >
             {t("detailAnalysis")}
           </button>

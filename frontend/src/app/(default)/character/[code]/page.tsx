@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       : t("titleWithName", { name });
     const description =
       stats && stats.totalGames > 0
-        ? `이터널리턴 ${name} ${currentPatch} 패치 다이아 이상 통계. 승률 ${stats.winRate.toFixed(1)}%, 픽률 ${stats.pickRate.toFixed(1)}%, 평균 RP ${stats.averageRP.toFixed(1)}, 추천 무기와 조합을 확인하세요.`
+        ? `이터널리턴 ${name} ${currentPatch} 패치 다이아 이상 통계. 승률 ${stats.winRate.toFixed(1)}%, 픽률 ${stats.pickRate.toFixed(1)}%, 평균 RP ${stats.averageRP.toFixed(1)}, 무기와 조합 데이터.`
         : t("descriptionWithName", { name });
 
     return {

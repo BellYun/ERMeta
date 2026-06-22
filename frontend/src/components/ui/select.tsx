@@ -15,7 +15,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       <select
         ref={ref}
         className={cn(
-          "h-10 sm:h-10 w-full appearance-none rounded-xl border border-[var(--color-border)] bg-[rgba(255,255,255,0.04)] px-3 pr-9 text-sm font-medium text-[var(--color-foreground)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/12 cursor-pointer transition-colors touch-manipulation backdrop-blur-xl",
+          "h-9 sm:h-9 w-full appearance-none rounded-[5px] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 pr-9 text-sm font-bold text-[var(--color-foreground)] focus:outline-none focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] cursor-pointer touch-manipulation",
           className
         )}
         {...props}
@@ -37,7 +37,11 @@ const SelectItem = React.forwardRef<
   HTMLOptionElement,
   React.OptionHTMLAttributes<HTMLOptionElement>
 >(({ className, ...props }, ref) => (
-  <option ref={ref} className={cn("bg-[#0f172a]", className)} {...props} />
+  <option
+    ref={ref}
+    className={cn("bg-[var(--color-surface)] text-[var(--color-foreground)]", className)}
+    {...props}
+  />
 ));
 SelectItem.displayName = "SelectItem";
 

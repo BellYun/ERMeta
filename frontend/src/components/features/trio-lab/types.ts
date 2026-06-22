@@ -126,7 +126,7 @@ export function trioName(combo: TrioWeaponCombo): string {
 export type TrioSortBy = "recommended" | "winRate" | "averageRP" | "averageRank" | "totalGames";
 
 export const SORT_LABELS: Record<TrioSortBy, string> = {
-  recommended: "추천순",
+  recommended: "지표순",
   averageRP: "평균 RP순",
   winRate: "승률순",
   averageRank: "평균 순위순",

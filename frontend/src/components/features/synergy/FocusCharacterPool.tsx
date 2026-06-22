@@ -44,7 +44,7 @@ export function FocusCharacterPool() {
   );
 
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-sm overflow-hidden">
+    <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]">
       {/* 접이식 헤더 */}
       <button
         onClick={() => setIsFocusExpanded((prev) => !prev)}
@@ -54,7 +54,7 @@ export function FocusCharacterPool() {
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium text-[var(--color-foreground)]">{t("title")}</span>
           {focusCharacters.length > 0 && (
-            <span className="rounded-full bg-[var(--color-primary)]/20 px-1.5 py-0.5 text-[10px] font-medium text-[var(--color-primary)]">
+            <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--color-muted-foreground)]">
               {t("count", { count: focusCharacters.length })}
             </span>
           )}
@@ -89,7 +89,7 @@ export function FocusCharacterPool() {
             <button
               key={`focus-chip-${code}`}
               onClick={() => toggleFocus(code)}
-              className="inline-flex items-center gap-1 rounded-md border border-[var(--color-primary)]/40 bg-[var(--color-primary)]/10 px-2 py-1 text-[10px] text-[var(--color-foreground)] hover:bg-[var(--color-primary)]/20 transition-colors"
+              className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1 text-[10px] text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
             >
               <span className="relative h-4 w-4 shrink-0 overflow-hidden rounded">
                 <Image
@@ -116,7 +116,7 @@ export function FocusCharacterPool() {
               value={focusSearch}
               onChange={(e) => setFocusSearch(e.target.value)}
               placeholder={t("searchPlaceholder")}
-              className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-primary)] focus:outline-none"
+              className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-border-light)] focus:outline-none"
             />
             {focusSearch && (
               <button
@@ -129,9 +129,7 @@ export function FocusCharacterPool() {
           </div>
 
           <React.Suspense
-            fallback={
-              <div className="h-[300px] rounded-lg bg-[var(--color-surface-2)] animate-pulse" />
-            }
+            fallback={<div className="h-[300px] rounded-lg bg-[var(--color-surface-2)]" />}
           >
             <VirtualCharacterGrid
               codes={filteredFocusCodes}

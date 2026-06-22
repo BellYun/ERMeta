@@ -20,9 +20,11 @@ function GroupSection({ group, characters, query }: GroupSectionProps) {
   const partnerRoles = group ? (group.topPartnerRoles ?? []) : [];
 
   return (
-    <section className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <h2 className="text-base font-semibold text-[var(--color-foreground)]">{label}</h2>
+    <section className="flex flex-col gap-3">
+      <div className="home-section-header flex flex-wrap items-center gap-2">
+        <h2 className="dashboard-section-title text-base font-semibold text-[var(--color-foreground)]">
+          {label}
+        </h2>
         {partnerRoles.map((role) => (
           <span
             key={role}

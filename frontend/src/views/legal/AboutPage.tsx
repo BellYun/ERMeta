@@ -58,7 +58,7 @@ const copy = {
   default: {
     title: "About ER&GG",
     updated: "Last updated: May 31, 2026",
-    lead: "ER&GG is an unofficial Eternal Return analytics service that explains character meta, weapon choices, and trio composition trends from ranked match data.",
+    lead: "ER&GG is an unofficial Eternal Return analysis service that explains character meta, weapon choices, and trio composition trends from ranked match data.",
     sections: [
       {
         title: "What this site provides",
@@ -80,26 +80,54 @@ const copy = {
   },
 };
 
+const linkLabels = {
+  ko: {
+    methodology: "데이터 방법론",
+    privacy: "개인정보처리방침",
+    terms: "이용약관",
+  },
+  ja: {
+    methodology: "データ方法論",
+    privacy: "プライバシーポリシー",
+    terms: "利用規約",
+  },
+  default: {
+    methodology: "Methodology",
+    privacy: "Privacy",
+    terms: "Terms",
+  },
+};
+
 function getCopy(locale: RouteLocale) {
   if (locale === "ko" || locale === "ja") return copy[locale];
   return copy.default;
 }
 
+function getLinkLabels(locale: RouteLocale) {
+  if (locale === "ko" || locale === "ja") return linkLabels[locale];
+  return linkLabels.default;
+}
+
 export default function AboutPage({ locale }: { locale: RouteLocale }) {
   const content = getCopy(locale);
+  const labels = getLinkLabels(locale);
 
   return (
-    <article className="prose-custom mx-auto max-w-3xl py-8">
-      <h1 className="mb-4 text-xl font-bold text-[var(--color-foreground)]">{content.title}</h1>
-      <p className="mb-8 text-xs text-[var(--color-muted-foreground)]">{content.updated}</p>
-      <p className="mb-8 text-sm leading-relaxed text-[var(--color-muted-foreground)]">
-        {content.lead}
-      </p>
+    <article className="mx-auto flex max-w-3xl flex-col gap-5 py-8">
+      <header className="dashboard-panel p-4">
+        <span className="dashboard-kicker">{content.updated}</span>
+        <h1 className="dashboard-section-title mt-2 text-xl font-bold text-[var(--color-foreground)]">
+          {content.title}
+        </h1>
+        <p className="mt-3 text-sm leading-relaxed text-[var(--color-muted-foreground)]">
+          {content.lead}
+        </p>
+      </header>
 
-      <div className="space-y-8">
+      <div className="grid gap-3">
         {content.sections.map((section) => (
-          <section key={section.title}>
-            <h2 className="mb-3 text-base font-semibold text-[var(--color-foreground)]">
+          <section key={section.title} className="metric-card p-4">
+            <h2 className="dashboard-section-title mb-2 text-base font-semibold text-[var(--color-foreground)]">
               {section.title}
             </h2>
             <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
@@ -109,18 +137,27 @@ export default function AboutPage({ locale }: { locale: RouteLocale }) {
         ))}
       </div>
 
-      <div className="mt-8 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+      <div className="metric-card p-4" data-accent="true">
         <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
-          <Link href="/methodology" className="text-[var(--color-primary)] hover:underline">
-            Methodology
+          <Link
+            href="/methodology"
+            className="font-semibold text-[var(--color-accent-foreground)] hover:underline"
+          >
+            {labels.methodology}
           </Link>
           {" / "}
-          <Link href="/privacy" className="text-[var(--color-primary)] hover:underline">
-            Privacy
+          <Link
+            href="/privacy"
+            className="font-semibold text-[var(--color-accent-foreground)] hover:underline"
+          >
+            {labels.privacy}
           </Link>
           {" / "}
-          <Link href="/terms" className="text-[var(--color-primary)] hover:underline">
-            Terms
+          <Link
+            href="/terms"
+            className="font-semibold text-[var(--color-accent-foreground)] hover:underline"
+          >
+            {labels.terms}
           </Link>
         </p>
       </div>

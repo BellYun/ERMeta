@@ -15,9 +15,18 @@ export function getOverallChangeType(patchNote: CharacterPatchNote): "buff" | "n
 }
 
 export const CHANGE_LABEL: Record<string, { text: string; color: string }> = {
-  buff: { text: "BUFF", color: "text-[var(--color-stat-up)] bg-[var(--color-stat-up)]/10" },
-  nerf: { text: "NERF", color: "text-[var(--color-stat-down)] bg-[var(--color-stat-down)]/10" },
-  rework: { text: "ADJUST", color: "text-[var(--color-primary)] bg-[var(--color-primary)]/10" },
+  buff: {
+    text: "상향",
+    color: "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-stat-up)]",
+  },
+  nerf: {
+    text: "하향",
+    color: "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-stat-down)]",
+  },
+  rework: {
+    text: "조정",
+    color: "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]",
+  },
 };
 
 interface HoneyPickCardProps {
@@ -50,35 +59,31 @@ export function HoneyPickCard({
     <div className="shrink-0 px-1" style={{ width: `${cardWidth}%` }}>
       <div
         className={cn(
-          "group/card relative cursor-pointer transition-all duration-500 ease-out rounded-xl",
-          isCenter ? "z-20 overflow-visible" : "brightness-[0.55] overflow-hidden"
+          "group/card relative cursor-pointer rounded-md",
+          isCenter ? "z-20 overflow-visible" : "opacity-55 overflow-hidden"
         )}
         onClick={onCardClick}
       >
         {/* Main card */}
-        <div className="relative w-full aspect-[4/5] shrink-0 overflow-hidden rounded-xl bg-[var(--color-surface-2)]">
+        <div className="relative w-full aspect-[4/5] shrink-0 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)]">
           <Image
             src={halfUrl}
             alt={name}
             fill
-            className={cn(
-              "object-cover object-top transition-transform duration-700",
-              isCenter && "group-hover/card:scale-105"
-            )}
+            className="object-cover object-top"
             sizes="33vw"
             priority={isCenter}
           />
 
-          {/* Bottom gradient */}
-          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-[var(--color-surface)]" />
 
           {/* Rank badge */}
           <div
             className={cn(
-              "absolute top-2 left-2 flex h-6 w-6 items-center justify-center rounded-md text-[11px] font-bold",
+              "absolute top-2 left-2 flex h-6 w-6 items-center justify-center rounded border text-[11px] font-bold",
               isCenter
-                ? "bg-[var(--color-accent-gold)]/20 text-[var(--color-accent-gold)]"
-                : "bg-black/40 text-[var(--color-muted-foreground)]"
+                ? "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
+                : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]"
             )}
           >
             {rank}
@@ -87,7 +92,12 @@ export function HoneyPickCard({
           {/* Change label */}
           {isCenter && changeLabel && (
             <div className="absolute top-2 right-2">
-              <span className={cn("rounded px-1.5 py-0.5 text-[9px] font-bold", changeLabel.color)}>
+              <span
+                className={cn(
+                  "rounded border px-1.5 py-0.5 text-[9px] font-bold",
+                  changeLabel.color
+                )}
+              >
                 {changeLabel.text}
               </span>
             </div>
@@ -96,28 +106,37 @@ export function HoneyPickCard({
           {/* Info panel */}
           <div
             className={cn(
-              "absolute inset-x-2 bottom-2 rounded-lg transition-all",
+              "absolute inset-x-2 bottom-2 rounded border border-[var(--color-border)] bg-[var(--color-surface)]",
               isCenter ? "p-2.5" : "p-2"
             )}
           >
             <div className="min-w-0">
-              <p className={cn("font-bold truncate text-white", isCenter ? "text-sm" : "text-xs")}>
+              <p
+                className={cn(
+                  "truncate font-bold text-[var(--color-foreground)]",
+                  isCenter ? "text-sm" : "text-xs"
+                )}
+              >
                 {name}
               </p>
               {isCenter && (
-                <p className="text-[10px] text-white/60 truncate mt-0.5">{weaponName}</p>
+                <p className="mt-0.5 truncate text-[10px] text-[var(--color-muted-foreground)]">
+                  {weaponName}
+                </p>
               )}
             </div>
 
             {/* Stats - center only */}
             {isCenter && (
-              <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-white/10">
+              <div className="mt-2 flex items-center gap-1.5 border-t border-[var(--color-border)] pt-2">
                 <div className="flex-1 text-center">
-                  <p className="text-[8px] text-white/50 uppercase tracking-wider">승률</p>
+                  <p className="text-[8px] text-[var(--color-muted-foreground)]">승률</p>
                   <p
                     className={cn(
                       "text-[13px] font-bold tabular-nums leading-tight",
-                      pick.winRate >= 60 ? "text-[var(--color-accent-gold)]" : "text-white"
+                      pick.winRate >= 60
+                        ? "text-[var(--color-accent-gold)]"
+                        : "text-[var(--color-foreground)]"
                     )}
                   >
                     {pick.winRate.toFixed(1)}%
@@ -126,23 +145,25 @@ export function HoneyPickCard({
                     +{pick.winRateDelta.toFixed(1)}
                   </p>
                 </div>
-                <div className="w-px h-7 bg-white/10" />
+                <div className="h-7 w-px bg-[var(--color-border)]" />
                 <div className="flex-1 text-center">
-                  <p className="text-[8px] text-white/50 uppercase tracking-wider">픽률</p>
-                  <p className="text-[13px] font-bold tabular-nums leading-tight text-white">
+                  <p className="text-[8px] text-[var(--color-muted-foreground)]">픽률</p>
+                  <p className="text-[13px] font-bold leading-tight text-[var(--color-foreground)] tabular-nums">
                     {pick.pickRate.toFixed(1)}%
                   </p>
                   <p className="text-[9px] font-medium text-[var(--color-stat-up)] mt-0.5 tabular-nums">
                     +{pick.pickRateDelta.toFixed(1)}
                   </p>
                 </div>
-                <div className="w-px h-7 bg-white/10" />
+                <div className="h-7 w-px bg-[var(--color-border)]" />
                 <div className="flex-1 text-center">
-                  <p className="text-[8px] text-white/50 uppercase tracking-wider">RP</p>
+                  <p className="text-[8px] text-[var(--color-muted-foreground)]">RP</p>
                   <p
                     className={cn(
                       "text-[13px] font-bold tabular-nums leading-tight",
-                      pick.averageRP >= 0 ? "text-[var(--color-accent-gold)]" : "text-white/60"
+                      pick.averageRP >= 0
+                        ? "text-[var(--color-accent-gold)]"
+                        : "text-[var(--color-muted-foreground)]"
                     )}
                   >
                     {pick.averageRP >= 0 ? "+" : ""}
@@ -169,15 +190,18 @@ export function HoneyPickCard({
         {isCenter && patchNote && (
           <div
             className={cn(
-              "hidden sm:block absolute top-0 left-full h-full w-0 group-hover/card:w-52 overflow-hidden transition-all duration-500 ease-out rounded-r-xl",
-              "bg-[var(--color-surface)]/95 backdrop-blur-xl border-l border-[var(--color-border)]"
+              "hidden sm:block absolute top-0 left-full h-full w-0 group-hover/card:w-52 overflow-hidden rounded-r",
+              "bg-[var(--color-surface)] border-l border-[var(--color-border)]"
             )}
           >
             <div className="w-52 h-full p-3 flex flex-col gap-2 overflow-y-auto">
               <div className="flex items-center gap-1.5">
                 {changeLabel && (
                   <span
-                    className={cn("rounded px-1.5 py-0.5 text-[9px] font-bold", changeLabel.color)}
+                    className={cn(
+                      "rounded border px-1.5 py-0.5 text-[9px] font-bold",
+                      changeLabel.color
+                    )}
                   >
                     {changeLabel.text}
                   </span>
@@ -194,7 +218,10 @@ export function HoneyPickCard({
                     <div key={ci} className="flex flex-col gap-0.5">
                       <div className="flex items-center gap-1">
                         <span
-                          className={cn("rounded px-1 py-0.5 text-[8px] font-bold", label.color)}
+                          className={cn(
+                            "rounded border px-1 py-0.5 text-[8px] font-bold",
+                            label.color
+                          )}
                         >
                           {label.text}
                         </span>

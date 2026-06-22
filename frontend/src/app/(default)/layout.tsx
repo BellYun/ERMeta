@@ -5,6 +5,7 @@ import { AppFrame } from "@/components/AppFrame";
 import FeedbackWidget from "@/components/features/FeedbackWidget";
 import { L10nProvider } from "@/components/L10nProvider";
 import { RootDocumentExtras } from "@/components/RootDocumentExtras";
+import { ThemeInitScript } from "@/components/ThemeInitScript";
 import { getStatsPatchVersions } from "@/data/patch-notes";
 import { DEFAULT_ROUTE_LOCALE } from "@/i18n/routing";
 import { DEFAULT_LANGUAGE } from "@/lib/detectLanguage";
@@ -25,7 +26,10 @@ export default async function DefaultLayout({ children }: { children: ReactNode 
   const patchAnalysisPatch = getPatchAnalysisVersions()[0] ?? "";
 
   return (
-    <html lang={HTML_LANG_BY_LANGUAGE[DEFAULT_LANGUAGE] ?? "ko"}>
+    <html lang={HTML_LANG_BY_LANGUAGE[DEFAULT_LANGUAGE] ?? "ko"} suppressHydrationWarning>
+      <head>
+        <ThemeInitScript />
+      </head>
       <body>
         <L10nProvider
           initialL10n={initialL10n}
@@ -37,6 +41,7 @@ export default async function DefaultLayout({ children }: { children: ReactNode 
             messages={initialMessages}
             currentPatch={currentPatch}
             patchAnalysisPatch={patchAnalysisPatch}
+            routeLocale={DEFAULT_ROUTE_LOCALE}
           >
             {children}
           </AppFrame>

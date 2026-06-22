@@ -14,6 +14,7 @@ export function ComboCard({
   getCharName,
   selectedAllies,
   isFocusPoolCombo = false,
+  isTopResult = false,
   compact = false,
   priorityImages = false,
   onNavigateAnalysis,
@@ -23,6 +24,7 @@ export function ComboCard({
   getCharName: (code: number) => string;
   selectedAllies: number[];
   isFocusPoolCombo?: boolean;
+  isTopResult?: boolean;
   compact?: boolean;
   /** true면 이미지를 priority로 즉시 로드 (상위 카드용) */
   priorityImages?: boolean;
@@ -47,13 +49,20 @@ export function ComboCard({
   return (
     <div
       className={cn(
-        "group flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 px-3 py-2.5 transition-all duration-200 hover:bg-[var(--color-primary)]/[0.04] hover:border-[var(--color-primary)]/20",
-        isFocusPoolCombo &&
-          "border-[rgba(216,180,254,0.42)] bg-[linear-gradient(135deg,rgba(168,85,247,0.08),rgba(17,25,46,0.82)_48%)] shadow-[inset_0_1px_0_rgba(216,180,254,0.08)]"
+        "combo-card",
+        "group flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
       )}
+      data-accent={isFocusPoolCombo || isTopResult ? "true" : undefined}
     >
       {/* 순위 */}
-      <span className="w-5 shrink-0 text-center text-xs font-bold text-[var(--color-muted-foreground)] group-hover:text-[var(--color-primary)]">
+      <span
+        className={cn(
+          "w-5 shrink-0 text-center text-xs font-bold group-hover:text-[var(--color-foreground)]",
+          isTopResult
+            ? "text-[var(--color-accent-foreground)]"
+            : "text-[var(--color-muted-foreground)]"
+        )}
+      >
         {rank}
       </span>
 
@@ -66,8 +75,10 @@ export function ComboCard({
               <div
                 className={cn(
                   "relative h-8 w-8 overflow-hidden rounded-md bg-[var(--color-border)]",
-                  isRecommended && "ring-2 ring-[var(--color-accent-gold)]",
-                  isRecommended && "group-hover/char:ring-[var(--color-primary)] transition-all"
+                  isRecommended &&
+                    (isTopResult
+                      ? "border border-[var(--color-accent)]"
+                      : "border border-[var(--color-border-light)]")
                 )}
               >
                 <Image
@@ -85,7 +96,7 @@ export function ComboCard({
                   className={cn(
                     "w-10 truncate text-center text-[9px]",
                     isRecommended
-                      ? "text-[var(--color-accent-gold)] group-hover/char:text-[var(--color-primary)]"
+                      ? "text-[var(--color-foreground)] group-hover/char:text-[var(--color-foreground)]"
                       : "text-[var(--color-muted-foreground)]"
                   )}
                 >
@@ -105,7 +116,7 @@ export function ComboCard({
                 >
                   {charContent}
                   {rest.length === 1 && (
-                    <span className="rounded-md border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-1.5 py-0.5 text-[9px] font-medium text-[var(--color-primary)] group-hover/char:bg-[var(--color-primary)]/20 group-hover/char:border-[var(--color-primary)]/50 transition-colors whitespace-nowrap">
+                    <span className="whitespace-nowrap rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[9px] font-medium text-[var(--color-foreground)] transition-colors group-hover/char:border-[var(--color-border-light)]">
                       분석보기
                     </span>
                   )}
@@ -121,7 +132,7 @@ export function ComboCard({
 
       {/* 소표본 배지 */}
       {isSmallSample && (
-        <span className="text-[9px] bg-[var(--color-surface-2)] text-[var(--color-muted-foreground)] px-1.5 py-0.5 rounded shrink-0">
+        <span className="shrink-0 rounded border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[9px] text-[var(--color-muted-foreground)]">
           소표본
         </span>
       )}
@@ -145,7 +156,7 @@ export function ComboCard({
           </span>
         </div>
       ) : (
-        <div className="ml-auto flex items-center gap-3 sm:gap-6 text-right">
+        <div className="ml-auto flex items-center gap-3 text-right sm:gap-6">
           <div className="flex flex-col">
             <span className="text-[10px] text-[var(--color-muted-foreground)]">승률</span>
             <span className="text-sm font-semibold text-[var(--color-foreground)]">

@@ -1,35 +1,34 @@
-import { ImageResponse } from "next/og"
+import { ImageResponse } from "next/og";
 
-export const size = { width: 48, height: 48 }
-export const contentType = "image/png"
+export const size = { width: 48, height: 48 };
+export const contentType = "image/png";
 
 export default function Icon() {
   return new ImageResponse(
-    (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#ffffff",
+        border: "1px solid #d5dbe5",
+        borderRadius: "8px",
+      }}
+    >
       <div
         style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "linear-gradient(135deg, #38bdf8, #a78bfa)",
-          borderRadius: "10px",
+          fontSize: "24px",
+          fontWeight: 700,
+          color: "#172033",
+          letterSpacing: "0",
+          lineHeight: 1,
         }}
       >
-        <div
-          style={{
-            fontSize: "24px",
-            fontWeight: 900,
-            color: "#ffffff",
-            letterSpacing: "-1px",
-            lineHeight: 1,
-          }}
-        >
-          ER
-        </div>
+        ER
       </div>
-    ),
+    </div>,
     { ...size }
-  )
+  );
 }

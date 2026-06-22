@@ -81,12 +81,12 @@ export function LocaleRecommendationBanner() {
   };
 
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-[rgba(96,165,250,0.14)] bg-[rgba(59,130,246,0.08)] px-3 py-2 text-sm text-[var(--color-foreground)] sm:px-4 lg:px-6">
+    <div className="flex items-center justify-between gap-3 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-foreground)] sm:px-4 lg:px-6">
       <div className="flex min-w-0 items-center gap-2.5">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[rgba(96,165,250,0.18)] bg-[rgba(96,165,250,0.12)] text-[var(--color-primary)]">
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]">
           <Globe2 className="h-4 w-4" strokeWidth={2} />
         </span>
-        <p className="min-w-0 text-xs leading-5 text-[var(--color-foreground)]/86 sm:text-sm">
+        <p className="min-w-0 text-xs leading-5 text-[var(--color-muted-foreground)] sm:text-sm">
           {t("localeRecommendationBody", {
             language: LANGUAGE_LABELS[recommendedLanguage],
           })}
@@ -97,7 +97,7 @@ export function LocaleRecommendationBanner() {
         <button
           type="button"
           onClick={handleSwitch}
-          className="rounded-full border border-[rgba(96,165,250,0.2)] bg-[rgba(96,165,250,0.14)] px-3 py-1.5 text-xs font-semibold text-[var(--color-primary)] transition-colors hover:bg-[rgba(96,165,250,0.2)] sm:text-sm"
+          className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] sm:text-sm"
         >
           {t("localeRecommendationCta")}
         </button>
@@ -105,7 +105,7 @@ export function LocaleRecommendationBanner() {
           type="button"
           aria-label={t("localeRecommendationDismiss")}
           onClick={handleDismiss}
-          className="flex h-8 w-8 items-center justify-center rounded-full border border-transparent text-[var(--color-foreground)]/64 transition-colors hover:border-[var(--color-border)] hover:text-[var(--color-foreground)]"
+          className="flex h-8 w-8 items-center justify-center rounded border border-transparent text-[var(--color-muted-foreground)] transition-colors hover:border-[var(--color-border)] hover:text-[var(--color-foreground)]"
         >
           <X className="h-4 w-4" strokeWidth={2} />
         </button>

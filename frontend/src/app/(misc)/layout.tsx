@@ -3,6 +3,7 @@ import "../globals.css";
 import type { ReactNode } from "react";
 import { L10nProvider } from "@/components/L10nProvider";
 import { RootDocumentExtras } from "@/components/RootDocumentExtras";
+import { ThemeInitScript } from "@/components/ThemeInitScript";
 import { DEFAULT_LANGUAGE } from "@/lib/detectLanguage";
 import { geistSans } from "@/lib/geistFont";
 import { loadL10nRecord } from "@/lib/serverL10n";
@@ -26,7 +27,14 @@ export default async function MiscLayout({ children }: { children: ReactNode }) 
   const initialL10n = loadL10nRecord(DEFAULT_LANGUAGE);
 
   return (
-    <html lang={HTML_LANG_BY_LANGUAGE[DEFAULT_LANGUAGE] ?? "ko"} className={geistSans.variable}>
+    <html
+      lang={HTML_LANG_BY_LANGUAGE[DEFAULT_LANGUAGE] ?? "ko"}
+      className={geistSans.variable}
+      suppressHydrationWarning
+    >
+      <head>
+        <ThemeInitScript />
+      </head>
       <body>
         <L10nProvider
           initialL10n={initialL10n}

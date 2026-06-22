@@ -65,7 +65,7 @@ export function HomeFilterAside({ anchorId }: HomeFilterAsideProps) {
       className="fixed top-[5.5rem] z-50 hidden xl:block"
       style={{ left: layout.left, width: layout.width }}
     >
-      <div className="rounded-[20px] border border-[var(--color-border)] bg-[rgba(8,13,26,0.82)] p-3 shadow-[0_24px_48px_-36px_rgba(0,0,0,0.82)] backdrop-blur-xl">
+      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
         <GlobalFilter />
       </div>
     </section>

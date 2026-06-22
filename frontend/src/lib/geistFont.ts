@@ -1,6 +1,3 @@
-import { Geist } from "next/font/google";
-
-export const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+export const geistSans = {
+  variable: "font-geist-sans-fallback",
+} as const;

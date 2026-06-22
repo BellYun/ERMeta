@@ -1,7 +1,9 @@
 "use client";
 
+import { useLocale } from "next-intl";
 import { useEffect, useRef } from "react";
 import { ADSENSE_CLIENT, ADSENSE_PREVIEW } from "@/components/ads/adsenseConfig";
+import type { RouteLocale } from "@/i18n/routing";
 import { analytics, type AdSlotName } from "@/lib/analytics";
 
 declare global {
@@ -21,6 +23,14 @@ interface AdSlotProps {
   minHeight?: number;
 }
 
+const AD_LABEL: Record<RouteLocale, string> = {
+  ko: "광고",
+  en: "Ad",
+  ja: "広告",
+  "zh-Hans": "广告",
+  "zh-Hant": "廣告",
+};
+
 export function AdSlot({
   slot,
   slotName,
@@ -31,6 +41,8 @@ export function AdSlot({
   className,
   minHeight = 100,
 }: AdSlotProps) {
+  const locale = useLocale() as RouteLocale;
+  const label = AD_LABEL[locale] ?? AD_LABEL.ko;
   const rootRef = useRef<HTMLDivElement | null>(null);
   const insRef = useRef<HTMLModElement | null>(null);
   const pushedElement = useRef<HTMLModElement | null>(null);
@@ -100,8 +112,8 @@ export function AdSlot({
         className={`ad-placement ad-placement-preview ${className ?? ""}`}
         style={{ minHeight }}
       >
-        <span className="ad-placement-label">Advertisement</span>
-        <div className="ad-placement-preview-box">AdSense preview</div>
+        <span className="ad-placement-label">{label}</span>
+        <div className="ad-placement-preview-box" aria-hidden="true" />
       </div>
     );
   }
@@ -110,7 +122,7 @@ export function AdSlot({
 
   return (
     <div ref={rootRef} className={`ad-placement ${className ?? ""}`} style={{ minHeight }}>
-      <span className="ad-placement-label">Advertisement</span>
+      <span className="ad-placement-label">{label}</span>
       <ins
         key={`${slotName}:${slot}`}
         ref={insRef}

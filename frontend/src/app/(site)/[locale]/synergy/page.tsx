@@ -16,6 +16,8 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
     notFound();
   }
 
+  setRequestLocale(locale);
+
   return localizeMetadata(await generateBaseMetadata(), "/synergy", locale);
 }
 

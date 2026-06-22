@@ -1,11 +1,15 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
 /** 시너지 페이지 섹션별 Suspense fallback 스켈레톤 */
 
 export function FocusPoolSkeleton() {
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
+    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden">
       <div className="flex items-center justify-between px-3 py-2.5">
-        <div className="h-4 w-24 rounded bg-[var(--color-surface-2)] animate-pulse" />
-        <div className="h-4 w-4 rounded bg-[var(--color-surface-2)] animate-pulse" />
+        <div className="h-4 w-24 rounded bg-[var(--color-surface-2)]" />
+        <div className="h-4 w-4 rounded bg-[var(--color-surface-2)]" />
       </div>
     </div>
   );
@@ -18,18 +22,18 @@ export function AllySelectorSkeleton() {
         {[0, 1].map((i) => (
           <div
             key={i}
-            className="h-16 w-28 rounded-xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface-2)] animate-pulse"
+            className="h-16 w-28 rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-surface-2)]"
           />
         ))}
       </div>
-      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-2">
-        <div className="h-4 w-28 rounded bg-[var(--color-surface-2)] animate-pulse mb-2 ml-1" />
-        <div className="h-8 w-full rounded-md bg-[var(--color-surface-2)] animate-pulse mb-2" />
+      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-2">
+        <div className="h-4 w-28 rounded bg-[var(--color-surface-2)] mb-2 ml-1" />
+        <div className="h-8 w-full rounded-md bg-[var(--color-surface-2)] mb-2" />
         <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-1">
           {Array.from({ length: 20 }).map((_, i) => (
             <div key={i} className="flex flex-col items-center gap-1 py-2">
-              <div className="h-10 w-10 rounded-md bg-[var(--color-surface-2)] animate-pulse" />
-              <div className="h-3 w-8 rounded bg-[var(--color-surface-2)] animate-pulse" />
+              <div className="h-10 w-10 rounded-md bg-[var(--color-surface-2)]" />
+              <div className="h-3 w-8 rounded bg-[var(--color-surface-2)]" />
             </div>
           ))}
         </div>
@@ -44,7 +48,7 @@ export function ResultSkeleton() {
       {Array.from({ length: 5 }).map((_, i) => (
         <div
           key={i}
-          className="h-14 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 animate-pulse"
+          className="h-14 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]"
         />
       ))}
     </div>
@@ -57,17 +61,17 @@ export function ResultSkeleton() {
  * 레이아웃과 섹션 제목/번호/gap을 실제와 동일하게 유지해 CLS 방지.
  */
 export function SynergyDetailInteractiveSkeleton() {
+  const t = useTranslations("synergyInteractive");
+
   return (
     <div className="flex flex-col gap-5 sm:gap-6 mt-5 sm:mt-7">
       <section>
         <div className="flex items-center gap-2 mb-2.5">
-          <span className="flex items-center justify-center h-5 w-5 rounded-md bg-[var(--color-accent-purple)]/15 text-[10px] font-bold text-[var(--color-accent-purple)]">
+          <span className="flex items-center justify-center h-5 w-5 rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[10px] font-bold text-[var(--color-muted-foreground)]">
             1
           </span>
-          <h2 className="text-sm font-bold text-[var(--color-foreground)]">내 캐릭터 풀</h2>
-          <span className="text-[10px] text-[var(--color-muted-foreground)]">
-            선택사항 · 캐릭터+무기 단위 필터링
-          </span>
+          <h2 className="text-sm font-bold text-[var(--color-foreground)]">{t("poolTitle")}</h2>
+          <span className="text-[10px] text-[var(--color-muted-foreground)]">{t("poolHint")}</span>
         </div>
         <FocusPoolSkeleton />
       </section>
@@ -75,20 +79,22 @@ export function SynergyDetailInteractiveSkeleton() {
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
         <section className="w-full lg:w-[340px] shrink-0">
           <div className="flex items-center gap-2 mb-2.5">
-            <span className="flex items-center justify-center h-5 w-5 rounded-md bg-[var(--color-primary)]/15 text-[10px] font-bold text-[var(--color-primary)]">
+            <span className="flex items-center justify-center h-5 w-5 rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[10px] font-bold text-[var(--color-muted-foreground)]">
               2
             </span>
-            <h2 className="text-sm font-bold text-[var(--color-foreground)]">아군 선택</h2>
+            <h2 className="text-sm font-bold text-[var(--color-foreground)]">{t("alliesTitle")}</h2>
           </div>
           <AllySelectorSkeleton />
         </section>
 
         <section className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2.5">
-            <span className="flex items-center justify-center h-5 w-5 rounded-md bg-[var(--color-accent-gold)]/15 text-[10px] font-bold text-[var(--color-accent-gold)]">
+            <span className="flex items-center justify-center h-5 w-5 rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[10px] font-bold text-[var(--color-muted-foreground)]">
               3
             </span>
-            <h2 className="text-sm font-bold text-[var(--color-foreground)]">추천 조합</h2>
+            <h2 className="text-sm font-bold text-[var(--color-foreground)]">
+              {t("resultsTitle")}
+            </h2>
           </div>
           <ResultSkeleton />
         </section>

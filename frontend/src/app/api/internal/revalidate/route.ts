@@ -4,10 +4,10 @@ import { NextResponse, type NextRequest } from "next/server";
 export const dynamic = "force-dynamic";
 
 /**
- * ERmangho 수집 파이프라인이 5분 주기 수집 완료 시 호출하는 내부 webhook.
+ * Stats ingestion pipeline webhook.
  * 변경된 테이블/캐릭터에 대응하는 tag 만 무효화하여 L1 Next.js Data Cache 를 즉시 갱신.
  *
- * 사용 예 (ERmangho):
+ * Usage:
  *   POST /api/internal/revalidate
  *   Headers: { "x-internal-secret": process.env.INTERNAL_REVALIDATE_SECRET, "Content-Type": "application/json" }
  *   Body:    { "tables": ["v2_CharacterTrio", "v2_CharacterTrioWeapon"], "chars": [27, 15] }
@@ -47,9 +47,9 @@ function isNumberArray(value: unknown): value is number[] {
 export async function POST(request: NextRequest) {
   const expected = process.env.INTERNAL_REVALIDATE_SECRET;
   if (!expected) {
-    console.error("[internal/revalidate] INTERNAL_REVALIDATE_SECRET 미설정");
+    console.error("[internal/revalidate] missing secret");
     return NextResponse.json(
-      { error: "server misconfigured" },
+      { error: "temporary_unavailable" },
       { status: 500, headers: { "Cache-Control": "no-store" } }
     );
   }
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     body = (await request.json()) as RevalidateBody;
   } catch {
     return NextResponse.json(
-      { error: "invalid JSON body" },
+      { error: "invalid_request_body" },
       { status: 400, headers: { "Cache-Control": "no-store" } }
     );
   }

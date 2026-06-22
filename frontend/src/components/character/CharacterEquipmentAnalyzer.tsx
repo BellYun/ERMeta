@@ -31,10 +31,26 @@ function useLocalizedItemNames(l10n: Map<string, string>): Record<number, string
 type TraitGroup = "havoc" | "fortification" | "support" | "chaos" | "unknown";
 
 const GROUP_CONFIG: Record<TraitGroup, { letter: string; bg: string; text: string }> = {
-  havoc: { letter: "파", bg: "bg-red-500/20", text: "text-red-400" },
-  fortification: { letter: "저", bg: "bg-blue-500/20", text: "text-blue-400" },
-  support: { letter: "지", bg: "bg-emerald-500/20", text: "text-emerald-400" },
-  chaos: { letter: "혼", bg: "bg-purple-500/20", text: "text-purple-400" },
+  havoc: {
+    letter: "파",
+    bg: "bg-[var(--color-surface-2)]",
+    text: "text-[var(--color-foreground)]",
+  },
+  fortification: {
+    letter: "저",
+    bg: "bg-[var(--color-surface-2)]",
+    text: "text-[var(--color-foreground)]",
+  },
+  support: {
+    letter: "지",
+    bg: "bg-[var(--color-surface-2)]",
+    text: "text-[var(--color-foreground)]",
+  },
+  chaos: {
+    letter: "혼",
+    bg: "bg-[var(--color-surface-2)]",
+    text: "text-[var(--color-foreground)]",
+  },
   unknown: {
     letter: "?",
     bg: "bg-[var(--color-surface-2)]",
@@ -113,30 +129,28 @@ function TopBuildsTable({
   traitNames: Record<number, string>;
 }) {
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
-      <SectionHeader title="TOP BUILDS" />
+    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
+      <SectionHeader title="주요 빌드" />
 
       {/* 모바일 카드 레이아웃 (<640px) */}
       <div className="sm:hidden divide-y divide-[var(--color-border)]">
         {builds.map((b, i) => (
           <div
             key={i}
-            className={cn("px-3 py-2 space-y-1.5", i === 0 && "bg-[var(--color-accent-gold)]/5")}
+            className={cn("px-3 py-2 space-y-1.5", i === 0 && "bg-[var(--color-stat-up)]/5")}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span
                   className={cn(
                     "text-xs font-bold",
-                    i === 0
-                      ? "text-[var(--color-accent-gold)]"
-                      : "text-[var(--color-muted-foreground)]"
+                    i === 0 ? "text-[var(--color-stat-up)]" : "text-[var(--color-muted-foreground)]"
                   )}
                 >
                   #{i + 1}
                 </span>
                 {b.mainCore != null && (
-                  <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium bg-[var(--color-primary)]/20 text-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/40">
+                  <span className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--color-foreground)]">
                     <TraitIconSmall code={b.mainCore} size={16} />
                     {traitNames[b.mainCore] ?? b.mainCore}
                   </span>
@@ -191,8 +205,8 @@ function TopBuildsTable({
               <tr
                 key={i}
                 className={cn(
-                  "border-b border-[var(--color-border)] last:border-0 transition-colors hover:bg-[var(--color-surface-2)]",
-                  i === 0 && "bg-[var(--color-accent-gold)]/5"
+                  "border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-surface-2)]",
+                  i === 0 && "bg-[var(--color-stat-up)]/5"
                 )}
               >
                 <td className="px-2 py-1.5 text-left">
@@ -200,7 +214,7 @@ function TopBuildsTable({
                     className={cn(
                       "font-bold",
                       i === 0
-                        ? "text-[var(--color-accent-gold)]"
+                        ? "text-[var(--color-stat-up)]"
                         : "text-[var(--color-muted-foreground)]"
                     )}
                   >
@@ -209,7 +223,7 @@ function TopBuildsTable({
                 </td>
                 <td className="px-1.5 py-1.5 text-center">
                   {b.mainCore != null ? (
-                    <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium bg-[var(--color-primary)]/20 text-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/40 whitespace-nowrap">
+                    <span className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--color-foreground)] whitespace-nowrap">
                       <TraitIconSmall code={b.mainCore} size={16} />
                       {traitNames[b.mainCore] ?? b.mainCore}
                     </span>
@@ -262,8 +276,8 @@ function TopBuildsTable({
               <tr
                 key={i}
                 className={cn(
-                  "border-b border-[var(--color-border)] last:border-0 transition-colors hover:bg-[var(--color-surface-2)]",
-                  i === 0 && "bg-[var(--color-accent-gold)]/5"
+                  "border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-surface-2)]",
+                  i === 0 && "bg-[var(--color-stat-up)]/5"
                 )}
               >
                 <td className="px-3 py-2 text-left">
@@ -271,7 +285,7 @@ function TopBuildsTable({
                     className={cn(
                       "text-xs font-bold",
                       i === 0
-                        ? "text-[var(--color-accent-gold)]"
+                        ? "text-[var(--color-stat-up)]"
                         : "text-[var(--color-muted-foreground)]"
                     )}
                   >
@@ -281,7 +295,7 @@ function TopBuildsTable({
                 {/* 메인특성 */}
                 <td className="px-2 py-2 text-center">
                   {b.mainCore != null ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-medium bg-[var(--color-primary)]/20 text-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/40 whitespace-nowrap">
+                    <span className="inline-flex items-center gap-1.5 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-0.5 text-xs font-medium text-[var(--color-foreground)] whitespace-nowrap">
                       <TraitIconSmall code={b.mainCore} size={20} />
                       {traitNames[b.mainCore] ?? b.mainCore}
                     </span>
@@ -333,7 +347,7 @@ function SlotPopularityGrid({
   itemNames: Record<number, string>;
 }) {
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
+    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
       <SectionHeader title="슬롯별 인기 아이템" />
 
       {/* 모바일: 슬롯별 가로 리스트 (스크롤 없음) */}
@@ -351,16 +365,15 @@ function SlotPopularityGrid({
                   <div
                     key={item.code}
                     className={cn(
-                      "flex flex-col items-center gap-0.5 rounded-lg px-2 py-1.5 min-w-[56px] shrink-0",
-                      i === 0 &&
-                        "bg-[var(--color-accent-gold)]/5 ring-1 ring-[var(--color-accent-gold)]/20"
+                      "flex flex-col items-center gap-0.5 rounded-md px-2 py-1.5 min-w-[56px] shrink-0",
+                      i === 0 && "bg-[var(--color-stat-up)]/5 ring-1 ring-[var(--color-stat-up)]/20"
                     )}
                   >
                     <ItemIcon code={item.code} size={30} />
                     <span className="text-[10px] text-[var(--color-foreground)] text-center max-w-[52px] truncate leading-tight">
                       {itemNames[item.code] ?? item.code}
                     </span>
-                    <span className="text-[10px] text-[var(--color-primary)]">
+                    <span className="text-[10px] text-[var(--color-foreground)]">
                       {item.pickRate.toFixed(1)}%
                     </span>
                     <span className="text-[10px] text-[var(--color-foreground)]">
@@ -394,15 +407,15 @@ function SlotPopularityGrid({
                       <div
                         key={item.code}
                         className={cn(
-                          "flex flex-col items-center gap-1 px-2 py-2 transition-colors hover:bg-[var(--color-surface-2)]",
-                          i === 0 && "bg-[var(--color-accent-gold)]/5"
+                          "flex flex-col items-center gap-1 px-2 py-2 hover:bg-[var(--color-surface-2)]",
+                          i === 0 && "bg-[var(--color-stat-up)]/5"
                         )}
                       >
                         <ItemIcon code={item.code} size={34} />
                         <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-full truncate w-full leading-tight">
                           {itemNames[item.code] ?? item.code}
                         </span>
-                        <span className="text-[9px] text-[var(--color-primary)]">
+                        <span className="text-[9px] text-[var(--color-foreground)]">
                           픽률 {item.pickRate.toFixed(1)}%
                         </span>
                         <WinRateSpan winRate={item.winRate} label="승률 " />
@@ -427,15 +440,15 @@ function CoreItemsList({
   itemNames: Record<number, string>;
 }) {
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 overflow-hidden">
+    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
       <SectionHeader title="코어 아이템" />
       <div className="divide-y divide-[var(--color-border)]">
         {coreItems.map((item, i) => (
           <div
             key={item.code}
             className={cn(
-              "px-3 md:px-4 py-2.5 hover:bg-[var(--color-surface-2)] transition-colors",
-              i === 0 && "bg-[var(--color-accent-gold)]/5"
+              "px-3 md:px-4 py-2.5 hover:bg-[var(--color-surface-2)]",
+              i === 0 && "bg-[var(--color-stat-up)]/5"
             )}
           >
             {/* 모바일: 컴팩트 2줄 (<640px) */}
@@ -444,9 +457,7 @@ function CoreItemsList({
                 <span
                   className={cn(
                     "w-5 shrink-0 text-xs font-bold text-center",
-                    i === 0
-                      ? "text-[var(--color-accent-gold)]"
-                      : "text-[var(--color-muted-foreground)]"
+                    i === 0 ? "text-[var(--color-stat-up)]" : "text-[var(--color-muted-foreground)]"
                   )}
                 >
                   {i + 1}
@@ -457,7 +468,9 @@ function CoreItemsList({
                 </span>
               </div>
               <div className="flex items-center gap-3 pl-7 text-xs">
-                <span className="text-[var(--color-primary)]">픽 {item.pickRate.toFixed(1)}%</span>
+                <span className="text-[var(--color-foreground)]">
+                  픽 {item.pickRate.toFixed(1)}%
+                </span>
                 <WinRateSpan winRate={item.winRate} label="승 " />
                 <span className="text-[var(--color-muted-foreground)]">
                   {item.totalGames.toLocaleString()}판
@@ -469,9 +482,7 @@ function CoreItemsList({
               <span
                 className={cn(
                   "w-5 shrink-0 text-xs font-bold text-center",
-                  i === 0
-                    ? "text-[var(--color-accent-gold)]"
-                    : "text-[var(--color-muted-foreground)]"
+                  i === 0 ? "text-[var(--color-stat-up)]" : "text-[var(--color-muted-foreground)]"
                 )}
               >
                 {i + 1}
@@ -480,7 +491,7 @@ function CoreItemsList({
               <span className="flex-1 text-sm text-[var(--color-foreground)] truncate">
                 {itemNames[item.code] ?? item.code}
               </span>
-              <span className="text-xs text-[var(--color-primary)]">
+              <span className="text-xs text-[var(--color-foreground)]">
                 {item.pickRate.toFixed(1)}%
               </span>
               <WinRateSpan winRate={item.winRate} />
@@ -490,9 +501,7 @@ function CoreItemsList({
               <span
                 className={cn(
                   "w-5 shrink-0 text-xs font-bold text-center",
-                  i === 0
-                    ? "text-[var(--color-accent-gold)]"
-                    : "text-[var(--color-muted-foreground)]"
+                  i === 0 ? "text-[var(--color-stat-up)]" : "text-[var(--color-muted-foreground)]"
                 )}
               >
                 {i + 1}
@@ -501,7 +510,7 @@ function CoreItemsList({
               <span className="flex-1 text-sm text-[var(--color-foreground)] truncate">
                 {itemNames[item.code] ?? item.code}
               </span>
-              <span className="text-xs text-[var(--color-primary)]">
+              <span className="text-xs text-[var(--color-foreground)]">
                 픽률 {item.pickRate.toFixed(1)}%
               </span>
               <WinRateSpan winRate={item.winRate} label="승률 " />
@@ -553,7 +562,7 @@ export function CharacterEquipmentAnalyzer({
     return (
       <div className="space-y-4">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-40 rounded-lg bg-[var(--color-surface)] animate-pulse" />
+          <div key={i} className="h-40 rounded-md bg-[var(--color-surface)]" />
         ))}
       </div>
     );
@@ -567,7 +576,7 @@ export function CharacterEquipmentAnalyzer({
 
   if (isEmpty) {
     return (
-      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-8 text-center text-sm text-[var(--color-muted-foreground)]">
+      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
         아이템 빌드 표본을 확인 중입니다.
       </div>
     );

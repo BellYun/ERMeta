@@ -170,7 +170,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
   return (
     <div className="flex flex-col gap-3">
       {/* ── Role Filter ── */}
-      <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
+      <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 scrollbar-hide">
         {roleTabs.map(({ value, label }) => (
           <button
             key={value}
@@ -187,12 +187,12 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
       </div>
 
       {/* ── Table ── */}
-      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
         {/* Desktop Table */}
         <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/50">
+              <tr className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/72">
                 <SortableHead
                   label="#"
                   sortKey="rank"
@@ -201,10 +201,10 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                   onSort={handleSort}
                   className="w-14 text-center"
                 />
-                <th className="px-2 py-2.5 text-left text-xs font-medium text-[var(--color-muted-foreground)] w-12">
+                <th className="w-12 px-2 py-2 text-left text-[11px] font-semibold text-[var(--color-muted-foreground)]">
                   {t("columns.tier")}
                 </th>
-                <th className="px-2 py-2.5 text-left text-xs font-medium text-[var(--color-muted-foreground)]">
+                <th className="px-2 py-2 text-left text-[11px] font-semibold text-[var(--color-muted-foreground)]">
                   {t("columns.character")}
                 </th>
                 <SortableHead
@@ -248,7 +248,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                       </td>
                       <td className="px-2 py-2.5">
                         <div className="flex items-center gap-2.5">
-                          <Skeleton className="h-8 w-8 rounded-lg shrink-0" />
+                          <Skeleton className="h-8 w-8 rounded-md shrink-0" />
                           <Skeleton className="h-4 w-24" />
                         </div>
                       </td>
@@ -269,8 +269,10 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                       <tr
                         key={key}
                         className={cn(
-                          "border-b border-[var(--color-border)]/30 last:border-b-0 cursor-pointer group transition-colors",
-                          "hover:bg-[var(--color-surface-2)]"
+                          "group cursor-pointer border-b border-[var(--color-border)]/35 last:border-b-0",
+                          char.rank <= 3
+                            ? "data-table-highlight border-l-2 border-l-[var(--color-accent)]"
+                            : "hover:bg-[var(--color-surface-2)]"
                         )}
                         onClick={() => {
                           navigateToCharacter(char);
@@ -283,10 +285,10 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                         }}
                       >
                         {/* Rank */}
-                        <td className="px-3 py-2 text-center">
+                        <td className="px-3 py-1.5 text-center">
                           <span
                             className={cn(
-                              "text-sm font-bold tabular-nums",
+                              "font-mono text-sm font-bold tabular-nums",
                               char.rank <= 3
                                 ? "text-[var(--color-accent-gold)]"
                                 : "text-[var(--color-muted-foreground)]"
@@ -296,27 +298,27 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           </span>
                         </td>
                         {/* Tier */}
-                        <td className="px-2 py-2">
+                        <td className="px-2 py-1.5">
                           <TierBadge tier={char.tier} />
                         </td>
                         {/* Character */}
-                        <td className="px-2 py-2">
+                        <td className="px-2 py-1.5">
                           <div className="relative flex items-center gap-2.5">
-                            <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
+                            <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-md bg-[var(--color-surface-2)]">
                               <Image
                                 src={char.imageUrl}
                                 alt={char.name}
                                 fill
                                 className="object-cover"
-                                sizes="32px"
+                                sizes="28px"
                               />
                               {char.patchNote && (
-                                <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]" />
+                                <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded border border-[var(--color-surface)] bg-[var(--color-muted-foreground)]" />
                               )}
                             </div>
                             <div className="min-w-0">
                               <span className="flex items-center gap-1.5">
-                                <span className="text-sm font-medium text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors truncate block">
+                                <span className="text-sm font-medium text-[var(--color-foreground)] truncate block">
                                   {char.name}
                                 </span>
                                 {char.patchNote && (
@@ -326,9 +328,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                                       patch: char.patchNote.patch,
                                     })}
                                     onClick={(e) => togglePatchNote(e, key)}
-                                    className="shrink-0 rounded-md border border-[rgba(96,165,250,0.3)] bg-[rgba(96,165,250,0.1)] px-1.5 py-0.5 text-[9px] font-black tracking-[0.08em] text-[var(--color-primary)] transition-colors hover:bg-[rgba(96,165,250,0.16)]"
+                                    className="shrink-0 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)]"
                                   >
-                                    PATCH
+                                    패치
                                   </button>
                                 )}
                               </span>
@@ -342,22 +344,22 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           </div>
                         </td>
                         {/* Pick Rate */}
-                        <td className="px-3 py-2 text-right">
-                          <span className="text-sm tabular-nums text-[var(--color-foreground)]">
+                        <td className="px-3 py-1.5 text-right">
+                          <span className="font-mono text-[0.82rem] tabular-nums text-[var(--color-foreground)]">
                             {char.pickRate.toFixed(1)}%
                           </span>
                         </td>
                         {/* Win Rate */}
-                        <td className="px-3 py-2 text-right">
-                          <span className="text-sm font-medium tabular-nums text-[var(--color-foreground)]">
+                        <td className="px-3 py-1.5 text-right">
+                          <span className="font-mono text-[0.82rem] font-medium tabular-nums text-[var(--color-foreground)]">
                             {char.winRate.toFixed(1)}%
                           </span>
                         </td>
                         {/* Average RP */}
-                        <td className="px-3 py-2 text-right">
+                        <td className="px-3 py-1.5 text-right">
                           <span
                             className={cn(
-                              "text-sm font-semibold tabular-nums",
+                              "font-mono text-[0.82rem] font-semibold tabular-nums",
                               char.averageRP >= 0
                                 ? "text-[var(--color-accent-gold)]"
                                 : "text-[var(--color-muted-foreground)]"
@@ -386,16 +388,16 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
 
         {/* Mobile List */}
         <div className="sm:hidden">
-          <div className="grid grid-cols-[30px_minmax(0,1.7fr)_50px_50px_64px] items-center gap-1.5 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/55 px-3 py-2.5 text-[10px] font-medium text-[var(--color-muted-foreground)]">
+          <div className="grid grid-cols-[28px_minmax(0,1.7fr)_48px_48px_60px] items-center gap-1.5 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/72 px-2.5 py-2 text-[10px] font-semibold text-[var(--color-muted-foreground)]">
             <span className="text-center">#</span>
             <span>{t("columns.character")}</span>
             <button
               type="button"
               onClick={() => handleSort("winRate")}
               className={cn(
-                "text-right transition-colors",
+                "text-right",
                 sortKey === "winRate"
-                  ? "text-[var(--color-primary)]"
+                  ? "text-[var(--color-accent-foreground)]"
                   : "text-[var(--color-muted-foreground)]"
               )}
             >
@@ -405,9 +407,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
               type="button"
               onClick={() => handleSort("pickRate")}
               className={cn(
-                "text-right transition-colors",
+                "text-right",
                 sortKey === "pickRate"
-                  ? "text-[var(--color-primary)]"
+                  ? "text-[var(--color-accent-foreground)]"
                   : "text-[var(--color-muted-foreground)]"
               )}
             >
@@ -417,9 +419,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
               type="button"
               onClick={() => handleSort("averageRP")}
               className={cn(
-                "text-right transition-colors",
+                "text-right",
                 sortKey === "averageRP"
-                  ? "text-[var(--color-primary)]"
+                  ? "text-[var(--color-accent-foreground)]"
                   : "text-[var(--color-muted-foreground)]"
               )}
             >
@@ -433,12 +435,12 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
               Array.from({ length: 8 }).map((_, i) => (
                 <div
                   key={i}
-                  className="grid grid-cols-[30px_minmax(0,1.7fr)_50px_50px_64px] items-center gap-1.5 px-3 py-2.5"
+                  className="grid grid-cols-[28px_minmax(0,1.7fr)_48px_48px_60px] items-center gap-1.5 px-2.5 py-2"
                 >
                   <Skeleton className="h-4 w-5 shrink-0" />
                   <div className="flex min-w-0 items-center gap-1.5">
                     <Skeleton className="h-5 w-5 rounded shrink-0" />
-                    <Skeleton className="h-8 w-8 rounded-lg shrink-0" />
+                    <Skeleton className="h-8 w-8 rounded-md shrink-0" />
                     <Skeleton className="h-3 w-18" />
                   </div>
                   <Skeleton className="ml-auto h-3 w-9" />
@@ -456,7 +458,11 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                 return (
                   <div
                     key={key}
-                    className="relative grid grid-cols-[30px_minmax(0,1.7fr)_50px_50px_64px] items-center gap-1.5 px-3 py-2.5 cursor-pointer active:bg-[var(--color-surface-2)] touch-manipulation transition-colors"
+                    className={cn(
+                      "relative grid grid-cols-[28px_minmax(0,1.7fr)_48px_48px_60px] items-center gap-1.5 px-2.5 py-2 cursor-pointer touch-manipulation active:bg-[var(--color-surface-2)]",
+                      char.rank <= 3 &&
+                        "data-table-highlight border-l-2 border-l-[var(--color-accent)]"
+                    )}
                     onClick={() => {
                       navigateToCharacter(char);
                     }}
@@ -464,7 +470,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                     {/* Rank */}
                     <span
                       className={cn(
-                        "w-5 text-center text-[0.95rem] font-black tabular-nums",
+                        "w-5 text-center font-mono text-[0.88rem] font-bold tabular-nums",
                         char.rank <= 3
                           ? "text-[var(--color-accent-gold)]"
                           : "text-[var(--color-muted-foreground)]"
@@ -475,7 +481,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                     {/* Tier */}
                     <div className="flex min-w-0 items-center gap-1.5">
                       <TierBadge tier={char.tier} />
-                      <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
+                      <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-md bg-[var(--color-surface-2)]">
                         <Image
                           src={char.imageUrl}
                           alt={char.name}
@@ -484,7 +490,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           sizes="32px"
                         />
                         {char.patchNote && (
-                          <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]" />
+                          <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded border border-[var(--color-surface)] bg-[var(--color-muted-foreground)]" />
                         )}
                       </div>
                       <div className="min-w-0">
@@ -497,9 +503,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                               type="button"
                               aria-label={t("patchNoteButton", { patch: char.patchNote.patch })}
                               onClick={(e) => togglePatchNote(e, key)}
-                              className="shrink-0 rounded-md border border-[rgba(96,165,250,0.28)] bg-[rgba(96,165,250,0.1)] px-1 py-0.5 text-[8px] font-black tracking-[0.06em] text-[var(--color-primary)]"
+                              className="shrink-0 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1 py-0.5 text-[8px] font-semibold text-[var(--color-muted-foreground)]"
                             >
-                              PATCH
+                              패치
                             </button>
                           )}
                         </div>
@@ -508,15 +514,15 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                         </p>
                       </div>
                     </div>
-                    <span className="text-right text-[0.82rem] font-medium tabular-nums text-[var(--color-foreground)]">
+                    <span className="text-right font-mono text-[0.78rem] font-medium tabular-nums text-[var(--color-foreground)]">
                       {char.winRate.toFixed(1)}%
                     </span>
-                    <span className="text-right text-[0.82rem] font-medium tabular-nums text-[var(--color-foreground)]">
+                    <span className="text-right font-mono text-[0.78rem] font-medium tabular-nums text-[var(--color-foreground)]">
                       {char.pickRate.toFixed(1)}%
                     </span>
                     <span
                       className={cn(
-                        "text-right text-[0.88rem] font-semibold tabular-nums",
+                        "text-right font-mono text-[0.82rem] font-semibold tabular-nums",
                         char.averageRP >= 0
                           ? "text-[var(--color-accent-gold)]"
                           : "text-[var(--color-muted-foreground)]"
@@ -540,7 +546,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
       {!isLoading && hasMore && (
         <button
           onClick={() => setShowAll((v) => !v)}
-          className="w-full py-2.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)] transition-colors"
+          className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] py-2.5 text-xs font-medium text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
         >
           {showAll ? t("collapse") : t("showAll", { count: filtered.length })}
         </button>
@@ -572,9 +578,9 @@ function SortableHead({
   return (
     <th
       className={cn(
-        "px-3 py-2.5 text-xs font-medium select-none cursor-pointer transition-colors group/th",
+        "px-3 py-2 text-[11px] font-semibold select-none cursor-pointer group/th",
         isActive
-          ? "text-[var(--color-primary)]"
+          ? "text-[var(--color-accent-foreground)]"
           : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]",
         className
       )}
@@ -585,13 +591,13 @@ function SortableHead({
         {tooltip && (
           <span className="relative group/tip">
             <svg
-              className="w-3 h-3 opacity-40 group-hover/tip:opacity-80 transition-opacity cursor-help"
+              className="w-3 h-3 opacity-40 group-hover/tip:opacity-80 cursor-help"
               viewBox="0 0 16 16"
               fill="currentColor"
             >
               <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2.5a1 1 0 110 2 1 1 0 010-2zM6.5 7h2v4.5h-2V7z" />
             </svg>
-            <span className="fixed hidden group-hover/tip:block px-2.5 py-1.5 rounded-lg bg-[var(--color-surface-3)] border border-[var(--color-border)] text-[10px] text-[var(--color-foreground)] font-normal whitespace-nowrap shadow-lg z-[9999] -translate-x-1/2 mt-1">
+            <span className="fixed z-[9999] mt-1 hidden -translate-x-1/2 whitespace-nowrap rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2.5 py-1.5 text-[10px] font-normal text-[var(--color-foreground)] group-hover/tip:block">
               {tooltip}
             </span>
           </span>
@@ -605,10 +611,7 @@ function SortableHead({
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
   return (
     <svg
-      className={cn(
-        "w-3 h-3 transition-all",
-        active ? "opacity-100" : "opacity-0 group-hover/th:opacity-40"
-      )}
+      className={cn("w-3 h-3", active ? "opacity-100" : "opacity-0 group-hover/th:opacity-40")}
       viewBox="0 0 12 12"
       fill="currentColor"
     >

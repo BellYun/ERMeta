@@ -34,11 +34,11 @@ async function mockTriosWeapon(page: Page) {
       body: JSON.stringify({
         results: [
           {
-            character1: 1,
-            weaponType1: 0,
-            character2: 2,
+            character1: 76,
+            weaponType1: 3,
+            character2: 1,
             weaponType2: 0,
-            character3: 3,
+            character3: 2,
             weaponType3: 0,
             mainCore1: 0,
             mainCore2: 0,
@@ -49,11 +49,11 @@ async function mockTriosWeapon(page: Page) {
             averageRank: 3.4,
           },
           {
-            character1: 4,
-            weaponType1: 0,
-            character2: 5,
+            character1: 76,
+            weaponType1: 3,
+            character2: 4,
             weaponType2: 0,
-            character3: 6,
+            character3: 5,
             weaponType3: 0,
             mainCore1: 0,
             mainCore2: 0,

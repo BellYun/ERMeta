@@ -1,4 +1,4 @@
-// bestWeapon 숫자 코드 → 한국어 이름 (ERmangho weaponNames.ts 기준)
+// bestWeapon 숫자 코드 → 한국어 이름.
 export const WEAPON_KOR_BY_CODE: Record<number, string> = {
   1: "글러브",
   2: "톤파",

@@ -248,7 +248,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ builds: builds.slice(0, 5) }, { headers: getCacheHeaders("daily") });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("[builds/traits/main] 예외:", message);
+    console.error("[builds/traits/main] request failed:", message);
     return NextResponse.json({ builds: [] });
   }
 }

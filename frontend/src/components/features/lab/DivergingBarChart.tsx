@@ -100,10 +100,7 @@ function HalfPanel({ label, labelColor, entries, maxDelta, variant, className }:
 
   return (
     <div className={cn("px-4 py-3", className)}>
-      <p
-        className="text-[11px] font-bold uppercase tracking-wide mb-2"
-        style={{ color: labelColor }}
-      >
+      <p className="mb-2 text-[11px] font-semibold" style={{ color: labelColor }}>
         {label}
       </p>
 

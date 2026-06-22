@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
     notFound();
   }
 
-  return localizeMetadata(await generateBaseMetadata(), "/patches", locale);
+  return localizeMetadata(await generateBaseMetadata(locale), "/patches", locale);
 }
 
 export default async function LocalizedPatchesIndexPage({ params }: LocalePageProps) {
@@ -32,5 +32,5 @@ export default async function LocalizedPatchesIndexPage({ params }: LocalePagePr
 
   setRequestLocale(locale);
 
-  return <PatchesIndexPage />;
+  return <PatchesIndexPage locale={locale} />;
 }

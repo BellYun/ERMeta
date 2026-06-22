@@ -49,7 +49,7 @@ class SectionErrorBoundaryInner extends React.Component<Props & BoundaryMessages
     if (this.state.hasError) {
       return (
         <div
-          className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] py-12 text-center"
+          className="flex flex-col items-center justify-center rounded-md border border-dashed border-[var(--color-border)] py-12 text-center"
           style={{ minHeight: this.props.fallbackHeight }}
         >
           <AlertTriangle className="mb-3 h-8 w-8 text-[var(--color-danger)]" />
@@ -61,7 +61,7 @@ class SectionErrorBoundaryInner extends React.Component<Props & BoundaryMessages
           </p>
           <button
             onClick={() => this.setState({ hasError: false, error: null })}
-            className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-foreground)] hover:bg-[var(--color-surface)] transition-colors"
+            className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-[var(--color-surface-2)] border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-foreground)]"
           >
             <RefreshCw className="h-3.5 w-3.5" />
             {this.props.retry}
