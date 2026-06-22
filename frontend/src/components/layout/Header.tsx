@@ -111,8 +111,33 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
   }, [pathname]);
 
   React.useEffect(() => {
+    const applyTheme = (nextTheme: "light" | "dark") => {
+      document.documentElement.dataset.theme = nextTheme;
+      document.documentElement.style.colorScheme = nextTheme;
+      setTheme(nextTheme);
+    };
+
+    const getStoredTheme = () => {
+      try {
+        const storedTheme = localStorage.getItem("ergg-theme");
+        return storedTheme === "dark" || storedTheme === "light" ? storedTheme : null;
+      } catch {
+        return null;
+      }
+    };
+
+    const systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const syncSystemTheme = () => {
+      if (getStoredTheme()) return;
+      applyTheme(systemThemeQuery.matches ? "dark" : "light");
+    };
+
     const currentTheme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
     setTheme(currentTheme);
+    syncSystemTheme();
+    systemThemeQuery.addEventListener("change", syncSystemTheme);
+
+    return () => systemThemeQuery.removeEventListener("change", syncSystemTheme);
   }, []);
 
   const toggleTheme = () => {
