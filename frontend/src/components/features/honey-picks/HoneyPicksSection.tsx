@@ -62,6 +62,10 @@ interface HoneyPicksSectionProps {
   initialPatchVersion?: string;
 }
 
+function getPickKey(pick: HoneyPickData) {
+  return `${pick.characterNum}:${pick.bestWeapon}`;
+}
+
 export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPicksSectionProps) {
   const { l10n } = useL10n();
   const t = useTranslations("honeyPicks");
@@ -132,7 +136,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
 
           return (
             <div
-              key={r.pick.characterNum}
+              key={getPickKey(r.pick)}
               className="char-card group home-pick-card flex cursor-pointer flex-col bg-[var(--color-surface)] p-3.5"
               data-accent={i === 0 ? "true" : undefined}
               onClick={() => {
@@ -314,7 +318,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
           const changeLabel = r.changeType ? CHANGE_LABEL[r.changeType] : null;
           return (
             <div
-              key={r.pick.characterNum}
+              key={getPickKey(r.pick)}
               className={cn(
                 "char-card relative w-[138px] shrink-0 snap-start cursor-pointer touch-manipulation bg-[var(--color-surface)]"
               )}
