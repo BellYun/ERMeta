@@ -15,7 +15,7 @@ import tanksData from "../../public/data/lab/tanks.json";
 import warriorsData from "../../public/data/lab/warriors.json";
 
 const ANALYSIS_TIER = "DIAMOND_PLUS";
-const PATCH_ANALYSIS_VERSIONS = ["11.3"] as const;
+const PATCH_ANALYSIS_VERSIONS = ["11.4"] as const;
 const ROLES: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
 const WEAPON_ORDER = Object.keys(WEAPON_KOR_BY_CODE).map(Number);
 const WEAPON_ALIASES: Partial<Record<number, string[]>> = {

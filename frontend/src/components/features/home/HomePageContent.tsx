@@ -27,7 +27,7 @@ export async function HomePageContent({
   const totalMatches = rankingData.rankings.reduce((sum, row) => sum + row.totalGames, 0);
   const hasRankingData = rankingData.rankings.length > 0 && totalMatches > 0;
   const trackedMatches = hasRankingData ? formatMetricNumber(totalMatches) : "";
-  const fallbackPatch = defaultPatch || "11.4";
+  const fallbackPatch = defaultPatch || "11.5";
 
   return (
     <div className="page-shell home-shell flex flex-col">

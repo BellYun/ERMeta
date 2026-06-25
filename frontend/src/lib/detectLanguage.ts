@@ -1,11 +1,5 @@
-// 서비스 노출 언어 화이트리스트. 기본 한국어 + 영어/일본어/중국어만 운영.
-export const SUPPORTED_LANGUAGES = [
-  "Korean",
-  "English",
-  "Japanese",
-  "ChineseSimplified",
-  "ChineseTraditional",
-] as const;
+// 서비스 노출 언어 화이트리스트. 기본 한국어 + 영어/일본어만 운영.
+export const SUPPORTED_LANGUAGES = ["Korean", "English", "Japanese"] as const;
 
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
 
@@ -17,10 +11,6 @@ const BCP47_MAP: Array<[RegExp, SupportedLanguage]> = [
   [/^ko\b/i, "Korean"],
   [/^en\b/i, "English"],
   [/^ja\b/i, "Japanese"],
-  // 중국어: hans/cn = 간체, hant/tw/hk/mo = 번체
-  [/^zh-(hant|tw|hk|mo)\b/i, "ChineseTraditional"],
-  [/^zh-(hans|cn|sg)\b/i, "ChineseSimplified"],
-  [/^zh\b/i, "ChineseSimplified"],
 ];
 
 function tagToLanguage(tag: string): SupportedLanguage | null {

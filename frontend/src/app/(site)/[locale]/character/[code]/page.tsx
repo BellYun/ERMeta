@@ -50,25 +50,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ? `${name} 빌드/특성/무기 통계 - 이터널리턴 ${currentPatch}`
         : locale === "ja" && currentPatch
           ? `${name} ビルド/特性/武器統計 - Eternal Return ${currentPatch}`
-          : locale === "zh-Hans" && currentPatch
-            ? `${name} 出装/特性/武器统计 - Eternal Return ${currentPatch}`
-            : locale === "zh-Hant" && currentPatch
-              ? `${name} 出裝/特性/武器統計 - Eternal Return ${currentPatch}`
-              : currentPatch
-                ? `${name} Build, Traits, Weapon Stats - Eternal Return ${currentPatch}`
-                : t("titleWithName", { name });
+          : currentPatch
+            ? `${name} Build, Traits, Weapon Stats - Eternal Return ${currentPatch}`
+            : t("titleWithName", { name });
     const description =
       locale === "ko" && stats && stats.totalGames > 0
         ? `이터널리턴 ${name} ${currentPatch} 패치 다이아 이상 통계. 승률 ${stats.winRate.toFixed(1)}%, 픽률 ${stats.pickRate.toFixed(1)}%, 평균 RP ${stats.averageRP.toFixed(1)}, 무기와 조합 데이터.`
         : locale === "ja" && stats && stats.totalGames > 0
           ? `Eternal Return ${name} パッチ${currentPatch}のダイヤ以上統計。勝率${stats.winRate.toFixed(1)}%、ピック率${stats.pickRate.toFixed(1)}%、平均RP ${stats.averageRP.toFixed(1)}、武器とチーム構成データ。`
-          : locale === "zh-Hans" && stats && stats.totalGames > 0
-            ? `Eternal Return ${name} ${currentPatch} 版本钻石以上统计。胜率 ${stats.winRate.toFixed(1)}%、选取率 ${stats.pickRate.toFixed(1)}%、平均 RP ${stats.averageRP.toFixed(1)}、武器和阵容数据。`
-            : locale === "zh-Hant" && stats && stats.totalGames > 0
-              ? `Eternal Return ${name} ${currentPatch} 版本鑽石以上統計。勝率 ${stats.winRate.toFixed(1)}%、選取率 ${stats.pickRate.toFixed(1)}%、平均 RP ${stats.averageRP.toFixed(1)}、武器和陣容資料。`
-              : stats && stats.totalGames > 0
-                ? `Eternal Return ${name} stats for patch ${currentPatch} in Diamond+. Win rate ${stats.winRate.toFixed(1)}%, pick rate ${stats.pickRate.toFixed(1)}%, average RP ${stats.averageRP.toFixed(1)}, weapons and team comps.`
-                : t("descriptionWithName", { name });
+          : stats && stats.totalGames > 0
+            ? `Eternal Return ${name} stats for patch ${currentPatch} in Diamond+. Win rate ${stats.winRate.toFixed(1)}%, pick rate ${stats.pickRate.toFixed(1)}%, average RP ${stats.averageRP.toFixed(1)}, weapons and team comps.`
+            : t("descriptionWithName", { name });
 
     return {
       metadataBase: new URL(BASE_URL),

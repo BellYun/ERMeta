@@ -89,6 +89,7 @@ const CHARACTER_NAMES: Record<number, string> = {
   86: "펜리르",
   87: "코렐라인",
   88: "비형",
+  89: "크레이버",
   9998: "Dr. 하나",
   9999: "나쟈",
 };
@@ -207,6 +208,7 @@ const CHARACTER_MINI_IMAGES: Record<number, string> = {
   86: "/CharactER/086.%20Fenrir/02.%20Default/Mini.png",
   87: "/CharactER/087.%20Coraline/02.%20Default/Mini.png",
   88: "/CharactER/088.%20Bihyung/02.%20Default/Mini.png",
+  89: "/CharactER/089.%20Craver/02.%20Default/Mini.png",
 };
 
 /** characterNum으로 Mini 이미지 경로 반환. 없으면 placeholder. */
@@ -328,6 +330,7 @@ const COMBO_ROLES: Record<string, CharacterRole[]> = {
   "72_11": ["원거리 딜러"], // 카티야+저격총
   "2_10": ["원거리 딜러"], // 아야+돌격 소총
   "57_23": ["원거리 딜러"], // 마르티나+카메라
+  "89_9": ["원거리 딜러"], // 크레이버+권총
   // 지원가
   "41_24": ["지원가"], // 요한+아르카나
   "69_9": ["지원가"], // 레니+권총
