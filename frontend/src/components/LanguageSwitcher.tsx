@@ -11,8 +11,6 @@ const LANGUAGE_LABELS: Record<SupportedLanguage, string> = {
   Korean: "한국어",
   English: "English",
   Japanese: "日本語",
-  ChineseSimplified: "简体中文",
-  ChineseTraditional: "繁體中文",
 };
 
 export function LanguageSwitcher() {

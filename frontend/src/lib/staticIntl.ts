@@ -6,24 +6,18 @@ export const HTML_LANG_BY_LANGUAGE: Record<SupportedLanguage, string> = {
   Korean: "ko",
   English: "en",
   Japanese: "ja",
-  ChineseSimplified: "zh-Hans",
-  ChineseTraditional: "zh-Hant",
 };
 
 export const OG_LOCALE_BY_LANGUAGE: Record<SupportedLanguage, string> = {
   Korean: "ko_KR",
   English: "en_US",
   Japanese: "ja_JP",
-  ChineseSimplified: "zh_CN",
-  ChineseTraditional: "zh_TW",
 };
 
 export const STRUCTURED_DATA_LANGUAGE_BY_LANGUAGE: Record<SupportedLanguage, string> = {
   Korean: "ko-KR",
   English: "en-US",
   Japanese: "ja-JP",
-  ChineseSimplified: "zh-CN",
-  ChineseTraditional: "zh-TW",
 };
 
 type MessagesModule = { default: IntlMessages };
@@ -32,8 +26,6 @@ const MESSAGE_LOADERS: Record<string, () => Promise<MessagesModule>> = {
   en: () => import("../../messages/en.json"),
   ko: () => import("../../messages/ko.json"),
   ja: () => import("../../messages/ja.json"),
-  "zh-Hans": () => import("../../messages/zh-Hans.json"),
-  "zh-Hant": () => import("../../messages/zh-Hant.json"),
 };
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {

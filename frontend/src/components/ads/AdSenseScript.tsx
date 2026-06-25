@@ -16,7 +16,7 @@ const CONTENT_PATH_PREFIXES = [
 ];
 
 function stripLocale(pathname: string) {
-  return pathname.replace(/^\/(?:ko|en|ja|zh-Hans|zh-Hant)(?=\/|$)/, "") || "/";
+  return pathname.replace(/^\/(?:ko|en|ja)(?=\/|$)/, "") || "/";
 }
 
 function canLoadAds(pathname: string) {
