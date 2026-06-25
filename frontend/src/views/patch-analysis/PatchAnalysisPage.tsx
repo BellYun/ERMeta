@@ -729,10 +729,12 @@ function RoleTable({
   roles,
   copy,
   locale,
+  showDescription = true,
 }: {
   roles: PatchRoleMetric[];
   copy: PatchAnalysisCopy;
   locale: RouteLocale;
+  showDescription?: boolean;
 }) {
   const best = roles[0];
   const worst = roles[roles.length - 1];
@@ -748,9 +750,11 @@ function RoleTable({
             <h2 className="dashboard-section-title mt-2 text-base font-bold text-[var(--color-foreground)] sm:text-lg">
               {copy.role.title}
             </h2>
-            <p className="mt-1 text-sm leading-6 text-[var(--color-muted-foreground)]">
-              {copy.role.body(bestLabel, worstLabel)}
-            </p>
+            {showDescription ? (
+              <p className="mt-1 text-sm leading-6 text-[var(--color-muted-foreground)]">
+                {copy.role.body(bestLabel, worstLabel)}
+              </p>
+            ) : null}
           </div>
           <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1 text-xs text-[var(--color-muted-foreground)]">
             {copy.role.rankScope}
@@ -908,7 +912,7 @@ function CharacterSection({
   fallbackMap,
 }: {
   title: string;
-  description: string;
+  description?: string;
   entries: PatchCharacterDelta[];
   evaluations: Record<number, string>;
   copy: PatchAnalysisCopy;
@@ -926,9 +930,11 @@ function CharacterSection({
           <h2 className="dashboard-section-title text-base font-bold text-[var(--color-foreground)] sm:text-lg">
             {title}
           </h2>
-          <p className="mt-1 text-sm leading-6 text-[var(--color-muted-foreground)]">
-            {description}
-          </p>
+          {description ? (
+            <p className="mt-1 text-sm leading-6 text-[var(--color-muted-foreground)]">
+              {description}
+            </p>
+          ) : null}
         </div>
         <span className="text-xs text-[var(--color-muted-foreground)]">
           {copy.sectionCount(entries.length)}
@@ -1013,6 +1019,8 @@ export default async function PatchAnalysisPage({
   const worstRole = data.roleMetrics[data.roleMetrics.length - 1];
   const bestRoleLabel = bestRole ? getRoleLabel(locale, bestRole.role) : "";
   const worstRoleLabel = worstRole ? getRoleLabel(locale, worstRole.role) : "";
+  const showDescriptions = data.currentPatch !== "11.4";
+  const sectionEvaluations = showDescriptions ? evaluations : {};
 
   return (
     <main className="page-shell flex flex-col gap-5 lg:gap-6">
@@ -1032,10 +1040,12 @@ export default async function PatchAnalysisPage({
             <h1 className="mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
               {copy.title(data.currentPatch)}
             </h1>
-            <p className="mt-2 max-w-[44rem] text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">
-              {copy.intro}
-            </p>
-            {bestRole && worstRole ? (
+            {showDescriptions ? (
+              <p className="mt-2 max-w-[44rem] text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">
+                {copy.intro}
+              </p>
+            ) : null}
+            {showDescriptions && bestRole && worstRole ? (
               <p className="mt-3 max-w-[44rem] text-sm leading-6 text-[var(--color-muted-foreground)]">
                 {copy.roleSummary(bestRoleLabel, worstRoleLabel)}
               </p>
@@ -1064,34 +1074,43 @@ export default async function PatchAnalysisPage({
               icon={<CalendarDays className="h-5 w-5" strokeWidth={2} />}
               label={copy.metrics.patch}
               value={`${data.currentPatch}`}
-              body={copy.metrics.patchBody(data.previousPatch)}
+              body={showDescriptions ? copy.metrics.patchBody(data.previousPatch) : undefined}
               tone="blue"
             />
             <MetricCard
               icon={<BarChart3 className="h-5 w-5" strokeWidth={2} />}
               label={copy.metrics.sample}
               value={copy.metrics.sampleValue(formatNumber(data.totalMatches))}
-              body={copy.metrics.sampleBody(formatNumber(data.previousTotalMatches))}
+              body={
+                showDescriptions
+                  ? copy.metrics.sampleBody(formatNumber(data.previousTotalMatches))
+                  : undefined
+              }
             />
             <MetricCard
               icon={<TrendingUp className="h-5 w-5" strokeWidth={2} />}
               label={copy.metrics.buffs}
               value={copy.metrics.count(data.buffed.length)}
-              body={copy.metrics.buffBody}
+              body={showDescriptions ? copy.metrics.buffBody : undefined}
               tone="gold"
             />
             <MetricCard
               icon={<Swords className="h-5 w-5" strokeWidth={2} />}
               label={copy.metrics.nerfs}
               value={copy.metrics.count(data.nerfed.length)}
-              body={copy.metrics.nerfBody}
+              body={showDescriptions ? copy.metrics.nerfBody : undefined}
               tone="danger"
             />
           </div>
         </div>
       </section>
 
-      <RoleTable roles={data.roleMetrics} copy={copy} locale={locale} />
+      <RoleTable
+        roles={data.roleMetrics}
+        copy={copy}
+        locale={locale}
+        showDescription={showDescriptions}
+      />
 
       <div className="grid gap-5 xl:grid-cols-2">
         <DeltaRanking
@@ -1116,9 +1135,9 @@ export default async function PatchAnalysisPage({
         <>
           <CharacterSection
             title={copy.sections.buffTitle}
-            description={copy.sections.buffDescription}
+            description={showDescriptions ? copy.sections.buffDescription : undefined}
             entries={data.buffed}
-            evaluations={evaluations}
+            evaluations={sectionEvaluations}
             copy={copy}
             locale={locale}
             l10n={l10n}
@@ -1126,9 +1145,9 @@ export default async function PatchAnalysisPage({
           />
           <CharacterSection
             title={copy.sections.nerfTitle}
-            description={copy.sections.nerfDescription}
+            description={showDescriptions ? copy.sections.nerfDescription : undefined}
             entries={data.nerfed}
-            evaluations={evaluations}
+            evaluations={sectionEvaluations}
             copy={copy}
             locale={locale}
             l10n={l10n}
@@ -1136,9 +1155,9 @@ export default async function PatchAnalysisPage({
           />
           <CharacterSection
             title={copy.sections.mixedTitle}
-            description={copy.sections.mixedDescription}
+            description={showDescriptions ? copy.sections.mixedDescription : undefined}
             entries={data.mixed}
-            evaluations={evaluations}
+            evaluations={sectionEvaluations}
             copy={copy}
             locale={locale}
             l10n={l10n}
@@ -1147,13 +1166,19 @@ export default async function PatchAnalysisPage({
         </>
       ) : null}
 
-      <section className="dashboard-panel p-4 lg:p-6">
-        <div className="flex flex-col gap-2">
-          <p className="dashboard-kicker">{copy.guideKicker}</p>
-          <h2 className="text-base font-bold text-[var(--color-foreground)]">{copy.guideTitle}</h2>
-          <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">{copy.guideBody}</p>
-        </div>
-      </section>
+      {showDescriptions ? (
+        <section className="dashboard-panel p-4 lg:p-6">
+          <div className="flex flex-col gap-2">
+            <p className="dashboard-kicker">{copy.guideKicker}</p>
+            <h2 className="text-base font-bold text-[var(--color-foreground)]">
+              {copy.guideTitle}
+            </h2>
+            <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">
+              {copy.guideBody}
+            </p>
+          </div>
+        </section>
+      ) : null}
     </main>
   );
 }
