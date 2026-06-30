@@ -51,8 +51,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     buildLocalizedEntry("/methodology", "monthly", 0.45),
     buildLocalizedEntry("/character/1", "daily", 0.9),
     buildLocalizedEntry("/character-lab", "daily", 0.85),
-    buildLocalizedEntry("/synergy", "daily", 0.8),
-    buildLocalizedEntry("/synergy-detail", "daily", 0.75),
+    buildLocalizedEntry("/synergy-detail", "daily", 0.8),
     buildLocalizedEntry("/patches", "weekly", 0.7),
     buildLocalizedEntry(patchAnalysisPath, "daily", 0.82),
     buildLocalizedEntry("/season10-recap", "weekly", 0.8),
@@ -96,17 +95,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       alternates: buildAlternates("/character-lab"),
     },
     {
-      url: `${base}${prefixSeoLocalePath("/synergy", SEO_TARGET_LOCALE)}`,
-      lastModified: now,
-      changeFrequency: "daily",
-      priority: 0.7,
-      alternates: buildAlternates("/synergy"),
-    },
-    {
       url: `${base}${prefixSeoLocalePath("/synergy-detail", SEO_TARGET_LOCALE)}`,
       lastModified: now,
       changeFrequency: "daily",
-      priority: 0.65,
+      priority: 0.7,
       alternates: buildAlternates("/synergy-detail"),
     },
     {

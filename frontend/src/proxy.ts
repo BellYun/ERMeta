@@ -13,6 +13,15 @@ function applyLanguageCookie(response: NextResponse, cookieLanguage: string) {
   });
 }
 
+function getSynergyDetailRedirectPathname(pathname: string, routeLocale: string | null) {
+  const localizedSynergyPathname = routeLocale ? `/${routeLocale}/synergy` : "/synergy";
+  if (pathname !== localizedSynergyPathname && pathname !== `${localizedSynergyPathname}/`) {
+    return null;
+  }
+
+  return routeLocale ? `/${routeLocale}/synergy-detail` : "/synergy-detail";
+}
+
 export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
@@ -24,6 +33,16 @@ export function proxy(request: NextRequest) {
   const cookieLanguage = routeLocale
     ? LANGUAGE_BY_ROUTE_LOCALE[routeLocale]
     : LANGUAGE_BY_ROUTE_LOCALE[DEFAULT_ROUTE_LOCALE];
+  const synergyDetailRedirectPathname = getSynergyDetailRedirectPathname(pathname, routeLocale);
+
+  if (synergyDetailRedirectPathname) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = synergyDetailRedirectPathname;
+
+    const response = NextResponse.redirect(redirectUrl, 308);
+    applyLanguageCookie(response, cookieLanguage);
+    return response;
+  }
 
   if (!routeLocale) {
     const rewriteUrl = request.nextUrl.clone();
