@@ -3,7 +3,6 @@
 import {
   ArrowRight,
   BarChart3,
-  FlaskConical,
   Gauge,
   Layers,
   Menu,
@@ -70,12 +69,6 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
       label: tNav("synergyRecommendation"),
       icon: Network,
       isActive: normalizedPathname === "/synergy-detail",
-    },
-    {
-      href: withCurrentRouteLocale(pathname, "/trio-lab"),
-      label: tNav("trioLab"),
-      icon: FlaskConical,
-      isActive: normalizedPathname.startsWith("/trio-lab"),
     },
     {
       href: withCurrentRouteLocale(pathname, "/character-lab"),

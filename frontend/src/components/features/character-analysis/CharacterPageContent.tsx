@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { ArrowRight, BarChart3, GitBranch, Info, Network, TrendingUp } from "lucide-react";
+import { ArrowRight, BarChart3, GitBranch, Info, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
@@ -344,7 +344,6 @@ function CharacterSeoSection({
   const topWeapon = stats.weapons[0] ?? null;
   const topWeaponName = topWeapon ? resolveWeaponName(topWeapon.bestWeapon, l10n) : null;
   const tierLabel = formatTierLabel(locale, stats.tier);
-  const trioHref = `${localizeRoutePath("/trio-lab", locale)}?pool=${code}`;
   const patchAnalysisVersion = getPatchAnalysisVersions()[0] ?? null;
   const patchHref = localizeRoutePath(
     patchAnalysisVersion ? `/patch-analysis/${patchAnalysisVersion}` : "/patch-analysis",
@@ -371,8 +370,6 @@ function CharacterSeoSection({
           sample: "분석 표본",
           sampleSuffix: "판",
           actionTitle: "연결 데이터",
-          trio: `${characterName} 포함 조합`,
-          trioDesc: "캐릭터 풀 기준 3인 조합",
           patch: patchAnalysisVersion ? `${patchAnalysisVersion} 패치 분석` : "패치 분석",
           patchDesc: "제공 중인 패치 메타 분석",
           lab: "역할 비교",
@@ -395,8 +392,6 @@ function CharacterSeoSection({
             sample: "分析標本",
             sampleSuffix: "試合",
             actionTitle: "関連データ",
-            trio: `${characterName}を含む構成`,
-            trioDesc: "キャラクタープール基準の3人構成",
             patch: patchAnalysisVersion ? `パッチ${patchAnalysisVersion}分析` : "パッチ分析",
             patchDesc: "提供中のパッチメタ分析",
             lab: "ロール比較",
@@ -419,8 +414,6 @@ function CharacterSeoSection({
               sample: "分析样本",
               sampleSuffix: "场",
               actionTitle: "相关数据",
-              trio: `包含 ${characterName} 的阵容`,
-              trioDesc: "基于角色池的三人阵容",
               patch: patchAnalysisVersion ? `${patchAnalysisVersion} 版本分析` : "版本分析",
               patchDesc: "当前提供的版本 Meta 分析",
               lab: "定位比较",
@@ -443,8 +436,6 @@ function CharacterSeoSection({
                 sample: "分析樣本",
                 sampleSuffix: "場",
                 actionTitle: "相關資料",
-                trio: `包含 ${characterName} 的陣容`,
-                trioDesc: "基於角色池的三人陣容",
                 patch: patchAnalysisVersion ? `${patchAnalysisVersion} 版本分析` : "版本分析",
                 patchDesc: "目前提供的版本 Meta 分析",
                 lab: "定位比較",
@@ -466,8 +457,6 @@ function CharacterSeoSection({
                 sample: "Sample",
                 sampleSuffix: "matches",
                 actionTitle: "Related data",
-                trio: `${characterName} comps`,
-                trioDesc: "Trio data with this character",
                 patch: patchAnalysisVersion
                   ? `Patch ${patchAnalysisVersion} analysis`
                   : "Patch analysis",
@@ -485,18 +474,11 @@ function CharacterSeoSection({
   ];
   const links = [
     {
-      href: trioHref,
-      label: copy.trio,
-      description: copy.trioDesc,
-      Icon: Network,
-      primary: true,
-    },
-    {
       href: patchHref,
       label: copy.patch,
       description: copy.patchDesc,
       Icon: TrendingUp,
-      primary: false,
+      primary: true,
     },
     {
       href: labHref,

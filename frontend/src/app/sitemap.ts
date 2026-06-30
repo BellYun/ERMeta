@@ -51,7 +51,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     buildLocalizedEntry("/methodology", "monthly", 0.45),
     buildLocalizedEntry("/character/1", "daily", 0.9),
     buildLocalizedEntry("/character-lab", "daily", 0.85),
-    buildLocalizedEntry("/trio-lab", "daily", 0.85),
     buildLocalizedEntry("/synergy", "daily", 0.8),
     buildLocalizedEntry("/synergy-detail", "daily", 0.75),
     buildLocalizedEntry("/patches", "weekly", 0.7),
@@ -95,13 +94,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "daily",
       priority: 0.75,
       alternates: buildAlternates("/character-lab"),
-    },
-    {
-      url: `${base}${prefixSeoLocalePath("/trio-lab", SEO_TARGET_LOCALE)}`,
-      lastModified: now,
-      changeFrequency: "daily",
-      priority: 0.75,
-      alternates: buildAlternates("/trio-lab"),
     },
     {
       url: `${base}${prefixSeoLocalePath("/synergy", SEO_TARGET_LOCALE)}`,

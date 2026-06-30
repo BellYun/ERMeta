@@ -4,7 +4,7 @@ import {
   sortTrioWeaponCombos,
   type ApiTrioWeaponRow,
   type TrioWeaponCombo,
-} from "@/components/features/trio-lab/types";
+} from "@/components/features/team-combos/types";
 import { isMultiSearchEnabled } from "@/lib/featureFlags";
 
 const TEAM_SIZE = 3;

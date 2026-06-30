@@ -2,22 +2,18 @@
 
 import { AlertTriangle, Loader2, Search, Swords, Trophy, Users } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { getFallbackMap } from "@/components/features/synergy/constants";
-import { getCharacterWeaponOptions } from "@/components/features/trio-lab/searchRequests";
+import { getCharacterWeaponOptions } from "@/components/features/team-combos/searchRequests";
 import {
   comboTier,
   characterDisplayName,
   weaponDisplayName,
   type TrioWeaponCombo,
-} from "@/components/features/trio-lab/types";
-import { buildTrioLabDetailHref } from "@/components/features/trio-lab/urlState";
+} from "@/components/features/team-combos/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
-import { withCurrentRouteLocale } from "@/lib/localizedPath";
 import { cn } from "@/lib/utils";
 
 interface MultiSearchResponse {
@@ -148,7 +144,7 @@ export function MultiSearchClient() {
 
         setTeamCombos(recommendations.results);
         setComboError(
-          recommendations.results.length === 0 ? "조건에 맞는 조합 실험실 표본이 없습니다." : null
+          recommendations.results.length === 0 ? "조건에 맞는 팀 조합 표본이 없습니다." : null
         );
       } catch {
         if (!cancelled) {
@@ -759,20 +755,6 @@ async function fetchTeamCombos(pools: number[][]): Promise<TeamCombosResponse> {
   };
 }
 
-function comboDetailHref(combo: TrioWeaponCombo): string {
-  const pool = combo.members.map((member) => member.character);
-  const weaponFilters = Object.fromEntries(
-    combo.members.map((member) => [member.character, member.weapon])
-  ) as Record<number, number>;
-
-  return buildTrioLabDetailHref(combo.id, {
-    pool,
-    weaponFilters,
-    sort: "recommended",
-    search: "",
-  });
-}
-
 function memberDisplayName(member: TrioWeaponCombo["members"][number]): string {
   return `${characterDisplayName(member.character)} ${weaponDisplayName(member.weapon)}`;
 }
@@ -1014,7 +996,6 @@ function MyPickComboCard({
   recommendation: OrderedComboRecommendation;
   rank: number;
 }) {
-  const pathname = usePathname();
   const { myMember, combos } = recommendation;
   const bestCombo = combos[0]?.combo;
   const tier = bestCombo
@@ -1090,11 +1071,9 @@ function MyPickComboCard({
           팀원 픽 순서
         </p>
         {combos.map(({ combo, members }) => (
-          <Link
+          <div
             key={combo.id}
-            href={withCurrentRouteLocale(pathname, comboDetailHref(combo))}
-            scroll={false}
-            className="flex items-center justify-between gap-2 rounded border border-transparent bg-[var(--color-surface)] px-2 py-1.5 text-[11px] hover:border-[var(--color-accent)] hover:bg-[var(--color-accent-muted)]"
+            className="flex items-center justify-between gap-2 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1.5 text-[11px]"
           >
             <span className="min-w-0 truncate font-bold text-[var(--color-foreground)]">
               {members
@@ -1106,7 +1085,7 @@ function MyPickComboCard({
               {combo.averageRP >= 0 ? "+" : ""}
               {combo.averageRP.toFixed(1)} RP
             </span>
-          </Link>
+          </div>
         ))}
       </div>
     </div>

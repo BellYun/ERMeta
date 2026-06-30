@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { mergeApiRowsByComboId, type ApiTrioWeaponRow } from "@/components/features/trio-lab/types";
+import {
+  mergeApiRowsByComboId,
+  type ApiTrioWeaponRow,
+} from "@/components/features/team-combos/types";
 
 function makeRow(overrides: Partial<ApiTrioWeaponRow>): ApiTrioWeaponRow {
   return {

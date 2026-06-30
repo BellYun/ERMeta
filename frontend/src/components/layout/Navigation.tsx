@@ -2,7 +2,6 @@
 
 import {
   BarChart3,
-  FlaskConical,
   Gauge,
   Layers,
   MessageSquarePlus,
@@ -71,12 +70,6 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
       label: t("synergyRecommendation"),
       icon: Network,
       isActive: normalizedPathname === "/synergy-detail",
-    },
-    {
-      href: withCurrentRouteLocale(pathname, "/trio-lab"),
-      label: t("trioLab"),
-      icon: FlaskConical,
-      isActive: normalizedPathname.startsWith("/trio-lab"),
     },
     {
       href: withCurrentRouteLocale(pathname, "/character-lab"),
