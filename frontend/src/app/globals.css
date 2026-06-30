@@ -39,6 +39,9 @@
 @layer base {
   :root {
     color-scheme: light;
+    --font-plex-sans-kr:
+      "Pretendard", "Apple SD Gothic Neo", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-plex-mono: "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
     --color-tier-s: #7c3aed;
     --color-tier-a: #1d4ed8;
     --color-tier-b: #047857;
@@ -110,7 +113,7 @@
     min-height: 100vh;
     background: var(--color-background);
     color: var(--color-foreground);
-    font-family: var(--font-plex-sans-kr), "Apple SD Gothic Neo", "Pretendard", sans-serif;
+    font-family: var(--font-plex-sans-kr);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings:
