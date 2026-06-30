@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "../globals.css";
 import type { ReactNode } from "react";
+import { FontStylesheetLinks } from "@/components/FontStylesheetLinks";
 import { L10nProvider } from "@/components/L10nProvider";
 import { RootDocumentExtras } from "@/components/RootDocumentExtras";
 import { ThemeInitScript } from "@/components/ThemeInitScript";
@@ -33,6 +34,7 @@ export default async function MiscLayout({ children }: { children: ReactNode }) 
       suppressHydrationWarning
     >
       <head>
+        <FontStylesheetLinks />
         <ThemeInitScript />
       </head>
       <body>
