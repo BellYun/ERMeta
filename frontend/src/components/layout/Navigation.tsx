@@ -8,7 +8,6 @@ import {
   Network,
   NotebookText,
   Search,
-  Trophy,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -91,12 +90,6 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
       label: t("patchAnalysisNav"),
       icon: Gauge,
       isActive: normalizedPathname.startsWith("/patch-analysis"),
-    },
-    {
-      href: withCurrentRouteLocale(pathname, "/season10-recap"),
-      label: t("seasonRecap"),
-      icon: Trophy,
-      isActive: normalizedPathname.startsWith("/season10-recap"),
     },
   ];
 

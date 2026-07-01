@@ -1,4 +1,4 @@
-import { BookOpenText, SlidersHorizontal } from "lucide-react";
+import { BookOpenText, Gauge, SlidersHorizontal } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import type { HomeMetaStats } from "@/lib/homeMetaShared";
 import type { RankingResponse } from "@/lib/ranking";
@@ -28,6 +28,7 @@ export async function HomePageContent({
   const hasRankingData = rankingData.rankings.length > 0 && totalMatches > 0;
   const trackedMatches = hasRankingData ? formatMetricNumber(totalMatches) : "";
   const fallbackPatch = defaultPatch || "11.5";
+  const patchAnalysisHref = `/${locale}/patch-analysis/11.5`;
 
   return (
     <div className="page-shell home-shell flex flex-col">
@@ -51,6 +52,13 @@ export async function HomePageContent({
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
+              <a
+                href={patchAnalysisHref}
+                className="hidden items-center gap-1.5 rounded-md border border-[var(--color-border-light)] bg-[var(--color-surface)] px-2.5 py-2 text-xs font-semibold text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)] sm:inline-flex"
+              >
+                <Gauge className="h-3.5 w-3.5" strokeWidth={2} />
+                {t("patchAnalysisCta")}
+              </a>
               <a
                 href={`/${locale}/methodology`}
                 className="hidden items-center gap-1.5 rounded-md border border-[var(--color-border)] px-2.5 py-2 text-xs font-medium text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:text-[var(--color-foreground)] sm:inline-flex"
@@ -105,8 +113,8 @@ export async function HomePageContent({
               <div className="mt-4 flex flex-wrap gap-2">
                 {[
                   { href: `/${locale}/character/1`, label: t("fallback.characterCta") },
+                  { href: patchAnalysisHref, label: t("fallback.analysisCta") },
                   { href: `/${locale}/patches`, label: t("fallback.patchCta") },
-                  { href: `/${locale}/season10-recap`, label: t("fallback.recapCta") },
                   { href: `/${locale}/methodology`, label: t("fallback.methodologyCta") },
                 ].map((link) => (
                   <a
