@@ -26,6 +26,7 @@ import {
 
 const MIN_MEANINGFUL_GAMES = 10;
 const VIRTUAL_CARD_ESTIMATE = 92;
+const VISIBLE_RESULTS_STEP = 30;
 
 /** 무기·코어 무시하고 캐릭터(c1,c2,c3) 기준으로 그룹화 */
 function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
@@ -222,6 +223,7 @@ export function SynergyDetailResults() {
   const [results, setResults] = React.useState<TrioWeaponResult[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = React.useState(VISIBLE_RESULTS_STEP);
 
   /**
    * 1번 탭 즉각 반응 핵심:
@@ -385,6 +387,26 @@ export function SynergyDetailResults() {
     return prioritizeFocusGroups(sampleAwareGroups, deferredCharCodes, focusCharWeapons);
   }, [results, deferredAllies, deferredCharCodes, focusCharWeapons, sortBy]);
 
+  const visibleResetKey = React.useMemo(() => {
+    const allyKey = deferredAllies
+      .map((ally) => `${ally.charCode}:${ally.weaponCode ?? 0}`)
+      .join("|");
+    const focusKey = focusCharWeapons
+      .map((focus) => `${focus.charCode}:${focus.weaponCode}`)
+      .join("|");
+    return `${allyKey}::${focusKey}::${sortBy}`;
+  }, [deferredAllies, focusCharWeapons, sortBy]);
+
+  React.useEffect(() => {
+    setVisibleCount(VISIBLE_RESULTS_STEP);
+  }, [visibleResetKey]);
+
+  const visibleRecommendations = React.useMemo(
+    () => recommendations.slice(0, visibleCount),
+    [recommendations, visibleCount]
+  );
+  const hasMoreRecommendations = visibleRecommendations.length < recommendations.length;
+
   const clearAllies = React.useCallback(() => {
     setLocalAllies([null, null]);
     router.replace(pathname, { scroll: false });
@@ -427,14 +449,14 @@ export function SynergyDetailResults() {
   }, []);
 
   const rowVirtualizer = useWindowVirtualizer({
-    count: recommendations.length,
+    count: visibleRecommendations.length,
     estimateSize: () => VIRTUAL_CARD_ESTIMATE,
     overscan: 6,
     scrollMargin: virtualScrollMargin,
   });
 
   React.useLayoutEffect(() => {
-    if (recommendations.length === 0) return;
+    if (visibleRecommendations.length === 0) return;
     const el = virtualListRef.current;
     if (!el) return;
 
@@ -450,11 +472,11 @@ export function SynergyDetailResults() {
       observer.disconnect();
       window.removeEventListener("resize", updateScrollMargin);
     };
-  }, [recommendations.length]);
+  }, [visibleRecommendations.length]);
 
   React.useEffect(() => {
     rowVirtualizer.measure();
-  }, [recommendations, rowVirtualizer]);
+  }, [visibleRecommendations, rowVirtualizer]);
 
   return (
     <>
@@ -647,7 +669,7 @@ export function SynergyDetailResults() {
               style={{ height: rowVirtualizer.getTotalSize() }}
             >
               {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-                const group = recommendations[virtualRow.index];
+                const group = visibleRecommendations[virtualRow.index];
                 return (
                   <div
                     key={virtualRow.key}
@@ -673,6 +695,22 @@ export function SynergyDetailResults() {
                 );
               })}
             </div>
+            {hasMoreRecommendations ? (
+              <button
+                type="button"
+                onClick={() =>
+                  setVisibleCount((current) =>
+                    Math.min(current + VISIBLE_RESULTS_STEP, recommendations.length)
+                  )
+                }
+                className="dashboard-tab mx-auto mt-3 min-h-[38px] px-4 text-sm font-semibold"
+              >
+                {t("more", {
+                  visible: Math.min(visibleCount, recommendations.length),
+                  total: recommendations.length,
+                })}
+              </button>
+            ) : null}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] px-6 py-14 text-center">
