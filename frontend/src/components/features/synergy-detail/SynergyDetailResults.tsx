@@ -389,6 +389,7 @@ export function SynergyDetailResults() {
 
   const visibleResetKey = React.useMemo(() => {
     const allyKey = deferredAllies
+      .filter((ally): ally is NonNullable<typeof ally> => ally !== null)
       .map((ally) => `${ally.charCode}:${ally.weaponCode ?? 0}`)
       .join("|");
     const focusKey = focusCharWeapons
@@ -465,11 +466,8 @@ export function SynergyDetailResults() {
     };
 
     updateScrollMargin();
-    const observer = new ResizeObserver(updateScrollMargin);
-    observer.observe(el);
     window.addEventListener("resize", updateScrollMargin);
     return () => {
-      observer.disconnect();
       window.removeEventListener("resize", updateScrollMargin);
     };
   }, [visibleRecommendations.length]);
