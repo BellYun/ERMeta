@@ -1,5 +1,6 @@
 "use client";
 
+import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import { X, Users, Loader2, Info, Share2 } from "lucide-react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -24,6 +25,7 @@ import {
 } from "./WeaponAllySelector";
 
 const MIN_MEANINGFUL_GAMES = 10;
+const VIRTUAL_CARD_ESTIMATE = 92;
 
 /** 무기·코어 무시하고 캐릭터(c1,c2,c3) 기준으로 그룹화 */
 function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
@@ -143,6 +145,7 @@ function prioritizeFocusGroups(
 }
 
 export function SynergyDetailResults() {
+  "use no memo";
   const { l10n } = useL10n();
   const t = useTranslations("synergyResults");
   const searchParams = useSearchParams();
@@ -243,15 +246,8 @@ export function SynergyDetailResults() {
   }, [selectedAllies, deferredAllies]);
   const showLoading = loading || isAllyChangeInFlight;
   const [copied, setCopied] = React.useState(false);
-  // 첫 paint에는 3 카드만 commit해서 click duration을 짧게 가져가고,
-  // 나머지는 requestIdleCallback로 idle frame마다 4장씩 점진 mount.
-  // "더보기" 버튼은 사용자 의도가 명확하므로 30 단위 추가.
-  // (2026-04-15 INP 개선: 6→3, 6→4 로 조정. CPU 10x throttle 워스트케이스에서 두 번째 탭 click
-  //  duration 이 첫 탭의 response-commit frame 에 겹치는 것을 완화.)
-  const INITIAL_VISIBLE = 3;
-  const IDLE_BATCH = 4;
-  const IDLE_TARGET = 30;
-  const [visibleCount, setVisibleCount] = React.useState(INITIAL_VISIBLE);
+  const virtualListRef = React.useRef<HTMLDivElement>(null);
+  const [virtualScrollMargin, setVirtualScrollMargin] = React.useState(0);
   const traitNames = useTraitNames(l10n);
 
   const getCharName = React.useCallback(
@@ -353,39 +349,12 @@ export function SynergyDetailResults() {
     }, 300);
 
     setLoading(true);
-    setVisibleCount(INITIAL_VISIBLE);
     return () => {
       clearTimeout(timerId);
       controller.abort();
       setLoading(false);
     };
   }, [deferredAllies, t]);
-
-  // 점진적 카드 mount — visibleCount를 idle frame마다 6씩 늘려 IDLE_TARGET까지 확장.
-  // 사용자 click의 commit이 30개가 아닌 6개만 처리하므로 INP duration이 줄어들고,
-  // 이어지는 idle frame에서 나머지 카드가 채워져 사용자가 스크롤하기 전에 mount 완료.
-  React.useEffect(() => {
-    if (visibleCount >= IDLE_TARGET) return;
-    if (results.length === 0) return;
-    type IdleId = ReturnType<typeof setTimeout> | number;
-    const ric = (cb: () => void): IdleId =>
-      typeof requestIdleCallback === "function"
-        ? requestIdleCallback(cb, { timeout: 500 })
-        : setTimeout(cb, 0);
-    const cic = (id: IdleId) => {
-      if (typeof cancelIdleCallback === "function" && typeof id === "number") {
-        cancelIdleCallback(id);
-      } else {
-        clearTimeout(id as ReturnType<typeof setTimeout>);
-      }
-    };
-    const id = ric(() => {
-      React.startTransition(() => {
-        setVisibleCount((c) => Math.min(c + IDLE_BATCH, IDLE_TARGET));
-      });
-    });
-    return () => cic(id);
-  }, [visibleCount, results.length]);
 
   // Two-level aggregation + focus-priority sorting — deferred 기반
   const recommendations = React.useMemo(() => {
@@ -456,6 +425,36 @@ export function SynergyDetailResults() {
       sortBy: currentSortBy as SynergySortBy,
     });
   }, []);
+
+  const rowVirtualizer = useWindowVirtualizer({
+    count: recommendations.length,
+    estimateSize: () => VIRTUAL_CARD_ESTIMATE,
+    overscan: 6,
+    scrollMargin: virtualScrollMargin,
+  });
+
+  React.useLayoutEffect(() => {
+    if (recommendations.length === 0) return;
+    const el = virtualListRef.current;
+    if (!el) return;
+
+    const updateScrollMargin = () => {
+      setVirtualScrollMargin(el.getBoundingClientRect().top + window.scrollY);
+    };
+
+    updateScrollMargin();
+    const observer = new ResizeObserver(updateScrollMargin);
+    observer.observe(el);
+    window.addEventListener("resize", updateScrollMargin);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateScrollMargin);
+    };
+  }, [recommendations.length]);
+
+  React.useEffect(() => {
+    rowVirtualizer.measure();
+  }, [recommendations, rowVirtualizer]);
 
   return (
     <>
@@ -642,28 +641,38 @@ export function SynergyDetailResults() {
                 {t("infoPair")}
               </p>
             )}
-            {recommendations.slice(0, visibleCount).map((group, i) => (
-              <ComboWeaponCard
-                key={`${group.character1}-${group.weaponType1}-${group.character2}-${group.weaponType2}-${group.character3}-${group.weaponType3}`}
-                group={group}
-                rank={i + 1}
-                getCharName={getCharName}
-                getWeaponName={getWeaponName}
-                getTraitName={getTraitName}
-                selectedCharCodes={deferredCharCodes}
-                isFocusPoolCombo={isFocusPoolCombo(group)}
-                onRecommendationClick={onRecommendationClick}
-              />
-            ))}
-            {recommendations.length > visibleCount && (
-              <button
-                type="button"
-                onClick={() => setVisibleCount((prev) => prev + 30)}
-                className="w-full min-h-[44px] rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] py-3 text-[13.5px] font-semibold text-[var(--color-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
-              >
-                {t("more", { visible: visibleCount, total: recommendations.length })}
-              </button>
-            )}
+            <div
+              ref={virtualListRef}
+              className="relative"
+              style={{ height: rowVirtualizer.getTotalSize() }}
+            >
+              {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                const group = recommendations[virtualRow.index];
+                return (
+                  <div
+                    key={virtualRow.key}
+                    data-index={virtualRow.index}
+                    ref={rowVirtualizer.measureElement}
+                    className="absolute left-0 top-0 w-full pb-2"
+                    style={{
+                      transform: `translateY(${virtualRow.start - virtualScrollMargin}px)`,
+                    }}
+                  >
+                    <ComboWeaponCard
+                      key={`${group.character1}-${group.weaponType1}-${group.character2}-${group.weaponType2}-${group.character3}-${group.weaponType3}`}
+                      group={group}
+                      rank={virtualRow.index + 1}
+                      getCharName={getCharName}
+                      getWeaponName={getWeaponName}
+                      getTraitName={getTraitName}
+                      selectedCharCodes={deferredCharCodes}
+                      isFocusPoolCombo={isFocusPoolCombo(group)}
+                      onRecommendationClick={onRecommendationClick}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] px-6 py-14 text-center">
