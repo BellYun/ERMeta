@@ -2,6 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
+import { localizePatchNote } from "@/data/patch-note-localization";
 import { getCharacterPatchNote } from "@/data/patch-notes";
 import type { RouteLocale } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
@@ -58,7 +59,10 @@ export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
   return (
     <div className="space-y-3">
       {patches.slice(0, 5).map((patch, i) => {
-        const note = getCharacterPatchNote(selectedCode, patch);
+        const sourceNote = getCharacterPatchNote(selectedCode, patch);
+        const note = sourceNote ? localizePatchNote(sourceNote, locale) : undefined;
+        const showDetailedPatchNote =
+          locale === "ko" || ((locale === "en" || locale === "ja") && patch === "11.5");
         return (
           <div
             key={patch}
@@ -78,7 +82,7 @@ export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
               <div className="px-3 sm:px-4 py-2 sm:py-3 text-xs text-[var(--color-muted-foreground)]">
                 {t("noChanges")}
               </div>
-            ) : locale !== "ko" ? (
+            ) : !showDetailedPatchNote ? (
               <div className="px-3 sm:px-4 py-2 sm:py-3">
                 <div className="flex flex-wrap items-center gap-1.5">
                   {Array.from(new Set(note.changes.map((change) => change.changeType))).map(
