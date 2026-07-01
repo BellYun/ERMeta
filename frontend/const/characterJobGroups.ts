@@ -4,24 +4,24 @@
  */
 
 export const JOB_GROUP = {
-  TANK: 'TANK',
-  WARRIOR: 'WARRIOR',
-  ASSASSIN: 'ASSASSIN',
-  SKILL_DEALER: 'SKILL_DEALER',
-  RANGED_DEALER: 'RANGED_DEALER',
-  SUPPORT: 'SUPPORT',
+  TANK: "TANK",
+  WARRIOR: "WARRIOR",
+  ASSASSIN: "ASSASSIN",
+  SKILL_DEALER: "SKILL_DEALER",
+  RANGED_DEALER: "RANGED_DEALER",
+  SUPPORT: "SUPPORT",
 } as const;
 
 export type JobGroupKey = (typeof JOB_GROUP)[keyof typeof JOB_GROUP];
 
 /** 직업군 표시 라벨 (한국어) */
 export const JOB_GROUP_LABELS: Record<JobGroupKey, string> = {
-  [JOB_GROUP.TANK]: '탱커',
-  [JOB_GROUP.WARRIOR]: '전사',
-  [JOB_GROUP.ASSASSIN]: '암살자',
-  [JOB_GROUP.SKILL_DEALER]: '스킬딜러',
-  [JOB_GROUP.RANGED_DEALER]: '원거리딜러',
-  [JOB_GROUP.SUPPORT]: '지원가',
+  [JOB_GROUP.TANK]: "탱커",
+  [JOB_GROUP.WARRIOR]: "전사",
+  [JOB_GROUP.ASSASSIN]: "암살자",
+  [JOB_GROUP.SKILL_DEALER]: "스킬딜러",
+  [JOB_GROUP.RANGED_DEALER]: "원거리딜러",
+  [JOB_GROUP.SUPPORT]: "지원가",
 };
 
 /** 직업군 순서 (UI 탭/섹션 표시 순) */
@@ -127,6 +127,8 @@ export const CHARACTER_JOB_GROUP_MAP: Record<number, JobGroupKey> = {
   85: JOB_GROUP.WARRIOR,
   86: JOB_GROUP.WARRIOR,
   87: JOB_GROUP.SKILL_DEALER,
+  88: JOB_GROUP.WARRIOR,
+  89: JOB_GROUP.RANGED_DEALER,
 };
 
 export function getJobGroupForCharacter(characterCode: number): JobGroupKey | undefined {

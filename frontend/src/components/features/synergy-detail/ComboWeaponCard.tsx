@@ -122,9 +122,12 @@ function ComboWeaponCardImpl({
   return (
     <div
       className={cn(
-        "rounded-md border bg-[var(--color-surface)]",
-        rank <= 3 ? "border-[var(--color-border-light)]" : "border-[var(--color-border)]",
-        isFocusPoolCombo && "border-[var(--color-border-light)] bg-[var(--color-surface)]"
+        "rounded-md border bg-[var(--color-surface)] transition-colors",
+        isFocusPoolCombo
+          ? "border-[color-mix(in_srgb,var(--color-accent)_46%,var(--color-border-light))] bg-[color-mix(in_srgb,var(--color-accent-muted)_62%,var(--color-surface))] shadow-[inset_3px_0_0_color-mix(in_srgb,var(--color-accent)_72%,transparent)]"
+          : rank <= 3
+            ? "border-[var(--color-border-light)]"
+            : "border-[var(--color-border)]"
       )}
       style={{ contentVisibility: "auto", containIntrinsicSize: "auto 56px" }}
     >
@@ -335,12 +338,15 @@ export const ComboWeaponCard = React.memo(ComboWeaponCardImpl, (prev, next) => {
   if (prev.getCharName !== next.getCharName) return false;
   if (prev.getWeaponName !== next.getWeaponName) return false;
   if (prev.getTraitName !== next.getTraitName) return false;
+  if (prev.isFocusPoolCombo !== next.isFocusPoolCombo) return false;
   // selectedCharCodes는 number[]이므로 shallow 비교
   const a = prev.selectedCharCodes;
   const b = next.selectedCharCodes;
-  if (a === b) return true;
-  if (a.length !== b.length) return false;
-  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  if (a !== b) {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  }
+
   return true;
 });
 

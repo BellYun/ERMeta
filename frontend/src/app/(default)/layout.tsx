@@ -3,6 +3,7 @@ import "../globals.css";
 import type { ReactNode } from "react";
 import { AppFrame } from "@/components/AppFrame";
 import FeedbackWidget from "@/components/features/FeedbackWidget";
+import { FontStylesheetLinks } from "@/components/FontStylesheetLinks";
 import { L10nProvider } from "@/components/L10nProvider";
 import { RootDocumentExtras } from "@/components/RootDocumentExtras";
 import { ThemeInitScript } from "@/components/ThemeInitScript";
@@ -28,6 +29,7 @@ export default async function DefaultLayout({ children }: { children: ReactNode 
   return (
     <html lang={HTML_LANG_BY_LANGUAGE[DEFAULT_LANGUAGE] ?? "ko"} suppressHydrationWarning>
       <head>
+        <FontStylesheetLinks />
         <ThemeInitScript />
       </head>
       <body>

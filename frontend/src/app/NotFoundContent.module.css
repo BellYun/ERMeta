@@ -1,0 +1,331 @@
+.shell {
+  --color-background: #f7f9fc;
+  --color-surface: #ffffff;
+  --color-surface-2: #f1f5f9;
+  --color-border: #b8c5d6;
+  --color-foreground: #0f172a;
+  --color-muted-foreground: #334155;
+  --color-accent: #1d4ed8;
+  --color-accent-muted: #edf4ff;
+  --color-accent-foreground: #153e91;
+
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  padding: 24px 12px;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family:
+    "Pretendard",
+    "Apple SD Gothic Neo",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+:global(html[data-theme="dark"]) .shell {
+  --color-background: #0b1220;
+  --color-surface: #111827;
+  --color-surface-2: #172033;
+  --color-border: #334155;
+  --color-foreground: #e5e7eb;
+  --color-muted-foreground: #a7b3c5;
+  --color-accent: #60a5fa;
+  --color-accent-muted: rgba(37, 99, 235, 0.2);
+  --color-accent-foreground: #93c5fd;
+}
+
+@media (prefers-color-scheme: dark) {
+  :global(html:not([data-theme="light"])) .shell {
+    --color-background: #0b1220;
+    --color-surface: #111827;
+    --color-surface-2: #172033;
+    --color-border: #334155;
+    --color-foreground: #e5e7eb;
+    --color-muted-foreground: #a7b3c5;
+    --color-accent: #60a5fa;
+    --color-accent-muted: rgba(37, 99, 235, 0.2);
+    --color-accent-foreground: #93c5fd;
+  }
+}
+
+.shell *,
+.shell *::before,
+.shell *::after {
+  box-sizing: border-box;
+}
+
+.panel {
+  position: relative;
+  overflow: hidden;
+  width: min(100%, 1152px);
+  margin: 0 auto;
+  padding: 16px;
+  border: 1px solid var(--color-border, #b8c5d6);
+  border-radius: 6px;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-surface-2) 58%, transparent),
+      transparent 46px
+    ),
+    var(--color-surface);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--color-accent-muted) 72%, transparent),
+    0 1px 1px rgba(15, 23, 42, 0.05);
+}
+
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: color-mix(in srgb, var(--color-accent) 78%, transparent);
+}
+
+.grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 20px;
+}
+
+.primary {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.kicker {
+  display: inline-flex;
+  width: fit-content;
+  color: var(--color-accent-foreground);
+  font-family: "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.headerRow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.copyBlock {
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  color: var(--color-foreground);
+  font-size: 1.7rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.body {
+  max-width: 46rem;
+  margin: 12px 0 0;
+  color: var(--color-muted-foreground);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.codeMark {
+  display: none;
+  flex-shrink: 0;
+  color: color-mix(in srgb, var(--color-accent) 26%, transparent);
+  font-family: "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 4.5rem;
+  font-weight: 800;
+  line-height: 0.9;
+}
+
+.pathBox {
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface);
+  padding: 12px;
+}
+
+.pathLabel {
+  margin: 0;
+  color: var(--color-muted-foreground);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.pathValue {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+  color: var(--color-foreground);
+  font-family: "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.primaryAction,
+.secondaryAction {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 8px;
+  border-radius: 6px;
+  padding: 0 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.primaryAction {
+  border: 1px solid color-mix(in srgb, var(--color-accent) 58%, var(--color-border));
+  background: var(--color-accent-muted);
+  color: var(--color-accent-foreground);
+}
+
+.secondaryAction {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-muted-foreground);
+}
+
+.routes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface);
+  padding: 10px;
+}
+
+.routesLabel {
+  margin: 0;
+  padding: 4px 8px;
+  color: var(--color-muted-foreground);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.routeLink {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 28px;
+  align-items: center;
+  gap: 12px;
+  min-height: 68px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 10px;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+.routeLink:hover {
+  border-color: var(--color-border);
+  background: var(--color-surface-2);
+}
+
+.imageWrap {
+  position: relative;
+  display: block;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface-2);
+}
+
+.routeCopy {
+  min-width: 0;
+}
+
+.routeTitle {
+  display: block;
+  overflow: hidden;
+  color: var(--color-foreground);
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.routeBody {
+  display: -webkit-box;
+  margin-top: 3px;
+  overflow: hidden;
+  color: var(--color-muted-foreground);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.routeIcon {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--color-muted-foreground);
+}
+
+.routeLink:hover .routeIcon {
+  color: var(--color-foreground);
+}
+
+@media (min-width: 640px) {
+  .shell {
+    padding: 32px 20px;
+  }
+
+  .panel {
+    padding: 24px;
+  }
+
+  .headerRow {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .title {
+    font-size: 2.15rem;
+  }
+
+  .codeMark {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .panel {
+    padding: 28px;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr) 390px;
+    align-items: stretch;
+  }
+}

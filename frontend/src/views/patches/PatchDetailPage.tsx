@@ -4,6 +4,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeBadgeStatic";
+import { localizePatchNotes } from "@/data/patch-note-localization";
 import { getAllPatchVersions, getNotesByPatch, getPatchSummary } from "@/data/patch-notes";
 import { Link } from "@/i18n/navigation";
 import { LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
@@ -87,7 +88,9 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
   const t = await getStaticTranslator("patches", language);
   const tPatch = await getStaticTranslator("characterPatch", language);
   const summary = getPatchSummary(version);
-  const notes = getNotesByPatch(version);
+  const notes = localizePatchNotes(getNotesByPatch(version), locale);
+  const showDetailedPatchNotes =
+    locale === "ko" || ((locale === "en" || locale === "ja") && version === "11.5");
   const l10n = loadL10nMap(language);
   const fallbackMap = buildFallbackMap();
 
@@ -239,7 +242,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                   </span>
                 </div>
 
-                {locale === "ko" ? (
+                {showDetailedPatchNotes ? (
                   <ul className="mt-4 divide-y divide-[var(--color-border)] rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
                     {note.changes.map((change, changeIndex) => {
                       const detailText = change.description.join(" ");

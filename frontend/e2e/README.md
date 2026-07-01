@@ -24,7 +24,7 @@ frontend/e2e/
 | 스펙                             | 대상                                                                                            |
 | -------------------------------- | ----------------------------------------------------------------------------------------------- |
 | `smoke/home.spec.ts`             | `/` (메타 분석, GlobalFilter, TierRankingTable, HoneyPicksSection)                              |
-| `smoke/synergy.spec.ts`          | `/synergy`, `/synergy-detail` h1 노출                                                           |
+| `smoke/synergy.spec.ts`          | `/synergy` -> `/synergy-detail` 리다이렉트, `/synergy-detail` h1 노출                           |
 | `smoke/seo.spec.ts`              | `/robots.txt`, `/sitemap.xml`, 홈/캐릭터 canonical                                              |
 | `smoke/api.spec.ts`              | `/api/patches/history`, `/api/meta/honey-picks`, `/api/character/mithril-rp-ranking` 응답 shape |
 | `smoke/synergy-share.spec.ts`    | 🥇 시너지 공유 — `?a=&b=&c=` 조합 URL 복원, 공유 버튼 노출 규칙                                 |

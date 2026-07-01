@@ -5,6 +5,7 @@ import "../../globals.css";
 import type { ReactNode } from "react";
 import { AppFrame } from "@/components/AppFrame";
 import FeedbackWidget from "@/components/features/FeedbackWidget";
+import { FontStylesheetLinks } from "@/components/FontStylesheetLinks";
 import { L10nProvider } from "@/components/L10nProvider";
 import { RootDocumentExtras } from "@/components/RootDocumentExtras";
 import { ThemeInitScript } from "@/components/ThemeInitScript";
@@ -55,6 +56,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   return (
     <html lang={htmlLang} className={geistSans.variable} suppressHydrationWarning>
       <head>
+        <FontStylesheetLinks />
         <ThemeInitScript />
       </head>
       <body>

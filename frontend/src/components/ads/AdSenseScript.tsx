@@ -11,7 +11,6 @@ const CONTENT_PATH_PREFIXES = [
   "/character/",
   "/patches",
   "/patch-analysis",
-  "/season10-recap",
   "/synergy-detail",
 ];
 
