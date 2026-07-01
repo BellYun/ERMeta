@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import type { ReactNode } from "react";
 import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeBadgeStatic";
+import { localizePatchChanges } from "@/data/patch-note-localization";
 import { Link } from "@/i18n/navigation";
 import { LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
 import {
@@ -192,6 +193,71 @@ const PATCH_CONTEXT_COMMENTS: Record<string, Record<number, CausalEvaluationComm
   },
 };
 
+const PATCH_CONTEXT_COMMENT_TRANSLATIONS: Partial<
+  Record<RouteLocale, Record<string, Record<number, string>>>
+> = {
+  en: {
+    "11.5": {
+      2: "Aya received a passive shield buff and also benefited from some item buffs, but her metrics have not risen much. The weak metrics of bruiser characters that were often paired with her in a ranged-DPS meta also seem to be weighing on her. For now, it is hard to say the buff has meaningfully translated into results, so the rest of the patch needs more data.",
+      6: "Nadine was nerfed through the crossbow mastery basic attack amplification, which had been producing very strong metrics. Some item buffs helped keep her from collapsing, and she still looks like a serviceable pick.",
+      9: "Isol is trending upward after the Semtex Bomb buff and several item buffs. The current meta is still centered on ranged DPS, so his role inside a team can feel somewhat awkward. The buff direction is positive, and his evaluation can improve further depending on the rest of the patch.",
+      17: "Adriana received a low-level ultimate damage buff. She previously struggled into support-heavy teams, but support characters and healing tools were weakened this patch while ranged DPS became stronger. Both the buff and the meta shift are working in her favor.",
+      20: "Lenox received a buff to E's target max-health damage, but her overall RP metrics fell as pick rate rose and less experienced players entered the sample. Lenox is not a pure placement-stability tank; her results depend heavily on fight execution, so that new-player inflow likely hurt placement rate.",
+      25: "Bernice received per-level attack power and W trap count improvements, with some item buffs on top. His metrics have not risen much, so it is hard to say the buffs immediately improved performance. More data is needed through the rest of the patch.",
+      27: "Alex lost part of the defense gain from using melee weapons. It is a baseline durability nerf, but Alex still has strong utility and stability. He still looks usable after the nerf.",
+      30: "Eleven received ultimate damage and healing buffs, but she is being affected by the sharp RP drop in tank + bruiser + bruiser structures. When paired with ranged DPS, however, her metrics remain good, so the buff looks meaningful in teams that include a ranged damage dealer.",
+      31: "Rio received a bow mastery basic attack amplification buff and is posting good metrics overall. Her RP gain remains stable despite a sharp pick-rate increase, making her one of the clearer beneficiaries of both the buff and the item environment this patch.",
+      38: "Jenny received an E damage buff, but she had often been paired with supports such as Charlotte, so Healing Wind's cooldown increase and The Sun nerf hit her hard. Support-heavy teams can suppress her metrics, while teams with lower support dependence may feel the buff more clearly.",
+      39: "Camilo received a Q damage nerf, but he benefited from the starting item Minuteman's Mark and several arm item buffs. He is still posting good results when using options such as Dice of Destiny or Radar instead of Mithril Armband, so the item environment is helping him stay strong despite the character nerf.",
+      41: "Johann was adjusted through arcana mastery, enhanced Q healing, W slow, and cooldown changes. He is one of the main targets of the support nerfs, and with RP gain falling negative, he is currently difficult to pick comfortably.",
+      45: "Mai was nerfed in both Shawl Veil's damage reduction and Exclusive's healing. Pick rate fell while RP gain rose, which may mean the sample shifted toward experienced players after less experienced users left. The nerf is real, but pick-rate movement needs to be considered when reading the metrics.",
+      48: "Tia received a Q damage buff and is showing high RP gain overall. This is a case where the buff is reflected positively in the metrics, and she looks usable at the current point of the patch.",
+      50: "Elena received a W damage buff, but teams that previously paired her with bruisers are being affected by bruiser metric decline in a ranged-DPS-heavy meta. When used with ranged DPS, however, her results are good, so the buff feels meaningful in those team structures.",
+      54: "Karla received a crossbow mastery growth buff, but she is struggling to use her strengths in the current ranged-DPS-centered meta. The buff is closer to long-term scaling support and has not immediately produced a metric rise.",
+      58: "Haze received an RQ damage buff, and her pick rate rose sharply, which likely brought in less experienced players. Even so, her overall metrics are holding up reasonably well, so the buff appears to be meaningful.",
+      61: "Irem received a cat-form W damage buff, and support nerfs helped her RP gain rise sharply when paired with skill dealers. Her overall metrics improved, but teams with supports lost RP because of the support nerfs. She looks usable relative to the numbers.",
+      68: "Alonso's main damage reduction tool, Bouncing Shield, was nerfed heavily. Both pick rate and RP gain fell sharply, so this looks like a very noticeable nerf.",
+      69: "Leni lost W movement speed, W cooldown, and E shield scaling at the same time. She is one of the hardest-hit supports this patch, and with RP gain falling negative, she currently looks difficult to pick.",
+      71: "Kenneth received attack power growth and Q scaling buffs, but his pick rate rose sharply, likely bringing less experienced players into the sample. His synergy with ranged DPS was not especially good before, and the current ranged-DPS-centered meta makes him more team-dependent. The buff itself is meaningful, but the metrics do not yet show a stable pick.",
+      78: "Hisui received an ultimate bonus damage nerf. Ranged DPS strength and support nerfs also made it harder for her to use her previous strengths. Both the nerf and the meta shift are working against her.",
+      79: "Justina received an ultimate damage buff, but the current data is not enough to judge it as meaningful. She should be evaluated after more samples accumulate.",
+      81: "Nia received a W damage buff, but the weak metrics of bruiser characters she was often paired with seem to be hurting her in a ranged-DPS-heavy meta. The buff is clear, but she should be read as a pick that is heavily affected by team composition right now.",
+      82: "Shureen gained an advantage in longer TTK fights through her passive healing buff. Her RP gain rose especially when paired with tanks. Metrics with other roles are not good, so she is best read as a pick with a clear strength in tank-paired teams.",
+      88: "Bihyung received a base defense nerf because of his high pick rate and durability metrics. Lowering base stats is not a small change, and his actual metrics fell sharply. Compared with before, he now depends more on team composition and player mastery.",
+    },
+  },
+  ja: {
+    "11.5": {
+      2: "アヤはパッシブのシールド強化を受け、一部アイテム強化の恩恵もありましたが、指標は大きく伸びていません。遠距離アタッカーが強い環境で一緒に採用されていたファイター実験体の指標が弱いことも影響しているようです。現時点ではバフが大きく結果に反映されたとは言いにくく、残りのパッチ推移をもう少し見る必要があります。",
+      6: "ナディンは高い指標を出していた石弓武器熟練度の基本攻撃増幅がナーフされました。ただし一部アイテム強化の恩恵で指標は大きく崩れておらず、現在も無難な性能を維持しています。",
+      9: "アイソルはセムテックス爆弾の強化と一部アイテム強化の恩恵を受け、指標が上向いています。ただし現在のメタは遠距離アタッカー中心に流れており、チーム内での役割競合にはやや曖昧さがあります。バフ方向は良く、残りのパッチ推移次第で評価がさらに上がる可能性があります。",
+      17: "アドリアナはアルティメットの低レベル区間ダメージが強化されました。以前はサポート構成を相手に苦しい場面がありましたが、今回のパッチでサポート実験体や回復要素が弱くなり、遠距離アタッカー実験体が強くなったことで使いやすい環境になっています。バフとメタ変化の両方がプラスに働いたピックです。",
+      20: "レノックスはEスキルの対象最大体力比例ダメージが強化されましたが、ピック率上昇に伴って不慣れなプレイヤーが流入し、全体RP指標は下がっています。レノックスは入賞安定性の高い純タンクというより、交戦熟練度で結果が大きく変わる実験体なので、不慣れな流入が入賞率低下に影響したと見られます。",
+      25: "バニスはレベルごとの攻撃力強化とW設置数の改善を受け、一部アイテム強化の恩恵もありました。ただし指標は大きく伸びておらず、バフが即時の性能改善につながったとは言いにくい状態です。残りのパッチ期間で追加データを確認する必要があります。",
+      27: "アレックスは近接武器使用時に得られる防御力増加効果がナーフされました。基礎耐久を下げるナーフではありますが、アレックスは依然として高いユーティリティと安定性を持つ実験体です。ナーフ後も十分に使えるピックに見えます。",
+      30: "イレブンはアルティメットのダメージと回復量が強化されましたが、現在のメタでタンク + ファイター + ファイター構成の平均RPが大きく下がった影響を受けています。ただし遠距離アタッカーと一緒に採用される場合は良い指標を出しており、遠距離アタッカーを含む構成ではバフが有効に働くピックと見られます。",
+      31: "リオは弓武器熟練度の基本攻撃増幅が強化され、全体的に良い指標を出しています。ピック率が急増しているにもかかわらずRP獲得量が安定しており、今回のパッチでバフとアイテム環境の恩恵を大きく受けたピックです。",
+      38: "ジェニーはEスキルのダメージ強化を受けましたが、既存ではシャーロットなどサポートと一緒に採用される比率が高かったため、ヒーリングウィンドのクールダウン増加とザ・サンのナーフの影響を強く受けました。サポートと組む構成では指標が抑えられますが、サポート依存度を下げた構成ではバフをより感じやすくなります。",
+      39: "カミロはQスキルのダメージがナーフされましたが、開始アイテムのミニットマンの標識強化と一部腕アイテム強化の恩恵を受けました。特にミスリル腕章の代わりに運命のサイコロやレーダーを採用する場合も良い指標を出しており、キャラクターナーフにもかかわらずアイテム環境のおかげで良い状態を維持しています。",
+      41: "ヨハンはアルカナ武器熟練度、強化Q回復量、Wのスロウとクールダウン調整が同時に入りました。サポート実験体ナーフの中心対象の一人と見られ、RP獲得量がマイナスに落ちているため、現在は採用しづらいピックです。",
+      45: "マイはショールベールの被ダメージ減少量とイクスクルーシブの回復量が同時にナーフされました。ピック率は下がりましたがRP獲得量はむしろ上がっており、不慣れなプレイヤーが離れた後に熟練者中心のサンプルへ再編された可能性があります。ナーフ自体は明確ですが、指標を読む際はピック率変化も合わせて見る必要があります。",
+      48: "ティアはQスキルのダメージ強化を受け、全体的に高いRP獲得量を示しています。バフが指標に良く反映されたケースで、現時点では十分に使えるピックです。",
+      50: "エレナはWスキルのダメージ強化を受けましたが、遠距離アタッカーが強い環境の影響で、従来ファイターと一緒に採用されていた構成の平均RPが下がっています。一方で遠距離アタッカーと組む場合は良い指標を出しており、遠距離アタッカーがいる構成ではバフを体感しやすいピックです。",
+      54: "カーラは石弓武器熟練度の成長強化を受けましたが、現在の遠距離アタッカー中心メタでは強みを活かしにくい状態です。バフ自体は長期的な性能補強に近く、即時の指標上昇にはつながっていません。",
+      58: "ヘイズはRQダメージ強化を受け、ピック率が大きく上昇したため不慣れなプレイヤーの流入が予想されます。それでも全体指標は悪くない水準を維持しており、今回のバフは有効に働いているようです。",
+      61: "イレムは猫Wスキルのダメージ強化を受け、サポート実験体ナーフの影響でスキルアタッカーと一緒に採用する構成のRP獲得量が大きく上昇しました。全体指標は改善しましたが、サポートと一緒に採用する場合はサポートナーフの影響を受けてRP獲得量が下がっています。指標上は十分に使えるピックです。",
+      68: "アロンソは主な被ダメージ減少手段であるバウンシングシールドの被ダメージ減少量が大きくナーフされました。ピック率が落ち、RP獲得量も大きく減少しているため、今回のナーフの体感が非常に大きいピックです。",
+      69: "レニはWスキルの移動速度増加量とクールダウン、Eスキルのシールド係数がすべてナーフされました。今回のパッチで最も大きな打撃を受けたサポートの一人であり、RP獲得量がマイナスに落ちているため、現在は採用しにくいピックです。",
+      71: "ケネスは攻撃力成長値とQスキル係数のバフを受けましたが、ピック率が大きく上がり、不慣れなプレイヤーの流入が影響したと見られます。以前から遠距離アタッカーとの相性が特別良いわけではなく、現在の遠距離アタッカー中心メタでは構成依存が目立っています。バフ自体は意味がありますが、指標上はまだ安定したピックとは言いにくいです。",
+      78: "ヒスイはアルティメットの追加ダメージがナーフされました。そこに遠距離アタッカーの強さとサポートナーフが重なり、従来の強みを活かしにくい環境になっています。ナーフとメタ変化が同時にマイナスに働いたピックです。",
+      79: "ユスティナはアルティメットのダメージ強化を受けましたが、現在の指標だけでは有意な変化とは判断しにくいです。サンプルがさらに積み上がってから評価するのが適切です。",
+      81: "ニアはWスキルのダメージ強化を受けましたが、遠距離アタッカーが強い環境の影響で、一緒に採用されていたファイター実験体の指標が弱い影響を受けているようです。バフ自体は明確ですが、現在のメタでは構成影響を大きく受けるピックと見るのが適切です。",
+      82: "シュリンはパッシブ回復量バフにより、TTKが長い交戦で利点を得ました。特にタンクと一緒に採用する場合はRP獲得量が大きく上昇しています。ただし他の役割と組む場合は指標が良くないため、現在はタンクと組む構成で強みがはっきりしたピックと見るのが適切です。",
+      88: "ビヒョンは高いピック率と耐久指標を理由に基本防御力がナーフされました。基礎性能を直接下げるナーフなので影響は小さくなく、実際の指標も大きく下がっています。以前のように安定して使うより、構成と熟練度をより強く問われるピックになったと見られます。",
+    },
+  },
+};
+
 const PATCH_ANALYSIS_COPY = {
   ko: {
     kicker: "패치 메타 리포트",
@@ -233,6 +299,8 @@ const PATCH_ANALYSIS_COPY = {
       summary: (count: string, winRate: string, rp: string) =>
         `${count}판 · 승률 ${winRate} · RP ${rp}`,
       aggregate: "통합",
+      diamondPlus: "다이아+",
+      gameCount: (count: string) => `${count}판`,
       averageRP: "RP",
       deltaWinRate: "승률",
       deltaPickRate: "픽률",
@@ -248,6 +316,13 @@ const PATCH_ANALYSIS_COPY = {
         "너프 대상 캐릭터는 평균 RP 하락폭이 큰 순서로 정렬했습니다. 표본과 승률이 유지되는 픽은 메타 잔존 가능성이 높습니다.",
       mixedTitle: "혼합 조정 캐릭터",
       mixedDescription: "버프와 너프가 함께 들어간 캐릭터는 실제 지표 변화를 우선합니다.",
+      focusedBuffTitle: "버프 캐릭터 패치 평가",
+      focusedBuffDescription: "버프 대상 캐릭터의 패치 내역과 현재 메타 맥락을 정리했습니다.",
+      focusedNerfTitle: "너프 캐릭터 패치 평가",
+      focusedNerfDescription: "너프 대상 캐릭터의 패치 내역과 현재 메타 맥락을 정리했습니다.",
+      focusedMixedTitle: "조정 캐릭터 패치 평가",
+      focusedMixedDescription:
+        "버프와 너프가 함께 들어간 캐릭터의 패치 내역과 현재 메타 맥락을 정리했습니다.",
     },
     guideKicker: "판단 기준",
     guideTitle: "판단 기준",
@@ -294,6 +369,8 @@ const PATCH_ANALYSIS_COPY = {
       summary: (count: string, winRate: string, rp: string) =>
         `${count} games · win rate ${winRate} · RP ${rp}`,
       aggregate: "Combined",
+      diamondPlus: "Diamond+",
+      gameCount: (count: string) => `${count} games`,
       averageRP: "RP",
       deltaWinRate: "Win rate",
       deltaPickRate: "Pick rate",
@@ -310,6 +387,15 @@ const PATCH_ANALYSIS_COPY = {
       mixedTitle: "Mixed Adjustment Characters",
       mixedDescription:
         "Characters with both buffs and nerfs are better read through actual metric movement than a single direction label.",
+      focusedBuffTitle: "Buffed Character Patch Evaluation",
+      focusedBuffDescription:
+        "Patch changes and the current meta context are summarized for buff targets.",
+      focusedNerfTitle: "Nerfed Character Patch Evaluation",
+      focusedNerfDescription:
+        "Patch changes and the current meta context are summarized for nerf targets.",
+      focusedMixedTitle: "Adjusted Character Patch Evaluation",
+      focusedMixedDescription:
+        "Patch changes and the current meta context are summarized for characters with mixed buffs and nerfs.",
     },
     guideKicker: "Reading Guide",
     guideTitle: "Reading Guide",
@@ -356,6 +442,8 @@ const PATCH_ANALYSIS_COPY = {
       summary: (count: string, winRate: string, rp: string) =>
         `${count}試合 · 勝率 ${winRate} · RP ${rp}`,
       aggregate: "統合",
+      diamondPlus: "ダイヤ+",
+      gameCount: (count: string) => `${count}試合`,
       averageRP: "RP",
       deltaWinRate: "勝率",
       deltaPickRate: "ピック率",
@@ -372,6 +460,13 @@ const PATCH_ANALYSIS_COPY = {
       mixedTitle: "混合調整キャラクター",
       mixedDescription:
         "バフとナーフが同時に入ったキャラクターは、単一方向ではなく実際の指標変化で読む方が適切です。",
+      focusedBuffTitle: "バフキャラクターのパッチ評価",
+      focusedBuffDescription: "バフ対象キャラクターのパッチ内容と現在のメタ文脈を整理しました。",
+      focusedNerfTitle: "ナーフキャラクターのパッチ評価",
+      focusedNerfDescription: "ナーフ対象キャラクターのパッチ内容と現在のメタ文脈を整理しました。",
+      focusedMixedTitle: "調整キャラクターのパッチ評価",
+      focusedMixedDescription:
+        "バフとナーフが同時に入ったキャラクターのパッチ内容と現在のメタ文脈を整理しました。",
     },
     guideKicker: "解釈基準",
     guideTitle: "解釈基準",
@@ -418,6 +513,8 @@ const PATCH_ANALYSIS_COPY = {
       summary: (count: string, winRate: string, rp: string) =>
         `${count} 场 · 胜率 ${winRate} · RP ${rp}`,
       aggregate: "综合",
+      diamondPlus: "钻石+",
+      gameCount: (count: string) => `${count} 场`,
       averageRP: "RP",
       deltaWinRate: "胜率",
       deltaPickRate: "选取率",
@@ -432,6 +529,12 @@ const PATCH_ANALYSIS_COPY = {
         "削弱目标按平均 RP 下降幅度排序。若削弱后样本和胜率仍稳定，仍可能是可用选择。",
       mixedTitle: "混合调整角色",
       mixedDescription: "同时包含增强和削弱的角色，更适合根据实际指标变化解读。",
+      focusedBuffTitle: "增强角色版本评价",
+      focusedBuffDescription: "整理增强目标角色的版本改动和当前 Meta 背景。",
+      focusedNerfTitle: "削弱角色版本评价",
+      focusedNerfDescription: "整理削弱目标角色的版本改动和当前 Meta 背景。",
+      focusedMixedTitle: "调整角色版本评价",
+      focusedMixedDescription: "整理同时包含增强和削弱角色的版本改动和当前 Meta 背景。",
     },
     guideKicker: "解读标准",
     guideTitle: "解读标准",
@@ -478,6 +581,8 @@ const PATCH_ANALYSIS_COPY = {
       summary: (count: string, winRate: string, rp: string) =>
         `${count} 場 · 勝率 ${winRate} · RP ${rp}`,
       aggregate: "綜合",
+      diamondPlus: "鑽石+",
+      gameCount: (count: string) => `${count} 場`,
       averageRP: "RP",
       deltaWinRate: "勝率",
       deltaPickRate: "選取率",
@@ -492,6 +597,12 @@ const PATCH_ANALYSIS_COPY = {
         "削弱目標按平均 RP 下降幅度排序。若削弱後樣本和勝率仍穩定，仍可能是可用選擇。",
       mixedTitle: "混合調整角色",
       mixedDescription: "同時包含強化和削弱的角色，更適合根據實際指標變化解讀。",
+      focusedBuffTitle: "強化角色版本評價",
+      focusedBuffDescription: "整理強化目標角色的版本改動和目前 Meta 背景。",
+      focusedNerfTitle: "削弱角色版本評價",
+      focusedNerfDescription: "整理削弱目標角色的版本改動和目前 Meta 背景。",
+      focusedMixedTitle: "調整角色版本評價",
+      focusedMixedDescription: "整理同時包含強化和削弱角色的版本改動和目前 Meta 背景。",
     },
     guideKicker: "解讀標準",
     guideTitle: "解讀標準",
@@ -642,14 +753,14 @@ function CharacterDeltaCard({
   l10n: Map<string, string>;
   fallbackMap: Map<number, string>;
 }) {
-  const firstChanges = entry.note.changes.slice(0, 3);
+  const firstChanges = localizePatchChanges(entry.note, locale).slice(0, 3);
   const weaponNames =
     entry.isAggregate && !AGGREGATE_ONLY_CHARACTERS.has(entry.characterNum)
       ? getEntryWeaponNames(entry)
       : [];
   const displayName = getEntryDisplayName(entry, l10n, fallbackMap);
   const scopeLabel = getScopeLabel(entry, copy, l10n);
-  const causalComments = locale === "ko" ? buildCausalEvaluationComments(entry) : [];
+  const causalComments = buildCausalEvaluationComments(entry, locale);
 
   return (
     <article className="metric-card grid gap-4 px-4 py-4 lg:grid-cols-[minmax(260px,0.82fr)_minmax(0,1.35fr)] lg:items-start">
@@ -764,10 +875,12 @@ function DiamondMetricPanel({
   return (
     <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5">
       <div className="flex items-center justify-between gap-2">
-        <p className="text-[11px] font-bold text-[var(--color-foreground)]">다이아+</p>
+        <p className="text-[11px] font-bold text-[var(--color-foreground)]">
+          {copy.card.diamondPlus}
+        </p>
         <span className="text-[10px] font-medium text-[var(--color-muted-foreground)]">
           {metric.current
-            ? `${formatNumber(metric.current.totalGames)}판`
+            ? copy.card.gameCount(formatNumber(metric.current.totalGames))
             : copy.card.pending(displayName)}
         </span>
       </div>
@@ -892,12 +1005,22 @@ function HighlightedChangedValue({ before, after }: { before: string; after: str
   return <span>{parts}</span>;
 }
 
-function getPatchContextComments(entry: PatchCharacterDelta) {
-  return PATCH_CONTEXT_COMMENTS[entry.note.patch]?.[entry.characterNum] ?? [];
+function getPatchContextComments(entry: PatchCharacterDelta, locale: RouteLocale) {
+  const comments = PATCH_CONTEXT_COMMENTS[entry.note.patch]?.[entry.characterNum] ?? [];
+  if (locale === "ko") return comments;
+
+  const translatedBody =
+    PATCH_CONTEXT_COMMENT_TRANSLATIONS[locale]?.[entry.note.patch]?.[entry.characterNum];
+  if (!translatedBody || comments.length === 0) return [];
+
+  return comments.map((comment, index) => ({
+    ...comment,
+    body: index === 0 ? translatedBody : comment.body,
+  }));
 }
 
-function buildCausalEvaluationComments(entry: PatchCharacterDelta) {
-  return getPatchContextComments(entry);
+function buildCausalEvaluationComments(entry: PatchCharacterDelta, locale: RouteLocale) {
+  return getPatchContextComments(entry, locale);
 }
 
 function RoleTable({
@@ -1308,55 +1431,51 @@ export default async function PatchAnalysisPage({
         </>
       ) : null}
 
-      {locale === "ko" ? (
-        <>
-          <CharacterSection
-            title={showRawMetrics ? copy.sections.buffTitle : "버프 캐릭터 패치 평가"}
-            description={
-              showDescriptions
-                ? showRawMetrics
-                  ? copy.sections.buffDescription
-                  : "버프 대상 캐릭터의 패치 내역과 현재 메타 맥락을 정리했습니다."
-                : undefined
-            }
-            entries={data.buffed}
-            copy={copy}
-            locale={locale}
-            l10n={l10n}
-            fallbackMap={fallbackMap}
-          />
-          <CharacterSection
-            title={showRawMetrics ? copy.sections.nerfTitle : "너프 캐릭터 패치 평가"}
-            description={
-              showDescriptions
-                ? showRawMetrics
-                  ? copy.sections.nerfDescription
-                  : "너프 대상 캐릭터의 패치 내역과 현재 메타 맥락을 정리했습니다."
-                : undefined
-            }
-            entries={data.nerfed}
-            copy={copy}
-            locale={locale}
-            l10n={l10n}
-            fallbackMap={fallbackMap}
-          />
-          <CharacterSection
-            title={showRawMetrics ? copy.sections.mixedTitle : "조정 캐릭터 패치 평가"}
-            description={
-              showDescriptions
-                ? showRawMetrics
-                  ? copy.sections.mixedDescription
-                  : "버프와 너프가 함께 들어간 캐릭터의 패치 내역과 현재 메타 맥락을 정리했습니다."
-                : undefined
-            }
-            entries={data.mixed}
-            copy={copy}
-            locale={locale}
-            l10n={l10n}
-            fallbackMap={fallbackMap}
-          />
-        </>
-      ) : null}
+      <CharacterSection
+        title={showRawMetrics ? copy.sections.buffTitle : copy.sections.focusedBuffTitle}
+        description={
+          showDescriptions
+            ? showRawMetrics
+              ? copy.sections.buffDescription
+              : copy.sections.focusedBuffDescription
+            : undefined
+        }
+        entries={data.buffed}
+        copy={copy}
+        locale={locale}
+        l10n={l10n}
+        fallbackMap={fallbackMap}
+      />
+      <CharacterSection
+        title={showRawMetrics ? copy.sections.nerfTitle : copy.sections.focusedNerfTitle}
+        description={
+          showDescriptions
+            ? showRawMetrics
+              ? copy.sections.nerfDescription
+              : copy.sections.focusedNerfDescription
+            : undefined
+        }
+        entries={data.nerfed}
+        copy={copy}
+        locale={locale}
+        l10n={l10n}
+        fallbackMap={fallbackMap}
+      />
+      <CharacterSection
+        title={showRawMetrics ? copy.sections.mixedTitle : copy.sections.focusedMixedTitle}
+        description={
+          showDescriptions
+            ? showRawMetrics
+              ? copy.sections.mixedDescription
+              : copy.sections.focusedMixedDescription
+            : undefined
+        }
+        entries={data.mixed}
+        copy={copy}
+        locale={locale}
+        l10n={l10n}
+        fallbackMap={fallbackMap}
+      />
 
       {showDescriptions && showRawMetrics ? (
         <section className="dashboard-panel p-4 lg:p-6">
