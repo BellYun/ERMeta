@@ -750,5 +750,12 @@
       "label": "방망이",
       "isDefault": true
     }
+  ],
+  "89": [
+    {
+      "weaponCode": 9,
+      "label": "권총",
+      "isDefault": true
+    }
   ]
 }
