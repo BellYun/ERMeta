@@ -1,7 +1,6 @@
 import { ArrowDown, ArrowUp, BarChart3, CalendarDays, Swords, TrendingUp } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeBadgeStatic";
 import { Link } from "@/i18n/navigation";
@@ -17,7 +16,6 @@ import {
   getPatchAnalysisData,
   getPatchAnalysisVersions,
   type PatchCharacterDelta,
-  type PatchCharacterMetric,
   type PatchRoleMetric,
 } from "@/lib/patchAnalysis";
 import { loadL10nMap } from "@/lib/serverL10n";
@@ -29,10 +27,6 @@ export const dynamic = "force-static";
 
 const ROLE_ORDER: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
 const AGGREGATE_ONLY_CHARACTERS = new Set([3, 13, 15, 29]);
-const EVALUATED_CHARACTER_NUMS = [
-  3, 5, 6, 8, 13, 15, 17, 18, 21, 29, 33, 35, 38, 45, 47, 51, 52, 55, 56, 59, 61, 63, 66, 69, 70,
-  71, 72, 73, 74, 77, 83, 84, 87, 88,
-];
 
 interface PatchAnalysisPageProps {
   version?: string;
@@ -87,6 +81,117 @@ const ROLE_LABELS: Record<RouteLocale, Record<string, string>> = {
   },
 };
 
+interface CausalEvaluationComment {
+  label: string;
+  body: string;
+  tone: "positive" | "negative" | "neutral";
+}
+
+function patchContextComment(
+  body: string,
+  tone: CausalEvaluationComment["tone"] = "neutral"
+): CausalEvaluationComment[] {
+  return [{ label: "패치 평가", tone, body }];
+}
+
+const PATCH_CONTEXT_COMMENTS: Record<string, Record<number, CausalEvaluationComment[]>> = {
+  "11.5": {
+    2: patchContextComment(
+      "아야는 패시브 보호막 버프를 받았고, 일부 아이템 버프의 수혜도 있었으나 지표가 크게 상승하지는 않았습니다. 원거리 딜러 강세로 인해 함께 기용되던 전사 실험체들의 지표가 좋지 않은 점도 영향을 준 것으로 보입니다. 현재까지는 버프가 크게 유의미하게 반영되었다고 보기는 어렵고, 남은 패치 흐름을 더 지켜볼 필요가 있습니다."
+    ),
+    6: patchContextComment(
+      "나딘은 너무 좋은 지표를 보여주던 석궁 무기 숙련도의 기본 공격 증폭이 너프되었습니다. 다만 일부 아이템 버프의 수혜로 인해 지표가 크게 무너지지는 않았고, 현재도 무난한 성능을 보여주고 있습니다."
+    ),
+    9: patchContextComment(
+      "아이솔은 셈텍스 폭탄 버프와 일부 아이템 버프의 수혜를 받으며 지표가 우상향하고 있습니다. 다만 현재 메타가 원거리 딜러 중심으로 흘러가고 있어, 조합 내 역할 경쟁에서는 다소 애매한 부분이 있습니다. 버프 방향은 긍정적이며, 남은 패치 흐름에 따라 평가가 더 올라갈 수 있는 픽입니다.",
+      "positive"
+    ),
+    17: patchContextComment(
+      "아드리아나는 궁극기 저레벨 구간 피해량 버프를 받았습니다. 기존에는 서포터 조합을 상대할 때 어려움을 겪는 경우가 있었으나, 이번 패치에서 서포터 실험체와 회복 관련 요소가 약해지고 원거리 딜러 실험체가 강세를 보이면서 아드리아나를 사용하기 좋은 환경이 만들어졌습니다. 버프와 메타 변화가 모두 긍정적으로 작용한 픽입니다.",
+      "positive"
+    ),
+    20: patchContextComment(
+      "레녹스는 E 스킬의 대상 최대 체력 비례 피해량 버프를 받았으나, 픽률 상승과 함께 비숙련자 유입이 발생하면서 전체 RP 지표는 하락한 모습입니다. 레녹스는 순방 안정성이 높은 탱커라기보다는 교전 숙련도에 따라 성과가 크게 갈리는 실험체인 만큼, 비숙련자 유입이 순방률 하락에 영향을 준 것으로 보입니다.",
+      "negative"
+    ),
+    25: patchContextComment(
+      "버니스는 레벨당 공격력 버프와 W 설치 개수 개선을 받았고, 일부 아이템 버프의 수혜도 있었습니다. 다만 지표가 크게 상승하지는 않아 버프가 즉각적인 성능 개선으로 이어졌다고 보기는 어렵습니다. 남은 패치 기간 동안 추가 지표를 확인할 필요가 있습니다."
+    ),
+    27: patchContextComment(
+      "알렉스는 근접 무기 사용 시 얻는 방어력 증가 효과가 너프되었습니다. 기본 체급을 낮추는 너프이긴 하지만, 알렉스는 여전히 높은 유틸성과 안정성을 가진 실험체입니다. 너프 이후에도 충분히 사용할 만한 픽으로 보입니다."
+    ),
+    30: patchContextComment(
+      "일레븐은 궁극기 피해량과 회복량 버프를 받았으나, 현재 메타에서 탱커 + 전사 + 전사 조합의 평균 RP가 크게 하락한 영향을 받고 있습니다. 다만 원거리 딜러와 함께 기용되는 경우에는 좋은 지표를 보여주고 있어, 원거리 딜러가 포함된 조합에서는 버프가 유의미하게 작용하는 픽으로 볼 수 있습니다."
+    ),
+    31: patchContextComment(
+      "리오는 활 무기 숙련도의 기본 공격 증폭 버프를 받았고, 전체적으로 좋은 지표를 보여주고 있습니다. 픽률이 급등했음에도 불구하고 RP 획득량이 안정적으로 유지되고 있어, 이번 패치에서 버프와 아이템 환경의 수혜를 크게 받은 픽으로 볼 수 있습니다.",
+      "positive"
+    ),
+    38: patchContextComment(
+      "제니는 E 스킬 피해량 버프를 받았으나, 기존에 샬럿 등 서포터와 함께 기용되던 비중이 높았던 만큼 힐링 윈드 쿨다운 증가와 더 썬 너프의 영향을 크게 받았습니다. 서포터와 함께 사용하는 조합에서는 지표가 눌릴 수 있지만, 서포터 의존도를 낮춘 조합에서는 버프 체감이 더 크게 나타날 수 있습니다."
+    ),
+    39: patchContextComment(
+      "카밀로는 Q 스킬 피해량 너프를 받았으나, 시작 아이템인 미닛맨의 표식 버프와 일부 팔 아이템 버프의 수혜를 받았습니다. 특히 미스릴 완장 대신 운명의 주사위나 레이더를 기용하는 경우에도 좋은 지표를 보여주고 있어, 캐릭터 너프에도 불구하고 아이템 환경 덕분에 좋은 모습을 유지하고 있습니다.",
+      "positive"
+    ),
+    41: patchContextComment(
+      "요한은 아르카나 무기 숙련도, Q 강화 회복량, W 슬로우 및 쿨다운 조정이 함께 들어갔습니다. 서포터 실험체 너프의 핵심 대상 중 하나로 볼 수 있으며, RP 획득량이 음수로 떨어진 만큼 현재는 기용 부담이 큰 픽입니다.",
+      "negative"
+    ),
+    45: patchContextComment(
+      "마이는 숄 장막의 피해 감소량과 익스클루시브 회복량이 함께 너프되었습니다. 픽률은 낮아졌으나 RP 획득량은 오히려 상승한 모습인데, 이는 비숙련자 이탈 이후 숙련자 위주로 표본이 재편된 영향일 가능성이 있습니다. 너프 자체는 분명하지만, 지표 해석에는 픽률 변화까지 함께 고려할 필요가 있습니다."
+    ),
+    48: patchContextComment(
+      "띠아는 Q 스킬 피해량 버프를 받았고, 전체적으로 높은 RP 획득량을 보여주고 있습니다. 버프가 지표에 긍정적으로 반영된 케이스로 볼 수 있으며, 현재 기준으로는 충분히 사용할 만한 픽입니다.",
+      "positive"
+    ),
+    50: patchContextComment(
+      "엘레나는 W 스킬 피해량 버프를 받았으나, 원거리 딜러 강세로 인해 기존에 전사와 함께 기용되던 조합의 평균 RP가 하락한 영향을 받고 있습니다. 반면 원거리 딜러와 함께 사용하는 경우에는 좋은 지표를 보여주고 있어, 원거리 딜러가 있는 조합에서는 버프 체감이 유의미한 픽입니다."
+    ),
+    54: patchContextComment(
+      "칼라는 석궁 무기 숙련도 성장 버프를 받았으나, 현재 원거리 딜러 중심 메타에서는 강점을 살리기 어려운 모습입니다. 버프 자체는 장기적인 성능 보완에 가깝고, 즉각적인 지표 상승으로 이어지지는 않은 상태입니다.",
+      "negative"
+    ),
+    58: patchContextComment(
+      "헤이즈는 RQ 피해량 버프를 받았고, 픽률이 크게 상승하면서 비숙련자 유입이 예상되는 상황입니다. 그럼에도 전체 지표가 나쁘지 않게 유지되고 있어, 이번 버프는 유의미하게 작용한 것으로 보입니다.",
+      "positive"
+    ),
+    61: patchContextComment(
+      "이렘은 고양이 W 스킬 피해량 버프를 받았고, 서포터 실험체 너프의 영향으로 스킬 딜러와 함께 기용하는 조합의 RP 획득량이 크게 상승했습니다. 전체적인 지표는 개선되었으나, 지원가와 함께 기용하는 경우에는 서포터 너프의 영향을 받아 RP 획득량이 감소한 모습입니다. 지표 대비 충분히 사용할 만한 픽입니다.",
+      "positive"
+    ),
+    68: patchContextComment(
+      "알론소는 주된 피해 감소 수단인 바운싱 실드의 피해 감소량이 크게 너프되었습니다. 픽률이 빠지고 RP 획득량도 크게 감소한 만큼, 이번 너프의 체감이 매우 큰 픽으로 볼 수 있습니다.",
+      "negative"
+    ),
+    69: patchContextComment(
+      "레니는 W 스킬 이동 속도 증가량과 쿨다운, E 스킬 보호막 계수가 모두 너프되었습니다. 이번 패치에서 가장 큰 타격을 받은 서포터 중 하나이며, RP 획득량이 음수로 떨어진 만큼 현재는 기용하기 어려운 픽으로 보입니다.",
+      "negative"
+    ),
+    71: patchContextComment(
+      "케네스는 공격력 성장치와 Q 스킬 계수 버프를 받았으나, 픽률이 크게 상승하면서 비숙련자 유입의 영향을 받은 것으로 보입니다. 기존에도 원거리 딜러와의 궁합이 좋은 편은 아니었고, 현재 원거리 딜러 중심 메타에서 조합을 타는 모습이 나타나고 있습니다. 버프 자체는 유의미하지만, 지표상으로는 아직 안정적인 픽이라고 보기는 어렵습니다."
+    ),
+    78: patchContextComment(
+      "히스이는 궁극기 추가 피해량 너프를 받았습니다. 여기에 원거리 딜러 강세와 서포터 너프가 겹치면서 기존 강점을 살리기 어려운 환경이 되었습니다. 너프와 메타 변화가 동시에 부정적으로 작용한 픽입니다.",
+      "negative"
+    ),
+    79: patchContextComment(
+      "유스티나는 궁극기 피해량 버프를 받았으나, 현재 지표만으로는 유의미한 변화라고 판단하기 어렵습니다. 표본이 더 쌓인 뒤에 평가하는 것이 적절한 픽입니다."
+    ),
+    81: patchContextComment(
+      "니아는 W 스킬 피해량 버프를 받았으나, 원거리 딜러 강세로 인해 함께 기용되던 전사 실험체들의 지표가 좋지 않은 영향을 받은 것으로 보입니다. 버프 자체는 명확하지만, 현재 메타에서는 조합 영향을 크게 받는 픽으로 보는 것이 적절합니다."
+    ),
+    82: patchContextComment(
+      "슈린은 패시브 회복량 버프로 인해 TTK가 긴 교전에서 이점을 얻었습니다. 특히 탱커와 함께 기용하는 경우 RP 획득량이 크게 상승한 모습입니다. 다만 다른 직업군과 함께 사용할 때는 지표가 좋지 않아, 현재는 탱커와 함께 쓰는 조합에서 강점이 뚜렷한 픽으로 보는 것이 적절합니다.",
+      "positive"
+    ),
+    88: patchContextComment(
+      "비형은 높은 픽률과 내구 지표를 이유로 기본 방어력 너프를 받았습니다. 기본 체급을 직접 낮춘 너프인 만큼 영향이 작지 않으며, 실제 지표도 크게 하락한 모습입니다. 기존처럼 안정적으로 쓰기보다는 조합과 숙련도를 더 많이 타는 픽이 된 것으로 보입니다.",
+      "negative"
+    ),
+  },
+};
+
 const PATCH_ANALYSIS_COPY = {
   ko: {
     kicker: "패치 메타 리포트",
@@ -95,7 +200,7 @@ const PATCH_ANALYSIS_COPY = {
     intro:
       "다이아 이상 랭크 통계를 기준으로 최신 패치와 직전 패치의 평균 RP, 승률, 픽률, 순방률을 비교했습니다. 버프와 너프 대상의 지표 반응, 역할군별 랭크 상승 효율을 함께 정리합니다.",
     roleSummary: (best: string, worst: string) =>
-      `현재 역할군 평균 RP는 ${best}이 가장 높고 ${worst}이 가장 낮습니다. 승률보다 평균 RP와 순방률을 함께 보는 편이 패치 흐름을 판단하기 쉽습니다.`,
+      `역할군 평균 RP 최고: ${best}. 최저: ${worst}. 승률 단독보다 평균 RP와 순방률을 함께 확인해야 합니다.`,
     navAria: "패치 분석 버전 선택",
     navLabel: (patch: string) => `${patch} 분석`,
     metrics: {
@@ -114,7 +219,7 @@ const PATCH_ANALYSIS_COPY = {
       kicker: "역할군 지표",
       title: "역할군 평균 RP",
       body: (best: string, worst: string) =>
-        `오늘 통계 기준으로는 ${best}의 평균 RP가 가장 높고, ${worst}의 평균 RP가 가장 낮습니다. 승률보다 평균 RP가 낮은 역할군은 순방/킬 보상 구조를 함께 확인해야 합니다.`,
+        `오늘 통계 기준으로 평균 RP가 가장 높은 역할군은 ${best}, 가장 낮은 역할군은 ${worst}입니다. 승률보다 평균 RP가 낮은 역할군은 순방/킬 보상 구조를 함께 확인해야 합니다.`,
       rankScope: "DIAMOND+ · IN1000 제외",
       columns: ["역할군", "평균 RP", "이전 대비", "승률", "순방률", "표본"],
     },
@@ -128,6 +233,7 @@ const PATCH_ANALYSIS_COPY = {
       summary: (count: string, winRate: string, rp: string) =>
         `${count}판 · 승률 ${winRate} · RP ${rp}`,
       aggregate: "통합",
+      averageRP: "RP",
       deltaWinRate: "승률",
       deltaPickRate: "픽률",
       deltaTop3Rate: "순방률",
@@ -136,18 +242,17 @@ const PATCH_ANALYSIS_COPY = {
     sections: {
       buffTitle: "버프 캐릭터 지표 반응",
       buffDescription:
-        "버프 대상 캐릭터를 평균 RP 상승폭 기준으로 정렬했습니다. 기존 지표와 현재 지표를 함께 봐야 실제 패치 반응을 판단할 수 있습니다.",
+        "버프 대상 캐릭터를 평균 RP 상승폭 기준으로 정렬했습니다. 기존 지표와 현재 지표를 함께 비교합니다.",
       nerfTitle: "너프 캐릭터 지표 반응",
       nerfDescription:
-        "너프 대상 캐릭터는 평균 RP 하락폭이 큰 순서로 정렬했습니다. 너프 후에도 표본과 승률이 유지되면 여전히 메타 픽으로 볼 수 있습니다.",
+        "너프 대상 캐릭터는 평균 RP 하락폭이 큰 순서로 정렬했습니다. 표본과 승률이 유지되는 픽은 메타 잔존 가능성이 높습니다.",
       mixedTitle: "혼합 조정 캐릭터",
-      mixedDescription:
-        "버프와 너프가 함께 들어간 캐릭터는 단일 방향보다 실제 지표 변화로 해석하는 편이 안전합니다.",
+      mixedDescription: "버프와 너프가 함께 들어간 캐릭터는 실제 지표 변화를 우선합니다.",
     },
-    guideKicker: "해석 기준",
-    guideTitle: "해석 기준",
+    guideKicker: "판단 기준",
+    guideTitle: "판단 기준",
     guideBody:
-      "순방률이 낮으면 초중반 탈락 리스크가 높고, 순방률은 낮지만 승률이 높으면 마지막 금지 구역 교전 전환력이 좋은 픽으로 볼 수 있습니다. 평균 RP는 킬, 순방, 최종 순위가 함께 반영된 지표로 해석합니다.",
+      "순방률 하락은 초중반 탈락 리스크 증가를 뜻합니다. 순방률은 낮고 승률이 높으면 마지막 금지 구역 교전 전환력이 높은 픽입니다. 평균 RP는 킬, 순방, 최종 순위를 합친 지표입니다.",
   },
   en: {
     kicker: "Patch Meta Report",
@@ -189,6 +294,7 @@ const PATCH_ANALYSIS_COPY = {
       summary: (count: string, winRate: string, rp: string) =>
         `${count} games · win rate ${winRate} · RP ${rp}`,
       aggregate: "Combined",
+      averageRP: "RP",
       deltaWinRate: "Win rate",
       deltaPickRate: "Pick rate",
       deltaTop3Rate: "Placement",
@@ -250,6 +356,7 @@ const PATCH_ANALYSIS_COPY = {
       summary: (count: string, winRate: string, rp: string) =>
         `${count}試合 · 勝率 ${winRate} · RP ${rp}`,
       aggregate: "統合",
+      averageRP: "RP",
       deltaWinRate: "勝率",
       deltaPickRate: "ピック率",
       deltaTop3Rate: "入賞率",
@@ -311,6 +418,7 @@ const PATCH_ANALYSIS_COPY = {
       summary: (count: string, winRate: string, rp: string) =>
         `${count} 场 · 胜率 ${winRate} · RP ${rp}`,
       aggregate: "综合",
+      averageRP: "RP",
       deltaWinRate: "胜率",
       deltaPickRate: "选取率",
       deltaTop3Rate: "前三率",
@@ -370,6 +478,7 @@ const PATCH_ANALYSIS_COPY = {
       summary: (count: string, winRate: string, rp: string) =>
         `${count} 場 · 勝率 ${winRate} · RP ${rp}`,
       aggregate: "綜合",
+      averageRP: "RP",
       deltaWinRate: "勝率",
       deltaPickRate: "選取率",
       deltaTop3Rate: "前三率",
@@ -473,23 +582,12 @@ function MetricCard({
         </p>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">{label}</p>
         {body ? (
-          <p className="mt-2 text-xs leading-5 text-[var(--color-muted-foreground)]">{body}</p>
+          <p className="mt-2 text-[0.95rem] leading-6 text-[var(--color-muted-foreground)]">
+            {body}
+          </p>
         ) : null}
       </div>
     </div>
-  );
-}
-
-function metricLabel(
-  metric: PatchCharacterMetric | null,
-  fallbackName: string,
-  copy: PatchAnalysisCopy
-) {
-  if (!metric) return copy.card.pending(fallbackName);
-  return copy.card.summary(
-    formatNumber(metric.totalGames),
-    formatPercent(metric.winRate),
-    formatSigned(metric.averageRP, 1)
   );
 }
 
@@ -507,6 +605,9 @@ function getScopeLabel(
   l10n: Map<string, string>
 ) {
   if (entry.isAggregate) return copy.card.aggregate;
+  if (entry.weaponCodes.length > 1) {
+    return entry.weaponCodes.map((weaponCode) => resolveWeaponName(weaponCode, l10n)).join(" + ");
+  }
   const weaponCode = entry.weaponCodes[0];
   return weaponCode ? resolveWeaponName(weaponCode, l10n) : copy.card.aggregate;
 }
@@ -530,14 +631,14 @@ function DeltaBadge({ value, suffix = "" }: { value: number; suffix?: string }) 
 
 function CharacterDeltaCard({
   entry,
-  evaluations,
   copy,
+  locale,
   l10n,
   fallbackMap,
 }: {
   entry: PatchCharacterDelta;
-  evaluations: Record<number, string>;
   copy: PatchAnalysisCopy;
+  locale: RouteLocale;
   l10n: Map<string, string>;
   fallbackMap: Map<number, string>;
 }) {
@@ -546,13 +647,13 @@ function CharacterDeltaCard({
     entry.isAggregate && !AGGREGATE_ONLY_CHARACTERS.has(entry.characterNum)
       ? getEntryWeaponNames(entry)
       : [];
-  const evaluation = evaluations[entry.characterNum];
   const displayName = getEntryDisplayName(entry, l10n, fallbackMap);
   const scopeLabel = getScopeLabel(entry, copy, l10n);
+  const causalComments = locale === "ko" ? buildCausalEvaluationComments(entry) : [];
 
   return (
-    <article className="metric-card grid gap-4 px-4 py-4 lg:grid-cols-[minmax(260px,0.9fr)_minmax(0,1.55fr)] lg:items-start">
-      <div className="flex flex-col gap-3 lg:sticky lg:top-24">
+    <article className="metric-card grid gap-4 px-4 py-4 lg:grid-cols-[minmax(260px,0.82fr)_minmax(0,1.35fr)] lg:items-start">
+      <div className="flex flex-col gap-3">
         <div className="flex items-start gap-3">
           <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)]">
             <Image
@@ -598,21 +699,10 @@ function CharacterDeltaCard({
                 </span>
               ))}
             </div>
-            <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
-              {metricLabel(entry.previous, displayName, copy)}
-            </p>
-            <p className="mt-0.5 text-xs text-[var(--color-foreground)]">
-              → {metricLabel(entry.current, displayName, copy)}
-            </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
-          <DeltaMetric label="RP" value={entry.deltaAverageRP} />
-          <DeltaMetric label={copy.card.deltaWinRate} value={entry.deltaWinRate} suffix="%p" />
-          <DeltaMetric label={copy.card.deltaPickRate} value={entry.deltaPickRate} suffix="%p" />
-          <DeltaMetric label={copy.card.deltaTop3Rate} value={entry.deltaTop3Rate} suffix="%p" />
-        </div>
+        <DiamondMetricPanel entry={entry} copy={copy} displayName={displayName} />
       </div>
 
       <div className="flex flex-col gap-3">
@@ -624,7 +714,7 @@ function CharacterDeltaCard({
             {firstChanges.map((change, index) => (
               <li
                 key={`${change.target}-${index}`}
-                className="text-xs leading-5 text-[var(--color-muted-foreground)]"
+                className="text-[0.95rem] leading-7 text-[var(--color-muted-foreground)]"
               >
                 <span className="font-semibold text-[var(--color-foreground)]">
                   {change.target}
@@ -635,16 +725,117 @@ function CharacterDeltaCard({
           </ul>
         </div>
 
-        {evaluation ? (
+        {causalComments.length > 0 ? (
           <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-3">
             <p className="text-[11px] font-semibold text-[var(--color-foreground)]">
               {copy.evaluation}
             </p>
-            <p className="mt-2 text-xs leading-5 text-[var(--color-foreground)]/86">{evaluation}</p>
+            <div className="mt-2 grid gap-2">
+              {causalComments.map((comment) => (
+                <p
+                  key={`${comment.label}-${comment.body}`}
+                  className="text-[1rem] leading-7 text-[var(--color-foreground)]/88"
+                >
+                  {comment.body}
+                </p>
+              ))}
+            </div>
           </div>
         ) : null}
       </div>
     </article>
+  );
+}
+
+function DiamondMetricPanel({
+  entry,
+  copy,
+  displayName,
+}: {
+  entry: PatchCharacterDelta;
+  copy: PatchAnalysisCopy;
+  displayName: string;
+}) {
+  const metric = entry.tierMetrics.find((candidate) => candidate.tier === "DIAMOND_PLUS");
+  if (!metric) return null;
+
+  const hasComparableMetrics = metric.current != null && metric.previous != null;
+
+  return (
+    <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-[11px] font-bold text-[var(--color-foreground)]">다이아+</p>
+        <span className="text-[10px] font-medium text-[var(--color-muted-foreground)]">
+          {metric.current
+            ? `${formatNumber(metric.current.totalGames)}판`
+            : copy.card.pending(displayName)}
+        </span>
+      </div>
+      <div className="mt-2 grid grid-cols-2 gap-1.5">
+        <DiamondMetricStat
+          label={copy.card.averageRP}
+          value={metric.current ? formatSigned(metric.current.averageRP, 1) : "-"}
+          delta={hasComparableMetrics ? metric.deltaAverageRP : null}
+        />
+        <DiamondMetricStat
+          label={copy.card.deltaWinRate}
+          value={metric.current ? formatPercent(metric.current.winRate) : "-"}
+          delta={hasComparableMetrics ? metric.deltaWinRate : null}
+          suffix="%p"
+        />
+        <DiamondMetricStat
+          label={copy.card.deltaPickRate}
+          value={metric.current ? formatPercent(metric.current.pickRate) : "-"}
+          delta={hasComparableMetrics ? metric.deltaPickRate : null}
+          suffix="%p"
+        />
+        <DiamondMetricStat
+          label={copy.card.deltaTop3Rate}
+          value={metric.current ? formatPercent(metric.current.top3Rate) : "-"}
+          delta={hasComparableMetrics ? metric.deltaTop3Rate : null}
+          suffix="%p"
+        />
+      </div>
+    </div>
+  );
+}
+
+function DiamondMetricStat({
+  label,
+  value,
+  delta,
+  suffix = "",
+}: {
+  label: string;
+  value: string;
+  delta: number | null;
+  suffix?: string;
+}) {
+  return (
+    <div className="min-w-0 rounded border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2 py-1.5">
+      <p className="truncate text-[10px] font-semibold text-[var(--color-muted-foreground)]">
+        {label}
+      </p>
+      <div className="mt-1 flex items-baseline justify-between gap-1.5">
+        <span className="min-w-0 text-[0.95rem] font-bold tabular-nums text-[var(--color-foreground)]">
+          {value}
+        </span>
+        {delta == null ? (
+          <span className="shrink-0 text-[11px] font-semibold tabular-nums text-[var(--color-muted-foreground)]">
+            -
+          </span>
+        ) : (
+          <span
+            className={cn(
+              "shrink-0 text-[11px] font-semibold tabular-nums",
+              delta >= 0 ? "text-[var(--color-success)]" : "text-[var(--color-danger)]"
+            )}
+          >
+            {formatSigned(delta, 1, suffix)}
+          </span>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -701,28 +892,12 @@ function HighlightedChangedValue({ before, after }: { before: string; after: str
   return <span>{parts}</span>;
 }
 
-function DeltaMetric({
-  label,
-  value,
-  suffix = "",
-}: {
-  label: string;
-  value: number;
-  suffix?: string;
-}) {
-  return (
-    <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2">
-      <p className="text-[10px] font-semibold text-[var(--color-muted-foreground)]">{label}</p>
-      <p
-        className={cn(
-          "mt-1 text-sm font-semibold tabular-nums",
-          value >= 0 ? "text-[var(--color-success)]" : "text-[var(--color-danger)]"
-        )}
-      >
-        {formatSigned(value, 1, suffix)}
-      </p>
-    </div>
-  );
+function getPatchContextComments(entry: PatchCharacterDelta) {
+  return PATCH_CONTEXT_COMMENTS[entry.note.patch]?.[entry.characterNum] ?? [];
+}
+
+function buildCausalEvaluationComments(entry: PatchCharacterDelta) {
+  return getPatchContextComments(entry);
 }
 
 function RoleTable({
@@ -751,7 +926,7 @@ function RoleTable({
               {copy.role.title}
             </h2>
             {showDescription ? (
-              <p className="mt-1 text-sm leading-6 text-[var(--color-muted-foreground)]">
+              <p className="mt-1 text-base leading-7 text-[var(--color-muted-foreground)]">
                 {copy.role.body(bestLabel, worstLabel)}
               </p>
             ) : null}
@@ -905,7 +1080,6 @@ function CharacterSection({
   title,
   description,
   entries,
-  evaluations,
   copy,
   locale,
   l10n,
@@ -914,7 +1088,6 @@ function CharacterSection({
   title: string;
   description?: string;
   entries: PatchCharacterDelta[];
-  evaluations: Record<number, string>;
   copy: PatchAnalysisCopy;
   locale: RouteLocale;
   l10n: Map<string, string>;
@@ -931,7 +1104,7 @@ function CharacterSection({
             {title}
           </h2>
           {description ? (
-            <p className="mt-1 text-sm leading-6 text-[var(--color-muted-foreground)]">
+            <p className="mt-1 text-base leading-7 text-[var(--color-muted-foreground)]">
               {description}
             </p>
           ) : null}
@@ -956,8 +1129,8 @@ function CharacterSection({
                 <CharacterDeltaCard
                   key={`${group.role}-${entry.characterNum}-${entry.scopeKey}`}
                   entry={entry}
-                  evaluations={evaluations}
                   copy={copy}
+                  locale={locale}
                   l10n={l10n}
                   fallbackMap={fallbackMap}
                 />
@@ -1007,25 +1180,23 @@ export default async function PatchAnalysisPage({
   const copy = PATCH_ANALYSIS_COPY[locale];
   const l10n = loadL10nMap(LANGUAGE_BY_ROUTE_LOCALE[locale]);
   const fallbackMap = buildFallbackMap();
-  const tEvaluations = await getTranslations("patchAnalysis.evaluations");
   const analysisVersions = getPatchAnalysisVersions();
-  const evaluations = Object.fromEntries(
-    EVALUATED_CHARACTER_NUMS.map((characterNum) => [
-      characterNum,
-      tEvaluations(String(characterNum)),
-    ])
-  );
   const bestRole = data.roleMetrics[0];
   const worstRole = data.roleMetrics[data.roleMetrics.length - 1];
   const bestRoleLabel = bestRole ? getRoleLabel(locale, bestRole.role) : "";
   const worstRoleLabel = worstRole ? getRoleLabel(locale, worstRole.role) : "";
   const showDescriptions = data.currentPatch !== "11.4";
-  const sectionEvaluations = showDescriptions ? evaluations : {};
+  const showRawMetrics = data.currentPatch !== "11.5";
 
   return (
     <main className="page-shell flex flex-col gap-5 lg:gap-6">
       <section className="dashboard-panel px-4 py-4 lg:px-5">
-        <div className="grid gap-3 xl:grid-cols-[minmax(0,1.05fr)_minmax(340px,0.95fr)]">
+        <div
+          className={cn(
+            "grid gap-3",
+            showRawMetrics ? "xl:grid-cols-[minmax(0,1.05fr)_minmax(340px,0.95fr)]" : undefined
+          )}
+        >
           <div className="flex flex-col justify-center">
             <div className="flex flex-wrap items-center gap-2.5">
               <span className="dashboard-kicker">{copy.kicker}</span>
@@ -1041,12 +1212,12 @@ export default async function PatchAnalysisPage({
               {copy.title(data.currentPatch)}
             </h1>
             {showDescriptions ? (
-              <p className="mt-2 max-w-[44rem] text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">
+              <p className="mt-2 max-w-[44rem] text-base leading-7 text-[var(--color-foreground)]">
                 {copy.intro}
               </p>
             ) : null}
-            {showDescriptions && bestRole && worstRole ? (
-              <p className="mt-3 max-w-[44rem] text-sm leading-6 text-[var(--color-muted-foreground)]">
+            {showDescriptions && showRawMetrics && bestRole && worstRole ? (
+              <p className="mt-3 max-w-[44rem] text-base leading-7 text-[var(--color-muted-foreground)]">
                 {copy.roleSummary(bestRoleLabel, worstRoleLabel)}
               </p>
             ) : null}
@@ -1069,95 +1240,116 @@ export default async function PatchAnalysisPage({
             </nav>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <MetricCard
-              icon={<CalendarDays className="h-5 w-5" strokeWidth={2} />}
-              label={copy.metrics.patch}
-              value={`${data.currentPatch}`}
-              body={showDescriptions ? copy.metrics.patchBody(data.previousPatch) : undefined}
-              tone="blue"
-            />
-            <MetricCard
-              icon={<BarChart3 className="h-5 w-5" strokeWidth={2} />}
-              label={copy.metrics.sample}
-              value={copy.metrics.sampleValue(formatNumber(data.totalMatches))}
-              body={
-                showDescriptions
-                  ? copy.metrics.sampleBody(formatNumber(data.previousTotalMatches))
-                  : undefined
-              }
-            />
-            <MetricCard
-              icon={<TrendingUp className="h-5 w-5" strokeWidth={2} />}
-              label={copy.metrics.buffs}
-              value={copy.metrics.count(data.buffed.length)}
-              body={showDescriptions ? copy.metrics.buffBody : undefined}
-              tone="gold"
-            />
-            <MetricCard
-              icon={<Swords className="h-5 w-5" strokeWidth={2} />}
-              label={copy.metrics.nerfs}
-              value={copy.metrics.count(data.nerfed.length)}
-              body={showDescriptions ? copy.metrics.nerfBody : undefined}
-              tone="danger"
-            />
-          </div>
+          {showRawMetrics ? (
+            <div className="grid gap-3 sm:grid-cols-2">
+              <MetricCard
+                icon={<CalendarDays className="h-5 w-5" strokeWidth={2} />}
+                label={copy.metrics.patch}
+                value={`${data.currentPatch}`}
+                body={showDescriptions ? copy.metrics.patchBody(data.previousPatch) : undefined}
+                tone="blue"
+              />
+              <MetricCard
+                icon={<BarChart3 className="h-5 w-5" strokeWidth={2} />}
+                label={copy.metrics.sample}
+                value={copy.metrics.sampleValue(formatNumber(data.totalMatches))}
+                body={
+                  showDescriptions
+                    ? copy.metrics.sampleBody(formatNumber(data.previousTotalMatches))
+                    : undefined
+                }
+              />
+              <MetricCard
+                icon={<TrendingUp className="h-5 w-5" strokeWidth={2} />}
+                label={copy.metrics.buffs}
+                value={copy.metrics.count(data.buffed.length)}
+                body={showDescriptions ? copy.metrics.buffBody : undefined}
+                tone="gold"
+              />
+              <MetricCard
+                icon={<Swords className="h-5 w-5" strokeWidth={2} />}
+                label={copy.metrics.nerfs}
+                value={copy.metrics.count(data.nerfed.length)}
+                body={showDescriptions ? copy.metrics.nerfBody : undefined}
+                tone="danger"
+              />
+            </div>
+          ) : null}
         </div>
       </section>
 
-      <RoleTable
-        roles={data.roleMetrics}
-        copy={copy}
-        locale={locale}
-        showDescription={showDescriptions}
-      />
+      {showRawMetrics ? (
+        <>
+          <RoleTable
+            roles={data.roleMetrics}
+            copy={copy}
+            locale={locale}
+            showDescription={showDescriptions}
+          />
 
-      <div className="grid gap-5 xl:grid-cols-2">
-        <DeltaRanking
-          title={copy.rankingUp}
-          entries={data.rising}
-          tone="up"
-          copy={copy}
-          l10n={l10n}
-          fallbackMap={fallbackMap}
-        />
-        <DeltaRanking
-          title={copy.rankingDown}
-          entries={data.falling}
-          tone="down"
-          copy={copy}
-          l10n={l10n}
-          fallbackMap={fallbackMap}
-        />
-      </div>
+          <div className="grid gap-5 xl:grid-cols-2">
+            <DeltaRanking
+              title={copy.rankingUp}
+              entries={data.rising}
+              tone="up"
+              copy={copy}
+              l10n={l10n}
+              fallbackMap={fallbackMap}
+            />
+            <DeltaRanking
+              title={copy.rankingDown}
+              entries={data.falling}
+              tone="down"
+              copy={copy}
+              l10n={l10n}
+              fallbackMap={fallbackMap}
+            />
+          </div>
+        </>
+      ) : null}
 
       {locale === "ko" ? (
         <>
           <CharacterSection
-            title={copy.sections.buffTitle}
-            description={showDescriptions ? copy.sections.buffDescription : undefined}
+            title={showRawMetrics ? copy.sections.buffTitle : "버프 캐릭터 패치 평가"}
+            description={
+              showDescriptions
+                ? showRawMetrics
+                  ? copy.sections.buffDescription
+                  : "버프 대상 캐릭터의 패치 내역과 현재 메타 맥락을 정리했습니다."
+                : undefined
+            }
             entries={data.buffed}
-            evaluations={sectionEvaluations}
             copy={copy}
             locale={locale}
             l10n={l10n}
             fallbackMap={fallbackMap}
           />
           <CharacterSection
-            title={copy.sections.nerfTitle}
-            description={showDescriptions ? copy.sections.nerfDescription : undefined}
+            title={showRawMetrics ? copy.sections.nerfTitle : "너프 캐릭터 패치 평가"}
+            description={
+              showDescriptions
+                ? showRawMetrics
+                  ? copy.sections.nerfDescription
+                  : "너프 대상 캐릭터의 패치 내역과 현재 메타 맥락을 정리했습니다."
+                : undefined
+            }
             entries={data.nerfed}
-            evaluations={sectionEvaluations}
             copy={copy}
             locale={locale}
             l10n={l10n}
             fallbackMap={fallbackMap}
           />
           <CharacterSection
-            title={copy.sections.mixedTitle}
-            description={showDescriptions ? copy.sections.mixedDescription : undefined}
+            title={showRawMetrics ? copy.sections.mixedTitle : "조정 캐릭터 패치 평가"}
+            description={
+              showDescriptions
+                ? showRawMetrics
+                  ? copy.sections.mixedDescription
+                  : "버프와 너프가 함께 들어간 캐릭터의 패치 내역과 현재 메타 맥락을 정리했습니다."
+                : undefined
+            }
             entries={data.mixed}
-            evaluations={sectionEvaluations}
             copy={copy}
             locale={locale}
             l10n={l10n}
@@ -1166,14 +1358,14 @@ export default async function PatchAnalysisPage({
         </>
       ) : null}
 
-      {showDescriptions ? (
+      {showDescriptions && showRawMetrics ? (
         <section className="dashboard-panel p-4 lg:p-6">
           <div className="flex flex-col gap-2">
             <p className="dashboard-kicker">{copy.guideKicker}</p>
             <h2 className="text-base font-bold text-[var(--color-foreground)]">
               {copy.guideTitle}
             </h2>
-            <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">
+            <p className="text-base leading-7 text-[var(--color-muted-foreground)]">
               {copy.guideBody}
             </p>
           </div>
