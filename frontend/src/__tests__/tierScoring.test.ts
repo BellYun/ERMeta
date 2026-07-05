@@ -1,6 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { assignCharTier } from "@/components/features/character-analysis/utils";
 import { computeMetaScores, assignTier } from "@/components/features/tier-ranking/utils";
+import {
+  assignPerformanceTier,
+  comparePerformanceTierStats,
+  computeComboTierScore,
+} from "@/lib/tierScoring";
 
 describe("assignTier", () => {
   it("S 티어: score >= 1.0", () => {
@@ -114,6 +119,16 @@ describe("computeMetaScores", () => {
 });
 
 describe("assignCharTier", () => {
+  it("조합에서도 재사용하는 공용 기준과 동일한 티어를 반환", () => {
+    const stats = {
+      winRate: 15,
+      averageRank: 3.5,
+      averageRP: 8,
+    };
+
+    expect(assignCharTier(stats)).toBe(assignPerformanceTier(stats));
+  });
+
   it("높은 승률 + 높은 RP → S 티어", () => {
     expect(
       assignCharTier({
@@ -162,5 +177,48 @@ describe("assignCharTier", () => {
     // top3Rate 45%와 averageRank 3의 Z-score는 비슷 (둘 다 평균보다 좋음)
     expect(["S", "A"]).toContain(withTop3);
     expect(["S", "A"]).toContain(withRank);
+  });
+});
+
+describe("comparePerformanceTierStats", () => {
+  const strong = {
+    winRate: 20,
+    averageRank: 3,
+    averageRP: 18,
+    totalGames: 50,
+  };
+  const average = {
+    winRate: 12.5,
+    averageRank: 4.5,
+    averageRP: 0,
+    totalGames: 200,
+  };
+
+  it("게임 수보다 티어 원점수가 높은 조합을 먼저 배치", () => {
+    expect(comparePerformanceTierStats(strong, average)).toBeLessThan(0);
+    expect(comparePerformanceTierStats(average, strong)).toBeGreaterThan(0);
+  });
+
+  it("지표가 높아도 10판 미만 소표본은 뒤로 배치", () => {
+    expect(comparePerformanceTierStats({ ...strong, totalGames: 9 }, average)).toBeGreaterThan(0);
+  });
+});
+
+describe("computeComboTierScore", () => {
+  it("조합 티어에서는 평균 RP에 가장 높은 가중치를 부여", () => {
+    const rpOnly = computeComboTierScore({
+      winRate: 12.5,
+      averageRank: 4.5,
+      averageRP: 15,
+    });
+    const winOnly = computeComboTierScore({
+      winRate: 16,
+      averageRank: 4.5,
+      averageRP: 0,
+    });
+
+    expect(rpOnly).toBe(0.5);
+    expect(winOnly).toBeCloseTo(0.2);
+    expect(rpOnly).toBeGreaterThan(winOnly);
   });
 });

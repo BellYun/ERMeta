@@ -25,6 +25,9 @@ interface HomeDashboardSectionsProps {
   defaultPatch: string;
 }
 
+const DeferredHoneyPicksSection = React.memo(HoneyPicksSection);
+const DeferredTierRankingTable = React.memo(TierRankingTable);
+
 function HomeDashboardSectionsBody({
   homeMetaStats,
   defaultPatch,
@@ -107,7 +110,7 @@ function HomeDashboardSectionsBody({
           ) : null}
           {statsError ? <p className="text-sm text-[var(--color-danger)]">{statsError}</p> : null}
 
-          <HoneyPicksSection
+          <DeferredHoneyPicksSection
             initialData={computedView.honeyPicks}
             initialPatchVersion={computedView.honeyPatchVersion}
           />
@@ -134,7 +137,7 @@ function HomeDashboardSectionsBody({
             {t("rankingDescription")}
           </p>
         </div>
-        <TierRankingTable initialData={computedView.rankingData} />
+        <DeferredTierRankingTable initialData={computedView.rankingData} />
       </section>
     </>
   );

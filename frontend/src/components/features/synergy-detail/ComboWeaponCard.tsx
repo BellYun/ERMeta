@@ -1,17 +1,18 @@
 "use client";
 
-import { ArrowUpRight, ChevronRight } from "lucide-react";
+import { ArrowUpRight, ChevronRight, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import * as React from "react";
+import { TierBadge } from "@/components/features/TierBadge";
 import { Link } from "@/i18n/navigation";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
+import type { OperationProfile, PlayStyleKey } from "@/lib/synergyInsights";
+import { assignComboTier, COMBO_TIER_WEIGHTS, PERFORMANCE_TIER_MIN_GAMES } from "@/lib/tierScoring";
 import { cn } from "@/lib/utils";
 import { TraitIcon } from "./TraitIcon";
 import type { TrioWeaponResult } from "./types";
 import { useTapGuard } from "./useTapGuard";
-
-const SMALL_SAMPLE_THRESHOLD = 10;
 
 /** Level 1 (접힘): 캐릭터+무기 조합 (mainCore 집계) */
 export interface GroupedCombo {
@@ -25,6 +26,7 @@ export interface GroupedCombo {
   winRate: number;
   averageRP: number;
   averageRank: number;
+  operationProfile?: OperationProfile | null;
   /** Level 2 (펼침): 특성별 브레이크다운 */
   traitVariants: TrioWeaponResult[];
 }
@@ -59,6 +61,88 @@ function getCoreForMember(m: OrderedMember, v: TrioWeaponResult): number | null 
   return v.mainCore3;
 }
 
+function hasCoreData(v: TrioWeaponResult): boolean {
+  return Boolean(
+    (v.mainCore1 && v.mainCore1 > 0) ||
+    (v.mainCore2 && v.mainCore2 > 0) ||
+    (v.mainCore3 && v.mainCore3 > 0)
+  );
+}
+
+function getPlayStyleToneClass(key: PlayStyleKey) {
+  switch (key) {
+    case "snowball":
+      return "border-emerald-400/45 bg-emerald-400/10 text-emerald-700 dark:text-emerald-300";
+    case "tempo":
+      return "border-fuchsia-400/50 bg-fuchsia-400/10 text-fuchsia-700 dark:text-fuchsia-300";
+    case "stable":
+      return "border-sky-400/45 bg-sky-400/10 text-sky-700 dark:text-sky-300";
+    case "lateValue":
+      return "border-indigo-400/50 bg-indigo-400/10 text-indigo-700 dark:text-indigo-300";
+    case "volatile":
+      return "border-amber-400/55 bg-amber-400/10 text-amber-700 dark:text-amber-300";
+    case "climbVolatile":
+      return "border-orange-400/55 bg-orange-400/10 text-orange-700 dark:text-orange-300";
+    case "trap":
+      return "border-red-400/55 bg-red-400/10 text-red-700 dark:text-red-300";
+    case "balanced":
+      return "border-slate-400/50 bg-slate-400/10 text-slate-700 dark:text-slate-300";
+    default:
+      return "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)]";
+  }
+}
+
+function toTopPercent(percentile: number) {
+  return Math.max(1, 100 - percentile);
+}
+
+function toBottomPercent(percentile: number) {
+  return Math.max(1, percentile);
+}
+
+function PlayStyleInsightBadge({
+  profile,
+  label,
+  description,
+  metricSummary,
+}: {
+  profile: OperationProfile;
+  label: string;
+  description: string;
+  metricSummary: string;
+}) {
+  const tooltipId = React.useId();
+
+  return (
+    <span className="group/tip relative inline-flex">
+      <span
+        tabIndex={0}
+        aria-describedby={tooltipId}
+        title={`${description}\n${metricSummary}`}
+        className={cn(
+          "cursor-help rounded-md border px-2 py-1 text-[10px] font-bold outline-none ring-offset-2 ring-offset-[var(--color-surface)] transition-shadow focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] sm:text-[11px]",
+          getPlayStyleToneClass(profile.key)
+        )}
+      >
+        {label}
+      </span>
+      <span
+        id={tooltipId}
+        role="tooltip"
+        className="pointer-events-none absolute bottom-full left-0 z-50 mb-2 hidden w-64 max-w-[calc(100vw-2rem)] rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] p-2 text-left text-[11px] font-medium leading-relaxed text-[var(--color-foreground)] shadow-lg group-hover/tip:block group-focus-within/tip:block"
+      >
+        <span className="block text-[11px] font-bold text-[var(--color-foreground)]">{label}</span>
+        <span className="mt-1 block text-[10.5px] text-[var(--color-muted-foreground)]">
+          {description}
+        </span>
+        <span className="mt-1.5 block border-t border-[var(--color-border)] pt-1.5 text-[10px] text-[var(--color-muted-foreground)]">
+          {metricSummary}
+        </span>
+      </span>
+    </span>
+  );
+}
+
 interface ComboWeaponCardProps {
   group: GroupedCombo;
   rank: number;
@@ -67,6 +151,7 @@ interface ComboWeaponCardProps {
   getTraitName: (code: number) => string | null;
   selectedCharCodes: number[];
   isFocusPoolCombo?: boolean;
+  loadTraitVariants?: (group: GroupedCombo, signal?: AbortSignal) => Promise<TrioWeaponResult[]>;
   /** 추천(gold ring) 캐릭터 Link 클릭 시 호출. 부모가 analytics 발화. 메모이제이션 유지를 위해 ref-stable하게 전달할 것. */
   onRecommendationClick?: (pickedCode: number, pickedRank: number) => void;
 }
@@ -84,26 +169,70 @@ function ComboWeaponCardImpl({
   getTraitName,
   selectedCharCodes,
   isFocusPoolCombo = false,
+  loadTraitVariants,
   onRecommendationClick,
 }: ComboWeaponCardProps) {
   const t = useTranslations("synergyComboCard");
   const [showTraits, setShowTraits] = React.useState(false);
   const [showAllVariants, setShowAllVariants] = React.useState(false);
+  const [loadedTraitVariants, setLoadedTraitVariants] = React.useState<TrioWeaponResult[] | null>(
+    null
+  );
+  const [isTraitsLoading, setIsTraitsLoading] = React.useState(false);
   const ordered = React.useMemo(
     () => getOrderedMembers(group, selectedCharCodes),
     [group, selectedCharCodes]
   );
-  const isSmallSample = group.totalGames < SMALL_SAMPLE_THRESHOLD;
+  const isSmallSample = group.totalGames < PERFORMANCE_TIER_MIN_GAMES;
+  const tier = isSmallSample
+    ? null
+    : assignComboTier({
+        winRate: group.winRate,
+        averageRank: group.averageRank,
+        averageRP: group.averageRP,
+      });
+  const tierWeightDescription = `${t("rp")} ${COMBO_TIER_WEIGHTS.averageRP * 100}% · ${t("averageRank")} ${COMBO_TIER_WEIGHTS.survival * 100}% · ${t("winRate")} ${COMBO_TIER_WEIGHTS.winRate * 100}%`;
+  const groupHasCoreData = React.useMemo(
+    () => group.traitVariants.some(hasCoreData),
+    [group.traitVariants]
+  );
+
+  React.useEffect(() => {
+    if (!showTraits || !loadTraitVariants || loadedTraitVariants !== null || groupHasCoreData) {
+      return;
+    }
+
+    const controller = new AbortController();
+    setIsTraitsLoading(true);
+    loadTraitVariants(group, controller.signal)
+      .then((rows) => {
+        setLoadedTraitVariants(rows);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        setLoadedTraitVariants(group.traitVariants);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setIsTraitsLoading(false);
+      });
+
+    return () => controller.abort();
+  }, [group, groupHasCoreData, loadTraitVariants, loadedTraitVariants, showTraits]);
+
+  const traitVariants = loadedTraitVariants ?? group.traitVariants;
   // 상위 10개까지 잘라두고, 초기 펼침에서는 상위 3개만 노출하여 첫 커밋 비용을 줄임.
   // 나머지는 "더보기" 로 유저 의도 있을 때만 mount (TraitIcon n×3 서브트리가 무거워서 INP 주요 기여자).
   const sortedVariants = React.useMemo(
-    () => [...group.traitVariants].sort((a, b) => b.averageRP - a.averageRP).slice(0, 10),
-    [group.traitVariants]
+    () => [...traitVariants].sort((a, b) => b.averageRP - a.averageRP).slice(0, 10),
+    [traitVariants]
   );
   const INITIAL_VARIANTS = 3;
-  const visibleVariants = showAllVariants
-    ? sortedVariants
-    : sortedVariants.slice(0, INITIAL_VARIANTS);
+  const isInitialTraitFetch = isTraitsLoading && loadedTraitVariants === null && !groupHasCoreData;
+  const visibleVariants = isInitialTraitFetch
+    ? []
+    : showAllVariants
+      ? sortedVariants
+      : sortedVariants.slice(0, INITIAL_VARIANTS);
   const hasMoreVariants = sortedVariants.length > INITIAL_VARIANTS;
 
   // pointer 단계로 토글해 onClick frame 까지 밀리는 커밋을 앞당김
@@ -119,6 +248,8 @@ function ComboWeaponCardImpl({
   // 스크롤 발생 시 브라우저가 차단해주지 않으므로 pointermove 단계에서 SLOP=10px 누적 가드.
   const tapGuard = useTapGuard(toggleTraits);
 
+  // 부모 가상 스크롤이 이 카드의 실제 높이를 ResizeObserver로 측정한다.
+  // content-visibility/contain-intrinsic-size를 함께 쓰면 비동기 펼침 높이가 누락되어 카드가 겹칠 수 있다.
   return (
     <div
       className={cn(
@@ -129,7 +260,6 @@ function ComboWeaponCardImpl({
             ? "border-[var(--color-border-light)]"
             : "border-[var(--color-border)]"
       )}
-      style={{ contentVisibility: "auto", containIntrinsicSize: "auto 56px" }}
     >
       {/* 메인 행 — 포인터 단계로 특성 토글 (div+role로 Link 중첩 이슈 해소) */}
       <div
@@ -160,6 +290,16 @@ function ComboWeaponCardImpl({
         >
           {rank}
         </span>
+
+        {tier ? (
+          <span
+            className="inline-flex shrink-0"
+            aria-label={`Tier ${tier}: ${tierWeightDescription}`}
+            title={tierWeightDescription}
+          >
+            <TierBadge tier={tier} className="h-6 min-w-6 text-[10px] sm:h-7 sm:min-w-7" />
+          </span>
+        ) : null}
 
         {/* 3캐릭터 + 무기 */}
         <div className="flex items-center gap-0.5 sm:gap-1">
@@ -270,9 +410,46 @@ function ComboWeaponCardImpl({
         </div>
       </div>
 
+      {group.operationProfile ? (
+        <div className="border-t border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-surface-2)_72%,transparent)] px-2 py-2 sm:px-3">
+          <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+            <PlayStyleInsightBadge
+              profile={group.operationProfile}
+              label={t("insight.operationLabel", {
+                value: t(`insight.playStyle.${group.operationProfile.key}`),
+              })}
+              description={t(`insight.playStyleDescription.${group.operationProfile.key}`, {
+                winRate: group.winRate.toFixed(1),
+                averageRank: group.averageRank.toFixed(1),
+                averageRP: `${group.averageRP > 0 ? "+" : ""}${group.averageRP.toFixed(1)}`,
+              })}
+              metricSummary={t("insight.metricSummary", {
+                rpTop: toTopPercent(group.operationProfile.rpPercentile),
+                winTop: toTopPercent(group.operationProfile.winRatePercentile),
+                rankStanding:
+                  group.operationProfile.rankPercentile >= 50
+                    ? t("insight.rankStanding.top", {
+                        value: toTopPercent(group.operationProfile.rankPercentile),
+                      })
+                    : t("insight.rankStanding.bottom", {
+                        value: toBottomPercent(group.operationProfile.rankPercentile),
+                      }),
+                games: group.totalGames,
+                confidence: t(`insight.confidence.${group.operationProfile.confidence}`),
+              })}
+            />
+          </div>
+        </div>
+      ) : null}
+
       {/* 특성 브레이크다운 */}
       {showTraits && (
         <div className="px-2 sm:px-3 py-2.5 flex flex-col gap-1.5 bg-[var(--color-surface-2)] border-t border-[var(--color-border)]">
+          {isInitialTraitFetch && (
+            <div className="flex items-center justify-center rounded-md bg-[var(--color-surface)] px-3 py-3 border border-[var(--color-border-light)]">
+              <Loader2 className="h-4 w-4 animate-spin text-[var(--color-primary-hover)]" />
+            </div>
+          )}
           {visibleVariants.map((v, vi) => (
             <div
               key={`${v.mainCore1}-${v.mainCore2}-${v.mainCore3}-${vi}`}
@@ -339,6 +516,7 @@ export const ComboWeaponCard = React.memo(ComboWeaponCardImpl, (prev, next) => {
   if (prev.getWeaponName !== next.getWeaponName) return false;
   if (prev.getTraitName !== next.getTraitName) return false;
   if (prev.isFocusPoolCombo !== next.isFocusPoolCombo) return false;
+  if (prev.loadTraitVariants !== next.loadTraitVariants) return false;
   // selectedCharCodes는 number[]이므로 shallow 비교
   const a = prev.selectedCharCodes;
   const b = next.selectedCharCodes;

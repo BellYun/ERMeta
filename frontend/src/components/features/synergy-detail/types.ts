@@ -1,3 +1,5 @@
+import type { OperationProfile } from "@/lib/synergyInsights";
+
 export interface TrioWeaponResult {
   character1: number;
   weaponType1: number;
@@ -12,6 +14,7 @@ export interface TrioWeaponResult {
   winRate: number;
   averageRP: number;
   averageRank: number;
+  operationProfile?: OperationProfile | null;
 }
 
-export type SortBy = "averageRP" | "winRate" | "averageRank" | "totalGames";
+export type SortBy = "tierScore" | "averageRP" | "winRate" | "averageRank" | "totalGames";

@@ -31,6 +31,7 @@
     "ariaMain": "メインナビゲーション",
     "metaAnalysis": "メタ分析",
     "synergyRecommendation": "編成データ",
+    "synergyMatrix": "シナジーマトリクス",
     "characterAnalysis": "キャラクター分析",
     "characterLab": "ロールグループ",
     "dataLab": "データラボ",
@@ -395,6 +396,7 @@
   "synergyResults": {
     "sort": {
       "recommended": "指標順",
+      "tierScore": "ティアスコア",
       "averageRP": "平均RP",
       "winRate": "勝率",
       "totalGames": "試合数",
@@ -458,7 +460,40 @@
     "rp": "RP",
     "games": "試合数",
     "averageRank": "平均順位",
-    "moreTraits": "特性をさらに {count} 件表示"
+    "moreTraits": "特性をさらに {count} 件表示",
+    "insight": {
+      "operationLabel": "運用傾向: {value}",
+      "metricSummary": "類似候補との比較 · RP上位{rpTop}% · 勝率上位{winTop}% · {rankStanding} · {games}試合（{confidence}）",
+      "rankStanding": {
+        "top": "平均順位 上位{value}%",
+        "bottom": "平均順位 下位{value}%"
+      },
+      "confidence": {
+        "low": "信頼度低",
+        "medium": "信頼度中",
+        "high": "信頼度高"
+      },
+      "playStyle": {
+        "snowball": "全区間優勢型",
+        "tempo": "勝利転換型",
+        "stable": "順位安定型",
+        "lateValue": "順位重視型",
+        "volatile": "終盤高打点型",
+        "climbVolatile": "上昇変動型",
+        "trap": "要注意",
+        "balanced": "バランス型"
+      },
+      "playStyleDescription": {
+        "snowball": "勝率{winRate}%・平均順位{averageRank}位・平均RP {averageRP}で、3指標すべてが良い構成です。",
+        "tempo": "勝率{winRate}%・平均RP {averageRP}で、上位に残った試合を1位につなげる力が高い構成です。",
+        "stable": "平均順位{averageRank}位・平均RP {averageRP}で、安定して上位に入りRPを獲得する構成です。",
+        "lateValue": "平均順位は{averageRank}位ですが、勝率は{winRate}%です。1位よりも安定した上位進出に強みがあります。",
+        "volatile": "勝率は{winRate}%と高めですが、平均順位は{averageRank}位です。早期脱落のリスクはあるものの、生き残れば1位まで狙える構成です。",
+        "climbVolatile": "平均順位は{averageRank}位で結果の振れ幅は大きい一方、平均RPは{averageRP}です。好調時のRP獲得が大きい構成です。",
+        "trap": "勝率{winRate}%・平均順位{averageRank}位・平均RP {averageRP}で、3指標とも低く固定ピックには注意が必要です。",
+        "balanced": "勝率{winRate}%・平均順位{averageRank}位・平均RP {averageRP}で、特定の指標に偏らない構成です。"
+      }
+    }
   },
   "characterAnalysis": {
     "quickSummary": "要約",

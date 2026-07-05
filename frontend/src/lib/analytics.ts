@@ -45,7 +45,7 @@ export type Source =
   | "landing"
   | "external";
 
-export type SynergySortBy = "averageRP" | "winRate" | "averageRank" | "totalGames";
+export type SynergySortBy = "tierScore" | "averageRP" | "winRate" | "averageRank" | "totalGames";
 export type SynergyPrefetchTrigger = "hover" | "viewport";
 
 export type SessionSource = "organic_search" | "community" | "direct" | "social" | "internal";

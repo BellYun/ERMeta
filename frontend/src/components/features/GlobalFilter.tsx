@@ -8,6 +8,7 @@ import { useFilter } from "./FilterContext";
 
 export function GlobalFilter() {
   const { patch, tier, patches, setPatch, setTier } = useFilter();
+  const [selectedTier, setSelectedTier] = React.useState(tier);
   const mobileTierRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
   const desktopTierRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
   const t = useTranslations("globalFilter");
@@ -22,9 +23,14 @@ export function GlobalFilter() {
     [t]
   );
 
+  React.useEffect(() => {
+    setSelectedTier(tier);
+  }, [tier]);
+
   const selectTier = React.useCallback(
     (value: string) => {
-      setTier(value);
+      setSelectedTier(value);
+      React.startTransition(() => setTier(value));
       analytics.tierGroupSelected(value);
     },
     [setTier]
@@ -112,7 +118,7 @@ export function GlobalFilter() {
           className="col-span-3 grid grid-cols-3 gap-1.5"
         >
           {tierOptions.map(({ value, label }, index) => {
-            const isSelected = tier === value;
+            const isSelected = selectedTier === value;
             return (
               <button
                 key={value}
@@ -186,7 +192,7 @@ export function GlobalFilter() {
           className="flex rounded-[5px] bg-[var(--color-surface-2)] border border-[var(--color-border)] p-0.5"
         >
           {tierOptions.map(({ value, label }, index) => {
-            const isSelected = tier === value;
+            const isSelected = selectedTier === value;
             return (
               <button
                 key={value}
