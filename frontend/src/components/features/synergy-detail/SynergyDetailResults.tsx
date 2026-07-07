@@ -259,8 +259,7 @@ export function SynergyDetailResults() {
     [deferredAllies]
   );
 
-  const urlSortBy = React.useMemo(() => parseSortByParam(searchParams.get("sort")), [searchParams]);
-  const [sortBy, setSortBy] = React.useState<SortBy>(urlSortBy);
+  const sortBy = React.useMemo(() => parseSortByParam(searchParams.get("sort")), [searchParams]);
   const [queryAllies, setQueryAllies] = React.useState<AllySelection[]>(deferredAllies);
   const [resultsState, setResultsState] = React.useState<{
     data: TrioWeaponResult[];
@@ -272,10 +271,6 @@ export function SynergyDetailResults() {
     loading: deferredAllies.length > 0,
   }));
   const [visibleCount, setVisibleCount] = React.useState(VISIBLE_RESULTS_STEP);
-
-  React.useEffect(() => {
-    setSortBy(urlSortBy);
-  }, [urlSortBy]);
 
   /**
    * 1번 탭 즉각 반응 핵심:
@@ -460,7 +455,6 @@ export function SynergyDetailResults() {
   const updateSortBy = React.useCallback(
     (nextSortBy: SortBy) => {
       if (nextSortBy === sortBy) return;
-      setSortBy(nextSortBy);
       const params = new URLSearchParams(searchParams.toString());
       if (nextSortBy === "averageRP") params.delete("sort");
       else params.set("sort", nextSortBy);

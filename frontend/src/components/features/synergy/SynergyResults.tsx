@@ -161,8 +161,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
     return allies;
   }, [searchParams]);
 
-  const urlSortBy = React.useMemo(() => parseSortByParam(searchParams.get("sort")), [searchParams]);
-  const [sortBy, setSortBy] = React.useState<SortBy>(urlSortBy);
+  const sortBy = React.useMemo(() => parseSortByParam(searchParams.get("sort")), [searchParams]);
   const [queryAllies, setQueryAllies] = React.useState<number[]>(selectedAllies);
   const [resultsState, setResultsState] = React.useState<{
     data: TrioResult[];
@@ -174,10 +173,6 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
     loading: selectedAllies.length > 0,
   }));
   const [copied, setCopied] = React.useState(false);
-
-  React.useEffect(() => {
-    setSortBy(urlSortBy);
-  }, [urlSortBy]);
 
   const getCharName = React.useCallback(
     (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
@@ -276,7 +271,6 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
   const updateSortBy = React.useCallback(
     (nextSortBy: SortBy) => {
       if (nextSortBy === sortBy) return;
-      setSortBy(nextSortBy);
       const params = new URLSearchParams(searchParams.toString());
       if (nextSortBy === "averageRP") params.delete("sort");
       else params.set("sort", nextSortBy);
