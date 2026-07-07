@@ -225,6 +225,67 @@ describe("analytics — P0 helpers", () => {
     });
   });
 
+  describe("synergy exploration funnel events", () => {
+    it("탐색 깊이 증가 이벤트를 전달한다", async () => {
+      analytics.synergyExplorationAdvanced({
+        ally1Code: 1,
+        ally2Code: 2,
+        resultCount: 20,
+        sortBy: "averageRP",
+        explorationDepth: 3,
+        isWeaponScope: false,
+        source: "filter_change",
+      });
+      await flushAsync();
+      expect(trackMock).toHaveBeenCalledWith("synergy_exploration_advanced", {
+        ally1Code: 1,
+        ally2Code: 2,
+        resultCount: 20,
+        sortBy: "averageRP",
+        explorationDepth: 3,
+        isWeaponScope: false,
+        source: "filter_change",
+      });
+    });
+
+    it("퍼널 종료 이벤트에 상세 조회 여부를 담는다", async () => {
+      analytics.synergyFunnelExited({
+        ally1Code: 1,
+        ally2Code: null,
+        resultCount: 12,
+        sortBy: "winRate",
+        explorationDepth: 2,
+        openedDetail: false,
+        isWeaponScope: false,
+      });
+      await flushAsync();
+      expect(trackMock).toHaveBeenCalledWith("synergy_funnel_exited", {
+        ally1Code: 1,
+        ally2Code: null,
+        resultCount: 12,
+        sortBy: "winRate",
+        explorationDepth: 2,
+        openedDetail: false,
+        isWeaponScope: false,
+      });
+    });
+
+    it("recommendation prefetch 이벤트는 trigger 와 source 를 전달한다", async () => {
+      analytics.synergyRecommendationPrefetched({
+        pickedCode: 3,
+        pickedRank: 1,
+        trigger: "viewport",
+      });
+      await flushAsync();
+      expect(trackMock).toHaveBeenCalledWith("synergy_recommendation_prefetched", {
+        pickedCode: 3,
+        pickedRank: 1,
+        trigger: "viewport",
+        source: "synergy",
+      });
+    });
+  });
+
   describe("ad slot events", () => {
     it("ad_slot_rendered 에 슬롯명과 광고 슬롯 ID 를 전달한다", async () => {
       analytics.adSlotRendered({

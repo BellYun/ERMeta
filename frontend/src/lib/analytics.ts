@@ -41,6 +41,7 @@ export type Source =
   | "external";
 
 export type SynergySortBy = "averageRP" | "winRate" | "averageRank" | "totalGames";
+export type SynergyPrefetchTrigger = "hover" | "viewport";
 
 export type SessionSource = "organic_search" | "community" | "direct" | "social" | "internal";
 
@@ -217,6 +218,41 @@ export const analytics = {
     sortBy: SynergySortBy;
   }) {
     track("synergy_recommendation_clicked", { ...args, source: "synergy" as const });
+  },
+
+  /** 시너지 탐색 세션 내 조건 탐색 깊이 증가 */
+  synergyExplorationAdvanced(args: {
+    ally1Code: number | null;
+    ally2Code: number | null;
+    resultCount: number;
+    sortBy: SynergySortBy;
+    explorationDepth: number;
+    isWeaponScope: boolean;
+    source: "url_restore" | "filter_change" | "sort_change";
+  }) {
+    track("synergy_exploration_advanced", args);
+  },
+
+  /** 결과를 본 뒤 상세 조회 없이 떠나는 비율 계산용 종료 이벤트 */
+  synergyFunnelExited(args: {
+    ally1Code: number | null;
+    ally2Code: number | null;
+    resultCount: number;
+    sortBy: SynergySortBy;
+    explorationDepth: number;
+    openedDetail: boolean;
+    isWeaponScope: boolean;
+  }) {
+    track("synergy_funnel_exited", args);
+  },
+
+  /** 추천 카드 상세 라우트 prefetch */
+  synergyRecommendationPrefetched(args: {
+    pickedCode: number;
+    pickedRank: number;
+    trigger: SynergyPrefetchTrigger;
+  }) {
+    track("synergy_recommendation_prefetched", { ...args, source: "synergy" as const });
   },
 
   /**

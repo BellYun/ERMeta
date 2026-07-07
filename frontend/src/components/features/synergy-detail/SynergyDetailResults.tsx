@@ -15,7 +15,12 @@ import { isMobileDevice } from "@/lib/device";
 import { FetchHttpError, FetchRetriesExhaustedError, fetchWithRetry } from "@/lib/fetchWithRetry";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
-import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "../synergy/constants";
+import {
+  getAllCharacterCodes,
+  getFallbackMap,
+  parseSortByParam,
+  SORT_OPTIONS,
+} from "../synergy/constants";
 import { ComboWeaponCard, type GroupedCombo } from "./ComboWeaponCard";
 import type { TrioWeaponResult, SortBy } from "./types";
 import {
@@ -104,6 +109,41 @@ function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
 
 function sortAllyPair<T extends { charCode: number }>(allies: T[]): T[] {
   return [...allies].sort((a, b) => a.charCode - b.charCode);
+}
+
+function getAllyQueryKey(allies: AllySelection[]) {
+  return sortAllyPair(allies)
+    .map((ally) => `${ally.charCode}:${ally.weaponCode ?? 0}`)
+    .join("|");
+}
+
+function buildDetailSearchParams(allies: AllySelection[]) {
+  const params = new URLSearchParams({ sortBy: "totalGames", limit: "5000" });
+  const queryAllies = sortAllyPair(allies);
+  const a1 = queryAllies[0];
+  if (a1) {
+    params.set("character1", String(a1.charCode));
+    if (a1.weaponCode) params.set("weapon1", String(a1.weaponCode));
+  }
+  const a2 = queryAllies[1];
+  if (a2) {
+    params.set("character2", String(a2.charCode));
+    if (a2.weaponCode) params.set("weapon2", String(a2.weaponCode));
+  }
+  return params;
+}
+
+async function fetchDetailRows(allies: AllySelection[], signal?: AbortSignal) {
+  const params = buildDetailSearchParams(allies);
+  const data = await fetchWithRetry<{ results?: TrioWeaponResult[]; error?: string }>(
+    `/api/stats/trios-weapon?${params.toString()}`,
+    { signal }
+  );
+  return data.results ?? [];
+}
+
+function isAbortError(error: unknown) {
+  return error instanceof DOMException && error.name === "AbortError";
 }
 
 function prioritizeFocusGroups(
@@ -219,10 +259,17 @@ export function SynergyDetailResults() {
     [deferredAllies]
   );
 
-  const [sortBy, setSortBy] = React.useState<SortBy>("averageRP");
-  const [results, setResults] = React.useState<TrioWeaponResult[]>([]);
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
+  const sortBy = React.useMemo(() => parseSortByParam(searchParams.get("sort")), [searchParams]);
+  const [queryAllies, setQueryAllies] = React.useState<AllySelection[]>(deferredAllies);
+  const [resultsState, setResultsState] = React.useState<{
+    data: TrioWeaponResult[];
+    error: unknown;
+    loading: boolean;
+  }>(() => ({
+    data: [],
+    error: null,
+    loading: deferredAllies.length > 0,
+  }));
   const [visibleCount, setVisibleCount] = React.useState(VISIBLE_RESULTS_STEP);
 
   /**
@@ -246,7 +293,65 @@ export function SynergyDetailResults() {
     }
     return false;
   }, [selectedAllies, deferredAllies]);
-  const showLoading = loading || isAllyChangeInFlight;
+  React.useEffect(() => {
+    if (deferredAllies.length === 0) {
+      setQueryAllies([]);
+      return;
+    }
+
+    const timerId = setTimeout(() => {
+      const nextKey = getAllyQueryKey(deferredAllies);
+      setQueryAllies((prev) => (getAllyQueryKey(prev) === nextKey ? prev : deferredAllies));
+    }, 180);
+
+    return () => clearTimeout(timerId);
+  }, [deferredAllies]);
+
+  React.useEffect(() => {
+    if (queryAllies.length === 0) {
+      setResultsState({ data: [], error: null, loading: false });
+      return;
+    }
+
+    let cancelled = false;
+    const controller = new AbortController();
+    setResultsState((prev) => ({ ...prev, error: null, loading: true }));
+
+    fetchDetailRows(queryAllies, controller.signal)
+      .then((data) => {
+        if (cancelled) return;
+        setResultsState({ data, error: null, loading: false });
+      })
+      .catch((err: unknown) => {
+        if (cancelled || isAbortError(err)) return;
+        setResultsState({ data: [], error: err, loading: false });
+      });
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [queryAllies]);
+
+  const deferredAlliesKey = React.useMemo(() => getAllyQueryKey(deferredAllies), [deferredAllies]);
+  const queryAlliesKey = React.useMemo(() => getAllyQueryKey(queryAllies), [queryAllies]);
+  const isQueryAlliesPending = deferredAllies.length > 0 && deferredAlliesKey !== queryAlliesKey;
+  const showLoading = isAllyChangeInFlight || isQueryAlliesPending || resultsState.loading;
+  const results = React.useMemo(
+    () => (isQueryAlliesPending ? [] : resultsState.data),
+    [isQueryAlliesPending, resultsState.data]
+  );
+  const error = React.useMemo(() => {
+    const err = resultsState.error;
+    if (!err || deferredAllies.length === 0 || isQueryAlliesPending) return null;
+    if (err instanceof DOMException && err.name === "TimeoutError") return t("timeout");
+    if (err instanceof FetchRetriesExhaustedError) return t("genericError");
+    if (err instanceof FetchHttpError) {
+      const body = err.body as { error?: string } | null;
+      return body?.error ?? t("genericError");
+    }
+    return err instanceof Error ? err.message : t("genericError");
+  }, [deferredAllies.length, isQueryAlliesPending, resultsState.error, t]);
   const [copied, setCopied] = React.useState(false);
   const virtualListRef = React.useRef<HTMLDivElement>(null);
   const [virtualScrollMargin, setVirtualScrollMargin] = React.useState(0);
@@ -291,72 +396,6 @@ export function SynergyDetailResults() {
     },
     [deferredCharCodes, focusCharWeapons]
   );
-
-  // API 호출 — deferredAllies 기반 (아군 선택 탭 즉시성 확보). 정렬은 클라이언트에서 처리해 CDN 키를 줄인다.
-  React.useEffect(() => {
-    if (deferredAllies.length === 0) {
-      setResults([]);
-      setLoading(false);
-      return;
-    }
-
-    const controller = new AbortController();
-    const timerId = setTimeout(() => {
-      const params = new URLSearchParams({ sortBy: "totalGames", limit: "5000" });
-      const queryAllies = sortAllyPair(deferredAllies);
-      const a1 = queryAllies[0];
-      if (a1) {
-        params.set("character1", String(a1.charCode));
-        if (a1.weaponCode) params.set("weapon1", String(a1.weaponCode));
-      }
-      const a2 = queryAllies[1];
-      if (a2) {
-        params.set("character2", String(a2.charCode));
-        if (a2.weaponCode) params.set("weapon2", String(a2.weaponCode));
-      }
-
-      setError(null);
-
-      fetchWithRetry<{ results?: TrioWeaponResult[]; error?: string }>(
-        `/api/stats/trios-weapon?${params.toString()}`,
-        { signal: controller.signal }
-      )
-        .then((data) => {
-          // setResults + setLoading(false)를 같은 startTransition 배치에 넣어
-          // "로딩 꺼짐 → 결과 렌더 전" 사이 '결과 없음' 빈 화면이 깜빡이는 것을 방지.
-          React.startTransition(() => {
-            setResults(data.results ?? []);
-            setLoading(false);
-          });
-        })
-        .catch((err) => {
-          if (err instanceof DOMException && err.name === "AbortError") return;
-          // 에러 경로는 urgent 유지 — 즉시 에러 메시지 표시
-          setLoading(false);
-          if (err instanceof DOMException && err.name === "TimeoutError") {
-            setError(t("timeout"));
-            return;
-          }
-          if (err instanceof FetchRetriesExhaustedError) {
-            setError(t("genericError"));
-            return;
-          }
-          if (err instanceof FetchHttpError) {
-            const body = err.body as { error?: string } | null;
-            setError(body?.error ?? t("genericError"));
-            return;
-          }
-          setError(err instanceof Error ? err.message : t("genericError"));
-        });
-    }, 300);
-
-    setLoading(true);
-    return () => {
-      clearTimeout(timerId);
-      controller.abort();
-      setLoading(false);
-    };
-  }, [deferredAllies, t]);
 
   // Two-level aggregation + focus-priority sorting — deferred 기반
   const recommendations = React.useMemo(() => {
@@ -413,15 +452,66 @@ export function SynergyDetailResults() {
     router.replace(pathname, { scroll: false });
   }, [router, pathname]);
 
+  const updateSortBy = React.useCallback(
+    (nextSortBy: SortBy) => {
+      if (nextSortBy === sortBy) return;
+      const params = new URLSearchParams(searchParams.toString());
+      if (nextSortBy === "averageRP") params.delete("sort");
+      else params.set("sort", nextSortBy);
+      const nextUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+      router.replace(nextUrl, { scroll: false });
+      analytics.synergySortChanged(nextSortBy);
+    },
+    [pathname, router, searchParams, sortBy]
+  );
+
   // synergy_result_viewed — 같은 (ally1,ally2,sortBy) 조합은 중복 fire 금지
   const lastViewedKeyRef = React.useRef<string | null>(null);
+  const explorationDepthRef = React.useRef(0);
+  const funnelStateRef = React.useRef<{
+    viewed: boolean;
+    openedDetail: boolean;
+    ally1Code: number | null;
+    ally2Code: number | null;
+    resultCount: number;
+    sortBy: SynergySortBy;
+    explorationDepth: number;
+  }>({
+    viewed: false,
+    openedDetail: false,
+    ally1Code: null,
+    ally2Code: null,
+    resultCount: 0,
+    sortBy: "averageRP",
+    explorationDepth: 0,
+  });
+
   React.useEffect(() => {
     if (showLoading || deferredAllies.length === 0 || recommendations.length === 0) return;
     const a1 = deferredCharCodes[0] ?? null;
     const a2 = deferredCharCodes[1] ?? null;
-    const key = `${a1 ?? "_"}|${a2 ?? "_"}|${sortBy}`;
+    const allyKey = getAllyQueryKey(deferredAllies);
+    const key = `${allyKey}|${sortBy}`;
     if (lastViewedKeyRef.current === key) return;
+    const previousKey = lastViewedKeyRef.current;
+    const previousAllyKey = previousKey ? previousKey.split("|").slice(0, -1).join("|") : null;
+    const source =
+      previousKey === null && typeof window !== "undefined" && window.location.search
+        ? "url_restore"
+        : previousAllyKey === allyKey
+          ? "sort_change"
+          : "filter_change";
     lastViewedKeyRef.current = key;
+    explorationDepthRef.current += 1;
+    funnelStateRef.current = {
+      viewed: true,
+      openedDetail: false,
+      ally1Code: a1,
+      ally2Code: a2,
+      resultCount: recommendations.length,
+      sortBy: sortBy as SynergySortBy,
+      explorationDepth: explorationDepthRef.current,
+    };
     analytics.synergyResultViewed({
       ally1Code: a1,
       ally2Code: a2,
@@ -431,7 +521,46 @@ export function SynergyDetailResults() {
       patch: "",
       isWeaponScope: true,
     });
+    analytics.synergyExplorationAdvanced({
+      ally1Code: a1,
+      ally2Code: a2,
+      resultCount: recommendations.length,
+      sortBy: sortBy as SynergySortBy,
+      explorationDepth: explorationDepthRef.current,
+      isWeaponScope: true,
+      source,
+    });
   }, [showLoading, recommendations, deferredAllies, deferredCharCodes, sortBy]);
+
+  const emitFunnelExit = React.useCallback(() => {
+    const state = funnelStateRef.current;
+    if (!state.viewed) return;
+    analytics.synergyFunnelExited({
+      ally1Code: state.ally1Code,
+      ally2Code: state.ally2Code,
+      resultCount: state.resultCount,
+      sortBy: state.sortBy,
+      explorationDepth: state.explorationDepth,
+      openedDetail: state.openedDetail,
+      isWeaponScope: true,
+    });
+    state.viewed = false;
+  }, []);
+
+  React.useEffect(() => {
+    const handlePageHide = () => emitFunnelExit();
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") emitFunnelExit();
+    };
+
+    window.addEventListener("pagehide", handlePageHide);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      emitFunnelExit();
+      window.removeEventListener("pagehide", handlePageHide);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [emitFunnelExit]);
 
   // synergy_recommendation_clicked — ref-stable 콜백 (ComboWeaponCard memo 보존)
   const recClickStateRef = React.useRef({ deferredCharCodes, sortBy });
@@ -440,6 +569,7 @@ export function SynergyDetailResults() {
   }, [deferredCharCodes, sortBy]);
   const onRecommendationClick = React.useCallback((pickedCode: number, pickedRank: number) => {
     const { deferredCharCodes: allies, sortBy: currentSortBy } = recClickStateRef.current;
+    funnelStateRef.current.openedDetail = true;
     analytics.synergyRecommendationClicked({
       ally1Code: allies[0] ?? null,
       ally2Code: allies[1] ?? null,
@@ -562,10 +692,7 @@ export function SynergyDetailResults() {
           {SORT_OPTIONS.map(({ value, labelKey }) => (
             <button
               key={value}
-              onClick={() => {
-                setSortBy(value);
-                analytics.synergySortChanged(value);
-              }}
+              onClick={() => updateSortBy(value)}
               className={cn(
                 "dashboard-tab flex min-h-[30px] shrink-0 items-center px-3 py-1 text-[12px] font-semibold",
                 sortBy === value
