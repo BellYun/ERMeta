@@ -34,3 +34,7 @@ export const SORT_OPTIONS: {
   { value: "averageRank", label: "평균 순위", labelKey: "averageRank" },
   { value: "totalGames", label: "게임 수", labelKey: "totalGames" },
 ];
+
+export function parseSortByParam(value: string | null): SortBy {
+  return SORT_OPTIONS.some((option) => option.value === value) ? (value as SortBy) : "averageRP";
+}

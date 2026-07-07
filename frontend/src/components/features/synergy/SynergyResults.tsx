@@ -7,12 +7,12 @@ import * as React from "react";
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary";
 import { useL10n } from "@/components/L10nProvider";
 import { useFocusCharacters } from "@/hooks/useFocusCharacters";
-import { analytics, type SynergySortBy } from "@/lib/analytics";
+import { analytics, type SynergyPrefetchTrigger, type SynergySortBy } from "@/lib/analytics";
 import { resolveCharacterName } from "@/lib/characterMap";
 import { isMobileDevice } from "@/lib/device";
 import { FetchHttpError, FetchRetriesExhaustedError, fetchWithRetry } from "@/lib/fetchWithRetry";
 import { withCurrentRouteLocale } from "@/lib/localizedPath";
-import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "./constants";
+import { getAllCharacterCodes, getFallbackMap, parseSortByParam, SORT_OPTIONS } from "./constants";
 import type { TrioResult, SortBy } from "./types";
 import { getThirdCharacter, deduplicateResults } from "./utils";
 const ComboCard = React.lazy(() => import("./ComboCard").then((m) => ({ default: m.ComboCard })));
@@ -73,6 +73,31 @@ function mergeTrioWeaponRowsByCharacters(rows: TrioWeaponApiRow[]): TrioResult[]
 
 function sortCharacterPair(characters: number[]): number[] {
   return [...characters].sort((a, b) => a - b);
+}
+
+function getCharacterPairKey(characters: number[]) {
+  return sortCharacterPair(characters).join(":");
+}
+
+function buildTrioWeaponSearchParams(selectedAllies: number[]) {
+  const params = new URLSearchParams({ sortBy: "totalGames", limit: "5000" });
+  const queryAllies = sortCharacterPair(selectedAllies);
+  if (queryAllies[0] !== undefined) params.set("character1", String(queryAllies[0]));
+  if (queryAllies[1] !== undefined) params.set("character2", String(queryAllies[1]));
+  return params;
+}
+
+async function fetchTrioWeaponRows(selectedAllies: number[], signal?: AbortSignal) {
+  const params = buildTrioWeaponSearchParams(selectedAllies);
+  const data = await fetchWithRetry<{ results?: TrioWeaponApiRow[]; error?: string }>(
+    `/api/stats/trios-weapon?${params.toString()}`,
+    { signal }
+  );
+  return mergeTrioWeaponRowsByCharacters(data.results ?? []);
+}
+
+function isAbortError(error: unknown) {
+  return error instanceof DOMException && error.name === "AbortError";
 }
 
 function isFocusResult(rec: TrioResult, selectedAllies: number[], focusCharacters: number[]) {
@@ -136,68 +161,95 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
     return allies;
   }, [searchParams]);
 
-  const [sortBy, setSortBy] = React.useState<SortBy>("averageRP");
-  const [trioResults, setTrioResults] = React.useState<TrioResult[]>([]);
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
+  const urlSortBy = React.useMemo(() => parseSortByParam(searchParams.get("sort")), [searchParams]);
+  const [sortBy, setSortBy] = React.useState<SortBy>(urlSortBy);
+  const [queryAllies, setQueryAllies] = React.useState<number[]>(selectedAllies);
+  const [resultsState, setResultsState] = React.useState<{
+    data: TrioResult[];
+    error: unknown;
+    loading: boolean;
+  }>(() => ({
+    data: [],
+    error: null,
+    loading: selectedAllies.length > 0,
+  }));
   const [copied, setCopied] = React.useState(false);
+
+  React.useEffect(() => {
+    setSortBy(urlSortBy);
+  }, [urlSortBy]);
 
   const getCharName = React.useCallback(
     (code: number) => resolveCharacterName(code, l10n, getFallbackMap()),
     [l10n]
   );
 
-  // API 호출: 아군 선택 시 (300ms 디바운스 + AbortController). 정렬은 클라이언트에서 처리해 CDN 키를 줄인다.
+  // 조건 변경 중에는 잠깐 기다렸다가 최종 조합만 요청한다.
+  // 요청 파라미터는 정렬된 캐릭터 pair라서 A+B와 B+A가 같은 HTTP 캐시 키를 공유한다.
   React.useEffect(() => {
     if (selectedAllies.length === 0) {
-      setTrioResults([]);
-      setLoading(false);
+      setQueryAllies([]);
       return;
     }
 
-    const controller = new AbortController();
     const timerId = setTimeout(() => {
-      const params = new URLSearchParams({ sortBy: "totalGames", limit: "5000" });
-      const queryAllies = sortCharacterPair(selectedAllies);
-      if (queryAllies[0] !== undefined) params.set("character1", String(queryAllies[0]));
-      if (queryAllies[1] !== undefined) params.set("character2", String(queryAllies[1]));
+      const nextKey = getCharacterPairKey(selectedAllies);
+      setQueryAllies((prev) => (getCharacterPairKey(prev) === nextKey ? prev : selectedAllies));
+    }, 180);
 
-      setError(null);
-
-      fetchWithRetry<{ results?: TrioWeaponApiRow[]; error?: string }>(
-        `/api/stats/trios-weapon?${params.toString()}`,
-        { signal: controller.signal }
-      )
-        .then((data) => {
-          setTrioResults(mergeTrioWeaponRowsByCharacters(data.results ?? []));
-        })
-        .catch((err) => {
-          if (err instanceof DOMException && err.name === "AbortError") return;
-          if (err instanceof DOMException && err.name === "TimeoutError") {
-            setError(t("timeout"));
-            return;
-          }
-          if (err instanceof FetchRetriesExhaustedError) {
-            setError(t("genericError"));
-            return;
-          }
-          if (err instanceof FetchHttpError) {
-            const body = err.body as { error?: string } | null;
-            setError(body?.error ?? t("genericError"));
-            return;
-          }
-          setError(err instanceof Error ? err.message : t("genericError"));
-        })
-        .finally(() => setLoading(false));
-    }, 300);
-
-    setLoading(true);
     return () => {
       clearTimeout(timerId);
-      controller.abort();
-      setLoading(false);
     };
-  }, [selectedAllies, t]);
+  }, [selectedAllies]);
+
+  React.useEffect(() => {
+    if (queryAllies.length === 0) {
+      setResultsState({ data: [], error: null, loading: false });
+      return;
+    }
+
+    let cancelled = false;
+    const controller = new AbortController();
+    setResultsState((prev) => ({ ...prev, error: null, loading: true }));
+
+    fetchTrioWeaponRows(queryAllies, controller.signal)
+      .then((data) => {
+        if (cancelled) return;
+        setResultsState({ data, error: null, loading: false });
+      })
+      .catch((err: unknown) => {
+        if (cancelled || isAbortError(err)) return;
+        setResultsState({ data: [], error: err, loading: false });
+      });
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [queryAllies]);
+
+  const selectedAlliesKey = React.useMemo(
+    () => getCharacterPairKey(selectedAllies),
+    [selectedAllies]
+  );
+  const queryAlliesKey = React.useMemo(() => getCharacterPairKey(queryAllies), [queryAllies]);
+  const isSelectionPending = selectedAllies.length > 0 && selectedAlliesKey !== queryAlliesKey;
+  const trioResults = React.useMemo(
+    () => (isSelectionPending ? [] : resultsState.data),
+    [isSelectionPending, resultsState.data]
+  );
+  const loading = selectedAllies.length > 0 && (isSelectionPending || resultsState.loading);
+  const error = React.useMemo(() => {
+    const err = resultsState.error;
+    if (!err || selectedAllies.length === 0 || isSelectionPending) return null;
+    if (err instanceof DOMException && err.name === "TimeoutError") return t("timeout");
+    if (err instanceof FetchRetriesExhaustedError) return t("genericError");
+    if (err instanceof FetchHttpError) {
+      const body = err.body as { error?: string } | null;
+      return body?.error ?? t("genericError");
+    }
+    return err instanceof Error ? err.message : t("genericError");
+  }, [isSelectionPending, resultsState.error, selectedAllies.length, t]);
 
   const recommendations = React.useMemo(() => {
     if (selectedAllies.length === 0) return [];
@@ -218,16 +270,83 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
   }, [trioResults, selectedAllies, focusCharacters, sortBy]);
 
   const clearAllies = React.useCallback(() => {
-    router.replace(withCurrentRouteLocale(pathname, "/synergy-detail"), { scroll: false });
+    router.replace(pathname, { scroll: false });
   }, [pathname, router]);
+
+  const updateSortBy = React.useCallback(
+    (nextSortBy: SortBy) => {
+      if (nextSortBy === sortBy) return;
+      setSortBy(nextSortBy);
+      const params = new URLSearchParams(searchParams.toString());
+      if (nextSortBy === "averageRP") params.delete("sort");
+      else params.set("sort", nextSortBy);
+      const nextUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+      router.replace(nextUrl, { scroll: false });
+      analytics.synergySortChanged(nextSortBy);
+    },
+    [pathname, router, searchParams, sortBy]
+  );
+
+  const prefetchedAnalysisRef = React.useRef(new Set<number>());
+  const prefetchAnalysis = React.useCallback(
+    (code: number, rank: number, trigger: SynergyPrefetchTrigger) => {
+      if (prefetchedAnalysisRef.current.has(code)) return;
+      prefetchedAnalysisRef.current.add(code);
+      router.prefetch(withCurrentRouteLocale(pathname, `/character/${code}`));
+      analytics.synergyRecommendationPrefetched({
+        pickedCode: code,
+        pickedRank: rank,
+        trigger,
+      });
+    },
+    [pathname, router]
+  );
 
   // synergy_result_viewed — 같은 (ally1,ally2,sortBy) 조합은 중복 fire 금지
   const lastViewedKeyRef = React.useRef<string | null>(null);
+  const explorationDepthRef = React.useRef(0);
+  const funnelStateRef = React.useRef<{
+    viewed: boolean;
+    openedDetail: boolean;
+    ally1Code: number | null;
+    ally2Code: number | null;
+    resultCount: number;
+    sortBy: SynergySortBy;
+    explorationDepth: number;
+  }>({
+    viewed: false,
+    openedDetail: false,
+    ally1Code: null,
+    ally2Code: null,
+    resultCount: 0,
+    sortBy: "averageRP",
+    explorationDepth: 0,
+  });
+
   React.useEffect(() => {
     if (loading || selectedAllies.length === 0 || recommendations.length === 0) return;
     const key = `${selectedAllies[0] ?? "_"}|${selectedAllies[1] ?? "_"}|${sortBy}`;
     if (lastViewedKeyRef.current === key) return;
+    const previousKey = lastViewedKeyRef.current;
+    const previousPairKey = previousKey?.split("|").slice(0, 2).join("|") ?? null;
+    const currentPairKey = `${selectedAllies[0] ?? "_"}|${selectedAllies[1] ?? "_"}`;
+    const source =
+      previousKey === null && typeof window !== "undefined" && window.location.search
+        ? "url_restore"
+        : previousPairKey === currentPairKey
+          ? "sort_change"
+          : "filter_change";
     lastViewedKeyRef.current = key;
+    explorationDepthRef.current += 1;
+    funnelStateRef.current = {
+      viewed: true,
+      openedDetail: false,
+      ally1Code: selectedAllies[0] ?? null,
+      ally2Code: selectedAllies[1] ?? null,
+      resultCount: recommendations.length,
+      sortBy: sortBy as SynergySortBy,
+      explorationDepth: explorationDepthRef.current,
+    };
     analytics.synergyResultViewed({
       ally1Code: selectedAllies[0] ?? null,
       ally2Code: selectedAllies[1] ?? null,
@@ -237,7 +356,46 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
       patch: "",
       isWeaponScope: false,
     });
+    analytics.synergyExplorationAdvanced({
+      ally1Code: selectedAllies[0] ?? null,
+      ally2Code: selectedAllies[1] ?? null,
+      resultCount: recommendations.length,
+      sortBy: sortBy as SynergySortBy,
+      explorationDepth: explorationDepthRef.current,
+      isWeaponScope: false,
+      source,
+    });
   }, [loading, selectedAllies, sortBy, recommendations]);
+
+  const emitFunnelExit = React.useCallback(() => {
+    const state = funnelStateRef.current;
+    if (!state.viewed) return;
+    analytics.synergyFunnelExited({
+      ally1Code: state.ally1Code,
+      ally2Code: state.ally2Code,
+      resultCount: state.resultCount,
+      sortBy: state.sortBy,
+      explorationDepth: state.explorationDepth,
+      openedDetail: state.openedDetail,
+      isWeaponScope: false,
+    });
+    state.viewed = false;
+  }, []);
+
+  React.useEffect(() => {
+    const handlePageHide = () => emitFunnelExit();
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") emitFunnelExit();
+    };
+
+    window.addEventListener("pagehide", handlePageHide);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      emitFunnelExit();
+      window.removeEventListener("pagehide", handlePageHide);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [emitFunnelExit]);
 
   return (
     <>
@@ -247,10 +405,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
           {SORT_OPTIONS.map(({ value, labelKey }) => (
             <button
               key={value}
-              onClick={() => {
-                setSortBy(value);
-                analytics.synergySortChanged(value);
-              }}
+              onClick={() => updateSortBy(value)}
               className="dashboard-tab min-h-[30px] px-2.5 py-1 text-xs"
               data-active={sortBy === value ? "true" : undefined}
             >
@@ -397,7 +552,10 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                   isTopResult={i < 3}
                   compact={compact}
                   priorityImages={i < 5}
+                  prefetchOnViewport={i < 4}
+                  onPrefetchAnalysis={prefetchAnalysis}
                   onNavigateAnalysis={(code) => {
+                    funnelStateRef.current.openedDetail = true;
                     analytics.synergyRecommendationClicked({
                       ally1Code: selectedAllies[0] ?? null,
                       ally2Code: selectedAllies[1] ?? null,
@@ -405,7 +563,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
                       pickedRank: i + 1,
                       sortBy: sortBy as SynergySortBy,
                     });
-                    router.push(`/character/${code}`);
+                    router.push(withCurrentRouteLocale(pathname, `/character/${code}`));
                   }}
                 />
               ))}

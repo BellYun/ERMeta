@@ -17,6 +17,8 @@ export function ComboCard({
   isTopResult = false,
   compact = false,
   priorityImages = false,
+  prefetchOnViewport = false,
+  onPrefetchAnalysis,
   onNavigateAnalysis,
 }: {
   rec: TrioResult;
@@ -28,31 +30,64 @@ export function ComboCard({
   compact?: boolean;
   /** true면 이미지를 priority로 즉시 로드 (상위 카드용) */
   priorityImages?: boolean;
+  prefetchOnViewport?: boolean;
+  onPrefetchAnalysis?: (code: number, rank: number, trigger: "hover" | "viewport") => void;
   onNavigateAnalysis?: (code: number) => void;
 }) {
   // 선택한 아군을 앞에, 추천 캐릭터를 마지막에 표시
-  const allChars = [rec.character1, rec.character2, rec.character3];
-  const allies: number[] = [];
-  const rest: number[] = [];
-  for (const code of allChars) {
-    if (selectedAllies.includes(code) && allies.length < selectedAllies.length) {
-      allies.push(code);
-    } else {
-      rest.push(code);
+  const { chars, rest } = React.useMemo(() => {
+    const allChars = [rec.character1, rec.character2, rec.character3];
+    const nextAllies: number[] = [];
+    const nextRest: number[] = [];
+    for (const code of allChars) {
+      if (selectedAllies.includes(code) && nextAllies.length < selectedAllies.length) {
+        nextAllies.push(code);
+      } else {
+        nextRest.push(code);
+      }
     }
-  }
-  // 선택 순서 유지
-  allies.sort((a, b) => selectedAllies.indexOf(a) - selectedAllies.indexOf(b));
-  const chars = [...allies, ...rest];
+    // 선택 순서 유지
+    nextAllies.sort((a, b) => selectedAllies.indexOf(a) - selectedAllies.indexOf(b));
+    return { chars: [...nextAllies, ...nextRest], rest: nextRest };
+  }, [rec.character1, rec.character2, rec.character3, selectedAllies]);
   const isSmallSample = rec.totalGames < SMALL_SAMPLE_THRESHOLD;
+  const cardRef = React.useRef<HTMLDivElement>(null);
+
+  const prefetchRecommended = React.useCallback(
+    (trigger: "hover" | "viewport") => {
+      if (!onPrefetchAnalysis) return;
+      for (const code of rest) onPrefetchAnalysis(code, rank, trigger);
+    },
+    [onPrefetchAnalysis, rank, rest]
+  );
+
+  React.useEffect(() => {
+    if (!prefetchOnViewport || !onPrefetchAnalysis) return;
+    const element = cardRef.current;
+    if (!element || typeof IntersectionObserver === "undefined") return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        prefetchRecommended("viewport");
+        observer.disconnect();
+      },
+      { rootMargin: "240px 0px", threshold: 0.1 }
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [onPrefetchAnalysis, prefetchOnViewport, prefetchRecommended]);
 
   return (
     <div
+      ref={cardRef}
       className={cn(
         "combo-card",
         "group flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
       )}
       data-accent={isFocusPoolCombo || isTopResult ? "true" : undefined}
+      onPointerEnter={() => prefetchRecommended("hover")}
     >
       {/* 순위 */}
       <span
@@ -110,6 +145,7 @@ export function ComboCard({
               {isRecommended && onNavigateAnalysis ? (
                 <button
                   type="button"
+                  onFocus={() => onPrefetchAnalysis?.(code, rank, "hover")}
                   onClick={() => onNavigateAnalysis(code)}
                   className="group/char relative z-10 cursor-pointer flex items-center gap-1"
                   title={`${getCharName(code)} 분석 보기`}
