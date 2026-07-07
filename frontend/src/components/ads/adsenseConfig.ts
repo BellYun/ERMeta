@@ -11,6 +11,25 @@ export const ADSENSE_CLIENT = ADSENSE_DISABLED
 export const ADSENSE_PREVIEW =
   !ADSENSE_DISABLED && process.env.NEXT_PUBLIC_ADSENSE_PREVIEW === "true";
 
+export interface AdSlotReservation {
+  baseHeight: number;
+  smHeight?: number;
+  lgHeight?: number;
+  width?: number;
+}
+
+export const ADSENSE_SLOT_RESERVATIONS = {
+  contentHorizontal: {
+    baseHeight: 112,
+    smHeight: 120,
+    lgHeight: 120,
+  },
+  siteRail: {
+    baseHeight: 600,
+    width: 160,
+  },
+} as const satisfies Record<string, AdSlotReservation>;
+
 export const ADSENSE_SLOTS = {
   homeRanking: ADSENSE_DISABLED
     ? ""

@@ -532,8 +532,27 @@ html[data-theme="dark"] .char-card.home-pick-card:hover {
 
 .ad-placement {
   position: relative;
-  display: block;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   width: 100%;
+  min-height: var(--ad-reserved-height, 100px);
+  height: var(--ad-reserved-height, 100px);
+  overflow: hidden;
+  contain: layout paint style;
+}
+
+@media (min-width: 640px) {
+  .ad-placement {
+    min-height: var(--ad-reserved-height-sm, var(--ad-reserved-height, 100px));
+    height: var(--ad-reserved-height-sm, var(--ad-reserved-height, 100px));
+  }
+}
+
+@media (min-width: 1024px) {
+  .ad-placement {
+    min-height: var(--ad-reserved-height-lg, var(--ad-reserved-height-sm, 100px));
+    height: var(--ad-reserved-height-lg, var(--ad-reserved-height-sm, 100px));
+  }
 }
 
 .ad-placement-label {
@@ -548,9 +567,27 @@ html[data-theme="dark"] .char-card.home-pick-card:hover {
   text-transform: none;
 }
 
+.ad-placement .adsbygoogle {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.ad-placement-fallback {
+  position: absolute;
+  inset: 22px 8px 8px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed rgba(100, 116, 139, 0.35);
+  border-radius: 4px;
+  color: var(--color-muted-foreground);
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
 .ad-placement-preview-box {
   display: grid;
-  min-height: 96px;
   place-items: center;
   border: 1px dashed rgba(100, 116, 139, 0.5);
   border-radius: 4px;
