@@ -4,9 +4,41 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
+function parseCsvEnv(value: string | undefined): string[] {
+  return (value ?? "")
+    .split(",")
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+}
+
+function getFrozenPatchAnalysisRewrites() {
+  const origin = process.env.PATCH_ANALYSIS_FROZEN_ORIGIN?.replace(/\/$/, "");
+  const versions = parseCsvEnv(process.env.PATCH_ANALYSIS_FROZEN_VERSIONS);
+  if (!origin || versions.length === 0) return [];
+
+  return versions.flatMap((version) => [
+    {
+      source: `/patch-analysis/${version}`,
+      destination: `${origin}/patch-analysis/${version}`,
+    },
+    {
+      source: `/:locale(ko|en|ja)/patch-analysis/${version}`,
+      destination: `${origin}/:locale/patch-analysis/${version}`,
+    },
+  ]);
+}
+
 const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react", "recharts"],
+  },
+  async rewrites() {
+    const frozenPatchAnalysisRewrites = getFrozenPatchAnalysisRewrites();
+    if (frozenPatchAnalysisRewrites.length === 0) return [];
+
+    return {
+      beforeFiles: frozenPatchAnalysisRewrites,
+    };
   },
   async redirects() {
     return [
