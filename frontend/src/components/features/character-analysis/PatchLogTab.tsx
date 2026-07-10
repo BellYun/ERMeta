@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
-import { localizePatchNote } from "@/data/patch-note-localization";
+import { hasPatchChangeLocalization, localizePatchNote } from "@/data/patch-note-localization";
 import { getCharacterPatchNote } from "@/data/patch-notes";
 import type { RouteLocale } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
@@ -61,8 +61,7 @@ export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
       {patches.slice(0, 5).map((patch, i) => {
         const sourceNote = getCharacterPatchNote(selectedCode, patch);
         const note = sourceNote ? localizePatchNote(sourceNote, locale) : undefined;
-        const showDetailedPatchNote =
-          locale === "ko" || ((locale === "en" || locale === "ja") && patch === "11.5");
+        const showDetailedPatchNote = locale === "ko" || hasPatchChangeLocalization(patch, locale);
         return (
           <div
             key={patch}

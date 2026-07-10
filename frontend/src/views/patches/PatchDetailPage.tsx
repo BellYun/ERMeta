@@ -4,7 +4,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeBadgeStatic";
-import { localizePatchNotes } from "@/data/patch-note-localization";
+import { hasPatchChangeLocalization, localizePatchNotes } from "@/data/patch-note-localization";
 import { getAllPatchVersions, getNotesByPatch, getPatchSummary } from "@/data/patch-notes";
 import { Link } from "@/i18n/navigation";
 import { LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
@@ -89,8 +89,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
   const tPatch = await getStaticTranslator("characterPatch", language);
   const summary = getPatchSummary(version);
   const notes = localizePatchNotes(getNotesByPatch(version), locale);
-  const showDetailedPatchNotes =
-    locale === "ko" || ((locale === "en" || locale === "ja") && version === "11.5");
+  const showDetailedPatchNotes = locale === "ko" || hasPatchChangeLocalization(version, locale);
   const l10n = loadL10nMap(language);
   const fallbackMap = buildFallbackMap();
 

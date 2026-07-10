@@ -648,6 +648,10 @@ const PATCH_CHANGE_LOCALIZATIONS: Partial<
   },
 };
 
+export function hasPatchChangeLocalization(patch: string, locale: RouteLocale): boolean {
+  return Boolean(PATCH_CHANGE_LOCALIZATIONS[locale]?.[patch]);
+}
+
 export function localizePatchChanges(note: CharacterPatchNote, locale: RouteLocale): PatchChange[] {
   const localizedChanges = PATCH_CHANGE_LOCALIZATIONS[locale]?.[note.patch]?.[note.characterCode];
   if (!localizedChanges) return note.changes;
