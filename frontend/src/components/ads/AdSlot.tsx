@@ -1,8 +1,12 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import { useEffect, useRef } from "react";
-import { ADSENSE_CLIENT, ADSENSE_PREVIEW } from "@/components/ads/adsenseConfig";
+import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ADSENSE_CLIENT,
+  ADSENSE_PREVIEW,
+  type AdSlotReservation,
+} from "@/components/ads/adsenseConfig";
 import type { RouteLocale } from "@/i18n/routing";
 import { analytics, type AdSlotName } from "@/lib/analytics";
 
@@ -20,6 +24,7 @@ interface AdSlotProps {
   layoutKey?: string;
   responsive?: boolean;
   className?: string;
+  reservation?: AdSlotReservation;
   minHeight?: number;
 }
 
@@ -31,6 +36,47 @@ const AD_LABEL: Record<RouteLocale, string> = {
   "zh-Hant": "廣告",
 };
 
+type AdSlotStatus = "reserved" | "requested" | "filled" | "unfilled" | "timeout";
+
+type AdSlotStyle = CSSProperties & {
+  "--ad-reserved-height": string;
+  "--ad-reserved-height-sm": string;
+  "--ad-reserved-height-lg": string;
+  "--ad-reserved-width"?: string;
+};
+
+function getReservationStyle(
+  reservation: AdSlotReservation | undefined,
+  fallbackHeight: number
+): AdSlotStyle {
+  const baseHeight = reservation?.baseHeight ?? fallbackHeight;
+  const smHeight = reservation?.smHeight ?? baseHeight;
+  const lgHeight = reservation?.lgHeight ?? smHeight;
+
+  return {
+    "--ad-reserved-height": `${baseHeight}px`,
+    "--ad-reserved-height-sm": `${smHeight}px`,
+    "--ad-reserved-height-lg": `${lgHeight}px`,
+    "--ad-reserved-width": reservation?.width ? `${reservation.width}px` : undefined,
+  };
+}
+
+function getCurrentReservedHeight(
+  reservation: AdSlotReservation | undefined,
+  fallbackHeight: number
+) {
+  if (typeof window === "undefined") return reservation?.baseHeight ?? fallbackHeight;
+  if (window.matchMedia("(min-width: 1024px)").matches) {
+    return (
+      reservation?.lgHeight ?? reservation?.smHeight ?? reservation?.baseHeight ?? fallbackHeight
+    );
+  }
+  if (window.matchMedia("(min-width: 640px)").matches) {
+    return reservation?.smHeight ?? reservation?.baseHeight ?? fallbackHeight;
+  }
+  return reservation?.baseHeight ?? fallbackHeight;
+}
+
 export function AdSlot({
   slot,
   slotName,
@@ -39,6 +85,7 @@ export function AdSlot({
   layoutKey,
   responsive = true,
   className,
+  reservation,
   minHeight = 100,
 }: AdSlotProps) {
   const locale = useLocale() as RouteLocale;
@@ -48,6 +95,27 @@ export function AdSlot({
   const pushedElement = useRef<HTMLModElement | null>(null);
   const renderedTracked = useRef(false);
   const viewedTracked = useRef(false);
+  const statusTracked = useRef<Set<AdSlotStatus>>(new Set());
+  const [status, setStatus] = useState<AdSlotStatus>("reserved");
+  const reservedStyle = useMemo(
+    () => getReservationStyle(reservation, minHeight),
+    [minHeight, reservation]
+  );
+
+  const trackStatus = useCallback(
+    (nextStatus: AdSlotStatus) => {
+      if (!slot || statusTracked.current.has(nextStatus)) return;
+      statusTracked.current.add(nextStatus);
+      analytics.adSlotStateChanged({
+        slotName,
+        adSlotId: slot,
+        status: nextStatus,
+        reservedHeight: getCurrentReservedHeight(reservation, minHeight),
+        reservedWidth: reservation?.width ?? null,
+      });
+    },
+    [minHeight, reservation, slot, slotName]
+  );
 
   useEffect(() => {
     const element = insRef.current;
@@ -56,16 +124,63 @@ export function AdSlot({
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
       pushedElement.current = element;
+      trackStatus("requested");
     } catch {
       // adsbygoogle may not be loaded yet; loader script will retry on script load
     }
-  }, [slot]);
+  }, [slot, trackStatus]);
+
+  useEffect(() => {
+    if (ADSENSE_PREVIEW || !ADSENSE_CLIENT || !slot) return;
+    const element = insRef.current;
+    if (!element || typeof MutationObserver === "undefined") return;
+
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+    const clearStatusTimeout = () => {
+      if (!timeoutId) return;
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    };
+
+    const updateStatus = () => {
+      const adStatus = element.getAttribute("data-ad-status");
+      const nextStatus = adStatus === "filled" || adStatus === "unfilled" ? adStatus : null;
+      if (!nextStatus) return;
+      setStatus(nextStatus);
+      trackStatus(nextStatus);
+      clearStatusTimeout();
+    };
+
+    const observer = new MutationObserver(updateStatus);
+    observer.observe(element, { attributes: true, attributeFilter: ["data-ad-status"] });
+
+    timeoutId = setTimeout(() => {
+      if (element.getAttribute("data-ad-status")) return;
+      if (element.querySelector("iframe")) return;
+      setStatus("timeout");
+      trackStatus("timeout");
+      timeoutId = null;
+    }, 6000);
+
+    updateStatus();
+
+    return () => {
+      observer.disconnect();
+      clearStatusTimeout();
+    };
+  }, [slot, trackStatus]);
 
   useEffect(() => {
     if (!slot || renderedTracked.current) return;
     renderedTracked.current = true;
-    analytics.adSlotRendered({ slotName, adSlotId: slot });
-  }, [slot, slotName]);
+    analytics.adSlotRendered({
+      slotName,
+      adSlotId: slot,
+      reservedHeight: getCurrentReservedHeight(reservation, minHeight),
+      reservedWidth: reservation?.width ?? null,
+    });
+  }, [minHeight, reservation, slot, slotName]);
 
   useEffect(() => {
     if (!slot || viewedTracked.current) return;
@@ -87,7 +202,12 @@ export function AdSlot({
           if (viewTimer) return;
           viewTimer = setTimeout(() => {
             viewedTracked.current = true;
-            analytics.adSlotViewed({ slotName, adSlotId: slot });
+            analytics.adSlotViewed({
+              slotName,
+              adSlotId: slot,
+              reservedHeight: getCurrentReservedHeight(reservation, minHeight),
+              reservedWidth: reservation?.width ?? null,
+            });
             observer.disconnect();
           }, 1000);
         } else {
@@ -103,14 +223,16 @@ export function AdSlot({
       clearViewTimer();
       observer.disconnect();
     };
-  }, [slot, slotName]);
+  }, [minHeight, reservation, slot, slotName]);
 
   if (ADSENSE_PREVIEW) {
     return (
       <div
         ref={rootRef}
         className={`ad-placement ad-placement-preview ${className ?? ""}`}
-        style={{ minHeight }}
+        style={reservedStyle}
+        data-ad-slot-name={slotName}
+        data-ad-slot-status="preview"
       >
         <span className="ad-placement-label">{label}</span>
         <div className="ad-placement-preview-box" aria-hidden="true" />
@@ -120,14 +242,22 @@ export function AdSlot({
 
   if (!ADSENSE_CLIENT || !slot) return null;
 
+  const showFallback = status === "unfilled" || status === "timeout";
+
   return (
-    <div ref={rootRef} className={`ad-placement ${className ?? ""}`} style={{ minHeight }}>
+    <div
+      ref={rootRef}
+      className={`ad-placement ${className ?? ""}`}
+      style={reservedStyle}
+      data-ad-slot-name={slotName}
+      data-ad-slot-status={status}
+    >
       <span className="ad-placement-label">{label}</span>
       <ins
         key={`${slotName}:${slot}`}
         ref={insRef}
         className="adsbygoogle block"
-        style={{ display: "block", minHeight, width: "100%" }}
+        style={{ display: "block", minHeight: 0, width: "100%", height: "100%" }}
         data-ad-client={ADSENSE_CLIENT}
         data-ad-slot={slot}
         data-ad-format={format}
@@ -135,6 +265,11 @@ export function AdSlot({
         data-ad-layout-key={layoutKey}
         data-full-width-responsive={responsive ? "true" : "false"}
       />
+      {showFallback ? (
+        <div className="ad-placement-fallback" aria-hidden="true">
+          {label}
+        </div>
+      ) : null}
     </div>
   );
 }

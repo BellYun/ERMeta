@@ -298,6 +298,8 @@ describe("analytics — P0 helpers", () => {
         slot_name: "synergy_detail_top",
         ad_slot_id: "8139813658",
         page_path: "/ko/synergy-detail",
+        reserved_height: undefined,
+        reserved_width: undefined,
       });
     });
 
@@ -317,6 +319,27 @@ describe("analytics — P0 helpers", () => {
         page_path: "/ko",
         viewport_width: 390,
         viewport_height: 844,
+        reserved_height: undefined,
+        reserved_width: undefined,
+      });
+    });
+
+    it("ad_slot_state_changed 에 슬롯 상태와 예약 크기를 전달한다", async () => {
+      analytics.adSlotStateChanged({
+        slotName: "site_rail_right",
+        adSlotId: "8139813658",
+        status: "unfilled",
+        reservedHeight: 600,
+        reservedWidth: 160,
+      });
+      await flushAsync();
+      expect(trackMock).toHaveBeenCalledWith("ad_slot_state_changed", {
+        slot_name: "site_rail_right",
+        ad_slot_id: "8139813658",
+        status: "unfilled",
+        page_path: undefined,
+        reserved_height: 600,
+        reserved_width: 160,
       });
     });
   });

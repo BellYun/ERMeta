@@ -1,6 +1,10 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ADSENSE_SLOTS, canRenderAdSlot } from "@/components/ads/adsenseConfig";
+import {
+  ADSENSE_SLOT_RESERVATIONS,
+  ADSENSE_SLOTS,
+  canRenderAdSlot,
+} from "@/components/ads/adsenseConfig";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { Header } from "@/components/layout/Header";
 import type { RouteLocale } from "@/i18n/routing";
@@ -65,8 +69,8 @@ export function AppFrame({
                       slotName="site_rail_left"
                       format="vertical"
                       responsive={false}
+                      reservation={ADSENSE_SLOT_RESERVATIONS.siteRail}
                       className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-2"
-                      minHeight={600}
                     />
                   </div>
                 ) : null}
@@ -84,8 +88,8 @@ export function AppFrame({
                       slotName="site_rail_right"
                       format="vertical"
                       responsive={false}
+                      reservation={ADSENSE_SLOT_RESERVATIONS.siteRail}
                       className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-2"
-                      minHeight={600}
                     />
                   </div>
                 ) : null}

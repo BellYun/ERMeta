@@ -46,10 +46,22 @@ const PATCH_ANALYSIS_METADATA = {
 } as const;
 
 export const dynamic = "force-static";
-export const dynamicParams = false;
+export const dynamicParams = true;
+
+function getSkippedStaticPatchAnalysisVersions() {
+  return new Set(
+    (process.env.SKIP_PATCH_ANALYSIS_STATIC_VERSIONS ?? "")
+      .split(",")
+      .map((version) => version.trim())
+      .filter(Boolean)
+  );
+}
 
 export function generateStaticParams() {
-  const patchVersions = getPatchAnalysisVersions();
+  const skippedVersions = getSkippedStaticPatchAnalysisVersions();
+  const patchVersions = getPatchAnalysisVersions().filter(
+    (version) => !skippedVersions.has(version)
+  );
 
   return ROUTE_LOCALES.flatMap((locale) =>
     patchVersions.map((version) => ({

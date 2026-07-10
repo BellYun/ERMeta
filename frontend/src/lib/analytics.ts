@@ -19,6 +19,11 @@ function track(event: string, properties?: Record<string, unknown>) {
     .catch(() => {});
 }
 
+function getCurrentPagePath() {
+  if (typeof window === "undefined") return undefined;
+  return window.location?.pathname;
+}
+
 // ── Types (pm/amplitude-event-design.md §3.3) ────────────────────────────────
 export type FeatureKey =
   | "character_analysis"
@@ -50,6 +55,7 @@ export type AdSlotName =
   | "synergy_detail_top"
   | "site_rail_left"
   | "site_rail_right";
+export type AdSlotStatus = "reserved" | "requested" | "filled" | "unfilled" | "timeout";
 
 export interface SessionProperties {
   session_source?: SessionSource;
@@ -285,17 +291,30 @@ export const analytics = {
   },
 
   /** 광고 슬롯 DOM 렌더링 — 실제 광고 fill 여부와 무관하게 슬롯 노출 후보를 측정한다. */
-  adSlotRendered(args: { slotName: AdSlotName; adSlotId: string; pagePath?: string }) {
+  adSlotRendered(args: {
+    slotName: AdSlotName;
+    adSlotId: string;
+    pagePath?: string;
+    reservedHeight?: number;
+    reservedWidth?: number | null;
+  }) {
     track("ad_slot_rendered", {
       slot_name: args.slotName,
       ad_slot_id: args.adSlotId,
-      page_path:
-        args.pagePath ?? (typeof window !== "undefined" ? window.location.pathname : undefined),
+      page_path: args.pagePath ?? getCurrentPagePath(),
+      reserved_height: args.reservedHeight,
+      reserved_width: args.reservedWidth,
     });
   },
 
   /** 광고 슬롯이 viewport 에 50% 이상 1초 머문 경우. 클릭 추적은 AdSense 정책상 하지 않는다. */
-  adSlotViewed(args: { slotName: AdSlotName; adSlotId: string; pagePath?: string }) {
+  adSlotViewed(args: {
+    slotName: AdSlotName;
+    adSlotId: string;
+    pagePath?: string;
+    reservedHeight?: number;
+    reservedWidth?: number | null;
+  }) {
     const viewport =
       typeof window !== "undefined"
         ? {
@@ -307,10 +326,29 @@ export const analytics = {
     track("ad_slot_viewed", {
       slot_name: args.slotName,
       ad_slot_id: args.adSlotId,
-      page_path:
-        args.pagePath ?? (typeof window !== "undefined" ? window.location.pathname : undefined),
+      page_path: args.pagePath ?? getCurrentPagePath(),
       viewport_width: viewport?.width,
       viewport_height: viewport?.height,
+      reserved_height: args.reservedHeight,
+      reserved_width: args.reservedWidth,
+    });
+  },
+
+  /** 광고 슬롯 lifecycle — fill/unfilled/timeout 비율을 성능 지표와 같이 본다. */
+  adSlotStateChanged(args: {
+    slotName: AdSlotName;
+    adSlotId: string;
+    status: AdSlotStatus;
+    reservedHeight: number;
+    reservedWidth: number | null;
+  }) {
+    track("ad_slot_state_changed", {
+      slot_name: args.slotName,
+      ad_slot_id: args.adSlotId,
+      status: args.status,
+      page_path: getCurrentPagePath(),
+      reserved_height: args.reservedHeight,
+      reserved_width: args.reservedWidth,
     });
   },
 
@@ -363,7 +401,7 @@ export const analytics = {
     rating?: "good" | "needs-improvement" | "poor";
     navigationType?: string;
   }) {
-    const pagePath = typeof window !== "undefined" ? window.location.pathname : undefined;
+    const pagePath = getCurrentPagePath();
     const connection =
       typeof navigator !== "undefined"
         ? (navigator as unknown as { connection?: { effectiveType?: string } }).connection
@@ -381,6 +419,10 @@ export const analytics = {
       navigation_type: metric.navigationType,
       page_path: pagePath,
       effective_connection_type: connection?.effectiveType,
+      ad_slots_present:
+        typeof document !== "undefined"
+          ? document.querySelectorAll("[data-ad-slot-name]").length
+          : 0,
     });
   },
 };
