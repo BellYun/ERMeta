@@ -33,11 +33,8 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react", "recharts"],
   },
   async rewrites() {
-    const frozenPatchAnalysisRewrites = getFrozenPatchAnalysisRewrites();
-    if (frozenPatchAnalysisRewrites.length === 0) return [];
-
     return {
-      beforeFiles: frozenPatchAnalysisRewrites,
+      beforeFiles: getFrozenPatchAnalysisRewrites(),
     };
   },
   async redirects() {

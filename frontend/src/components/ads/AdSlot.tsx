@@ -97,7 +97,6 @@ export function AdSlot({
   const viewedTracked = useRef(false);
   const statusTracked = useRef<Set<AdSlotStatus>>(new Set());
   const [status, setStatus] = useState<AdSlotStatus>("reserved");
-  const reservedHeight = getCurrentReservedHeight(reservation, minHeight);
   const reservedStyle = useMemo(
     () => getReservationStyle(reservation, minHeight),
     [minHeight, reservation]
@@ -111,11 +110,11 @@ export function AdSlot({
         slotName,
         adSlotId: slot,
         status: nextStatus,
-        reservedHeight,
+        reservedHeight: getCurrentReservedHeight(reservation, minHeight),
         reservedWidth: reservation?.width ?? null,
       });
     },
-    [reservation?.width, reservedHeight, slot, slotName]
+    [minHeight, reservation, slot, slotName]
   );
 
   useEffect(() => {
@@ -136,27 +135,39 @@ export function AdSlot({
     const element = insRef.current;
     if (!element || typeof MutationObserver === "undefined") return;
 
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+    const clearStatusTimeout = () => {
+      if (!timeoutId) return;
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    };
+
     const updateStatus = () => {
       const adStatus = element.getAttribute("data-ad-status");
       const nextStatus = adStatus === "filled" || adStatus === "unfilled" ? adStatus : null;
       if (!nextStatus) return;
       setStatus(nextStatus);
       trackStatus(nextStatus);
+      clearStatusTimeout();
     };
 
     const observer = new MutationObserver(updateStatus);
     observer.observe(element, { attributes: true, attributeFilter: ["data-ad-status"] });
 
-    const timeoutId = setTimeout(() => {
+    timeoutId = setTimeout(() => {
       if (element.getAttribute("data-ad-status")) return;
       if (element.querySelector("iframe")) return;
       setStatus("timeout");
       trackStatus("timeout");
+      timeoutId = null;
     }, 6000);
+
+    updateStatus();
 
     return () => {
       observer.disconnect();
-      clearTimeout(timeoutId);
+      clearStatusTimeout();
     };
   }, [slot, trackStatus]);
 
@@ -166,10 +177,10 @@ export function AdSlot({
     analytics.adSlotRendered({
       slotName,
       adSlotId: slot,
-      reservedHeight,
+      reservedHeight: getCurrentReservedHeight(reservation, minHeight),
       reservedWidth: reservation?.width ?? null,
     });
-  }, [reservation?.width, reservedHeight, slot, slotName]);
+  }, [minHeight, reservation, slot, slotName]);
 
   useEffect(() => {
     if (!slot || viewedTracked.current) return;
@@ -194,7 +205,7 @@ export function AdSlot({
             analytics.adSlotViewed({
               slotName,
               adSlotId: slot,
-              reservedHeight,
+              reservedHeight: getCurrentReservedHeight(reservation, minHeight),
               reservedWidth: reservation?.width ?? null,
             });
             observer.disconnect();
@@ -212,7 +223,7 @@ export function AdSlot({
       clearViewTimer();
       observer.disconnect();
     };
-  }, [reservation?.width, reservedHeight, slot, slotName]);
+  }, [minHeight, reservation, slot, slotName]);
 
   if (ADSENSE_PREVIEW) {
     return (
