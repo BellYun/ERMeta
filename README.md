@@ -74,6 +74,8 @@ flowchart LR
   NEXT --> OBS["Vercel · Sentry · Amplitude · GA4"]
 ```
 
+> **Backend scope:** NestJS 서버는 서비스 초기 단계에서 BSER API 연동, 멀티서치, Redis 캐시 구조를 빠르게 검증하기 위해 구현한 초기 검증용 백엔드입니다.
+
 - 조회 중심 페이지는 Server Component와 정적 생성을 활용해 초기 HTML과 SEO 표면을 확보합니다.
 - 필터, 검색, 터치 선택, 모달처럼 상호작용이 필요한 영역만 Client Component로 분리합니다.
 - 통계 API는 Next.js 서버 캐시, CDN/브라우저 HTTP 캐시, NestJS Redis를 데이터 휘발성에 따라 조합합니다.
