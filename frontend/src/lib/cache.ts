@@ -26,7 +26,7 @@ const CACHE_CONTROL: Record<CachePreset, string> = {
   immutable: "public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400",
   slow: "public, max-age=300, s-maxage=3600, stale-while-revalidate=600",
   daily: "public, max-age=300, s-maxage=1800, stale-while-revalidate=300",
-  "character-stats": "public, max-age=300, s-maxage=21600, stale-while-revalidate=3600",
+  "character-stats": "public, max-age=300, s-maxage=43200, stale-while-revalidate=3600",
   // frequent (trios): L3 5m / L2 1h / SWR 7d — tag invalidation 의존, stale 7d 안전망
   frequent: "public, max-age=300, s-maxage=3600, stale-while-revalidate=604800",
   // stats-long (trios-weapon): L3 10m / L2 7d / SWR 7d — 최고 카디널리티, 가장 길게
