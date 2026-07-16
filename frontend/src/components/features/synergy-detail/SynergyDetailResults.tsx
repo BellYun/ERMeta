@@ -14,6 +14,7 @@ import { resolveCharacterName } from "@/lib/characterMap";
 import { isMobileDevice } from "@/lib/device";
 import { FetchHttpError, FetchRetriesExhaustedError, fetchWithRetry } from "@/lib/fetchWithRetry";
 import { buildTrioInsightBenchmarks, getTrioOperationProfile } from "@/lib/synergyInsights";
+import { MINIMUM_GAMES_OPTIONS, parseMinimumGamesParam } from "@/lib/synergyUrlState";
 import { comparePerformanceTierStats } from "@/lib/tierScoring";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
@@ -330,6 +331,10 @@ export function SynergyDetailResults() {
     () => parseDetailSortByParam(searchParams.get("sort")),
     [searchParams]
   );
+  const minimumGames = React.useMemo(
+    () => parseMinimumGamesParam(searchParams.get("minGames")),
+    [searchParams]
+  );
   const [queryAllies, setQueryAllies] = React.useState<AllySelection[]>(deferredAllies);
   const [resultsState, setResultsState] = React.useState<{
     data: TrioWeaponResult[];
@@ -473,30 +478,32 @@ export function SynergyDetailResults() {
 
     // Group by character+weapon (Level 1)
     const grouped = groupByCharWeapon(results);
+    const filteredBySample =
+      minimumGames > 0 ? grouped.filter((group) => group.totalGames >= minimumGames) : grouped;
 
     // Sort
     if (sortBy === "tierScore") {
-      grouped.sort(comparePerformanceTierStats);
+      filteredBySample.sort(comparePerformanceTierStats);
     } else if (sortBy === "averageRP") {
-      grouped.sort((a, b) => b.averageRP - a.averageRP);
+      filteredBySample.sort((a, b) => b.averageRP - a.averageRP);
     } else if (sortBy === "winRate") {
-      grouped.sort((a, b) => b.winRate - a.winRate);
+      filteredBySample.sort((a, b) => b.winRate - a.winRate);
     } else if (sortBy === "averageRank") {
-      grouped.sort((a, b) => a.averageRank - b.averageRank);
+      filteredBySample.sort((a, b) => a.averageRank - b.averageRank);
     } else {
-      grouped.sort((a, b) => b.totalGames - a.totalGames);
+      filteredBySample.sort((a, b) => b.totalGames - a.totalGames);
     }
 
     const sampleAwareGroups =
       sortBy === "totalGames"
-        ? grouped
+        ? filteredBySample
         : [
-            ...grouped.filter((group) => group.totalGames >= MIN_MEANINGFUL_GAMES),
-            ...grouped.filter((group) => group.totalGames < MIN_MEANINGFUL_GAMES),
+            ...filteredBySample.filter((group) => group.totalGames >= MIN_MEANINGFUL_GAMES),
+            ...filteredBySample.filter((group) => group.totalGames < MIN_MEANINGFUL_GAMES),
           ];
 
     return prioritizeFocusGroups(sampleAwareGroups, deferredCharCodes, focusCharWeapons);
-  }, [results, deferredAllies, deferredCharCodes, focusCharWeapons, sortBy]);
+  }, [results, deferredAllies, deferredCharCodes, focusCharWeapons, minimumGames, sortBy]);
 
   const visibleResetKey = React.useMemo(() => {
     const allyKey = deferredAllies
@@ -506,8 +513,8 @@ export function SynergyDetailResults() {
     const focusKey = focusCharWeapons
       .map((focus) => `${focus.charCode}:${focus.weaponCode}`)
       .join("|");
-    return `${allyKey}::${focusKey}::${sortBy}`;
-  }, [deferredAllies, focusCharWeapons, sortBy]);
+    return `${allyKey}::${focusKey}::${sortBy}::${minimumGames}`;
+  }, [deferredAllies, focusCharWeapons, minimumGames, sortBy]);
 
   React.useEffect(() => {
     setVisibleCount(VISIBLE_RESULTS_STEP);
@@ -521,8 +528,11 @@ export function SynergyDetailResults() {
 
   const clearAllies = React.useCallback(() => {
     setLocalAllies([null, null]);
-    router.replace(pathname, { scroll: false });
-  }, [router, pathname]);
+    const params = new URLSearchParams(searchParams.toString());
+    ["ally1", "w1", "ally2", "w2", "a", "b"].forEach((key) => params.delete(key));
+    const nextUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+    router.replace(nextUrl, { scroll: false });
+  }, [pathname, router, searchParams]);
 
   const updateSortBy = React.useCallback(
     (nextSortBy: SortBy) => {
@@ -535,6 +545,18 @@ export function SynergyDetailResults() {
       analytics.synergySortChanged(nextSortBy);
     },
     [pathname, router, searchParams, sortBy]
+  );
+
+  const updateMinimumGames = React.useCallback(
+    (nextMinimumGames: number) => {
+      if (nextMinimumGames === minimumGames) return;
+      const params = new URLSearchParams(searchParams.toString());
+      if (nextMinimumGames === 0) params.delete("minGames");
+      else params.set("minGames", String(nextMinimumGames));
+      const nextUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+      router.replace(nextUrl, { scroll: false });
+    },
+    [minimumGames, pathname, router, searchParams]
   );
 
   // synergy_result_viewed — 같은 (ally1,ally2,sortBy) 조합은 중복 fire 금지
@@ -755,6 +777,7 @@ export function SynergyDetailResults() {
               </button>
               <button
                 type="button"
+                aria-label={t("clearAllies")}
                 onClick={clearAllies}
                 className="inline-flex min-h-[34px] shrink-0 items-center justify-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
               >
@@ -765,22 +788,39 @@ export function SynergyDetailResults() {
           )}
         </div>
 
-        <div className="flex w-full items-center gap-1 overflow-x-auto rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] p-0.5 xl:w-auto">
-          {DETAIL_SORT_OPTIONS.map(({ value, labelKey }) => (
-            <button
-              key={value}
-              onClick={() => updateSortBy(value)}
-              className={cn(
-                "dashboard-tab flex min-h-[30px] shrink-0 items-center px-3 py-1 text-[12px] font-semibold",
-                sortBy === value
-                  ? ""
-                  : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
-              )}
-              data-active={sortBy === value ? "true" : undefined}
+        <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center xl:w-auto">
+          <label className="flex shrink-0 items-center gap-2 text-[12px] font-semibold text-[var(--color-muted-foreground)]">
+            <span>{t("minimumGames")}</span>
+            <select
+              aria-label={t("minimumGames")}
+              value={minimumGames}
+              onChange={(event) => updateMinimumGames(Number(event.target.value))}
+              className="min-h-[34px] rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-[12px] font-semibold text-[var(--color-foreground)] outline-none focus:border-[var(--color-border-light)]"
             >
-              {t(`sort.${labelKey}`)}
-            </button>
-          ))}
+              {MINIMUM_GAMES_OPTIONS.map((value) => (
+                <option key={value} value={value}>
+                  {value === 0 ? t("allSamples") : t("gamesAtLeast", { count: value })}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="flex w-full items-center gap-1 overflow-x-auto rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] p-0.5 xl:w-auto">
+            {DETAIL_SORT_OPTIONS.map(({ value, labelKey }) => (
+              <button
+                key={value}
+                onClick={() => updateSortBy(value)}
+                className={cn(
+                  "dashboard-tab flex min-h-[30px] shrink-0 items-center px-3 py-1 text-[12px] font-semibold",
+                  sortBy === value
+                    ? ""
+                    : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
+                )}
+                data-active={sortBy === value ? "true" : undefined}
+              >
+                {t(`sort.${labelKey}`)}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -922,13 +962,18 @@ export function SynergyDetailResults() {
               strokeWidth={1.75}
             />
             <p className="text-[14px] font-medium text-[var(--color-foreground)]">
-              {t("emptyNoData")}
+              {minimumGames > 0
+                ? t("emptyMinimumGames", { count: minimumGames })
+                : t("emptyNoData")}
             </p>
             <button
-              onClick={clearAllies}
+              onClick={() => {
+                if (minimumGames > 0) updateMinimumGames(0);
+                else clearAllies();
+              }}
               className="mt-3 text-[12px] font-semibold text-[var(--color-primary-hover)] hover:underline active:opacity-70 min-h-[44px] px-2"
             >
-              {t("clearAllies")}
+              {minimumGames > 0 ? t("showAllSamples") : t("clearAllies")}
             </button>
           </div>
         )}

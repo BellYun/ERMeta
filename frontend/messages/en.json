@@ -403,6 +403,9 @@
     "titleSingle": "Detailed comps with {ally}",
     "titlePair": "Detailed comps for {ally1} + {ally2}",
     "focusFilter": "Prioritizing {count} pool picks",
+    "minimumGames": "Minimum sample",
+    "allSamples": "All",
+    "gamesAtLeast": "{count}+ games",
     "copied": "Copied!",
     "share": "Share",
     "reset": "Reset",
@@ -419,6 +422,8 @@
     "more": "Show more ({visible}/{total})",
     "emptyFiltered": "No comps match your current character pool. Try widening the pool.",
     "emptyNoData": "Checking samples for this team setup.",
+    "emptyMinimumGames": "No comps have at least {count} games.",
+    "showAllSamples": "Show all samples",
     "clearAllies": "Clear allies",
     "timeout": "The request timed out. Please try again.",
     "genericError": "Something went wrong."

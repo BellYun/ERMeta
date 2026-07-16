@@ -405,6 +405,9 @@
     "titleSingle": "{ally} を含む詳細編成",
     "titlePair": "{ally1} + {ally2} の詳細編成",
     "focusFilter": "自分のプール {count}件を優先表示",
+    "minimumGames": "最小サンプル",
+    "allSamples": "すべて",
+    "gamesAtLeast": "{count}試合以上",
     "copied": "コピーしました！",
     "share": "共有",
     "reset": "初期化",
@@ -421,6 +424,8 @@
     "more": "もっと見る ({visible}/{total})",
     "emptyFiltered": "現在のキャラプールに一致する編成がありません。プールを広げてください。",
     "emptyNoData": "この編成データはありません。",
+    "emptyMinimumGames": "{count}試合以上の編成はありません。",
+    "showAllSamples": "すべてのサンプルを表示",
     "clearAllies": "味方をクリア",
     "timeout": "リクエストがタイムアウトしました。もう一度お試しください。",
     "genericError": "エラーが発生しました。"

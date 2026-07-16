@@ -397,6 +397,9 @@
     "titleSingle": "{ally} 포함 상세 조합",
     "titlePair": "{ally1} + {ally2} 상세 조합",
     "focusFilter": "내 풀 {count}명 우선 표시",
+    "minimumGames": "최소 표본",
+    "allSamples": "전체",
+    "gamesAtLeast": "{count}판 이상",
     "copied": "복사됨!",
     "share": "공유",
     "reset": "초기화",
@@ -413,6 +416,8 @@
     "more": "더보기 ({visible}/{total})",
     "emptyFiltered": "내 캐릭터 풀에 해당하는 조합이 없습니다. 캐릭터 풀을 넓혀보세요.",
     "emptyNoData": "해당 조합 표본을 확인 중입니다",
+    "emptyMinimumGames": "{count}판 이상인 조합이 없습니다.",
+    "showAllSamples": "전체 표본 보기",
     "clearAllies": "아군 초기화하기",
     "timeout": "요청 시간이 초과되었습니다. 다시 시도해주세요.",
     "genericError": "오류가 발생했습니다."
