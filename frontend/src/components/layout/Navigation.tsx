@@ -3,6 +3,7 @@
 import {
   BarChart3,
   Gauge,
+  Grid3X3,
   Layers,
   MessageSquarePlus,
   Network,
@@ -69,6 +70,12 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
       label: t("synergyRecommendation"),
       icon: Network,
       isActive: normalizedPathname === "/synergy-detail",
+    },
+    {
+      href: withCurrentRouteLocale(pathname, "/synergy-matrix"),
+      label: t("synergyMatrix"),
+      icon: Grid3X3,
+      isActive: normalizedPathname === "/synergy-matrix",
     },
     {
       href: withCurrentRouteLocale(pathname, "/character-lab"),

@@ -6,12 +6,16 @@ const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]);
 const BAYESIAN_K = 50;
 
 const TRIO_WEAPON_SEARCH_TABLE = 'v2_CharacterTrioWeaponSearch_all';
+const TRIO_WEAPON_PAIR_LOOKUP_TABLES = [
+  'v2_CharacterTrioWeaponPairLookup_agg_next',
+  'v2_CharacterTrioWeaponPairLookup_all_next',
+] as const;
 const DB_PAGE_SIZE = 1000;
 const TRIO_WEAPON_PARALLEL_FETCH_LIMIT = 5000;
 const TRIO_WEAPON_FULL_FETCH_LIMIT = 5000;
 const EXACT_PAIR_WEAPON_FETCH_LIMIT = 20000;
 const MAX_TRIO_WEAPON_RESPONSE_LIMIT = TRIO_WEAPON_FULL_FETCH_LIMIT;
-const TRIO_WEAPON_CACHE_VERSION = 'v8';
+const TRIO_WEAPON_CACHE_VERSION = 'v13';
 
 type SortBy = 'averageRP' | 'winRate' | 'averageRank' | 'totalGames' | 'recommended';
 
@@ -78,6 +82,16 @@ function normalizeCharacterWeaponPair(
   weapon2: number,
 ): [number, number, number, number] {
   return char1 <= char2 ? [char1, weapon1, char2, weapon2] : [char2, weapon2, char1, weapon1];
+}
+
+function pairLookupKey(char1: number, char2: number): string {
+  const [c1, c2] = normalizeCharacterPair(char1, char2);
+  return `${c1}:${c2}`;
+}
+
+function pairWeaponLookupKey(char1: number, weapon1: number, char2: number, weapon2: number): string {
+  const [c1, w1, c2, w2] = normalizeCharacterWeaponPair(char1, weapon1, char2, weapon2);
+  return `${c1}:${w1}|${c2}:${w2}`;
 }
 
 const TRIO_WEAPON_SEARCH_SELECT =
@@ -386,6 +400,29 @@ export class StatsService {
   private async fetchTrioWeaponPair(char1: number, char2: number) {
     const client = this.supabase.getClient();
     const [c1, c2] = normalizeCharacterPair(char1, char2);
+    const key = pairLookupKey(c1, c2);
+
+    for (const lookupTable of TRIO_WEAPON_PAIR_LOOKUP_TABLES) {
+      try {
+        const lookupRows = await this.fetchSearchPages(
+          (offset, pageEnd) =>
+            client
+              .from(lookupTable)
+              .select(TRIO_WEAPON_SEARCH_SELECT)
+              .eq('pair_key', key)
+              .order('total_games', { ascending: false })
+              .range(offset, pageEnd),
+          TRIO_WEAPON_FULL_FETCH_LIMIT,
+        );
+
+        if (lookupRows.length > 0) {
+          return aggregateSearchRows(lookupRows).filter((row) => !hasExcludedTrio(row));
+        }
+      } catch (error) {
+        if (!isMissingRelationError(error)) throw error;
+      }
+    }
+
     const rows = (
       await Promise.all(
         TRIO_WEAPON_SEARCH_PAIR_POSITIONS.map((position) =>
@@ -410,6 +447,29 @@ export class StatsService {
   private async fetchTrioWeaponPairWeaponExact(char1: number, weapon1: number, char2: number, weapon2: number) {
     const client = this.supabase.getClient();
     const [c1, w1, c2, w2] = normalizeCharacterWeaponPair(char1, weapon1, char2, weapon2);
+    const key = pairWeaponLookupKey(c1, w1, c2, w2);
+
+    for (const lookupTable of TRIO_WEAPON_PAIR_LOOKUP_TABLES) {
+      try {
+        const lookupRows = await this.fetchSearchPages(
+          (offset, pageEnd) =>
+            client
+              .from(lookupTable)
+              .select(TRIO_WEAPON_SEARCH_SELECT)
+              .eq('pair_weapon_key', key)
+              .order('total_games', { ascending: false })
+              .range(offset, pageEnd),
+          EXACT_PAIR_WEAPON_FETCH_LIMIT,
+        );
+
+        if (lookupRows.length > 0) {
+          return aggregateSearchRows(lookupRows).filter((row) => !hasExcludedTrio(row));
+        }
+      } catch (error) {
+        if (!isMissingRelationError(error)) throw error;
+      }
+    }
+
     const rows = (
       await Promise.all(
         TRIO_WEAPON_SEARCH_PAIR_POSITIONS.map((position) =>

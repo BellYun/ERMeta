@@ -19,7 +19,6 @@ import { withCurrentSeoLocale } from "@/lib/localizedPath";
 import type { CharacterRankingData, RankingResponse } from "@/lib/ranking";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
-import { useFilter } from "../FilterContext";
 import { TierBadge } from "../TierBadge";
 import { PatchNoteTooltip } from "./PatchNoteTooltip";
 import type { PrevStats, DisplayRow } from "./types";
@@ -79,10 +78,11 @@ interface TierRankingTableProps {
 }
 
 export function TierRankingTable({ initialData }: TierRankingTableProps) {
-  const { patch, tier } = useFilter();
   const t = useTranslations("tierRanking");
   const [activeRole, setActiveRole] = React.useState<RoleTabValue>(ALL_ROLE);
   const rankingData = initialData ?? null;
+  const patch = rankingData?.patchVersion ?? "";
+  const matchmakingTier = rankingData?.tier ?? "";
   const isLoading = !initialData;
   const [activeKey, setActiveKey] = React.useState<string | null>(null);
   const [sortKey, setSortKey] = React.useState<SortKey>("rank");
@@ -137,7 +137,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
 
   React.useEffect(() => {
     setActiveKey(null);
-  }, [patch, tier, activeRole, sortKey, sortDir, showAll]);
+  }, [patch, matchmakingTier, activeRole, sortKey, sortDir, showAll]);
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -155,7 +155,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
       rank: char.rank,
       tier: char.tier ?? "",
       patch: patch ?? "",
-      matchmakingTier: tier as TierGroupEnum,
+      matchmakingTier: matchmakingTier as TierGroupEnum,
     });
     router.push(
       withCurrentSeoLocale(pathname, `/character/${char.code}?weapon=${char.weaponCode}`)

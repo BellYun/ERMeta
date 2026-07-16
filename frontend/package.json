@@ -17,6 +17,7 @@
     "test:e2e": "node scripts/run-playwright.mjs test",
     "test:e2e:ui": "node scripts/run-playwright.mjs test --ui",
     "test:e2e:install": "playwright install --with-deps chromium",
+    "build:synergy-matrix": "node scripts/build-synergy-character-matrix.mjs",
     "fetch-l10n": "node --env-file=.env.local scripts/fetch-l10n.mjs",
     "prepare": "cd .. && husky"
   },

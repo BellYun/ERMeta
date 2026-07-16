@@ -31,6 +31,7 @@
     "ariaMain": "Main navigation",
     "metaAnalysis": "Meta Analysis",
     "synergyRecommendation": "Team Data",
+    "synergyMatrix": "Synergy Matrix",
     "characterAnalysis": "Character Analysis",
     "characterLab": "Role Groups",
     "dataLab": "Data Lab",
@@ -393,6 +394,7 @@
   "synergyResults": {
     "sort": {
       "recommended": "Metric order",
+      "tierScore": "Tier Score",
       "averageRP": "Avg RP",
       "winRate": "Win Rate",
       "totalGames": "Games",
@@ -401,6 +403,9 @@
     "titleSingle": "Detailed comps with {ally}",
     "titlePair": "Detailed comps for {ally1} + {ally2}",
     "focusFilter": "Prioritizing {count} pool picks",
+    "minimumGames": "Minimum sample",
+    "allSamples": "All",
+    "gamesAtLeast": "{count}+ games",
     "copied": "Copied!",
     "share": "Share",
     "reset": "Reset",
@@ -417,6 +422,8 @@
     "more": "Show more ({visible}/{total})",
     "emptyFiltered": "No comps match your current character pool. Try widening the pool.",
     "emptyNoData": "Checking samples for this team setup.",
+    "emptyMinimumGames": "No comps have at least {count} games.",
+    "showAllSamples": "Show all samples",
     "clearAllies": "Clear allies",
     "timeout": "The request timed out. Please try again.",
     "genericError": "Something went wrong."
@@ -559,7 +566,40 @@
     "rp": "RP",
     "games": "Games",
     "averageRank": "Avg Rank",
-    "moreTraits": "Show {count} more traits"
+    "moreTraits": "Show {count} more traits",
+    "insight": {
+      "operationLabel": "Playstyle Profile: {value}",
+      "metricSummary": "Compared with similar candidates · top {rpTop}% RP · top {winTop}% win rate · {rankStanding} · {games} games ({confidence})",
+      "rankStanding": {
+        "top": "top {value}% average placement",
+        "bottom": "bottom {value}% average placement"
+      },
+      "confidence": {
+        "low": "low confidence",
+        "medium": "medium confidence",
+        "high": "high confidence"
+      },
+      "playStyle": {
+        "snowball": "All-Around Strength",
+        "tempo": "Win Conversion",
+        "stable": "Placement Stability",
+        "lateValue": "Placement-First",
+        "volatile": "Late-Game Upside",
+        "climbVolatile": "Volatile Climb",
+        "trap": "Use with Caution",
+        "balanced": "Balanced"
+      },
+      "playStyleDescription": {
+        "snowball": "With a {winRate}% win rate, {averageRank} average placement, and {averageRP} average RP, this comp performs well across all three metrics.",
+        "tempo": "A {winRate}% win rate and {averageRP} average RP show strong ability to turn top finishes into wins.",
+        "stable": "A {averageRank} average placement and {averageRP} average RP show consistent top finishes and steady climbing.",
+        "lateValue": "Average placement is {averageRank}, while win rate is {winRate}%. This comp is better at reaching the top ranks than finishing first.",
+        "volatile": "Win rate is strong at {winRate}%, but average placement is {averageRank}. It may exit early more often, but surviving runs convert into wins well.",
+        "climbVolatile": "Average placement is {averageRank}, but average RP is {averageRP}. Results vary widely, while successful games still give strong climbing rewards.",
+        "trap": "Win rate is {winRate}%, average placement is {averageRank}, and average RP is {averageRP}; all three metrics are weak for a default ranked comp.",
+        "balanced": "Win rate is {winRate}%, average placement is {averageRank}, and average RP is {averageRP}, without one metric dominating the profile."
+      }
+    }
   },
   "pageError": {
     "description": "There may be a temporary server or connection issue. The problem has been reported automatically.",

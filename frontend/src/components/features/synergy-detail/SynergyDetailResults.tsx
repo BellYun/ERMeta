@@ -13,14 +13,12 @@ import { analytics, type SynergySortBy } from "@/lib/analytics";
 import { resolveCharacterName } from "@/lib/characterMap";
 import { isMobileDevice } from "@/lib/device";
 import { FetchHttpError, FetchRetriesExhaustedError, fetchWithRetry } from "@/lib/fetchWithRetry";
+import { buildTrioInsightBenchmarks, getTrioOperationProfile } from "@/lib/synergyInsights";
+import { MINIMUM_GAMES_OPTIONS, parseMinimumGamesParam } from "@/lib/synergyUrlState";
+import { comparePerformanceTierStats } from "@/lib/tierScoring";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
-import {
-  getAllCharacterCodes,
-  getFallbackMap,
-  parseSortByParam,
-  SORT_OPTIONS,
-} from "../synergy/constants";
+import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "../synergy/constants";
 import { ComboWeaponCard, type GroupedCombo } from "./ComboWeaponCard";
 import type { TrioWeaponResult, SortBy } from "./types";
 import {
@@ -30,10 +28,21 @@ import {
 } from "./WeaponAllySelector";
 
 const MIN_MEANINGFUL_GAMES = 10;
-const VIRTUAL_CARD_ESTIMATE = 92;
+const VIRTUAL_CARD_ESTIMATE = 150; // 운영 안내가 포함된 접힌 카드의 실측 높이
 const VISIBLE_RESULTS_STEP = 30;
 
-/** 무기·코어 무시하고 캐릭터(c1,c2,c3) 기준으로 그룹화 */
+const DETAIL_SORT_OPTIONS: {
+  value: SortBy;
+  labelKey: "tierScore" | "averageRP" | "winRate" | "averageRank" | "totalGames";
+}[] = [{ value: "tierScore", labelKey: "tierScore" }, ...SORT_OPTIONS];
+
+function parseDetailSortByParam(value: string | null): SortBy {
+  return DETAIL_SORT_OPTIONS.some((option) => option.value === value)
+    ? (value as SortBy)
+    : "averageRP";
+}
+
+/** 코어만 무시하고 캐릭터+무기(c:w) 기준으로 그룹화 */
 function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
   const map = new Map<
     string,
@@ -54,7 +63,11 @@ function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
   >();
 
   for (const r of results) {
-    const key = `${r.character1}-${r.character2}-${r.character3}`;
+    const key = [
+      `${r.character1}:${r.weaponType1}`,
+      `${r.character2}:${r.weaponType2}`,
+      `${r.character3}:${r.weaponType3}`,
+    ].join("-");
     const existing = map.get(key);
     const games = r.totalGames;
     const wins = (r.winRate * games) / 100;
@@ -92,7 +105,7 @@ function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
     }
   }
 
-  return Array.from(map.values()).map((v) => ({
+  const groups: GroupedCombo[] = Array.from(map.values()).map((v) => ({
     character1: v.c1,
     weaponType1: v.w1,
     character2: v.c2,
@@ -105,6 +118,16 @@ function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
     averageRank: v.totalGames > 0 ? v.rankSum / v.totalGames : 0,
     traitVariants: v.variants,
   }));
+  const benchmarks = buildTrioInsightBenchmarks(groups, 50);
+
+  return groups.map((group) => {
+    const operationProfile = getTrioOperationProfile(group, benchmarks);
+
+    return {
+      ...group,
+      operationProfile,
+    };
+  });
 }
 
 function sortAllyPair<T extends { charCode: number }>(allies: T[]): T[] {
@@ -140,6 +163,51 @@ async function fetchDetailRows(allies: AllySelection[], signal?: AbortSignal) {
     { signal }
   );
   return data.results ?? [];
+}
+
+function getGroupWeaponForCharacter(group: GroupedCombo, charCode: number): number | null {
+  if (group.character1 === charCode) return group.weaponType1;
+  if (group.character2 === charCode) return group.weaponType2;
+  if (group.character3 === charCode) return group.weaponType3;
+  return null;
+}
+
+function buildCoreVariantSearchParams(allies: AllySelection[], group: GroupedCombo) {
+  if (allies.length !== 2) return null;
+  const queryAllies = sortAllyPair(allies);
+  const ally1 = queryAllies[0];
+  const ally2 = queryAllies[1];
+  const pairWeapon1 = ally1.weaponCode ?? getGroupWeaponForCharacter(group, ally1.charCode);
+  const pairWeapon2 = ally2.weaponCode ?? getGroupWeaponForCharacter(group, ally2.charCode);
+  if (pairWeapon1 == null || pairWeapon2 == null) return null;
+
+  return new URLSearchParams({
+    pairCharacter1: String(ally1.charCode),
+    pairWeapon1: String(pairWeapon1),
+    pairCharacter2: String(ally2.charCode),
+    pairWeapon2: String(pairWeapon2),
+    trioCharacter1: String(group.character1),
+    trioWeapon1: String(group.weaponType1),
+    trioCharacter2: String(group.character2),
+    trioWeapon2: String(group.weaponType2),
+    trioCharacter3: String(group.character3),
+    trioWeapon3: String(group.weaponType3),
+  });
+}
+
+async function fetchCoreVariantRows(
+  allies: AllySelection[],
+  group: GroupedCombo,
+  signal?: AbortSignal
+) {
+  const params = buildCoreVariantSearchParams(allies, group);
+  if (!params) return group.traitVariants;
+
+  const data = await fetchWithRetry<{ results?: TrioWeaponResult[]; error?: string }>(
+    `/api/stats/trios-weapon/core-variants?${params.toString()}`,
+    { signal }
+  );
+  return data.results && data.results.length > 0 ? data.results : group.traitVariants;
 }
 
 function isAbortError(error: unknown) {
@@ -259,7 +327,14 @@ export function SynergyDetailResults() {
     [deferredAllies]
   );
 
-  const sortBy = React.useMemo(() => parseSortByParam(searchParams.get("sort")), [searchParams]);
+  const sortBy = React.useMemo(
+    () => parseDetailSortByParam(searchParams.get("sort")),
+    [searchParams]
+  );
+  const minimumGames = React.useMemo(
+    () => parseMinimumGamesParam(searchParams.get("minGames")),
+    [searchParams]
+  );
   const [queryAllies, setQueryAllies] = React.useState<AllySelection[]>(deferredAllies);
   const [resultsState, setResultsState] = React.useState<{
     data: TrioWeaponResult[];
@@ -403,28 +478,32 @@ export function SynergyDetailResults() {
 
     // Group by character+weapon (Level 1)
     const grouped = groupByCharWeapon(results);
+    const filteredBySample =
+      minimumGames > 0 ? grouped.filter((group) => group.totalGames >= minimumGames) : grouped;
 
     // Sort
-    if (sortBy === "averageRP") {
-      grouped.sort((a, b) => b.averageRP - a.averageRP);
+    if (sortBy === "tierScore") {
+      filteredBySample.sort(comparePerformanceTierStats);
+    } else if (sortBy === "averageRP") {
+      filteredBySample.sort((a, b) => b.averageRP - a.averageRP);
     } else if (sortBy === "winRate") {
-      grouped.sort((a, b) => b.winRate - a.winRate);
+      filteredBySample.sort((a, b) => b.winRate - a.winRate);
     } else if (sortBy === "averageRank") {
-      grouped.sort((a, b) => a.averageRank - b.averageRank);
+      filteredBySample.sort((a, b) => a.averageRank - b.averageRank);
     } else {
-      grouped.sort((a, b) => b.totalGames - a.totalGames);
+      filteredBySample.sort((a, b) => b.totalGames - a.totalGames);
     }
 
     const sampleAwareGroups =
       sortBy === "totalGames"
-        ? grouped
+        ? filteredBySample
         : [
-            ...grouped.filter((group) => group.totalGames >= MIN_MEANINGFUL_GAMES),
-            ...grouped.filter((group) => group.totalGames < MIN_MEANINGFUL_GAMES),
+            ...filteredBySample.filter((group) => group.totalGames >= MIN_MEANINGFUL_GAMES),
+            ...filteredBySample.filter((group) => group.totalGames < MIN_MEANINGFUL_GAMES),
           ];
 
     return prioritizeFocusGroups(sampleAwareGroups, deferredCharCodes, focusCharWeapons);
-  }, [results, deferredAllies, deferredCharCodes, focusCharWeapons, sortBy]);
+  }, [results, deferredAllies, deferredCharCodes, focusCharWeapons, minimumGames, sortBy]);
 
   const visibleResetKey = React.useMemo(() => {
     const allyKey = deferredAllies
@@ -434,8 +513,8 @@ export function SynergyDetailResults() {
     const focusKey = focusCharWeapons
       .map((focus) => `${focus.charCode}:${focus.weaponCode}`)
       .join("|");
-    return `${allyKey}::${focusKey}::${sortBy}`;
-  }, [deferredAllies, focusCharWeapons, sortBy]);
+    return `${allyKey}::${focusKey}::${sortBy}::${minimumGames}`;
+  }, [deferredAllies, focusCharWeapons, minimumGames, sortBy]);
 
   React.useEffect(() => {
     setVisibleCount(VISIBLE_RESULTS_STEP);
@@ -449,8 +528,11 @@ export function SynergyDetailResults() {
 
   const clearAllies = React.useCallback(() => {
     setLocalAllies([null, null]);
-    router.replace(pathname, { scroll: false });
-  }, [router, pathname]);
+    const params = new URLSearchParams(searchParams.toString());
+    ["ally1", "w1", "ally2", "w2", "a", "b"].forEach((key) => params.delete(key));
+    const nextUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+    router.replace(nextUrl, { scroll: false });
+  }, [pathname, router, searchParams]);
 
   const updateSortBy = React.useCallback(
     (nextSortBy: SortBy) => {
@@ -463,6 +545,18 @@ export function SynergyDetailResults() {
       analytics.synergySortChanged(nextSortBy);
     },
     [pathname, router, searchParams, sortBy]
+  );
+
+  const updateMinimumGames = React.useCallback(
+    (nextMinimumGames: number) => {
+      if (nextMinimumGames === minimumGames) return;
+      const params = new URLSearchParams(searchParams.toString());
+      if (nextMinimumGames === 0) params.delete("minGames");
+      else params.set("minGames", String(nextMinimumGames));
+      const nextUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+      router.replace(nextUrl, { scroll: false });
+    },
+    [minimumGames, pathname, router, searchParams]
   );
 
   // synergy_result_viewed — 같은 (ally1,ally2,sortBy) 조합은 중복 fire 금지
@@ -579,6 +673,12 @@ export function SynergyDetailResults() {
     });
   }, []);
 
+  const loadCoreVariants = React.useCallback(
+    (group: GroupedCombo, signal?: AbortSignal) =>
+      fetchCoreVariantRows(deferredAllies, group, signal),
+    [deferredAllies]
+  );
+
   const rowVirtualizer = useWindowVirtualizer({
     count: visibleRecommendations.length,
     estimateSize: () => VIRTUAL_CARD_ESTIMATE,
@@ -602,9 +702,8 @@ export function SynergyDetailResults() {
     };
   }, [visibleRecommendations.length]);
 
-  React.useEffect(() => {
-    rowVirtualizer.measure();
-  }, [visibleRecommendations, rowVirtualizer]);
+  // measureElement의 ref 콜백과 ResizeObserver가 실제 카드 높이를 갱신한다.
+  // 여기서 measure()를 호출하면 펼친 카드의 캐시도 추정치로 초기화되어 다음 카드와 겹칠 수 있다.
 
   return (
     <>
@@ -678,6 +777,7 @@ export function SynergyDetailResults() {
               </button>
               <button
                 type="button"
+                aria-label={t("clearAllies")}
                 onClick={clearAllies}
                 className="inline-flex min-h-[34px] shrink-0 items-center justify-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
               >
@@ -688,22 +788,39 @@ export function SynergyDetailResults() {
           )}
         </div>
 
-        <div className="flex w-full items-center gap-1 overflow-x-auto rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] p-0.5 xl:w-auto">
-          {SORT_OPTIONS.map(({ value, labelKey }) => (
-            <button
-              key={value}
-              onClick={() => updateSortBy(value)}
-              className={cn(
-                "dashboard-tab flex min-h-[30px] shrink-0 items-center px-3 py-1 text-[12px] font-semibold",
-                sortBy === value
-                  ? ""
-                  : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
-              )}
-              data-active={sortBy === value ? "true" : undefined}
+        <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center xl:w-auto">
+          <label className="flex shrink-0 items-center gap-2 text-[12px] font-semibold text-[var(--color-muted-foreground)]">
+            <span>{t("minimumGames")}</span>
+            <select
+              aria-label={t("minimumGames")}
+              value={minimumGames}
+              onChange={(event) => updateMinimumGames(Number(event.target.value))}
+              className="min-h-[34px] rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-[12px] font-semibold text-[var(--color-foreground)] outline-none focus:border-[var(--color-border-light)]"
             >
-              {t(`sort.${labelKey}`)}
-            </button>
-          ))}
+              {MINIMUM_GAMES_OPTIONS.map((value) => (
+                <option key={value} value={value}>
+                  {value === 0 ? t("allSamples") : t("gamesAtLeast", { count: value })}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="flex w-full items-center gap-1 overflow-x-auto rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] p-0.5 xl:w-auto">
+            {DETAIL_SORT_OPTIONS.map(({ value, labelKey }) => (
+              <button
+                key={value}
+                onClick={() => updateSortBy(value)}
+                className={cn(
+                  "dashboard-tab flex min-h-[30px] shrink-0 items-center px-3 py-1 text-[12px] font-semibold",
+                  sortBy === value
+                    ? ""
+                    : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
+                )}
+                data-active={sortBy === value ? "true" : undefined}
+              >
+                {t(`sort.${labelKey}`)}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -814,6 +931,7 @@ export function SynergyDetailResults() {
                       getTraitName={getTraitName}
                       selectedCharCodes={deferredCharCodes}
                       isFocusPoolCombo={isFocusPoolCombo(group)}
+                      loadTraitVariants={loadCoreVariants}
                       onRecommendationClick={onRecommendationClick}
                     />
                   </div>
@@ -844,13 +962,18 @@ export function SynergyDetailResults() {
               strokeWidth={1.75}
             />
             <p className="text-[14px] font-medium text-[var(--color-foreground)]">
-              {t("emptyNoData")}
+              {minimumGames > 0
+                ? t("emptyMinimumGames", { count: minimumGames })
+                : t("emptyNoData")}
             </p>
             <button
-              onClick={clearAllies}
+              onClick={() => {
+                if (minimumGames > 0) updateMinimumGames(0);
+                else clearAllies();
+              }}
               className="mt-3 text-[12px] font-semibold text-[var(--color-primary-hover)] hover:underline active:opacity-70 min-h-[44px] px-2"
             >
-              {t("clearAllies")}
+              {minimumGames > 0 ? t("showAllSamples") : t("clearAllies")}
             </button>
           </div>
         )}

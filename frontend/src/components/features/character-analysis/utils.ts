@@ -1,5 +1,6 @@
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route";
 import type { Tier } from "@/lib/design-tokens";
+import { assignPerformanceTier } from "@/lib/tierScoring";
 
 export function assignCharTier(stat: {
   winRate: number;
@@ -7,26 +8,7 @@ export function assignCharTier(stat: {
   averageRank: number;
   averageRP: number;
 }): Tier {
-  // 1~8등 배틀로얄 기댓값 기준 정규화
-  //   기대 승률      = 1/8 = 12.5%  (σ ≈ 3.5%p)
-  //   기대 상위3위율 = 3/8 = 37.5%  (σ ≈ 7%p)
-  //   기대 평균순위  = 4.5           (σ ≈ 1.5)
-  const zWin = (stat.winRate - 12.5) / 3.5;
-
-  // top3Rate 우선, 없으면(무기별 통계) averageRank로 대체 (낮을수록 좋으므로 부호 반전)
-  const zSurvival =
-    stat.top3Rate !== undefined ? (stat.top3Rate - 37.5) / 7.0 : (4.5 - stat.averageRank) / 1.5;
-
-  const zRP = stat.averageRP / 15.0;
-
-  // 승률 40%, 생존력(상위3위율·평균순위) 35%, 평균RP 25%
-  const score = zWin * 0.4 + zSurvival * 0.35 + zRP * 0.25;
-
-  if (score >= 1.0) return "S";
-  if (score >= 0.3) return "A";
-  if (score >= -0.3) return "B";
-  if (score >= -1.0) return "C";
-  return "D";
+  return assignPerformanceTier(stat);
 }
 
 export async function fetchStats(

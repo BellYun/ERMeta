@@ -31,6 +31,7 @@
     "ariaMain": "메인 내비게이션",
     "metaAnalysis": "메타 분석",
     "synergyRecommendation": "조합 데이터",
+    "synergyMatrix": "시너지 매트릭스",
     "characterAnalysis": "캐릭터 분석",
     "characterLab": "캐릭터 유형 분석",
     "dataLab": "데이터 랩",
@@ -387,6 +388,7 @@
   "synergyResults": {
     "sort": {
       "recommended": "지표순",
+      "tierScore": "티어 점수",
       "averageRP": "평균 RP",
       "winRate": "승률",
       "totalGames": "게임 수",
@@ -395,6 +397,9 @@
     "titleSingle": "{ally} 포함 상세 조합",
     "titlePair": "{ally1} + {ally2} 상세 조합",
     "focusFilter": "내 풀 {count}명 우선 표시",
+    "minimumGames": "최소 표본",
+    "allSamples": "전체",
+    "gamesAtLeast": "{count}판 이상",
     "copied": "복사됨!",
     "share": "공유",
     "reset": "초기화",
@@ -411,6 +416,8 @@
     "more": "더보기 ({visible}/{total})",
     "emptyFiltered": "내 캐릭터 풀에 해당하는 조합이 없습니다. 캐릭터 풀을 넓혀보세요.",
     "emptyNoData": "해당 조합 표본을 확인 중입니다",
+    "emptyMinimumGames": "{count}판 이상인 조합이 없습니다.",
+    "showAllSamples": "전체 표본 보기",
     "clearAllies": "아군 초기화하기",
     "timeout": "요청 시간이 초과되었습니다. 다시 시도해주세요.",
     "genericError": "오류가 발생했습니다."
@@ -553,7 +560,40 @@
     "rp": "RP",
     "games": "게임 수",
     "averageRank": "평균 순위",
-    "moreTraits": "특성 {count}개 더 보기"
+    "moreTraits": "특성 {count}개 더 보기",
+    "insight": {
+      "operationLabel": "운영 성향: {value}",
+      "metricSummary": "비슷한 후보와 비교 · RP 상위 {rpTop}% · 승률 상위 {winTop}% · {rankStanding} · 표본 {games}판 ({confidence})",
+      "rankStanding": {
+        "top": "평균 순위 상위 {value}%",
+        "bottom": "평균 순위 하위 {value}%"
+      },
+      "confidence": {
+        "low": "낮은 신뢰도",
+        "medium": "보통 신뢰도",
+        "high": "높은 신뢰도"
+      },
+      "playStyle": {
+        "snowball": "전구간 우세형",
+        "tempo": "승리 전환형",
+        "stable": "순방 안정형",
+        "lateValue": "순방 우세형",
+        "volatile": "후반 고점형",
+        "climbVolatile": "등반 변동형",
+        "trap": "주의 필요",
+        "balanced": "균형형"
+      },
+      "playStyleDescription": {
+        "snowball": "승률 {winRate}%, 평균 순위 {averageRank}위, 평균 RP {averageRP}로 세 지표가 모두 좋은 조합입니다.",
+        "tempo": "승률 {winRate}%, 평균 RP {averageRP}로 상위권에 들었을 때 1등으로 마무리하는 힘이 좋은 조합입니다.",
+        "stable": "평균 순위 {averageRank}위, 평균 RP {averageRP}로 꾸준히 상위권에 들며 RP를 챙기는 조합입니다.",
+        "lateValue": "평균 순위는 {averageRank}위인데 승률은 {winRate}%입니다. 우승보다 꾸준한 상위권 진입에 강합니다.",
+        "volatile": "승률은 {winRate}%로 높은 편인데 평균 순위는 {averageRank}위입니다. 초반 탈락 위험은 있지만, 살아남으면 1등까지 갈 힘이 좋은 조합입니다.",
+        "climbVolatile": "평균 순위 {averageRank}위로 결과 편차는 크지만 평균 RP는 {averageRP}입니다. 잘 풀린 판의 RP 보상이 큰 조합입니다.",
+        "trap": "승률 {winRate}%, 평균 순위 {averageRank}위, 평균 RP {averageRP}로 세 지표가 모두 낮아 고정픽으로 추천하기 어렵습니다.",
+        "balanced": "승률 {winRate}%, 평균 순위 {averageRank}위, 평균 RP {averageRP}로 특정 지표에 치우치지 않은 조합입니다."
+      }
+    }
   },
   "pageError": {
     "description": "서버 연결에 문제가 있거나 일시적인 오류입니다. 문제가 자동으로 보고되었습니다.",

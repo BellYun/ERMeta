@@ -282,7 +282,8 @@ export function WeaponAllySelector() {
 
   const updateUrl = React.useCallback(
     (a1: AllySelection | null, a2: AllySelection | null) => {
-      const params = new URLSearchParams();
+      const params = new URLSearchParams(window.location.search);
+      ["ally1", "w1", "ally2", "w2", "a", "b"].forEach((key) => params.delete(key));
       if (a1) {
         params.set("ally1", String(a1.charCode));
         if (a1.weaponCode) params.set("w1", String(a1.weaponCode));
@@ -406,6 +407,7 @@ export function WeaponAllySelector() {
         {ally1 ? (
           <SlotWeaponFilled
             code={ally1.charCode}
+            weaponCode={ally1.weaponCode}
             name={getCharName(ally1.charCode)}
             weaponName={resolveWeaponLabel(ally1)}
             onRemove={() => removeAlly(ally1.charCode)}
@@ -416,6 +418,7 @@ export function WeaponAllySelector() {
         {ally2 ? (
           <SlotWeaponFilled
             code={ally2.charCode}
+            weaponCode={ally2.weaponCode}
             name={getCharName(ally2.charCode)}
             weaponName={resolveWeaponLabel(ally2)}
             onRemove={() => removeAlly(ally2.charCode)}
@@ -509,17 +512,23 @@ export function WeaponAllySelector() {
 
 function SlotWeaponFilled({
   code,
+  weaponCode,
   name,
   weaponName,
   onRemove,
 }: {
   code: number;
+  weaponCode: number | null;
   name: string;
   weaponName: string;
   onRemove: () => void;
 }) {
   return (
-    <div className="flex w-full items-center gap-3 rounded-md border border-[var(--color-border-light)] bg-[var(--color-surface)] px-4 py-3">
+    <div
+      data-ally-character={code}
+      data-ally-weapon={weaponCode ?? 0}
+      className="flex w-full items-center gap-3 rounded-md border border-[var(--color-border-light)] bg-[var(--color-surface)] px-4 py-3"
+    >
       <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded bg-[var(--color-border)] outline outline-1 outline-[var(--color-border)]">
         <Image
           src={getCharacterMiniWebpUrl(code)}

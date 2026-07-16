@@ -6,6 +6,10 @@ import { createServerClient } from "@/lib/supabase";
 
 const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]);
 const TRIO_WEAPON_SEARCH_TABLE = "v2_CharacterTrioWeaponSearch_all";
+const TRIO_WEAPON_PAIR_LOOKUP_TABLES = [
+  "v2_CharacterTrioWeaponPairLookup_agg_next",
+  "v2_CharacterTrioWeaponPairLookup_all_next",
+] as const;
 
 // .or() 한 번에 character1/2/3 세 컬럼 OR 절을 던지면 인기 캐릭(예: 자히르=1)에서
 // PostgREST statement_timeout(~3s) 초과 → 500. 컬럼당 단일 인덱스만 쓰는 .eq() 3쿼리
@@ -15,7 +19,7 @@ const PARALLEL_FETCH_LIMIT = 5000;
 const FULL_FETCH_LIMIT = 5000;
 const EXACT_PAIR_WEAPON_FETCH_LIMIT = 20000;
 const MAX_RESPONSE_LIMIT = FULL_FETCH_LIMIT;
-const TRIO_WEAPON_CACHE_VERSION = "v8";
+const TRIO_WEAPON_CACHE_VERSION = "v13";
 
 // L1 캐시 TTL — source 가 사전 집계 테이블(v2_CharacterTrioWeapon* / search_all)이고
 // tag-based invalidation 으로 즉시 갱신되므로 7d. 카디널리티가 가장 큰 라우트라
@@ -43,6 +47,21 @@ function normalizeCharacterWeaponPair(
   weapon2: number
 ): [number, number, number, number] {
   return char1 <= char2 ? [char1, weapon1, char2, weapon2] : [char2, weapon2, char1, weapon1];
+}
+
+function pairLookupKey(char1: number, char2: number): string {
+  const [c1, c2] = normalizeCharacterPair(char1, char2);
+  return `${c1}:${c2}`;
+}
+
+function pairWeaponLookupKey(
+  char1: number,
+  weapon1: number,
+  char2: number,
+  weapon2: number
+): string {
+  const [c1, w1, c2, w2] = normalizeCharacterWeaponPair(char1, weapon1, char2, weapon2);
+  return `${c1}:${w1}|${c2}:${w2}`;
 }
 
 function bayesianRP(averageRP: number, totalGames: number, globalAvgRP: number): number {
@@ -113,6 +132,11 @@ interface TrioWeaponMember {
   character: number;
   weapon: number;
   mainCore: number | null;
+}
+
+interface SupabaseErrorLike {
+  code?: string;
+  message?: string;
 }
 
 type SearchPositionColumn = "ally1_char" | "ally2_char" | "third_char";
@@ -272,6 +296,19 @@ function matchesWeaponFilter(
   );
 }
 
+function isMissingRelationError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const supabaseError = error as SupabaseErrorLike;
+  if (supabaseError.code === "PGRST205" || supabaseError.code === "42P01") return true;
+
+  const message = supabaseError.message ?? "";
+  return (
+    message.includes("Could not find the table") ||
+    message.includes("schema cache") ||
+    (message.includes("relation") && message.includes("does not exist"))
+  );
+}
+
 async function fetchSearchRows(
   fetchPage: (
     offset: number,
@@ -306,6 +343,29 @@ async function fetchTrioWeaponPair(char1: number, char2: number): Promise<Aggreg
   const [c1, c2] = normalizeCharacterPair(char1, char2);
   const searchSelect =
     "ally1_char,ally1_weapon,ally1_core,ally2_char,ally2_weapon,ally2_core,third_char,third_weapon,third_core,total_games,total_wins,total_rp,rank_sum";
+
+  const key = pairLookupKey(c1, c2);
+  for (const lookupTable of TRIO_WEAPON_PAIR_LOOKUP_TABLES) {
+    try {
+      const lookupRows = await fetchSearchRows(
+        (offset, pageEnd) =>
+          supabase
+            .from(lookupTable)
+            .select(searchSelect)
+            .eq("pair_key", key)
+            .order("total_games", { ascending: false })
+            .range(offset, pageEnd),
+        FULL_FETCH_LIMIT
+      );
+
+      if (lookupRows.length > 0) {
+        return aggregateSearchRows(lookupRows).filter((r) => !hasExcludedChar(r));
+      }
+    } catch (error) {
+      if (!isMissingRelationError(error)) throw error;
+    }
+  }
+
   const rows = (
     await Promise.all(
       TRIO_WEAPON_SEARCH_PAIR_POSITIONS.map((position) =>
@@ -341,6 +401,29 @@ async function fetchTrioWeaponPairWeaponExact(
   const [c1, w1, c2, w2] = normalizeCharacterWeaponPair(char1, weapon1, char2, weapon2);
   const searchSelect =
     "ally1_char,ally1_weapon,ally1_core,ally2_char,ally2_weapon,ally2_core,third_char,third_weapon,third_core,total_games,total_wins,total_rp,rank_sum";
+
+  const key = pairWeaponLookupKey(c1, w1, c2, w2);
+  for (const lookupTable of TRIO_WEAPON_PAIR_LOOKUP_TABLES) {
+    try {
+      const lookupRows = await fetchSearchRows(
+        (offset, pageEnd) =>
+          supabase
+            .from(lookupTable)
+            .select(searchSelect)
+            .eq("pair_weapon_key", key)
+            .order("total_games", { ascending: false })
+            .range(offset, pageEnd),
+        EXACT_PAIR_WEAPON_FETCH_LIMIT
+      );
+
+      if (lookupRows.length > 0) {
+        return aggregateSearchRows(lookupRows).filter((r) => !hasExcludedChar(r));
+      }
+    } catch (error) {
+      if (!isMissingRelationError(error)) throw error;
+    }
+  }
+
   const rows = (
     await Promise.all(
       TRIO_WEAPON_SEARCH_PAIR_POSITIONS.map((position) =>

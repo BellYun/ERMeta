@@ -1,38 +1,115 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
-// 🥇 시너지 공유 기능 스모크.
-// 가정 (2026-04-22 구현 예정):
-// - /synergy-detail 3명 선택 완료 시 공유 버튼 노출
-// - URL 로딩 시 ?a=&b=&c= 쿼리로 조합 자동 복원
-// - 공유 버튼 클릭 → URL 생성 (clipboard or location 변경)
-//
-// 기능 구현 전에는 실패할 수 있음. 구현 직후 본 스펙이 계약 역할.
+const trioRows = [
+  {
+    character1: 6,
+    weaponType1: 8,
+    character2: 10,
+    weaponType2: 1,
+    character3: 1,
+    weaponType3: 1,
+    mainCore1: 0,
+    mainCore2: 0,
+    mainCore3: 0,
+    totalGames: 120,
+    winRate: 24.5,
+    averageRP: 8.7,
+    averageRank: 3.5,
+  },
+  {
+    character1: 6,
+    weaponType1: 8,
+    character2: 10,
+    weaponType2: 1,
+    character3: 2,
+    weaponType3: 2,
+    mainCore1: 0,
+    mainCore2: 0,
+    mainCore3: 0,
+    totalGames: 5,
+    winRate: 40,
+    averageRP: 10.2,
+    averageRank: 3.1,
+  },
+];
 
-const hasSupabase = !!process.env.NEXT_PUBLIC_SUPABASE_URL;
+async function mockSynergyApis(page: Page) {
+  await page.route(/\/api\/stats\/trios-weapon(?:\?.*)?$/, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      headers: { "Cache-Control": "no-store" },
+      body: JSON.stringify({ results: trioRows }),
+    });
+  });
+  await page.route("**/api/traits/names*", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ names: {} }),
+    });
+  });
+}
 
-test.describe("시너지 공유 — 스모크", () => {
-  test.skip(!hasSupabase, "NEXT_PUBLIC_SUPABASE_URL 미주입 → 실 DB 의존 테스트 skip");
-
-  test("/synergy-detail?a=1&b=2&c=3 조합 직접 URL 접근 200 + h1 노출", async ({ page }) => {
-    const res = await page.goto("/synergy-detail?a=1&b=2&c=3");
-    expect(res?.status()).toBeLessThan(400);
-    await expect(page.getByRole("heading", { level: 1 }).first()).toBeVisible({ timeout: 20_000 });
+test.describe("시너지 상세 URL 공유·복원", () => {
+  test.beforeEach(async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "chromium-desktop", "데스크탑 공유 경로 전용");
+    await mockSynergyApis(page);
   });
 
-  // MSC 미확정: 공유 버튼 초기 상태 (disabled vs hidden) 설계가 확정되기 전까지 fixme.
-  // 구현 완료 후 test.fixme → test 로 전환하고 강제 계약 (toHaveCount(0)) 으로 활성화.
-  test.fixme("/synergy-detail 기본 접근 시 공유 버튼은 조합 선택 전에는 노출되지 않는다 (MSC 미확정)", async ({
+  test("비교·정렬·표본 조건을 새로고침 후 복원하고 공유 URL에 유지한다", async ({
     page,
+    context,
   }) => {
-    await page.goto("/synergy-detail");
-    const shareButton = page.getByRole("button", { name: /공유|share/i });
-    await expect(shareButton).toHaveCount(0);
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.goto("/synergy-detail?ally1=6&w1=8&ally2=10&w2=1&sort=tierScore&minGames=30");
+
+    await expect(page.locator('[data-ally-character="6"][data-ally-weapon="8"]')).toBeVisible();
+    await expect(page.locator('[data-ally-character="10"][data-ally-weapon="1"]')).toBeVisible();
+    await expect(page.getByLabel("최소 표본")).toHaveValue("30");
+    await expect(page.getByRole("button", { name: "티어 점수" })).toHaveAttribute(
+      "data-active",
+      "true"
+    );
+    await page.reload();
+
+    await expect(page.locator('[data-ally-character="6"][data-ally-weapon="8"]')).toBeVisible();
+    await expect(page.locator('[data-ally-character="10"][data-ally-weapon="1"]')).toBeVisible();
+    await expect(page.getByLabel("최소 표본")).toHaveValue("30");
+    await expect(page.getByRole("button", { name: "티어 점수" })).toHaveAttribute(
+      "data-active",
+      "true"
+    );
+
+    await page.getByRole("button", { name: "공유" }).click();
+    const sharedUrl = await page.evaluate(() => navigator.clipboard.readText());
+    const sharedParams = new URL(sharedUrl).searchParams;
+    expect(sharedParams.get("ally1")).toBe("6");
+    expect(sharedParams.get("w1")).toBe("8");
+    expect(sharedParams.get("ally2")).toBe("10");
+    expect(sharedParams.get("w2")).toBe("1");
+    expect(sharedParams.get("sort")).toBe("tierScore");
+    expect(sharedParams.get("minGames")).toBe("30");
+    expect(sharedParams.has("focus")).toBe(false);
+    expect(sharedParams.get("utm_source")).toBe("ergg_share");
+    expect(sharedParams.get("utm_medium")).toBe("clipboard");
+    expect(sharedParams.get("utm_campaign")).toBe("synergy_detail");
+
+    await page.getByRole("button", { name: "아군 초기화하기" }).click();
+    await expect.poll(() => new URL(page.url()).searchParams.has("ally1")).toBe(false);
+    const resetParams = new URL(page.url()).searchParams;
+    expect(resetParams.get("sort")).toBe("tierScore");
+    expect(resetParams.get("minGames")).toBe("30");
   });
 
-  test("3명 조합 URL 접근 시 페이지가 해당 조합으로 렌더링된다 (복원)", async ({ page }) => {
-    await page.goto("/synergy-detail?a=1&b=2&c=3");
-    // 특정 캐릭터 이미지/이름이 DOM 에 노출되는지 — 캐릭터 코드 1,2,3 은 알파(1), 아야(2), 현우(3) 로 가정
-    // 실제 구현 시 characterMap 기반으로 보강 필요
-    await expect(page.getByRole("heading", { level: 1 }).first()).toBeVisible({ timeout: 20_000 });
+  test("최소 표본 미만 조합을 숨기고 전체 표본 전환 시 다시 노출한다", async ({ page }) => {
+    await page.goto("/synergy-detail?ally1=6&w1=8&ally2=10&w2=1&minGames=10");
+
+    await expect(page.locator('a[href^="/character/1?"]').first()).toBeVisible();
+    await expect(page.locator('a[href^="/character/2?"]')).toHaveCount(0);
+
+    await page.getByLabel("최소 표본").selectOption("0");
+    await expect.poll(() => new URL(page.url()).searchParams.has("minGames")).toBe(false);
+    await expect(page.locator('a[href^="/character/2?"]').first()).toBeVisible();
   });
 });
