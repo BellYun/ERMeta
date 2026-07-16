@@ -444,7 +444,10 @@ function ComboWeaponCardImpl({
 
       {/* 특성 브레이크다운 */}
       {showTraits && (
-        <div className="px-2 sm:px-3 py-2.5 flex flex-col gap-1.5 bg-[var(--color-surface-2)] border-t border-[var(--color-border)]">
+        <div
+          data-trait-breakdown
+          className="px-2 sm:px-3 py-2.5 flex flex-col gap-1.5 bg-[var(--color-surface-2)] border-t border-[var(--color-border)]"
+        >
           {isInitialTraitFetch && (
             <div className="flex items-center justify-center rounded-md bg-[var(--color-surface)] px-3 py-3 border border-[var(--color-border-light)]">
               <Loader2 className="h-4 w-4 animate-spin text-[var(--color-primary-hover)]" />
