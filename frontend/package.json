@@ -18,7 +18,8 @@
     "test:e2e:ui": "node scripts/run-playwright.mjs test --ui",
     "test:e2e:install": "playwright install --with-deps chromium",
     "build:synergy-matrix": "node scripts/build-synergy-character-matrix.mjs",
-    "fetch-l10n": "node --env-file=.env.local scripts/fetch-l10n.mjs",
+    "build:l10n-chunks": "node scripts/build-l10n-chunks.mjs",
+    "fetch-l10n": "node --env-file=.env.local scripts/fetch-l10n.mjs && npm run build:l10n-chunks",
     "prepare": "cd .. && husky"
   },
   "dependencies": {
