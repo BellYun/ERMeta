@@ -13,7 +13,7 @@ import { getStatsPatchVersions } from "@/data/patch-notes";
 import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
 import { geistSans } from "@/lib/geistFont";
 import { getPatchAnalysisVersions } from "@/lib/patchAnalysis";
-import { loadL10nRecord } from "@/lib/serverL10n";
+import { loadL10nSeed } from "@/lib/serverL10n";
 import { buildSiteMetadata, buildWebsiteStructuredData } from "@/lib/siteMetadata";
 import { HTML_LANG_BY_LANGUAGE, loadIntlMessages } from "@/lib/staticIntl";
 
@@ -47,7 +47,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
 
   const language = LANGUAGE_BY_ROUTE_LOCALE[locale];
   const initialMessages = await loadIntlMessages(language);
-  const initialL10n = loadL10nRecord(language);
+  const initialL10nSeed = loadL10nSeed(language);
   const htmlLang = HTML_LANG_BY_LANGUAGE[language] ?? "ko";
   const structuredData = await buildWebsiteStructuredData(language, locale);
   const currentPatch = getStatsPatchVersions()[0] ?? "";
@@ -61,7 +61,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
       </head>
       <body>
         <L10nProvider
-          initialL10n={initialL10n}
+          initialL10nSeed={initialL10nSeed}
           initialMessages={initialMessages}
           initialLanguage={language}
         >

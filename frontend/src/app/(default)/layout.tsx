@@ -11,7 +11,7 @@ import { getStatsPatchVersions } from "@/data/patch-notes";
 import { DEFAULT_ROUTE_LOCALE } from "@/i18n/routing";
 import { DEFAULT_LANGUAGE } from "@/lib/detectLanguage";
 import { getPatchAnalysisVersions } from "@/lib/patchAnalysis";
-import { loadL10nRecord } from "@/lib/serverL10n";
+import { loadL10nSeed } from "@/lib/serverL10n";
 import { buildDefaultSiteMetadata, buildWebsiteStructuredData } from "@/lib/siteMetadata";
 import { HTML_LANG_BY_LANGUAGE, loadIntlMessages } from "@/lib/staticIntl";
 
@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function DefaultLayout({ children }: { children: ReactNode }) {
   const initialMessages = await loadIntlMessages(DEFAULT_LANGUAGE);
-  const initialL10n = loadL10nRecord(DEFAULT_LANGUAGE);
+  const initialL10nSeed = loadL10nSeed(DEFAULT_LANGUAGE);
   const structuredData = await buildWebsiteStructuredData(DEFAULT_LANGUAGE, DEFAULT_ROUTE_LOCALE);
   const currentPatch = getStatsPatchVersions()[0] ?? "";
   const patchAnalysisPatch = getPatchAnalysisVersions()[0] ?? "";
@@ -34,7 +34,7 @@ export default async function DefaultLayout({ children }: { children: ReactNode 
       </head>
       <body>
         <L10nProvider
-          initialL10n={initialL10n}
+          initialL10nSeed={initialL10nSeed}
           initialMessages={initialMessages}
           initialLanguage={DEFAULT_LANGUAGE}
         >

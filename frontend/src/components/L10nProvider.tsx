@@ -57,22 +57,22 @@ export function useL10n() {
 }
 
 interface L10nProviderProps {
-  initialL10n?: Record<string, string>;
+  initialL10nSeed?: Record<string, string>;
   initialMessages: IntlMessages;
   initialLanguage?: SupportedLanguage;
   children: React.ReactNode;
 }
 
 export function L10nProvider({
-  initialL10n,
+  initialL10nSeed,
   initialMessages,
   initialLanguage,
   children,
 }: L10nProviderProps) {
   const serverLanguage = initialLanguage ?? DEFAULT_LANGUAGE;
   const initialL10nMap = React.useMemo(
-    () => (initialL10n ? new Map(Object.entries(initialL10n)) : null),
-    [initialL10n]
+    () => (initialL10nSeed ? new Map(Object.entries(initialL10nSeed)) : null),
+    [initialL10nSeed]
   );
   const [language, setLanguageState] = useState<SupportedLanguage>(serverLanguage);
   const [messages, setMessages] = useState<IntlMessages>(initialMessages);
@@ -88,6 +88,9 @@ export function L10nProvider({
   const l10nCacheRef = useRef<Partial<Record<SupportedLanguage, Map<string, string>>>>(
     initialL10nMap ? { [serverLanguage]: initialL10nMap } : {}
   );
+  const seedLanguagesRef = useRef<Set<SupportedLanguage>>(
+    initialL10nMap ? new Set([serverLanguage]) : new Set()
+  );
 
   useEffect(() => {
     document.documentElement.lang = HTML_LANG_BY_LANGUAGE[language] ?? "ko";
@@ -99,6 +102,7 @@ export function L10nProvider({
 
     const cachedMessages = messageCacheRef.current[language];
     const cachedL10n = l10nCacheRef.current[language];
+    const needsFullL10n = seedLanguagesRef.current.has(language);
 
     if (cachedMessages) {
       setMessages(cachedMessages);
@@ -110,19 +114,20 @@ export function L10nProvider({
       l10nDispatch({ type: "FETCH_START" });
     }
 
-    if (cachedMessages && cachedL10n) {
+    if (cachedMessages && cachedL10n && !needsFullL10n) {
       return;
     }
 
     Promise.all([
       cachedMessages ? Promise.resolve(cachedMessages) : loadIntlMessages(language),
-      cachedL10n ? Promise.resolve(cachedL10n) : fetchAndParseL10n(language),
+      cachedL10n && !needsFullL10n ? Promise.resolve(cachedL10n) : fetchAndParseL10n(language),
     ])
       .then(([nextMessages, nextL10n]) => {
         if (ignore) return;
 
         messageCacheRef.current[language] = nextMessages;
         l10nCacheRef.current[language] = nextL10n;
+        seedLanguagesRef.current.delete(language);
         setMessages(nextMessages);
         l10nDispatch({ type: "FETCH_SUCCESS", payload: nextL10n });
       })
