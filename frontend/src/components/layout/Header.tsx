@@ -103,7 +103,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
     setMobileMenuOpen(false);
   }, [pathname]);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     const applyTheme = (nextTheme: "light" | "dark") => {
       document.documentElement.dataset.theme = nextTheme;
       document.documentElement.style.colorScheme = nextTheme;
@@ -120,18 +120,16 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
     };
 
     const systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const syncSystemTheme = () => {
-      if (getStoredTheme()) return;
-      applyTheme(systemThemeQuery.matches ? "dark" : "light");
+    const syncTheme = () => {
+      const storedTheme = getStoredTheme();
+      applyTheme(storedTheme ?? (systemThemeQuery.matches ? "dark" : "light"));
     };
 
-    const currentTheme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
-    setTheme(currentTheme);
-    syncSystemTheme();
-    systemThemeQuery.addEventListener("change", syncSystemTheme);
+    syncTheme();
+    systemThemeQuery.addEventListener("change", syncTheme);
 
-    return () => systemThemeQuery.removeEventListener("change", syncSystemTheme);
-  }, []);
+    return () => systemThemeQuery.removeEventListener("change", syncTheme);
+  }, [pathname]);
 
   const toggleTheme = () => {
     setTheme((current) => {
