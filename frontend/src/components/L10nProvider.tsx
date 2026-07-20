@@ -2,11 +2,13 @@
 
 import { NextIntlClientProvider } from "next-intl";
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import type { L10nNamespace } from "@/generated/l10nManifest";
 import { DEFAULT_LANGUAGE, LANGUAGE_COOKIE, type SupportedLanguage } from "@/lib/detectLanguage";
 import { HTML_LANG_BY_LANGUAGE, loadIntlMessages, type IntlMessages } from "@/lib/staticIntl";
-import { fetchAndParseL10n } from "@/utils/l10n";
+import { fetchL10nNamespace } from "@/utils/l10n";
 
 const COOKIE_MAX_AGE_DAYS = 365;
+const EMPTY_L10N = new Map<string, string>();
 
 function setLanguageCookie(lang: SupportedLanguage) {
   if (typeof document === "undefined") return;
@@ -28,7 +30,7 @@ type L10nAction =
 const l10nReducer = (state: L10nState, action: L10nAction): L10nState => {
   switch (action.type) {
     case "FETCH_START":
-      return { ...state, loading: true, error: null };
+      return { l10n: EMPTY_L10N, loading: true, error: null };
     case "FETCH_SUCCESS":
       return { ...state, loading: false, error: null, l10n: action.payload };
     case "FETCH_ERROR":
@@ -54,6 +56,59 @@ export function useL10n() {
     throw new Error("useL10n must be used within a L10nProvider");
   }
   return context;
+}
+
+interface L10nNamespaceState {
+  language: SupportedLanguage;
+  namespace: L10nNamespace;
+  l10n: Map<string, string>;
+  loading: boolean;
+  error: string | null;
+}
+
+/** 현재 기능에서 요구하는 l10n namespace만 지연 로드한다. */
+export function useL10nNamespace(namespace: L10nNamespace) {
+  const context = useL10n();
+  const { language } = context;
+  const [state, setState] = useState<L10nNamespaceState | null>(null);
+
+  useEffect(() => {
+    if (namespace === "core") return;
+
+    let ignore = false;
+
+    fetchL10nNamespace(language, namespace)
+      .then((nextL10n) => {
+        if (!ignore) {
+          setState({ language, namespace, l10n: nextL10n, loading: false, error: null });
+        }
+      })
+      .catch((error) => {
+        if (!ignore) {
+          setState({
+            language,
+            namespace,
+            l10n: EMPTY_L10N,
+            loading: false,
+            error: error instanceof Error ? error.message : "l10n 로딩 실패",
+          });
+        }
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, [language, namespace]);
+
+  if (namespace === "core") {
+    return { l10n: context.l10n, loading: context.loading, error: context.error };
+  }
+
+  if (!state || state.language !== language || state.namespace !== namespace) {
+    return { l10n: EMPTY_L10N, loading: true, error: null };
+  }
+
+  return { l10n: state.l10n, loading: state.loading, error: state.error };
 }
 
 interface L10nProviderProps {
@@ -88,9 +143,6 @@ export function L10nProvider({
   const l10nCacheRef = useRef<Partial<Record<SupportedLanguage, Map<string, string>>>>(
     initialL10nMap ? { [serverLanguage]: initialL10nMap } : {}
   );
-  const seedLanguagesRef = useRef<Set<SupportedLanguage>>(
-    initialL10nMap ? new Set([serverLanguage]) : new Set()
-  );
 
   useEffect(() => {
     document.documentElement.lang = HTML_LANG_BY_LANGUAGE[language] ?? "ko";
@@ -102,7 +154,6 @@ export function L10nProvider({
 
     const cachedMessages = messageCacheRef.current[language];
     const cachedL10n = l10nCacheRef.current[language];
-    const needsFullL10n = seedLanguagesRef.current.has(language);
 
     if (cachedMessages) {
       setMessages(cachedMessages);
@@ -114,20 +165,19 @@ export function L10nProvider({
       l10nDispatch({ type: "FETCH_START" });
     }
 
-    if (cachedMessages && cachedL10n && !needsFullL10n) {
+    if (cachedMessages && cachedL10n) {
       return;
     }
 
     Promise.all([
       cachedMessages ? Promise.resolve(cachedMessages) : loadIntlMessages(language),
-      cachedL10n && !needsFullL10n ? Promise.resolve(cachedL10n) : fetchAndParseL10n(language),
+      cachedL10n ? Promise.resolve(cachedL10n) : fetchL10nNamespace(language, "core"),
     ])
       .then(([nextMessages, nextL10n]) => {
         if (ignore) return;
 
         messageCacheRef.current[language] = nextMessages;
         l10nCacheRef.current[language] = nextL10n;
-        seedLanguagesRef.current.delete(language);
         setMessages(nextMessages);
         l10nDispatch({ type: "FETCH_SUCCESS", payload: nextL10n });
       })
@@ -148,6 +198,10 @@ export function L10nProvider({
   const setLanguage = (lang: SupportedLanguage) => {
     if (lang === language) return;
     setLanguageCookie(lang);
+    const cachedL10n = l10nCacheRef.current[lang];
+    l10nDispatch(
+      cachedL10n ? { type: "FETCH_SUCCESS", payload: cachedL10n } : { type: "FETCH_START" }
+    );
     setLanguageState(lang);
   };
 
