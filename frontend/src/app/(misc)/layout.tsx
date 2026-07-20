@@ -7,7 +7,7 @@ import { RootDocumentExtras } from "@/components/RootDocumentExtras";
 import { ThemeInitScript } from "@/components/ThemeInitScript";
 import { DEFAULT_LANGUAGE } from "@/lib/detectLanguage";
 import { geistSans } from "@/lib/geistFont";
-import { loadL10nRecord } from "@/lib/serverL10n";
+import { loadL10nSeed } from "@/lib/serverL10n";
 import { HTML_LANG_BY_LANGUAGE, loadIntlMessages } from "@/lib/staticIntl";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function MiscLayout({ children }: { children: ReactNode }) {
   const initialMessages = await loadIntlMessages(DEFAULT_LANGUAGE);
-  const initialL10n = loadL10nRecord(DEFAULT_LANGUAGE);
+  const initialL10nSeed = loadL10nSeed(DEFAULT_LANGUAGE);
 
   return (
     <html
@@ -39,7 +39,7 @@ export default async function MiscLayout({ children }: { children: ReactNode }) 
       </head>
       <body>
         <L10nProvider
-          initialL10n={initialL10n}
+          initialL10nSeed={initialL10nSeed}
           initialMessages={initialMessages}
           initialLanguage={DEFAULT_LANGUAGE}
         >
