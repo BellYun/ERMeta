@@ -2,7 +2,7 @@
 
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import { X, Users, Loader2, Info, Share2 } from "lucide-react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary";
@@ -14,6 +14,7 @@ import { resolveCharacterName } from "@/lib/characterMap";
 import { isMobileDevice } from "@/lib/device";
 import { FetchHttpError, FetchRetriesExhaustedError, fetchWithRetry } from "@/lib/fetchWithRetry";
 import { buildTrioInsightBenchmarks, getTrioOperationProfile } from "@/lib/synergyInsights";
+import { buildSynergyShareUrl } from "@/lib/synergyShare";
 import { MINIMUM_GAMES_OPTIONS, parseMinimumGamesParam } from "@/lib/synergyUrlState";
 import { comparePerformanceTierStats } from "@/lib/tierScoring";
 import { cn } from "@/lib/utils";
@@ -258,7 +259,6 @@ export function SynergyDetailResults() {
   const { l10n } = useL10n();
   const t = useTranslations("synergyResults");
   const searchParams = useSearchParams();
-  const router = useRouter();
   const pathname = usePathname();
   const { focusCharWeapons } = useFocusCharWeapons();
   const [localAllies, setLocalAllies] = React.useState<
@@ -327,14 +327,20 @@ export function SynergyDetailResults() {
     [deferredAllies]
   );
 
-  const sortBy = React.useMemo(
+  const urlSortBy = React.useMemo(
     () => parseDetailSortByParam(searchParams.get("sort")),
     [searchParams]
   );
-  const minimumGames = React.useMemo(
+  const urlMinimumGames = React.useMemo(
     () => parseMinimumGamesParam(searchParams.get("minGames")),
     [searchParams]
   );
+  const [sortBy, setSortBy] = React.useState<SortBy>(urlSortBy);
+  const [minimumGames, setMinimumGames] = React.useState(urlMinimumGames);
+
+  React.useEffect(() => setSortBy(urlSortBy), [urlSortBy]);
+  React.useEffect(() => setMinimumGames(urlMinimumGames), [urlMinimumGames]);
+
   const [queryAllies, setQueryAllies] = React.useState<AllySelection[]>(deferredAllies);
   const [resultsState, setResultsState] = React.useState<{
     data: TrioWeaponResult[];
@@ -526,37 +532,43 @@ export function SynergyDetailResults() {
   );
   const hasMoreRecommendations = visibleRecommendations.length < recommendations.length;
 
+  const replaceSearchParams = React.useCallback(
+    (params: URLSearchParams) => {
+      const nextUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+      window.history.replaceState(window.history.state, "", nextUrl);
+    },
+    [pathname]
+  );
+
   const clearAllies = React.useCallback(() => {
     setLocalAllies([null, null]);
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(window.location.search);
     ["ally1", "w1", "ally2", "w2", "a", "b"].forEach((key) => params.delete(key));
-    const nextUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
-    router.replace(nextUrl, { scroll: false });
-  }, [pathname, router, searchParams]);
+    replaceSearchParams(params);
+  }, [replaceSearchParams]);
 
   const updateSortBy = React.useCallback(
     (nextSortBy: SortBy) => {
       if (nextSortBy === sortBy) return;
-      const params = new URLSearchParams(searchParams.toString());
-      if (nextSortBy === "averageRP") params.delete("sort");
-      else params.set("sort", nextSortBy);
-      const nextUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
-      router.replace(nextUrl, { scroll: false });
+      setSortBy(nextSortBy);
+      const params = new URLSearchParams(window.location.search);
+      params.set("sort", nextSortBy);
+      replaceSearchParams(params);
       analytics.synergySortChanged(nextSortBy);
     },
-    [pathname, router, searchParams, sortBy]
+    [replaceSearchParams, sortBy]
   );
 
   const updateMinimumGames = React.useCallback(
     (nextMinimumGames: number) => {
       if (nextMinimumGames === minimumGames) return;
-      const params = new URLSearchParams(searchParams.toString());
+      setMinimumGames(nextMinimumGames);
+      const params = new URLSearchParams(window.location.search);
       if (nextMinimumGames === 0) params.delete("minGames");
       else params.set("minGames", String(nextMinimumGames));
-      const nextUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
-      router.replace(nextUrl, { scroll: false });
+      replaceSearchParams(params);
     },
-    [minimumGames, pathname, router, searchParams]
+    [minimumGames, replaceSearchParams]
   );
 
   // synergy_result_viewed — 같은 (ally1,ally2,sortBy) 조합은 중복 fire 금지
@@ -739,11 +751,7 @@ export function SynergyDetailResults() {
                         })
                       : t("titleSingle", { ally: getCharName(selectedCharCodes[0]) });
                   const buildShareUrl = (method: "native" | "clipboard") => {
-                    const u = new URL(window.location.href);
-                    u.searchParams.set("utm_source", "ergg_share");
-                    u.searchParams.set("utm_medium", method);
-                    u.searchParams.set("utm_campaign", "synergy_detail");
-                    return u.toString();
+                    return buildSynergyShareUrl(window.location.href, selectedCharCodes, method);
                   };
                   if (isMobileDevice() && typeof navigator.share === "function") {
                     navigator

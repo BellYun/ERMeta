@@ -13,35 +13,18 @@ import { SynergyDetailClient } from "@/components/features/synergy-detail/Synerg
 import { getCharacterName } from "@/lib/characterMap";
 import { BASE_URL } from "@/lib/siteMetadata";
 
-type SearchParams = Promise<Record<string, string | string[] | undefined>>;
-
-function parseAllyCode(raw: string | string[] | undefined): number | null {
-  const value = Array.isArray(raw) ? raw[0] : raw;
-  if (!value) return null;
-  const code = Number.parseInt(value, 10);
-  return Number.isFinite(code) && code > 0 ? code : null;
-}
-
-function getFirstParam(
-  params: Record<string, string | string[] | undefined>,
-  ...keys: string[]
-): string | string[] | undefined {
-  for (const key of keys) {
-    const value = params[key];
-    if (value != null) return value;
-  }
-  return undefined;
+interface SynergyDetailMetadataOptions {
+  ally1?: number | null;
+  ally2?: number | null;
+  pathname?: string;
 }
 
 export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}): Promise<Metadata> {
-  const params = await searchParams;
+  ally1 = null,
+  ally2 = null,
+  pathname = "/synergy-detail",
+}: SynergyDetailMetadataOptions = {}): Promise<Metadata> {
   const t = await getTranslations("synergyDetailMetadata");
-  const ally1 = parseAllyCode(getFirstParam(params, "ally1", "a"));
-  const ally2 = parseAllyCode(getFirstParam(params, "ally2", "b"));
 
   const name1 = ally1 ? getCharacterName(ally1) : null;
   const name2 = ally2 ? getCharacterName(ally2) : null;
@@ -82,7 +65,7 @@ export async function generateMetadata({
     openGraph: {
       title: t("socialTitle", { headline }),
       description,
-      url: "/synergy-detail",
+      url: pathname,
       images: [{ url: ogImageUrl, width: 1200, height: 630 }],
     },
     twitter: {
@@ -91,7 +74,7 @@ export async function generateMetadata({
       description,
       images: [ogImageUrl],
     },
-    alternates: { canonical: "/synergy-detail" },
+    alternates: { canonical: pathname },
   };
 }
 

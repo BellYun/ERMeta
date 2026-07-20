@@ -119,6 +119,16 @@ export function getCharacterName(code: number): string {
   return CHARACTER_NAMES[code] ?? `코드: ${code}`;
 }
 
+/** 공유 URL처럼 외부 입력에서 받은 코드가 실제 플레이어 캐릭터인지 확인한다. */
+export function isKnownCharacterCode(code: number): boolean {
+  return (
+    Number.isInteger(code) &&
+    code > 0 &&
+    code < 9000 &&
+    Object.prototype.hasOwnProperty.call(CHARACTER_NAMES, code)
+  );
+}
+
 const CHARACTER_MINI_IMAGES: Record<number, string> = {
   1: "/CharactER/001.%20Jackie/02.%20Default/Mini.png",
   2: "/CharactER/002.%20Aya/02.%20Default/Mini.png",
