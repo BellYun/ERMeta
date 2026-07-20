@@ -535,7 +535,7 @@ export function SynergyDetailResults() {
   const replaceSearchParams = React.useCallback(
     (params: URLSearchParams) => {
       const nextUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
-      window.history.replaceState(window.history.state, "", nextUrl);
+      window.history.replaceState(null, "", nextUrl);
     },
     [pathname]
   );

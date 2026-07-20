@@ -99,6 +99,8 @@ test.describe("시너지 상세 URL 공유·복원", () => {
 
     await page.getByRole("button", { name: "아군 초기화하기" }).click();
     await expect.poll(() => new URL(page.url()).searchParams.has("ally1")).toBe(false);
+    await expect(page.getByRole("button", { name: "아군 초기화하기" })).toHaveCount(0);
+    await expect(page.getByText("아군의 픽에 맞춰 무기별 상세 조합을 찾아보세요")).toBeVisible();
     const resetParams = new URL(page.url()).searchParams;
     expect(resetParams.get("sort")).toBe("tierScore");
     expect(resetParams.get("minGames")).toBe("30");

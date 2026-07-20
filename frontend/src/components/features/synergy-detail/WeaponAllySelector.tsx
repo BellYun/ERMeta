@@ -293,7 +293,7 @@ export function WeaponAllySelector() {
         if (a2.weaponCode) params.set("w2", String(a2.weaponCode));
       }
       const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
-      window.history.replaceState(window.history.state, "", newUrl);
+      window.history.replaceState(null, "", newUrl);
       window.dispatchEvent(
         new CustomEvent<SynergyDetailAlliesChangedDetail>(SYNERGY_DETAIL_ALLIES_CHANGED_EVENT, {
           detail: { ally1: a1, ally2: a2 },

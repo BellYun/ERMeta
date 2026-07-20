@@ -36,6 +36,9 @@ function getSynergyShareSelection(pathname: string, routeLocale: string | null) 
 export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const routeLocale = getRouteLocaleSegmentFromPathname(pathname);
+  const cookieLanguage = routeLocale
+    ? LANGUAGE_BY_ROUTE_LOCALE[routeLocale]
+    : LANGUAGE_BY_ROUTE_LOCALE[DEFAULT_ROUTE_LOCALE];
 
   if (pathname === "/synergy-detail/opengraph-image") {
     return NextResponse.next();
@@ -43,15 +46,14 @@ export function proxy(request: NextRequest) {
 
   const shareSelection = getSynergyShareSelection(pathname, routeLocale);
   if (shareSelection && !parseSynergyShareSelection(shareSelection)) {
-    return new NextResponse("Not Found", {
-      status: 404,
-      headers: { "Content-Type": "text/plain; charset=utf-8" },
-    });
+    const invalidShareUrl = request.nextUrl.clone();
+    invalidShareUrl.pathname = `/${routeLocale ?? DEFAULT_ROUTE_LOCALE}/synergy-detail/share-invalid`;
+
+    const response = NextResponse.rewrite(invalidShareUrl, { status: 404 });
+    applyLanguageCookie(response, cookieLanguage);
+    return response;
   }
 
-  const cookieLanguage = routeLocale
-    ? LANGUAGE_BY_ROUTE_LOCALE[routeLocale]
-    : LANGUAGE_BY_ROUTE_LOCALE[DEFAULT_ROUTE_LOCALE];
   const synergyDetailRedirectPathname = getSynergyDetailRedirectPathname(pathname, routeLocale);
 
   if (synergyDetailRedirectPathname) {

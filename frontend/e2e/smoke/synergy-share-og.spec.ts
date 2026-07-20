@@ -67,5 +67,6 @@ test.describe("시너지 공유 — OG 이미지", () => {
   test("등록되지 않은 조합 공유 경로는 404를 반환한다", async ({ request }) => {
     const res = await request.get("/synergy-detail/share/1x-2");
     expect(res.status()).toBe(404);
+    expect(await res.text()).toContain("페이지를 찾을 수 없습니다");
   });
 });
