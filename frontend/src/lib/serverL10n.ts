@@ -28,11 +28,15 @@ export function loadL10nMap(language: SupportedLanguage): Map<string, string> {
 }
 
 export function extractL10nSeed(l10n: Record<string, string>): Record<string, string> {
-  return Object.fromEntries(
-    Object.entries(l10n).filter(([key]) =>
-      L10N_SEED_PREFIXES.some((prefix) => key.startsWith(prefix))
-    )
-  );
+  const seed: Record<string, string> = {};
+
+  for (const key of Object.keys(l10n)) {
+    if (L10N_SEED_PREFIXES.some((prefix) => key.startsWith(prefix))) {
+      seed[key] = l10n[key];
+    }
+  }
+
+  return seed;
 }
 
 /**
