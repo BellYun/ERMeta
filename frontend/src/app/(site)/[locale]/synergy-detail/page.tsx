@@ -7,12 +7,11 @@ import SynergyDetailPage, {
   generateMetadata as generateBaseMetadata,
 } from "@/views/synergy-detail/SynergyDetailPage";
 
-type SearchParams = Promise<Record<string, string | string[] | undefined>>;
-
 interface LocalePageProps {
   params: Promise<{ locale: string }>;
-  searchParams: SearchParams;
 }
+
+export const dynamic = "force-static";
 
 const SYNERGY_DETAIL_METADATA = {
   ko: {
@@ -37,10 +36,7 @@ const SYNERGY_DETAIL_METADATA = {
   },
 } as const;
 
-export async function generateMetadata({
-  params,
-  searchParams,
-}: LocalePageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
   const { locale } = await params;
 
   if (!isRouteLocale(locale)) {
@@ -49,11 +45,7 @@ export async function generateMetadata({
 
   setRequestLocale(locale);
 
-  const base = localizeMetadata(
-    await generateBaseMetadata({ searchParams }),
-    "/synergy-detail",
-    locale
-  );
+  const base = localizeMetadata(await generateBaseMetadata(), "/synergy-detail", locale);
   const copy = SYNERGY_DETAIL_METADATA[locale];
 
   return {

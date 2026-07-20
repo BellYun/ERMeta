@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { DEFAULT_ROUTE_LOCALE, LANGUAGE_BY_ROUTE_LOCALE } from "@/i18n/routing";
 import { LANGUAGE_COOKIE } from "@/lib/detectLanguage";
 import { getRouteLocaleSegmentFromPathname } from "@/lib/localizedPath";
+import { parseSynergyShareSelection } from "@/lib/synergyShare";
 
 const COOKIE_MAX_AGE = 365 * 24 * 60 * 60; // 1년
 
@@ -22,17 +23,37 @@ function getSynergyDetailRedirectPathname(pathname: string, routeLocale: string 
   return routeLocale ? `/${routeLocale}/synergy-detail` : "/synergy-detail";
 }
 
+function getSynergyShareSelection(pathname: string, routeLocale: string | null) {
+  const localizedPrefix = routeLocale ? `/${routeLocale}` : "";
+  const sharePrefix = `${localizedPrefix}/synergy-detail/share/`;
+  if (!pathname.startsWith(sharePrefix)) return null;
+
+  const selection = pathname.slice(sharePrefix.length).replace(/\/$/, "");
+  if (!selection || selection.includes("/")) return null;
+  return selection;
+}
+
 export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  const routeLocale = getRouteLocaleSegmentFromPathname(pathname);
+  const cookieLanguage = routeLocale
+    ? LANGUAGE_BY_ROUTE_LOCALE[routeLocale]
+    : LANGUAGE_BY_ROUTE_LOCALE[DEFAULT_ROUTE_LOCALE];
 
   if (pathname === "/synergy-detail/opengraph-image") {
     return NextResponse.next();
   }
 
-  const routeLocale = getRouteLocaleSegmentFromPathname(pathname);
-  const cookieLanguage = routeLocale
-    ? LANGUAGE_BY_ROUTE_LOCALE[routeLocale]
-    : LANGUAGE_BY_ROUTE_LOCALE[DEFAULT_ROUTE_LOCALE];
+  const shareSelection = getSynergyShareSelection(pathname, routeLocale);
+  if (shareSelection && !parseSynergyShareSelection(shareSelection)) {
+    const invalidShareUrl = request.nextUrl.clone();
+    invalidShareUrl.pathname = `/${routeLocale ?? DEFAULT_ROUTE_LOCALE}/synergy-detail/share-invalid`;
+
+    const response = NextResponse.rewrite(invalidShareUrl, { status: 404 });
+    applyLanguageCookie(response, cookieLanguage);
+    return response;
+  }
+
   const synergyDetailRedirectPathname = getSynergyDetailRedirectPathname(pathname, routeLocale);
 
   if (synergyDetailRedirectPathname) {

@@ -83,7 +83,9 @@ test.describe("시너지 상세 URL 공유·복원", () => {
 
     await page.getByRole("button", { name: "공유" }).click();
     const sharedUrl = await page.evaluate(() => navigator.clipboard.readText());
-    const sharedParams = new URL(sharedUrl).searchParams;
+    const parsedSharedUrl = new URL(sharedUrl);
+    expect(parsedSharedUrl.pathname).toBe("/synergy-detail/share/6-10");
+    const sharedParams = parsedSharedUrl.searchParams;
     expect(sharedParams.get("ally1")).toBe("6");
     expect(sharedParams.get("w1")).toBe("8");
     expect(sharedParams.get("ally2")).toBe("10");
@@ -97,9 +99,28 @@ test.describe("시너지 상세 URL 공유·복원", () => {
 
     await page.getByRole("button", { name: "아군 초기화하기" }).click();
     await expect.poll(() => new URL(page.url()).searchParams.has("ally1")).toBe(false);
+    await expect(page.getByRole("button", { name: "아군 초기화하기" })).toHaveCount(0);
+    await expect(page.getByText("아군의 픽에 맞춰 무기별 상세 조합을 찾아보세요")).toBeVisible();
     const resetParams = new URL(page.url()).searchParams;
     expect(resetParams.get("sort")).toBe("tierScore");
     expect(resetParams.get("minGames")).toBe("30");
+  });
+
+  test("기본 평균 RP 정렬도 URL에 명시하고 새로고침 후 복원한다", async ({ page }) => {
+    await page.goto("/synergy-detail?ally1=6&w1=8&ally2=10&w2=1");
+
+    await page.getByRole("button", { name: "게임 수", exact: true }).click();
+    await expect.poll(() => new URL(page.url()).searchParams.get("sort")).toBe("totalGames");
+
+    await page.getByRole("button", { name: "평균 RP", exact: true }).click();
+    await expect.poll(() => new URL(page.url()).searchParams.get("sort")).toBe("averageRP");
+    await page.reload();
+
+    await expect(page.getByRole("button", { name: "평균 RP", exact: true })).toHaveAttribute(
+      "data-active",
+      "true"
+    );
+    expect(new URL(page.url()).searchParams.get("sort")).toBe("averageRP");
   });
 
   test("최소 표본 미만 조합을 숨기고 전체 표본 전환 시 다시 노출한다", async ({ page }) => {
