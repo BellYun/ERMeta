@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { L10N_CORE_SEEDS } from "@/generated/l10nCoreSeeds";
 import { L10N_CHUNK_MANIFEST, type L10nNamespace } from "@/generated/l10nManifest";
 
 afterEach(() => {
@@ -70,6 +71,17 @@ describe("generated l10n chunks", () => {
           Object.keys(chunk).every((key) => prefixes.some((prefix) => key.startsWith(prefix)))
         ).toBe(true);
       }
+    }
+  );
+
+  it.each(Object.entries(L10N_CHUNK_MANIFEST))(
+    "keeps the generated %s server seed in sync with the public core chunk",
+    (language, namespaces) => {
+      const publicCore = JSON.parse(
+        readFileSync(join(process.cwd(), "public", namespaces.core), "utf8")
+      );
+
+      expect(L10N_CORE_SEEDS[language as keyof typeof L10N_CORE_SEEDS]).toEqual(publicCore);
     }
   );
 });

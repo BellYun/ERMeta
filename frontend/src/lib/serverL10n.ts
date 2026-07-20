@@ -1,10 +1,9 @@
 import { readFileSync } from "fs";
 import { join } from "path";
-import { L10N_CHUNK_MANIFEST } from "@/generated/l10nManifest";
+import { L10N_CORE_SEEDS } from "@/generated/l10nCoreSeeds";
 import { DEFAULT_LANGUAGE, type SupportedLanguage } from "@/lib/detectLanguage";
 
 const L10N_SEED_PREFIXES = ["Character/Name/", "WeaponType/", "Trait/Name/"] as const;
-const l10nSeedCache = new Map<SupportedLanguage, Record<string, string>>();
 
 export function loadL10nRecord(language: SupportedLanguage): Record<string, string> | undefined {
   try {
@@ -40,28 +39,10 @@ export function extractL10nSeed(l10n: Record<string, string>): Record<string, st
   return seed;
 }
 
-function loadGeneratedL10nSeed(language: SupportedLanguage): Record<string, string> | undefined {
-  try {
-    const publicPath = L10N_CHUNK_MANIFEST[language].core;
-    const filePath = join(process.cwd(), "public", publicPath);
-    return JSON.parse(readFileSync(filePath, "utf8")) as Record<string, string>;
-  } catch {
-    return undefined;
-  }
-}
-
 /**
  * 첫 paint에 필요한 이름만 반환한다. 추가 사전은 기능별 namespace로 지연 로드한다.
- * 전체 원본 대신 생성된 core 청크만 읽고 동일 언어의 seed를 메모리에 캐시한다.
+ * 정적으로 생성된 core seed를 사용해 서버 함수의 public 디렉터리 전체 추적을 방지한다.
  */
 export function loadL10nSeed(language: SupportedLanguage): Record<string, string> | undefined {
-  const cached = l10nSeedCache.get(language);
-  if (cached) return cached;
-
-  const generatedSeed = loadGeneratedL10nSeed(language);
-  const seed = generatedSeed ?? extractL10nSeed(loadL10nRecord(language) ?? {});
-  if (Object.keys(seed).length === 0) return undefined;
-
-  l10nSeedCache.set(language, seed);
-  return seed;
+  return L10N_CORE_SEEDS[language];
 }
