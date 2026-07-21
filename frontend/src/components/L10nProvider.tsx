@@ -27,10 +27,10 @@ type L10nAction =
   | { type: "FETCH_SUCCESS"; payload: Map<string, string> }
   | { type: "FETCH_ERROR"; payload: string };
 
-const l10nReducer = (state: L10nState, action: L10nAction): L10nState => {
+export const l10nReducer = (state: L10nState, action: L10nAction): L10nState => {
   switch (action.type) {
     case "FETCH_START":
-      return { l10n: EMPTY_L10N, loading: true, error: null };
+      return { ...state, loading: true, error: null };
     case "FETCH_SUCCESS":
       return { ...state, loading: false, error: null, l10n: action.payload };
     case "FETCH_ERROR":
