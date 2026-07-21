@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import * as React from "react";
 import itemNameMap from "@/../const/itemNameMap.json";
 import type { EquipmentBuildResult, BuildSummary } from "@/app/api/builds/equipment/route";
-import { useL10n } from "@/components/L10nProvider";
+import { useL10n, useL10nNamespace } from "@/components/L10nProvider";
 import { useTraitNames } from "@/hooks/useTraitNames";
 import { cn } from "@/lib/utils";
 import { ItemIcon, WinRateSpan, SLOTS } from "./shared";
@@ -591,6 +591,7 @@ export function CharacterDetailedAnalyzer({
   bestWeapon,
 }: Props) {
   const { l10n } = useL10n();
+  const { l10n: itemNamesL10n } = useL10nNamespace("item-names");
   const t = useTranslations("characterDetailed");
   const [traitBuilds, setTraitBuilds] = React.useState<TraitMainGroupData[]>([]);
   const [selectedComboIdx, setSelectedComboIdx] = React.useState<number>(-1);
@@ -598,7 +599,7 @@ export function CharacterDetailedAnalyzer({
   const [traitLoading, setTraitLoading] = React.useState(false);
   const [equipLoading, setEquipLoading] = React.useState(false);
   const traitNames = useTraitNames(l10n);
-  const itemNames = useLocalizedItemNames(l10n);
+  const itemNames = useLocalizedItemNames(itemNamesL10n);
   const groupConfig = React.useMemo(() => createGroupConfig(t), [t]);
 
   // 메인 특성 그룹 로드

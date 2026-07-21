@@ -8,7 +8,7 @@ import type {
   BuildSummary,
   CoreItem,
 } from "@/app/api/builds/equipment/route";
-import { useL10n } from "@/components/L10nProvider";
+import { useL10n, useL10nNamespace } from "@/components/L10nProvider";
 import { useTraitNames } from "@/hooks/useTraitNames";
 import { cn } from "@/lib/utils";
 import { TierGroup } from "@/utils/tier";
@@ -532,8 +532,9 @@ export function CharacterEquipmentAnalyzer({
   bestWeapon,
 }: Props) {
   const { l10n } = useL10n();
+  const { l10n: itemNamesL10n } = useL10nNamespace("item-names");
   const [data, setData] = React.useState<EquipmentBuildResult | null>(null);
-  const itemNames = useLocalizedItemNames(l10n);
+  const itemNames = useLocalizedItemNames(itemNamesL10n);
   const traitNames = useTraitNames(l10n);
   const [loading, setLoading] = React.useState(false);
 
