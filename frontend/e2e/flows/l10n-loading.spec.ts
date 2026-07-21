@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 
+const REQUEST_OBSERVATION_MS = 1_000;
+
 function trackL10nRequests(page: Page) {
   const requests: string[] = [];
 
@@ -15,8 +17,8 @@ function trackL10nRequests(page: Page) {
 test("static content does not download the game dictionary", async ({ page }) => {
   const l10nRequests = trackL10nRequests(page);
 
-  await page.goto("/ko/about");
-  await page.waitForLoadState("networkidle");
+  await page.goto("/ko/about", { waitUntil: "load" });
+  await page.waitForTimeout(REQUEST_OBSERVATION_MS);
 
   expect(l10nRequests).toEqual([]);
 });
