@@ -30,7 +30,7 @@ export const getPatches = unstable_cache(
       return getStatsPatchVersions();
     }
   },
-  ["patches", "patch-notes-v4"],
+  ["patches", "patch-notes-v5"],
   {
     revalidate: 21600,
     tags: ["patches"],

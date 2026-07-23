@@ -27,7 +27,7 @@ export async function HomePageContent({
   const totalMatches = rankingData.rankings.reduce((sum, row) => sum + row.totalGames, 0);
   const hasRankingData = rankingData.rankings.length > 0 && totalMatches > 0;
   const trackedMatches = hasRankingData ? formatMetricNumber(totalMatches) : "";
-  const fallbackPatch = defaultPatch || "11.6";
+  const fallbackPatch = defaultPatch || "11.7";
   const patchAnalysisHref = `/${locale}/patch-analysis/11.5`;
 
   return (
