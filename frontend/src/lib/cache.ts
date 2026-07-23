@@ -7,7 +7,7 @@
  *   C. 준동적 (통계)     → "daily"
  *   C-1. 패치 단위 캐릭터 상세 통계 → "character-stats"
  *   D. 고카디널리티 사전집계 (trios)        → "frequent"
- *   E. 고카디널리티 사전집계 + 키 폭발 (trios-weapon) → "stats-long"
+ *   E. 대용량 사전집계 + member/weapon 버킷 (trios-weapon) → "stats-long"
  *
  * D/E 는 source 가 사전 집계 테이블 (v2_CharacterTrio*) + tag-based invalidation
  * (revalidateTag) 으로 즉시 갱신되므로 TTL/SWR 을 길게 잡아 hit rate 극대화.
@@ -29,7 +29,7 @@ const CACHE_CONTROL: Record<CachePreset, string> = {
   "character-stats": "public, max-age=300, s-maxage=43200, stale-while-revalidate=3600",
   // frequent (trios): L3 5m / L2 1h / SWR 7d — tag invalidation 의존, stale 7d 안전망
   frequent: "public, max-age=300, s-maxage=3600, stale-while-revalidate=604800",
-  // stats-long (trios-weapon): L3 10m / L2 7d / SWR 7d — 최고 카디널리티, 가장 길게
+  // stats-long (trios-weapon): L3 10m / L2 7d / SWR 7d — 버킷 재사용을 위해 가장 길게
   "stats-long": "public, max-age=600, s-maxage=604800, stale-while-revalidate=604800",
 };
 
