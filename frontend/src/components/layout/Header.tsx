@@ -4,7 +4,6 @@ import {
   ArrowRight,
   BarChart3,
   Gauge,
-  Grid3X3,
   Layers,
   Menu,
   MessageSquarePlus,
@@ -69,12 +68,6 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
       label: tNav("synergyRecommendation"),
       icon: Network,
       isActive: normalizedPathname === "/synergy-detail",
-    },
-    {
-      href: withCurrentRouteLocale(pathname, "/synergy-matrix"),
-      label: tNav("synergyMatrix"),
-      icon: Grid3X3,
-      isActive: normalizedPathname === "/synergy-matrix",
     },
     {
       href: withCurrentRouteLocale(pathname, "/character-lab"),
