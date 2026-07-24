@@ -17,6 +17,12 @@ import { buildTrioInsightBenchmarks, getTrioOperationProfile } from "@/lib/syner
 import { buildSynergyShareUrl } from "@/lib/synergyShare";
 import { MINIMUM_GAMES_OPTIONS, parseMinimumGamesParam } from "@/lib/synergyUrlState";
 import { comparePerformanceTierStats } from "@/lib/tierScoring";
+import {
+  filterTrioWeaponTuples,
+  parseTrioWeaponTupleBucket,
+  trioWeaponTupleToResult,
+  type CachedTrioWeaponTuple,
+} from "@/lib/trioWeaponTuple";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
 import { getAllCharacterCodes, getFallbackMap, SORT_OPTIONS } from "../synergy/constants";
@@ -31,6 +37,12 @@ import {
 const MIN_MEANINGFUL_GAMES = 10;
 const VIRTUAL_CARD_ESTIMATE = 150; // 운영 안내가 포함된 접힌 카드의 실측 높이
 const VISIBLE_RESULTS_STEP = 30;
+const DETAIL_BUCKET_MEMORY_CACHE_LIMIT = 8;
+
+type DetailBucketData = CachedTrioWeaponTuple[] | TrioWeaponResult[];
+
+const detailBucketMemoryCache = new Map<string, CachedTrioWeaponTuple[]>();
+const detailBucketInFlight = new Map<string, Promise<DetailBucketData>>();
 
 const DETAIL_SORT_OPTIONS: {
   value: SortBy;
@@ -141,7 +153,7 @@ function getAllyQueryKey(allies: AllySelection[]) {
     .join("|");
 }
 
-function buildDetailSearchParams(allies: AllySelection[]) {
+function buildLegacyDetailSearchParams(allies: AllySelection[]) {
   const params = new URLSearchParams({ sortBy: "totalGames", limit: "5000" });
   const queryAllies = sortAllyPair(allies);
   const a1 = queryAllies[0];
@@ -157,8 +169,85 @@ function buildDetailSearchParams(allies: AllySelection[]) {
   return params;
 }
 
+function buildDetailTupleSearchParams(allies: AllySelection[]) {
+  // 첫 번째 선택(A)을 고정 anchor로 사용해 B만 바뀔 때 같은 bucket을 재사용한다.
+  const anchor = allies.find(
+    (ally) => ally.charCode > 0 && ally.weaponCode != null && ally.weaponCode > 0
+  );
+  if (!anchor?.weaponCode) return null;
+
+  return new URLSearchParams({
+    format: "tuple",
+    character1: String(anchor.charCode),
+    weapon1: String(anchor.weaponCode),
+  });
+}
+
+function isLegacyDetailResponse(
+  value: unknown
+): value is { results?: TrioWeaponResult[]; error?: string } {
+  if (value == null || typeof value !== "object" || !("results" in value)) return false;
+  const { results } = value as { results?: unknown };
+  return results == null || Array.isArray(results);
+}
+
+function rememberDetailBucket(key: string, tuples: CachedTrioWeaponTuple[]) {
+  detailBucketMemoryCache.delete(key);
+  detailBucketMemoryCache.set(key, tuples);
+
+  while (detailBucketMemoryCache.size > DETAIL_BUCKET_MEMORY_CACHE_LIMIT) {
+    const oldestKey = detailBucketMemoryCache.keys().next().value;
+    if (oldestKey == null) break;
+    detailBucketMemoryCache.delete(oldestKey);
+  }
+}
+
+async function fetchDetailTupleBucket(params: URLSearchParams): Promise<DetailBucketData> {
+  const requestUrl = `/api/stats/trios-weapon?${params.toString()}`;
+  const cached = detailBucketMemoryCache.get(requestUrl);
+  if (cached) {
+    detailBucketMemoryCache.delete(requestUrl);
+    detailBucketMemoryCache.set(requestUrl, cached);
+    return cached;
+  }
+
+  const existingRequest = detailBucketInFlight.get(requestUrl);
+  if (existingRequest) return existingRequest;
+
+  // 선택 B가 바뀌어도 같은 A+무기 bucket 요청을 공유한다. 호출부의 cancelled guard가
+  // 이전 렌더의 state 반영만 막고, 이미 시작한 저카디널리티 요청은 끝까지 재사용한다.
+  const request: Promise<DetailBucketData> = fetchWithRetry<unknown>(requestUrl)
+    .then((payload) => {
+      // E2E/preview의 기존 object mock과 순차 배포를 위한 호환 경로.
+      if (isLegacyDetailResponse(payload)) return payload.results ?? [];
+
+      const tuples = parseTrioWeaponTupleBucket(payload).items;
+      rememberDetailBucket(requestUrl, tuples);
+      return tuples;
+    })
+    .finally(() => {
+      detailBucketInFlight.delete(requestUrl);
+    });
+
+  detailBucketInFlight.set(requestUrl, request);
+  return request;
+}
+
 async function fetchDetailRows(allies: AllySelection[], signal?: AbortSignal) {
-  const params = buildDetailSearchParams(allies);
+  const tupleParams = buildDetailTupleSearchParams(allies);
+  if (tupleParams) {
+    const bucket = await fetchDetailTupleBucket(tupleParams);
+    if (bucket.length === 0) return [];
+
+    // legacy object 응답에는 tuple(길이 10) 대신 result object가 들어온다.
+    if (!Array.isArray(bucket[0])) return bucket as TrioWeaponResult[];
+
+    return filterTrioWeaponTuples(bucket as CachedTrioWeaponTuple[], allies)
+      .slice(0, 5000)
+      .map(trioWeaponTupleToResult);
+  }
+
+  const params = buildLegacyDetailSearchParams(allies);
   const data = await fetchWithRetry<{ results?: TrioWeaponResult[]; error?: string }>(
     `/api/stats/trios-weapon?${params.toString()}`,
     { signal }

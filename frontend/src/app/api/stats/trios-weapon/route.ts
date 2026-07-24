@@ -3,9 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCacheHeaders, SERVER_ERROR_HEADERS, withCacheObservability } from "@/lib/cache";
 import { tryNestApiProxy } from "@/lib/server/nestProxy";
 import { createServerClient } from "@/lib/supabase";
+import {
+  parseTrioWeaponTuple,
+  trioWeaponTupleToResult,
+  type CachedTrioWeaponTuple,
+} from "@/lib/trioWeaponTuple";
 
 const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]);
 const TRIO_WEAPON_SEARCH_TABLE = "v2_CharacterTrioWeaponSearch_all";
+const TRIO_WEAPON_MEMBER_BUCKET_RPC = "get_trio_weapon_member_bucket";
 const TRIO_WEAPON_PAIR_LOOKUP_TABLES = [
   "v2_CharacterTrioWeaponPairLookup_agg_next",
   "v2_CharacterTrioWeaponPairLookup_all_next",
@@ -17,13 +23,12 @@ const TRIO_WEAPON_PAIR_LOOKUP_TABLES = [
 const DB_PAGE_SIZE = 1000;
 const PARALLEL_FETCH_LIMIT = 5000;
 const FULL_FETCH_LIMIT = 5000;
-const EXACT_PAIR_WEAPON_FETCH_LIMIT = 20000;
 const MAX_RESPONSE_LIMIT = FULL_FETCH_LIMIT;
-const TRIO_WEAPON_CACHE_VERSION = "v13";
+const TRIO_WEAPON_CACHE_VERSION = "v14";
 
 // L1 캐시 TTL — source 가 사전 집계 테이블(v2_CharacterTrioWeapon* / search_all)이고
-// tag-based invalidation 으로 즉시 갱신되므로 7d. 카디널리티가 가장 큰 라우트라
-// 한번 채워진 항목을 최대한 오래 유지해 hit rate 극대화. 무기/sortBy/limit 은 캐시 외부.
+// tag-based invalidation 으로 즉시 갱신되므로 7d. member+weapon 버킷을 오래 유지해
+// 여러 pair 조회가 같은 저카디널리티 엔트리를 재사용한다. pair/sortBy/limit 은 캐시 외부.
 const L1_REVALIDATE_SEC = 7 * 24 * 3600;
 
 type SortBy = "averageRP" | "winRate" | "averageRank" | "totalGames" | "recommended";
@@ -40,28 +45,9 @@ function normalizeCharacterPair(char1: number, char2: number): [number, number] 
   return char1 <= char2 ? [char1, char2] : [char2, char1];
 }
 
-function normalizeCharacterWeaponPair(
-  char1: number,
-  weapon1: number,
-  char2: number,
-  weapon2: number
-): [number, number, number, number] {
-  return char1 <= char2 ? [char1, weapon1, char2, weapon2] : [char2, weapon2, char1, weapon1];
-}
-
 function pairLookupKey(char1: number, char2: number): string {
   const [c1, c2] = normalizeCharacterPair(char1, char2);
   return `${c1}:${c2}`;
-}
-
-function pairWeaponLookupKey(
-  char1: number,
-  weapon1: number,
-  char2: number,
-  weapon2: number
-): string {
-  const [c1, w1, c2, w2] = normalizeCharacterWeaponPair(char1, weapon1, char2, weapon2);
-  return `${c1}:${w1}|${c2}:${w2}`;
 }
 
 function bayesianRP(averageRP: number, totalGames: number, globalAvgRP: number): number {
@@ -112,6 +98,11 @@ interface AggregatedTrioWeapon {
   averageRank: number;
 }
 
+interface MemberWeaponBucketRpcRow {
+  item_count: number;
+  items: unknown;
+}
+
 interface TrioWeaponSearchRow {
   ally1_char: number;
   ally1_weapon: number;
@@ -140,32 +131,23 @@ interface SupabaseErrorLike {
 }
 
 type SearchPositionColumn = "ally1_char" | "ally2_char" | "third_char";
-type SearchColumn = keyof TrioWeaponSearchRow;
 type TrioWeaponSearchPairPosition = {
   charColumn1: SearchPositionColumn;
-  weaponColumn1: SearchColumn;
   charColumn2: SearchPositionColumn;
-  weaponColumn2: SearchColumn;
 };
 
 const TRIO_WEAPON_SEARCH_PAIR_POSITIONS: readonly TrioWeaponSearchPairPosition[] = [
   {
     charColumn1: "ally1_char",
-    weaponColumn1: "ally1_weapon",
     charColumn2: "ally2_char",
-    weaponColumn2: "ally2_weapon",
   },
   {
     charColumn1: "ally1_char",
-    weaponColumn1: "ally1_weapon",
     charColumn2: "third_char",
-    weaponColumn2: "third_weapon",
   },
   {
     charColumn1: "ally2_char",
-    weaponColumn1: "ally2_weapon",
     charColumn2: "third_char",
-    weaponColumn2: "third_weapon",
   },
 ];
 
@@ -296,6 +278,10 @@ function matchesWeaponFilter(
   );
 }
 
+function matchesCharacterFilter(r: AggregatedTrioWeapon, charCode: number): boolean {
+  return r.character1 === charCode || r.character2 === charCode || r.character3 === charCode;
+}
+
 function isMissingRelationError(error: unknown): boolean {
   if (!error || typeof error !== "object") return false;
   const supabaseError = error as SupabaseErrorLike;
@@ -388,63 +374,34 @@ async function fetchTrioWeaponPair(char1: number, char2: number): Promise<Aggreg
 }
 
 /**
- * 정확 페어(char1+weapon1, char2+weapon2) — DB에서 무기까지 필터링한다.
- * 상세 추천처럼 조건이 충분히 좁은 경우에는 5,000개 일반 cap 때문에 후보가 누락되면 안 된다.
+ * character+weapon 한 개를 anchor로 compact tuple bucket을 가져온다.
+ * RPC가 canonical pair row만 읽으므로 pair lookup의 3배 중복은 응답에 포함되지 않는다.
  */
-async function fetchTrioWeaponPairWeaponExact(
-  char1: number,
-  weapon1: number,
-  char2: number,
-  weapon2: number
-): Promise<AggregatedTrioWeapon[]> {
+async function fetchTrioWeaponMemberWeaponBucket(
+  character: number,
+  weapon: number
+): Promise<CachedTrioWeaponTuple[]> {
   const supabase = createServerClient();
-  const [c1, w1, c2, w2] = normalizeCharacterWeaponPair(char1, weapon1, char2, weapon2);
-  const searchSelect =
-    "ally1_char,ally1_weapon,ally1_core,ally2_char,ally2_weapon,ally2_core,third_char,third_weapon,third_core,total_games,total_wins,total_rp,rank_sum";
+  const { data, error } = await supabase
+    .rpc(TRIO_WEAPON_MEMBER_BUCKET_RPC, {
+      p_character: character,
+      p_weapon: weapon,
+    })
+    .single();
 
-  const key = pairWeaponLookupKey(c1, w1, c2, w2);
-  for (const lookupTable of TRIO_WEAPON_PAIR_LOOKUP_TABLES) {
-    try {
-      const lookupRows = await fetchSearchRows(
-        (offset, pageEnd) =>
-          supabase
-            .from(lookupTable)
-            .select(searchSelect)
-            .eq("pair_weapon_key", key)
-            .order("total_games", { ascending: false })
-            .range(offset, pageEnd),
-        EXACT_PAIR_WEAPON_FETCH_LIMIT
-      );
+  if (error) throw error;
 
-      if (lookupRows.length > 0) {
-        return aggregateSearchRows(lookupRows).filter((r) => !hasExcludedChar(r));
-      }
-    } catch (error) {
-      if (!isMissingRelationError(error)) throw error;
-    }
+  const bucket = data as MemberWeaponBucketRpcRow | null;
+  if (!bucket || !Array.isArray(bucket.items)) {
+    throw new Error("invalid_trio_weapon_member_bucket_response");
   }
 
-  const rows = (
-    await Promise.all(
-      TRIO_WEAPON_SEARCH_PAIR_POSITIONS.map((position) =>
-        fetchSearchRows(
-          (offset, pageEnd) =>
-            supabase
-              .from(TRIO_WEAPON_SEARCH_TABLE)
-              .select(searchSelect)
-              .eq(position.charColumn1, c1)
-              .eq(position.weaponColumn1, w1)
-              .eq(position.charColumn2, c2)
-              .eq(position.weaponColumn2, w2)
-              .order("total_games", { ascending: false })
-              .range(offset, pageEnd),
-          EXACT_PAIR_WEAPON_FETCH_LIMIT
-        )
-      )
-    )
-  ).flat();
+  const tuples = bucket.items.map(parseTrioWeaponTuple);
+  if (Number(bucket.item_count) !== tuples.length) {
+    throw new Error("invalid_trio_weapon_member_bucket_count");
+  }
 
-  return aggregateSearchRows(rows).filter((r) => !hasExcludedChar(r));
+  return tuples;
 }
 
 async function fetchTrioWeaponSinglePosition(
@@ -525,7 +482,9 @@ async function fetchTrioWeaponAll(): Promise<AggregatedTrioWeapon[]> {
   return aggregateSearchRows(rows).filter((r) => !hasExcludedChar(r));
 }
 
-// ─── L1 캐시 래퍼 — 키는 정규화된 캐릭터 코드만. 무기/sortBy/limit 은 외부 적용. ──
+// ─── L1 캐시 래퍼 ────────────────────────────────────────────────────────────
+// 무기 지정 요청은 member+weapon bucket만 캐시한다. 두 번째 캐릭터/무기,
+// sortBy/limit은 캐시 밖에서 적용하여 pair+weapon 키 폭발을 막는다.
 
 function getCachedTrioWeaponPair(char1: number, char2: number) {
   const [c1, c2] = normalizeCharacterPair(char1, char2);
@@ -539,26 +498,17 @@ function getCachedTrioWeaponPair(char1: number, char2: number) {
   )();
 }
 
-function getCachedTrioWeaponPairWeaponExact(
-  char1: number,
-  weapon1: number,
-  char2: number,
-  weapon2: number
-) {
-  const [c1, w1, c2, w2] = normalizeCharacterWeaponPair(char1, weapon1, char2, weapon2);
+function getCachedTrioWeaponMemberWeapon(character: number, weapon: number) {
   return unstable_cache(
-    () => fetchTrioWeaponPairWeaponExact(c1, w1, c2, w2),
-    [
-      "trio-weapon-pair-weapon-exact",
-      TRIO_WEAPON_CACHE_VERSION,
-      String(c1),
-      String(w1),
-      String(c2),
-      String(w2),
-    ],
+    () => fetchTrioWeaponMemberWeaponBucket(character, weapon),
+    ["trio-weapon-member-weapon", TRIO_WEAPON_CACHE_VERSION, String(character), String(weapon)],
     {
       revalidate: L1_REVALIDATE_SEC,
-      tags: ["trios-weapon", `trios-weapon:char:${c1}`, `trios-weapon:char:${c2}`],
+      tags: [
+        "trios-weapon",
+        `trios-weapon:char:${character}`,
+        `trios-weapon:member-weapon:${character}:${weapon}`,
+      ],
     }
   )();
 }
@@ -586,10 +536,16 @@ function getCachedTrioWeaponAll() {
 }
 
 export async function GET(request: NextRequest) {
-  const proxied = await tryNestApiProxy(request, "/stats/trios-weapon");
-  if (proxied) return proxied;
-
   const { searchParams } = new URL(request.url);
+  const tupleFormat = searchParams.get("format") === "tuple";
+
+  // compact tuple 계약은 이 Next route와 Supabase RPC가 담당한다.
+  // Nest가 아직 같은 계약을 제공하지 않으므로 기존 object 요청만 proxy한다.
+  if (!tupleFormat) {
+    const proxied = await tryNestApiProxy(request, "/stats/trios-weapon");
+    if (proxied) return proxied;
+  }
+
   const sortByParam = (searchParams.get("sortBy") ?? "averageRP") as SortBy;
   const limitParam = searchParams.get("limit");
 
@@ -598,6 +554,22 @@ export async function GET(request: NextRequest) {
   const rawWeapon1 = parseIntOrNull(searchParams.get("weapon1"));
   const rawWeapon2 = parseIntOrNull(searchParams.get("weapon2"));
 
+  if (
+    tupleFormat &&
+    (rawChar1 == null ||
+      rawWeapon1 == null ||
+      rawChar1 < 1 ||
+      rawWeapon1 < 1 ||
+      rawChar2 != null ||
+      rawWeapon2 != null ||
+      searchParams.has("sortBy") ||
+      searchParams.has("limit"))
+  ) {
+    return NextResponse.json(
+      { error: "tuple_format_requires_member_weapon_only" },
+      { status: 400 }
+    );
+  }
   if (rawChar2 != null && rawChar1 == null) {
     return NextResponse.json({ error: "missing_character1" }, { status: 400 });
   }
@@ -608,6 +580,12 @@ export async function GET(request: NextRequest) {
     (rawChar1 != null && EXCLUDED_CHARACTER_CODES.has(rawChar1)) ||
     (rawChar2 != null && EXCLUDED_CHARACTER_CODES.has(rawChar2))
   ) {
+    if (tupleFormat) {
+      return NextResponse.json(
+        { version: 1, itemCount: 0, items: [] },
+        { headers: getCacheHeaders("stats-long") }
+      );
+    }
     return NextResponse.json({ results: [] }, { headers: getCacheHeaders("stats-long") });
   }
 
@@ -629,10 +607,30 @@ export async function GET(request: NextRequest) {
   try {
     const t0 = Date.now();
     let aggregated: AggregatedTrioWeapon[];
-    let isExactPairWeaponSearch = false;
-    if (char1 != null && char2 != null && weapon1 != null && weapon2 != null) {
-      isExactPairWeaponSearch = true;
-      aggregated = await getCachedTrioWeaponPairWeaponExact(char1, weapon1, char2, weapon2);
+    const isExactPairWeaponSearch =
+      char1 != null && char2 != null && weapon1 != null && weapon2 != null;
+    const memberWeaponAnchor =
+      char1 != null && weapon1 != null
+        ? { character: char1, weapon: weapon1 }
+        : char2 != null && weapon2 != null
+          ? { character: char2, weapon: weapon2 }
+          : null;
+
+    if (memberWeaponAnchor) {
+      const tuples = await getCachedTrioWeaponMemberWeapon(
+        memberWeaponAnchor.character,
+        memberWeaponAnchor.weapon
+      );
+      const latencyMs = Date.now() - t0;
+
+      if (tupleFormat) {
+        return NextResponse.json(
+          { version: 1, itemCount: tuples.length, items: tuples },
+          { headers: withCacheObservability(getCacheHeaders("stats-long"), latencyMs) }
+        );
+      }
+
+      aggregated = tuples.map(trioWeaponTupleToResult);
     } else if (char1 != null && char2 != null) {
       aggregated = await getCachedTrioWeaponPair(char1, char2);
     } else if (char1 != null) {
@@ -642,13 +640,20 @@ export async function GET(request: NextRequest) {
     }
     const latencyMs = Date.now() - t0;
 
-    // 무기 필터 — 캐시 외부에서 적용 (캐시 키에 weapon 미포함)
+    // member+weapon bucket은 anchor만 보장한다. 두 번째 캐릭터/무기 조건은
+    // 캐시 밖에서 적용하여 pair별 캐시 엔트리를 만들지 않는다.
     let filtered = aggregated;
+    if (char1 != null) {
+      filtered = filtered.filter((r) => matchesCharacterFilter(r, char1));
+    }
+    if (char2 != null) {
+      filtered = filtered.filter((r) => matchesCharacterFilter(r, char2));
+    }
     if (char1 != null && weapon1 != null) {
-      filtered = filtered.filter((r) => matchesWeaponFilter(r, char1!, weapon1!));
+      filtered = filtered.filter((r) => matchesWeaponFilter(r, char1, weapon1));
     }
     if (char2 != null && weapon2 != null) {
-      filtered = filtered.filter((r) => matchesWeaponFilter(r, char2!, weapon2!));
+      filtered = filtered.filter((r) => matchesWeaponFilter(r, char2, weapon2));
     }
 
     // 캐시된 배열 mutate 방지를 위해 복사 후 정렬
