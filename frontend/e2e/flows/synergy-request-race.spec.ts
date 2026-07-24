@@ -1,22 +1,13 @@
 import { expect, test, type Page } from "@playwright/test";
 
-function trioRow(thirdCharacter: number) {
-  return {
-    character1: 6,
-    weaponType1: 8,
-    character2: 1,
-    weaponType2: 1,
-    character3: thirdCharacter,
-    weaponType3: 1,
-    mainCore1: 0,
-    mainCore2: 0,
-    mainCore3: 0,
-    totalGames: 120,
-    winRate: 25,
-    averageRP: 8,
-    averageRank: 3.5,
-  };
-}
+const tupleBucket = {
+  version: 1,
+  itemCount: 2,
+  items: [
+    [6, 8, 2, 9, 3, 16, 120, 30, 2880, 420],
+    [6, 8, 1, 16, 5, 5, 120, 30, 2880, 420],
+  ],
+};
 
 async function mockTraitNames(page: Page) {
   await page.route("**/api/traits/names*", async (route) => {
@@ -29,55 +20,50 @@ async function mockTraitNames(page: Page) {
 }
 
 test.describe("시너지 상세 요청 경쟁", () => {
-  test("늦게 끝난 이전 요청이 최신 아군 조합 결과를 덮어쓰지 않는다", async ({
-    page,
-  }, testInfo) => {
+  test("진행 중인 A+무기 버킷 요청을 최신 아군 조합에 재사용한다", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "chromium-desktop", "데스크탑 회귀 경로 전용");
     await mockTraitNames(page);
 
-    let markSingleRequestStarted: (() => void) | undefined;
-    const singleRequestStarted = new Promise<void>((resolve) => {
-      markSingleRequestStarted = resolve;
+    let requestCount = 0;
+    let markBucketRequestStarted: (() => void) | undefined;
+    const bucketRequestStarted = new Promise<void>((resolve) => {
+      markBucketRequestStarted = resolve;
     });
 
     await page.route(/\/api\/stats\/trios-weapon(?:\?.*)?$/, async (route) => {
       const url = new URL(route.request().url());
-      const isPairRequest = url.searchParams.has("character2");
+      requestCount += 1;
+      expect(url.searchParams.get("format")).toBe("tuple");
+      expect(url.searchParams.get("character1")).toBe("6");
+      expect(url.searchParams.get("weapon1")).toBe("8");
+      expect(url.searchParams.has("character2")).toBe(false);
+      expect(url.searchParams.has("weapon2")).toBe(false);
 
-      if (!isPairRequest) {
-        markSingleRequestStarted?.();
-        await new Promise((resolve) => setTimeout(resolve, 1_000));
-      } else {
-        await new Promise((resolve) => setTimeout(resolve, 40));
-      }
-
-      try {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          headers: { "Cache-Control": "no-store" },
-          body: JSON.stringify({ results: [trioRow(isPairRequest ? 5 : 2)] }),
-        });
-      } catch {
-        // AbortController가 이전 네트워크 요청을 끊으면 Playwright의 지연 fulfill도 실패한다.
-      }
+      markBucketRequestStarted?.();
+      await new Promise((resolve) => setTimeout(resolve, 1_000));
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        headers: { "Cache-Control": "no-store" },
+        body: JSON.stringify(tupleBucket),
+      });
     });
 
     await page.goto("/synergy-detail?ally1=6&w1=8");
-    await singleRequestStarted;
+    await bucketRequestStarted;
 
     const allySection = page
       .locator("section")
       .filter({ has: page.getByRole("heading", { name: "아군 선택" }) })
       .first();
-    const nextAlly = allySection.locator("button[title]:not([disabled]):not(.outline)").first();
+    await allySection.locator("input").fill("재키");
+    const nextAlly = allySection.locator('button[title="재키 (양손검)"]');
     await expect(nextAlly).toBeVisible();
     await nextAlly.click();
-    await page.waitForURL(/[?&]ally2=\d+/, { timeout: 10_000 });
+    await page.waitForURL(/[?&]ally2=1(?:&|$)/, { timeout: 10_000 });
 
     await expect(page.locator('a[href^="/character/5?"]').first()).toBeVisible();
-    await page.waitForTimeout(1_100);
     await expect(page.locator('a[href^="/character/2?"]')).toHaveCount(0);
-    await expect(page.locator('a[href^="/character/5?"]').first()).toBeVisible();
+    expect(requestCount).toBe(1);
   });
 });
