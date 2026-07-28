@@ -17,6 +17,7 @@ export const dynamic = "force-dynamic";
  *   - v2_CharacterTrioWeapon                → "trios-weapon"
  *   - v2_CharacterTrioWeaponSearch_all      → "trios-weapon"
  *   - v2_CharacterTrioWeaponPairLookup_*    → "trios-weapon"
+ *   - v2_CharacterTrioWeaponMemberBucket    → "trios-weapon"
  *   - v2_CharacterStats / CharacterStats    → "character-stats:rows" + "character-stats:patch:<patchVersion>" 등 (lib/characterStats.ts 참조)
  *   - chars 배열의 각 코드               → "trios:char:<n>", "trios-weapon:char:<n>"
  */
@@ -28,6 +29,7 @@ const TABLE_TAG_MAP: Record<string, string[]> = {
   v2_CharacterTrioWeaponSearch_all: ["trios-weapon"],
   v2_CharacterTrioWeaponPairLookup_agg_next: ["trios-weapon"],
   v2_CharacterTrioWeaponPairLookup_all_next: ["trios-weapon"],
+  v2_CharacterTrioWeaponMemberBucket: ["trios-weapon"],
   v2_CharacterStats: ["character-stats:rows"],
   CharacterStats: ["character-stats:rows"],
 };

@@ -11,7 +11,7 @@ const FIRST_TUPLE: CachedTrioWeaponTuple = [6, 8, 10, 1, 22, 3, 120, 30, 3240, 4
 const SECOND_TUPLE: CachedTrioWeaponTuple = [6, 8, 11, 2, 23, 4, 80, 16, 1680, 320];
 
 describe("trioWeaponTuple", () => {
-  it("RPC JSON tuple을 검증하고 숫자로 정규화한다", () => {
+  it("bucket JSON tuple을 검증하고 숫자로 정규화한다", () => {
     expect(parseTrioWeaponTuple(["6", 8, 10, 1, 22, 3, 120, 30, 3240, 420])).toEqual(FIRST_TUPLE);
     expect(() => parseTrioWeaponTuple([6, 8])).toThrow("invalid_trio_weapon_member_bucket_tuple");
     expect(() => parseTrioWeaponTuple([6, 8, 10, 1, 22, 3, 120, 30, "not-a-number", 420])).toThrow(
