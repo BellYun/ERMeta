@@ -11,7 +11,7 @@ import {
 
 const EXCLUDED_CHARACTER_CODES = new Set([9998, 9999]);
 const TRIO_WEAPON_SEARCH_TABLE = "v2_CharacterTrioWeaponSearch_all";
-const TRIO_WEAPON_MEMBER_BUCKET_RPC = "get_trio_weapon_member_bucket";
+const TRIO_WEAPON_MEMBER_BUCKET_TABLE = "v2_CharacterTrioWeaponMemberBucket";
 const TRIO_WEAPON_PAIR_LOOKUP_TABLES = [
   "v2_CharacterTrioWeaponPairLookup_agg_next",
   "v2_CharacterTrioWeaponPairLookup_all_next",
@@ -24,7 +24,7 @@ const DB_PAGE_SIZE = 1000;
 const PARALLEL_FETCH_LIMIT = 5000;
 const FULL_FETCH_LIMIT = 5000;
 const MAX_RESPONSE_LIMIT = FULL_FETCH_LIMIT;
-const TRIO_WEAPON_CACHE_VERSION = "v14";
+const TRIO_WEAPON_CACHE_VERSION = "v15";
 
 // L1 캐시 TTL — source 가 사전 집계 테이블(v2_CharacterTrioWeapon* / search_all)이고
 // tag-based invalidation 으로 즉시 갱신되므로 7d. member+weapon 버킷을 오래 유지해
@@ -98,7 +98,7 @@ interface AggregatedTrioWeapon {
   averageRank: number;
 }
 
-interface MemberWeaponBucketRpcRow {
+interface MemberWeaponBucketRow {
   item_count: number;
   items: unknown;
 }
@@ -374,8 +374,8 @@ async function fetchTrioWeaponPair(char1: number, char2: number): Promise<Aggreg
 }
 
 /**
- * character+weapon 한 개를 anchor로 compact tuple bucket을 가져온다.
- * RPC가 canonical pair row만 읽으므로 pair lookup의 3배 중복은 응답에 포함되지 않는다.
+ * character+weapon 한 개를 anchor로 사전 집계된 compact tuple bucket 한 행을 가져온다.
+ * 패치 집계 시 canonical pair row에서 미리 생성하므로 요청 경로에서는 JSONB_AGG를 하지 않는다.
  */
 async function fetchTrioWeaponMemberWeaponBucket(
   character: number,
@@ -383,16 +383,17 @@ async function fetchTrioWeaponMemberWeaponBucket(
 ): Promise<CachedTrioWeaponTuple[]> {
   const supabase = createServerClient();
   const { data, error } = await supabase
-    .rpc(TRIO_WEAPON_MEMBER_BUCKET_RPC, {
-      p_character: character,
-      p_weapon: weapon,
-    })
-    .single();
+    .from(TRIO_WEAPON_MEMBER_BUCKET_TABLE)
+    .select("item_count,items")
+    .eq("character_code", character)
+    .eq("weapon_code", weapon)
+    .maybeSingle();
 
   if (error) throw error;
+  if (!data) return [];
 
-  const bucket = data as MemberWeaponBucketRpcRow | null;
-  if (!bucket || !Array.isArray(bucket.items)) {
+  const bucket = data as MemberWeaponBucketRow;
+  if (!Array.isArray(bucket.items)) {
     throw new Error("invalid_trio_weapon_member_bucket_response");
   }
 
@@ -539,7 +540,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const tupleFormat = searchParams.get("format") === "tuple";
 
-  // compact tuple 계약은 이 Next route와 Supabase RPC가 담당한다.
+  // compact tuple 계약은 이 Next route와 Supabase bucket table이 담당한다.
   // Nest가 아직 같은 계약을 제공하지 않으므로 기존 object 요청만 proxy한다.
   if (!tupleFormat) {
     const proxied = await tryNestApiProxy(request, "/stats/trios-weapon");
