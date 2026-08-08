@@ -185,6 +185,13 @@
       "methodologyCta": "통계 해석 방법"
     },
     "preseasonNotice": "11.0 버전은 프리시즌 데이터이므로 제공하지 않습니다.",
+    "preseasonPolicyNotice": "프리시즌 기간에는 통계를 집계하지 않습니다.",
+    "preparing": {
+      "subtitle": "새 시즌 통계를 준비하고 있습니다.",
+      "kicker": "시즌 전환 안내",
+      "title": "정규 시즌 데이터 집계 후 통계를 제공합니다",
+      "body": "프리시즌 경기는 집계하지 않으며, 새 정규 시즌의 표본이 충분히 쌓이면 메타 분석을 다시 제공합니다."
+    },
     "filterCta": "필터 열기",
     "topFiveTitle": "이번 패치 상승 캐릭터",
     "honeyPicksTitle": "이번 패치 상승 픽",

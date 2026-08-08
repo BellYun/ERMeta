@@ -145,6 +145,13 @@
       "methodologyCta": "統計の読み方"
     },
     "preseasonNotice": "11.0はプレシーズンデータのため提供していません。",
+    "preseasonPolicyNotice": "プレシーズン期間の統計は集計していません。",
+    "preparing": {
+      "subtitle": "新シーズンの統計を準備しています。",
+      "kicker": "シーズン移行のお知らせ",
+      "title": "レギュラーシーズンのデータ集計後に統計を提供します",
+      "body": "プレシーズンの試合は集計せず、新しいレギュラーシーズンのサンプルが十分に集まり次第、メタ分析を再開します。"
+    },
     "filterCta": "フィルターを開く",
     "patchAnalysisCta": "11.5パッチ分析",
     "honeyPicksTitle": "今パッチの急上昇",

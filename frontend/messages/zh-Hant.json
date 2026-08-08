@@ -144,6 +144,13 @@
       "methodologyCta": "統計方法"
     },
     "preseasonNotice": "11.0 為季前賽資料，因此不提供。",
+    "preseasonPolicyNotice": "季前賽期間的資料不納入統計。",
+    "preparing": {
+      "subtitle": "新賽季統計正在準備中。",
+      "kicker": "賽季過渡說明",
+      "title": "例行賽資料完成彙整後將提供統計",
+      "body": "季前賽對局不納入統計。新例行賽樣本量充足後，我們將恢復提供版本分析。"
+    },
     "filterCta": "開啟篩選",
     "patchAnalysisCta": "11.5 版本分析",
     "honeyPicksTitle": "本版本上升",

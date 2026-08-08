@@ -191,6 +191,13 @@
       "methodologyCta": "Methodology"
     },
     "preseasonNotice": "Patch 11.0 uses preseason data and is not provided.",
+    "preseasonPolicyNotice": "Preseason matches are not included in our statistics.",
+    "preparing": {
+      "subtitle": "New season statistics are being prepared.",
+      "kicker": "Season transition",
+      "title": "Statistics will return after regular-season data is collected",
+      "body": "Preseason matches are excluded. Meta analysis will resume once the new regular season has a sufficient sample size."
+    },
     "filterCta": "Open filters",
     "topFiveTitle": "Patch risers",
     "honeyPicksTitle": "Patch Risers",
