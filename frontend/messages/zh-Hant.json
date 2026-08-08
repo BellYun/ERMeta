@@ -5,7 +5,7 @@
     "logoSubtitle": "永恆輪迴 Meta",
     "patchPrefix": "v",
     "seasonRecapBadge": "賽季",
-    "seasonRecapTitle": "第 10 賽季回顧已上線",
+    "seasonRecapTitle": "第 11 賽季回顧已上線",
     "seasonRecapBody": "查看各版本主要 RP 陣容與完整賽季 Meta 變化。",
     "seasonRecapCta": "開啟回顧",
     "patchAnalysisBadge": "版本分析",
@@ -458,7 +458,102 @@
     "rp": "RP",
     "games": "場次",
     "averageRank": "平均名次",
-    "moreTraits": "再顯示 {count} 個特性"
+    "moreTraits": "再顯示 {count} 個特性",
+    "insight": {
+      "operationLabel": "營運傾向：{value}",
+      "metricSummary": "與相似候選比較 · RP 前 {rpTop}% · 勝率前 {winTop}% · {rankStanding} · {games} 場（{confidence}）",
+      "rankStanding": {
+        "top": "平均名次前 {value}%",
+        "bottom": "平均名次後 {value}%"
+      },
+      "confidence": {
+        "low": "低可信度",
+        "medium": "中等可信度",
+        "high": "高可信度"
+      },
+      "playStyle": {
+        "snowball": "全指標優勢型",
+        "tempo": "勝利轉化型",
+        "stable": "排名穩定型",
+        "lateValue": "排名優先型",
+        "volatile": "高上限波動型",
+        "climbVolatile": "上分波動型",
+        "trap": "需要謹慎",
+        "balanced": "均衡型"
+      },
+      "playStyleDescription": {
+        "snowball": "勝率 {winRate}%、平均名次 {averageRank}、平均 RP {averageRP}，三項指標均較強。",
+        "tempo": "勝率 {winRate}%、平均 RP {averageRP}，進入前列後轉化為第一名的能力較強。",
+        "stable": "平均名次 {averageRank}、平均 RP {averageRP}，能較穩定地進入前列並獲得 RP。",
+        "lateValue": "平均名次為 {averageRank}，勝率為 {winRate}%。比起奪冠，更擅長穩定進入前列。",
+        "volatile": "勝率達到 {winRate}%，但平均名次為 {averageRank}。早期出局風險較高，存活後仍有較強奪冠能力。",
+        "climbVolatile": "平均名次為 {averageRank}，結果波動較大，但平均 RP 為 {averageRP}。順利對局的上分收益較高。",
+        "trap": "勝率 {winRate}%、平均名次 {averageRank}、平均 RP {averageRP}，三項指標均偏弱，不宜作為固定陣容。",
+        "balanced": "勝率 {winRate}%、平均名次 {averageRank}、平均 RP {averageRP}，沒有明顯偏向單一指標。"
+      }
+    },
+    "composition": {
+      "rolesLabel": "定位",
+      "powerSpikeLabel": "強勢條件",
+      "favorableLabel": "可能有利",
+      "cautionLabel": "需要注意",
+      "hypothesisNotice": "勝率與 RP 來自跨版本累積陣容資料庫，定位採用 ERMeta 分類。由於沒有直接時間與交戰日誌，強勢期和剋制關係屬於基於定位的假設。",
+      "roles": {
+        "tank": "坦克",
+        "warrior": "戰士",
+        "assassin": "刺客",
+        "skillDealer": "技能輸出",
+        "rangedCarry": "遠程輸出",
+        "support": "輔助",
+        "unknown": "未分類"
+      },
+      "patterns": {
+        "threeLayer": "前排·輔助·輸出三層陣容",
+        "diveFollow": "先手進場與刺客跟進",
+        "doubleFront": "雙前排陣容",
+        "frontToBack": "前後排標準陣容",
+        "protectCarry": "保護核心輸出",
+        "pickBurst": "抓單爆發陣容",
+        "pokeKite": "消耗拉扯陣容",
+        "brawl": "近距離混戰陣容",
+        "flexible": "條件應對型陣容"
+      },
+      "patternDescriptions": {
+        "threeLayer": "坦克創造空間，輔助延長核心輸出的安全輸出時間。",
+        "diveFollow": "前排先吸引注意，刺客隨後集中同一目標。",
+        "doubleFront": "兩名成員維持前線，後排持續輸出。",
+        "frontToBack": "前排發起或承受進場，後排從安全距離完成收割。",
+        "protectCarry": "輔助保護核心輸出的位置與生存，適合延長交戰。",
+        "pickBurst": "優先快速擊殺落單目標，製造人數優勢。",
+        "pokeKite": "先消耗生命值並保持距離，懲罰對手的強行接近。",
+        "brawl": "在短距離持續進場和換血，爭奪正面戰優勢。",
+        "flexible": "沒有單一明確方案，需要在交戰前確定先手與保護職責。"
+      },
+      "powerSpikes": {
+        "formationReady": "前排與保護手段、核心輸出的關鍵技能同時就緒時",
+        "burstCooldowns": "進場、爆發和控制可以集中同一目標時",
+        "frontlineReady": "前排生存手段與後排持續輸出同時就緒時",
+        "rangeSetup": "先取得視野和距離，且消耗與撤退手段可用時",
+        "sustainedResources": "治療、防禦與持續作戰資源仍然充足時",
+        "synchronizedTools": "三人的終極技能、戰術技能與武器技能同時可用時"
+      },
+      "favorable": {
+        "singleDive": "可以反打逐個進場目標的情況",
+        "exposedBackline": "可以先手攻擊缺少保護或逃生的後排",
+        "shortRangeApproach": "短手對手必須從正面穿過前排接近",
+        "slowFrontline": "可以先消耗缺少強制進場的緩慢前排",
+        "closeRangeFight": "雙方必須貼近並持續換血的交戰",
+        "conditional": "提前確定先手成員與集火目標的交戰"
+      },
+      "threats": {
+        "splitPressure": "多方向壓力使前排、輔助和核心輸出分離",
+        "peelDisengage": "首次進場被強保護、擊退或撤退手段化解",
+        "flankCollapse": "側翼直接接近後排，或前後排距離被拉開",
+        "hardEngage": "在消耗形成優勢前被強制快速貼近",
+        "longRangeKite": "接觸前被遠程消耗與拉扯削減生命值",
+        "unclearInitiation": "先手職責不清，導致關鍵技能分散使用"
+      }
+    }
   },
   "characterAnalysis": {
     "quickSummary": "摘要",

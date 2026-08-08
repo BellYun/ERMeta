@@ -4,7 +4,7 @@
     "logoSubtitle": "이리와지지",
     "patchPrefix": "v",
     "seasonRecapBadge": "시즌",
-    "seasonRecapTitle": "시즌 10 리캡 공개",
+    "seasonRecapTitle": "시즌 11 리캡 공개",
     "seasonRecapBody": "패치별 평균 RP 주요 조합과 시즌 누적 메타 흐름을 정리했습니다.",
     "seasonRecapCta": "열기",
     "patchAnalysisBadge": "패치 분석",
@@ -592,6 +592,68 @@
         "climbVolatile": "평균 순위 {averageRank}위로 결과 편차는 크지만 평균 RP는 {averageRP}입니다. 잘 풀린 판의 RP 보상이 큰 조합입니다.",
         "trap": "승률 {winRate}%, 평균 순위 {averageRank}위, 평균 RP {averageRP}로 세 지표가 모두 낮아 고정픽으로 추천하기 어렵습니다.",
         "balanced": "승률 {winRate}%, 평균 순위 {averageRank}위, 평균 RP {averageRP}로 특정 지표에 치우치지 않은 조합입니다."
+      }
+    },
+    "composition": {
+      "rolesLabel": "역할",
+      "powerSpikeLabel": "힘이 모이는 조건",
+      "favorableLabel": "유리할 수 있는 구도",
+      "cautionLabel": "주의할 구도",
+      "hypothesisNotice": "승률·RP는 패치가 합쳐진 누적 조합 DB, 역할은 ERMeta 분류를 사용합니다. 파워 스파이크와 상성은 직접 시간·교전 로그가 없는 역할 기반 가설입니다.",
+      "roles": {
+        "tank": "탱커",
+        "warrior": "전사",
+        "assassin": "암살자",
+        "skillDealer": "스킬딜러",
+        "rangedCarry": "원거리 딜러",
+        "support": "지원가",
+        "unknown": "미분류"
+      },
+      "patterns": {
+        "threeLayer": "전열·지원·딜 3단 조합",
+        "diveFollow": "선진입 후속 암살 조합",
+        "doubleFront": "이중 전열 조합",
+        "frontToBack": "전열-후열 정석 조합",
+        "protectCarry": "핵심 딜러 보호 조합",
+        "pickBurst": "점사·암살 조합",
+        "pokeKite": "포킹·거리 유지 조합",
+        "brawl": "근거리 난전 조합",
+        "flexible": "조건 대응형 조합"
+      },
+      "patternDescriptions": {
+        "threeLayer": "탱커가 공간을 만들고 지원가가 핵심 딜러의 공격 시간을 늘리는 구조입니다.",
+        "diveFollow": "전열이 먼저 시선을 끈 뒤 암살자가 같은 목표에 후속 진입하는 구조입니다.",
+        "doubleFront": "두 명이 앞선을 유지하고 후열 딜러가 그 뒤에서 누적 피해를 넣는 구조입니다.",
+        "frontToBack": "전열이 진입을 받아내거나 열고 후열이 안전한 거리에서 마무리하는 구조입니다.",
+        "protectCarry": "지원가가 핵심 딜러의 위치와 생존을 보조하며 교전을 길게 보는 구조입니다.",
+        "pickBurst": "고립된 목표를 빠르게 끊고 인원 우위를 만드는 데 초점을 둔 구조입니다.",
+        "pokeKite": "먼저 체력을 깎고 거리를 유지하면서 상대의 무리한 진입을 유도하는 구조입니다.",
+        "brawl": "짧은 거리에서 진입과 지속 교환을 반복해 전면전 우위를 노리는 구조입니다.",
+        "flexible": "역할이 한 방향으로 뚜렷하지 않아 교전 전 누가 열고 지킬지 합의가 필요한 구조입니다."
+      },
+      "powerSpikes": {
+        "formationReady": "전열·보호 스킬과 핵심 딜러의 주요 스킬이 함께 준비됐을 때",
+        "burstCooldowns": "진입기와 순간 폭딜·제어 스킬을 같은 목표에 맞출 수 있을 때",
+        "frontlineReady": "전열의 생존 수단과 후열의 지속 화력이 동시에 준비됐을 때",
+        "rangeSetup": "시야와 사거리를 먼저 확보하고 포킹·이탈 수단이 준비됐을 때",
+        "sustainedResources": "회복·방어 자원과 지속 교전 스킬이 남아 있을 때",
+        "synchronizedTools": "세 명의 궁극기·전술·무기 스킬 준비가 겹칠 때"
+      },
+      "favorable": {
+        "singleDive": "한 명씩 들어오는 단일 진입을 받아치는 상황",
+        "exposedBackline": "보호와 이탈 수단이 부족한 후열을 먼저 노릴 수 있는 상황",
+        "shortRangeApproach": "사거리가 짧은 상대가 정면으로 접근해야 하는 상황",
+        "slowFrontline": "강제 진입 수단이 부족한 느린 전열을 먼저 견제하는 상황",
+        "closeRangeFight": "서로 가까이 붙어 지속 교환해야 하는 상황",
+        "conditional": "선진입 담당과 목표를 먼저 정하고 싸우는 상황"
+      },
+      "threats": {
+        "splitPressure": "전열·지원·딜러가 갈라지거나 여러 방향에서 동시에 압박받는 상황",
+        "peelDisengage": "첫 진입이 강한 보호·밀쳐내기·이탈기에 막히는 상황",
+        "flankCollapse": "후열이 측면 진입에 노출되거나 전열과 거리가 벌어지는 상황",
+        "hardEngage": "포킹 전에 거리를 한 번에 지우는 강제 진입을 허용하는 상황",
+        "longRangeKite": "붙기 전에 원거리 견제와 이탈에 체력이 소모되는 상황",
+        "unclearInitiation": "교전 개시 담당이 불분명해 주요 스킬이 따로 쓰이는 상황"
       }
     }
   },

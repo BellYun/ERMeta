@@ -5,7 +5,7 @@
     "logoSubtitle": "Eternal Returnメタ",
     "patchPrefix": "v",
     "seasonRecapBadge": "シーズン",
-    "seasonRecapTitle": "シーズン10リキャップ公開",
+    "seasonRecapTitle": "シーズン11リキャップ公開",
     "seasonRecapBody": "パッチ別の主要RP編成とシーズン全体のメタ推移を確認できます。",
     "seasonRecapCta": "開く",
     "patchAnalysisBadge": "パッチ分析",
@@ -497,6 +497,68 @@
         "climbVolatile": "平均順位は{averageRank}位で結果の振れ幅は大きい一方、平均RPは{averageRP}です。好調時のRP獲得が大きい構成です。",
         "trap": "勝率{winRate}%・平均順位{averageRank}位・平均RP {averageRP}で、3指標とも低く固定ピックには注意が必要です。",
         "balanced": "勝率{winRate}%・平均順位{averageRank}位・平均RP {averageRP}で、特定の指標に偏らない構成です。"
+      }
+    },
+    "composition": {
+      "rolesLabel": "役割",
+      "powerSpikeLabel": "パワースパイク条件",
+      "favorableLabel": "有利になりやすい状況",
+      "cautionLabel": "注意する状況",
+      "hypothesisNotice": "勝率・RPはパッチ横断の累積編成DB、役割はERMeta分類を使用します。パワースパイクと相性は時間・交戦ログがないため、役割に基づく仮説です。",
+      "roles": {
+        "tank": "タンク",
+        "warrior": "ファイター",
+        "assassin": "アサシン",
+        "skillDealer": "スキルディーラー",
+        "rangedCarry": "遠距離キャリー",
+        "support": "サポート",
+        "unknown": "未分類"
+      },
+      "patterns": {
+        "threeLayer": "前衛・支援・火力の3層構成",
+        "diveFollow": "先行突入＋アサシン追撃",
+        "doubleFront": "ダブル前衛",
+        "frontToBack": "フロント・トゥ・バック",
+        "protectCarry": "キャリー保護",
+        "pickBurst": "ピック・バースト",
+        "pokeKite": "ポーク・カイト",
+        "brawl": "近距離集団戦",
+        "flexible": "条件対応型"
+      },
+      "patternDescriptions": {
+        "threeLayer": "タンクが空間を作り、サポートが主力ディーラーの攻撃時間を延ばす構成です。",
+        "diveFollow": "前衛が先に注意を引き、アサシンが同じ対象へ追撃する構成です。",
+        "doubleFront": "2人が前線を維持し、後衛ディーラーが継続火力を出す構成です。",
+        "frontToBack": "前衛が交戦を始めるか受け止め、後衛が安全な距離から仕留めます。",
+        "protectCarry": "サポートが主力ディーラーの位置と生存を補助し、長い交戦を狙います。",
+        "pickBurst": "孤立した対象を素早く倒し、人数差を作る構成です。",
+        "pokeKite": "先に体力を削り、距離を保ちながら無理な接近を誘います。",
+        "brawl": "短い距離で突入と継続交換を繰り返し、正面戦を制します。",
+        "flexible": "明確な単一プランがないため、交戦前に突入役と保護役を決める必要があります。"
+      },
+      "powerSpikes": {
+        "formationReady": "前衛・保護手段と主力ディーラーの主要スキルが同時に揃った時",
+        "burstCooldowns": "突入・瞬間火力・妨害を同じ対象に合わせられる時",
+        "frontlineReady": "前衛の生存手段と後衛の継続火力が同時に揃った時",
+        "rangeSetup": "視界と射程を先に確保し、ポークと離脱手段が使える時",
+        "sustainedResources": "回復・防御・継続戦闘のリソースが残っている時",
+        "synchronizedTools": "3人の究極技・戦術・武器スキルが同時に使える時"
+      },
+      "favorable": {
+        "singleDive": "1人ずつ入ってくる突入を迎撃できる状況",
+        "exposedBackline": "保護や離脱手段が少ない後衛を先に狙える状況",
+        "shortRangeApproach": "短射程の相手が正面から接近する必要がある状況",
+        "slowFrontline": "強制突入手段が少ない遅い前衛を先に削れる状況",
+        "closeRangeFight": "両チームが近距離で継続交換する状況",
+        "conditional": "突入役と集中対象を事前に決めて戦う状況"
+      },
+      "threats": {
+        "splitPressure": "複数方向の圧力で前衛・支援・キャリーが分断される状況",
+        "peelDisengage": "最初の突入が強いピール・ノックバック・離脱に止められる状況",
+        "flankCollapse": "側面から後衛に到達されるか、前衛との距離が開く状況",
+        "hardEngage": "ポーク前に一気に距離を詰める強制突入を許す状況",
+        "longRangeKite": "接触前に遠距離攻撃と離脱で体力を削られる状況",
+        "unclearInitiation": "突入役が曖昧で主要スキルを別々に使う状況"
       }
     }
   },

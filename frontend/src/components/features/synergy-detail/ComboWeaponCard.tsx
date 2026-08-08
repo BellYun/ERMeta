@@ -7,6 +7,11 @@ import * as React from "react";
 import { TierBadge } from "@/components/features/TierBadge";
 import { Link } from "@/i18n/navigation";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
+import type {
+  CompositionMemberProfile,
+  CompositionRoleKey,
+  TrioCompositionInsight,
+} from "@/lib/synergyComposition";
 import type { OperationProfile, PlayStyleKey } from "@/lib/synergyInsights";
 import { assignComboTier, COMBO_TIER_WEIGHTS, PERFORMANCE_TIER_MIN_GAMES } from "@/lib/tierScoring";
 import { cn } from "@/lib/utils";
@@ -27,6 +32,7 @@ export interface GroupedCombo {
   averageRP: number;
   averageRank: number;
   operationProfile?: OperationProfile | null;
+  compositionInsight?: TrioCompositionInsight | null;
   /** Level 2 (펼침): 특성별 브레이크다운 */
   traitVariants: TrioWeaponResult[];
 }
@@ -98,6 +104,13 @@ function toTopPercent(percentile: number) {
 
 function toBottomPercent(percentile: number) {
   return Math.max(1, percentile);
+}
+
+function memberRoleLabel(
+  member: CompositionMemberProfile,
+  t: ReturnType<typeof useTranslations<"synergyComboCard">>
+) {
+  return member.roles.map((role: CompositionRoleKey) => t(`composition.roles.${role}`)).join("/");
 }
 
 function PlayStyleInsightBadge({
@@ -183,6 +196,16 @@ function ComboWeaponCardImpl({
     () => getOrderedMembers(group, selectedCharCodes),
     [group, selectedCharCodes]
   );
+  const orderedInsightMembers = React.useMemo(() => {
+    if (!group.compositionInsight) return [];
+    return ordered
+      .map(({ char, weapon }) =>
+        group.compositionInsight?.members.find(
+          (member) => member.character === char && member.weapon === weapon
+        )
+      )
+      .filter((member): member is CompositionMemberProfile => Boolean(member));
+  }, [group.compositionInsight, ordered]);
   const isSmallSample = group.totalGames < PERFORMANCE_TIER_MIN_GAMES;
   const tier = isSmallSample
     ? null
@@ -439,6 +462,66 @@ function ComboWeaponCardImpl({
               })}
             />
           </div>
+          {group.compositionInsight ? (
+            <div
+              data-composition-explanation
+              className="mt-2 space-y-1.5 text-[10.5px] leading-relaxed sm:text-[11px]"
+            >
+              <p className="font-semibold text-[var(--color-foreground)]">
+                {t(`composition.patterns.${group.compositionInsight.pattern}`)}
+                <span className="font-medium text-[var(--color-muted-foreground)]">
+                  {" "}
+                  — {t(`composition.patternDescriptions.${group.compositionInsight.pattern}`)}
+                </span>
+              </p>
+              <dl className="grid gap-x-3 gap-y-1 text-[var(--color-muted-foreground)] sm:grid-cols-2">
+                <div className="min-w-0">
+                  <dt className="inline font-bold text-[var(--color-foreground)]">
+                    {t("composition.rolesLabel")}
+                    {": "}
+                  </dt>
+                  <dd className="inline">
+                    {orderedInsightMembers
+                      .map(
+                        (member) =>
+                          `${getCharName(member.character)}(${memberRoleLabel(member, t)})`
+                      )
+                      .join(" · ")}
+                  </dd>
+                </div>
+                <div className="min-w-0">
+                  <dt className="inline font-bold text-[var(--color-foreground)]">
+                    {t("composition.powerSpikeLabel")}
+                    {": "}
+                  </dt>
+                  <dd className="inline">
+                    {t(`composition.powerSpikes.${group.compositionInsight.powerSpike}`)}
+                  </dd>
+                </div>
+                <div className="min-w-0">
+                  <dt className="inline font-bold text-[var(--color-foreground)]">
+                    {t("composition.favorableLabel")}
+                    {": "}
+                  </dt>
+                  <dd className="inline">
+                    {t(`composition.favorable.${group.compositionInsight.favorableMatchup}`)}
+                  </dd>
+                </div>
+                <div className="min-w-0">
+                  <dt className="inline font-bold text-[var(--color-foreground)]">
+                    {t("composition.cautionLabel")}
+                    {": "}
+                  </dt>
+                  <dd className="inline">
+                    {t(`composition.threats.${group.compositionInsight.threatMatchup}`)}
+                  </dd>
+                </div>
+              </dl>
+              <p className="text-[9.5px] text-[var(--color-muted-foreground)]/80">
+                {t("composition.hypothesisNotice")}
+              </p>
+            </div>
+          ) : null}
         </div>
       ) : null}
 

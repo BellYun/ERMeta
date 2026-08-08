@@ -12,6 +12,7 @@ import {
   NotebookText,
   Search,
   Sun,
+  Trophy,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -43,7 +44,8 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
   const patchAnalysisPath = patchAnalysisPatch
     ? `/patch-analysis/${patchAnalysisPatch}`
     : "/patch-analysis";
-  const showPatchAnalysisBanner = !normalizedPathname.startsWith("/patch-analysis");
+  const seasonRecapPath = "/season11-recap";
+  const showSeasonRecapBanner = normalizedPathname !== seasonRecapPath;
 
   const navLinks: Array<{
     href: string;
@@ -89,6 +91,12 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
       label: tNav("patchAnalysisNav"),
       icon: Gauge,
       isActive: normalizedPathname.startsWith("/patch-analysis"),
+    },
+    {
+      href: withCurrentRouteLocale(pathname, seasonRecapPath),
+      label: tNav("seasonRecap"),
+      icon: Trophy,
+      isActive: normalizedPathname === seasonRecapPath,
     },
   ];
 
@@ -169,32 +177,32 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
       <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[var(--color-surface)]">
         <LocaleRecommendationBanner />
 
-        {showPatchAnalysisBanner && (
+        {showSeasonRecapBanner && (
           <Link
-            href={withCurrentRouteLocale(pathname, patchAnalysisPath)}
+            href={withCurrentRouteLocale(pathname, seasonRecapPath)}
             className="group flex items-center justify-between gap-3 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 transition-colors hover:bg-[var(--color-surface)] sm:px-4 lg:px-6"
           >
             <div className="flex min-w-0 items-start gap-3">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]">
-                <Gauge className="h-4.5 w-4.5" strokeWidth={2} />
+                <Trophy className="h-4.5 w-4.5" strokeWidth={2} />
               </span>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-[10px] font-medium text-[var(--color-muted-foreground)]">
-                    {t("patchAnalysisBadge")}
+                    {t("seasonRecapBadge")}
                   </span>
                   <p className="text-sm font-semibold text-[var(--color-foreground)]">
-                    {t("patchAnalysisTitle")}
+                    {t("seasonRecapTitle")}
                   </p>
                 </div>
                 <p className="mt-0.5 text-xs leading-5 text-[var(--color-muted-foreground)] sm:text-sm">
-                  {t("patchAnalysisBody")}
+                  {t("seasonRecapBody")}
                 </p>
               </div>
             </div>
 
             <span className="hidden shrink-0 items-center gap-1.5 text-sm font-medium text-[var(--color-muted-foreground)] transition group-hover:text-[var(--color-foreground)] sm:inline-flex">
-              {t("patchAnalysisCta")}
+              {t("seasonRecapCta")}
               <ArrowRight className="h-4 w-4" strokeWidth={2} />
             </span>
           </Link>

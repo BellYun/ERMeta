@@ -4,7 +4,7 @@
     "logoSubtitle": "Eternal Return Meta",
     "patchPrefix": "v",
     "seasonRecapBadge": "Season",
-    "seasonRecapTitle": "Season 10 recap is live",
+    "seasonRecapTitle": "Season 11 recap is live",
     "seasonRecapBody": "Review per-patch top RP comps and the full season meta flow in one place.",
     "seasonRecapCta": "Open recap",
     "patchAnalysisBadge": "Patch analysis",
@@ -598,6 +598,68 @@
         "climbVolatile": "Average placement is {averageRank}, but average RP is {averageRP}. Results vary widely, while successful games still give strong climbing rewards.",
         "trap": "Win rate is {winRate}%, average placement is {averageRank}, and average RP is {averageRP}; all three metrics are weak for a default ranked comp.",
         "balanced": "Win rate is {winRate}%, average placement is {averageRank}, and average RP is {averageRP}, without one metric dominating the profile."
+      }
+    },
+    "composition": {
+      "rolesLabel": "Roles",
+      "powerSpikeLabel": "Power-spike condition",
+      "favorableLabel": "Can favor",
+      "cautionLabel": "Watch for",
+      "hypothesisNotice": "Win rate and RP come from the cumulative cross-patch trio database; roles use ERMeta labels. Power-spike and matchup notes are role-based hypotheses because direct timing and fight logs are unavailable.",
+      "roles": {
+        "tank": "Tank",
+        "warrior": "Bruiser",
+        "assassin": "Assassin",
+        "skillDealer": "Skill Damage",
+        "rangedCarry": "Ranged Carry",
+        "support": "Support",
+        "unknown": "Unclassified"
+      },
+      "patterns": {
+        "threeLayer": "Frontline-Support-Carry",
+        "diveFollow": "Engage into Assassin Follow-up",
+        "doubleFront": "Double Frontline",
+        "frontToBack": "Front-to-Back",
+        "protectCarry": "Protect the Carry",
+        "pickBurst": "Pick and Burst",
+        "pokeKite": "Poke and Kite",
+        "brawl": "Close-Range Brawl",
+        "flexible": "Conditional Flex"
+      },
+      "patternDescriptions": {
+        "threeLayer": "The tank creates space while the support extends the main damage dealer's uptime.",
+        "diveFollow": "The frontline draws attention first, then the assassin follows onto the same target.",
+        "doubleFront": "Two members hold the front while a backline dealer applies sustained damage.",
+        "frontToBack": "The frontline starts or absorbs the engage so the backline can finish from a safe range.",
+        "protectCarry": "The support preserves the main dealer's position and survival for a longer fight.",
+        "pickBurst": "The comp focuses on deleting an isolated target to create a numbers advantage.",
+        "pokeKite": "The comp chips first, maintains range, and punishes forced approaches.",
+        "brawl": "The comp repeatedly engages and trades at short range to win a direct fight.",
+        "flexible": "No single plan dominates, so the team must agree on who engages and who protects before fighting."
+      },
+      "powerSpikes": {
+        "formationReady": "when frontline and protection tools are ready with the carry's key skills",
+        "burstCooldowns": "when engage, burst, and control can land on the same target",
+        "frontlineReady": "when frontline survival and backline sustained damage are ready together",
+        "rangeSetup": "after securing vision and range with poke and escape tools available",
+        "sustainedResources": "while healing, defense, and sustained-fight resources remain",
+        "synchronizedTools": "when all three members' ultimates, tactical skills, and weapon skills overlap"
+      },
+      "favorable": {
+        "singleDive": "isolated one-by-one dives that can be counter-engaged",
+        "exposedBackline": "backlines with limited protection or escape tools",
+        "shortRangeApproach": "short-range opponents forced to approach through the frontline",
+        "slowFrontline": "slow frontlines with limited forced-engage options",
+        "closeRangeFight": "fights where both teams must stay close and keep trading",
+        "conditional": "fights where the engage owner and focus target are agreed in advance"
+      },
+      "threats": {
+        "splitPressure": "multi-angle pressure that separates frontline, support, and carry",
+        "peelDisengage": "strong peel, knockback, or disengage stopping the first entry",
+        "flankCollapse": "flanks reaching the backline or a large gap opening behind the frontline",
+        "hardEngage": "hard engage that closes distance before poke can create an advantage",
+        "longRangeKite": "losing health to long-range poke and disengage before making contact",
+        "unclearInitiation": "unclear engage ownership causing key skills to be used separately"
       }
     }
   },

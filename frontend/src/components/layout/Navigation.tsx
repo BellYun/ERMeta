@@ -8,6 +8,7 @@ import {
   Network,
   NotebookText,
   Search,
+  Trophy,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -37,6 +38,7 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
   const patchAnalysisPath = patchAnalysisPatch
     ? `/patch-analysis/${patchAnalysisPatch}`
     : "/patch-analysis";
+  const seasonRecapPath = "/season11-recap";
   const t = useTranslations("navigation");
   const tHeader = useTranslations("header");
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
@@ -90,6 +92,12 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
       label: t("patchAnalysisNav"),
       icon: Gauge,
       isActive: normalizedPathname.startsWith("/patch-analysis"),
+    },
+    {
+      href: withCurrentRouteLocale(pathname, seasonRecapPath),
+      label: t("seasonRecap"),
+      icon: Trophy,
+      isActive: normalizedPathname === seasonRecapPath,
     },
   ];
 

@@ -5,7 +5,7 @@
     "logoSubtitle": "永恒轮回 Meta",
     "patchPrefix": "v",
     "seasonRecapBadge": "赛季",
-    "seasonRecapTitle": "第 10 赛季回顾已上线",
+    "seasonRecapTitle": "第 11 赛季回顾已上线",
     "seasonRecapBody": "查看各版本主要 RP 阵容和完整赛季 Meta 变化。",
     "seasonRecapCta": "打开回顾",
     "patchAnalysisBadge": "版本分析",
@@ -458,7 +458,102 @@
     "rp": "RP",
     "games": "场次",
     "averageRank": "平均名次",
-    "moreTraits": "再显示 {count} 个特性"
+    "moreTraits": "再显示 {count} 个特性",
+    "insight": {
+      "operationLabel": "运营倾向：{value}",
+      "metricSummary": "与相似候选比较 · RP 前 {rpTop}% · 胜率前 {winTop}% · {rankStanding} · {games} 场（{confidence}）",
+      "rankStanding": {
+        "top": "平均名次前 {value}%",
+        "bottom": "平均名次后 {value}%"
+      },
+      "confidence": {
+        "low": "低可信度",
+        "medium": "中等可信度",
+        "high": "高可信度"
+      },
+      "playStyle": {
+        "snowball": "全指标优势型",
+        "tempo": "胜利转化型",
+        "stable": "排名稳定型",
+        "lateValue": "排名优先型",
+        "volatile": "高上限波动型",
+        "climbVolatile": "上分波动型",
+        "trap": "需要谨慎",
+        "balanced": "均衡型"
+      },
+      "playStyleDescription": {
+        "snowball": "胜率 {winRate}%、平均名次 {averageRank}、平均 RP {averageRP}，三项指标均较强。",
+        "tempo": "胜率 {winRate}%、平均 RP {averageRP}，进入前列后转化为第一名的能力较强。",
+        "stable": "平均名次 {averageRank}、平均 RP {averageRP}，能够较稳定地进入前列并获得 RP。",
+        "lateValue": "平均名次为 {averageRank}，胜率为 {winRate}%。比起夺冠，更擅长稳定进入前列。",
+        "volatile": "胜率达到 {winRate}%，但平均名次为 {averageRank}。早期出局风险较高，存活后仍有较强夺冠能力。",
+        "climbVolatile": "平均名次为 {averageRank}，结果波动较大，但平均 RP 为 {averageRP}。顺利对局的上分收益较高。",
+        "trap": "胜率 {winRate}%、平均名次 {averageRank}、平均 RP {averageRP}，三项指标均偏弱，不宜作为固定阵容。",
+        "balanced": "胜率 {winRate}%、平均名次 {averageRank}、平均 RP {averageRP}，没有明显偏向单一指标。"
+      }
+    },
+    "composition": {
+      "rolesLabel": "定位",
+      "powerSpikeLabel": "强势条件",
+      "favorableLabel": "可能有利",
+      "cautionLabel": "需要注意",
+      "hypothesisNotice": "胜率与 RP 来自跨版本累计阵容数据库，定位采用 ERMeta 分类。由于没有直接时间与交战日志，强势期和克制关系属于基于定位的假设。",
+      "roles": {
+        "tank": "坦克",
+        "warrior": "战士",
+        "assassin": "刺客",
+        "skillDealer": "技能输出",
+        "rangedCarry": "远程输出",
+        "support": "辅助",
+        "unknown": "未分类"
+      },
+      "patterns": {
+        "threeLayer": "前排·辅助·输出三层阵容",
+        "diveFollow": "先手进场与刺客跟进",
+        "doubleFront": "双前排阵容",
+        "frontToBack": "前后排标准阵容",
+        "protectCarry": "保护核心输出",
+        "pickBurst": "抓单爆发阵容",
+        "pokeKite": "消耗拉扯阵容",
+        "brawl": "近距离混战阵容",
+        "flexible": "条件应对型阵容"
+      },
+      "patternDescriptions": {
+        "threeLayer": "坦克创造空间，辅助延长核心输出的安全输出时间。",
+        "diveFollow": "前排先吸引注意，刺客随后集中同一目标。",
+        "doubleFront": "两名成员维持前线，后排持续输出。",
+        "frontToBack": "前排发起或承受进场，后排从安全距离完成收割。",
+        "protectCarry": "辅助保护核心输出的位置与生存，适合延长交战。",
+        "pickBurst": "优先快速击杀落单目标，制造人数优势。",
+        "pokeKite": "先消耗生命值并保持距离，惩罚对手的强行接近。",
+        "brawl": "在短距离持续进场和换血，争夺正面战优势。",
+        "flexible": "没有单一明确方案，需要在交战前确定先手与保护职责。"
+      },
+      "powerSpikes": {
+        "formationReady": "前排与保护手段、核心输出的关键技能同时就绪时",
+        "burstCooldowns": "进场、爆发和控制可以集中同一目标时",
+        "frontlineReady": "前排生存手段与后排持续输出同时就绪时",
+        "rangeSetup": "先取得视野和距离，且消耗与撤退手段可用时",
+        "sustainedResources": "治疗、防御与持续作战资源仍然充足时",
+        "synchronizedTools": "三人的终极技能、战术技能与武器技能同时可用时"
+      },
+      "favorable": {
+        "singleDive": "可以反打逐个进场目标的情况",
+        "exposedBackline": "可以先手攻击缺少保护或逃生的后排",
+        "shortRangeApproach": "短手对手必须从正面穿过前排接近",
+        "slowFrontline": "可以先消耗缺少强制进场的缓慢前排",
+        "closeRangeFight": "双方必须贴近并持续换血的交战",
+        "conditional": "提前确定先手成员与集火目标的交战"
+      },
+      "threats": {
+        "splitPressure": "多方向压力使前排、辅助和核心输出分离",
+        "peelDisengage": "首次进场被强保护、击退或撤退手段化解",
+        "flankCollapse": "侧翼直接接近后排，或前后排距离被拉开",
+        "hardEngage": "在消耗形成优势前被强制快速贴近",
+        "longRangeKite": "接触前被远程消耗与拉扯削减生命值",
+        "unclearInitiation": "先手职责不清，导致关键技能分散使用"
+      }
+    }
   },
   "characterAnalysis": {
     "quickSummary": "摘要",

@@ -13,6 +13,7 @@ import { analytics, type SynergySortBy } from "@/lib/analytics";
 import { resolveCharacterName } from "@/lib/characterMap";
 import { isMobileDevice } from "@/lib/device";
 import { FetchHttpError, FetchRetriesExhaustedError, fetchWithRetry } from "@/lib/fetchWithRetry";
+import { buildTrioCompositionInsight } from "@/lib/synergyComposition";
 import { buildTrioInsightBenchmarks, getTrioOperationProfile } from "@/lib/synergyInsights";
 import { buildSynergyShareUrl } from "@/lib/synergyShare";
 import { MINIMUM_GAMES_OPTIONS, parseMinimumGamesParam } from "@/lib/synergyUrlState";
@@ -35,7 +36,7 @@ import {
 } from "./WeaponAllySelector";
 
 const MIN_MEANINGFUL_GAMES = 10;
-const VIRTUAL_CARD_ESTIMATE = 150; // 운영 안내가 포함된 접힌 카드의 실측 높이
+const VIRTUAL_CARD_ESTIMATE = 245; // 운영·역할·상성 설명이 포함된 접힌 카드의 실측 높이
 const VISIBLE_RESULTS_STEP = 30;
 const DETAIL_BUCKET_MEMORY_CACHE_LIMIT = 8;
 
@@ -135,10 +136,16 @@ function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
 
   return groups.map((group) => {
     const operationProfile = getTrioOperationProfile(group, benchmarks);
+    const compositionInsight = buildTrioCompositionInsight([
+      { character: group.character1, weapon: group.weaponType1 },
+      { character: group.character2, weapon: group.weaponType2 },
+      { character: group.character3, weapon: group.weaponType3 },
+    ]);
 
     return {
       ...group,
       operationProfile,
+      compositionInsight,
     };
   });
 }
