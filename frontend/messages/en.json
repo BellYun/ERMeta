@@ -4,7 +4,7 @@
     "logoSubtitle": "Eternal Return Meta",
     "patchPrefix": "v",
     "seasonRecapBadge": "Season",
-    "seasonRecapTitle": "Season 10 recap is live",
+    "seasonRecapTitle": "Season 11 recap is live",
     "seasonRecapBody": "Review per-patch top RP comps and the full season meta flow in one place.",
     "seasonRecapCta": "Open recap",
     "patchAnalysisBadge": "Patch analysis",
@@ -191,6 +191,13 @@
       "methodologyCta": "Methodology"
     },
     "preseasonNotice": "Patch 11.0 uses preseason data and is not provided.",
+    "preseasonPolicyNotice": "Preseason matches are not included in our statistics.",
+    "preparing": {
+      "subtitle": "New season statistics are being prepared.",
+      "kicker": "Season transition",
+      "title": "Statistics will return after regular-season data is collected",
+      "body": "Preseason matches are excluded. Meta analysis will resume once the new regular season has a sufficient sample size."
+    },
     "filterCta": "Open filters",
     "topFiveTitle": "Patch risers",
     "honeyPicksTitle": "Patch Risers",
@@ -414,11 +421,11 @@
       "prompt": "Find weapon-specific team comps based on your allies' picks",
       "step1": "1. Set your character pool first (optional)",
       "step2": "2. Select your allies' characters and weapons",
-      "step3": "3. Click a comp to inspect trait-level performance"
+      "step3": "3. Review each recommended trio's roles, game plan, and matchups"
     },
     "loading": "Loading team data...",
-    "infoSingle": "Add one more ally to narrow the condition · click a comp to see trait metrics",
-    "infoPair": "Click a comp to see trait metrics",
+    "infoSingle": "Add one more ally to narrow the condition · each card includes trio analysis",
+    "infoPair": "Each card includes trio analysis and trait-level metrics",
     "more": "Show more ({visible}/{total})",
     "emptyFiltered": "No comps match your current character pool. Try widening the pool.",
     "emptyNoData": "Checking samples for this team setup.",
@@ -598,6 +605,281 @@
         "climbVolatile": "Average placement is {averageRank}, but average RP is {averageRP}. Results vary widely, while successful games still give strong climbing rewards.",
         "trap": "Win rate is {winRate}%, average placement is {averageRank}, and average RP is {averageRP}; all three metrics are weak for a default ranked comp.",
         "balanced": "Win rate is {winRate}%, average placement is {averageRank}, and average RP is {averageRP}, without one metric dominating the profile."
+      }
+    },
+    "composition": {
+      "title": "Trio composition analysis",
+      "rolesLabel": "Roles",
+      "combatPlanLabel": "In-game plan",
+      "engagementSetupLabel": "Fight setup",
+      "engagementTriggerLabel": "Commit condition",
+      "combatOrderLabel": "Actual fight sequence",
+      "powerSpikeLabel": "Power-spike condition",
+      "favorableLabel": "Can favor",
+      "cautionLabel": "Watch for",
+      "hypothesisNotice": "Win rate and RP come from the cumulative cross-patch trio database; roles and tactical traits use ERMeta labels. Power-spike and matchup notes are heuristic analysis because direct timing and fight logs are unavailable.",
+      "roles": {
+        "tank": "Tank",
+        "warrior": "Bruiser",
+        "assassin": "Assassin",
+        "skillDealer": "Skill Damage",
+        "rangedCarry": "Ranged Carry",
+        "support": "Support",
+        "unknown": "Unclassified"
+      },
+      "traits": {
+        "engage": "Engage",
+        "dive": "Dive follow-up",
+        "peel": "Peel",
+        "protect": "Ally protection",
+        "poke": "Poke",
+        "burst": "Burst",
+        "sustain": "Sustained fight",
+        "zoneControl": "Zone control"
+      },
+      "formations": {
+        "front": "Frontline",
+        "mid": "Midline",
+        "back": "Backline"
+      },
+      "ranges": {
+        "melee": "Melee",
+        "mid": "Mid range",
+        "long": "Long range"
+      },
+      "combatTasks": {
+        "initiate": "Initiate",
+        "followDive": "Follow-up dive",
+        "frontline": "Hold frontline",
+        "primaryDamage": "Main damage",
+        "followupDamage": "Follow-up damage",
+        "poke": "Poke first",
+        "control": "Chain control",
+        "suppress": "Deny engage",
+        "protect": "Protect allies",
+        "finish": "Finish"
+      },
+      "combatDoctrine": {
+        "title": "Fight plan from comp traits",
+        "memberDutyTitle": "Member assignments",
+        "labels": {
+          "winCondition": "Win condition",
+          "opening": "Start the fight",
+          "target": "First target",
+          "frontline": "Frontline rule",
+          "damage": "Damage rule",
+          "switchRule": "Switch condition",
+          "failure": "Losing pattern",
+          "dutyAction": "Action",
+          "dutySecondary": "Secondary",
+          "dutyAvoid": "Avoid"
+        },
+        "memberActions": {
+          "openControlledTarget": "Create the team’s go signal with the first control while follow-up damage is in range.",
+          "punishEnemyEntry": "Stop the enemy after they spend their engage tool and cannot retreat safely.",
+          "openDiveAngle": "Create an angle that reaches the same target at the same time as the follow-up diver.",
+          "confirmPokeAdvantage": "Commit only onto a target whose health or mobility was reduced by poke.",
+          "startFrontlineContact": "Hold the nearest threat and create the first contact point for allied damage.",
+          "followInitiatorTarget": "Join the target held by the initiator and overlap the first damage window.",
+          "syncDiveSameTarget": "Reach the same target with the initiator and close off its escape route.",
+          "screenCarry": "Stay between the main damage dealer and incoming threats to preserve damage uptime.",
+          "alternateFrontline": "Step forward when the other frontline retreats and take over enemy attention and cooldowns.",
+          "compressMeleeSpace": "Compress the same area with the other melee members and block the target’s retreat.",
+          "denyApproach": "Use range and control to deny approach paths so allies are not forced to tank damage.",
+          "holdFollowupRange": "Hold the frontline without moving beyond allied follow-up range.",
+          "repeatPoke": "Repeat pressure from safe maximum range and track resources lost by the target hit.",
+          "damageAfterPoke": "Convert the health or mobility advantage created by poke into the main fight’s damage.",
+          "applySafeFollowupDamage": "Add follow-up damage to the engaged target while maintaining a safe range.",
+          "damageControlledTarget": "Commit primary damage to the target caught by the first control.",
+          "damageNearestThreat": "Keep attacking the nearest threat crossing into the team’s formation.",
+          "damageExposedBackline": "Focus the backliner outside protection range when allied engages overlap.",
+          "damageIntrudingDiver": "Attack the enemy that spent mobility to enter the formation and remove them inside it.",
+          "chainControlOnTarget": "Apply the next control as the first control ends on the same target.",
+          "holdControlForDiver": "Save control until the enemy diver spends mobility and can be stopped reliably.",
+          "suppressApproach": "Keep threatening the enemy’s approach path to restrict their mobility and engage timing.",
+          "protectPrimaryDamage": "Prioritize peel and protection so the primary damage member can keep attacking.",
+          "finishCurrentTarget": "Finish the target receiving allied damage, then decide the next action."
+        },
+        "memberAvoids": {
+          "doNotEnterAlone": "Do not enter before the rest of the team can follow.",
+          "doNotLeaveFollowupRange": "Do not chase beyond allied follow-up range.",
+          "doNotOverlapFrontCooldowns": "Do not spend every defensive and control cooldown with the other frontline.",
+          "doNotSplitMeleeTarget": "Do not split onto a different target from the other melee members.",
+          "doNotOverchase": "Do not abandon the frontline to chase deep into the enemy backline.",
+          "doNotCrossFrontline": "Do not step ahead of the frontline and expose yourself to engage.",
+          "keepEscapeTool": "Do not spend all mobility offensively and become defenseless against the next engage.",
+          "doNotSpendDefensiveToolEarly": "Do not spend key protection or control before the enemy commits.",
+          "doNotSpendSuppressionEarly": "Do not spend every key denial tool on empty poke while the enemy can still engage.",
+          "doNotChangeTargetEarly": "Do not split damage onto a new target while the first target is still alive."
+        },
+        "features": {
+          "damageDelivery": {
+            "poke": "Poke damage",
+            "burst": "Burst window",
+            "sustained": "Sustained damage",
+            "distributed": "Distributed damage"
+          },
+          "accessMethod": {
+            "forcedEngage": "Forced engage",
+            "dive": "Backline dive",
+            "counterEngage": "Counter-engage",
+            "frontToBack": "Front-to-back"
+          },
+          "carryDependency": {
+            "careRequired": "Needs peel",
+            "infighting": "Infighting carry",
+            "selfSufficient": "Self-peeling",
+            "noSingleCarry": "No single carry"
+          },
+          "frontlineStructure": {
+            "soloFront": "Solo frontline",
+            "doubleFront": "Double frontline",
+            "noFront": "No frontline",
+            "tripleMelee": "Triple melee"
+          },
+          "fightLength": {
+            "shortWindow": "Short burst window",
+            "longCycle": "Long fight cycle"
+          },
+          "targetRule": {
+            "controlledTarget": "Controlled target",
+            "nearestThreat": "Nearest threat",
+            "exposedBackline": "Exposed backline",
+            "intrudingDiver": "Committed diver"
+          }
+        },
+        "statements": {
+          "pokeBeforeCommit": "Create a health or mobility advantage with poke before spending frontline health to commit.",
+          "syncBurstWindow": "Layer the first control and all three key damage tools inside a target's defense and escape window.",
+          "preserveCarryUptime": "Give the main dealer time to keep hitting the same target from behind the frontline.",
+          "rotateFrontline": "Alternate which frontliner absorbs attention and major skills to extend backline damage uptime.",
+          "compressMeleeSpace": "Compress one area so all three members fight the same target within mutual melee range.",
+          "preserveRangedSpacing": "Avoid a static front fight and alternate range and mobility instead of letting one member tank too long.",
+          "sustainAccessibleTarget": "Keep damaging an accessible target instead of forcing an unreliable chase onto the backline.",
+          "pokeThenCommit": "Commit only after poke creates a health lead, forces mobility, or connects into follow-up control.",
+          "waitEnemyEntry": "Counter when the enemy has spent an engage tool and can no longer retreat safely.",
+          "syncDiveEntry": "Start the full fight only when at least two entry angles can reach the same target together.",
+          "controlThenCommit": "Use the first control hit or a key escape being spent as the signal for everyone to commit.",
+          "frontlineContact": "Connect damage after the frontline absorbs a key enemy tool or pins the nearest threat.",
+          "controlledTarget": "Prioritize the target all three members can actually reach after the first control, not a role name.",
+          "nearestThreat": "Remove the nearest enemy threatening your formation instead of forcing access to the backline.",
+          "exposedBackline": "Target a backliner outside protection and escape range only when multiple entries can land together.",
+          "intrudingDiver": "Stop and focus an enemy who has spent mobility to enter your formation.",
+          "screenCarry": "Stay between the main dealer and enemy divers instead of chasing the enemy backline too deeply.",
+          "alternateAggro": "Do not spend both frontliners' survival and control tools together; one holds the line as the other exits.",
+          "collapseSameZone": "Do not chase separate enemies; narrow escape and protection space together around one area.",
+          "preserveRangedSpace": "Deny approaches by alternating range, mobility, and control zones rather than assigning one member to tank.",
+          "holdFollowupRange": "Advance only as far as you can survive without leaving follow-up damage range.",
+          "repeatPoke": "Repeat the range advantage with poke while the other members prepare follow-up on the target it reaches.",
+          "overlapBurst": "Do not split targets while the first target lives; layer follow-up entry and burst onto that target.",
+          "sustainNearest": "Keep sustained damage on the nearest accessible enemy even as the active frontliner changes.",
+          "sameTargetDistributed": "Even without one carry, overlap all three major damage tools on the same target and timing.",
+          "resetOnMiss": "If the opening control or burst misses, disengage instead of feeding the remaining key tools one by one.",
+          "regroupOnSeparation": "If frontline, backline, or melee members separate, regroup before continuing the chase.",
+          "reopenDistance": "If the catch fails or mobility is spent, reopen distance and create the next damage turn.",
+          "switchWhenOutOfRange": "When the current target leaves effective range, immediately switch to the next threat entering it.",
+          "chaseOnlyEscapeSpent": "Chase briefly only after a kill or a key escape has been confirmed as spent.",
+          "fightBeforePoke": "Avoid a solo frontline commit before poke creates an advantage and splits the team's damage.",
+          "staggeredEntry": "Avoid entering one at a time and being isolated before the next member arrives.",
+          "frontlineOverextends": "Avoid chasing the enemy backline so deeply that the carry and protection owner are separated.",
+          "simultaneousFrontCooldowns": "Avoid spending both frontliners' survival and control cooldowns together with nothing for the next enemy turn.",
+          "splitMeleeTargets": "Avoid turning triple melee into three separate duels and losing the numbers advantage.",
+          "spendAllMobility": "Avoid both ranged members using mobility aggressively at once and becoming exposed to the next engage.",
+          "splitDamage": "Avoid all three members attacking different targets and finishing none of them."
+        }
+      },
+      "engagementShapes": {
+        "engageLane": "Open an engage lane",
+        "pokeWait": "Wait for a poke advantage",
+        "frontBackLine": "Front-to-back formation",
+        "counterPocket": "Invite and counter-engage",
+        "splitCollapse": "Multi-angle pressure",
+        "cooldownRelay": "Frontline cooldown relay",
+        "signalHold": "Hold for the agreed signal"
+      },
+      "combatPhases": {
+        "setup": "Set up",
+        "signal": "Go signal",
+        "firstTurn": "First turn",
+        "conversion": "Damage and peel handoff",
+        "decision": "Finish or reset"
+      },
+      "combatInstructions": {
+        "holdFormation": "Keep frontline-to-backline spacing so follow-up damage can still reach after the first engage.",
+        "maintainRange": "Do not collapse all three at once; pressure from maximum poke range and draw out health or mobility first.",
+        "holdCompact": "Overlap protection ranges while leaving enough space to avoid all three being hit by one control effect.",
+        "splitAngles": "Create separate entry angles, but synchronize them so the first spotted member never fights alone.",
+        "staggerFrontline": "Decide who absorbs pressure first so both frontliners do not spend survival and control tools together.",
+        "assignSignal": "Choose one control or tactical skill as the go signal and hold the remaining major cooldowns.",
+        "controlOrEscape": "Commit only when the first control lands or a key enemy escape has been spent.",
+        "pokeAdvantage": "Create a health lead or force mobility with poke, then use the first control hit as the focus signal.",
+        "enemyCommit": "Counter when the enemy has actually spent an engage tool and can no longer retreat cleanly.",
+        "isolatedTarget": "Enter only when a target leaves protection range and both approach angles can connect together.",
+        "frontlineContact": "Start after the frontline absorbs a key enemy tool or pins the nearest threat in place.",
+        "agreedControl": "The other two members commit to the same target only after the agreed first control lands.",
+        "openOneTurn": "Complete the opening duty without overchasing, preserving range and an angle for the next member.",
+        "sameTarget": "Do not split targets while the first one lives; layer follow-up entry and main damage in order.",
+        "nearestThreat": "The backline should remove the nearest threat crossing the frontline instead of forcing access to the enemy backline.",
+        "protectThenDamage": "Stop the diver's movement first to create damage uptime, then turn onto that exposed target together.",
+        "alternateCooldowns": "Step forward as the previous member's key tool ends, alternating survival and control cooldowns.",
+        "finishOrReset": "Chase briefly after a kill or key escape is spent; if the first entry fails, reset formation and cooldowns first.",
+        "repeatPokeOrReset": "If the catch fails, do not force the chase; reopen distance and create another poke turn.",
+        "holdOrReset": "Keep clearing the nearest target while the formation holds; regroup immediately if frontline and backline separate."
+      },
+      "combatPlans": {
+        "engageChain": "The initiator draws attention, the follow-up diver locks onto the same target, and the third member concentrates damage.",
+        "pokeCatch": "Chip opponents from range, then focus one target when the first control skill connects.",
+        "frontToBack": "The frontline holds space while the backline removes the nearest threat and the third member denies dives.",
+        "counterEngage": "Stop the enemy engage with protection or displacement, then counter-focus the exposed target.",
+        "collapse": "Collapse on a priority target from different angles, remove them quickly, and create a numbers advantage.",
+        "brawlCycle": "Stagger frontline and sustained-fight cooldowns to keep a long close-range fight going.",
+        "coordinate": "Use the first control hit as the signal and commit all three major tools to the same target in sequence."
+      },
+      "patterns": {
+        "threeLayer": "Frontline-Support-Carry",
+        "diveFollow": "Engage and Dive Follow-up",
+        "doubleFront": "Double Frontline",
+        "frontToBack": "Front-to-Back",
+        "protectCarry": "Protect the Carry",
+        "pickBurst": "Pick and Burst",
+        "pokeKite": "Poke and Kite",
+        "brawl": "Close-Range Brawl",
+        "flexible": "Conditional Flex"
+      },
+      "patternDescriptions": {
+        "threeLayer": "The tank creates space while the support extends the main damage dealer's uptime.",
+        "diveFollow": "The initiator draws attention first, then a mobile teammate follows onto the same target.",
+        "doubleFront": "Two members hold the front while a backline dealer applies sustained damage.",
+        "frontToBack": "The frontline starts or absorbs the engage so the backline can finish from a safe range.",
+        "protectCarry": "The support preserves the main dealer's position and survival for a longer fight.",
+        "pickBurst": "The comp focuses on deleting an isolated target to create a numbers advantage.",
+        "pokeKite": "The comp chips first, maintains range, and punishes forced approaches.",
+        "brawl": "The comp repeatedly engages and trades at short range to win a direct fight.",
+        "flexible": "No single plan dominates, so the team must agree on who engages and who protects before fighting."
+      },
+      "powerSpikes": {
+        "formationReady": "when frontline and protection tools are ready with the carry's key skills",
+        "burstCooldowns": "when engage, burst, and control can land on the same target",
+        "frontlineReady": "when frontline survival and backline sustained damage are ready together",
+        "rangeSetup": "after securing vision and range with poke and escape tools available",
+        "sustainedResources": "while healing, defense, and sustained-fight resources remain",
+        "synchronizedTools": "when all three members' ultimates, tactical skills, and weapon skills overlap"
+      },
+      "favorable": {
+        "singleDive": "isolated one-by-one dives that can be counter-engaged",
+        "exposedBackline": "backlines with limited protection or escape tools",
+        "shortRangeApproach": "short-range opponents forced to approach through the frontline",
+        "slowFrontline": "slow frontlines with limited forced-engage options",
+        "closeRangeFight": "fights where both teams must stay close and keep trading",
+        "conditional": "fights where the engage owner and focus target are agreed in advance"
+      },
+      "threats": {
+        "splitPressure": "multi-angle pressure that separates frontline, support, and carry",
+        "peelDisengage": "strong peel, knockback, or disengage stopping the first entry",
+        "flankCollapse": "flanks reaching the backline or a large gap opening behind the frontline",
+        "hardEngage": "hard engage that closes distance before poke can create an advantage",
+        "longRangeKite": "losing health to long-range poke and disengage before making contact",
+        "unclearInitiation": "unclear engage ownership causing key skills to be used separately"
       }
     }
   },

@@ -5,7 +5,7 @@
     "logoSubtitle": "永恒轮回 Meta",
     "patchPrefix": "v",
     "seasonRecapBadge": "赛季",
-    "seasonRecapTitle": "第 10 赛季回顾已上线",
+    "seasonRecapTitle": "第 11 赛季回顾已上线",
     "seasonRecapBody": "查看各版本主要 RP 阵容和完整赛季 Meta 变化。",
     "seasonRecapCta": "打开回顾",
     "patchAnalysisBadge": "版本分析",
@@ -144,6 +144,13 @@
       "methodologyCta": "统计方法"
     },
     "preseasonNotice": "11.0 为季前赛数据，因此不提供。",
+    "preseasonPolicyNotice": "季前赛期间的数据不纳入统计。",
+    "preparing": {
+      "subtitle": "新赛季统计正在准备中。",
+      "kicker": "赛季过渡说明",
+      "title": "常规赛数据完成汇总后将提供统计",
+      "body": "季前赛对局不纳入统计。新常规赛样本量充足后，我们将恢复提供版本分析。"
+    },
     "filterCta": "打开筛选",
     "patchAnalysisCta": "11.5 版本分析",
     "honeyPicksTitle": "本版本上升",
@@ -411,11 +418,11 @@
       "prompt": "根据队友的选择寻找包含武器的详细阵容",
       "step1": "1. 先设置你的角色池（可选）",
       "step2": "2. 选择队友的角色和武器",
-      "step3": "3. 点击阵容查看特性层级表现"
+      "step3": "3. 查看推荐三人阵容的职责、运营与对局分析"
     },
     "loading": "正在加载阵容数据...",
-    "infoSingle": "再添加一名队友可缩小条件 · 点击阵容可查看特性拆解",
-    "infoPair": "点击阵容可查看特性拆解",
+    "infoSingle": "再添加一名队友可缩小条件 · 每张卡片均提供三人阵容分析",
+    "infoPair": "每张卡片均提供三人阵容分析和特性指标",
     "more": "显示更多 ({visible}/{total})",
     "emptyFiltered": "当前角色池下没有匹配阵容，请尝试扩大角色池。",
     "emptyNoData": "当前阵容没有可用数据。",
@@ -458,7 +465,315 @@
     "rp": "RP",
     "games": "场次",
     "averageRank": "平均名次",
-    "moreTraits": "再显示 {count} 个特性"
+    "moreTraits": "再显示 {count} 个特性",
+    "insight": {
+      "operationLabel": "运营倾向：{value}",
+      "metricSummary": "与相似候选比较 · RP 前 {rpTop}% · 胜率前 {winTop}% · {rankStanding} · {games} 场（{confidence}）",
+      "rankStanding": {
+        "top": "平均名次前 {value}%",
+        "bottom": "平均名次后 {value}%"
+      },
+      "confidence": {
+        "low": "低可信度",
+        "medium": "中等可信度",
+        "high": "高可信度"
+      },
+      "playStyle": {
+        "snowball": "全指标优势型",
+        "tempo": "胜利转化型",
+        "stable": "排名稳定型",
+        "lateValue": "排名优先型",
+        "volatile": "高上限波动型",
+        "climbVolatile": "上分波动型",
+        "trap": "需要谨慎",
+        "balanced": "均衡型"
+      },
+      "playStyleDescription": {
+        "snowball": "胜率 {winRate}%、平均名次 {averageRank}、平均 RP {averageRP}，三项指标均较强。",
+        "tempo": "胜率 {winRate}%、平均 RP {averageRP}，进入前列后转化为第一名的能力较强。",
+        "stable": "平均名次 {averageRank}、平均 RP {averageRP}，能够较稳定地进入前列并获得 RP。",
+        "lateValue": "平均名次为 {averageRank}，胜率为 {winRate}%。比起夺冠，更擅长稳定进入前列。",
+        "volatile": "胜率达到 {winRate}%，但平均名次为 {averageRank}。早期出局风险较高，存活后仍有较强夺冠能力。",
+        "climbVolatile": "平均名次为 {averageRank}，结果波动较大，但平均 RP 为 {averageRP}。顺利对局的上分收益较高。",
+        "trap": "胜率 {winRate}%、平均名次 {averageRank}、平均 RP {averageRP}，三项指标均偏弱，不宜作为固定阵容。",
+        "balanced": "胜率 {winRate}%、平均名次 {averageRank}、平均 RP {averageRP}，没有明显偏向单一指标。"
+      }
+    },
+    "composition": {
+      "title": "三人阵容分析",
+      "rolesLabel": "定位",
+      "combatPlanLabel": "实战方案",
+      "engagementSetupLabel": "交战构图",
+      "engagementTriggerLabel": "转入正面交战条件",
+      "combatOrderLabel": "实际交战顺序",
+      "powerSpikeLabel": "强势条件",
+      "favorableLabel": "可能有利",
+      "cautionLabel": "需要注意",
+      "hypothesisNotice": "胜率与 RP 来自跨版本累计阵容数据库，定位与战术特征采用 ERMeta 分类。由于没有直接时间与交战日志，强势期和克制关系属于启发式分析。",
+      "roles": {
+        "tank": "坦克",
+        "warrior": "战士",
+        "assassin": "刺客",
+        "skillDealer": "技能输出",
+        "rangedCarry": "远程输出",
+        "support": "辅助",
+        "unknown": "未分类"
+      },
+      "traits": {
+        "engage": "强制开团",
+        "dive": "突进跟进",
+        "peel": "反突进",
+        "protect": "队友保护",
+        "poke": "远程消耗",
+        "burst": "爆发",
+        "sustain": "持续作战",
+        "zoneControl": "区域控制"
+      },
+      "formations": {
+        "front": "前排",
+        "mid": "中排",
+        "back": "后排"
+      },
+      "ranges": {
+        "melee": "近距离",
+        "mid": "中距离",
+        "long": "远距离"
+      },
+      "combatTasks": {
+        "initiate": "发起交战",
+        "followDive": "后续进场",
+        "frontline": "维持前排",
+        "primaryDamage": "主要输出",
+        "followupDamage": "后续输出",
+        "poke": "先手消耗",
+        "control": "控制衔接",
+        "suppress": "压制进场",
+        "protect": "保护队友",
+        "finish": "完成收割"
+      },
+      "combatDoctrine": {
+        "title": "基于阵容特性的交战法",
+        "memberDutyTitle": "角色分工",
+        "labels": {
+          "winCondition": "胜利条件",
+          "opening": "开战方式",
+          "target": "首个目标",
+          "frontline": "前排行动",
+          "damage": "输出行动",
+          "switchRule": "转换条件",
+          "failure": "失败模式",
+          "dutyAction": "执行",
+          "dutySecondary": "辅助功能",
+          "dutyAvoid": "注意"
+        },
+        "memberActions": {
+          "openControlledTarget": "在队友能跟上伤害的距离内用首次控制制造全队进场信号。",
+          "punishEnemyEntry": "等敌人交出进场技能、难以安全撤退时限制其移动。",
+          "openDiveAngle": "先创造与后续突进者同时接触同一目标的角度。",
+          "confirmPokeAdvantage": "只把已被消耗血量或位移资源的目标转化为正式交战。",
+          "startFrontlineContact": "牵制最近威胁，为队友伤害创造第一个接触点。",
+          "followInitiatorTarget": "立即跟上开团者控制的目标并重叠第一轮伤害。",
+          "syncDiveSameTarget": "与开团者同时抵达同一目标并压缩其退路。",
+          "screenCarry": "站在主力输出与突进者之间，保证持续输出时间。",
+          "alternateFrontline": "另一名前排后撤时上前，接替敌方注意力和关键技能。",
+          "compressMeleeSpace": "与其他近战压缩同一区域并封锁同一目标的退路。",
+          "denyApproach": "利用射程和控制封锁接近路线，避免队友长时间承伤。",
+          "holdFollowupRange": "只推进到队友能跟上伤害的位置并维持前线。",
+          "repeatPoke": "在安全的最大射程反复消耗，并确认命中目标损失的资源。",
+          "damageAfterPoke": "把先手消耗创造的血量或位移优势转化为正式交战的主力伤害。",
+          "applySafeFollowupDamage": "保持安全距离，对进场者控制的目标补充后续伤害。",
+          "damageControlledTarget": "把主力伤害集中到首次被控制的目标。",
+          "damageNearestThreat": "持续攻击越过己方阵型的最近威胁。",
+          "damageExposedBackline": "集中攻击脱离保护范围且被己方多人同时突进的后排。",
+          "damageIntrudingDiver": "优先攻击交位移进入己方阵型的敌人并在阵内将其击杀。",
+          "chainControlOnTarget": "首次控制结束时继续限制同一目标的移动。",
+          "holdControlForDiver": "保留控制，等敌方突进者交出位移后再可靠地将其留住。",
+          "suppressApproach": "持续威胁敌方接近路线，限制其位移和进场时机。",
+          "protectPrimaryDamage": "优先阻断突进和提供保护，让主力输出持续攻击。",
+          "finishCurrentTarget": "先击杀队友正在集火的目标，再判断下一步行动。"
+        },
+        "memberAvoids": {
+          "doNotEnterAlone": "不要在队友能跟进前独自进场。",
+          "doNotLeaveFollowupRange": "不要追出队友的后续伤害范围。",
+          "doNotOverlapFrontCooldowns": "不要与另一名前排同时交光防御和控制技能。",
+          "doNotSplitMeleeTarget": "不要与其他近战分开攻击不同目标。",
+          "doNotOverchase": "不要放弃前线深入追击敌方后排。",
+          "doNotCrossFrontline": "不要越过前排而暴露在敌方开团中。",
+          "keepEscapeTool": "不要把所有位移用于进攻，导致无法应对下一次突进。",
+          "doNotSpendDefensiveToolEarly": "不要在敌人真正进场前提前交掉关键保护或控制。",
+          "doNotSpendSuppressionEarly": "敌人仍能进场时，不要把关键压制手段全部浪费在无意义消耗上。",
+          "doNotChangeTargetEarly": "第一个目标存活时不要把伤害分散到新目标。"
+        },
+        "features": {
+          "damageDelivery": {
+            "poke": "消耗输出",
+            "burst": "瞬间爆发",
+            "sustained": "持续输出",
+            "distributed": "分散输出"
+          },
+          "accessMethod": {
+            "forcedEngage": "强制进场",
+            "dive": "突进后排",
+            "counterEngage": "反打进场",
+            "frontToBack": "从前排处理"
+          },
+          "carryDependency": {
+            "careRequired": "需要保护",
+            "infighting": "近身输出型",
+            "selfSufficient": "自我保护型",
+            "noSingleCarry": "无单一核心"
+          },
+          "frontlineStructure": {
+            "soloFront": "单前排",
+            "doubleFront": "双前排",
+            "noFront": "无前排",
+            "tripleMelee": "三近战"
+          },
+          "fightLength": {
+            "shortWindow": "短爆发窗口",
+            "longCycle": "长时间交战"
+          },
+          "targetRule": {
+            "controlledTarget": "被控制目标",
+            "nearestThreat": "最近威胁",
+            "exposedBackline": "暴露后排",
+            "intrudingDiver": "已进场突进者"
+          }
+        },
+        "statements": {
+          "pokeBeforeCommit": "前排用生命值承担进场成本前，先用消耗建立血量或位移优势。",
+          "syncBurstWindow": "把首次控制和三人的关键输出压进目标防御与逃生手段生效前的短窗口。",
+          "preserveCarryUptime": "确保核心输出能在前排身后持续攻击同一目标。",
+          "rotateFrontline": "两名前排轮流承受注意与关键技能，累计后排的安全输出时间。",
+          "compressMeleeSpace": "压缩同一区域，让三人都在彼此近战范围内攻击同一目标。",
+          "preserveRangedSpacing": "避免让一人长期承伤的正面战，轮换使用射程和位移。",
+          "sustainAccessibleTarget": "不要强追后排，持续攻击输出不会中断的可接触目标。",
+          "pokeThenCommit": "消耗形成血量优势、逼出位移或衔接控制后再转入正面交战。",
+          "waitEnemyEntry": "等敌方交出进场技能且难以安全后撤时再反打。",
+          "syncDiveEntry": "至少两个进场角能同时接触同一目标时才开启正面交战。",
+          "controlThenCommit": "以首次控制命中或关键逃生技能交出作为全员进场信号。",
+          "frontlineContact": "前排吃下敌方关键技能或控制住最近威胁后再衔接输出。",
+          "controlledTarget": "优先攻击首次控制后全队输出真正能覆盖的目标，而不是固定角色。",
+          "nearestThreat": "不要强行寻找敌方后排，优先处理威胁我方阵型的最近敌人。",
+          "exposedBackline": "只攻击脱离保护与逃生范围、且多路进场能同时命中的后排。",
+          "intrudingDiver": "先阻止并集火已经交出位移进入我方阵型的敌人。",
+          "screenCarry": "不要深追敌方后排，保持在核心输出与敌方突进者之间。",
+          "alternateAggro": "两名前排不要同时交出生存和控制技能，一人后撤时由另一人维持战线。",
+          "collapseSameZone": "不要追不同敌人，一起压缩同一区域的退路和保护范围。",
+          "preserveRangedSpace": "轮换射程、位移和控制区域阻止接近，而不是让一人长期承伤。",
+          "holdFollowupRange": "只前进到自己能承受且不脱离后续输出范围的位置。",
+          "repeatPoke": "消耗成员重复利用射程优势，其余成员准备衔接被命中的目标。",
+          "overlapBurst": "首个目标存活时不要分散，把后续进场与爆发叠加到同一目标。",
+          "sustainNearest": "即使前排轮换，也不要中断对最近可接触敌人的持续输出。",
+          "sameTargetDistributed": "即使没有单一核心，也要让三人的关键输出在同一目标和时机重叠。",
+          "resetOnMiss": "首次控制或爆发失败时立即撤离，不要依次浪费剩余关键技能。",
+          "regroupOnSeparation": "前后排或近战成员分离时，优先会合而不是继续追击。",
+          "reopenDistance": "抓人失败或位移已交时重新拉开距离，创造下一轮输出机会。",
+          "switchWhenOutOfRange": "当前目标离开有效射程时，立即转向新进入射程的最近威胁。",
+          "chaseOnlyEscapeSpent": "确认击杀或关键逃生技能已交后才短暂追击。",
+          "fightBeforePoke": "避免消耗形成优势前前排单独进场，导致全队输出分散。",
+          "staggeredEntry": "避免三人逐个进场，在下一名队友到达前被各个击破。",
+          "frontlineOverextends": "避免前排深追敌方后排，使核心输出与保护者分离。",
+          "simultaneousFrontCooldowns": "避免两名前排同时用尽生存与控制技能，无法应对敌方下一轮。",
+          "splitMeleeTargets": "避免三近战各自开始单挑并失去人数优势。",
+          "spendAllMobility": "避免两名远程同时进攻性使用位移，无法应对下一次进场。",
+          "splitDamage": "避免三人攻击不同目标而一个也无法击杀。"
+        }
+      },
+      "engagementShapes": {
+        "engageLane": "建立先手进场通道",
+        "pokeWait": "等待消耗优势",
+        "frontBackLine": "前后排正面阵型",
+        "counterPocket": "诱导进场并反打",
+        "splitCollapse": "多角度施压",
+        "cooldownRelay": "前排冷却轮换",
+        "signalHold": "等待约定信号"
+      },
+      "combatPhases": {
+        "setup": "对峙准备",
+        "signal": "开战信号",
+        "firstTurn": "第一轮行动",
+        "conversion": "输出与保护衔接",
+        "decision": "收割或重整"
+      },
+      "combatInstructions": {
+        "holdFormation": "保持前后排间距，确保首次进场后后续输出仍能覆盖。",
+        "maintainRange": "三人不要同时贴近，先在消耗射程边缘迫使对手损失生命或交出位移。",
+        "holdCompact": "让保护范围互相覆盖，同时保留足够间距，避免三人被同一个控制命中。",
+        "splitAngles": "制造不同进场角度，但要同步时机，避免先暴露的人单独开战。",
+        "staggerFrontline": "先确定谁先承受压力，避免两名前排同时交出保命与控制技能。",
+        "assignSignal": "指定一个控制或战术技能作为开战信号，其余关键技能先保留。",
+        "controlOrEscape": "只有首个控制命中或敌方关键逃生技能已交时才进场。",
+        "pokeAdvantage": "先用消耗制造血量优势或逼出位移，再以首次控制命中作为集火信号。",
+        "enemyCommit": "等敌方真正交出进场技能、难以安全后撤时再反打。",
+        "isolatedTarget": "目标脱离保护范围且两个进场角能同时接触时才进入。",
+        "frontlineContact": "前排吃下敌方关键技能或控制住最近威胁时开始交战。",
+        "agreedControl": "只有约定的首个控制命中后，另外两人才对同一目标投入技能。",
+        "openOneTurn": "只完成首轮职责，不要追得过深，为下一名成员保留距离和进场角。",
+        "sameTarget": "首个目标存活时不要分散，依次叠加后续进场与主要输出。",
+        "nearestThreat": "后排不要强行寻找敌方后排，优先处理试图越过前排的最近威胁。",
+        "protectThenDamage": "先阻止突进者移动、创造安全输出时间，再一起转火这个暴露目标。",
+        "alternateCooldowns": "上一人的关键技能结束时下一人向前，轮流使用保命与控制技能。",
+        "finishOrReset": "击杀目标或逼出关键逃生后短暂追击；首次进场失败则先重整阵型与冷却。",
+        "repeatPokeOrReset": "抓人失败不要强追，重新拉开距离并创造下一轮消耗机会。",
+        "holdOrReset": "阵型完整时继续处理最近目标；前后排脱节时立即会合重整。"
+      },
+      "combatPlans": {
+        "engageChain": "先手成员吸引注意，后续进场者锁定同一目标，第三名成员集中输出。",
+        "pokeCatch": "先从远处消耗生命值，再以首次控制命中为信号集火一个目标。",
+        "frontToBack": "前排维持正面空间，后排优先处理最近威胁，第三名成员阻止敌方突进。",
+        "counterEngage": "用保护或击退打断敌方进场，再反向集火暴露的目标。",
+        "collapse": "从不同角度同时包夹核心目标，快速击杀并形成人数优势。",
+        "brawlCycle": "前排与持续作战成员错开技能使用，维持长时间近距离混战。",
+        "coordinate": "以首次控制命中为信号，将三人的关键技能依次集中在同一目标上。"
+      },
+      "patterns": {
+        "threeLayer": "前排·辅助·输出三层阵容",
+        "diveFollow": "先手进场与突进跟进",
+        "doubleFront": "双前排阵容",
+        "frontToBack": "前后排标准阵容",
+        "protectCarry": "保护核心输出",
+        "pickBurst": "抓单爆发阵容",
+        "pokeKite": "消耗拉扯阵容",
+        "brawl": "近距离混战阵容",
+        "flexible": "条件应对型阵容"
+      },
+      "patternDescriptions": {
+        "threeLayer": "坦克创造空间，辅助延长核心输出的安全输出时间。",
+        "diveFollow": "先手开团者吸引注意后，由高机动队友跟进同一目标。",
+        "doubleFront": "两名成员维持前线，后排持续输出。",
+        "frontToBack": "前排发起或承受进场，后排从安全距离完成收割。",
+        "protectCarry": "辅助保护核心输出的位置与生存，适合延长交战。",
+        "pickBurst": "优先快速击杀落单目标，制造人数优势。",
+        "pokeKite": "先消耗生命值并保持距离，惩罚对手的强行接近。",
+        "brawl": "在短距离持续进场和换血，争夺正面战优势。",
+        "flexible": "没有单一明确方案，需要在交战前确定先手与保护职责。"
+      },
+      "powerSpikes": {
+        "formationReady": "前排与保护手段、核心输出的关键技能同时就绪时",
+        "burstCooldowns": "进场、爆发和控制可以集中同一目标时",
+        "frontlineReady": "前排生存手段与后排持续输出同时就绪时",
+        "rangeSetup": "先取得视野和距离，且消耗与撤退手段可用时",
+        "sustainedResources": "治疗、防御与持续作战资源仍然充足时",
+        "synchronizedTools": "三人的终极技能、战术技能与武器技能同时可用时"
+      },
+      "favorable": {
+        "singleDive": "可以反打逐个进场目标的情况",
+        "exposedBackline": "可以先手攻击缺少保护或逃生的后排",
+        "shortRangeApproach": "短手对手必须从正面穿过前排接近",
+        "slowFrontline": "可以先消耗缺少强制进场的缓慢前排",
+        "closeRangeFight": "双方必须贴近并持续换血的交战",
+        "conditional": "提前确定先手成员与集火目标的交战"
+      },
+      "threats": {
+        "splitPressure": "多方向压力使前排、辅助和核心输出分离",
+        "peelDisengage": "首次进场被强保护、击退或撤退手段化解",
+        "flankCollapse": "侧翼直接接近后排，或前后排距离被拉开",
+        "hardEngage": "在消耗形成优势前被强制快速贴近",
+        "longRangeKite": "接触前被远程消耗与拉扯削减生命值",
+        "unclearInitiation": "先手职责不清，导致关键技能分散使用"
+      }
+    }
   },
   "characterAnalysis": {
     "quickSummary": "摘要",

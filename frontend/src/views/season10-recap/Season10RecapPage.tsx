@@ -1,35 +1,50 @@
-import { BarChart3, Database, Layers3, Trophy } from "lucide-react";
+import { ArrowRight, BarChart3, Database, Layers3, Trophy } from "lucide-react";
 import type { Metadata } from "next";
-import Image from "next/image";
 import type { ReactNode } from "react";
+import { BalancePatchResponseBlock } from "@/app/season10-recap/BalancePatchResponseBlock";
+import { NewCharacterReportBlock } from "@/app/season10-recap/NewCharacterReportBlock";
 import { PatchTimelineBlock } from "@/app/season10-recap/PatchTimelineBlock";
 import { RoleStrengthBlock } from "@/app/season10-recap/RoleStrengthBlock";
 import { SeasonHallOfFameBlock } from "@/app/season10-recap/SeasonHallOfFameBlock";
 import { Link } from "@/i18n/navigation";
-import { LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
-import { buildFallbackMap, getCharacterImageUrl, resolveCharacterName } from "@/lib/characterMap";
+import type { RouteLocale } from "@/i18n/routing";
 import { getSeasonRecapData } from "@/lib/seasonRecap";
-import { loadL10nMap } from "@/lib/serverL10n";
 import { BASE_URL } from "@/lib/siteMetadata";
 import { cn } from "@/lib/utils";
-import { resolveWeaponName } from "@/lib/weaponMap";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(BASE_URL),
-  title: "시즌 10 리캡 - 마지막 메타 기록",
-  description:
-    "이터널리턴 시즌 10 마무리. 패치별 평균 RP 주요 조합과 시즌 누적 평균 RP 전체 랭킹. 미스릴+ 기준.",
-  alternates: { canonical: "/season10-recap" },
-  openGraph: {
-    title: "시즌 10 리캡",
-    description: "패치별 평균 RP 주요 조합 + 시즌 누적 전체 랭킹",
-    url: "/season10-recap",
-  },
-  twitter: {
-    title: "시즌 10 리캡",
-    description: "패치별 평균 RP 주요 조합 + 시즌 누적 전체 랭킹",
-  },
-};
+export function getSeasonRecapMetadata(seasonNumber: number, socialImagePath?: string): Metadata {
+  const pathname = `/season${seasonNumber}-recap`;
+  const title = `시즌 ${seasonNumber} 리캡`;
+  const socialImage = socialImagePath
+    ? {
+        url: new URL(socialImagePath, BASE_URL).toString(),
+        width: 1733,
+        height: 907,
+        alt: title,
+      }
+    : undefined;
+
+  return {
+    metadataBase: new URL(BASE_URL),
+    title: `${title} - 마지막 메타 기록`,
+    description: `이터널리턴 시즌 ${seasonNumber} 마무리. 패치별 평균 RP 주요 조합과 시즌 누적 평균 RP 전체 랭킹. 다이아 이상 기준.`,
+    alternates: { canonical: pathname },
+    openGraph: {
+      title,
+      description: "패치별 평균 RP 주요 조합 + 시즌 누적 전체 랭킹",
+      url: pathname,
+      images: socialImage ? [socialImage] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: "패치별 평균 RP 주요 조합 + 시즌 누적 전체 랭킹",
+      images: socialImage ? [socialImage.url] : undefined,
+    },
+  };
+}
+
+export const metadata = getSeasonRecapMetadata(10);
 
 export const revalidate = 86400;
 
@@ -38,7 +53,7 @@ const COPY = {
     emptyTitle: "시즌 10 리캡",
     emptyBody: "현재 표시할 시즌 데이터가 없습니다.",
     kicker: "시즌 10 마무리",
-    tierScope: "미스릴+ 집계",
+    tierScope: "다이아 이상 집계",
     title: "시즌 10 리캡",
     trackedPatches: "추적 패치",
     trackedPatchesValue: (count: number) => `${count}개`,
@@ -46,15 +61,10 @@ const COPY = {
     trackedCombosValue: (count: string) => `${count}개`,
     totalSample: "누적 표본",
     totalSampleValue: (count: string) => `${count}판`,
-    leaderTitle: "시즌 1위 조합",
-    leaderPatchCount: (count: number, total: number) => `주요권 ${count}/${total} 패치`,
-    integrated: "통합 집계",
-    seasonAverageRp: "시즌 평균 RP",
-    preparing: "시즌 누적 주요 조합 데이터가 아직 집계되지 않았습니다.",
     basisKicker: "데이터 기준",
     basisTitle: "공식 API 기반 시즌 누적 집계입니다.",
     basisBody:
-      "미스릴 / 메테오라이트 / 다이아몬드 / 상위 1000위 티어 통합 통계이며, 평균 RP 획득량 기준으로 정렬했습니다. 알렉스처럼 무기 통합 집계가 필요한 캐릭터는 단일 조합으로 합산했습니다.",
+      "다이아몬드 이상 티어 통합 통계이며, 평균 RP 획득량 기준으로 정렬했습니다. 알렉스처럼 무기 통합 집계가 필요한 캐릭터는 단일 조합으로 합산했습니다.",
     back: "메타 분석으로 돌아가기",
     nonKoSummary:
       "This localized overview highlights the season-level metrics and leading compositions.",
@@ -63,7 +73,7 @@ const COPY = {
     emptyTitle: "Season 10 Recap",
     emptyBody: "Data is being prepared. Please check again later.",
     kicker: "Season 10 closing record",
-    tierScope: "Mithril+ aggregate",
+    tierScope: "Diamond+ aggregate",
     title: "Season 10 Recap",
     trackedPatches: "Tracked patches",
     trackedPatchesValue: (count: number) => `${count}`,
@@ -71,15 +81,10 @@ const COPY = {
     trackedCombosValue: (count: string) => count,
     totalSample: "Total sample",
     totalSampleValue: (count: string) => `${count} games`,
-    leaderTitle: "Season leader",
-    leaderPatchCount: (count: number, total: number) => `Top group in ${count}/${total} patches`,
-    integrated: "Combined weapons",
-    seasonAverageRp: "Season avg RP",
-    preparing: "Season team data is being prepared.",
     basisKicker: "Data Basis",
     basisTitle: "Season aggregate based on official API data.",
     basisBody:
-      "The recap combines Mithril, Meteorite, Diamond, and top-1000 ranked tiers, then sorts teams by average RP. Weapon-agnostic characters are merged into a single aggregate row.",
+      "The recap combines Diamond and higher ranked tiers, then sorts teams by average RP. Weapon-agnostic characters are merged into a single aggregate row.",
     back: "Back to Meta Analysis",
     nonKoSummary: "This localized page focuses on season-level metrics and leading compositions.",
   },
@@ -87,7 +92,7 @@ const COPY = {
     emptyTitle: "シーズン10リキャップ",
     emptyBody: "データを準備中です。しばらくしてから再度ご確認ください。",
     kicker: "シーズン10最終記録",
-    tierScope: "ミスリル以上集計",
+    tierScope: "ダイヤ以上集計",
     title: "シーズン10リキャップ",
     trackedPatches: "追跡パッチ",
     trackedPatchesValue: (count: number) => `${count}`,
@@ -95,15 +100,10 @@ const COPY = {
     trackedCombosValue: (count: string) => count,
     totalSample: "累積サンプル",
     totalSampleValue: (count: string) => `${count}試合`,
-    leaderTitle: "シーズン首位",
-    leaderPatchCount: (count: number, total: number) => `${count}/${total}パッチで上位`,
-    integrated: "統合集計",
-    seasonAverageRp: "シーズン平均RP",
-    preparing: "シーズン累積編成データを準備中です。",
     basisKicker: "データ基準",
     basisTitle: "公式APIに基づくシーズン累積集計です。",
     basisBody:
-      "ミスリル、メテオライト、ダイヤモンド、上位1000位のランク帯を統合し、平均RPで編成を並べています。武器統合集計が必要なキャラクターは単一行にまとめています。",
+      "ダイヤモンド以上のランク帯を統合し、平均RPで編成を並べています。武器統合集計が必要なキャラクターは単一行にまとめています。",
     back: "メタ分析へ戻る",
     nonKoSummary:
       "詳細行の名称は韓国語ソースデータに基づくため、このローカライズ版では未翻訳行を出さずにシーズン指標を表示します。",
@@ -112,7 +112,7 @@ const COPY = {
     emptyTitle: "第 10 赛季回顾",
     emptyBody: "数据正在准备中，请稍后再查看。",
     kicker: "第 10 赛季最终记录",
-    tierScope: "秘银以上汇总",
+    tierScope: "钻石以上汇总",
     title: "第 10 赛季回顾",
     trackedPatches: "追踪版本",
     trackedPatchesValue: (count: number) => `${count}`,
@@ -120,15 +120,9 @@ const COPY = {
     trackedCombosValue: (count: string) => count,
     totalSample: "累计样本",
     totalSampleValue: (count: string) => `${count} 场`,
-    leaderTitle: "赛季第一",
-    leaderPatchCount: (count: number, total: number) => `${count}/${total} 个版本进入前列`,
-    integrated: "合并统计",
-    seasonAverageRp: "赛季平均 RP",
-    preparing: "赛季累计阵容数据正在准备中。",
     basisKicker: "数据基准",
     basisTitle: "基于官方 API 的赛季累计统计。",
-    basisBody:
-      "汇总秘银、陨石、钻石和前 1000 名分段，并按平均 RP 对阵容排序。需要合并武器统计的角色会合并为单行。",
+    basisBody: "汇总钻石以上分段，并按平均 RP 对阵容排序。需要合并武器统计的角色会合并为单行。",
     back: "返回 Meta 分析",
     nonKoSummary:
       "详细行名称基于韩文源数据，因此本地化页面只显示赛季级指标，不展示未翻译的源数据行。",
@@ -137,7 +131,7 @@ const COPY = {
     emptyTitle: "第 10 賽季回顧",
     emptyBody: "資料正在準備中，請稍後再查看。",
     kicker: "第 10 賽季最終紀錄",
-    tierScope: "秘銀以上彙總",
+    tierScope: "鑽石以上彙總",
     title: "第 10 賽季回顧",
     trackedPatches: "追蹤版本",
     trackedPatchesValue: (count: number) => `${count}`,
@@ -145,20 +139,26 @@ const COPY = {
     trackedCombosValue: (count: string) => count,
     totalSample: "累計樣本",
     totalSampleValue: (count: string) => `${count} 場`,
-    leaderTitle: "賽季第一",
-    leaderPatchCount: (count: number, total: number) => `${count}/${total} 個版本進入前列`,
-    integrated: "合併統計",
-    seasonAverageRp: "賽季平均 RP",
-    preparing: "賽季累計陣容資料正在準備中。",
     basisKicker: "資料基準",
     basisTitle: "基於官方 API 的賽季累計統計。",
-    basisBody:
-      "彙總秘銀、隕石、鑽石和前 1000 名分段，並按平均 RP 對陣容排序。需要合併武器統計的角色會合併為單行。",
+    basisBody: "彙總鑽石以上分段，並按平均 RP 對陣容排序。需要合併武器統計的角色會合併為單行。",
     back: "返回 Meta 分析",
     nonKoSummary:
       "詳細行名稱基於韓文來源資料，因此本地化頁面只顯示賽季級指標，不展示未翻譯的來源資料列。",
   },
 } as const;
+
+function getSeasonCopy(locale: RouteLocale, seasonNumber: number) {
+  const copy = COPY[locale] ?? COPY.ko;
+  const replaceSeasonNumber = (value: string) => value.replace("10", String(seasonNumber));
+
+  return {
+    ...copy,
+    emptyTitle: replaceSeasonNumber(copy.emptyTitle),
+    kicker: replaceSeasonNumber(copy.kicker),
+    title: replaceSeasonNumber(copy.title),
+  };
+}
 
 function formatMetricNumber(value: number) {
   if (!Number.isFinite(value) || value <= 0) return "0";
@@ -170,11 +170,13 @@ function HeroMetricCard({
   label,
   value,
   tone = "default",
+  className,
 }: {
   icon: ReactNode;
   label: string;
   value: string;
   tone?: "default" | "gold" | "blue";
+  className?: string;
 }) {
   const isAccent = tone !== "default";
   const iconTone = isAccent
@@ -183,7 +185,10 @@ function HeroMetricCard({
 
   return (
     <div
-      className="metric-card flex min-h-[96px] flex-col gap-3 px-3.5 py-3.5 sm:min-h-[112px] sm:px-4"
+      className={cn(
+        "metric-card flex min-h-[96px] flex-col gap-3 px-3.5 py-3.5 sm:min-h-[112px] sm:px-4",
+        className
+      )}
       data-accent={isAccent ? "true" : undefined}
     >
       <div
@@ -202,65 +207,67 @@ function HeroMetricCard({
   );
 }
 
-function LeaderCard({
-  characterCode,
-  averageRP,
-  topAppearances,
-  totalPatches,
-  copy,
-  name,
-  weaponName,
-}: {
-  characterCode: number;
-  averageRP: number;
-  topAppearances: number;
-  totalPatches: number;
-  copy: (typeof COPY)[RouteLocale];
-  name: string;
-  weaponName: string;
-}) {
-  const imageUrl = getCharacterImageUrl(characterCode);
+const RECAP_SECTION_LINKS = [
+  { href: "#season-recap-patches", index: "01", label: "패치 흐름" },
+  { href: "#season-recap-roles", index: "02", label: "직업군 흐름" },
+  { href: "#season-recap-balance-response", index: "03", label: "패치 반응" },
+  { href: "#season-recap-new-characters", index: "04", label: "신규 캐릭터" },
+  { href: "#season-recap-ranking", index: "05", label: "시즌 랭킹" },
+] as const;
 
+function SeasonRecapSectionNav({ seasonNumber }: { seasonNumber: number }) {
   return (
-    <div
-      className="metric-card col-span-2 flex min-h-[120px] items-center gap-4 px-4 py-4 sm:min-h-[132px]"
+    <nav
+      aria-label={`시즌 ${seasonNumber} 리캡 섹션`}
+      className="metric-card col-span-2 flex min-h-[112px] flex-col justify-between px-4 py-4"
       data-accent="true"
     >
-      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] sm:h-20 sm:w-20">
-        <Image src={imageUrl} alt={name} fill className="object-cover" sizes="80px" />
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[var(--color-accent-foreground)]">
-            <Trophy className="h-3.5 w-3.5" strokeWidth={2} />
-            {copy.leaderTitle}
-          </span>
-          <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
-            {copy.leaderPatchCount(topAppearances, totalPatches)}
-          </span>
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--color-accent-foreground)]">
+            리캡 목차
+          </p>
+          <p className="mt-1 text-sm font-bold text-[var(--color-foreground)]">
+            원하는 분석으로 바로 이동
+          </p>
         </div>
-        <p className="mt-3 truncate text-[1.1rem] font-bold text-[var(--color-foreground)] sm:text-[1.35rem]">
-          {name}
-        </p>
-        <p className="mt-1 text-sm text-[var(--color-muted-foreground)]">{weaponName}</p>
+        <span className="shrink-0 font-mono text-[10px] font-semibold text-[var(--color-muted-foreground)]">
+          SEASON {seasonNumber}
+        </span>
       </div>
-      <div className="shrink-0 text-right">
-        <p className="text-[1.35rem] font-bold text-[var(--color-accent-foreground)] sm:text-[1.7rem]">
-          +{averageRP.toFixed(1)}
-        </p>
-        <p className="mt-1 text-[11px] text-[var(--color-muted-foreground)] sm:text-sm">
-          {copy.seasonAverageRp}
-        </p>
+
+      <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-[var(--color-border)] pt-3">
+        {RECAP_SECTION_LINKS.map((item) => (
+          <a
+            key={item.href}
+            href={item.href}
+            className="group inline-flex items-center gap-1.5 text-xs font-bold text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--color-accent-foreground)]"
+          >
+            <span className="font-mono text-[9px] text-[var(--color-accent-foreground)]">
+              {item.index}
+            </span>
+            <span>{item.label}</span>
+            <ArrowRight
+              className="h-3 w-3 opacity-45 transition-transform group-hover:translate-x-0.5 group-hover:opacity-100"
+              strokeWidth={2}
+            />
+          </a>
+        ))}
       </div>
-    </div>
+    </nav>
   );
 }
 
-export default async function SeasonRecapPage({ locale = "ko" }: { locale?: RouteLocale }) {
-  const copy = COPY[locale] ?? COPY.ko;
-  const l10n = loadL10nMap(LANGUAGE_BY_ROUTE_LOCALE[locale]);
-  const fallbackMap = buildFallbackMap();
-  const { patches, perPatchTop, seasonTop, roleStats } = await getSeasonRecapData();
+export default async function SeasonRecapPage({
+  locale = "ko",
+  seasonNumber = 10,
+}: {
+  locale?: RouteLocale;
+  seasonNumber?: number;
+}) {
+  const copy = getSeasonCopy(locale, seasonNumber);
+  const { patches, perPatchTop, seasonTop, roleStatsByTier, tierRpTrends } =
+    await getSeasonRecapData(seasonNumber);
 
   if (patches.length === 0) {
     return (
@@ -279,11 +286,13 @@ export default async function SeasonRecapPage({ locale = "ko" }: { locale?: Rout
   const lastPatch = patches[patches.length - 1];
   const trackedCombos = seasonTop.length;
   const totalMatches = seasonTop.reduce((sum, row) => sum + row.totalGames, 0);
-  const leader = seasonTop[0] ?? null;
 
   return (
     <main className="page-shell flex flex-col gap-5 lg:gap-6">
-      <section className="dashboard-panel px-4 py-4 lg:px-5">
+      <section
+        id="season-recap-summary"
+        className="dashboard-panel scroll-mt-24 px-4 py-4 lg:scroll-mt-20 lg:px-5"
+      >
         <div className="grid gap-3 xl:grid-cols-[minmax(0,1.08fr)_minmax(340px,0.92fr)]">
           <div className="flex flex-col justify-center">
             <div className="flex flex-wrap items-center gap-2.5">
@@ -332,26 +341,9 @@ export default async function SeasonRecapPage({ locale = "ko" }: { locale?: Rout
               label={copy.totalSample}
               value={copy.totalSampleValue(formatMetricNumber(totalMatches))}
               tone="gold"
+              className={locale === "ko" ? undefined : "sm:col-span-2"}
             />
-            {leader ? (
-              <LeaderCard
-                characterCode={leader.characterNum}
-                averageRP={leader.averageRP}
-                topAppearances={leader.topAppearances}
-                totalPatches={patches.length}
-                copy={copy}
-                name={resolveCharacterName(leader.characterNum, l10n, fallbackMap)}
-                weaponName={
-                  leader.bestWeapon > 0
-                    ? resolveWeaponName(leader.bestWeapon, l10n)
-                    : copy.integrated
-                }
-              />
-            ) : (
-              <div className="metric-card col-span-2 flex min-h-[132px] items-center justify-center px-4 py-4 text-sm text-[var(--color-muted-foreground)] sm:min-h-[150px] sm:px-5 sm:py-5">
-                {copy.preparing}
-              </div>
-            )}
+            {locale === "ko" ? <SeasonRecapSectionNav seasonNumber={seasonNumber} /> : null}
           </div>
         </div>
       </section>
@@ -359,11 +351,18 @@ export default async function SeasonRecapPage({ locale = "ko" }: { locale?: Rout
       {locale === "ko" ? (
         <>
           <PatchTimelineBlock perPatchTop={perPatchTop} />
-          <RoleStrengthBlock roleStats={roleStats} patches={patches} />
+          <RoleStrengthBlock
+            roleStatsByTier={roleStatsByTier}
+            patches={patches}
+            benchmarks={tierRpTrends}
+          />
+          <BalancePatchResponseBlock entries={seasonTop} patches={patches} trends={tierRpTrends} />
+          <NewCharacterReportBlock entries={seasonTop} benchmarks={tierRpTrends} />
           <SeasonHallOfFameBlock
             entries={seasonTop}
             totalPatches={patches.length}
             patches={patches}
+            tierRpTrends={tierRpTrends}
           />
         </>
       ) : (
@@ -374,7 +373,7 @@ export default async function SeasonRecapPage({ locale = "ko" }: { locale?: Rout
         </section>
       )}
 
-      <section className="dashboard-panel p-4">
+      <section id="season-recap-basis" className="dashboard-panel scroll-mt-24 p-4 lg:scroll-mt-20">
         <div className="home-section-header flex flex-col gap-2 pb-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">

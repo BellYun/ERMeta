@@ -4,11 +4,12 @@ import {
   getCharacterPatchNote,
   getNotesByPatch,
   getPatchSummary,
+  getStatsPatchVersions,
 } from "@/data/patch-notes";
 
 describe("11.7 patch notes", () => {
-  it("11.7을 최신 패치로 노출한다", () => {
-    expect(getAllPatchVersions()[0]).toBe("11.7");
+  it("11.7을 패치 목록에 노출한다", () => {
+    expect(getAllPatchVersions()).toContain("11.7");
   });
 
   it("공식 실험체 변경 수와 유형을 보존한다", () => {
@@ -27,5 +28,34 @@ describe("11.7 patch notes", () => {
     const rio = getCharacterPatchNote(31, "11.7");
 
     expect(rio?.changes.map((change) => change.changeType)).toEqual(["buff", "nerf"]);
+  });
+});
+
+describe("12.0 patch notes", () => {
+  it("12.0을 최신 패치로 노출한다", () => {
+    expect(getAllPatchVersions()[0]).toBe("12.0");
+  });
+
+  it("프리시즌 12.0을 통계 패치 목록에서는 제외한다", () => {
+    expect(getStatsPatchVersions()).not.toContain("12.0");
+    expect(getStatsPatchVersions()[0]).toBe("11.7");
+  });
+
+  it("공식 실험체 변경 수와 유형을 보존한다", () => {
+    expect(getNotesByPatch("12.0")).toHaveLength(24);
+    expect(getPatchSummary("12.0")).toEqual({
+      patch: "12.0",
+      totalChanges: 60,
+      buffs: 30,
+      nerfs: 20,
+      reworks: 10,
+      characterCount: 24,
+    });
+  });
+
+  it("상향과 하향이 함께 있는 다니엘 변경을 각각 기록한다", () => {
+    const daniel = getCharacterPatchNote(37, "12.0");
+
+    expect(daniel?.changes.map((change) => change.changeType)).toEqual(["buff", "nerf", "nerf"]);
   });
 });
