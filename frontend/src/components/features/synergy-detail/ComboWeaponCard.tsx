@@ -1,18 +1,85 @@
 "use client";
 
-import { ArrowUpRight, ChevronRight, Loader2 } from "lucide-react";
+import { ArrowUpRight, ChevronRight, Loader2, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import { TierBadge } from "@/components/features/TierBadge";
 import { Link } from "@/i18n/navigation";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
-import type { OperationProfile, PlayStyleKey } from "@/lib/synergyInsights";
+import {
+  buildTrioCompositionInsight,
+  type CompositionMemberDuty,
+  type CompositionPatternKey,
+  type TrioCompositionInsight,
+} from "@/lib/synergyComposition";
 import { assignComboTier, COMBO_TIER_WEIGHTS, PERFORMANCE_TIER_MIN_GAMES } from "@/lib/tierScoring";
 import { cn } from "@/lib/utils";
 import { TraitIcon } from "./TraitIcon";
 import type { TrioWeaponResult } from "./types";
 import { useTapGuard } from "./useTapGuard";
+
+/*
+ * Composition analysis is supplemental to the recommendation statistics.
+ * Keep it out of the result commit so a newly arrived result cannot monopolize
+ * the main thread before the user's next selection is handled.
+ */
+const COMPOSITION_INSIGHT_DELAY_MS = 100;
+
+function useDeferredCompositionInsight(group: GroupedCombo) {
+  const insightKey = `${group.character1}:${group.weaponType1}|${group.character2}:${group.weaponType2}|${group.character3}:${group.weaponType3}`;
+  const suppliedInsight = group.compositionInsight ?? null;
+  const [computed, setComputed] = React.useState<{
+    key: string;
+    insight: TrioCompositionInsight;
+  } | null>(() => (suppliedInsight ? { key: insightKey, insight: suppliedInsight } : null));
+
+  React.useEffect(() => {
+    if (suppliedInsight) {
+      setComputed({ key: insightKey, insight: suppliedInsight });
+      return;
+    }
+
+    let cancelled = false;
+    let idleCallbackId: number | null = null;
+    let fallbackTimerId: number | null = null;
+    const computeInsight = () => {
+      const insight = buildTrioCompositionInsight([
+        { character: group.character1, weapon: group.weaponType1 },
+        { character: group.character2, weapon: group.weaponType2 },
+        { character: group.character3, weapon: group.weaponType3 },
+      ]);
+      if (cancelled) return;
+      React.startTransition(() => setComputed({ key: insightKey, insight }));
+    };
+    const timerId = window.setTimeout(() => {
+      if (typeof window.requestIdleCallback === "function") {
+        idleCallbackId = window.requestIdleCallback(computeInsight, { timeout: 1_500 });
+      } else {
+        fallbackTimerId = window.setTimeout(computeInsight, 0);
+      }
+    }, COMPOSITION_INSIGHT_DELAY_MS);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timerId);
+      if (idleCallbackId != null) window.cancelIdleCallback(idleCallbackId);
+      if (fallbackTimerId != null) window.clearTimeout(fallbackTimerId);
+    };
+  }, [
+    group.character1,
+    group.weaponType1,
+    group.character2,
+    group.weaponType2,
+    group.character3,
+    group.weaponType3,
+    insightKey,
+    suppliedInsight,
+  ]);
+
+  if (suppliedInsight) return suppliedInsight;
+  return computed?.key === insightKey ? computed.insight : null;
+}
 
 /** Level 1 (접힘): 캐릭터+무기 조합 (mainCore 집계) */
 export interface GroupedCombo {
@@ -26,7 +93,7 @@ export interface GroupedCombo {
   winRate: number;
   averageRP: number;
   averageRank: number;
-  operationProfile?: OperationProfile | null;
+  compositionInsight?: TrioCompositionInsight | null;
   /** Level 2 (펼침): 특성별 브레이크다운 */
   traitVariants: TrioWeaponResult[];
 }
@@ -69,79 +136,17 @@ function hasCoreData(v: TrioWeaponResult): boolean {
   );
 }
 
-function getPlayStyleToneClass(key: PlayStyleKey) {
-  switch (key) {
-    case "snowball":
-      return "border-emerald-400/45 bg-emerald-400/10 text-emerald-700 dark:text-emerald-300";
-    case "tempo":
-      return "border-fuchsia-400/50 bg-fuchsia-400/10 text-fuchsia-700 dark:text-fuchsia-300";
-    case "stable":
-      return "border-sky-400/45 bg-sky-400/10 text-sky-700 dark:text-sky-300";
-    case "lateValue":
-      return "border-indigo-400/50 bg-indigo-400/10 text-indigo-700 dark:text-indigo-300";
-    case "volatile":
-      return "border-amber-400/55 bg-amber-400/10 text-amber-700 dark:text-amber-300";
-    case "climbVolatile":
-      return "border-orange-400/55 bg-orange-400/10 text-orange-700 dark:text-orange-300";
-    case "trap":
-      return "border-red-400/55 bg-red-400/10 text-red-700 dark:text-red-300";
-    case "balanced":
-      return "border-slate-400/50 bg-slate-400/10 text-slate-700 dark:text-slate-300";
-    default:
-      return "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-foreground)]";
-  }
-}
-
-function toTopPercent(percentile: number) {
-  return Math.max(1, 100 - percentile);
-}
-
-function toBottomPercent(percentile: number) {
-  return Math.max(1, percentile);
-}
-
-function PlayStyleInsightBadge({
-  profile,
-  label,
-  description,
-  metricSummary,
-}: {
-  profile: OperationProfile;
-  label: string;
-  description: string;
-  metricSummary: string;
-}) {
-  const tooltipId = React.useId();
-
-  return (
-    <span className="group/tip relative inline-flex">
-      <span
-        tabIndex={0}
-        aria-describedby={tooltipId}
-        title={`${description}\n${metricSummary}`}
-        className={cn(
-          "cursor-help rounded-md border px-2 py-1 text-[10px] font-bold outline-none ring-offset-2 ring-offset-[var(--color-surface)] transition-shadow focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] sm:text-[11px]",
-          getPlayStyleToneClass(profile.key)
-        )}
-      >
-        {label}
-      </span>
-      <span
-        id={tooltipId}
-        role="tooltip"
-        className="pointer-events-none absolute bottom-full left-0 z-50 mb-2 hidden w-64 max-w-[calc(100vw-2rem)] rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] p-2 text-left text-[11px] font-medium leading-relaxed text-[var(--color-foreground)] shadow-lg group-hover/tip:block group-focus-within/tip:block"
-      >
-        <span className="block text-[11px] font-bold text-[var(--color-foreground)]">{label}</span>
-        <span className="mt-1 block text-[10.5px] text-[var(--color-muted-foreground)]">
-          {description}
-        </span>
-        <span className="mt-1.5 block border-t border-[var(--color-border)] pt-1.5 text-[10px] text-[var(--color-muted-foreground)]">
-          {metricSummary}
-        </span>
-      </span>
-    </span>
-  );
-}
+const COMPOSITION_PATTERN_BADGE_TONES: Record<CompositionPatternKey, string> = {
+  threeLayer: "border-violet-400/45 bg-violet-400/10 text-violet-700 dark:text-violet-300",
+  diveFollow: "border-rose-400/45 bg-rose-400/10 text-rose-700 dark:text-rose-300",
+  doubleFront: "border-orange-400/45 bg-orange-400/10 text-orange-700 dark:text-orange-300",
+  frontToBack: "border-emerald-400/45 bg-emerald-400/10 text-emerald-700 dark:text-emerald-300",
+  protectCarry: "border-sky-400/45 bg-sky-400/10 text-sky-700 dark:text-sky-300",
+  pickBurst: "border-fuchsia-400/45 bg-fuchsia-400/10 text-fuchsia-700 dark:text-fuchsia-300",
+  pokeKite: "border-cyan-400/45 bg-cyan-400/10 text-cyan-700 dark:text-cyan-300",
+  brawl: "border-amber-400/45 bg-amber-400/10 text-amber-700 dark:text-amber-300",
+  flexible: "border-slate-400/45 bg-slate-400/10 text-slate-700 dark:text-slate-300",
+};
 
 interface ComboWeaponCardProps {
   group: GroupedCombo;
@@ -173,6 +178,10 @@ function ComboWeaponCardImpl({
   onRecommendationClick,
 }: ComboWeaponCardProps) {
   const t = useTranslations("synergyComboCard");
+  const compositionInsight = useDeferredCompositionInsight(group);
+  const compositionAnalysisTitle = t.has("composition.title")
+    ? t("composition.title")
+    : `${t("composition.rolesLabel")} · ${t("composition.powerSpikeLabel")}`;
   const [showTraits, setShowTraits] = React.useState(false);
   const [showAllVariants, setShowAllVariants] = React.useState(false);
   const [loadedTraitVariants, setLoadedTraitVariants] = React.useState<TrioWeaponResult[] | null>(
@@ -183,6 +192,45 @@ function ComboWeaponCardImpl({
     () => getOrderedMembers(group, selectedCharCodes),
     [group, selectedCharCodes]
   );
+  const combatDoctrine = compositionInsight?.combatDoctrine;
+  const doctrineFeatureLabels = combatDoctrine
+    ? [
+        t(
+          `composition.combatDoctrine.features.damageDelivery.${combatDoctrine.features.damageDelivery}`
+        ),
+        t(
+          `composition.combatDoctrine.features.accessMethod.${combatDoctrine.features.accessMethod}`
+        ),
+        t(
+          `composition.combatDoctrine.features.frontlineStructure.${combatDoctrine.features.frontlineStructure}`
+        ),
+      ]
+    : [];
+  const doctrineRows = combatDoctrine
+    ? [
+        {
+          label: t("composition.combatDoctrine.labels.winCondition"),
+          text: t(`composition.combatDoctrine.statements.${combatDoctrine.winCondition}`),
+        },
+        {
+          label: t("composition.combatDoctrine.labels.opening"),
+          text: t(`composition.combatDoctrine.statements.${combatDoctrine.opening}`),
+        },
+        {
+          label: t("composition.combatDoctrine.labels.failure"),
+          text: t(`composition.combatDoctrine.statements.${combatDoctrine.failure}`),
+        },
+      ]
+    : [];
+  const orderedMemberDuties = combatDoctrine
+    ? ordered
+        .map(({ char, weapon }) =>
+          combatDoctrine.memberDuties.find(
+            (duty) => duty.character === char && duty.weapon === weapon
+          )
+        )
+        .filter((duty): duty is CompositionMemberDuty => Boolean(duty))
+    : [];
   const isSmallSample = group.totalGames < PERFORMANCE_TIER_MIN_GAMES;
   const tier = isSmallSample
     ? null
@@ -410,37 +458,121 @@ function ComboWeaponCardImpl({
         </div>
       </div>
 
-      {group.operationProfile ? (
+      {compositionInsight ? (
         <div className="border-t border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-surface-2)_72%,transparent)] px-2 py-2 sm:px-3">
           <div className="flex min-w-0 flex-wrap items-center gap-1.5">
-            <PlayStyleInsightBadge
-              profile={group.operationProfile}
-              label={t("insight.operationLabel", {
-                value: t(`insight.playStyle.${group.operationProfile.key}`),
-              })}
-              description={t(`insight.playStyleDescription.${group.operationProfile.key}`, {
-                winRate: group.winRate.toFixed(1),
-                averageRank: group.averageRank.toFixed(1),
-                averageRP: `${group.averageRP > 0 ? "+" : ""}${group.averageRP.toFixed(1)}`,
-              })}
-              metricSummary={t("insight.metricSummary", {
-                rpTop: toTopPercent(group.operationProfile.rpPercentile),
-                winTop: toTopPercent(group.operationProfile.winRatePercentile),
-                rankStanding:
-                  group.operationProfile.rankPercentile >= 50
-                    ? t("insight.rankStanding.top", {
-                        value: toTopPercent(group.operationProfile.rankPercentile),
-                      })
-                    : t("insight.rankStanding.bottom", {
-                        value: toBottomPercent(group.operationProfile.rankPercentile),
-                      }),
-                games: group.totalGames,
-                confidence: t(`insight.confidence.${group.operationProfile.confidence}`),
-              })}
-            />
+            <span
+              data-composition-pattern-badge={compositionInsight.pattern}
+              title={t(`composition.patternDescriptions.${compositionInsight.pattern}`)}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[10px] font-bold sm:text-[11px]",
+                COMPOSITION_PATTERN_BADGE_TONES[compositionInsight.pattern]
+              )}
+            >
+              <Sparkles className="h-3 w-3 shrink-0" />
+              {t(`composition.patterns.${compositionInsight.pattern}`)}
+            </span>
           </div>
+          {showTraits ? (
+            <div
+              data-composition-explanation
+              data-composition-pattern={compositionInsight.pattern}
+              className="mt-2 text-[10.5px] leading-relaxed sm:text-[11px]"
+            >
+              <div className="flex items-center gap-1.5 border-b border-[var(--color-border)] pb-1.5">
+                <Sparkles className="h-3.5 w-3.5 shrink-0 text-[var(--color-accent-foreground)]" />
+                <p className="font-bold text-[var(--color-foreground)]">
+                  {compositionAnalysisTitle}
+                </p>
+              </div>
+              <div className="mt-2 space-y-1.5">
+                <div
+                  data-combat-doctrine
+                  className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]/55 p-2"
+                >
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <p className="mr-1 font-bold text-[var(--color-foreground)]">
+                      {t("composition.combatDoctrine.title")}
+                    </p>
+                    {doctrineFeatureLabels.map((label) => (
+                      <span
+                        key={label}
+                        className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)]"
+                      >
+                        {label}
+                      </span>
+                    ))}
+                  </div>
+                  <dl className="mt-2 space-y-1.5">
+                    {doctrineRows.map((row, index) => (
+                      <div
+                        key={row.label}
+                        data-combat-doctrine-rule={index + 1}
+                        className="grid grid-cols-[4.75rem_minmax(0,1fr)] gap-1.5"
+                      >
+                        <dt className="font-bold text-[var(--color-foreground)]">{row.label}</dt>
+                        <dd className="text-[var(--color-muted-foreground)]">{row.text}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                  <div className="mt-2.5 border-t border-[var(--color-border)] pt-2">
+                    <p className="font-bold text-[var(--color-foreground)]">
+                      {t("composition.combatDoctrine.memberDutyTitle")}
+                    </p>
+                    <div className="mt-1.5 grid gap-1.5 lg:grid-cols-3">
+                      {orderedMemberDuties.map((duty) => (
+                        <div
+                          key={`${duty.character}_${duty.weapon}`}
+                          data-combat-member-duty={`${duty.character}_${duty.weapon}`}
+                          className="rounded border border-[var(--color-border)] bg-[var(--color-surface-2)]/65 p-2"
+                        >
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="font-bold text-[var(--color-foreground)]">
+                              {getCharName(duty.character)}
+                            </span>
+                            <span className="rounded-full bg-[var(--color-accent)]/12 px-1.5 py-0.5 text-[9px] font-bold text-[var(--color-accent-foreground)]">
+                              {t(`composition.combatTasks.${duty.task}`)}
+                            </span>
+                            {duty.secondaryTask && (
+                              <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)]">
+                                {t("composition.combatDoctrine.labels.dutySecondary")}
+                                {" · "}
+                                {t(`composition.combatTasks.${duty.secondaryTask}`)}
+                              </span>
+                            )}
+                          </div>
+                          <p className="mt-1 text-[var(--color-muted-foreground)]">
+                            <span className="font-bold text-[var(--color-foreground)]">
+                              {t("composition.combatDoctrine.labels.dutyAction")}
+                              {": "}
+                            </span>
+                            {t(`composition.combatDoctrine.memberActions.${duty.action}`)}
+                          </p>
+                          <p className="mt-0.5 text-[var(--color-muted-foreground)]">
+                            <span className="font-bold text-rose-600 dark:text-rose-300">
+                              {t("composition.combatDoctrine.labels.dutyAvoid")}
+                              {": "}
+                            </span>
+                            {t(`composition.combatDoctrine.memberAvoids.${duty.avoid}`)}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null}
         </div>
-      ) : null}
+      ) : (
+        <div
+          data-composition-insight-pending
+          aria-hidden="true"
+          className="border-t border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-surface-2)_72%,transparent)] px-2 py-2 sm:px-3"
+        >
+          <div className="h-[26px] w-24 animate-pulse rounded-md bg-[var(--color-surface-3)]" />
+        </div>
+      )}
 
       {/* 특성 브레이크다운 */}
       {showTraits && (

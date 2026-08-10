@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { createSynergyDetailSelectionStore } from "@/components/features/synergy-detail/SynergyDetailSelectionStore";
 import {
   computeNextAllies,
   parseAllyFromParams,
@@ -89,7 +90,7 @@ describe("handleSelect callback stability (integration)", () => {
    * This test documents the invariant that the callback dependency set
    * of handleSelect must NOT include ally1/ally2/selectedAllies/isSelected.
    * The actual stability is enforced by computeNextAllies being a pure
-   * external function + allyRef carrying the latest values.
+   * external function + the scoped store's getState() carrying the latest values.
    *
    * If a future refactor adds those deps back, the callback identity
    * would change on every selection, breaking CharWeaponCell's React.memo
@@ -104,5 +105,33 @@ describe("handleSelect callback stability (integration)", () => {
       computeNextAllies(null, null, item(1, 1)),
     ];
     expect(a).toEqual(b);
+  });
+});
+
+describe("SynergyDetailSelectionStore", () => {
+  it("stores both slots atomically for the next consecutive input", () => {
+    const store = createSynergyDetailSelectionStore([null, null]);
+    const next: [AllySelection, AllySelection] = [
+      { charCode: 10, weaponCode: 2 },
+      { charCode: 20, weaponCode: 5 },
+    ];
+
+    store.getState().setAllies(next);
+
+    expect(store.getState().allies).toEqual(next);
+  });
+
+  it("does not notify subscribers when URL sync repeats the same selections", () => {
+    const first: AllySelection = { charCode: 10, weaponCode: 2 };
+    const store = createSynergyDetailSelectionStore([first, null]);
+    let notifications = 0;
+    const unsubscribe = store.subscribe(() => {
+      notifications += 1;
+    });
+
+    store.getState().setAllies([{ ...first }, null]);
+
+    expect(notifications).toBe(0);
+    unsubscribe();
   });
 });

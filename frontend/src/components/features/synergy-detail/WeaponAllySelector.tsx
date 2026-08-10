@@ -3,7 +3,7 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { X, Search } from "lucide-react";
 import Image from "next/image";
-import { useSearchParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import characterBestWeapons from "@/../const/characterBestWeapons.json";
@@ -14,7 +14,16 @@ import { resolveWeaponName } from "@/lib/weaponMap";
 import { getFallbackMap, EXCLUDED_CHARACTER_CODES } from "../synergy/constants";
 import { SlotEmpty } from "../synergy/SlotEmpty";
 import { matchesChosungSearch } from "../synergy/utils";
+import {
+  type AllySelection,
+  type AllySelectionPair,
+  useSynergyDetailSelection,
+  useSynergyDetailSelectionStoreApi,
+} from "./SynergyDetailSelectionStore";
 import { useTapGuard } from "./useTapGuard";
+
+export { parseAllyFromParams } from "./SynergyDetailSelectionStore";
+export type { AllySelection } from "./SynergyDetailSelectionStore";
 
 // ─── 데이터 ──────────────────────────────────────────────────────────────────
 
@@ -67,34 +76,6 @@ export function getAllCharWeaponItems(): CharWeaponItem[] {
 }
 
 // ─── 타입 ──────────────────────────────────────────────────────────────────
-
-export interface AllySelection {
-  charCode: number;
-  weaponCode: number | null;
-}
-
-export const SYNERGY_DETAIL_ALLIES_CHANGED_EVENT = "synergy-detail:allies-changed";
-
-export interface SynergyDetailAlliesChangedDetail {
-  ally1: AllySelection | null;
-  ally2: AllySelection | null;
-}
-
-export function parseAllyFromParams(
-  params: URLSearchParams,
-  allyKey: string,
-  weaponKey: string,
-  legacyAllyKey?: string,
-  legacyWeaponKey?: string
-): AllySelection | null {
-  const charStr = params.get(allyKey) ?? (legacyAllyKey ? params.get(legacyAllyKey) : null);
-  if (!charStr) return null;
-  const charCode = parseInt(charStr, 10);
-  if (isNaN(charCode)) return null;
-  const wStr = params.get(weaponKey) ?? (legacyWeaponKey ? params.get(legacyWeaponKey) : null);
-  const weaponCode = wStr ? parseInt(wStr, 10) : null;
-  return { charCode, weaponCode: weaponCode && !isNaN(weaponCode) ? weaponCode : null };
-}
 
 /**
  * 선택 토글 로직 — 컴포넌트 외부에서 테스트 가능한 순수 함수.
@@ -218,7 +199,6 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
 export function WeaponAllySelector() {
   const { l10n } = useL10n();
   const t = useTranslations("weaponAllySelector");
-  const searchParams = useSearchParams();
   const pathname = usePathname();
   const [search, setSearch] = React.useState("");
   const parentRef = React.useRef<HTMLDivElement>(null);
@@ -229,56 +209,17 @@ export function WeaponAllySelector() {
     [l10n]
   );
 
-  const urlAlly1 = React.useMemo(
-    () => parseAllyFromParams(searchParams, "ally1", "w1", "a"),
-    [searchParams]
-  );
-  const urlAlly2 = React.useMemo(
-    () => parseAllyFromParams(searchParams, "ally2", "w2", "b"),
-    [searchParams]
-  );
-
-  /**
-   * 1번 탭 즉시 반응 핵심:
-   * - URL을 source of truth로만 두면 탭 → router.replace → 라우트 전환 → searchParams 재방출 →
-   *   ally 재계산 → 슬롯 렌더까지 수백 ms 체감됨.
-   * - 로컬 optimistic state로 탭 즉시 슬롯 채움, URL 동기화는 백그라운드에서 처리.
-   * - 외부(뒤로가기/공유링크)로 URL이 바뀌면 skipNextSyncRef가 false라서 local로 역동기화됨.
-   */
-  const [localAlly1, setLocalAlly1] = React.useState<AllySelection | null>(urlAlly1);
-  const [localAlly2, setLocalAlly2] = React.useState<AllySelection | null>(urlAlly2);
-  const skipNextSyncRef = React.useRef(false);
-
-  React.useEffect(() => {
-    if (skipNextSyncRef.current) {
-      // 방금 우리가 푸시한 URL 반영 — local은 이미 최신
-      skipNextSyncRef.current = false;
-      return;
-    }
-    setLocalAlly1(urlAlly1);
-    setLocalAlly2(urlAlly2);
-  }, [urlAlly1, urlAlly2]);
-
-  const ally1 = localAlly1;
-  const ally2 = localAlly2;
+  const selectionStore = useSynergyDetailSelectionStoreApi();
+  const [ally1, ally2] = useSynergyDetailSelection((state) => state.allies);
+  const pendingUrlSelectionRef = React.useRef<AllySelectionPair | null>(null);
+  const urlSyncFrameRef = React.useRef<number | null>(null);
+  const urlSyncTimerRef = React.useRef<number | null>(null);
 
   const selectedAllies = React.useMemo(
     () => [ally1, ally2].filter(Boolean) as AllySelection[],
     [ally1, ally2]
   );
-
-  /**
-   * handleSelect/removeAlly가 매 렌더마다 재생성되면 CharWeaponCell(React.memo)의
-   * onSelect prop이 바뀌어 90+ 셀이 전부 리렌더됨.
-   * 최신 ally 값을 ref로 동기화하고 콜백은 updateUrl에만 의존시켜 identity를 고정.
-   */
-  const allyRef = React.useRef<{ ally1: AllySelection | null; ally2: AllySelection | null }>({
-    ally1,
-    ally2,
-  });
-  React.useEffect(() => {
-    allyRef.current = { ally1, ally2 };
-  }, [ally1, ally2]);
+  const deferredDisabledAllies = React.useDeferredValue(selectedAllies);
 
   const updateUrl = React.useCallback(
     (a1: AllySelection | null, a2: AllySelection | null) => {
@@ -294,13 +235,41 @@ export function WeaponAllySelector() {
       }
       const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
       window.history.replaceState(null, "", newUrl);
-      window.dispatchEvent(
-        new CustomEvent<SynergyDetailAlliesChangedDetail>(SYNERGY_DETAIL_ALLIES_CHANGED_EVENT, {
-          detail: { ally1: a1, ally2: a2 },
-        })
-      );
     },
     [pathname]
+  );
+
+  const scheduleUrlUpdate = React.useCallback(
+    (next: AllySelectionPair) => {
+      pendingUrlSelectionRef.current = next;
+      if (urlSyncFrameRef.current !== null || urlSyncTimerRef.current !== null) return;
+
+      // Next.js가 history.replaceState를 감싸 searchParams 갱신을 예약하므로,
+      // pointerup 안에서 호출하면 선택 feedback의 paint까지 같은 interaction에 묶인다.
+      // 첫 선택 paint가 끝난 뒤 별도 task에서 최신 pair 한 건만 URL에 반영한다.
+      urlSyncFrameRef.current = window.requestAnimationFrame(() => {
+        urlSyncFrameRef.current = null;
+        urlSyncTimerRef.current = window.setTimeout(() => {
+          urlSyncTimerRef.current = null;
+          const pending = pendingUrlSelectionRef.current;
+          pendingUrlSelectionRef.current = null;
+          if (pending) updateUrl(pending[0], pending[1]);
+        }, 0);
+      });
+    },
+    [updateUrl]
+  );
+
+  React.useEffect(
+    () => () => {
+      if (urlSyncFrameRef.current !== null) {
+        window.cancelAnimationFrame(urlSyncFrameRef.current);
+      }
+      if (urlSyncTimerRef.current !== null) {
+        window.clearTimeout(urlSyncTimerRef.current);
+      }
+    },
+    []
   );
 
   const isSelected = React.useCallback(
@@ -315,45 +284,39 @@ export function WeaponAllySelector() {
     (item: CharWeaponItem) => {
       if (isSelected(item)) return false;
       // 같은 캐릭터의 다른 무기가 이미 선택되어 있으면 disabled
-      if (selectedAllies.some((a) => a.charCode === item.charCode)) return true;
-      return selectedAllies.length >= 2;
+      if (deferredDisabledAllies.some((a) => a.charCode === item.charCode)) return true;
+      return deferredDisabledAllies.length >= 2;
     },
-    [selectedAllies, isSelected]
+    [deferredDisabledAllies, isSelected]
   );
 
   const commitSelection = React.useCallback(
-    (next: [AllySelection | null, AllySelection | null]) => {
-      // 0) ref를 즉시 갱신 → 빠른 연속 탭에서도 allyRef.current가 최신값을 가짐
-      //    (useEffect 기반 sync는 렌더 커밋 이후에 발생하므로 tight loop에서는 stale 가능)
-      allyRef.current = { ally1: next[0], ally2: next[1] };
-      // 1) 로컬 상태 업데이트 → 슬롯/셀 즉각 시각 반응
-      setLocalAlly1(next[0]);
-      setLocalAlly2(next[1]);
-      // 2) useEffect가 이 URL 변화를 local로 되돌리지 않도록 스킵 플래그 설정
-      skipNextSyncRef.current = true;
-      // 3) URL 동기화는 startTransition 안에서 비동기로
-      updateUrl(next[0], next[1]);
+    (next: AllySelectionPair) => {
+      // store action은 두 슬롯을 원자적으로 갱신하고, 다음 연속 탭은 getState()로 최신값을 읽는다.
+      selectionStore.getState().setAllies(next);
+      // URL은 공유와 복원을 위한 외부 표현이며 선택 UI의 선행 조건이 아니다.
+      scheduleUrlUpdate(next);
     },
-    [updateUrl]
+    [scheduleUrlUpdate, selectionStore]
   );
 
   const handleSelect = React.useCallback(
     (item: CharWeaponItem) => {
-      const { ally1: a1, ally2: a2 } = allyRef.current;
+      const [a1, a2] = selectionStore.getState().allies;
       const next = computeNextAllies(a1, a2, item);
       if (!next) return;
       commitSelection(next);
     },
-    [commitSelection]
+    [commitSelection, selectionStore]
   );
 
   const removeAlly = React.useCallback(
     (charCode: number) => {
-      const { ally1: a1, ally2: a2 } = allyRef.current;
+      const [a1, a2] = selectionStore.getState().allies;
       if (a1?.charCode === charCode) commitSelection([a2, null]);
       else if (a2?.charCode === charCode) commitSelection([a1, null]);
     },
-    [commitSelection]
+    [commitSelection, selectionStore]
   );
 
   // 검색 필터

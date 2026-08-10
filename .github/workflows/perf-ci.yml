@@ -1,27 +1,19 @@
-name: Perf CI (INP)
+name: Nightly Mobile Interaction Benchmark
 
 on:
-  pull_request:
-    paths:
-      - "frontend/src/**"
-      - "frontend/package.json"
-      - "frontend/package-lock.json"
-      - "frontend/next.config.ts"
-      - "frontend/postcss.config.mjs"
-      - "frontend/scripts/inp-benchmark.mjs"
-      - "frontend/scripts/inp-ci.mjs"
-      - ".github/workflows/perf-ci.yml"
+  schedule:
+    - cron: "0 18 * * *"
   workflow_dispatch:
 
 concurrency:
-  group: perf-ci-${{ github.ref }}
+  group: perf-nightly-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   inp-bench:
-    name: INP Bench Gate (synergy-detail)
+    name: Mobile Interaction Report (synergy-detail)
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 35
     defaults:
       run:
         working-directory: frontend
@@ -30,7 +22,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
           cache-dependency-path: frontend/package-lock.json
 
@@ -57,18 +49,32 @@ jobs:
       - name: Wait for server
         run: npx --yes wait-on http://localhost:3000 -t 60000
 
-      - name: Run INP gate
+      - name: Run 50ms stress scenario
         env:
           BENCH_URL: http://localhost:3000/synergy-detail
-          INP_THRESHOLD_MS: 250
-          RUNS: 5
+          RUNS: 30
+          WARMUP_RUNS: 2
           CPU_THROTTLE: 6
+          INTER_TAP_MS: 50
+          PERF_HARD_GATE: "0"
+          CI_OUTPUT_PATH: inp-nightly-stress.json
         run: node scripts/inp-ci.mjs
 
-      - name: Upload INP result
+      - name: Run 1s general scenario
+        env:
+          BENCH_URL: http://localhost:3000/synergy-detail
+          RUNS: 30
+          WARMUP_RUNS: 2
+          CPU_THROTTLE: 6
+          INTER_TAP_MS: 1000
+          PERF_HARD_GATE: "0"
+          CI_OUTPUT_PATH: inp-nightly-general.json
+        run: node scripts/inp-ci.mjs
+
+      - name: Upload benchmark results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: inp-ci-result
-          path: frontend/inp-ci-result.json
-          retention-days: 14
+          name: mobile-interaction-nightly
+          path: frontend/inp-nightly-*.json
+          retention-days: 30
