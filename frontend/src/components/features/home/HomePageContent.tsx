@@ -1,4 +1,4 @@
-import { BookOpenText, Gauge, SlidersHorizontal } from "lucide-react";
+import { BookOpenText, Gauge, Hourglass, Info, SlidersHorizontal } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import type { HomeMetaStats } from "@/lib/homeMetaShared";
 import type { RankingResponse } from "@/lib/ranking";
@@ -29,6 +29,8 @@ export async function HomePageContent({
   const trackedMatches = hasRankingData ? formatMetricNumber(totalMatches) : "";
   const fallbackPatch = defaultPatch || "11.7";
   const patchAnalysisHref = `/${locale}/patch-analysis/11.5`;
+  const isSeasonPreparing = defaultPatch === "11.7";
+  const showHomeStats = hasRankingData && !isSeasonPreparing;
 
   return (
     <div className="page-shell home-shell flex flex-col">
@@ -40,15 +42,21 @@ export async function HomePageContent({
                 <h1 className="dashboard-section-title home-hero-title text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
                   {t("title")}
                 </h1>
-                {defaultPatch ? (
+                {defaultPatch && !isSeasonPreparing ? (
                   <span className="dashboard-kicker">{t("patch", { patch: defaultPatch })}</span>
                 ) : null}
               </div>
               <p className="mt-3 max-w-[58rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem] sm:leading-7">
-                {hasRankingData
-                  ? t("subtitle", { count: trackedMatches })
-                  : t("fallback.subtitle", { patch: fallbackPatch })}
+                {isSeasonPreparing
+                  ? t("preparing.subtitle")
+                  : hasRankingData
+                    ? t("subtitle", { count: trackedMatches })
+                    : t("fallback.subtitle", { patch: fallbackPatch })}
               </p>
+              <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 py-1.5 text-xs text-[var(--color-muted-foreground)]">
+                <Info className="h-3.5 w-3.5 shrink-0 text-[var(--color-accent-foreground)]" />
+                <span>{t("preseasonPolicyNotice")}</span>
+              </div>
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
@@ -76,7 +84,26 @@ export async function HomePageContent({
             </div>
           </div>
 
-          {hasRankingData ? (
+          {isSeasonPreparing ? (
+            <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-4 sm:px-5">
+              <div className="flex items-start gap-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-[var(--color-accent)] bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]">
+                  <Hourglass className="h-4.5 w-4.5" />
+                </span>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--color-accent-foreground)]">
+                    {t("preparing.kicker")}
+                  </p>
+                  <h2 className="mt-1.5 text-base font-bold text-[var(--color-foreground)]">
+                    {t("preparing.title")}
+                  </h2>
+                  <p className="mt-2 max-w-[56rem] text-sm leading-6 text-[var(--color-muted-foreground)]">
+                    {t("preparing.body")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : hasRankingData ? (
             <div className="metric-card home-hero-metric p-0" data-accent="true">
               <div className="home-report-strip">
                 <div className="home-report-primary">
@@ -131,7 +158,7 @@ export async function HomePageContent({
         </div>
       </section>
 
-      {hasRankingData ? (
+      {showHomeStats ? (
         <HomeDashboardSections
           patches={patches}
           homeMetaStats={homeMetaStats}

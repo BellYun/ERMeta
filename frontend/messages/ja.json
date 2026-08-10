@@ -5,7 +5,7 @@
     "logoSubtitle": "Eternal Returnメタ",
     "patchPrefix": "v",
     "seasonRecapBadge": "シーズン",
-    "seasonRecapTitle": "シーズン10リキャップ公開",
+    "seasonRecapTitle": "シーズン11リキャップ公開",
     "seasonRecapBody": "パッチ別の主要RP編成とシーズン全体のメタ推移を確認できます。",
     "seasonRecapCta": "開く",
     "patchAnalysisBadge": "パッチ分析",
@@ -145,6 +145,13 @@
       "methodologyCta": "統計の読み方"
     },
     "preseasonNotice": "11.0はプレシーズンデータのため提供していません。",
+    "preseasonPolicyNotice": "プレシーズン期間の統計は集計していません。",
+    "preparing": {
+      "subtitle": "新シーズンの統計を準備しています。",
+      "kicker": "シーズン移行のお知らせ",
+      "title": "レギュラーシーズンのデータ集計後に統計を提供します",
+      "body": "プレシーズンの試合は集計せず、新しいレギュラーシーズンのサンプルが十分に集まり次第、メタ分析を再開します。"
+    },
     "filterCta": "フィルターを開く",
     "patchAnalysisCta": "11.5パッチ分析",
     "honeyPicksTitle": "今パッチの急上昇",
@@ -416,11 +423,11 @@
       "prompt": "味方のピックに合わせて武器込みの編成を探しましょう",
       "step1": "1. 自分のキャラプールを設定します (任意)",
       "step2": "2. 味方のキャラクターと武器を選択します",
-      "step3": "3. 編成をクリックして特性ごとの性能を確認します"
+      "step3": "3. おすすめ3人編成の役割・運用・相性分析を確認できます"
     },
     "loading": "編成データを読み込み中...",
-    "infoSingle": "味方をもう1人追加すると条件を絞り込めます · 編成をクリックすると特性内訳を確認できます",
-    "infoPair": "編成をクリックすると特性内訳を確認できます",
+    "infoSingle": "味方をもう1人追加すると条件を絞り込めます · 各カードで3人編成分析を確認できます",
+    "infoPair": "各カードで3人編成分析と特性別指標を確認できます",
     "more": "もっと見る ({visible}/{total})",
     "emptyFiltered": "現在のキャラプールに一致する編成がありません。プールを広げてください。",
     "emptyNoData": "この編成データはありません。",
@@ -497,6 +504,281 @@
         "climbVolatile": "平均順位は{averageRank}位で結果の振れ幅は大きい一方、平均RPは{averageRP}です。好調時のRP獲得が大きい構成です。",
         "trap": "勝率{winRate}%・平均順位{averageRank}位・平均RP {averageRP}で、3指標とも低く固定ピックには注意が必要です。",
         "balanced": "勝率{winRate}%・平均順位{averageRank}位・平均RP {averageRP}で、特定の指標に偏らない構成です。"
+      }
+    },
+    "composition": {
+      "title": "3人編成分析",
+      "rolesLabel": "役割",
+      "combatPlanLabel": "実戦プラン",
+      "engagementSetupLabel": "交戦構図",
+      "engagementTriggerLabel": "本交戦への移行条件",
+      "combatOrderLabel": "実際の交戦手順",
+      "powerSpikeLabel": "パワースパイク条件",
+      "favorableLabel": "有利になりやすい状況",
+      "cautionLabel": "注意する状況",
+      "hypothesisNotice": "勝率・RPはパッチ横断の累積編成DB、役割と戦術傾向はERMeta分類を使用します。パワースパイクと相性は時間・交戦ログがないため、ヒューリスティック分析です。",
+      "roles": {
+        "tank": "タンク",
+        "warrior": "ファイター",
+        "assassin": "アサシン",
+        "skillDealer": "スキルディーラー",
+        "rangedCarry": "遠距離キャリー",
+        "support": "サポート",
+        "unknown": "未分類"
+      },
+      "traits": {
+        "engage": "強制イニシエート",
+        "dive": "ダイブ追撃",
+        "peel": "ピール",
+        "protect": "味方保護",
+        "poke": "ポーク",
+        "burst": "バースト",
+        "sustain": "継続戦闘",
+        "zoneControl": "ゾーン制圧"
+      },
+      "formations": {
+        "front": "前衛",
+        "mid": "中衛",
+        "back": "後衛"
+      },
+      "ranges": {
+        "melee": "近距離",
+        "mid": "中距離",
+        "long": "長距離"
+      },
+      "combatTasks": {
+        "initiate": "交戦開始",
+        "followDive": "追撃突入",
+        "frontline": "前線維持",
+        "primaryDamage": "主火力",
+        "followupDamage": "後続火力",
+        "poke": "先行ポーク",
+        "control": "妨害連携",
+        "suppress": "突入抑制",
+        "protect": "味方保護",
+        "finish": "仕留め"
+      },
+      "combatDoctrine": {
+        "title": "編成特性に基づく交戦法",
+        "memberDutyTitle": "実験体ごとの担当",
+        "labels": {
+          "winCondition": "勝利条件",
+          "opening": "交戦開始",
+          "target": "最初の対象",
+          "frontline": "前衛の行動",
+          "damage": "火力の行動",
+          "switchRule": "切替条件",
+          "failure": "崩れるパターン",
+          "dutyAction": "実行",
+          "dutySecondary": "補助機能",
+          "dutyAvoid": "注意"
+        },
+        "memberActions": {
+          "openControlledTarget": "味方の追撃が届く距離で最初の行動妨害を当て、全員の突入合図を作ります。",
+          "punishEnemyEntry": "敵が突入スキルを使い、安全に戻れなくなった瞬間に動きを止めます。",
+          "openDiveAngle": "追撃担当と同じ対象へ同時に届く侵入角を先に作ります。",
+          "confirmPokeAdvantage": "ポークで体力か移動手段を削った対象だけを本交戦につなげます。",
+          "startFrontlineContact": "最も近い脅威を捉え、味方の火力が続く最初の接点を作ります。",
+          "followInitiatorTarget": "開始担当が拘束した対象へすぐ合流し、最初の火力を重ねます。",
+          "syncDiveSameTarget": "開始担当と同じ対象へ同時に入り、退路を狭めます。",
+          "screenCarry": "主力火力と侵入者の間を守り、攻撃時間を確保します。",
+          "alternateFrontline": "もう一人の前衛が下がる時に前へ出て、敵の視線と主要スキルを引き継ぎます。",
+          "compressMeleeSpace": "他の近接と同じ範囲を圧縮し、同じ対象の退路を塞ぎます。",
+          "denyApproach": "射程と行動妨害で接近経路を塞ぎ、味方が長く攻撃を受けないようにします。",
+          "holdFollowupRange": "味方の追撃が届く距離までだけ前進して前線を維持します。",
+          "repeatPoke": "安全な最大射程から牽制を繰り返し、命中した対象が失った資源を確認します。",
+          "damageAfterPoke": "先制牽制で作った体力・移動手段の優位を本交戦の継続火力へ変換します。",
+          "applySafeFollowupDamage": "突入担当が拘束した対象へ安全距離を保ちながら後続火力を加えます。",
+          "damageControlledTarget": "最初の行動妨害を受けた対象へ主力火力を集中します。",
+          "damageNearestThreat": "味方の陣形へ入ってくる最も近い脅威から攻撃し続けます。",
+          "damageExposedBackline": "保護範囲を外れ、味方の突入が重なる後衛へ火力を集中します。",
+          "damageIntrudingDiver": "移動手段を使って陣形内へ入った敵から攻撃して排除します。",
+          "chainControlOnTarget": "最初の行動妨害が切れる時に、同じ対象の移動を再び制限します。",
+          "holdControlForDiver": "敵のダイバーが移動手段を使った後に確実に止められるよう行動妨害を残します。",
+          "suppressApproach": "敵の接近経路を継続して脅かし、移動手段と突入タイミングを制限します。",
+          "protectPrimaryDamage": "主力火力担当が攻撃を続けられるよう、侵入阻止と保護を優先します。",
+          "finishCurrentTarget": "味方の火力が集まっている対象を倒してから次の行動を判断します。"
+        },
+        "memberAvoids": {
+          "doNotEnterAlone": "味方が追撃できる前に一人で入りません。",
+          "doNotLeaveFollowupRange": "味方の追撃範囲を外れるまで追いません。",
+          "doNotOverlapFrontCooldowns": "もう一人の前衛と防御・行動妨害スキルを同時に全て使いません。",
+          "doNotSplitMeleeTarget": "他の近接と別の対象へ分かれません。",
+          "doNotOverchase": "前線を捨てて敵後衛を深追いしません。",
+          "doNotCrossFrontline": "前衛より先に出て突入へ身をさらしません。",
+          "keepEscapeTool": "移動手段を攻撃に全て使い、次の突入へ無防備になりません。",
+          "doNotSpendDefensiveToolEarly": "敵が突入する前に重要な保護・行動妨害を先に使いません。",
+          "doNotSpendSuppressionEarly": "敵がまだ突入できる間、重要な抑制手段を無意味な牽制に全て使いません。",
+          "doNotChangeTargetEarly": "最初の対象が生きている間に別の対象へ火力を分けません。"
+        },
+        "features": {
+          "damageDelivery": {
+            "poke": "ポーク火力",
+            "burst": "瞬間バースト",
+            "sustained": "継続火力",
+            "distributed": "分散火力"
+          },
+          "accessMethod": {
+            "forcedEngage": "強制突入",
+            "dive": "後衛ダイブ",
+            "counterEngage": "カウンター",
+            "frontToBack": "前衛から処理"
+          },
+          "carryDependency": {
+            "careRequired": "ピール必須",
+            "infighting": "インファイト型",
+            "selfSufficient": "自己防衛型",
+            "noSingleCarry": "単独キャリーなし"
+          },
+          "frontlineStructure": {
+            "soloFront": "単独前衛",
+            "doubleFront": "ダブル前衛",
+            "noFront": "前衛なし",
+            "tripleMelee": "近接3人"
+          },
+          "fightLength": {
+            "shortWindow": "短いバースト時間",
+            "longCycle": "長期交戦"
+          },
+          "targetRule": {
+            "controlledTarget": "妨害中の対象",
+            "nearestThreat": "最も近い脅威",
+            "exposedBackline": "露出した後衛",
+            "intrudingDiver": "侵入したダイバー"
+          }
+        },
+        "statements": {
+          "pokeBeforeCommit": "前衛の体力を突入コストにする前に、ポークで体力か移動手段の優位を作ります。",
+          "syncBurstWindow": "最初の妨害と3人の主要火力を、対象の防御・離脱時間より短く重ねます。",
+          "preserveCarryUptime": "主力ディーラーが前衛の後ろから同じ対象を攻撃し続ける時間を作ります。",
+          "rotateFrontline": "前衛2人が交互に注意と主要スキルを受け、後衛の攻撃時間を延ばします。",
+          "compressMeleeSpace": "一つの地域を狭め、3人が互いの近接範囲内で同じ対象と戦います。",
+          "preserveRangedSpacing": "1人が長く耐える正面戦を避け、射程と移動手段を交互に使います。",
+          "sustainAccessibleTarget": "無理な後衛追撃より、火力が途切れない対象を攻撃し続けます。",
+          "pokeThenCommit": "ポークで体力差を作るか移動手段を使わせ、妨害が続く時だけ本交戦へ移ります。",
+          "waitEnemyEntry": "敵が突入手段を使い、安全に戻れなくなった瞬間に反撃します。",
+          "syncDiveEntry": "2つ以上の進入角が同じ対象へ同時に届く時だけ本交戦を始めます。",
+          "controlThenCommit": "最初の妨害命中か重要な離脱手段の消費を全員突入の合図にします。",
+          "frontlineContact": "前衛が敵の主要スキルを受けるか最も近い脅威を止めた後に火力をつなぎます。",
+          "controlledTarget": "役割名ではなく、最初の妨害後に3人の火力が実際に届く対象を優先します。",
+          "nearestThreat": "敵後衛を無理に狙わず、味方陣形を脅かす最も近い敵から処理します。",
+          "exposedBackline": "保護・離脱範囲外で複数の突入が同時に届く後衛を狙います。",
+          "intrudingDiver": "移動手段を使って味方陣形へ入った敵を止めて集中攻撃します。",
+          "screenCarry": "敵後衛を深追いせず、主力ディーラーと敵ダイバーの間を維持します。",
+          "alternateAggro": "前衛2人の生存・妨害手段を同時に使わず、1人が下がる時にもう1人が線を保ちます。",
+          "collapseSameZone": "別々の敵を追わず、退路と保護範囲を一緒に狭めて一地域を圧迫します。",
+          "preserveRangedSpace": "1人が耐える代わりに射程・移動・妨害の領域を交互に作って接近を防ぎます。",
+          "holdFollowupRange": "後続火力の範囲を外れず、自分が耐えられる距離までだけ前進します。",
+          "repeatPoke": "ポーク担当は射程優位を繰り返し、残るメンバーは命中した対象への追撃を準備します。",
+          "overlapBurst": "最初の対象が生きている間は分散せず、追撃突入とバーストを同じ対象へ重ねます。",
+          "sustainNearest": "前衛担当が変わっても、接近可能な最も近い敵への継続火力を切らしません。",
+          "sameTargetDistributed": "単独キャリーがいなくても3人の主要火力を同じ対象と時間帯に重ねます。",
+          "resetOnMiss": "最初の妨害やバーストが失敗したら、残る主要スキルを順番に捨てず離脱します。",
+          "regroupOnSeparation": "前後衛または近接同士の距離が開いたら、追撃より合流を優先します。",
+          "reopenDistance": "捕まえられないか移動手段を使ったら、再び距離を広げて次の火力ターンを作ります。",
+          "switchWhenOutOfRange": "現在の対象が有効射程を外れたら、新しく入る近い対象へすぐ切り替えます。",
+          "chaseOnlyEscapeSpent": "撃破または重要な離脱手段の消費を確認した時だけ短く追います。",
+          "fightBeforePoke": "ポークで優位を作る前に前衛だけが入り、3人の火力が分かれる状況を避けます。",
+          "staggeredEntry": "3人が1人ずつ入り、次の味方が届く前に各個撃破される状況を避けます。",
+          "frontlineOverextends": "前衛が敵後衛を深追いして主力ディーラーと保護役が分断される状況を避けます。",
+          "simultaneousFrontCooldowns": "前衛2人が生存・妨害手段を同時に使い、次の敵ターンを止められない状況を避けます。",
+          "splitMeleeTargets": "近接3人が別々の1対1を始め、人数差を失う状況を避けます。",
+          "spendAllMobility": "後衛2人が移動手段を同時に攻撃へ使い、次の突入に無防備になる状況を避けます。",
+          "splitDamage": "3人が別々の対象を見て、誰も倒せない状況を避けます。"
+        }
+      },
+      "engagementShapes": {
+        "engageLane": "先行突入ルート確保",
+        "pokeWait": "ポーク優位待ち",
+        "frontBackLine": "前後衛の正面陣形",
+        "counterPocket": "突入誘導・カウンター",
+        "splitCollapse": "複数角度からの圧力",
+        "cooldownRelay": "前衛クールダウン交代",
+        "signalHold": "合意した合図待ち"
+      },
+      "combatPhases": {
+        "setup": "対峙準備",
+        "signal": "開始合図",
+        "firstTurn": "最初のターン",
+        "conversion": "火力・保護の引き継ぎ",
+        "decision": "仕留め・リセット"
+      },
+      "combatInstructions": {
+        "holdFormation": "前衛と後衛の間隔を保ち、最初の突入後も追撃火力が届く陣形を取ります。",
+        "maintainRange": "3人同時に接近せず、ポーク射程の端から体力と移動手段を先に消耗させます。",
+        "holdCompact": "保護範囲を重ねつつ、1つの妨害に全員が当たらない間隔を残します。",
+        "splitAngles": "別々の進入角を作り、先に見つかった1人だけが戦わないようタイミングを合わせます。",
+        "staggerFrontline": "前衛2人が生存・妨害手段を同時に使わないよう、先に耐える順番を決めます。",
+        "assignSignal": "最初の妨害か戦術スキルを開始合図に決め、残りの主要スキルを温存します。",
+        "controlOrEscape": "最初の妨害が当たるか、敵の重要な離脱手段が使われた時だけ突入します。",
+        "pokeAdvantage": "ポークで体力差を作るか移動手段を使わせ、最初の妨害命中を集中攻撃の合図にします。",
+        "enemyCommit": "敵が突入手段を実際に使い、安全に戻れなくなった瞬間に反撃します。",
+        "isolatedTarget": "保護範囲を外れた敵に2つの進入角が同時に届く時だけ入ります。",
+        "frontlineContact": "前衛が敵の主要スキルを受けるか、最も近い脅威を止めた瞬間に始めます。",
+        "agreedControl": "事前に決めた最初の妨害が命中した時だけ、残る2人も同じ対象へ重ねます。",
+        "openOneTurn": "最初の役目だけを行い、深追いせず次の担当が入る距離と角度を残します。",
+        "sameTarget": "最初の対象が生きている間は分散せず、追撃突入と主火力を順番に重ねます。",
+        "nearestThreat": "後衛は敵後衛を無理に狙わず、前衛を越えようとする最も近い脅威から処理します。",
+        "protectThenDamage": "入ってきた敵の移動を先に止め、味方の攻撃時間を作ってから同じ対象へ火力を移します。",
+        "alternateCooldowns": "1人の主要スキルが終わる時に次の担当が前へ出て、生存・妨害手段を交互に使います。",
+        "finishOrReset": "撃破か重要な離脱手段の消費後だけ短く追い、初動が止められたら陣形とクールダウンを戻します。",
+        "repeatPokeOrReset": "捕まえられなければ無理に追わず、再び距離を広げて次のポークターンを作ります。",
+        "holdOrReset": "陣形が保てる間は近い対象から処理し、前後が離れたらすぐ合流してリセットします。"
+      },
+      "combatPlans": {
+        "engageChain": "先行突入役が注意を引き、追撃役が同じ対象を拘束し、残る1人が火力を集中します。",
+        "pokeCatch": "遠距離から体力を削り、最初の妨害命中を合図に1人へ集中攻撃します。",
+        "frontToBack": "前衛が正面の空間を維持し、後衛が近い敵から処理し、3人目が突入を阻止します。",
+        "counterEngage": "保護やノックバックで敵の突入を止め、露出した対象から反撃します。",
+        "collapse": "異なる角度から重要対象へ同時に入り、短時間で倒して人数差を作ります。",
+        "brawlCycle": "前衛と継続戦闘役がスキルの使用順をずらし、長い近距離戦を維持します。",
+        "coordinate": "最初の妨害命中を合図に、3人の主要スキルを同じ対象へ順番に使います。"
+      },
+      "patterns": {
+        "threeLayer": "前衛・支援・火力の3層構成",
+        "diveFollow": "先行突入＋ダイブ追撃",
+        "doubleFront": "ダブル前衛",
+        "frontToBack": "フロント・トゥ・バック",
+        "protectCarry": "キャリー保護",
+        "pickBurst": "ピック・バースト",
+        "pokeKite": "ポーク・カイト",
+        "brawl": "近距離集団戦",
+        "flexible": "条件対応型"
+      },
+      "patternDescriptions": {
+        "threeLayer": "タンクが空間を作り、サポートが主力ディーラーの攻撃時間を延ばす構成です。",
+        "diveFollow": "先行突入役が注意を引き、機動力の高い味方が同じ対象へ追撃する構成です。",
+        "doubleFront": "2人が前線を維持し、後衛ディーラーが継続火力を出す構成です。",
+        "frontToBack": "前衛が交戦を始めるか受け止め、後衛が安全な距離から仕留めます。",
+        "protectCarry": "サポートが主力ディーラーの位置と生存を補助し、長い交戦を狙います。",
+        "pickBurst": "孤立した対象を素早く倒し、人数差を作る構成です。",
+        "pokeKite": "先に体力を削り、距離を保ちながら無理な接近を誘います。",
+        "brawl": "短い距離で突入と継続交換を繰り返し、正面戦を制します。",
+        "flexible": "明確な単一プランがないため、交戦前に突入役と保護役を決める必要があります。"
+      },
+      "powerSpikes": {
+        "formationReady": "前衛・保護手段と主力ディーラーの主要スキルが同時に揃った時",
+        "burstCooldowns": "突入・瞬間火力・妨害を同じ対象に合わせられる時",
+        "frontlineReady": "前衛の生存手段と後衛の継続火力が同時に揃った時",
+        "rangeSetup": "視界と射程を先に確保し、ポークと離脱手段が使える時",
+        "sustainedResources": "回復・防御・継続戦闘のリソースが残っている時",
+        "synchronizedTools": "3人の究極技・戦術・武器スキルが同時に使える時"
+      },
+      "favorable": {
+        "singleDive": "1人ずつ入ってくる突入を迎撃できる状況",
+        "exposedBackline": "保護や離脱手段が少ない後衛を先に狙える状況",
+        "shortRangeApproach": "短射程の相手が正面から接近する必要がある状況",
+        "slowFrontline": "強制突入手段が少ない遅い前衛を先に削れる状況",
+        "closeRangeFight": "両チームが近距離で継続交換する状況",
+        "conditional": "突入役と集中対象を事前に決めて戦う状況"
+      },
+      "threats": {
+        "splitPressure": "複数方向の圧力で前衛・支援・キャリーが分断される状況",
+        "peelDisengage": "最初の突入が強いピール・ノックバック・離脱に止められる状況",
+        "flankCollapse": "側面から後衛に到達されるか、前衛との距離が開く状況",
+        "hardEngage": "ポーク前に一気に距離を詰める強制突入を許す状況",
+        "longRangeKite": "接触前に遠距離攻撃と離脱で体力を削られる状況",
+        "unclearInitiation": "突入役が曖昧で主要スキルを別々に使う状況"
       }
     }
   },

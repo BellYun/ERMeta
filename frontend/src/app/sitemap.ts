@@ -53,6 +53,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     buildLocalizedEntry("/character-lab", "daily", 0.85),
     buildLocalizedEntry("/synergy-detail", "daily", 0.8),
     buildLocalizedEntry("/synergy-matrix", "daily", 0.78),
+    buildLocalizedEntry("/season11-recap", "daily", 0.85),
     buildLocalizedEntry("/patches", "weekly", 0.7),
     buildLocalizedEntry(patchAnalysisPath, "daily", 0.82),
     buildLocalizedEntry("/privacy", "monthly", 0.35),
@@ -107,6 +108,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "daily",
       priority: 0.68,
       alternates: buildAlternates("/synergy-matrix"),
+    },
+    {
+      url: `${base}${prefixSeoLocalePath("/season11-recap", SEO_TARGET_LOCALE)}`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.78,
+      alternates: buildAlternates("/season11-recap"),
     },
     {
       url: `${base}${prefixSeoLocalePath("/patches", SEO_TARGET_LOCALE)}`,
