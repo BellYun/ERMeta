@@ -6,7 +6,7 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
     <div
       ref={ref}
       className={cn(
-        "rounded-[5px] border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)] shadow-[0_1px_1px_rgba(15,23,42,0.05)] data-[accent=true]:border-[var(--color-accent)]",
+        "rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] text-[var(--color-ink)] shadow-[var(--shadow-card)] data-[accent=true]:border-[var(--color-accent)] data-[state=error]:border-[var(--color-danger)] data-[state=success]:border-[var(--color-success)]",
         className
       )}
       {...props}
@@ -20,7 +20,7 @@ const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
     <div
       ref={ref}
       className={cn(
-        "relative z-[1] flex flex-col gap-1 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3.5",
+        "relative z-[1] flex flex-col gap-1 border-b border-[var(--color-rule)] bg-[var(--color-paper-2)] px-4 py-3.5",
         className
       )}
       {...props}

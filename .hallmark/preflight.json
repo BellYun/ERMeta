@@ -1,0 +1,9 @@
+{
+  "date": "2026-08-10",
+  "font_stack": "Pretendard + SF Mono",
+  "palette": "Tailwind v4 CSS variables, light/dark slate with cobalt accent",
+  "motion": "motion-cut; no motion library",
+  "spacing": "Tailwind utilities; no locked named scale before Hallmark",
+  "framework": "Next.js 16 App Router + React 19 + Tailwind CSS 4",
+  "preserve": ["route ownership", "brand blue", "light/dark mode", "localization", "data logic"]
+}

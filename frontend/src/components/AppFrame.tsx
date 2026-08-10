@@ -96,9 +96,11 @@ export function AppFrame({
               </aside>
             ) : null}
           </div>
-          <footer className="border-t border-[var(--color-border)] bg-[var(--color-surface)]">
-            <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-2.5 px-4 py-5 text-[11px] leading-relaxed text-[var(--color-muted-foreground)] lg:px-6">
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <footer className="site-footer border-t border-[var(--color-border)] bg-[var(--color-surface)]">
+            <div className="site-footer__inner mx-auto flex w-full max-w-[1440px] flex-col gap-2.5 px-4 py-5 text-[11px] leading-relaxed text-[var(--color-muted-foreground)] lg:px-6">
+              <div className="site-footer__line flex flex-wrap items-center gap-x-3 gap-y-1">
+                <span className="site-footer__brand">ER&amp;GG</span>
+                <span className="text-[var(--color-border)]">&middot;</span>
                 <Link
                   href={footerHref("/about")}
                   className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
