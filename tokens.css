@@ -1,5 +1,5 @@
-/* Hallmark · genre: modern-minimal · tone: technical · anchor: cobalt 256° · macrostructure: Stat-Led / Workbench / Index-First · theme: Cobalt · design-system: design.md · designed-as-app
- * pre-emit critique: P5 H5 E5 S5 R5 V4 · contrast: pass (40–41) · nav: N13 · footer: Ft2 · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50–57)
+/* Hallmark · genre: modern-minimal · tone: technical · DNA-source: https://lol.ps/ · macrostructure: Workbench / Index-First · theme: studied-DNA · design-system: design.md · designed-as-app
+ * pre-emit critique: P5 H5 E5 S5 R5 V4 · contrast: pass (40–41) · nav: N1b · footer: Ft4 · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pending (49) · icons: pass (30) · mobile: pending (34, 49, 50–57)
  */
 :root {
   --color-paper: oklch(98.5% 0.004 250);
@@ -24,8 +24,26 @@
   --color-success: oklch(46% 0.13 151);
   --color-success-soft: oklch(94% 0.025 151);
   --color-warning: oklch(55% 0.12 75);
+  --color-home-canvas: #10131c;
+  --color-home-surface: #181c2a;
+  --color-home-surface-2: #1f2331;
+  --color-home-rule: #272c3c;
+  --color-home-rule-strong: #3a4155;
+  --color-home-ink: #f5f7fb;
+  --color-home-ink-2: #dae0e9;
+  --color-home-muted: #828799;
+  --color-brand-deep: #213a96;
+  --color-brand-medium: #3254ce;
+  --color-brand-bright: #3d69ff;
+  --color-on-brand: #ffffff;
+  --color-home-search-surface: #ffffff;
+  --color-home-search-ink: #353945;
+  --color-home-key: #e5e7eb;
+  --color-home-key-ink: #535969;
+  --shadow-home-search: 0 0.75rem 2.5rem rgb(16 19 28 / 18%);
 
-  --font-display: "Space Grotesk", "Pretendard", ui-sans-serif, sans-serif;
+  --font-display:
+    "Pretendard", "Apple SD Gothic Neo", ui-sans-serif, sans-serif;
   --font-body: "Pretendard", "Apple SD Gothic Neo", ui-sans-serif, sans-serif;
   --font-outlier: "JetBrains Mono", "SFMono-Regular", ui-monospace, monospace;
   --display-weight: 700;
@@ -103,4 +121,21 @@
   --color-success-soft: oklch(24% 0.035 151);
   --color-warning: oklch(76% 0.12 75);
   --shadow-card: none;
+  --color-home-canvas: #10131c;
+  --color-home-surface: #181c2a;
+  --color-home-surface-2: #1f2331;
+  --color-home-rule: #272c3c;
+  --color-home-rule-strong: #3a4155;
+  --color-home-ink: #f5f7fb;
+  --color-home-ink-2: #dae0e9;
+  --color-home-muted: #828799;
+  --color-brand-deep: #213a96;
+  --color-brand-medium: #3254ce;
+  --color-brand-bright: #3d69ff;
+  --color-on-brand: #ffffff;
+  --color-home-search-surface: #ffffff;
+  --color-home-search-ink: #353945;
+  --color-home-key: #e5e7eb;
+  --color-home-key-ink: #535969;
+  --shadow-home-search: 0 0.75rem 2.5rem rgb(16 19 28 / 18%);
 }

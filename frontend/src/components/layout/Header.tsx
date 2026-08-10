@@ -175,7 +175,12 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
 
   return (
     <>
-      <header className="site-header sticky top-0 z-40 border-b border-[var(--color-border)] bg-[var(--color-surface)]">
+      <header
+        className={cn(
+          "site-header sticky top-0 z-40 border-b border-[var(--color-border)] bg-[var(--color-surface)]",
+          normalizedPathname === "/" && "site-header--home"
+        )}
+      >
         <LocaleRecommendationBanner />
 
         {showSeasonRecapBanner && (
@@ -271,7 +276,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
 
             <SiteCommandPalette
               patchAnalysisPatch={patchAnalysisPatch}
-              className="hidden lg:inline-flex"
+              className={normalizedPathname === "/" ? "hidden" : "hidden lg:inline-flex"}
             />
 
             <div className="ml-auto flex items-center gap-2 lg:gap-3">

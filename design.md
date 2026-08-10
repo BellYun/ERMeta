@@ -10,26 +10,26 @@ A locked design system for the ER&GG multi-page app. Every page redesign reads t
 
 ## Genre
 
-Modern-minimal, using the Cobalt catalog theme adapted for Korean, Japanese, and English game-stat interfaces.
+Modern-minimal and technical, using a dark data-hub system studied from lol.ps and adapted for Korean, Japanese, and English Eternal Return interfaces.
 
 ## Macrostructure family
 
-- Data overview pages: **Stat-Led** — one real patch or sample metric anchors the page; supporting tables qualify it.
+- Data overview pages: **Workbench + Index-First** — search and filters lead; compact rankings, patch movement, and supporting lists carry the page.
 - Interactive app pages: **Workbench** — controls and live results are the page; no decorative mockups or marketing sections.
 - Content hubs and reference pages: **Index-First** — titles, dates, versions, and links form the primary rhythm.
 
 ## Theme
 
-- Cool engineered paper with ruler-drawn boundaries.
-- One electric cobalt signal accent, occupying less than 5% of a viewport.
-- Light and dark modes retain the same 256° anchor hue.
-- Graphite is reserved for one high-information band or proof surface, never used as ambient decoration.
+- Dark neutral-cool paper (`#10131c`) is the canonical data canvas.
+- Deep indigo (`#213a96`) owns the navigation band; electric blue (`#3d69ff`) is reserved for active states and short signals.
+- Light mode remains available on detail and content routes, while the home workbench stays dark-first in both themes.
+- Character art and real game data provide visual richness; decorative gradients stay inside the compact search band.
 
 Canonical values live in `tokens.css`.
 
 ## Typography
 
-- Display: Space Grotesk 700, normal; Korean and Japanese fall back to Pretendard.
+- Display: Pretendard 700, normal.
 - Body: Pretendard 400.
 - Outlier: JetBrains Mono 500, only for patch/version labels and headline metrics.
 - Display tracking: `-0.035em`.
@@ -43,7 +43,7 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 
 - Motion-cut by default.
 - Functional controls use `--dur-micro` or `--dur-short` with `--ease-out`.
-- The home Stat-Led metric may reveal once; all other numbers render immediately.
+- Search, filters, and data rows respond immediately; all numbers render without reveal animation.
 - Reduced motion removes spatial transforms and keeps state feedback at 150ms or less.
 
 ## Microinteractions stance
@@ -55,13 +55,13 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 
 ## Navigation and footer
 
-- Navigation: N13 Inline command pill, adapted to preserve the existing product destinations and mobile drawer.
-- Footer: Ft2 Inline-rule single line, followed by the required API attribution and legal disclaimer.
+- Navigation: N1b Dense product bar, adapted to preserve the existing destinations and mobile drawer. Search becomes the home page's primary workbench action; Cmd/Ctrl+K remains available on deeper routes.
+- Footer: Ft4 Compact colophon — one link row followed by the required API attribution and legal disclaimer.
 
 ## CTA voice
 
-- Primary: compact cobalt fill, 6px radius, destination-specific verb.
-- Secondary: paper surface with a visible rule; no generic “Continue” or “Click here”.
+- Primary: compact electric-blue fill, 6px radius, destination-specific verb.
+- Secondary: dark paper surface with a visible indigo rule; no generic “Continue” or “Click here”.
 
 ## Per-page allowances
 
@@ -71,7 +71,7 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 
 ## What pages MUST share
 
-- Wordmark treatment, Cobalt accent placement, type roles, focus treatment, button geometry, rules, and spacing tokens.
+- Wordmark treatment, indigo navigation band, electric-blue signal placement, type roles, focus treatment, button geometry, rules, and spacing tokens.
 - Light/dark hue identity.
 - Loading, empty, error, disabled, and success state language.
 
@@ -91,15 +91,16 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 
 ```css
 @theme {
-  --color-paper: oklch(98.5% 0.004 250);
-  --color-paper-2: oklch(96.5% 0.006 250);
-  --color-paper-3: oklch(93.5% 0.008 250);
-  --color-ink: oklch(18% 0.018 258);
-  --color-ink-2: oklch(27% 0.02 258);
-  --color-rule: oklch(88% 0.01 250);
-  --color-rule-2: oklch(72% 0.014 250);
-  --color-accent: oklch(52% 0.2 256);
-  --font-display: "Space Grotesk", "Pretendard", ui-sans-serif, sans-serif;
+  --color-paper: #10131c;
+  --color-paper-2: #181c2a;
+  --color-paper-3: #1f2331;
+  --color-ink: #f5f7fb;
+  --color-ink-2: #dae0e9;
+  --color-rule: #272c3c;
+  --color-rule-2: #3a4155;
+  --color-accent: #3d69ff;
+  --color-brand-deep: #213a96;
+  --font-display: "Pretendard", ui-sans-serif, sans-serif;
   --font-body: "Pretendard", ui-sans-serif, sans-serif;
   --font-outlier: "JetBrains Mono", ui-monospace, monospace;
   --spacing-xs: 0.5rem;
@@ -118,14 +119,15 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 {
   "$schema": "https://design-tokens.github.io/community-group/format/",
   "color": {
-    "paper": { "$value": "oklch(98.5% 0.004 250)", "$type": "color" },
-    "ink": { "$value": "oklch(18% 0.018 258)", "$type": "color" },
-    "accent": { "$value": "oklch(52% 0.2 256)", "$type": "color" },
-    "rule": { "$value": "oklch(88% 0.01 250)", "$type": "color" }
+    "paper": { "$value": "#10131c", "$type": "color" },
+    "ink": { "$value": "#f5f7fb", "$type": "color" },
+    "accent": { "$value": "#3d69ff", "$type": "color" },
+    "brandDeep": { "$value": "#213a96", "$type": "color" },
+    "rule": { "$value": "#272c3c", "$type": "color" }
   },
   "font": {
     "display": {
-      "$value": "Space Grotesk, Pretendard, ui-sans-serif",
+      "$value": "Pretendard, ui-sans-serif",
       "$type": "fontFamily"
     },
     "body": { "$value": "Pretendard, ui-sans-serif", "$type": "fontFamily" },
@@ -146,21 +148,21 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 
 ```css
 :root {
-  --background: 98.5% 0.004 250;
-  --foreground: 18% 0.018 258;
-  --card: 96.5% 0.006 250;
-  --card-foreground: 18% 0.018 258;
-  --popover: 98.5% 0.004 250;
-  --popover-foreground: 18% 0.018 258;
-  --primary: 52% 0.2 256;
-  --primary-foreground: 98.5% 0.004 250;
-  --secondary: 93.5% 0.008 250;
-  --secondary-foreground: 27% 0.02 258;
-  --muted: 88% 0.01 250;
-  --muted-foreground: 49% 0.018 257;
-  --border: 88% 0.01 250;
-  --input: 72% 0.014 250;
-  --ring: 46% 0.22 256;
+  --background: 14% 0.012 258;
+  --foreground: 96% 0.006 250;
+  --card: 18% 0.014 258;
+  --card-foreground: 96% 0.006 250;
+  --popover: 18% 0.014 258;
+  --popover-foreground: 96% 0.006 250;
+  --primary: 68% 0.18 256;
+  --primary-foreground: 14% 0.012 258;
+  --secondary: 22% 0.016 258;
+  --secondary-foreground: 90% 0.008 250;
+  --muted: 30% 0.016 258;
+  --muted-foreground: 72% 0.014 255;
+  --border: 30% 0.016 258;
+  --input: 45% 0.018 258;
+  --ring: 78% 0.16 256;
   --radius: 0.625rem;
 }
 ```

@@ -1,5 +1,6 @@
-import { BookOpenText, Gauge, Hourglass, Info, SlidersHorizontal } from "lucide-react";
+import { BookOpenText, Gauge, Hourglass, Info, Network, SlidersHorizontal } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { CharacterSearchCombobox } from "@/components/features/character-analysis/CharacterSearchCombobox";
 import type { HomeMetaStats } from "@/lib/homeMetaShared";
 import type { RankingResponse } from "@/lib/ranking";
 import { HomeDashboardSections } from "./HomeDashboardSections";
@@ -34,109 +35,90 @@ export async function HomePageContent({
 
   return (
     <div className="page-shell home-shell flex flex-col">
-      <section className="home-stat-hero">
-        <div className="home-stat-hero__head">
-          <div className="home-stat-hero__copy">
-            <div className="home-stat-hero__eyebrow">
+      <section className="home-search-hero" aria-labelledby="home-search-title">
+        <div className="home-search-hero__inner">
+          <div className="home-search-hero__main">
+            <div className="home-search-hero__eyebrow">
               <span>ER&amp;GG</span>
               {defaultPatch && !isSeasonPreparing ? (
                 <span>{t("patch", { patch: defaultPatch })}</span>
               ) : null}
             </div>
-            <h1 className="home-stat-hero__title">{t("title")}</h1>
-            <p className="home-stat-hero__subtitle">
+            <h1 id="home-search-title" className="home-search-hero__title">
+              {t("title")}
+            </h1>
+            <p className="home-search-hero__subtitle">
               {isSeasonPreparing
                 ? t("preparing.subtitle")
                 : hasRankingData
                   ? t("subtitle", { count: trackedMatches })
                   : t("fallback.subtitle", { patch: fallbackPatch })}
             </p>
+            <div className="home-search-hero__search-wrap">
+              <CharacterSearchCombobox className="home-search-hero__search" scroll={false} />
+              <span className="home-search-hero__shortcut" aria-hidden="true">
+                ⌘ K
+              </span>
+            </div>
+
+            <nav className="home-search-hero__quick-links" aria-label={t("title")}>
+              <a href={`/${locale}/synergy-detail`}>
+                <Network className="h-4 w-4" aria-hidden="true" />
+                {t("guide.comboTitle")}
+              </a>
+              <a href={patchAnalysisHref}>
+                <Gauge className="h-4 w-4" aria-hidden="true" />
+                {t("patchAnalysisCta")}
+              </a>
+              <a href={`/${locale}/methodology`}>
+                <BookOpenText className="h-4 w-4" aria-hidden="true" />
+                {t("guide.cta")}
+              </a>
+            </nav>
           </div>
 
-          <div className="home-stat-hero__actions">
-            <a href={patchAnalysisHref} className="home-stat-hero__action hidden sm:inline-flex">
-              <Gauge className="h-4 w-4" strokeWidth={2} />
-              {t("patchAnalysisCta")}
-            </a>
-            <a
-              href={`/${locale}/methodology`}
-              className="home-stat-hero__action hidden sm:inline-flex"
-            >
-              <BookOpenText className="h-4 w-4" strokeWidth={2} />
-              {t("guide.cta")}
-            </a>
-            <a
-              href="#home-mobile-filter"
-              className="home-stat-hero__mobile-filter h-11 w-11 p-0 sm:hidden"
-              aria-label={t("filterCta")}
-            >
-              <SlidersHorizontal className="h-4.5 w-4.5" strokeWidth={2} />
-            </a>
-          </div>
-        </div>
-
-        <div className="home-stat-hero__proof">
-          <div className="home-stat-hero__metric">
-            <p className="home-stat-hero__metric-label">
-              {isSeasonPreparing
-                ? t("preparing.kicker")
-                : hasRankingData
-                  ? t("matchMetric")
-                  : t("fallback.kicker", { patch: fallbackPatch })}
+          <aside className="home-search-hero__status" aria-label={t("matchMetric")}>
+            <div className="home-search-hero__status-head">
+              <span className="home-search-hero__pulse" aria-hidden="true" />
+              <span>
+                {isSeasonPreparing ? t("preparing.kicker") : t("patch", { patch: fallbackPatch })}
+              </span>
+            </div>
+            <p className="home-search-hero__status-label">
+              {hasRankingData && !isSeasonPreparing
+                ? t("matchMetric")
+                : isSeasonPreparing
+                  ? t("preparing.title")
+                  : t("fallback.title")}
             </p>
-            <p className="home-stat-hero__figure">
+            <p className="home-search-hero__status-value">
               {hasRankingData && !isSeasonPreparing ? trackedMatches : fallbackPatch}
             </p>
-          </div>
-
-          <div className="home-stat-hero__context">
+            <p className="home-search-hero__status-body">
+              {isSeasonPreparing
+                ? t("preparing.body")
+                : hasRankingData
+                  ? t("matchMetricDescription", { patch: defaultPatch })
+                  : t("fallback.body")}
+            </p>
             {isSeasonPreparing ? (
-              <>
-                <span className="home-stat-hero__context-icon" aria-hidden="true">
-                  <Hourglass className="h-4.5 w-4.5" />
-                </span>
-                <p className="home-stat-hero__context-label">{t("preparing.kicker")}</p>
-                <h2 className="home-stat-hero__context-heading">{t("preparing.title")}</h2>
-                <p className="home-stat-hero__context-body">{t("preparing.body")}</p>
-              </>
-            ) : hasRankingData ? (
-              <>
-                <p className="home-stat-hero__context-label">
-                  {t("patch", { patch: defaultPatch })}
-                </p>
-                <h2 className="home-stat-hero__context-heading">{t("matchMetric")}</h2>
-                <p className="home-stat-hero__context-body">
-                  {t("matchMetricDescription", { patch: defaultPatch })}
-                </p>
-              </>
-            ) : (
-              <>
-                <p className="home-stat-hero__context-label">
-                  {t("fallback.kicker", { patch: fallbackPatch })}
-                </p>
-                <h2 className="home-stat-hero__context-heading">{t("fallback.title")}</h2>
-                <p className="home-stat-hero__context-body">{t("fallback.body")}</p>
-                <div className="home-stat-hero__fallback-links">
-                  {[
-                    { href: `/${locale}/character/1`, label: t("fallback.characterCta") },
-                    { href: patchAnalysisHref, label: t("fallback.analysisCta") },
-                    { href: `/${locale}/patches`, label: t("fallback.patchCta") },
-                    { href: `/${locale}/methodology`, label: t("fallback.methodologyCta") },
-                  ].map((link) => (
-                    <a key={link.href} href={link.href} className="home-stat-hero__link">
-                      {link.label}
-                    </a>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
+              <Hourglass className="home-search-hero__status-icon" aria-hidden="true" />
+            ) : null}
+          </aside>
         </div>
 
-        <p className="home-stat-hero__notice">
-          <Info className="h-3.5 w-3.5" aria-hidden="true" />
-          <span>{t("preseasonPolicyNotice")}</span>
-        </p>
+        <div className="home-search-hero__foot">
+          <p>
+            <Info className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>{t("preseasonPolicyNotice")}</span>
+          </p>
+          {showHomeStats ? (
+            <a href="#home-mobile-filter" aria-label={t("filterCta")}>
+              <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
+              {t("filterCta")}
+            </a>
+          ) : null}
+        </div>
       </section>
 
       {showHomeStats ? (
@@ -145,7 +127,35 @@ export async function HomePageContent({
           homeMetaStats={homeMetaStats}
           defaultPatch={defaultPatch}
         />
-      ) : null}
+      ) : (
+        <section className="home-empty-index" aria-labelledby="home-empty-title">
+          <div className="home-empty-index__copy">
+            <p>
+              {isSeasonPreparing
+                ? t("preparing.kicker")
+                : t("fallback.kicker", { patch: fallbackPatch })}
+            </p>
+            <h2 id="home-empty-title">
+              {isSeasonPreparing ? t("preparing.title") : t("fallback.title")}
+            </h2>
+            <span>{isSeasonPreparing ? t("preparing.body") : t("fallback.body")}</span>
+          </div>
+          <nav className="home-empty-index__links" aria-label={t("title")}>
+            {[
+              { href: `/${locale}/character/1`, label: t("fallback.characterCta") },
+              { href: `/${locale}/synergy-detail`, label: t("guide.comboTitle") },
+              { href: patchAnalysisHref, label: t("fallback.analysisCta") },
+              { href: `/${locale}/patches`, label: t("fallback.patchCta") },
+              { href: `/${locale}/methodology`, label: t("fallback.methodologyCta") },
+            ].map((link, index) => (
+              <a key={link.href} href={link.href}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <strong>{link.label}</strong>
+              </a>
+            ))}
+          </nav>
+        </section>
+      )}
     </div>
   );
 }

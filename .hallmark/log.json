@@ -6,5 +6,13 @@
     "theme": "Cobalt",
     "enrichment": "none",
     "brief": "ER&GG multi-page Eternal Return meta-analysis redesign"
+  },
+  {
+    "date": "2026-08-10",
+    "scope": "app",
+    "macrostructure": "Workbench + Index-First",
+    "theme": "studied-DNA (https://lol.ps/)",
+    "enrichment": "search-band only",
+    "brief": "ER&GG home redesigned as a dark search-first data hub"
   }
 ]
