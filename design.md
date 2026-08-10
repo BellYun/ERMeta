@@ -10,7 +10,7 @@ A locked design system for the ER&GG multi-page app. Every page redesign reads t
 
 ## Genre
 
-Modern-minimal and technical, using a dark data-hub system studied from lol.ps and adapted for Korean, Japanese, and English Eternal Return interfaces.
+Modern-minimal and technical, using a custom dual-mode data-hub system tuned for Korean, Japanese, and English Eternal Return interfaces.
 
 ## Macrostructure family
 
@@ -20,10 +20,12 @@ Modern-minimal and technical, using a dark data-hub system studied from lol.ps a
 
 ## Theme
 
-- Dark neutral-cool paper (`#10131c`) is the canonical data canvas.
-- Deep indigo (`#213a96`) owns the navigation band; electric blue (`#3d69ff`) is reserved for active states and short signals.
-- Every product route uses the same dark data canvas in both theme settings; the theme control changes preference state without splitting the visual identity.
-- Character art and real game data provide visual richness; decorative gradients stay inside the compact search band.
+- **Mineral Signal** is the identity: a clear mineral blue around `245°` marks active states, rank emphasis, filters, links, and focus signals.
+- Light mode is an icy analysis board: a cold paper canvas (`oklch(96% 0.014 245)`) with bright surfaces and dark blue-black ink. Its working accent is deliberately deeper (`oklch(43% 0.15 245)`) for legibility.
+- Dark mode is a night tactical screen: a deep blue-black canvas (`oklch(13% 0.022 252)`) with mineral-tinted elevations. Its signal accent is deliberately brighter (`oklch(83% 0.15 245)`).
+- The two modes are not visual inverses and do not need matching surface relationships. They share the accent hue, component geometry, and information hierarchy.
+- The navigation band remains a deep mineral brand strip in both modes so the wordmark and bright signal stay recognizable while the page canvas changes independently.
+- Character art and real game data provide visual richness. Success remains green, warnings amber, and losses red so mineral blue never replaces meaning-bearing status colour.
 
 Canonical values live in `tokens.css`.
 
@@ -61,8 +63,8 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 
 ## CTA voice
 
-- Primary: compact electric-blue fill, 6px radius, destination-specific verb.
-- Secondary: dark paper surface with a visible indigo rule; no generic “Continue” or “Click here”.
+- Primary: compact Mineral Signal treatment, 6px radius, destination-specific verb.
+- Secondary: the current mode's surface with a visible mineral rule; no generic “Continue” or “Click here”.
 
 ## Per-page allowances
 
@@ -73,8 +75,8 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 
 ## What pages MUST share
 
-- Wordmark treatment, indigo navigation band, electric-blue signal placement, type roles, focus treatment, button geometry, rules, and spacing tokens.
-- Light/dark hue identity.
+- Wordmark treatment, deep mineral navigation band, Mineral Signal placement, type roles, focus treatment, button geometry, rules, and spacing tokens.
+- The `245°` point hue and semantic meaning of every status colour.
 - Loading, empty, error, disabled, and success state language.
 - Dense panel borders, table headers, form controls, and active-tab signals across every route family.
 
@@ -83,6 +85,7 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 - Density and column count according to the page’s data.
 - Stat-Led, Workbench, or Index-First structure according to page type.
 - Character and item imagery already supplied by the product.
+- Surface depth, elevation contrast, and canvas brightness between light and dark modes.
 
 ## Exports
 
@@ -94,19 +97,19 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 
 ```css
 @theme {
-  --color-paper: #10131c;
-  --color-paper-2: #181c2a;
-  --color-paper-3: #1f2331;
-  --color-ink: #f5f7fb;
-  --color-ink-2: #dae0e9;
-  --color-rule: #272c3c;
-  --color-rule-2: #3a4155;
-  --color-accent: #3d69ff;
-  --color-brand-deep: #213a96;
-  --color-app-canvas: #10131c;
-  --color-app-surface: #181c2a;
-  --color-app-rule: #272c3c;
-  --color-app-ink: #f5f7fb;
+  --color-paper: oklch(98% 0.009 245);
+  --color-paper-2: oklch(96% 0.012 245);
+  --color-paper-3: oklch(91% 0.025 245);
+  --color-ink: oklch(17% 0.025 252);
+  --color-ink-2: oklch(25% 0.03 252);
+  --color-rule: oklch(84% 0.026 245);
+  --color-rule-2: oklch(63% 0.035 245);
+  --color-accent: oklch(43% 0.15 245);
+  --color-brand-deep: oklch(18% 0.03 252);
+  --color-app-canvas: oklch(96% 0.014 245);
+  --color-app-surface: oklch(98% 0.009 245);
+  --color-app-rule: oklch(63% 0.035 245);
+  --color-app-ink: oklch(17% 0.025 252);
   --font-display: "Pretendard", ui-sans-serif, sans-serif;
   --font-body: "Pretendard", ui-sans-serif, sans-serif;
   --font-outlier: "JetBrains Mono", ui-monospace, monospace;
@@ -123,6 +126,22 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --radius-card: 0.625rem;
 }
+
+[data-theme="dark"] {
+  --color-paper: oklch(13% 0.022 252);
+  --color-paper-2: oklch(17% 0.024 252);
+  --color-paper-3: oklch(23% 0.03 252);
+  --color-ink: oklch(96% 0.016 245);
+  --color-ink-2: oklch(88% 0.02 245);
+  --color-rule: oklch(31% 0.035 250);
+  --color-rule-2: oklch(50% 0.04 248);
+  --color-accent: oklch(83% 0.15 245);
+  --color-brand-deep: oklch(10% 0.028 252);
+  --color-app-canvas: oklch(13% 0.022 252);
+  --color-app-surface: oklch(17% 0.024 252);
+  --color-app-rule: oklch(50% 0.04 248);
+  --color-app-ink: oklch(96% 0.016 245);
+}
 ```
 
 ### DTCG `tokens.json`
@@ -131,14 +150,26 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 {
   "$schema": "https://design-tokens.github.io/community-group/format/",
   "color": {
-    "paper": { "$value": "#10131c", "$type": "color" },
-    "ink": { "$value": "#f5f7fb", "$type": "color" },
-    "accent": { "$value": "#3d69ff", "$type": "color" },
-    "brandDeep": { "$value": "#213a96", "$type": "color" },
-    "rule": { "$value": "#272c3c", "$type": "color" },
-    "appCanvas": { "$value": "#10131c", "$type": "color" },
-    "appSurface": { "$value": "#181c2a", "$type": "color" },
-    "appInk": { "$value": "#f5f7fb", "$type": "color" }
+    "light": {
+      "paper": { "$value": "oklch(98% 0.009 245)", "$type": "color" },
+      "ink": { "$value": "oklch(17% 0.025 252)", "$type": "color" },
+      "accent": { "$value": "oklch(43% 0.15 245)", "$type": "color" },
+      "brandDeep": { "$value": "oklch(18% 0.03 252)", "$type": "color" },
+      "rule": { "$value": "oklch(63% 0.035 245)", "$type": "color" },
+      "appCanvas": { "$value": "oklch(96% 0.014 245)", "$type": "color" },
+      "appSurface": { "$value": "oklch(98% 0.009 245)", "$type": "color" },
+      "appInk": { "$value": "oklch(17% 0.025 252)", "$type": "color" }
+    },
+    "dark": {
+      "paper": { "$value": "oklch(13% 0.022 252)", "$type": "color" },
+      "ink": { "$value": "oklch(96% 0.016 245)", "$type": "color" },
+      "accent": { "$value": "oklch(83% 0.15 245)", "$type": "color" },
+      "brandDeep": { "$value": "oklch(10% 0.028 252)", "$type": "color" },
+      "rule": { "$value": "oklch(50% 0.04 248)", "$type": "color" },
+      "appCanvas": { "$value": "oklch(13% 0.022 252)", "$type": "color" },
+      "appSurface": { "$value": "oklch(17% 0.024 252)", "$type": "color" },
+      "appInk": { "$value": "oklch(96% 0.016 245)", "$type": "color" }
+    }
   },
   "font": {
     "display": {
@@ -170,21 +201,40 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 
 ```css
 :root {
-  --background: 14% 0.012 258;
-  --foreground: 96% 0.006 250;
-  --card: 18% 0.014 258;
-  --card-foreground: 96% 0.006 250;
-  --popover: 18% 0.014 258;
-  --popover-foreground: 96% 0.006 250;
-  --primary: 68% 0.18 256;
-  --primary-foreground: 14% 0.012 258;
-  --secondary: 22% 0.016 258;
-  --secondary-foreground: 90% 0.008 250;
-  --muted: 30% 0.016 258;
-  --muted-foreground: 72% 0.014 255;
-  --border: 30% 0.016 258;
-  --input: 45% 0.018 258;
-  --ring: 78% 0.16 256;
+  --background: 96% 0.014 245;
+  --foreground: 17% 0.025 252;
+  --card: 98% 0.009 245;
+  --card-foreground: 17% 0.025 252;
+  --popover: 98% 0.009 245;
+  --popover-foreground: 17% 0.025 252;
+  --primary: 43% 0.15 245;
+  --primary-foreground: 98% 0.009 245;
+  --secondary: 91% 0.025 245;
+  --secondary-foreground: 27% 0.03 250;
+  --muted: 91% 0.025 245;
+  --muted-foreground: 44% 0.035 248;
+  --border: 63% 0.035 245;
+  --input: 52% 0.045 245;
+  --ring: 43% 0.18 245;
+  --radius: 0.625rem;
+}
+
+.dark {
+  --background: 13% 0.022 252;
+  --foreground: 96% 0.016 245;
+  --card: 17% 0.024 252;
+  --card-foreground: 96% 0.016 245;
+  --popover: 17% 0.024 252;
+  --popover-foreground: 96% 0.016 245;
+  --primary: 83% 0.15 245;
+  --primary-foreground: 13% 0.022 252;
+  --secondary: 23% 0.03 252;
+  --secondary-foreground: 88% 0.02 245;
+  --muted: 23% 0.03 252;
+  --muted-foreground: 74% 0.032 248;
+  --border: 50% 0.04 248;
+  --input: 62% 0.05 245;
+  --ring: 72% 0.18 245;
   --radius: 0.625rem;
 }
 ```

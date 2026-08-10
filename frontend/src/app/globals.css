@@ -1,44 +1,45 @@
 @import "../../../tokens.css";
 @import "tailwindcss";
 
-/* Hallmark · genre: modern-minimal · tone: technical · DNA-source: https://lol.ps/ · macrostructure: Workbench + Index-First · theme: studied-DNA · design-system: design.md · designed-as-app
- * pre-emit critique: P5 H5 E5 S5 R5 V5 · contrast: pass (40–41) · readability: pass (13px floor) · nav: N1b · footer: Ft4 · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50–57)
+/* Hallmark · genre: modern-minimal · tone: technical · macrostructure: Workbench + Index-First · theme: custom Mineral Signal · vibe: "icy analysis, night tactical signal" · anchor hue: 245/252 · design-system: design.md · designed-as-app
+ * paper: light oklch(96% 0.014 245), dark oklch(13% 0.022 252) · accent: light oklch(43% 0.15 245), dark oklch(83% 0.15 245) · display/body: Pretendard · axes: dual-mode / geometric-sans / chromatic-mineral-blue
+ * pre-emit critique: P5 H5 E5 S5 R5 V4 · contrast: pass (40–41) · readability: pass (13px floor) · nav: N1b · footer: Ft4 · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50–57)
  */
 
 @theme {
-  --color-background: oklch(98.5% 0.004 250);
-  --color-surface: oklch(98.5% 0.004 250);
-  --color-surface-2: oklch(96.5% 0.006 250);
-  --color-surface-3: oklch(93.5% 0.008 250);
-  --color-surface-4: oklch(93.5% 0.008 250);
+  --color-background: oklch(98% 0.009 245);
+  --color-surface: oklch(98% 0.009 245);
+  --color-surface-2: oklch(96% 0.012 245);
+  --color-surface-3: oklch(91% 0.025 245);
+  --color-surface-4: oklch(91% 0.025 245);
 
-  --color-border: oklch(88% 0.01 250);
-  --color-border-light: oklch(72% 0.014 250);
+  --color-border: oklch(84% 0.026 245);
+  --color-border-light: oklch(63% 0.035 245);
 
-  --color-foreground: oklch(18% 0.018 258);
-  --color-muted-foreground: oklch(38% 0.018 257);
+  --color-foreground: oklch(17% 0.025 252);
+  --color-muted-foreground: oklch(34% 0.032 250);
 
-  --color-primary: oklch(18% 0.018 258);
-  --color-primary-hover: oklch(27% 0.02 258);
-  --color-accent: oklch(52% 0.2 256);
-  --color-accent-muted: oklch(94% 0.026 256);
-  --color-accent-foreground: oklch(47% 0.2 256);
-  --color-accent-gold: oklch(52% 0.2 256);
+  --color-primary: oklch(17% 0.025 252);
+  --color-primary-hover: oklch(25% 0.03 252);
+  --color-accent: oklch(43% 0.15 245);
+  --color-accent-muted: oklch(90% 0.05 245);
+  --color-accent-foreground: oklch(37% 0.16 245);
+  --color-accent-gold: oklch(37% 0.16 245);
   --color-trait-chaos: oklch(50% 0.19 294);
-  --color-danger-readable: oklch(47% 0.19 27);
+  --color-danger-readable: oklch(45% 0.19 25);
 
-  --color-danger: oklch(52% 0.19 27);
-  --color-success: oklch(46% 0.13 151);
-  --color-warning: oklch(55% 0.12 75);
+  --color-danger: oklch(49% 0.19 25);
+  --color-success: oklch(40% 0.13 150);
+  --color-warning: oklch(50% 0.12 80);
 
-  --color-stat-up: oklch(46% 0.13 151);
-  --color-stat-down: oklch(52% 0.19 27);
+  --color-stat-up: oklch(40% 0.13 150);
+  --color-stat-down: oklch(49% 0.19 25);
 
   --color-tier-s: oklch(52% 0.2 294);
-  --color-tier-a: oklch(52% 0.2 256);
-  --color-tier-b: oklch(46% 0.13 151);
-  --color-tier-c: oklch(55% 0.12 75);
-  --color-tier-d: oklch(52% 0.19 27);
+  --color-tier-a: oklch(43% 0.15 245);
+  --color-tier-b: oklch(40% 0.13 150);
+  --color-tier-c: oklch(50% 0.12 80);
+  --color-tier-d: oklch(49% 0.19 25);
 }
 
 @layer base {
@@ -47,48 +48,48 @@
     --font-plex-sans-kr: var(--font-body);
     --font-plex-mono: var(--font-outlier);
     --color-tier-s: oklch(52% 0.2 294);
-    --color-tier-a: oklch(52% 0.2 256);
-    --color-tier-b: oklch(46% 0.13 151);
-    --color-tier-c: oklch(55% 0.12 75);
-    --color-tier-d: oklch(52% 0.19 27);
+    --color-tier-a: oklch(43% 0.15 245);
+    --color-tier-b: oklch(40% 0.13 150);
+    --color-tier-c: oklch(50% 0.12 80);
+    --color-tier-d: oklch(49% 0.19 25);
   }
 
   [data-theme="dark"] {
     color-scheme: dark;
 
-    --color-background: oklch(14% 0.012 258);
-    --color-surface: oklch(14% 0.012 258);
-    --color-surface-2: oklch(18% 0.014 258);
-    --color-surface-3: oklch(22% 0.016 258);
-    --color-surface-4: oklch(22% 0.016 258);
+    --color-background: oklch(13% 0.022 252);
+    --color-surface: oklch(13% 0.022 252);
+    --color-surface-2: oklch(17% 0.024 252);
+    --color-surface-3: oklch(23% 0.03 252);
+    --color-surface-4: oklch(23% 0.03 252);
 
-    --color-border: oklch(30% 0.016 258);
-    --color-border-light: oklch(45% 0.018 258);
+    --color-border: oklch(31% 0.035 250);
+    --color-border-light: oklch(50% 0.04 248);
 
-    --color-foreground: oklch(96% 0.006 250);
-    --color-muted-foreground: oklch(82% 0.01 252);
+    --color-foreground: oklch(96% 0.016 245);
+    --color-muted-foreground: oklch(82% 0.024 245);
 
-    --color-primary: oklch(96% 0.006 250);
-    --color-primary-hover: oklch(90% 0.008 250);
-    --color-accent: oklch(68% 0.18 256);
-    --color-accent-muted: oklch(24% 0.04 256);
-    --color-accent-foreground: oklch(73% 0.16 256);
-    --color-accent-gold: oklch(68% 0.18 256);
+    --color-primary: oklch(96% 0.016 245);
+    --color-primary-hover: oklch(88% 0.02 245);
+    --color-accent: oklch(83% 0.15 245);
+    --color-accent-muted: oklch(28% 0.065 245);
+    --color-accent-foreground: oklch(88% 0.13 245);
+    --color-accent-gold: oklch(88% 0.13 245);
     --color-trait-chaos: oklch(76% 0.13 294);
-    --color-danger-readable: oklch(78% 0.13 27);
+    --color-danger-readable: oklch(82% 0.14 25);
 
-    --color-danger: oklch(72% 0.15 27);
-    --color-success: oklch(72% 0.12 151);
-    --color-warning: oklch(76% 0.12 75);
+    --color-danger: oklch(78% 0.16 25);
+    --color-success: oklch(81% 0.14 150);
+    --color-warning: oklch(84% 0.13 80);
 
-    --color-stat-up: oklch(72% 0.12 151);
-    --color-stat-down: oklch(72% 0.15 27);
+    --color-stat-up: oklch(81% 0.14 150);
+    --color-stat-down: oklch(78% 0.16 25);
 
     --color-tier-s: oklch(72% 0.14 294);
-    --color-tier-a: oklch(68% 0.18 256);
-    --color-tier-b: oklch(72% 0.12 151);
-    --color-tier-c: oklch(76% 0.12 75);
-    --color-tier-d: oklch(72% 0.15 27);
+    --color-tier-a: oklch(83% 0.15 245);
+    --color-tier-b: oklch(81% 0.14 150);
+    --color-tier-c: oklch(84% 0.13 80);
+    --color-tier-d: oklch(78% 0.16 25);
   }
 
   .font-geist-sans-fallback {
@@ -197,7 +198,7 @@
  * H2 knobs: ratio=8/4, right=live-proof, divider=negative-space
  * N1b knobs: cluster=dense, utilities=right, home-search=hero
  * Ft4 knobs: links=single-row, colophon=compact
- * theme: studied-DNA (https://lol.ps/) · design-system: design.md · designed-as-app
+ * theme: custom Mineral Signal · anchor hue: 245/252 · design-system: design.md · designed-as-app
  */
 
 .site-header {
@@ -215,9 +216,9 @@
 }
 
 .site-wordmark__mark {
-  border-color: color-mix(in srgb, var(--color-on-brand) 28%, transparent);
-  background: color-mix(in srgb, var(--color-on-brand) 8%, transparent);
-  color: var(--color-on-brand);
+  border-color: color-mix(in oklch, var(--color-brand-bright) 58%, transparent);
+  background: color-mix(in oklch, var(--color-brand-bright) 10%, transparent);
+  color: var(--color-brand-bright);
 }
 
 .site-wordmark__title,
@@ -238,11 +239,16 @@
   display: none;
 }
 
-.site-navigation__link:hover,
-.site-navigation__link[aria-current="page"] {
+.site-navigation__link:hover {
   border-color: color-mix(in srgb, var(--color-on-brand) 12%, transparent);
   background: color-mix(in srgb, var(--color-on-brand) 10%, transparent);
   color: var(--color-on-brand);
+}
+
+.site-navigation__link[aria-current="page"] {
+  border-color: color-mix(in oklch, var(--color-brand-bright) 48%, transparent);
+  background: color-mix(in oklch, var(--color-brand-bright) 11%, transparent);
+  color: var(--color-brand-bright);
 }
 
 .site-header .site-icon-button,
@@ -302,8 +308,8 @@
   --color-muted-foreground: var(--color-home-muted);
   --color-border: var(--color-home-rule);
   --color-border-light: var(--color-home-rule-strong);
-  --color-primary: var(--color-brand-bright);
-  --color-primary-hover: color-mix(in srgb, var(--color-brand-bright) 82%, var(--color-on-brand));
+  --color-primary: var(--color-accent);
+  --color-primary-hover: var(--color-accent-hover);
   position: relative;
   gap: var(--space-lg);
   margin-block: calc(var(--space-md) * -1) calc(var(--space-xl) * -1);
@@ -311,7 +317,7 @@
   background: var(--color-home-canvas);
   box-shadow: 0 0 0 100vmax var(--color-home-canvas);
   color: var(--color-home-ink-2);
-  color-scheme: dark;
+  color-scheme: inherit;
   clip-path: inset(0 -100vmax);
 }
 
@@ -321,11 +327,7 @@
   overflow: hidden;
   border: var(--rule-hair) solid var(--color-home-rule-strong);
   border-radius: var(--radius-card);
-  background: linear-gradient(
-    105deg,
-    color-mix(in srgb, var(--color-brand-deep) 54%, var(--color-home-surface)),
-    var(--color-home-surface) 64%
-  );
+  background: linear-gradient(105deg, var(--color-home-surface-2), var(--color-home-surface) 64%);
 }
 
 .home-search-hero__inner {
@@ -353,7 +355,7 @@
 .home-search-hero__eyebrow span + span::before {
   content: "/";
   margin-right: var(--space-sm);
-  color: var(--color-brand-bright);
+  color: var(--color-accent);
 }
 
 .home-search-hero__title {
@@ -399,7 +401,7 @@
 }
 
 .home-search-hero__search-wrap .home-search-hero__search > div > svg {
-  color: var(--color-brand-medium);
+  color: var(--color-accent);
 }
 
 .home-search-hero__search .absolute[role="listbox"] {
@@ -444,11 +446,11 @@
 }
 
 .home-search-hero__quick-links a:hover {
-  color: var(--color-on-brand);
+  color: var(--color-home-ink);
 }
 
 .home-search-hero__quick-links svg {
-  color: var(--color-brand-bright);
+  color: var(--color-accent);
 }
 
 .home-search-hero__status {
@@ -472,8 +474,8 @@
   width: var(--space-xs);
   height: var(--space-xs);
   border-radius: 50%;
-  background: var(--color-brand-bright);
-  box-shadow: 0 0 0 var(--space-2xs) color-mix(in srgb, var(--color-brand-bright) 18%, transparent);
+  background: var(--color-accent);
+  box-shadow: 0 0 0 var(--space-2xs) color-mix(in srgb, var(--color-accent) 18%, transparent);
 }
 
 .home-search-hero__status-label {
@@ -507,7 +509,7 @@
   right: 0;
   width: var(--space-lg);
   height: var(--space-lg);
-  color: var(--color-brand-bright);
+  color: var(--color-accent);
 }
 
 .home-search-hero__foot {
@@ -535,7 +537,7 @@
 
 .home-search-hero__foot svg {
   flex: 0 0 auto;
-  color: var(--color-brand-bright);
+  color: var(--color-accent);
 }
 
 .home-dashboard {
@@ -554,7 +556,7 @@
 }
 
 .home-empty-index__copy > p {
-  color: var(--color-brand-bright);
+  color: var(--color-accent);
   font-family: var(--font-body);
   font-size: var(--text-xs);
   font-weight: 600;
@@ -593,11 +595,11 @@
 
 .home-empty-index__links a:hover {
   background: var(--color-home-surface);
-  color: var(--color-on-brand);
+  color: var(--color-home-ink);
 }
 
 .home-empty-index__links span {
-  color: var(--color-brand-bright);
+  color: var(--color-accent);
   font-family: var(--font-body);
   font-size: var(--text-xs);
 }
@@ -631,7 +633,7 @@
   width: var(--space-xs);
   height: var(--space-xs);
   border-radius: 50%;
-  background: var(--color-brand-bright);
+  background: var(--color-accent);
 }
 
 .home-data-section .home-pick-card,
@@ -1928,9 +1930,9 @@ textarea {
 }
 
 .site-header .site-wordmark__mark {
-  border-color: color-mix(in srgb, var(--color-on-brand) 28%, transparent);
-  background: color-mix(in srgb, var(--color-on-brand) 8%, transparent);
-  color: var(--color-on-brand);
+  border-color: color-mix(in oklch, var(--color-brand-bright) 58%, transparent);
+  background: color-mix(in oklch, var(--color-brand-bright) 10%, transparent);
+  color: var(--color-brand-bright);
 }
 
 .site-header .site-wordmark__title,
@@ -1944,11 +1946,16 @@ textarea {
   color: color-mix(in srgb, var(--color-on-brand) 72%, transparent);
 }
 
-.site-header .site-navigation__link:hover,
-.site-header .site-navigation__link[aria-current="page"] {
+.site-header .site-navigation__link:hover {
   border-color: color-mix(in srgb, var(--color-on-brand) 12%, transparent);
   background: color-mix(in srgb, var(--color-on-brand) 10%, transparent);
   color: var(--color-on-brand);
+}
+
+.site-header .site-navigation__link[aria-current="page"] {
+  border-color: color-mix(in oklch, var(--color-brand-bright) 48%, transparent);
+  background: color-mix(in oklch, var(--color-brand-bright) 11%, transparent);
+  color: var(--color-brand-bright);
 }
 
 .site-header .site-icon-button,
@@ -1976,7 +1983,7 @@ textarea {
 }
 
 /* Hallmark · genre: modern-minimal · macrostructure: Workbench / Index-First
- * theme: studied-DNA (https://lol.ps/) · design-system: design.md · designed-as-app
+ * theme: custom Mineral Signal · anchor hue: 245/252 · design-system: design.md · designed-as-app
  * scope: every route · nav: N1b · footer: Ft4 · enrichment: none
  */
 
@@ -2016,7 +2023,7 @@ body,
   min-height: 100vh;
   background: var(--color-app-canvas);
   color: var(--color-app-ink-2);
-  color-scheme: dark;
+  color-scheme: inherit;
 }
 
 .app-canvas {
@@ -2024,7 +2031,7 @@ body,
   background:
     linear-gradient(
       to bottom,
-      color-mix(in oklch, var(--color-brand-deep) 11%, transparent),
+      color-mix(in oklch, var(--color-app-accent-soft) 65%, transparent),
       transparent 16rem
     ),
     var(--color-app-canvas);

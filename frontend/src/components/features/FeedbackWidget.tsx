@@ -281,10 +281,10 @@ export default function FeedbackWidget() {
               type="submit"
               disabled={formState === "submitting" || message.trim().length < 5}
               className={[
-                "w-full rounded-md py-2 text-sm font-medium text-white transition-colors",
+                "w-full rounded-md border py-2 text-sm font-medium transition-colors",
                 formState === "submitting" || message.trim().length < 5
-                  ? "bg-[var(--color-foreground)] opacity-50 cursor-not-allowed"
-                  : "bg-[var(--color-foreground)] hover:bg-[var(--color-primary-hover)]",
+                  ? "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-muted-foreground)] opacity-55 cursor-not-allowed"
+                  : "border-[var(--color-accent)] bg-[var(--color-accent)] text-[var(--color-accent-ink)] hover:border-[var(--color-accent-hover)] hover:bg-[var(--color-accent-hover)]",
               ].join(" ")}
             >
               {formState === "submitting" ? copy.submitting : copy.submit}

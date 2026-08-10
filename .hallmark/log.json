@@ -3,6 +3,44 @@
     "date": "2026-08-10",
     "scope": "app",
     "macrostructure": "Workbench / Index-First",
+    "theme": "custom — Mineral Signal",
+    "theme_axes": "dual-mode / geometric-sans / mineral-blue ~245°",
+    "vibe": "icy analysis, night tactical signal",
+    "enrichment": "none",
+    "brief": "ER&GG app-wide Mineral Signal dual-mode identity pass"
+  },
+  {
+    "date": "2026-08-10",
+    "scope": "page",
+    "macrostructure": "Catalogue / Paired Comparison",
+    "theme": "palette comparison — five custom candidates",
+    "theme_axes": "dual-mode / geometric-sans / mixed accents",
+    "enrichment": "none",
+    "brief": "ER&GG white-dark palette comparison lab"
+  },
+  {
+    "date": "2026-08-10",
+    "scope": "app",
+    "macrostructure": "Workbench / Index-First",
+    "theme": "custom — Abyss Jade",
+    "theme_axes": "dark / geometric-sans / chromatic-jade ~165°",
+    "vibe": "survival telemetry, mineral precision",
+    "enrichment": "none",
+    "brief": "ER&GG app-wide Abyss Jade identity pass"
+  },
+  {
+    "date": "2026-08-10",
+    "scope": "app",
+    "macrostructure": "Workbench / Index-First",
+    "theme": "custom — Obsidian Brass",
+    "theme_axes": "dark / geometric-sans / warm",
+    "enrichment": "none",
+    "brief": "ER&GG app-wide obsidian and brass palette pass"
+  },
+  {
+    "date": "2026-08-10",
+    "scope": "app",
+    "macrostructure": "Workbench / Index-First",
     "theme": "studied-DNA (https://lol.ps/)",
     "enrichment": "none",
     "brief": "ER&GG full-route readability typography pass"

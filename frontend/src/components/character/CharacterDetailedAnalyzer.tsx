@@ -310,14 +310,14 @@ function TopBuildsTableFiltered({
                 <WinRateSpan winRate={b.winRate} />
               </div>
             </div>
-            <div className="flex items-center gap-1 justify-center overflow-x-auto pb-0.5 scrollbar-hide">
+            <div className="flex items-start justify-center gap-0.5 pb-0.5">
               {SLOTS.map((s) => {
                 const code = b[s];
                 return (
-                  <div key={s} className="flex flex-col items-center gap-0.5 shrink-0 min-w-0">
+                  <div key={s} className="flex min-w-0 flex-1 flex-col items-center gap-1">
                     <ItemIcon code={code} size={28} />
                     {code != null && (
-                      <span className="text-[9px] text-[var(--color-muted-foreground)] max-w-[40px] truncate text-center">
+                      <span className="w-full whitespace-normal text-center text-xs leading-tight text-[var(--color-muted-foreground)] [overflow-wrap:anywhere]">
                         {itemNames[code] ?? code}
                       </span>
                     )}
@@ -340,7 +340,7 @@ function TopBuildsTableFiltered({
             <tr className="border-b border-[var(--color-border)] text-[var(--color-muted-foreground)] text-xs">
               <th className="px-3 py-2 text-left font-medium w-8">#</th>
               {SLOTS.map((s) => (
-                <th key={s} className="px-2 py-2 text-center font-medium">
+                <th key={s} className="min-w-24 px-2 py-2 text-center font-medium">
                   {slotLabels[s]}
                 </th>
               ))}
@@ -368,11 +368,11 @@ function TopBuildsTableFiltered({
                 {SLOTS.map((s) => {
                   const code = b[s];
                   return (
-                    <td key={s} className="px-2 py-2 text-center">
-                      <div className="flex flex-col items-center gap-0.5">
+                    <td key={s} className="px-2 py-2 text-center align-top">
+                      <div className="flex min-w-24 flex-col items-center gap-1">
                         <ItemIcon code={code} size={36} />
                         {code != null && (
-                          <span className="text-[9px] text-[var(--color-muted-foreground)] max-w-[52px] truncate">
+                          <span className="w-full max-w-28 whitespace-normal text-center text-xs leading-snug text-[var(--color-muted-foreground)] [overflow-wrap:anywhere]">
                             {itemNames[code] ?? code}
                           </span>
                         )}

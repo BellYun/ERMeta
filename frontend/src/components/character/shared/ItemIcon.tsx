@@ -19,6 +19,9 @@ export function ItemIcon({ code, size = 36 }: { code: number | null; size?: numb
   const grade = getItemGrade(code);
   const gradeBg = grade ? GRADE_BG[grade] : "bg-[var(--color-surface-2)]";
   const gradeBorder = grade ? GRADE_BORDER[grade] : "border border-[var(--color-border)]";
+  const missingIconText = grade
+    ? "text-[var(--color-on-graphite)]"
+    : "text-[var(--color-muted-foreground)]";
 
   if (!imgPath) {
     return (
@@ -26,7 +29,12 @@ export function ItemIcon({ code, size = 36 }: { code: number | null; size?: numb
         className={cn("rounded-md flex items-center justify-center", gradeBg, gradeBorder)}
         style={{ width: size, height: size }}
       >
-        <span className="text-[8px] text-[var(--color-muted-foreground)]">?</span>
+        <span
+          className={cn("font-bold", missingIconText)}
+          style={{ fontSize: "var(--text-data-min)" }}
+        >
+          ?
+        </span>
       </div>
     );
   }
