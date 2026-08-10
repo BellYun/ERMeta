@@ -1,5 +1,5 @@
 /* Hallmark · genre: modern-minimal · tone: technical · DNA-source: https://lol.ps/ · macrostructure: Workbench / Index-First · theme: studied-DNA · design-system: design.md · designed-as-app
- * pre-emit critique: P5 H5 E5 S5 R5 V5 · contrast: pass (40–41) · nav: N1b · footer: Ft4 · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50–57)
+ * pre-emit critique: P5 H5 E5 S5 R5 V5 · contrast: pass (40–41) · readability: pass (13px floor) · nav: N1b · footer: Ft4 · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50–57)
  */
 :root {
   --color-paper: oklch(98.5% 0.004 250);
@@ -66,11 +66,12 @@
   --tracking-display: -0.035em;
   --tracking-label: 0.06em;
 
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-md: 1.125rem;
-  --text-lg: 1.375rem;
+  --text-data-min: 0.8125rem;
+  --text-xs: 0.875rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1.0625rem;
+  --text-md: 1.25rem;
+  --text-lg: 1.5rem;
   --text-xl: 1.75rem;
   --text-2xl: 2.25rem;
   --text-3xl: 3rem;
