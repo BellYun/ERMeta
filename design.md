@@ -22,7 +22,7 @@ Modern-minimal and technical, using a dark data-hub system studied from lol.ps a
 
 - Dark neutral-cool paper (`#10131c`) is the canonical data canvas.
 - Deep indigo (`#213a96`) owns the navigation band; electric blue (`#3d69ff`) is reserved for active states and short signals.
-- Light mode remains available on detail and content routes, while the home workbench stays dark-first in both themes.
+- Every product route uses the same dark data canvas in both theme settings; the theme control changes preference state without splitting the visual identity.
 - Character art and real game data provide visual richness; decorative gradients stay inside the compact search band.
 
 Canonical values live in `tokens.css`.
@@ -68,12 +68,14 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 - App pages use no decorative enrichment; game data and character art carry the interface.
 - Content pages are typography-first.
 - Existing analytics, ads, data fetching, routing, and localization remain unchanged.
+- Redirect and performance-lab routes inherit the shell when rendered; redirect behavior and experiment logic remain unchanged.
 
 ## What pages MUST share
 
 - Wordmark treatment, indigo navigation band, electric-blue signal placement, type roles, focus treatment, button geometry, rules, and spacing tokens.
 - Light/dark hue identity.
 - Loading, empty, error, disabled, and success state language.
+- Dense panel borders, table headers, form controls, and active-tab signals across every route family.
 
 ## What pages MAY differ on
 
@@ -100,6 +102,10 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
   --color-rule-2: #3a4155;
   --color-accent: #3d69ff;
   --color-brand-deep: #213a96;
+  --color-app-canvas: #10131c;
+  --color-app-surface: #181c2a;
+  --color-app-rule: #272c3c;
+  --color-app-ink: #f5f7fb;
   --font-display: "Pretendard", ui-sans-serif, sans-serif;
   --font-body: "Pretendard", ui-sans-serif, sans-serif;
   --font-outlier: "JetBrains Mono", ui-monospace, monospace;
@@ -123,7 +129,10 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
     "ink": { "$value": "#f5f7fb", "$type": "color" },
     "accent": { "$value": "#3d69ff", "$type": "color" },
     "brandDeep": { "$value": "#213a96", "$type": "color" },
-    "rule": { "$value": "#272c3c", "$type": "color" }
+    "rule": { "$value": "#272c3c", "$type": "color" },
+    "appCanvas": { "$value": "#10131c", "$type": "color" },
+    "appSurface": { "$value": "#181c2a", "$type": "color" },
+    "appInk": { "$value": "#f5f7fb", "$type": "color" }
   },
   "font": {
     "display": {

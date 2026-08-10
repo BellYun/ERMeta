@@ -50,14 +50,14 @@ export function AppFrame({
       >
         {getMessage(messages, "layout.skipToMain")}
       </a>
-      <div className="min-h-screen overflow-x-clip bg-[var(--color-background)]">
+      <div className="app-canvas min-h-screen overflow-x-clip bg-[var(--color-background)]">
         <div className="min-w-0 flex flex-col">
           <Header currentPatch={currentPatch} patchAnalysisPatch={patchAnalysisPatch} />
           <div
             className={
               showRailAds
-                ? "mx-auto grid w-full max-w-[1720px] grid-cols-1 gap-4 px-3 pt-4 pb-8 sm:px-4 sm:pt-5 sm:pb-10 lg:px-6 lg:pt-5 lg:pb-8 min-[1400px]:grid-cols-[160px_minmax(0,1fr)_160px]"
-                : "mx-auto w-full max-w-[1440px] px-3 pt-4 pb-8 sm:px-4 sm:pt-5 sm:pb-10 lg:px-6 lg:pt-5 lg:pb-8"
+                ? "app-layout mx-auto grid w-full max-w-[1720px] grid-cols-1 gap-4 px-3 pt-4 pb-8 sm:px-4 sm:pt-5 sm:pb-10 lg:px-6 lg:pt-5 lg:pb-8 min-[1400px]:grid-cols-[160px_minmax(0,1fr)_160px]"
+                : "app-layout mx-auto w-full max-w-[1440px] px-3 pt-4 pb-8 sm:px-4 sm:pt-5 sm:pb-10 lg:px-6 lg:pt-5 lg:pb-8"
             }
           >
             {showRailAds ? (
@@ -76,7 +76,7 @@ export function AppFrame({
                 ) : null}
               </aside>
             ) : null}
-            <main id={mainId} className="min-w-0 flex-1">
+            <main id={mainId} className="app-main min-w-0 flex-1">
               {children}
             </main>
             {showRailAds ? (

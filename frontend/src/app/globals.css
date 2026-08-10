@@ -1974,3 +1974,302 @@ textarea {
 .site-footer a:hover {
   color: var(--color-home-ink-2);
 }
+
+/* Hallmark · genre: modern-minimal · macrostructure: Workbench / Index-First
+ * theme: studied-DNA (https://lol.ps/) · design-system: design.md · designed-as-app
+ * scope: every route · nav: N1b · footer: Ft4 · enrichment: none
+ */
+
+body,
+.app-shell {
+  --color-background: var(--color-app-canvas);
+  --color-surface: var(--color-app-surface);
+  --color-surface-2: var(--color-app-surface-raised);
+  --color-surface-3: var(--color-app-surface-raised);
+  --color-surface-4: var(--color-app-surface-raised);
+  --color-border: var(--color-app-rule);
+  --color-border-light: var(--color-app-rule-strong);
+  --color-foreground: var(--color-app-ink);
+  --color-muted-foreground: var(--color-app-muted);
+  --color-primary: var(--color-app-accent);
+  --color-primary-hover: var(--color-app-accent-hover);
+  --color-accent: var(--color-app-accent);
+  --color-accent-muted: var(--color-app-accent-soft);
+  --color-accent-foreground: var(--color-app-accent-hover);
+  --color-danger-readable: var(--color-app-danger);
+  --color-danger: var(--color-app-danger);
+  --color-success: var(--color-app-success);
+  --color-warning: var(--color-app-warning);
+  --color-stat-up: var(--color-app-success);
+  --color-stat-down: var(--color-app-danger);
+  --color-paper: var(--color-app-canvas);
+  --color-paper-2: var(--color-app-surface);
+  --color-paper-3: var(--color-app-surface-raised);
+  --color-rule: var(--color-app-rule);
+  --color-rule-2: var(--color-app-rule-strong);
+  --color-muted: var(--color-app-muted);
+  --color-neutral: var(--color-app-ink-2);
+  --color-ink-2: var(--color-app-ink-2);
+  --color-ink: var(--color-app-ink);
+  --color-focus: var(--color-app-accent-hover);
+  --shadow-card: var(--shadow-app-panel);
+  min-height: 100vh;
+  background: var(--color-app-canvas);
+  color: var(--color-app-ink-2);
+  color-scheme: dark;
+}
+
+.app-canvas {
+  min-height: 100vh;
+  background:
+    linear-gradient(
+      to bottom,
+      color-mix(in oklch, var(--color-brand-deep) 11%, transparent),
+      transparent 16rem
+    ),
+    var(--color-app-canvas);
+}
+
+.app-layout {
+  position: relative;
+  isolation: isolate;
+}
+
+.app-main {
+  min-width: 0;
+  color: var(--color-app-ink-2);
+}
+
+.app-main > :where(article, .page-shell) {
+  width: 100%;
+}
+
+.app-shell .page-shell {
+  min-width: 0;
+}
+
+.app-shell .dashboard-panel,
+.app-shell .metric-card,
+.app-shell .metric-tile,
+.app-shell .char-card,
+.app-shell .combo-card {
+  border-color: var(--color-app-rule);
+  border-radius: var(--radius-card);
+  background: var(--color-app-surface);
+  background-image: none;
+  box-shadow: var(--shadow-app-panel);
+}
+
+.app-shell .dashboard-panel::before,
+.app-shell .metric-card::before,
+.app-shell .metric-tile::before,
+.app-shell .char-card::before,
+.app-shell .combo-card::before {
+  content: none;
+}
+
+.app-shell .dashboard-panel .metric-card,
+.app-shell .dashboard-panel .metric-tile {
+  border-right: 0;
+  border-bottom: 0;
+  border-left: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.app-shell
+  :where(
+    .dashboard-panel,
+    .metric-card,
+    .metric-tile,
+    .char-card,
+    .combo-card
+  )[data-accent="true"] {
+  border-color: color-mix(in oklch, var(--color-app-accent) 54%, var(--color-app-rule));
+}
+
+.app-shell :where(.metric-card, .metric-tile, .char-card, .combo-card) {
+  transition:
+    border-color var(--dur-micro) var(--ease-out),
+    background-color var(--dur-micro) var(--ease-out),
+    transform var(--dur-micro) var(--ease-out);
+}
+
+.app-shell :where(a.metric-card, button.metric-card, .char-card, .combo-card):hover {
+  border-color: var(--color-app-rule-strong);
+  background: var(--color-app-surface-raised);
+}
+
+.app-shell :where(a.metric-card, button.metric-card, .char-card, .combo-card):active {
+  transform: translateY(var(--rule-hair));
+}
+
+.app-main > article > :where(header, section, .metric-card),
+.app-main > article > .grid > section {
+  border-radius: var(--radius-input);
+}
+
+.app-shell .dashboard-kicker {
+  color: var(--color-app-accent-hover);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.app-shell :where(.dashboard-title, .dashboard-section-title, .metric-value) {
+  color: var(--color-app-ink);
+}
+
+.app-shell :where(.dashboard-subtitle, .metric-label) {
+  color: var(--color-app-muted);
+}
+
+.app-shell .dashboard-section-title::before {
+  width: var(--space-2xs);
+  height: 1rem;
+  border-radius: 0;
+  background: var(--color-app-accent);
+}
+
+.app-shell .home-section-header {
+  border-color: var(--color-app-rule);
+}
+
+.app-shell .dashboard-tab {
+  min-height: 2.75rem;
+  border-color: var(--color-app-rule);
+  background: var(--color-app-surface-raised);
+  color: var(--color-app-muted);
+  white-space: nowrap;
+}
+
+.app-shell .dashboard-tab:hover {
+  border-color: var(--color-app-rule-strong);
+  background: color-mix(
+    in oklch,
+    var(--color-app-surface-raised) 82%,
+    var(--color-app-accent-soft)
+  );
+  color: var(--color-app-ink);
+}
+
+.app-shell .dashboard-tab[data-active="true"] {
+  border-color: var(--color-app-accent);
+  background: var(--color-app-accent-soft);
+  color: var(--color-app-accent-hover);
+}
+
+.app-shell :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  min-height: 2.75rem;
+  border-color: var(--color-app-rule);
+  border-radius: var(--radius-input);
+  background-color: var(--color-app-surface-raised);
+  color: var(--color-app-ink);
+  outline: var(--rule-fine) solid transparent;
+  outline-offset: var(--space-3xs);
+}
+
+.app-shell :where(input, textarea)::placeholder {
+  color: var(--color-app-muted);
+  opacity: 1;
+}
+
+.app-shell :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea):hover {
+  border-color: var(--color-app-rule-strong);
+}
+
+.app-shell :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea):focus {
+  border-color: var(--color-app-accent);
+}
+
+.app-shell select option {
+  background: var(--color-app-surface);
+  color: var(--color-app-ink);
+}
+
+.app-main table {
+  border-color: var(--color-app-rule);
+  background: var(--color-app-surface);
+  color: var(--color-app-ink-2);
+}
+
+.app-main thead {
+  background: var(--color-app-surface-raised);
+}
+
+.app-main th {
+  border-color: var(--color-app-rule);
+  color: var(--color-app-muted);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.app-main td {
+  border-color: var(--color-app-rule);
+}
+
+.app-main tbody tr {
+  transition: background-color var(--dur-micro) var(--ease-out);
+}
+
+.app-main tbody tr:hover {
+  background: color-mix(in oklch, var(--color-app-surface-raised) 74%, transparent);
+}
+
+.app-shell :where([role="tab"], [role="button"], button):focus-visible {
+  outline-color: var(--color-app-accent-hover);
+}
+
+.app-shell :where([aria-busy="true"], [data-loading="true"]) {
+  cursor: progress;
+}
+
+.app-shell :where([aria-invalid="true"], [data-state="error"]) {
+  border-color: var(--color-app-danger);
+}
+
+.app-shell :where([data-state="success"]) {
+  border-color: var(--color-app-success);
+}
+
+.app-shell [class~="transition-all"] {
+  transition-property: color, background-color, border-color, opacity, transform;
+}
+
+.app-shell .site-footer {
+  border-color: var(--color-app-rule);
+  background: var(--color-app-surface);
+}
+
+.app-shell .site-footer :where(.site-footer__inner, p, a) {
+  color: var(--color-app-muted);
+}
+
+.app-shell .site-footer :where(.site-footer__brand, a:hover) {
+  color: var(--color-app-ink-2);
+}
+
+@media (max-width: 47.999rem) {
+  .app-layout {
+    padding-top: var(--space-sm);
+    padding-bottom: var(--space-xl);
+  }
+
+  .app-main > article {
+    padding-block: var(--space-md);
+  }
+
+  .app-shell :where(.dashboard-panel, .metric-card, .metric-tile) {
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-shell :where(.metric-card, .metric-tile, .char-card, .combo-card, .dashboard-tab, tbody tr) {
+    transition-duration: 0.01ms;
+  }
+}

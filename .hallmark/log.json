@@ -2,6 +2,14 @@
   {
     "date": "2026-08-10",
     "scope": "app",
+    "macrostructure": "Workbench / Index-First",
+    "theme": "studied-DNA (https://lol.ps/)",
+    "enrichment": "none",
+    "brief": "ER&GG full-route dark data-hub redesign"
+  },
+  {
+    "date": "2026-08-10",
+    "scope": "app",
     "macrostructure": "Stat-Led / Workbench / Index-First",
     "theme": "Cobalt",
     "enrichment": "none",
