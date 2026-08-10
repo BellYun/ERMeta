@@ -1201,7 +1201,16 @@ function threatMatchupForPattern(pattern: CompositionPatternKey): ThreatMatchupK
   }
 }
 
-export function buildTrioCompositionInsight(
+const COMPOSITION_INSIGHT_CACHE_LIMIT = 512;
+const compositionInsightCache = new Map<string, TrioCompositionInsight>();
+
+function getCompositionInsightCacheKey(
+  input: readonly [CompositionMemberInput, CompositionMemberInput, CompositionMemberInput]
+) {
+  return input.map((member) => `${member.character}:${member.weapon}`).join("|");
+}
+
+function computeTrioCompositionInsight(
   input: readonly [CompositionMemberInput, CompositionMemberInput, CompositionMemberInput]
 ): TrioCompositionInsight {
   const members = input.map((member) => {
@@ -1239,4 +1248,20 @@ export function buildTrioCompositionInsight(
     hasDirectMatchupEvidence: false,
     hasTimedPowerSpikeEvidence: false,
   };
+}
+
+export function buildTrioCompositionInsight(
+  input: readonly [CompositionMemberInput, CompositionMemberInput, CompositionMemberInput]
+): TrioCompositionInsight {
+  const cacheKey = getCompositionInsightCacheKey(input);
+  const cached = compositionInsightCache.get(cacheKey);
+  if (cached) return cached;
+
+  const insight = computeTrioCompositionInsight(input);
+  compositionInsightCache.set(cacheKey, insight);
+  if (compositionInsightCache.size > COMPOSITION_INSIGHT_CACHE_LIMIT) {
+    const oldestKey = compositionInsightCache.keys().next().value;
+    if (oldestKey !== undefined) compositionInsightCache.delete(oldestKey);
+  }
+  return insight;
 }

@@ -7,16 +7,79 @@ import * as React from "react";
 import { TierBadge } from "@/components/features/TierBadge";
 import { Link } from "@/i18n/navigation";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
-import type {
-  CompositionMemberDuty,
-  CompositionPatternKey,
-  TrioCompositionInsight,
+import {
+  buildTrioCompositionInsight,
+  type CompositionMemberDuty,
+  type CompositionPatternKey,
+  type TrioCompositionInsight,
 } from "@/lib/synergyComposition";
 import { assignComboTier, COMBO_TIER_WEIGHTS, PERFORMANCE_TIER_MIN_GAMES } from "@/lib/tierScoring";
 import { cn } from "@/lib/utils";
 import { TraitIcon } from "./TraitIcon";
 import type { TrioWeaponResult } from "./types";
 import { useTapGuard } from "./useTapGuard";
+
+/*
+ * Composition analysis is supplemental to the recommendation statistics.
+ * Keep it out of the result commit so a newly arrived result cannot monopolize
+ * the main thread before the user's next selection is handled.
+ */
+const COMPOSITION_INSIGHT_DELAY_MS = 100;
+
+function useDeferredCompositionInsight(group: GroupedCombo) {
+  const insightKey = `${group.character1}:${group.weaponType1}|${group.character2}:${group.weaponType2}|${group.character3}:${group.weaponType3}`;
+  const suppliedInsight = group.compositionInsight ?? null;
+  const [computed, setComputed] = React.useState<{
+    key: string;
+    insight: TrioCompositionInsight;
+  } | null>(() => (suppliedInsight ? { key: insightKey, insight: suppliedInsight } : null));
+
+  React.useEffect(() => {
+    if (suppliedInsight) {
+      setComputed({ key: insightKey, insight: suppliedInsight });
+      return;
+    }
+
+    let cancelled = false;
+    let idleCallbackId: number | null = null;
+    let fallbackTimerId: number | null = null;
+    const computeInsight = () => {
+      const insight = buildTrioCompositionInsight([
+        { character: group.character1, weapon: group.weaponType1 },
+        { character: group.character2, weapon: group.weaponType2 },
+        { character: group.character3, weapon: group.weaponType3 },
+      ]);
+      if (cancelled) return;
+      React.startTransition(() => setComputed({ key: insightKey, insight }));
+    };
+    const timerId = window.setTimeout(() => {
+      if (typeof window.requestIdleCallback === "function") {
+        idleCallbackId = window.requestIdleCallback(computeInsight, { timeout: 1_500 });
+      } else {
+        fallbackTimerId = window.setTimeout(computeInsight, 0);
+      }
+    }, COMPOSITION_INSIGHT_DELAY_MS);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timerId);
+      if (idleCallbackId != null) window.cancelIdleCallback(idleCallbackId);
+      if (fallbackTimerId != null) window.clearTimeout(fallbackTimerId);
+    };
+  }, [
+    group.character1,
+    group.weaponType1,
+    group.character2,
+    group.weaponType2,
+    group.character3,
+    group.weaponType3,
+    insightKey,
+    suppliedInsight,
+  ]);
+
+  if (suppliedInsight) return suppliedInsight;
+  return computed?.key === insightKey ? computed.insight : null;
+}
 
 /** Level 1 (접힘): 캐릭터+무기 조합 (mainCore 집계) */
 export interface GroupedCombo {
@@ -115,6 +178,7 @@ function ComboWeaponCardImpl({
   onRecommendationClick,
 }: ComboWeaponCardProps) {
   const t = useTranslations("synergyComboCard");
+  const compositionInsight = useDeferredCompositionInsight(group);
   const compositionAnalysisTitle = t.has("composition.title")
     ? t("composition.title")
     : `${t("composition.rolesLabel")} · ${t("composition.powerSpikeLabel")}`;
@@ -128,7 +192,7 @@ function ComboWeaponCardImpl({
     () => getOrderedMembers(group, selectedCharCodes),
     [group, selectedCharCodes]
   );
-  const combatDoctrine = group.compositionInsight?.combatDoctrine;
+  const combatDoctrine = compositionInsight?.combatDoctrine;
   const doctrineFeatureLabels = combatDoctrine
     ? [
         t(
@@ -394,25 +458,25 @@ function ComboWeaponCardImpl({
         </div>
       </div>
 
-      {group.compositionInsight ? (
+      {compositionInsight ? (
         <div className="border-t border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-surface-2)_72%,transparent)] px-2 py-2 sm:px-3">
           <div className="flex min-w-0 flex-wrap items-center gap-1.5">
             <span
-              data-composition-pattern-badge={group.compositionInsight.pattern}
-              title={t(`composition.patternDescriptions.${group.compositionInsight.pattern}`)}
+              data-composition-pattern-badge={compositionInsight.pattern}
+              title={t(`composition.patternDescriptions.${compositionInsight.pattern}`)}
               className={cn(
                 "inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[10px] font-bold sm:text-[11px]",
-                COMPOSITION_PATTERN_BADGE_TONES[group.compositionInsight.pattern]
+                COMPOSITION_PATTERN_BADGE_TONES[compositionInsight.pattern]
               )}
             >
               <Sparkles className="h-3 w-3 shrink-0" />
-              {t(`composition.patterns.${group.compositionInsight.pattern}`)}
+              {t(`composition.patterns.${compositionInsight.pattern}`)}
             </span>
           </div>
           {showTraits ? (
             <div
               data-composition-explanation
-              data-composition-pattern={group.compositionInsight.pattern}
+              data-composition-pattern={compositionInsight.pattern}
               className="mt-2 text-[10.5px] leading-relaxed sm:text-[11px]"
             >
               <div className="flex items-center gap-1.5 border-b border-[var(--color-border)] pb-1.5">
@@ -500,7 +564,15 @@ function ComboWeaponCardImpl({
             </div>
           ) : null}
         </div>
-      ) : null}
+      ) : (
+        <div
+          data-composition-insight-pending
+          aria-hidden="true"
+          className="border-t border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-surface-2)_72%,transparent)] px-2 py-2 sm:px-3"
+        >
+          <div className="h-[26px] w-24 animate-pulse rounded-md bg-[var(--color-surface-3)]" />
+        </div>
+      )}
 
       {/* 특성 브레이크다운 */}
       {showTraits && (
