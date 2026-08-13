@@ -93,7 +93,7 @@ export default function OGImage() {
           </div>
 
           <div style={{ display: "flex", fontSize: "26px", color: "#475569", lineHeight: 1.5 }}>
-            캐릭터 티어 · 3인 조합 · 승률 · 픽률 · 평균 RP
+            실험체 티어 · 3인 조합 · 승률 · 픽률 · 평균 RP
           </div>
 
           <div style={{ display: "flex", gap: "12px", marginTop: "8px" }}>

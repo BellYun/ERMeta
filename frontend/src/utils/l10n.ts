@@ -35,7 +35,7 @@ export function getItemName(l10n: Map<string, string>, code: number): string | n
   return l10n.get(`Item/Name/${code}`) ?? null;
 }
 
-// 캐릭터 이름 가져오기
+// 실험체 이름 가져오기
 export function getCharacterName(l10n: Map<string, string>, code: number): string | null {
   return l10n.get(`Character/Name/${code}`) ?? null;
 }

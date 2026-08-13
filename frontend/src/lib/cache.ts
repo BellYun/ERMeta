@@ -5,7 +5,7 @@
  *   A. 불변 (종료 패치)  → "immutable"
  *   B. 준정적 (패치 목록) → "slow"
  *   C. 준동적 (통계)     → "daily"
- *   C-1. 패치 단위 캐릭터 상세 통계 → "character-stats"
+ *   C-1. 패치 단위 실험체 상세 통계 → "character-stats"
  *   D. 고카디널리티 사전집계 (trios)        → "frequent"
  *   E. 대용량 사전집계 + member/weapon 버킷 (trios-weapon) → "stats-long"
  *

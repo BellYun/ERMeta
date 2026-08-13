@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 /**
  * Stats ingestion pipeline webhook.
- * 변경된 테이블/캐릭터에 대응하는 tag 만 무효화하여 L1 Next.js Data Cache 를 즉시 갱신.
+ * 변경된 테이블/실험체에 대응하는 tag 만 무효화하여 L1 Next.js Data Cache 를 즉시 갱신.
  *
  * Usage:
  *   POST /api/internal/revalidate

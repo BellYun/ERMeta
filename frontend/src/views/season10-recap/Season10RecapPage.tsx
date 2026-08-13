@@ -64,7 +64,7 @@ const COPY = {
     basisKicker: "데이터 기준",
     basisTitle: "공식 API 기반 시즌 누적 집계입니다.",
     basisBody:
-      "다이아몬드 이상 티어 통합 통계이며, 평균 RP 획득량 기준으로 정렬했습니다. 알렉스처럼 무기 통합 집계가 필요한 캐릭터는 단일 조합으로 합산했습니다.",
+      "다이아몬드 이상 티어 통합 통계이며, 평균 RP 획득량 기준으로 정렬했습니다. 알렉스처럼 무기 통합 집계가 필요한 실험체는 단일 조합으로 합산했습니다.",
     back: "메타 분석으로 돌아가기",
     nonKoSummary:
       "This localized overview highlights the season-level metrics and leading compositions.",
@@ -211,7 +211,7 @@ const RECAP_SECTION_LINKS = [
   { href: "#season-recap-patches", index: "01", label: "패치 흐름" },
   { href: "#season-recap-roles", index: "02", label: "직업군 흐름" },
   { href: "#season-recap-balance-response", index: "03", label: "패치 반응" },
-  { href: "#season-recap-new-characters", index: "04", label: "신규 캐릭터" },
+  { href: "#season-recap-new-characters", index: "04", label: "신규 실험체" },
   { href: "#season-recap-ranking", index: "05", label: "시즌 랭킹" },
 ] as const;
 

@@ -86,6 +86,12 @@ export function SiteCommandPalette({ patchAnalysisPatch, className }: SiteComman
         icon: Layers3,
       },
       {
+        key: "character-lab-new",
+        label: tNav("characterLabNew"),
+        href: withCurrentRouteLocale(pathname, "/character-lab/new"),
+        icon: Layers3,
+      },
+      {
         key: "patches",
         label: tNav("patchNotes"),
         href: withCurrentRouteLocale(pathname, "/patches"),

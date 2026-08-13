@@ -85,13 +85,13 @@ function TrendPanel({ trend }: { trend: ComboTrend }) {
   return (
     <div className="border-t border-[var(--color-border)] bg-[var(--color-surface-2)]/45 px-2.5 py-2.5">
       <p className="text-[13px] font-semibold text-[var(--color-foreground)]">
-        {trend.focalLabel}과 잘 맞는 캐릭터 조합 경향
+        {trend.focalLabel}과 잘 맞는 실험체 조합 경향
       </p>
 
       {trend.patterns.length === 0 ? (
         <div className="mt-1.5 text-[13px] leading-5 text-[var(--color-muted-foreground)]">
           <p>{trend.compositionLabel} 조합에서 상승하는 경향이 있습니다.</p>
-          <p>세부 캐릭터 유형은 아직 표본이 부족합니다.</p>
+          <p>세부 실험체 유형은 아직 표본이 부족합니다.</p>
         </div>
       ) : (
         <table className="mt-2 w-full table-fixed border-collapse text-left">
@@ -111,7 +111,7 @@ function TrendPanel({ trend }: { trend: ComboTrend }) {
                 scope="col"
                 className="border-l border-[var(--color-border)] py-1.5 pl-2 text-sm font-semibold text-[var(--color-foreground)]"
               >
-                해당 캐릭터
+                해당 실험체
               </th>
             </tr>
           </thead>

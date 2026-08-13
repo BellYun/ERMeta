@@ -106,7 +106,7 @@ function CharacterComparison({ reports }: { reports: CharacterReport[] }) {
           한눈에 비교
         </p>
         <h2 className="dashboard-section-title mt-2 text-[1.25rem] font-bold text-[var(--color-foreground)] sm:text-[1.55rem]">
-          시즌 11 신규 캐릭터 성적표
+          시즌 11 신규 실험체 성적표
         </h2>
       </div>
 
@@ -415,7 +415,7 @@ function PatchTierCell({
 
       <div className="mt-2.5 space-y-2">
         <RpComparisonBar
-          label="캐릭터 RP"
+          label="실험체 RP"
           value={stat.averageRP}
           maxAbsRp={maxAbsRp}
           tone={stat.averageRP >= 0 ? tierTone : "bg-[var(--color-danger)]"}
@@ -582,7 +582,7 @@ function CharacterReportCard({
           </div>
           <div className="min-w-0">
             <p className="text-[10px] font-bold text-[var(--color-accent-foreground)]">
-              {report.firstStat.patch} 첫 집계 · 신규 캐릭터
+              {report.firstStat.patch} 첫 집계 · 신규 실험체
             </p>
             <h2 className="mt-1 text-xl font-bold text-[var(--color-foreground)] sm:text-2xl">
               {report.name}
@@ -650,7 +650,7 @@ export function NewCharacterReportBlock({
         id="season-recap-new-characters"
         className="dashboard-panel scroll-mt-24 p-10 text-center lg:scroll-mt-20"
       >
-        <p className="text-sm text-[var(--color-muted-foreground)]">신규 캐릭터 표본 확인 중</p>
+        <p className="text-sm text-[var(--color-muted-foreground)]">신규 실험체 표본 확인 중</p>
       </section>
     );
   }

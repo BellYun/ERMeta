@@ -256,7 +256,7 @@ const ROLE_KEYS: Record<CharacterRole, CompositionRoleKey> = {
 };
 
 /**
- * 역할만으로 사라지는 캐릭터별 전술 차이를 보완하는 ERMeta 휴리스틱입니다.
+ * 역할만으로 사라지는 실험체별 전술 차이를 보완하는 ERMeta 휴리스틱입니다.
  * 패치 수치가 아니라 스킬셋의 대표적인 교전 기능만 2개 이내로 보수적으로 기록합니다.
  */
 const CHARACTER_TRAITS: Record<number, CompositionTraitKey[]> = {
@@ -354,7 +354,7 @@ const CHARACTER_TRAITS: Record<number, CompositionTraitKey[]> = {
 
 /**
  * 같은 실험체도 무기군에 따라 실제 교전 위치와 임무가 달라지는 경우만 덮어씁니다.
- * 나머지는 캐릭터 기본 성향을 사용해 신규 조합도 안전하게 설명합니다.
+ * 나머지는 실험체 기본 성향을 사용해 신규 조합도 안전하게 설명합니다.
  */
 const COMBO_TRAIT_OVERRIDES: Record<string, CompositionTraitKey[]> = {
   "2_9": ["poke", "burst"], // 아야 권총: 스킬 폭딜과 짧은 재배치

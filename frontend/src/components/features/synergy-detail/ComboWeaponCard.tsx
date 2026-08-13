@@ -81,7 +81,7 @@ function useDeferredCompositionInsight(group: GroupedCombo) {
   return computed?.key === insightKey ? computed.insight : null;
 }
 
-/** Level 1 (접힘): 캐릭터+무기 조합 (mainCore 집계) */
+/** Level 1 (접힘): 실험체+무기 조합 (mainCore 집계) */
 export interface GroupedCombo {
   character1: number;
   weaponType1: number;
@@ -157,7 +157,7 @@ interface ComboWeaponCardProps {
   selectedCharCodes: number[];
   isFocusPoolCombo?: boolean;
   loadTraitVariants?: (group: GroupedCombo, signal?: AbortSignal) => Promise<TrioWeaponResult[]>;
-  /** 추천(gold ring) 캐릭터 Link 클릭 시 호출. 부모가 analytics 발화. 메모이제이션 유지를 위해 ref-stable하게 전달할 것. */
+  /** 추천(gold ring) 실험체 Link 클릭 시 호출. 부모가 analytics 발화. 메모이제이션 유지를 위해 ref-stable하게 전달할 것. */
   onRecommendationClick?: (pickedCode: number, pickedRank: number) => void;
 }
 
@@ -349,7 +349,7 @@ function ComboWeaponCardImpl({
           </span>
         ) : null}
 
-        {/* 3캐릭터 + 무기 */}
+        {/* 3실험체 + 무기 */}
         <div className="flex items-center gap-0.5 sm:gap-1">
           {ordered.map((m, i) => {
             const isRecommended = !selectedCharCodes.includes(m.char);
@@ -400,7 +400,7 @@ function ComboWeaponCardImpl({
                     }}
                     onTouchEnd={(e) => e.stopPropagation()}
                     // 외부 div[role=button]가 onPointerUp으로 토글하므로 pointer 단계에서도
-                    // 차단해야 "캐릭터 상세 이동" 탭이 실수로 브레이크다운 토글을 함께 트리거하지 않음.
+                    // 차단해야 "실험체 상세 이동" 탭이 실수로 브레이크다운 토글을 함께 트리거하지 않음.
                     // pointerDown 도 차단해야 부모 div 의 pointerStartRef 가 Link 좌표로 오염되지 않음
                     // (Safari 는 pointercancel 비보장 — Link 탭 후 다음 카드 탭에서 stale start 로 토글되는 회귀 차단).
                     onPointerDown={(e) => e.stopPropagation()}
@@ -592,7 +592,7 @@ function ComboWeaponCardImpl({
             >
               {/* 순위 열과 동일한 오프셋 */}
               <span className="w-1 sm:w-2 shrink-0" />
-              {/* 특성 아이콘 — 캐릭터 열과 동일 gap/너비 */}
+              {/* 특성 아이콘 — 실험체 열과 동일 gap/너비 */}
               <div className="flex items-center gap-0.5 sm:gap-1">
                 {ordered.map((m, mi) => {
                   const core = getCoreForMember(m, v);

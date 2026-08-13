@@ -149,7 +149,7 @@ export function LabPageContent({ data }: Props) {
           return !characters.some((c) => c.characterName.includes(query));
         }) && (
           <p className="text-sm text-[var(--color-muted-foreground)]">
-            &ldquo;{query}&rdquo;에 해당하는 캐릭터가 없습니다.
+            &ldquo;{query}&rdquo;에 해당하는 실험체가 없습니다.
           </p>
         )}
     </div>

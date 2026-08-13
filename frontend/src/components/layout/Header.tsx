@@ -3,8 +3,10 @@
 import {
   ArrowRight,
   BarChart3,
+  ChevronDown,
   Gauge,
   Layers,
+  Layers3,
   Menu,
   MessageSquarePlus,
   Moon,
@@ -76,7 +78,8 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
       label: tNav("characterLab"),
       icon: Layers,
       isActive:
-        normalizedPathname.startsWith("/character-lab") ||
+        (normalizedPathname.startsWith("/character-lab") &&
+          !normalizedPathname.startsWith("/character-lab/new")) ||
         normalizedPathname === "/lab" ||
         normalizedPathname.startsWith("/lab/"),
     },
@@ -85,6 +88,19 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
       label: tNav("patchNotes"),
       icon: NotebookText,
       isActive: normalizedPathname.startsWith("/patches"),
+    },
+  ];
+  const labLinks: Array<{
+    href: string;
+    label: string;
+    icon: LucideIcon;
+    isActive: boolean;
+  }> = [
+    {
+      href: withCurrentRouteLocale(pathname, "/character-lab/new"),
+      label: tNav("characterLabNew"),
+      icon: Layers3,
+      isActive: normalizedPathname.startsWith("/character-lab/new"),
     },
     {
       href: withCurrentRouteLocale(pathname, patchAnalysisPath),
@@ -99,6 +115,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
       isActive: normalizedPathname === seasonRecapPath,
     },
   ];
+  const isLabActive = labLinks.some((link) => link.isActive);
 
   React.useEffect(() => {
     setMobileMenuOpen(false);
@@ -253,7 +270,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
 
             <nav
               aria-label={tNav("ariaMain")}
-              className="site-navigation hidden min-w-0 flex-1 items-center gap-1 overflow-x-auto px-2 scrollbar-hide lg:flex"
+              className="site-navigation hidden min-w-0 flex-1 items-center gap-1 px-2 lg:flex"
             >
               {navLinks.map(({ href, label, icon: Icon, isActive }) => (
                 <Link
@@ -271,14 +288,59 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                   <span>{label}</span>
                 </Link>
               ))}
+
+              <details
+                className="site-navigation-lab relative shrink-0"
+                onKeyDown={(event) => {
+                  if (event.key !== "Escape") return;
+                  event.currentTarget.removeAttribute("open");
+                  event.currentTarget.querySelector("summary")?.focus();
+                }}
+              >
+                <summary
+                  aria-current={isLabActive ? "page" : undefined}
+                  className={cn(
+                    "site-navigation__link inline-flex h-9 cursor-pointer list-none items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium xl:px-3 xl:text-[13px]",
+                    isLabActive
+                      ? "border-[var(--color-border-light)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
+                      : "border-transparent text-[var(--color-muted-foreground)] hover:border-[var(--color-border)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+                  )}
+                >
+                  <span>{tNav("lab")}</span>
+                  <ChevronDown
+                    aria-hidden="true"
+                    className="site-navigation-lab__chevron h-3.5 w-3.5"
+                    strokeWidth={2}
+                  />
+                </summary>
+
+                <div className="site-navigation-lab__menu">
+                  {labLinks.map(({ href, label, icon: Icon, isActive }) => (
+                    <Link
+                      key={href}
+                      href={href}
+                      aria-current={isActive ? "page" : undefined}
+                      onClick={(event) =>
+                        event.currentTarget.closest("details")?.removeAttribute("open")
+                      }
+                      className="site-navigation-lab__item"
+                    >
+                      <Icon className="h-4 w-4" strokeWidth={2} />
+                      <span>{label}</span>
+                    </Link>
+                  ))}
+                </div>
+              </details>
             </nav>
 
-            <CharacterSearchCombobox
+            <div
               className={cn(
-                "hidden w-64 max-w-64 shrink-0 xl:w-72 xl:max-w-72",
+                "site-header-search hidden shrink-0",
                 normalizedPathname !== "/" && "lg:block"
               )}
-            />
+            >
+              <CharacterSearchCombobox className="site-header-search__field" />
+            </div>
 
             <div className="ml-auto flex items-center gap-2 lg:gap-3">
               <button

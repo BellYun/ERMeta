@@ -49,7 +49,7 @@ function PalettePreview({ mode, className }: { mode: "WHITE" | "DARK"; className
       <div className={styles.previewBody}>
         <div className={styles.contextRow}>
           <div>
-            <p className={styles.contextLabel}>캐릭터 메타</p>
+            <p className={styles.contextLabel}>실험체 메타</p>
             <h3 className={styles.characterName}>재키 · 단검</h3>
           </div>
           <span className={styles.patchBadge}>11.7 · 다이아+</span>

@@ -53,7 +53,7 @@ const signalBars = [74, 52, 88, 61, 47, 82, 69, 58, 91, 64, 76, 55];
 const pageTypes = [
   "홈",
   "티어 랭킹",
-  "캐릭터 상세",
+  "실험체 상세",
   "시너지 추천",
   "트리오 연구소",
   "패치 분석",
@@ -167,7 +167,7 @@ export default async function DesignLabPage({ params }: DesignLabPageProps) {
               전체 리디자인 전에 방향만 비교하는 임시 실험실
             </h1>
             <p className="mt-3 text-sm leading-6 text-[var(--color-muted-foreground)]">
-              실제 화면을 바로 갈아엎지 않고, 게임 도메인의 캐릭터성은 살리되 통계 서비스처럼 읽히는
+              실제 화면을 바로 갈아엎지 않고, 게임 도메인의 실험체성은 살리되 통계 서비스처럼 읽히는
               여섯 가지 방향을 나란히 비교합니다.
             </p>
           </div>
@@ -208,7 +208,7 @@ function TerminalConcept() {
     <ConceptFrame
       eyebrow="A. DATA TERMINAL"
       title="분석 터미널형"
-      description="가장 통계 서비스답게 읽힙니다. 숫자, 변화량, 테이블 밀도가 강점이고 캐릭터 이미지는 작게 씁니다."
+      description="가장 통계 서비스답게 읽힙니다. 숫자, 변화량, 테이블 밀도가 강점이고 실험체 이미지는 작게 씁니다."
       className="bg-[#f7fafc]"
     >
       <div className="rounded-md border border-[#b8c5d6] bg-[#ffffff]">
@@ -281,7 +281,7 @@ function EsportsConcept() {
     <ConceptFrame
       eyebrow="B. ESPORTS DESK"
       title="중계 분석 데스크형"
-      description="게임 도메인 감도가 가장 큽니다. 캐릭터 비주얼과 승률 그래프를 전면에 두되, 과한 게임 UI는 피합니다."
+      description="게임 도메인 감도가 가장 큽니다. 실험체 비주얼과 승률 그래프를 전면에 두되, 과한 게임 UI는 피합니다."
       className="bg-[#fbfcff]"
     >
       <div className="overflow-hidden rounded-md border border-[#b6c4d8] bg-[#ffffff]">
@@ -346,7 +346,7 @@ function DatabaseConcept() {
     <ConceptFrame
       eyebrow="C. GAME DATABASE"
       title="게임 DB/위키형"
-      description="정보 탐색에 가장 편합니다. 캐릭터, 무기, 태그, 수치가 카드 안에서 안정적으로 정리됩니다."
+      description="정보 탐색에 가장 편합니다. 실험체, 무기, 태그, 수치가 카드 안에서 안정적으로 정리됩니다."
       className="bg-[#f8fafc]"
     >
       <div className="rounded-md border border-[#b8c5d6] bg-[#ffffff] p-3">
@@ -497,7 +497,7 @@ function PatchReportConcept() {
             <ClipboardList className="h-5 w-5 text-[#725414]" />
           </div>
           <p className="mt-2 text-xs leading-5 text-[#4b5563]">
-            상향 캐릭터의 픽률 전환이 빠르게 진행 중이며, 근접 교전 조합의 평균 RP가 상승했습니다.
+            상향 실험체의 픽률 전환이 빠르게 진행 중이며, 근접 교전 조합의 평균 RP가 상승했습니다.
           </p>
         </div>
 
@@ -545,7 +545,7 @@ function ScoutingBoardConcept() {
     <ConceptFrame
       eyebrow="F. SCOUTING BOARD"
       title="스카우팅 보드형"
-      description="조합 탐색과 비교에 강합니다. 시너지, 트리오 연구소, 캐릭터 랩 쪽에서 힘을 받는 방향입니다."
+      description="조합 탐색과 비교에 강합니다. 시너지, 트리오 연구소, 실험체 랩 쪽에서 힘을 받는 방향입니다."
       className="bg-[#f8fafc]"
     >
       <div className="rounded-md border border-[#b8c5d6] bg-white p-3">
@@ -687,7 +687,7 @@ function HomePageMockup() {
             </span>
           </div>
           <div className="mt-4 grid grid-cols-3 gap-2">
-            <AnalyticsTile label="변동 캐릭터" value="18" tone="blue" />
+            <AnalyticsTile label="변동 실험체" value="18" tone="blue" />
             <AnalyticsTile label="평균 RP" value="+8.4" tone="green" />
             <AnalyticsTile label="표본" value="42K" tone="gray" />
           </div>
@@ -774,8 +774,8 @@ function CharacterPageMockup() {
   return (
     <PageMockupFrame
       label="CHARACTER DETAIL"
-      title="캐릭터 상세 분석"
-      description="캐릭터 이미지는 헤더에서만 강하게 쓰고, 아래는 지표/무기/패치 근거 중심으로 정리합니다."
+      title="실험체 상세 분석"
+      description="실험체 이미지는 헤더에서만 강하게 쓰고, 아래는 지표/무기/패치 근거 중심으로 정리합니다."
     >
       <div className="grid gap-3 lg:grid-cols-[280px_1fr]">
         <div className="relative min-h-[260px] overflow-hidden rounded-md border border-[#b8c5d6] bg-[#eaf2ff]">
@@ -927,7 +927,7 @@ function PatchPageMockup() {
     <PageMockupFrame
       label="PATCH ANALYSIS"
       title="패치 분석"
-      description="패치 리포트는 타임라인, 영향 받은 캐릭터, 핵심 해석이 한 흐름으로 읽혀야 합니다."
+      description="패치 리포트는 타임라인, 영향 받은 실험체, 핵심 해석이 한 흐름으로 읽혀야 합니다."
     >
       <div className="grid gap-3 lg:grid-cols-[0.8fr_1.2fr]">
         <div className="rounded-md border border-[#c8c1ad] bg-[#fffdf7] p-4">
@@ -983,7 +983,7 @@ function DirectionPageMatrix() {
           A~F 전체를 페이지별로 재구성한 비교안
         </h2>
         <p className="mt-2 max-w-4xl text-sm leading-6 text-[var(--color-muted-foreground)]">
-          각 디자인 방향마다 홈, 티어 랭킹, 캐릭터 상세, 시너지 추천, 트리오 연구소, 패치 분석
+          각 디자인 방향마다 홈, 티어 랭킹, 실험체 상세, 시너지 추천, 트리오 연구소, 패치 분석
           화면을 같은 정보량으로 다시 배치했습니다.
         </p>
       </div>
@@ -1054,7 +1054,7 @@ function DirectionPageCard({
   const titleByPage: Record<(typeof pageTypes)[number], string> = {
     홈: "메타 요약",
     "티어 랭킹": "순위 테이블",
-    "캐릭터 상세": getCharacterName(character),
+    "실험체 상세": getCharacterName(character),
     "시너지 추천": "조합 후보",
     "트리오 연구소": "트리오 카드",
     "패치 분석": "변화 리포트",
@@ -1084,7 +1084,7 @@ function DirectionPageCard({
 
       {page === "홈" ? <MatrixHome system={system} character={character} /> : null}
       {page === "티어 랭킹" ? <MatrixRanking system={system} /> : null}
-      {page === "캐릭터 상세" ? <MatrixCharacter system={system} character={character} /> : null}
+      {page === "실험체 상세" ? <MatrixCharacter system={system} character={character} /> : null}
       {page === "시너지 추천" ? <MatrixSynergy system={system} /> : null}
       {page === "트리오 연구소" ? <MatrixTrio system={system} /> : null}
       {page === "패치 분석" ? <MatrixPatch system={system} /> : null}
@@ -1316,7 +1316,7 @@ function MatrixPatch({ system }: { system: (typeof directionSystems)[number] }) 
           상향 이후 48시간
         </p>
         <p className="mt-1 text-xs leading-5" style={{ color: system.muted }}>
-          픽률 전환과 RP 기대값이 먼저 반응한 캐릭터를 요약합니다.
+          픽률 전환과 RP 기대값이 먼저 반응한 실험체를 요약합니다.
         </p>
       </div>
       {picks.slice(0, 3).map((pick) => (

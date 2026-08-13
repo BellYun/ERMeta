@@ -7,7 +7,7 @@ import { getCharacterName } from "@/lib/characterMap";
 import { createServerClient } from "@/lib/supabase";
 
 // Satori 가 WebP 디코딩을 못 하므로 미리 PNG dataURL 로 변환해서 임베드한다.
-// 캐릭터 mini 이미지는 정적 자산이라 instance 메모리에 캐시 (87 chars × ~3KB ≈ 260KB)
+// 실험체 mini 이미지는 정적 자산이라 instance 메모리에 캐시 (87 chars × ~3KB ≈ 260KB)
 const iconCache = new Map<number, string>();
 
 async function loadIconDataUrl(code: number): Promise<string | null> {
@@ -311,7 +311,7 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
         <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1 }}>
           {trios.map((trio, i) => {
             const chars = [trio.character1, trio.character2, trio.character3];
-            // 아군을 앞에, 후보 캐릭터를 뒤에
+            // 아군을 앞에, 후보 실험체를 뒤에
             const allySet = new Set(allies);
             const allyChars = chars.filter((c) => allySet.has(c));
             const recChars = chars.filter((c) => !allySet.has(c));
@@ -348,7 +348,7 @@ function renderTrioOG(trios: AggTrio[], allies: number[], icons: Map<number, str
                   {i + 1}
                 </span>
 
-                {/* 캐릭터 3명 */}
+                {/* 실험체 3명 */}
                 <div style={{ display: "flex", alignItems: "center", gap: "8px", flex: 1 }}>
                   {ordered.map((code, ci) => {
                     const isRec = !allySet.has(code);
@@ -497,7 +497,7 @@ export async function GET(request: NextRequest) {
   const char1 = ally1Param ? parseInt(ally1Param, 10) : null;
   const char2 = ally2Param ? parseInt(ally2Param, 10) : null;
 
-  // 유효한 캐릭터가 없으면 기본 OG
+  // 유효한 실험체가 없으면 기본 OG
   if (char1 == null || isNaN(char1)) {
     return new ImageResponse(renderDefaultOG(), {
       ...SIZE,

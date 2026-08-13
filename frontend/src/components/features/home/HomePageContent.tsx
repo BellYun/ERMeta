@@ -54,6 +54,27 @@ export async function HomePageContent({
 
   return (
     <div className="page-shell home-shell flex flex-col">
+      {isPreparing ? (
+        <section aria-labelledby="home-season-recap-title">
+          <Link className="home-season-recap" href={`/${locale}/season11-recap`}>
+            <span className="home-season-recap__season" aria-hidden="true">
+              <Trophy />
+              <span>SEASON</span>
+              <strong>11</strong>
+            </span>
+            <span className="home-season-recap__copy">
+              <span className="home-season-recap__eyebrow">{t("seasonRecap.eyebrow")}</span>
+              <strong id="home-season-recap-title">{t("seasonRecap.title")}</strong>
+              <span>{t("seasonRecap.body")}</span>
+            </span>
+            <span className="home-season-recap__cta">
+              {t("seasonRecap.cta")}
+              <ArrowUpRight aria-hidden="true" />
+            </span>
+          </Link>
+        </section>
+      ) : null}
+
       <section className="home-search-hero" aria-labelledby="home-search-title">
         <div className="home-search-hero__inner">
           <div className="home-search-hero__main">
@@ -153,27 +174,6 @@ export async function HomePageContent({
           ) : null}
         </div>
       </section>
-
-      {isPreparing ? (
-        <section aria-labelledby="home-season-recap-title">
-          <Link className="home-season-recap" href={`/${locale}/season11-recap`}>
-            <span className="home-season-recap__season" aria-hidden="true">
-              <Trophy />
-              <span>SEASON</span>
-              <strong>11</strong>
-            </span>
-            <span className="home-season-recap__copy">
-              <span className="home-season-recap__eyebrow">{t("seasonRecap.eyebrow")}</span>
-              <strong id="home-season-recap-title">{t("seasonRecap.title")}</strong>
-              <span>{t("seasonRecap.body")}</span>
-            </span>
-            <span className="home-season-recap__cta">
-              {t("seasonRecap.cta")}
-              <ArrowUpRight aria-hidden="true" />
-            </span>
-          </Link>
-        </section>
-      ) : null}
 
       {showHomeStats ? (
         <HomeDashboardSections

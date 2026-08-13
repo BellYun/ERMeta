@@ -132,7 +132,7 @@ const PATCH_CONTEXT_COMMENTS: Record<string, Record<number, CausalEvaluationComm
       "제니는 E 스킬 피해량 버프를 받았으나, 기존에 샬럿 등 서포터와 함께 기용되던 비중이 높았던 만큼 힐링 윈드 쿨다운 증가와 더 썬 너프의 영향을 크게 받았습니다. 서포터와 함께 사용하는 조합에서는 지표가 눌릴 수 있지만, 서포터 의존도를 낮춘 조합에서는 버프 체감이 더 크게 나타날 수 있습니다."
     ),
     39: patchContextComment(
-      "카밀로는 Q 스킬 피해량 너프를 받았으나, 시작 아이템인 미닛맨의 표식 버프와 일부 팔 아이템 버프의 수혜를 받았습니다. 특히 미스릴 완장 대신 운명의 주사위나 레이더를 기용하는 경우에도 좋은 지표를 보여주고 있어, 캐릭터 너프에도 불구하고 아이템 환경 덕분에 좋은 모습을 유지하고 있습니다.",
+      "카밀로는 Q 스킬 피해량 너프를 받았으나, 시작 아이템인 미닛맨의 표식 버프와 일부 팔 아이템 버프의 수혜를 받았습니다. 특히 미스릴 완장 대신 운명의 주사위나 레이더를 기용하는 경우에도 좋은 지표를 보여주고 있어, 실험체 너프에도 불구하고 아이템 환경 덕분에 좋은 모습을 유지하고 있습니다.",
       "positive"
     ),
     41: patchContextComment(
@@ -289,8 +289,8 @@ const PATCH_ANALYSIS_COPY = {
       rankScope: "DIAMOND+ · IN1000 제외",
       columns: ["역할군", "평균 RP", "이전 대비", "승률", "순방률", "표본"],
     },
-    rankingUp: "평균 RP 상승폭 주요 캐릭터",
-    rankingDown: "평균 RP 하락폭 주요 캐릭터",
+    rankingUp: "평균 RP 상승폭 주요 실험체",
+    rankingDown: "평균 RP 하락폭 주요 실험체",
     patchHistory: "패치 내역",
     evaluation: "패치 평가",
     changeLabels: { buff: "버프", nerf: "너프", adjust: "조정" },
@@ -308,21 +308,21 @@ const PATCH_ANALYSIS_COPY = {
     },
     sectionCount: (count: number) => `${count}건`,
     sections: {
-      buffTitle: "버프 캐릭터 지표 반응",
+      buffTitle: "버프 실험체 지표 반응",
       buffDescription:
-        "버프 대상 캐릭터를 평균 RP 상승폭 기준으로 정렬했습니다. 기존 지표와 현재 지표를 함께 비교합니다.",
-      nerfTitle: "너프 캐릭터 지표 반응",
+        "버프 대상 실험체를 평균 RP 상승폭 기준으로 정렬했습니다. 기존 지표와 현재 지표를 함께 비교합니다.",
+      nerfTitle: "너프 실험체 지표 반응",
       nerfDescription:
-        "너프 대상 캐릭터는 평균 RP 하락폭이 큰 순서로 정렬했습니다. 표본과 승률이 유지되는 픽은 메타 잔존 가능성이 높습니다.",
-      mixedTitle: "혼합 조정 캐릭터",
-      mixedDescription: "버프와 너프가 함께 들어간 캐릭터는 실제 지표 변화를 우선합니다.",
-      focusedBuffTitle: "버프 캐릭터 패치 평가",
-      focusedBuffDescription: "버프 대상 캐릭터의 패치 내역과 현재 메타 맥락을 정리했습니다.",
-      focusedNerfTitle: "너프 캐릭터 패치 평가",
-      focusedNerfDescription: "너프 대상 캐릭터의 패치 내역과 현재 메타 맥락을 정리했습니다.",
-      focusedMixedTitle: "조정 캐릭터 패치 평가",
+        "너프 대상 실험체는 평균 RP 하락폭이 큰 순서로 정렬했습니다. 표본과 승률이 유지되는 픽은 메타 잔존 가능성이 높습니다.",
+      mixedTitle: "혼합 조정 실험체",
+      mixedDescription: "버프와 너프가 함께 들어간 실험체는 실제 지표 변화를 우선합니다.",
+      focusedBuffTitle: "버프 실험체 패치 평가",
+      focusedBuffDescription: "버프 대상 실험체의 패치 내역과 현재 메타 맥락을 정리했습니다.",
+      focusedNerfTitle: "너프 실험체 패치 평가",
+      focusedNerfDescription: "너프 대상 실험체의 패치 내역과 현재 메타 맥락을 정리했습니다.",
+      focusedMixedTitle: "조정 실험체 패치 평가",
       focusedMixedDescription:
-        "버프와 너프가 함께 들어간 캐릭터의 패치 내역과 현재 메타 맥락을 정리했습니다.",
+        "버프와 너프가 함께 들어간 실험체의 패치 내역과 현재 메타 맥락을 정리했습니다.",
     },
     guideKicker: "판단 기준",
     guideTitle: "판단 기준",
@@ -629,7 +629,7 @@ export async function generateMetadata(version?: string): Promise<Metadata> {
     openGraph: {
       title: "패치 메타 분석",
       description:
-        "버프/너프 이후 캐릭터 지표 변화와 역할군 평균 RP를 오늘 통계 기준으로 정리합니다.",
+        "버프/너프 이후 실험체 지표 변화와 역할군 평균 RP를 오늘 통계 기준으로 정리합니다.",
       type: "article",
     },
     robots: { index: true, follow: true },

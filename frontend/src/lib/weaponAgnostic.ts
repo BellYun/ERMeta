@@ -1,6 +1,6 @@
 import { isWeaponAgnosticCharacter } from "@/lib/characterMap";
 
-/** 무기 무관 캐릭터를 단일 row로 합산했을 때 쓰는 bestWeapon 센티넬. resolveWeaponName(0) → "전체 무기". */
+/** 무기 무관 실험체를 단일 row로 합산했을 때 쓰는 bestWeapon 센티넬. resolveWeaponName(0) → "전체 무기". */
 export const WEAPON_AGNOSTIC_SENTINEL = 0;
 
 interface CollapsibleRow {
@@ -14,10 +14,10 @@ interface CollapsibleRow {
 }
 
 /**
- * 무기 무관 캐릭터(알렉스 등)의 (characterNum, bestWeapon) 분리 row를 하나로 합산한다.
- * 일반 캐릭터 row는 그대로 통과. 합산 row는 bestWeapon=센티넬, 게임 수 가중 평균 순위.
+ * 무기 무관 실험체(알렉스 등)의 (characterNum, bestWeapon) 분리 row를 하나로 합산한다.
+ * 일반 실험체 row는 그대로 통과. 합산 row는 bestWeapon=센티넬, 게임 수 가중 평균 순위.
  *
- * @param extraKey 같은 캐릭터라도 분리 보존해야 하는 축(예: tier, patchVersion)을 키로.
+ * @param extraKey 같은 실험체라도 분리 보존해야 하는 축(예: tier, patchVersion)을 키로.
  */
 export function collapseWeaponAgnosticRows<T extends CollapsibleRow>(
   rows: T[],

@@ -188,7 +188,7 @@ export async function fetchHoneyPicksServer(
 
     const typedData = data as StatRow[];
     // selectTierRows 가 cumulative tier filter + (characterNum, bestWeapon) 합산 후,
-    // 무기 무관 캐릭터(알렉스 등) collapse 는 마지막에 한 번.
+    // 무기 무관 실험체(알렉스 등) collapse 는 마지막에 한 번.
     const { rows: currentMerged, usedTier } = selectTierRows(
       typedData.filter((r) => r.patchVersion === patchVersion),
       requestedTier

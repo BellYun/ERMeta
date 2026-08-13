@@ -431,7 +431,7 @@ async function fetchTrioWeaponSinglePosition(
   return rows;
 }
 
-/** 단일 캐릭터 — all 검색 테이블에서 ally1/ally2/third 3 위치별 fetch 후 trio 단위 dedup. */
+/** 단일 실험체 — all 검색 테이블에서 ally1/ally2/third 3 위치별 fetch 후 trio 단위 dedup. */
 async function fetchTrioWeaponSingle(char1: number): Promise<AggregatedTrioWeapon[]> {
   const results = await Promise.all([
     fetchTrioWeaponSinglePosition(char1, "ally1_char"),
@@ -459,7 +459,7 @@ async function fetchTrioWeaponSingle(char1: number): Promise<AggregatedTrioWeapo
   return aggregateSearchRows(dedupedRows).filter((r) => !hasExcludedChar(r));
 }
 
-/** 캐릭터 미지정 — all 검색 테이블 top N */
+/** 실험체 미지정 — all 검색 테이블 top N */
 async function fetchTrioWeaponAll(): Promise<AggregatedTrioWeapon[]> {
   const supabase = createServerClient();
   const select =
@@ -484,7 +484,7 @@ async function fetchTrioWeaponAll(): Promise<AggregatedTrioWeapon[]> {
 }
 
 // ─── L1 캐시 래퍼 ────────────────────────────────────────────────────────────
-// 무기 지정 요청은 member+weapon bucket만 캐시한다. 두 번째 캐릭터/무기,
+// 무기 지정 요청은 member+weapon bucket만 캐시한다. 두 번째 실험체/무기,
 // sortBy/limit은 캐시 밖에서 적용하여 pair+weapon 키 폭발을 막는다.
 
 function getCachedTrioWeaponPair(char1: number, char2: number) {
@@ -641,7 +641,7 @@ export async function GET(request: NextRequest) {
     }
     const latencyMs = Date.now() - t0;
 
-    // member+weapon bucket은 anchor만 보장한다. 두 번째 캐릭터/무기 조건은
+    // member+weapon bucket은 anchor만 보장한다. 두 번째 실험체/무기 조건은
     // 캐시 밖에서 적용하여 pair별 캐시 엔트리를 만들지 않는다.
     let filtered = aggregated;
     if (char1 != null) {

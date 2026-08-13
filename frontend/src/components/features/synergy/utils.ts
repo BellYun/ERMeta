@@ -72,7 +72,7 @@ export function deduplicateResults(
 ): TrioResult[] {
   if (selectedAllies.length === 2) {
     const [allyA, allyB] = selectedAllies;
-    // 2명 고정 시 3번째 캐릭터 기준으로 중복 제거 (서버 인덱스 기준 최우선)
+    // 2명 고정 시 3번째 실험체 기준으로 중복 제거 (서버 인덱스 기준 최우선)
     const map = new Map<number, { rec: TrioResult; idx: number }>();
     for (let i = 0; i < results.length; i++) {
       const rec = results[i];
@@ -90,7 +90,7 @@ export function deduplicateResults(
 
   if (selectedAllies.length === 1) {
     const selected = selectedAllies[0];
-    // 나머지 두 캐릭터 쌍(min-max) 기준 중복 제거 (서버 인덱스 기준 최우선)
+    // 나머지 두 실험체 쌍(min-max) 기준 중복 제거 (서버 인덱스 기준 최우선)
     const map = new Map<string, { rec: TrioResult; idx: number }>();
     for (let i = 0; i < results.length; i++) {
       const rec = results[i];

@@ -16,11 +16,11 @@ interface LocalePageProps {
 const COPY: Record<ActiveRouteLocale, MatrixCopy> = {
   ko: {
     title: "시너지 매트릭스",
-    metadataTitle: "시너지 매트릭스 - 캐릭터 조합 상성 히트맵",
+    metadataTitle: "시너지 매트릭스 - 실험체 조합 상성 히트맵",
     description:
-      "이터널리턴 캐릭터 87명의 조합 상성을 Canvas 히트맵으로 탐색하고, 평균 RP 상승량과 승률 상승량을 비교합니다.",
+      "이터널리턴 실험체 87명의 조합 상성을 Canvas 히트맵으로 탐색하고, 평균 RP 상승량과 승률 상승량을 비교합니다.",
     kicker: "10.x 다이아+ 누적",
-    subtitle: "캐릭터를 기준 행, 동료를 열로 놓고 조합 상성을 한 화면에서 비교합니다.",
+    subtitle: "실험체를 기준 행, 동료를 열로 놓고 조합 상성을 한 화면에서 비교합니다.",
     body: "색이 진할수록 선택한 지표의 변화가 큽니다. 셀을 선택하면 공유 가능한 링크와 조합 상세로 이동할 수 있습니다.",
     loading: "시너지 매트릭스를 준비하는 중",
     loadFailed: "시너지 매트릭스를 불러오지 못했습니다",
@@ -28,7 +28,7 @@ const COPY: Record<ActiveRouteLocale, MatrixCopy> = {
       metric: "지표",
       minGames: "최소 표본",
       sort: "정렬",
-      focus: "기준 캐릭터",
+      focus: "기준 실험체",
     },
     metrics: {
       rpLift: "RP 상승량",
@@ -45,7 +45,7 @@ const COPY: Record<ActiveRouteLocale, MatrixCopy> = {
       games: "표본 많은 순",
     },
     selectedPair: "선택한 조합",
-    hoverHelp: "셀을 터치하거나 클릭하면 기준 캐릭터와 동료 캐릭터의 조합 지표를 봅니다.",
+    hoverHelp: "셀을 터치하거나 클릭하면 기준 실험체와 동료 실험체의 조합 지표를 봅니다.",
     noCell: "표본 조건을 만족하는 셀을 선택해주세요.",
     topPositive: "RP 상승 상위 조합",
     topNegative: "RP 하락 상위 조합",
@@ -60,7 +60,7 @@ const COPY: Record<ActiveRouteLocale, MatrixCopy> = {
     copyLink: "링크 복사",
     copied: "복사됨",
     accessibilityTitle:
-      "캐릭터 조합 상성 히트맵. 방향키로 선택 셀을 이동하고 엔터 없이 셀 이동 즉시 선택됩니다.",
+      "실험체 조합 상성 히트맵. 방향키로 선택 셀을 이동하고 엔터 없이 셀 이동 즉시 선택됩니다.",
   },
   en: {
     title: "Synergy Matrix",

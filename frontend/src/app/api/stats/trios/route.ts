@@ -195,7 +195,7 @@ async function fetchSearchRows(
 }
 
 /**
- * DB fetch + dedup + filter(제외 캐릭터) + 집계.
+ * DB fetch + dedup + filter(제외 실험체) + 집계.
  * sort/limit 은 캐시 외부에서 적용해 sortBy/limit 토글에도 L1 hit 유지.
  *
  * char1/char2 는 호출 측에서 char1 < char2 로 정규화된 값을 전달해야 한다.
@@ -343,12 +343,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "missing_character1" }, { status: 400 });
   }
 
-  // 동일 캐릭터 금지
+  // 동일 실험체 금지
   if (rawChar1 != null && rawChar2 != null && rawChar1 === rawChar2) {
     return NextResponse.json({ error: "duplicate_characters" }, { status: 400 });
   }
 
-  // 제외 캐릭터 선택 시 빈 결과
+  // 제외 실험체 선택 시 빈 결과
   if (
     (rawChar1 != null && EXCLUDED_CHARACTER_CODES.has(rawChar1)) ||
     (rawChar2 != null && EXCLUDED_CHARACTER_CODES.has(rawChar2))
