@@ -24,7 +24,6 @@ import { CharacterSearchCombobox } from "@/components/features/character-analysi
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { LocaleRecommendationBanner } from "@/components/layout/LocaleRecommendationBanner";
 import { Navigation } from "@/components/layout/Navigation";
-import { SiteCommandPalette } from "@/components/layout/SiteCommandPalette";
 import { stripRouteLocaleFromPathname, withCurrentRouteLocale } from "@/lib/localizedPath";
 import { cn } from "@/lib/utils";
 
@@ -274,9 +273,11 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
               ))}
             </nav>
 
-            <SiteCommandPalette
-              patchAnalysisPatch={patchAnalysisPatch}
-              className={normalizedPathname === "/" ? "hidden" : "hidden lg:inline-flex"}
+            <CharacterSearchCombobox
+              className={cn(
+                "hidden w-64 max-w-64 shrink-0 xl:w-72 xl:max-w-72",
+                normalizedPathname !== "/" && "lg:block"
+              )}
             />
 
             <div className="ml-auto flex items-center gap-2 lg:gap-3">

@@ -1,12 +1,12 @@
 .shell {
-  --color-background: oklch(96% 0.014 245);
-  --color-surface: oklch(98% 0.009 245);
-  --color-surface-2: oklch(91% 0.025 245);
-  --color-border: oklch(63% 0.035 245);
+  --color-background: oklch(97% 0.008 245);
+  --color-surface: oklch(98% 0.006 245);
+  --color-surface-2: oklch(94% 0.015 245);
+  --color-border: oklch(74% 0.022 245);
   --color-foreground: oklch(17% 0.025 252);
   --color-muted-foreground: oklch(40% 0.035 248);
   --color-accent: oklch(43% 0.15 245);
-  --color-accent-muted: oklch(90% 0.05 245);
+  --color-accent-muted: oklch(92% 0.035 245);
   --color-accent-foreground: oklch(37% 0.16 245);
 
   box-sizing: border-box;
@@ -27,27 +27,27 @@
 }
 
 :global(html[data-theme="dark"]) .shell {
-  --color-background: oklch(13% 0.022 252);
-  --color-surface: oklch(17% 0.024 252);
-  --color-surface-2: oklch(23% 0.03 252);
-  --color-border: oklch(50% 0.04 248);
+  --color-background: oklch(14% 0.018 252);
+  --color-surface: oklch(18% 0.02 252);
+  --color-surface-2: oklch(22% 0.024 252);
+  --color-border: oklch(36% 0.028 250);
   --color-foreground: oklch(96% 0.016 245);
   --color-muted-foreground: oklch(74% 0.032 248);
   --color-accent: oklch(83% 0.15 245);
-  --color-accent-muted: oklch(28% 0.065 245);
+  --color-accent-muted: oklch(27% 0.045 245);
   --color-accent-foreground: oklch(88% 0.13 245);
 }
 
 @media (prefers-color-scheme: dark) {
   :global(html:not([data-theme="light"])) .shell {
-    --color-background: oklch(13% 0.022 252);
-    --color-surface: oklch(17% 0.024 252);
-    --color-surface-2: oklch(23% 0.03 252);
-    --color-border: oklch(50% 0.04 248);
+    --color-background: oklch(14% 0.018 252);
+    --color-surface: oklch(18% 0.02 252);
+    --color-surface-2: oklch(22% 0.024 252);
+    --color-border: oklch(36% 0.028 250);
     --color-foreground: oklch(96% 0.016 245);
     --color-muted-foreground: oklch(74% 0.032 248);
     --color-accent: oklch(83% 0.15 245);
-    --color-accent-muted: oklch(28% 0.065 245);
+    --color-accent-muted: oklch(27% 0.045 245);
     --color-accent-foreground: oklch(88% 0.13 245);
   }
 }

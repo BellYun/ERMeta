@@ -11,13 +11,13 @@
 
 export const colors = {
   // 배경 계층
-  background: "oklch(98% 0.009 245)",
-  surface: "oklch(98% 0.009 245)",
-  surface2: "oklch(96% 0.012 245)",
-  surface3: "oklch(91% 0.025 245)",
-  surface4: "oklch(91% 0.025 245)",
-  border: "oklch(84% 0.026 245)",
-  borderLight: "oklch(63% 0.035 245)",
+  background: "oklch(98% 0.006 245)",
+  surface: "oklch(98% 0.006 245)",
+  surface2: "oklch(97% 0.008 245)",
+  surface3: "oklch(94% 0.015 245)",
+  surface4: "oklch(94% 0.015 245)",
+  border: "oklch(88% 0.018 245)",
+  borderLight: "oklch(60% 0.035 245)",
 
   // 텍스트
   foreground: "oklch(17% 0.025 252)",
@@ -27,7 +27,7 @@ export const colors = {
   primary: "oklch(17% 0.025 252)",
   primaryHover: "oklch(25% 0.03 252)",
   accent: "oklch(43% 0.15 245)",
-  accentMuted: "oklch(90% 0.05 245)",
+  accentMuted: "oklch(92% 0.035 245)",
   accentForeground: "oklch(37% 0.16 245)",
   accentGold: "oklch(37% 0.16 245)",
   accentPurple: "oklch(34% 0.032 250)",
@@ -54,19 +54,19 @@ export const colors = {
 } as const;
 
 export const darkColors = {
-  background: "oklch(13% 0.022 252)",
-  surface: "oklch(13% 0.022 252)",
-  surface2: "oklch(17% 0.024 252)",
-  surface3: "oklch(23% 0.03 252)",
-  surface4: "oklch(23% 0.03 252)",
-  border: "oklch(31% 0.035 250)",
-  borderLight: "oklch(50% 0.04 248)",
+  background: "oklch(14% 0.018 252)",
+  surface: "oklch(14% 0.018 252)",
+  surface2: "oklch(18% 0.02 252)",
+  surface3: "oklch(22% 0.024 252)",
+  surface4: "oklch(22% 0.024 252)",
+  border: "oklch(30% 0.026 250)",
+  borderLight: "oklch(55% 0.04 248)",
   foreground: "oklch(96% 0.016 245)",
   mutedForeground: "oklch(82% 0.024 245)",
   primary: "oklch(96% 0.016 245)",
   primaryHover: "oklch(88% 0.02 245)",
   accent: "oklch(83% 0.15 245)",
-  accentMuted: "oklch(28% 0.065 245)",
+  accentMuted: "oklch(27% 0.045 245)",
   accentForeground: "oklch(88% 0.13 245)",
   accentGold: "oklch(88% 0.13 245)",
   accentPurple: "oklch(82% 0.024 245)",

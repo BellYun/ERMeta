@@ -21,8 +21,9 @@ Modern-minimal and technical, using a custom dual-mode data-hub system tuned for
 ## Theme
 
 - **Mineral Signal** is the identity: a clear mineral blue around `245°` marks active states, rank emphasis, filters, links, and focus signals.
-- Light mode is an icy analysis board: a cold paper canvas (`oklch(96% 0.014 245)`) with bright surfaces and dark blue-black ink. Its working accent is deliberately deeper (`oklch(43% 0.15 245)`) for legibility.
-- Dark mode is a night tactical screen: a deep blue-black canvas (`oklch(13% 0.022 252)`) with mineral-tinted elevations. Its signal accent is deliberately brighter (`oklch(83% 0.15 245)`).
+- Light mode is a quiet analysis board: a nearly neutral mineral paper canvas (`oklch(97% 0.008 245)`) with bright surfaces, low-chroma separators, and dark blue-black ink. Its working accent remains deliberately deeper (`oklch(43% 0.15 245)`) for legibility.
+- Dark mode is a night tactical screen: a deep blue-black canvas (`oklch(14% 0.018 252)`) with restrained mineral-tinted elevations. Search and form surfaces stay dark instead of flipping bright; the signal accent remains deliberately brighter (`oklch(83% 0.15 245)`).
+- Default rules are intentionally quiet during long reading sessions. Strong rules are reserved for controls, focus, selection, and high-information boundaries.
 - The two modes are not visual inverses and do not need matching surface relationships. They share the accent hue, component geometry, and information hierarchy.
 - The navigation band remains a deep mineral brand strip in both modes so the wordmark and bright signal stay recognizable while the page canvas changes independently.
 - Character art and real game data provide visual richness. Success remains green, warnings amber, and losses red so mineral blue never replaces meaning-bearing status colour.
@@ -78,7 +79,7 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 - Wordmark treatment, deep mineral navigation band, Mineral Signal placement, type roles, focus treatment, button geometry, rules, and spacing tokens.
 - The `245°` point hue and semantic meaning of every status colour.
 - Loading, empty, error, disabled, and success state language.
-- Dense panel borders, table headers, form controls, and active-tab signals across every route family.
+- Dense information geometry, table headers, form controls, and active-tab signals across every route family. Repeated panel and row rules stay subordinate to text and data.
 
 ## What pages MAY differ on
 
@@ -97,18 +98,18 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 
 ```css
 @theme {
-  --color-paper: oklch(98% 0.009 245);
-  --color-paper-2: oklch(96% 0.012 245);
-  --color-paper-3: oklch(91% 0.025 245);
+  --color-paper: oklch(98% 0.006 245);
+  --color-paper-2: oklch(97% 0.008 245);
+  --color-paper-3: oklch(94% 0.015 245);
   --color-ink: oklch(17% 0.025 252);
   --color-ink-2: oklch(25% 0.03 252);
-  --color-rule: oklch(84% 0.026 245);
-  --color-rule-2: oklch(63% 0.035 245);
+  --color-rule: oklch(88% 0.018 245);
+  --color-rule-2: oklch(60% 0.035 245);
   --color-accent: oklch(43% 0.15 245);
   --color-brand-deep: oklch(18% 0.03 252);
-  --color-app-canvas: oklch(96% 0.014 245);
-  --color-app-surface: oklch(98% 0.009 245);
-  --color-app-rule: oklch(63% 0.035 245);
+  --color-app-canvas: oklch(97% 0.008 245);
+  --color-app-surface: oklch(98% 0.006 245);
+  --color-app-rule: oklch(74% 0.022 245);
   --color-app-ink: oklch(17% 0.025 252);
   --font-display: "Pretendard", ui-sans-serif, sans-serif;
   --font-body: "Pretendard", ui-sans-serif, sans-serif;
@@ -128,18 +129,18 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 }
 
 [data-theme="dark"] {
-  --color-paper: oklch(13% 0.022 252);
-  --color-paper-2: oklch(17% 0.024 252);
-  --color-paper-3: oklch(23% 0.03 252);
+  --color-paper: oklch(14% 0.018 252);
+  --color-paper-2: oklch(18% 0.02 252);
+  --color-paper-3: oklch(22% 0.024 252);
   --color-ink: oklch(96% 0.016 245);
   --color-ink-2: oklch(88% 0.02 245);
-  --color-rule: oklch(31% 0.035 250);
-  --color-rule-2: oklch(50% 0.04 248);
+  --color-rule: oklch(30% 0.026 250);
+  --color-rule-2: oklch(55% 0.04 248);
   --color-accent: oklch(83% 0.15 245);
   --color-brand-deep: oklch(10% 0.028 252);
-  --color-app-canvas: oklch(13% 0.022 252);
-  --color-app-surface: oklch(17% 0.024 252);
-  --color-app-rule: oklch(50% 0.04 248);
+  --color-app-canvas: oklch(14% 0.018 252);
+  --color-app-surface: oklch(18% 0.02 252);
+  --color-app-rule: oklch(36% 0.028 250);
   --color-app-ink: oklch(96% 0.016 245);
 }
 ```
@@ -151,23 +152,23 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
   "$schema": "https://design-tokens.github.io/community-group/format/",
   "color": {
     "light": {
-      "paper": { "$value": "oklch(98% 0.009 245)", "$type": "color" },
+      "paper": { "$value": "oklch(98% 0.006 245)", "$type": "color" },
       "ink": { "$value": "oklch(17% 0.025 252)", "$type": "color" },
       "accent": { "$value": "oklch(43% 0.15 245)", "$type": "color" },
       "brandDeep": { "$value": "oklch(18% 0.03 252)", "$type": "color" },
-      "rule": { "$value": "oklch(63% 0.035 245)", "$type": "color" },
-      "appCanvas": { "$value": "oklch(96% 0.014 245)", "$type": "color" },
-      "appSurface": { "$value": "oklch(98% 0.009 245)", "$type": "color" },
+      "rule": { "$value": "oklch(74% 0.022 245)", "$type": "color" },
+      "appCanvas": { "$value": "oklch(97% 0.008 245)", "$type": "color" },
+      "appSurface": { "$value": "oklch(98% 0.006 245)", "$type": "color" },
       "appInk": { "$value": "oklch(17% 0.025 252)", "$type": "color" }
     },
     "dark": {
-      "paper": { "$value": "oklch(13% 0.022 252)", "$type": "color" },
+      "paper": { "$value": "oklch(14% 0.018 252)", "$type": "color" },
       "ink": { "$value": "oklch(96% 0.016 245)", "$type": "color" },
       "accent": { "$value": "oklch(83% 0.15 245)", "$type": "color" },
       "brandDeep": { "$value": "oklch(10% 0.028 252)", "$type": "color" },
-      "rule": { "$value": "oklch(50% 0.04 248)", "$type": "color" },
-      "appCanvas": { "$value": "oklch(13% 0.022 252)", "$type": "color" },
-      "appSurface": { "$value": "oklch(17% 0.024 252)", "$type": "color" },
+      "rule": { "$value": "oklch(36% 0.028 250)", "$type": "color" },
+      "appCanvas": { "$value": "oklch(14% 0.018 252)", "$type": "color" },
+      "appSurface": { "$value": "oklch(18% 0.02 252)", "$type": "color" },
       "appInk": { "$value": "oklch(96% 0.016 245)", "$type": "color" }
     }
   },
@@ -201,39 +202,39 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 
 ```css
 :root {
-  --background: 96% 0.014 245;
+  --background: 97% 0.008 245;
   --foreground: 17% 0.025 252;
-  --card: 98% 0.009 245;
+  --card: 98% 0.006 245;
   --card-foreground: 17% 0.025 252;
-  --popover: 98% 0.009 245;
+  --popover: 98% 0.006 245;
   --popover-foreground: 17% 0.025 252;
   --primary: 43% 0.15 245;
-  --primary-foreground: 98% 0.009 245;
-  --secondary: 91% 0.025 245;
+  --primary-foreground: 98% 0.006 245;
+  --secondary: 94% 0.015 245;
   --secondary-foreground: 27% 0.03 250;
-  --muted: 91% 0.025 245;
+  --muted: 94% 0.015 245;
   --muted-foreground: 44% 0.035 248;
-  --border: 63% 0.035 245;
-  --input: 52% 0.045 245;
+  --border: 74% 0.022 245;
+  --input: 60% 0.035 245;
   --ring: 43% 0.18 245;
   --radius: 0.625rem;
 }
 
 .dark {
-  --background: 13% 0.022 252;
+  --background: 14% 0.018 252;
   --foreground: 96% 0.016 245;
-  --card: 17% 0.024 252;
+  --card: 18% 0.02 252;
   --card-foreground: 96% 0.016 245;
-  --popover: 17% 0.024 252;
+  --popover: 18% 0.02 252;
   --popover-foreground: 96% 0.016 245;
   --primary: 83% 0.15 245;
-  --primary-foreground: 13% 0.022 252;
-  --secondary: 23% 0.03 252;
+  --primary-foreground: 14% 0.018 252;
+  --secondary: 22% 0.024 252;
   --secondary-foreground: 88% 0.02 245;
-  --muted: 23% 0.03 252;
+  --muted: 22% 0.024 252;
   --muted-foreground: 74% 0.032 248;
-  --border: 50% 0.04 248;
-  --input: 62% 0.05 245;
+  --border: 36% 0.028 250;
+  --input: 55% 0.04 245;
   --ring: 72% 0.18 245;
   --radius: 0.625rem;
 }

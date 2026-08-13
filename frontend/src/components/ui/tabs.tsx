@@ -24,17 +24,21 @@ interface TabsProps {
 function Tabs({ defaultValue, value, onValueChange, className, children }: TabsProps) {
   const [internalValue, setInternalValue] = React.useState(defaultValue ?? "");
   const controlled = value !== undefined;
+  const activeValue = value ?? internalValue;
+  const handleValueChange = React.useCallback(
+    (nextValue: string) => {
+      if (!controlled) setInternalValue(nextValue);
+      onValueChange?.(nextValue);
+    },
+    [controlled, onValueChange]
+  );
+  const contextValue = React.useMemo(
+    () => ({ value: activeValue, onValueChange: handleValueChange }),
+    [activeValue, handleValueChange]
+  );
 
   return (
-    <TabsContext.Provider
-      value={{
-        value: controlled ? value! : internalValue,
-        onValueChange: (v) => {
-          if (!controlled) setInternalValue(v);
-          onValueChange?.(v);
-        },
-      }}
-    >
+    <TabsContext.Provider value={contextValue}>
       <div className={cn("w-full", className)}>{children}</div>
     </TabsContext.Provider>
   );

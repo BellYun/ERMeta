@@ -13,7 +13,6 @@ import { buildFallbackMap, getCharacterImageUrl, resolveCharacterName } from "@/
 import type { Tier } from "@/lib/design-tokens";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
-import { TierGroup } from "@/utils/tier";
 import { TierBadge } from "../TierBadge";
 import { StatCard, SkeletonCard } from "./StatCard";
 
@@ -82,15 +81,12 @@ export function CharacterHeader({
   const tierRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
   const weaponRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
 
-  // 단일 + 누적(+) 옵션 (다이아 / 다이아+ / 메테오 / 메테오+ / 미스릴 이상 / 1000위)
+  // 누적(+) 티어 옵션 (다이아+ / 메테오+ / 미스릴 이상)
   const tierOptionsList = React.useMemo(
     () => [
-      { value: "DIAMOND", label: t("tiers.DIAMOND") },
       { value: "DIAMOND_PLUS", label: `${t("tiers.DIAMOND")}+` },
-      { value: "METEORITE", label: t("tiers.METEORITE") },
       { value: "METEORITE_PLUS", label: `${t("tiers.METEORITE")}+` },
       { value: "MITHRIL_PLUS", label: t("tiers.MITHRIL") },
-      { value: TierGroup.IN1000, label: t("tiers.IN1000") },
     ],
     [t]
   );

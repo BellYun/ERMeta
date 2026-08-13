@@ -4,6 +4,7 @@ import {
   BarChart3,
   Gauge,
   Layers,
+  Layers3,
   Network,
   NotebookText,
   Search,
@@ -77,6 +78,12 @@ export function SiteCommandPalette({ patchAnalysisPatch, className }: SiteComman
         label: tNav("characterLab"),
         href: withCurrentRouteLocale(pathname, "/character-lab"),
         icon: Layers,
+      },
+      {
+        key: "composition-lab",
+        label: tNav("characterCompositionLab"),
+        href: withCurrentRouteLocale(pathname, "/composition-lab"),
+        icon: Layers3,
       },
       {
         key: "patches",
