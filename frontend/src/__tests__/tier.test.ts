@@ -160,8 +160,8 @@ describe("parseTierGroup", () => {
     expect(parseTierGroup("DIAMOND_BELOW")).toBeNull();
   });
 
-  it("PLATINUM은 통과 (수집·노출 대상)", () => {
-    expect(parseTierGroup("PLATINUM")).toBe(TierGroup.PLATINUM);
+  it("PLATINUM은 null (수집·노출 대상에서 제외)", () => {
+    expect(parseTierGroup("PLATINUM")).toBeNull();
   });
 
   it("잘못된 값은 null", () => {
@@ -169,9 +169,8 @@ describe("parseTierGroup", () => {
   });
 });
 describe("expandCumulativeTier", () => {
-  it("플레티넘+는 플레티넘부터 미스릴까지 누적한다", () => {
-    expect(expandCumulativeTier("PLATINUM_PLUS")).toEqual([
-      TierGroup.PLATINUM,
+  it("다이아몬드+는 다이아몬드부터 미스릴까지 누적한다", () => {
+    expect(expandCumulativeTier("DIAMOND_PLUS")).toEqual([
       TierGroup.DIAMOND,
       TierGroup.METEORITE,
       TierGroup.MITHRIL,

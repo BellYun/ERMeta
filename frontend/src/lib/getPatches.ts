@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { STATS_EXCLUDED_PATCHES, getStatsPatchVersions } from "@/data/patch-notes";
+import { getVisibleStatsPatchVersions, isVisibleStatsPatchVersion } from "@/data/patch-notes";
 import { createServerClient } from "@/lib/supabase";
 
 /**
@@ -18,19 +18,17 @@ export const getPatches = unstable_cache(
         .order("startDate", { ascending: false })
         .limit(10);
 
-      const localPatchVersions = getStatsPatchVersions();
+      const localPatchVersions = getVisibleStatsPatchVersions();
       if (!error && data && data.length > 0) {
-        const activePatchVersions = data
-          .map((p) => p.version)
-          .filter((v) => !STATS_EXCLUDED_PATCHES.has(v));
+        const activePatchVersions = data.map((p) => p.version).filter(isVisibleStatsPatchVersion);
         return Array.from(new Set([...localPatchVersions, ...activePatchVersions]));
       }
       return localPatchVersions;
     } catch {
-      return getStatsPatchVersions();
+      return getVisibleStatsPatchVersions();
     }
   },
-  ["patches", "patch-notes-v5"],
+  ["patches", "patch-notes-v6-visible-from-11-7"],
   {
     revalidate: 21600,
     tags: ["patches"],

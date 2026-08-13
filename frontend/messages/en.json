@@ -248,7 +248,6 @@
     "patchOption": "Patch {patch}",
     "noPatch": "No patch data",
     "tiers": {
-      "PLATINUM": "Platinum",
       "DIAMOND": "Diamond",
       "METEORITE": "Meteorite",
       "MITHRIL": "Mithril"
@@ -354,7 +353,6 @@
     "emptyPatchData": "Checking samples for this patch.",
     "loadingPatchInfo": "Loading patch data...",
     "tiers": {
-      "PLATINUM": "Platinum",
       "DIAMOND": "Diamond",
       "METEORITE": "Meteorite",
       "MITHRIL": "Mithril+",

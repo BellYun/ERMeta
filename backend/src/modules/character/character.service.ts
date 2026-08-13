@@ -7,7 +7,6 @@ const STATS_EXCLUDED_PATCHES = new Set(['11.0']);
 const WEAPON_AGNOSTIC_CHARACTER_CODES = new Set([27]);
 const WEAPON_AGNOSTIC_SENTINEL = 0;
 const TIER_CUMULATIVE: Record<string, string[]> = {
-  PLATINUM_PLUS: ['PLATINUM', 'DIAMOND', 'METEORITE', 'MITHRIL'],
   DIAMOND_PLUS: ['DIAMOND', 'METEORITE', 'MITHRIL'],
   METEORITE_PLUS: ['METEORITE', 'MITHRIL'],
   MITHRIL_PLUS: ['MITHRIL'],
@@ -66,14 +65,9 @@ function formatPercent(value: number) {
 }
 
 function formatInsightTier(locale: InsightLocale, tier: string) {
-  if (tier === 'PLATINUM_PLUS') {
-    if (locale === 'ja') return 'プラチナ以上';
-    if (locale === 'ko') return '플레티넘 이상';
-    return 'Platinum+';
-  }
   if (tier === 'MITHRIL_PLUS') {
     if (locale === 'ja') return 'ミスリル以上';
-    if (locale === 'ko') return '미스릴 이상';
+    if (locale === 'ko') return '미스릴+';
     return 'Mithril+';
   }
   if (tier === 'METEORITE_PLUS') {

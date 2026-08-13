@@ -55,6 +55,11 @@ interface PartnerTypeInfo {
   members: CharacterWeaponMember[];
 }
 
+function formatPartnerTypeLabel(role: string, fitRole: string) {
+  const typedFitRole = fitRole.endsWith("형") ? fitRole : `${fitRole}형`;
+  return `${typedFitRole} ${role}`;
+}
+
 function getCharacterWeaponHref(member: CharacterWeaponMember) {
   const weaponQuery = member.weapon != null ? `?weapon=${member.weapon}` : "";
   return `/character/${member.characterCode}${weaponQuery}`;
@@ -109,7 +114,7 @@ function PartnerTypePopover({
   membersLabel: string;
   profileUnit: string;
 }) {
-  const label = `${partner.role} ${partner.fitRole}`;
+  const label = formatPartnerTypeLabel(partner.role, partner.fitRole);
 
   if (partner.members.length === 0) {
     return <span>{label}</span>;
@@ -128,10 +133,7 @@ function PartnerTypePopover({
         role="tooltip"
         className="pointer-events-auto invisible fixed inset-x-4 top-1/2 z-[1000] w-auto -translate-y-1/2 rounded-md border border-[var(--color-border-light)] bg-[var(--color-surface)] p-3 opacity-0 shadow-xl transition group-hover/partner:visible group-hover/partner:opacity-100 group-focus-within/partner:visible group-focus-within/partner:opacity-100 sm:absolute sm:inset-x-auto sm:left-auto sm:right-0 sm:top-[calc(100%+0.5rem)] sm:w-[min(22rem,calc(100vw-3rem))] sm:translate-y-1 sm:before:absolute sm:before:-top-2 sm:before:left-0 sm:before:h-2 sm:before:w-full sm:before:content-[''] sm:group-hover/partner:translate-y-0 sm:group-focus-within/partner:translate-y-0"
       >
-        <span className="block text-xs text-[var(--color-muted-foreground)]">{partner.role}</span>
-        <strong className="mt-0.5 block text-sm text-[var(--color-foreground)]">
-          {partner.fitRole}
-        </strong>
+        <strong className="block text-sm text-[var(--color-foreground)]">{label}</strong>
         <span className="mt-2 block text-[10px] font-semibold text-[var(--color-muted-foreground)]">
           {membersLabel} · {partner.members.length}
           {profileUnit}

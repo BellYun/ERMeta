@@ -5,11 +5,18 @@ import {
   getNotesByPatch,
   getPatchSummary,
   getStatsPatchVersions,
+  getVisibleStatsPatchVersions,
 } from "@/data/patch-notes";
 
 describe("11.7 patch notes", () => {
   it("11.7을 패치 목록에 노출한다", () => {
     expect(getAllPatchVersions()).toContain("11.7");
+  });
+
+  it("메인과 실험체 분석에서 11.7부터 노출한다", () => {
+    expect(getVisibleStatsPatchVersions()).toContain("11.7");
+    expect(getVisibleStatsPatchVersions()).not.toContain("11.6");
+    expect(getVisibleStatsPatchVersions()).not.toContain("10.7");
   });
 
   it("공식 실험체 변경 수와 유형을 보존한다", () => {

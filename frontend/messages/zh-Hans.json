@@ -234,7 +234,6 @@
     "patchOption": "版本 {patch}",
     "noPatch": "暂无版本数据",
     "tiers": {
-      "PLATINUM": "白金",
       "DIAMOND": "钻石",
       "METEORITE": "陨石",
       "MITHRIL": "秘银"
@@ -385,7 +384,6 @@
     "emptyPatchData": "正在确认该版本的样本。",
     "loadingPatchInfo": "正在加载版本数据...",
     "tiers": {
-      "PLATINUM": "白金",
       "DIAMOND": "钻石",
       "METEORITE": "陨石",
       "MITHRIL": "秘银+",

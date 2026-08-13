@@ -92,16 +92,9 @@ function formatNumber(value: number) {
 }
 
 function formatTierLabel(locale: RouteLocale, tier: string) {
-  if (tier === "PLATINUM_PLUS") {
-    if (locale === "ja") return "プラチナ以上";
-    if (locale === "ko") return "플레티넘 이상";
-    if (locale === "zh-Hans") return "铂金以上";
-    if (locale === "zh-Hant") return "白金以上";
-    return "Platinum+";
-  }
   if (tier === "MITHRIL_PLUS") {
     if (locale === "ja") return "ミスリル以上";
-    if (locale === "ko") return "미스릴 이상";
+    if (locale === "ko") return "미스릴+";
     if (locale === "zh-Hans") return "秘银以上";
     if (locale === "zh-Hant") return "秘銀以上";
     return "Mithril+";

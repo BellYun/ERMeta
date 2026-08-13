@@ -241,7 +241,6 @@
     "patchOption": "パッチ {patch}",
     "noPatch": "パッチ集計を確認中",
     "tiers": {
-      "PLATINUM": "プラチナ",
       "DIAMOND": "ダイヤ",
       "METEORITE": "メテオライト",
       "MITHRIL": "ミスリル"
@@ -392,7 +391,6 @@
     "emptyPatchData": "このパッチのデータはありません。",
     "loadingPatchInfo": "パッチデータを読み込み中...",
     "tiers": {
-      "PLATINUM": "プラチナ",
       "DIAMOND": "ダイヤ",
       "METEORITE": "メテオライト",
       "MITHRIL": "ミスリル+",

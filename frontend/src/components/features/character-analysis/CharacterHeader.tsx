@@ -87,13 +87,10 @@ export function CharacterHeader({
   const tierRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
   const weaponRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
 
-  // 누적(+) 티어 옵션 (플레티넘+ / 다이아+ / 메테오+ / 미스릴 이상)
+  // 누적(+) 티어 옵션 (다이아+ / 메테오+ / 미스릴+)
   const tierOptionsList = React.useMemo(
     () =>
       CHARACTER_ANALYSIS_TIERS.map((value) => {
-        if (value === "PLATINUM_PLUS") {
-          return { value, label: `${t("tiers.PLATINUM")}+` };
-        }
         if (value === "DIAMOND_PLUS") {
           return { value, label: `${t("tiers.DIAMOND")}+` };
         }

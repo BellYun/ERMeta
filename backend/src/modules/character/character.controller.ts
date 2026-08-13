@@ -25,7 +25,7 @@ export class CharacterController {
     return this.characterService.getCharacterStats(
       parseInt(characterCode, 10),
       query.patchVersion ?? '',
-      query.tier ?? 'PLATINUM_PLUS',
+      query.tier ?? 'DIAMOND_PLUS',
     );
   }
 
@@ -38,7 +38,7 @@ export class CharacterController {
     return this.characterService.getCharacterInsight(
       parseInt(characterCode, 10),
       query.patchVersion ?? '',
-      query.tier ?? 'PLATINUM_PLUS',
+      query.tier ?? 'DIAMOND_PLUS',
       query.locale ?? 'ko',
     );
   }

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { CharacterPageContent } from "@/components/features/character-analysis/CharacterPageContent";
 import { CHARACTER_CODES } from "@/components/features/character-analysis/constants";
-import { getStatsPatchVersions } from "@/data/patch-notes";
+import { getVisibleStatsPatchVersions } from "@/data/patch-notes";
 import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
 import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
 import { getCachedCharacterStats } from "@/lib/characterStats";
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const code = parseInt(rawCode, 10);
   const translatorPromise = getStaticTranslator("characterMetadata", language);
-  const currentPatch = getStatsPatchVersions()[0];
+  const currentPatch = getVisibleStatsPatchVersions()[0];
   const name =
     !Number.isNaN(code) && CHARACTER_CODES.includes(code)
       ? resolveCharacterName(code, loadL10nMap(language), buildFallbackMap())
@@ -59,11 +59,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             : t("titleWithName", { name });
     const description =
       locale === "ko" && stats && stats.totalGames > 0
-        ? `이터널리턴 ${name} ${currentPatch} 패치 플레티넘 이상 통계. 승률 ${stats.winRate.toFixed(1)}%, 픽률 ${stats.pickRate.toFixed(1)}%, 평균 RP ${stats.averageRP.toFixed(1)}, 무기와 조합 데이터.`
+        ? `이터널리턴 ${name} ${currentPatch} 패치 다이아 이상 통계. 승률 ${stats.winRate.toFixed(1)}%, 픽률 ${stats.pickRate.toFixed(1)}%, 평균 RP ${stats.averageRP.toFixed(1)}, 무기와 조합 데이터.`
         : locale === "ja" && stats && stats.totalGames > 0
-          ? `Eternal Return ${name} パッチ${currentPatch}のプラチナ以上統計。勝率${stats.winRate.toFixed(1)}%、ピック率${stats.pickRate.toFixed(1)}%、平均RP ${stats.averageRP.toFixed(1)}、武器とチーム構成データ。`
+          ? `Eternal Return ${name} パッチ${currentPatch}のダイヤ以上統計。勝率${stats.winRate.toFixed(1)}%、ピック率${stats.pickRate.toFixed(1)}%、平均RP ${stats.averageRP.toFixed(1)}、武器とチーム構成データ。`
           : stats && stats.totalGames > 0
-            ? `Eternal Return ${name} stats for patch ${currentPatch} in Platinum+. Win rate ${stats.winRate.toFixed(1)}%, pick rate ${stats.pickRate.toFixed(1)}%, average RP ${stats.averageRP.toFixed(1)}, weapons and team comps.`
+            ? `Eternal Return ${name} stats for patch ${currentPatch} in Diamond+. Win rate ${stats.winRate.toFixed(1)}%, pick rate ${stats.pickRate.toFixed(1)}%, average RP ${stats.averageRP.toFixed(1)}, weapons and team comps.`
             : t("descriptionWithName", { name });
 
     return {
@@ -170,7 +170,7 @@ export default async function LocalizedCharacterPage({ params }: Props) {
   }
 
   // 통계용 패치 목록(제외 패치 제외). 최신 버전이 자동으로 맨 앞(기본 선택)에 온다.
-  const patches = getStatsPatchVersions();
+  const patches = getVisibleStatsPatchVersions();
   const [currentPatch, previousPatch] = patches;
   const [initialStats, initialPrevStats] = await Promise.all([
     currentPatch

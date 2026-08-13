@@ -242,7 +242,6 @@
     "patchOption": "패치 {patch}",
     "noPatch": "패치 없음",
     "tiers": {
-      "PLATINUM": "플레티넘",
       "DIAMOND": "다이아",
       "METEORITE": "메테오라이트",
       "MITHRIL": "미스릴"
@@ -333,7 +332,7 @@
     "sharedContexts": "공통 세부 조합",
     "individualProfile": "개별 프로필",
     "sameType": "같은 유형",
-    "signatureComposition": "대표 상승 조합",
+    "signatureComposition": "대표 추천 조합",
     "showMoreSignatures": "더보기 ({visible}/{total})",
     "collapseSignatures": "접기",
     "gamesUnit": "판",
@@ -348,10 +347,9 @@
     "emptyPatchData": "이 패치의 표본을 확인 중입니다.",
     "loadingPatchInfo": "패치 정보를 불러오는 중...",
     "tiers": {
-      "PLATINUM": "플레티넘",
       "DIAMOND": "다이아",
       "METEORITE": "메테오라이트",
-      "MITHRIL": "미스릴 이상",
+      "MITHRIL": "미스릴+",
       "DIAMOND_BELOW": "다이아 이하"
     }
   },
