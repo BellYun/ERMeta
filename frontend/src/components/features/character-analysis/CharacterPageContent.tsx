@@ -5,10 +5,23 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route";
+import {
+  ADSENSE_SLOT_RESERVATIONS,
+  ADSENSE_SLOTS,
+  canRenderAdSlot,
+} from "@/components/ads/adsenseConfig";
+import { AdSlot } from "@/components/ads/AdSlot";
 import { CharacterAnalysisClient } from "@/components/features/CharacterAnalysisClient";
 import type { ComboEntry, LabCharacter, LabData } from "@/components/features/lab/types";
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary";
 import { LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
+import {
+  getCharacterAffinityGroupName,
+  getCharacterAffinityProfiles,
+  getCharacterAffinitySubtype,
+  getCharacterAffinityTypeMembers,
+  getCharacterRisingCompositions,
+} from "@/lib/characterAffinity";
 import {
   buildCharacterInsight,
   type CharacterInsight,
@@ -655,46 +668,100 @@ export async function CharacterPageContent({
   const serverSummary = buildServerSummary(locale, code, initialStats);
   const summaryTitle = getSummaryTitle(locale);
   const insight = buildInsight(locale, code, initialStats, initialPrevStats);
+  const weaponTypeProfiles = Object.fromEntries(
+    getCharacterAffinityProfiles(code).map(({ group, member }) => {
+      const risingCompositions = getCharacterRisingCompositions(member.profileKey)
+        .toSorted((a, b) => b.adjustedResidual - a.adjustedResidual || b.games - a.games)
+        .slice(0, 20);
+
+      return [
+        member.weapon == null ? "default" : String(member.weapon),
+        {
+          groupName: getCharacterAffinityGroupName(group, locale),
+          subtype: getCharacterAffinitySubtype(member),
+          peers: group.primaryMembers
+            .filter((peer) => peer.profileKey !== member.profileKey)
+            .map((peer) => ({
+              profileKey: peer.profileKey,
+              characterCode: peer.characterCode,
+              characterName: peer.characterName,
+              weapon: peer.weapon,
+              weaponName: peer.weaponName,
+            })),
+          signatures: risingCompositions.map((signature) => ({
+            partnerTypes: signature.partnerTypes.map((partner) => ({
+              role: partner.role,
+              fitRole: partner.fitRole,
+              members: getCharacterAffinityTypeMembers(partner.role, partner.fitRole).map(
+                (typeMember) => ({
+                  profileKey: typeMember.profileKey,
+                  characterCode: typeMember.characterCode,
+                  characterName: typeMember.characterName,
+                  weapon: typeMember.weapon,
+                  weaponName: typeMember.weaponName,
+                })
+              ),
+            })),
+            roleComposition: signature.roleComposition,
+            games: signature.games,
+            adjustedResidual: signature.adjustedResidual,
+          })),
+        },
+      ];
+    })
+  );
 
   return (
     <div className="page-shell flex flex-col gap-5 lg:gap-6">
-      <section className="dashboard-panel px-4 py-4 lg:px-5">
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(320px,420px)] lg:items-start">
+      <section className="dashboard-panel px-3.5 py-3 sm:px-4 lg:px-4">
+        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(300px,390px)] lg:items-center">
           <div className="flex min-w-0 flex-col justify-center">
-            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-muted-foreground)]">
-                <BarChart3 className="h-3.5 w-3.5" />
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--color-muted-foreground)]">
+                <BarChart3 className="h-3 w-3" />
                 {t("patchBase", { patch: patches[0] ?? "—" })}
               </span>
             </div>
 
-            <h1 className="mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
+            <h1 className="mt-1.5 text-lg font-bold leading-tight text-[var(--color-foreground)] sm:text-xl">
               {t("title")}
             </h1>
-            <p className="mt-2 max-w-[46rem] text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">
+            <p className="mt-1.5 max-w-[46rem] text-xs leading-5 text-[var(--color-foreground)] sm:text-sm">
               {t("subtitle")}
             </p>
-            <p className="mt-1.5 max-w-[46rem] text-sm leading-6 text-[var(--color-muted-foreground)]">
+            <p className="mt-1 max-w-[46rem] text-xs leading-5 text-[var(--color-muted-foreground)]">
               {t("description")}
             </p>
-            <p className="mt-2 text-xs text-[var(--color-muted-foreground)]">{t("imageNotice")}</p>
+            <p className="mt-1.5 text-[10px] leading-4 text-[var(--color-muted-foreground)]">
+              {t("imageNotice")}
+            </p>
           </div>
 
           {serverSummary ? (
-            <aside className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3.5 sm:p-4">
-              <div className="mb-2 flex items-center gap-2">
-                <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-border)] text-[var(--color-muted-foreground)]">
-                  <Info className="h-3.5 w-3.5" />
+            <aside className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
+              <div className="mb-1.5 flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-md border border-[var(--color-border)] text-[var(--color-muted-foreground)]">
+                  <Info className="h-3 w-3" />
                 </span>
-                <h2 className="text-sm font-bold text-[var(--color-foreground)]">{summaryTitle}</h2>
+                <h2 className="text-xs font-bold text-[var(--color-foreground)]">{summaryTitle}</h2>
               </div>
-              <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">
+              <p className="text-xs leading-5 text-[var(--color-muted-foreground)]">
                 {serverSummary}
               </p>
             </aside>
           ) : null}
         </div>
       </section>
+
+      {canRenderAdSlot(ADSENSE_SLOTS.characterAnalysis) ? (
+        <AdSlot
+          slot={ADSENSE_SLOTS.characterAnalysis}
+          slotName="character_analysis_top"
+          format="horizontal"
+          className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 sm:px-4"
+          reservation={ADSENSE_SLOT_RESERVATIONS.contentHorizontal}
+        />
+      ) : null}
 
       {initialStats ? (
         <CharacterSeoSection locale={locale} code={code} stats={initialStats} />
@@ -711,6 +778,7 @@ export async function CharacterPageContent({
               initialStats={initialStats}
               initialPrevStats={initialPrevStats}
               code={code}
+              weaponTypeProfiles={weaponTypeProfiles}
             />
           </Suspense>
         </SectionErrorBoundary>

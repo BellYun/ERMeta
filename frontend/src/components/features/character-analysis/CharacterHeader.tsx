@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import * as React from "react";
+import characterBestWeapons from "@/../const/characterBestWeapons.json";
 import type {
   CharacterStatsResponse,
   WeaponStatItem,
@@ -13,11 +14,15 @@ import { buildFallbackMap, getCharacterImageUrl, resolveCharacterName } from "@/
 import { CHARACTER_ANALYSIS_TIERS } from "@/lib/characterTier";
 import type { Tier } from "@/lib/design-tokens";
 import { cn } from "@/lib/utils";
-import { resolveWeaponName } from "@/lib/weaponMap";
+import { getWeaponGroupImageUrl, resolveWeaponName } from "@/lib/weaponMap";
 import { TierBadge } from "../TierBadge";
 import { StatCard, SkeletonCard } from "./StatCard";
 
 const FALLBACK_MAP = buildFallbackMap();
+const CHARACTER_WEAPONS = characterBestWeapons as Record<
+  string,
+  Array<{ weaponCode: number; label: string; isDefault: boolean }>
+>;
 
 type DisplayStat = CharacterStatsResponse | WeaponStatItem;
 
@@ -100,9 +105,25 @@ export function CharacterHeader({
     [t]
   );
 
-  const weaponOptions: Array<number | null> = stats?.weapons
-    ? [null, ...stats.weapons.map((w) => w.bestWeapon ?? null)]
-    : [null];
+  const availableWeaponCodes = React.useMemo(() => {
+    const weaponCodes = new Set<number>();
+    for (const weapon of CHARACTER_WEAPONS[String(selectedCode)] ?? []) {
+      if (weapon.weaponCode > 0) weaponCodes.add(weapon.weaponCode);
+    }
+    for (const weapon of stats?.weapons ?? []) {
+      if (weapon.bestWeapon != null && weapon.bestWeapon > 0) {
+        weaponCodes.add(weapon.bestWeapon);
+      }
+    }
+    return [...weaponCodes];
+  }, [selectedCode, stats?.weapons]);
+
+  const weaponStatsByCode = React.useMemo(
+    () => new Map((stats?.weapons ?? []).map((weapon) => [weapon.bestWeapon, weapon])),
+    [stats?.weapons]
+  );
+
+  const weaponOptions = availableWeaponCodes;
 
   const handleTierKey = (e: React.KeyboardEvent, index: number) => {
     const next = radioGroupKeyIndex(e.key, index, tierOptionsList.length);
@@ -120,9 +141,7 @@ export function CharacterHeader({
     e.preventDefault();
     const nextWeapon = weaponOptions[next];
     setSelectedWeapon(nextWeapon);
-    if (nextWeapon != null) {
-      analytics.weaponSelected(selectedCode, nextWeapon, resolveWeaponName(nextWeapon));
-    }
+    analytics.weaponSelected(selectedCode, nextWeapon, resolveWeaponName(nextWeapon));
     weaponRefs.current[next]?.focus();
   };
 
@@ -230,7 +249,7 @@ export function CharacterHeader({
           </div>
         </div>
 
-        {!loading && stats?.weapons && stats.weapons.length > 0 && (
+        {availableWeaponCodes.length > 0 ? (
           <div className="mt-3 border-t border-[var(--color-border)] pt-3">
             <span className="mb-2 block text-[10px] font-semibold text-[var(--color-muted-foreground)]">
               {t("weapon")}
@@ -240,29 +259,14 @@ export function CharacterHeader({
               aria-label={t("weaponSelectorAria")}
               className="flex gap-1.5 overflow-x-auto pb-0.5 scrollbar-hide"
             >
-              <button
-                ref={(el) => {
-                  weaponRefs.current[0] = el;
-                }}
-                type="button"
-                role="radio"
-                aria-checked={selectedWeapon == null}
-                tabIndex={selectedWeapon == null ? 0 : -1}
-                onClick={() => setSelectedWeapon(null)}
-                onKeyDown={(e) => handleWeaponKey(e, 0)}
-                className={cn(
-                  "dashboard-tab shrink-0 gap-1.5 px-2.5 py-1.5 text-[11px] sm:px-3 sm:text-xs"
-                )}
-                data-active={selectedWeapon == null ? "true" : undefined}
-              >
-                {t("all")}
-              </button>
-              {stats.weapons.map((w, i) => {
-                const isSelected = selectedWeapon === w.bestWeapon;
-                const weaponIndex = i + 1;
+              {availableWeaponCodes.map((weaponCode, i) => {
+                const weaponStat = weaponStatsByCode.get(weaponCode);
+                const weaponIconUrl = getWeaponGroupImageUrl(weaponCode);
+                const isSelected = selectedWeapon === weaponCode;
+                const weaponIndex = i;
                 return (
                   <button
-                    key={w.bestWeapon ?? "none"}
+                    key={weaponCode}
                     ref={(el) => {
                       weaponRefs.current[weaponIndex] = el;
                     }}
@@ -271,11 +275,11 @@ export function CharacterHeader({
                     aria-checked={isSelected}
                     tabIndex={isSelected ? 0 : -1}
                     onClick={() => {
-                      setSelectedWeapon(w.bestWeapon ?? null);
+                      setSelectedWeapon(weaponCode);
                       analytics.weaponSelected(
                         selectedCode,
-                        w.bestWeapon ?? 0,
-                        resolveWeaponName(w.bestWeapon ?? null, l10n)
+                        weaponCode,
+                        resolveWeaponName(weaponCode, l10n)
                       );
                     }}
                     onKeyDown={(e) => handleWeaponKey(e, weaponIndex)}
@@ -284,41 +288,57 @@ export function CharacterHeader({
                     )}
                     data-active={isSelected ? "true" : undefined}
                   >
-                    <div className="flex items-center justify-between gap-2 w-full">
-                      <span className="font-medium">
-                        {resolveWeaponName(w.bestWeapon ?? null, l10n)}
+                    <div className="flex w-full items-center justify-between gap-2">
+                      <span className="flex min-w-0 items-center gap-1.5 font-medium">
+                        {weaponIconUrl ? (
+                          <span className="flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded border border-[var(--color-border)] bg-[var(--color-surface)]">
+                            <Image
+                              src={weaponIconUrl}
+                              alt=""
+                              width={24}
+                              height={24}
+                              className="h-full w-full object-cover"
+                              aria-hidden="true"
+                            />
+                          </span>
+                        ) : null}
+                        <span className="truncate">{resolveWeaponName(weaponCode, l10n)}</span>
                       </span>
-                      <span
-                        className={cn(
-                          "text-[10px] tabular-nums",
-                          isSelected
-                            ? "text-[var(--color-accent-foreground)]"
-                            : "text-[var(--color-muted-foreground)]"
-                        )}
-                      >
-                        {w.pickRate.toFixed(1)}%
-                      </span>
+                      {weaponStat ? (
+                        <span
+                          className={cn(
+                            "text-[10px] tabular-nums",
+                            isSelected
+                              ? "text-[var(--color-accent-foreground)]"
+                              : "text-[var(--color-muted-foreground)]"
+                          )}
+                        >
+                          {weaponStat.pickRate.toFixed(1)}%
+                        </span>
+                      ) : null}
                     </div>
-                    <div
-                      className="mt-1.5 h-0.5 w-full rounded-full bg-[var(--color-border)]/70"
-                      aria-hidden="true"
-                    >
+                    {weaponStat ? (
                       <div
-                        className={cn(
-                          "h-full rounded-full",
-                          isSelected
-                            ? "bg-[var(--color-accent)]"
-                            : "bg-[var(--color-muted-foreground)]/50"
-                        )}
-                        style={{ width: `${w.pickRate}%` }}
-                      />
-                    </div>
+                        className="mt-1.5 h-0.5 w-full rounded-full bg-[var(--color-border)]/70"
+                        aria-hidden="true"
+                      >
+                        <div
+                          className={cn(
+                            "h-full rounded-full",
+                            isSelected
+                              ? "bg-[var(--color-accent)]"
+                              : "bg-[var(--color-muted-foreground)]/50"
+                          )}
+                          style={{ width: `${weaponStat.pickRate}%` }}
+                        />
+                      </div>
+                    ) : null}
                   </button>
                 );
               })}
             </div>
           </div>
-        )}
+        ) : null}
       </div>
 
       {loading ? (

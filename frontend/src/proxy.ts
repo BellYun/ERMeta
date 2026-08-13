@@ -3,6 +3,7 @@ import { DEFAULT_ROUTE_LOCALE, LANGUAGE_BY_ROUTE_LOCALE } from "@/i18n/routing";
 import { LANGUAGE_COOKIE } from "@/lib/detectLanguage";
 import { getRouteLocaleSegmentFromPathname } from "@/lib/localizedPath";
 import { parseSynergyShareSelection } from "@/lib/synergyShare";
+import { getRepresentativeWeaponCode } from "@/lib/weaponMap";
 
 const COOKIE_MAX_AGE = 365 * 24 * 60 * 60; // 1년
 
@@ -33,6 +34,21 @@ function getSynergyShareSelection(pathname: string, routeLocale: string | null) 
   return selection;
 }
 
+function getCharacterCodeFromPathname(pathname: string, routeLocale: string | null) {
+  const segments = pathname.split("/").filter(Boolean);
+  const expectedCharacterIndex = routeLocale ? 1 : 0;
+
+  if (
+    segments.length !== expectedCharacterIndex + 2 ||
+    segments[expectedCharacterIndex] !== "character"
+  ) {
+    return null;
+  }
+
+  const code = Number.parseInt(segments[expectedCharacterIndex + 1], 10);
+  return Number.isFinite(code) ? code : null;
+}
+
 export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const routeLocale = getRouteLocaleSegmentFromPathname(pathname);
@@ -42,6 +58,19 @@ export function proxy(request: NextRequest) {
 
   if (pathname === "/synergy-detail/opengraph-image") {
     return NextResponse.next();
+  }
+
+  const characterCode = getCharacterCodeFromPathname(pathname, routeLocale);
+  if (characterCode != null && !request.nextUrl.searchParams.has("weapon")) {
+    const representativeWeapon = getRepresentativeWeaponCode(characterCode);
+    if (representativeWeapon != null) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.searchParams.set("weapon", String(representativeWeapon));
+
+      const response = NextResponse.redirect(redirectUrl, 307);
+      applyLanguageCookie(response, cookieLanguage);
+      return response;
+    }
   }
 
   const shareSelection = getSynergyShareSelection(pathname, routeLocale);
@@ -84,6 +113,6 @@ export function proxy(request: NextRequest) {
 // 정적 자산/내부 라우트에서는 미들웨어 스킵 (불필요한 edge 호출 줄이기)
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon\\.ico|robots\\.txt|ads\\.txt|sitemap|manifest|apple-icon|icon|character/|lab(?:/|$)|landing|character-test|performance-lab/|characters/|CharactER/|TraitSkill/|Item/|l10n/|data/|api/).*)",
+    "/((?!_next/static|_next/image|favicon\\.ico|robots\\.txt|ads\\.txt|sitemap|manifest|apple-icon|icon|lab(?:/|$)|landing|character-test|performance-lab/|characters/|CharactER/|weapon-icons/|TraitSkill/|Item/|l10n/|data/|api/).*)",
   ],
 };

@@ -1,4 +1,4 @@
-/** 캐릭터 분석 페이지 섹션별 Suspense fallback 스켈레톤 */
+/** 실험체 분석 페이지 섹션별 Suspense fallback 스켈레톤 */
 
 export function CharacterGridSkeleton() {
   return (

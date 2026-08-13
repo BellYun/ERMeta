@@ -53,6 +53,7 @@ export type SessionSource = "organic_search" | "community" | "direct" | "social"
 export type AdSlotName =
   | "home_ranking"
   | "synergy_detail_top"
+  | "character_analysis_top"
   | "site_rail_left"
   | "site_rail_right";
 export type AdSlotStatus = "reserved" | "requested" | "filled" | "unfilled" | "timeout";
@@ -101,12 +102,12 @@ export const analytics = {
     track("patch_selected", { patch });
   },
 
-  /** 메인 페이지 - 캐릭터 티어표 S/A/B/C/D 탭 필터 */
+  /** 메인 페이지 - 실험체 티어표 S/A/B/C/D 탭 필터 */
   rankingTierTabChanged(tab: string) {
     track("ranking_tier_tab_changed", { tab });
   },
 
-  /** 캐릭터 분석 - 캐릭터 조회 (NSM auto-trigger: character_analysis) */
+  /** 실험체 분석 - 실험체 조회 (NSM auto-trigger: character_analysis) */
   characterViewed(characterCode: number, characterName: string) {
     track("character_viewed", { characterCode, characterName });
     if (markAndCheckFirstTime("character_analysis")) {
@@ -117,27 +118,27 @@ export const analytics = {
     }
   },
 
-  /** 캐릭터 분석 - 무기 선택 */
+  /** 실험체 분석 - 무기 선택 */
   weaponSelected(characterCode: number, weaponCode: number, weaponName: string) {
     track("weapon_selected", { characterCode, weaponCode, weaponName });
   },
 
-  /** 캐릭터 분석 - 분석 티어 그룹 변경 */
+  /** 실험체 분석 - 분석 티어 그룹 변경 */
   analysisTierChanged(tier: string) {
     track("analysis_tier_changed", { tier });
   },
 
-  /** 캐릭터 분석 - 탭 전환 */
+  /** 실험체 분석 - 탭 전환 */
   analysisTabChanged(tab: string) {
     track("analysis_tab_changed", { tab });
   },
 
-  /** 캐릭터 분석 - 캐릭터 검색 */
+  /** 실험체 분석 - 실험체 검색 */
   characterSearched(query: string) {
     track("character_searched", { query });
   },
 
-  /** 시너지 - 동료 캐릭터 선택 (NSM auto-trigger: synergy_search) */
+  /** 시너지 - 동료 실험체 선택 (NSM auto-trigger: synergy_search) */
   synergyAllySelected(slot: "A" | "B", characterCode: number, characterName: string) {
     track("synergy_ally_selected", { slot, characterCode, characterName });
     if (markAndCheckFirstTime("synergy_search")) {
@@ -215,7 +216,7 @@ export const analytics = {
     track("synergy_result_viewed", args);
   },
 
-  /** 시너지 추천 3번째 캐릭터 클릭 */
+  /** 시너지 추천 3번째 실험체 클릭 */
   synergyRecommendationClicked(args: {
     ally1Code: number | null;
     ally2Code: number | null;

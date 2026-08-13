@@ -1,17 +1,23 @@
 "use client";
 
-import { BarChart2, FileText, Loader2 } from "lucide-react";
+import { BarChart2, ChevronDown, FileText, Loader2 } from "lucide-react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import { Suspense } from "react";
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route";
 import { useL10n } from "@/components/L10nProvider";
+import { Link } from "@/i18n/navigation";
+import { getCharacterMiniWebpUrl, getCharacterName } from "@/lib/characterMap";
 import { DEFAULT_CHARACTER_ANALYSIS_TIER } from "@/lib/characterTier";
 import { cn } from "@/lib/utils";
-import { resolveWeaponName } from "@/lib/weaponMap";
+import {
+  getRepresentativeWeaponCode,
+  getWeaponGroupImageUrl,
+  resolveWeaponName,
+} from "@/lib/weaponMap";
 import { CharacterHeader } from "./CharacterHeader";
 import { RoleComboRpPanel } from "./RoleComboRpPanel";
-import { SynergyPartnersSection } from "./SynergyPartnersSection";
 import { assignCharTier, fetchStats, fetchStatsHistory } from "./utils";
 
 // 탭 콘텐츠: lazy import (코드 스플릿)
@@ -35,11 +41,148 @@ function TabFallback() {
   );
 }
 
+interface CharacterWeaponMember {
+  profileKey: string;
+  characterCode: number;
+  characterName: string;
+  weapon: number | null;
+  weaponName: string;
+}
+
+interface PartnerTypeInfo {
+  role: string;
+  fitRole: string;
+  members: CharacterWeaponMember[];
+}
+
+function getCharacterWeaponHref(member: CharacterWeaponMember) {
+  const weaponQuery = member.weapon != null ? `?weapon=${member.weapon}` : "";
+  return `/character/${member.characterCode}${weaponQuery}`;
+}
+
+function CharacterWeaponPortrait({
+  member,
+  size = "compact",
+}: {
+  member: CharacterWeaponMember;
+  size?: "compact" | "large";
+}) {
+  const weaponImage = getWeaponGroupImageUrl(member.weapon);
+  const isLarge = size === "large";
+
+  return (
+    <span className={cn("relative block shrink-0", isLarge ? "h-14 w-14" : "h-9 w-9")}>
+      <Image
+        src={getCharacterMiniWebpUrl(member.characterCode)}
+        alt={member.characterName}
+        width={isLarge ? 56 : 36}
+        height={isLarge ? 56 : 36}
+        className="h-full w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] object-cover object-top"
+      />
+      {weaponImage ? (
+        <span
+          className={cn(
+            "absolute -bottom-1 -right-1 grid place-items-center rounded-full border border-white/25 bg-slate-950 shadow-sm",
+            isLarge ? "h-7 w-7" : "h-5 w-5"
+          )}
+          title={member.weaponName}
+        >
+          <Image
+            src={weaponImage}
+            alt={member.weaponName}
+            width={isLarge ? 24 : 16}
+            height={isLarge ? 24 : 16}
+            className={isLarge ? "h-6 w-6 object-contain" : "h-4 w-4 object-contain"}
+          />
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
+function PartnerTypePopover({
+  partner,
+  membersLabel,
+  profileUnit,
+}: {
+  partner: PartnerTypeInfo;
+  membersLabel: string;
+  profileUnit: string;
+}) {
+  const label = `${partner.role} ${partner.fitRole}`;
+
+  if (partner.members.length === 0) {
+    return <span>{label}</span>;
+  }
+
+  return (
+    <span className="group/partner relative inline-block">
+      <button
+        type="button"
+        className="rounded-sm border-b border-dashed border-[var(--color-muted-foreground)] text-left outline-none transition-colors hover:text-[var(--color-accent-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+        aria-label={`${label}, ${membersLabel} ${partner.members.length}${profileUnit}`}
+      >
+        {label}
+      </button>
+      <span
+        role="tooltip"
+        className="pointer-events-auto invisible fixed inset-x-4 top-1/2 z-[1000] w-auto -translate-y-1/2 rounded-md border border-[var(--color-border-light)] bg-[var(--color-surface)] p-3 opacity-0 shadow-xl transition group-hover/partner:visible group-hover/partner:opacity-100 group-focus-within/partner:visible group-focus-within/partner:opacity-100 sm:absolute sm:inset-x-auto sm:left-auto sm:right-0 sm:top-[calc(100%+0.5rem)] sm:w-[min(22rem,calc(100vw-3rem))] sm:translate-y-1 sm:before:absolute sm:before:-top-2 sm:before:left-0 sm:before:h-2 sm:before:w-full sm:before:content-[''] sm:group-hover/partner:translate-y-0 sm:group-focus-within/partner:translate-y-0"
+      >
+        <span className="block text-xs text-[var(--color-muted-foreground)]">{partner.role}</span>
+        <strong className="mt-0.5 block text-sm text-[var(--color-foreground)]">
+          {partner.fitRole}
+        </strong>
+        <span className="mt-2 block text-[10px] font-semibold text-[var(--color-muted-foreground)]">
+          {membersLabel} · {partner.members.length}
+          {profileUnit}
+        </span>
+        <span className="mt-1.5 grid grid-cols-2 gap-1.5">
+          {partner.members.map((member) => (
+            <Link
+              key={member.profileKey}
+              href={getCharacterWeaponHref(member)}
+              className="flex min-w-0 items-center gap-2 rounded border border-[var(--color-border)] bg-[var(--color-surface-2)] p-1.5 text-[var(--color-foreground)] transition-colors hover:border-[var(--color-accent)] hover:bg-[var(--color-surface-3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+            >
+              <CharacterWeaponPortrait member={member} />
+              <span className="min-w-0">
+                <strong className="block truncate text-[11px] font-semibold">
+                  {member.characterName}
+                </strong>
+                <span className="mt-0.5 block truncate text-[10px] text-[var(--color-muted-foreground)]">
+                  {member.weaponName}
+                </span>
+              </span>
+            </Link>
+          ))}
+        </span>
+      </span>
+    </span>
+  );
+}
+
 interface CharacterAnalysisClientProps {
   initialPatches?: string[];
   initialStats?: CharacterStatsResponse | null;
   initialPrevStats?: CharacterStatsResponse | null;
   code: number;
+  weaponTypeProfiles?: Record<
+    string,
+    {
+      groupName: string;
+      subtype: string;
+      peers: CharacterWeaponMember[];
+      signatures: Array<{
+        partnerTypes: Array<{
+          role: string;
+          fitRole: string;
+          members: CharacterWeaponMember[];
+        }>;
+        roleComposition: string;
+        games: number;
+        adjustedResidual: number;
+      }>;
+    }
+  >;
 }
 
 function readWeaponFromLocation(): number | null {
@@ -57,27 +200,28 @@ export function CharacterAnalysisClient({
   initialStats,
   initialPrevStats,
   code,
+  weaponTypeProfiles = {},
 }: CharacterAnalysisClientProps) {
   const { l10n } = useL10n();
   const t = useTranslations("characterAnalysis");
+  const characterHeaderT = useTranslations("characterHeader");
   const patches = React.useMemo(() => initialPatches ?? [], [initialPatches]);
   const selectablePatches = patches;
 
   const [selectedTier, setSelectedTier] = React.useState<string>(DEFAULT_CHARACTER_ANALYSIS_TIER);
   const [selectedPatch, setSelectedPatch] = React.useState<string | null>(() => patches[0] ?? null);
+  const [expandedSignatureProfiles, setExpandedSignatureProfiles] = React.useState<Set<string>>(
+    () => new Set()
+  );
 
-  const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>((): number | null => {
-    if (initialStats?.weapons && initialStats.weapons.length > 0) {
-      return initialStats.weapons[0].bestWeapon ?? null;
-    }
-    return null;
-  });
+  const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>(() =>
+    getRepresentativeWeaponCode(code)
+  );
 
   React.useEffect(() => {
-    const weapon = readWeaponFromLocation();
-    if (weapon != null) {
-      setSelectedWeapon(weapon);
-    }
+    const requestedWeapon = readWeaponFromLocation();
+    const weapon = requestedWeapon ?? getRepresentativeWeaponCode(code);
+    setSelectedWeapon(weapon);
   }, [code]);
 
   // 무기 변경 시 URL 파라미터 동기화
@@ -300,7 +444,18 @@ export function CharacterAnalysisClient({
   }, [patches, allPatchStats, selectedWeapon]);
 
   const hasPreviousData = displayPrevStat != null && (displayPrevStat.totalGames ?? 0) > 0;
+  const characterTypeEntries = React.useMemo(() => {
+    if (selectedWeapon != null) {
+      const profile =
+        weaponTypeProfiles[String(selectedWeapon)] ?? weaponTypeProfiles.default ?? null;
+      return profile ? [{ weaponCode: selectedWeapon, profile }] : [];
+    }
 
+    return Object.entries(weaponTypeProfiles).map(([weaponKey, profile]) => ({
+      weaponCode: weaponKey === "default" ? null : Number(weaponKey),
+      profile,
+    }));
+  }, [selectedWeapon, weaponTypeProfiles]);
   return (
     <div className="flex flex-col gap-5 sm:gap-6">
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_340px]">
@@ -396,12 +551,178 @@ export function CharacterAnalysisClient({
             </div>
           </section>
         )}
-
-        <div className="flex flex-col gap-5 xl:col-span-2">
-          <SynergyPartnersSection characterCode={code} selectedWeapon={selectedWeapon} />
-          <RoleComboRpPanel characterCode={code} selectedWeapon={selectedWeapon} />
-        </div>
       </div>
+
+      {characterTypeEntries.length > 0 ? (
+        <section className="dashboard-panel character-analysis-panel character-type-panel z-[30] p-3.5 sm:p-4">
+          <div className="flex flex-col gap-1 border-b border-[var(--color-border)] pb-3 sm:flex-row sm:items-end sm:justify-between">
+            <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
+              {characterHeaderT("characterType")}
+            </h2>
+            <p className="text-xs text-[var(--color-muted-foreground)]">
+              {characterHeaderT("characterTypeHint")}
+            </p>
+          </div>
+          <div className="mt-3 grid gap-3">
+            {characterTypeEntries.map(({ weaponCode, profile }) => {
+              const signatureProfileKey = `${code}:${weaponCode ?? "default"}`;
+              const signaturesExpanded = expandedSignatureProfiles.has(signatureProfileKey);
+              const visibleSignatures = signaturesExpanded
+                ? profile.signatures.slice(0, 20)
+                : profile.signatures.slice(0, 5);
+
+              return (
+                <article
+                  key={weaponCode ?? "default"}
+                  className="grid gap-4 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] p-3.5 lg:grid-cols-[minmax(0,0.8fr)_minmax(22rem,1.2fr)] lg:p-4"
+                >
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <CharacterWeaponPortrait
+                          size="large"
+                          member={{
+                            profileKey: `${code}_${weaponCode ?? "default"}`,
+                            characterCode: code,
+                            characterName: getCharacterName(code),
+                            weapon: weaponCode,
+                            weaponName:
+                              weaponCode == null
+                                ? characterHeaderT("allWeapons")
+                                : resolveWeaponName(weaponCode, l10n),
+                          }}
+                        />
+                        <div className="min-w-0">
+                          <p className="text-xs text-[var(--color-muted-foreground)]">
+                            {weaponCode == null
+                              ? characterHeaderT("allWeapons")
+                              : resolveWeaponName(weaponCode, l10n)}
+                          </p>
+                          <h3 className="mt-1 text-base font-bold leading-6 text-[var(--color-foreground)]">
+                            {profile.groupName}
+                          </h3>
+                        </div>
+                      </div>
+                      <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1 text-xs text-[var(--color-muted-foreground)]">
+                        {characterHeaderT("internalType")} · {profile.subtype}
+                      </span>
+                    </div>
+
+                    {profile.peers.length > 0 ? (
+                      <div className="mt-3">
+                        <p className="text-xs font-semibold text-[var(--color-muted-foreground)]">
+                          {characterHeaderT("sameType")}
+                        </p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {profile.peers.map((peer) => (
+                            <Link
+                              key={peer.profileKey}
+                              href={getCharacterWeaponHref(peer)}
+                              className="flex min-w-0 items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] py-1.5 pl-1.5 pr-2.5 transition-colors hover:border-[var(--color-accent)] hover:bg-[var(--color-surface-3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+                            >
+                              <CharacterWeaponPortrait member={peer} />
+                              <span className="min-w-0">
+                                <strong className="block truncate text-xs text-[var(--color-foreground)]">
+                                  {peer.characterName}
+                                </strong>
+                                <span className="mt-0.5 block truncate text-[10px] text-[var(--color-muted-foreground)]">
+                                  {peer.weaponName}
+                                </span>
+                              </span>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
+
+                  {profile.signatures.length > 0 ? (
+                    <div className="border-t border-[var(--color-border)] pt-4 lg:border-l lg:border-t-0 lg:pl-4 lg:pt-0">
+                      <p className="text-xs font-semibold text-[var(--color-muted-foreground)]">
+                        {characterHeaderT("signatureComposition")}
+                      </p>
+                      <ol className="mt-2 divide-y divide-[var(--color-border)] border-y border-[var(--color-border)]">
+                        {visibleSignatures.map((signature, index) => (
+                          <li
+                            key={`${signature.roleComposition}-${signature.partnerTypes
+                              .map((partner) => `${partner.role}:${partner.fitRole}`)
+                              .join("|")}`}
+                            className="grid gap-1 py-2.5 sm:grid-cols-[1.5rem_minmax(0,1fr)_auto] sm:items-center sm:gap-2"
+                          >
+                            <span className="hidden text-xs font-bold tabular-nums text-[var(--color-muted-foreground)] sm:block">
+                              {index + 1}
+                            </span>
+                            <div className="min-w-0">
+                              <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm font-semibold text-[var(--color-foreground)]">
+                                {signature.partnerTypes.map((partner, partnerIndex) => (
+                                  <React.Fragment key={`${partner.role}:${partner.fitRole}`}>
+                                    {partnerIndex > 0 ? (
+                                      <span className="text-[var(--color-muted-foreground)]">
+                                        ×
+                                      </span>
+                                    ) : null}
+                                    <PartnerTypePopover
+                                      partner={partner}
+                                      membersLabel={characterHeaderT("typeCharacters")}
+                                      profileUnit={characterHeaderT("profileUnit")}
+                                    />
+                                  </React.Fragment>
+                                ))}
+                              </p>
+                              <p className="mt-0.5 truncate text-xs text-[var(--color-muted-foreground)]">
+                                {signature.roleComposition}
+                              </p>
+                            </div>
+                            <p className="text-xs tabular-nums text-[var(--color-muted-foreground)] sm:text-right">
+                              {signature.games.toLocaleString()} {characterHeaderT("gamesUnit")} ·{" "}
+                              <span className="font-bold text-[var(--color-foreground)]">
+                                {signature.adjustedResidual >= 0 ? "+" : ""}
+                                {signature.adjustedResidual.toFixed(2)} RP
+                              </span>
+                            </p>
+                          </li>
+                        ))}
+                      </ol>
+                      {profile.signatures.length > 5 ? (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setExpandedSignatureProfiles((current) => {
+                              const next = new Set(current);
+                              if (next.has(signatureProfileKey)) {
+                                next.delete(signatureProfileKey);
+                              } else {
+                                next.add(signatureProfileKey);
+                              }
+                              return next;
+                            })
+                          }
+                          className="mt-2 flex min-h-9 w-full items-center justify-center gap-1.5 rounded-md text-xs font-semibold text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-surface)] hover:text-[var(--color-foreground)]"
+                        >
+                          {signaturesExpanded
+                            ? characterHeaderT("collapseSignatures")
+                            : characterHeaderT("showMoreSignatures", {
+                                visible: visibleSignatures.length,
+                                total: Math.min(profile.signatures.length, 20),
+                              })}
+                          <ChevronDown
+                            className={cn(
+                              "h-3.5 w-3.5 transition-transform",
+                              signaturesExpanded && "rotate-180"
+                            )}
+                          />
+                        </button>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
+
+      <RoleComboRpPanel characterCode={code} selectedWeapon={selectedWeapon} />
 
       <div className="pt-0.5 sm:pt-1">
         <div className="mb-3 flex items-center gap-2 sm:mb-4">

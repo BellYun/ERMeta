@@ -3,7 +3,7 @@
 import { BarChart3, ChevronDown } from "lucide-react";
 import { useLocale } from "next-intl";
 import * as React from "react";
-import type { ComboEntry, LabCharacter, LabData, LabGroup } from "@/components/features/lab/types";
+import type { ComboEntry, LabCharacter, LabData } from "@/components/features/lab/types";
 import { useL10n } from "@/components/L10nProvider";
 import type { RouteLocale } from "@/i18n/routing";
 import { getComboRoles, type CharacterRole } from "@/lib/characterMap";
@@ -33,7 +33,6 @@ const labDataCache = new Map<string, Promise<LabData | null>>();
 type RoleComboCopy = {
   title: string;
   sampleChecking: string;
-  pickCondition: string;
   sample: string;
   games: string;
   collapse: string;
@@ -41,9 +40,6 @@ type RoleComboCopy = {
   strongLabel: string;
   weakLabel: string;
   insufficientSample: string;
-  noData: string;
-  strong: (text: string) => string;
-  mixed: (text: string, weakText: string) => string;
 };
 
 const ROLE_LABELS: Record<RouteLocale, Record<string, string>> = {
@@ -93,7 +89,6 @@ const COPY: Record<RouteLocale, RoleComboCopy> = {
   ko: {
     title: "역할 조합별 RP",
     sampleChecking: "역할 조합 표본 확인 중",
-    pickCondition: "픽 조건",
     sample: "표본",
     games: "판",
     collapse: "접기",
@@ -101,17 +96,10 @@ const COPY: Record<RouteLocale, RoleComboCopy> = {
     strongLabel: "강한 조합",
     weakLabel: "약한 조합",
     insufficientSample: "표본 부족",
-    noData:
-      "역할 조합별 RP 표본이 부족해 특정 상황을 단정하기 어렵습니다. 캐릭터 기본 지표와 현재 팀 조합의 역할 분포를 함께 봐야 합니다.",
-    strong: (text: string) =>
-      `역할 조합별 RP 기준으로 ${text}에서 성과가 높게 나왔습니다. 해당 역할군이 팀에 있을 때의 표본입니다.`,
-    mixed: (text: string, weakText: string) =>
-      `역할 조합별 RP 기준으로 ${text}에서 성과가 높게 나왔습니다. 반대로 ${weakText}처럼 낮게 나온 조합은 교전 개시, 앞라인, 마무리 화력 중 빠진 역할이 있었는지 함께 봐야 합니다.`,
   },
   en: {
     title: "Role Combo RP",
     sampleChecking: "Checking role-combo samples",
-    pickCondition: "Pick Context",
     sample: "Sample",
     games: "games",
     collapse: "Collapse",
@@ -119,17 +107,10 @@ const COPY: Record<RouteLocale, RoleComboCopy> = {
     strongLabel: "Higher RP",
     weakLabel: "Lower RP",
     insufficientSample: "Limited sample",
-    noData:
-      "Role-combo RP samples are limited. Read this together with the character metrics and current team role spread.",
-    strong: (text: string) =>
-      `Role-combo RP is higher in ${text}. These samples show cases where those roles appeared on the team.`,
-    mixed: (text: string, weakText: string) =>
-      `Role-combo RP is higher in ${text}. Lower samples such as ${weakText} should be checked for missing engage, frontline, or finishing damage.`,
   },
   ja: {
     title: "役割編成別RP",
     sampleChecking: "役割編成サンプルを確認中",
-    pickCondition: "ピック条件",
     sample: "サンプル",
     games: "試合",
     collapse: "閉じる",
@@ -137,17 +118,10 @@ const COPY: Record<RouteLocale, RoleComboCopy> = {
     strongLabel: "高RP",
     weakLabel: "低RP",
     insufficientSample: "サンプル不足",
-    noData:
-      "役割編成別RPのサンプルが少ないため、キャラクター基本指標とチーム内の役割分布を合わせて確認してください。",
-    strong: (text: string) =>
-      `役割編成別RPでは ${text} の成績が高く出ています。該当役割がチームにいる場合のサンプルです。`,
-    mixed: (text: string, weakText: string) =>
-      `役割編成別RPでは ${text} の成績が高く出ています。一方で ${weakText} のように低い編成は、開戦・前衛・決定力の不足も確認してください。`,
   },
   "zh-Hans": {
     title: "定位组合 RP",
     sampleChecking: "正在确认定位组合样本",
-    pickCondition: "选择条件",
     sample: "样本",
     games: "场",
     collapse: "收起",
@@ -155,16 +129,10 @@ const COPY: Record<RouteLocale, RoleComboCopy> = {
     strongLabel: "较高 RP",
     weakLabel: "较低 RP",
     insufficientSample: "样本不足",
-    noData: "定位组合 RP 样本较少，需要与角色基础指标和当前队伍定位分布一起查看。",
-    strong: (text: string) =>
-      `定位组合 RP 中，${text} 的表现较高。这是队伍中出现对应定位时的样本。`,
-    mixed: (text: string, weakText: string) =>
-      `定位组合 RP 中，${text} 的表现较高。相反，${weakText} 等较低组合需要同时检查开战、前排或收割能力是否缺失。`,
   },
   "zh-Hant": {
     title: "定位組合 RP",
     sampleChecking: "正在確認定位組合樣本",
-    pickCondition: "選擇條件",
     sample: "樣本",
     games: "場",
     collapse: "收起",
@@ -172,11 +140,6 @@ const COPY: Record<RouteLocale, RoleComboCopy> = {
     strongLabel: "較高 RP",
     weakLabel: "較低 RP",
     insufficientSample: "樣本不足",
-    noData: "定位組合 RP 樣本較少，需要與角色基礎指標和目前隊伍定位分布一起查看。",
-    strong: (text: string) =>
-      `定位組合 RP 中，${text} 的表現較高。這是隊伍中出現對應定位時的樣本。`,
-    mixed: (text: string, weakText: string) =>
-      `定位組合 RP 中，${text} 的表現較高。相反，${weakText} 等較低組合需要同時檢查開戰、前排或收割能力是否缺失。`,
   },
 };
 
@@ -187,7 +150,6 @@ interface RoleComboRpPanelProps {
 
 interface RoleComboData {
   role: string;
-  group: LabGroup | null;
   character: LabCharacter;
 }
 
@@ -204,29 +166,6 @@ function localizeRoleText(value: string, locale: RouteLocale) {
   return Object.entries(ROLE_LABELS.ko).reduce(
     (text, [koLabel]) => text.replaceAll(koLabel, labels[koLabel] ?? koLabel),
     value
-  );
-}
-
-function formatComboEntry(entry: ComboEntry, copy: RoleComboCopy, locale: RouteLocale) {
-  return `${localizeRoleText(entry.multiset, locale)}(${formatDelta(entry.delta)} RP, ${formatGames(
-    entry.games
-  )}${copy.games})`;
-}
-
-function buildPickTimingCopy(data: RoleComboData, copy: RoleComboCopy, locale: RouteLocale) {
-  const strong = data.character.strong.slice(0, 2);
-  const weak = data.character.weak[0] ?? null;
-
-  if (strong.length === 0) {
-    return copy.noData;
-  }
-
-  const strongText = strong.map((entry) => formatComboEntry(entry, copy, locale)).join(", ");
-
-  if (!weak) return copy.strong(strongText);
-  return copy.mixed(
-    strongText,
-    `${localizeRoleText(weak.multiset, locale)} (${formatDelta(weak.delta)} RP)`
   );
 }
 
@@ -253,7 +192,6 @@ function findLabCharacter(
   if (!character) return null;
   return {
     role: data.role,
-    group: data.groups.find((group) => group.id === character.groupId) ?? null,
     character,
   };
 }
@@ -360,35 +298,6 @@ export function RoleComboRpPanel({ characterCode, selectedWeapon }: RoleComboRpP
         </div>
       ) : (
         <>
-          {data.group ? (
-            <div className="mx-4 mb-3 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2">
-              <div className="text-xs font-semibold text-[var(--color-foreground)]">
-                {localizeRoleText(data.group.label, locale)}
-              </div>
-              {data.group.topPartnerRoles && data.group.topPartnerRoles.length > 0 ? (
-                <div className="mt-1 flex flex-wrap gap-1">
-                  {data.group.topPartnerRoles.map((role) => (
-                    <span
-                      key={role}
-                      className="rounded border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[9px] text-[var(--color-muted-foreground)]"
-                    >
-                      {localizeRoleText(role, locale)}
-                    </span>
-                  ))}
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-
-          <div className="mx-4 mb-3 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5">
-            <p className="text-[11px] font-semibold text-[var(--color-foreground)]">
-              {copy.pickCondition}
-            </p>
-            <p className="mt-1 text-xs leading-5 text-[var(--color-muted-foreground)]">
-              {buildPickTimingCopy(data, copy, locale)}
-            </p>
-          </div>
-
           <ComboDivergingList
             strong={data.character.strong}
             weak={data.character.weak}
@@ -520,38 +429,42 @@ function ComboBarRow({
   const isStrong = variant === "strong";
 
   return (
-    <li className="border-b border-[var(--color-border)]/40 py-1.5 last:border-b-0">
-      <p className="mb-1.5 break-keep text-[11px] leading-snug text-[var(--color-muted-foreground)]">
-        {localizeRoleText(entry.multiset, locale)}
-      </p>
-
-      <div className={cn("flex items-center gap-1.5", !isStrong && "flex-row-reverse")}>
-        <div
-          aria-hidden="true"
-          className="flex h-2 min-w-0 flex-1 overflow-hidden rounded bg-[var(--color-surface-2)]"
-          style={{ justifyContent: isStrong ? "flex-start" : "flex-end" }}
-        >
-          <div
-            className="h-full rounded opacity-70"
-            style={{
-              width: `${pct}%`,
-              backgroundColor: isStrong ? "var(--color-tier-s)" : "var(--color-danger)",
-            }}
-          />
-        </div>
-        <span className="w-[58px] shrink-0 text-right text-[10px] tabular-nums text-[var(--color-muted-foreground)]">
-          {formatGames(entry.games)}
-          {copy.games}
+    <li className="border-b border-[var(--color-border)]/40 last:border-b-0">
+      <div className="w-full py-1.5 text-left">
+        <span className="mb-1.5 flex items-start justify-between gap-2">
+          <span className="break-keep text-[11px] leading-snug text-[var(--color-muted-foreground)]">
+            {localizeRoleText(entry.multiset, locale)}
+          </span>
         </span>
-        <span
-          className={cn(
-            "w-[38px] shrink-0 text-xs font-semibold tabular-nums",
-            isStrong
-              ? "text-left text-[var(--color-tier-s)]"
-              : "text-right text-[var(--color-danger)]"
-          )}
-        >
-          {formatDelta(entry.delta)}
+
+        <span className={cn("flex items-center gap-1.5", !isStrong && "flex-row-reverse")}>
+          <span
+            aria-hidden="true"
+            className="flex h-2 min-w-0 flex-1 overflow-hidden rounded bg-[var(--color-surface-2)]"
+            style={{ justifyContent: isStrong ? "flex-start" : "flex-end" }}
+          >
+            <span
+              className="h-full rounded opacity-70"
+              style={{
+                width: `${pct}%`,
+                backgroundColor: isStrong ? "var(--color-tier-s)" : "var(--color-danger)",
+              }}
+            />
+          </span>
+          <span className="w-[58px] shrink-0 text-right text-[10px] tabular-nums text-[var(--color-muted-foreground)]">
+            {formatGames(entry.games)}
+            {copy.games}
+          </span>
+          <span
+            className={cn(
+              "w-[38px] shrink-0 text-xs font-semibold tabular-nums",
+              isStrong
+                ? "text-left text-[var(--color-tier-s)]"
+                : "text-right text-[var(--color-danger)]"
+            )}
+          >
+            {formatDelta(entry.delta)}
+          </span>
         </span>
       </div>
     </li>
