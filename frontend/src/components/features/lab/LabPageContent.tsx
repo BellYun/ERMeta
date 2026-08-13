@@ -18,6 +18,36 @@ function GroupSection({ group, characters, query }: GroupSectionProps) {
 
   const label = group ? group.label : "미분류";
   const partnerRoles = group ? (group.topPartnerRoles ?? []) : [];
+  const internalRoleMap = new Map<
+    string,
+    {
+      label: string;
+      reason: string;
+      metricSummary: string;
+      characters: LabCharacter[];
+      totalGames: number;
+    }
+  >();
+  for (const character of filtered) {
+    const roleLabel =
+      character.classification?.metricRole ?? character.classification?.fitRole ?? "유연 연계";
+    const reason = character.classification?.fitReason ?? "전투 상황에 맞춰 유연하게 보완합니다.";
+    const metricSummary = character.classification?.metricSummary ?? "지표 검증 정보 없음";
+    const key = `${roleLabel}::${reason}::${metricSummary}`;
+    const internalRole = internalRoleMap.get(key) ?? {
+      label: roleLabel,
+      reason,
+      metricSummary,
+      characters: [],
+      totalGames: 0,
+    };
+    internalRole.characters.push(character);
+    internalRole.totalGames += character.totalGames;
+    internalRoleMap.set(key, internalRole);
+  }
+  const internalRoles = [...internalRoleMap.values()].sort(
+    (a, b) => b.totalGames - a.totalGames || a.label.localeCompare(b.label, "ko")
+  );
 
   return (
     <section className="flex flex-col gap-3">
@@ -34,9 +64,37 @@ function GroupSection({ group, characters, query }: GroupSectionProps) {
           </span>
         ))}
       </div>
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-        {filtered.map((c) => (
-          <LabCharacterCard key={`${c.characterCode}_${c.weapon}`} character={c} />
+      <div className="flex flex-col gap-5 border-l border-[var(--color-border)] pl-3 sm:pl-4">
+        {internalRoles.map((internalRole) => (
+          <div
+            key={`${internalRole.label}::${internalRole.reason}`}
+            className="flex flex-col gap-2.5"
+          >
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-sm font-semibold text-[var(--color-foreground)]">
+                  {internalRole.label}
+                </h3>
+                <span className="text-[11px] tabular-nums text-[var(--color-muted-foreground)]">
+                  {internalRole.characters.length}명
+                </span>
+              </div>
+              <p className="mt-0.5 text-xs leading-relaxed text-[var(--color-muted-foreground)]">
+                {internalRole.reason}
+              </p>
+              <p className="mt-1 text-[11px] font-medium tabular-nums text-[var(--color-accent-foreground)]">
+                {internalRole.metricSummary}
+              </p>
+            </div>
+            <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+              {internalRole.characters.map((character) => (
+                <LabCharacterCard
+                  key={`${character.characterCode}_${character.weapon}`}
+                  character={character}
+                />
+              ))}
+            </div>
+          </div>
         ))}
       </div>
     </section>

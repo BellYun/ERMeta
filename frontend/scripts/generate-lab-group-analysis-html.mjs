@@ -35,6 +35,10 @@ function formatRp(value) {
   return Number(value).toFixed(3);
 }
 
+function formatPercent(value) {
+  return `${(Number(value) * 100).toFixed(1)}%`;
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -112,45 +116,69 @@ function renderEntryList(entries, kind) {
   `;
 }
 
-function renderMembers(members) {
-  return `
-    <table>
-      <thead>
-        <tr>
-          <th>실험체</th>
-          <th>무기</th>
-          <th>게임</th>
-          <th>평균 RP</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${members
-          .map(
-            (member) => `
-              <tr>
-                <td>${escapeHtml(member.characterName)}</td>
-                <td>${escapeHtml(member.weaponName)}</td>
-                <td>${formatNumber(member.totalGames)}</td>
-                <td>${formatRp(member.ownMeanRP)}</td>
-              </tr>
-            `
-          )
-          .join("")}
-      </tbody>
-    </table>
-  `;
+function groupMembersByInternalRole(members) {
+  const byInternalRole = new Map();
+  for (const member of members) {
+    const label =
+      member.classification?.metricRole ?? member.classification?.fitRole ?? "유연 연계";
+    const reason = member.classification?.fitReason ?? "전투 상황에 맞춰 유연하게 보완합니다.";
+    const metricSummary = member.classification?.metricSummary ?? "지표 검증 정보 없음";
+    const key = `${label}::${reason}::${metricSummary}`;
+    const group = byInternalRole.get(key) ?? {
+      label,
+      reason,
+      metricSummary,
+      members: [],
+      totalGames: 0,
+    };
+    group.members.push(member);
+    group.totalGames += member.totalGames;
+    byInternalRole.set(key, group);
+  }
+
+  return [...byInternalRole.values()].sort(
+    (a, b) => b.totalGames - a.totalGames || a.label.localeCompare(b.label, "ko")
+  );
 }
 
-function renderMemberChips(members) {
+function renderInternalRoleGroups(members) {
+  const internalRoles = groupMembersByInternalRole(members);
   return `
-    <div class="member-chips">
-      ${members
+    <div class="internal-role-groups">
+      ${internalRoles
         .map(
-          (member) => `
-            <span title="${escapeHtml(comboKey(member))}">
-              <b>${escapeHtml(member.characterName)}</b>
-              <small>${escapeHtml(member.weaponName)}</small>
-            </span>
+          (internalRole) => `
+            <section class="internal-role-card">
+              <header>
+                <div>
+                  <h4>${escapeHtml(internalRole.label)}</h4>
+                  <p>${escapeHtml(internalRole.reason)}</p>
+                  <p class="metric-summary">${escapeHtml(internalRole.metricSummary)}</p>
+                </div>
+                <div class="internal-role-metrics">
+                  <span>${internalRole.members.length}명</span>
+                  <span>${formatNumber(internalRole.totalGames)}판</span>
+                </div>
+              </header>
+              <div class="internal-members">
+                ${internalRole.members
+                  .map(
+                    (member) => `
+                      <article class="internal-member" title="${escapeHtml(comboKey(member))}">
+                        <div class="member-title">
+                          <b>${escapeHtml(member.characterName)}</b>
+                          <small>${escapeHtml(member.weaponName)}</small>
+                        </div>
+                        <div class="member-fit">
+                          <strong>+${formatRp(member.classification?.partnerDelta ?? 0)} RP</strong>
+                          <span>${formatNumber(member.classification?.partnerGames ?? 0)}판 · ${formatPercent(member.classification?.partnerGameShare ?? 0)}</span>
+                        </div>
+                      </article>
+                    `
+                  )
+                  .join("")}
+              </div>
+            </section>
           `
         )
         .join("")}
@@ -172,7 +200,7 @@ function renderGroupCard(group) {
           <span><b>${formatRp(group.weightedRp)}</b> RP</span>
         </div>
       </header>
-      ${renderMemberChips(group.members)}
+      ${renderInternalRoleGroups(group.members)}
       <div class="grid">
         <section>
           <h4>강한 조합 유형</h4>
@@ -183,7 +211,6 @@ function renderGroupCard(group) {
           ${renderEntryList(group.weak, "weak")}
         </section>
       </div>
-      ${renderMembers(group.members)}
     </article>
   `;
 }
@@ -194,16 +221,22 @@ function renderRoleSection(data) {
     .filter((group) => group.members.length > 0);
   const totalMembers = groups.reduce((sum, group) => sum + group.members.length, 0);
   const totalGames = groups.reduce((sum, group) => sum + group.totalGames, 0);
+  const internalRoleCount = groups.reduce(
+    (sum, group) => sum + groupMembersByInternalRole(group.members).length,
+    0
+  );
+  const seasons = (data.seasons ?? []).join("+") || "unknown";
 
   return `
     <section class="role-section" id="${data.roleSlug}">
       <div class="role-heading">
         <div>
           <h2>${escapeHtml(data.role)}</h2>
-          <p>${escapeHtml(data.generatedFrom ?? "unknown")} · ${escapeHtml(data.generatedAt)} · minGames ${data.minGames}</p>
+          <p>${escapeHtml(data.generatedFrom ?? "unknown")} · 시즌 ${escapeHtml(seasons)} · ${escapeHtml(data.generatedAt)} · minGames ${data.minGames}</p>
         </div>
         <div class="role-metrics">
           <span>${groups.length} 그룹</span>
+          <span>${internalRoleCount} 내부 역할군</span>
           <span>${totalMembers}명</span>
           <span>${formatNumber(totalGames)}판</span>
         </div>
@@ -240,12 +273,17 @@ function renderSummary(datasets) {
           const groups = data.groups.map((group) => summarizeGroup(data, group));
           const games = groups.reduce((sum, group) => sum + group.totalGames, 0);
           const members = groups.reduce((sum, group) => sum + group.members.length, 0);
+          const internalRoles = groups.reduce(
+            (sum, group) => sum + groupMembersByInternalRole(group.members).length,
+            0
+          );
           const largest = [...groups].sort((a, b) => b.totalGames - a.totalGames)[0];
           return `
             <div class="summary-card">
               <span>${escapeHtml(data.role)}</span>
-              <b>${data.groups.length} 그룹 · ${members}명</b>
-              <small>${formatNumber(games)}판 · 최대 ${escapeHtml(largest?.label ?? "-")}</small>
+              <b>${data.groups.length} 조합 · ${internalRoles} 내부 역할군</b>
+              <small>${members}명 · ${formatNumber(games)}판</small>
+              <small>최대 ${escapeHtml(largest?.label ?? "-")}</small>
             </div>
           `;
         })
@@ -289,6 +327,17 @@ function renderPage(datasets) {
     h1, h2, h3, h4, p { margin: 0; }
     h1 { font-size: clamp(28px, 4vw, 44px); letter-spacing: 0; }
     .hero p { margin-top: 10px; color: var(--muted); max-width: 920px; }
+    .second-order-link {
+      display: inline-block;
+      margin-top: 14px;
+      border: 1px solid var(--blue);
+      border-radius: 8px;
+      padding: 8px 11px;
+      color: var(--blue);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+    }
     nav {
       display: flex;
       gap: 8px;
@@ -358,28 +407,77 @@ function renderPage(datasets) {
       margin-bottom: 14px;
     }
     .group-card h3 { font-size: 20px; }
-    .member-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      margin: -2px 0 14px;
+    .internal-role-groups {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 10px;
+      margin: -2px 0 16px;
     }
-    .member-chips span {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 5px;
-      max-width: 100%;
+    .internal-role-card {
+      min-width: 0;
       border: 1px solid var(--line);
+      border-left: 3px solid var(--blue);
       background: #fbfbf8;
       border-radius: 8px;
-      padding: 6px 8px;
+      padding: 12px;
+    }
+    .internal-role-card > header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .internal-role-card h4 {
+      margin: 0;
+      font-size: 15px;
+      color: var(--blue);
+    }
+    .internal-role-card p {
+      margin-top: 3px;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    .internal-role-card .metric-summary {
+      color: var(--blue);
+      font-weight: 650;
+      font-variant-numeric: tabular-nums;
+    }
+    .internal-role-metrics {
+      display: flex;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .internal-role-metrics span {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      padding: 3px 7px;
+      color: var(--muted);
+      font-size: 11px;
       white-space: nowrap;
     }
-    .member-chips small {
+    .internal-members { display: grid; gap: 6px; }
+    .internal-member {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      border-top: 1px solid var(--line);
+      padding-top: 7px;
+    }
+    .member-title, .member-fit { min-width: 0; }
+    .member-title b, .member-title small, .member-fit strong, .member-fit span { display: block; }
+    .member-title small, .member-fit span {
       color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .member-fit { flex-shrink: 0; text-align: right; }
+    .member-fit strong { color: var(--green); font-size: 12px; }
     .grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -397,22 +495,13 @@ function renderPage(datasets) {
     .strong .entry-meta { color: var(--green); }
     .weak .entry-meta { color: var(--red); }
     .empty { color: var(--muted); font-size: 14px; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-    th, td {
-      border-top: 1px solid var(--line);
-      padding: 8px 7px;
-      text-align: left;
-    }
-    th { color: var(--muted); font-weight: 650; }
-    td:nth-child(3), td:nth-child(4), th:nth-child(3), th:nth-child(4) { text-align: right; }
     @media (max-width: 760px) {
       .role-heading, .group-card > header { display: block; }
       .role-metrics, .metrics { justify-content: flex-start; margin-top: 10px; }
       .grid { grid-template-columns: 1fr; }
+      .internal-role-groups { grid-template-columns: 1fr; }
+      .internal-role-card > header { display: block; }
+      .internal-role-metrics { margin-top: 8px; }
       nav { position: static; }
     }
   </style>
@@ -420,7 +509,8 @@ function renderPage(datasets) {
 <body>
   <header class="hero">
     <h1>유형분석 그룹 리포트</h1>
-    <p>현재 Lab JSON의 그룹 라벨과 멤버를 기준으로, 새 사전집계 테이블에서 재계산된 게임 수, 평균 RP, 강한/약한 조합 유형을 묶어 본 검토용 HTML입니다.</p>
+    <p>파트너 역할 조합과 전투 특성으로 먼저 묶은 뒤, 강·약 방향과 RP·판수 지표의 불일치가 명확한 후보만 재분리했습니다. 시즌 10·11 통합 성과와 지표군별 일치도를 함께 확인할 수 있습니다.</p>
+    <a class="second-order-link" href="./composition-analysis.html">2차 조합 유형 분석 보기 →</a>
   </header>
   ${renderNav(datasets)}
   <main>
@@ -436,7 +526,8 @@ function main() {
   const datasets = ROLE_FILES.map((slug) =>
     JSON.parse(fs.readFileSync(path.resolve(LAB_DIR, `${slug}.json`), "utf8"))
   );
-  fs.writeFileSync(OUT_PATH, renderPage(datasets));
+  const html = renderPage(datasets).replace(/[ \t]+$/gm, "");
+  fs.writeFileSync(OUT_PATH, html);
   console.log(`wrote ${OUT_PATH}`);
 }
 

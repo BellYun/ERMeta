@@ -1,0 +1,127 @@
+{
+  "snapshotId": "season10-11-exact-two-partner-affinity-v1",
+  "frozenAt": "2026-08-12T23:47:15.119Z",
+  "mutableSourceFiles": {
+    "groups": "public/data/lab/entry-sample-confidence/composition-affinity-character-groups.json",
+    "contexts": "public/data/lab/entry-sample-confidence/exact-two-partner-character-contexts.ndjson"
+  },
+  "frozenFiles": {
+    "groups": {
+      "path": "groups.json",
+      "bytes": 551111,
+      "sha256": "64bd6838f3264521f5c709cbcb6dbb39272791d6ead7a616d55b374c4c907842"
+    },
+    "contexts": {
+      "path": "exact-two-partner-contexts.ndjson",
+      "bytes": 9654051,
+      "sha256": "9b2e73b29ef05a22dcc736319634c4384a52d349ee16fecfbb3d35cbae5a8c59"
+    }
+  },
+  "method": "global-role-exact-two-partner-composition-affinity-iterative-refinement-v3-direction40-magnitude35-overlap25",
+  "sourceMetric": "entry-sample-confidence",
+  "seasons": [10, 11],
+  "contextUnit": "exact-two-partner-first-order-types",
+  "contextMinGames": 100,
+  "similarity": {
+    "directionWeight": 0.4,
+    "magnitudeWeight": 0.35,
+    "overlapWeight": 0.25,
+    "rolePercentile": 0.85,
+    "mergeAverageMargin": 0.02,
+    "relocationMargin": 0.015,
+    "maxRefinementIterations": 20,
+    "auxiliaryRatio": 0.85
+  },
+  "roles": [
+    {
+      "role": "탱커",
+      "profiles": 14,
+      "observedThreshold": 0.575,
+      "threshold": 0.575,
+      "minimumSharedContexts": 8,
+      "coreGroups": 2,
+      "independentProfiles": 10,
+      "initialGroups": 12,
+      "iterations": 2,
+      "converged": true,
+      "cycleDetected": false,
+      "isolatedProfiles": 0,
+      "relocatedProfiles": 0
+    },
+    {
+      "role": "전사",
+      "profiles": 46,
+      "observedThreshold": 0.553,
+      "threshold": 0.553,
+      "minimumSharedContexts": 12,
+      "coreGroups": 13,
+      "independentProfiles": 14,
+      "initialGroups": 27,
+      "iterations": 2,
+      "converged": true,
+      "cycleDetected": false,
+      "isolatedProfiles": 0,
+      "relocatedProfiles": 0
+    },
+    {
+      "role": "암살자",
+      "profiles": 4,
+      "observedThreshold": 0.533,
+      "threshold": 0.533,
+      "minimumSharedContexts": 4,
+      "coreGroups": 0,
+      "independentProfiles": 4,
+      "initialGroups": 4,
+      "iterations": 2,
+      "converged": true,
+      "cycleDetected": false,
+      "isolatedProfiles": 0,
+      "relocatedProfiles": 0
+    },
+    {
+      "role": "스킬딜러",
+      "profiles": 33,
+      "observedThreshold": 0.542,
+      "threshold": 0.542,
+      "minimumSharedContexts": 12,
+      "coreGroups": 8,
+      "independentProfiles": 12,
+      "initialGroups": 20,
+      "iterations": 2,
+      "converged": true,
+      "cycleDetected": false,
+      "isolatedProfiles": 0,
+      "relocatedProfiles": 0
+    },
+    {
+      "role": "원거리 딜러",
+      "profiles": 14,
+      "observedThreshold": 0.574,
+      "threshold": 0.574,
+      "minimumSharedContexts": 8,
+      "coreGroups": 3,
+      "independentProfiles": 8,
+      "initialGroups": 11,
+      "iterations": 2,
+      "converged": true,
+      "cycleDetected": false,
+      "isolatedProfiles": 0,
+      "relocatedProfiles": 0
+    },
+    {
+      "role": "지원가",
+      "profiles": 3,
+      "observedThreshold": 0.479,
+      "threshold": 0.52,
+      "minimumSharedContexts": 4,
+      "coreGroups": 0,
+      "independentProfiles": 3,
+      "initialGroups": 3,
+      "iterations": 2,
+      "converged": true,
+      "cycleDetected": false,
+      "isolatedProfiles": 0,
+      "relocatedProfiles": 0
+    }
+  ]
+}

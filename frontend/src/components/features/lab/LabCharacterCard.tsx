@@ -14,6 +14,7 @@ interface Props {
 
 export function LabCharacterCard({ character }: Props) {
   const imgUrl = getCharacterMiniWebpUrl(character.characterCode);
+  const classification = character.classification;
 
   return (
     <div className="metric-card overflow-hidden">
@@ -39,7 +40,18 @@ export function LabCharacterCard({ character }: Props) {
             </p>
             <p className="truncate text-xs text-[var(--color-muted-foreground)] transition group-hover:text-[var(--color-foreground)]">
               {character.weaponName}
+              {classification?.archetype ? ` · ${classification.archetype}` : ""}
             </p>
+            {classification?.partnerRoles.length === 2 && classification.partnerDelta != null ? (
+              <p className="mt-0.5 truncate text-[11px] text-[var(--color-muted-foreground)]">
+                {classification.partnerRoles.join(" + ")} 연계 · +
+                {classification.partnerDelta.toFixed(2)} RP ·{" "}
+                {formatGames(classification.partnerGames)}판
+                {classification.partnerGameShare > 0
+                  ? ` (${(classification.partnerGameShare * 100).toFixed(1)}%)`
+                  : ""}
+              </p>
+            ) : null}
           </div>
         </Link>
         <div className="shrink-0 text-right">

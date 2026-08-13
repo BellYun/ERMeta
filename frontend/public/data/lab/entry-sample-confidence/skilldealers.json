@@ -1,0 +1,4040 @@
+{
+  "role": "스킬딜러",
+  "roleSlug": "skilldealers",
+  "groupK": 8,
+  "internalGroupK": 24,
+  "minGames": 30,
+  "cumulative": true,
+  "generatedFrom": "v2_CharacterTrioWeapon",
+  "seasons": [10, 11],
+  "scoreMode": "tier-entry-cost-adjusted+sample-confidence",
+  "entryCosts": {
+    "DIAMOND": 48,
+    "METEORITE": 54.5,
+    "MITHRIL": 60
+  },
+  "classificationMethod": "primary-role+season-10-11-composition-fit-game-trend-metric-split-v5+tier-entry-cost+lift-sqrt-games",
+  "primaryRoleOnly": true,
+  "generatedAt": "2026-08-12",
+  "groups": [
+    {
+      "id": 0,
+      "label": "전사·원거리 딜러 연계형",
+      "curated": false,
+      "topPartnerRoles": ["전사", "원거리 딜러"],
+      "characterKeys": ["83_6", "75_22", "81_9", "79_8", "36_5", "12_7", "15_6", "9_9", "24_21"]
+    },
+    {
+      "id": 1,
+      "label": "전사 2인 연계형",
+      "curated": false,
+      "topPartnerRoles": ["전사 ×2"],
+      "characterKeys": ["77_24", "17_5", "66_24", "34_23", "51_22"]
+    },
+    {
+      "id": 2,
+      "label": "스킬딜러·원거리 딜러 연계형",
+      "curated": false,
+      "topPartnerRoles": ["스킬딜러", "원거리 딜러"],
+      "characterKeys": ["26_9", "87_24", "89_9", "60_6", "5_5", "24_3"]
+    },
+    {
+      "id": 3,
+      "label": "스킬딜러 2인 연계형",
+      "curated": false,
+      "topPartnerRoles": ["스킬딜러 ×2"],
+      "characterKeys": ["2_11", "43_5", "19_6", "15_5", "19_24"]
+    },
+    {
+      "id": 4,
+      "label": "탱커·원거리 딜러 연계형",
+      "curated": false,
+      "topPartnerRoles": ["탱커", "원거리 딜러"],
+      "characterKeys": ["58_10", "12_6"]
+    },
+    {
+      "id": 5,
+      "label": "전사·스킬딜러 연계형",
+      "curated": false,
+      "topPartnerRoles": ["전사", "스킬딜러"],
+      "characterKeys": ["2_9", "54_8", "6_7"]
+    },
+    {
+      "id": 6,
+      "label": "탱커·전사 연계형",
+      "curated": false,
+      "topPartnerRoles": ["탱커", "전사"],
+      "characterKeys": ["48_3", "52_24"]
+    },
+    {
+      "id": 7,
+      "label": "탱커·스킬딜러 연계형",
+      "curated": false,
+      "topPartnerRoles": ["탱커", "스킬딜러"],
+      "characterKeys": ["5_6"]
+    }
+  ],
+  "characters": [
+    {
+      "characterCode": 83,
+      "characterName": "헨리",
+      "weapon": 6,
+      "weaponName": "암기",
+      "totalGames": 132131,
+      "ownMeanRP": 53.174,
+      "groupId": 0,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "진입 억제 포킹 딜러",
+        "roles": ["스킬딜러"],
+        "traits": ["poke", "zoneControl"],
+        "partnerRoles": ["전사", "원거리 딜러"],
+        "fitRole": "진입 억제",
+        "fitReason": "아군 전열이 교전을 여는 동안 상대의 역진입과 이탈 경로를 묶어 후열 화력 시간을 확보합니다.",
+        "partnerDelta": 1.061,
+        "partnerGames": 19907,
+        "partnerGameShare": 0.15066108634612618,
+        "confidence": "high",
+        "metricRole": "진입 억제",
+        "metricSummary": "대표 조합 평균 +1.06 RP · 평균 비중 15.1% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.061,
+          "games": 19907
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.028,
+          "games": 15820
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": 2.938,
+          "games": 1146
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.771,
+          "games": 13481
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": 3.691,
+          "games": 212
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 0.785,
+          "games": 1590
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.534,
+          "games": 840
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.029,
+          "games": 28483
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -3.299,
+          "games": 7725
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": -0.864,
+          "games": 21448
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.754,
+          "games": 8081
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -2.473,
+          "games": 375
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -1.552,
+          "games": 880
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": -0.23,
+          "games": 7553
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": -0.839,
+          "games": 79
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -0.715,
+          "games": 102
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -0.363,
+          "games": 98
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -0.002,
+          "games": 4270
+        }
+      ]
+    },
+    {
+      "characterCode": 75,
+      "characterName": "르노어",
+      "weapon": 22,
+      "weaponName": "기타",
+      "totalGames": 120896,
+      "ownMeanRP": 52.542,
+      "groupId": 0,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "진형 장악 포킹 딜러",
+        "roles": ["스킬딜러"],
+        "traits": ["zoneControl", "poke"],
+        "partnerRoles": ["전사", "원거리 딜러"],
+        "fitRole": "전열 장악",
+        "fitReason": "탱커·전사와 원거리 딜러가 만든 진형에서 공간을 선점하고 포킹 구간을 길게 유지합니다.",
+        "partnerDelta": 2.007,
+        "partnerGames": 12321,
+        "partnerGameShare": 0.10191404182106935,
+        "confidence": "high",
+        "metricRole": "전열 장악",
+        "metricSummary": "대표 조합 평균 +2.01 RP · 평균 비중 10.2% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 2.007,
+          "games": 12321
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.373,
+          "games": 17176
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": 4.18,
+          "games": 181
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 1.493,
+          "games": 438
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.271,
+          "games": 4001
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": 0.697,
+          "games": 561
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": 0.763,
+          "games": 102
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": 0.016,
+          "games": 13026
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -20.169,
+          "games": 66
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": -0.654,
+          "games": 36907
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": -5.923,
+          "games": 366
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.228,
+          "games": 8484
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -4.325,
+          "games": 297
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.54,
+          "games": 17912
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": -1.117,
+          "games": 566
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -0.586,
+          "games": 1668
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -0.12,
+          "games": 4218
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": -1.024,
+          "games": 50
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": -0.105,
+          "games": 2530
+        }
+      ]
+    },
+    {
+      "characterCode": 81,
+      "characterName": "니아",
+      "weapon": 9,
+      "weaponName": "권총",
+      "totalGames": 112175,
+      "ownMeanRP": 52.824,
+      "groupId": 0,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "장악 누커",
+        "roles": ["스킬딜러"],
+        "traits": ["zoneControl", "burst"],
+        "partnerRoles": ["전사", "원거리 딜러"],
+        "fitRole": "장악 폭딜",
+        "fitReason": "난전·진입 + 후열 지속 화력 기반에서 이동 경로를 묶고 한 지점에 폭딜을 집중합니다.",
+        "partnerDelta": 1.02,
+        "partnerGames": 9816,
+        "partnerGameShare": 0.08750612881658124,
+        "confidence": "high",
+        "metricRole": "장악 폭딜",
+        "metricSummary": "대표 조합 평균 +1.33 RP · 평균 비중 10.6% · 방향 일치 70%",
+        "metricCohesion": 0.7037037037037037,
+        "metricClusterSize": 3
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.02,
+          "games": 9816
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.692,
+          "games": 2777
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 4.114,
+          "games": 342
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.246,
+          "games": 40981
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": 0.552,
+          "games": 4561
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": 1.497,
+          "games": 563
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 0.339,
+          "games": 1473
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.044,
+          "games": 11730
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": -18.615,
+          "games": 93
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": -7.429,
+          "games": 288
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -17.818,
+          "games": 46
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.238,
+          "games": 7423
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -5.164,
+          "games": 248
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": -1.6,
+          "games": 1986
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": -0.615,
+          "games": 12176
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -3.251,
+          "games": 359
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -4.32,
+          "games": 67
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.186,
+          "games": 17161
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": -0.875,
+          "games": 70
+        }
+      ]
+    },
+    {
+      "characterCode": 79,
+      "characterName": "유스티나",
+      "weapon": 8,
+      "weaponName": "석궁",
+      "totalGames": 99143,
+      "ownMeanRP": 51.899,
+      "groupId": 0,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "포킹 누커",
+        "roles": ["스킬딜러"],
+        "traits": ["poke", "burst"],
+        "partnerRoles": ["전사", "원거리 딜러"],
+        "fitRole": "포킹 점사",
+        "fitReason": "난전·진입 + 후열 지속 화력 기반에서 사전 견제로 체력을 깎은 뒤 점사 각을 완성합니다.",
+        "partnerDelta": 1.786,
+        "partnerGames": 12141,
+        "partnerGameShare": 0.1224594777240955,
+        "confidence": "high",
+        "metricRole": "포킹 점사",
+        "metricSummary": "대표 조합 평균 +1.46 RP · 평균 비중 10.8% · 방향 일치 67%",
+        "metricCohesion": 0.6666666666666666,
+        "metricClusterSize": 3
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.786,
+          "games": 12141
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 3.997,
+          "games": 676
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": 1.442,
+          "games": 2751
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.99,
+          "games": 5406
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": 5.185,
+          "games": 51
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.425,
+          "games": 423
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.147,
+          "games": 28190
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": 0.174,
+          "games": 3941
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": 0.331,
+          "games": 187
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": -1.404,
+          "games": 10824
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.968,
+          "games": 11824
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -2.803,
+          "games": 1222
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.231,
+          "games": 5587
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -7.048,
+          "games": 101
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -4.771,
+          "games": 43
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -1.319,
+          "games": 501
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": -1.272,
+          "games": 377
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": -0.295,
+          "games": 562
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.021,
+          "games": 14311
+        }
+      ]
+    },
+    {
+      "characterCode": 36,
+      "characterName": "이바",
+      "weapon": 5,
+      "weaponName": "투척",
+      "totalGames": 90048,
+      "ownMeanRP": 52.79,
+      "groupId": 0,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "포킹 누커",
+        "roles": ["스킬딜러"],
+        "traits": ["poke", "burst"],
+        "partnerRoles": ["전사", "원거리 딜러"],
+        "fitRole": "포킹 점사",
+        "fitReason": "난전·진입 + 후열 지속 화력 기반에서 사전 견제로 체력을 깎은 뒤 점사 각을 완성합니다.",
+        "partnerDelta": 1.426,
+        "partnerGames": 7872,
+        "partnerGameShare": 0.08742004264392324,
+        "confidence": "high",
+        "metricRole": "포킹 점사",
+        "metricSummary": "대표 조합 평균 +1.46 RP · 평균 비중 10.8% · 방향 일치 67%",
+        "metricCohesion": 0.6666666666666666,
+        "metricClusterSize": 3
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.426,
+          "games": 7872
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": 0.96,
+          "games": 9845
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": 5.667,
+          "games": 184
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.549,
+          "games": 12157
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 2.785,
+          "games": 425
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.777,
+          "games": 3553
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": 0.829,
+          "games": 2340
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": 3.031,
+          "games": 126
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": 0.987,
+          "games": 626
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 지원가",
+          "delta": 3.28,
+          "games": 38
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 0.359,
+          "games": 1359
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.549,
+          "games": 243
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.891,
+          "games": 8242
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -9.183,
+          "games": 98
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -1.533,
+          "games": 2475
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": -0.413,
+          "games": 23842
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.343,
+          "games": 15920
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -1.844,
+          "games": 278
+        }
+      ]
+    },
+    {
+      "characterCode": 12,
+      "characterName": "혜진",
+      "weapon": 7,
+      "weaponName": "활",
+      "totalGames": 63282,
+      "ownMeanRP": 53.594,
+      "groupId": 0,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "장악 포킹 딜러",
+        "roles": ["스킬딜러"],
+        "traits": ["poke", "zoneControl"],
+        "partnerRoles": ["전사", "원거리 딜러"],
+        "fitRole": "포킹 장악",
+        "fitReason": "난전·진입 + 후열 지속 화력 기반에서 공간을 묶고 포킹으로 상대 진입 경로를 제한합니다.",
+        "partnerDelta": 1.602,
+        "partnerGames": 7208,
+        "partnerGameShare": 0.11390284757118928,
+        "confidence": "high",
+        "metricRole": "포킹 장악",
+        "metricSummary": "대표 조합 평균 +1.60 RP · 평균 비중 11.4% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.602,
+          "games": 7208
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": 0.999,
+          "games": 8324
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.127,
+          "games": 6422
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": 4.668,
+          "games": 111
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 0.897,
+          "games": 710
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 0.966,
+          "games": 313
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": 2.098,
+          "games": 46
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": 0.227,
+          "games": 1935
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": 1.423,
+          "games": 48
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -15.907,
+          "games": 89
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -2.412,
+          "games": 3643
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": -6.236,
+          "games": 470
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -1.438,
+          "games": 6713
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": -6.019,
+          "games": 315
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -0.925,
+          "games": 2986
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -1.84,
+          "games": 272
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.25,
+          "games": 2871
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": -0.015,
+          "games": 20773
+        }
+      ]
+    },
+    {
+      "characterCode": 15,
+      "characterName": "시셀라",
+      "weapon": 6,
+      "weaponName": "암기",
+      "totalGames": 56284,
+      "ownMeanRP": 52.313,
+      "groupId": 0,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "포킹 누커",
+        "roles": ["스킬딜러"],
+        "traits": ["poke", "burst"],
+        "partnerRoles": ["전사", "원거리 딜러"],
+        "fitRole": "포킹 점사",
+        "fitReason": "난전·진입 + 후열 지속 화력 기반에서 사전 견제로 체력을 깎은 뒤 점사 각을 완성합니다.",
+        "partnerDelta": 1.181,
+        "partnerGames": 6412,
+        "partnerGameShare": 0.11392225143913012,
+        "confidence": "high",
+        "metricRole": "포킹 점사",
+        "metricSummary": "대표 조합 평균 +1.46 RP · 평균 비중 10.8% · 방향 일치 67%",
+        "metricCohesion": 0.6666666666666666,
+        "metricClusterSize": 3
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.181,
+          "games": 6412
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": 2.131,
+          "games": 1871
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 3.294,
+          "games": 495
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.501,
+          "games": 3261
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.288,
+          "games": 7931
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.165,
+          "games": 16455
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": 0.731,
+          "games": 36
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": 0.228,
+          "games": 157
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -3.375,
+          "games": 3583
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": -8.902,
+          "games": 81
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -2.425,
+          "games": 600
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -0.984,
+          "games": 2109
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": -2.1,
+          "games": 335
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -2.727,
+          "games": 96
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.188,
+          "games": 6067
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": -0.168,
+          "games": 6522
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.59,
+          "games": 210
+        }
+      ]
+    },
+    {
+      "characterCode": 9,
+      "characterName": "아이솔",
+      "weapon": 9,
+      "weaponName": "권총",
+      "totalGames": 47387,
+      "ownMeanRP": 52.149,
+      "groupId": 0,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "장악 누커",
+        "roles": ["스킬딜러", "원거리 딜러"],
+        "traits": ["zoneControl", "burst"],
+        "partnerRoles": ["전사", "원거리 딜러"],
+        "fitRole": "장악 폭딜",
+        "fitReason": "난전·진입 + 후열 지속 화력 기반에서 이동 경로를 묶고 한 지점에 폭딜을 집중합니다.",
+        "partnerDelta": 1.949,
+        "partnerGames": 4560,
+        "partnerGameShare": 0.09622892354443202,
+        "confidence": "high",
+        "metricRole": "장악 폭딜",
+        "metricSummary": "대표 조합 평균 +1.33 RP · 평균 비중 10.6% · 방향 일치 70%",
+        "metricCohesion": 0.7037037037037037,
+        "metricClusterSize": 3
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.949,
+          "games": 4560
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.822,
+          "games": 3088
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.296,
+          "games": 14057
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": 2.627,
+          "games": 70
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": 0.321,
+          "games": 3237
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 0.763,
+          "games": 297
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": 0.124,
+          "games": 7048
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.103,
+          "games": 203
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -24.989,
+          "games": 66
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": -7.312,
+          "games": 443
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -2.977,
+          "games": 2077
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": -10.03,
+          "games": 86
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.781,
+          "games": 4307
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -3.174,
+          "games": 185
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -1.463,
+          "games": 467
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.296,
+          "games": 4226
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": -0.584,
+          "games": 37
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": -0.047,
+          "games": 2892
+        }
+      ]
+    },
+    {
+      "characterCode": 24,
+      "characterName": "아델라",
+      "weapon": 21,
+      "weaponName": "레이피어",
+      "totalGames": 41007,
+      "ownMeanRP": 54.459,
+      "groupId": 0,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "장악 누커",
+        "roles": ["스킬딜러"],
+        "traits": ["burst", "zoneControl"],
+        "partnerRoles": ["전사", "원거리 딜러"],
+        "fitRole": "장악 폭딜",
+        "fitReason": "난전·진입 + 후열 지속 화력 기반에서 이동 경로를 묶고 한 지점에 폭딜을 집중합니다.",
+        "partnerDelta": 1.027,
+        "partnerGames": 5451,
+        "partnerGameShare": 0.13292852439827346,
+        "confidence": "high",
+        "metricRole": "장악 폭딜",
+        "metricSummary": "대표 조합 평균 +1.33 RP · 평균 비중 10.6% · 방향 일치 70%",
+        "metricCohesion": 0.7037037037037037,
+        "metricClusterSize": 3
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.027,
+          "games": 5451
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.023,
+          "games": 4254
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.608,
+          "games": 11918
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.611,
+          "games": 2105
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": 0.128,
+          "games": 6369
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": 0.747,
+          "games": 33
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -3.282,
+          "games": 2679
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": -3.929,
+          "games": 1333
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -1.514,
+          "games": 1424
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": -2.687,
+          "games": 319
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": -2.698,
+          "games": 196
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -1.488,
+          "games": 385
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -3.079,
+          "games": 41
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.196,
+          "games": 4115
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -0.973,
+          "games": 123
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": -1.247,
+          "games": 36
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": -0.169,
+          "games": 197
+        }
+      ]
+    },
+    {
+      "characterCode": 77,
+      "characterName": "유민",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "totalGames": 169346,
+      "ownMeanRP": 52.826,
+      "groupId": 1,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "진입 장악 딜러",
+        "roles": ["스킬딜러"],
+        "traits": ["engage", "zoneControl"],
+        "partnerRoles": ["전사", "전사"],
+        "fitRole": "진입 장악",
+        "fitReason": "난전·진입 2중 기반에서 교전을 열면서 적의 이동 공간까지 제한합니다.",
+        "partnerDelta": 0.573,
+        "partnerGames": 49709,
+        "partnerGameShare": 0.29353512926198433,
+        "confidence": "high",
+        "metricRole": "진입 장악",
+        "metricSummary": "대표 조합 평균 +0.57 RP · 평균 비중 29.4% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.573,
+          "games": 49709
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.682,
+          "games": 19564
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": 0.414,
+          "games": 24247
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": 0.925,
+          "games": 2447
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": 4.468,
+          "games": 70
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": 0.14,
+          "games": 382
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 0.046,
+          "games": 2238
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": -1.075,
+          "games": 21321
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": -6.594,
+          "games": 499
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": -3.943,
+          "games": 546
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.611,
+          "games": 16562
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 지원가",
+          "delta": -7.985,
+          "games": 89
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -4.195,
+          "games": 300
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -0.802,
+          "games": 6343
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": -0.815,
+          "games": 4039
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -0.328,
+          "games": 13541
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": -0.804,
+          "games": 947
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.611,
+          "games": 520
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -0.208,
+          "games": 405
+        }
+      ]
+    },
+    {
+      "characterCode": 17,
+      "characterName": "아드리아나",
+      "weapon": 5,
+      "weaponName": "투척",
+      "totalGames": 95363,
+      "ownMeanRP": 52.849,
+      "groupId": 1,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "장악 포킹 딜러",
+        "roles": ["스킬딜러"],
+        "traits": ["zoneControl", "poke"],
+        "partnerRoles": ["전사", "전사"],
+        "fitRole": "포킹 장악",
+        "fitReason": "난전·진입 2중 기반에서 공간을 묶고 포킹으로 상대 진입 경로를 제한합니다.",
+        "partnerDelta": 0.707,
+        "partnerGames": 34319,
+        "partnerGameShare": 0.35987752063169154,
+        "confidence": "high",
+        "metricRole": "포킹 장악",
+        "metricSummary": "대표 조합 평균 +0.62 RP · 평균 비중 33.0% · 방향 일치 80%",
+        "metricCohesion": 0.8,
+        "metricClusterSize": 2
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.707,
+          "games": 34319
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.733,
+          "games": 9791
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 3.643,
+          "games": 300
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": 0.929,
+          "games": 3932
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.321,
+          "games": 12092
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": 2.446,
+          "games": 76
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.377,
+          "games": 3048
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -2.339,
+          "games": 5303
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": -3.199,
+          "games": 1808
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -6.804,
+          "games": 174
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": -13.131,
+          "games": 44
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": -0.841,
+          "games": 9017
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.636,
+          "games": 13174
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": -3.596,
+          "games": 404
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -2.11,
+          "games": 1156
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -6.008,
+          "games": 45
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -1.86,
+          "games": 218
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": -0.315,
+          "games": 411
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -0.493,
+          "games": 34
+        }
+      ]
+    },
+    {
+      "characterCode": 66,
+      "characterName": "아르다",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "totalGames": 91780,
+      "ownMeanRP": 53.143,
+      "groupId": 1,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "지원형 장악 딜러",
+        "roles": ["스킬딜러", "지원가"],
+        "traits": ["protect", "zoneControl"],
+        "partnerRoles": ["전사", "전사"],
+        "fitRole": "보호 장악",
+        "fitReason": "난전·진입 2중 기반에서 아군을 보호하면서 유리한 전투 구역을 고정합니다.",
+        "partnerDelta": 0.43,
+        "partnerGames": 43215,
+        "partnerGameShare": 0.4708542166049248,
+        "confidence": "high",
+        "metricRole": "보호 장악",
+        "metricSummary": "대표 조합 평균 +0.51 RP · 평균 비중 35.7% · 방향 일치 89%",
+        "metricCohesion": 0.8888888888888888,
+        "metricClusterSize": 2
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.43,
+          "games": 43215
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.683,
+          "games": 8891
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.934,
+          "games": 3134
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": 0.699,
+          "games": 4412
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 2.652,
+          "games": 297
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": 1.132,
+          "games": 431
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.063,
+          "games": 285
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.099,
+          "games": 6507
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -25.788,
+          "games": 33
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -4.044,
+          "games": 671
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": -1.088,
+          "games": 9076
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": -2.144,
+          "games": 1832
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.956,
+          "games": 9170
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": -10.934,
+          "games": 67
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.368,
+          "games": 3395
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -5.361,
+          "games": 154
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -2.172,
+          "games": 124
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": -1.889,
+          "games": 60
+        }
+      ]
+    },
+    {
+      "characterCode": 34,
+      "characterName": "나타폰",
+      "weapon": 23,
+      "weaponName": "카메라",
+      "totalGames": 79476,
+      "ownMeanRP": 54.069,
+      "groupId": 1,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "장악 포킹 딜러",
+        "roles": ["스킬딜러"],
+        "traits": ["poke", "zoneControl"],
+        "partnerRoles": ["전사", "전사"],
+        "fitRole": "포킹 장악",
+        "fitReason": "난전·진입 2중 기반에서 공간을 묶고 포킹으로 상대 진입 경로를 제한합니다.",
+        "partnerDelta": 0.526,
+        "partnerGames": 23822,
+        "partnerGameShare": 0.29973828577180534,
+        "confidence": "high",
+        "metricRole": "포킹 장악",
+        "metricSummary": "대표 조합 평균 +0.62 RP · 평균 비중 33.0% · 방향 일치 80%",
+        "metricCohesion": 0.8,
+        "metricClusterSize": 2
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.526,
+          "games": 23822
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": 3.626,
+          "games": 155
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.427,
+          "games": 8750
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.577,
+          "games": 3140
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.229,
+          "games": 8090
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": 1.969,
+          "games": 39
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": 0.079,
+          "games": 10603
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 0.212,
+          "games": 326
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.186,
+          "games": 320
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": -4.295,
+          "games": 512
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.788,
+          "games": 10416
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -2.268,
+          "games": 1024
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -0.865,
+          "games": 6466
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": -5.334,
+          "games": 100
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -1.673,
+          "games": 358
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -0.459,
+          "games": 3108
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -3.012,
+          "games": 54
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": -0.166,
+          "games": 2118
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -0.171,
+          "games": 55
+        }
+      ]
+    },
+    {
+      "characterCode": 51,
+      "characterName": "프리야",
+      "weapon": 22,
+      "weaponName": "기타",
+      "totalGames": 38178,
+      "ownMeanRP": 53.052,
+      "groupId": 1,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "지원형 장악 딜러",
+        "roles": ["스킬딜러", "지원가"],
+        "traits": ["protect", "zoneControl"],
+        "partnerRoles": ["전사", "전사"],
+        "fitRole": "보호 장악",
+        "fitReason": "난전·진입 2중 기반에서 아군을 보호하면서 유리한 전투 구역을 고정합니다.",
+        "partnerDelta": 0.594,
+        "partnerGames": 9312,
+        "partnerGameShare": 0.2439101052962439,
+        "confidence": "high",
+        "metricRole": "보호 장악",
+        "metricSummary": "대표 조합 평균 +0.51 RP · 평균 비중 35.7% · 방향 일치 89%",
+        "metricCohesion": 0.8888888888888888,
+        "metricClusterSize": 2
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.594,
+          "games": 9312
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.044,
+          "games": 2876
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 2.487,
+          "games": 276
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 2.877,
+          "games": 156
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.351,
+          "games": 7416
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.333,
+          "games": 4689
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": 0.879,
+          "games": 35
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": -2.319,
+          "games": 1857
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -2.39,
+          "games": 1386
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -7.468,
+          "games": 114
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": -0.435,
+          "games": 6696
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": -5.55,
+          "games": 40
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": -1.736,
+          "games": 305
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": -1.397,
+          "games": 403
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -0.623,
+          "games": 1062
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.277,
+          "games": 1505
+        }
+      ]
+    },
+    {
+      "characterCode": 26,
+      "characterName": "바바라",
+      "weapon": 9,
+      "weaponName": "권총",
+      "totalGames": 139493,
+      "ownMeanRP": 52.482,
+      "groupId": 2,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "지속 장악 딜러",
+        "roles": ["스킬딜러"],
+        "traits": ["zoneControl", "sustain"],
+        "partnerRoles": ["스킬딜러", "원거리 딜러"],
+        "fitRole": "지속 장악",
+        "fitReason": "스킬 화력·장악 + 후열 지속 화력 기반에서 지역을 오래 점유하며 지속 교전의 중심을 잡습니다.",
+        "partnerDelta": 1.381,
+        "partnerGames": 9105,
+        "partnerGameShare": 0.06527209250643401,
+        "confidence": "high",
+        "metricRole": "지속 장악",
+        "metricSummary": "대표 조합 평균 +1.57 RP · 평균 비중 6.8% · 방향 일치 75%",
+        "metricCohesion": 0.75,
+        "metricClusterSize": 2
+      },
+      "strong": [
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.381,
+          "games": 9105
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": 1.445,
+          "games": 5711
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.664,
+          "games": 16624
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": 0.56,
+          "games": 21110
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 2.061,
+          "games": 890
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 0.453,
+          "games": 1394
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": 1.933,
+          "games": 55
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -24.74,
+          "games": 75
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -6.472,
+          "games": 771
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.281,
+          "games": 12095
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 지원가",
+          "delta": -15.667,
+          "games": 44
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.867,
+          "games": 13987
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": -2.779,
+          "games": 1044
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -6.346,
+          "games": 175
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -4.887,
+          "games": 222
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": -1.988,
+          "games": 341
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": -0.094,
+          "games": 33642
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.548,
+          "games": 544
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.073,
+          "games": 17112
+        }
+      ]
+    },
+    {
+      "characterCode": 87,
+      "characterName": "코렐라인",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "totalGames": 126687,
+      "ownMeanRP": 51.515,
+      "groupId": 2,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "지속 장악 딜러",
+        "roles": ["스킬딜러"],
+        "traits": ["zoneControl", "sustain"],
+        "partnerRoles": ["스킬딜러", "원거리 딜러"],
+        "fitRole": "지속 장악",
+        "fitReason": "스킬 화력·장악 + 후열 지속 화력 기반에서 지역을 오래 점유하며 지속 교전의 중심을 잡습니다.",
+        "partnerDelta": 1.757,
+        "partnerGames": 8958,
+        "partnerGameShare": 0.07070970186364821,
+        "confidence": "high",
+        "metricRole": "지속 장악",
+        "metricSummary": "대표 조합 평균 +1.57 RP · 평균 비중 6.8% · 방향 일치 75%",
+        "metricCohesion": 0.75,
+        "metricClusterSize": 2
+      },
+      "strong": [
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.757,
+          "games": 8958
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 2.337,
+          "games": 1052
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.551,
+          "games": 15065
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": 0.844,
+          "games": 5309
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 2.176,
+          "games": 619
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.254,
+          "games": 16363
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": 0.429,
+          "games": 4613
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": 2.592,
+          "games": 81
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": 0.047,
+          "games": 884
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -12.972,
+          "games": 131
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.451,
+          "games": 8801
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -14.353,
+          "games": 53
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": -0.478,
+          "games": 32571
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -6.343,
+          "games": 180
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": -4.342,
+          "games": 232
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -2.92,
+          "games": 494
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -1.529,
+          "games": 1367
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.098,
+          "games": 13296
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": -0.052,
+          "games": 16588
+        }
+      ]
+    },
+    {
+      "characterCode": 89,
+      "characterName": "크레이버",
+      "weapon": 9,
+      "weaponName": "권총",
+      "totalGames": 88260,
+      "ownMeanRP": 51.601,
+      "groupId": 2,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "후속 포화 스킬딜러",
+        "roles": ["스킬딜러"],
+        "traits": ["poke", "burst"],
+        "partnerRoles": ["스킬딜러", "원거리 딜러"],
+        "fitRole": "포킹 점사",
+        "fitReason": "아군 전열이나 선행 스킬딜러가 만든 교전 구도에서 후속 화력을 연속으로 누적합니다.",
+        "partnerDelta": 1.787,
+        "partnerGames": 3760,
+        "partnerGameShare": 0.04260140493995015,
+        "confidence": "high",
+        "metricRole": "포킹 점사 · 후속 포화",
+        "metricSummary": "대표 조합 평균 +1.79 RP · 평균 비중 4.3% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1,
+        "metricGroupKey": "skilldealer-poke-followup-barrage"
+      },
+      "strong": [
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.787,
+          "games": 3760
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": 1.65,
+          "games": 2816
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": 0.578,
+          "games": 17709
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 2.284,
+          "games": 422
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 0.82,
+          "games": 796
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.281,
+          "games": 6630
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": 1.163,
+          "games": 53
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "암살자 + 스킬딜러 + 지원가",
+          "delta": -30.942,
+          "games": 48
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -14.366,
+          "games": 88
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": -10.205,
+          "games": 167
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": -2.669,
+          "games": 882
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": -3.909,
+          "games": 408
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -0.821,
+          "games": 7018
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -3.569,
+          "games": 141
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.393,
+          "games": 9885
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.283,
+          "games": 8547
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -0.859,
+          "games": 925
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -1.74,
+          "games": 147
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": -0.077,
+          "games": 24563
+        }
+      ]
+    },
+    {
+      "characterCode": 60,
+      "characterName": "타지아",
+      "weapon": 6,
+      "weaponName": "암기",
+      "totalGames": 37853,
+      "ownMeanRP": 53.864,
+      "groupId": 2,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "포킹 누커",
+        "roles": ["스킬딜러"],
+        "traits": ["poke", "burst"],
+        "partnerRoles": ["스킬딜러", "원거리 딜러"],
+        "fitRole": "포킹 점사",
+        "fitReason": "스킬 화력·장악 + 후열 지속 화력 기반에서 사전 견제로 체력을 깎은 뒤 점사 각을 완성합니다.",
+        "partnerDelta": 1.984,
+        "partnerGames": 1562,
+        "partnerGameShare": 0.0412648931392492,
+        "confidence": "high",
+        "metricRole": "포킹 점사 · 기동 포착",
+        "metricSummary": "대표 조합 평균 +1.98 RP · 평균 비중 4.1% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.984,
+          "games": 1562
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": 3.469,
+          "games": 482
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": 5.339,
+          "games": 169
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.869,
+          "games": 5828
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": 3.4,
+          "games": 299
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 3.659,
+          "games": 135
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": 1.498,
+          "games": 512
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": 0.277,
+          "games": 2312
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": 1.229,
+          "games": 33
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": 0.134,
+          "games": 2260
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 지원가",
+          "delta": 0.235,
+          "games": 96
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -7.726,
+          "games": 262
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": -0.879,
+          "games": 6376
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.614,
+          "games": 2846
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -0.597,
+          "games": 2864
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -0.985,
+          "games": 978
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": -1.27,
+          "games": 239
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": -0.161,
+          "games": 9458
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": -0.142,
+          "games": 1112
+        }
+      ]
+    },
+    {
+      "characterCode": 5,
+      "characterName": "자히르",
+      "weapon": 5,
+      "weaponName": "투척",
+      "totalGames": 24009,
+      "ownMeanRP": 54.965,
+      "groupId": 2,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "장악 포킹 딜러",
+        "roles": ["스킬딜러"],
+        "traits": ["poke", "zoneControl"],
+        "partnerRoles": ["스킬딜러", "원거리 딜러"],
+        "fitRole": "포킹 장악",
+        "fitReason": "스킬 화력·장악 + 후열 지속 화력 기반에서 공간을 묶고 포킹으로 상대 진입 경로를 제한합니다.",
+        "partnerDelta": 3.463,
+        "partnerGames": 953,
+        "partnerGameShare": 0.039693448290224496,
+        "confidence": "high",
+        "metricRole": "포킹 장악",
+        "metricSummary": "대표 조합 평균 +3.46 RP · 평균 비중 4.0% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 3.463,
+          "games": 953
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": 6.647,
+          "games": 70
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": 0.961,
+          "games": 2882
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.356,
+          "games": 5941
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": 0.339,
+          "games": 4049
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": 1.717,
+          "games": 125
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.219,
+          "games": 3080
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": 0.134,
+          "games": 688
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -32.314,
+          "games": 46
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": -9.563,
+          "games": 70
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.586,
+          "games": 2376
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": -7.771,
+          "games": 74
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": -5.465,
+          "games": 103
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -1.941,
+          "games": 739
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.618,
+          "games": 2183
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -2.609,
+          "games": 52
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -1.043,
+          "games": 219
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -0.329,
+          "games": 348
+        }
+      ]
+    },
+    {
+      "characterCode": 24,
+      "characterName": "아델라",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "totalGames": 19689,
+      "ownMeanRP": 53.453,
+      "groupId": 2,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "장악 누커",
+        "roles": ["스킬딜러"],
+        "traits": ["burst", "zoneControl"],
+        "partnerRoles": ["스킬딜러", "원거리 딜러"],
+        "fitRole": "장악 폭딜",
+        "fitReason": "스킬 화력·장악 + 후열 지속 화력 기반에서 이동 경로를 묶고 한 지점에 폭딜을 집중합니다.",
+        "partnerDelta": 2.263,
+        "partnerGames": 1074,
+        "partnerGameShare": 0.05454822489715069,
+        "confidence": "high",
+        "metricRole": "장악 폭딜",
+        "metricSummary": "대표 조합 평균 +2.26 RP · 평균 비중 5.5% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 2.263,
+          "games": 1074
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": 4.836,
+          "games": 159
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.687,
+          "games": 5715
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 2.137,
+          "games": 95
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": 0.458,
+          "games": 1864
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.431,
+          "games": 2041
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -2.512,
+          "games": 756
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": -0.984,
+          "games": 3135
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.929,
+          "games": 2465
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": -1.631,
+          "games": 652
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -2.112,
+          "games": 210
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -2.244,
+          "games": 59
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": -1.338,
+          "games": 96
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -0.193,
+          "games": 1280
+        }
+      ]
+    },
+    {
+      "characterCode": 2,
+      "characterName": "아야",
+      "weapon": 11,
+      "weaponName": "저격총",
+      "totalGames": 83681,
+      "ownMeanRP": 52.827,
+      "groupId": 3,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "포킹 누커",
+        "roles": ["스킬딜러", "원거리 딜러"],
+        "traits": ["poke", "burst"],
+        "partnerRoles": ["스킬딜러", "스킬딜러"],
+        "fitRole": "포킹 점사",
+        "fitReason": "스킬 화력·장악 2중 기반에서 사전 견제로 체력을 깎은 뒤 점사 각을 완성합니다.",
+        "partnerDelta": 2.199,
+        "partnerGames": 2978,
+        "partnerGameShare": 0.035587528829722395,
+        "confidence": "high",
+        "metricRole": "포킹 점사",
+        "metricSummary": "대표 조합 평균 +2.20 RP · 평균 비중 3.6% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": 2.199,
+          "games": 2978
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.842,
+          "games": 9707
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.057,
+          "games": 3785
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.438,
+          "games": 7497
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": 1.035,
+          "games": 558
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 0.87,
+          "games": 462
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": 0.783,
+          "games": 391
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": 0.988,
+          "games": 109
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": 0.067,
+          "games": 11092
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -21.218,
+          "games": 40
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": -15.526,
+          "games": 36
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": -5.105,
+          "games": 291
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": -6.249,
+          "games": 133
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -0.844,
+          "games": 6949
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": -0.393,
+          "games": 24175
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -1.695,
+          "games": 989
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -2.833,
+          "games": 173
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -0.589,
+          "games": 3093
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.089,
+          "games": 11198
+        }
+      ]
+    },
+    {
+      "characterCode": 43,
+      "characterName": "셀린",
+      "weapon": 5,
+      "weaponName": "투척",
+      "totalGames": 71461,
+      "ownMeanRP": 53.641,
+      "groupId": 3,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "장악 누커",
+        "roles": ["스킬딜러"],
+        "traits": ["zoneControl", "burst"],
+        "partnerRoles": ["스킬딜러", "스킬딜러"],
+        "fitRole": "장악 폭딜",
+        "fitReason": "스킬 화력·장악 2중 기반에서 이동 경로를 묶고 한 지점에 폭딜을 집중합니다.",
+        "partnerDelta": 1.41,
+        "partnerGames": 2152,
+        "partnerGameShare": 0.03011432809504485,
+        "confidence": "high",
+        "metricRole": "장악 폭딜",
+        "metricSummary": "대표 조합 평균 +1.41 RP · 평균 비중 3.0% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": 4.788,
+          "games": 341
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": 1.41,
+          "games": 2152
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.487,
+          "games": 11169
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": 3.403,
+          "games": 143
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 1.21,
+          "games": 945
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 2.385,
+          "games": 189
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.339,
+          "games": 7342
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": 2.506,
+          "games": 88
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.36,
+          "games": 3687
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": 0.48,
+          "games": 1791
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": 0.111,
+          "games": 10402
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -12.254,
+          "games": 163
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -4.449,
+          "games": 362
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -0.954,
+          "games": 6869
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": -0.383,
+          "games": 16640
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": -0.163,
+          "games": 8642
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": -0.25,
+          "games": 440
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -0.12,
+          "games": 59
+        }
+      ]
+    },
+    {
+      "characterCode": 19,
+      "characterName": "엠마",
+      "weapon": 6,
+      "weaponName": "암기",
+      "totalGames": 50969,
+      "ownMeanRP": 53.059,
+      "groupId": 3,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "유틸 포킹 딜러",
+        "roles": ["스킬딜러"],
+        "traits": ["poke", "peel"],
+        "partnerRoles": ["스킬딜러", "스킬딜러"],
+        "fitRole": "견제·받아치기",
+        "fitReason": "스킬 화력·장악 2중 기반에서 거리를 유지하며 견제하고 적의 역진입을 받아칩니다.",
+        "partnerDelta": 2.279,
+        "partnerGames": 2613,
+        "partnerGameShare": 0.05126645608114736,
+        "confidence": "high",
+        "metricRole": "견제·받아치기",
+        "metricSummary": "대표 조합 평균 +2.15 RP · 평균 비중 5.0% · 방향 일치 70%",
+        "metricCohesion": 0.7,
+        "metricClusterSize": 2
+      },
+      "strong": [
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": 2.279,
+          "games": 2613
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 3.33,
+          "games": 352
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": 0.577,
+          "games": 9586
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 2.918,
+          "games": 311
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.718,
+          "games": 4334
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": 2.095,
+          "games": 254
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": 0.823,
+          "games": 561
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": 0.337,
+          "games": 140
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": 0.136,
+          "games": 50
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -14.467,
+          "games": 58
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.306,
+          "games": 3505
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -1.603,
+          "games": 1840
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.857,
+          "games": 3298
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -2.386,
+          "games": 389
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.604,
+          "games": 4561
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": -0.21,
+          "games": 11634
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.053,
+          "games": 7426
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": -0.588,
+          "games": 33
+        }
+      ]
+    },
+    {
+      "characterCode": 15,
+      "characterName": "시셀라",
+      "weapon": 5,
+      "weaponName": "투척",
+      "totalGames": 45827,
+      "ownMeanRP": 52.279,
+      "groupId": 3,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "장악 포킹 딜러",
+        "roles": ["스킬딜러"],
+        "traits": ["poke", "zoneControl"],
+        "partnerRoles": ["스킬딜러", "스킬딜러"],
+        "fitRole": "포킹 장악",
+        "fitReason": "스킬 화력·장악 2중 기반에서 공간을 묶고 포킹으로 상대 진입 경로를 제한합니다.",
+        "partnerDelta": 2.741,
+        "partnerGames": 1470,
+        "partnerGameShare": 0.03207715975298405,
+        "confidence": "high",
+        "metricRole": "포킹 장악",
+        "metricSummary": "대표 조합 평균 +2.74 RP · 평균 비중 3.2% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": 2.741,
+          "games": 1470
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.788,
+          "games": 2964
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 3.153,
+          "games": 405
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.626,
+          "games": 5504
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": 2.025,
+          "games": 222
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.246,
+          "games": 13116
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": 2.604,
+          "games": 73
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": 2.507,
+          "games": 73
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.118,
+          "games": 6560
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -4.171,
+          "games": 2769
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": -4.133,
+          "games": 178
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -2.265,
+          "games": 516
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -3.41,
+          "games": 135
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -0.6,
+          "games": 1804
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": -0.181,
+          "games": 5003
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.157,
+          "games": 4957
+        }
+      ]
+    },
+    {
+      "characterCode": 19,
+      "characterName": "엠마",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "totalGames": 40092,
+      "ownMeanRP": 53.232,
+      "groupId": 3,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "유틸 포킹 딜러",
+        "roles": ["스킬딜러"],
+        "traits": ["poke", "peel"],
+        "partnerRoles": ["스킬딜러", "스킬딜러"],
+        "fitRole": "견제·받아치기",
+        "fitReason": "스킬 화력·장악 2중 기반에서 거리를 유지하며 견제하고 적의 역진입을 받아칩니다.",
+        "partnerDelta": 2.013,
+        "partnerGames": 1918,
+        "partnerGameShare": 0.047839968073431105,
+        "confidence": "high",
+        "metricRole": "견제·받아치기",
+        "metricSummary": "대표 조합 평균 +2.15 RP · 평균 비중 5.0% · 방향 일치 70%",
+        "metricCohesion": 0.7,
+        "metricClusterSize": 2
+      },
+      "strong": [
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": 2.013,
+          "games": 1918
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.404,
+          "games": 3645
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": 2.611,
+          "games": 424
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 2.502,
+          "games": 292
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": 5.383,
+          "games": 60
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": 1.153,
+          "games": 205
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.257,
+          "games": 3022
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 0.513,
+          "games": 273
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.014,
+          "games": 6027
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -3.594,
+          "games": 1439
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -20.468,
+          "games": 40
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": -14.981,
+          "games": 35
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": -3.797,
+          "games": 252
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -1.136,
+          "games": 2659
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -0.511,
+          "games": 2565
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": -0.06,
+          "games": 7715
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": -0.021,
+          "games": 9462
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -0.294,
+          "games": 34
+        }
+      ]
+    },
+    {
+      "characterCode": 58,
+      "characterName": "헤이즈",
+      "weapon": 10,
+      "weaponName": "돌격 소총",
+      "totalGames": 200901,
+      "ownMeanRP": 52.051,
+      "groupId": 4,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "포킹 누커",
+        "roles": ["스킬딜러"],
+        "traits": ["poke", "burst"],
+        "partnerRoles": ["탱커", "원거리 딜러"],
+        "fitRole": "포킹 점사",
+        "fitReason": "전열·진입 + 후열 지속 화력 기반에서 사전 견제로 체력을 깎은 뒤 점사 각을 완성합니다.",
+        "partnerDelta": 1.063,
+        "partnerGames": 30926,
+        "partnerGameShare": 0.15393651599544053,
+        "confidence": "high",
+        "metricRole": "포킹 점사",
+        "metricSummary": "대표 조합 평균 +1.06 RP · 평균 비중 15.4% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.063,
+          "games": 30926
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": 1.403,
+          "games": 4906
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 3.17,
+          "games": 559
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.596,
+          "games": 9131
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 1.151,
+          "games": 1263
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": 3.467,
+          "games": 96
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 0.411,
+          "games": 2683
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.048,
+          "games": 58621
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": 0.024,
+          "games": 101
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -9.308,
+          "games": 425
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.234,
+          "games": 13636
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.542,
+          "games": 29294
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -0.79,
+          "games": 6767
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -5.194,
+          "games": 152
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": -2.132,
+          "games": 341
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": -0.239,
+          "games": 19895
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -0.988,
+          "games": 793
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": -0.764,
+          "games": 876
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.144,
+          "games": 20404
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 지원가",
+          "delta": -0.529,
+          "games": 31
+        }
+      ]
+    },
+    {
+      "characterCode": 12,
+      "characterName": "혜진",
+      "weapon": 6,
+      "weaponName": "암기",
+      "totalGames": 15369,
+      "ownMeanRP": 54.829,
+      "groupId": 4,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "장악 포킹 딜러",
+        "roles": ["스킬딜러"],
+        "traits": ["poke", "zoneControl"],
+        "partnerRoles": ["탱커", "원거리 딜러"],
+        "fitRole": "포킹 장악",
+        "fitReason": "전열·진입 + 후열 지속 화력 기반에서 공간을 묶고 포킹으로 상대 진입 경로를 제한합니다.",
+        "partnerDelta": 1.482,
+        "partnerGames": 1541,
+        "partnerGameShare": 0.10026677077233392,
+        "confidence": "high",
+        "metricRole": "포킹 장악",
+        "metricSummary": "대표 조합 평균 +1.48 RP · 평균 비중 10.0% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.482,
+          "games": 1541
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": 3.516,
+          "games": 113
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": 0.803,
+          "games": 850
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.544,
+          "games": 835
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": 0.254,
+          "games": 1538
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 0.802,
+          "games": 154
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 0.371,
+          "games": 74
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.011,
+          "games": 4940
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": -1.56,
+          "games": 1795
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": -6.708,
+          "games": 73
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -1.297,
+          "games": 695
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": -0.186,
+          "games": 2099
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -0.646,
+          "games": 60
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": -0.08,
+          "games": 526
+        }
+      ]
+    },
+    {
+      "characterCode": 2,
+      "characterName": "아야",
+      "weapon": 9,
+      "weaponName": "권총",
+      "totalGames": 74970,
+      "ownMeanRP": 52.879,
+      "groupId": 5,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "포킹 누커",
+        "roles": ["스킬딜러", "원거리 딜러"],
+        "traits": ["poke", "burst"],
+        "partnerRoles": ["전사", "스킬딜러"],
+        "fitRole": "포킹 점사",
+        "fitReason": "난전·진입 + 스킬 화력·장악 기반에서 사전 견제로 체력을 깎은 뒤 점사 각을 완성합니다.",
+        "partnerDelta": 0.938,
+        "partnerGames": 10055,
+        "partnerGameShare": 0.1341203147925837,
+        "confidence": "high",
+        "metricRole": "포킹 점사",
+        "metricSummary": "대표 조합 평균 +1.12 RP · 평균 비중 14.7% · 방향 일치 80%",
+        "metricCohesion": 0.8,
+        "metricClusterSize": 2
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": 0.938,
+          "games": 10055
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.415,
+          "games": 23358
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.907,
+          "games": 3354
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 1.455,
+          "games": 980
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": 1.226,
+          "games": 536
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": 0.411,
+          "games": 2597
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.238,
+          "games": 6613
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": 0.912,
+          "games": 65
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -26.878,
+          "games": 74
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.473,
+          "games": 5448
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": -4.981,
+          "games": 269
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.825,
+          "games": 9643
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.449,
+          "games": 7601
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -3.323,
+          "games": 136
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -0.607,
+          "games": 3295
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -1.642,
+          "games": 403
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": -2.745,
+          "games": 131
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": -1.641,
+          "games": 351
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -3.004,
+          "games": 42
+        }
+      ]
+    },
+    {
+      "characterCode": 54,
+      "characterName": "칼라",
+      "weapon": 8,
+      "weaponName": "석궁",
+      "totalGames": 63990,
+      "ownMeanRP": 53.364,
+      "groupId": 5,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "포킹 누커",
+        "roles": ["스킬딜러"],
+        "traits": ["poke", "burst"],
+        "partnerRoles": ["전사", "스킬딜러"],
+        "fitRole": "포킹 점사",
+        "fitReason": "난전·진입 + 스킬 화력·장악 기반에서 사전 견제로 체력을 깎은 뒤 점사 각을 완성합니다.",
+        "partnerDelta": 1.297,
+        "partnerGames": 10205,
+        "partnerGameShare": 0.15947804344428818,
+        "confidence": "high",
+        "metricRole": "포킹 점사",
+        "metricSummary": "대표 조합 평균 +1.12 RP · 평균 비중 14.7% · 방향 일치 80%",
+        "metricCohesion": 0.8,
+        "metricClusterSize": 2
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": 1.297,
+          "games": 10205
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.566,
+          "games": 5449
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": 1.33,
+          "games": 2529
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.168,
+          "games": 3128
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": 4.377,
+          "games": 165
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.304,
+          "games": 5895
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": 2.135,
+          "games": 100
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": 0.575,
+          "games": 478
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": 0.446,
+          "games": 447
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": 0.777,
+          "games": 125
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 0.453,
+          "games": 245
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 0.19,
+          "games": 841
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -2.811,
+          "games": 7703
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": -5.353,
+          "games": 205
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -0.897,
+          "games": 6504
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": -0.182,
+          "games": 17428
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -0.25,
+          "games": 2430
+        }
+      ]
+    },
+    {
+      "characterCode": 6,
+      "characterName": "나딘",
+      "weapon": 7,
+      "weaponName": "활",
+      "totalGames": 38934,
+      "ownMeanRP": 52.829,
+      "groupId": 5,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "지속 견제 딜러",
+        "roles": ["스킬딜러", "원거리 딜러"],
+        "traits": ["poke", "sustain"],
+        "partnerRoles": ["전사", "스킬딜러"],
+        "fitRole": "지속 견제",
+        "fitReason": "난전·진입 + 스킬 화력·장악 기반에서 사전 견제와 지속 화력으로 긴 교전의 우위를 만듭니다.",
+        "partnerDelta": 1.01,
+        "partnerGames": 5953,
+        "partnerGameShare": 0.15289977911337135,
+        "confidence": "high",
+        "metricRole": "지속 견제",
+        "metricSummary": "대표 조합 평균 +1.01 RP · 평균 비중 15.3% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": 1.01,
+          "games": 5953
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.718,
+          "games": 1968
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.536,
+          "games": 10557
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 1.553,
+          "games": 472
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 2.743,
+          "games": 110
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": 0.261,
+          "games": 4344
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": -19.218,
+          "games": 70
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -16.807,
+          "games": 58
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": -1.749,
+          "games": 2876
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": -1.694,
+          "games": 2075
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -5.435,
+          "games": 82
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.684,
+          "games": 3331
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -1.034,
+          "games": 1387
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.352,
+          "games": 4891
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": -1.344,
+          "games": 193
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": -0.678,
+          "games": 283
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -0.397,
+          "games": 228
+        }
+      ]
+    },
+    {
+      "characterCode": 48,
+      "characterName": "띠아",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "totalGames": 93881,
+      "ownMeanRP": 53.272,
+      "groupId": 6,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "장악 포킹 딜러",
+        "roles": ["스킬딜러"],
+        "traits": ["zoneControl", "poke"],
+        "partnerRoles": ["탱커", "전사"],
+        "fitRole": "포킹 장악",
+        "fitReason": "전열·진입 + 난전·진입 기반에서 공간을 묶고 포킹으로 상대 진입 경로를 제한합니다.",
+        "partnerDelta": 0.854,
+        "partnerGames": 7339,
+        "partnerGameShare": 0.07817343232389941,
+        "confidence": "high",
+        "metricRole": "포킹 장악",
+        "metricSummary": "대표 조합 평균 +0.85 RP · 평균 비중 7.8% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": 0.854,
+          "games": 7339
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.807,
+          "games": 5025
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.402,
+          "games": 13687
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": 2.599,
+          "games": 222
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": 0.284,
+          "games": 17963
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": 0.088,
+          "games": 21968
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.062,
+          "games": 9728
+        },
+        {
+          "multiset": "암살자 + 암살자 + 스킬딜러",
+          "delta": 0.912,
+          "games": 38
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.102,
+          "games": 537
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -11.089,
+          "games": 151
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.57,
+          "games": 7445
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -2.173,
+          "games": 836
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": -1.041,
+          "games": 3371
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -5.174,
+          "games": 117
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -1.784,
+          "games": 640
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": -0.573,
+          "games": 3366
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": -1.094,
+          "games": 903
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -3.251,
+          "games": 56
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": -1.098,
+          "games": 456
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 지원가",
+          "delta": -2.255,
+          "games": 32
+        }
+      ]
+    },
+    {
+      "characterCode": 52,
+      "characterName": "아디나",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "totalGames": 73193,
+      "ownMeanRP": 53.861,
+      "groupId": 6,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "지원형 포킹 딜러",
+        "roles": ["스킬딜러", "지원가"],
+        "traits": ["poke", "protect"],
+        "partnerRoles": ["탱커", "전사"],
+        "fitRole": "견제 지원",
+        "fitReason": "전열·진입 + 난전·진입 기반에서 안전한 거리에서 견제하면서 동료의 딜 각을 보호합니다.",
+        "partnerDelta": 1.129,
+        "partnerGames": 10100,
+        "partnerGameShare": 0.13799133796947796,
+        "confidence": "high",
+        "metricRole": "견제 지원",
+        "metricSummary": "대표 조합 평균 +1.13 RP · 평균 비중 13.8% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": 1.129,
+          "games": 10100
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.846,
+          "games": 10191
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 3.885,
+          "games": 251
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": 2.865,
+          "games": 372
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.527,
+          "games": 8020
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": 0.894,
+          "games": 2257
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": 1.669,
+          "games": 435
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": 1.929,
+          "games": 141
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": 0.832,
+          "games": 306
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.132,
+          "games": 2985
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": 0.057,
+          "games": 63
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.504,
+          "games": 5735
+        },
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": -0.689,
+          "games": 20598
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -2.113,
+          "games": 890
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": -0.53,
+          "games": 8722
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -4.208,
+          "games": 38
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -1.221,
+          "games": 128
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": -0.177,
+          "games": 1912
+        }
+      ]
+    },
+    {
+      "characterCode": 5,
+      "characterName": "자히르",
+      "weapon": 6,
+      "weaponName": "암기",
+      "totalGames": 30110,
+      "ownMeanRP": 55.74,
+      "groupId": 7,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "장악 포킹 딜러",
+        "roles": ["스킬딜러"],
+        "traits": ["poke", "zoneControl"],
+        "partnerRoles": ["탱커", "스킬딜러"],
+        "fitRole": "포킹 장악",
+        "fitReason": "전열·진입 + 스킬 화력·장악 기반에서 공간을 묶고 포킹으로 상대 진입 경로를 제한합니다.",
+        "partnerDelta": 1.913,
+        "partnerGames": 2967,
+        "partnerGameShare": 0.0985386914646297,
+        "confidence": "high",
+        "metricRole": "포킹 장악",
+        "metricSummary": "대표 조합 평균 +1.91 RP · 평균 비중 9.9% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": 1.913,
+          "games": 2967
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.407,
+          "games": 3793
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": 1.218,
+          "games": 4986
+        },
+        {
+          "multiset": "전사 + 암살자 + 스킬딜러",
+          "delta": 2.039,
+          "games": 914
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": 5.53,
+          "games": 103
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 2.467,
+          "games": 394
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 원거리 딜러",
+          "delta": 4.853,
+          "games": 74
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 스킬딜러",
+          "delta": 0.353,
+          "games": 3803
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "전사 + 전사 + 스킬딜러",
+          "delta": -1.621,
+          "games": 7655
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 원거리 딜러",
+          "delta": -3.524,
+          "games": 1194
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -11.389,
+          "games": 96
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 스킬딜러",
+          "delta": -5.844,
+          "games": 181
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -4.211,
+          "games": 308
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 원거리 딜러",
+          "delta": -7.082,
+          "games": 104
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -7.634,
+          "games": 53
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.378,
+          "games": 2525
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -0.999,
+          "games": 61
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 스킬딜러",
+          "delta": -0.038,
+          "games": 883
+        }
+      ]
+    }
+  ]
+}

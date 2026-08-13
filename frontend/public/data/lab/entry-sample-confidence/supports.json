@@ -1,0 +1,377 @@
+{
+  "role": "지원가",
+  "roleSlug": "supports",
+  "groupK": 2,
+  "internalGroupK": 2,
+  "minGames": 30,
+  "cumulative": true,
+  "generatedFrom": "v2_CharacterTrioWeapon",
+  "seasons": [10, 11],
+  "scoreMode": "tier-entry-cost-adjusted+sample-confidence",
+  "entryCosts": {
+    "DIAMOND": 48,
+    "METEORITE": 54.5,
+    "MITHRIL": 60
+  },
+  "classificationMethod": "primary-role+season-10-11-composition-fit-game-trend-metric-split-v5+tier-entry-cost+lift-sqrt-games",
+  "primaryRoleOnly": true,
+  "generatedAt": "2026-08-12",
+  "groups": [
+    {
+      "id": 0,
+      "label": "전사 2인 연계형",
+      "curated": false,
+      "topPartnerRoles": ["전사 ×2"],
+      "characterKeys": ["69_9"]
+    },
+    {
+      "id": 1,
+      "label": "전사·원거리 딜러 연계형",
+      "curated": false,
+      "topPartnerRoles": ["전사", "원거리 딜러"],
+      "characterKeys": ["41_24", "73_24"]
+    }
+  ],
+  "characters": [
+    {
+      "characterCode": 69,
+      "characterName": "레니",
+      "weapon": 9,
+      "weaponName": "권총",
+      "totalGames": 90039,
+      "ownMeanRP": 52.473,
+      "groupId": 0,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "보호 지원가",
+        "roles": ["지원가"],
+        "traits": ["protect", "peel"],
+        "partnerRoles": ["전사", "전사"],
+        "fitRole": "후열 보호",
+        "fitReason": "난전·진입 2중 기반에서 후열을 지키고 적의 진입 타이밍을 끊습니다.",
+        "partnerDelta": 0.835,
+        "partnerGames": 54598,
+        "partnerGameShare": 0.6063816790501894,
+        "confidence": "high",
+        "metricRole": "후열 보호",
+        "metricSummary": "대표 조합 평균 +0.83 RP · 평균 비중 60.6% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 전사 + 지원가",
+          "delta": 0.835,
+          "games": 54598
+        },
+        {
+          "multiset": "탱커 + 전사 + 지원가",
+          "delta": 0.425,
+          "games": 9299
+        },
+        {
+          "multiset": "탱커 + 암살자 + 지원가",
+          "delta": 1.194,
+          "games": 716
+        },
+        {
+          "multiset": "원거리 딜러 + 원거리 딜러 + 지원가",
+          "delta": 0.631,
+          "games": 137
+        },
+        {
+          "multiset": "탱커 + 탱커 + 지원가",
+          "delta": 0.271,
+          "games": 357
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 지원가",
+          "delta": 0.235,
+          "games": 365
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "원거리 딜러 + 지원가 + 지원가",
+          "delta": -38.869,
+          "games": 66
+        },
+        {
+          "multiset": "전사 + 지원가 + 지원가",
+          "delta": -16.66,
+          "games": 178
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -8.812,
+          "games": 486
+        },
+        {
+          "multiset": "전사 + 원거리 딜러 + 지원가",
+          "delta": -1.814,
+          "games": 7257
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": -4.704,
+          "games": 970
+        },
+        {
+          "multiset": "스킬딜러 + 지원가 + 지원가",
+          "delta": -17.699,
+          "games": 68
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -4.353,
+          "games": 979
+        },
+        {
+          "multiset": "전사 + 암살자 + 지원가",
+          "delta": -1.787,
+          "games": 5290
+        },
+        {
+          "multiset": "암살자 + 암살자 + 지원가",
+          "delta": -15.775,
+          "games": 44
+        },
+        {
+          "multiset": "지원가 + 지원가 + 지원가",
+          "delta": -13.062,
+          "games": 33
+        },
+        {
+          "multiset": "암살자 + 원거리 딜러 + 지원가",
+          "delta": -3.624,
+          "games": 316
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -0.649,
+          "games": 7451
+        }
+      ]
+    },
+    {
+      "characterCode": 41,
+      "characterName": "요한",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "totalGames": 31484,
+      "ownMeanRP": 54.002,
+      "groupId": 1,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "보호 지원가",
+        "roles": ["지원가"],
+        "traits": ["protect", "peel"],
+        "partnerRoles": ["전사", "원거리 딜러"],
+        "fitRole": "후열 보호",
+        "fitReason": "난전·진입 + 후열 지속 화력 기반에서 후열을 지키고 적의 진입 타이밍을 끊습니다.",
+        "partnerDelta": 0.959,
+        "partnerGames": 8446,
+        "partnerGameShare": 0.26826324482276714,
+        "confidence": "high",
+        "metricRole": "후열 보호",
+        "metricSummary": "대표 조합 평균 +1.12 RP · 평균 비중 27.3% · 방향 일치 67%",
+        "metricCohesion": 0.6666666666666666,
+        "metricClusterSize": 2
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 원거리 딜러 + 지원가",
+          "delta": 0.959,
+          "games": 8446
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": 1.388,
+          "games": 1753
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": 0.659,
+          "games": 4353
+        },
+        {
+          "multiset": "전사 + 전사 + 지원가",
+          "delta": 0.207,
+          "games": 11490
+        },
+        {
+          "multiset": "탱커 + 암살자 + 지원가",
+          "delta": 1.814,
+          "games": 65
+        },
+        {
+          "multiset": "전사 + 암살자 + 지원가",
+          "delta": 0.262,
+          "games": 770
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -7.949,
+          "games": 420
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 지원가",
+          "delta": -3.505,
+          "games": 1624
+        },
+        {
+          "multiset": "탱커 + 전사 + 지원가",
+          "delta": -2.674,
+          "games": 1427
+        },
+        {
+          "multiset": "지원가 + 지원가 + 지원가",
+          "delta": -14.591,
+          "games": 33
+        },
+        {
+          "multiset": "전사 + 지원가 + 지원가",
+          "delta": -8.946,
+          "games": 81
+        },
+        {
+          "multiset": "원거리 딜러 + 원거리 딜러 + 지원가",
+          "delta": -3.593,
+          "games": 266
+        },
+        {
+          "multiset": "암살자 + 원거리 딜러 + 지원가",
+          "delta": -2.125,
+          "games": 163
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -0.821,
+          "games": 393
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 지원가",
+          "delta": -0.273,
+          "games": 127
+        }
+      ]
+    },
+    {
+      "characterCode": 73,
+      "characterName": "샬럿",
+      "weapon": 24,
+      "weaponName": "아르카나",
+      "totalGames": 28788,
+      "ownMeanRP": 50.014,
+      "groupId": 1,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "보호 지원가",
+        "roles": ["지원가"],
+        "traits": ["protect", "peel"],
+        "partnerRoles": ["전사", "원거리 딜러"],
+        "fitRole": "후열 보호",
+        "fitReason": "난전·진입 + 후열 지속 화력 기반에서 후열을 지키고 적의 진입 타이밍을 끊습니다.",
+        "partnerDelta": 1.273,
+        "partnerGames": 7988,
+        "partnerGameShare": 0.2774767264137835,
+        "confidence": "high",
+        "metricRole": "후열 보호",
+        "metricSummary": "대표 조합 평균 +1.12 RP · 평균 비중 27.3% · 방향 일치 67%",
+        "metricCohesion": 0.6666666666666666,
+        "metricClusterSize": 2
+      },
+      "strong": [
+        {
+          "multiset": "전사 + 원거리 딜러 + 지원가",
+          "delta": 1.273,
+          "games": 7988
+        },
+        {
+          "multiset": "전사 + 전사 + 지원가",
+          "delta": 1.124,
+          "games": 8567
+        },
+        {
+          "multiset": "스킬딜러 + 원거리 딜러 + 지원가",
+          "delta": 0.513,
+          "games": 2528
+        },
+        {
+          "multiset": "원거리 딜러 + 원거리 딜러 + 지원가",
+          "delta": 0.731,
+          "games": 522
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 지원가",
+          "delta": 0.175,
+          "games": 1225
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "원거리 딜러 + 지원가 + 지원가",
+          "delta": -34.047,
+          "games": 71
+        },
+        {
+          "multiset": "암살자 + 스킬딜러 + 지원가",
+          "delta": -16.593,
+          "games": 236
+        },
+        {
+          "multiset": "전사 + 지원가 + 지원가",
+          "delta": -14.306,
+          "games": 175
+        },
+        {
+          "multiset": "암살자 + 원거리 딜러 + 지원가",
+          "delta": -8.588,
+          "games": 319
+        },
+        {
+          "multiset": "스킬딜러 + 지원가 + 지원가",
+          "delta": -16.314,
+          "games": 64
+        },
+        {
+          "multiset": "탱커 + 전사 + 지원가",
+          "delta": -3.771,
+          "games": 792
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -4.006,
+          "games": 387
+        },
+        {
+          "multiset": "탱커 + 암살자 + 지원가",
+          "delta": -6.963,
+          "games": 103
+        },
+        {
+          "multiset": "지원가 + 지원가 + 지원가",
+          "delta": -10.603,
+          "games": 33
+        },
+        {
+          "multiset": "스킬딜러 + 스킬딜러 + 지원가",
+          "delta": -1.831,
+          "games": 599
+        },
+        {
+          "multiset": "전사 + 암살자 + 지원가",
+          "delta": -0.845,
+          "games": 1143
+        },
+        {
+          "multiset": "전사 + 스킬딜러 + 지원가",
+          "delta": -0.254,
+          "games": 3972
+        }
+      ]
+    }
+  ]
+}

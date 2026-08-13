@@ -1,0 +1,3265 @@
+{
+  "generatedAt": "2026-08-12T22:49:06.295Z",
+  "seasons": [10, 11],
+  "sourceMethod": "fixed-first-order-composition-context-groups+multi-membership-character-tendencies+100-game-partner-type-contexts+verified-character-triples+member-baseline-residual-v12+tier-entry-cost+lift-sqrt-games",
+  "method": "global-second-order-catalog-v1",
+  "roleCompositionCount": 56,
+  "minSharedCompositions": 0,
+  "summary": {
+    "baseTypeCount": 57,
+    "splitBaseTypes": 57,
+    "consensusTypeCount": 3906,
+    "characterProfiles": 114
+  },
+  "groups": [
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "견제 지원",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-견제 지원",
+          "label": "견제 지원",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 58,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 52,
+              "characterName": "아디나",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "totalGames": 73193,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 58,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "견제·받아치기",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-견제·받아치기",
+          "label": "견제·받아치기",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 54,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 19,
+              "characterName": "엠마",
+              "weapon": 6,
+              "weaponName": "암기",
+              "totalGames": 50969,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 19,
+              "characterName": "엠마",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "totalGames": 40092,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 54,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "보호 장악",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-보호 장악",
+          "label": "보호 장악",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 51,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 66,
+              "characterName": "아르다",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "totalGames": 91780,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 51,
+              "characterName": "프리야",
+              "weapon": 22,
+              "weaponName": "기타",
+              "totalGames": 38178,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 51,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "장악 폭딜",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-장악 폭딜",
+          "label": "장악 폭딜",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 102,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 81,
+              "characterName": "니아",
+              "weapon": 9,
+              "weaponName": "권총",
+              "totalGames": 112175,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 24,
+              "characterName": "아델라",
+              "weapon": 21,
+              "weaponName": "레이피어",
+              "totalGames": 41007,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 43,
+              "characterName": "셀린",
+              "weapon": 5,
+              "weaponName": "투척",
+              "totalGames": 71461,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 24,
+              "characterName": "아델라",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "totalGames": 19689,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 9,
+              "characterName": "아이솔",
+              "weapon": 9,
+              "weaponName": "권총",
+              "totalGames": 47387,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 102,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "전열 장악",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-전열 장악",
+          "label": "전열 장악",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 53,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 75,
+              "characterName": "르노어",
+              "weapon": 22,
+              "weaponName": "기타",
+              "totalGames": 120896,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 53,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "지속 견제",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-지속 견제",
+          "label": "지속 견제",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 23,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 6,
+              "characterName": "나딘",
+              "weapon": 7,
+              "weaponName": "활",
+              "totalGames": 38934,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 23,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "지속 장악",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-지속 장악",
+          "label": "지속 장악",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 89,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 87,
+              "characterName": "코렐라인",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "totalGames": 126687,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 26,
+              "characterName": "바바라",
+              "weapon": 9,
+              "weaponName": "권총",
+              "totalGames": 139493,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 89,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "진입 억제",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-진입 억제",
+          "label": "진입 억제",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 79,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 83,
+              "characterName": "헨리",
+              "weapon": 6,
+              "weaponName": "암기",
+              "totalGames": 132131,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 79,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "진입 장악",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-진입 장악",
+          "label": "진입 장악",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 72,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 77,
+              "characterName": "유민",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "totalGames": 169346,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 72,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "포킹 장악",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-포킹 장악",
+          "label": "포킹 장악",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 117,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 48,
+              "characterName": "띠아",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "totalGames": 93881,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 34,
+              "characterName": "나타폰",
+              "weapon": 23,
+              "weaponName": "카메라",
+              "totalGames": 79476,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 12,
+              "characterName": "혜진",
+              "weapon": 7,
+              "weaponName": "활",
+              "totalGames": 63282,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 17,
+              "characterName": "아드리아나",
+              "weapon": 5,
+              "weaponName": "투척",
+              "totalGames": 95363,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 5,
+              "characterName": "자히르",
+              "weapon": 6,
+              "weaponName": "암기",
+              "totalGames": 30110,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 5,
+              "characterName": "자히르",
+              "weapon": 5,
+              "weaponName": "투척",
+              "totalGames": 24009,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 12,
+              "characterName": "혜진",
+              "weapon": 6,
+              "weaponName": "암기",
+              "totalGames": 15369,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 15,
+              "characterName": "시셀라",
+              "weapon": 5,
+              "weaponName": "투척",
+              "totalGames": 45827,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 117,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "포킹 점사",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-포킹 점사",
+          "label": "포킹 점사",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 138,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 58,
+              "characterName": "헤이즈",
+              "weapon": 10,
+              "weaponName": "돌격 소총",
+              "totalGames": 200901,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 54,
+              "characterName": "칼라",
+              "weapon": 8,
+              "weaponName": "석궁",
+              "totalGames": 63990,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 15,
+              "characterName": "시셀라",
+              "weapon": 6,
+              "weaponName": "암기",
+              "totalGames": 56284,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 79,
+              "characterName": "유스티나",
+              "weapon": 8,
+              "weaponName": "석궁",
+              "totalGames": 99143,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 36,
+              "characterName": "이바",
+              "weapon": 5,
+              "weaponName": "투척",
+              "totalGames": 90048,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 2,
+              "characterName": "아야",
+              "weapon": 11,
+              "weaponName": "저격총",
+              "totalGames": 83681,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 2,
+              "characterName": "아야",
+              "weapon": 9,
+              "weaponName": "권총",
+              "totalGames": 74970,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 138,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "포킹 점사 · 기동 포착",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-포킹 점사 · 기동 포착",
+          "label": "포킹 점사 · 기동 포착",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 29,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 60,
+              "characterName": "타지아",
+              "weapon": 6,
+              "weaponName": "암기",
+              "totalGames": 37853,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 29,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "포킹 점사 · 후속 포화",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-포킹 점사 · 후속 포화",
+          "label": "포킹 점사 · 후속 포화",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 44,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 89,
+              "characterName": "크레이버",
+              "weapon": 9,
+              "weaponName": "권총",
+              "totalGames": 88260,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 44,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "암살자",
+      "baseFitRole": "진입 마무리",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "암살자-진입 마무리",
+          "label": "진입 마무리",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 91,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 18,
+              "characterName": "쇼이치",
+              "weapon": 15,
+              "weaponName": "단검",
+              "totalGames": 173508,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 37,
+              "characterName": "다니엘",
+              "weapon": 15,
+              "weaponName": "단검",
+              "totalGames": 61427,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 23,
+              "characterName": "캐시",
+              "weapon": 15,
+              "weaponName": "단검",
+              "totalGames": 45048,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 91,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "암살자",
+      "baseFitRole": "추격 지속전",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "암살자-추격 지속전",
+          "label": "추격 지속전",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 15,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 23,
+              "characterName": "캐시",
+              "weapon": 18,
+              "weaponName": "쌍검",
+              "totalGames": 25209,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 15,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "견제 지원",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-견제 지원",
+          "label": "견제 지원",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 50,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 62,
+              "characterName": "테오도르",
+              "weapon": 11,
+              "weaponName": "저격총",
+              "totalGames": 86602,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 50,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "견제·받아치기",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-견제·받아치기",
+          "label": "견제·받아치기",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 60,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 25,
+              "characterName": "버니스",
+              "weapon": 11,
+              "weaponName": "저격총",
+              "totalGames": 92557,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 60,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "받아치기 유지",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-받아치기 유지",
+          "label": "받아치기 유지",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 51,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 8,
+              "characterName": "하트",
+              "weapon": 22,
+              "weaponName": "기타",
+              "totalGames": 66749,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 51,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "인파이팅 화력",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-인파이팅 화력",
+          "label": "인파이팅 화력",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 61,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 40,
+              "characterName": "클로에",
+              "weapon": 6,
+              "weaponName": "암기",
+              "totalGames": 66846,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 61,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "지속 견제",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-지속 견제",
+          "label": "지속 견제",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 90,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 2,
+              "characterName": "아야",
+              "weapon": 10,
+              "weaponName": "돌격 소총",
+              "totalGames": 109941,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 31,
+              "characterName": "리오",
+              "weapon": 7,
+              "weaponName": "활",
+              "totalGames": 228379,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 90,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "지속 견제 · 생존 반격",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-지속 견제 · 생존 반격",
+          "label": "지속 견제 · 생존 반격",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 45,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 38,
+              "characterName": "제니",
+              "weapon": 9,
+              "weaponName": "권총",
+              "totalGames": 42178,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 45,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "지속 견제 · 성장 장기전",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-지속 견제 · 성장 장기전",
+          "label": "지속 견제 · 성장 장기전",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 33,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 57,
+              "characterName": "마르티나",
+              "weapon": 23,
+              "weaponName": "카메라",
+              "totalGames": 39446,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 33,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "지속 견제 · 투사체 견제",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-지속 견제 · 투사체 견제",
+          "label": "지속 견제 · 투사체 견제",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 59,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 32,
+              "characterName": "윌리엄",
+              "weapon": 5,
+              "weaponName": "투척",
+              "totalGames": 81740,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 59,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "지속 장악",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-지속 장악",
+          "label": "지속 장악",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 66,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 9,
+              "characterName": "아이솔",
+              "weapon": 10,
+              "weaponName": "돌격 소총",
+              "totalGames": 110795,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 66,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "진입 마무리",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-진입 마무리",
+          "label": "진입 마무리",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 61,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 70,
+              "characterName": "츠바메",
+              "weapon": 6,
+              "weaponName": "암기",
+              "totalGames": 129583,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 61,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "추격 지속전",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-추격 지속전",
+          "label": "추격 지속전",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 77,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 21,
+              "characterName": "로지",
+              "weapon": 9,
+              "weaponName": "권총",
+              "totalGames": 141659,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 77,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "포킹 점사",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-포킹 점사",
+          "label": "포킹 점사",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 83,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 6,
+              "characterName": "나딘",
+              "weapon": 8,
+              "weaponName": "석궁",
+              "totalGames": 88559,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 72,
+              "characterName": "카티야",
+              "weapon": 11,
+              "weaponName": "저격총",
+              "totalGames": 293227,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 83,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "강제 진입",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-강제 진입",
+          "label": "강제 진입",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 69,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 33,
+              "characterName": "니키",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "totalGames": 117731,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 35,
+              "characterName": "얀",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "totalGames": 56743,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 69,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "교전 개시",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-교전 개시",
+          "label": "교전 개시",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 122,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 42,
+              "characterName": "비앙카",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "totalGames": 132031,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 7,
+              "characterName": "현우",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "totalGames": 114989,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 29,
+              "characterName": "레온",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "totalGames": 114783,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 122,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "교전 개시 · 벽 연계 포착",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-교전 개시 · 벽 연계 포착",
+          "label": "교전 개시 · 벽 연계 포착",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 15,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 7,
+              "characterName": "현우",
+              "weapon": 2,
+              "weaponName": "톤파",
+              "totalGames": 20233,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 15,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "교전 개시 · 연속 진입",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-교전 개시 · 연속 진입",
+          "label": "교전 개시 · 연속 진입",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 57,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 11,
+              "characterName": "유키",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "totalGames": 134827,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 29,
+              "characterName": "레온",
+              "weapon": 2,
+              "weaponName": "톤파",
+              "totalGames": 25141,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 57,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "받아치기 유지",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-받아치기 유지",
+          "label": "받아치기 유지",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 39,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 35,
+              "characterName": "얀",
+              "weapon": 2,
+              "weaponName": "톤파",
+              "totalGames": 70409,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 39,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "선봉 보호",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-선봉 보호",
+          "label": "선봉 보호",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 14,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 28,
+              "characterName": "수아",
+              "weapon": 13,
+              "weaponName": "망치",
+              "totalGames": 27424,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 14,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "장악 폭딜",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-장악 폭딜",
+          "label": "장악 폭딜",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 86,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 84,
+              "characterName": "블레어",
+              "weapon": 18,
+              "weaponName": "쌍검",
+              "totalGames": 135775,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 86,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "전열 유지",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-전열 유지",
+          "label": "전열 유지",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 180,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 86,
+              "characterName": "펜리르",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "totalGames": 137321,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 71,
+              "characterName": "케네스",
+              "weapon": 14,
+              "weaponName": "도끼",
+              "totalGames": 109320,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 65,
+              "characterName": "데비&마를렌",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "totalGames": 227578,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 78,
+              "characterName": "히스이",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "totalGames": 247854,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 14,
+              "characterName": "키아라",
+              "weapon": 21,
+              "weaponName": "레이피어",
+              "totalGames": 104417,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 180,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "전열 유지 · 변신 지속전",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-전열 유지 · 변신 지속전",
+          "label": "전열 유지 · 변신 지속전",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 69,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 63,
+              "characterName": "이안",
+              "weapon": 15,
+              "weaponName": "단검",
+              "totalGames": 77290,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 69,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "전열 유지 · 선봉 지속 압박형",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-전열 유지 · 선봉 지속 압박형",
+          "label": "전열 유지 · 선봉 지속 압박형",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 113,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 80,
+              "characterName": "이슈트반",
+              "weapon": 19,
+              "weaponName": "창",
+              "totalGames": 118840,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 88,
+              "characterName": "비형",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "totalGames": 135116,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 74,
+              "characterName": "다르코",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "totalGames": 189792,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 113,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "전열 유지 · 추격 압박",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-전열 유지 · 추격 압박",
+          "label": "전열 유지 · 추격 압박",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 67,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 59,
+              "characterName": "아이작",
+              "weapon": 2,
+              "weaponName": "톤파",
+              "totalGames": 137920,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 67,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "진입 마무리",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-진입 마무리",
+          "label": "진입 마무리",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 187,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 3,
+              "characterName": "피오라",
+              "weapon": 21,
+              "weaponName": "레이피어",
+              "totalGames": 58669,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 67,
+              "characterName": "아비게일",
+              "weapon": 14,
+              "weaponName": "도끼",
+              "totalGames": 197167,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 39,
+              "characterName": "카밀로",
+              "weapon": 21,
+              "weaponName": "레이피어",
+              "totalGames": 77220,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 22,
+              "characterName": "루크",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "totalGames": 190490,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 46,
+              "characterName": "에이든",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "totalGames": 127128,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 47,
+              "characterName": "라우라",
+              "weapon": 4,
+              "weaponName": "채찍",
+              "totalGames": 89529,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 3,
+              "characterName": "피오라",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "totalGames": 33174,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 3,
+              "characterName": "피오라",
+              "weapon": 19,
+              "weaponName": "창",
+              "totalGames": 10196,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 187,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "진입 장악",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-진입 장악",
+          "label": "진입 장악",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 110,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 27,
+              "characterName": "알렉스",
+              "weapon": null,
+              "weaponName": "톤파 / 암기 / 권총 / 양손검",
+              "totalGames": 136407,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 61,
+              "characterName": "이렘",
+              "weapon": 5,
+              "weaponName": "투척",
+              "totalGames": 87171,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 110,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "진입 지속전",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-진입 지속전",
+          "label": "진입 지속전",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 63,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 64,
+              "characterName": "바냐",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "totalGames": 132415,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 63,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "진입 차단",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-진입 차단",
+          "label": "진입 차단",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 50,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 28,
+              "characterName": "수아",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "totalGames": 63473,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 50,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "추격 지속전",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-추격 지속전",
+          "label": "추격 지속전",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 155,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 39,
+              "characterName": "카밀로",
+              "weapon": 18,
+              "weaponName": "쌍검",
+              "totalGames": 60108,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 56,
+              "characterName": "피올로",
+              "weapon": 20,
+              "weaponName": "쌍절곤",
+              "totalGames": 108292,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 1,
+              "characterName": "재키",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "totalGames": 95232,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 82,
+              "characterName": "슈린",
+              "weapon": 21,
+              "weaponName": "레이피어",
+              "totalGames": 110584,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 44,
+              "characterName": "에키온",
+              "weapon": 25,
+              "weaponName": "VF의수",
+              "totalGames": 79947,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 16,
+              "characterName": "실비아",
+              "weapon": 9,
+              "weaponName": "권총",
+              "totalGames": 84157,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 1,
+              "characterName": "재키",
+              "weapon": 15,
+              "weaponName": "단검",
+              "totalGames": 46816,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 1,
+              "characterName": "재키",
+              "weapon": 18,
+              "weaponName": "쌍검",
+              "totalGames": 29291,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 10,
+              "characterName": "리 다이린",
+              "weapon": 20,
+              "weaponName": "쌍절곤",
+              "totalGames": 40700,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 1,
+              "characterName": "재키",
+              "weapon": 14,
+              "weaponName": "도끼",
+              "totalGames": 11902,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 155,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "추격 지속전 · 근접 교란",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-추격 지속전 · 근접 교란",
+          "label": "추격 지속전 · 근접 교란",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 62,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 10,
+              "characterName": "리 다이린",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "totalGames": 78619,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 62,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "추격 지속전 · 진입 연계",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-추격 지속전 · 진입 연계",
+          "label": "추격 지속전 · 진입 연계",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 47,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 11,
+              "characterName": "유키",
+              "weapon": 18,
+              "weaponName": "쌍검",
+              "totalGames": 77314,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 47,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "추격 지속전 · 측면 진입",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-추격 지속전 · 측면 진입",
+          "label": "추격 지속전 · 측면 진입",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 61,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 49,
+              "characterName": "펠릭스",
+              "weapon": 19,
+              "weaponName": "창",
+              "totalGames": 87610,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 61,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "지원가",
+      "baseFitRole": "후열 보호",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "지원가-후열 보호",
+          "label": "후열 보호",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 63,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 69,
+              "characterName": "레니",
+              "weapon": 9,
+              "weaponName": "권총",
+              "totalGames": 90039,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 41,
+              "characterName": "요한",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "totalGames": 31484,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 73,
+              "characterName": "샬럿",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "totalGames": 28788,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 63,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "탱커",
+      "baseFitRole": "받아치기 유지",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "탱커-받아치기 유지",
+          "label": "받아치기 유지",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 44,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 13,
+              "characterName": "쇼우",
+              "weapon": 15,
+              "weaponName": "단검",
+              "totalGames": 38058,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 44,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "탱커",
+      "baseFitRole": "선봉 보호",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "탱커-선봉 보호",
+          "label": "선봉 보호",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 82,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 68,
+              "characterName": "알론소",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "totalGames": 105584,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 20,
+              "characterName": "레녹스",
+              "weapon": 4,
+              "weaponName": "채찍",
+              "totalGames": 122197,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 53,
+              "characterName": "마커스",
+              "weapon": 13,
+              "weaponName": "망치",
+              "totalGames": 67141,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 82,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "탱커",
+      "baseFitRole": "선봉 보호 · 강제 진입",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "탱커-선봉 보호 · 강제 진입",
+          "label": "선봉 보호 · 강제 진입",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 81,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 85,
+              "characterName": "미르카",
+              "weapon": 13,
+              "weaponName": "망치",
+              "totalGames": 110069,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 30,
+              "characterName": "일레븐",
+              "weapon": 13,
+              "weaponName": "망치",
+              "totalGames": 98634,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 81,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "탱커",
+      "baseFitRole": "선봉 보호 · 진입 교란",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "탱커-선봉 보호 · 진입 교란",
+          "label": "선봉 보호 · 진입 교란",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 50,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 4,
+              "characterName": "매그너스",
+              "weapon": 13,
+              "weaponName": "망치",
+              "totalGames": 108721,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 50,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "탱커",
+      "baseFitRole": "전열 유지",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "탱커-전열 유지",
+          "label": "전열 유지",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 41,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 13,
+              "characterName": "쇼우",
+              "weapon": 19,
+              "weaponName": "창",
+              "totalGames": 22110,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            },
+            {
+              "characterCode": 4,
+              "characterName": "매그너스",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "totalGames": 40460,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 41,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "탱커",
+      "baseFitRole": "전열 유지 · 진형 붕괴 압박",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "탱커-전열 유지 · 진형 붕괴 압박",
+          "label": "전열 유지 · 진형 붕괴 압박",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 54,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 53,
+              "characterName": "마커스",
+              "weapon": 14,
+              "weaponName": "도끼",
+              "totalGames": 95209,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 54,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "탱커",
+      "baseFitRole": "전열 유지 · 후열 화력 보장",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "탱커-전열 유지 · 후열 화력 보장",
+          "label": "전열 유지 · 후열 화력 보장",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 44,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 76,
+              "characterName": "가넷",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "totalGames": 140760,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 44,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "탱커",
+      "baseFitRole": "진입 보호",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "탱커-진입 보호",
+          "label": "진입 보호",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 57,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 55,
+              "characterName": "에스텔",
+              "weapon": 14,
+              "weaponName": "도끼",
+              "totalGames": 115620,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 57,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "탱커",
+      "baseFitRole": "진입 장악",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "탱커-진입 장악",
+          "label": "진입 장악",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 37,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 50,
+              "characterName": "엘레나",
+              "weapon": 21,
+              "weaponName": "레이피어",
+              "totalGames": 58731,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 37,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "탱커",
+      "baseFitRole": "후열 보호",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "탱커-후열 보호",
+          "label": "후열 보호",
+          "cohesion": null,
+          "separation": null,
+          "classificationBasis": "first-order-composition-affinity-profile",
+          "roleIsolated": false,
+          "trendSharedPairs": 36,
+          "confidence": "high",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 45,
+              "characterName": "마이",
+              "weapon": 4,
+              "weaponName": "채찍",
+              "totalGames": 51839,
+              "compositionAppearances": 21,
+              "groupAgreement": null,
+              "trendOwnSimilarity": null,
+              "trendOwnSharedPairs": 0,
+              "trendAlternativeSimilarity": null,
+              "trendAlternativeMinimum": null,
+              "trendAlternativeSharedPairs": 0,
+              "trendAssignmentMargin": null,
+              "trendAmbiguous": false,
+              "trendAlternativeCharacters": []
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 36,
+      "conflictPairCount": 0,
+      "split": true
+    }
+  ]
+}
