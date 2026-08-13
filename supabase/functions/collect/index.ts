@@ -25,7 +25,7 @@ import {
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // ── 상수 ──────────────────────────────────────────────────
-const SEASON_ID = 39;
+const SEASON_ID = 41;
 const TEAM_MODE = 3; // 스쿼드
 const FORWARD_BUDGET_MS = 135_000; // forward 최대 (RECENT 도달 시 즉시 중단)
 const FORWARD_START_GAME = 58540099;

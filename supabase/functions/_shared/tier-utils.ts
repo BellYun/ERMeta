@@ -12,13 +12,12 @@ export enum TierGroup {
   IN1000 = "IN1000",
 }
 
-// 시즌 초반 표본 확보를 위해 플래티넘부터 수집한다.
-export const MIN_COLLECT_TIER = TierGroup.PLATINUM;
-export const MIN_COLLECT_MMR = 3600;
+// 지표 표본은 다이아몬드부터 수집한다.
+export const MIN_COLLECT_TIER = TierGroup.DIAMOND;
+export const MIN_COLLECT_MMR = 5000;
 
-// 플래티넘 이상 지표 수집 대상 티어 (IN1000 제거됨)
+// 다이아몬드 이상 지표 수집 대상 티어 (IN1000 제거됨)
 export const COLLECT_TIERS: readonly TierGroup[] = [
-  TierGroup.PLATINUM,
   TierGroup.DIAMOND,
   TierGroup.METEORITE,
   TierGroup.MITHRIL,
@@ -43,7 +42,7 @@ export function getAllTierGroupsFromMMR(
 
   const groups: TierGroup[] = [];
 
-  if (mmr < MIN_COLLECT_MMR) {
+  if (mmr < 3600) {
     groups.push(TierGroup.DIAMOND_BELOW);
     return groups;
   }
@@ -65,7 +64,7 @@ export function getAllTierGroupsFromMMR(
 }
 
 /**
- * 최소 수집 티어(현재 플래티넘) 이상만 반환한다.
+ * 최소 수집 티어(현재 다이아몬드) 이상만 반환한다.
  */
 export function getCollectableTiers(
   mmr: number | null | undefined,
