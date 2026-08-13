@@ -288,13 +288,13 @@ export function CharacterHeader({
                     <div className="flex w-full items-center justify-between gap-2">
                       <span className="flex min-w-0 items-center gap-1.5 font-medium">
                         {weaponIconUrl ? (
-                          <span className="flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded border border-[var(--color-border)] bg-[var(--color-surface)]">
+                          <span className="weapon-icon-backdrop flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded border shadow-sm">
                             <Image
                               src={weaponIconUrl}
                               alt=""
                               width={24}
                               height={24}
-                              className="h-full w-full object-cover"
+                              className="h-full w-full object-contain p-0.5"
                               aria-hidden="true"
                             />
                           </span>

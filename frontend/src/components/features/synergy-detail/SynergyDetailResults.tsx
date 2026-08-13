@@ -939,7 +939,11 @@ export function SynergyDetailResults() {
             <p className="text-sm text-[var(--color-danger)]">{error}</p>
           </div>
         ) : recommendations.length > 0 ? (
-          <div data-sr-block data-result-version={resultVersion} className="flex flex-col gap-2">
+          <div
+            data-sr-block
+            data-result-version={resultVersion}
+            className="synergy-results-compact flex flex-col gap-2"
+          >
             {resultAllies.length === 1 && (
               <p className="flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-[12px] font-medium text-[var(--color-muted-foreground)]">
                 <Info
