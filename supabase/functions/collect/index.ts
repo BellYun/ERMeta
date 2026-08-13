@@ -546,7 +546,12 @@ serve(async (req: Request) => {
             const parsed = parseGameData(game, patchIntervals, rank1000MMR, true);
             if (parsed === "RECENT") {
               forwardHitRecent = true;
-              console.log("[Forward] 최근 1시간 이내 게임 도달, 수집 중단");
+              // 아직 안정화되지 않은 현재 게임은 처리 완료로 기록하지 않는다.
+              // 직전 번호까지만 저장해야 다음 실행도 currentGame부터 다시 탐색한다.
+              lastGameNumber = currentGame - 1;
+              console.log(
+                `[Forward] 최근 1시간 이내 게임 도달: gameNumber=${currentGame}, 다음 실행도 동일 번호부터 재탐색`
+              );
               break;
             }
             if (parsed) {
