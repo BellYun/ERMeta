@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">캐시 처리 경로 분포 비교</title>
+  <desc id="desc">기존 정확 조합과 변경 후 공용 후보군의 Edge Cache, Data Cache, 완전 MISS 처리 비율을 비교한 100퍼센트 누적 막대그래프</desc>
+  <rect width="1600" height="900" fill="#ffffff"/>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+    <text x="120" y="110" fill="#0f172a" font-size="48" font-weight="700">캐시 키를 공유하자 비싼 MISS 경로가 줄었습니다</text>
+    <text x="120" y="160" fill="#64748b" font-size="24">전체 요청의 처리 경로 · 서로 다른 운영 관찰 구간을 같은 방식으로 환산</text>
+
+    <g font-size="21" fill="#334155">
+      <rect x="760" y="202" width="24" height="24" rx="5" fill="#2563eb"/>
+      <text x="798" y="222">Edge Cache</text>
+      <rect x="970" y="202" width="24" height="24" rx="5" fill="#16a34a"/>
+      <text x="1008" y="222">Edge MISS → Data Cache</text>
+      <rect x="1300" y="202" width="24" height="24" rx="5" fill="#e11d48"/>
+      <text x="1338" y="222">완전 MISS</text>
+    </g>
+
+    <text x="120" y="345" fill="#0f172a" font-size="28" font-weight="700">기존 정확 조합</text>
+    <rect x="350" y="285" width="208.8" height="100" rx="14" fill="#2563eb"/>
+    <rect x="558.8" y="285" width="121.2" height="100" fill="#16a34a"/>
+    <path d="M680 285H1536V385H680Z" fill="#e11d48"/>
+    <text x="454.4" y="345" text-anchor="middle" fill="#ffffff" font-size="28" font-weight="700">17.4%</text>
+    <text x="619.4" y="345" text-anchor="middle" fill="#ffffff" font-size="23" font-weight="700">10.1%</text>
+    <text x="1108" y="345" text-anchor="middle" fill="#ffffff" font-size="34" font-weight="700">72.5%</text>
+
+    <text x="120" y="535" fill="#0f172a" font-size="28" font-weight="700">변경 후 후보군</text>
+    <path d="M350 475H935.6V575H350Q336 575 336 561V489Q336 475 350 475Z" fill="#2563eb" transform="translate(14 0)"/>
+    <rect x="935.6" y="475" width="326.4" height="100" fill="#16a34a"/>
+    <path d="M1262 475H1536V575H1262Z" fill="#e11d48"/>
+    <text x="642.8" y="535" text-anchor="middle" fill="#ffffff" font-size="34" font-weight="700">48.8%</text>
+    <text x="1098.8" y="535" text-anchor="middle" fill="#ffffff" font-size="30" font-weight="700">27.2%</text>
+    <text x="1399" y="535" text-anchor="middle" fill="#ffffff" font-size="30" font-weight="700">24.0%</text>
+
+    <line x1="120" y1="670" x2="1480" y2="670" stroke="#e2e8f0" stroke-width="2"/>
+    <text x="120" y="745" fill="#0f172a" font-size="34" font-weight="700">완전 MISS 환산 비율</text>
+    <text x="470" y="745" fill="#e11d48" font-size="42" font-weight="700">72.5%</text>
+    <text x="620" y="745" fill="#94a3b8" font-size="42">→</text>
+    <text x="700" y="745" fill="#16a34a" font-size="42" font-weight="700">24.0%</text>
+    <text x="120" y="810" fill="#64748b" font-size="22">통제된 동일 기간의 전후 실험이 아니라, 각 관찰 구간에서 계산한 운영 신호입니다.</text>
+  </g>
+</svg>
