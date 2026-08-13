@@ -180,7 +180,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
   );
 
   // 조건 변경 중에는 잠깐 기다렸다가 최종 조합만 요청한다.
-  // 요청 파라미터는 정렬된 캐릭터 pair라서 A+B와 B+A가 같은 HTTP 캐시 키를 공유한다.
+  // 요청 파라미터는 정렬된 실험체 pair라서 A+B와 B+A가 같은 HTTP 캐시 키를 공유한다.
   React.useEffect(() => {
     if (selectedAllies.length === 0) {
       setQueryAllies([]);

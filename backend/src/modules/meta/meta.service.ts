@@ -4,7 +4,7 @@ import { RedisService } from '../../common/redis/redis.service';
 
 const TIER_FALLBACK_ORDER = ['DIAMOND', 'METEORITE', 'MITHRIL', 'IN1000'];
 const HOME_BASE_TIERS = ['DIAMOND', 'METEORITE', 'MITHRIL'] as const;
-const STATS_EXCLUDED_PATCHES = new Set(['11.0']);
+const STATS_EXCLUDED_PATCHES = new Set(['11.0', '12.0']);
 const PLAYERS_PER_MATCH = 24;
 const CURRENT_PATCH_MIN_MATCH_RATIO = 0.1;
 const WEAPON_AGNOSTIC_CHARACTER_CODES = new Set([27]);
@@ -15,7 +15,6 @@ const HONEY_PICK_SCORE_WEIGHTS = {
   averageRP: 0.2,
 } as const;
 const TIER_CUMULATIVE: Record<string, string[]> = {
-  PLATINUM_PLUS: ['PLATINUM', 'DIAMOND', 'METEORITE', 'MITHRIL'],
   DIAMOND_PLUS: ['DIAMOND', 'METEORITE', 'MITHRIL'],
   METEORITE_PLUS: ['METEORITE', 'MITHRIL'],
   MITHRIL_PLUS: ['MITHRIL'],
@@ -177,7 +176,7 @@ export class MetaService {
   }
 
   async getHomeStats(patchVersion: string | undefined) {
-    const cacheKey = `home-meta:${patchVersion ?? 'latest'}`;
+    const cacheKey = `home-meta-v2:${patchVersion ?? 'latest'}`;
     return this.redis.getOrSet(cacheKey, 1800, () => this._getHomeStats(patchVersion));
   }
 

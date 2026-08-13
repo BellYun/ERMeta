@@ -156,7 +156,7 @@ function RPTooltip({
                 : "text-[var(--color-danger)]"
             )}
           >
-            {hasComparison ? "캐릭터 평균 RP" : "평균 RP"} {(datum.averageRP ?? 0) >= 0 ? "+" : ""}
+            {hasComparison ? "실험체 평균 RP" : "평균 RP"} {(datum.averageRP ?? 0) >= 0 ? "+" : ""}
             {(datum.averageRP ?? 0).toFixed(1)}
           </p>
           <p className="mt-0.5 text-[10px] text-[var(--color-muted-foreground)]">
@@ -164,7 +164,7 @@ function RPTooltip({
           </p>
         </>
       ) : (
-        <p className="mt-1 text-[10px] text-[var(--color-muted-foreground)]">캐릭터 표본 없음</p>
+        <p className="mt-1 text-[10px] text-[var(--color-muted-foreground)]">실험체 표본 없음</p>
       )}
       {hasComparison ? (
         <>
@@ -204,7 +204,7 @@ function RPTooltip({
         </div>
       ) : (
         <p className="mt-2 border-t border-[var(--color-border)] pt-2 text-[9px] text-[var(--color-muted-foreground)]">
-          해당 캐릭터의 패치 변경 내역 없음
+          해당 실험체의 패치 변경 내역 없음
         </p>
       )}
     </div>

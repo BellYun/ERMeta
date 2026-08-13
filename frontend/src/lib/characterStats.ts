@@ -5,7 +5,7 @@ import { createServerClient } from "@/lib/supabase";
 import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
 import { expandCumulativeTier } from "@/utils/tier";
 
-const CHARACTER_STATS_CACHE_VERSION = "diamond-plus-without-in1000-v1";
+const CHARACTER_STATS_CACHE_VERSION = "cumulative-tiers-without-in1000-v2";
 
 interface StatRow {
   characterNum: number;
@@ -137,7 +137,7 @@ function buildCharacterStatsResponse(
   }
 
   const grandTotal = allRows.reduce((sum, row) => sum + (row.totalGames ?? 0), 0);
-  // 무기 무관 캐릭터(알렉스 등)는 무기별 row를 단일 entry로 합산 (단일 patch+tier 컨텍스트)
+  // 무기 무관 실험체(알렉스 등)는 무기별 row를 단일 entry로 합산 (단일 patch+tier 컨텍스트)
   const rows = collapseWeaponAgnosticRows(
     allRows.filter((row) => row.characterNum === characterCode)
   );

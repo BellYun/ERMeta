@@ -54,14 +54,14 @@ for (const line of text.split(/\r?\n/)) {
   if (!key.startsWith("Item/Name/")) continue;
   const code = Number(key.slice("Item/Name/".length));
   if (!isNaN(code) && code > 0) {
-    names[String(code)] = trimmed.slice(sepIdx + 1);
+    names[String(code)] = trimmed.slice(sepIdx + 1).trimEnd();
   }
 }
 
 // 코드 순으로 정렬하여 저장
-const sorted = Object.fromEntries(
-  Object.entries(names).sort(([a], [b]) => Number(a) - Number(b))
-);
+const sorted = Object.fromEntries(Object.entries(names).sort(([a], [b]) => Number(a) - Number(b)));
 
-writeFileSync(OUTPUT_PATH, JSON.stringify(sorted, null, 2), "utf-8");
-console.log(`[fetch-item-names] 저장 완료: ${OUTPUT_PATH} (${Object.keys(sorted).length}개 아이템)`);
+writeFileSync(OUTPUT_PATH, `${JSON.stringify(sorted, null, 2)}\n`, "utf-8");
+console.log(
+  `[fetch-item-names] 저장 완료: ${OUTPUT_PATH} (${Object.keys(sorted).length}개 아이템)`
+);

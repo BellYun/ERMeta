@@ -2,8 +2,11 @@ import type { CharacterPatchNote } from "./10.1";
 
 const PATCH = "12.0";
 
-// 출처: https://playeternalreturn.com/posts/news/3743?hl=ko-KR
-// 12.0 Part.2 중 개별 실험체 변경 사항만 기록합니다.
+// 출처:
+// - 12.0 Part.2: https://playeternalreturn.com/posts/news/3743?hl=ko-KR
+// - 12.0a 핫픽스: https://playeternalreturn.com/posts/news/3759?hl=ko-KR
+// - 12.0b 핫픽스: https://playeternalreturn.com/posts/news/3768?hl=ko-KR
+// 각 공지 중 개별 실험체 변경 사항만 기록합니다.
 export const PATCH_NOTES: CharacterPatchNote[] = [
   {
     characterCode: 6, // 나딘
@@ -27,6 +30,12 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         description: ["교전 위력을 강화하기 위해 추가 공격력 계수를 높였습니다."],
         valueSummary:
           "100/150/200(+추가 공격력의 75%)(+스킬 증폭의 80%)(+야성 중첩 피해) → 100/150/200(+추가 공격력의 80%)(+스킬 증폭의 80%)(+야성 중첩 피해)",
+      },
+      {
+        target: "레벨 당 방어력 (12.0b 핫픽스)",
+        changeType: "buff",
+        description: ["핫픽스로 성장 내구도를 보완했습니다."],
+        valueSummary: "2.5 → 2.7",
       },
     ],
   },
@@ -285,6 +294,42 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         description: ["기본 스킬 개선에 맞춰 후반 쿨다운을 늘렸습니다."],
         valueSummary: "26/22/18초 → 26/23/20초",
       },
+      {
+        target: "방망이 무기 숙련도 레벨 당 스킬 증폭 (12.0a 핫픽스)",
+        changeType: "nerf",
+        description: ["핫픽스로 방망이 수아의 위력을 낮췄습니다."],
+        valueSummary: "4.2% → 4%",
+      },
+      {
+        target: "파랑새(W) - 보호막 발동 조건 (12.0a 핫픽스)",
+        changeType: "nerf",
+        description: ["수아 자신을 지정해야만 보호막이 발동하도록 변경했습니다."],
+      },
+      {
+        target: "오딧세이(Q) - 책갈피 피해량 (12.0b 핫픽스)",
+        changeType: "nerf",
+        description: ["핫픽스로 책갈피 피해의 스킬 증폭 계수를 낮췄습니다."],
+        valueSummary: "20/40/60/80/100(+스킬 증폭의 40%) → 20/40/60/80/100(+스킬 증폭의 35%)",
+      },
+      {
+        target: "돈키호테(E) - 책갈피 대상 피해량 (12.0b 핫픽스)",
+        changeType: "nerf",
+        description: ["핫픽스로 책갈피 대상 피해의 스킬 증폭 계수를 낮췄습니다."],
+        valueSummary:
+          "150/190/230/270/310(+스킬 증폭의 85%) → 150/190/230/270/310(+스킬 증폭의 80%)",
+      },
+      {
+        target: "기억력-오딧세이(RQ) - 책갈피 피해량 (12.0b 핫픽스)",
+        changeType: "nerf",
+        description: ["핫픽스로 강화 오딧세이의 책갈피 피해 계수를 낮췄습니다."],
+        valueSummary: "50/100/150(+스킬 증폭의 50%) → 50/100/150(+스킬 증폭의 45%)",
+      },
+      {
+        target: "기억력-돈키호테(RE) - 책갈피 대상 피해량 (12.0b 핫픽스)",
+        changeType: "nerf",
+        description: ["핫픽스로 강화 돈키호테의 책갈피 대상 피해 계수를 낮췄습니다."],
+        valueSummary: "170/260/350(+스킬 증폭의 85%) → 170/260/350(+스킬 증폭의 80%)",
+      },
     ],
   },
   {
@@ -302,6 +347,18 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         changeType: "buff",
         description: ["스킬 연계를 안정적으로 이어가도록 도발 시간을 늘렸습니다."],
         valueSummary: "0.7초 → 0.8초",
+      },
+      {
+        target: "기본 방어력 (12.0a 핫픽스)",
+        changeType: "buff",
+        description: ["핫픽스로 기본 내구도를 보완했습니다."],
+        valueSummary: "49 → 51",
+      },
+      {
+        target: "기습(근접 Q) - 공격력 증가 (12.0a 핫픽스)",
+        changeType: "buff",
+        description: ["핫픽스로 근접 기습의 공격력 증가량을 높였습니다."],
+        valueSummary: "6% → 7%",
       },
     ],
   },
@@ -361,6 +418,12 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         changeType: "buff",
         description: ["내구도를 보완하기 위해 방어력 증가량을 높였습니다."],
         valueSummary: "10/13/16/19/22 → 12/15/18/21/24",
+      },
+      {
+        target: "기본 공격력 (12.0b 핫픽스)",
+        changeType: "buff",
+        description: ["핫픽스로 기본 공격력을 높였습니다."],
+        valueSummary: "37 → 40",
       },
     ],
   },
@@ -424,6 +487,12 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         description: ["완전 충전 공격의 저지력을 강화했습니다."],
         valueSummary: "0.5초 → 0.75초",
       },
+      {
+        target: "작살 장전(P) - 이동 속도 감소 지속 시간 (12.0b 핫픽스)",
+        changeType: "buff",
+        description: ["핫픽스로 이동 속도 감소 지속 시간을 추가로 늘렸습니다."],
+        valueSummary: "0.75초 → 1초",
+      },
     ],
   },
   {
@@ -441,6 +510,12 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         changeType: "nerf",
         description: ["무기 스킬이 지속 효과 발동에 포함된 점을 반영해 추가 피해량을 낮췄습니다."],
         valueSummary: "55% → 50%",
+      },
+      {
+        target: "외과 전문의(P) - 외상 획득 제한 (12.0b 핫픽스)",
+        changeType: "nerf",
+        description: ["외상은 개별 스킬마다 한 번만 얻을 수 있도록 제한했습니다."],
+        valueSummary: "개별 스킬마다 외상 1회",
       },
     ],
   },
@@ -520,6 +595,25 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         changeType: "nerf",
         description: ["무기 스킬 판정 변경 이후의 내구도를 조정했습니다."],
         valueSummary: "10/15/20/25/30(+추가 공격력의 40%) → 10/15/20/25/30(+추가 공격력의 30%)",
+      },
+    ],
+  },
+  {
+    characterCode: 1, // 재키
+    patch: PATCH,
+    changes: [
+      {
+        target: "피의 축제(P) - 지속 피해 스킬 판정 (12.0b 핫픽스)",
+        changeType: "nerf",
+        description: ["지속적으로 피해를 입히는 개별 스킬은 0.3초마다 판정되도록 제한했습니다."],
+        valueSummary: "지속 피해 개별 스킬은 0.3초마다 판정",
+      },
+      {
+        target: "연참(Q) - 피해량 (12.0b 핫픽스)",
+        changeType: "nerf",
+        description: ["핫픽스로 공격력 계수를 낮췄습니다."],
+        valueSummary:
+          "30/50/70/90/110(+공격력의 55%)(+대상 현재 체력의 7%) → 30/50/70/90/110(+공격력의 50%)(+대상 현재 체력의 7%)",
       },
     ],
   },

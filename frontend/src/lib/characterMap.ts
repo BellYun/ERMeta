@@ -100,7 +100,7 @@ export function buildFallbackMap(): Map<number, string> {
 }
 
 /**
- * 캐릭터 코드로 표시 이름을 결정하는 공통 함수.
+ * 실험체 코드로 표시 이름을 결정하는 공통 함수.
  * 우선순위: l10n → fallbackMap → "코드: ${code}"
  */
 export function resolveCharacterName(
@@ -119,7 +119,7 @@ export function getCharacterName(code: number): string {
   return CHARACTER_NAMES[code] ?? `코드: ${code}`;
 }
 
-/** 공유 URL처럼 외부 입력에서 받은 코드가 실제 플레이어 캐릭터인지 확인한다. */
+/** 공유 URL처럼 외부 입력에서 받은 코드가 실제 플레이어 실험체인지 확인한다. */
 export function isKnownCharacterCode(code: number): boolean {
   return (
     Number.isInteger(code) &&
@@ -235,7 +235,7 @@ export function getCharacterMiniWebpUrl(code: number): string {
 // 직업군 타입
 export type CharacterRole = "탱커" | "전사" | "암살자" | "스킬딜러" | "원거리 딜러" | "지원가";
 
-// 캐릭터+무기 조합 → 직업군 매핑 (key: "캐릭터코드_무기코드")
+// 실험체+무기 조합 → 직업군 매핑 (key: "실험체코드_무기코드")
 const COMBO_ROLES: Record<string, CharacterRole[]> = {
   // 탱커
   "55_14": ["탱커", "전사"], // 에스텔+도끼
@@ -244,7 +244,7 @@ const COMBO_ROLES: Record<string, CharacterRole[]> = {
   "4_13": ["탱커", "전사"], // 매그너스+망치
   "13_15": ["탱커"], // 쇼우+단검
   "30_13": ["탱커"], // 일레븐+망치
-  "45_4": ["탱커"], // 마이+채찍
+  "45_4": ["탱커", "지원가"], // 마이+채찍
   "4_3": ["탱커", "전사"], // 매그너스+방망이
   "76_3": ["탱커", "전사"], // 가넷+방망이
   "50_21": ["탱커"], // 엘레나+레이피어
@@ -326,6 +326,8 @@ const COMBO_ROLES: Record<string, CharacterRole[]> = {
   "6_7": ["스킬딜러", "원거리 딜러"], // 나딘+활
   "2_9": ["스킬딜러", "원거리 딜러"], // 아야+권총
   "15_5": ["스킬딜러"], // 시셀라+투척
+  "58_10": ["스킬딜러"], // 헤이즈+돌격 소총
+  "89_9": ["스킬딜러"], // 크레이버+권총
   // 원거리 딜러
   "21_9": ["원거리 딜러"], // 로지+권총
   "40_6": ["원거리 딜러"], // 클로에+암기
@@ -340,7 +342,6 @@ const COMBO_ROLES: Record<string, CharacterRole[]> = {
   "72_11": ["원거리 딜러"], // 카티야+저격총
   "2_10": ["원거리 딜러"], // 아야+돌격 소총
   "57_23": ["원거리 딜러"], // 마르티나+카메라
-  "89_9": ["원거리 딜러"], // 크레이버+권총
   // 지원가
   "41_24": ["지원가"], // 요한+아르카나
   "69_9": ["지원가"], // 레니+권총
@@ -375,7 +376,7 @@ const WEAPON_ROLES_FALLBACK: Record<number, CharacterRole[]> = {
   25: ["전사"], // VF의수
 };
 
-// 무기군 구분 없이 단일 직업군/통계로 통합하는 캐릭터 (코드 → 통합 직업군)
+// 무기군 구분 없이 단일 직업군/통계로 통합하는 실험체 (코드 → 통합 직업군)
 export const WEAPON_AGNOSTIC_ROLES: Record<number, CharacterRole[]> = {
   27: ["전사"], // 알렉스: 어떤 무기군이든 전사로 통합
 };
@@ -384,7 +385,7 @@ export function isWeaponAgnosticCharacter(characterCode: number): boolean {
   return characterCode in WEAPON_AGNOSTIC_ROLES;
 }
 
-/** 캐릭터+무기 조합으로 직업군 조회. 무기 무관 캐릭터는 고정 직업군, 없으면 무기 fallback. */
+/** 실험체+무기 조합으로 직업군 조회. 무기 무관 실험체는 고정 직업군, 없으면 무기 fallback. */
 export function getComboRoles(characterCode: number, weaponCode: number): CharacterRole[] {
   if (characterCode in WEAPON_AGNOSTIC_ROLES) {
     return WEAPON_AGNOSTIC_ROLES[characterCode];
@@ -393,7 +394,7 @@ export function getComboRoles(characterCode: number, weaponCode: number): Charac
   return COMBO_ROLES[key] ?? WEAPON_ROLES_FALLBACK[weaponCode] ?? [];
 }
 
-/** Half 이미지 경로. Mini 경로에서 Mini.png → Half.png 치환. 없는 캐릭터는 Mini fallback. */
+/** Half 이미지 경로. Mini 경로에서 Mini.png → Half.png 치환. 없는 실험체는 Mini fallback. */
 export function getCharacterHalfImageUrl(code: number): string {
   const miniPath = CHARACTER_MINI_IMAGES[code];
   if (!miniPath) return `/characters/placeholder.png`;

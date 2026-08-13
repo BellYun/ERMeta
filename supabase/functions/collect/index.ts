@@ -16,12 +16,16 @@ import {
   fetchGame,
   fetchTopRanks,
 } from "../_shared/bser-api.ts";
-import { getCollectableTiers } from "../_shared/tier-utils.ts";
+import {
+  getCollectableTiers,
+  MIN_COLLECT_MMR,
+  MIN_COLLECT_TIER,
+} from "../_shared/tier-utils.ts";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // ── 상수 ──────────────────────────────────────────────────
-const SEASON_ID = 39;
+const SEASON_ID = 41;
 const TEAM_MODE = 3; // 스쿼드
 const FORWARD_BUDGET_MS = 135_000; // forward 최대 (RECENT 도달 시 즉시 중단)
 const FORWARD_START_GAME = 58540099;
@@ -456,6 +460,7 @@ serve(async (req: Request) => {
 
     const currentPatch = patchCache.find((p: any) => p.isActive)?.version ?? patchCache[0].version;
     console.log(`[Collect] 현재 패치: ${currentPatch}, 총 ${patchCache.length}개`);
+    console.log(`[Collect] 수집 기준: ${MIN_COLLECT_TIER} 이상 (MMR ${MIN_COLLECT_MMR}+)`);
 
     // ── 2. IN1000 MMR 갱신 ─────────────────────────────
     let rank1000MMR: number | null = null;
@@ -586,6 +591,10 @@ serve(async (req: Request) => {
       success: true,
       totalTime: `${totalTime}s`,
       currentPatch,
+      collectionTier: {
+        minimum: MIN_COLLECT_TIER,
+        minMMR: MIN_COLLECT_MMR,
+      },
       rank1000MMR,
       forward: {
         collected: forwardCollected,

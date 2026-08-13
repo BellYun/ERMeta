@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">브라우저 계산과 렌더링 시간 비교</title>
+  <desc id="desc">일반 CPU와 4배 감속 CPU에서 기존 정확 조회와 신규 후보군 방식의 JSON 파싱 시작부터 첫 카드 페인트까지 p50 비교</desc>
+  <rect width="1600" height="900" fill="#ffffff"/>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+    <text x="120" y="110" fill="#0f172a" font-size="48" font-weight="700">필터링보다 전송 비용이 더 큰 병목이었습니다</text>
+    <text x="120" y="160" fill="#64748b" font-size="24">JSON 파싱 시작 → 첫 결과 카드 페인트 p50 · 네트워크 제외</text>
+
+    <rect x="980" y="803" width="24" height="24" rx="5" fill="#2563eb"/>
+    <text x="1020" y="823" fill="#334155" font-size="21">기존 정확 조회</text>
+    <rect x="1210" y="803" width="24" height="24" rx="5" fill="#f97316"/>
+    <text x="1250" y="823" fill="#334155" font-size="21">공용 후보군</text>
+
+    <g stroke="#e2e8f0" stroke-width="2">
+      <line x1="180" y1="700" x2="1480" y2="700"/>
+      <line x1="180" y1="585" x2="1480" y2="585"/>
+      <line x1="180" y1="470" x2="1480" y2="470"/>
+      <line x1="180" y1="355" x2="1480" y2="355"/>
+      <line x1="180" y1="240" x2="1480" y2="240"/>
+    </g>
+    <g fill="#64748b" font-size="19" text-anchor="end">
+      <text x="160" y="708">0</text><text x="160" y="593">50</text><text x="160" y="478">100</text>
+      <text x="160" y="363">150</text><text x="160" y="248">200ms</text>
+    </g>
+
+    <rect x="380" y="619.96" width="150" height="80.04" rx="12" fill="#2563eb"/>
+    <rect x="550" y="609.15" width="150" height="90.85" rx="12" fill="#f97316"/>
+    <text x="455" y="600" text-anchor="middle" fill="#0f172a" font-size="28" font-weight="700">34.8ms</text>
+    <text x="625" y="590" text-anchor="middle" fill="#0f172a" font-size="28" font-weight="700">39.5ms</text>
+    <text x="540" y="540" text-anchor="middle" fill="#f97316" font-size="25" font-weight="700">+4.7ms</text>
+
+    <rect x="960" y="293.91" width="150" height="406.09" rx="12" fill="#2563eb"/>
+    <rect x="1130" y="244.37" width="150" height="455.63" rx="12" fill="#f97316"/>
+    <text x="1035" y="274" text-anchor="middle" fill="#0f172a" font-size="28" font-weight="700">176.6ms</text>
+    <text x="1205" y="225" text-anchor="middle" fill="#0f172a" font-size="28" font-weight="700">198.1ms</text>
+    <text x="1120" y="185" text-anchor="middle" fill="#f97316" font-size="25" font-weight="700">+21.5ms</text>
+
+    <g fill="#0f172a" font-size="28" font-weight="700" text-anchor="middle">
+      <text x="540" y="760">일반 데스크톱 CPU</text>
+      <text x="1120" y="760">CPU 4배 감속</text>
+    </g>
+    <text x="120" y="860" fill="#64748b" font-size="22">일반 CPU 각 50회 · CPU 4배 감속 각 30회 · production build</text>
+  </g>
+</svg>

@@ -19,7 +19,13 @@
     "test:e2e:ui": "node scripts/run-playwright.mjs test --ui",
     "test:e2e:install": "playwright install --with-deps chromium",
     "build:synergy-matrix": "node scripts/build-synergy-character-matrix.mjs",
+    "lab:generate": "node scripts/generate-lab-data-from-search-table.mjs",
+    "lab:rising-compositions": "node scripts/generate-character-rising-compositions.mjs",
+    "lab:types": "node scripts/generate-lab-character-types-from-compositions.mjs",
+    "lab:affinity:freeze": "node scripts/freeze-lab-composition-affinity-snapshot.mjs",
+    "lab:reports": "npm run lab:types && node scripts/generate-lab-group-analysis-html.mjs && node scripts/generate-lab-composition-analysis-html.mjs",
     "build:l10n-chunks": "node scripts/build-l10n-chunks.mjs",
+    "fetch:item-tooltip-data": "node --env-file=.env scripts/fetch-item-stats.mjs && node scripts/fetch-item-effects.mjs",
     "fetch-l10n": "node --env-file=.env.local scripts/fetch-l10n.mjs && npm run build:l10n-chunks",
     "prepare": "cd .. && husky"
   },

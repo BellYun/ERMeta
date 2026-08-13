@@ -82,12 +82,12 @@ function HomeDashboardSectionsBody({
   }, [selectedPatch, selectedStats, tier]);
 
   return (
-    <>
-      <section id="home-mobile-filter" className="dashboard-panel home-filter-panel p-3 sm:hidden">
+    <div className="home-dashboard">
+      <section id="home-mobile-filter" className="home-filter-panel p-3 sm:hidden">
         <GlobalFilter />
       </section>
 
-      <section className="dashboard-panel home-section-panel p-4 sm:p-5 lg:p-6">
+      <section className="home-data-section home-data-section--risers">
         <div className="flex flex-col gap-5">
           <div className="home-section-header flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
             <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
@@ -123,12 +123,12 @@ function HomeDashboardSectionsBody({
         <AdSlot
           slot={ADSENSE_SLOTS.homeRanking}
           slotName="home_ranking"
-          className="dashboard-panel px-3 py-2.5 sm:px-4"
+          className="home-data-ad px-3 py-2.5 sm:px-4"
           reservation={ADSENSE_SLOT_RESERVATIONS.contentHorizontal}
         />
       ) : null}
 
-      <section className="dashboard-panel home-section-panel p-4 sm:p-5 lg:p-6">
+      <section className="home-data-section home-data-section--ranking">
         <div className="home-section-header mb-5 flex flex-wrap items-end gap-x-4 gap-y-2">
           <h2 className="dashboard-section-title text-base font-bold text-[var(--color-foreground)] sm:text-lg">
             {t("rankingTitle")}
@@ -139,7 +139,7 @@ function HomeDashboardSectionsBody({
         </div>
         <DeferredTierRankingTable initialData={computedView.rankingData} />
       </section>
-    </>
+    </div>
   );
 }
 

@@ -41,6 +41,7 @@ type SynergyData = {
   characterCode: number;
   characterName: string;
   patchScope: string;
+  seasons?: number[];
   tierScope: string;
   weapons: WeaponSynergy[];
 };
@@ -48,6 +49,7 @@ type SynergyData = {
 type Copy = {
   title: string;
   basedOn: string;
+  seasonLabel: string;
   synergyTitle: string;
   antiTitle: string;
   insufficientSample: string;
@@ -60,6 +62,7 @@ const COPY: Record<RouteLocale, Copy> = {
   ko: {
     title: "잘 맞는 실험체",
     basedOn: "기준",
+    seasonLabel: "시즌",
     synergyTitle: "잘 맞는 조합",
     antiTitle: "주의할 조합",
     insufficientSample: "표본 부족",
@@ -70,6 +73,7 @@ const COPY: Record<RouteLocale, Copy> = {
   en: {
     title: "Partner Results",
     basedOn: "base",
+    seasonLabel: "Seasons",
     synergyTitle: "Higher-RP Partners",
     antiTitle: "Lower-RP Partners",
     insufficientSample: "Limited sample",
@@ -80,6 +84,7 @@ const COPY: Record<RouteLocale, Copy> = {
   ja: {
     title: "相性データ",
     basedOn: "基準",
+    seasonLabel: "シーズン",
     synergyTitle: "高RPの組み合わせ",
     antiTitle: "注意する組み合わせ",
     insufficientSample: "サンプル不足",
@@ -90,6 +95,7 @@ const COPY: Record<RouteLocale, Copy> = {
   "zh-Hans": {
     title: "搭档数据",
     basedOn: "基准",
+    seasonLabel: "赛季",
     synergyTitle: "较高 RP 组合",
     antiTitle: "需注意组合",
     insufficientSample: "样本不足",
@@ -100,6 +106,7 @@ const COPY: Record<RouteLocale, Copy> = {
   "zh-Hant": {
     title: "搭檔資料",
     basedOn: "基準",
+    seasonLabel: "賽季",
     synergyTitle: "較高 RP 組合",
     antiTitle: "需注意組合",
     insufficientSample: "樣本不足",
@@ -125,7 +132,7 @@ export function SynergyPartnersSection({
   React.useEffect(() => {
     let cancelled = false;
     setData(null);
-    fetch(`/api/synergy-pairs/${characterCode}`)
+    fetch(`/api/synergy-pairs/${characterCode}?scope=s10-s11`)
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then((json: SynergyData) => {
         if (!cancelled) setData(json);
@@ -149,6 +156,9 @@ export function SynergyPartnersSection({
 
   const characterName = resolveCharacterName(data.characterCode, l10n, fallbackMap);
   const weaponName = resolveWeaponName(entry.weapon, l10n);
+  const scopeLabel = data.seasons?.length
+    ? `${copy.seasonLabel} ${data.seasons.join("·")}`
+    : data.patchScope;
 
   return (
     <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
@@ -158,7 +168,7 @@ export function SynergyPartnersSection({
           {copy.title}
         </h2>
         <span className="text-[10px] text-[var(--color-muted-foreground)]">
-          {characterName}({weaponName}) {copy.basedOn} · {data.patchScope} · {data.tierScope}
+          {characterName}({weaponName}) {copy.basedOn} · {scopeLabel} · {data.tierScope}
         </span>
       </div>
 

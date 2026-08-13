@@ -231,7 +231,7 @@ function emptyTierRpTrend(): TierRpTrend {
 }
 
 function buildRoleStats(rows: StatRow[], patches: string[]): RoleAggregate[] {
-  // 한 캐릭터+무기 조합이 복수 직업군에 매핑되면 각 직업군 버킷에 모두 반영한다.
+  // 한 실험체+무기 조합이 복수 직업군에 매핑되면 각 직업군 버킷에 모두 반영한다.
   const rolePatchTotals = new Map<CharacterRole, Map<string, { games: number; rp: number }>>();
   const roleSeasonTotals = new Map<CharacterRole, { games: number; rp: number }>();
 

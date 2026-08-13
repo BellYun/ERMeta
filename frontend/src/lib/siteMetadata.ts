@@ -11,6 +11,7 @@ import {
   loadIntlMessages,
   OG_LOCALE_BY_LANGUAGE,
   STRUCTURED_DATA_LANGUAGE_BY_LANGUAGE,
+  type IntlMessages,
 } from "@/lib/staticIntl";
 
 export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://erwagg.com";
@@ -147,11 +148,11 @@ export async function buildDefaultSiteMetadata(): Promise<Metadata> {
   };
 }
 
-export async function buildWebsiteStructuredData(
+export function buildWebsiteStructuredData(
   language: SupportedLanguage,
-  locale: RouteLocale
-): Promise<Record<string, unknown>> {
-  const messages = await loadIntlMessages(language);
+  locale: RouteLocale,
+  messages: IntlMessages
+): Record<string, unknown> {
   const localizedHomePath = localizeRoutePath("/", locale);
 
   return {

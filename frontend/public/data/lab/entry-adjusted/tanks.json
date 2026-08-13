@@ -1,0 +1,1694 @@
+{
+  "role": "탱커",
+  "roleSlug": "tanks",
+  "groupK": 3,
+  "internalGroupK": 10,
+  "minGames": 30,
+  "cumulative": true,
+  "generatedFrom": "v2_CharacterTrioWeapon",
+  "seasons": [10, 11],
+  "scoreMode": "tier-entry-cost-adjusted",
+  "entryCosts": {
+    "DIAMOND": 48,
+    "METEORITE": 54.5,
+    "MITHRIL": 60
+  },
+  "classificationMethod": "primary-role+season-10-11-composition-fit-game-trend-metric-split-v5+tier-entry-cost",
+  "primaryRoleOnly": true,
+  "generatedAt": "2026-08-12",
+  "groups": [
+    {
+      "id": 0,
+      "label": "스킬딜러·원거리 딜러 연계형",
+      "curated": false,
+      "topPartnerRoles": ["스킬딜러", "원거리 딜러"],
+      "characterKeys": ["76_3", "20_4", "55_14", "68_1", "53_14", "53_13", "13_15", "13_19"]
+    },
+    {
+      "id": 1,
+      "label": "전사 2인 연계형",
+      "curated": false,
+      "topPartnerRoles": ["전사 ×2"],
+      "characterKeys": ["85_13", "4_13", "30_13", "45_4"]
+    },
+    {
+      "id": 2,
+      "label": "전사·원거리 딜러 연계형",
+      "curated": false,
+      "topPartnerRoles": ["전사", "원거리 딜러"],
+      "characterKeys": ["50_21", "4_3"]
+    }
+  ],
+  "characters": [
+    {
+      "characterCode": 76,
+      "characterName": "가넷",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "totalGames": 140760,
+      "ownMeanRP": 52.276,
+      "groupId": 0,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "선봉 브루저 탱커",
+        "roles": ["탱커", "전사"],
+        "traits": ["engage", "sustain"],
+        "partnerRoles": ["스킬딜러", "원거리 딜러"],
+        "fitRole": "전열 유지",
+        "fitReason": "스킬 화력·장악 + 후열 지속 화력 기반에서 전열에 오래 남아 동료 딜러의 화력 시간을 늘립니다.",
+        "partnerDelta": 0.959,
+        "partnerGames": 37796,
+        "partnerGameShare": 0.268513782324524,
+        "confidence": "high",
+        "metricRole": "전열 유지 · 후열 화력 보장",
+        "metricSummary": "대표 조합 평균 +0.96 RP · 평균 비중 26.9% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 암살자 + 암살자",
+          "delta": 2.32,
+          "games": 45
+        },
+        {
+          "multiset": "탱커 + 탱커 + 암살자",
+          "delta": 1.692,
+          "games": 59
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.959,
+          "games": 37796
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 원거리 딜러",
+          "delta": 0.658,
+          "games": 2525
+        },
+        {
+          "multiset": "탱커 + 탱커 + 지원가",
+          "delta": 0.41,
+          "games": 224
+        },
+        {
+          "multiset": "탱커 + 전사 + 전사",
+          "delta": 0.306,
+          "games": 7005
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 탱커 + 탱커",
+          "delta": -33.045,
+          "games": 42
+        },
+        {
+          "multiset": "탱커 + 암살자 + 지원가",
+          "delta": -8.417,
+          "games": 72
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -5.055,
+          "games": 846
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 지원가",
+          "delta": -4.274,
+          "games": 535
+        },
+        {
+          "multiset": "탱커 + 탱커 + 원거리 딜러",
+          "delta": -3.998,
+          "games": 750
+        },
+        {
+          "multiset": "탱커 + 전사 + 지원가",
+          "delta": -2.776,
+          "games": 1054
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -2.525,
+          "games": 242
+        },
+        {
+          "multiset": "탱커 + 탱커 + 전사",
+          "delta": -1.088,
+          "games": 450
+        },
+        {
+          "multiset": "탱커 + 암살자 + 원거리 딜러",
+          "delta": -0.812,
+          "games": 2624
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.346,
+          "games": 37504
+        },
+        {
+          "multiset": "탱커 + 전사 + 원거리 딜러",
+          "delta": -0.304,
+          "games": 30766
+        },
+        {
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": -0.022,
+          "games": 1632
+        }
+      ]
+    },
+    {
+      "characterCode": 20,
+      "characterName": "레녹스",
+      "weapon": 4,
+      "weaponName": "채찍",
+      "totalGames": 122197,
+      "ownMeanRP": 52.763,
+      "groupId": 0,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "선봉 보호 탱커",
+        "roles": ["탱커"],
+        "traits": ["engage", "peel"],
+        "partnerRoles": ["스킬딜러", "원거리 딜러"],
+        "fitRole": "선봉 보호",
+        "fitReason": "스킬 화력·장악 + 후열 지속 화력 기반에서 선봉에서 교전을 열면서 후열로 들어오는 적도 막습니다.",
+        "partnerDelta": 1.065,
+        "partnerGames": 50640,
+        "partnerGameShare": 0.41441279245808,
+        "confidence": "high",
+        "metricRole": "선봉 보호",
+        "metricSummary": "대표 조합 평균 +0.80 RP · 평균 비중 30.5% · 방향 일치 58%",
+        "metricCohesion": 0.5833333333333334,
+        "metricClusterSize": 3
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 전사 + 전사",
+          "delta": 1.986,
+          "games": 2232
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 1.065,
+          "games": 50640
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 지원가",
+          "delta": 1.011,
+          "games": 270
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 전사 + 지원가",
+          "delta": -8.309,
+          "games": 95
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -7.143,
+          "games": 353
+        },
+        {
+          "multiset": "탱커 + 탱커 + 원거리 딜러",
+          "delta": -6.983,
+          "games": 530
+        },
+        {
+          "multiset": "탱커 + 탱커 + 전사",
+          "delta": -3.13,
+          "games": 126
+        },
+        {
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": -2.465,
+          "games": 523
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.508,
+          "games": 12852
+        },
+        {
+          "multiset": "탱커 + 암살자 + 원거리 딜러",
+          "delta": -1.335,
+          "games": 2147
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -1.019,
+          "games": 21477
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -1.001,
+          "games": 1921
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -0.606,
+          "games": 65
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 원거리 딜러",
+          "delta": -0.205,
+          "games": 3821
+        },
+        {
+          "multiset": "탱커 + 전사 + 원거리 딜러",
+          "delta": -0.051,
+          "games": 25086
+        }
+      ]
+    },
+    {
+      "characterCode": 55,
+      "characterName": "에스텔",
+      "weapon": 14,
+      "weaponName": "도끼",
+      "totalGames": 115620,
+      "ownMeanRP": 52.873,
+      "groupId": 0,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "진입 보호 탱커",
+        "roles": ["탱커", "전사"],
+        "traits": ["engage", "protect"],
+        "partnerRoles": ["스킬딜러", "원거리 딜러"],
+        "fitRole": "진입 보호",
+        "fitReason": "스킬 화력·장악 + 후열 지속 화력 기반에서 진입을 시작한 뒤 아군이 화력을 낼 시간을 확보합니다.",
+        "partnerDelta": 0.656,
+        "partnerGames": 30846,
+        "partnerGameShare": 0.26678775298391283,
+        "confidence": "high",
+        "metricRole": "진입 보호",
+        "metricSummary": "대표 조합 평균 +0.66 RP · 평균 비중 26.7% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 전사 + 지원가",
+          "delta": 3.234,
+          "games": 230
+        },
+        {
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": 2.317,
+          "games": 1750
+        },
+        {
+          "multiset": "탱커 + 암살자 + 암살자",
+          "delta": 1.074,
+          "games": 48
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 원거리 딜러",
+          "delta": 1.056,
+          "games": 2081
+        },
+        {
+          "multiset": "탱커 + 암살자 + 원거리 딜러",
+          "delta": 0.776,
+          "games": 2796
+        },
+        {
+          "multiset": "탱커 + 암살자 + 지원가",
+          "delta": 0.768,
+          "games": 74
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.656,
+          "games": 30846
+        },
+        {
+          "multiset": "탱커 + 전사 + 전사",
+          "delta": 0.244,
+          "games": 5784
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 탱커 + 암살자",
+          "delta": -12.582,
+          "games": 53
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 지원가",
+          "delta": -7.087,
+          "games": 260
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -5.826,
+          "games": 653
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -5.325,
+          "games": 83
+        },
+        {
+          "multiset": "탱커 + 탱커 + 전사",
+          "delta": -2.315,
+          "games": 357
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.388,
+          "games": 8846
+        },
+        {
+          "multiset": "탱커 + 탱커 + 원거리 딜러",
+          "delta": -0.507,
+          "games": 738
+        },
+        {
+          "multiset": "탱커 + 전사 + 원거리 딜러",
+          "delta": -0.329,
+          "games": 28510
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -0.109,
+          "games": 3262
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.035,
+          "games": 29208
+        }
+      ]
+    },
+    {
+      "characterCode": 68,
+      "characterName": "알론소",
+      "weapon": 1,
+      "weaponName": "글러브",
+      "totalGames": 105584,
+      "ownMeanRP": 52.709,
+      "groupId": 0,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "선봉 보호 탱커",
+        "roles": ["탱커"],
+        "traits": ["engage", "peel"],
+        "partnerRoles": ["스킬딜러", "원거리 딜러"],
+        "fitRole": "선봉 보호",
+        "fitReason": "스킬 화력·장악 + 후열 지속 화력 기반에서 선봉에서 교전을 열면서 후열로 들어오는 적도 막습니다.",
+        "partnerDelta": 0.761,
+        "partnerGames": 34323,
+        "partnerGameShare": 0.3250776632823155,
+        "confidence": "high",
+        "metricRole": "선봉 보호",
+        "metricSummary": "대표 조합 평균 +0.80 RP · 평균 비중 30.5% · 방향 일치 58%",
+        "metricCohesion": 0.5833333333333334,
+        "metricClusterSize": 3
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 탱커 + 암살자",
+          "delta": 5.363,
+          "games": 37
+        },
+        {
+          "multiset": "탱커 + 탱커 + 탱커",
+          "delta": 3.856,
+          "games": 42
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 지원가",
+          "delta": 1.175,
+          "games": 236
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.761,
+          "games": 34323
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 원거리 딜러",
+          "delta": 0.568,
+          "games": 2677
+        },
+        {
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": 0.473,
+          "games": 1047
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": 0.458,
+          "games": 25496
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 0.3,
+          "games": 2421
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -18.329,
+          "games": 99
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -10.576,
+          "games": 494
+        },
+        {
+          "multiset": "탱커 + 탱커 + 원거리 딜러",
+          "delta": -8.733,
+          "games": 439
+        },
+        {
+          "multiset": "탱커 + 전사 + 지원가",
+          "delta": -6.372,
+          "games": 193
+        },
+        {
+          "multiset": "탱커 + 암살자 + 원거리 딜러",
+          "delta": -3.114,
+          "games": 1851
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.329,
+          "games": 11221
+        },
+        {
+          "multiset": "탱커 + 전사 + 전사",
+          "delta": -0.943,
+          "games": 4216
+        },
+        {
+          "multiset": "탱커 + 탱커 + 전사",
+          "delta": -0.749,
+          "games": 313
+        },
+        {
+          "multiset": "탱커 + 전사 + 원거리 딜러",
+          "delta": -0.206,
+          "games": 20428
+        }
+      ]
+    },
+    {
+      "characterCode": 53,
+      "characterName": "마커스",
+      "weapon": 14,
+      "weaponName": "도끼",
+      "totalGames": 95209,
+      "ownMeanRP": 52.313,
+      "groupId": 0,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "선봉 브루저 탱커",
+        "roles": ["탱커", "전사"],
+        "traits": ["engage", "sustain"],
+        "partnerRoles": ["스킬딜러", "원거리 딜러"],
+        "fitRole": "전열 유지",
+        "fitReason": "스킬 화력·장악 + 후열 지속 화력 기반에서 전열에 오래 남아 동료 딜러의 화력 시간을 늘립니다.",
+        "partnerDelta": 0.754,
+        "partnerGames": 21593,
+        "partnerGameShare": 0.2267957861126574,
+        "confidence": "high",
+        "metricRole": "전열 유지 · 진형 교란",
+        "metricSummary": "대표 조합 평균 +0.80 RP · 평균 비중 26.9% · 방향 일치 78%",
+        "metricCohesion": 0.7777777777777778,
+        "metricClusterSize": 2
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 암살자 + 지원가",
+          "delta": 4.832,
+          "games": 115
+        },
+        {
+          "multiset": "탱커 + 암살자 + 암살자",
+          "delta": 4.005,
+          "games": 30
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 지원가",
+          "delta": 2.241,
+          "games": 828
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.754,
+          "games": 21593
+        },
+        {
+          "multiset": "탱커 + 전사 + 지원가",
+          "delta": 0.601,
+          "games": 2568
+        },
+        {
+          "multiset": "탱커 + 탱커 + 지원가",
+          "delta": 0.31,
+          "games": 188
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": 0.29,
+          "games": 7832
+        },
+        {
+          "multiset": "탱커 + 전사 + 원거리 딜러",
+          "delta": 0.026,
+          "games": 20981
+        },
+        {
+          "multiset": "탱커 + 암살자 + 원거리 딜러",
+          "delta": 0.001,
+          "games": 1822
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 탱커 + 탱커",
+          "delta": -13.723,
+          "games": 40
+        },
+        {
+          "multiset": "탱커 + 탱커 + 암살자",
+          "delta": -8.008,
+          "games": 59
+        },
+        {
+          "multiset": "탱커 + 탱커 + 원거리 딜러",
+          "delta": -3.391,
+          "games": 853
+        },
+        {
+          "multiset": "탱커 + 탱커 + 전사",
+          "delta": -2.706,
+          "games": 592
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -1.784,
+          "games": 344
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -1.483,
+          "games": 2624
+        },
+        {
+          "multiset": "탱커 + 전사 + 전사",
+          "delta": -1.357,
+          "games": 4624
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -0.692,
+          "games": 819
+        },
+        {
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": -0.375,
+          "games": 1180
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.212,
+          "games": 26572
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 원거리 딜러",
+          "delta": -0.197,
+          "games": 1544
+        }
+      ]
+    },
+    {
+      "characterCode": 53,
+      "characterName": "마커스",
+      "weapon": 13,
+      "weaponName": "망치",
+      "totalGames": 67141,
+      "ownMeanRP": 52.771,
+      "groupId": 0,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "선봉 보호 탱커",
+        "roles": ["탱커", "전사"],
+        "traits": ["engage", "peel"],
+        "partnerRoles": ["스킬딜러", "원거리 딜러"],
+        "fitRole": "선봉 보호",
+        "fitReason": "스킬 화력·장악 + 후열 지속 화력 기반에서 선봉에서 교전을 열면서 후열로 들어오는 적도 막습니다.",
+        "partnerDelta": 0.567,
+        "partnerGames": 11776,
+        "partnerGameShare": 0.17539208531299802,
+        "confidence": "high",
+        "metricRole": "선봉 보호",
+        "metricSummary": "대표 조합 평균 +0.80 RP · 평균 비중 30.5% · 방향 일치 58%",
+        "metricCohesion": 0.5833333333333334,
+        "metricClusterSize": 3
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 탱커 + 탱커",
+          "delta": 6.98,
+          "games": 44
+        },
+        {
+          "multiset": "탱커 + 암살자 + 지원가",
+          "delta": 2.621,
+          "games": 121
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": 2.448,
+          "games": 287
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 지원가",
+          "delta": 2.289,
+          "games": 609
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 원거리 딜러",
+          "delta": 1.647,
+          "games": 864
+        },
+        {
+          "multiset": "탱커 + 전사 + 지원가",
+          "delta": 0.64,
+          "games": 3661
+        },
+        {
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": 0.59,
+          "games": 1130
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": 0.585,
+          "games": 697
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.567,
+          "games": 11776
+        },
+        {
+          "multiset": "탱커 + 전사 + 전사",
+          "delta": 0.398,
+          "games": 4354
+        },
+        {
+          "multiset": "탱커 + 탱커 + 지원가",
+          "delta": 0.388,
+          "games": 131
+        },
+        {
+          "multiset": "탱커 + 전사 + 원거리 딜러",
+          "delta": 0.027,
+          "games": 15344
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 탱커 + 암살자",
+          "delta": -9.844,
+          "games": 65
+        },
+        {
+          "multiset": "탱커 + 탱커 + 원거리 딜러",
+          "delta": -4.274,
+          "games": 667
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -0.816,
+          "games": 4174
+        },
+        {
+          "multiset": "탱커 + 탱커 + 전사",
+          "delta": -0.752,
+          "games": 675
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -0.54,
+          "games": 1819
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.394,
+          "games": 19483
+        },
+        {
+          "multiset": "탱커 + 암살자 + 원거리 딜러",
+          "delta": -0.379,
+          "games": 1216
+        }
+      ]
+    },
+    {
+      "characterCode": 13,
+      "characterName": "쇼우",
+      "weapon": 15,
+      "weaponName": "단검",
+      "totalGames": 38058,
+      "ownMeanRP": 54.242,
+      "groupId": 0,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "유지·받아치기 탱커",
+        "roles": ["탱커"],
+        "traits": ["sustain", "peel"],
+        "partnerRoles": ["스킬딜러", "원거리 딜러"],
+        "fitRole": "받아치기 유지",
+        "fitReason": "스킬 화력·장악 + 후열 지속 화력 기반에서 첫 진입을 받아낸 뒤 장기 교전으로 전환합니다.",
+        "partnerDelta": 0.899,
+        "partnerGames": 10157,
+        "partnerGameShare": 0.2668821272794156,
+        "confidence": "high",
+        "metricRole": "받아치기 유지",
+        "metricSummary": "대표 조합 평균 +0.90 RP · 평균 비중 26.7% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 원거리 딜러 + 원거리 딜러",
+          "delta": 1.755,
+          "games": 708
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.899,
+          "games": 10157
+        },
+        {
+          "multiset": "탱커 + 전사 + 원거리 딜러",
+          "delta": 0.386,
+          "games": 8895
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 0.147,
+          "games": 767
+        },
+        {
+          "multiset": "탱커 + 탱커 + 암살자",
+          "delta": 0.047,
+          "games": 39
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 원거리 딜러 + 지원가",
+          "delta": -20.289,
+          "games": 60
+        },
+        {
+          "multiset": "탱커 + 전사 + 지원가",
+          "delta": -5.39,
+          "games": 104
+        },
+        {
+          "multiset": "탱커 + 탱커 + 전사",
+          "delta": -4.97,
+          "games": 280
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -4.656,
+          "games": 44
+        },
+        {
+          "multiset": "탱커 + 암살자 + 원거리 딜러",
+          "delta": -3.206,
+          "games": 668
+        },
+        {
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": -2.159,
+          "games": 607
+        },
+        {
+          "multiset": "탱커 + 탱커 + 원거리 딜러",
+          "delta": -1.565,
+          "games": 390
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -1.519,
+          "games": 388
+        },
+        {
+          "multiset": "탱커 + 전사 + 전사",
+          "delta": -1.28,
+          "games": 2664
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -0.184,
+          "games": 3016
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.181,
+          "games": 9224
+        }
+      ]
+    },
+    {
+      "characterCode": 13,
+      "characterName": "쇼우",
+      "weapon": 19,
+      "weaponName": "창",
+      "totalGames": 22110,
+      "ownMeanRP": 53.074,
+      "groupId": 0,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "선봉 브루저 탱커",
+        "roles": ["탱커"],
+        "traits": ["engage", "sustain"],
+        "partnerRoles": ["스킬딜러", "원거리 딜러"],
+        "fitRole": "전열 유지",
+        "fitReason": "스킬 화력·장악 + 후열 지속 화력 기반에서 전열에 오래 남아 동료 딜러의 화력 시간을 늘립니다.",
+        "partnerDelta": 0.849,
+        "partnerGames": 6894,
+        "partnerGameShare": 0.3118046132971506,
+        "confidence": "high",
+        "metricRole": "전열 유지 · 진형 교란",
+        "metricSummary": "대표 조합 평균 +0.80 RP · 평균 비중 26.9% · 방향 일치 78%",
+        "metricCohesion": 0.7777777777777778,
+        "metricClusterSize": 2
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 원거리 딜러 + 원거리 딜러",
+          "delta": 3.703,
+          "games": 485
+        },
+        {
+          "multiset": "탱커 + 암살자 + 원거리 딜러",
+          "delta": 2.197,
+          "games": 400
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": 1.627,
+          "games": 170
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.849,
+          "games": 6894
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 지원가",
+          "delta": 0.65,
+          "games": 31
+        },
+        {
+          "multiset": "탱커 + 전사 + 원거리 딜러",
+          "delta": 0.237,
+          "games": 4981
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 탱커 + 전사",
+          "delta": -11.727,
+          "games": 114
+        },
+        {
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": -4.996,
+          "games": 255
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -2.572,
+          "games": 2013
+        },
+        {
+          "multiset": "탱커 + 탱커 + 원거리 딜러",
+          "delta": -1.231,
+          "games": 205
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -0.639,
+          "games": 408
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.237,
+          "games": 4961
+        },
+        {
+          "multiset": "탱커 + 전사 + 전사",
+          "delta": -0.05,
+          "games": 1115
+        }
+      ]
+    },
+    {
+      "characterCode": 85,
+      "characterName": "미르카",
+      "weapon": 13,
+      "weaponName": "망치",
+      "totalGames": 110069,
+      "ownMeanRP": 52.2,
+      "groupId": 1,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "선봉 보호 탱커",
+        "roles": ["탱커", "전사"],
+        "traits": ["engage", "peel"],
+        "partnerRoles": ["전사", "전사"],
+        "fitRole": "선봉 보호",
+        "fitReason": "난전·진입 2중 기반에서 선봉에서 교전을 열면서 후열로 들어오는 적도 막습니다.",
+        "partnerDelta": 2.298,
+        "partnerGames": 8581,
+        "partnerGameShare": 0.07796018860896346,
+        "confidence": "high",
+        "metricRole": "선봉 보호 · 강제 진입",
+        "metricSummary": "대표 조합 평균 +2.81 RP · 평균 비중 6.4% · 방향 일치 67%",
+        "metricCohesion": 0.6666666666666666,
+        "metricClusterSize": 2
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 탱커 + 암살자",
+          "delta": 6.486,
+          "games": 64
+        },
+        {
+          "multiset": "탱커 + 암살자 + 지원가",
+          "delta": 2.904,
+          "games": 59
+        },
+        {
+          "multiset": "탱커 + 전사 + 전사",
+          "delta": 2.298,
+          "games": 8581
+        },
+        {
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": 1.486,
+          "games": 1920
+        },
+        {
+          "multiset": "탱커 + 암살자 + 암살자",
+          "delta": 0.786,
+          "games": 32
+        },
+        {
+          "multiset": "탱커 + 전사 + 원거리 딜러",
+          "delta": 0.306,
+          "games": 26895
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 원거리 딜러",
+          "delta": 0.227,
+          "games": 1754
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.028,
+          "games": 23755
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 탱커 + 탱커",
+          "delta": -10.123,
+          "games": 58
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -6.013,
+          "games": 175
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -1.701,
+          "games": 713
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.421,
+          "games": 7746
+        },
+        {
+          "multiset": "탱커 + 탱커 + 전사",
+          "delta": -1.09,
+          "games": 563
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 지원가",
+          "delta": -1.035,
+          "games": 455
+        },
+        {
+          "multiset": "탱커 + 전사 + 지원가",
+          "delta": -1.027,
+          "games": 710
+        },
+        {
+          "multiset": "탱커 + 암살자 + 원거리 딜러",
+          "delta": -0.957,
+          "games": 2215
+        },
+        {
+          "multiset": "탱커 + 탱커 + 원거리 딜러",
+          "delta": -0.933,
+          "games": 754
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.424,
+          "games": 30870
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -0.336,
+          "games": 2725
+        }
+      ]
+    },
+    {
+      "characterCode": 4,
+      "characterName": "매그너스",
+      "weapon": 13,
+      "weaponName": "망치",
+      "totalGames": 108721,
+      "ownMeanRP": 52.723,
+      "groupId": 1,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "선봉 보호 탱커",
+        "roles": ["탱커", "전사"],
+        "traits": ["engage", "peel"],
+        "partnerRoles": ["전사", "전사"],
+        "fitRole": "선봉 보호",
+        "fitReason": "난전·진입 2중 기반에서 선봉에서 교전을 열면서 후열로 들어오는 적도 막습니다.",
+        "partnerDelta": 0.835,
+        "partnerGames": 15739,
+        "partnerGameShare": 0.1447650407924872,
+        "confidence": "high",
+        "metricRole": "선봉 보호 · 진입 교란",
+        "metricSummary": "대표 조합 평균 +0.83 RP · 평균 비중 14.5% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 탱커 + 탱커",
+          "delta": 4.73,
+          "games": 70
+        },
+        {
+          "multiset": "탱커 + 탱커 + 암살자",
+          "delta": 2.917,
+          "games": 144
+        },
+        {
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": 1.037,
+          "games": 3622
+        },
+        {
+          "multiset": "탱커 + 전사 + 전사",
+          "delta": 0.835,
+          "games": 15739
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": 0.625,
+          "games": 2946
+        },
+        {
+          "multiset": "탱커 + 암살자 + 원거리 딜러",
+          "delta": 0.242,
+          "games": 2246
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": 0.19,
+          "games": 33473
+        },
+        {
+          "multiset": "탱커 + 암살자 + 지원가",
+          "delta": 0.185,
+          "games": 68
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.159,
+          "games": 12338
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 원거리 딜러 + 지원가",
+          "delta": -9.385,
+          "games": 325
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -7.856,
+          "games": 157
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -3.758,
+          "games": 1195
+        },
+        {
+          "multiset": "탱커 + 탱커 + 원거리 딜러",
+          "delta": -3.065,
+          "games": 1355
+        },
+        {
+          "multiset": "탱커 + 암살자 + 암살자",
+          "delta": -1.808,
+          "games": 98
+        },
+        {
+          "multiset": "탱커 + 전사 + 지원가",
+          "delta": -1.605,
+          "games": 1143
+        },
+        {
+          "multiset": "탱커 + 탱커 + 전사",
+          "delta": -1.544,
+          "games": 1155
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.494,
+          "games": 4845
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 원거리 딜러",
+          "delta": -0.345,
+          "games": 983
+        },
+        {
+          "multiset": "탱커 + 탱커 + 지원가",
+          "delta": -0.17,
+          "games": 58
+        },
+        {
+          "multiset": "탱커 + 전사 + 원거리 딜러",
+          "delta": -0.149,
+          "games": 26756
+        }
+      ]
+    },
+    {
+      "characterCode": 30,
+      "characterName": "일레븐",
+      "weapon": 13,
+      "weaponName": "망치",
+      "totalGames": 98634,
+      "ownMeanRP": 52.782,
+      "groupId": 1,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "선봉 보호 탱커",
+        "roles": ["탱커"],
+        "traits": ["engage", "peel"],
+        "partnerRoles": ["전사", "전사"],
+        "fitRole": "선봉 보호",
+        "fitReason": "난전·진입 2중 기반에서 선봉에서 교전을 열면서 후열로 들어오는 적도 막습니다.",
+        "partnerDelta": 3.319,
+        "partnerGames": 4845,
+        "partnerGameShare": 0.04912099276111686,
+        "confidence": "high",
+        "metricRole": "선봉 보호 · 강제 진입",
+        "metricSummary": "대표 조합 평균 +2.81 RP · 평균 비중 6.4% · 방향 일치 67%",
+        "metricCohesion": 0.6666666666666666,
+        "metricClusterSize": 2
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 전사 + 전사",
+          "delta": 3.319,
+          "games": 4845
+        },
+        {
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": 2.16,
+          "games": 1181
+        },
+        {
+          "multiset": "탱커 + 전사 + 지원가",
+          "delta": 1.772,
+          "games": 99
+        },
+        {
+          "multiset": "탱커 + 암살자 + 원거리 딜러",
+          "delta": 1.615,
+          "games": 2067
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 원거리 딜러",
+          "delta": 1.572,
+          "games": 2428
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 지원가",
+          "delta": 1.29,
+          "games": 122
+        },
+        {
+          "multiset": "탱커 + 탱커 + 암살자",
+          "delta": 1.047,
+          "games": 45
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": 0.341,
+          "games": 21370
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.326,
+          "games": 32835
+        },
+        {
+          "multiset": "탱커 + 탱커 + 탱커",
+          "delta": 0.176,
+          "games": 32
+        },
+        {
+          "multiset": "탱커 + 탱커 + 전사",
+          "delta": 0.166,
+          "games": 280
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 탱커 + 원거리 딜러",
+          "delta": -3.876,
+          "games": 485
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -1.856,
+          "games": 392
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.712,
+          "games": 8828
+        },
+        {
+          "multiset": "탱커 + 전사 + 원거리 딜러",
+          "delta": -1.207,
+          "games": 21393
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -0.973,
+          "games": 53
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -0.33,
+          "games": 2142
+        }
+      ]
+    },
+    {
+      "characterCode": 45,
+      "characterName": "마이",
+      "weapon": 4,
+      "weaponName": "채찍",
+      "totalGames": 51839,
+      "ownMeanRP": 52.52,
+      "groupId": 1,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "보호 지원 탱커",
+        "roles": ["탱커", "지원가"],
+        "traits": ["protect", "peel"],
+        "partnerRoles": ["전사", "전사"],
+        "fitRole": "후열 보호",
+        "fitReason": "난전·진입 2중 기반에서 후열을 지키고 적의 진입 타이밍을 끊습니다.",
+        "partnerDelta": 3.254,
+        "partnerGames": 2370,
+        "partnerGameShare": 0.0457184745076101,
+        "confidence": "medium",
+        "metricRole": "후열 보호",
+        "metricSummary": "대표 조합 평균 +3.25 RP · 평균 비중 4.6% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": 4.294,
+          "games": 56
+        },
+        {
+          "multiset": "탱커 + 전사 + 전사",
+          "delta": 3.254,
+          "games": 2370
+        },
+        {
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": 1.749,
+          "games": 1146
+        },
+        {
+          "multiset": "탱커 + 탱커 + 암살자",
+          "delta": 1.233,
+          "games": 36
+        },
+        {
+          "multiset": "탱커 + 탱커 + 전사",
+          "delta": 1.168,
+          "games": 133
+        },
+        {
+          "multiset": "탱커 + 암살자 + 원거리 딜러",
+          "delta": 0.778,
+          "games": 1727
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 원거리 딜러",
+          "delta": 0.746,
+          "games": 1103
+        },
+        {
+          "multiset": "탱커 + 전사 + 지원가",
+          "delta": 0.285,
+          "games": 417
+        },
+        {
+          "multiset": "탱커 + 전사 + 원거리 딜러",
+          "delta": 0.185,
+          "games": 12852
+        },
+        {
+          "multiset": "탱커 + 암살자 + 지원가",
+          "delta": 0.074,
+          "games": 233
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 원거리 딜러 + 지원가",
+          "delta": -12.1,
+          "games": 167
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -11.938,
+          "games": 218
+        },
+        {
+          "multiset": "탱커 + 탱커 + 원거리 딜러",
+          "delta": -4.799,
+          "games": 224
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -1.654,
+          "games": 3465
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -0.353,
+          "games": 1758
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.099,
+          "games": 11298
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.037,
+          "games": 14580
+        }
+      ]
+    },
+    {
+      "characterCode": 50,
+      "characterName": "엘레나",
+      "weapon": 21,
+      "weaponName": "레이피어",
+      "totalGames": 58731,
+      "ownMeanRP": 52.822,
+      "groupId": 2,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "제어 진입 탱커",
+        "roles": ["탱커"],
+        "traits": ["engage", "zoneControl"],
+        "partnerRoles": ["전사", "원거리 딜러"],
+        "fitRole": "진입 장악",
+        "fitReason": "난전·진입 + 후열 지속 화력 기반에서 교전을 열면서 적의 이동 공간까지 제한합니다.",
+        "partnerDelta": 0.783,
+        "partnerGames": 15301,
+        "partnerGameShare": 0.26052680867003797,
+        "confidence": "high",
+        "metricRole": "진입 장악",
+        "metricSummary": "대표 조합 평균 +0.78 RP · 평균 비중 26.1% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 원거리 딜러 + 원거리 딜러",
+          "delta": 4.383,
+          "games": 553
+        },
+        {
+          "multiset": "탱커 + 전사 + 지원가",
+          "delta": 2.33,
+          "games": 342
+        },
+        {
+          "multiset": "탱커 + 탱커 + 전사",
+          "delta": 2.309,
+          "games": 375
+        },
+        {
+          "multiset": "탱커 + 전사 + 전사",
+          "delta": 1.165,
+          "games": 7425
+        },
+        {
+          "multiset": "탱커 + 전사 + 원거리 딜러",
+          "delta": 0.783,
+          "games": 15301
+        },
+        {
+          "multiset": "탱커 + 암살자 + 암살자",
+          "delta": 0.133,
+          "games": 44
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -31.414,
+          "games": 61
+        },
+        {
+          "multiset": "탱커 + 암살자 + 지원가",
+          "delta": -21.906,
+          "games": 31
+        },
+        {
+          "multiset": "탱커 + 탱커 + 원거리 딜러",
+          "delta": -10.994,
+          "games": 504
+        },
+        {
+          "multiset": "탱커 + 탱커 + 암살자",
+          "delta": -3.357,
+          "games": 52
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": -2.408,
+          "games": 2630
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -2.33,
+          "games": 459
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 지원가",
+          "delta": -2.291,
+          "games": 157
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -1.443,
+          "games": 1602
+        },
+        {
+          "multiset": "탱커 + 암살자 + 원거리 딜러",
+          "delta": -0.467,
+          "games": 1252
+        },
+        {
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": -0.293,
+          "games": 1749
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": -0.228,
+          "games": 19137
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": -0.092,
+          "games": 7029
+        }
+      ]
+    },
+    {
+      "characterCode": 4,
+      "characterName": "매그너스",
+      "weapon": 3,
+      "weaponName": "방망이",
+      "totalGames": 40460,
+      "ownMeanRP": 52.38,
+      "groupId": 2,
+      "classification": {
+        "method": "combat-traits+season-10-11-affinity",
+        "archetype": "선봉 브루저 탱커",
+        "roles": ["탱커", "전사"],
+        "traits": ["engage", "sustain"],
+        "partnerRoles": ["전사", "원거리 딜러"],
+        "fitRole": "전열 유지",
+        "fitReason": "난전·진입 + 후열 지속 화력 기반에서 전열에 오래 남아 동료 딜러의 화력 시간을 늘립니다.",
+        "partnerDelta": 1.158,
+        "partnerGames": 7858,
+        "partnerGameShare": 0.19421651013346516,
+        "confidence": "high",
+        "metricRole": "전열 유지",
+        "metricSummary": "대표 조합 평균 +1.16 RP · 평균 비중 19.4% · 개별 지표군",
+        "metricCohesion": null,
+        "metricClusterSize": 1
+      },
+      "strong": [
+        {
+          "multiset": "탱커 + 암살자 + 암살자",
+          "delta": 5.409,
+          "games": 31
+        },
+        {
+          "multiset": "탱커 + 암살자 + 지원가",
+          "delta": 2.308,
+          "games": 44
+        },
+        {
+          "multiset": "탱커 + 전사 + 원거리 딜러",
+          "delta": 1.158,
+          "games": 7858
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 지원가",
+          "delta": 1.005,
+          "games": 180
+        },
+        {
+          "multiset": "탱커 + 암살자 + 원거리 딜러",
+          "delta": 0.755,
+          "games": 562
+        },
+        {
+          "multiset": "탱커 + 전사 + 전사",
+          "delta": 0.744,
+          "games": 5678
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 원거리 딜러",
+          "delta": 0.39,
+          "games": 3635
+        },
+        {
+          "multiset": "탱커 + 스킬딜러 + 스킬딜러",
+          "delta": 0.376,
+          "games": 1752
+        },
+        {
+          "multiset": "탱커 + 전사 + 스킬딜러",
+          "delta": 0.159,
+          "games": 12602
+        }
+      ],
+      "weak": [
+        {
+          "multiset": "탱커 + 스킬딜러 + 지원가",
+          "delta": -18.651,
+          "games": 104
+        },
+        {
+          "multiset": "탱커 + 원거리 딜러 + 원거리 딜러",
+          "delta": -5.336,
+          "games": 234
+        },
+        {
+          "multiset": "탱커 + 탱커 + 암살자",
+          "delta": -4.166,
+          "games": 135
+        },
+        {
+          "multiset": "탱커 + 암살자 + 스킬딜러",
+          "delta": -3.2,
+          "games": 923
+        },
+        {
+          "multiset": "탱커 + 탱커 + 지원가",
+          "delta": -2.556,
+          "games": 85
+        },
+        {
+          "multiset": "탱커 + 탱커 + 스킬딜러",
+          "delta": -2.52,
+          "games": 1789
+        },
+        {
+          "multiset": "탱커 + 탱커 + 원거리 딜러",
+          "delta": -1.924,
+          "games": 1574
+        },
+        {
+          "multiset": "탱커 + 탱커 + 전사",
+          "delta": -1.524,
+          "games": 1145
+        },
+        {
+          "multiset": "탱커 + 전사 + 지원가",
+          "delta": -1.522,
+          "games": 875
+        },
+        {
+          "multiset": "탱커 + 전사 + 암살자",
+          "delta": -0.629,
+          "games": 1224
+        }
+      ]
+    }
+  ]
+}

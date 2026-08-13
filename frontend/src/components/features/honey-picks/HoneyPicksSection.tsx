@@ -111,7 +111,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
 
     const buffed = all.filter((r) => r.changeType === "buff" || r.changeType === "rework");
 
-    // 버프/조정 캐릭터가 4개 미만이면 나머지를 승률 상승 캐릭터로 채움
+    // 버프/조정 실험체가 4개 미만이면 나머지를 승률 상승 실험체로 채움
     if (buffed.length >= 4) return buffed.slice(0, 5);
 
     const buffedNums = new Set(buffed.map((r) => r.pick.characterNum));
@@ -311,7 +311,7 @@ export function HoneyPicksSection({ initialData, initialPatchVersion }: HoneyPic
       {/* ── Mobile: Card grid ── */}
       <div
         tabIndex={0}
-        aria-label="모바일 상승 캐릭터 카드 목록"
+        aria-label="모바일 상승 실험체 카드 목록"
         className="sm:hidden -mx-1 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-1 pb-1 scrollbar-hide"
       >
         {resolved.map((r, i) => {

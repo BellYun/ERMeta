@@ -256,7 +256,7 @@ const ROLE_KEYS: Record<CharacterRole, CompositionRoleKey> = {
 };
 
 /**
- * 역할만으로 사라지는 캐릭터별 전술 차이를 보완하는 ERMeta 휴리스틱입니다.
+ * 역할만으로 사라지는 실험체별 전술 차이를 보완하는 ERMeta 휴리스틱입니다.
  * 패치 수치가 아니라 스킬셋의 대표적인 교전 기능만 2개 이내로 보수적으로 기록합니다.
  */
 const CHARACTER_TRAITS: Record<number, CompositionTraitKey[]> = {
@@ -336,7 +336,8 @@ const CHARACTER_TRAITS: Record<number, CompositionTraitKey[]> = {
   74: ["engage", "sustain"],
   75: ["zoneControl", "poke"],
   76: ["engage", "sustain"],
-  77: ["protect", "zoneControl"],
+  // E로 바람 지대를 만들며 진입하고 W 넉백/R 에어본으로 교전을 여는 장악형.
+  77: ["engage", "zoneControl"],
   78: ["engage", "sustain"],
   79: ["poke", "burst"],
   80: ["engage", "sustain"],
@@ -346,14 +347,14 @@ const CHARACTER_TRAITS: Record<number, CompositionTraitKey[]> = {
   84: ["zoneControl", "burst"],
   85: ["engage", "peel"],
   86: ["engage", "sustain"],
-  87: ["zoneControl", "protect"],
+  87: ["zoneControl", "sustain"],
   88: ["engage", "sustain"],
   89: ["poke", "burst"],
 };
 
 /**
  * 같은 실험체도 무기군에 따라 실제 교전 위치와 임무가 달라지는 경우만 덮어씁니다.
- * 나머지는 캐릭터 기본 성향을 사용해 신규 조합도 안전하게 설명합니다.
+ * 나머지는 실험체 기본 성향을 사용해 신규 조합도 안전하게 설명합니다.
  */
 const COMBO_TRAIT_OVERRIDES: Record<string, CompositionTraitKey[]> = {
   "2_9": ["poke", "burst"], // 아야 권총: 스킬 폭딜과 짧은 재배치

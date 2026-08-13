@@ -3,10 +3,11 @@ import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { CharacterPageContent } from "@/components/features/character-analysis/CharacterPageContent";
 import { CHARACTER_CODES } from "@/components/features/character-analysis/constants";
-import { getStatsPatchVersions } from "@/data/patch-notes";
+import { getVisibleStatsPatchVersions } from "@/data/patch-notes";
 import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
 import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
 import { getCachedCharacterStats } from "@/lib/characterStats";
+import { DEFAULT_CHARACTER_ANALYSIS_TIER } from "@/lib/characterTier";
 import { buildLocalizedAlternates, localizeRoutePath } from "@/lib/seoLocales";
 import { loadL10nMap } from "@/lib/serverL10n";
 import { BASE_URL } from "@/lib/siteMetadata";
@@ -34,17 +35,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const language = LANGUAGE_BY_ROUTE_LOCALE[locale];
 
   const code = parseInt(rawCode, 10);
-  const t = await getStaticTranslator("characterMetadata", language);
-  const currentPatch = getStatsPatchVersions()[0];
+  const translatorPromise = getStaticTranslator("characterMetadata", language);
+  const currentPatch = getVisibleStatsPatchVersions()[0];
   const name =
     !Number.isNaN(code) && CHARACTER_CODES.includes(code)
       ? resolveCharacterName(code, loadL10nMap(language), buildFallbackMap())
       : null;
 
   if (name && !name.startsWith("코드:")) {
-    const stats = currentPatch
-      ? await getCachedCharacterStats(code, currentPatch, "DIAMOND_PLUS")
-      : null;
+    const [t, stats] = await Promise.all([
+      translatorPromise,
+      currentPatch
+        ? getCachedCharacterStats(code, currentPatch, DEFAULT_CHARACTER_ANALYSIS_TIER)
+        : null,
+    ]);
     const title =
       locale === "ko" && currentPatch
         ? `${name} 빌드/특성/무기 통계 - 이터널리턴 ${currentPatch}`
@@ -118,6 +122,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  const t = await translatorPromise;
+
   return {
     metadataBase: new URL(BASE_URL),
     title: t("titleFallback"),
@@ -164,11 +170,15 @@ export default async function LocalizedCharacterPage({ params }: Props) {
   }
 
   // 통계용 패치 목록(제외 패치 제외). 최신 버전이 자동으로 맨 앞(기본 선택)에 온다.
-  const patches = getStatsPatchVersions();
+  const patches = getVisibleStatsPatchVersions();
   const [currentPatch, previousPatch] = patches;
   const [initialStats, initialPrevStats] = await Promise.all([
-    currentPatch ? getCachedCharacterStats(code, currentPatch, "DIAMOND_PLUS") : null,
-    previousPatch ? getCachedCharacterStats(code, previousPatch, "DIAMOND_PLUS") : null,
+    currentPatch
+      ? getCachedCharacterStats(code, currentPatch, DEFAULT_CHARACTER_ANALYSIS_TIER)
+      : null,
+    previousPatch
+      ? getCachedCharacterStats(code, previousPatch, DEFAULT_CHARACTER_ANALYSIS_TIER)
+      : null,
   ]);
 
   return (

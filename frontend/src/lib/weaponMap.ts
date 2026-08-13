@@ -1,3 +1,15 @@
+import characterBestWeapons from "@/../const/characterBestWeapons.json";
+
+const CHARACTER_WEAPONS = characterBestWeapons as Record<
+  string,
+  Array<{ weaponCode: number; label: string; isDefault: boolean }>
+>;
+
+export function getRepresentativeWeaponCode(characterCode: number): number | null {
+  const weapons = CHARACTER_WEAPONS[String(characterCode)] ?? [];
+  return weapons.find((weapon) => weapon.isDefault)?.weaponCode ?? weapons[0]?.weaponCode ?? null;
+}
+
 // bestWeapon 숫자 코드 → 한국어 이름.
 export const WEAPON_KOR_BY_CODE: Record<number, string> = {
   1: "글러브",
@@ -53,6 +65,15 @@ export const WEAPON_ENUM_BY_CODE: Record<number, string> = {
   24: "Arcana",
   25: "VFArm",
 };
+
+const WEAPON_GROUP_IMAGE_CODES = new Set([
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24, 25,
+]);
+
+export function getWeaponGroupImageUrl(code: number | null): string | null {
+  if (code == null || code === 0) return null;
+  return WEAPON_GROUP_IMAGE_CODES.has(code) ? `/weapon-icons/${code}.png` : null;
+}
 
 /**
  * 무기 코드로 표시 이름 결정.

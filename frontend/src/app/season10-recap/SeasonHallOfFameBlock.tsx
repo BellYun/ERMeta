@@ -73,7 +73,7 @@ export function SeasonHallOfFameBlock({
               시즌 누적 랭킹
             </h2>
             <p className="mt-1 text-xs leading-6 text-[var(--color-muted-foreground)] sm:text-sm">
-              선택한 티어의 시즌 전체 평균 RP 기준 순위입니다. 행을 열면 캐릭터 평균과 전체 평균을
+              선택한 티어의 시즌 전체 평균 RP 기준 순위입니다. 행을 열면 실험체 평균과 전체 평균을
               패치별로 비교할 수 있습니다.
             </p>
           </div>
@@ -310,7 +310,7 @@ function PatchBreakdown({
     <div className="border-t border-[var(--color-border)]/40 bg-[var(--color-surface)] px-3 py-3 sm:px-4">
       <div className="mb-3 flex items-center justify-between gap-3">
         <span className="text-[11px] font-semibold text-[var(--color-muted-foreground)]">
-          캐릭터 평균 RP vs 전체 평균 RP
+          실험체 평균 RP vs 전체 평균 RP
         </span>
         <Link
           href={href}
@@ -323,7 +323,7 @@ function PatchBreakdown({
       <div className="grid gap-3 lg:grid-cols-2">
         <RpComparisonGraphCard
           label="다이아+ 비교"
-          description="막대: 캐릭터·무기 조합 · 선: 다이아+ 전체"
+          description="막대: 실험체·무기 조합 · 선: 다이아+ 전체"
           patches={patches}
           scope={entry}
           benchmark={tierRpTrends.diamondPlus}
@@ -331,7 +331,7 @@ function PatchBreakdown({
         />
         <RpComparisonGraphCard
           label="미스릴+ 비교"
-          description="막대: 캐릭터·무기 조합 · 선: 미스릴+ 전체"
+          description="막대: 실험체·무기 조합 · 선: 미스릴+ 전체"
           patches={patches}
           scope={entry.mithrilPlus}
           benchmark={tierRpTrends.mithrilPlus}
@@ -416,7 +416,7 @@ function RpComparisonGraphCard({
         {scope ? (
           <div className="text-right text-[10px] tabular-nums">
             <p className="font-bold text-[var(--color-accent-foreground)]">
-              캐릭터 {formatRp(scope.averageRP)} RP
+              실험체 {formatRp(scope.averageRP)} RP
             </p>
             <p className="mt-0.5 font-semibold text-[var(--color-warning)]">
               평균 {formatRp(benchmark.averageRP)} RP

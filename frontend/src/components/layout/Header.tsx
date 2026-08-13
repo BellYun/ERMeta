@@ -3,8 +3,10 @@
 import {
   ArrowRight,
   BarChart3,
+  ChevronDown,
   Gauge,
   Layers,
+  Layers3,
   Menu,
   MessageSquarePlus,
   Moon,
@@ -76,7 +78,8 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
       label: tNav("characterLab"),
       icon: Layers,
       isActive:
-        normalizedPathname.startsWith("/character-lab") ||
+        (normalizedPathname.startsWith("/character-lab") &&
+          !normalizedPathname.startsWith("/character-lab/new")) ||
         normalizedPathname === "/lab" ||
         normalizedPathname.startsWith("/lab/"),
     },
@@ -85,6 +88,19 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
       label: tNav("patchNotes"),
       icon: NotebookText,
       isActive: normalizedPathname.startsWith("/patches"),
+    },
+  ];
+  const labLinks: Array<{
+    href: string;
+    label: string;
+    icon: LucideIcon;
+    isActive: boolean;
+  }> = [
+    {
+      href: withCurrentRouteLocale(pathname, "/character-lab/new"),
+      label: tNav("characterLabNew"),
+      icon: Layers3,
+      isActive: normalizedPathname.startsWith("/character-lab/new"),
     },
     {
       href: withCurrentRouteLocale(pathname, patchAnalysisPath),
@@ -99,6 +115,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
       isActive: normalizedPathname === seasonRecapPath,
     },
   ];
+  const isLabActive = labLinks.some((link) => link.isActive);
 
   React.useEffect(() => {
     setMobileMenuOpen(false);
@@ -174,13 +191,18 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[var(--color-surface)]">
+      <header
+        className={cn(
+          "site-header sticky top-0 z-40 border-b border-[var(--color-border)] bg-[var(--color-surface)]",
+          normalizedPathname === "/" && "site-header--home"
+        )}
+      >
         <LocaleRecommendationBanner />
 
         {showSeasonRecapBanner && (
           <Link
             href={withCurrentRouteLocale(pathname, seasonRecapPath)}
-            className="group flex items-center justify-between gap-3 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 transition-colors hover:bg-[var(--color-surface)] sm:px-4 lg:px-6"
+            className="site-announcement group flex items-center justify-between gap-3 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 sm:px-4 lg:px-6"
           >
             <div className="flex min-w-0 items-start gap-3">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]">
@@ -208,8 +230,8 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
           </Link>
         )}
 
-        <div className="mx-auto w-full max-w-[1440px] px-3 py-3 sm:px-4 lg:px-6 lg:py-0">
-          <div className="flex min-h-[54px] items-center gap-2.5 lg:min-h-[64px]">
+        <div className="site-header__container mx-auto w-full max-w-[1440px] px-3 py-3 sm:px-4 lg:px-6 lg:py-0">
+          <div className="site-header__bar flex min-h-[54px] items-center gap-2.5 lg:min-h-[64px]">
             <button
               type="button"
               aria-label={mobileMenuOpen ? t("closeMenu") : t("openMenu")}
@@ -219,7 +241,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                 setMobileSearchOpen(false);
                 setMobileMenuOpen((prev) => !prev);
               }}
-              className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] lg:hidden"
+              className="site-icon-button flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)] lg:hidden"
             >
               {mobileMenuOpen ? (
                 <X className="h-4.5 w-4.5" strokeWidth={2.2} />
@@ -231,16 +253,16 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
             <Link
               href={withCurrentRouteLocale(pathname, "/")}
               title={currentPatch ? `${t("patchPrefix")}${currentPatch}` : t("logoTitle")}
-              className="flex min-w-0 items-center gap-2.5"
+              className="site-wordmark flex min-w-0 items-center gap-2.5"
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-sm font-bold text-[var(--color-foreground)]">
+              <div className="site-wordmark__mark flex h-9 w-9 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-sm font-bold text-[var(--color-foreground)]">
                 ER
               </div>
               <div className="min-w-0">
-                <p className="truncate text-[1.05rem] font-bold text-[var(--color-foreground)]">
+                <p className="site-wordmark__title truncate text-[1.05rem] font-bold text-[var(--color-foreground)]">
                   {t("logoTitle")}
                 </p>
-                <p className="hidden truncate text-[11px] text-[var(--color-muted-foreground)] lg:block">
+                <p className="site-wordmark__meta hidden truncate text-[11px] text-[var(--color-muted-foreground)] lg:block">
                   {currentPatch ? `${t("patchPrefix")}${currentPatch}` : t("logoSubtitle")}
                 </p>
               </div>
@@ -248,7 +270,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
 
             <nav
               aria-label={tNav("ariaMain")}
-              className="hidden min-w-0 flex-1 items-center gap-1 overflow-x-auto px-2 scrollbar-hide lg:flex"
+              className="site-navigation hidden min-w-0 flex-1 items-center gap-1 px-2 lg:flex"
             >
               {navLinks.map(({ href, label, icon: Icon, isActive }) => (
                 <Link
@@ -256,7 +278,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                   href={href}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors xl:px-3 xl:text-[13px]",
+                    "site-navigation__link inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium xl:px-3 xl:text-[13px]",
                     isActive
                       ? "border-[var(--color-border-light)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
                       : "border-transparent text-[var(--color-muted-foreground)] hover:border-[var(--color-border)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
@@ -266,10 +288,58 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                   <span>{label}</span>
                 </Link>
               ))}
+
+              <details
+                className="site-navigation-lab relative shrink-0"
+                onKeyDown={(event) => {
+                  if (event.key !== "Escape") return;
+                  event.currentTarget.removeAttribute("open");
+                  event.currentTarget.querySelector("summary")?.focus();
+                }}
+              >
+                <summary
+                  aria-current={isLabActive ? "page" : undefined}
+                  className={cn(
+                    "site-navigation__link inline-flex h-9 cursor-pointer list-none items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium xl:px-3 xl:text-[13px]",
+                    isLabActive
+                      ? "border-[var(--color-border-light)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
+                      : "border-transparent text-[var(--color-muted-foreground)] hover:border-[var(--color-border)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+                  )}
+                >
+                  <span>{tNav("lab")}</span>
+                  <ChevronDown
+                    aria-hidden="true"
+                    className="site-navigation-lab__chevron h-3.5 w-3.5"
+                    strokeWidth={2}
+                  />
+                </summary>
+
+                <div className="site-navigation-lab__menu">
+                  {labLinks.map(({ href, label, icon: Icon, isActive }) => (
+                    <Link
+                      key={href}
+                      href={href}
+                      aria-current={isActive ? "page" : undefined}
+                      onClick={(event) =>
+                        event.currentTarget.closest("details")?.removeAttribute("open")
+                      }
+                      className="site-navigation-lab__item"
+                    >
+                      <Icon className="h-4 w-4" strokeWidth={2} />
+                      <span>{label}</span>
+                    </Link>
+                  ))}
+                </div>
+              </details>
             </nav>
 
-            <div className="hidden w-[min(28vw,24rem)] shrink-0 lg:flex">
-              <CharacterSearchCombobox className="max-w-none" />
+            <div
+              className={cn(
+                "site-header-search hidden shrink-0",
+                normalizedPathname !== "/" && "lg:block"
+              )}
+            >
+              <CharacterSearchCombobox className="site-header-search__field" />
             </div>
 
             <div className="ml-auto flex items-center gap-2 lg:gap-3">
@@ -280,7 +350,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                   setMobileMenuOpen(false);
                   setMobileSearchOpen((prev) => !prev);
                 }}
-                className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] lg:hidden"
+                className="site-icon-button flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)] lg:hidden"
               >
                 {mobileSearchOpen ? (
                   <X className="h-4.5 w-4.5" strokeWidth={2.2} />
@@ -299,7 +369,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                 aria-label={theme === "dark" ? t("switchToLightTheme") : t("switchToDarkTheme")}
                 aria-pressed={theme === "dark"}
                 title={theme === "dark" ? t("switchToLightTheme") : t("switchToDarkTheme")}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)] lg:h-9 lg:w-9 lg:rounded-md"
+                className="site-icon-button flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)] lg:h-9 lg:w-9 lg:rounded-md"
               >
                 {theme === "dark" ? (
                   <Sun className="h-4.5 w-4.5 lg:h-3.5 lg:w-3.5" strokeWidth={2} />
@@ -317,7 +387,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                 aria-expanded={isFeedbackOpen}
                 aria-pressed={isFeedbackOpen}
                 className={cn(
-                  "hidden h-9 shrink-0 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors lg:inline-flex",
+                  "site-action-button hidden h-9 shrink-0 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium lg:inline-flex",
                   isFeedbackOpen
                     ? "border-[var(--color-border-light)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
                     : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
@@ -342,7 +412,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
           <button
             type="button"
             aria-label={t("closeMenu")}
-            className="absolute inset-0 bg-slate-900/24"
+            className="mobile-navigation-backdrop absolute inset-0"
             onClick={() => setMobileMenuOpen(false)}
           />
           <div
@@ -350,13 +420,13 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
             role="dialog"
             aria-modal="true"
             aria-label={t("mobileMenu")}
-            className="absolute inset-y-0 left-0 flex h-dvh w-[min(21rem,calc(100vw-2rem))] max-w-full flex-col overflow-hidden border-r border-[var(--color-border)] bg-[var(--color-surface)]"
+            className="mobile-navigation-drawer absolute inset-y-0 left-0 flex h-dvh w-[min(21rem,calc(100vw-2rem))] max-w-full flex-col overflow-hidden border-r border-[var(--color-border)] bg-[var(--color-surface)]"
           >
             <button
               type="button"
               aria-label={t("closeMenu")}
               onClick={() => setMobileMenuOpen(false)}
-              className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
+              className="site-icon-button absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
             >
               <X className="h-4.5 w-4.5" strokeWidth={2.2} />
             </button>
@@ -378,7 +448,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                   aria-label={theme === "dark" ? t("switchToLightTheme") : t("switchToDarkTheme")}
                   aria-pressed={theme === "dark"}
                   title={theme === "dark" ? t("switchToLightTheme") : t("switchToDarkTheme")}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)] transition-colors hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+                  className="site-icon-button flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]"
                 >
                   {theme === "dark" ? (
                     <Sun className="h-4.5 w-4.5" strokeWidth={2} />

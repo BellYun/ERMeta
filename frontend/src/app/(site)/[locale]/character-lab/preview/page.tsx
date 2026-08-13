@@ -19,7 +19,7 @@ interface LocalePageProps {
 const PREVIEW_METADATA = {
   ko: {
     title: "시너지 그룹 분석",
-    description: "캐릭터 유형별 파트너 역할과 트리오 성과를 비교합니다.",
+    description: "실험체 유형별 파트너 역할과 트리오 성과를 비교합니다.",
   },
   en: {
     title: "Synergy Group Analysis",
@@ -49,10 +49,10 @@ const PREVIEW_COPY: Record<
   }
 > = {
   ko: {
-    back: "캐릭터 유형 분석",
+    back: "실험체 유형 분석",
     kicker: "원거리 딜러 기준",
     summary: "원거리 딜러 기준으로 파트너 역할, 역할 조합, 트리오 성과를 함께 비교합니다.",
-    metrics: ["그룹", "캐릭터", "최소 표본"],
+    metrics: ["그룹", "실험체", "최소 표본"],
   },
   en: {
     back: "Role Groups",
@@ -169,7 +169,7 @@ function partnersOfMultiset(multiset: string, focusRole: string): PartnerRole[] 
   return partners;
 }
 
-// 캐릭터마다 파트너 역할별 가중 평균 RP delta
+// 실험체마다 파트너 역할별 가중 평균 RP delta
 function computeAffinity(char: LabCharacter, focusRole: string): Record<PartnerRole, number> {
   const acc: Record<PartnerRole, { sum: number; weight: number }> = {
     탱커: { sum: 0, weight: 0 },
@@ -397,7 +397,7 @@ function Heatmap({
         <thead>
           <tr>
             <th className="sticky left-0 z-10 bg-[var(--color-surface)] px-2 py-2 text-left text-[10px] font-medium text-[var(--color-muted-foreground)]">
-              캐릭터+무기
+              실험체+무기
             </th>
             {PARTNER_ROLES.map((role) => (
               <th
@@ -1021,7 +1021,7 @@ function TrioMatrixRow({
   );
 }
 
-// ───────── 4) 캐릭터 위치 비교 ─────────
+// ───────── 4) 실험체 위치 비교 ─────────
 function ScatterPlot({
   characters,
   focusRole,
@@ -1177,7 +1177,7 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
           className="dashboard-tab inline-flex items-center gap-1 px-2 py-1"
         >
           <ArrowLeft className="h-3 w-3" strokeWidth={2.4} />
-          캐릭터 유형 분석
+          실험체 유형 분석
         </Link>
         <span className="text-[var(--color-border-light)]">/</span>
         <span className="text-[var(--color-foreground)]">그룹 분석</span>
@@ -1228,7 +1228,7 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
           파트너 역할 분포
         </h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
-          캐릭터별로 어떤 파트너 역할과 함께할 때 RP가 좋아지는지 보여줍니다.
+          실험체별로 어떤 파트너 역할과 함께할 때 RP가 좋아지는지 보여줍니다.
         </p>
         <div className="mt-3">
           <Heatmap characters={data.characters} focusRole={data.role} groupIdByKey={groupIdByKey} />
@@ -1259,7 +1259,7 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
           그룹 내 유사도
         </h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
-          그룹 대표 패턴과 각 캐릭터의 패턴을 겹쳐서 같은 유형으로 묶이는지 확인합니다. 응집도는
+          그룹 대표 패턴과 각 실험체의 패턴을 겹쳐서 같은 유형으로 묶이는지 확인합니다. 응집도는
           패턴 유사도를 100점 기준으로 환산합니다.
           <span className="ml-2 inline-flex items-center gap-1 align-middle text-[10px]">
             <span
@@ -1371,13 +1371,13 @@ export default async function CharacterLabPreviewPage({ params }: LocalePageProp
         </div>
       </section>
 
-      {/* 캐릭터 위치 비교 */}
+      {/* 실험체 위치 비교 */}
       <section className="dashboard-panel p-4">
         <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
-          캐릭터 위치 비교
+          실험체 위치 비교
         </h2>
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
-          같은 그룹의 캐릭터들이 어느 정도 가까운 위치에 모이는지 비교합니다.
+          같은 그룹의 실험체들이 어느 정도 가까운 위치에 모이는지 비교합니다.
         </p>
         <div className="mt-4 char-card p-4">
           <ScatterPlot

@@ -24,7 +24,7 @@ export function PatchTimelineBlock({ perPatchTop }: PatchTimelineBlockProps) {
               패치별 평균 RP 주요 조합
             </h2>
             <p className="mt-1 text-xs leading-6 text-[var(--color-muted-foreground)] sm:text-sm">
-              각 패치의 주요 변경 내역과 다이아 이상 평균 RP 상위 캐릭터+무기 조합입니다.
+              각 패치의 주요 변경 내역과 다이아 이상 평균 RP 상위 실험체+무기 조합입니다.
             </p>
           </div>
           <span className="text-xs font-medium text-[var(--color-muted-foreground)]">

@@ -28,7 +28,7 @@ export class CharacterStatsQueryDto {
 
   @IsEnum(TierGroup)
   @IsOptional()
-  tier?: TierGroup = TierGroup.DIAMOND;
+  tier?: TierGroup = TierGroup.DIAMOND_PLUS;
 }
 
 export class CharacterInsightQueryDto extends CharacterStatsQueryDto {

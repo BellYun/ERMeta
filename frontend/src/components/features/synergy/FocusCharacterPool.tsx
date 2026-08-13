@@ -15,7 +15,7 @@ const VirtualCharacterGrid = React.lazy(() =>
 );
 
 /**
- * 내 캐릭터 풀 Island — localStorage 기반 독립 Client Component
+ * 내 실험체 풀 Island — localStorage 기반 독립 Client Component
  * 다른 Island(SynergyResults)과 useFocusCharacters 훅으로 상태 공유
  */
 export function FocusCharacterPool() {
@@ -82,7 +82,7 @@ export function FocusCharacterPool() {
         </div>
       </button>
 
-      {/* 접힌 상태: 선택된 캐릭터 칩 표시 */}
+      {/* 접힌 상태: 선택된 실험체 칩 표시 */}
       {!isFocusExpanded && focusCharacters.length > 0 && (
         <div className="px-3 pb-2.5 flex flex-wrap gap-1.5">
           {focusCharacters.map((code) => (

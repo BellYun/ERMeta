@@ -14,6 +14,10 @@ function getMetaContent(html: string, attribute: string, value: string): string 
   return tag?.match(/content="([^"]+)"/)?.[1]?.replaceAll("&amp;", "&") ?? null;
 }
 
+function getLinkTags(html: string): string[] {
+  return html.match(/<link\b[^>]*>/g) ?? [];
+}
+
 test.describe("시너지 공유 — OG 이미지", () => {
   test("/synergy-detail/opengraph-image 엔드포인트가 image 응답을 반환한다", async ({
     request,
@@ -62,6 +66,20 @@ test.describe("시너지 공유 — OG 이미지", () => {
     const ogImageUrl = new URL(ogImage!, "http://localhost");
     expect(ogImageUrl.searchParams.get("ally1")).toBe("1");
     expect(ogImageUrl.searchParams.get("ally2")).toBe("2");
+  });
+
+  test("공유 경로는 메인 도구 canonical만 제공하고 hreflang은 제공하지 않는다", async ({
+    request,
+  }) => {
+    const res = await request.get("/synergy-detail/share/1-2");
+    expect(res.status()).toBe(200);
+
+    const links = getLinkTags(await res.text());
+    const canonical = links.find((tag) => tag.includes('rel="canonical"'));
+    expect(canonical).toBeDefined();
+    expect(canonical).toMatch(/href="[^"]*\/synergy-detail\/?"/);
+    expect(canonical).not.toContain("/share/");
+    expect(links.filter((tag) => tag.includes("hreflang="))).toHaveLength(0);
   });
 
   test("등록되지 않은 조합 공유 경로는 404를 반환한다", async ({ request }) => {

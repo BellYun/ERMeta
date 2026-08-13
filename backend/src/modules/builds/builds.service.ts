@@ -7,7 +7,6 @@ import { RedisService } from '../../common/redis/redis.service';
 const ITEM_GRADE = itemGradeMap as Record<string, string>;
 const WEAPON_ITEM_TYPE = weaponItemTypeMap as Record<string, number>;
 const TIER_CUMULATIVE: Record<string, string[]> = {
-  PLATINUM_PLUS: ['PLATINUM', 'DIAMOND', 'METEORITE', 'MITHRIL'],
   DIAMOND_PLUS: ['DIAMOND', 'METEORITE', 'MITHRIL'],
   METEORITE_PLUS: ['METEORITE', 'MITHRIL'],
   MITHRIL_PLUS: ['MITHRIL'],

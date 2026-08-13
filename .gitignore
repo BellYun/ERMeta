@@ -1,12 +1,16 @@
 # OMC
 .omc/
 
+# Local Codex skills
+.agents/skills/ermeta-patch-video-design/
+
 # Next.js
 .next/
 
 *.md
 !README.md
 !**/README.md
+!frontend/docs/NEXT_RENDERING_STRATEGY_AUDIT_2026-07-20.md
 
 # Backend
 backend/dist/

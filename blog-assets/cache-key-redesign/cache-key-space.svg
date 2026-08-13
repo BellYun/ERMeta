@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">캐시 키 공간 구조적 상한 축소</title>
+  <desc id="desc">기존 정확 조합의 가능한 키 공간 상한 6750개와 공용 후보군 117개를 비교한 가로 막대그래프</desc>
+  <rect width="1600" height="900" fill="#ffffff"/>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+    <text x="120" y="110" fill="#0f172a" font-size="48" font-weight="700">검색 조합 대신 재사용 가능한 데이터 단위로 묶었습니다</text>
+    <text x="120" y="160" fill="#64748b" font-size="24">가능한 캐시 키 공간의 구조적 상한 · 실제 운영 고유 키 수가 아님</text>
+
+    <text x="120" y="330" fill="#0f172a" font-size="30" font-weight="700">기존 정확 조합</text>
+    <rect x="390" y="260" width="1080" height="110" rx="16" fill="#cbd5e1"/>
+    <text x="1435" y="330" text-anchor="end" fill="#0f172a" font-size="42" font-weight="700">6,750개</text>
+
+    <text x="120" y="520" fill="#0f172a" font-size="30" font-weight="700">공용 후보군</text>
+    <rect x="390" y="450" width="18.72" height="110" rx="9" fill="#16a34a"/>
+    <line x1="418" y1="505" x2="560" y2="505" stroke="#16a34a" stroke-width="3"/>
+    <text x="580" y="520" fill="#16a34a" font-size="42" font-weight="700">117개</text>
+
+    <line x1="120" y1="670" x2="1480" y2="670" stroke="#e2e8f0" stroke-width="2"/>
+    <text x="120" y="760" fill="#0f172a" font-size="34" font-weight="700">키 공간 상한</text>
+    <text x="390" y="760" fill="#16a34a" font-size="50" font-weight="700">57.7분의 1</text>
+    <text x="120" y="825" fill="#64748b" font-size="22">여러 정확 조합이 같은 캐릭터+무기 후보군을 공유하도록 재사용 경계를 변경했습니다.</text>
+  </g>
+</svg>

@@ -22,7 +22,11 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function DefaultLayout({ children }: { children: ReactNode }) {
   const initialMessages = await loadIntlMessages(DEFAULT_LANGUAGE);
   const initialL10nSeed = loadL10nSeed(DEFAULT_LANGUAGE);
-  const structuredData = await buildWebsiteStructuredData(DEFAULT_LANGUAGE, DEFAULT_ROUTE_LOCALE);
+  const structuredData = buildWebsiteStructuredData(
+    DEFAULT_LANGUAGE,
+    DEFAULT_ROUTE_LOCALE,
+    initialMessages
+  );
   const currentPatch = getStatsPatchVersions()[0] ?? "";
   const patchAnalysisPatch = getPatchAnalysisVersions()[0] ?? "";
 

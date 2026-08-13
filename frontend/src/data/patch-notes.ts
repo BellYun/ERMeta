@@ -15,6 +15,7 @@ import { PATCH_NOTES as PATCH_11_5 } from "./11.5";
 import { PATCH_NOTES as PATCH_11_6 } from "./11.6";
 import { PATCH_NOTES as PATCH_11_7 } from "./11.7";
 import { PATCH_NOTES as PATCH_12_0 } from "./12.0";
+import { PATCH_NOTES as PATCH_12_1 } from "./12.1";
 
 export type { ChangeType, PatchChange, CharacterPatchNote } from "./10.1";
 
@@ -35,6 +36,7 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
   ...PATCH_11_6,
   ...PATCH_11_7,
   ...PATCH_12_0,
+  ...PATCH_12_1,
 ];
 
 export function getCharacterPatchNote(
@@ -67,6 +69,20 @@ export function isStatsExcludedPatch(patch: string): boolean {
 // 통계용 패치 목록 (최신순). 제외 패치를 뺀다.
 export function getStatsPatchVersions(): string[] {
   return getAllPatchVersions().filter((p) => !STATS_EXCLUDED_PATCHES.has(p));
+}
+
+export const MIN_VISIBLE_STATS_PATCH_VERSION = "11.7";
+
+export function isVisibleStatsPatchVersion(patch: string): boolean {
+  return (
+    !STATS_EXCLUDED_PATCHES.has(patch) &&
+    compareVersionDesc(patch, MIN_VISIBLE_STATS_PATCH_VERSION) <= 0
+  );
+}
+
+// 메인 및 실험체 분석 선택 목록은 11.7 이상만 노출한다.
+export function getVisibleStatsPatchVersions(): string[] {
+  return getAllPatchVersions().filter(isVisibleStatsPatchVersion);
 }
 
 export interface PatchSummary {

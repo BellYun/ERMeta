@@ -1,0 +1,1024 @@
+{
+  "revisionId": "season10-11-exact-two-partner-affinity-v1-editorial-r5",
+  "updatedAt": "2026-08-13T12:00:00+09:00",
+  "replacedGroupIds": [
+    "탱커-2",
+    "탱커-3",
+    "탱커-5",
+    "탱커-6",
+    "탱커-7",
+    "전사-7",
+    "전사-15",
+    "원거리 딜러-6",
+    "원거리 딜러-11"
+  ],
+  "mergedGroups": [
+    {
+      "id": "탱커-editorial-미르카-매그너스-망치",
+      "role": "탱커",
+      "kind": "core",
+      "threshold": 0.575,
+      "cohesion": 0.576,
+      "minimumSimilarity": 0.576,
+      "signatureContexts": [
+        {
+          "key": "탱커 + 전사 + 전사 / 탱커 관점 / 전사 장악 폭딜 × 전사 진입 마무리",
+          "roleComposition": "탱커 + 전사 + 전사",
+          "partnerTypes": [
+            { "role": "전사", "fitRole": "장악 폭딜" },
+            { "role": "전사", "fitRole": "진입 마무리" }
+          ],
+          "positiveMembers": 2,
+          "memberCount": 2,
+          "coverage": 1,
+          "games": 326,
+          "adjustedResidual": 3.19,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 125,
+              "positiveMembers": 1,
+              "observedMembers": 1,
+              "positiveRate": 1
+            },
+            {
+              "season": 11,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            }
+          ],
+          "seasonConsistency": "insufficient"
+        },
+        {
+          "key": "탱커 + 전사 + 전사 / 탱커 관점 / 전사 진입 지속전 × 전사 추격 지속전",
+          "roleComposition": "탱커 + 전사 + 전사",
+          "partnerTypes": [
+            { "role": "전사", "fitRole": "진입 지속전" },
+            { "role": "전사", "fitRole": "추격 지속전" }
+          ],
+          "positiveMembers": 2,
+          "memberCount": 2,
+          "coverage": 1,
+          "games": 354,
+          "adjustedResidual": 3.368,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 108,
+              "positiveMembers": 1,
+              "observedMembers": 1,
+              "positiveRate": 1
+            },
+            {
+              "season": 11,
+              "games": 103,
+              "positiveMembers": 1,
+              "observedMembers": 1,
+              "positiveRate": 1
+            }
+          ],
+          "seasonConsistency": "insufficient"
+        },
+        {
+          "key": "탱커 + 전사 + 전사 / 탱커 관점 / 전사 전열 유지 × 전사 진입 지속전",
+          "roleComposition": "탱커 + 전사 + 전사",
+          "partnerTypes": [
+            { "role": "전사", "fitRole": "전열 유지" },
+            { "role": "전사", "fitRole": "진입 지속전" }
+          ],
+          "positiveMembers": 2,
+          "memberCount": 2,
+          "coverage": 1,
+          "games": 319,
+          "adjustedResidual": 2.487,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            },
+            {
+              "season": 11,
+              "games": 101,
+              "positiveMembers": 1,
+              "observedMembers": 1,
+              "positiveRate": 1
+            }
+          ],
+          "seasonConsistency": "insufficient"
+        },
+        {
+          "key": "탱커 + 전사 + 스킬딜러 / 탱커 관점 / 전사 추격 지속전 × 스킬딜러 포킹 점사 · 후속 포화",
+          "roleComposition": "탱커 + 전사 + 스킬딜러",
+          "partnerTypes": [
+            { "role": "전사", "fitRole": "추격 지속전" },
+            { "role": "스킬딜러", "fitRole": "포킹 점사 · 후속 포화" }
+          ],
+          "positiveMembers": 2,
+          "memberCount": 2,
+          "coverage": 1,
+          "games": 354,
+          "adjustedResidual": 2.794,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            },
+            {
+              "season": 11,
+              "games": 354,
+              "positiveMembers": 2,
+              "observedMembers": 2,
+              "positiveRate": 1
+            }
+          ],
+          "seasonConsistency": "insufficient"
+        },
+        {
+          "key": "탱커 + 전사 + 스킬딜러 / 탱커 관점 / 전사 추격 지속전 × 스킬딜러 포킹 장악",
+          "roleComposition": "탱커 + 전사 + 스킬딜러",
+          "partnerTypes": [
+            { "role": "전사", "fitRole": "추격 지속전" },
+            { "role": "스킬딜러", "fitRole": "포킹 장악" }
+          ],
+          "positiveMembers": 2,
+          "memberCount": 2,
+          "coverage": 1,
+          "games": 2140,
+          "adjustedResidual": 2.727,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 1172,
+              "positiveMembers": 2,
+              "observedMembers": 2,
+              "positiveRate": 1
+            },
+            {
+              "season": 11,
+              "games": 968,
+              "positiveMembers": 2,
+              "observedMembers": 2,
+              "positiveRate": 1
+            }
+          ],
+          "seasonConsistency": "both-positive"
+        }
+      ],
+      "seasonConsistency": "insufficient",
+      "primaryMembers": [
+        {
+          "profileKey": "85:13",
+          "characterCode": 85,
+          "characterName": "미르카",
+          "weapon": 13,
+          "weaponName": "망치",
+          "role": "탱커",
+          "firstOrderType": "선봉 보호 · 강제 진입",
+          "membership": "primary",
+          "similarity": 0.576,
+          "minimumSimilarity": 0.576,
+          "sharedContexts": 222
+        },
+        {
+          "profileKey": "4:13",
+          "characterCode": 4,
+          "characterName": "매그너스",
+          "weapon": 13,
+          "weaponName": "망치",
+          "role": "탱커",
+          "firstOrderType": "선봉 보호 · 진입 교란",
+          "membership": "primary",
+          "similarity": 0.576,
+          "minimumSimilarity": 0.576,
+          "sharedContexts": 222
+        }
+      ],
+      "auxiliaryMembers": [],
+      "label": "탱커 + 전사 + 전사 · 전사 장악 폭딜 × 전사 진입 마무리",
+      "editorialReasonKo": "직접 유사도 57.6%가 탱커 경계 57.5%를 넘고 222개 정확 조합 문맥을 공유해 하나의 핵심군으로 병합했습니다. 방망이 매그너스는 포함하지 않습니다.",
+      "editorialReasonEn": "Merged after direct similarity reached 57.6%, above the 57.5% tank threshold, across 222 shared exact contexts. Bat Magnus remains separate."
+    },
+    {
+      "id": "탱커-editorial-레녹스-일레븐-에스텔",
+      "role": "탱커",
+      "kind": "core",
+      "threshold": 0.575,
+      "cohesion": 0.592,
+      "minimumSimilarity": 0.573,
+      "signatureContexts": [
+        {
+          "key": "탱커 + 스킬딜러 + 원거리 딜러 / 탱커 관점 / 스킬딜러 장악 폭딜 × 원거리 딜러 지속 장악",
+          "roleComposition": "탱커 + 스킬딜러 + 원거리 딜러",
+          "partnerTypes": [
+            { "role": "스킬딜러", "fitRole": "장악 폭딜" },
+            { "role": "원거리 딜러", "fitRole": "지속 장악" }
+          ],
+          "positiveMembers": 4,
+          "memberCount": 4,
+          "coverage": 1,
+          "games": 1288,
+          "adjustedResidual": 2.692,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 469,
+              "positiveMembers": 3,
+              "observedMembers": 3,
+              "positiveRate": 1
+            },
+            {
+              "season": 11,
+              "games": 731,
+              "positiveMembers": 3,
+              "observedMembers": 4,
+              "positiveRate": 0.75
+            }
+          ],
+          "seasonConsistency": "both-positive"
+        },
+        {
+          "key": "탱커 + 스킬딜러 + 원거리 딜러 / 탱커 관점 / 스킬딜러 진입 장악 × 원거리 딜러 지속 장악",
+          "roleComposition": "탱커 + 스킬딜러 + 원거리 딜러",
+          "partnerTypes": [
+            { "role": "스킬딜러", "fitRole": "진입 장악" },
+            { "role": "원거리 딜러", "fitRole": "지속 장악" }
+          ],
+          "positiveMembers": 4,
+          "memberCount": 4,
+          "coverage": 1,
+          "games": 790,
+          "adjustedResidual": 2.771,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 164,
+              "positiveMembers": 1,
+              "observedMembers": 1,
+              "positiveRate": 1
+            },
+            {
+              "season": 11,
+              "games": 255,
+              "positiveMembers": 2,
+              "observedMembers": 2,
+              "positiveRate": 1
+            }
+          ],
+          "seasonConsistency": "insufficient"
+        },
+        {
+          "key": "탱커 + 스킬딜러 + 원거리 딜러 / 탱커 관점 / 스킬딜러 장악 폭딜 × 원거리 딜러 추격 지속전",
+          "roleComposition": "탱커 + 스킬딜러 + 원거리 딜러",
+          "partnerTypes": [
+            { "role": "스킬딜러", "fitRole": "장악 폭딜" },
+            { "role": "원거리 딜러", "fitRole": "추격 지속전" }
+          ],
+          "positiveMembers": 4,
+          "memberCount": 4,
+          "coverage": 1,
+          "games": 1221,
+          "adjustedResidual": 2.473,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 626,
+              "positiveMembers": 3,
+              "observedMembers": 4,
+              "positiveRate": 0.75
+            },
+            {
+              "season": 11,
+              "games": 506,
+              "positiveMembers": 3,
+              "observedMembers": 3,
+              "positiveRate": 1
+            }
+          ],
+          "seasonConsistency": "both-positive"
+        },
+        {
+          "key": "탱커 + 스킬딜러 + 원거리 딜러 / 탱커 관점 / 스킬딜러 견제 지원 × 원거리 딜러 포킹 점사",
+          "roleComposition": "탱커 + 스킬딜러 + 원거리 딜러",
+          "partnerTypes": [
+            { "role": "스킬딜러", "fitRole": "견제 지원" },
+            { "role": "원거리 딜러", "fitRole": "포킹 점사" }
+          ],
+          "positiveMembers": 4,
+          "memberCount": 4,
+          "coverage": 1,
+          "games": 1595,
+          "adjustedResidual": 2.22,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 637,
+              "positiveMembers": 3,
+              "observedMembers": 3,
+              "positiveRate": 1
+            },
+            {
+              "season": 11,
+              "games": 859,
+              "positiveMembers": 4,
+              "observedMembers": 4,
+              "positiveRate": 1
+            }
+          ],
+          "seasonConsistency": "both-positive"
+        },
+        {
+          "key": "탱커 + 전사 + 스킬딜러 / 탱커 관점 / 전사 진입 마무리 × 스킬딜러 견제 지원",
+          "roleComposition": "탱커 + 전사 + 스킬딜러",
+          "partnerTypes": [
+            { "role": "전사", "fitRole": "진입 마무리" },
+            { "role": "스킬딜러", "fitRole": "견제 지원" }
+          ],
+          "positiveMembers": 4,
+          "memberCount": 4,
+          "coverage": 1,
+          "games": 626,
+          "adjustedResidual": 3.388,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            },
+            {
+              "season": 11,
+              "games": 112,
+              "positiveMembers": 1,
+              "observedMembers": 1,
+              "positiveRate": 1
+            }
+          ],
+          "seasonConsistency": "insufficient"
+        }
+      ],
+      "seasonConsistency": "insufficient",
+      "primaryMembers": [
+        {
+          "profileKey": "20:4",
+          "characterCode": 20,
+          "characterName": "레녹스",
+          "weapon": 4,
+          "weaponName": "채찍",
+          "role": "탱커",
+          "firstOrderType": "선봉 보호",
+          "membership": "primary",
+          "similarity": 0.583,
+          "minimumSimilarity": 0.573,
+          "sharedContexts": 200
+        },
+        {
+          "profileKey": "30:13",
+          "characterCode": 30,
+          "characterName": "일레븐",
+          "weapon": 13,
+          "weaponName": "망치",
+          "role": "탱커",
+          "firstOrderType": "선봉 보호 · 강제 진입",
+          "membership": "primary",
+          "similarity": 0.6,
+          "minimumSimilarity": 0.591,
+          "sharedContexts": 200
+        },
+        {
+          "profileKey": "55:14",
+          "characterCode": 55,
+          "characterName": "에스텔",
+          "weapon": 14,
+          "weaponName": "도끼",
+          "role": "탱커",
+          "firstOrderType": "진입 보호",
+          "membership": "primary",
+          "similarity": 0.596,
+          "minimumSimilarity": 0.579,
+          "sharedContexts": 202
+        },
+        {
+          "profileKey": "68:1",
+          "characterCode": 68,
+          "characterName": "알론소",
+          "weapon": 1,
+          "weaponName": "글러브",
+          "role": "탱커",
+          "firstOrderType": "선봉 보호",
+          "membership": "primary",
+          "similarity": 0.587,
+          "minimumSimilarity": 0.573,
+          "sharedContexts": 207
+        }
+      ],
+      "auxiliaryMembers": [
+        {
+          "profileKey": "53:14",
+          "characterCode": 53,
+          "characterName": "마커스",
+          "weapon": 14,
+          "weaponName": "도끼",
+          "role": "탱커",
+          "firstOrderType": "전열 유지 · 진형 붕괴 압박",
+          "membership": "auxiliary",
+          "similarity": 0.563,
+          "minimumSimilarity": 0.514,
+          "sharedContexts": 143
+        }
+      ],
+      "label": "탱커 + 스킬딜러 + 원거리 딜러 · 스킬딜러 장악 폭딜 × 원거리 딜러 지속 장악",
+      "editorialReasonKo": "레녹스와 알론소를 보조 소속에서 주 소속으로 승격했습니다. 네 캐릭터의 평균 쌍 유사도는 59.2%이며, 알론소-레녹스 쌍만 탱커 경계보다 0.2%p 낮아 검토 예외로 함께 묶었습니다.",
+      "editorialReasonEn": "Lennox and Alonso were promoted from auxiliary to primary membership. The four profiles average 59.2% pair similarity; only Alonso-Lennox is 0.2 percentage points below the tank threshold and is retained as a reviewed exception."
+    },
+    {
+      "id": "전사-editorial-선봉-지속-압박",
+      "role": "전사",
+      "kind": "core",
+      "threshold": 0.553,
+      "cohesion": 0.582,
+      "minimumSimilarity": 0.578,
+      "signatureContexts": [
+        {
+          "key": "전사 + 스킬딜러 + 원거리 딜러 / 전사 관점 / 스킬딜러 장악 폭딜 × 원거리 딜러 지속 장악",
+          "roleComposition": "전사 + 스킬딜러 + 원거리 딜러",
+          "partnerTypes": [
+            { "role": "스킬딜러", "fitRole": "장악 폭딜" },
+            { "role": "원거리 딜러", "fitRole": "지속 장악" }
+          ],
+          "positiveMembers": 3,
+          "memberCount": 3,
+          "coverage": 1,
+          "games": 433,
+          "adjustedResidual": 2.913,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            },
+            {
+              "season": 11,
+              "games": 219,
+              "positiveMembers": 2,
+              "observedMembers": 2,
+              "positiveRate": 1
+            }
+          ],
+          "seasonConsistency": "insufficient"
+        },
+        {
+          "key": "전사 + 스킬딜러 + 원거리 딜러 / 전사 관점 / 스킬딜러 진입 억제 × 원거리 딜러 지속 견제",
+          "roleComposition": "전사 + 스킬딜러 + 원거리 딜러",
+          "partnerTypes": [
+            { "role": "스킬딜러", "fitRole": "진입 억제" },
+            { "role": "원거리 딜러", "fitRole": "지속 견제" }
+          ],
+          "positiveMembers": 3,
+          "memberCount": 3,
+          "coverage": 1,
+          "games": 1020,
+          "adjustedResidual": 2.852,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 334,
+              "positiveMembers": 2,
+              "observedMembers": 2,
+              "positiveRate": 1
+            },
+            {
+              "season": 11,
+              "games": 686,
+              "positiveMembers": 3,
+              "observedMembers": 3,
+              "positiveRate": 1
+            }
+          ],
+          "seasonConsistency": "both-positive"
+        },
+        {
+          "key": "전사 + 스킬딜러 + 스킬딜러 / 전사 관점 / 스킬딜러 장악 폭딜 × 스킬딜러 포킹 점사 · 후속 포화",
+          "roleComposition": "전사 + 스킬딜러 + 스킬딜러",
+          "partnerTypes": [
+            { "role": "스킬딜러", "fitRole": "장악 폭딜" },
+            { "role": "스킬딜러", "fitRole": "포킹 점사 · 후속 포화" }
+          ],
+          "positiveMembers": 3,
+          "memberCount": 3,
+          "coverage": 1,
+          "games": 496,
+          "adjustedResidual": 3.072,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            },
+            {
+              "season": 11,
+              "games": 496,
+              "positiveMembers": 3,
+              "observedMembers": 3,
+              "positiveRate": 1
+            }
+          ],
+          "seasonConsistency": "insufficient"
+        },
+        {
+          "key": "전사 + 스킬딜러 + 원거리 딜러 / 전사 관점 / 스킬딜러 포킹 장악 × 원거리 딜러 받아치기 유지",
+          "roleComposition": "전사 + 스킬딜러 + 원거리 딜러",
+          "partnerTypes": [
+            { "role": "스킬딜러", "fitRole": "포킹 장악" },
+            { "role": "원거리 딜러", "fitRole": "받아치기 유지" }
+          ],
+          "positiveMembers": 2,
+          "memberCount": 3,
+          "coverage": 0.667,
+          "games": 329,
+          "adjustedResidual": 3.62,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            },
+            {
+              "season": 11,
+              "games": 138,
+              "positiveMembers": 1,
+              "observedMembers": 1,
+              "positiveRate": 1
+            }
+          ],
+          "seasonConsistency": "insufficient"
+        },
+        {
+          "key": "전사 + 전사 + 원거리 딜러 / 전사 관점 / 전사 추격 지속전 × 원거리 딜러 견제 지원",
+          "roleComposition": "전사 + 전사 + 원거리 딜러",
+          "partnerTypes": [
+            { "role": "전사", "fitRole": "추격 지속전" },
+            { "role": "원거리 딜러", "fitRole": "견제 지원" }
+          ],
+          "positiveMembers": 3,
+          "memberCount": 3,
+          "coverage": 1,
+          "games": 1297,
+          "adjustedResidual": 3.305,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 477,
+              "positiveMembers": 2,
+              "observedMembers": 2,
+              "positiveRate": 1
+            },
+            {
+              "season": 11,
+              "games": 820,
+              "positiveMembers": 3,
+              "observedMembers": 3,
+              "positiveRate": 1
+            }
+          ],
+          "seasonConsistency": "both-positive"
+        }
+      ],
+      "seasonConsistency": "insufficient",
+      "primaryMembers": [
+        {
+          "profileKey": "11:16",
+          "characterCode": 11,
+          "characterName": "유키",
+          "weapon": 16,
+          "weaponName": "양손검",
+          "role": "전사",
+          "firstOrderType": "교전 개시 · 연속 진입",
+          "membership": "primary",
+          "similarity": 0.585,
+          "minimumSimilarity": 0.58,
+          "sharedContexts": 286
+        },
+        {
+          "profileKey": "74:3",
+          "characterCode": 74,
+          "characterName": "다르코",
+          "weapon": 3,
+          "weaponName": "방망이",
+          "role": "전사",
+          "firstOrderType": "전열 유지 · 선봉 지속 압박형",
+          "membership": "primary",
+          "similarity": 0.579,
+          "minimumSimilarity": 0.578,
+          "sharedContexts": 313
+        },
+        {
+          "profileKey": "88:3",
+          "characterCode": 88,
+          "characterName": "비형",
+          "weapon": 3,
+          "weaponName": "방망이",
+          "role": "전사",
+          "firstOrderType": "전열 유지 · 선봉 지속 압박형",
+          "membership": "primary",
+          "similarity": 0.583,
+          "minimumSimilarity": 0.578,
+          "sharedContexts": 286
+        }
+      ],
+      "auxiliaryMembers": [],
+      "label": "전사 + 스킬딜러 + 원거리 딜러 · 스킬딜러 장악 폭딜 × 원거리 딜러 지속 장악",
+      "editorialReasonKo": "양손검 유키는 다르코·비형과 각각 58.0%, 58.9%로 전사 경계 55.3%를 넘어 주 소속으로 편입했습니다. 쌍검 유키는 두 프로필과 43%대로 기존 유형을 유지합니다.",
+      "editorialReasonEn": "Two-handed-sword Yuki was promoted into the vanguard sustained-pressure group after reaching 58.0% and 58.9% similarity with Darko and Bihyung, above the 55.3% warrior threshold. Dual-swords Yuki remains in the existing group at roughly 43% similarity."
+    },
+    {
+      "id": "전사-editorial-알렉스",
+      "role": "전사",
+      "kind": "independent",
+      "threshold": 0.553,
+      "cohesion": null,
+      "minimumSimilarity": null,
+      "signatureContexts": [
+        {
+          "key": "전사 + 스킬딜러 + 원거리 딜러 / 전사 관점 / 스킬딜러 포킹 점사 × 원거리 딜러 지속 견제 · 성장 장기전",
+          "roleComposition": "전사 + 스킬딜러 + 원거리 딜러",
+          "partnerTypes": [
+            { "role": "스킬딜러", "fitRole": "포킹 점사" },
+            { "role": "원거리 딜러", "fitRole": "지속 견제 · 성장 장기전" }
+          ],
+          "positiveMembers": 1,
+          "memberCount": 1,
+          "coverage": 1,
+          "games": 102,
+          "adjustedResidual": 4.484,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            },
+            {
+              "season": 11,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            }
+          ],
+          "seasonConsistency": "insufficient"
+        },
+        {
+          "key": "전사 + 전사 + 전사 / 전사 관점 / 전사 전열 유지 · 변신 지속전 × 전사 진입 마무리",
+          "roleComposition": "전사 + 전사 + 전사",
+          "partnerTypes": [
+            { "role": "전사", "fitRole": "전열 유지 · 변신 지속전" },
+            { "role": "전사", "fitRole": "진입 마무리" }
+          ],
+          "positiveMembers": 1,
+          "memberCount": 1,
+          "coverage": 1,
+          "games": 111,
+          "adjustedResidual": 3.641,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            },
+            {
+              "season": 11,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            }
+          ],
+          "seasonConsistency": "insufficient"
+        },
+        {
+          "key": "전사 + 스킬딜러 + 원거리 딜러 / 전사 관점 / 스킬딜러 장악 폭딜 × 원거리 딜러 견제·받아치기",
+          "roleComposition": "전사 + 스킬딜러 + 원거리 딜러",
+          "partnerTypes": [
+            { "role": "스킬딜러", "fitRole": "장악 폭딜" },
+            { "role": "원거리 딜러", "fitRole": "견제·받아치기" }
+          ],
+          "positiveMembers": 1,
+          "memberCount": 1,
+          "coverage": 1,
+          "games": 112,
+          "adjustedResidual": 4.063,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            },
+            {
+              "season": 11,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            }
+          ],
+          "seasonConsistency": "insufficient"
+        },
+        {
+          "key": "전사 + 스킬딜러 + 원거리 딜러 / 전사 관점 / 스킬딜러 장악 폭딜 × 원거리 딜러 진입 마무리",
+          "roleComposition": "전사 + 스킬딜러 + 원거리 딜러",
+          "partnerTypes": [
+            { "role": "스킬딜러", "fitRole": "장악 폭딜" },
+            { "role": "원거리 딜러", "fitRole": "진입 마무리" }
+          ],
+          "positiveMembers": 1,
+          "memberCount": 1,
+          "coverage": 1,
+          "games": 118,
+          "adjustedResidual": 3.647,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            },
+            {
+              "season": 11,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            }
+          ],
+          "seasonConsistency": "insufficient"
+        },
+        {
+          "key": "전사 + 스킬딜러 + 원거리 딜러 / 전사 관점 / 스킬딜러 포킹 점사 × 원거리 딜러 받아치기 유지",
+          "roleComposition": "전사 + 스킬딜러 + 원거리 딜러",
+          "partnerTypes": [
+            { "role": "스킬딜러", "fitRole": "포킹 점사" },
+            { "role": "원거리 딜러", "fitRole": "받아치기 유지" }
+          ],
+          "positiveMembers": 1,
+          "memberCount": 1,
+          "coverage": 1,
+          "games": 185,
+          "adjustedResidual": 4.023,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            },
+            {
+              "season": 11,
+              "games": 101,
+              "positiveMembers": 1,
+              "observedMembers": 1,
+              "positiveRate": 1
+            }
+          ],
+          "seasonConsistency": "insufficient"
+        }
+      ],
+      "seasonConsistency": "insufficient",
+      "primaryMembers": [
+        {
+          "profileKey": "27:null",
+          "characterCode": 27,
+          "characterName": "알렉스",
+          "weapon": null,
+          "weaponName": "톤파 / 암기 / 권총 / 양손검",
+          "role": "전사",
+          "firstOrderType": "진입 장악",
+          "membership": "primary",
+          "similarity": null,
+          "minimumSimilarity": null,
+          "sharedContexts": 0
+        }
+      ],
+      "auxiliaryMembers": [],
+      "label": "전사 + 스킬딜러 + 원거리 딜러 · 스킬딜러 포킹 점사 × 원거리 딜러 지속 견제 · 성장 장기전",
+      "editorialReasonKo": "양손검 유키가 선봉 지속 압박형으로 이동하면서 알렉스의 조합 경향은 별도 프로필로 보존했습니다.",
+      "editorialReasonEn": "Alex remains as a separate profile after two-handed-sword Yuki moved into the vanguard sustained-pressure group."
+    },
+    {
+      "id": "원거리 딜러-editorial-후열-사거리-압박",
+      "role": "원거리 딜러",
+      "kind": "core",
+      "threshold": 0.574,
+      "cohesion": 0.59,
+      "minimumSimilarity": 0.59,
+      "signatureContexts": [
+        {
+          "key": "탱커 + 스킬딜러 + 원거리 딜러 / 원거리 딜러 관점 / 탱커 받아치기 유지 × 스킬딜러 진입 장악",
+          "roleComposition": "탱커 + 스킬딜러 + 원거리 딜러",
+          "partnerTypes": [
+            { "role": "탱커", "fitRole": "받아치기 유지" },
+            { "role": "스킬딜러", "fitRole": "진입 장악" }
+          ],
+          "positiveMembers": 2,
+          "memberCount": 2,
+          "coverage": 1,
+          "games": 316,
+          "adjustedResidual": 3.131,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            },
+            {
+              "season": 11,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            }
+          ],
+          "seasonConsistency": "insufficient"
+        },
+        {
+          "key": "전사 + 스킬딜러 + 원거리 딜러 / 원거리 딜러 관점 / 전사 추격 지속전 · 근접 교란 × 스킬딜러 장악 폭딜",
+          "roleComposition": "전사 + 스킬딜러 + 원거리 딜러",
+          "partnerTypes": [
+            { "role": "전사", "fitRole": "추격 지속전 · 근접 교란" },
+            { "role": "스킬딜러", "fitRole": "장악 폭딜" }
+          ],
+          "positiveMembers": 2,
+          "memberCount": 2,
+          "coverage": 1,
+          "games": 286,
+          "adjustedResidual": 3.059,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            },
+            {
+              "season": 11,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            }
+          ],
+          "seasonConsistency": "insufficient"
+        },
+        {
+          "key": "탱커 + 스킬딜러 + 원거리 딜러 / 원거리 딜러 관점 / 탱커 받아치기 유지 × 스킬딜러 전열 장악",
+          "roleComposition": "탱커 + 스킬딜러 + 원거리 딜러",
+          "partnerTypes": [
+            { "role": "탱커", "fitRole": "받아치기 유지" },
+            { "role": "스킬딜러", "fitRole": "전열 장악" }
+          ],
+          "positiveMembers": 2,
+          "memberCount": 2,
+          "coverage": 1,
+          "games": 258,
+          "adjustedResidual": 2.921,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            },
+            {
+              "season": 11,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            }
+          ],
+          "seasonConsistency": "insufficient"
+        },
+        {
+          "key": "탱커 + 스킬딜러 + 원거리 딜러 / 원거리 딜러 관점 / 탱커 전열 유지 × 스킬딜러 포킹 장악",
+          "roleComposition": "탱커 + 스킬딜러 + 원거리 딜러",
+          "partnerTypes": [
+            { "role": "탱커", "fitRole": "전열 유지" },
+            { "role": "스킬딜러", "fitRole": "포킹 장악" }
+          ],
+          "positiveMembers": 2,
+          "memberCount": 2,
+          "coverage": 1,
+          "games": 731,
+          "adjustedResidual": 2.987,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 356,
+              "positiveMembers": 2,
+              "observedMembers": 2,
+              "positiveRate": 1
+            },
+            {
+              "season": 11,
+              "games": 375,
+              "positiveMembers": 2,
+              "observedMembers": 2,
+              "positiveRate": 1
+            }
+          ],
+          "seasonConsistency": "both-positive"
+        },
+        {
+          "key": "전사 + 스킬딜러 + 원거리 딜러 / 원거리 딜러 관점 / 전사 진입 장악 × 스킬딜러 진입 장악",
+          "roleComposition": "전사 + 스킬딜러 + 원거리 딜러",
+          "partnerTypes": [
+            { "role": "전사", "fitRole": "진입 장악" },
+            { "role": "스킬딜러", "fitRole": "진입 장악" }
+          ],
+          "positiveMembers": 2,
+          "memberCount": 2,
+          "coverage": 1,
+          "games": 373,
+          "adjustedResidual": 2.401,
+          "seasonSignals": [
+            {
+              "season": 10,
+              "games": 0,
+              "positiveMembers": 0,
+              "observedMembers": 0,
+              "positiveRate": null
+            },
+            {
+              "season": 11,
+              "games": 115,
+              "positiveMembers": 1,
+              "observedMembers": 1,
+              "positiveRate": 1
+            }
+          ],
+          "seasonConsistency": "insufficient"
+        }
+      ],
+      "seasonConsistency": "insufficient",
+      "primaryMembers": [
+        {
+          "profileKey": "31:7",
+          "characterCode": 31,
+          "characterName": "리오",
+          "weapon": 7,
+          "weaponName": "활",
+          "role": "원거리 딜러",
+          "firstOrderType": "지속 견제",
+          "subtypeName": "지속 견제형",
+          "membership": "primary",
+          "similarity": 0.59,
+          "minimumSimilarity": 0.59,
+          "sharedContexts": 441
+        },
+        {
+          "profileKey": "72:11",
+          "characterCode": 72,
+          "characterName": "카티야",
+          "weapon": 11,
+          "weaponName": "저격총",
+          "role": "원거리 딜러",
+          "firstOrderType": "포킹 점사",
+          "subtypeName": "포킹 점사형",
+          "membership": "primary",
+          "similarity": 0.59,
+          "minimumSimilarity": 0.59,
+          "sharedContexts": 441
+        }
+      ],
+      "auxiliaryMembers": [],
+      "label": "탱커 + 스킬딜러 + 원거리 딜러 · 탱커 전열 유지 × 스킬딜러 포킹 장악",
+      "editorialReasonKo": "리오와 카티야는 공통 정확 조합 441개와 직접 유사도 59.0%를 근거로 후열 사거리 압박형에 함께 배치했습니다. 세부 조합의 방향 차이는 리오의 지속 견제형과 카티야의 포킹 점사형으로 구분해 보존했습니다.",
+      "editorialReasonEn": "Rio and Katja are grouped under backline range pressure based on 441 shared exact contexts and 59.0% direct similarity. Their different composition directions remain visible as sustained-poke and burst-poke subtypes."
+    }
+  ]
+}

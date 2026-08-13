@@ -56,7 +56,7 @@ function parseDetailSortByParam(value: string | null): SortBy {
     : "averageRP";
 }
 
-/** 코어만 무시하고 캐릭터+무기(c:w) 기준으로 그룹화 */
+/** 코어만 무시하고 실험체+무기(c:w) 기준으로 그룹화 */
 function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
   const map = new Map<
     string,

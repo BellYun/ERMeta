@@ -30,9 +30,12 @@
   "navigation": {
     "ariaMain": "主導覽",
     "metaAnalysis": "Meta分析",
-    "synergyRecommendation": "陣容資料",
+    "synergyRecommendation": "陣容推薦",
     "characterAnalysis": "角色分析",
+    "lab": "實驗室",
     "characterLab": "角色分組",
+    "characterLabNew": "新版角色分析",
+    "characterCompositionLab": "角色陣容分析",
     "dataLab": "資料實驗室",
     "patchNotes": "版本說明",
     "patchAnalysisNav": "版本分析",
@@ -145,6 +148,13 @@
     },
     "preseasonNotice": "11.0 為季前賽資料，因此不提供。",
     "preseasonPolicyNotice": "季前賽期間的資料不納入統計。",
+    "collectionPolicyNotice": "正在收集12.1版本的牌位資料。",
+    "collecting": {
+      "subtitle": "正在收集12.1版本的牌位資料用於版本分析。",
+      "kicker": "正在收集{patch}版本",
+      "title": "正在準備新賽季版本分析",
+      "body": "牌位樣本充足後，將自動開放角色排名和版本分析。"
+    },
     "preparing": {
       "subtitle": "新賽季統計正在準備中。",
       "kicker": "賽季過渡說明",
@@ -224,7 +234,6 @@
     "patchOption": "版本 {patch}",
     "noPatch": "沒有版本資料",
     "tiers": {
-      "PLATINUM": "白金",
       "DIAMOND": "鑽石",
       "METEORITE": "隕石",
       "MITHRIL": "秘銀"
@@ -352,6 +361,20 @@
     "tierSelectorAria": "選擇分析牌位",
     "weaponSelectorAria": "選擇武器",
     "weapon": "武器",
+    "characterType": "角色類型",
+    "characterTypeHint": "依據第10、11賽季陣容傾向",
+    "allWeapons": "全部武器",
+    "internalType": "內部類型",
+    "typeSimilarity": "類型相似度",
+    "sharedContexts": "共同細分陣容",
+    "individualProfile": "獨立檔案",
+    "sameType": "同類型",
+    "signatureComposition": "代表上升陣容",
+    "showMoreSignatures": "顯示更多 ({visible}/{total})",
+    "collapseSignatures": "收起",
+    "gamesUnit": "場",
+    "typeCharacters": "該類型角色",
+    "profileUnit": "個檔案",
     "all": "全部",
     "pickRate": "選取率",
     "winRate": "勝率",
@@ -361,11 +384,9 @@
     "emptyPatchData": "正在確認此版本的樣本。",
     "loadingPatchInfo": "正在載入版本資料...",
     "tiers": {
-      "PLATINUM": "白金",
       "DIAMOND": "鑽石",
       "METEORITE": "隕石",
       "MITHRIL": "秘銀+",
-      "IN1000": "前1000",
       "DIAMOND_BELOW": "鑽石及以下"
     }
   },

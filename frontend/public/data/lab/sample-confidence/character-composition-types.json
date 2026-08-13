@@ -1,0 +1,2568 @@
+{
+  "generatedAt": "2026-08-12T06:08:55.088Z",
+  "seasons": [10, 11],
+  "sourceMethod": "global-second-order-character-context-clusters+fixed-role-composition+verified-character-triples+member-direction-validation+member-baseline-residual-v5+lift-sqrt-games",
+  "method": "global-second-order-catalog-v1",
+  "roleCompositionCount": 56,
+  "minSharedCompositions": 0,
+  "summary": {
+    "baseTypeCount": 35,
+    "splitBaseTypes": 16,
+    "consensusTypeCount": 70,
+    "characterProfiles": 114
+  },
+  "groups": [
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "견제·받아치기",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-견제·받아치기 · 진입 마무리 + 포킹 점사 연계",
+          "label": "견제·받아치기 · 진입 마무리 + 포킹 점사 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 진입 마무리 + 스킬딜러 포킹 점사",
+              "occurrences": 1,
+              "games": 369,
+              "avgResidual": 3.901
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 19,
+              "characterName": "엠마",
+              "weapon": 6,
+              "weaponName": "암기",
+              "totalGames": 52653,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "보호 장악",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-보호 장악 · 전열 유지 · 선봉 지속 압박형 + 추격 지속전 연계",
+          "label": "보호 장악 · 전열 유지 · 선봉 지속 압박형 + 추격 지속전 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 전열 유지 · 선봉 지속 압박형 + 전사 추격 지속전",
+              "occurrences": 1,
+              "games": 513,
+              "avgResidual": 5.503
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 5,
+              "characterName": "자히르",
+              "weapon": 6,
+              "weaponName": "암기",
+              "totalGames": 30765,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 51,
+              "characterName": "프리야",
+              "weapon": 22,
+              "weaponName": "기타",
+              "totalGames": 39188,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "장악 폭딜",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-장악 폭딜 · 교전 개시 + 포킹 점사 연계",
+          "label": "장악 폭딜 · 교전 개시 + 포킹 점사 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 교전 개시 + 스킬딜러 포킹 점사",
+              "occurrences": 1,
+              "games": 413,
+              "avgResidual": 5.563
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 6,
+              "characterName": "나딘",
+              "weapon": 7,
+              "weaponName": "활",
+              "totalGames": 39910,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 24,
+              "characterName": "아델라",
+              "weapon": 21,
+              "weaponName": "레이피어",
+              "totalGames": 41632,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 24,
+              "characterName": "아델라",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "totalGames": 20252,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "장악 폭딜 · 범위 장악",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-장악 폭딜 · 범위 장악 · 전열 유지 + 추격 지속전 연계",
+          "label": "장악 폭딜 · 범위 장악 · 전열 유지 + 추격 지속전 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 전열 유지 + 전사 추격 지속전",
+              "occurrences": 1,
+              "games": 851,
+              "avgResidual": 5.112
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 81,
+              "characterName": "니아",
+              "weapon": 9,
+              "weaponName": "권총",
+              "totalGames": 113497,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "장악 폭딜 · 함정 연계",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-장악 폭딜 · 함정 연계 · 선봉 보호 + 포킹 점사 연계",
+          "label": "장악 폭딜 · 함정 연계 · 선봉 보호 + 포킹 점사 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 선봉 보호 + 원거리 딜러 포킹 점사",
+              "occurrences": 1,
+              "games": 852,
+              "avgResidual": 1.842
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 9,
+              "characterName": "아이솔",
+              "weapon": 9,
+              "weaponName": "권총",
+              "totalGames": 48235,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "지속 장악",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-지속 장악 · 교전 개시 + 진입 지속전 연계",
+          "label": "지속 장악 · 교전 개시 + 진입 지속전 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 교전 개시 + 전사 진입 지속전",
+              "occurrences": 1,
+              "games": 342,
+              "avgResidual": 3.775
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 79,
+              "characterName": "유스티나",
+              "weapon": 8,
+              "weaponName": "석궁",
+              "totalGames": 101152,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 87,
+              "characterName": "코렐라인",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "totalGames": 129358,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "스킬딜러-지속 장악 · 전열 유지 + 추격 지속전 연계",
+          "label": "지속 장악 · 전열 유지 + 추격 지속전 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 전열 유지 + 원거리 딜러 추격 지속전",
+              "occurrences": 1,
+              "games": 824,
+              "avgResidual": 4.777
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 26,
+              "characterName": "바바라",
+              "weapon": 9,
+              "weaponName": "권총",
+              "totalGames": 141371,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 17,
+              "characterName": "아드리아나",
+              "weapon": 5,
+              "weaponName": "투척",
+              "totalGames": 96153,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 36,
+              "characterName": "이바",
+              "weapon": 5,
+              "weaponName": "투척",
+              "totalGames": 91353,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "진입 장악",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-진입 장악 · 받아치기 유지 + 포킹 점사 연계",
+          "label": "진입 장악 · 받아치기 유지 + 포킹 점사 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 받아치기 유지 + 원거리 딜러 포킹 점사",
+              "occurrences": 1,
+              "games": 672,
+              "avgResidual": 5.732
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 77,
+              "characterName": "유민",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "totalGames": 170562,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 75,
+              "characterName": "르노어",
+              "weapon": 22,
+              "weaponName": "기타",
+              "totalGames": 121702,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 83,
+              "characterName": "헨리",
+              "weapon": 6,
+              "weaponName": "암기",
+              "totalGames": 133528,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 48,
+              "characterName": "띠아",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "totalGames": 95044,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 66,
+              "characterName": "아르다",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "totalGames": 92997,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "포킹 장악",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-포킹 장악 · 선봉 보호 + 지속 견제 연계",
+          "label": "포킹 장악 · 선봉 보호 + 지속 견제 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 선봉 보호 + 원거리 딜러 지속 견제",
+              "occurrences": 1,
+              "games": 597,
+              "avgResidual": 2.249
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 5,
+              "characterName": "자히르",
+              "weapon": 5,
+              "weaponName": "투척",
+              "totalGames": 24603,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "스킬딜러-포킹 장악 · 선봉 보호 + 추격 지속전 연계",
+          "label": "포킹 장악 · 선봉 보호 + 추격 지속전 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 선봉 보호 + 전사 추격 지속전",
+              "occurrences": 1,
+              "games": 493,
+              "avgResidual": 2.131
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 15,
+              "characterName": "시셀라",
+              "weapon": 5,
+              "weaponName": "투척",
+              "totalGames": 46566,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "스킬딜러-포킹 장악 · 전열 유지 + 견제·받아치기 연계",
+          "label": "포킹 장악 · 전열 유지 + 견제·받아치기 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 전열 유지 + 원거리 딜러 견제·받아치기",
+              "occurrences": 1,
+              "games": 323,
+              "avgResidual": 5.084
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 12,
+              "characterName": "혜진",
+              "weapon": 7,
+              "weaponName": "활",
+              "totalGames": 64330,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 52,
+              "characterName": "아디나",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "totalGames": 73856,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 19,
+              "characterName": "엠마",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "totalGames": 40275,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 12,
+              "characterName": "혜진",
+              "weapon": 6,
+              "weaponName": "암기",
+              "totalGames": 15989,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "포킹 점사",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-포킹 점사 · 선봉 보호 + 추격 지속전 연계",
+          "label": "포킹 점사 · 선봉 보호 + 추격 지속전 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "high",
+          "contexts": [
+            {
+              "label": "탱커 선봉 보호 + 전사 추격 지속전",
+              "occurrences": 1,
+              "games": 1187,
+              "avgResidual": 2.942
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 2,
+              "characterName": "아야",
+              "weapon": 11,
+              "weaponName": "저격총",
+              "totalGames": 84506,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "스킬딜러-포킹 점사 · 선봉 보호 + 추격 지속전 연계 · 시셀라·타지아 중심",
+          "label": "포킹 점사 · 선봉 보호 + 추격 지속전 연계 · 시셀라·타지아 중심",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 선봉 보호 + 원거리 딜러 추격 지속전",
+              "occurrences": 1,
+              "games": 494,
+              "avgResidual": 5.465
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 15,
+              "characterName": "시셀라",
+              "weapon": 6,
+              "weaponName": "암기",
+              "totalGames": 56902,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 60,
+              "characterName": "타지아",
+              "weapon": 6,
+              "weaponName": "암기",
+              "totalGames": 38571,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "스킬딜러-포킹 점사 · 전열 유지 + 포킹 장악 연계",
+          "label": "포킹 점사 · 전열 유지 + 포킹 장악 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 전열 유지 + 스킬딜러 포킹 장악",
+              "occurrences": 1,
+              "games": 308,
+              "avgResidual": 4.9
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 2,
+              "characterName": "아야",
+              "weapon": 9,
+              "weaponName": "권총",
+              "totalGames": 75388,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 43,
+              "characterName": "셀린",
+              "weapon": 5,
+              "weaponName": "투척",
+              "totalGames": 72183,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "스킬딜러-포킹 점사 · 전열 유지 + 포킹 점사 연계",
+          "label": "포킹 점사 · 전열 유지 + 포킹 점사 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "high",
+          "contexts": [
+            {
+              "label": "탱커 전열 유지 + 원거리 딜러 포킹 점사",
+              "occurrences": 1,
+              "games": 2547,
+              "avgResidual": 2.66
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 34,
+              "characterName": "나타폰",
+              "weapon": 23,
+              "weaponName": "카메라",
+              "totalGames": 80346,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 58,
+              "characterName": "헤이즈",
+              "weapon": 10,
+              "weaponName": "돌격 소총",
+              "totalGames": 202652,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "스킬딜러-포킹 점사 · 진입 장악 + 추격 지속전 연계",
+          "label": "포킹 점사 · 진입 장악 + 추격 지속전 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 진입 장악 + 전사 추격 지속전",
+              "occurrences": 1,
+              "games": 306,
+              "avgResidual": 3.468
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 54,
+              "characterName": "칼라",
+              "weapon": 8,
+              "weaponName": "석궁",
+              "totalGames": 65335,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "스킬딜러",
+      "baseFitRole": "포킹 점사 · 후속 포화",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "스킬딜러-포킹 점사 · 후속 포화 · 교전 개시 + 지속 견제 연계",
+          "label": "포킹 점사 · 후속 포화 · 교전 개시 + 지속 견제 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 교전 개시 + 원거리 딜러 지속 견제",
+              "occurrences": 1,
+              "games": 346,
+              "avgResidual": 3.608
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 89,
+              "characterName": "크레이버",
+              "weapon": 9,
+              "weaponName": "권총",
+              "totalGames": 88260,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    },
+    {
+      "role": "암살자",
+      "baseFitRole": "진입 마무리",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "암살자-진입 마무리 · 선봉 보호 + 진입 지속전 연계",
+          "label": "진입 마무리 · 선봉 보호 + 진입 지속전 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 선봉 보호 + 전사 진입 지속전",
+              "occurrences": 1,
+              "games": 350,
+              "avgResidual": 5.688
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 18,
+              "characterName": "쇼이치",
+              "weapon": 15,
+              "weaponName": "단검",
+              "totalGames": 176499,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 37,
+              "characterName": "다니엘",
+              "weapon": 15,
+              "weaponName": "단검",
+              "totalGames": 62463,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 23,
+              "characterName": "캐시",
+              "weapon": 18,
+              "weaponName": "쌍검",
+              "totalGames": 25418,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "암살자-진입 마무리 · 진입 마무리 + 지속 견제 연계",
+          "label": "진입 마무리 · 진입 마무리 + 지속 견제 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 진입 마무리 + 원거리 딜러 지속 견제",
+              "occurrences": 1,
+              "games": 408,
+              "avgResidual": 4.621
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 23,
+              "characterName": "캐시",
+              "weapon": 15,
+              "weaponName": "단검",
+              "totalGames": 45673,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "견제·받아치기",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-견제·받아치기 · 선봉 보호 + 진입 마무리 연계",
+          "label": "견제·받아치기 · 선봉 보호 + 진입 마무리 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 선봉 보호 + 암살자 진입 마무리",
+              "occurrences": 1,
+              "games": 521,
+              "avgResidual": 4.439
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 25,
+              "characterName": "버니스",
+              "weapon": 11,
+              "weaponName": "저격총",
+              "totalGames": 93959,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "받아치기 유지",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-받아치기 유지 · 진입 억제 + 포킹 점사 연계",
+          "label": "받아치기 유지 · 진입 억제 + 포킹 점사 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "스킬딜러 진입 억제 + 스킬딜러 포킹 점사",
+              "occurrences": 1,
+              "games": 609,
+              "avgResidual": 3.776
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 8,
+              "characterName": "하트",
+              "weapon": 22,
+              "weaponName": "기타",
+              "totalGames": 68147,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "인파이팅 화력",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-인파이팅 화력 · 선봉 보호 + 전열 장악 연계",
+          "label": "인파이팅 화력 · 선봉 보호 + 전열 장악 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 선봉 보호 + 스킬딜러 전열 장악",
+              "occurrences": 1,
+              "games": 508,
+              "avgResidual": 5.15
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 40,
+              "characterName": "클로에",
+              "weapon": 6,
+              "weaponName": "암기",
+              "totalGames": 67795,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 57,
+              "characterName": "마르티나",
+              "weapon": 23,
+              "weaponName": "카메라",
+              "totalGames": 40771,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "지속 견제",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-지속 견제 · 선봉 보호 + 전열 장악 연계",
+          "label": "지속 견제 · 선봉 보호 + 전열 장악 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 선봉 보호 + 스킬딜러 전열 장악",
+              "occurrences": 1,
+              "games": 412,
+              "avgResidual": 3.948
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 32,
+              "characterName": "윌리엄",
+              "weapon": 5,
+              "weaponName": "투척",
+              "totalGames": 83574,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "원거리 딜러-지속 견제 · 선봉 보호 + 진입 억제 연계",
+          "label": "지속 견제 · 선봉 보호 + 진입 억제 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 선봉 보호 + 스킬딜러 진입 억제",
+              "occurrences": 1,
+              "games": 604,
+              "avgResidual": 4.559
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 2,
+              "characterName": "아야",
+              "weapon": 10,
+              "weaponName": "돌격 소총",
+              "totalGames": 110945,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "원거리 딜러-지속 견제 · 전열 유지 + 포킹 점사 연계",
+          "label": "지속 견제 · 전열 유지 + 포킹 점사 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 전열 유지 + 스킬딜러 포킹 점사",
+              "occurrences": 1,
+              "games": 321,
+              "avgResidual": 5.604
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 38,
+              "characterName": "제니",
+              "weapon": 9,
+              "weaponName": "권총",
+              "totalGames": 43090,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "진입 마무리",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-진입 마무리 · 전열 유지 · 선봉 지속 압박형 + 진입 억제 연계",
+          "label": "진입 마무리 · 전열 유지 · 선봉 지속 압박형 + 진입 억제 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 전열 유지 · 선봉 지속 압박형 + 스킬딜러 진입 억제",
+              "occurrences": 1,
+              "games": 433,
+              "avgResidual": 5.586
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 9,
+              "characterName": "아이솔",
+              "weapon": 10,
+              "weaponName": "돌격 소총",
+              "totalGames": 111691,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 70,
+              "characterName": "츠바메",
+              "weapon": 6,
+              "weaponName": "암기",
+              "totalGames": 132323,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "추격 지속전",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-추격 지속전 · 교전 개시 · 광역 진입 + 추격 지속전 연계",
+          "label": "추격 지속전 · 교전 개시 · 광역 진입 + 추격 지속전 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 교전 개시 · 광역 진입 + 전사 추격 지속전",
+              "occurrences": 1,
+              "games": 504,
+              "avgResidual": 4.976
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 21,
+              "characterName": "로지",
+              "weapon": 9,
+              "weaponName": "권총",
+              "totalGames": 144027,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    },
+    {
+      "role": "원거리 딜러",
+      "baseFitRole": "포킹 점사",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "원거리 딜러-포킹 점사 · 전열 유지 + 진입 장악 연계",
+          "label": "포킹 점사 · 전열 유지 + 진입 장악 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 전열 유지 + 스킬딜러 진입 장악",
+              "occurrences": 1,
+              "games": 415,
+              "avgResidual": 5.584
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 6,
+              "characterName": "나딘",
+              "weapon": 8,
+              "weaponName": "석궁",
+              "totalGames": 90172,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 62,
+              "characterName": "테오도르",
+              "weapon": 11,
+              "weaponName": "저격총",
+              "totalGames": 88346,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "원거리 딜러-포킹 점사 · 진입 장악 + 진입 마무리 연계",
+          "label": "포킹 점사 · 진입 장악 + 진입 마무리 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 진입 장악 + 전사 진입 마무리",
+              "occurrences": 1,
+              "games": 754,
+              "avgResidual": 4.032
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 31,
+              "characterName": "리오",
+              "weapon": 7,
+              "weaponName": "활",
+              "totalGames": 230260,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 72,
+              "characterName": "카티야",
+              "weapon": 11,
+              "weaponName": "저격총",
+              "totalGames": 294547,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "강제 진입",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-강제 진입 · 진입 마무리 + 진입 억제 연계",
+          "label": "강제 진입 · 진입 마무리 + 진입 억제 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 진입 마무리 + 스킬딜러 진입 억제",
+              "occurrences": 1,
+              "games": 549,
+              "avgResidual": 5.397
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 29,
+              "characterName": "레온",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "totalGames": 115257,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 33,
+              "characterName": "니키",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "totalGames": 118884,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "전사-강제 진입 · 진입 마무리 + 포킹 점사 연계",
+          "label": "강제 진입 · 진입 마무리 + 포킹 점사 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 진입 마무리 + 원거리 딜러 포킹 점사",
+              "occurrences": 1,
+              "games": 380,
+              "avgResidual": 3.141
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 35,
+              "characterName": "얀",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "totalGames": 58102,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "교전 개시",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-교전 개시 · 진입 마무리 + 포킹 점사 연계",
+          "label": "교전 개시 · 진입 마무리 + 포킹 점사 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 진입 마무리 + 스킬딜러 포킹 점사",
+              "occurrences": 1,
+              "games": 325,
+              "avgResidual": 4.839
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 29,
+              "characterName": "레온",
+              "weapon": 2,
+              "weaponName": "톤파",
+              "totalGames": 25349,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "전사-교전 개시 · 진입 장악 + 포킹 장악 연계",
+          "label": "교전 개시 · 진입 장악 + 포킹 장악 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 진입 장악 + 스킬딜러 포킹 장악",
+              "occurrences": 1,
+              "games": 440,
+              "avgResidual": 4.992
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 47,
+              "characterName": "라우라",
+              "weapon": 4,
+              "weaponName": "채찍",
+              "totalGames": 91627,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 7,
+              "characterName": "현우",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "totalGames": 117280,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 7,
+              "characterName": "현우",
+              "weapon": 2,
+              "weaponName": "톤파",
+              "totalGames": 20625,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "전사-교전 개시 · 포킹 장악 · 전열 연계 + 지속 견제 연계",
+          "label": "교전 개시 · 포킹 장악 · 전열 연계 + 지속 견제 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "스킬딜러 포킹 장악 · 전열 연계 + 원거리 딜러 지속 견제",
+              "occurrences": 1,
+              "games": 313,
+              "avgResidual": 5.971
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 11,
+              "characterName": "유키",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "totalGames": 135333,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 3,
+              "characterName": "피오라",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "totalGames": 33854,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "장악 폭딜",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-장악 폭딜 · 선봉 보호 + 진입 마무리 연계",
+          "label": "장악 폭딜 · 선봉 보호 + 진입 마무리 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 선봉 보호 + 전사 진입 마무리",
+              "occurrences": 1,
+              "games": 755,
+              "avgResidual": 4.404
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 84,
+              "characterName": "블레어",
+              "weapon": 18,
+              "weaponName": "쌍검",
+              "totalGames": 137850,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 10,
+              "characterName": "리 다이린",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "totalGames": 79649,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "전열 유지",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-전열 유지 · 교전 개시 · 광역 진입 + 추격 지속전 연계",
+          "label": "전열 유지 · 교전 개시 · 광역 진입 + 추격 지속전 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 교전 개시 · 광역 진입 + 전사 추격 지속전",
+              "occurrences": 1,
+              "games": 338,
+              "avgResidual": 5.218
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 71,
+              "characterName": "케네스",
+              "weapon": 14,
+              "weaponName": "도끼",
+              "totalGames": 110707,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "전사-전열 유지 · 전사 진입 장악 + 스킬딜러 진입 장악 연계",
+          "label": "전열 유지 · 전사 진입 장악 + 스킬딜러 진입 장악 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 진입 장악 + 스킬딜러 진입 장악",
+              "occurrences": 1,
+              "games": 300,
+              "avgResidual": 4.564
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 86,
+              "characterName": "펜리르",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "totalGames": 138563,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 16,
+              "characterName": "실비아",
+              "weapon": 9,
+              "weaponName": "권총",
+              "totalGames": 86346,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 35,
+              "characterName": "얀",
+              "weapon": 2,
+              "weaponName": "톤파",
+              "totalGames": 71649,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "전사-전열 유지 · 전열 유지 · 추격 압박 + 포킹 장악 연계",
+          "label": "전열 유지 · 전열 유지 · 추격 압박 + 포킹 장악 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 전열 유지 · 추격 압박 + 스킬딜러 포킹 장악",
+              "occurrences": 1,
+              "games": 822,
+              "avgResidual": 4.409
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 67,
+              "characterName": "아비게일",
+              "weapon": 14,
+              "weaponName": "도끼",
+              "totalGames": 198498,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 78,
+              "characterName": "히스이",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "totalGames": 249219,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "전사-전열 유지 · 추격 지속전 + 진입 억제 연계",
+          "label": "전열 유지 · 추격 지속전 + 진입 억제 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "high",
+          "contexts": [
+            {
+              "label": "전사 추격 지속전 + 스킬딜러 진입 억제",
+              "occurrences": 1,
+              "games": 1194,
+              "avgResidual": 4.573
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 65,
+              "characterName": "데비&마를렌",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "totalGames": 229672,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 3,
+              "characterName": "피오라",
+              "weapon": 21,
+              "weaponName": "레이피어",
+              "totalGames": 61028,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 42,
+              "characterName": "비앙카",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "totalGames": 133462,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 59,
+              "characterName": "아이작",
+              "weapon": 2,
+              "weaponName": "톤파",
+              "totalGames": 140379,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "전열 유지 · 변신 지속전",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-전열 유지 · 변신 지속전 · 선봉 보호 + 포킹 장악 연계",
+          "label": "전열 유지 · 변신 지속전 · 선봉 보호 + 포킹 장악 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 선봉 보호 + 스킬딜러 포킹 장악",
+              "occurrences": 1,
+              "games": 399,
+              "avgResidual": 4.911
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 63,
+              "characterName": "이안",
+              "weapon": 15,
+              "weaponName": "단검",
+              "totalGames": 78629,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "전열 유지 · 선봉 지속 압박형",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-전열 유지 · 선봉 지속 압박형 · 진입 장악 + 추격 지속전 연계",
+          "label": "전열 유지 · 선봉 지속 압박형 · 진입 장악 + 추격 지속전 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 진입 장악 + 전사 추격 지속전",
+              "occurrences": 1,
+              "games": 393,
+              "avgResidual": 4.935
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 80,
+              "characterName": "이슈트반",
+              "weapon": 19,
+              "weaponName": "창",
+              "totalGames": 120895,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "전사-전열 유지 · 선봉 지속 압박형 · 추격 지속전 + 견제 지원 연계",
+          "label": "전열 유지 · 선봉 지속 압박형 · 추격 지속전 + 견제 지원 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 추격 지속전 + 원거리 딜러 견제 지원",
+              "occurrences": 1,
+              "games": 601,
+              "avgResidual": 3.984
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 74,
+              "characterName": "다르코",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "totalGames": 191371,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "진입 마무리",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-진입 마무리 · 선봉 보호 + 보호 장악 연계",
+          "label": "진입 마무리 · 선봉 보호 + 보호 장악 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 선봉 보호 + 스킬딜러 보호 장악",
+              "occurrences": 1,
+              "games": 317,
+              "avgResidual": 5.181
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 49,
+              "characterName": "펠릭스",
+              "weapon": 19,
+              "weaponName": "창",
+              "totalGames": 89315,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 46,
+              "characterName": "에이든",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "totalGames": 129109,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "전사-진입 마무리 · 진입 억제 + 지속 견제 연계",
+          "label": "진입 마무리 · 진입 억제 + 지속 견제 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "스킬딜러 진입 억제 + 원거리 딜러 지속 견제",
+              "occurrences": 1,
+              "games": 809,
+              "avgResidual": 4.723
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 22,
+              "characterName": "루크",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "totalGames": 192992,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 88,
+              "characterName": "비형",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "totalGames": 135116,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 14,
+              "characterName": "키아라",
+              "weapon": 21,
+              "weaponName": "레이피어",
+              "totalGames": 105361,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "전사-진입 마무리 · 피오라 중심",
+          "label": "진입 마무리 · 피오라 중심",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "low",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 3,
+              "characterName": "피오라",
+              "weapon": 19,
+              "weaponName": "창",
+              "totalGames": 10478,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "진입 장악",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-진입 장악 · 전열 유지 · 선봉 지속 압박형 + 추격 지속전 연계",
+          "label": "진입 장악 · 전열 유지 · 선봉 지속 압박형 + 추격 지속전 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 전열 유지 · 선봉 지속 압박형 + 전사 추격 지속전",
+              "occurrences": 1,
+              "games": 441,
+              "avgResidual": 4.425
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 27,
+              "characterName": "알렉스",
+              "weapon": null,
+              "weaponName": "톤파 / 암기 / 권총 / 양손검",
+              "totalGames": 139215,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "전사-진입 장악 · 전열 유지 + 포킹 점사 연계",
+          "label": "진입 장악 · 전열 유지 + 포킹 점사 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 전열 유지 + 스킬딜러 포킹 점사",
+              "occurrences": 1,
+              "games": 535,
+              "avgResidual": 4.092
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 61,
+              "characterName": "이렘",
+              "weapon": 5,
+              "weaponName": "투척",
+              "totalGames": 88684,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "진입 지속전",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-진입 지속전 · 강제 진입 + 추격 지속전 연계",
+          "label": "진입 지속전 · 강제 진입 + 추격 지속전 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 강제 진입 + 전사 추격 지속전",
+              "occurrences": 1,
+              "games": 413,
+              "avgResidual": 5.756
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 64,
+              "characterName": "바냐",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "totalGames": 133177,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 44,
+              "characterName": "에키온",
+              "weapon": 25,
+              "weaponName": "VF의수",
+              "totalGames": 82009,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    },
+    {
+      "role": "전사",
+      "baseFitRole": "추격 지속전",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "전사-추격 지속전 · 재키 중심",
+          "label": "추격 지속전 · 재키 중심",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "low",
+          "contexts": [],
+          "characters": [
+            {
+              "characterCode": 1,
+              "characterName": "재키",
+              "weapon": 14,
+              "weaponName": "도끼",
+              "totalGames": 12175,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "전사-추격 지속전 · 전열 유지 · 선봉 지속 압박형 + 보호 장악 연계",
+          "label": "추격 지속전 · 전열 유지 · 선봉 지속 압박형 + 보호 장악 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 전열 유지 · 선봉 지속 압박형 + 스킬딜러 보호 장악",
+              "occurrences": 1,
+              "games": 337,
+              "avgResidual": 5.427
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 56,
+              "characterName": "피올로",
+              "weapon": 20,
+              "weaponName": "쌍절곤",
+              "totalGames": 109829,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 28,
+              "characterName": "수아",
+              "weapon": 13,
+              "weaponName": "망치",
+              "totalGames": 28070,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "전사-추격 지속전 · 전열 유지 · 선봉 지속 압박형 + 후열 보호 연계",
+          "label": "추격 지속전 · 전열 유지 · 선봉 지속 압박형 + 후열 보호 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 전열 유지 · 선봉 지속 압박형 + 지원가 후열 보호",
+              "occurrences": 1,
+              "games": 424,
+              "avgResidual": 4.651
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 82,
+              "characterName": "슈린",
+              "weapon": 21,
+              "weaponName": "레이피어",
+              "totalGames": 112051,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 28,
+              "characterName": "수아",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "totalGames": 64324,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "전사-추격 지속전 · 전열 유지 + 지속 견제 연계",
+          "label": "추격 지속전 · 전열 유지 + 지속 견제 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 전열 유지 + 원거리 딜러 지속 견제",
+              "occurrences": 1,
+              "games": 426,
+              "avgResidual": 3.983
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 11,
+              "characterName": "유키",
+              "weapon": 18,
+              "weaponName": "쌍검",
+              "totalGames": 77846,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "전사-추격 지속전 · 전열 유지 + 포킹 장악 연계",
+          "label": "추격 지속전 · 전열 유지 + 포킹 장악 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 전열 유지 + 스킬딜러 포킹 장악",
+              "occurrences": 1,
+              "games": 619,
+              "avgResidual": 3.679
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 10,
+              "characterName": "리 다이린",
+              "weapon": 20,
+              "weaponName": "쌍절곤",
+              "totalGames": 41276,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 1,
+              "characterName": "재키",
+              "weapon": 18,
+              "weaponName": "쌍검",
+              "totalGames": 29466,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "전사-추격 지속전 · 전열 유지 + 후열 보호 연계",
+          "label": "추격 지속전 · 전열 유지 + 후열 보호 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "high",
+          "contexts": [
+            {
+              "label": "전사 전열 유지 + 지원가 후열 보호",
+              "occurrences": 1,
+              "games": 1726,
+              "avgResidual": 3.615
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 39,
+              "characterName": "카밀로",
+              "weapon": 18,
+              "weaponName": "쌍검",
+              "totalGames": 60688,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "전사-추격 지속전 · 추격 지속전 + 보호 장악 연계",
+          "label": "추격 지속전 · 추격 지속전 + 보호 장악 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 추격 지속전 + 스킬딜러 보호 장악",
+              "occurrences": 1,
+              "games": 745,
+              "avgResidual": 4.284
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 39,
+              "characterName": "카밀로",
+              "weapon": 21,
+              "weaponName": "레이피어",
+              "totalGames": 78974,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 1,
+              "characterName": "재키",
+              "weapon": 16,
+              "weaponName": "양손검",
+              "totalGames": 96843,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "전사-추격 지속전 · 추격 지속전 + 포킹 점사 연계",
+          "label": "추격 지속전 · 추격 지속전 + 포킹 점사 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 추격 지속전 + 스킬딜러 포킹 점사",
+              "occurrences": 1,
+              "games": 322,
+              "avgResidual": 4.063
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 1,
+              "characterName": "재키",
+              "weapon": 15,
+              "weaponName": "단검",
+              "totalGames": 47149,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "지원가",
+      "baseFitRole": "후열 보호",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "지원가-후열 보호 · 선봉 보호 + 지속 견제 연계",
+          "label": "후열 보호 · 선봉 보호 + 지속 견제 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "탱커 선봉 보호 + 원거리 딜러 지속 견제",
+              "occurrences": 1,
+              "games": 412,
+              "avgResidual": 1.813
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 73,
+              "characterName": "샬럿",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "totalGames": 29020,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "지원가-후열 보호 · 전열 유지 · 선봉 지속 압박형 + 추격 지속전 연계",
+          "label": "후열 보호 · 전열 유지 · 선봉 지속 압박형 + 추격 지속전 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "high",
+          "contexts": [
+            {
+              "label": "전사 전열 유지 · 선봉 지속 압박형 + 전사 추격 지속전",
+              "occurrences": 1,
+              "games": 1375,
+              "avgResidual": 3.321
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 69,
+              "characterName": "레니",
+              "weapon": 9,
+              "weaponName": "권총",
+              "totalGames": 91494,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "지원가-후열 보호 · 진입 마무리 + 추격 지속전 연계",
+          "label": "후열 보호 · 진입 마무리 + 추격 지속전 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 진입 마무리 + 전사 추격 지속전",
+              "occurrences": 1,
+              "games": 606,
+              "avgResidual": 5.446
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 41,
+              "characterName": "요한",
+              "weapon": 24,
+              "weaponName": "아르카나",
+              "totalGames": 32315,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "탱커",
+      "baseFitRole": "받아치기 유지",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "탱커-받아치기 유지 · 진입 마무리 + 지속 견제 연계",
+          "label": "받아치기 유지 · 진입 마무리 + 지속 견제 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 진입 마무리 + 원거리 딜러 지속 견제",
+              "occurrences": 1,
+              "games": 582,
+              "avgResidual": 4.645
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 13,
+              "characterName": "쇼우",
+              "weapon": 15,
+              "weaponName": "단검",
+              "totalGames": 38663,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    },
+    {
+      "role": "탱커",
+      "baseFitRole": "선봉 보호",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "탱커-선봉 보호 · 전열 유지 + 장악 폭딜 연계",
+          "label": "선봉 보호 · 전열 유지 + 장악 폭딜 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 전열 유지 + 스킬딜러 장악 폭딜",
+              "occurrences": 1,
+              "games": 306,
+              "avgResidual": 5.219
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 30,
+              "characterName": "일레븐",
+              "weapon": 13,
+              "weaponName": "망치",
+              "totalGames": 99868,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "탱커-선봉 보호 · 전열 유지 + 지속 장악 연계",
+          "label": "선봉 보호 · 전열 유지 + 지속 장악 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 전열 유지 + 스킬딜러 지속 장악",
+              "occurrences": 1,
+              "games": 317,
+              "avgResidual": 4.41
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 53,
+              "characterName": "마커스",
+              "weapon": 13,
+              "weaponName": "망치",
+              "totalGames": 68438,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "탱커-선봉 보호 · 진입 마무리 + 추격 지속전 연계",
+          "label": "선봉 보호 · 진입 마무리 + 추격 지속전 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "전사 진입 마무리 + 전사 추격 지속전",
+              "occurrences": 1,
+              "games": 819,
+              "avgResidual": 4.218
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 85,
+              "characterName": "미르카",
+              "weapon": 13,
+              "weaponName": "망치",
+              "totalGames": 111832,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "탱커-선봉 보호 · 진입 장악 + 지속 견제 연계",
+          "label": "선봉 보호 · 진입 장악 + 지속 견제 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "스킬딜러 진입 장악 + 원거리 딜러 지속 견제",
+              "occurrences": 1,
+              "games": 924,
+              "avgResidual": 4.31
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 68,
+              "characterName": "알론소",
+              "weapon": 1,
+              "weaponName": "글러브",
+              "totalGames": 106332,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "탱커-선봉 보호 · 추격 지속전 + 포킹 장악 연계",
+          "label": "선봉 보호 · 추격 지속전 + 포킹 장악 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "high",
+          "contexts": [
+            {
+              "label": "전사 추격 지속전 + 스킬딜러 포킹 장악",
+              "occurrences": 1,
+              "games": 1017,
+              "avgResidual": 3.82
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 4,
+              "characterName": "매그너스",
+              "weapon": 13,
+              "weaponName": "망치",
+              "totalGames": 109879,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "탱커",
+      "baseFitRole": "전열 유지",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "탱커-전열 유지 · 전열 장악 + 추격 지속전 연계",
+          "label": "전열 유지 · 전열 장악 + 추격 지속전 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "스킬딜러 전열 장악 + 원거리 딜러 추격 지속전",
+              "occurrences": 1,
+              "games": 392,
+              "avgResidual": 4.845
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 20,
+              "characterName": "레녹스",
+              "weapon": 4,
+              "weaponName": "채찍",
+              "totalGames": 123944,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 76,
+              "characterName": "가넷",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "totalGames": 141665,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        },
+        {
+          "id": "탱커-전열 유지 · 포킹 장악 · 전열 연계 + 지속 견제 연계",
+          "label": "전열 유지 · 포킹 장악 · 전열 연계 + 지속 견제 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "스킬딜러 포킹 장악 · 전열 연계 + 원거리 딜러 지속 견제",
+              "occurrences": 1,
+              "games": 317,
+              "avgResidual": 6.003
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 53,
+              "characterName": "마커스",
+              "weapon": 14,
+              "weaponName": "도끼",
+              "totalGames": 96767,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 13,
+              "characterName": "쇼우",
+              "weapon": 19,
+              "weaponName": "창",
+              "totalGames": 22421,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": true
+    },
+    {
+      "role": "탱커",
+      "baseFitRole": "진입 보호",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "탱커-진입 보호 · 포킹 장악 + 추격 지속전 연계",
+          "label": "진입 보호 · 포킹 장악 + 추격 지속전 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "스킬딜러 포킹 장악 + 원거리 딜러 추격 지속전",
+              "occurrences": 1,
+              "games": 337,
+              "avgResidual": 5.569
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 55,
+              "characterName": "에스텔",
+              "weapon": 14,
+              "weaponName": "도끼",
+              "totalGames": 116720,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            },
+            {
+              "characterCode": 4,
+              "characterName": "매그너스",
+              "weapon": 3,
+              "weaponName": "방망이",
+              "totalGames": 40870,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    },
+    {
+      "role": "탱커",
+      "baseFitRole": "진입 장악",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "탱커-진입 장악 · 진입 마무리 + 지속 견제 연계",
+          "label": "진입 장악 · 진입 마무리 + 지속 견제 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "암살자 진입 마무리 + 원거리 딜러 지속 견제",
+              "occurrences": 1,
+              "games": 359,
+              "avgResidual": 5.117
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 50,
+              "characterName": "엘레나",
+              "weapon": 21,
+              "weaponName": "레이피어",
+              "totalGames": 59631,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    },
+    {
+      "role": "탱커",
+      "baseFitRole": "후열 보호",
+      "relevantCompositions": 21,
+      "types": [
+        {
+          "id": "탱커-후열 보호 · 진입 마무리 + 지속 견제 연계",
+          "label": "후열 보호 · 진입 마무리 + 지속 견제 연계",
+          "cohesion": null,
+          "separation": null,
+          "confidence": "medium",
+          "contexts": [
+            {
+              "label": "암살자 진입 마무리 + 원거리 딜러 지속 견제",
+              "occurrences": 1,
+              "games": 591,
+              "avgResidual": 2.533
+            }
+          ],
+          "characters": [
+            {
+              "characterCode": 45,
+              "characterName": "마이",
+              "weapon": 4,
+              "weaponName": "채찍",
+              "totalGames": 52615,
+              "compositionAppearances": 21,
+              "groupAgreement": null
+            }
+          ]
+        }
+      ],
+      "reliablePairCount": 0,
+      "conflictPairCount": 0,
+      "split": false
+    }
+  ]
+}

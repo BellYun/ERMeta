@@ -30,10 +30,13 @@
   "navigation": {
     "ariaMain": "Main navigation",
     "metaAnalysis": "Meta Analysis",
-    "synergyRecommendation": "Team Data",
+    "synergyRecommendation": "Team Recommendations",
     "synergyMatrix": "Synergy Matrix",
     "characterAnalysis": "Character Analysis",
+    "lab": "Lab",
     "characterLab": "Role Groups",
+    "characterLabNew": "New Role Analysis",
+    "characterCompositionLab": "Composition Analysis",
     "dataLab": "Data Lab",
     "patchNotes": "Patch Notes",
     "patchAnalysisNav": "Patch Analysis",
@@ -192,11 +195,24 @@
     },
     "preseasonNotice": "Patch 11.0 uses preseason data and is not provided.",
     "preseasonPolicyNotice": "Preseason matches are not included in our statistics.",
+    "collectionPolicyNotice": "Ranked data for patch 12.1 is being collected.",
+    "collecting": {
+      "subtitle": "Ranked data for patch {patch} is being collected for meta analysis.",
+      "kicker": "Collecting patch {patch}",
+      "title": "The new-season meta analysis is being prepared",
+      "body": "Character rankings and meta analysis will open automatically once the ranked sample is ready."
+    },
     "preparing": {
       "subtitle": "New season statistics are being prepared.",
       "kicker": "Season transition",
       "title": "Statistics will return after regular-season data is collected",
       "body": "Preseason matches are excluded. Meta analysis will resume once the new regular season has a sufficient sample size."
+    },
+    "seasonRecap": {
+      "eyebrow": "Preseason archive",
+      "title": "Revisit the Season 11 meta",
+      "body": "Explore average RP by patch, leading compositions, and the season-long meta flow.",
+      "cta": "Open Season 11 recap"
     },
     "filterCta": "Open filters",
     "topFiveTitle": "Patch risers",
@@ -232,7 +248,6 @@
     "patchOption": "Patch {patch}",
     "noPatch": "No patch data",
     "tiers": {
-      "PLATINUM": "Platinum",
       "DIAMOND": "Diamond",
       "METEORITE": "Meteorite",
       "MITHRIL": "Mithril"
@@ -315,6 +330,20 @@
     "tierSelectorAria": "Select analysis tier",
     "weaponSelectorAria": "Select weapon",
     "weapon": "Weapon",
+    "characterType": "Character type",
+    "characterTypeHint": "Based on Seasons 10–11 composition tendencies",
+    "allWeapons": "All weapons",
+    "internalType": "Subtype",
+    "typeSimilarity": "Type similarity",
+    "sharedContexts": "Shared contexts",
+    "individualProfile": "Individual profile",
+    "sameType": "Same type",
+    "signatureComposition": "Signature composition",
+    "showMoreSignatures": "Show more ({visible}/{total})",
+    "collapseSignatures": "Collapse",
+    "gamesUnit": "games",
+    "typeCharacters": "Characters in this type",
+    "profileUnit": " profiles",
     "all": "All",
     "pickRate": "Pick Rate",
     "winRate": "Win Rate",
@@ -324,11 +353,9 @@
     "emptyPatchData": "Checking samples for this patch.",
     "loadingPatchInfo": "Loading patch data...",
     "tiers": {
-      "PLATINUM": "Platinum",
       "DIAMOND": "Diamond",
       "METEORITE": "Meteorite",
       "MITHRIL": "Mithril+",
-      "IN1000": "Rank 1000",
       "DIAMOND_BELOW": "Diamond and below"
     }
   },

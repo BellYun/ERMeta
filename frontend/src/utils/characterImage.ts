@@ -1,10 +1,10 @@
 import itemImageMap from "../../const/itemImageMap.json";
 
 /**
- * characterNum을 받아서 해당하는 캐릭터의 mini 이미지 경로를 반환합니다.
+ * characterNum을 받아서 해당하는 실험체의 mini 이미지 경로를 반환합니다.
  * 파일명이 통일되어 있으므로 여러 가능한 경로를 시도합니다.
- * @param characterNum 캐릭터 번호 (1부터 시작)
- * @returns 캐릭터 mini 이미지 경로 또는 null
+ * @param characterNum 실험체 번호 (1부터 시작)
+ * @returns 실험체 mini 이미지 경로 또는 null
  */
 export async function getCharacterMiniImagePath(
   characterNum: number | null | undefined

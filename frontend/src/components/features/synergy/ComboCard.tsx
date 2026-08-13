@@ -34,7 +34,7 @@ export function ComboCard({
   onPrefetchAnalysis?: (code: number, rank: number, trigger: "hover" | "viewport") => void;
   onNavigateAnalysis?: (code: number) => void;
 }) {
-  // 선택한 아군을 앞에, 추천 캐릭터를 마지막에 표시
+  // 선택한 아군을 앞에, 추천 실험체를 마지막에 표시
   const { chars, rest } = React.useMemo(() => {
     const allChars = [rec.character1, rec.character2, rec.character3];
     const nextAllies: number[] = [];
@@ -101,7 +101,7 @@ export function ComboCard({
         {rank}
       </span>
 
-      {/* 3캐릭터 */}
+      {/* 3실험체 */}
       <div className="flex items-center gap-1">
         {chars.map((code, i) => {
           const isRecommended = !selectedAllies.includes(code);

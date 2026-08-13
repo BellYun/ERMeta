@@ -4,7 +4,7 @@ import { setRequestLocale } from "next-intl/server";
 import { SynergyShareRedirect } from "@/components/features/synergy-detail/SynergyShareRedirect";
 import { isRouteLocale } from "@/i18n/routing";
 import { localizeMetadata } from "@/lib/routeMetadata";
-import { buildLocalizedAlternates, localizeRoutePath } from "@/lib/seoLocales";
+import { localizeRoutePath } from "@/lib/seoLocales";
 import { parseSynergyShareSelection } from "@/lib/synergyShare";
 import { generateMetadata as generateBaseMetadata } from "@/views/synergy-detail/SynergyDetailPage";
 
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: SynergySharePageProps): Promi
 
   return {
     ...base,
-    alternates: buildLocalizedAlternates("/synergy-detail", locale),
+    alternates: { canonical: localizeRoutePath("/synergy-detail", locale) },
     robots: { index: false, follow: true },
   };
 }

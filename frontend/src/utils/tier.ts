@@ -11,9 +11,8 @@ export enum TierGroup {
   IN1000 = "IN1000",
 }
 
-// 지표 노출용 티어 (DIAMOND_BELOW 제외)
+// 지표 노출용 티어 (다이아몬드 이상)
 export const METRICS_TIER_GROUPS: TierGroup[] = [
-  TierGroup.PLATINUM,
   TierGroup.DIAMOND,
   TierGroup.METEORITE,
   TierGroup.MITHRIL,
@@ -29,7 +28,6 @@ export const METRICS_TIER_GROUPS: TierGroup[] = [
  * 정렬: 낮은 티어 → 높은 티어 순서.
  */
 export const TIER_CUMULATIVE: Record<string, TierGroup[]> = {
-  PLATINUM_PLUS: [TierGroup.PLATINUM, TierGroup.DIAMOND, TierGroup.METEORITE, TierGroup.MITHRIL],
   DIAMOND_PLUS: [TierGroup.DIAMOND, TierGroup.METEORITE, TierGroup.MITHRIL],
   METEORITE_PLUS: [TierGroup.METEORITE, TierGroup.MITHRIL],
   MITHRIL_PLUS: [TierGroup.MITHRIL],
@@ -227,8 +225,8 @@ export function parseTierGroup(value: string | null | undefined): TierGroup | nu
   const validValues = Object.values(TierGroup);
   if (validValues.includes(value as TierGroup)) {
     const parsed = value as TierGroup;
-    // 전반 지표에서는 DIAMOND_BELOW를 사용하지 않음
-    if (parsed === TierGroup.DIAMOND_BELOW) {
+    // 전반 지표에서는 다이아몬드 미만 티어를 사용하지 않음
+    if (parsed === TierGroup.DIAMOND_BELOW || parsed === TierGroup.PLATINUM) {
       return null;
     }
     return parsed;

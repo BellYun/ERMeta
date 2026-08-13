@@ -32,7 +32,7 @@ function formatPercent(value: number) {
 function formatTier(locale: RouteLocale, tier: string) {
   if (tier === "MITHRIL_PLUS") {
     if (locale === "ja") return "ミスリル以上";
-    if (locale === "ko") return "미스릴 이상";
+    if (locale === "ko") return "미스릴+";
     if (locale === "zh-Hans") return "秘银以上";
     if (locale === "zh-Hant") return "秘銀以上";
     return "Mithril+";
@@ -188,7 +188,7 @@ function buildKoreanInsight(
     ? concentrated
       ? `${characterName}는 ${weaponName} 선택 비중이 높아 역할이 비교적 고정됩니다. 역할 조합별 RP에서 같이 쓰인 역할군과 평균 RP를 확인할 수 있습니다.`
       : `${characterName}는 무기 선택지가 분산되어 조합에 따라 역할이 달라집니다. 역할 조합별 RP에서 강하게 나온 역할군과 약하게 나온 역할군을 나눠 볼 수 있습니다.`
-    : `${characterName}는 무기별 표본이 부족해 역할 조합별 RP와 전체 캐릭터 지표를 함께 봐야 합니다.`;
+    : `${characterName}는 무기별 표본이 부족해 역할 조합별 RP와 전체 실험체 지표를 함께 봐야 합니다.`;
   const compositionReason = roleComboInsight
     ? `${roleComboInsight.pickReason}${
         roleComboInsight.weakReason ? `\n\n${roleComboInsight.weakReason}` : ""
@@ -204,7 +204,7 @@ function buildKoreanInsight(
       : "픽률은 확보되어 있지만 조합과 무기 선택에 따라 결과가 달라질 수 있습니다.",
     weapon && weapon.totalGames < 200
       ? "주력 무기 표본이 작아 무기별 세부 수치의 변동 폭이 큽니다."
-      : "무기별 수치는 전체 캐릭터 지표와 함께 비교합니다.",
+      : "무기별 수치는 전체 실험체 지표와 함께 비교합니다.",
   ];
 
   return {

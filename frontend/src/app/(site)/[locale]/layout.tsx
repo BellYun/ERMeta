@@ -9,7 +9,7 @@ import { FontStylesheetLinks } from "@/components/FontStylesheetLinks";
 import { L10nProvider } from "@/components/L10nProvider";
 import { RootDocumentExtras } from "@/components/RootDocumentExtras";
 import { ThemeInitScript } from "@/components/ThemeInitScript";
-import { getStatsPatchVersions } from "@/data/patch-notes";
+import { getAllPatchVersions } from "@/data/patch-notes";
 import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
 import { geistSans } from "@/lib/geistFont";
 import { getPatchAnalysisVersions } from "@/lib/patchAnalysis";
@@ -47,10 +47,10 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
 
   const language = LANGUAGE_BY_ROUTE_LOCALE[locale];
   const initialMessages = await loadIntlMessages(language);
+  const structuredData = buildWebsiteStructuredData(language, locale, initialMessages);
   const initialL10nSeed = loadL10nSeed(language);
   const htmlLang = HTML_LANG_BY_LANGUAGE[language] ?? "ko";
-  const structuredData = await buildWebsiteStructuredData(language, locale);
-  const currentPatch = getStatsPatchVersions()[0] ?? "";
+  const currentPatch = getAllPatchVersions()[0] ?? "";
   const patchAnalysisPatch = getPatchAnalysisVersions()[0] ?? "";
 
   return (

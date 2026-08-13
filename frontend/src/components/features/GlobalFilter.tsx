@@ -14,11 +14,8 @@ export function GlobalFilter() {
   const t = useTranslations("globalFilter");
   const tierOptions = React.useMemo(
     () => [
-      { value: "DIAMOND", label: t("tiers.DIAMOND") },
       { value: "DIAMOND_PLUS", label: `${t("tiers.DIAMOND")}+` },
-      { value: "METEORITE", label: t("tiers.METEORITE") },
       { value: "METEORITE_PLUS", label: `${t("tiers.METEORITE")}+` },
-      { value: "MITHRIL_PLUS", label: `${t("tiers.MITHRIL")}+` },
     ],
     [t]
   );
@@ -115,7 +112,7 @@ export function GlobalFilter() {
           role="radiogroup"
           aria-label={t("tierAria")}
           aria-orientation="horizontal"
-          className="col-span-3 grid grid-cols-3 gap-1.5"
+          className="col-span-3 grid grid-cols-2 gap-1.5"
         >
           {tierOptions.map(({ value, label }, index) => {
             const isSelected = selectedTier === value;

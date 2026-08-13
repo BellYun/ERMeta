@@ -30,9 +30,12 @@
   "navigation": {
     "ariaMain": "主导航",
     "metaAnalysis": "Meta分析",
-    "synergyRecommendation": "阵容数据",
+    "synergyRecommendation": "阵容推荐",
     "characterAnalysis": "角色分析",
+    "lab": "实验室",
     "characterLab": "角色分组",
+    "characterLabNew": "新版角色分析",
+    "characterCompositionLab": "角色阵容分析",
     "dataLab": "数据实验室",
     "patchNotes": "版本说明",
     "patchAnalysisNav": "版本分析",
@@ -145,6 +148,13 @@
     },
     "preseasonNotice": "11.0 为季前赛数据，因此不提供。",
     "preseasonPolicyNotice": "季前赛期间的数据不纳入统计。",
+    "collectionPolicyNotice": "正在收集12.1版本的排位数据。",
+    "collecting": {
+      "subtitle": "正在收集12.1版本的排位数据用于版本分析。",
+      "kicker": "正在收集{patch}版本",
+      "title": "正在准备新赛季版本分析",
+      "body": "排位样本充足后，将自动开放角色排名和版本分析。"
+    },
     "preparing": {
       "subtitle": "新赛季统计正在准备中。",
       "kicker": "赛季过渡说明",
@@ -224,7 +234,6 @@
     "patchOption": "版本 {patch}",
     "noPatch": "暂无版本数据",
     "tiers": {
-      "PLATINUM": "白金",
       "DIAMOND": "钻石",
       "METEORITE": "陨石",
       "MITHRIL": "秘银"
@@ -352,6 +361,20 @@
     "tierSelectorAria": "选择分析段位",
     "weaponSelectorAria": "选择武器",
     "weapon": "武器",
+    "characterType": "角色类型",
+    "characterTypeHint": "基于第10、11赛季阵容倾向",
+    "allWeapons": "全部武器",
+    "internalType": "内部类型",
+    "typeSimilarity": "类型相似度",
+    "sharedContexts": "共同细分阵容",
+    "individualProfile": "独立档案",
+    "sameType": "同类型",
+    "signatureComposition": "代表上升阵容",
+    "showMoreSignatures": "显示更多 ({visible}/{total})",
+    "collapseSignatures": "收起",
+    "gamesUnit": "场",
+    "typeCharacters": "该类型角色",
+    "profileUnit": "个档案",
     "all": "全部",
     "pickRate": "选取率",
     "winRate": "胜率",
@@ -361,11 +384,9 @@
     "emptyPatchData": "正在确认该版本的样本。",
     "loadingPatchInfo": "正在加载版本数据...",
     "tiers": {
-      "PLATINUM": "白金",
       "DIAMOND": "钻石",
       "METEORITE": "陨石",
       "MITHRIL": "秘银+",
-      "IN1000": "前1000",
       "DIAMOND_BELOW": "钻石及以下"
     }
   },
