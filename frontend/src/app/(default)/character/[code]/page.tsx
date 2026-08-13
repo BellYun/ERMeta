@@ -5,6 +5,7 @@ import { CHARACTER_CODES } from "@/components/features/character-analysis/consta
 import { getStatsPatchVersions } from "@/data/patch-notes";
 import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
 import { getCachedCharacterStats } from "@/lib/characterStats";
+import { DEFAULT_CHARACTER_ANALYSIS_TIER } from "@/lib/characterTier";
 import { DEFAULT_LANGUAGE } from "@/lib/detectLanguage";
 import { buildDefaultAlternates } from "@/lib/seoLocales";
 import { loadL10nMap } from "@/lib/serverL10n";
@@ -35,14 +36,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (name && !name.startsWith("코드:")) {
     const stats = currentPatch
-      ? await getCachedCharacterStats(code, currentPatch, "DIAMOND_PLUS")
+      ? await getCachedCharacterStats(code, currentPatch, DEFAULT_CHARACTER_ANALYSIS_TIER)
       : null;
     const title = currentPatch
       ? `${name} 빌드/특성/무기 통계 - 이터널리턴 ${currentPatch}`
       : t("titleWithName", { name });
     const description =
       stats && stats.totalGames > 0
-        ? `이터널리턴 ${name} ${currentPatch} 패치 다이아 이상 통계. 승률 ${stats.winRate.toFixed(1)}%, 픽률 ${stats.pickRate.toFixed(1)}%, 평균 RP ${stats.averageRP.toFixed(1)}, 무기와 조합 데이터.`
+        ? `이터널리턴 ${name} ${currentPatch} 패치 플레티넘 이상 통계. 승률 ${stats.winRate.toFixed(1)}%, 픽률 ${stats.pickRate.toFixed(1)}%, 평균 RP ${stats.averageRP.toFixed(1)}, 무기와 조합 데이터.`
         : t("descriptionWithName", { name });
 
     return {
@@ -126,8 +127,12 @@ export default async function DefaultCharacterPage({ params }: Props) {
   const patches = getStatsPatchVersions();
   const [currentPatch, previousPatch] = patches;
   const [initialStats, initialPrevStats] = await Promise.all([
-    currentPatch ? getCachedCharacterStats(code, currentPatch, "DIAMOND_PLUS") : null,
-    previousPatch ? getCachedCharacterStats(code, previousPatch, "DIAMOND_PLUS") : null,
+    currentPatch
+      ? getCachedCharacterStats(code, currentPatch, DEFAULT_CHARACTER_ANALYSIS_TIER)
+      : null,
+    previousPatch
+      ? getCachedCharacterStats(code, previousPatch, DEFAULT_CHARACTER_ANALYSIS_TIER)
+      : null,
   ]);
 
   return (

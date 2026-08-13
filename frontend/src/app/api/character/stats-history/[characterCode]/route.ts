@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getStatsPatchVersions } from "@/data/patch-notes";
 import { getCacheHeaders, SERVER_ERROR_HEADERS, withCacheObservability } from "@/lib/cache";
 import { getCachedCharacterStats, type CharacterStatsResponse } from "@/lib/characterStats";
+import { DEFAULT_CHARACTER_ANALYSIS_TIER } from "@/lib/characterTier";
 
 interface CharacterStatsHistoryResponse {
   characterCode: number;
@@ -38,7 +39,7 @@ export async function GET(
   }
 
   const { searchParams } = new URL(request.url);
-  const tier = searchParams.get("tier") ?? "DIAMOND";
+  const tier = searchParams.get("tier") ?? DEFAULT_CHARACTER_ANALYSIS_TIER;
   const patches = parseRequestedPatches(searchParams.get("patchVersions"));
 
   try {

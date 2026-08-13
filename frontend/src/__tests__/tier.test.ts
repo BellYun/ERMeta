@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
+  expandCumulativeTier,
   TierGroup,
   getTierFromMMR,
   normalizeTier,
@@ -165,5 +166,15 @@ describe("parseTierGroup", () => {
 
   it("잘못된 값은 null", () => {
     expect(parseTierGroup("INVALID")).toBeNull();
+  });
+});
+describe("expandCumulativeTier", () => {
+  it("플레티넘+는 플레티넘부터 미스릴까지 누적한다", () => {
+    expect(expandCumulativeTier("PLATINUM_PLUS")).toEqual([
+      TierGroup.PLATINUM,
+      TierGroup.DIAMOND,
+      TierGroup.METEORITE,
+      TierGroup.MITHRIL,
+    ]);
   });
 });

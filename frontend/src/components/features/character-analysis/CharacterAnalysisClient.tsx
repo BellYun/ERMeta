@@ -6,6 +6,7 @@ import * as React from "react";
 import { Suspense } from "react";
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route";
 import { useL10n } from "@/components/L10nProvider";
+import { DEFAULT_CHARACTER_ANALYSIS_TIER } from "@/lib/characterTier";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
 import { CharacterHeader } from "./CharacterHeader";
@@ -62,7 +63,7 @@ export function CharacterAnalysisClient({
   const patches = React.useMemo(() => initialPatches ?? [], [initialPatches]);
   const selectablePatches = patches;
 
-  const [selectedTier, setSelectedTier] = React.useState<string>("DIAMOND_PLUS");
+  const [selectedTier, setSelectedTier] = React.useState<string>(DEFAULT_CHARACTER_ANALYSIS_TIER);
   const [selectedPatch, setSelectedPatch] = React.useState<string | null>(() => patches[0] ?? null);
 
   const [selectedWeapon, setSelectedWeapon] = React.useState<number | null>((): number | null => {
@@ -123,7 +124,7 @@ export function CharacterAnalysisClient({
   React.useEffect(() => {
     let cancelled = false;
 
-    if (selectedTier === "DIAMOND_PLUS" && initialStats) {
+    if (selectedTier === DEFAULT_CHARACTER_ANALYSIS_TIER && initialStats) {
       setAllPatchStats(() => {
         const initial: (CharacterStatsResponse | null)[] = Array(patches.length).fill(null);
         if (initialStats) initial[0] = initialStats;

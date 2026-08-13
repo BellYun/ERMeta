@@ -10,6 +10,7 @@ import type {
 import { useL10n } from "@/components/L10nProvider";
 import { analytics } from "@/lib/analytics";
 import { buildFallbackMap, getCharacterImageUrl, resolveCharacterName } from "@/lib/characterMap";
+import { CHARACTER_ANALYSIS_TIERS } from "@/lib/characterTier";
 import type { Tier } from "@/lib/design-tokens";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
@@ -81,13 +82,21 @@ export function CharacterHeader({
   const tierRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
   const weaponRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
 
-  // 누적(+) 티어 옵션 (다이아+ / 메테오+ / 미스릴 이상)
+  // 누적(+) 티어 옵션 (플레티넘+ / 다이아+ / 메테오+ / 미스릴 이상)
   const tierOptionsList = React.useMemo(
-    () => [
-      { value: "DIAMOND_PLUS", label: `${t("tiers.DIAMOND")}+` },
-      { value: "METEORITE_PLUS", label: `${t("tiers.METEORITE")}+` },
-      { value: "MITHRIL_PLUS", label: t("tiers.MITHRIL") },
-    ],
+    () =>
+      CHARACTER_ANALYSIS_TIERS.map((value) => {
+        if (value === "PLATINUM_PLUS") {
+          return { value, label: `${t("tiers.PLATINUM")}+` };
+        }
+        if (value === "DIAMOND_PLUS") {
+          return { value, label: `${t("tiers.DIAMOND")}+` };
+        }
+        if (value === "METEORITE_PLUS") {
+          return { value, label: `${t("tiers.METEORITE")}+` };
+        }
+        return { value, label: t("tiers.MITHRIL") };
+      }),
     [t]
   );
 

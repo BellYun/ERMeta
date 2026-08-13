@@ -5,7 +5,7 @@ import { createServerClient } from "@/lib/supabase";
 import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
 import { expandCumulativeTier } from "@/utils/tier";
 
-const CHARACTER_STATS_CACHE_VERSION = "diamond-plus-without-in1000-v1";
+const CHARACTER_STATS_CACHE_VERSION = "cumulative-tiers-without-in1000-v2";
 
 interface StatRow {
   characterNum: number;
@@ -63,7 +63,7 @@ async function fetchCharacterStatRowsServer(
   tier: string
 ): Promise<StatRow[]> {
   const supabase = createServerClient();
-  // 누적 tier: DIAMOND_PLUS → [DIAMOND, METEORITE, MITHRIL] row 그룹 fetch.
+  // 누적 tier: PLATINUM_PLUS → [PLATINUM, DIAMOND, METEORITE, MITHRIL] row 그룹 fetch.
   // IN1000은 MITHRIL과 별도 합산하지 않고 단독 조회에만 사용한다.
   const tiers = expandCumulativeTier(tier);
 

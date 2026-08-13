@@ -66,6 +66,11 @@ function formatPercent(value: number) {
 }
 
 function formatInsightTier(locale: InsightLocale, tier: string) {
+  if (tier === 'PLATINUM_PLUS') {
+    if (locale === 'ja') return 'プラチナ以上';
+    if (locale === 'ko') return '플레티넘 이상';
+    return 'Platinum+';
+  }
   if (tier === 'MITHRIL_PLUS') {
     if (locale === 'ja') return 'ミスリル以上';
     if (locale === 'ko') return '미스릴 이상';

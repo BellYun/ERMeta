@@ -1,6 +1,8 @@
 import { IsString, IsOptional, IsEnum } from 'class-validator';
 
 export enum TierGroup {
+  PLATINUM = 'PLATINUM',
+  PLATINUM_PLUS = 'PLATINUM_PLUS',
   DIAMOND = 'DIAMOND',
   DIAMOND_PLUS = 'DIAMOND_PLUS',
   METEORITE = 'METEORITE',
@@ -28,7 +30,7 @@ export class CharacterStatsQueryDto {
 
   @IsEnum(TierGroup)
   @IsOptional()
-  tier?: TierGroup = TierGroup.DIAMOND;
+  tier?: TierGroup = TierGroup.PLATINUM_PLUS;
 }
 
 export class CharacterInsightQueryDto extends CharacterStatsQueryDto {
