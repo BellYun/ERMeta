@@ -30,10 +30,11 @@
   "navigation": {
     "ariaMain": "メインナビゲーション",
     "metaAnalysis": "メタ分析",
-    "synergyRecommendation": "編成データ",
+    "synergyRecommendation": "編成おすすめ",
     "synergyMatrix": "シナジーマトリクス",
     "characterAnalysis": "キャラクター分析",
     "characterLab": "ロールグループ",
+    "characterCompositionLab": "キャラクター構成分析",
     "dataLab": "データラボ",
     "patchNotes": "パッチノート",
     "patchAnalysisNav": "パッチ分析",
@@ -146,11 +147,24 @@
     },
     "preseasonNotice": "11.0はプレシーズンデータのため提供していません。",
     "preseasonPolicyNotice": "プレシーズン期間の統計は集計していません。",
+    "collectionPolicyNotice": "パッチ12.1のランクデータを集計しています。",
+    "collecting": {
+      "subtitle": "パッチ{patch}のメタ分析に向けてランクデータを集計しています。",
+      "kicker": "パッチ{patch}集計中",
+      "title": "新シーズンのメタ分析を準備しています",
+      "body": "ランクサンプルが十分に集まると、キャラクター順位とメタ分析を自動で公開します。"
+    },
     "preparing": {
       "subtitle": "新シーズンの統計を準備しています。",
       "kicker": "シーズン移行のお知らせ",
       "title": "レギュラーシーズンのデータ集計後に統計を提供します",
       "body": "プレシーズンの試合は集計せず、新しいレギュラーシーズンのサンプルが十分に集まり次第、メタ分析を再開します。"
+    },
+    "seasonRecap": {
+      "eyebrow": "プレシーズンアーカイブ",
+      "title": "シーズン11のメタを振り返る",
+      "body": "パッチ別の平均RP、主要編成、シーズンを通したメタの流れをまとめました。",
+      "cta": "シーズン11リキャップを見る"
     },
     "filterCta": "フィルターを開く",
     "patchAnalysisCta": "11.5パッチ分析",
@@ -366,7 +380,6 @@
       "DIAMOND": "ダイヤ",
       "METEORITE": "メテオライト",
       "MITHRIL": "ミスリル+",
-      "IN1000": "上位1000",
       "DIAMOND_BELOW": "ダイヤ以下"
     }
   },

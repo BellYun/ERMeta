@@ -7,6 +7,7 @@ import { getPatches } from "@/lib/getPatches";
 import { getCachedHomeMetaStats } from "@/lib/homeMetaServer";
 import {
   DEFAULT_HOME_TIER,
+  HOME_META_CURRENT_PATCH,
   buildHomeMetaView,
   createEmptyHomeMetaStats,
 } from "@/lib/homeMetaShared";
@@ -78,16 +79,18 @@ export default async function LocalizedHomePage({ params }: LocalePageProps) {
 
   setRequestLocale(locale);
 
-  const patches = await getPatches();
-  const defaultPatch = patches[0] ?? "";
-  let homeMetaStats = createEmptyHomeMetaStats(defaultPatch);
+  const availablePatches = await getPatches();
+  const patches = [
+    HOME_META_CURRENT_PATCH,
+    ...availablePatches.filter((patch) => patch !== HOME_META_CURRENT_PATCH),
+  ];
+  const currentPatch = HOME_META_CURRENT_PATCH;
+  let homeMetaStats = createEmptyHomeMetaStats(currentPatch);
 
-  if (defaultPatch) {
-    try {
-      homeMetaStats = await getCachedHomeMetaStats(defaultPatch);
-    } catch {
-      homeMetaStats = createEmptyHomeMetaStats(defaultPatch);
-    }
+  try {
+    homeMetaStats = await getCachedHomeMetaStats(currentPatch);
+  } catch {
+    homeMetaStats = createEmptyHomeMetaStats(currentPatch);
   }
 
   const initialView = buildHomeMetaView(homeMetaStats, DEFAULT_HOME_TIER);
@@ -96,6 +99,7 @@ export default async function LocalizedHomePage({ params }: LocalePageProps) {
     <HomePageContent
       locale={locale}
       patches={patches}
+      currentPatch={currentPatch}
       homeMetaStats={homeMetaStats}
       rankingData={initialView.rankingData}
     />

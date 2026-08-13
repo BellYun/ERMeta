@@ -39,11 +39,24 @@ function normalizeRows(rows: unknown[]): HomeMetaStatRow[] {
 
 async function fetchHomeMetaStats(patchVersion: string): Promise<HomeMetaStats> {
   const supabase = createServerClient();
-  const { data: patches } = await supabase
-    .from("PatchVersion")
-    .select("version")
-    .order("startDate", { ascending: false })
-    .limit(50);
+  const [{ data: patches }, collectionResult] = await Promise.all([
+    supabase
+      .from("PatchVersion")
+      .select("version")
+      .order("startDate", { ascending: false })
+      .limit(50),
+    supabase
+      .from("v2_CharacterStats")
+      .select("totalGames")
+      .eq("patchVersion", patchVersion)
+      .in("tier", HOME_BASE_TIERS),
+  ]);
+  const collectedGames = collectionResult.error
+    ? 0
+    : (collectionResult.data ?? []).reduce(
+        (sum: number, row: { totalGames: number | null }) => sum + Number(row.totalGames ?? 0),
+        0
+      );
 
   const patchList = Array.from(
     new Set([
@@ -95,6 +108,7 @@ async function fetchHomeMetaStats(patchVersion: string): Promise<HomeMetaStats> 
       patchVersion,
       previousPatch,
       rows: [],
+      collectedGames,
     };
   }
 
@@ -102,13 +116,14 @@ async function fetchHomeMetaStats(patchVersion: string): Promise<HomeMetaStats> 
     patchVersion,
     previousPatch,
     rows: normalizeRows(data),
+    collectedGames,
   };
 }
 
 export async function getCachedHomeMetaStats(patchVersion: string): Promise<HomeMetaStats> {
   return unstable_cache(
     async () => fetchHomeMetaStats(patchVersion),
-    ["home-meta-stats", patchVersion],
+    ["home-meta-stats-v3", patchVersion],
     {
       revalidate: 21600,
       tags: ["home-meta-stats", `home-meta-stats:${patchVersion}`],

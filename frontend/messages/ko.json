@@ -30,10 +30,11 @@
   "navigation": {
     "ariaMain": "메인 내비게이션",
     "metaAnalysis": "메타 분석",
-    "synergyRecommendation": "조합 데이터",
+    "synergyRecommendation": "조합 추천",
     "synergyMatrix": "시너지 매트릭스",
     "characterAnalysis": "캐릭터 분석",
     "characterLab": "캐릭터 유형 분석",
+    "characterCompositionLab": "캐릭터 조합 분석",
     "dataLab": "데이터 랩",
     "patchNotes": "패치 노트",
     "patchAnalysisNav": "패치 분석",
@@ -186,11 +187,24 @@
     },
     "preseasonNotice": "11.0 버전은 프리시즌 데이터이므로 제공하지 않습니다.",
     "preseasonPolicyNotice": "프리시즌 기간에는 통계를 집계하지 않습니다.",
+    "collectionPolicyNotice": "패치 12.1 랭크 데이터를 집계하고 있습니다.",
+    "collecting": {
+      "subtitle": "패치 {patch} 메타 분석을 위한 랭크 데이터를 집계하고 있습니다.",
+      "kicker": "패치 {patch} 집계 중",
+      "title": "새 시즌 메타 분석을 준비하고 있습니다",
+      "body": "랭크 표본이 충분히 쌓이면 캐릭터 순위와 메타 분석을 자동으로 공개합니다."
+    },
     "preparing": {
       "subtitle": "새 시즌 통계를 준비하고 있습니다.",
       "kicker": "시즌 전환 안내",
       "title": "정규 시즌 데이터 집계 후 통계를 제공합니다",
       "body": "프리시즌 경기는 집계하지 않으며, 새 정규 시즌의 표본이 충분히 쌓이면 메타 분석을 다시 제공합니다."
+    },
+    "seasonRecap": {
+      "eyebrow": "프리시즌 아카이브",
+      "title": "시즌 11 메타, 한 번에 돌아보기",
+      "body": "패치별 평균 RP와 주요 조합, 시즌 누적 메타 흐름을 정리했습니다.",
+      "cta": "시즌 11 리캡 보기"
     },
     "filterCta": "필터 열기",
     "topFiveTitle": "이번 패치 상승 캐릭터",
@@ -322,7 +336,6 @@
       "DIAMOND": "다이아",
       "METEORITE": "메테오라이트",
       "MITHRIL": "미스릴 이상",
-      "IN1000": "1000위 이내",
       "DIAMOND_BELOW": "다이아 이하"
     }
   },

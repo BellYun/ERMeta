@@ -30,9 +30,10 @@
   "navigation": {
     "ariaMain": "主導覽",
     "metaAnalysis": "Meta分析",
-    "synergyRecommendation": "陣容資料",
+    "synergyRecommendation": "陣容推薦",
     "characterAnalysis": "角色分析",
     "characterLab": "角色分組",
+    "characterCompositionLab": "角色陣容分析",
     "dataLab": "資料實驗室",
     "patchNotes": "版本說明",
     "patchAnalysisNav": "版本分析",
@@ -145,6 +146,13 @@
     },
     "preseasonNotice": "11.0 為季前賽資料，因此不提供。",
     "preseasonPolicyNotice": "季前賽期間的資料不納入統計。",
+    "collectionPolicyNotice": "正在收集12.1版本的牌位資料。",
+    "collecting": {
+      "subtitle": "正在收集12.1版本的牌位資料用於版本分析。",
+      "kicker": "正在收集{patch}版本",
+      "title": "正在準備新賽季版本分析",
+      "body": "牌位樣本充足後，將自動開放角色排名和版本分析。"
+    },
     "preparing": {
       "subtitle": "新賽季統計正在準備中。",
       "kicker": "賽季過渡說明",
@@ -365,7 +373,6 @@
       "DIAMOND": "鑽石",
       "METEORITE": "隕石",
       "MITHRIL": "秘銀+",
-      "IN1000": "前1000",
       "DIAMOND_BELOW": "鑽石及以下"
     }
   },

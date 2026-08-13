@@ -3,17 +3,19 @@ import type { CharacterRankingData, RankingResponse } from "@/lib/ranking";
 import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
 import { calculateMetaChanges, calculateTrendScore } from "@/utils/metaAnalysis";
 
-export type HomeBaseTier = "DIAMOND" | "METEORITE" | "MITHRIL";
-export type HomePlusTier = "DIAMOND_PLUS" | "METEORITE_PLUS" | "MITHRIL_PLUS";
+export type HomeBaseTier = "PLATINUM" | "DIAMOND" | "METEORITE" | "MITHRIL";
+export type HomePlusTier = "PLATINUM_PLUS" | "DIAMOND_PLUS" | "METEORITE_PLUS";
 export type HomeSelectableTier = HomeBaseTier | HomePlusTier;
 
-export const DEFAULT_HOME_TIER: HomePlusTier = "DIAMOND_PLUS";
-export const HOME_BASE_TIERS: HomeBaseTier[] = ["DIAMOND", "METEORITE", "MITHRIL"];
+export const DEFAULT_HOME_TIER: HomePlusTier = "PLATINUM_PLUS";
+export const HOME_BASE_TIERS: HomeBaseTier[] = ["PLATINUM", "DIAMOND", "METEORITE", "MITHRIL"];
+export const HOME_META_CURRENT_PATCH = "12.1";
+export const HOME_META_MIN_COLLECTED_GAMES = 100_000;
 
 export const HOME_PLUS_TIER_MAP: Record<HomePlusTier, HomeBaseTier[]> = {
+  PLATINUM_PLUS: ["PLATINUM", "DIAMOND", "METEORITE", "MITHRIL"],
   DIAMOND_PLUS: ["DIAMOND", "METEORITE", "MITHRIL"],
   METEORITE_PLUS: ["METEORITE", "MITHRIL"],
-  MITHRIL_PLUS: ["MITHRIL"],
 };
 
 export interface HomeMetaStatRow {
@@ -32,6 +34,7 @@ export interface HomeMetaStats {
   patchVersion: string;
   previousPatch: string | null;
   rows: HomeMetaStatRow[];
+  collectedGames?: number;
 }
 
 export interface RisingPickData {
@@ -245,5 +248,6 @@ export function createEmptyHomeMetaStats(patchVersion = ""): HomeMetaStats {
     patchVersion,
     previousPatch: null,
     rows: [],
+    collectedGames: 0,
   };
 }
