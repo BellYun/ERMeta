@@ -68,17 +68,17 @@ const ROLE_LABELS: Record<RouteLocale, Record<string, string>> = {
 
 const COPY = {
   ko: {
-    title: "캐릭터 유형 분석",
+    title: "실험체 유형 분석",
     kicker: "누적 통계 기준",
-    subtitle: "ER&GG는 캐릭터별 시너지 패턴을 누적 랭크 데이터로 다시 묶어 보여줍니다.",
-    body: "비슷한 시너지를 가진 캐릭터끼리 묶었습니다. 그룹별로 어떤 조합에서 잘 나오고 어떤 조합에서 못 나오는지 보세요.",
-    analyzedCharacters: "분석 캐릭터",
+    subtitle: "ER&GG는 실험체별 시너지 패턴을 누적 랭크 데이터로 다시 묶어 보여줍니다.",
+    body: "비슷한 시너지를 가진 실험체끼리 묶었습니다. 그룹별로 어떤 조합에서 잘 나오고 어떤 조합에서 못 나오는지 보세요.",
+    analyzedCharacters: "분석 실험체",
     roles: "직업군",
     totalGroups: "총 시너지 그룹",
     sectionTitle: "직업군 클러스터링",
     sectionMeta: "주요 패치 10 기준 누적",
     groupType: "유형 그룹",
-    characterCount: (count: number) => `캐릭터 ${count}종`,
+    characterCount: (count: number) => `실험체 ${count}종`,
     groupCount: (count: number) => `시너지 그룹 ${count}개`,
     curated: (count: number) => `큐레이팅 ${count}`,
     minSample: "최소 표본",

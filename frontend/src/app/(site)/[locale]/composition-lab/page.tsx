@@ -101,7 +101,7 @@ const SAMPLE_COPY: Record<
   ko: {
     score: "판수 근거점수",
     description:
-      "관측 상승폭 × √판수로 조합과 캐릭터 후보를 다시 정렬합니다. 정확한 유의확률이 아니라, 효과 크기와 반복 판수를 함께 보는 비교용 지표입니다.",
+      "관측 상승폭 × √판수로 조합과 실험체 후보를 다시 정렬합니다. 정확한 유의확률이 아니라, 효과 크기와 반복 판수를 함께 보는 비교용 지표입니다.",
     rankedHint:
       "관측 상승폭과 판수를 함께 반영한 상위 12개입니다. 큰 상승폭이 적은 판수에서 나온 조합보다 반복된 경향을 우선합니다.",
     insufficient: "표본 부족",
@@ -245,7 +245,7 @@ const BOUNDARY_COPY: Record<
   ko: {
     title: "경계 프로필",
     body: "기존 역할군 기준을 섞지 않고 2차 역할군 세부 조합 경향만 비교합니다. 차선 유사도가 {threshold} 이상이고 분류 간격이 {margin} 이내인 경우만 표시합니다.",
-    none: "현재 기준에서 두 유형 사이에 애매하게 걸친 캐릭터가 없습니다.",
+    none: "현재 기준에서 두 유형 사이에 애매하게 걸친 실험체가 없습니다.",
     current: "현재",
     alternative: "차선",
     own: "현재 유형 유사도",
@@ -253,7 +253,7 @@ const BOUNDARY_COPY: Record<
     alternativeScore: "차선 유사도",
     margin: "현재−차선",
     thresholdMargin: "병합 기준까지",
-    nearby: "차선 유형 캐릭터",
+    nearby: "차선 유형 실험체",
   },
   en: {
     title: "Boundary profiles",
@@ -377,9 +377,9 @@ const COPY: Record<
   }
 > = {
   ko: {
-    title: "캐릭터 조합 분석",
-    metadataTitle: "캐릭터 조합 분석 - 시즌 10·11",
-    description: "시즌 10·11에서 역할 조합마다 잘 맞았던 캐릭터 유형과 예시를 보여줍니다.",
+    title: "실험체 조합 분석",
+    metadataTitle: "실험체 조합 분석 - 시즌 10·11",
+    description: "시즌 10·11에서 역할 조합마다 잘 맞았던 실험체 유형과 예시를 보여줍니다.",
     kicker: "시즌 10·11 전적 기준",
     compositionView: "조합별 보기",
     characterView: "조합 성향 그룹 모아보기",
@@ -390,10 +390,10 @@ const COPY: Record<
     reliableTypes: "판수 충분한 조합",
     conditionalSplits: "조합 성향 그룹",
     topCombinations: "성적이 좋았던 내부 역할 조합",
-    conditionalCatalog: "이 조합에서 고르기 좋은 캐릭터 유형",
+    conditionalCatalog: "이 조합에서 고르기 좋은 실험체 유형",
     baseType: "원래 분류",
     partnerFit: "전체 조합 경향",
-    recommendations: "해당 캐릭터",
+    recommendations: "해당 실험체",
     lowSample: "판수 부족",
     adjusted: "조합 상승폭",
     consensusTitle: "1차 유형별 조합 성향 그룹",
@@ -402,16 +402,16 @@ const COPY: Record<
     baseGroups: "1차 유형",
     splitGroups: "복수 성향 유형",
     finalTypes: "조합 성향 그룹",
-    profiles: "캐릭터·무기 수",
+    profiles: "실험체·무기 수",
     recurringContexts: "전체 조합 경향",
     cohesion: "같이 묶인 비율",
     separation: "따로 묶인 비율",
     evidence: "확인한 짝",
     unchanged: "그대로",
     split: "나눠 봄",
-    backToTypes: "캐릭터 유형 분석",
+    backToTypes: "실험체 유형 분석",
     exploreGuide:
-      "먼저 역할 조합을 고르세요. 보고 싶은 역할을 누르면 어울리는 유형과 캐릭터가 나옵니다. 더 궁금한 항목만 펼쳐 판수를 확인할 수 있습니다.",
+      "먼저 역할 조합을 고르세요. 보고 싶은 역할을 누르면 어울리는 유형과 실험체가 나옵니다. 더 궁금한 항목만 펼쳐 판수를 확인할 수 있습니다.",
     roleFocus: "보고 싶은 역할",
     roleFocusHint: "같은 역할 안에서 어떤 유형이 이 조합에 더 어울리는지 비교합니다.",
     sortBy: "보는 순서",
@@ -419,14 +419,14 @@ const COPY: Record<
     sortGames: "많이 나온 순",
     sortName: "이름순",
     typeCount: "개",
-    openEvidence: "캐릭터와 판수 보기",
+    openEvidence: "실험체와 판수 보기",
     fitGuide:
-      "조합 상승폭은 각 캐릭터가 평소보다 이 조합에서 얼마나 더 좋은 성적을 냈는지 보여줍니다. 판수가 적으면 참고만 하세요.",
+      "조합 상승폭은 각 실험체가 평소보다 이 조합에서 얼마나 더 좋은 성적을 냈는지 보여줍니다. 판수가 적으면 참고만 하세요.",
     rankedHint: "이 역할 조합에서 성적이 좋았던 내부 역할 조합 12개입니다. 판수도 함께 확인하세요.",
     rpAverage: "평균 RP",
     groupOverview: "역할별 유형",
     consensusHint:
-      "항목을 펼치면 선호하는 핵심 동료 유형, 해당 성향을 보인 캐릭터, 같이 좋았던 나머지 동료 유형 순서로 확인할 수 있습니다.",
+      "항목을 펼치면 선호하는 핵심 동료 유형, 해당 성향을 보인 실험체, 같이 좋았던 나머지 동료 유형 순서로 확인할 수 있습니다.",
     showAllRanked: "4–12위 더 보기",
     differentPairs: "다르게 묶인 짝",
     checkedCompositions: "확인한 조합",
@@ -741,7 +741,7 @@ const AFFINITY_COPY: Record<
 > = {
   ko: {
     title: "전역 2차 조합 성향군",
-    body: "56개 역할 조합에서 두 동료의 내부 역할군을 A × B 한 세트로 고정해 모든 상승·하락을 비교했습니다. 한 동료만 같은 경우는 같은 문맥으로 보지 않으며, 같은 직업 안에서 정확한 동료 2인 조합의 방향·상승폭이 반복되는 캐릭터만 묶었습니다.",
+    body: "56개 역할 조합에서 두 동료의 내부 역할군을 A × B 한 세트로 고정해 모든 상승·하락을 비교했습니다. 한 동료만 같은 경우는 같은 문맥으로 보지 않으며, 같은 직업 안에서 정확한 동료 2인 조합의 방향·상승폭이 반복되는 실험체만 묶었습니다.",
     combinedBasis: "입장료 보정 + 판수 신뢰 보정 · 시즌 10·11",
     coreGroups: "핵심 성향군",
     independentGroups: "독립 성향",
@@ -873,7 +873,7 @@ const VALIDATION_COPY: Record<
 > = {
   ko: {
     title: "세부 조합 검증",
-    hint: "실제 3인 조합 30판부터 표시하고, 캐릭터별 방향 일치는 100판부터 판정합니다. 분산 자료가 없어 유의확률이 아닌 판수 기반 경향 검증입니다.",
+    hint: "실제 3인 조합 30판부터 표시하고, 실험체별 방향 일치는 100판부터 판정합니다. 분산 자료가 없어 유의확률이 아닌 판수 기반 경향 검증입니다.",
     open: "상대 유형별 검증 보기",
     agreement: "방향 일치",
     checked: "확인",
@@ -881,9 +881,9 @@ const VALIDATION_COPY: Record<
     insufficient: "판정 보류",
     consistent: "그룹 경향 일치",
     mixed: "그룹 내 혼재",
-    actual: "검증용 실제 캐릭터 조합",
+    actual: "검증용 실제 실험체 조합",
     noActual: "30판 이상 실제 조합이 없습니다.",
-    character: "캐릭터",
+    character: "실험체",
     result: "조합 상승폭",
     evidence: "판수 근거",
     reference: "참고",
@@ -2275,7 +2275,7 @@ export default async function CompositionLabPage({
         ) : null}
         {locale === "ko" && isEntryAdjusted ? (
           <p className="border-l-2 border-[var(--color-accent)] pl-3 text-xs leading-5 text-[var(--color-muted-foreground)]">
-            다이아 +48 · 메테오 +54.5 · 미스릴 +60 RP를 복원해 조합 유형과 캐릭터 내부 역할군을
+            다이아 +48 · 메테오 +54.5 · 미스릴 +60 RP를 복원해 조합 유형과 실험체 내부 역할군을
             별도로 다시 계산했습니다.
           </p>
         ) : null}
@@ -2529,7 +2529,7 @@ export default async function CompositionLabPage({
                   {locale === "ko"
                     ? compositionData.combinationGroupingBasis ===
                       "fixed-first-order-composition-contexts"
-                      ? `1차 유형 고정 · 모든 역할 조합 동시 분석 · 핵심 동료 1차 유형별 ${compositionData.displayedSimilarityMinGames ?? 100}판 이상 · 보정 상승폭 +${(compositionData.compositionAffinityMinLift ?? 0.5).toFixed(1)} RP 이상 · 나머지 동료 유형 세부 검증 · 캐릭터 중복 소속 허용`
+                      ? `1차 유형 고정 · 모든 역할 조합 동시 분석 · 핵심 동료 1차 유형별 ${compositionData.displayedSimilarityMinGames ?? 100}판 이상 · 보정 상승폭 +${(compositionData.compositionAffinityMinLift ?? 0.5).toFixed(1)} RP 이상 · 나머지 동료 유형 세부 검증 · 실험체 중복 소속 허용`
                       : `전역 역할군 재계산 ${compositionData.globalSecondOrderIterations}회 · ${compositionData.globalSecondOrderConverged ? "소속 수렴 완료" : compositionData.globalSecondOrderCycleDetected ? "역할군 순환 감지" : "반복 상한 도달"}`
                     : compositionData.combinationGroupingBasis ===
                         "fixed-first-order-composition-contexts"
@@ -2926,7 +2926,7 @@ export default async function CompositionLabPage({
                         {compositionData.combinationGroupingBasis ===
                         "fixed-first-order-composition-contexts" ? (
                           <>
-                            상승 조합 그룹 {group.reliablePairCount} · 소속 캐릭터{" "}
+                            상승 조합 그룹 {group.reliablePairCount} · 소속 실험체{" "}
                             {group.types.reduce((sum, type) => sum + type.characters.length, 0)}
                           </>
                         ) : (
@@ -2994,9 +2994,9 @@ export default async function CompositionLabPage({
                               <dt className="text-[var(--color-muted-foreground)]">
                                 {type.classificationBasis ===
                                 "first-order-composition-affinity-profile"
-                                  ? "소속 캐릭터"
+                                  ? "소속 실험체"
                                   : type.classificationBasis === "full-composition-trend-profile"
-                                    ? "비교한 캐릭터 쌍"
+                                    ? "비교한 실험체 쌍"
                                     : copy.separation}
                               </dt>
                               <dd className="mt-0.5 font-mono text-sm font-bold">

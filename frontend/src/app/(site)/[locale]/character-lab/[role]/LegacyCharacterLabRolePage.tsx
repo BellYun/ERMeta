@@ -76,11 +76,11 @@ const ROLE_LABELS: Record<RouteLocale, Record<SupportedRole, string>> = {
 
 const COPY = {
   ko: {
-    back: "캐릭터 유형 분석",
+    back: "실험체 유형 분석",
     title: (role: string) => `${role} 시너지 그룹`,
     badge: "패치 무관 누적 통계 · 시즌 전체 기준",
     body: (games: string) =>
-      `캐릭터마다 어떤 3인 조합에서 평균 RP가 잘 나오는지 누적 통계로 정리합니다. 표본 ${games}판 미만 조합은 제외합니다.`,
+      `실험체마다 어떤 3인 조합에서 평균 RP가 잘 나오는지 누적 통계로 정리합니다. 표본 ${games}판 미만 조합은 제외합니다.`,
   },
   en: {
     back: "Role Groups",
