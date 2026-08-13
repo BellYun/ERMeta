@@ -207,10 +207,6 @@
   backdrop-filter: none;
 }
 
-.site-header--home .site-announcement {
-  display: none;
-}
-
 .site-header__bar {
   min-height: 3.75rem;
 }
@@ -2190,7 +2186,6 @@ textarea {
   backdrop-filter: none;
 }
 
-.site-header--home .site-announcement,
 .site-header--home .command-trigger {
   display: none;
 }

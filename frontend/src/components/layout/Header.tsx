@@ -4,6 +4,7 @@ import {
   ArrowRight,
   BarChart3,
   ChevronDown,
+  Clock3,
   Gauge,
   Layers,
   Layers3,
@@ -36,6 +37,7 @@ interface HeaderProps {
 
 export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
   const t = useTranslations("header");
+  const tHome = useTranslations("home");
   const tNav = useTranslations("navigation");
   const pathname = usePathname();
   const normalizedPathname = stripRouteLocaleFromPathname(pathname);
@@ -47,6 +49,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
     ? `/patch-analysis/${patchAnalysisPatch}`
     : "/patch-analysis";
   const seasonRecapPath = "/season11-recap";
+  const showRankCollectionNotice = currentPatch === "12.1";
   const showSeasonRecapBanner = normalizedPathname !== seasonRecapPath;
 
   const navLinks: Array<{
@@ -198,6 +201,33 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
         )}
       >
         <LocaleRecommendationBanner />
+
+        {showRankCollectionNotice ? (
+          <div
+            role="status"
+            aria-label={tHome("collecting.title")}
+            className="site-collection-notice border-b-2 border-[var(--color-warning)] bg-[var(--color-surface)] px-3 py-2 text-[var(--color-foreground)] sm:px-4 lg:px-6"
+          >
+            <div className="mx-auto flex w-full max-w-[1440px] items-start justify-center gap-2.5 sm:items-center">
+              <Clock3
+                className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-warning)] sm:mt-0"
+                strokeWidth={2.2}
+                aria-hidden="true"
+              />
+              <div className="flex min-w-0 flex-col gap-0.5 text-xs leading-5 sm:flex-row sm:items-center sm:gap-2 sm:text-sm">
+                <strong className="shrink-0 font-semibold">
+                  {tHome("collecting.kicker", { patch: currentPatch })}
+                </strong>
+                <span className="hidden text-[var(--color-border)] sm:inline" aria-hidden="true">
+                  ·
+                </span>
+                <span className="text-[var(--color-muted-foreground)]">
+                  {tHome("collectionPolicyNotice")}
+                </span>
+              </div>
+            </div>
+          </div>
+        ) : null}
 
         {showSeasonRecapBanner && (
           <Link
