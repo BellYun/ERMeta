@@ -153,6 +153,7 @@ export async function HomePageContent({
             <p
               className="home-search-hero__status-value"
               role={isCollectionPending ? "progressbar" : undefined}
+              aria-label={isCollectionPending ? t("collecting.title") : undefined}
               aria-valuemin={isCollectionPending ? 0 : undefined}
               aria-valuemax={isCollectionPending ? 100 : undefined}
               aria-valuenow={isCollectionPending ? collectionProgress : undefined}
