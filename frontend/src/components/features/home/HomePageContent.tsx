@@ -29,6 +29,8 @@ function formatMetricNumber(value: number) {
   return new Intl.NumberFormat("en-US").format(Math.round(value));
 }
 
+const ESTIMATED_PARTICIPANTS_PER_MATCH = 21;
+
 export async function HomePageContent({
   locale,
   patches,
@@ -44,7 +46,9 @@ export async function HomePageContent({
   const isCollectionReady =
     homeMetaStats.patchVersion === HOME_META_CURRENT_PATCH &&
     collectedGames >= HOME_META_MIN_COLLECTED_GAMES;
-  const trackedMatches = isCollectionReady ? formatMetricNumber(collectedGames) : "";
+  const trackedMatches = isCollectionReady
+    ? formatMetricNumber(collectedGames / ESTIMATED_PARTICIPANTS_PER_MATCH)
+    : "";
   const fallbackPatch = currentPatch || defaultPatch || "12.1";
   const patchAnalysisHref = `/${locale}/patch-analysis/11.5`;
   const isPreseasonPreparing = currentPatch === "12.0";

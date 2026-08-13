@@ -10,7 +10,7 @@ export type HomeSelectableTier = HomeBaseTier | HomePlusTier;
 export const DEFAULT_HOME_TIER: HomePlusTier = "DIAMOND_PLUS";
 export const HOME_BASE_TIERS: HomeBaseTier[] = ["DIAMOND", "METEORITE", "MITHRIL"];
 export const HOME_META_CURRENT_PATCH = "12.1";
-export const HOME_META_MIN_COLLECTED_GAMES = 100_000;
+export const HOME_META_MIN_COLLECTED_GAMES = 50_000;
 
 export const HOME_PLUS_TIER_MAP: Record<HomePlusTier, HomeBaseTier[]> = {
   DIAMOND_PLUS: ["DIAMOND", "METEORITE", "MITHRIL"],
