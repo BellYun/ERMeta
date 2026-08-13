@@ -43,20 +43,21 @@ export default function OGImage() {
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
             <div
               style={{
-                background: "#ffffff",
-                border: "1px solid #d5dbe5",
+                background: "#172033",
+                border: "1px solid #7da2f8",
                 borderRadius: "10px",
                 width: "56px",
                 height: "56px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: "28px",
-                fontWeight: 700,
-                color: "#172033",
+                fontSize: "13px",
+                fontWeight: 800,
+                color: "#f1f5ff",
+                letterSpacing: "-0.8px",
               }}
             >
-              ER
+              ER&amp;GG
             </div>
             <span
               style={{ fontSize: "40px", fontWeight: 700, color: "#0f172a", letterSpacing: "0" }}
