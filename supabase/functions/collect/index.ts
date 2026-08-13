@@ -500,7 +500,11 @@ serve(async (req: Request) => {
       .from("v2_CollectionStatus")
       .select("*");
 
-    let forwardStatus = statuses?.find((s: any) => s.worker_type === "forward");
+    let forwardStatus =
+      statuses?.find((s: any) => s.worker_type === "forward2" && s.status === "active") ??
+      statuses?.find((s: any) => s.worker_type === "forward" && s.status === "active") ??
+      statuses?.find((s: any) => s.worker_type === "forward2") ??
+      statuses?.find((s: any) => s.worker_type === "forward");
 
     if (!forwardStatus) {
       const { data } = await supabase
@@ -517,6 +521,8 @@ serve(async (req: Request) => {
       console.log(`[Forward] 워커 초기화: gameNumber=${FORWARD_START_GAME}`);
     }
 
+    const forwardWorkerType = forwardStatus?.worker_type ?? "forward";
+
     // ── 4. Forward 워커 (신규 게임 → v2_) ─────────────────
     let forwardCollected = 0;
     let forwardSkipped = 0;
@@ -526,7 +532,7 @@ serve(async (req: Request) => {
     if (forwardStatus?.status === "active") {
       const forwardStartMs = Date.now();
       let currentGame = (forwardStatus.last_game_number ?? FORWARD_START_GAME) + 1;
-      console.log(`[Forward] 시작: gameNumber=${currentGame}`);
+      console.log(`[Forward] 시작: worker=${forwardWorkerType}, gameNumber=${currentGame}`);
 
       const byPatch = new Map<string, { participants: any[]; trios: any[] }>();
       let lastGameNumber = currentGame - 1;
@@ -580,7 +586,7 @@ serve(async (req: Request) => {
           consecutive_failures: forwardFailed > 0 ? (forwardStatus.consecutive_failures ?? 0) + forwardFailed : 0,
           updated_at: new Date().toISOString(),
         })
-        .eq("worker_type", "forward");
+        .eq("worker_type", forwardWorkerType);
 
       console.log(`[Forward] 완료: collected=${forwardCollected}, skipped=${forwardSkipped}, failed=${forwardFailed}, lastGame=${lastGameNumber}, hitRecent=${forwardHitRecent}`);
     }
