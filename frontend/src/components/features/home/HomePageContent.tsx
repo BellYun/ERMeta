@@ -46,6 +46,10 @@ export async function HomePageContent({
   const isCollectionReady =
     homeMetaStats.patchVersion === HOME_META_CURRENT_PATCH &&
     collectedGames >= HOME_META_MIN_COLLECTED_GAMES;
+  const collectionProgress = Math.min(
+    100,
+    Math.floor((collectedGames / HOME_META_MIN_COLLECTED_GAMES) * 100)
+  );
   const trackedMatches = isCollectionReady
     ? formatMetricNumber(collectedGames / ESTIMATED_PARTICIPANTS_PER_MATCH)
     : "";
@@ -123,7 +127,10 @@ export async function HomePageContent({
             </nav>
           </div>
 
-          <aside className="home-search-hero__status" aria-label={t("matchMetric")}>
+          <aside
+            className="home-search-hero__status"
+            aria-label={isCollectionPending ? t("collecting.title") : t("matchMetric")}
+          >
             <div className="home-search-hero__status-head">
               <span className="home-search-hero__pulse" aria-hidden="true" />
               <span>
@@ -143,8 +150,18 @@ export async function HomePageContent({
                     ? t("collecting.title")
                     : t("fallback.title")}
             </p>
-            <p className="home-search-hero__status-value">
-              {showHomeStats ? trackedMatches : isCollectionPending ? fallbackPatch : fallbackPatch}
+            <p
+              className="home-search-hero__status-value"
+              role={isCollectionPending ? "progressbar" : undefined}
+              aria-valuemin={isCollectionPending ? 0 : undefined}
+              aria-valuemax={isCollectionPending ? 100 : undefined}
+              aria-valuenow={isCollectionPending ? collectionProgress : undefined}
+            >
+              {showHomeStats
+                ? trackedMatches
+                : isCollectionPending
+                  ? `${collectionProgress}%`
+                  : fallbackPatch}
             </p>
             <p className="home-search-hero__status-body">
               {isPreseasonPreparing

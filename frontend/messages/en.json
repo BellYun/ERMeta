@@ -195,12 +195,12 @@
     },
     "preseasonNotice": "Patch 11.0 uses preseason data and is not provided.",
     "preseasonPolicyNotice": "Preseason matches are not included in our statistics.",
-    "collectionPolicyNotice": "Ranked data for patch 12.1 is being collected.",
+    "collectionPolicyNotice": "Because Eternal Return ranked play is locked, collection begins at 00:00 KST on August 15 and meta analysis may be published later than usual.",
     "collecting": {
       "subtitle": "Ranked data for patch {patch} is being collected for meta analysis.",
       "kicker": "Collecting patch {patch}",
       "title": "The new-season meta analysis is being prepared",
-      "body": "Character rankings and meta analysis will open automatically once the ranked sample is ready."
+      "body": "After Eternal Return ranked play unlocks, data collection begins at 00:00 KST on August 15. Character rankings and meta analysis will be published after a sufficient sample is collected."
     },
     "preparing": {
       "subtitle": "New season statistics are being prepared.",

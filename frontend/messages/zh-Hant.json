@@ -148,12 +148,12 @@
     },
     "preseasonNotice": "11.0 為季前賽資料，因此不提供。",
     "preseasonPolicyNotice": "季前賽期間的資料不納入統計。",
-    "collectionPolicyNotice": "正在收集12.1版本的牌位資料。",
+    "collectionPolicyNotice": "由於永恆輪迴牌位模式暫時鎖定，資料將從8月15日00:00（KST）開始收集，版本分析可能會比平時稍晚公開。",
     "collecting": {
       "subtitle": "正在收集12.1版本的牌位資料用於版本分析。",
       "kicker": "正在收集{patch}版本",
       "title": "正在準備新賽季版本分析",
-      "body": "牌位樣本充足後，將自動開放角色排名和版本分析。"
+      "body": "永恆輪迴牌位模式解鎖後，將從8月15日00:00（KST）開始收集資料，樣本量充足後再公開角色排名和版本分析。"
     },
     "preparing": {
       "subtitle": "新賽季統計正在準備中。",
