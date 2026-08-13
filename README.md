@@ -208,6 +208,7 @@ ERMeta/
 ├── backend/                       # NestJS API, Redis, 수집·가공
 ├── supabase/                      # Edge Functions
 ├── desktop/                       # Electron 데스크톱 클라이언트
+├── knowledge/eternal-return/      # 게임·데이터·커뮤니티 도메인 지식
 ├── DATA/                          # 통계 분석 자료
 └── docs/                          # 아키텍처와 운영 문서
 ```
