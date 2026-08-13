@@ -336,7 +336,8 @@ const CHARACTER_TRAITS: Record<number, CompositionTraitKey[]> = {
   74: ["engage", "sustain"],
   75: ["zoneControl", "poke"],
   76: ["engage", "sustain"],
-  77: ["protect", "zoneControl"],
+  // E로 바람 지대를 만들며 진입하고 W 넉백/R 에어본으로 교전을 여는 장악형.
+  77: ["engage", "zoneControl"],
   78: ["engage", "sustain"],
   79: ["poke", "burst"],
   80: ["engage", "sustain"],
@@ -346,7 +347,7 @@ const CHARACTER_TRAITS: Record<number, CompositionTraitKey[]> = {
   84: ["zoneControl", "burst"],
   85: ["engage", "peel"],
   86: ["engage", "sustain"],
-  87: ["zoneControl", "protect"],
+  87: ["zoneControl", "sustain"],
   88: ["engage", "sustain"],
   89: ["poke", "burst"],
 };
