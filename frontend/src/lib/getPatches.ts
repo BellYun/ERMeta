@@ -28,7 +28,7 @@ export const getPatches = unstable_cache(
       return getVisibleStatsPatchVersions();
     }
   },
-  ["patches", "patch-notes-v6-visible-from-11-7"],
+  ["patches", "patch-notes-v7-visible-from-11-1"],
   {
     revalidate: 21600,
     tags: ["patches"],
