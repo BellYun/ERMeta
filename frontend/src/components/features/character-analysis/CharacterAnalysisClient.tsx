@@ -87,7 +87,7 @@ function CharacterWeaponPortrait({
       {weaponImage ? (
         <span
           className={cn(
-            "absolute -bottom-1 -right-1 grid place-items-center rounded-full border border-white/25 bg-slate-950 shadow-sm",
+            "weapon-icon-backdrop absolute -bottom-1 -right-1 grid place-items-center rounded-full border shadow-sm",
             isLarge ? "h-7 w-7" : "h-5 w-5"
           )}
           title={member.weaponName}
@@ -197,6 +197,16 @@ function readWeaponFromLocation(): number | null {
   return Number.isFinite(weapon) ? weapon : null;
 }
 
+function replaceWeaponInLocation(weapon: number | null) {
+  const url = new URL(window.location.href);
+  if (weapon != null) {
+    url.searchParams.set("weapon", String(weapon));
+  } else {
+    url.searchParams.delete("weapon");
+  }
+  window.history.replaceState(null, "", url.pathname + url.search + url.hash);
+}
+
 export function CharacterAnalysisClient({
   initialPatches,
   initialStats,
@@ -224,18 +234,18 @@ export function CharacterAnalysisClient({
     const requestedWeapon = readWeaponFromLocation();
     const weapon = requestedWeapon ?? getRepresentativeWeaponCode(code);
     setSelectedWeapon(weapon);
+
+    // 클라이언트 라우팅은 서버 Proxy redirect를 거치지 않을 수 있으므로
+    // 대표 무기 선택 상태를 현재 URL에도 명시한다.
+    if (requestedWeapon == null && weapon != null) {
+      replaceWeaponInLocation(weapon);
+    }
   }, [code]);
 
   // 무기 변경 시 URL 파라미터 동기화
   const handleWeaponChange = React.useCallback((weapon: number | null) => {
     setSelectedWeapon(weapon);
-    const url = new URL(window.location.href);
-    if (weapon != null) {
-      url.searchParams.set("weapon", String(weapon));
-    } else {
-      url.searchParams.delete("weapon");
-    }
-    window.history.replaceState(null, "", url.pathname + url.search);
+    replaceWeaponInLocation(weapon);
   }, []);
 
   const [allPatchStats, setAllPatchStats] = React.useState<(CharacterStatsResponse | null)[]>(

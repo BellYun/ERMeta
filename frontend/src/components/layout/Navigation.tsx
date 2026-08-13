@@ -12,6 +12,7 @@ import {
   Trophy,
   type LucideIcon,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -153,15 +154,17 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
         onClick={onNavigate}
         className="flex items-center gap-3 px-2"
       >
-        <div className="flex h-11 w-11 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] text-sm font-bold text-[var(--color-foreground)]">
-          ER
-        </div>
+        <Image
+          src="/brand/ergg-mark.svg"
+          alt=""
+          width={44}
+          height={44}
+          className="h-11 w-11 shrink-0"
+          priority
+        />
         <div className="min-w-0">
           <p className="text-[1.25rem] font-bold text-[var(--color-foreground)]">
             {tHeader("logoTitle")}
-          </p>
-          <p className="text-[11px] text-[var(--color-muted-foreground)]">
-            {tHeader("logoSubtitle")}
           </p>
         </div>
       </Link>
