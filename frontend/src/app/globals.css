@@ -1204,6 +1204,11 @@ html[data-theme="dark"] .char-card.home-pick-card:hover {
   box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--color-accent) 76%, transparent);
 }
 
+.weapon-icon-backdrop {
+  border-color: rgb(255 255 255 / 18%);
+  background-color: #0f172a;
+}
+
 .data-table-highlight {
   background: color-mix(in srgb, var(--color-accent-muted) 94%, var(--color-surface));
 }
@@ -2543,7 +2548,7 @@ body,
 }
 
 /* Hallmark · full-app typography accessibility pass
- * scale: body=17px · support=15px · labels=13–14px · design-system: design.md
+ * scale: body=16px · support=14px · labels=13–13.5px · design-system: design.md
  */
 
 .app-shell {
@@ -2551,7 +2556,7 @@ body,
   line-height: 1.6;
 }
 
-.app-main > article :where(p, li) {
+.app-main > article :where(p, li):not(.synergy-results-compact *) {
   font-size: var(--text-base);
   line-height: 1.7;
 }
@@ -2570,11 +2575,14 @@ body,
     [class*="text-[10.5px]"],
     [class*="text-[11px]"],
     [class*="text-[11.5px]"]
-  ) {
+  ):not(.synergy-results-compact *) {
   font-size: var(--text-data-min);
 }
 
-.app-shell :where([class*="text-[12px]"], [class*="text-[12.5px]"], [class*="text-[13px]"]) {
+.app-shell
+  :where([class*="text-[12px]"], [class*="text-[12.5px]"], [class*="text-[13px]"]):not(
+    .synergy-results-compact *
+  ) {
   font-size: var(--text-xs);
 }
 
@@ -2604,7 +2612,7 @@ body,
   font-size: var(--text-data-min);
 }
 
-.app-shell .dashboard-tab,
+.app-shell .dashboard-tab:not(.synergy-results-compact *),
 .app-shell .dashboard-kicker,
 .app-main th {
   font-size: var(--text-xs);
