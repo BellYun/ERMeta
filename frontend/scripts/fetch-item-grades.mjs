@@ -47,5 +47,7 @@ const sorted = Object.fromEntries(
   Object.entries(gradeMap).sort(([a], [b]) => Number(a) - Number(b))
 );
 
-writeFileSync(OUTPUT_PATH, JSON.stringify(sorted, null, 2), "utf-8");
-console.log(`[fetch-item-grades] 저장 완료: ${OUTPUT_PATH} (${Object.keys(sorted).length}개 아이템)`);
+writeFileSync(OUTPUT_PATH, `${JSON.stringify(sorted, null, 2)}\n`, "utf-8");
+console.log(
+  `[fetch-item-grades] 저장 완료: ${OUTPUT_PATH} (${Object.keys(sorted).length}개 아이템)`
+);

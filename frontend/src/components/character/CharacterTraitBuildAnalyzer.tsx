@@ -7,6 +7,7 @@ import { useL10n } from "@/components/L10nProvider";
 import { useTraitNames } from "@/hooks/useTraitNames";
 import { cn } from "@/lib/utils";
 import { TierGroup } from "@/utils/tier";
+import { hasTraitIcon } from "@/utils/traitCodes";
 
 // ─── 특성 그룹 분류 ───────────────────────────────────────────────────────────
 
@@ -136,7 +137,13 @@ function TraitIcon({
           !isEmpty && pickRate >= 30 ? "ring-1 ring-[var(--color-stat-up)]/60" : ""
         )}
       >
-        {!imgError ? (
+        {!hasTraitIcon(code) ? (
+          <span
+            aria-hidden="true"
+            className="inline-flex rounded-sm bg-[var(--color-surface-2)]"
+            style={{ width: size, height: size }}
+          />
+        ) : !imgError ? (
           <Image
             src={`/TraitSkill/TraitSkillIcon_${code}.png`}
             alt={name ?? String(code)}

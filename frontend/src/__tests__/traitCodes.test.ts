@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { getTraitGroup } from "@/utils/traitCodes";
+import {
+  getTraitGroup,
+  hasTraitIcon,
+  TRAIT_CORES,
+  TRAIT_SUBS_SLOT1,
+  TRAIT_SUBS_SLOT2,
+} from "@/utils/traitCodes";
 
 describe("getTraitGroup", () => {
   it("null이면 unknown", () => {
@@ -23,13 +29,24 @@ describe("getTraitGroup", () => {
   });
 
   it("support 메인 특성 (prefix 72)", () => {
-    expect(getTraitGroup(7200101)).toBe("support");
+    expect(getTraitGroup(7211301)).toBe("support");
     expect(getTraitGroup(7200301)).toBe("support");
+  });
+
+  it("패치 후 폭발 선인장과 초재생의 지원 슬롯을 반영", () => {
+    expect(TRAIT_CORES.support).toEqual([7211301, 7200201, 7200301, 7200501]);
+    expect(TRAIT_SUBS_SLOT1.support).toEqual([7211001, 7210101, 7211401, 7200101]);
   });
 
   it("chaos 메인 특성 (prefix 73)", () => {
     expect(getTraitGroup(7300101)).toBe("chaos");
     expect(getTraitGroup(7300201)).toBe("chaos");
+  });
+
+  it("천상의 수집품은 chaos 보조 2슬롯에 포함", () => {
+    expect(TRAIT_SUBS_SLOT2.chaos).toContain(7310701);
+    expect(hasTraitIcon(7310701)).toBe(true);
+    expect(hasTraitIcon(7310501)).toBe(true);
   });
 
   it("sub 70107xx는 chaos 오버라이드 (havoc prefix지만 chaos)", () => {

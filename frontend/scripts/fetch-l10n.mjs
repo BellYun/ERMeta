@@ -12,13 +12,7 @@ const SEPARATOR = "\u2503"; // ┃
 
 // 서비스 노출 언어 화이트리스트 (src/lib/detectLanguage.ts 의 SUPPORTED_LANGUAGES 와 일치 유지).
 // 그 외 언어는 라우트가 없어 dead asset 이 되므로 fetch 하지 않는다.
-const LANGUAGES = [
-  "Korean",
-  "English",
-  "Japanese",
-  "ChineseSimplified",
-  "ChineseTraditional",
-];
+const LANGUAGES = ["Korean", "English", "Japanese", "ChineseSimplified", "ChineseTraditional"];
 
 const apiKey = process.env.BSER_API_KEY;
 if (!apiKey) {
@@ -73,11 +67,11 @@ for (let i = 0; i < LANGUAGES.length; i++) {
     if (!trimmed || trimmed.startsWith("#")) continue;
     const sepIdx = trimmed.indexOf(SEPARATOR);
     if (sepIdx === -1) continue;
-    parsed[trimmed.slice(0, sepIdx)] = trimmed.slice(sepIdx + 1);
+    parsed[trimmed.slice(0, sepIdx)] = trimmed.slice(sepIdx + 1).trimEnd();
   }
 
   // 4단계: 저장
   const outputPath = join(OUTPUT_DIR, `${language}.json`);
-  writeFileSync(outputPath, JSON.stringify(parsed), "utf-8");
+  writeFileSync(outputPath, `${JSON.stringify(parsed)}\n`, "utf-8");
   console.log(`[fetch-l10n] 저장 완료: ${outputPath} (${Object.keys(parsed).length}개 키)`);
 }

@@ -3,16 +3,19 @@
 
 export const L10N_CHUNK_MANIFEST = {
   Korean: {
-    core: "/l10n/chunks/Korean/core.ee5d072212d3.json",
-    "item-names": "/l10n/chunks/Korean/item-names.e7d610b45a64.json",
+    core: "/l10n/chunks/Korean/core.bcd934e4ede3.json",
+    "item-names": "/l10n/chunks/Korean/item-names.5e59b6ad4c65.json",
+    "game-descriptions": "/l10n/chunks/Korean/game-descriptions.21327e4d375d.json",
   },
   English: {
-    core: "/l10n/chunks/English/core.5fb5b36f0aba.json",
-    "item-names": "/l10n/chunks/English/item-names.3f6896ed4586.json",
+    core: "/l10n/chunks/English/core.244585d65e08.json",
+    "item-names": "/l10n/chunks/English/item-names.e5e9fb2c4e77.json",
+    "game-descriptions": "/l10n/chunks/English/game-descriptions.c7c9aef434fc.json",
   },
   Japanese: {
-    core: "/l10n/chunks/Japanese/core.796efd231161.json",
-    "item-names": "/l10n/chunks/Japanese/item-names.71e7d1b43d8a.json",
+    core: "/l10n/chunks/Japanese/core.e578c57de068.json",
+    "item-names": "/l10n/chunks/Japanese/item-names.1a925a71dab8.json",
+    "game-descriptions": "/l10n/chunks/Japanese/game-descriptions.788a807dadb6.json",
   },
 } as const;
 

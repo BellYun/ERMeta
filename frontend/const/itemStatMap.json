@@ -1,0 +1,3162 @@
+{
+  "101104": {
+    "attackPower": 4
+  },
+  "101201": {
+    "attackPower": 10
+  },
+  "101202": {
+    "attackPower": 18
+  },
+  "101301": {
+    "attackPower": 20,
+    "cooldownReduction": 5
+  },
+  "101302": {
+    "attackPower": 23,
+    "maxHp": 40
+  },
+  "101303": {
+    "attackPower": 20,
+    "defense": 12
+  },
+  "101401": {
+    "attackPower": 58,
+    "attackSpeedRatio": 0.2,
+    "cooldownReduction": 10,
+    "moveSpeedRatio": 0.02
+  },
+  "101402": {
+    "attackPower": 25,
+    "cooldownReduction": 10,
+    "moveSpeedRatio": 0.02,
+    "skillAmp": 68
+  },
+  "101404": {
+    "attackPower": 58,
+    "attackSpeedRatio": 0.3
+  },
+  "101405": {
+    "attackPower": 73,
+    "attackSpeedRatio": 0.5,
+    "moveSpeedRatio": 0.02
+  },
+  "101406": {
+    "attackPower": 63,
+    "attackSpeedRatio": 0.1,
+    "maxHp": 140
+  },
+  "101407": {
+    "attackPower": 60,
+    "attackSpeedRatio": 0.15
+  },
+  "101408": {
+    "attackPower": 30,
+    "maxHp": 50,
+    "skillAmp": 82
+  },
+  "101501": {
+    "attackPower": 45,
+    "cooldownReduction": 15,
+    "moveSpeedRatio": 0.02,
+    "skillAmp": 77
+  },
+  "101502": {
+    "attackPower": 66,
+    "attackSpeedRatio": 0.2,
+    "cooldownReduction": 10
+  },
+  "101503": {
+    "adaptiveForce": 57,
+    "attackPower": 20,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "moveSpeedRatio": 0.03,
+    "penetrationDefenseRatio": 0.1
+  },
+  "101504": {
+    "attackPower": 45,
+    "moveSpeedRatio": 0.02,
+    "skillAmp": 100
+  },
+  "101701": {
+    "attackPower": 79,
+    "attackSpeedRatio": 0.4,
+    "moveSpeedRatio": 0.02,
+    "penetrationDefenseRatio": 0.07
+  },
+  "101702": {
+    "attackPower": 13,
+    "moveSpeedRatio": 0.03,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 114
+  },
+  "102101": {
+    "attackPower": 11
+  },
+  "102201": {
+    "attackPower": 27
+  },
+  "102301": {
+    "attackPower": 35
+  },
+  "102403": {
+    "attackPower": 38
+  },
+  "102404": {
+    "attackPower": 40,
+    "maxHp": 50
+  },
+  "102405": {
+    "attackPower": 64,
+    "cooldownReduction": 10,
+    "defense": 10
+  },
+  "102406": {
+    "attackPower": 60,
+    "attackSpeedRatio": 0.2
+  },
+  "102407": {
+    "attackPower": 55,
+    "attackSpeedRatio": 0.2,
+    "hpRegenRatio": 0.75,
+    "maxHp": 200
+  },
+  "102408": {
+    "attackPower": 36,
+    "skillAmp": 90
+  },
+  "102409": {
+    "attackPower": 53,
+    "attackSpeedRatio": 0.2
+  },
+  "102410": {
+    "attackPower": 65,
+    "attackSpeedRatio": 0.2,
+    "lifeSteal": 0.05
+  },
+  "102411": {
+    "attackPower": 58,
+    "criticalStrikeChance": 0.29,
+    "criticalStrikeDamage": 0.05
+  },
+  "102412": {
+    "attackPower": 69,
+    "attackSpeedRatio": 0.38,
+    "sightRange": 1
+  },
+  "102413": {
+    "attackPower": 38,
+    "cooldownReduction": 10,
+    "skillAmp": 76
+  },
+  "102501": {
+    "adaptiveForce": 58,
+    "attackPower": 27,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "penetrationDefenseRatio": 0.1
+  },
+  "102502": {
+    "attackPower": 40,
+    "cooldownReduction": 15,
+    "skillAmp": 87
+  },
+  "102503": {
+    "attackPower": 40,
+    "skillAmp": 105
+  },
+  "102504": {
+    "attackPower": 67,
+    "attackSpeedRatio": 0.3,
+    "maxHp": 150
+  },
+  "102701": {
+    "attackPower": 82,
+    "attackSpeedRatio": 0.4,
+    "penetrationDefenseRatio": 0.07
+  },
+  "102702": {
+    "attackPower": 22,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 124
+  },
+  "103201": {
+    "attackPower": 8
+  },
+  "103202": {
+    "attackPower": 12
+  },
+  "103301": {
+    "attackPower": 28,
+    "normalLifeSteal": 0.03
+  },
+  "103302": {
+    "attackPower": 28
+  },
+  "103401": {
+    "attackPower": 48,
+    "attackSpeedRatio": 0.25,
+    "normalLifeSteal": 0.08
+  },
+  "103402": {
+    "attackPower": 64,
+    "attackSpeedRatio": 0.35,
+    "normalLifeSteal": 0.1
+  },
+  "103403": {
+    "attackPower": 31,
+    "cooldownReduction": 10,
+    "lifeSteal": 0.05,
+    "skillAmp": 70
+  },
+  "103404": {
+    "attackPower": 30,
+    "skillAmp": 82
+  },
+  "103501": {
+    "attackPower": 51,
+    "attackSpeedRatio": 0.35
+  },
+  "103502": {
+    "attackPower": 31,
+    "cooldownReduction": 15,
+    "skillAmp": 90
+  },
+  "103503": {
+    "attackPower": 66,
+    "attackSpeedRatio": 0.18
+  },
+  "103504": {
+    "adaptiveForce": 56,
+    "attackPower": 17,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "penetrationDefenseRatio": 0.1
+  },
+  "103505": {
+    "attackPower": 35,
+    "maxHp": 150,
+    "skillAmp": 86
+  },
+  "103506": {
+    "attackPower": 52,
+    "attackSpeedRatio": 0.25,
+    "cooldownReduction": 10
+  },
+  "103507": {
+    "attackPower": 60,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15
+  },
+  "103701": {
+    "attackPower": 72,
+    "attackSpeedRatio": 0.3,
+    "penetrationDefenseRatio": 0.07
+  },
+  "103702": {
+    "attackPower": 16,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 112
+  },
+  "104101": {
+    "attackPower": 16
+  },
+  "104201": {
+    "attackPower": 22
+  },
+  "104301": {
+    "attackPower": 30
+  },
+  "104302": {
+    "attackPower": 25
+  },
+  "104303": {
+    "attackPower": 30,
+    "cooldownReduction": 5
+  },
+  "104401": {
+    "attackPower": 34,
+    "maxHp": 80,
+    "skillAmp": 75
+  },
+  "104402": {
+    "attackPower": 80,
+    "defense": 10,
+    "hpRegenRatio": 0.5
+  },
+  "104403": {
+    "attackPower": 95,
+    "attackSpeedRatio": 0.3
+  },
+  "104404": {
+    "attackPower": 40,
+    "cooldownReduction": 15,
+    "skillAmp": 84
+  },
+  "104405": {
+    "attackPower": 30,
+    "cooldownReduction": 15,
+    "lifeSteal": 0.08,
+    "skillAmp": 86
+  },
+  "104406": {
+    "attackPower": 82,
+    "cooldownReduction": 10
+  },
+  "104407": {
+    "attackPower": 74,
+    "attackSpeedRatio": 0.1,
+    "criticalStrikeChance": 0.22,
+    "criticalStrikeDamage": 0.05
+  },
+  "104408": {
+    "attackPower": 26,
+    "skillAmp": 72
+  },
+  "104409": {
+    "attackPower": 34,
+    "cooldownReduction": 10,
+    "skillAmp": 65
+  },
+  "104501": {
+    "adaptiveForce": 58,
+    "attackPower": 50,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "penetrationDefenseRatio": 0.1
+  },
+  "104502": {
+    "attackPower": 82,
+    "cooldownReduction": 15,
+    "defense": 10
+  },
+  "104503": {
+    "attackPower": 40,
+    "maxHp": 120,
+    "skillAmp": 90
+  },
+  "104504": {
+    "attackPower": 110,
+    "attackSpeedRatio": 0.3
+  },
+  "104701": {
+    "attackPower": 102,
+    "attackSpeedRatio": 0.3,
+    "penetrationDefenseRatio": 0.07
+  },
+  "104702": {
+    "attackPower": 48,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 116
+  },
+  "105103": {
+    "attackPower": 18
+  },
+  "105201": {
+    "attackPower": 38,
+    "uniqueAttackRange": 0.2
+  },
+  "105202": {
+    "attackPower": 35
+  },
+  "105301": {
+    "attackPower": 44
+  },
+  "105302": {
+    "attackPower": 53,
+    "uniqueAttackRange": 0.3
+  },
+  "105401": {
+    "attackPower": 40
+  },
+  "105402": {
+    "attackPower": 44,
+    "cooldownReduction": 10,
+    "skillAmp": 62
+  },
+  "105403": {
+    "attackPower": 80,
+    "maxHp": 120,
+    "uniqueAttackRange": 0.3
+  },
+  "105404": {
+    "attackPower": 50,
+    "skillAmp": 75
+  },
+  "105405": {
+    "attackPower": 80,
+    "attackSpeedRatio": 0.2,
+    "cooldownReduction": 10
+  },
+  "105406": {
+    "attackPower": 78,
+    "attackSpeedRatio": 0.25
+  },
+  "105407": {
+    "attackPower": 75,
+    "attackSpeedRatio": 0.25,
+    "cooldownReduction": 10
+  },
+  "105408": {
+    "attackPower": 85,
+    "attackSpeedRatio": 0.3,
+    "maxHp": 100
+  },
+  "105501": {
+    "attackPower": 55,
+    "cooldownReduction": 15,
+    "skillAmp": 82
+  },
+  "105502": {
+    "adaptiveForce": 59,
+    "attackPower": 50,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "penetrationDefenseRatio": 0.1
+  },
+  "105503": {
+    "attackPower": 55,
+    "skillAmp": 98
+  },
+  "105701": {
+    "attackPower": 99,
+    "attackSpeedRatio": 0.3,
+    "penetrationDefenseRatio": 0.07
+  },
+  "105702": {
+    "attackPower": 50,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 114
+  },
+  "107101": {
+    "attackPower": 15
+  },
+  "107201": {
+    "attackPower": 25
+  },
+  "107301": {
+    "attackPower": 35
+  },
+  "107302": {
+    "attackPower": 29
+  },
+  "107303": {
+    "attackPower": 60
+  },
+  "107401": {
+    "attackPower": 30,
+    "skillAmp": 20
+  },
+  "107402": {
+    "attackPower": 82,
+    "attackSpeedRatio": 0.4,
+    "moveSpeedRatio": 0.02
+  },
+  "107403": {
+    "attackPower": 70,
+    "attackSpeedRatio": 0.25,
+    "moveSpeedRatio": 0.02
+  },
+  "107404": {
+    "attackPower": 40,
+    "cooldownReduction": 15,
+    "defense": 8,
+    "skillAmp": 97
+  },
+  "107405": {
+    "attackPower": 35,
+    "cooldownReduction": 10,
+    "defense": 6,
+    "skillAmp": 75
+  },
+  "107406": {
+    "attackPower": 60,
+    "attackSpeedRatio": 0.2
+  },
+  "107407": {
+    "attackPower": 35,
+    "defense": 6,
+    "skillAmp": 89
+  },
+  "107408": {
+    "attackPower": 82,
+    "maxHp": 120
+  },
+  "107501": {
+    "adaptiveForce": 59,
+    "attackPower": 36,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "defense": 8,
+    "penetrationDefenseRatio": 0.1
+  },
+  "107502": {
+    "attackPower": 40,
+    "defense": 8,
+    "skillAmp": 108
+  },
+  "107701": {
+    "attackPower": 92,
+    "attackSpeedRatio": 0.4,
+    "defense": 8,
+    "penetrationDefenseRatio": 0.07
+  },
+  "107702": {
+    "attackPower": 33,
+    "defense": 8,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 116
+  },
+  "108102": {
+    "attackPower": 15
+  },
+  "108103": {
+    "attackPower": 12
+  },
+  "108202": {
+    "attackPower": 22
+  },
+  "108301": {
+    "attackPower": 27
+  },
+  "108401": {
+    "attackPower": 25,
+    "skillAmp": 53
+  },
+  "108403": {
+    "attackPower": 75,
+    "attackSpeedRatio": 0.3,
+    "normalLifeSteal": 0.1
+  },
+  "108404": {
+    "attackPower": 72,
+    "attackSpeedRatio": 0.4
+  },
+  "108405": {
+    "attackPower": 22
+  },
+  "108501": {
+    "attackPower": 30,
+    "cooldownReduction": 10,
+    "skillAmp": 66
+  },
+  "108502": {
+    "attackPower": 85,
+    "attackSpeedRatio": 0.3,
+    "uniqueAttackRange": 0.2
+  },
+  "108503": {
+    "attackPower": 30,
+    "skillAmp": 92
+  },
+  "108504": {
+    "adaptiveForce": 56,
+    "attackPower": 57,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "penetrationDefenseRatio": 0.1
+  },
+  "108505": {
+    "attackPower": 78,
+    "attackSpeedRatio": 0.25,
+    "cooldownReduction": 10
+  },
+  "108506": {
+    "attackPower": 30,
+    "maxHp": 150,
+    "skillAmp": 86
+  },
+  "108701": {
+    "attackPower": 102,
+    "attackSpeedRatio": 0.4,
+    "penetrationDefenseRatio": 0.07
+  },
+  "108702": {
+    "attackPower": 55,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 114
+  },
+  "109101": {
+    "attackPower": 12
+  },
+  "109201": {
+    "attackPower": 20,
+    "skillAmp": 5
+  },
+  "109202": {
+    "attackPower": 10,
+    "skillAmp": 15
+  },
+  "109401": {
+    "attackPower": 40,
+    "cooldownReduction": 10,
+    "skillAmp": 65
+  },
+  "109402": {
+    "attackPower": 20,
+    "attackSpeedRatio": 0.1,
+    "skillAmp": 33
+  },
+  "109403": {
+    "attackPower": 40,
+    "moveSpeedRatio": 0.02,
+    "skillAmp": 78
+  },
+  "109404": {
+    "attackPower": 40,
+    "attackSpeedRatio": 0.3,
+    "skillAmp": 78
+  },
+  "109405": {
+    "attackPower": 28,
+    "maxHp": 100,
+    "skillAmp": 55
+  },
+  "109406": {
+    "attackPower": 42,
+    "attackSpeedRatio": 0.3,
+    "skillAmp": 95
+  },
+  "109501": {
+    "adaptiveForce": 57,
+    "attackPower": 25,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "penetrationDefenseRatio": 0.1
+  },
+  "109502": {
+    "attackPower": 45,
+    "cooldownReduction": 15,
+    "moveSpeedRatio": 0.02,
+    "skillAmp": 84
+  },
+  "109503": {
+    "attackPower": 30,
+    "maxHp": 150,
+    "skillAmp": 65
+  },
+  "109701": {
+    "attackPower": 25,
+    "attackSpeedRatio": 0.3,
+    "penetrationDefenseRatio": 0.07,
+    "skillAmp": 104
+  },
+  "109702": {
+    "attackPower": 25,
+    "attackSpeedRatio": 0.3,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 116
+  },
+  "110102": {
+    "attackPower": 7
+  },
+  "110201": {
+    "attackPower": 18
+  },
+  "110202": {
+    "attackPower": 20
+  },
+  "110301": {
+    "attackPower": 28
+  },
+  "110302": {
+    "attackPower": 20
+  },
+  "110401": {
+    "attackPower": 35,
+    "defense": 4
+  },
+  "110404": {
+    "attackPower": 20,
+    "skillAmp": 43
+  },
+  "110405": {
+    "attackPower": 64,
+    "attackSpeedRatio": 0.3,
+    "defense": 6
+  },
+  "110406": {
+    "attackPower": 41,
+    "maxHp": 100,
+    "skillAmp": 72
+  },
+  "110407": {
+    "attackPower": 63,
+    "maxHp": 100,
+    "moveSpeedRatio": 0.02
+  },
+  "110408": {
+    "attackPower": 32,
+    "cooldownReduction": 15,
+    "skillAmp": 64
+  },
+  "110409": {
+    "attackPower": 32,
+    "cooldownReduction": 10,
+    "skillAmp": 64
+  },
+  "110410": {
+    "attackPower": 60,
+    "defense": 6,
+    "hpRegenRatio": 0.6
+  },
+  "110411": {
+    "attackPower": 59,
+    "criticalStrikeChance": 0.2,
+    "criticalStrikeDamage": 0.05
+  },
+  "110412": {
+    "attackPower": 78,
+    "attackSpeedRatio": 0.2,
+    "moveSpeedRatio": 0.02
+  },
+  "110501": {
+    "attackPower": 60,
+    "attackSpeedRatio": 0.3
+  },
+  "110502": {
+    "attackPower": 38,
+    "cooldownReduction": 15,
+    "skillAmp": 87
+  },
+  "110503": {
+    "adaptiveForce": 57,
+    "attackPower": 35,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "penetrationDefenseRatio": 0.1
+  },
+  "110504": {
+    "attackPower": 40,
+    "maxHp": 120,
+    "skillAmp": 90
+  },
+  "110701": {
+    "attackPower": 88,
+    "attackSpeedRatio": 0.3,
+    "penetrationDefenseRatio": 0.07
+  },
+  "110702": {
+    "attackPower": 30,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 112
+  },
+  "111201": {
+    "attackPower": 23
+  },
+  "111301": {
+    "attackPower": 31
+  },
+  "111401": {
+    "attackPower": 38,
+    "defense": 3
+  },
+  "111402": {
+    "attackPower": 40,
+    "cooldownReduction": 10,
+    "skillAmp": 82
+  },
+  "111403": {
+    "attackPower": 40,
+    "defense": 6,
+    "skillAmp": 90
+  },
+  "111404": {
+    "attackPower": 50,
+    "attackSpeedRatio": 0.2,
+    "defense": 6,
+    "lifeSteal": 0.08
+  },
+  "111405": {
+    "attackPower": 42,
+    "defense": 8,
+    "skillAmp": 92
+  },
+  "111406": {
+    "attackPower": 53,
+    "attackSpeedRatio": 0.3,
+    "defense": 4
+  },
+  "111501": {
+    "attackPower": 47,
+    "cooldownReduction": 15,
+    "defense": 6,
+    "skillAmp": 82
+  },
+  "111502": {
+    "attackPower": 60,
+    "attackSpeedRatio": 0.4,
+    "cooldownReduction": 10,
+    "defense": 8
+  },
+  "111503": {
+    "adaptiveForce": 57,
+    "attackPower": 23,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "defense": 8,
+    "penetrationDefenseRatio": 0.1
+  },
+  "111504": {
+    "attackPower": 63,
+    "attackSpeedRatio": 0.3,
+    "defense": 8
+  },
+  "111701": {
+    "attackPower": 74,
+    "attackSpeedRatio": 0.35,
+    "defense": 8,
+    "penetrationDefenseRatio": 0.07
+  },
+  "111702": {
+    "attackPower": 20,
+    "defense": 8,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 114
+  },
+  "112105": {
+    "attackPower": 12
+  },
+  "112202": {
+    "attackPower": 18
+  },
+  "112204": {
+    "attackPower": 28,
+    "uniqueAttackRange": 0.2
+  },
+  "112205": {
+    "attackPower": 14
+  },
+  "112301": {
+    "attackPower": 32,
+    "attackSpeedRatio": 0.08
+  },
+  "112302": {
+    "attackPower": 33,
+    "attackSpeedRatio": 0.1,
+    "cooldownReduction": 10,
+    "skillAmp": 70
+  },
+  "112303": {
+    "attackPower": 28,
+    "attackSpeedRatio": 0.15
+  },
+  "112401": {
+    "attackPower": 76,
+    "attackSpeedRatio": 0.2
+  },
+  "112402": {
+    "attackPower": 65,
+    "attackSpeedRatio": 0.2
+  },
+  "112404": {
+    "attackPower": 84,
+    "attackSpeedRatio": 0.3
+  },
+  "112405": {
+    "attackPower": 40,
+    "attackSpeedRatio": 0.2,
+    "cooldownReduction": 10,
+    "skillAmp": 76
+  },
+  "112406": {
+    "attackPower": 78,
+    "attackSpeedRatio": 0.2
+  },
+  "112407": {
+    "attackPower": 40,
+    "skillAmp": 94
+  },
+  "112408": {
+    "attackPower": 33,
+    "attackSpeedRatio": 0.2,
+    "skillAmp": 68
+  },
+  "112501": {
+    "attackPower": 33,
+    "attackSpeedRatio": 0.15,
+    "skillAmp": 81
+  },
+  "112502": {
+    "attackPower": 40,
+    "attackSpeedRatio": 0.2,
+    "cooldownReduction": 15,
+    "skillAmp": 90
+  },
+  "112503": {
+    "adaptiveForce": 54,
+    "attackPower": 45,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "penetrationDefenseRatio": 0.1
+  },
+  "112701": {
+    "attackPower": 91,
+    "attackSpeedRatio": 0.3,
+    "penetrationDefenseRatio": 0.07
+  },
+  "112702": {
+    "attackPower": 40,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 108
+  },
+  "113101": {
+    "attackPower": 11
+  },
+  "113201": {
+    "attackPower": 16
+  },
+  "113202": {
+    "attackPower": 24,
+    "skillAmp": 32
+  },
+  "113203": {
+    "attackPower": 15,
+    "criticalStrikeChance": 0.1
+  },
+  "113205": {
+    "attackPower": 25
+  },
+  "113301": {
+    "attackPower": 29
+  },
+  "113302": {
+    "attackPower": 26,
+    "skillAmp": 34
+  },
+  "113401": {
+    "attackPower": 62,
+    "attackSpeedRatio": 0.4
+  },
+  "113404": {
+    "attackPower": 48,
+    "criticalStrikeDamage": 0.04
+  },
+  "113405": {
+    "attackPower": 31,
+    "skillAmp": 72
+  },
+  "113406": {
+    "attackPower": 31,
+    "cooldownReduction": 15,
+    "skillAmp": 61
+  },
+  "113408": {
+    "attackPower": 41,
+    "cooldownReduction": 10,
+    "skillAmp": 85
+  },
+  "113409": {
+    "attackPower": 30,
+    "cooldownReduction": 10,
+    "skillAmp": 64
+  },
+  "113410": {
+    "attackPower": 56,
+    "attackSpeedRatio": 0.25,
+    "moveSpeedRatio": 0.02
+  },
+  "113411": {
+    "attackPower": 45,
+    "cooldownReduction": 15,
+    "skillAmp": 78
+  },
+  "113412": {
+    "attackPower": 41,
+    "skillAmp": 88
+  },
+  "113501": {
+    "attackPower": 66,
+    "attackSpeedRatio": 0.25
+  },
+  "113502": {
+    "attackPower": 72,
+    "attackSpeedRatio": 0.4
+  },
+  "113503": {
+    "adaptiveForce": 54,
+    "attackPower": 31,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "penetrationDefenseRatio": 0.1
+  },
+  "113701": {
+    "attackPower": 77,
+    "attackSpeedRatio": 0.25,
+    "penetrationDefenseRatio": 0.07
+  },
+  "113702": {
+    "attackPower": 30,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 114
+  },
+  "114101": {
+    "attackPower": 11
+  },
+  "114201": {
+    "attackPower": 15
+  },
+  "114202": {
+    "attackPower": 17
+  },
+  "114203": {
+    "attackPower": 25
+  },
+  "114301": {
+    "attackPower": 30
+  },
+  "114303": {
+    "attackPower": 35
+  },
+  "114401": {
+    "attackPower": 57,
+    "attackSpeedRatio": 0.2
+  },
+  "114403": {
+    "attackPower": 43,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 10,
+    "skillAmp": 67
+  },
+  "114405": {
+    "attackPower": 63,
+    "attackSpeedRatio": 0.4,
+    "normalLifeSteal": 0.1
+  },
+  "114406": {
+    "attackPower": 70,
+    "attackSpeedRatio": 0.3,
+    "moveSpeedRatio": 0.02
+  },
+  "114407": {
+    "attackPower": 45,
+    "moveSpeedRatio": 0.02,
+    "skillAmp": 88
+  },
+  "114501": {
+    "attackPower": 43,
+    "moveSpeedRatio": 0.02,
+    "skillAmp": 72
+  },
+  "114502": {
+    "adaptiveForce": 57,
+    "attackPower": 24,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "penetrationDefenseRatio": 0.1
+  },
+  "114503": {
+    "attackPower": 45,
+    "attackSpeedRatio": 0.4,
+    "cooldownReduction": 10,
+    "skillAmp": 85
+  },
+  "114504": {
+    "attackPower": 67,
+    "attackSpeedRatio": 0.25
+  },
+  "114505": {
+    "attackPower": 80,
+    "attackSpeedRatio": 0.4,
+    "moveSpeedRatio": 0.02,
+    "normalLifeSteal": 0.1
+  },
+  "114701": {
+    "attackPower": 76,
+    "attackSpeedRatio": 0.3,
+    "penetrationDefenseRatio": 0.07
+  },
+  "114702": {
+    "attackPower": 29,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 112
+  },
+  "115101": {
+    "attackPower": 12
+  },
+  "115201": {
+    "attackPower": 30
+  },
+  "115202": {
+    "attackPower": 30
+  },
+  "115302": {
+    "attackPower": 35,
+    "attackSpeedRatio": 0.1
+  },
+  "115303": {
+    "attackPower": 40
+  },
+  "115401": {
+    "attackPower": 45
+  },
+  "115402": {
+    "attackPower": 67,
+    "attackSpeedRatio": 0.3
+  },
+  "115403": {
+    "attackPower": 42,
+    "cooldownReduction": 10,
+    "skillAmp": 68
+  },
+  "115404": {
+    "attackPower": 76,
+    "attackSpeedRatio": 0.18
+  },
+  "115405": {
+    "attackPower": 51,
+    "cooldownReduction": 10,
+    "skillAmp": 86
+  },
+  "115406": {
+    "attackPower": 42,
+    "skillAmp": 73
+  },
+  "115501": {
+    "attackPower": 86,
+    "attackSpeedRatio": 0.35
+  },
+  "115502": {
+    "adaptiveForce": 57,
+    "attackPower": 35,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "penetrationDefenseRatio": 0.1
+  },
+  "115503": {
+    "attackPower": 82,
+    "attackSpeedRatio": 0.48
+  },
+  "115504": {
+    "attackPower": 52,
+    "skillAmp": 96
+  },
+  "115701": {
+    "attackPower": 92,
+    "attackSpeedRatio": 0.4,
+    "penetrationDefenseRatio": 0.07
+  },
+  "115702": {
+    "attackPower": 40,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 112
+  },
+  "116101": {
+    "attackPower": 14
+  },
+  "116201": {
+    "attackPower": 15,
+    "attackSpeedRatio": 0.1
+  },
+  "116202": {
+    "attackPower": 23
+  },
+  "116301": {
+    "attackPower": 29
+  },
+  "116402": {
+    "attackPower": 35,
+    "attackSpeedRatio": 0.1
+  },
+  "116403": {
+    "attackPower": 29,
+    "skillAmp": 88
+  },
+  "116404": {
+    "attackPower": 35,
+    "cooldownReduction": 10,
+    "skillAmp": 67
+  },
+  "116405": {
+    "attackPower": 75,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 10
+  },
+  "116406": {
+    "attackPower": 40,
+    "attackSpeedRatio": 0.3,
+    "lifeSteal": 0.03,
+    "skillAmp": 70
+  },
+  "116407": {
+    "attackPower": 66,
+    "attackSpeedRatio": 0.3
+  },
+  "116408": {
+    "attackPower": 40
+  },
+  "116409": {
+    "attackPower": 23,
+    "skillAmp": 68
+  },
+  "116410": {
+    "attackPower": 77,
+    "attackSpeedRatio": 0.35
+  },
+  "116501": {
+    "attackPower": 85,
+    "attackSpeedRatio": 0.4,
+    "cooldownReduction": 15,
+    "moveSpeedRatio": 0.03
+  },
+  "116502": {
+    "attackPower": 40,
+    "attackSpeedRatio": 0.4,
+    "cooldownReduction": 15,
+    "skillAmp": 86
+  },
+  "116503": {
+    "adaptiveForce": 58,
+    "attackPower": 31,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "penetrationDefenseRatio": 0.1
+  },
+  "116701": {
+    "attackPower": 86,
+    "attackSpeedRatio": 0.35,
+    "penetrationDefenseRatio": 0.07
+  },
+  "116702": {
+    "attackPower": 28,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 116
+  },
+  "117101": {
+    "attackPower": 11
+  },
+  "117201": {
+    "attackPower": 19
+  },
+  "117301": {
+    "attackPower": 46
+  },
+  "117401": {
+    "attackPower": 25
+  },
+  "117402": {
+    "attackPower": 32,
+    "attackSpeedRatio": 0.1
+  },
+  "117403": {
+    "attackPower": 75,
+    "attackSpeedRatio": 0.2,
+    "normalLifeSteal": 0.08
+  },
+  "117404": {
+    "attackPower": 61,
+    "attackSpeedRatio": 0.2
+  },
+  "117405": {
+    "attackPower": 35,
+    "cooldownReduction": 10,
+    "skillAmp": 73
+  },
+  "117406": {
+    "attackPower": 88,
+    "attackSpeedRatio": 0.4
+  },
+  "117407": {
+    "attackPower": 35,
+    "attackSpeedRatio": 0.25,
+    "skillAmp": 78
+  },
+  "117501": {
+    "attackPower": 69,
+    "attackSpeedRatio": 0.35
+  },
+  "117502": {
+    "attackPower": 45,
+    "cooldownReduction": 10,
+    "skillAmp": 84
+  },
+  "117503": {
+    "adaptiveForce": 57,
+    "attackPower": 36,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "penetrationDefenseRatio": 0.1
+  },
+  "117504": {
+    "attackPower": 76,
+    "attackSpeedRatio": 0.3
+  },
+  "117505": {
+    "attackPower": 40,
+    "attackSpeedRatio": 0.3,
+    "skillAmp": 89
+  },
+  "117701": {
+    "attackPower": 93,
+    "attackSpeedRatio": 0.4,
+    "penetrationDefenseRatio": 0.07
+  },
+  "117702": {
+    "attackPower": 25,
+    "attackSpeedRatio": 0.3,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 106
+  },
+  "118101": {
+    "attackPower": 22
+  },
+  "118201": {
+    "attackPower": 30,
+    "sightRange": 1
+  },
+  "118301": {
+    "attackPower": 50,
+    "sightRange": 1
+  },
+  "118401": {
+    "attackPower": 35,
+    "sightRange": 1,
+    "skillAmp": 45
+  },
+  "118402": {
+    "attackPower": 35,
+    "attackSpeedRatio": 0.2,
+    "sightRange": 1
+  },
+  "118403": {
+    "attackPower": 70,
+    "criticalStrikeChance": 0.26,
+    "sightRange": 1
+  },
+  "118404": {
+    "attackPower": 76,
+    "attackSpeedRatio": 0.3,
+    "criticalStrikeChance": 0.33,
+    "sightRange": 1
+  },
+  "118405": {
+    "attackPower": 40,
+    "attackSpeedRatio": 0.15,
+    "cooldownReduction": 10,
+    "sightRange": 1,
+    "skillAmp": 72
+  },
+  "118406": {
+    "attackPower": 73,
+    "attackSpeedRatio": 0.3,
+    "sightRange": 1
+  },
+  "118407": {
+    "attackPower": 40,
+    "attackSpeedRatio": 0.3,
+    "sightRange": 1,
+    "skillAmp": 72
+  },
+  "118501": {
+    "attackPower": 50,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "sightRange": 1.5,
+    "skillAmp": 87
+  },
+  "118502": {
+    "attackPower": 99
+  },
+  "118503": {
+    "attackPower": 84,
+    "attackSpeedRatio": 0.5,
+    "normalLifeSteal": 0.08,
+    "sightRange": 1
+  },
+  "118504": {
+    "adaptiveForce": 59,
+    "attackPower": 28,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "penetrationDefenseRatio": 0.1,
+    "sightRange": 1.5
+  },
+  "118505": {
+    "attackPower": 47,
+    "attackSpeedRatio": 0.3,
+    "sightRange": 1.5,
+    "skillAmp": 92
+  },
+  "118701": {
+    "attackPower": 84,
+    "attackSpeedRatio": 0.3,
+    "penetrationDefenseRatio": 0.07,
+    "sightRange": 1.5
+  },
+  "118702": {
+    "attackPower": 22,
+    "attackSpeedRatio": 0.4,
+    "penetrationDefenseRatio": 0.08,
+    "sightRange": 1.5,
+    "skillAmp": 112
+  },
+  "119101": {
+    "attackPower": 13
+  },
+  "119201": {
+    "attackPower": 25
+  },
+  "119301": {
+    "attackPower": 38,
+    "skillAmp": 85
+  },
+  "119302": {
+    "attackPower": 30
+  },
+  "119401": {
+    "attackPower": 35,
+    "cooldownReduction": 10,
+    "skillAmp": 66
+  },
+  "119402": {
+    "attackPower": 63,
+    "attackSpeedRatio": 0.3
+  },
+  "119403": {
+    "attackPower": 77,
+    "attackSpeedRatio": 0.3,
+    "criticalStrikeChance": 0.33
+  },
+  "119404": {
+    "attackPower": 56,
+    "attackSpeedRatio": 0.15,
+    "criticalStrikeChance": 0.25
+  },
+  "119501": {
+    "adaptiveForce": 57,
+    "attackPower": 33,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "penetrationDefenseRatio": 0.1
+  },
+  "119502": {
+    "attackPower": 38,
+    "cooldownReduction": 15,
+    "skillAmp": 86
+  },
+  "119503": {
+    "attackPower": 40,
+    "skillAmp": 92
+  },
+  "119504": {
+    "attackPower": 79,
+    "attackSpeedRatio": 0.3
+  },
+  "119701": {
+    "attackPower": 89,
+    "attackSpeedRatio": 0.3,
+    "penetrationDefenseRatio": 0.07
+  },
+  "119702": {
+    "attackPower": 30,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 112
+  },
+  "120101": {
+    "attackPower": 5
+  },
+  "120201": {
+    "attackPower": 12
+  },
+  "120301": {
+    "attackPower": 25,
+    "criticalStrikeChance": 0.18
+  },
+  "120302": {
+    "attackPower": 25,
+    "cooldownReduction": 10,
+    "skillAmp": 69
+  },
+  "120303": {
+    "attackPower": 25
+  },
+  "120401": {
+    "attackPower": 57,
+    "criticalStrikeChance": 0.2,
+    "criticalStrikeDamage": 0.03,
+    "normalLifeSteal": 0.06
+  },
+  "120402": {
+    "attackPower": 28,
+    "cooldownReduction": 15,
+    "sightRange": 1,
+    "skillAmp": 84
+  },
+  "120403": {
+    "attackPower": 50,
+    "attackSpeedRatio": 0.4,
+    "criticalStrikeChance": 0.2
+  },
+  "120404": {
+    "attackPower": 62,
+    "criticalStrikeChance": 0.22,
+    "criticalStrikeDamage": 0.09
+  },
+  "120405": {
+    "attackPower": 58,
+    "attackSpeedRatio": 0.33,
+    "criticalStrikeChance": 0.25,
+    "criticalStrikeDamage": 0.07,
+    "moveSpeedRatio": 0.03
+  },
+  "120406": {
+    "attackPower": 28,
+    "maxHp": 100,
+    "skillAmp": 74
+  },
+  "120407": {
+    "attackPower": 25,
+    "skillAmp": 76
+  },
+  "120408": {
+    "attackPower": 57,
+    "attackSpeedRatio": 0.3,
+    "maxHp": 120
+  },
+  "120501": {
+    "attackPower": 30,
+    "sightRange": 1,
+    "skillAmp": 90
+  },
+  "120502": {
+    "adaptiveForce": 58,
+    "attackPower": 8,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "criticalStrikeDamage": 0.12,
+    "penetrationDefenseRatio": 0.1
+  },
+  "120503": {
+    "attackPower": 60,
+    "attackSpeedRatio": 0.3,
+    "maxHp": 150
+  },
+  "120504": {
+    "attackPower": 32,
+    "maxHp": 120,
+    "skillAmp": 86
+  },
+  "120701": {
+    "attackPower": 64,
+    "attackSpeedRatio": 0.3,
+    "criticalStrikeChance": 0.2,
+    "criticalStrikeDamage": 0.1,
+    "penetrationDefenseRatio": 0.07
+  },
+  "120702": {
+    "attackPower": 5,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 116
+  },
+  "121101": {
+    "attackPower": 5
+  },
+  "121201": {
+    "attackPower": 6,
+    "skillAmp": 35
+  },
+  "121202": {
+    "attackPower": 15
+  },
+  "121301": {
+    "attackPower": 20,
+    "maxHp": 120
+  },
+  "121302": {
+    "attackPower": 20,
+    "skillAmp": 37
+  },
+  "121303": {
+    "attackPower": 12,
+    "skillAmp": 45
+  },
+  "121304": {
+    "attackPower": 25,
+    "attackSpeedRatio": 0.2,
+    "normalLifeSteal": 0.08
+  },
+  "121305": {
+    "attackPower": 46
+  },
+  "121306": {
+    "attackPower": 22,
+    "attackSpeedRatio": 0.25
+  },
+  "121401": {
+    "attackPower": 42,
+    "cooldownReduction": 10,
+    "skillAmp": 70
+  },
+  "121402": {
+    "attackPower": 42,
+    "cooldownReduction": 15,
+    "skillAmp": 68
+  },
+  "121403": {
+    "attackPower": 42,
+    "skillAmp": 88
+  },
+  "121404": {
+    "attackPower": 62,
+    "attackSpeedRatio": 0.3,
+    "normalLifeSteal": 0.12
+  },
+  "121405": {
+    "attackPower": 66,
+    "attackSpeedRatio": 0.3
+  },
+  "121406": {
+    "attackPower": 58,
+    "attackSpeedRatio": 0.23
+  },
+  "121407": {
+    "attackPower": 64,
+    "attackSpeedRatio": 0.4
+  },
+  "121501": {
+    "attackPower": 45,
+    "cooldownReduction": 15,
+    "skillAmp": 95
+  },
+  "121502": {
+    "adaptiveForce": 59,
+    "attackPower": 22,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "penetrationDefenseRatio": 0.1
+  },
+  "121503": {
+    "attackPower": 44,
+    "skillAmp": 94
+  },
+  "121504": {
+    "attackPower": 75,
+    "attackSpeedRatio": 0.4,
+    "normalLifeSteal": 0.15
+  },
+  "121701": {
+    "attackPower": 75,
+    "attackSpeedRatio": 0.3,
+    "penetrationDefenseRatio": 0.07
+  },
+  "121702": {
+    "attackPower": 25,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 110
+  },
+  "122101": {
+    "attackPower": 12,
+    "sightRange": 0.5
+  },
+  "122201": {
+    "attackPower": 19,
+    "sightRange": 1
+  },
+  "122301": {
+    "attackPower": 22,
+    "sightRange": 1,
+    "skillAmp": 25
+  },
+  "122302": {
+    "attackPower": 15,
+    "sightRange": 1
+  },
+  "122401": {
+    "attackPower": 25,
+    "sightRange": 1,
+    "skillAmp": 77
+  },
+  "122402": {
+    "attackPower": 55,
+    "attackSpeedRatio": 0.2,
+    "cooldownReduction": 15,
+    "sightRange": 1
+  },
+  "122403": {
+    "attackPower": 63,
+    "attackSpeedRatio": 0.25,
+    "cooldownReduction": 10,
+    "sightRange": 1
+  },
+  "122404": {
+    "attackPower": 55,
+    "attackSpeedRatio": 0.2,
+    "cooldownReduction": 10,
+    "sightRange": 1
+  },
+  "122405": {
+    "attackPower": 22,
+    "cooldownReduction": 10,
+    "sightRange": 1,
+    "skillAmp": 68
+  },
+  "122501": {
+    "attackPower": 45,
+    "sightRange": 1,
+    "skillAmp": 87
+  },
+  "122502": {
+    "adaptiveForce": 57,
+    "attackPower": 28,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "penetrationDefenseRatio": 0.1,
+    "sightRange": 1
+  },
+  "122503": {
+    "attackPower": 72,
+    "attackSpeedRatio": 0.4,
+    "cooldownReduction": 15,
+    "sightRange": 1
+  },
+  "122504": {
+    "attackPower": 43,
+    "cooldownReduction": 15,
+    "sightRange": 1,
+    "skillAmp": 92
+  },
+  "122701": {
+    "attackPower": 77,
+    "attackSpeedRatio": 0.4,
+    "cooldownReduction": 10,
+    "penetrationDefenseRatio": 0.07,
+    "sightRange": 1
+  },
+  "122702": {
+    "attackPower": 25,
+    "penetrationDefenseRatio": 0.08,
+    "sightRange": 1,
+    "skillAmp": 110
+  },
+  "130101": {
+    "attackPower": 5,
+    "cooldownReduction": 5,
+    "skillAmp": 25
+  },
+  "130201": {
+    "attackPower": 13,
+    "cooldownReduction": 5,
+    "skillAmp": 33
+  },
+  "130202": {
+    "attackPower": 8,
+    "cooldownReduction": 5,
+    "skillAmp": 30
+  },
+  "130301": {
+    "attackPower": 25,
+    "cooldownReduction": 5,
+    "skillAmp": 40
+  },
+  "130302": {
+    "attackPower": 23,
+    "cooldownReduction": 5,
+    "healerGiveHpHealRatio": 0.05,
+    "skillAmp": 40
+  },
+  "130303": {
+    "attackPower": 20,
+    "cooldownReduction": 10,
+    "skillAmp": 32
+  },
+  "130304": {
+    "attackPower": 25,
+    "cooldownReduction": 10,
+    "skillAmp": 44
+  },
+  "130401": {
+    "attackPower": 30,
+    "skillAmp": 81
+  },
+  "130402": {
+    "attackPower": 25,
+    "cooldownReduction": 10,
+    "maxHp": 70,
+    "skillAmp": 66
+  },
+  "130403": {
+    "attackPower": 30,
+    "cooldownReduction": 10,
+    "healerGiveHpHealRatio": 0.04,
+    "skillAmp": 63
+  },
+  "130404": {
+    "attackPower": 38,
+    "cooldownReduction": 15,
+    "skillAmp": 68
+  },
+  "130405": {
+    "attackPower": 40,
+    "skillAmp": 95
+  },
+  "130501": {
+    "attackPower": 40,
+    "cooldownReduction": 15,
+    "skillAmp": 93
+  },
+  "130502": {
+    "attackPower": 40,
+    "cooldownReduction": 15,
+    "lifeSteal": 0.06,
+    "penetrationDefenseRatio": 0.1,
+    "skillAmp": 112
+  },
+  "130503": {
+    "attackPower": 35,
+    "cooldownReduction": 15,
+    "healerGiveHpHealRatio": 0.08,
+    "skillAmp": 82
+  },
+  "130504": {
+    "attackPower": 40,
+    "cooldownReduction": 10,
+    "skillAmp": 92
+  },
+  "130701": {
+    "attackPower": 40,
+    "penetrationDefenseRatio": 0.07,
+    "skillAmp": 114
+  },
+  "130702": {
+    "attackPower": 40,
+    "cooldownReduction": 15,
+    "penetrationDefenseRatio": 0.08,
+    "skillAmp": 110
+  },
+  "131201": {
+    "attackPower": 5
+  },
+  "131301": {
+    "attackPower": 40,
+    "attackSpeedRatio": 0.05,
+    "increaseBasicAttackDamageRatioByLv": 0.005
+  },
+  "131302": {
+    "attackPower": 37,
+    "lifeSteal": 0.08,
+    "maxHpByLv": 2
+  },
+  "131303": {
+    "attackPower": 42,
+    "cooldownReduction": 5,
+    "moveSpeedRatio": 0.02
+  },
+  "131401": {
+    "attackPower": 60,
+    "attackSpeedRatio": 0.15,
+    "increaseBasicAttackDamageRatioByLv": 0.008,
+    "uniqueAttackRange": 0.2
+  },
+  "131402": {
+    "attackPower": 52,
+    "lifeSteal": 0.1,
+    "maxHpByLv": 4
+  },
+  "131403": {
+    "attackPower": 68,
+    "cooldownReduction": 15,
+    "moveSpeedRatio": 0.02
+  },
+  "131501": {
+    "attackPower": 66,
+    "attackSpeedRatio": 0.2,
+    "increaseBasicAttackDamageRatioByLv": 0.01,
+    "uniqueAttackRange": 0.2
+  },
+  "131502": {
+    "attackPower": 72,
+    "attackSpeedRatio": 0.3,
+    "increaseBasicAttackDamageRatioByLv": 0.01,
+    "uniqueAttackRange": 0.2,
+    "uniqueTenacity": 0.3
+  },
+  "131503": {
+    "attackPower": 78,
+    "attackSpeedRatio": 0.35,
+    "increaseBasicAttackDamageRatioByLv": 0.01,
+    "penetrationDefenseRatio": 0.12,
+    "uniqueAttackRange": 0.2
+  },
+  "131504": {
+    "attackPower": 52,
+    "lifeSteal": 0.1,
+    "maxHpByLv": 6
+  },
+  "131505": {
+    "attackPower": 65,
+    "lifeSteal": 0.1,
+    "maxHpByLv": 8,
+    "uniqueTenacity": 0.3
+  },
+  "131506": {
+    "attackPower": 69,
+    "lifeSteal": 0.15,
+    "maxHpByLv": 10
+  },
+  "131507": {
+    "attackPower": 74,
+    "cooldownReduction": 20,
+    "moveSpeedRatio": 0.02
+  },
+  "131508": {
+    "attackPower": 82,
+    "cooldownReduction": 20,
+    "moveSpeedRatio": 0.02,
+    "uniqueTenacity": 0.3
+  },
+  "131509": {
+    "attackPower": 94,
+    "cooldownReduction": 30,
+    "moveSpeedRatio": 0.03
+  },
+  "201101": {
+    "defense": 1
+  },
+  "201102": {
+    "defense": 2
+  },
+  "201104": {
+    "maxHp": 30
+  },
+  "201201": {
+    "maxHp": 20
+  },
+  "201202": {
+    "defense": 2
+  },
+  "201203": {
+    "cooldownReduction": 5,
+    "defense": 2
+  },
+  "201204": {
+    "defense": 3
+  },
+  "201205": {
+    "maxHp": 60
+  },
+  "201206": {
+    "skillAmp": 5
+  },
+  "201301": {
+    "cooldownReduction": 10,
+    "defense": 3,
+    "maxHp": 90
+  },
+  "201302": {
+    "maxHp": 100
+  },
+  "201304": {
+    "attackPower": 20,
+    "attackSpeedRatio": 0.2,
+    "cooldownReduction": 10
+  },
+  "201305": {
+    "cooldownReduction": 10,
+    "skillAmp": 45
+  },
+  "201401": {
+    "cooldownReduction": 10,
+    "defense": 4,
+    "skillAmp": 30
+  },
+  "201402": {
+    "defense": 3,
+    "moveSpeedRatio": 0.02
+  },
+  "201403": {
+    "cooldownReduction": 15,
+    "defense": 15,
+    "maxHpByLv": 20
+  },
+  "201404": {
+    "attackPower": 17,
+    "attackSpeedRatio": 0.2,
+    "criticalStrikeChance": 0.28
+  },
+  "201405": {
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 10,
+    "skillAmp": 55
+  },
+  "201406": {
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "maxHp": 120
+  },
+  "201407": {
+    "cooldownReduction": 15,
+    "defense": 12,
+    "maxHp": 100
+  },
+  "201408": {
+    "attackPower": 35,
+    "cooldownReduction": 20,
+    "penetrationDefense": 12
+  },
+  "201409": {
+    "cooldownReduction": 15,
+    "skillAmp": 63
+  },
+  "201410": {
+    "moveSpeedRatio": 0.02,
+    "skillAmp": 80
+  },
+  "201411": {
+    "adaptiveForce": 45,
+    "cooldownReduction": 20,
+    "defense": 8,
+    "moveSpeedRatio": 0.03,
+    "penetrationDefense": 10
+  },
+  "201412": {
+    "cooldownReduction": 10,
+    "defense": 12,
+    "maxHp": 100
+  },
+  "201413": {
+    "cooldownReduction": 10,
+    "maxHp": 150,
+    "skillAmp": 50
+  },
+  "201414": {
+    "attackPower": 25,
+    "cooldownReduction": 15,
+    "penetrationDefense": 7
+  },
+  "201415": {
+    "cooldownReduction": 25,
+    "defense": 15,
+    "maxHpByLv": 22
+  },
+  "201416": {
+    "cooldownReduction": 15,
+    "skillAmp": 73
+  },
+  "201417": {
+    "attackPower": 28,
+    "attackSpeedRatio": 0.35
+  },
+  "201418": {
+    "attackPower": 35,
+    "moveSpeedRatio": 0.02,
+    "penetrationDefense": 8
+  },
+  "201419": {
+    "attackPower": 26,
+    "attackSpeedRatio": 0.15,
+    "defense": 10
+  },
+  "201420": {
+    "cooldownReduction": 10,
+    "skillAmp": 68
+  },
+  "201421": {
+    "attackPower": 10,
+    "attackSpeedRatio": 0.32,
+    "criticalStrikeChance": 0.28
+  },
+  "201422": {
+    "attackSpeedRatio": 0.25,
+    "cooldownReduction": 10,
+    "maxHp": 100,
+    "skillAmp": 53
+  },
+  "201423": {
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "maxHp": 200,
+    "skillAmp": 65
+  },
+  "201501": {
+    "attackPower": 36,
+    "defense": 15
+  },
+  "201502": {
+    "attackPower": 20,
+    "attackSpeedRatio": 0.25,
+    "criticalStrikeChance": 0.35,
+    "criticalStrikeDamage": 0.04
+  },
+  "201503": {
+    "moveSpeedRatio": 0.035,
+    "skillAmp": 80,
+    "uniqueSkillAmpRatio": 0.25
+  },
+  "201504": {
+    "cooldownReduction": 15,
+    "skillAmp": 80
+  },
+  "201505": {
+    "attackSpeedRatio": 0.35,
+    "cooldownReduction": 10,
+    "skillAmp": 80
+  },
+  "201506": {
+    "attackPower": 33,
+    "attackSpeedRatio": 0.4
+  },
+  "201507": {
+    "cooldownReduction": 10,
+    "maxHp": 200,
+    "skillAmp": 55
+  },
+  "201508": {
+    "cooldownReduction": 15,
+    "defense": 13,
+    "maxHpByLv": 16
+  },
+  "201509": {
+    "attackPower": 38,
+    "moveSpeedRatio": 0.03,
+    "penetrationDefense": 10
+  },
+  "201516": {
+    "cooldownReduction": 20,
+    "moveSpeedRatio": 0.025,
+    "skillAmp": 80,
+    "skillAmpByLevel": 1
+  },
+  "201517": {
+    "cooldownReduction": 20,
+    "moveSpeedRatio": 0.02,
+    "skillAmp": 80,
+    "skillAmpByLevel": 1
+  },
+  "201518": {
+    "attackPower": 25,
+    "attackSpeedRatio": 0.22,
+    "criticalStrikeChance": 0.35
+  },
+  "201519": {
+    "cooldownReduction": 10,
+    "moveSpeedRatio": 0.02,
+    "skillAmp": 82
+  },
+  "201520": {
+    "cooldownReduction": 15,
+    "moveSpeedRatio": 0.02,
+    "skillAmp": 85
+  },
+  "201521": {
+    "attackPower": 30,
+    "attackSpeedRatio": 0.35
+  },
+  "201522": {
+    "cooldownReduction": 15,
+    "defense": 10,
+    "maxHpByLv": 15
+  },
+  "201523": {
+    "attackPower": 30,
+    "attackSpeedRatio": 0.15,
+    "cooldownReduction": 10,
+    "defense": 10
+  },
+  "201524": {
+    "cooldownReduction": 20,
+    "defense": 15,
+    "maxHpByLv": 24
+  },
+  "201525": {
+    "attackPower": 30,
+    "attackSpeedRatio": 0.33,
+    "criticalStrikeChance": 0.35
+  },
+  "201526": {
+    "cooldownReduction": 10,
+    "defense": 8,
+    "skillAmp": 75
+  },
+  "201527": {
+    "attackPower": 25,
+    "attackSpeedRatio": 0.25,
+    "cooldownReduction": 15,
+    "maxHp": 150
+  },
+  "201528": {
+    "cooldownReduction": 10,
+    "defense": 18,
+    "maxHpByLv": 25
+  },
+  "201529": {
+    "adaptiveForce": 35,
+    "attackSpeedRatio": 0.25,
+    "defense": 15,
+    "lifeSteal": 0.08
+  },
+  "201530": {
+    "attackPower": 25,
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 20,
+    "defense": 10
+  },
+  "201531": {
+    "defense": 15,
+    "hpRegenRatio": 0.6,
+    "maxHp": 200
+  },
+  "201532": {
+    "defense": 15,
+    "hpRegenRatio": 1,
+    "maxHpByLv": 17
+  },
+  "201533": {
+    "cooldownReduction": 15,
+    "moveSpeedRatio": 0.025,
+    "skillAmp": 80
+  },
+  "201534": {
+    "attackPower": 18,
+    "attackPowerByLv": 3,
+    "attackSpeedRatio": 0.15,
+    "criticalStrikeChance": 0.35,
+    "defense": 20
+  },
+  "201535": {
+    "attackPower": 30,
+    "attackSpeedRatio": 0.3,
+    "maxHp": 250
+  },
+  "201536": {
+    "cooldownReduction": 15,
+    "healerGiveHpHealRatio": 0.06,
+    "skillAmp": 70
+  },
+  "201537": {
+    "defense": 12,
+    "maxHpByLv": 25
+  },
+  "201701": {
+    "adaptiveForce": 50,
+    "attackSpeedRatio": 0.35,
+    "moveSpeedRatio": 0.035
+  },
+  "202101": {
+    "attackPower": 4,
+    "defense": 3
+  },
+  "202103": {
+    "defense": 9
+  },
+  "202104": {
+    "cooldownReduction": 10,
+    "defense": 25,
+    "maxHp": 120,
+    "skillAmpByLevel": 5
+  },
+  "202105": {
+    "defense": 9
+  },
+  "202106": {
+    "defense": 9
+  },
+  "202201": {
+    "defense": 16
+  },
+  "202205": {
+    "attackPower": 4,
+    "defense": 12
+  },
+  "202206": {
+    "cooldownReduction": 5,
+    "defense": 11,
+    "skillAmp": 10
+  },
+  "202207": {
+    "attackPower": 3,
+    "defense": 10
+  },
+  "202209": {
+    "defense": 25,
+    "lifeSteal": 0.08,
+    "skillAmp": 35,
+    "skillAmpByLevel": 5
+  },
+  "202210": {
+    "defense": 10
+  },
+  "202211": {
+    "defense": 12,
+    "skillAmp": 15
+  },
+  "202301": {
+    "attackPower": 15,
+    "defense": 15
+  },
+  "202302": {
+    "defense": 21
+  },
+  "202303": {
+    "attackPower": 10,
+    "defense": 9,
+    "normalLifeSteal": 0.08
+  },
+  "202304": {
+    "attackPower": 5,
+    "defense": 13
+  },
+  "202306": {
+    "cooldownReduction": 10,
+    "defense": 18,
+    "skillAmp": 20
+  },
+  "202307": {
+    "defense": 24,
+    "skillAmp": 24,
+    "skillAmpByLevel": 5
+  },
+  "202401": {
+    "defense": 24,
+    "maxHp": 70
+  },
+  "202402": {
+    "defense": 28,
+    "maxHpByLv": 21
+  },
+  "202404": {
+    "cooldownReduction": 10,
+    "defense": 25,
+    "skillAmp": 12,
+    "skillAmpByLevel": 5
+  },
+  "202405": {
+    "attackPower": 9,
+    "attackPowerByLv": 3,
+    "criticalStrikeChance": 0.24,
+    "defense": 13
+  },
+  "202406": {
+    "attackPowerByLv": 3,
+    "defense": 20,
+    "penetrationDefense": 12
+  },
+  "202407": {
+    "cooldownReduction": 15,
+    "defense": 35,
+    "maxHpByLv": 24
+  },
+  "202408": {
+    "defense": 35,
+    "hpRegenRatio": 1,
+    "maxHpByLv": 18
+  },
+  "202410": {
+    "cooldownReduction": 10,
+    "defense": 28,
+    "maxHpByLv": 18
+  },
+  "202411": {
+    "attackPowerByLv": 3,
+    "cooldownReduction": 15,
+    "defense": 20,
+    "penetrationDefense": 6
+  },
+  "202412": {
+    "defense": 25,
+    "skillAmp": 26,
+    "skillAmpByLevel": 5
+  },
+  "202413": {
+    "attackPower": 10,
+    "attackPowerByLv": 3,
+    "attackSpeedRatio": 0.15,
+    "cooldownReduction": 10,
+    "defense": 10
+  },
+  "202415": {
+    "cooldownReduction": 20,
+    "defense": 35,
+    "maxHpByLv": 20
+  },
+  "202416": {
+    "cooldownReduction": 10,
+    "defense": 37,
+    "maxHpByLv": 23
+  },
+  "202417": {
+    "cooldownReduction": 15,
+    "defense": 25,
+    "hpRegenRatio": 0.6,
+    "maxHpByLv": 20
+  },
+  "202418": {
+    "attackPowerByLv": 3,
+    "attackSpeedRatio": 0.15,
+    "criticalStrikeChance": 0.24,
+    "defense": 13
+  },
+  "202419": {
+    "cooldownReduction": 20,
+    "defense": 22,
+    "skillAmpByLevel": 5
+  },
+  "202420": {
+    "attackPower": 3,
+    "attackPowerByLv": 3,
+    "attackSpeedRatio": 0.38,
+    "defense": 15
+  },
+  "202421": {
+    "cooldownReduction": 15,
+    "defense": 40,
+    "maxHpByLv": 24
+  },
+  "202422": {
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 10,
+    "defense": 25,
+    "maxHpByLv": 16
+  },
+  "202423": {
+    "attackPowerByLv": 3,
+    "cooldownReduction": 10,
+    "defense": 20,
+    "maxHp": 120
+  },
+  "202501": {
+    "cooldownReduction": 10,
+    "defense": 28,
+    "skillAmp": 40,
+    "skillAmpByLevel": 5
+  },
+  "202502": {
+    "cooldownReduction": 25,
+    "defense": 30,
+    "hpRegenRatio": 1,
+    "skillAmp": 35,
+    "skillAmpByLevel": 5
+  },
+  "202503": {
+    "defense": 30,
+    "skillAmp": 30,
+    "skillAmpByLevel": 5,
+    "uniqueSkillAmpRatio": 0.25
+  },
+  "202504": {
+    "attackPower": 13,
+    "attackPowerByLv": 3,
+    "attackSpeedRatio": 0.2,
+    "defense": 15,
+    "lifeSteal": 0.08
+  },
+  "202505": {
+    "attackPower": 20,
+    "attackPowerByLv": 3,
+    "defense": 22,
+    "lifeSteal": 0.1
+  },
+  "202506": {
+    "attackSpeedRatio": 0.15,
+    "defense": 38,
+    "maxHpByLv": 20
+  },
+  "202507": {
+    "defense": 42,
+    "maxHpByLv": 26
+  },
+  "202508": {
+    "cooldownReduction": 20,
+    "defense": 25,
+    "skillAmp": 20,
+    "skillAmpByLevel": 5
+  },
+  "202509": {
+    "attackPower": 10,
+    "attackPowerByLv": 3,
+    "attackSpeedRatio": 0.4,
+    "defense": 20
+  },
+  "202510": {
+    "attackPower": 14,
+    "attackPowerByLv": 3,
+    "criticalStrikeChance": 0.34,
+    "defense": 18
+  },
+  "202511": {
+    "defense": 25,
+    "skillAmp": 22,
+    "skillAmpByLevel": 5
+  },
+  "202512": {
+    "attackPower": 22,
+    "attackPowerByLv": 3,
+    "cooldownReduction": 20,
+    "defense": 27
+  },
+  "202513": {
+    "attackPower": 12,
+    "attackPowerByLv": 3,
+    "cooldownReduction": 10,
+    "defense": 20,
+    "penetrationDefense": 12
+  },
+  "202514": {
+    "cooldownReduction": 10,
+    "defense": 25,
+    "skillAmp": 25,
+    "skillAmpByLevel": 5
+  },
+  "202515": {
+    "attackPower": 18,
+    "attackPowerByLv": 3,
+    "defense": 23,
+    "penetrationDefense": 12
+  },
+  "202516": {
+    "cooldownReduction": 20,
+    "defense": 25,
+    "skillAmpByLevel": 5
+  },
+  "202517": {
+    "attackSpeedRatio": 0.35,
+    "cooldownReduction": 10,
+    "defense": 30,
+    "maxHpByLv": 20
+  },
+  "202518": {
+    "defense": 30,
+    "maxHp": 250,
+    "skillAmpByLevel": 5
+  },
+  "202521": {
+    "attackPowerByLv": 3,
+    "cooldownReduction": 10,
+    "defense": 25,
+    "maxHp": 150
+  },
+  "202522": {
+    "defense": 45,
+    "maxHpByLv": 24
+  },
+  "202523": {
+    "attackPowerByLv": 3,
+    "attackSpeedRatio": 0.2,
+    "criticalStrikeChance": 0.34,
+    "defense": 18
+  },
+  "202524": {
+    "attackPowerByLv": 3,
+    "defense": 30,
+    "maxHp": 250
+  },
+  "202525": {
+    "attackPower": 15,
+    "attackPowerByLv": 3,
+    "attackSpeedRatio": 0.3,
+    "defense": 20,
+    "ultCooldownReduction": 20
+  },
+  "202526": {
+    "cooldownReduction": 15,
+    "defense": 30,
+    "skillAmp": 30,
+    "skillAmpByLevel": 5
+  },
+  "202527": {
+    "cooldownReduction": 10,
+    "defense": 41,
+    "maxHpByLv": 25
+  },
+  "202528": {
+    "attackPower": 33,
+    "attackSpeedRatio": 0.3,
+    "criticalStrikeChance": 0.35
+  },
+  "202529": {
+    "attackPowerByLv": 3,
+    "attackSpeedRatio": 0.3,
+    "criticalStrikeChance": 0.35,
+    "defense": 20
+  },
+  "202530": {
+    "attackPowerByLv": 3,
+    "cooldownReduction": 15,
+    "defense": 25,
+    "maxHp": 200
+  },
+  "202531": {
+    "cooldownReduction": 10,
+    "defense": 40,
+    "maxHpByLv": 24
+  },
+  "203101": {
+    "attackSpeedRatio": 0.08
+  },
+  "203102": {
+    "hpRegenRatio": 0.2
+  },
+  "203104": {
+    "defense": 2
+  },
+  "203201": {
+    "defense": 6
+  },
+  "203202": {
+    "hpRegenRatio": 0.25
+  },
+  "203203": {
+    "defense": 5
+  },
+  "203204": {
+    "cooldownReduction": 5
+  },
+  "203301": {
+    "attackPower": 18
+  },
+  "203302": {
+    "skillAmp": 25
+  },
+  "203303": {
+    "defense": 8
+  },
+  "203304": {
+    "skillAmp": 22
+  },
+  "203306": {
+    "cooldownReduction": 10,
+    "skillAmp": 62
+  },
+  "203402": {
+    "cooldownReduction": 10,
+    "defense": 13,
+    "maxHp": 120
+  },
+  "203403": {
+    "skillAmp": 75
+  },
+  "203404": {
+    "attackSpeedRatio": 0.3,
+    "cooldownReduction": 15,
+    "defense": 12,
+    "maxHpByLv": 18
+  },
+  "203405": {
+    "attackSpeedRatio": 0.33,
+    "criticalStrikeChance": 0.26
+  },
+  "203406": {
+    "attackPower": 22,
+    "cooldownReduction": 15,
+    "maxHp": 150
+  },
+  "203407": {
+    "attackPower": 38,
+    "penetrationDefense": 9
+  },
+  "203408": {
+    "attackPower": 18,
+    "attackSpeedRatio": 0.35,
+    "criticalStrikeChance": 0.35
+  },
+  "203409": {
+    "defense": 16,
+    "maxHp": 240
+  },
+  "203410": {
+    "cooldownReduction": 20,
+    "skillAmp": 50
+  },
+  "203411": {
+    "cooldownReduction": 15,
+    "healerGiveHpHealRatio": 0.04,
+    "maxHp": 50,
+    "skillAmp": 40
+  },
+  "203412": {
+    "attackPower": 20,
+    "attackSpeedRatio": 0.25,
+    "defense": 10
+  },
+  "203413": {
+    "attackSpeedRatio": 0.42,
+    "skillAmp": 64
+  },
+  "203414": {
+    "attackPower": 28,
+    "cooldownReduction": 15,
+    "penetrationDefense": 7
+  },
+  "203415": {
+    "attackPower": 25,
+    "attackSpeedRatio": 0.18,
+    "criticalStrikeChance": 0.24
+  },
+  "203501": {
+    "cooldownReduction": 10,
+    "skillAmp": 82
+  },
+  "203502": {
+    "attackPower": 10,
+    "attackSpeedRatio": 0.38,
+    "criticalStrikeChance": 0.35
+  },
+  "203503": {
+    "attackPower": 45,
+    "defense": 25,
+    "uniqueTenacity": 0.3
+  },
+  "203504": {
+    "cooldownReduction": 20,
+    "defense": 15,
+    "maxHpByLv": 21
+  },
+  "203505": {
+    "cooldownReduction": 10,
+    "defense": 15,
+    "maxHpByLv": 20
+  },
+  "203506": {
+    "attackSpeedRatio": 0.3,
+    "skillAmp": 32
+  },
+  "203507": {
+    "cooldownReduction": 25,
+    "skillAmp": 84
+  },
+  "203508": {
+    "attackPower": 22,
+    "cooldownReduction": 20,
+    "maxHp": 200
+  },
+  "203509": {
+    "attackPower": 28,
+    "attackSpeedRatio": 0.3,
+    "penetrationDefenseRatio": 0.2
+  },
+  "203510": {
+    "penetrationDefenseRatio": 0.15,
+    "skillAmp": 85
+  },
+  "203511": {
+    "attackPower": 35,
+    "cooldownReduction": 20,
+    "penetrationDefense": 12
+  },
+  "203512": {
+    "cooldownReduction": 20,
+    "skillAmp": 75
+  },
+  "203513": {
+    "attackPower": 25,
+    "cooldownReduction": 15,
+    "defense": 20
+  },
+  "203514": {
+    "attackPower": 33,
+    "criticalStrikeChance": 0.34,
+    "defense": 10
+  },
+  "203515": {
+    "adaptiveForce": 43,
+    "cooldownReduction": 20,
+    "defense": 15
+  },
+  "203516": {
+    "maxHpByLv": 25
+  },
+  "204101": {
+    "moveSpeed": 0.12
+  },
+  "204102": {
+    "moveSpeed": 0.12
+  },
+  "204103": {
+    "moveSpeed": 0.12
+  },
+  "204201": {
+    "defense": 5,
+    "moveSpeed": 0.17
+  },
+  "204202": {
+    "maxHp": 50,
+    "moveSpeed": 0.16
+  },
+  "204203": {
+    "attackPower": 2,
+    "moveSpeed": 0.16
+  },
+  "204204": {
+    "moveSpeed": 0.17,
+    "uniqueTenacity": 0.05
+  },
+  "204205": {
+    "moveSpeed": 0.12
+  },
+  "204301": {
+    "cooldownReduction": 5,
+    "moveSpeed": 0.16
+  },
+  "204302": {
+    "hpRegenRatio": 0.1,
+    "moveSpeed": 0.16
+  },
+  "204303": {
+    "defense": 8,
+    "hpRegenRatio": 0.5,
+    "maxHp": 100,
+    "moveSpeed": 0.22
+  },
+  "204304": {
+    "moveSpeed": 0.22,
+    "penetrationDefense": 12
+  },
+  "204401": {
+    "defense": 8,
+    "moveSpeed": 0.22,
+    "uniqueTenacity": 0.2
+  },
+  "204402": {
+    "attackSpeedRatio": 0.38,
+    "hpRegenRatio": 0.25,
+    "moveSpeed": 0.22
+  },
+  "204403": {
+    "attackPower": 20,
+    "moveSpeed": 0.22,
+    "uniqueTenacity": 0.2
+  },
+  "204404": {
+    "attackSpeedRatio": 0.05,
+    "hpRegenRatio": 0.15,
+    "moveSpeed": 0.17
+  },
+  "204405": {
+    "moveSpeed": 0.25,
+    "skillAmp": 60,
+    "skillAmpRatio": 0.05
+  },
+  "204406": {
+    "cooldownReduction": 5,
+    "moveSpeed": 0.22,
+    "skillAmp": 25
+  },
+  "204407": {
+    "attackSpeedRatio": 0.38,
+    "defense": 10,
+    "moveSpeed": 0.25
+  },
+  "204408": {
+    "attackPower": 8,
+    "criticalStrikeChance": 0.25,
+    "moveSpeed": 0.22
+  },
+  "204409": {
+    "defense": 10,
+    "hpRegenRatio": 0.5,
+    "maxHp": 100,
+    "moveSpeed": 0.25
+  },
+  "204410": {
+    "cooldownReduction": 15,
+    "moveSpeed": 0.25,
+    "skillAmp": 33
+  },
+  "204411": {
+    "attackSpeedRatio": 0.28,
+    "hpRegenRatio": 0.25,
+    "moveSpeed": 0.22
+  },
+  "204412": {
+    "cooldownReduction": 10,
+    "defense": 8,
+    "moveSpeed": 0.22
+  },
+  "204413": {
+    "cooldownReduction": 20,
+    "defense": 10,
+    "maxHp": 250,
+    "moveSpeed": 0.27,
+    "tacticalCooldownReduction": 20
+  },
+  "204414": {
+    "moveSpeed": 0.25,
+    "penetrationDefense": 18
+  },
+  "204415": {
+    "moveSpeed": 0.22,
+    "skillAmp": 28
+  },
+  "204416": {
+    "attackPower": 15,
+    "attackSpeedRatio": 0.1,
+    "moveSpeed": 0.22,
+    "normalLifeSteal": 0.08
+  },
+  "204417": {
+    "attackPower": 18,
+    "cooldownReduction": 10,
+    "moveSpeed": 0.22
+  },
+  "204418": {
+    "attackSpeedRatio": 0.16,
+    "criticalStrikeChance": 0.25,
+    "moveSpeed": 0.22
+  },
+  "204419": {
+    "cooldownReduction": 10,
+    "moveSpeed": 0.22,
+    "skillAmp": 18
+  },
+  "204501": {
+    "defense": 18,
+    "maxHp": 150,
+    "moveSpeed": 0.25,
+    "uniqueTenacity": 0.3
+  },
+  "204502": {
+    "adaptiveForce": 25,
+    "attackSpeedRatio": 0.33,
+    "moveSpeed": 0.27
+  },
+  "204503": {
+    "adaptiveForce": 12,
+    "attackSpeedRatio": 0.38,
+    "hpRegenRatio": 0.25,
+    "moveSpeed": 0.25
+  },
+  "204504": {
+    "attackPower": 14,
+    "criticalStrikeChance": 0.33,
+    "moveSpeed": 0.25
+  },
+  "204505": {
+    "cooldownReduction": 10,
+    "moveSpeed": 0.25,
+    "skillAmp": 42
+  },
+  "204506": {
+    "cooldownReduction": 20,
+    "defense": 10,
+    "moveSpeed": 0.25
+  },
+  "204507": {
+    "attackPower": 25,
+    "attackSpeedRatio": 0.2,
+    "moveSpeed": 0.25,
+    "normalLifeSteal": 0.12
+  },
+  "204508": {
+    "attackPower": 23,
+    "attackSpeedRatio": 0.1,
+    "cooldownReduction": 15,
+    "moveSpeed": 0.25
+  },
+  "204509": {
+    "attackSpeedRatio": 0.26,
+    "criticalStrikeChance": 0.33,
+    "moveSpeed": 0.25
+  },
+  "204510": {
+    "attackPower": 17,
+    "attackSpeedRatio": 0.25,
+    "criticalStrikeChance": 0.35,
+    "moveSpeed": 0.27
+  },
+  "204511": {
+    "cooldownReduction": 10,
+    "moveSpeed": 0.27,
+    "skillAmp": 45
+  },
+  "204512": {
+    "cooldownReduction": 10,
+    "defense": 15,
+    "maxHp": 120,
+    "moveSpeed": 0.25
+  },
+  "204513": {
+    "cooldownReduction": 20,
+    "moveSpeed": 0.27,
+    "skillAmp": 50
+  },
+  "204514": {
+    "attackPower": 20,
+    "cooldownReduction": 15,
+    "maxHp": 150,
+    "moveSpeed": 0.25
+  },
+  "205107": {
+    "maxHp": 30
+  },
+  "205201": {
+    "cooldownReduction": 10,
+    "skillAmp": 52
+  },
+  "205304": {
+    "attackPower": 25,
+    "attackSpeedRatio": 0.3,
+    "moveSpeedRatio": 0.02
+  },
+  "205306": {
+    "attackPower": 26,
+    "attackSpeedRatio": 0.3,
+    "maxHp": 200
+  },
+  "205308": {
+    "attackPower": 25,
+    "attackSpeedRatio": 0.25,
+    "cooldownReduction": 10
+  },
+  "205309": {
+    "attackSpeedRatio": 0.3,
+    "defense": 10,
+    "maxHp": 200
+  },
+  "205401": {
+    "attackPower": 33,
+    "cooldownReduction": 10,
+    "defense": 10
+  },
+  "205404": {
+    "cooldownReduction": 15,
+    "defense": 10,
+    "maxHp": 120
+  },
+  "205405": {
+    "cooldownReduction": 5,
+    "defense": 10,
+    "maxHp": 100,
+    "skillAmp": 50
+  },
+  "205406": {
+    "cooldownReduction": 10,
+    "defense": 10,
+    "maxHp": 200,
+    "skillAmp": 55
+  },
+  "205407": {
+    "attackPower": 30,
+    "attackSpeedRatio": 0.3,
+    "moveSpeedRatio": 0.015
+  },
+  "205408": {
+    "attackPower": 30,
+    "attackSpeedRatio": 0.3,
+    "moveSpeedRatio": 0.02
+  },
+  "205501": {
+    "attackPower": 25,
+    "attackSpeedRatio": 0.35,
+    "criticalStrikeChance": 0.35,
+    "criticalStrikeDamage": 0.1
+  },
+  "205502": {
+    "cooldownReduction": 10,
+    "skillAmp": 82
+  },
+  "205503": {
+    "cooldownReduction": 20,
+    "moveSpeedRatio": 0.03,
+    "skillAmp": 80
+  },
+  "205504": {
+    "skillAmp": 84
+  },
+  "205505": {
+    "cooldownReduction": 10,
+    "skillAmp": 75
+  },
+  "205507": {
+    "penetrationDefenseRatio": 0.15,
+    "skillAmp": 95
+  },
+  "205508": {
+    "cooldownReduction": 20,
+    "skillAmp": 85
+  },
+  "205601": {
+    "cooldownReduction": 25,
+    "defense": 14,
+    "maxHpByLv": 22
+  },
+  "601501": {
+    "attackPower": 66,
+    "attackSpeedRatio": 0.2,
+    "increaseBasicAttackDamageRatioByLv": 0.01,
+    "uniqueAttackRange": 0.2
+  },
+  "601502": {
+    "attackPower": 72,
+    "attackSpeedRatio": 0.3,
+    "increaseBasicAttackDamageRatioByLv": 0.01,
+    "uniqueAttackRange": 0.2,
+    "uniqueTenacity": 0.3
+  },
+  "601503": {
+    "attackPower": 78,
+    "attackSpeedRatio": 0.35,
+    "increaseBasicAttackDamageRatioByLv": 0.01,
+    "penetrationDefenseRatio": 0.12,
+    "uniqueAttackRange": 0.2
+  },
+  "601504": {
+    "attackPower": 52,
+    "lifeSteal": 0.1,
+    "maxHpByLv": 6
+  },
+  "601505": {
+    "attackPower": 65,
+    "lifeSteal": 0.1,
+    "maxHpByLv": 8,
+    "uniqueTenacity": 0.3
+  },
+  "601506": {
+    "attackPower": 69,
+    "lifeSteal": 0.15,
+    "maxHpByLv": 10
+  },
+  "601507": {
+    "attackPower": 74,
+    "cooldownReduction": 20,
+    "moveSpeedRatio": 0.02
+  },
+  "601508": {
+    "attackPower": 82,
+    "cooldownReduction": 20,
+    "moveSpeedRatio": 0.02,
+    "uniqueTenacity": 0.3
+  },
+  "601509": {
+    "attackPower": 94,
+    "cooldownReduction": 30,
+    "moveSpeedRatio": 0.03
+  },
+  "701451": {
+    "attackSpeedRatio": 0.38,
+    "cooldownReduction": 20,
+    "maxHp": 220
+  },
+  "705601": {
+    "defense": 15,
+    "maxHpByLv": 20
+  },
+  "705603": {
+    "cooldownReduction": 10,
+    "defense": 15,
+    "maxHpByLv": 16
+  },
+  "705604": {
+    "cooldownReduction": 15,
+    "healerGiveHpHealRatio": 0.1,
+    "maxHp": 100,
+    "skillAmp": 55
+  },
+  "705607": {
+    "cooldownReduction": 15,
+    "defense": 13,
+    "maxHpByLv": 17
+  },
+  "705608": {
+    "skillAmp": 90,
+    "uniqueSkillAmpRatio": 0.15
+  },
+  "705614": {
+    "attackPower": 40,
+    "cooldownReduction": 15,
+    "penetrationDefense": 14
+  },
+  "705620": {
+    "cooldownReduction": 10,
+    "skillAmp": 60
+  }
+}

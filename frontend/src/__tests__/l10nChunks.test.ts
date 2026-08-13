@@ -54,6 +54,13 @@ describe("generated l10n chunks", () => {
   const allowedPrefixes: Record<L10nNamespace, string[]> = {
     core: ["Character/Name/", "WeaponType/", "Trait/Name/"],
     "item-names": ["Item/Name/"],
+    "game-descriptions": ["Item/Effect/", "Trait/Tooltip/"],
+  };
+
+  const minimumKeyCount: Record<L10nNamespace, number> = {
+    core: 300,
+    "item-names": 1_000,
+    "game-descriptions": 400,
   };
 
   it.each(Object.entries(L10N_CHUNK_MANIFEST))(
@@ -66,7 +73,9 @@ describe("generated l10n chunks", () => {
         const prefixes = allowedPrefixes[namespace as L10nNamespace];
 
         expect(publicPath).toContain(`.${hash}.json`);
-        expect(Object.keys(chunk).length).toBeGreaterThan(namespace === "core" ? 300 : 1_000);
+        expect(Object.keys(chunk).length).toBeGreaterThan(
+          minimumKeyCount[namespace as L10nNamespace]
+        );
         expect(
           Object.keys(chunk).every((key) => prefixes.some((prefix) => key.startsWith(prefix)))
         ).toBe(true);

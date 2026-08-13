@@ -12,12 +12,16 @@ const SOURCE_DIR = join(FRONTEND_DIR, "public/l10n");
 const OUTPUT_DIR = join(SOURCE_DIR, "chunks");
 const MANIFEST_PATH = join(FRONTEND_DIR, "src/generated/l10nManifest.ts");
 const CORE_SEEDS_PATH = join(FRONTEND_DIR, "src/generated/l10nCoreSeeds.ts");
+const ITEM_EFFECTS_PATH = join(FRONTEND_DIR, "const/itemEffectMap.json");
 
 const LANGUAGES = ["Korean", "English", "Japanese"];
 const NAMESPACES = {
   core: ["Character/Name/", "WeaponType/", "Trait/Name/"],
   "item-names": ["Item/Name/"],
+  "game-descriptions": ["Item/Effect/", "Trait/Tooltip/"],
 };
+
+const itemEffectsByLanguage = JSON.parse(readFileSync(ITEM_EFFECTS_PATH, "utf8"));
 
 function buildChunk(source, prefixes) {
   return Object.fromEntries(
@@ -39,7 +43,15 @@ const coreSeeds = {};
 
 for (const language of LANGUAGES) {
   const sourcePath = join(SOURCE_DIR, `${language}.json`);
-  const source = JSON.parse(readFileSync(sourcePath, "utf8"));
+  const source = {
+    ...JSON.parse(readFileSync(sourcePath, "utf8")),
+    ...Object.fromEntries(
+      Object.entries(itemEffectsByLanguage[language] ?? {}).map(([code, effect]) => [
+        `Item/Effect/${code}`,
+        effect,
+      ])
+    ),
+  };
   const languageOutputDir = join(OUTPUT_DIR, language);
 
   mkdirSync(languageOutputDir, { recursive: true });

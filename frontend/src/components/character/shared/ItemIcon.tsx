@@ -3,9 +3,20 @@
 import Image from "next/image";
 import itemImageMap from "@/../const/itemImageMap.json";
 import { cn } from "@/lib/utils";
-import { getItemGrade, GRADE_BG, GRADE_BORDER } from "./item-utils";
+import { GameDataTooltip, useGameDescription } from "./GameDataTooltip";
+import { encodePublicAssetPath, getItemGrade, GRADE_BG, GRADE_BORDER } from "./item-utils";
 
-export function ItemIcon({ code, size = 36 }: { code: number | null; size?: number }) {
+export function ItemIcon({
+  code,
+  name,
+  size = 36,
+}: {
+  code: number | null;
+  name?: string;
+  size?: number;
+}) {
+  const description = useGameDescription("item", code ?? 0);
+
   if (code == null) {
     return (
       <div
@@ -15,7 +26,8 @@ export function ItemIcon({ code, size = 36 }: { code: number | null; size?: numb
     );
   }
 
-  const imgPath = (itemImageMap as Record<string, string>)[String(code)];
+  const rawImgPath = (itemImageMap as Record<string, string>)[String(code)];
+  const imgPath = rawImgPath ? encodePublicAssetPath(rawImgPath) : undefined;
   const grade = getItemGrade(code);
   const gradeBg = grade ? GRADE_BG[grade] : "bg-[var(--color-surface-2)]";
   const gradeBorder = grade ? GRADE_BORDER[grade] : "border border-[var(--color-border)]";
@@ -23,23 +35,19 @@ export function ItemIcon({ code, size = 36 }: { code: number | null; size?: numb
     ? "text-[var(--color-on-graphite)]"
     : "text-[var(--color-muted-foreground)]";
 
-  if (!imgPath) {
-    return (
-      <div
-        className={cn("rounded-md flex items-center justify-center", gradeBg, gradeBorder)}
-        style={{ width: size, height: size }}
+  const icon = !imgPath ? (
+    <div
+      className={cn("rounded-md flex items-center justify-center", gradeBg, gradeBorder)}
+      style={{ width: size, height: size }}
+    >
+      <span
+        className={cn("font-bold", missingIconText)}
+        style={{ fontSize: "var(--text-data-min)" }}
       >
-        <span
-          className={cn("font-bold", missingIconText)}
-          style={{ fontSize: "var(--text-data-min)" }}
-        >
-          ?
-        </span>
-      </div>
-    );
-  }
-
-  return (
+        ?
+      </span>
+    </div>
+  ) : (
     <div
       className={cn("relative rounded-md overflow-hidden", gradeBg, gradeBorder)}
       style={{ width: size, height: size }}
@@ -53,5 +61,11 @@ export function ItemIcon({ code, size = 36 }: { code: number | null; size?: numb
         unoptimized
       />
     </div>
+  );
+
+  return (
+    <GameDataTooltip title={name ?? String(code)} description={description}>
+      {icon}
+    </GameDataTooltip>
   );
 }

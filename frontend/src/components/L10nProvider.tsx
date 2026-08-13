@@ -1,7 +1,15 @@
 "use client";
 
 import { NextIntlClientProvider } from "next-intl";
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { L10nNamespace } from "@/generated/l10nManifest";
 import { DEFAULT_LANGUAGE, LANGUAGE_COOKIE, type SupportedLanguage } from "@/lib/detectLanguage";
 import { HTML_LANG_BY_LANGUAGE, loadIntlMessages, type IntlMessages } from "@/lib/staticIntl";
@@ -195,15 +203,22 @@ export function L10nProvider({
     };
   }, [language]);
 
-  const setLanguage = (lang: SupportedLanguage) => {
-    if (lang === language) return;
-    setLanguageCookie(lang);
-    const cachedL10n = l10nCacheRef.current[lang];
-    l10nDispatch(
-      cachedL10n ? { type: "FETCH_SUCCESS", payload: cachedL10n } : { type: "FETCH_START" }
-    );
-    setLanguageState(lang);
-  };
+  const setLanguage = useCallback(
+    (lang: SupportedLanguage) => {
+      if (lang === language) return;
+      setLanguageCookie(lang);
+      const cachedL10n = l10nCacheRef.current[lang];
+      l10nDispatch(
+        cachedL10n ? { type: "FETCH_SUCCESS", payload: cachedL10n } : { type: "FETCH_START" }
+      );
+      setLanguageState(lang);
+    },
+    [language]
+  );
+  const contextValue = useMemo(
+    () => ({ l10n, loading, error, language, setLanguage }),
+    [l10n, loading, error, language, setLanguage]
+  );
 
   return (
     <NextIntlClientProvider
@@ -211,9 +226,7 @@ export function L10nProvider({
       messages={messages}
       timeZone="Asia/Seoul"
     >
-      <L10nContext.Provider value={{ l10n, loading, error, language, setLanguage }}>
-        {children}
-      </L10nContext.Provider>
+      <L10nContext.Provider value={contextValue}>{children}</L10nContext.Provider>
     </NextIntlClientProvider>
   );
 }

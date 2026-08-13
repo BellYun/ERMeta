@@ -25,6 +25,13 @@ export function getItemGrade(code: number | null): ItemGrade | null {
   return ((itemGradeMap as Record<string, string>)[String(code)] as ItemGrade | undefined) ?? null;
 }
 
+export function encodePublicAssetPath(assetPath: string): string {
+  return assetPath
+    .split("/")
+    .map((segment) => encodeURIComponent(segment))
+    .join("/");
+}
+
 export const SLOTS = ["weapon", "chest", "head", "arm", "leg"] as const;
 
 export const SLOT_LABELS: Record<string, string> = {

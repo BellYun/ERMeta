@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const language = LANGUAGE_BY_ROUTE_LOCALE[locale];
 
   const code = parseInt(rawCode, 10);
-  const t = await getStaticTranslator("characterMetadata", language);
+  const translatorPromise = getStaticTranslator("characterMetadata", language);
   const currentPatch = getStatsPatchVersions()[0];
   const name =
     !Number.isNaN(code) && CHARACTER_CODES.includes(code)
@@ -42,9 +42,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       : null;
 
   if (name && !name.startsWith("코드:")) {
-    const stats = currentPatch
-      ? await getCachedCharacterStats(code, currentPatch, "DIAMOND_PLUS")
-      : null;
+    const [t, stats] = await Promise.all([
+      translatorPromise,
+      currentPatch ? getCachedCharacterStats(code, currentPatch, "DIAMOND_PLUS") : null,
+    ]);
     const title =
       locale === "ko" && currentPatch
         ? `${name} 빌드/특성/무기 통계 - 이터널리턴 ${currentPatch}`
@@ -117,6 +118,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
     };
   }
+
+  const t = await translatorPromise;
 
   return {
     metadataBase: new URL(BASE_URL),
