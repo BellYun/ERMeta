@@ -71,7 +71,7 @@ export function getStatsPatchVersions(): string[] {
   return getAllPatchVersions().filter((p) => !STATS_EXCLUDED_PATCHES.has(p));
 }
 
-export const MIN_VISIBLE_STATS_PATCH_VERSION = "11.7";
+export const MIN_VISIBLE_STATS_PATCH_VERSION = "11.1";
 
 export function isVisibleStatsPatchVersion(patch: string): boolean {
   return (
@@ -80,7 +80,7 @@ export function isVisibleStatsPatchVersion(patch: string): boolean {
   );
 }
 
-// 메인 및 실험체 분석 선택 목록은 11.7 이상만 노출한다.
+// 메인 및 실험체 분석 선택 목록은 11.1 이상만 노출한다.
 export function getVisibleStatsPatchVersions(): string[] {
   return getAllPatchVersions().filter(isVisibleStatsPatchVersion);
 }

@@ -13,9 +13,10 @@ describe("11.7 patch notes", () => {
     expect(getAllPatchVersions()).toContain("11.7");
   });
 
-  it("메인과 실험체 분석에서 11.7부터 노출한다", () => {
+  it("메인과 실험체 분석에서 11.1부터 노출한다", () => {
     expect(getVisibleStatsPatchVersions()).toContain("11.7");
-    expect(getVisibleStatsPatchVersions()).not.toContain("11.6");
+    expect(getVisibleStatsPatchVersions()).toContain("11.1");
+    expect(getVisibleStatsPatchVersions()).not.toContain("11.0");
     expect(getVisibleStatsPatchVersions()).not.toContain("10.7");
   });
 
