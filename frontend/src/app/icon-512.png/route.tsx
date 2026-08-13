@@ -9,21 +9,21 @@ export async function GET() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#ffffff",
-        border: "1px solid #d5dbe5",
+        background: "#172033",
+        border: "4px solid #7da2f8",
         borderRadius: "96px",
       }}
     >
       <div
         style={{
-          fontSize: "248px",
-          fontWeight: 700,
-          color: "#172033",
-          letterSpacing: "0",
+          fontSize: "116px",
+          fontWeight: 800,
+          color: "#f1f5ff",
+          letterSpacing: "-8px",
           lineHeight: 1,
         }}
       >
-        ER
+        ER&amp;GG
       </div>
     </div>,
     { width: 512, height: 512 }

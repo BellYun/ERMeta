@@ -12,21 +12,21 @@ export default function Icon() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#ffffff",
-        border: "1px solid #d5dbe5",
+        background: "#172033",
+        border: "1px solid #7da2f8",
         borderRadius: "8px",
       }}
     >
       <div
         style={{
-          fontSize: "24px",
-          fontWeight: 700,
-          color: "#172033",
-          letterSpacing: "0",
+          fontSize: "11px",
+          fontWeight: 800,
+          color: "#f1f5ff",
+          letterSpacing: "-0.8px",
           lineHeight: 1,
         }}
       >
-        ER
+        ER&amp;GG
       </div>
     </div>,
     { ...size }

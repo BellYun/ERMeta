@@ -19,6 +19,7 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -282,18 +283,20 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
 
             <Link
               href={withCurrentRouteLocale(pathname, "/")}
-              title={currentPatch ? `${t("patchPrefix")}${currentPatch}` : t("logoTitle")}
+              title={t("logoTitle")}
               className="site-wordmark flex min-w-0 items-center gap-2.5"
             >
-              <div className="site-wordmark__mark flex h-9 w-9 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-sm font-bold text-[var(--color-foreground)]">
-                ER
-              </div>
+              <Image
+                src="/brand/ergg-mark.svg"
+                alt=""
+                width={36}
+                height={36}
+                className="site-wordmark__mark h-9 w-9 shrink-0"
+                priority
+              />
               <div className="min-w-0">
                 <p className="site-wordmark__title truncate text-[1.05rem] font-bold text-[var(--color-foreground)]">
                   {t("logoTitle")}
-                </p>
-                <p className="site-wordmark__meta hidden truncate text-[11px] text-[var(--color-muted-foreground)] lg:block">
-                  {currentPatch ? `${t("patchPrefix")}${currentPatch}` : t("logoSubtitle")}
                 </p>
               </div>
             </Link>
