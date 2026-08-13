@@ -36,7 +36,7 @@ const COPY: Record<
       "일반 문의": "일반 문의",
     },
     messagePlaceholder: "의견을 자유롭게 남겨주세요",
-    contactPlaceholder: "답변받을 연락처 (선택)",
+    contactPlaceholder: "답변받을 이메일 (선택)",
     error: "전송에 실패했습니다. 다시 시도해주세요.",
     submitting: "보내는 중...",
     submit: "보내기",
@@ -116,6 +116,7 @@ export default function FeedbackWidget() {
   const [message, setMessage] = useState("");
   const [contact, setContact] = useState("");
   const [formState, setFormState] = useState<FormState>("idle");
+  const [desktopPanelTop, setDesktopPanelTop] = useState(80);
 
   const openPanel = useCallback(() => {
     setFormState("idle");
@@ -154,6 +155,19 @@ export default function FeedbackWidget() {
     window.dispatchEvent(new CustomEvent("ergg:feedback-state", { detail: { open: isOpen } }));
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const updatePanelTop = () => {
+      const headerBottom = document.querySelector(".site-header")?.getBoundingClientRect().bottom;
+      setDesktopPanelTop(Math.max(16, (headerBottom ?? 64) + 12));
+    };
+
+    updatePanelTop();
+    window.addEventListener("resize", updatePanelTop);
+    return () => window.removeEventListener("resize", updatePanelTop);
+  }, [isOpen]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim().length < 5) return;
@@ -182,7 +196,10 @@ export default function FeedbackWidget() {
     // pointer-events-none 핵심: 닫힌 panel 도 layout 박스(약 358×410px)를 그대로 차지해
     // 모바일 화면 하단 ~50% 의 hit-test 를 wrapper 가 흡수하던 버그.
     // FAB / 열린 panel 에서만 pointer-events:auto 로 다시 켜고 그 외 빈 영역은 통과시킴.
-    <div className="pointer-events-none fixed bottom-[calc(env(safe-area-inset-bottom)+1rem)] right-4 z-[60] flex flex-col items-end gap-3 lg:bottom-6 lg:left-6 lg:right-auto lg:items-start xl:left-8">
+    <div
+      className="pointer-events-none fixed bottom-[calc(env(safe-area-inset-bottom)+1rem)] right-4 z-[60] flex flex-col items-end gap-3 lg:bottom-auto lg:right-6 lg:top-[var(--feedback-panel-top)] xl:right-8"
+      style={{ "--feedback-panel-top": `${desktopPanelTop}px` } as React.CSSProperties}
+    >
       {/* Form Panel */}
       <div
         id="feedback-panel"
@@ -195,10 +212,10 @@ export default function FeedbackWidget() {
         className={[
           "w-[calc(100vw-2rem)] max-w-sm sm:w-80 lg:w-[17.5rem] xl:w-[18rem]",
           "rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]",
-          "transition-colors origin-bottom-right focus:outline-none lg:origin-bottom-left",
+          "origin-bottom-right transition-colors focus:outline-none lg:origin-top-right",
           isOpen
             ? "opacity-100 translate-y-0 pointer-events-auto"
-            : "opacity-0 translate-y-4 pointer-events-none",
+            : "pointer-events-none translate-y-4 opacity-0 lg:-translate-y-4",
         ].join(" ")}
         style={{ position: "relative" }}
       >
@@ -261,7 +278,7 @@ export default function FeedbackWidget() {
 
             {/* Contact */}
             <input
-              type="text"
+              type="email"
               value={contact}
               onChange={(e) => setContact(e.target.value)}
               placeholder={copy.contactPlaceholder}
