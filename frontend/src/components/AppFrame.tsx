@@ -56,12 +56,12 @@ export function AppFrame({
           <div
             className={
               showRailAds
-                ? "app-layout mx-auto grid w-full max-w-[1720px] grid-cols-1 gap-4 px-3 pt-4 pb-8 sm:px-4 sm:pt-5 sm:pb-10 lg:px-6 lg:pt-5 lg:pb-8 min-[1400px]:grid-cols-[160px_minmax(0,1fr)_160px]"
+                ? "app-layout mx-auto grid w-full max-w-[1720px] grid-cols-1 gap-4 px-3 pt-4 pb-8 sm:px-4 sm:pt-5 sm:pb-10 lg:px-6 lg:pt-5 lg:pb-8 min-[1200px]:grid-cols-[160px_minmax(0,1fr)] min-[1500px]:grid-cols-[160px_minmax(0,1fr)_160px]"
                 : "app-layout mx-auto w-full max-w-[1440px] px-3 pt-4 pb-8 sm:px-4 sm:pt-5 sm:pb-10 lg:px-6 lg:pt-5 lg:pb-8"
             }
           >
             {showRailAds ? (
-              <aside className="hidden min-[1400px]:block" aria-label="Left advertisement">
+              <aside className="hidden min-[1200px]:block" aria-label="Left advertisement">
                 {showLeftRailAd ? (
                   <div className="sticky top-[8.5rem] w-full">
                     <AdSlot
@@ -80,7 +80,7 @@ export function AppFrame({
               {children}
             </main>
             {showRailAds ? (
-              <aside className="hidden min-[1400px]:block" aria-label="Right advertisement">
+              <aside className="hidden min-[1500px]:block" aria-label="Right advertisement">
                 {showRightRailAd ? (
                   <div className="sticky top-[8.5rem] w-full">
                     <AdSlot
