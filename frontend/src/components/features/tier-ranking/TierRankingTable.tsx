@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -30,6 +31,7 @@ function getPatchChangeBadge(patchNote: NonNullable<DisplayRow["patchNote"]>) {
   if (types.length > 0 && types.every((type) => type === "buff")) {
     return {
       label: "버프",
+      icon: ArrowUp,
       className:
         "border-[var(--color-stat-up)]/20 bg-[var(--color-stat-up)]/10 text-[var(--color-stat-up)]",
     };
@@ -38,6 +40,7 @@ function getPatchChangeBadge(patchNote: NonNullable<DisplayRow["patchNote"]>) {
   if (types.length > 0 && types.every((type) => type === "nerf")) {
     return {
       label: "너프",
+      icon: ArrowDown,
       className:
         "border-[var(--color-stat-down)]/20 bg-[var(--color-stat-down)]/10 text-[var(--color-stat-down)]",
     };
@@ -45,6 +48,7 @@ function getPatchChangeBadge(patchNote: NonNullable<DisplayRow["patchNote"]>) {
 
   return {
     label: "조정",
+    icon: ArrowUpDown,
     className:
       "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]",
   };
@@ -373,7 +377,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                                         })} · ${badge.label}`}
                                         onClick={(e) => togglePatchNote(e, key)}
                                         className={cn(
-                                          "shrink-0 rounded border px-1.5 py-0.5 text-[9px] font-semibold hover:brightness-95",
+                                          "shrink-0 rounded border px-1.5 py-0.5 text-sm font-semibold leading-none hover:brightness-95",
                                           badge.className
                                         )}
                                       >
@@ -563,6 +567,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           {char.patchNote &&
                             (() => {
                               const badge = getPatchChangeBadge(char.patchNote);
+                              const BadgeIcon = badge.icon;
                               return (
                                 <button
                                   type="button"
@@ -571,11 +576,12 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                                   })} · ${badge.label}`}
                                   onClick={(e) => togglePatchNote(e, key)}
                                   className={cn(
-                                    "shrink-0 rounded border px-1 py-0.5 text-[8px] font-semibold",
+                                    "grid h-5 w-5 shrink-0 place-items-center rounded-full border",
                                     badge.className
                                   )}
                                 >
-                                  {badge.label}
+                                  <BadgeIcon className="h-3 w-3" aria-hidden="true" />
+                                  <span className="sr-only">{badge.label}</span>
                                 </button>
                               );
                             })()}
