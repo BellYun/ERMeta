@@ -60,7 +60,7 @@ const DETAIL_SORT_OPTIONS: {
 function parseDetailSortByParam(value: string | null): SortBy {
   return DETAIL_SORT_OPTIONS.some((option) => option.value === value)
     ? (value as SortBy)
-    : "averageRP";
+    : "tierScore";
 }
 
 /** 코어만 무시하고 실험체+무기(c:w) 기준으로 그룹화 */
@@ -708,7 +708,7 @@ export function SynergyDetailResults() {
     ally1Code: null,
     ally2Code: null,
     resultCount: 0,
-    sortBy: "averageRP",
+    sortBy: "tierScore",
     explorationDepth: 0,
   });
 

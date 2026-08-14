@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, FlaskConical, Loader2, Sparkles } from "lucide-react";
+import { ChevronRight, Loader2, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import * as React from "react";
@@ -11,7 +11,6 @@ import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
 import {
   buildTrioCompositionInsight,
   type CompositionMemberDuty,
-  type CompositionPatternKey,
   type TrioCompositionInsight,
 } from "@/lib/synergyComposition";
 import { assignComboTier, COMBO_TIER_WEIGHTS, PERFORMANCE_TIER_MIN_GAMES } from "@/lib/tierScoring";
@@ -144,18 +143,6 @@ function hasCoreData(v: TrioWeaponResult): boolean {
     (v.mainCore3 && v.mainCore3 > 0)
   );
 }
-
-const COMPOSITION_PATTERN_BADGE_TONES: Record<CompositionPatternKey, string> = {
-  threeLayer: "border-violet-400/45 bg-violet-400/10 text-violet-700 dark:text-violet-300",
-  diveFollow: "border-rose-400/45 bg-rose-400/10 text-rose-700 dark:text-rose-300",
-  doubleFront: "border-orange-400/45 bg-orange-400/10 text-orange-700 dark:text-orange-300",
-  frontToBack: "border-emerald-400/45 bg-emerald-400/10 text-emerald-700 dark:text-emerald-300",
-  protectCarry: "border-sky-400/45 bg-sky-400/10 text-sky-700 dark:text-sky-300",
-  pickBurst: "border-fuchsia-400/45 bg-fuchsia-400/10 text-fuchsia-700 dark:text-fuchsia-300",
-  pokeKite: "border-cyan-400/45 bg-cyan-400/10 text-cyan-700 dark:text-cyan-300",
-  brawl: "border-amber-400/45 bg-amber-400/10 text-amber-700 dark:text-amber-300",
-  flexible: "border-slate-400/45 bg-slate-400/10 text-slate-700 dark:text-slate-300",
-};
 
 interface ComboWeaponCardProps {
   group: GroupedCombo;
@@ -449,39 +436,6 @@ function ComboWeaponCardImpl({
               );
             })}
           </div>
-          {compositionInsight ? (
-            <div className="flex max-w-full flex-wrap items-center justify-center gap-1">
-              <span
-                data-composition-pattern-badge={compositionInsight.pattern}
-                title={t(`composition.patternDescriptions.${compositionInsight.pattern}`)}
-                className={cn(
-                  "inline-flex max-w-full items-center gap-1 rounded-md border px-1.5 py-0.5 text-[9px] font-bold sm:text-[10px]",
-                  COMPOSITION_PATTERN_BADGE_TONES[compositionInsight.pattern]
-                )}
-              >
-                <Sparkles className="h-2.5 w-2.5 shrink-0" />
-                <span className="truncate">
-                  {t(`composition.patterns.${compositionInsight.pattern}`)}
-                </span>
-              </span>
-              {!successfulPrototype &&
-              affinityEvidence &&
-              affinityEvidence.classifiedMembers > 0 ? (
-                <span className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[9px] font-bold text-[var(--color-muted-foreground)]">
-                  <FlaskConical className="h-2.5 w-2.5 shrink-0 text-[var(--color-accent-foreground)]" />
-                  {t("affinity.summary", {
-                    matched: affinityEvidence.matchedMembers,
-                    classified: affinityEvidence.classifiedMembers,
-                  })}
-                </span>
-              ) : null}
-            </div>
-          ) : (
-            <span
-              aria-hidden="true"
-              className="h-[19px] w-20 animate-pulse rounded-md bg-[var(--color-surface-3)]"
-            />
-          )}
         </div>
 
         {/* 소표본 배지 */}
@@ -526,20 +480,23 @@ function ComboWeaponCardImpl({
           <div
             data-composition-explanation
             data-composition-pattern={compositionInsight.pattern}
-            className="text-[10.5px] leading-relaxed sm:text-[11px]"
+            className="text-xs leading-5 sm:text-[13px]"
           >
-            <div className="flex items-center gap-1.5 border-b border-[var(--color-border)] pb-1.5">
-              <Sparkles className="h-3.5 w-3.5 shrink-0 text-[var(--color-accent-foreground)]" />
-              <p className="font-bold text-[var(--color-foreground)]">{compositionAnalysisTitle}</p>
-              <span className="ml-auto rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)]">
-                {t(`composition.analysisBasis.${compositionInsight.analysisBasis}`)}
-              </span>
+            <div className="border-b border-[var(--color-border)] pb-2">
+              <div className="flex items-center gap-1.5">
+                <Sparkles className="h-4 w-4 shrink-0 text-[var(--color-accent-foreground)]" />
+                <p className="text-sm font-bold text-[var(--color-foreground)]">
+                  {compositionAnalysisTitle}
+                </p>
+              </div>
+              <p className="mt-1.5 leading-5 text-[var(--color-muted-foreground)]">
+                <span className="font-bold text-[var(--color-foreground)]">
+                  {t(`composition.patterns.${compositionInsight.pattern}`)}
+                  {": "}
+                </span>
+                {t(`composition.patternDescriptions.${compositionInsight.pattern}`)}
+              </p>
             </div>
-            <p className="mt-1 text-[9.5px] leading-4 text-[var(--color-muted-foreground)] sm:text-[10px]">
-              {successfulPrototype
-                ? t(`composition.prototypeNotice.${successfulPrototype.match}`)
-                : t("composition.hypothesisNotice")}
-            </p>
             {/* Hallmark · component: composition role summary · genre: modern-minimal
              * theme: Mineral Signal · critique: P5 H5 E4 S5 R5 V4
              */}
@@ -548,7 +505,7 @@ function ComboWeaponCardImpl({
                 data-successful-composition-prototype={successfulPrototype.match}
                 className="mt-1.5 border-y border-[var(--color-border)] py-1.5"
               >
-                <p className="font-bold text-[var(--color-foreground)]">
+                <p className="text-sm font-bold text-[var(--color-foreground)]">
                   {t("composition.prototype.title")}
                 </p>
                 <div className="mt-1 grid lg:grid-cols-3">
@@ -579,11 +536,11 @@ function ComboWeaponCardImpl({
                           <span className="font-bold text-[var(--color-foreground)]">
                             {getCharName(duty.character)}
                           </span>
-                          <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[9px] font-bold text-[var(--color-foreground)]">
+                          <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[10px] font-bold text-[var(--color-foreground)]">
                             {t(`composition.combatTasks.${duty.task}`)}
                           </span>
                           {duty.secondaryTask ? (
-                            <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)]">
+                            <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--color-muted-foreground)]">
                               {t("composition.combatDoctrine.labels.dutySecondary")}
                               {" · "}
                               {t(`composition.combatTasks.${duty.secondaryTask}`)}
@@ -593,7 +550,7 @@ function ComboWeaponCardImpl({
                         {newType ? (
                           <p
                             data-character-type={`${duty.character}_${duty.weapon}`}
-                            className="mt-1 min-w-0 break-words text-[9px] font-semibold text-[var(--color-accent-foreground)] sm:text-[9.5px]"
+                            className="mt-1 min-w-0 break-words text-[10px] font-semibold text-[var(--color-accent-foreground)] sm:text-[11px]"
                           >
                             {newType}
                           </p>
@@ -624,13 +581,13 @@ function ComboWeaponCardImpl({
                 className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]/55 p-1.5"
               >
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <p className="mr-1 font-bold text-[var(--color-foreground)]">
+                  <p className="mr-1 text-sm font-bold text-[var(--color-foreground)]">
                     {t("composition.combatDoctrine.title")}
                   </p>
                   {doctrineFeatureLabels.map((label) => (
                     <span
                       key={label}
-                      className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)]"
+                      className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--color-muted-foreground)]"
                     >
                       {label}
                     </span>
@@ -664,11 +621,11 @@ function ComboWeaponCardImpl({
                             <span className="font-bold text-[var(--color-foreground)]">
                               {getCharName(duty.character)}
                             </span>
-                            <span className="rounded-full bg-[var(--color-accent)]/12 px-1.5 py-0.5 text-[9px] font-bold text-[var(--color-accent-foreground)]">
+                            <span className="rounded-full bg-[var(--color-accent)]/12 px-1.5 py-0.5 text-[10px] font-bold text-[var(--color-accent-foreground)]">
                               {t(`composition.combatTasks.${duty.task}`)}
                             </span>
                             {duty.secondaryTask ? (
-                              <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)]">
+                              <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--color-muted-foreground)]">
                                 {t("composition.combatDoctrine.labels.dutySecondary")}
                                 {" · "}
                                 {t(`composition.combatTasks.${duty.secondaryTask}`)}
