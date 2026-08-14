@@ -1,7 +1,7 @@
 import { createReadStream, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import { createInterface } from "node:readline";
+import { fileURLToPath } from "node:url";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const frontendDir = resolve(scriptDir, "..");
@@ -145,6 +145,6 @@ const output = {
 };
 
 writeFileSync(outputPath, `${JSON.stringify(output, null, 2)}\n`, "utf8");
-console.log(
-  `Wrote ${prototypes.length} good-composition prototypes from ${stablePositiveObservations} stable positive observations to ${outputPath}`
+process.stdout.write(
+  `Wrote ${prototypes.length} good-composition prototypes from ${stablePositiveObservations} stable positive observations to ${outputPath}\n`
 );
