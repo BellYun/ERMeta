@@ -34,12 +34,12 @@ export function PatchComparisonTab({
   const t = useTranslations("characterPatch");
 
   if (loading) {
-    return <div className="h-40 rounded-md bg-[var(--color-surface)]" />;
+    return <div className="h-32 rounded-md bg-[var(--color-surface)]" />;
   }
 
   if (!stats || stats.totalGames === 0) {
     return (
-      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-8 flex flex-col items-center gap-2 text-[var(--color-muted-foreground)]">
+      <div className="flex flex-col items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-[var(--color-muted-foreground)]">
         <BarChart2 className="h-8 w-8 opacity-40" />
         <p className="text-sm">{t("noData")}</p>
       </div>
@@ -47,16 +47,16 @@ export function PatchComparisonTab({
   }
 
   return (
-    <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3 sm:p-5 space-y-3 sm:space-y-4 overflow-hidden">
+    <div className="space-y-3 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3 sm:p-4">
       {/* 멀티 패치 트렌드 차트 */}
       {chartData.length < 2 ? (
-        <div className="flex flex-col items-center gap-2 py-6 sm:py-8 text-[var(--color-muted-foreground)]">
+        <div className="flex flex-col items-center gap-2 py-5 sm:py-6 text-[var(--color-muted-foreground)]">
           <BarChart2 className="h-8 w-8 opacity-40" />
           <p className="text-sm">{t("notEnoughData")}</p>
           <p className="text-xs">{t("minTwoPatches")}</p>
         </div>
       ) : (
-        <div className="space-y-3 sm:space-y-4">
+        <div className="space-y-3">
           <p className="text-xs font-medium text-[var(--color-muted-foreground)]">
             {t("patchTrend")}
           </p>

@@ -561,9 +561,9 @@ export function CharacterEquipmentAnalyzer({
 
   if (loading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-3">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-40 rounded-md bg-[var(--color-surface)]" />
+          <div key={i} className="h-32 rounded-md bg-[var(--color-surface)]" />
         ))}
       </div>
     );
@@ -577,14 +577,14 @@ export function CharacterEquipmentAnalyzer({
 
   if (isEmpty) {
     return (
-      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
+      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center text-sm text-[var(--color-muted-foreground)]">
         아이템 빌드 표본을 확인 중입니다.
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {data.topBuilds.length > 0 && (
         <TopBuildsTable builds={data.topBuilds} itemNames={itemNames} traitNames={traitNames} />
       )}

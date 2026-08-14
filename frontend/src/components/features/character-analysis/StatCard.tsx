@@ -21,7 +21,7 @@ export function DeltaBadge({ delta, inverted = false }: { delta: number; inverte
 
 export function SkeletonCard() {
   return (
-    <div className="h-[78px] rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]" />
+    <div className="h-[68px] rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]" />
   );
 }
 
@@ -68,8 +68,8 @@ export function StatCard({
   return (
     <div
       className={cn(
-        "flex min-h-[76px] flex-col justify-between overflow-hidden rounded-md border border-[var(--color-border)] border-l-2 bg-[var(--color-surface)]",
-        "px-3 py-2.5 sm:px-3.5",
+        "flex min-h-[68px] flex-col justify-between overflow-hidden rounded-md border border-[var(--color-border)] border-l-2 bg-[var(--color-surface)]",
+        "px-2.5 py-2 sm:px-3",
         colors.border
       )}
     >
@@ -93,7 +93,7 @@ export function StatCard({
         )}
       </div>
       {gauge && (
-        <div className="relative mt-2 h-1 w-full rounded-full bg-[var(--color-border)]/60">
+        <div className="relative mt-1.5 h-1 w-full rounded-full bg-[var(--color-border)]/60">
           <div
             className={cn(
               "h-full rounded-full",
