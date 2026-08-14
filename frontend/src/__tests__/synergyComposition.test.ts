@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import type { CompositionAffinityEvidence } from "@/lib/characterAffinityComposition";
 import {
   buildTrioCompositionInsight,
   classifyCompositionPattern,
@@ -107,6 +108,149 @@ describe("classifyCompositionPattern", () => {
 });
 
 describe("buildTrioCompositionInsight", () => {
+  it("new 유형을 우선 사용해 전투 역할과 교전 순서를 다시 배정", () => {
+    const affinityEvidence = {
+      key: "8:22|20:4|74:3",
+      classifiedMembers: 3,
+      matchedMembers: 0,
+      prototype: null,
+      members: [
+        {
+          characterCode: 74,
+          weapon: 3,
+          characterName: "다르코",
+          weaponName: "방망이",
+          classification: {
+            role: "전사",
+            groupName: "선봉 지속 압박형",
+            subtype: "전열 유지 · 선봉 지속 압박형",
+            firstOrderType: "전열 유지 · 선봉 지속 압박형",
+          },
+          trend: null,
+        },
+        {
+          characterCode: 20,
+          weapon: 4,
+          characterName: "레녹스",
+          weaponName: "채찍",
+          classification: {
+            role: "탱커",
+            groupName: "전열 보호 · 장악 연계형",
+            subtype: "선봉 보호형",
+            firstOrderType: "선봉 보호",
+          },
+          trend: null,
+        },
+        {
+          characterCode: 8,
+          weapon: 22,
+          characterName: "하트",
+          weaponName: "기타",
+          classification: {
+            role: "원거리 딜러",
+            groupName: "받아치기 유지형",
+            subtype: "받아치기 유지형",
+            firstOrderType: "받아치기 유지",
+          },
+          trend: null,
+        },
+      ],
+    } satisfies CompositionAffinityEvidence;
+
+    const insight = buildTrioCompositionInsight(
+      [
+        { character: 74, weapon: 3 },
+        { character: 20, weapon: 4 },
+        { character: 8, weapon: 22 },
+      ],
+      affinityEvidence
+    );
+
+    expect(insight.analysisBasis).toBe("affinityTypes");
+    expect(insight.pattern).toBe("protectCarry");
+    expect(insight.members.map(({ traits }) => traits)).toEqual([
+      ["engage", "sustain"],
+      ["peel", "protect", "zoneControl"],
+      ["peel", "sustain"],
+    ]);
+    expect(insight.combatDoctrine.features).toMatchObject({
+      damageDelivery: "sustained",
+      accessMethod: "forcedEngage",
+      frontlineStructure: "doubleFront",
+    });
+    expect(insight.combatSequence).toEqual([
+      { character: 74, weapon: 3, task: "initiate" },
+      { character: 8, weapon: 22, task: "primaryDamage" },
+      { character: 20, weapon: 4, task: "protect" },
+    ]);
+
+    const evidenceBacked = buildTrioCompositionInsight(
+      [
+        { character: 74, weapon: 3 },
+        { character: 20, weapon: 4 },
+        { character: 8, weapon: 22 },
+      ],
+      { ...affinityEvidence, matchedMembers: 2 }
+    );
+    expect(evidenceBacked.analysisBasis).toBe("affinityEvidence");
+
+    const prototypeBacked = buildTrioCompositionInsight(
+      [
+        { character: 74, weapon: 3 },
+        { character: 20, weapon: 4 },
+        { character: 8, weapon: 22 },
+      ],
+      {
+        ...affinityEvidence,
+        prototype: {
+          match: "exact",
+          key: "원거리 딜러:받아치기 유지|전사:전열 유지 · 선봉 지속 압박형|탱커:선봉 보호",
+          roleComposition: "원거리 딜러 + 전사 + 탱커",
+          members: [
+            { role: "원거리 딜러", type: "받아치기 유지" },
+            { role: "전사", type: "전열 유지 · 선봉 지속 압박형" },
+            { role: "탱커", type: "선봉 보호" },
+          ],
+          memberMatches: [
+            {
+              characterCode: 74,
+              weapon: 3,
+              sourceType: "전열 유지 · 선봉 지속 압박형",
+              role: "전사",
+              type: "전열 유지 · 선봉 지속 압박형",
+              similarity: 1,
+            },
+            {
+              characterCode: 20,
+              weapon: 4,
+              sourceType: "선봉 보호",
+              role: "탱커",
+              type: "선봉 보호",
+              similarity: 1,
+            },
+            {
+              characterCode: 8,
+              weapon: 22,
+              sourceType: "받아치기 유지",
+              role: "원거리 딜러",
+              type: "받아치기 유지",
+              similarity: 1,
+            },
+          ],
+          similarity: 1,
+          minimumSimilarity: 1,
+          observations: 4,
+          supportingProfiles: 4,
+          reliableObservations: 3,
+          reliableRate: 0.75,
+          contextGames: 1_200,
+          adjustedResidual: 1.4,
+        },
+      }
+    );
+    expect(prototypeBacked.analysisBasis).toBe("successfulPrototypeExact");
+  });
+
   it("실제 캐릭터+무기 역할을 3단 조합 설명으로 변환", () => {
     const insight = buildTrioCompositionInsight([
       { character: 20, weapon: 4 }, // 레녹스: 탱커

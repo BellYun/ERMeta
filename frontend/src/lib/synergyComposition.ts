@@ -1,4 +1,6 @@
 import { COMPOSITION_CAPABILITY_HINTS } from "@/generated/compositionCapabilityHints";
+import type { CompositionAffinityEvidence } from "@/lib/characterAffinityComposition";
+import { getCompositionTypeTraits } from "@/lib/compositionTypeSemantics";
 import { getComboRoles, type CharacterRole } from "./characterMap";
 
 export type CompositionRoleKey =
@@ -144,7 +146,14 @@ export type CombatTaskKey =
   | "protect"
   | "finish";
 
-export type CapabilityEvidenceKey = "officialSkillText" | "editorialFallback";
+export type CapabilityEvidenceKey = "affinityProfile" | "officialSkillText" | "editorialFallback";
+
+export type CompositionAnalysisBasisKey =
+  | "successfulPrototypeExact"
+  | "successfulPrototypeNearest"
+  | "affinityEvidence"
+  | "affinityTypes"
+  | "legacyCapabilities";
 
 export interface CompositionCapabilityVector {
   pressureRange: number;
@@ -244,6 +253,9 @@ export interface TrioCompositionInsight {
   threatMatchup: ThreatMatchupKey;
   hasDirectMatchupEvidence: false;
   hasTimedPowerSpikeEvidence: false;
+  analysisBasis: CompositionAnalysisBasisKey;
+  affinityClassifiedMembers: number;
+  affinityMatchedMembers: number;
 }
 
 const ROLE_KEYS: Record<CharacterRole, CompositionRoleKey> = {
@@ -471,6 +483,16 @@ function traitsForMember(member: CompositionMemberInput): CompositionTraitKey[] 
   );
 }
 
+function affinityMemberForInput(
+  evidence: CompositionAffinityEvidence | null | undefined,
+  member: CompositionMemberInput
+) {
+  return evidence?.members.find(
+    (candidate) =>
+      candidate.characterCode === member.character && candidate.weapon === member.weapon
+  );
+}
+
 function formationForMember(
   primaryRole: CompositionRoleKey,
   traits: CompositionTraitKey[]
@@ -599,7 +621,10 @@ function officialTaskBonus(hint: OfficialCapabilityHint | undefined, task: Comba
   }
 }
 
-function buildCapabilityVector(member: CapabilityProfileInput): CompositionCapabilityVector {
+function buildCapabilityVector(
+  member: CapabilityProfileInput,
+  usesAffinityProfile = false
+): CompositionCapabilityVector {
   const officialHint = officialCapabilityHint(member.character);
   const officialUtility = Object.fromEntries(
     COMBAT_TASK_KEYS.map((task) => [task, officialTaskBonus(officialHint, task)])
@@ -612,7 +637,11 @@ function buildCapabilityVector(member: CapabilityProfileInput): CompositionCapab
     pressureRange: pressureRangeForMember(member),
     functions,
     officialUtility,
-    evidence: officialHint?.skillCount ? "officialSkillText" : "editorialFallback",
+    evidence: usesAffinityProfile
+      ? "affinityProfile"
+      : officialHint?.skillCount
+        ? "officialSkillText"
+        : "editorialFallback",
     officialSkillCount: officialHint?.skillCount ?? 0,
   };
 }
@@ -1206,17 +1235,68 @@ const COMPOSITION_INSIGHT_CACHE_LIMIT = 512;
 const compositionInsightCache = new Map<string, TrioCompositionInsight>();
 
 function getCompositionInsightCacheKey(
-  input: readonly [CompositionMemberInput, CompositionMemberInput, CompositionMemberInput]
+  input: readonly [CompositionMemberInput, CompositionMemberInput, CompositionMemberInput],
+  affinityEvidence?: CompositionAffinityEvidence | null
 ) {
-  return input.map((member) => `${member.character}:${member.weapon}`).join("|");
+  const trioKey = input.map((member) => `${member.character}:${member.weapon}`).join("|");
+  if (!affinityEvidence) return `${trioKey}:legacy`;
+  const profileKey = affinityEvidence.members
+    .map((member) =>
+      member.classification
+        ? `${member.characterCode}:${member.weapon}:${member.classification.role}:${member.classification.firstOrderType}`
+        : `${member.characterCode}:${member.weapon}:unclassified`
+    )
+    .sort((left, right) => left.localeCompare(right, "ko"))
+    .join("|");
+  const prototypeKey = affinityEvidence.prototype
+    ? `${affinityEvidence.prototype.match}:${affinityEvidence.prototype.key}`
+    : "no-prototype";
+  return `${trioKey}:${affinityEvidence.matchedMembers}:${prototypeKey}:${profileKey}`;
+}
+
+function buildPrototypeMemberProfiles(
+  members: [CompositionMemberProfile, CompositionMemberProfile, CompositionMemberProfile],
+  affinityEvidence?: CompositionAffinityEvidence | null
+): [CompositionMemberProfile, CompositionMemberProfile, CompositionMemberProfile] | null {
+  if (!affinityEvidence?.prototype) return null;
+  return members.map((member) => {
+    const match = affinityEvidence.prototype?.memberMatches.find(
+      (candidate) =>
+        candidate.characterCode === member.character && candidate.weapon === member.weapon
+    );
+    const traits = match ? getCompositionTypeTraits(match.type) : [];
+    if (traits.length === 0) return member;
+    const profile = {
+      ...member,
+      traits,
+      formation: formationForMember(member.primaryRole, traits),
+      effectiveRange: rangeForMember(member.primaryRole, traits),
+    } satisfies CompositionMemberProfile;
+    return {
+      ...profile,
+      capabilities: buildCapabilityVector(profile, true),
+    };
+  }) as [CompositionMemberProfile, CompositionMemberProfile, CompositionMemberProfile];
 }
 
 function computeTrioCompositionInsight(
-  input: readonly [CompositionMemberInput, CompositionMemberInput, CompositionMemberInput]
+  input: readonly [CompositionMemberInput, CompositionMemberInput, CompositionMemberInput],
+  affinityEvidence?: CompositionAffinityEvidence | null
 ): TrioCompositionInsight {
   const members = input.map((member) => {
-    const roles = toRoleKeys(getComboRoles(member.character, member.weapon));
-    const traits = traitsForMember(member);
+    const affinityMember = affinityMemberForInput(affinityEvidence, member);
+    const affinityRole = affinityMember?.classification?.role as CharacterRole | undefined;
+    const roles = affinityRole
+      ? toRoleKeys([affinityRole])
+      : toRoleKeys(getComboRoles(member.character, member.weapon));
+    const affinityTraits = affinityMember?.classification
+      ? getCompositionTypeTraits(
+          affinityMember.classification.groupName,
+          affinityMember.classification.subtype,
+          affinityMember.classification.firstOrderType
+        )
+      : [];
+    const traits = affinityTraits.length > 0 ? affinityTraits : traitsForMember(member);
     const primaryRole = roles[0];
     const profile = {
       ...member,
@@ -1229,36 +1309,54 @@ function computeTrioCompositionInsight(
     } satisfies CapabilityProfileInput;
     return {
       ...profile,
-      capabilities: buildCapabilityVector(profile),
+      capabilities: buildCapabilityVector(profile, affinityMember?.classification != null),
     } satisfies CompositionMemberProfile;
   }) as [CompositionMemberProfile, CompositionMemberProfile, CompositionMemberProfile];
-  const pattern = classifyCompositionPattern(members);
-  const combatPlan = combatPlanForMembers(members);
+  const prototypeMembers = buildPrototypeMemberProfiles(members, affinityEvidence);
+  const teamStructureMembers = prototypeMembers ?? members;
+  const pattern = classifyCompositionPattern(teamStructureMembers);
+  const combatPlan = combatPlanForMembers(teamStructureMembers);
   const combatSequence = buildCombatSequence(members, combatPlan);
+  const affinityClassifiedMembers = affinityEvidence?.classifiedMembers ?? 0;
+  const affinityMatchedMembers = affinityEvidence?.matchedMembers ?? 0;
+  const analysisBasis: CompositionAnalysisBasisKey =
+    affinityEvidence?.prototype?.match === "exact"
+      ? "successfulPrototypeExact"
+      : affinityEvidence?.prototype?.match === "nearest"
+        ? "successfulPrototypeNearest"
+        : affinityMatchedMembers >= 2
+          ? "affinityEvidence"
+          : affinityClassifiedMembers > 0
+            ? "affinityTypes"
+            : "legacyCapabilities";
 
   return {
     members,
     pattern,
     combatPlan,
     combatSequence,
-    combatDoctrine: buildCombatDoctrine(members, combatSequence),
+    combatDoctrine: buildCombatDoctrine(teamStructureMembers, combatSequence),
     powerSpike: powerSpikeForPattern(pattern),
     favorableMatchup: favorableMatchupForPattern(pattern),
     threatMatchup: threatMatchupForPattern(pattern),
     // 현재 DB는 팀 결과 집계만 가지며 실제 교전 상대와 획득 시각을 제공하지 않는다.
     hasDirectMatchupEvidence: false,
     hasTimedPowerSpikeEvidence: false,
+    analysisBasis,
+    affinityClassifiedMembers,
+    affinityMatchedMembers,
   };
 }
 
 export function buildTrioCompositionInsight(
-  input: readonly [CompositionMemberInput, CompositionMemberInput, CompositionMemberInput]
+  input: readonly [CompositionMemberInput, CompositionMemberInput, CompositionMemberInput],
+  affinityEvidence?: CompositionAffinityEvidence | null
 ): TrioCompositionInsight {
-  const cacheKey = getCompositionInsightCacheKey(input);
+  const cacheKey = getCompositionInsightCacheKey(input, affinityEvidence);
   const cached = compositionInsightCache.get(cacheKey);
   if (cached) return cached;
 
-  const insight = computeTrioCompositionInsight(input);
+  const insight = computeTrioCompositionInsight(input, affinityEvidence);
   compositionInsightCache.set(cacheKey, insight);
   if (compositionInsightCache.size > COMPOSITION_INSIGHT_CACHE_LIMIT) {
     const oldestKey = compositionInsightCache.keys().next().value;

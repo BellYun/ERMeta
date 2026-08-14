@@ -1,7 +1,15 @@
 import "server-only";
 
 import type { RouteLocale } from "@/i18n/routing";
+import type {
+  CompositionAffinityEvidence,
+  CompositionAffinityMemberInput,
+  GoodCompositionPrototypeEvidence,
+} from "@/lib/characterAffinityComposition";
+import { buildCompositionAffinityKey } from "@/lib/characterAffinityComposition";
+import { compositionTypeSimilarity } from "@/lib/compositionTypeSemantics";
 import editorialOverridesJson from "../../analysis-snapshots/composition-affinity/season10-11-exact-two-partner-affinity-v1/editorial-overrides.json";
+import goodCompositionPrototypesJson from "../../analysis-snapshots/composition-affinity/season10-11-exact-two-partner-affinity-v1/good-composition-prototypes.json";
 import frozenGroupsJson from "../../analysis-snapshots/composition-affinity/season10-11-exact-two-partner-affinity-v1/groups.json";
 import risingCompositionsJson from "../../public/data/lab/entry-sample-confidence/character-rising-compositions.json";
 
@@ -75,6 +83,22 @@ interface CharacterRisingCompositionIndex {
   profiles: Record<string, CharacterRisingComposition[]>;
 }
 
+interface GoodCompositionPrototype {
+  key: string;
+  roleComposition: string;
+  members: Array<{ role: string; type: string }>;
+  observations: number;
+  supportingProfiles: number;
+  reliableObservations: number;
+  reliableRate: number;
+  contextGames: number;
+  adjustedResidual: number;
+}
+
+interface GoodCompositionPrototypeSnapshot {
+  prototypes: GoodCompositionPrototype[];
+}
+
 export interface CharacterAffinityProfile {
   group: CharacterAffinityGroup;
   member: CharacterAffinityMember;
@@ -113,6 +137,8 @@ const GROUP_NAMES_KO: Record<string, string> = {
 const snapshot = frozenGroupsJson as unknown as CharacterAffinitySnapshot;
 const overrides = editorialOverridesJson as unknown as CharacterAffinityOverrides;
 const risingCompositionIndex = risingCompositionsJson as unknown as CharacterRisingCompositionIndex;
+const goodCompositionPrototypeSnapshot =
+  goodCompositionPrototypesJson as unknown as GoodCompositionPrototypeSnapshot;
 const replacedGroupIds = new Set(overrides.replacedGroupIds);
 
 export const effectiveCharacterAffinityGroups = [
@@ -121,12 +147,16 @@ export const effectiveCharacterAffinityGroups = [
 ];
 
 const profilesByCharacter = new Map<number, CharacterAffinityProfile[]>();
+const profilesByCharacterWeapon = new Map<string, CharacterAffinityProfile>();
 
 for (const group of effectiveCharacterAffinityGroups) {
   for (const member of group.primaryMembers) {
     const profiles = profilesByCharacter.get(member.characterCode) ?? [];
     profiles.push({ group, member });
     profilesByCharacter.set(member.characterCode, profiles);
+    if (member.weapon != null) {
+      profilesByCharacterWeapon.set(`${member.characterCode}:${member.weapon}`, { group, member });
+    }
   }
 }
 
@@ -171,4 +201,235 @@ export function getCharacterAffinityTypeMembers(role: string, firstOrderType: st
         weaponName: member.weaponName,
       }))
   );
+}
+
+function partnerTypesKey(partnerTypes: Array<{ role: string; fitRole: string }>) {
+  return partnerTypes
+    .map((partner) => `${partner.role}:${partner.fitRole}`)
+    .sort((left, right) => left.localeCompare(right, "ko"))
+    .join("|");
+}
+
+const MEMBER_ASSIGNMENTS = [
+  [0, 1, 2],
+  [0, 2, 1],
+  [1, 0, 2],
+  [1, 2, 0],
+  [2, 0, 1],
+  [2, 1, 0],
+] as const;
+
+const prototypesByKey = new Map(
+  goodCompositionPrototypeSnapshot.prototypes.map((prototype) => [prototype.key, prototype])
+);
+const prototypesByRoleComposition = new Map<string, GoodCompositionPrototype[]>();
+for (const prototype of goodCompositionPrototypeSnapshot.prototypes) {
+  const candidates = prototypesByRoleComposition.get(prototype.roleComposition) ?? [];
+  candidates.push(prototype);
+  prototypesByRoleComposition.set(prototype.roleComposition, candidates);
+}
+
+function classifiedPrototypeKey(members: Array<{ role: string; firstOrderType: string }>) {
+  return members
+    .map((member) => `${member.role}:${member.firstOrderType}`)
+    .sort((left, right) => left.localeCompare(right, "ko"))
+    .join("|");
+}
+
+function classifiedRoleComposition(members: Array<{ role: string }>) {
+  return members
+    .map((member) => member.role)
+    .sort((left, right) => left.localeCompare(right, "ko"))
+    .join(" + ");
+}
+
+function matchPrototypeMembers(
+  sources: Array<{
+    characterCode: number;
+    weapon: number;
+    role: string;
+    firstOrderType: string;
+  }>,
+  prototype: GoodCompositionPrototype
+) {
+  let best:
+    | {
+        assignment: (typeof MEMBER_ASSIGNMENTS)[number];
+        similarities: number[];
+        average: number;
+        minimum: number;
+      }
+    | undefined;
+
+  for (const assignment of MEMBER_ASSIGNMENTS) {
+    const valid = sources.every(
+      (source, sourceIndex) => source.role === prototype.members[assignment[sourceIndex]]?.role
+    );
+    if (!valid) continue;
+    const similarities = sources.map((source, sourceIndex) =>
+      compositionTypeSimilarity(
+        source.firstOrderType,
+        prototype.members[assignment[sourceIndex]].type
+      )
+    );
+    const average = similarities.reduce((sum, value) => sum + value, 0) / similarities.length;
+    const minimum = Math.min(...similarities);
+    if (!best || average > best.average || (average === best.average && minimum > best.minimum)) {
+      best = { assignment, similarities, average, minimum };
+    }
+  }
+  return best;
+}
+
+function prototypeEvidenceScore(
+  prototype: GoodCompositionPrototype,
+  similarity: number,
+  minimumSimilarity: number
+) {
+  const supportStrength = Math.min(1, prototype.supportingProfiles / 10);
+  const evidenceStrength = supportStrength * 0.55 + prototype.reliableRate * 0.45;
+  return similarity * 0.8 + minimumSimilarity * 0.1 + evidenceStrength * 0.1;
+}
+
+function getGoodCompositionPrototype(
+  members: Array<{
+    characterCode: number;
+    weapon: number;
+    role: string;
+    firstOrderType: string;
+  }>
+): GoodCompositionPrototypeEvidence | null {
+  if (members.length !== 3) return null;
+  const exactKey = classifiedPrototypeKey(members);
+  const exact = prototypesByKey.get(exactKey);
+  const candidates = exact
+    ? [exact]
+    : (prototypesByRoleComposition.get(classifiedRoleComposition(members)) ?? []);
+
+  let selected:
+    | {
+        prototype: GoodCompositionPrototype;
+        match: NonNullable<ReturnType<typeof matchPrototypeMembers>>;
+        score: number;
+      }
+    | undefined;
+  for (const prototype of candidates) {
+    const match = matchPrototypeMembers(members, prototype);
+    if (!match) continue;
+    const score = prototypeEvidenceScore(prototype, match.average, match.minimum);
+    if (!selected || score > selected.score) selected = { prototype, match, score };
+  }
+
+  if (!selected) return null;
+  const matchType = selected.prototype.key === exactKey ? "exact" : "nearest";
+  if (matchType === "nearest" && (selected.match.average < 0.58 || selected.match.minimum < 0.2)) {
+    return null;
+  }
+
+  const { prototype, match } = selected;
+  return {
+    match: matchType,
+    key: prototype.key,
+    roleComposition: prototype.roleComposition,
+    members: prototype.members,
+    memberMatches: members.map((member, memberIndex) => {
+      const prototypeMember = prototype.members[match.assignment[memberIndex]];
+      return {
+        characterCode: member.characterCode,
+        weapon: member.weapon,
+        sourceType: member.firstOrderType,
+        role: prototypeMember.role,
+        type: prototypeMember.type,
+        similarity: Number(match.similarities[memberIndex].toFixed(4)),
+      };
+    }),
+    similarity: Number(match.average.toFixed(4)),
+    minimumSimilarity: Number(match.minimum.toFixed(4)),
+    observations: prototype.observations,
+    supportingProfiles: prototype.supportingProfiles,
+    reliableObservations: prototype.reliableObservations,
+    reliableRate: prototype.reliableRate,
+    contextGames: prototype.contextGames,
+    adjustedResidual: prototype.adjustedResidual,
+  };
+}
+
+export function getTrioCharacterAffinityEvidence(
+  members: CompositionAffinityMemberInput[],
+  locale: RouteLocale
+): CompositionAffinityEvidence {
+  const profiles = members.map((member) =>
+    profilesByCharacterWeapon.get(`${member.characterCode}:${member.weapon}`)
+  );
+
+  const evidenceMembers = members.map((member, memberIndex) => {
+    const profile = profiles[memberIndex];
+    if (!profile) {
+      return {
+        ...member,
+        characterName: "",
+        weaponName: "",
+        classification: null,
+        trend: null,
+      };
+    }
+
+    const partnerProfiles = profiles.filter(
+      (candidate, candidateIndex): candidate is CharacterAffinityProfile =>
+        candidateIndex !== memberIndex && candidate != null
+    );
+    const expectedPartnerKey =
+      partnerProfiles.length === 2
+        ? partnerTypesKey(
+            partnerProfiles.map(({ member: partner }) => ({
+              role: partner.role,
+              fitRole: partner.firstOrderType,
+            }))
+          )
+        : null;
+    const matchedTrend = expectedPartnerKey
+      ? getCharacterRisingCompositions(profile.member.profileKey).find(
+          (context) => partnerTypesKey(context.partnerTypes) === expectedPartnerKey
+        )
+      : null;
+
+    return {
+      ...member,
+      characterName: profile.member.characterName,
+      weaponName: profile.member.weaponName,
+      classification: {
+        role: profile.member.role,
+        groupName: getCharacterAffinityGroupName(profile.group, locale),
+        subtype: getCharacterAffinitySubtype(profile.member),
+        firstOrderType: profile.member.firstOrderType,
+      },
+      trend: matchedTrend
+        ? {
+            roleComposition: matchedTrend.roleComposition,
+            games: matchedTrend.games,
+            adjustedResidual: matchedTrend.adjustedResidual,
+          }
+        : null,
+    };
+  });
+  const classifiedMembers = evidenceMembers.flatMap((member) =>
+    member.classification
+      ? [
+          {
+            characterCode: member.characterCode,
+            weapon: member.weapon,
+            role: member.classification.role,
+            firstOrderType: member.classification.firstOrderType,
+          },
+        ]
+      : []
+  );
+
+  return {
+    key: buildCompositionAffinityKey(members),
+    classifiedMembers: classifiedMembers.length,
+    matchedMembers: evidenceMembers.filter((member) => member.trend != null).length,
+    members: evidenceMembers,
+    prototype: getGoodCompositionPrototype(classifiedMembers),
+  };
 }
