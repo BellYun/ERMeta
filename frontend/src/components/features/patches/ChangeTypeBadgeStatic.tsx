@@ -40,7 +40,7 @@ export function ChangeTypeBadgeStatic({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded border px-2 py-1 text-[11px] font-semibold ",
+        "inline-flex items-center gap-1 whitespace-nowrap rounded border px-2 py-1 text-[11px] font-semibold",
         config.bgClass,
         config.colorClass
       )}
