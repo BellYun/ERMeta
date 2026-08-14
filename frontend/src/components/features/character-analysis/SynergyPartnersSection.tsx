@@ -161,8 +161,8 @@ export function SynergyPartnersSection({
     : data.patchScope;
 
   return (
-    <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
-      <div className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 sm:mb-4">
+    <section className="dashboard-panel p-3 sm:p-3.5 lg:p-4">
+      <div className="mb-2.5 flex flex-wrap items-center gap-x-2 gap-y-1 sm:mb-3">
         <Users className="h-4 w-4 text-[var(--color-muted-foreground)]" />
         <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
           {copy.title}
@@ -172,7 +172,7 @@ export function SynergyPartnersSection({
         </span>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-3 lg:grid-cols-2">
         <PartnerList
           title={copy.synergyTitle}
           icon={<TrendingUp className="h-3.5 w-3.5 text-[var(--color-stat-up)]" />}
@@ -220,11 +220,11 @@ function PartnerList({
         <span className="text-xs font-semibold text-[var(--color-foreground)]">{title}</span>
       </div>
       {partners.length === 0 ? (
-        <div className="rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] p-3 text-center text-xs text-[var(--color-muted-foreground)]">
+        <div className="rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] p-2.5 text-center text-xs text-[var(--color-muted-foreground)]">
           {copy.insufficientSample}
         </div>
       ) : (
-        <ul className="flex flex-col gap-1.5">
+        <ul className="flex flex-col gap-1">
           {partners.map((p, index) => (
             <PartnerCard
               key={`${p.partnerCode}-${p.partnerWeapon}`}
@@ -265,15 +265,15 @@ function PartnerCard({
 
   return (
     <li
-      className="metric-card flex items-center gap-3 p-2.5"
+      className="metric-card flex items-center gap-2.5 p-2"
       data-accent={featured ? "true" : undefined}
     >
       <Image
         src={getCharacterMiniWebpUrl(p.partnerCode)}
         alt={partnerName}
-        width={36}
-        height={36}
-        className="h-9 w-9 rounded-md object-cover"
+        width={32}
+        height={32}
+        className="h-8 w-8 rounded-md object-cover"
       />
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex items-center gap-1.5">

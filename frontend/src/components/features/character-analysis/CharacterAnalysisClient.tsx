@@ -76,28 +76,28 @@ function CharacterWeaponPortrait({
   const isLarge = size === "large";
 
   return (
-    <span className={cn("relative block shrink-0", isLarge ? "h-14 w-14" : "h-9 w-9")}>
+    <span className={cn("relative block shrink-0", isLarge ? "h-12 w-12" : "h-8 w-8")}>
       <Image
         src={getCharacterMiniWebpUrl(member.characterCode)}
         alt={member.characterName}
-        width={isLarge ? 56 : 36}
-        height={isLarge ? 56 : 36}
+        width={isLarge ? 48 : 32}
+        height={isLarge ? 48 : 32}
         className="h-full w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] object-cover object-top"
       />
       {weaponImage ? (
         <span
           className={cn(
             "weapon-icon-backdrop absolute -bottom-1 -right-1 grid place-items-center rounded-full border shadow-sm",
-            isLarge ? "h-7 w-7" : "h-5 w-5"
+            isLarge ? "h-6 w-6" : "h-[18px] w-[18px]"
           )}
           title={member.weaponName}
         >
           <Image
             src={weaponImage}
             alt={member.weaponName}
-            width={isLarge ? 24 : 16}
-            height={isLarge ? 24 : 16}
-            className={isLarge ? "h-6 w-6 object-contain" : "h-4 w-4 object-contain"}
+            width={isLarge ? 20 : 14}
+            height={isLarge ? 20 : 14}
+            className={isLarge ? "h-5 w-5 object-contain" : "h-3.5 w-3.5 object-contain"}
           />
         </span>
       ) : null}
@@ -469,9 +469,9 @@ export function CharacterAnalysisClient({
     }));
   }, [selectedWeapon, weaponTypeProfiles]);
   return (
-    <div className="flex flex-col gap-5 sm:gap-6">
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_340px]">
-        <section className="dashboard-panel character-analysis-panel p-3.5 sm:p-4">
+    <div className="flex flex-col gap-4 sm:gap-5">
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_320px]">
+        <section className="dashboard-panel character-analysis-panel p-3">
           <CharacterHeader
             selectedCode={code}
             selectedTier={selectedTier}
@@ -493,15 +493,15 @@ export function CharacterAnalysisClient({
         </section>
 
         {!loading && displayStat && displayStat.totalGames > 0 && (
-          <section className="dashboard-panel character-analysis-panel p-3.5 sm:p-4">
-            <div className="mb-3 flex items-center gap-2 sm:mb-4">
+          <section className="dashboard-panel character-analysis-panel p-3">
+            <div className="mb-2.5 flex items-center gap-2">
               <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
                 {t("quickSummary")}
               </h2>
             </div>
             <div className="overflow-hidden rounded-md border border-[var(--color-border)]">
               {/* Tier */}
-              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2">
+              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 py-1.5">
                 <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
                   {t("summary.tier")}
                 </span>
@@ -525,7 +525,7 @@ export function CharacterAnalysisClient({
                 )}
               </div>
               {/* Win Rate */}
-              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2">
+              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1.5">
                 <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
                   {t("summary.winRate")}
                 </span>
@@ -541,7 +541,7 @@ export function CharacterAnalysisClient({
                 </span>
               </div>
               {/* Best Weapon */}
-              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2">
+              <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1.5">
                 <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
                   {t("summary.recommendedWeapon")}
                 </span>
@@ -552,7 +552,7 @@ export function CharacterAnalysisClient({
                 </span>
               </div>
               {/* Pick Rate */}
-              <div className="flex items-center justify-between bg-[var(--color-surface)] px-3 py-2">
+              <div className="flex items-center justify-between bg-[var(--color-surface)] px-2.5 py-1.5">
                 <span className="text-[11px] font-medium text-[var(--color-muted-foreground)]">
                   {t("summary.pickRate")}
                 </span>
@@ -566,8 +566,8 @@ export function CharacterAnalysisClient({
       </div>
 
       {characterTypeEntries.length > 0 ? (
-        <section className="dashboard-panel character-analysis-panel character-type-panel z-[30] p-3.5 sm:p-4">
-          <div className="flex flex-col gap-1 border-b border-[var(--color-border)] pb-3 sm:flex-row sm:items-end sm:justify-between">
+        <section className="dashboard-panel character-analysis-panel character-type-panel z-[30] p-3">
+          <div className="flex flex-col gap-1 border-b border-[var(--color-border)] pb-2.5 sm:flex-row sm:items-end sm:justify-between">
             <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
               {characterHeaderT("characterType")}
             </h2>
@@ -575,7 +575,7 @@ export function CharacterAnalysisClient({
               {characterHeaderT("characterTypeHint")}
             </p>
           </div>
-          <div className="mt-3 grid gap-3">
+          <div className="mt-2.5 grid gap-2.5">
             {characterTypeEntries.map(({ weaponCode, profile }) => {
               const signatureProfileKey = `${code}:${weaponCode ?? "default"}`;
               const signaturesExpanded = expandedSignatureProfiles.has(signatureProfileKey);
@@ -586,11 +586,11 @@ export function CharacterAnalysisClient({
               return (
                 <article
                   key={weaponCode ?? "default"}
-                  className="grid gap-4 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] p-3.5 lg:grid-cols-[minmax(0,0.8fr)_minmax(22rem,1.2fr)] lg:p-4"
+                  className="grid gap-3 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] p-3 lg:grid-cols-[minmax(0,0.8fr)_minmax(22rem,1.2fr)]"
                 >
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-start justify-between gap-2">
-                      <div className="flex min-w-0 items-center gap-3">
+                      <div className="flex min-w-0 items-center gap-2.5">
                         <CharacterWeaponPortrait
                           size="large"
                           member={{
@@ -621,16 +621,16 @@ export function CharacterAnalysisClient({
                     </div>
 
                     {profile.peers.length > 0 ? (
-                      <div className="mt-3">
+                      <div className="mt-2.5">
                         <p className="text-xs font-semibold text-[var(--color-muted-foreground)]">
                           {characterHeaderT("sameType")}
                         </p>
-                        <div className="mt-2 flex flex-wrap gap-2">
+                        <div className="mt-1.5 flex flex-wrap gap-1.5">
                           {profile.peers.map((peer) => (
                             <Link
                               key={peer.profileKey}
                               href={getCharacterWeaponHref(peer)}
-                              className="flex min-w-0 items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] py-1.5 pl-1.5 pr-2.5 transition-colors hover:border-[var(--color-accent)] hover:bg-[var(--color-surface-3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+                              className="flex min-w-0 items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] py-1 pl-1 pr-2 transition-colors hover:border-[var(--color-accent)] hover:bg-[var(--color-surface-3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
                             >
                               <CharacterWeaponPortrait member={peer} />
                               <span className="min-w-0">
@@ -649,7 +649,7 @@ export function CharacterAnalysisClient({
                   </div>
 
                   {profile.signatures.length > 0 ? (
-                    <div className="border-t border-[var(--color-border)] pt-4 lg:border-l lg:border-t-0 lg:pl-4 lg:pt-0">
+                    <div className="border-t border-[var(--color-border)] pt-3 lg:border-l lg:border-t-0 lg:pl-3 lg:pt-0">
                       <p className="text-xs font-semibold text-[var(--color-muted-foreground)]">
                         {characterHeaderT("signatureComposition")}
                       </p>
@@ -659,7 +659,7 @@ export function CharacterAnalysisClient({
                             key={`${signature.roleComposition}-${signature.partnerTypes
                               .map((partner) => `${partner.role}:${partner.fitRole}`)
                               .join("|")}`}
-                            className="grid gap-1 py-2.5 sm:grid-cols-[1.5rem_minmax(0,1fr)_auto] sm:items-center sm:gap-2"
+                            className="grid gap-1 py-2 sm:grid-cols-[1.5rem_minmax(0,1fr)_auto] sm:items-center sm:gap-2"
                           >
                             <span className="hidden text-xs font-bold tabular-nums text-[var(--color-muted-foreground)] sm:block">
                               {index + 1}
@@ -737,15 +737,15 @@ export function CharacterAnalysisClient({
       <RoleComboRpPanel characterCode={code} selectedWeapon={selectedWeapon} />
 
       <div className="pt-0.5 sm:pt-1">
-        <div className="mb-3 flex items-center gap-2 sm:mb-4">
+        <div className="mb-2.5 flex items-center gap-2 sm:mb-3">
           <div className="h-px flex-1 bg-[var(--color-border)]" />
           <span className="dashboard-kicker text-[10px] sm:text-[11px]">{t("deepDive")}</span>
           <div className="h-px flex-1 bg-[var(--color-border)]" />
         </div>
 
-        <div className="grid gap-5 xl:grid-cols-2">
-          <section className="dashboard-panel character-analysis-panel p-3.5 sm:p-4">
-            <div className="mb-3 flex items-center gap-2 sm:mb-4">
+        <div className="grid gap-4 xl:grid-cols-2">
+          <section className="dashboard-panel character-analysis-panel p-3">
+            <div className="mb-2.5 flex items-center gap-2 sm:mb-3">
               <BarChart2 className="h-4 w-4 text-[var(--color-muted-foreground)]" />
               <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
                 {t("patchComparison")}
@@ -761,8 +761,8 @@ export function CharacterAnalysisClient({
             </Suspense>
           </section>
 
-          <section className="dashboard-panel character-analysis-panel p-3.5 sm:p-4">
-            <div className="mb-3 flex items-center gap-2 sm:mb-4">
+          <section className="dashboard-panel character-analysis-panel p-3">
+            <div className="mb-2.5 flex items-center gap-2 sm:mb-3">
               <FileText className="h-4 w-4 text-[var(--color-muted-foreground)]" />
               <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
                 {t("patchNotes")}
@@ -773,8 +773,8 @@ export function CharacterAnalysisClient({
             </Suspense>
           </section>
 
-          <section className="dashboard-panel character-analysis-panel p-3.5 sm:p-4 xl:col-span-2">
-            <div className="mb-3 flex items-center gap-2 sm:mb-4">
+          <section className="dashboard-panel character-analysis-panel p-3 xl:col-span-2">
+            <div className="mb-2.5 flex items-center gap-2 sm:mb-3">
               <BarChart2 className="h-4 w-4 text-[var(--color-muted-foreground)]" />
               <h2 className="dashboard-section-title text-sm font-bold text-[var(--color-foreground)]">
                 {t("stats")}

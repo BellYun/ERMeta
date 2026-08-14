@@ -3,13 +3,19 @@
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import { X, Users, Loader2, Info, Share2 } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary";
 import { useL10n } from "@/components/L10nProvider";
 import { useFocusCharWeapons } from "@/hooks/useFocusCharWeapons";
 import { useTraitNames } from "@/hooks/useTraitNames";
 import { analytics, type SynergySortBy } from "@/lib/analytics";
+import {
+  buildCompositionAffinityKey,
+  type CompositionAffinityBatchResponse,
+  type CompositionAffinityEvidence,
+  type CompositionAffinityMemberInput,
+} from "@/lib/characterAffinityComposition";
 import { resolveCharacterName } from "@/lib/characterMap";
 import { isMobileDevice } from "@/lib/device";
 import { FetchHttpError, FetchRetriesExhaustedError, fetchWithRetry } from "@/lib/fetchWithRetry";
@@ -44,6 +50,7 @@ type DetailBucketData = CachedTrioWeaponTuple[] | TrioWeaponResult[];
 
 const detailBucketMemoryCache = new Map<string, CachedTrioWeaponTuple[]>();
 const detailBucketInFlight = new Map<string, Promise<DetailBucketData>>();
+const affinityEvidenceMemoryCache = new Map<string, CompositionAffinityEvidence>();
 
 const DETAIL_SORT_OPTIONS: {
   value: SortBy;
@@ -53,7 +60,7 @@ const DETAIL_SORT_OPTIONS: {
 function parseDetailSortByParam(value: string | null): SortBy {
   return DETAIL_SORT_OPTIONS.some((option) => option.value === value)
     ? (value as SortBy)
-    : "averageRP";
+    : "tierScore";
 }
 
 /** 코어만 무시하고 실험체+무기(c:w) 기준으로 그룹화 */
@@ -132,6 +139,14 @@ function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
     averageRank: v.totalGames > 0 ? v.rankSum / v.totalGames : 0,
     traitVariants: v.variants,
   }));
+}
+
+function getGroupAffinityMembers(group: GroupedCombo): CompositionAffinityMemberInput[] {
+  return [
+    { characterCode: group.character1, weapon: group.weaponType1 },
+    { characterCode: group.character2, weapon: group.weaponType2 },
+    { characterCode: group.character3, weapon: group.weaponType3 },
+  ];
 }
 
 function sortAllyPair<T extends { charCode: number }>(allies: T[]): T[] {
@@ -367,6 +382,7 @@ export function SynergyDetailResults() {
   "use no memo";
   const { l10n } = useL10n();
   const t = useTranslations("synergyResults");
+  const locale = useLocale();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { focusCharWeapons } = useFocusCharWeapons();
@@ -576,6 +592,65 @@ export function SynergyDetailResults() {
     [recommendations, visibleCount]
   );
   const hasMoreRecommendations = visibleRecommendations.length < recommendations.length;
+  const [affinityEvidenceByKey, setAffinityEvidenceByKey] = React.useState<
+    Record<string, CompositionAffinityEvidence>
+  >({});
+
+  React.useEffect(() => {
+    if (visibleRecommendations.length === 0) return;
+
+    const combos = visibleRecommendations.map(getGroupAffinityMembers);
+    const cachedEntries = combos.flatMap((members) => {
+      const key = buildCompositionAffinityKey(members);
+      const evidence = affinityEvidenceMemoryCache.get(key);
+      return evidence ? ([[key, evidence]] as const) : [];
+    });
+    if (cachedEntries.length > 0) {
+      setAffinityEvidenceByKey((current) => ({
+        ...current,
+        ...Object.fromEntries(cachedEntries),
+      }));
+    }
+
+    const missingCombos = combos.filter(
+      (members) => !affinityEvidenceMemoryCache.has(buildCompositionAffinityKey(members))
+    );
+    if (missingCombos.length === 0) return;
+
+    const controller = new AbortController();
+    const requestChunks = Array.from({ length: Math.ceil(missingCombos.length / 60) }, (_, index) =>
+      missingCombos.slice(index * 60, (index + 1) * 60)
+    );
+    Promise.all(
+      requestChunks.map((combosChunk) =>
+        fetchWithRetry<CompositionAffinityBatchResponse>("/api/analysis/composition-affinity", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ locale, combos: combosChunk }),
+          signal: controller.signal,
+          maxRetries: 1,
+        })
+      )
+    )
+      .then((responses) => {
+        const affinityResults: Record<string, CompositionAffinityEvidence> = Object.assign(
+          {},
+          ...responses.map((response) => response.results)
+        );
+        for (const [key, evidence] of Object.entries(affinityResults)) {
+          affinityEvidenceMemoryCache.set(key, evidence);
+        }
+        React.startTransition(() => {
+          setAffinityEvidenceByKey((current) => ({ ...current, ...affinityResults }));
+        });
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        console.error("[synergy-detail] composition affinity request failed", error);
+      });
+
+    return () => controller.abort();
+  }, [locale, visibleRecommendations]);
 
   const replaceSearchParams = React.useCallback(
     (params: URLSearchParams) => {
@@ -633,7 +708,7 @@ export function SynergyDetailResults() {
     ally1Code: null,
     ally2Code: null,
     resultCount: 0,
-    sortBy: "averageRP",
+    sortBy: "tierScore",
     explorationDepth: 0,
   });
 
@@ -942,7 +1017,7 @@ export function SynergyDetailResults() {
           <div
             data-sr-block
             data-result-version={resultVersion}
-            className="synergy-results-compact flex flex-col gap-2"
+            className="synergy-results-compact flex flex-col gap-1.5"
           >
             {resultAllies.length === 1 && (
               <p className="flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-[12px] font-medium text-[var(--color-muted-foreground)]">
@@ -990,6 +1065,11 @@ export function SynergyDetailResults() {
                       isFocusPoolCombo={isFocusPoolCombo(group)}
                       loadTraitVariants={loadCoreVariants}
                       onRecommendationClick={onRecommendationClick}
+                      affinityEvidence={
+                        affinityEvidenceByKey[
+                          buildCompositionAffinityKey(getGroupAffinityMembers(group))
+                        ]
+                      }
                     />
                   </div>
                 );

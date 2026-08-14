@@ -49,37 +49,37 @@ interface CharacterPageContentProps {
 
 function CharacterAnalysisFallback() {
   return (
-    <div className="flex flex-col gap-5 sm:gap-6">
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_340px]">
-        <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
+    <div className="flex flex-col gap-4 sm:gap-5">
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_320px]">
+        <section className="dashboard-panel p-3">
           <div>
-            <div className="h-40 rounded-md bg-[var(--color-surface-2)] sm:h-48" />
+            <div className="h-36 rounded-md bg-[var(--color-surface-2)] sm:h-40" />
           </div>
         </section>
-        <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
+        <section className="dashboard-panel p-3">
           <div>
-            <div className="h-48 rounded-md bg-[var(--color-surface-2)]" />
+            <div className="h-40 rounded-md bg-[var(--color-surface-2)]" />
           </div>
         </section>
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-2">
-        <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
+      <div className="grid gap-4 xl:grid-cols-2">
+        <section className="dashboard-panel p-3">
           <div>
-            <div className="mb-4 h-6 w-28 rounded bg-[var(--color-surface-2)]" />
-            <div className="h-64 rounded-md bg-[var(--color-surface-2)]" />
+            <div className="mb-3 h-6 w-28 rounded bg-[var(--color-surface-2)]" />
+            <div className="h-56 rounded-md bg-[var(--color-surface-2)]" />
           </div>
         </section>
-        <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5">
+        <section className="dashboard-panel p-3">
           <div>
-            <div className="mb-4 h-6 w-24 rounded bg-[var(--color-surface-2)]" />
-            <div className="h-64 rounded-md bg-[var(--color-surface-2)]" />
+            <div className="mb-3 h-6 w-24 rounded bg-[var(--color-surface-2)]" />
+            <div className="h-56 rounded-md bg-[var(--color-surface-2)]" />
           </div>
         </section>
-        <section className="dashboard-panel p-3.5 sm:p-4 lg:p-5 xl:col-span-2">
+        <section className="dashboard-panel p-3 xl:col-span-2">
           <div>
-            <div className="mb-4 h-6 w-16 rounded bg-[var(--color-surface-2)]" />
-            <div className="h-80 rounded-md bg-[var(--color-surface-2)]" />
+            <div className="mb-3 h-6 w-16 rounded bg-[var(--color-surface-2)]" />
+            <div className="h-72 rounded-md bg-[var(--color-surface-2)]" />
           </div>
         </section>
       </div>
@@ -503,25 +503,25 @@ function CharacterSeoSection({
   ];
 
   return (
-    <section className="dashboard-panel p-4 lg:p-5">
+    <section className="dashboard-panel p-3">
       <script
         type="application/ld+json"
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)] lg:items-start">
+      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(260px,330px)] lg:items-start">
         <div>
           <p className="text-xs font-medium text-[var(--color-muted-foreground)]">{copy.eyebrow}</p>
-          <h2 className="mt-2 text-[1.25rem] font-bold text-[var(--color-foreground)] sm:text-[1.5rem]">
+          <h2 className="mt-1.5 text-[1.25rem] font-bold text-[var(--color-foreground)] sm:text-[1.5rem]">
             {copy.title}
           </h2>
-          <p className="mt-2 max-w-[58rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem] sm:leading-7">
+          <p className="mt-1.5 max-w-[58rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem] sm:leading-7">
             {copy.body}
           </p>
         </div>
 
         <nav
-          className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-2"
+          className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-1.5"
           aria-label={copy.title}
         >
           <p className="px-2 pb-1.5 text-xs font-bold text-[var(--color-muted-foreground)]">
@@ -532,14 +532,14 @@ function CharacterSeoSection({
               <Link
                 key={href}
                 href={href}
-                className={`group grid grid-cols-[2rem_minmax(0,1fr)_1.25rem] items-center gap-2 rounded-md border px-2.5 py-2.5 ${
+                className={`group grid grid-cols-[1.75rem_minmax(0,1fr)_1.25rem] items-center gap-2 rounded-md border px-2 py-2 ${
                   primary
                     ? "border-[var(--color-border-light)] bg-[var(--color-surface)] hover:bg-[var(--color-surface-2)]"
                     : "border-transparent bg-transparent hover:border-[var(--color-border)] hover:bg-[var(--color-surface-2)]"
                 }`}
               >
                 <span
-                  className={`flex h-8 w-8 items-center justify-center rounded-md border ${
+                  className={`flex h-7 w-7 items-center justify-center rounded-md border ${
                     primary
                       ? "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
                       : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]"
@@ -562,14 +562,14 @@ function CharacterSeoSection({
         </nav>
       </div>
 
-      <dl className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+      <dl className="mt-3 grid gap-1.5 sm:grid-cols-2 lg:grid-cols-5">
         {cards.map((card) => (
           <div
             key={card.label}
-            className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2"
+            className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1.5"
           >
             <dt className="text-xs text-[var(--color-muted-foreground)]">{card.label}</dt>
-            <dd className="mt-1 truncate text-sm font-bold text-[var(--color-foreground)]">
+            <dd className="mt-0.5 truncate text-sm font-bold text-[var(--color-foreground)]">
               {card.value}
             </dd>
           </div>
@@ -612,16 +612,16 @@ function buildInsight(
 
 function CharacterInsightSection({ insight }: { insight: CharacterInsight }) {
   return (
-    <section className="dashboard-panel p-4 lg:p-5">
-      <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1">
+    <section className="dashboard-panel p-3">
+      <div className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1">
         <Info className="h-4 w-4 text-[var(--color-muted-foreground)]" />
         <h2 className="text-sm font-bold text-[var(--color-foreground)]">{insight.headline}</h2>
       </div>
 
-      <div className="grid gap-3 lg:grid-cols-3">
+      <div className="grid gap-2.5 lg:grid-cols-3">
         <InsightCard title={insight.fitTitle} items={insight.fitPoints} />
         <InsightCard title={insight.metricsTitle} items={insight.metricsPoints} />
-        <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
           <h3 className="mb-2 text-sm font-bold text-[var(--color-foreground)]">
             {insight.compositionTitle}
           </h3>
@@ -636,7 +636,7 @@ function CharacterInsightSection({ insight }: { insight: CharacterInsight }) {
 
 function InsightCard({ title, items }: { title: string; items: string[] }) {
   return (
-    <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+    <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
       <h3 className="mb-2 text-sm font-bold text-[var(--color-foreground)]">{title}</h3>
       <ul className="grid gap-1.5 text-sm leading-6 text-[var(--color-muted-foreground)]">
         {items.map((item) => (
@@ -705,9 +705,9 @@ export async function CharacterPageContent({
   );
 
   return (
-    <div className="page-shell flex flex-col gap-5 lg:gap-6">
-      <section className="dashboard-panel px-3.5 py-3 sm:px-4 lg:px-4">
-        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(300px,390px)] lg:items-center">
+    <div className="page-shell flex flex-col gap-4 lg:gap-5">
+      <section className="dashboard-panel px-3 py-2.5 sm:px-3.5">
+        <div className="grid gap-2.5 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)] lg:items-center">
           <div className="flex min-w-0 flex-col justify-center">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
               <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--color-muted-foreground)]">
@@ -731,7 +731,7 @@ export async function CharacterPageContent({
           </div>
 
           {serverSummary ? (
-            <aside className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
+            <aside className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-2.5">
               <div className="mb-1.5 flex items-center gap-2">
                 <span className="flex h-6 w-6 items-center justify-center rounded-md border border-[var(--color-border)] text-[var(--color-muted-foreground)]">
                   <Info className="h-3 w-3" />

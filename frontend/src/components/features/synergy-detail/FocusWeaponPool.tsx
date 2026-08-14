@@ -9,7 +9,7 @@ import { useL10n } from "@/components/L10nProvider";
 import { useFocusCharWeapons } from "@/hooks/useFocusCharWeapons";
 import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMap";
 import { cn } from "@/lib/utils";
-import { resolveWeaponName } from "@/lib/weaponMap";
+import { getWeaponGroupImageUrl, resolveWeaponName } from "@/lib/weaponMap";
 import { getFallbackMap } from "../synergy/constants";
 import { matchesChosungSearch } from "../synergy/utils";
 import { useTapGuard } from "./useTapGuard";
@@ -31,6 +31,7 @@ const FocusCell = React.memo(function FocusCell({
 }) {
   const { l10n } = useL10n();
   const localizedWeaponLabel = item.weaponCode > 0 ? resolveWeaponName(item.weaponCode, l10n) : "";
+  const weaponIconUrl = getWeaponGroupImageUrl(item.weaponCode);
   // 가상화 그리드 안의 셀 — onPointerUp 만 두면 스크롤 도중 우연 트리거됨.
   const activate = React.useCallback(
     () => onSelect(item.charCode, item.weaponCode),
@@ -56,19 +57,33 @@ const FocusCell = React.memo(function FocusCell({
           : "hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80"
       )}
     >
-      <div
-        className={cn(
-          "relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
-          selected && "outline outline-1 outline-[var(--color-border-light)]"
-        )}
-      >
-        <Image
-          src={getCharacterMiniWebpUrl(item.charCode)}
-          alt={charName}
-          fill
-          className="object-cover"
-          sizes="40px"
-        />
+      <div className="relative h-10 w-10">
+        <span
+          className={cn(
+            "relative block h-full w-full overflow-hidden rounded-md bg-[var(--color-border)]",
+            selected && "outline outline-1 outline-[var(--color-border-light)]"
+          )}
+        >
+          <Image
+            src={getCharacterMiniWebpUrl(item.charCode)}
+            alt={charName}
+            fill
+            className="object-cover"
+            sizes="40px"
+          />
+        </span>
+        {weaponIconUrl ? (
+          <span className="weapon-icon-backdrop absolute -bottom-1 -right-1 z-10 grid h-5 w-5 place-items-center rounded-full border shadow-sm">
+            <Image
+              src={weaponIconUrl}
+              alt=""
+              width={16}
+              height={16}
+              className="h-4 w-4 object-contain"
+              aria-hidden="true"
+            />
+          </span>
+        ) : null}
       </div>
       <span
         className={cn(

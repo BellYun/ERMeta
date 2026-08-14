@@ -15,6 +15,7 @@ export interface DisplayRow {
   weaponCode: number;
   name: string;
   weaponName: string;
+  weaponIconUrl: string | null;
   imageUrl: string;
   tier: Tier;
   pickRate: number;

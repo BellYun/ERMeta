@@ -269,7 +269,7 @@ export function RoleComboRpPanel({ characterCode, selectedWeapon }: RoleComboRpP
   return (
     <section className="dashboard-panel flex min-w-0 flex-col overflow-hidden p-0">
       <div className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1">
-        <div className="flex w-full items-center gap-2 border-b border-[var(--color-border)] px-4 py-3">
+        <div className="flex w-full items-center gap-2 border-b border-[var(--color-border)] px-3 py-2.5">
           <BarChart3 className="h-4 w-4 shrink-0 text-[var(--color-muted-foreground)]" />
           <div className="min-w-0 flex-1">
             <h2 className="truncate text-sm font-bold text-[var(--color-foreground)]">
@@ -288,12 +288,12 @@ export function RoleComboRpPanel({ characterCode, selectedWeapon }: RoleComboRpP
       </div>
 
       {loading ? (
-        <div className="grid gap-2 px-4 pb-4">
+        <div className="grid gap-2 px-3 pb-3">
           <div className="h-9 rounded-md bg-[var(--color-surface-2)]" />
-          <div className="h-48 rounded-md bg-[var(--color-surface-2)]" />
+          <div className="h-40 rounded-md bg-[var(--color-surface-2)]" />
         </div>
       ) : !data ? (
-        <div className="mx-4 mb-4 flex min-h-[180px] items-center justify-center rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] px-4 text-center text-xs text-[var(--color-muted-foreground)]">
+        <div className="mx-3 mb-3 flex min-h-[150px] items-center justify-center rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] px-3 text-center text-xs text-[var(--color-muted-foreground)]">
           {copy.sampleChecking}
         </div>
       ) : (
@@ -381,10 +381,10 @@ function ComboHalf({
   locale: RouteLocale;
 }) {
   return (
-    <div className="px-4 pb-3 pt-2.5">
+    <div className="px-3 pb-2.5 pt-2">
       <p
         className={cn(
-          "mb-2 text-[11px] font-semibold",
+          "mb-1.5 text-[11px] font-semibold",
           variant === "strong" ? "text-[var(--color-tier-s)]" : "text-[var(--color-danger)]"
         )}
       >
@@ -430,7 +430,7 @@ function ComboBarRow({
 
   return (
     <li className="border-b border-[var(--color-border)]/40 last:border-b-0">
-      <div className="w-full py-1.5 text-left">
+      <div className="w-full py-1 text-left">
         <span className="mb-1.5 flex items-start justify-between gap-2">
           <span className="break-keep text-[11px] leading-snug text-[var(--color-muted-foreground)]">
             {localizeRoleText(entry.multiset, locale)}

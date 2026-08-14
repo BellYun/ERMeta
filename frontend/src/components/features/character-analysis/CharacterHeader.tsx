@@ -143,16 +143,16 @@ export function CharacterHeader({
   };
 
   return (
-    <div className="character-workspace flex flex-col gap-3.5">
+    <div className="character-workspace flex flex-col gap-3">
       <div
-        className="metric-card character-header-card p-3.5 sm:p-4"
+        className="metric-card character-header-card p-3"
         data-accent={charTier ? "true" : undefined}
       >
-        <div className="flex items-start gap-3 sm:gap-4">
+        <div className="flex items-start gap-2.5 sm:gap-3">
           <div className="relative shrink-0">
             <div
               className={cn(
-                "relative h-16 w-16 overflow-hidden rounded-md border bg-[var(--color-surface-2)] sm:h-20 sm:w-20",
+                "relative h-14 w-14 overflow-hidden rounded-md border bg-[var(--color-surface-2)] sm:h-16 sm:w-16",
                 charTier ? "border-[var(--color-accent)]" : "border-[var(--color-border)]"
               )}
             >
@@ -173,7 +173,7 @@ export function CharacterHeader({
             )}
           </div>
 
-          <div className="flex min-w-0 flex-1 flex-col gap-3">
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
             <div>
               <h2 className="dashboard-section-title text-[1.15rem] font-bold leading-tight text-[var(--color-foreground)] sm:text-xl">
                 {characterName}
@@ -192,7 +192,7 @@ export function CharacterHeader({
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 border-t border-[var(--color-border)] pt-3">
+            <div className="flex flex-wrap items-center gap-2 border-t border-[var(--color-border)] pt-2">
               <div
                 role="radiogroup"
                 aria-label={t("tierSelectorAria")}
@@ -247,8 +247,8 @@ export function CharacterHeader({
         </div>
 
         {availableWeaponCodes.length > 0 ? (
-          <div className="mt-3 border-t border-[var(--color-border)] pt-3">
-            <span className="mb-2 block text-[10px] font-semibold text-[var(--color-muted-foreground)]">
+          <div className="mt-2.5 border-t border-[var(--color-border)] pt-2.5">
+            <span className="mb-1.5 block text-[10px] font-semibold text-[var(--color-muted-foreground)]">
               {t("weapon")}
             </span>
             <div
@@ -281,19 +281,19 @@ export function CharacterHeader({
                     }}
                     onKeyDown={(e) => handleWeaponKey(e, weaponIndex)}
                     className={cn(
-                      "dashboard-tab min-w-[88px] shrink-0 flex-col px-2.5 py-1.5 text-[11px] sm:min-w-[96px] sm:px-3 sm:text-xs"
+                      "dashboard-tab min-w-[82px] shrink-0 flex-col px-2 py-1.5 text-[11px] sm:min-w-[90px] sm:px-2.5 sm:text-xs"
                     )}
                     data-active={isSelected ? "true" : undefined}
                   >
                     <div className="flex w-full items-center justify-between gap-2">
                       <span className="flex min-w-0 items-center gap-1.5 font-medium">
                         {weaponIconUrl ? (
-                          <span className="weapon-icon-backdrop flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded border shadow-sm">
+                          <span className="weapon-icon-backdrop flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded border shadow-sm">
                             <Image
                               src={weaponIconUrl}
                               alt=""
-                              width={24}
-                              height={24}
+                              width={20}
+                              height={20}
                               className="h-full w-full object-contain p-0.5"
                               aria-hidden="true"
                             />
@@ -339,13 +339,13 @@ export function CharacterHeader({
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+        <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4 sm:gap-2">
           {[...Array(4)].map((_, i) => (
             <SkeletonCard key={i} />
           ))}
         </div>
       ) : displayStat && displayStat.totalGames > 0 ? (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+        <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4 sm:gap-2">
           <StatCard
             label={t("pickRate")}
             value={`${(stats?.pickRate ?? displayStat.pickRate).toFixed(1)}%`}

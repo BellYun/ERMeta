@@ -595,6 +595,18 @@
     "games": "게임 수",
     "averageRank": "평균 순위",
     "moreTraits": "특성 {count}개 더 보기",
+    "affinity": {
+      "summary": "대표 상승 일치 {matched}/{classified}",
+      "title": "시즌 10·11 신규 유형 조합 근거",
+      "description": "정확한 동료 2인 역할군 조합에 입장료·판수 신뢰 보정을 적용한 고정본입니다.",
+      "matched": "대표 추천 조합 일치 · +{rp} RP · {games}판",
+      "unmatched": "대표 추천 상승 문맥 미확인",
+      "unclassified": "신규 유형 미분류",
+      "prototypeSummary": {
+        "exact": "성공 유형 조합 일치 · {profiles}개 프로필",
+        "nearest": "유사 성공 조합 {similarity}% · {profiles}개 프로필"
+      }
+    },
     "insight": {
       "operationLabel": "운영 성향: {value}",
       "metricSummary": "비슷한 후보와 비교 · RP 상위 {rpTop}% · 승률 상위 {winTop}% · {rankStanding} · 표본 {games}판 ({confidence})",
@@ -638,7 +650,21 @@
       "powerSpikeLabel": "힘이 모이는 조건",
       "favorableLabel": "유리할 수 있는 구도",
       "cautionLabel": "주의할 구도",
-      "hypothesisNotice": "승률·RP는 패치가 합쳐진 누적 조합 DB, 역할과 전술 성향은 ERMeta 분류를 사용합니다. 파워 스파이크와 상성은 직접 시간·교전 로그가 없는 휴리스틱 분석입니다.",
+      "hypothesisNotice": "전투 역할은 시즌 10·11 new 유형을 우선 사용하고, 미분류 실험체만 기존 기능 분류로 보완합니다. 추천 교전 운영은 직접 교전 로그가 없는 유형 기반 해석입니다.",
+      "prototypeNotice": {
+        "exact": "시즌 10·11에서 모두 상승하고 3개 이상 실험체·무기 프로필에서 반복된 동일 유형 조합을 기준으로 운영을 구성했습니다.",
+        "nearest": "정확히 같은 성공 표본이 없어, 동일 역할 구도에서 가장 가까운 반복 상승 유형 조합을 기준으로 운영을 구성했습니다."
+      },
+      "analysisBasis": {
+        "successfulPrototypeExact": "성공 조합 패턴 일치",
+        "successfulPrototypeNearest": "유사 성공 조합 참고",
+        "affinityEvidence": "대표 상승 근거 반영",
+        "affinityTypes": "new 유형 기반 참고",
+        "legacyCapabilities": "기존 기능 기반 참고"
+      },
+      "prototype": {
+        "title": "실험체별 역할"
+      },
       "roles": {
         "tank": "탱커",
         "warrior": "전사",
@@ -681,7 +707,7 @@
         "finish": "마무리"
       },
       "combatDoctrine": {
-        "title": "조합 특성 기반 교전법",
+        "title": "유형 기반 추천 교전 운영",
         "memberDutyTitle": "실험체별 담당",
         "labels": {
           "winCondition": "승리 조건",

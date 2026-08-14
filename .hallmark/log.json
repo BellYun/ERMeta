@@ -1,5 +1,15 @@
 [
   {
+    "date": "2026-08-14",
+    "scope": "page",
+    "macrostructure": "Editorial Change Log / Chronological Ledger",
+    "theme": "custom — Mineral Signal",
+    "theme_axes": "dual-mode / geometric-sans / mineral-blue ~245°",
+    "vibe": "League-style patch editorial, ER&GG data density",
+    "enrichment": "character portraits",
+    "brief": "ER&GG patch archive and detail redesigned around patch-first editorial reading"
+  },
+  {
     "date": "2026-08-10",
     "scope": "app",
     "macrostructure": "Workbench / Index-First",

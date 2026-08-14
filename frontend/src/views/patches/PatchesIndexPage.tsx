@@ -1,42 +1,17 @@
-import { ArrowUpRight, Layers3, NotebookText, Users, Wrench } from "lucide-react";
+/* Hallmark · genre: modern-minimal · macrostructure: Index-First ledger · design-system: design.md · designed-as-app
+ * pre-emit critique: P5 H5 E5 S5 R5 V5
+ */
+import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
-import type { ReactNode } from "react";
+import Image from "next/image";
 import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeBadgeStatic";
-import { getAllPatchVersions, getPatchSummary, PATCH_NOTES } from "@/data/patch-notes";
+import { getAllPatchVersions, getNotesByPatch, getPatchSummary } from "@/data/patch-notes";
 import { Link } from "@/i18n/navigation";
 import { LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
+import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
 import { getStaticTranslator } from "@/lib/staticIntl";
 
 export const dynamic = "force-static";
-
-function SummaryMetricCard({
-  icon,
-  label,
-  value,
-  accent = false,
-}: {
-  icon: ReactNode;
-  label: string;
-  value: string;
-  accent?: boolean;
-}) {
-  return (
-    <div
-      className="metric-card flex min-h-[92px] flex-col gap-2.5 px-3.5 py-3.5 sm:min-h-[104px] sm:px-4"
-      data-accent={accent ? "true" : undefined}
-    >
-      <div className="flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-accent-foreground)]">
-        {icon}
-      </div>
-      <div>
-        <p className="font-mono text-[1.2rem] font-bold leading-none text-[var(--color-foreground)] sm:text-[1.45rem]">
-          {value}
-        </p>
-        <p className="mt-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">{label}</p>
-      </div>
-    </div>
-  );
-}
 
 export async function generateMetadata(locale: RouteLocale = "ko"): Promise<Metadata> {
   const t = await getStaticTranslator("patches", LANGUAGE_BY_ROUTE_LOCALE[locale]);
@@ -59,179 +34,185 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
   const versions = getAllPatchVersions();
   const summaries = versions.map((version) => getPatchSummary(version));
   const latestSummary = summaries[0];
-  const adjustedRosterCount = new Set(PATCH_NOTES.map((note) => note.characterCode)).size;
-  const totalChanges = summaries.reduce((sum, summary) => sum + summary.totalChanges, 0);
+  const latestNotes = latestSummary ? getNotesByPatch(latestSummary.patch).slice(0, 8) : [];
+  const seasonGroups = Array.from(
+    summaries.reduce((groups, summary) => {
+      const season = summary.patch.split(".")[0] ?? summary.patch;
+      const current = groups.get(season) ?? [];
+      current.push(summary);
+      groups.set(season, current);
+      return groups;
+    }, new Map<string, typeof summaries>())
+  );
 
   return (
-    <main className="page-shell flex flex-col gap-5 lg:gap-6">
-      <section className="dashboard-panel px-4 py-4 lg:px-5">
-        <div className="grid gap-3 xl:grid-cols-[minmax(0,1.08fr)_minmax(340px,0.92fr)]">
-          <div className="flex flex-col justify-center">
-            <div className="flex flex-wrap items-center gap-2.5">
+    <main className="page-shell flex flex-col gap-4 lg:gap-5">
+      <section className="dashboard-panel overflow-hidden">
+        <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(300px,0.42fr)]">
+          <header className="flex min-w-0 flex-col justify-center px-4 py-5 sm:px-5 lg:py-6">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="dashboard-kicker">{t("heroEyebrow")}</span>
               {latestSummary ? (
-                <span className="text-xs font-medium text-[var(--color-muted-foreground)]">
+                <span className="font-mono text-xs text-[var(--color-muted-foreground)]">
                   {t("latestBadge")} · {t("patchPrefix")} {latestSummary.patch}
                 </span>
               ) : null}
             </div>
-
-            <h1 className="dashboard-section-title mt-2 text-xl font-bold leading-tight text-[var(--color-foreground)] sm:text-2xl">
+            <h1 className="mt-2 min-w-0 [overflow-wrap:anywhere] text-[1.85rem] font-bold leading-none tracking-[-0.035em] text-[var(--color-foreground)] sm:text-[2.35rem]">
               {t("indexTitle")}
             </h1>
-            <p className="mt-2 max-w-[38rem] text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">
-              {t("indexSubtitle")}
-            </p>
 
-            {latestSummary ? (
-              <div className="mt-4 flex flex-wrap items-center gap-2 text-xs sm:text-sm">
-                <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-[var(--color-muted-foreground)]">
-                  {t("characterCount", { count: latestSummary.characterCount })}
+            {latestNotes.length > 0 ? (
+              <div className="mt-3 flex items-center" aria-hidden="true">
+                {latestNotes.map((note, index) => (
+                  <div
+                    key={note.characterCode}
+                    className={`relative h-10 w-10 overflow-hidden rounded-full border-2 border-[var(--color-surface)] bg-[var(--color-surface-2)] sm:h-11 sm:w-11 ${index === 0 ? "" : "-ml-2"}`}
+                    style={{ zIndex: latestNotes.length - index }}
+                  >
+                    <Image
+                      src={getCharacterMiniWebpUrl(note.characterCode)}
+                      alt=""
+                      fill
+                      sizes="44px"
+                      className="object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : null}
+          </header>
+
+          {latestSummary ? (
+            <Link
+              href={`/patches/${latestSummary.patch}`}
+              className="group flex min-h-44 flex-col justify-between border-t border-[var(--color-border)] bg-[var(--color-surface-2)] p-4 outline-none transition-[background-color] duration-150 hover:bg-[var(--color-accent-muted)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-inset lg:border-l lg:border-t-0 sm:p-5"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-xs font-semibold text-[var(--color-accent-foreground)]">
+                  {t("latestPatchLabel")}
                 </span>
-                <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-[var(--color-muted-foreground)]">
+                <ArrowRight className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5" />
+              </div>
+              <div>
+                <p className="font-mono text-[2rem] font-bold tracking-[-0.04em] text-[var(--color-foreground)]">
+                  {t("patchPrefix")} {latestSummary.patch}
+                </p>
+                <p className="mt-1 text-sm text-[var(--color-muted-foreground)]">
                   {t("totalChanges", { count: latestSummary.totalChanges })}
-                </span>
-                {latestSummary.buffs > 0 ? (
+                </p>
+                <div className="mt-3 flex flex-wrap gap-1.5">
                   <ChangeTypeBadgeStatic
                     type="buff"
                     count={latestSummary.buffs}
                     label={t("counts.buff")}
                   />
-                ) : null}
-                {latestSummary.nerfs > 0 ? (
                   <ChangeTypeBadgeStatic
                     type="nerf"
                     count={latestSummary.nerfs}
                     label={t("counts.nerf")}
                   />
-                ) : null}
-                {latestSummary.reworks > 0 ? (
-                  <ChangeTypeBadgeStatic
-                    type="rework"
-                    count={latestSummary.reworks}
-                    label={t("counts.rework")}
-                  />
-                ) : null}
-              </div>
-            ) : null}
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            <SummaryMetricCard
-              icon={<Layers3 className="h-5 w-5" strokeWidth={2} />}
-              label={t("trackedPatches")}
-              value={`${summaries.length}`}
-              accent
-            />
-            <SummaryMetricCard
-              icon={<Users className="h-5 w-5" strokeWidth={2} />}
-              label={t("adjustedRoster")}
-              value={`${adjustedRosterCount}`}
-            />
-            <SummaryMetricCard
-              icon={<Wrench className="h-5 w-5" strokeWidth={2} />}
-              label={t("recordedChanges")}
-              value={`${totalChanges}`}
-            />
-            <SummaryMetricCard
-              icon={<NotebookText className="h-5 w-5" strokeWidth={2} />}
-              label={t("latestPatchLabel")}
-              value={latestSummary ? `${t("patchPrefix")} ${latestSummary.patch}` : "-"}
-              accent
-            />
-          </div>
-        </div>
-      </section>
-
-      <section className="dashboard-panel p-4">
-        <div className="flex flex-col gap-4">
-          <div className="home-section-header flex flex-col gap-3 pb-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h2 className="dashboard-section-title text-[1.3rem] font-bold text-[var(--color-foreground)] sm:text-[1.6rem]">
-                {t("archiveTitle")}
-              </h2>
-              <p className="mt-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">
-                {t("archiveCaption")}
-              </p>
-            </div>
-            {latestSummary ? (
-              <Link
-                href={`/patches/${latestSummary.patch}`}
-                className="dashboard-tab gap-2"
-                data-active="true"
-              >
-                <span>{t("viewDetail")}</span>
-                <ArrowUpRight className="h-4 w-4" strokeWidth={2} />
-              </Link>
-            ) : null}
-          </div>
-
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {summaries.map((summary, index) => (
-              <Link
-                key={summary.patch}
-                href={`/patches/${summary.patch}`}
-                className="metric-card group flex h-full flex-col gap-3.5 px-4 py-4 hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]"
-                data-accent={index === 0 ? "true" : undefined}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      {index === 0 ? (
-                        <span className="rounded border border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-2.5 py-1 text-[10px] font-semibold text-[var(--color-accent-foreground)]">
-                          {t("latestBadge")}
-                        </span>
-                      ) : null}
-                      <span className="text-xs text-[var(--color-muted-foreground)]">
-                        {t("characterCount", { count: summary.characterCount })}
-                      </span>
-                    </div>
-                    <h3 className="mt-3 text-[1.25rem] font-bold text-[var(--color-foreground)]">
-                      {t("patchPrefix")} {summary.patch}
-                    </h3>
-                    <p className="mt-1 text-sm text-[var(--color-muted-foreground)]">
-                      {t("totalChanges", { count: summary.totalChanges })}
-                    </p>
-                  </div>
-
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]">
-                    <ArrowUpRight className="h-4.5 w-4.5" strokeWidth={2} />
-                  </span>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2">
-                  {summary.buffs > 0 ? (
-                    <ChangeTypeBadgeStatic
-                      type="buff"
-                      count={summary.buffs}
-                      label={t("counts.buff")}
-                    />
-                  ) : null}
-                  {summary.nerfs > 0 ? (
-                    <ChangeTypeBadgeStatic
-                      type="nerf"
-                      count={summary.nerfs}
-                      label={t("counts.nerf")}
-                    />
-                  ) : null}
-                  {summary.reworks > 0 ? (
+                  {latestSummary.reworks > 0 ? (
                     <ChangeTypeBadgeStatic
                       type="rework"
-                      count={summary.reworks}
+                      count={latestSummary.reworks}
                       label={t("counts.rework")}
                     />
                   ) : null}
                 </div>
+              </div>
+            </Link>
+          ) : null}
+        </div>
+      </section>
 
-                <div className="mt-auto flex items-center justify-between border-t border-[var(--color-border)] pt-3 text-xs">
-                  <span className="text-[var(--color-muted-foreground)]">{t("viewDetail")}</span>
-                  <span className="font-medium text-[var(--color-foreground)]">
-                    {t("patchPrefix")} {summary.patch}
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
+      <section className="dashboard-panel overflow-hidden">
+        <header className="border-b border-[var(--color-border)] px-4 py-4 sm:px-5">
+          <h2 className="text-xl font-bold tracking-[-0.03em] text-[var(--color-foreground)] sm:text-2xl">
+            {t("archiveTitle")}
+          </h2>
+          <p className="mt-1 text-xs leading-5 text-[var(--color-muted-foreground)] sm:text-sm">
+            {t("archiveCaption")}
+          </p>
+        </header>
+
+        <div className="divide-y divide-[var(--color-border)]">
+          {seasonGroups.map(([season, seasonSummaries]) => (
+            <section key={season} className="grid lg:grid-cols-[116px_minmax(0,1fr)]">
+              <header className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3 lg:block lg:border-b-0 lg:border-r lg:px-4 lg:py-4">
+                <h3 className="font-mono text-base font-bold text-[var(--color-foreground)]">
+                  {t("patchPrefix")} {season}.x
+                </h3>
+                <p className="mt-0 text-xs text-[var(--color-muted-foreground)] lg:mt-1">
+                  {t("trackedPatches")} {seasonSummaries.length}
+                </p>
+              </header>
+
+              <ol className="divide-y divide-[var(--color-border)]">
+                {seasonSummaries.map((summary) => {
+                  const isLatest = summary.patch === latestSummary?.patch;
+                  return (
+                    <li key={summary.patch}>
+                      <Link
+                        href={`/patches/${summary.patch}`}
+                        className="group grid min-h-16 min-w-0 grid-cols-[minmax(74px,0.45fr)_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3 outline-none transition-[background-color] duration-150 hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-inset sm:grid-cols-[minmax(92px,0.4fr)_minmax(170px,0.8fr)_minmax(0,1fr)_auto] sm:px-5"
+                        aria-current={isLatest ? "page" : undefined}
+                      >
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono text-base font-bold text-[var(--color-foreground)]">
+                              {t("patchPrefix")} {summary.patch}
+                            </span>
+                            {isLatest ? (
+                              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent)]" />
+                            ) : null}
+                          </div>
+                          <span className="mt-0.5 block text-[10px] text-[var(--color-muted-foreground)] sm:hidden">
+                            {t("totalChanges", { count: summary.totalChanges })}
+                          </span>
+                        </div>
+
+                        <div className="hidden min-w-0 sm:block">
+                          <p className="text-sm text-[var(--color-foreground)]">
+                            {t("characterCount", { count: summary.characterCount })}
+                          </p>
+                          <p className="mt-0.5 text-xs text-[var(--color-muted-foreground)]">
+                            {t("totalChanges", { count: summary.totalChanges })}
+                          </p>
+                        </div>
+
+                        <div className="flex min-w-0 flex-wrap justify-end gap-1.5 sm:justify-start">
+                          {summary.buffs > 0 ? (
+                            <ChangeTypeBadgeStatic
+                              type="buff"
+                              count={summary.buffs}
+                              label={t("counts.buff")}
+                            />
+                          ) : null}
+                          {summary.nerfs > 0 ? (
+                            <ChangeTypeBadgeStatic
+                              type="nerf"
+                              count={summary.nerfs}
+                              label={t("counts.nerf")}
+                            />
+                          ) : null}
+                          {summary.reworks > 0 ? (
+                            <ChangeTypeBadgeStatic
+                              type="rework"
+                              count={summary.reworks}
+                              label={t("counts.rework")}
+                            />
+                          ) : null}
+                        </div>
+
+                        <ArrowRight className="h-4 w-4 text-[var(--color-muted-foreground)] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-[var(--color-foreground)]" />
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ol>
+            </section>
+          ))}
         </div>
       </section>
     </main>

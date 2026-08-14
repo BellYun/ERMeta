@@ -21,6 +21,7 @@
     "build:synergy-matrix": "node scripts/build-synergy-character-matrix.mjs",
     "lab:generate": "node scripts/generate-lab-data-from-search-table.mjs",
     "lab:rising-compositions": "node scripts/generate-character-rising-compositions.mjs",
+    "lab:good-composition-prototypes": "node scripts/generate-good-composition-prototypes.mjs",
     "lab:types": "node scripts/generate-lab-character-types-from-compositions.mjs",
     "lab:affinity:freeze": "node scripts/freeze-lab-composition-affinity-snapshot.mjs",
     "lab:reports": "npm run lab:types && node scripts/generate-lab-group-analysis-html.mjs && node scripts/generate-lab-composition-analysis-html.mjs",

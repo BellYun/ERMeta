@@ -266,14 +266,14 @@ export function CharacterTraitBuildAnalyzer({
 
   if (builds.length === 0) {
     return (
-      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center text-sm text-[var(--color-muted-foreground)]">
+      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-5 text-center text-sm text-[var(--color-muted-foreground)]">
         {t("empty.builds")}
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {builds.map((group, gi) => {
         const mainConfig = groupConfig[group.mainGroup];
 
@@ -288,7 +288,7 @@ export function CharacterTraitBuildAnalyzer({
             {/* 주특성 헤더 */}
             <div
               className={cn(
-                "flex items-center justify-between px-3 sm:px-4 py-2.5 border-b border-[var(--color-border)]",
+                "flex items-center justify-between border-b border-[var(--color-border)] px-3 py-2",
                 mainConfig.bg
               )}
             >
@@ -368,7 +368,7 @@ export function CharacterTraitBuildAnalyzer({
                         <div
                           key={si}
                           className={cn(
-                            "min-w-[220px] overflow-hidden bg-[var(--color-surface)] p-3 sm:min-w-0",
+                            "min-w-[220px] overflow-hidden bg-[var(--color-surface)] p-2.5 sm:min-w-0",
                             isEmpty && "opacity-40"
                           )}
                         >

@@ -500,6 +500,18 @@
     "games": "試合数",
     "averageRank": "平均順位",
     "moreTraits": "特性をさらに {count} 件表示",
+    "affinity": {
+      "summary": "上昇傾向の一致 {matched}/{classified}",
+      "title": "シーズン10・11 新分類の構成根拠",
+      "description": "正確な味方2人の役割構成に参加費・サンプル信頼度補正を適用した固定データです。",
+      "matched": "推奨構成に一致 · +{rp} RP · {games}試合",
+      "unmatched": "代表的な上昇傾向は未確認",
+      "unclassified": "新分類では未分類",
+      "prototypeSummary": {
+        "exact": "成功タイプ構成一致 · {profiles}プロファイル",
+        "nearest": "類似成功構成 {similarity}% · {profiles}プロファイル"
+      }
+    },
     "insight": {
       "operationLabel": "運用傾向: {value}",
       "metricSummary": "類似候補との比較 · RP上位{rpTop}% · 勝率上位{winTop}% · {rankStanding} · {games}試合（{confidence}）",
@@ -543,7 +555,21 @@
       "powerSpikeLabel": "パワースパイク条件",
       "favorableLabel": "有利になりやすい状況",
       "cautionLabel": "注意する状況",
-      "hypothesisNotice": "勝率・RPはパッチ横断の累積編成DB、役割と戦術傾向はERMeta分類を使用します。パワースパイクと相性は時間・交戦ログがないため、ヒューリスティック分析です。",
+      "hypothesisNotice": "戦闘役割はシーズン10・11の新分類を優先し、未分類の実験体のみ従来の機能分類で補完します。推奨交戦運用は直接の交戦ログがない分類ベースの解釈です。",
+      "prototypeNotice": {
+        "exact": "シーズン10・11の両方で上昇し、3つ以上の実験体・武器プロファイルで反復した同一タイプ構成を基準にしています。",
+        "nearest": "完全一致する成功標本がないため、同じ役割構成で最も近い反復上昇タイプ構成を基準にしています。"
+      },
+      "analysisBasis": {
+        "successfulPrototypeExact": "成功構成パターン一致",
+        "successfulPrototypeNearest": "類似成功構成を参照",
+        "affinityEvidence": "上昇傾向の根拠を反映",
+        "affinityTypes": "新分類ベースの参考",
+        "legacyCapabilities": "従来機能ベースの参考"
+      },
+      "prototype": {
+        "title": "各実験体の役割"
+      },
       "roles": {
         "tank": "タンク",
         "warrior": "ファイター",
@@ -586,7 +612,7 @@
         "finish": "仕留め"
       },
       "combatDoctrine": {
-        "title": "編成特性に基づく交戦法",
+        "title": "分類ベースの推奨交戦運用",
         "memberDutyTitle": "実験体ごとの担当",
         "labels": {
           "winCondition": "勝利条件",

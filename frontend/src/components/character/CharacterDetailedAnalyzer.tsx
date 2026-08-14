@@ -704,7 +704,7 @@ export function CharacterDetailedAnalyzer({
   // ── 표본 확인 중 ─────────────────────────────────────────────────────────────
   if (traitBuilds.length === 0) {
     return (
-      <div className="metric-card flex flex-col items-center gap-2 p-8 text-[var(--color-muted-foreground)]">
+      <div className="metric-card flex flex-col items-center gap-2 p-6 text-[var(--color-muted-foreground)]">
         <Layers className="h-8 w-8 opacity-40" />
         <p className="text-sm">{t("empty.detailed")}</p>
       </div>
@@ -722,9 +722,9 @@ export function CharacterDetailedAnalyzer({
 
   return (
     <GameDataTooltipProvider>
-      <div className="space-y-4">
+      <div className="space-y-3">
         {/* 주특성 그룹 선택 */}
-        <div className="metric-card p-2.5 sm:p-4">
+        <div className="metric-card p-2.5 sm:p-3">
           <p className="dashboard-section-title mb-1.5 text-[11px] font-semibold text-[var(--color-foreground)] sm:mb-3 sm:text-xs">
             {t("stats.primaryTrait")}
           </p>
@@ -793,7 +793,7 @@ export function CharacterDetailedAnalyzer({
 
           {/* 선택된 조합 요약 */}
           {selectedGroup && (
-            <div className="mt-2 flex items-center justify-between gap-2 rounded-md border border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-2.5 py-2 sm:mt-3 sm:justify-start sm:gap-4 sm:px-4">
+            <div className="mt-2 flex items-center justify-between gap-2 rounded-md border border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-2.5 py-1.5 sm:justify-start sm:gap-3 sm:px-3">
               <div className="flex items-center gap-1">
                 <span className="text-[10px] sm:text-xs text-[var(--color-muted-foreground)]">
                   {t("stats.total")}
@@ -844,12 +844,12 @@ export function CharacterDetailedAnalyzer({
                 )?.code;
 
                 return (
-                  <div className="space-y-4">
-                    <div className="flex flex-col lg:flex-row gap-4">
+                  <div className="space-y-3">
+                    <div className="flex flex-col gap-3 lg:flex-row">
                       {/* 왼쪽: 주특성 트리 */}
-                      <div className="metric-card flex-1 p-4 sm:p-5">
+                      <div className="metric-card flex-1 p-3 sm:p-4">
                         {hasPrimaryTraits && (
-                          <div className="flex flex-col items-center gap-3">
+                          <div className="flex flex-col items-center gap-2.5">
                             {topMainCore != null && (
                               <div className="rounded-md p-1 outline outline-1 outline-[var(--color-border)]">
                                 <TraitIconSmall code={topMainCore} size={40} />
@@ -916,7 +916,7 @@ export function CharacterDetailedAnalyzer({
                     {/* 부특성 3열 동시 표시 */}
                     {hasSecondaryTraits && (
                       <div className="metric-card overflow-hidden">
-                        <div className="px-3 sm:px-4 py-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60">
+                        <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60 px-3 py-1.5">
                           <span className="dashboard-section-title text-[11px] font-semibold text-[var(--color-foreground)] sm:text-xs">
                             {t("sections.secondaryTraits")}
                           </span>
@@ -935,10 +935,10 @@ export function CharacterDetailedAnalyzer({
                               return (
                                 <div
                                   key={si}
-                                  className="min-w-[220px] overflow-hidden bg-[var(--color-surface)] p-3 sm:min-w-0 sm:p-4"
+                                  className="min-w-[220px] overflow-hidden bg-[var(--color-surface)] p-2.5 sm:min-w-0 sm:p-3"
                                 >
                                   {/* 부특성 그룹 헤더 */}
-                                  <div className="mb-3 flex min-w-0 items-center justify-between gap-2">
+                                  <div className="mb-2.5 flex min-w-0 items-center justify-between gap-2">
                                     <div className="flex min-w-0 items-center gap-2">
                                       <div
                                         className={cn(
@@ -1006,7 +1006,7 @@ export function CharacterDetailedAnalyzer({
                 <div className="h-60 rounded-md bg-[var(--color-surface)]" />
               </div>
             ) : hasEquipData ? (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <SectionDivider title={t("sections.itemBuilds")} />
                 {equipData!.topBuilds.length > 0 && (
                   <TopBuildsTableFiltered builds={sortedTopBuilds} itemNames={itemNames} />
@@ -1019,7 +1019,7 @@ export function CharacterDetailedAnalyzer({
                 )}
               </div>
             ) : (
-              <div className="metric-card p-6 text-center text-sm text-[var(--color-muted-foreground)]">
+              <div className="metric-card p-5 text-center text-sm text-[var(--color-muted-foreground)]">
                 {t("empty.itemBuilds")}
               </div>
             )}

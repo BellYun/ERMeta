@@ -10,13 +10,13 @@ export function PatchNoteTooltip({ patchNote }: { patchNote: CharacterPatchNote 
   const changeTypeLabel = (type: string): { text: string; color: string } => {
     if (type === "buff")
       return {
-        text: "상향",
+        text: "버프",
         color:
           "text-[var(--color-stat-up)] bg-[var(--color-stat-up)]/10 border-[var(--color-stat-up)]/20",
       };
     if (type === "nerf")
       return {
-        text: "하향",
+        text: "너프",
         color:
           "text-[var(--color-stat-down)] bg-[var(--color-stat-down)]/10 border-[var(--color-stat-down)]/20",
       };

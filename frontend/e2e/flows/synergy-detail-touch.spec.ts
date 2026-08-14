@@ -140,14 +140,16 @@ test.describe("Flow: /synergy-detail 모바일 터치(pointer-phase)", () => {
     await card.scrollIntoViewIfNeeded();
 
     // 3) onPointerUp 토글이 동작하면 특성 브레이크다운 영역이 sibling div 로 렌더됨.
-    await card.tap();
+    const toggleHitArea = card.locator("[data-combo-toggle-hit-area]");
+    await expect(toggleHitArea).toBeVisible();
+    await toggleHitArea.tap();
 
     // 운영 성향 행도 sibling div이므로 특성 전용 식별자로 정확히 선택한다.
     const breakdownRow = card.locator("xpath=following-sibling::div[@data-trait-breakdown]");
     await expect(breakdownRow).toBeVisible({ timeout: 5_000 });
 
     // 4) 한 번 더 탭하면 닫혀야 함 (토글 동작 확인)
-    await card.tap();
+    await toggleHitArea.tap();
     await expect(breakdownRow).toBeHidden({ timeout: 5_000 });
   });
 

@@ -10,7 +10,7 @@ import characterBestWeapons from "@/../const/characterBestWeapons.json";
 import { useL10n } from "@/components/L10nProvider";
 import { resolveCharacterName, getCharacterMiniWebpUrl } from "@/lib/characterMap";
 import { cn } from "@/lib/utils";
-import { resolveWeaponName } from "@/lib/weaponMap";
+import { getWeaponGroupImageUrl, resolveWeaponName } from "@/lib/weaponMap";
 import { getFallbackMap, EXCLUDED_CHARACTER_CODES } from "../synergy/constants";
 import { SlotEmpty } from "../synergy/SlotEmpty";
 import { matchesChosungSearch } from "../synergy/utils";
@@ -136,6 +136,7 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
   const tapGuard = useTapGuard(activate);
   const { l10n } = useL10n();
   const localizedWeaponLabel = item.weaponCode > 0 ? resolveWeaponName(item.weaponCode, l10n) : "";
+  const weaponIconUrl = getWeaponGroupImageUrl(item.weaponCode);
   return (
     <button
       type="button"
@@ -158,19 +159,33 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
             : "hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80"
       )}
     >
-      <div
-        className={cn(
-          "relative h-10 w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
-          selected && "outline outline-1 outline-[var(--color-border-light)]"
-        )}
-      >
-        <Image
-          src={getCharacterMiniWebpUrl(item.charCode)}
-          alt={charName}
-          fill
-          className="object-cover"
-          sizes="40px"
-        />
+      <div className="relative h-10 w-10">
+        <span
+          className={cn(
+            "relative block h-full w-full overflow-hidden rounded-md bg-[var(--color-border)]",
+            selected && "outline outline-1 outline-[var(--color-border-light)]"
+          )}
+        >
+          <Image
+            src={getCharacterMiniWebpUrl(item.charCode)}
+            alt={charName}
+            fill
+            className="object-cover"
+            sizes="40px"
+          />
+        </span>
+        {weaponIconUrl ? (
+          <span className="weapon-icon-backdrop absolute -bottom-1 -right-1 z-10 grid h-5 w-5 place-items-center rounded-full border shadow-sm">
+            <Image
+              src={weaponIconUrl}
+              alt=""
+              width={16}
+              height={16}
+              className="h-4 w-4 object-contain"
+              aria-hidden="true"
+            />
+          </span>
+        ) : null}
       </div>
       <span
         className={cn(
@@ -486,20 +501,35 @@ function SlotWeaponFilled({
   weaponName: string;
   onRemove: () => void;
 }) {
+  const weaponIconUrl = getWeaponGroupImageUrl(weaponCode);
   return (
     <div
       data-ally-character={code}
       data-ally-weapon={weaponCode ?? 0}
       className="flex w-full items-center gap-3 rounded-md border border-[var(--color-border-light)] bg-[var(--color-surface)] px-4 py-3"
     >
-      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded bg-[var(--color-border)] outline outline-1 outline-[var(--color-border)]">
-        <Image
-          src={getCharacterMiniWebpUrl(code)}
-          alt={name}
-          fill
-          className="object-cover"
-          sizes="40px"
-        />
+      <div className="relative h-11 w-11 shrink-0">
+        <span className="relative block h-full w-full overflow-hidden rounded bg-[var(--color-border)] outline outline-1 outline-[var(--color-border)]">
+          <Image
+            src={getCharacterMiniWebpUrl(code)}
+            alt={name}
+            fill
+            className="object-cover"
+            sizes="44px"
+          />
+        </span>
+        {weaponIconUrl ? (
+          <span className="weapon-icon-backdrop absolute -bottom-1 -right-1 z-10 grid h-5 w-5 place-items-center rounded-full border shadow-sm">
+            <Image
+              src={weaponIconUrl}
+              alt=""
+              width={16}
+              height={16}
+              className="h-4 w-4 object-contain"
+              aria-hidden="true"
+            />
+          </span>
+        ) : null}
       </div>
       <div className="flex flex-col flex-1 min-w-0">
         <span className="truncate text-[15px] font-bold text-[var(--color-foreground)]">

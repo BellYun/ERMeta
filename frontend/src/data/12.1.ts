@@ -2,7 +2,9 @@ import type { CharacterPatchNote } from "./10.1";
 
 const PATCH = "12.1";
 
-// 출처: https://playeternalreturn.com/posts/news/3769?hl=ko-KR
+// 출처:
+// - 12.1 패치노트: https://playeternalreturn.com/posts/news/3769?hl=ko-KR
+// - 12.1b 핫픽스: https://playeternalreturn.com/posts/news/3780?hl=ko-KR
 // 개별 실험체 변경 사항만 기록합니다.
 export const PATCH_NOTES: CharacterPatchNote[] = [
   {
@@ -26,6 +28,12 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         changeType: "nerf",
         description: ["채찍 무기 스킬 변경 이후 증가한 화력을 일부 낮췄습니다."],
         valueSummary: "50/75/100/125/150(+스킬 증폭의 55%) → 50/75/100/125/150(+스킬 증폭의 50%)",
+      },
+      {
+        target: "황혼의 도둑(R) - 2타 피해량 (12.1b 핫픽스)",
+        changeType: "nerf",
+        description: ["핫픽스로 궁극기 2타의 기본 피해량을 낮췄습니다."],
+        valueSummary: "180/260/340(+스킬 증폭의 90%) → 140/220/300(+스킬 증폭의 90%)",
       },
     ],
   },
@@ -118,6 +126,38 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         description: ["단검 무기 스킬로 중첩을 얻는 변경 이후 높아진 위력을 견제했습니다."],
         valueSummary:
           "10/20/30(+스킬 증폭의 45%)(+대상 최대 체력의 2/3/4%) → 10/20/30(+스킬 증폭의 35%)(+대상 최대 체력의 2/3/4%)",
+      },
+    ],
+  },
+  {
+    characterCode: 28, // 수아
+    patch: PATCH,
+    changes: [
+      {
+        target: "기본 체력 (12.1b 핫픽스)",
+        changeType: "nerf",
+        description: ["핫픽스로 기본 내구도를 낮췄습니다."],
+        valueSummary: "1020 → 980",
+      },
+      {
+        target: "오딧세이(Q) - 책갈피 피해량 (12.1b 핫픽스)",
+        changeType: "nerf",
+        description: ["핫픽스로 책갈피 피해의 스킬 증폭 계수를 낮췄습니다."],
+        valueSummary: "20/40/60/80/100(+스킬 증폭의 35%) → 20/40/60/80/100(+스킬 증폭의 30%)",
+      },
+      {
+        target: "돈키호테(E) - 책갈피 대상 피해량 (12.1b 핫픽스)",
+        changeType: "nerf",
+        description: ["핫픽스로 책갈피 대상 피해의 스킬 증폭 계수를 낮췄습니다."],
+        valueSummary:
+          "150/190/230/270/310(+스킬 증폭의 80%) → 150/190/230/270/310(+스킬 증폭의 75%)",
+      },
+      {
+        target: "기억력(R) - 책갈피 피해량 (12.1b 핫픽스)",
+        changeType: "nerf",
+        description: ["핫픽스로 강화 오딧세이와 돈키호테의 책갈피 피해 계수를 낮췄습니다."],
+        valueSummary:
+          "RQ 50/100/150(+스킬 증폭의 45%) → 50/100/150(+스킬 증폭의 40%), RE 170/260/350(+스킬 증폭의 80%) → 170/260/350(+스킬 증폭의 75%)",
       },
     ],
   },
@@ -229,6 +269,25 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
     ],
   },
   {
+    characterCode: 1, // 재키
+    patch: PATCH,
+    changes: [
+      {
+        target: "단검 무기 숙련도 레벨 당 기본 공격 증폭 (12.1b 핫픽스)",
+        changeType: "nerf",
+        description: ["핫픽스로 단검 재키의 기본 공격 증폭을 낮췄습니다."],
+        valueSummary: "3% → 2.8%",
+      },
+      {
+        target: "연참(Q) - 피해량 (12.1b 핫픽스)",
+        changeType: "nerf",
+        description: ["핫픽스로 공격력 계수와 대상 현재 체력 비례 피해를 낮췄습니다."],
+        valueSummary:
+          "30/50/70/90/110(+공격력의 50%)(+대상 현재 체력의 7%) → 30/50/70/90/110(+공격력의 40%)(+대상 현재 체력의 6%)",
+      },
+    ],
+  },
+  {
     characterCode: 23, // 캐시
     patch: PATCH,
     changes: [
@@ -237,6 +296,19 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         changeType: "nerf",
         description: ["무기 스킬 변경 이후 높아진 교전 위력을 일부 낮췄습니다."],
         valueSummary: "50/100/150/200/250(+스킬 증폭의 95%) → 50/100/150/200/250(+스킬 증폭의 90%)",
+      },
+    ],
+  },
+  {
+    characterCode: 54, // 칼라
+    patch: PATCH,
+    changes: [
+      {
+        target: "작살 장전(P) - 완전히 충전된 피해량 (12.1b 핫픽스)",
+        changeType: "nerf",
+        description: ["핫픽스로 대상 최대 체력 비례 피해를 낮췄습니다."],
+        valueSummary:
+          "10/25/40(+공격력의 100%)(+스킬 증폭의 25%)(+대상 최대 체력의 4/8/12%) → 10/25/40(+공격력의 100%)(+스킬 증폭의 25%)(+대상 최대 체력의 4/7/10%)",
       },
     ],
   },

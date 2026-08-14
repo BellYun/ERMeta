@@ -75,15 +75,22 @@ describe("12.1 patch notes", () => {
   });
 
   it("공식 실험체 변경 수와 유형을 보존한다", () => {
-    expect(getNotesByPatch("12.1")).toHaveLength(20);
+    expect(getNotesByPatch("12.1")).toHaveLength(23);
     expect(getPatchSummary("12.1")).toEqual({
       patch: "12.1",
-      totalChanges: 26,
+      totalChanges: 34,
       buffs: 12,
-      nerfs: 13,
+      nerfs: 21,
       reworks: 1,
-      characterCount: 20,
+      characterCount: 23,
     });
+  });
+
+  it("12.1b 핫픽스 실험체 변경을 누적한다", () => {
+    expect(getCharacterPatchNote(47, "12.1")?.changes).toHaveLength(2);
+    expect(getCharacterPatchNote(28, "12.1")?.changes).toHaveLength(4);
+    expect(getCharacterPatchNote(1, "12.1")?.changes).toHaveLength(2);
+    expect(getCharacterPatchNote(54, "12.1")?.changes).toHaveLength(1);
   });
 
   it("상향과 하향이 함께 있는 엘레나 변경을 각각 기록한다", () => {
