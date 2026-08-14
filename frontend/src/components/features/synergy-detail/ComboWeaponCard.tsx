@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, ChevronRight, FlaskConical, Loader2, Sparkles } from "lucide-react";
+import { ChevronRight, FlaskConical, Loader2, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import * as React from "react";
@@ -16,6 +16,7 @@ import {
 } from "@/lib/synergyComposition";
 import { assignComboTier, COMBO_TIER_WEIGHTS, PERFORMANCE_TIER_MIN_GAMES } from "@/lib/tierScoring";
 import { cn } from "@/lib/utils";
+import { getWeaponGroupImageUrl } from "@/lib/weaponMap";
 import { TraitIcon } from "./TraitIcon";
 import type { TrioWeaponResult } from "./types";
 import { useTapGuard } from "./useTapGuard";
@@ -342,12 +343,12 @@ function ComboWeaponCardImpl({
           }
         }}
         style={{ touchAction: "manipulation" }}
-        className="w-full flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-2 sm:py-2.5 text-left cursor-pointer rounded-md hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]"
+        className="w-full flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:py-2 text-left cursor-pointer rounded-md hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]"
       >
         {/* 순위 */}
         <span
           className={cn(
-            "w-5 sm:w-6 shrink-0 text-center text-xs sm:text-sm font-bold",
+            "w-4 sm:w-5 shrink-0 text-center text-xs sm:text-sm font-bold",
             rank === 1
               ? "text-[var(--color-accent-gold)]"
               : rank === 2
@@ -366,53 +367,18 @@ function ComboWeaponCardImpl({
             aria-label={`Tier ${tier}: ${tierWeightDescription}`}
             title={tierWeightDescription}
           >
-            <TierBadge tier={tier} className="h-6 min-w-6 text-[10px] sm:h-7 sm:min-w-7" />
+            <TierBadge tier={tier} className="h-5 min-w-5 text-[9px] sm:h-6 sm:min-w-6" />
           </span>
         ) : null}
 
         {/* 3실험체 + 무기 */}
-        <div className="flex items-center gap-0.5 sm:gap-1">
-          {ordered.map((m, i) => {
-            const isRecommended = !selectedCharCodes.includes(m.char);
-            return (
-              <React.Fragment key={`${m.char}-${m.weapon}`}>
-                <div className="flex flex-col items-center gap-0.5">
-                  <div
-                    className={cn(
-                      "relative h-8 w-8 sm:h-10 sm:w-10 overflow-hidden rounded-md bg-[var(--color-border)]",
-                      isRecommended
-                        ? "outline outline-1 outline-[var(--color-border-light)]"
-                        : "ring-1 ring-[var(--color-border)]"
-                    )}
-                  >
-                    <Image
-                      src={getCharacterMiniWebpUrl(m.char)}
-                      alt={getCharName(m.char)}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 640px) 32px, 40px"
-                    />
-                  </div>
-                  <span
-                    className={cn(
-                      "w-10 sm:w-14 truncate text-center text-[9.5px] sm:text-[11.5px] font-bold ",
-                      isRecommended
-                        ? "text-[var(--color-accent-gold)]"
-                        : "text-[var(--color-foreground)]/82"
-                    )}
-                  >
-                    {getCharName(m.char)}
-                  </span>
-                  <span
-                    className={cn(
-                      "text-[8.5px] sm:text-[10px] truncate w-10 sm:w-14 text-center font-medium",
-                      isRecommended
-                        ? "text-[var(--color-accent-gold)]/72"
-                        : "text-[var(--color-foreground)]/55"
-                    )}
-                  >
-                    {getWeaponName(m.weapon)}
-                  </span>
+        <div className="flex flex-col items-center gap-1">
+          <div className="flex items-center gap-0.5 sm:gap-1">
+            {ordered.map((m, i) => {
+              const isRecommended = !selectedCharCodes.includes(m.char);
+              const weaponIconUrl = getWeaponGroupImageUrl(m.weapon);
+              return (
+                <React.Fragment key={`${m.char}-${m.weapon}`}>
                   <Link
                     href={`/character/${m.char}?weapon=${m.weapon}`}
                     onClick={(e) => {
@@ -420,26 +386,102 @@ function ComboWeaponCardImpl({
                       if (isRecommended) onRecommendationClick?.(m.char, rank);
                     }}
                     onTouchEnd={(e) => e.stopPropagation()}
-                    // 외부 div[role=button]가 onPointerUp으로 토글하므로 pointer 단계에서도
-                    // 차단해야 "실험체 상세 이동" 탭이 실수로 브레이크다운 토글을 함께 트리거하지 않음.
-                    // pointerDown 도 차단해야 부모 div 의 pointerStartRef 가 Link 좌표로 오염되지 않음
-                    // (Safari 는 pointercancel 비보장 — Link 탭 후 다음 카드 탭에서 stale start 로 토글되는 회귀 차단).
+                    // 외부 div[role=button]가 특성 토글을 처리하므로 링크의 포인터 이벤트를 분리한다.
                     onPointerDown={(e) => e.stopPropagation()}
                     onPointerUp={(e) => e.stopPropagation()}
-                    aria-label={`${getCharName(m.char)} 상세 보기`}
-                    className="mt-0.5 inline-flex h-[18px] w-[18px] items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:text-[var(--color-foreground)] active:bg-[var(--color-surface-2)] sm:h-5 sm:w-5"
+                    aria-label={`${getCharName(m.char)} ${getWeaponName(m.weapon)} 상세 보기`}
+                    className="group/member flex flex-col items-center gap-0.5 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
                   >
-                    <ArrowUpRight className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                    <div
+                      className={cn(
+                        "relative h-7 w-7 sm:h-9 sm:w-9",
+                        isRecommended
+                          ? "text-[var(--color-accent-gold)]"
+                          : "text-[var(--color-foreground)]"
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "relative block h-full w-full overflow-hidden rounded-md bg-[var(--color-border)] transition-colors group-hover/member:outline group-hover/member:outline-1 group-hover/member:outline-[var(--color-accent)]",
+                          isRecommended
+                            ? "outline outline-1 outline-[var(--color-border-light)]"
+                            : "ring-1 ring-[var(--color-border)]"
+                        )}
+                      >
+                        <Image
+                          src={getCharacterMiniWebpUrl(m.char)}
+                          alt={getCharName(m.char)}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 640px) 28px, 36px"
+                        />
+                      </span>
+                      {weaponIconUrl ? (
+                        <span className="weapon-icon-backdrop absolute -bottom-1 -right-1 z-10 grid h-4 w-4 place-items-center rounded-full border shadow-sm sm:h-5 sm:w-5">
+                          <Image
+                            src={weaponIconUrl}
+                            alt=""
+                            width={16}
+                            height={16}
+                            className="h-3.5 w-3.5 object-contain sm:h-4 sm:w-4"
+                            aria-hidden="true"
+                          />
+                        </span>
+                      ) : null}
+                    </div>
+                    <span
+                      className={cn(
+                        "w-10 sm:w-14 truncate text-center text-[9.5px] sm:text-[11.5px] font-bold ",
+                        isRecommended
+                          ? "text-[var(--color-accent-gold)]"
+                          : "text-[var(--color-foreground)]/82"
+                      )}
+                    >
+                      {getCharName(m.char)}
+                    </span>
                   </Link>
-                </div>
-                {i < 2 && (
-                  <span className="text-[8px] sm:text-[10px] text-[var(--color-border)] self-start mt-2 sm:mt-3">
-                    +
-                  </span>
+                  {i < 2 && (
+                    <span className="text-[8px] sm:text-[10px] text-[var(--color-border)] self-start mt-2 sm:mt-3">
+                      +
+                    </span>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
+          {compositionInsight ? (
+            <div className="flex max-w-full flex-wrap items-center justify-center gap-1">
+              <span
+                data-composition-pattern-badge={compositionInsight.pattern}
+                title={t(`composition.patternDescriptions.${compositionInsight.pattern}`)}
+                className={cn(
+                  "inline-flex max-w-full items-center gap-1 rounded-md border px-1.5 py-0.5 text-[9px] font-bold sm:text-[10px]",
+                  COMPOSITION_PATTERN_BADGE_TONES[compositionInsight.pattern]
                 )}
-              </React.Fragment>
-            );
-          })}
+              >
+                <Sparkles className="h-2.5 w-2.5 shrink-0" />
+                <span className="truncate">
+                  {t(`composition.patterns.${compositionInsight.pattern}`)}
+                </span>
+              </span>
+              {!successfulPrototype &&
+              affinityEvidence &&
+              affinityEvidence.classifiedMembers > 0 ? (
+                <span className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[9px] font-bold text-[var(--color-muted-foreground)]">
+                  <FlaskConical className="h-2.5 w-2.5 shrink-0 text-[var(--color-accent-foreground)]" />
+                  {t("affinity.summary", {
+                    matched: affinityEvidence.matchedMembers,
+                    classified: affinityEvidence.classifiedMembers,
+                  })}
+                </span>
+              ) : null}
+            </div>
+          ) : (
+            <span
+              aria-hidden="true"
+              className="h-[19px] w-20 animate-pulse rounded-md bg-[var(--color-surface-3)]"
+            />
+          )}
         </div>
 
         {/* 소표본 배지 */}
@@ -450,7 +492,7 @@ function ComboWeaponCardImpl({
         )}
 
         {/* 스탯 */}
-        <div className="ml-auto flex items-center gap-2 sm:gap-6 text-right">
+        <div className="ml-auto flex items-center gap-1.5 sm:gap-4 text-right">
           <StatCol label={t("winRate")} value={`${group.winRate.toFixed(1)}%`} />
           <StatCol
             label={t("rp")}
@@ -479,108 +521,160 @@ function ComboWeaponCardImpl({
         </div>
       </div>
 
-      {compositionInsight ? (
-        <div className="border-t border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-surface-2)_72%,transparent)] px-2 py-2 sm:px-3">
-          <div className="flex min-w-0 flex-wrap items-center gap-1.5">
-            <span
-              data-composition-pattern-badge={compositionInsight.pattern}
-              title={t(`composition.patternDescriptions.${compositionInsight.pattern}`)}
-              className={cn(
-                "inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[9.5px] font-bold sm:text-[10px]",
-                COMPOSITION_PATTERN_BADGE_TONES[compositionInsight.pattern]
-              )}
-            >
-              <Sparkles className="h-3 w-3 shrink-0" />
-              {t(`composition.patterns.${compositionInsight.pattern}`)}
-            </span>
-            {!successfulPrototype && affinityEvidence && affinityEvidence.classifiedMembers > 0 ? (
-              <span className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1 text-[9px] font-bold text-[var(--color-muted-foreground)] sm:text-[9.5px]">
-                <FlaskConical className="h-3 w-3 shrink-0 text-[var(--color-accent-foreground)]" />
-                {t("affinity.summary", {
-                  matched: affinityEvidence.matchedMembers,
-                  classified: affinityEvidence.classifiedMembers,
-                })}
+      {compositionInsight && showTraits ? (
+        <div className="border-t border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-surface-2)_72%,transparent)] px-2 py-1.5">
+          <div
+            data-composition-explanation
+            data-composition-pattern={compositionInsight.pattern}
+            className="text-[10.5px] leading-relaxed sm:text-[11px]"
+          >
+            <div className="flex items-center gap-1.5 border-b border-[var(--color-border)] pb-1.5">
+              <Sparkles className="h-3.5 w-3.5 shrink-0 text-[var(--color-accent-foreground)]" />
+              <p className="font-bold text-[var(--color-foreground)]">{compositionAnalysisTitle}</p>
+              <span className="ml-auto rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)]">
+                {t(`composition.analysisBasis.${compositionInsight.analysisBasis}`)}
               </span>
-            ) : null}
-          </div>
-          {showTraits ? (
-            <div
-              data-composition-explanation
-              data-composition-pattern={compositionInsight.pattern}
-              className="mt-2 text-[10px] leading-relaxed sm:text-[10.5px]"
-            >
-              <div className="flex items-center gap-1.5 border-b border-[var(--color-border)] pb-1.5">
-                <Sparkles className="h-3.5 w-3.5 shrink-0 text-[var(--color-accent-foreground)]" />
+            </div>
+            <p className="mt-1 text-[9.5px] leading-4 text-[var(--color-muted-foreground)] sm:text-[10px]">
+              {successfulPrototype
+                ? t(`composition.prototypeNotice.${successfulPrototype.match}`)
+                : t("composition.hypothesisNotice")}
+            </p>
+            {/* Hallmark · component: composition role summary · genre: modern-minimal
+             * theme: Mineral Signal · critique: P5 H5 E4 S5 R5 V4
+             */}
+            {successfulPrototype ? (
+              <div
+                data-successful-composition-prototype={successfulPrototype.match}
+                className="mt-1.5 border-y border-[var(--color-border)] py-1.5"
+              >
                 <p className="font-bold text-[var(--color-foreground)]">
-                  {compositionAnalysisTitle}
+                  {t("composition.prototype.title")}
                 </p>
-                <span className="ml-auto rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)]">
-                  {t(`composition.analysisBasis.${compositionInsight.analysisBasis}`)}
-                </span>
-              </div>
-              <p className="mt-1.5 text-[9px] leading-4 text-[var(--color-muted-foreground)] sm:text-[9.5px]">
-                {successfulPrototype
-                  ? t(`composition.prototypeNotice.${successfulPrototype.match}`)
-                  : t("composition.hypothesisNotice")}
-              </p>
-              {/* Hallmark · component: composition role summary · genre: modern-minimal
-               * theme: Mineral Signal · critique: P5 H5 E4 S5 R5 V4
-               */}
-              {successfulPrototype ? (
-                <div
-                  data-successful-composition-prototype={successfulPrototype.match}
-                  className="mt-2 border-y border-[var(--color-border)] py-2"
-                >
-                  <p className="font-bold text-[var(--color-foreground)]">
-                    {t("composition.prototype.title")}
-                  </p>
-                  <div className="mt-1.5 grid lg:grid-cols-3">
-                    {orderedMemberDuties.map((duty, dutyIndex) => {
-                      const classification = affinityMemberByKey.get(
-                        `${duty.character}_${duty.weapon}`
-                      )?.classification;
-                      const newType = classification
-                        ? [classification.role, classification.groupName, classification.subtype]
-                            .filter(
-                              (value, index, values) =>
-                                Boolean(value) && values.indexOf(value) === index
-                            )
-                            .join(" · ")
-                        : null;
+                <div className="mt-1 grid lg:grid-cols-3">
+                  {orderedMemberDuties.map((duty, dutyIndex) => {
+                    const classification = affinityMemberByKey.get(
+                      `${duty.character}_${duty.weapon}`
+                    )?.classification;
+                    const newType = classification
+                      ? [classification.role, classification.groupName, classification.subtype]
+                          .filter(
+                            (value, index, values) =>
+                              Boolean(value) && values.indexOf(value) === index
+                          )
+                          .join(" · ")
+                      : null;
 
-                      return (
+                    return (
+                      <div
+                        key={`${duty.character}_${duty.weapon}`}
+                        data-prototype-member-duty={`${duty.character}_${duty.weapon}`}
+                        className={cn(
+                          "min-w-0 py-1.5 first:pt-0 last:pb-0 lg:px-1.5 lg:py-0 lg:first:pl-0 lg:last:pr-0",
+                          dutyIndex > 0 &&
+                            "border-t border-[var(--color-border)] lg:border-l lg:border-t-0"
+                        )}
+                      >
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="font-bold text-[var(--color-foreground)]">
+                            {getCharName(duty.character)}
+                          </span>
+                          <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[9px] font-bold text-[var(--color-foreground)]">
+                            {t(`composition.combatTasks.${duty.task}`)}
+                          </span>
+                          {duty.secondaryTask ? (
+                            <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)]">
+                              {t("composition.combatDoctrine.labels.dutySecondary")}
+                              {" · "}
+                              {t(`composition.combatTasks.${duty.secondaryTask}`)}
+                            </span>
+                          ) : null}
+                        </div>
+                        {newType ? (
+                          <p
+                            data-character-type={`${duty.character}_${duty.weapon}`}
+                            className="mt-1 min-w-0 break-words text-[9px] font-semibold text-[var(--color-accent-foreground)] sm:text-[9.5px]"
+                          >
+                            {newType}
+                          </p>
+                        ) : null}
+                        <p className="mt-1 text-[var(--color-muted-foreground)]">
+                          <span className="font-bold text-[var(--color-foreground)]">
+                            {t("composition.combatDoctrine.labels.dutyAction")}
+                            {": "}
+                          </span>
+                          {t(`composition.combatDoctrine.memberActions.${duty.action}`)}
+                        </p>
+                        <p className="mt-0.5 text-[var(--color-muted-foreground)]">
+                          <span className="font-bold text-rose-600 dark:text-rose-300">
+                            {t("composition.combatDoctrine.labels.dutyAvoid")}
+                            {": "}
+                          </span>
+                          {t(`composition.combatDoctrine.memberAvoids.${duty.avoid}`)}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : null}
+            <div className="mt-1.5 space-y-1">
+              <div
+                data-combat-doctrine
+                className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]/55 p-1.5"
+              >
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <p className="mr-1 font-bold text-[var(--color-foreground)]">
+                    {t("composition.combatDoctrine.title")}
+                  </p>
+                  {doctrineFeatureLabels.map((label) => (
+                    <span
+                      key={label}
+                      className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)]"
+                    >
+                      {label}
+                    </span>
+                  ))}
+                </div>
+                <dl className="mt-2 space-y-1.5">
+                  {doctrineRows.map((row, index) => (
+                    <div
+                      key={row.label}
+                      data-combat-doctrine-rule={index + 1}
+                      className="grid grid-cols-[4.75rem_minmax(0,1fr)] gap-1.5"
+                    >
+                      <dt className="font-bold text-[var(--color-foreground)]">{row.label}</dt>
+                      <dd className="text-[var(--color-muted-foreground)]">{row.text}</dd>
+                    </div>
+                  ))}
+                </dl>
+                {!successfulPrototype ? (
+                  <div className="mt-2.5 border-t border-[var(--color-border)] pt-2">
+                    <p className="font-bold text-[var(--color-foreground)]">
+                      {t("composition.combatDoctrine.memberDutyTitle")}
+                    </p>
+                    <div className="mt-1.5 grid gap-1.5 lg:grid-cols-3">
+                      {orderedMemberDuties.map((duty) => (
                         <div
                           key={`${duty.character}_${duty.weapon}`}
-                          data-prototype-member-duty={`${duty.character}_${duty.weapon}`}
-                          className={cn(
-                            "min-w-0 py-2 first:pt-0 last:pb-0 lg:px-2 lg:py-0 lg:first:pl-0 lg:last:pr-0",
-                            dutyIndex > 0 &&
-                              "border-t border-[var(--color-border)] lg:border-l lg:border-t-0"
-                          )}
+                          data-combat-member-duty={`${duty.character}_${duty.weapon}`}
+                          className="rounded border border-[var(--color-border)] bg-[var(--color-surface-2)]/65 p-2"
                         >
                           <div className="flex flex-wrap items-center gap-1.5">
                             <span className="font-bold text-[var(--color-foreground)]">
                               {getCharName(duty.character)}
                             </span>
-                            <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[8.5px] font-bold text-[var(--color-foreground)]">
+                            <span className="rounded-full bg-[var(--color-accent)]/12 px-1.5 py-0.5 text-[9px] font-bold text-[var(--color-accent-foreground)]">
                               {t(`composition.combatTasks.${duty.task}`)}
                             </span>
                             {duty.secondaryTask ? (
-                              <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[8.5px] font-semibold text-[var(--color-muted-foreground)]">
+                              <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)]">
                                 {t("composition.combatDoctrine.labels.dutySecondary")}
                                 {" · "}
                                 {t(`composition.combatTasks.${duty.secondaryTask}`)}
                               </span>
                             ) : null}
                           </div>
-                          {newType ? (
-                            <p
-                              data-character-type={`${duty.character}_${duty.weapon}`}
-                              className="mt-1 min-w-0 break-words text-[8.5px] font-semibold text-[var(--color-accent-foreground)] sm:text-[9px]"
-                            >
-                              {newType}
-                            </p>
-                          ) : null}
                           <p className="mt-1 text-[var(--color-muted-foreground)]">
                             <span className="font-bold text-[var(--color-foreground)]">
                               {t("composition.combatDoctrine.labels.dutyAction")}
@@ -596,107 +690,21 @@ function ComboWeaponCardImpl({
                             {t(`composition.combatDoctrine.memberAvoids.${duty.avoid}`)}
                           </p>
                         </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ) : null}
-              <div className="mt-2 space-y-1.5">
-                <div
-                  data-combat-doctrine
-                  className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]/55 p-2"
-                >
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <p className="mr-1 font-bold text-[var(--color-foreground)]">
-                      {t("composition.combatDoctrine.title")}
-                    </p>
-                    {doctrineFeatureLabels.map((label) => (
-                      <span
-                        key={label}
-                        className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)]"
-                      >
-                        {label}
-                      </span>
-                    ))}
-                  </div>
-                  <dl className="mt-2 space-y-1.5">
-                    {doctrineRows.map((row, index) => (
-                      <div
-                        key={row.label}
-                        data-combat-doctrine-rule={index + 1}
-                        className="grid grid-cols-[4.75rem_minmax(0,1fr)] gap-1.5"
-                      >
-                        <dt className="font-bold text-[var(--color-foreground)]">{row.label}</dt>
-                        <dd className="text-[var(--color-muted-foreground)]">{row.text}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                  {!successfulPrototype ? (
-                    <div className="mt-2.5 border-t border-[var(--color-border)] pt-2">
-                      <p className="font-bold text-[var(--color-foreground)]">
-                        {t("composition.combatDoctrine.memberDutyTitle")}
-                      </p>
-                      <div className="mt-1.5 grid gap-1.5 lg:grid-cols-3">
-                        {orderedMemberDuties.map((duty) => (
-                          <div
-                            key={`${duty.character}_${duty.weapon}`}
-                            data-combat-member-duty={`${duty.character}_${duty.weapon}`}
-                            className="rounded border border-[var(--color-border)] bg-[var(--color-surface-2)]/65 p-2"
-                          >
-                            <div className="flex flex-wrap items-center gap-1.5">
-                              <span className="font-bold text-[var(--color-foreground)]">
-                                {getCharName(duty.character)}
-                              </span>
-                              <span className="rounded-full bg-[var(--color-accent)]/12 px-1.5 py-0.5 text-[9px] font-bold text-[var(--color-accent-foreground)]">
-                                {t(`composition.combatTasks.${duty.task}`)}
-                              </span>
-                              {duty.secondaryTask ? (
-                                <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)]">
-                                  {t("composition.combatDoctrine.labels.dutySecondary")}
-                                  {" · "}
-                                  {t(`composition.combatTasks.${duty.secondaryTask}`)}
-                                </span>
-                              ) : null}
-                            </div>
-                            <p className="mt-1 text-[var(--color-muted-foreground)]">
-                              <span className="font-bold text-[var(--color-foreground)]">
-                                {t("composition.combatDoctrine.labels.dutyAction")}
-                                {": "}
-                              </span>
-                              {t(`composition.combatDoctrine.memberActions.${duty.action}`)}
-                            </p>
-                            <p className="mt-0.5 text-[var(--color-muted-foreground)]">
-                              <span className="font-bold text-rose-600 dark:text-rose-300">
-                                {t("composition.combatDoctrine.labels.dutyAvoid")}
-                                {": "}
-                              </span>
-                              {t(`composition.combatDoctrine.memberAvoids.${duty.avoid}`)}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
+                      ))}
                     </div>
-                  ) : null}
-                </div>
+                  </div>
+                ) : null}
               </div>
             </div>
-          ) : null}
+          </div>
         </div>
-      ) : (
-        <div
-          data-composition-insight-pending
-          aria-hidden="true"
-          className="border-t border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-surface-2)_72%,transparent)] px-2 py-2 sm:px-3"
-        >
-          <div className="h-[26px] w-24 animate-pulse rounded-md bg-[var(--color-surface-3)]" />
-        </div>
-      )}
+      ) : null}
 
       {/* 특성 브레이크다운 */}
       {showTraits && (
         <div
           data-trait-breakdown
-          className="px-2 sm:px-3 py-2.5 flex flex-col gap-1.5 bg-[var(--color-surface-2)] border-t border-[var(--color-border)]"
+          className="px-2 py-2 flex flex-col gap-1.5 bg-[var(--color-surface-2)] border-t border-[var(--color-border)]"
         >
           {isInitialTraitFetch && (
             <div className="flex items-center justify-center rounded-md bg-[var(--color-surface)] px-3 py-3 border border-[var(--color-border-light)]">

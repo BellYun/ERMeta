@@ -1017,7 +1017,7 @@ export function SynergyDetailResults() {
           <div
             data-sr-block
             data-result-version={resultVersion}
-            className="synergy-results-compact flex flex-col gap-2"
+            className="synergy-results-compact flex flex-col gap-1.5"
           >
             {resultAllies.length === 1 && (
               <p className="flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-[12px] font-medium text-[var(--color-muted-foreground)]">
