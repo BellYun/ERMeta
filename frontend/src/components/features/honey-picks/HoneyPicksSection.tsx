@@ -29,9 +29,9 @@ export function getOverallChangeType(patchNote: CharacterPatchNote): "buff" | "n
 }
 
 export const CHANGE_LABEL: Record<string, { text: string; color: string; bg: string }> = {
-  buff: { text: "상향", color: "text-[var(--color-stat-up)]", bg: "bg-[var(--color-stat-up)]/10" },
+  buff: { text: "버프", color: "text-[var(--color-stat-up)]", bg: "bg-[var(--color-stat-up)]/10" },
   nerf: {
-    text: "하향",
+    text: "너프",
     color: "text-[var(--color-stat-down)]",
     bg: "bg-[var(--color-stat-down)]/10",
   },

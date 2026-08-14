@@ -18,11 +18,37 @@ import {
 import { withCurrentSeoLocale } from "@/lib/localizedPath";
 import type { CharacterRankingData, RankingResponse } from "@/lib/ranking";
 import { cn } from "@/lib/utils";
-import { resolveWeaponName } from "@/lib/weaponMap";
+import { getWeaponGroupImageUrl, resolveWeaponName } from "@/lib/weaponMap";
 import { TierBadge } from "../TierBadge";
 import { PatchNoteTooltip } from "./PatchNoteTooltip";
-import type { PrevStats, DisplayRow } from "./types";
+import { type DisplayRow, type PrevStats } from "./types";
 import { computeMetaScores, assignTier } from "./utils";
+
+function getPatchChangeBadge(patchNote: NonNullable<DisplayRow["patchNote"]>) {
+  const types = patchNote.changes.map((change) => change.changeType);
+
+  if (types.length > 0 && types.every((type) => type === "buff")) {
+    return {
+      label: "버프",
+      className:
+        "border-[var(--color-stat-up)]/20 bg-[var(--color-stat-up)]/10 text-[var(--color-stat-up)]",
+    };
+  }
+
+  if (types.length > 0 && types.every((type) => type === "nerf")) {
+    return {
+      label: "너프",
+      className:
+        "border-[var(--color-stat-down)]/20 bg-[var(--color-stat-down)]/10 text-[var(--color-stat-down)]",
+    };
+  }
+
+  return {
+    label: "조정",
+    className:
+      "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]",
+  };
+}
 
 const fallbackMap = buildFallbackMap();
 const ALL_ROLE = "all" as const;
@@ -63,6 +89,7 @@ function buildDisplayRows(
     weaponCode: r.bestWeapon,
     name: resolveCharacterName(r.characterNum, l10n, fallbackMap),
     weaponName: resolveWeaponName(r.bestWeapon, l10n),
+    weaponIconUrl: getWeaponGroupImageUrl(r.bestWeapon),
     imageUrl: getCharacterImageUrl(r.characterNum),
     tier: assignTier(scores.get(r.characterNum * 1000 + r.bestWeapon) ?? 0),
     pickRate: r.pickRate,
@@ -304,35 +331,56 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                         {/* Character */}
                         <td className="px-2 py-1.5">
                           <div className="relative flex items-center gap-2.5">
-                            <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-md bg-[var(--color-surface-2)]">
-                              <Image
-                                src={char.imageUrl}
-                                alt={char.name}
-                                fill
-                                className="object-cover"
-                                sizes="28px"
-                              />
+                            <div className="relative h-7 w-7 shrink-0">
+                              <span className="absolute inset-0 overflow-hidden rounded-md bg-[var(--color-surface-2)]">
+                                <Image
+                                  src={char.imageUrl}
+                                  alt={char.name}
+                                  fill
+                                  className="object-cover"
+                                  sizes="28px"
+                                />
+                              </span>
                               {char.patchNote && (
                                 <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded border border-[var(--color-surface)] bg-[var(--color-muted-foreground)]" />
                               )}
+                              {char.weaponIconUrl ? (
+                                <span className="weapon-icon-backdrop absolute -bottom-1 -right-1 z-10 grid h-4 w-4 place-items-center rounded-full border shadow-sm">
+                                  <Image
+                                    src={char.weaponIconUrl}
+                                    alt=""
+                                    width={12}
+                                    height={12}
+                                    className="h-3 w-3 object-contain"
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                              ) : null}
                             </div>
                             <div className="min-w-0">
                               <span className="flex items-center gap-1.5">
                                 <span className="text-sm font-medium text-[var(--color-foreground)] truncate block">
                                   {char.name}
                                 </span>
-                                {char.patchNote && (
-                                  <button
-                                    type="button"
-                                    aria-label={t("patchNoteButton", {
-                                      patch: char.patchNote.patch,
-                                    })}
-                                    onClick={(e) => togglePatchNote(e, key)}
-                                    className="shrink-0 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)]"
-                                  >
-                                    패치
-                                  </button>
-                                )}
+                                {char.patchNote &&
+                                  (() => {
+                                    const badge = getPatchChangeBadge(char.patchNote);
+                                    return (
+                                      <button
+                                        type="button"
+                                        aria-label={`${t("patchNoteButton", {
+                                          patch: char.patchNote.patch,
+                                        })} · ${badge.label}`}
+                                        onClick={(e) => togglePatchNote(e, key)}
+                                        className={cn(
+                                          "shrink-0 rounded border px-1.5 py-0.5 text-[9px] font-semibold hover:brightness-95",
+                                          badge.className
+                                        )}
+                                      >
+                                        {badge.label}
+                                      </button>
+                                    );
+                                  })()}
                               </span>
                               <span className="text-[11px] text-[var(--color-muted-foreground)] truncate block">
                                 {char.weaponName}
@@ -481,33 +529,56 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                     {/* Tier */}
                     <div className="flex min-w-0 items-center gap-1.5">
                       <TierBadge tier={char.tier} />
-                      <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-md bg-[var(--color-surface-2)]">
-                        <Image
-                          src={char.imageUrl}
-                          alt={char.name}
-                          fill
-                          className="object-cover"
-                          sizes="32px"
-                        />
+                      <div className="relative h-8 w-8 shrink-0">
+                        <span className="absolute inset-0 overflow-hidden rounded-md bg-[var(--color-surface-2)]">
+                          <Image
+                            src={char.imageUrl}
+                            alt={char.name}
+                            fill
+                            className="object-cover"
+                            sizes="32px"
+                          />
+                        </span>
                         {char.patchNote && (
                           <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded border border-[var(--color-surface)] bg-[var(--color-muted-foreground)]" />
                         )}
+                        {char.weaponIconUrl ? (
+                          <span className="weapon-icon-backdrop absolute -bottom-1 -right-1 z-10 grid h-4 w-4 place-items-center rounded-full border shadow-sm">
+                            <Image
+                              src={char.weaponIconUrl}
+                              alt=""
+                              width={12}
+                              height={12}
+                              className="h-3 w-3 object-contain"
+                              aria-hidden="true"
+                            />
+                          </span>
+                        ) : null}
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
                           <p className="truncate text-[0.82rem] font-semibold leading-tight text-[var(--color-foreground)]">
                             {char.name}
                           </p>
-                          {char.patchNote && (
-                            <button
-                              type="button"
-                              aria-label={t("patchNoteButton", { patch: char.patchNote.patch })}
-                              onClick={(e) => togglePatchNote(e, key)}
-                              className="shrink-0 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1 py-0.5 text-[8px] font-semibold text-[var(--color-muted-foreground)]"
-                            >
-                              패치
-                            </button>
-                          )}
+                          {char.patchNote &&
+                            (() => {
+                              const badge = getPatchChangeBadge(char.patchNote);
+                              return (
+                                <button
+                                  type="button"
+                                  aria-label={`${t("patchNoteButton", {
+                                    patch: char.patchNote.patch,
+                                  })} · ${badge.label}`}
+                                  onClick={(e) => togglePatchNote(e, key)}
+                                  className={cn(
+                                    "shrink-0 rounded border px-1 py-0.5 text-[8px] font-semibold",
+                                    badge.className
+                                  )}
+                                >
+                                  {badge.label}
+                                </button>
+                              );
+                            })()}
                         </div>
                         <p className="truncate text-[10px] text-[var(--color-muted-foreground)]">
                           {char.weaponName}

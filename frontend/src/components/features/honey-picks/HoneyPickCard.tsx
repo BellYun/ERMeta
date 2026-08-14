@@ -16,11 +16,11 @@ export function getOverallChangeType(patchNote: CharacterPatchNote): "buff" | "n
 
 export const CHANGE_LABEL: Record<string, { text: string; color: string }> = {
   buff: {
-    text: "상향",
+    text: "버프",
     color: "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-stat-up)]",
   },
   nerf: {
-    text: "하향",
+    text: "너프",
     color: "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-stat-down)]",
   },
   rework: {
