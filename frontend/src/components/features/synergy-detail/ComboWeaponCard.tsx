@@ -446,7 +446,10 @@ function ComboWeaponCardImpl({
         )}
 
         {/* 스탯 */}
-        <div className="ml-auto flex items-center gap-1.5 sm:gap-4 text-right">
+        <div
+          data-combo-toggle-hit-area
+          className="ml-auto flex items-center gap-1.5 sm:gap-4 text-right"
+        >
           <StatCol label={t("winRate")} value={`${group.winRate.toFixed(1)}%`} />
           <StatCol
             label={t("rp")}
@@ -489,7 +492,10 @@ function ComboWeaponCardImpl({
                   {compositionAnalysisTitle}
                 </p>
               </div>
-              <p className="mt-1.5 leading-5 text-[var(--color-muted-foreground)]">
+              <p
+                data-composition-pattern-summary
+                className="mt-1.5 leading-5 text-[var(--color-muted-foreground)]"
+              >
                 <span className="font-bold text-[var(--color-foreground)]">
                   {t(`composition.patterns.${compositionInsight.pattern}`)}
                   {": "}

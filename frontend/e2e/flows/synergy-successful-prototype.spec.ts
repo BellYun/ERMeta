@@ -156,7 +156,9 @@ test.describe("Flow: 성공 조합 프로토타입 분석", () => {
       .filter({ has: page.locator('a[href^="/character/"]') })
       .first();
     await expect(card).toBeVisible({ timeout: 20_000 });
-    await card.click();
+    const toggleHitArea = card.locator("[data-combo-toggle-hit-area]");
+    await expect(toggleHitArea).toBeVisible();
+    await toggleHitArea.click();
 
     const prototype = card.locator(
       'xpath=following-sibling::div//div[@data-successful-composition-prototype="exact"]'
@@ -176,7 +178,9 @@ test.describe("Flow: 성공 조합 프로토타입 분석", () => {
     await expect(
       card.locator("xpath=following-sibling::div//div[@data-combat-doctrine]")
     ).toBeVisible();
-    await expect(page.getByText("성공 조합 패턴 일치").first()).toBeVisible();
+    await expect(
+      card.locator("xpath=following-sibling::div//p[@data-composition-pattern-summary]")
+    ).toBeVisible();
     await expect(
       page.locator("[data-nextjs-dialog], .vite-error-overlay, #webpack-dev-server-client-overlay")
     ).toHaveCount(0);
