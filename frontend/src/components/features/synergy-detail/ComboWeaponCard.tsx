@@ -486,7 +486,7 @@ function ComboWeaponCardImpl({
               data-composition-pattern-badge={compositionInsight.pattern}
               title={t(`composition.patternDescriptions.${compositionInsight.pattern}`)}
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[10px] font-bold sm:text-[11px]",
+                "inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[9.5px] font-bold sm:text-[10px]",
                 COMPOSITION_PATTERN_BADGE_TONES[compositionInsight.pattern]
               )}
             >
@@ -494,7 +494,7 @@ function ComboWeaponCardImpl({
               {t(`composition.patterns.${compositionInsight.pattern}`)}
             </span>
             {!successfulPrototype && affinityEvidence && affinityEvidence.classifiedMembers > 0 ? (
-              <span className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1 text-[9.5px] font-bold text-[var(--color-muted-foreground)] sm:text-[10.5px]">
+              <span className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1 text-[9px] font-bold text-[var(--color-muted-foreground)] sm:text-[9.5px]">
                 <FlaskConical className="h-3 w-3 shrink-0 text-[var(--color-accent-foreground)]" />
                 {t("affinity.summary", {
                   matched: affinityEvidence.matchedMembers,
@@ -507,7 +507,7 @@ function ComboWeaponCardImpl({
             <div
               data-composition-explanation
               data-composition-pattern={compositionInsight.pattern}
-              className="mt-2 text-[10.5px] leading-relaxed sm:text-[11px]"
+              className="mt-2 text-[10px] leading-relaxed sm:text-[10.5px]"
             >
               <div className="flex items-center gap-1.5 border-b border-[var(--color-border)] pb-1.5">
                 <Sparkles className="h-3.5 w-3.5 shrink-0 text-[var(--color-accent-foreground)]" />
@@ -518,7 +518,7 @@ function ComboWeaponCardImpl({
                   {t(`composition.analysisBasis.${compositionInsight.analysisBasis}`)}
                 </span>
               </div>
-              <p className="mt-1.5 text-[9.5px] leading-4 text-[var(--color-muted-foreground)] sm:text-[10px]">
+              <p className="mt-1.5 text-[9px] leading-4 text-[var(--color-muted-foreground)] sm:text-[9.5px]">
                 {successfulPrototype
                   ? t(`composition.prototypeNotice.${successfulPrototype.match}`)
                   : t("composition.hypothesisNotice")}
@@ -562,11 +562,11 @@ function ComboWeaponCardImpl({
                             <span className="font-bold text-[var(--color-foreground)]">
                               {getCharName(duty.character)}
                             </span>
-                            <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[9px] font-bold text-[var(--color-foreground)]">
+                            <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[8.5px] font-bold text-[var(--color-foreground)]">
                               {t(`composition.combatTasks.${duty.task}`)}
                             </span>
                             {duty.secondaryTask ? (
-                              <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-muted-foreground)]">
+                              <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-1.5 py-0.5 text-[8.5px] font-semibold text-[var(--color-muted-foreground)]">
                                 {t("composition.combatDoctrine.labels.dutySecondary")}
                                 {" · "}
                                 {t(`composition.combatTasks.${duty.secondaryTask}`)}
@@ -576,7 +576,7 @@ function ComboWeaponCardImpl({
                           {newType ? (
                             <p
                               data-character-type={`${duty.character}_${duty.weapon}`}
-                              className="mt-1 min-w-0 break-words text-[9px] font-semibold text-[var(--color-accent-foreground)] sm:text-[9.5px]"
+                              className="mt-1 min-w-0 break-words text-[8.5px] font-semibold text-[var(--color-accent-foreground)] sm:text-[9px]"
                             >
                               {newType}
                             </p>

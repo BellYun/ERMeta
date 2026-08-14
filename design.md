@@ -36,8 +36,8 @@ Canonical values live in `tokens.css`.
 - Body: Pretendard 400.
 - Outlier: JetBrains Mono 500, only for patch/version labels and headline metrics.
 - Display tracking: `-0.035em`.
-- Body copy uses a compact 16px baseline; supporting UI copy uses 14px.
-- Dense data labels, badges, chart annotations, and version markers keep their component-authored scale. Shared labels use a 12px baseline.
+- Body copy uses a compact 15px baseline; supporting UI copy uses 13px.
+- Dense data labels, badges, chart annotations, and version markers keep their component-authored scale. Shared labels use an 11px baseline.
 
 ## Spacing
 
@@ -114,11 +114,11 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
   --font-display: "Pretendard", ui-sans-serif, sans-serif;
   --font-body: "Pretendard", ui-sans-serif, sans-serif;
   --font-outlier: "JetBrains Mono", ui-monospace, monospace;
-  --text-data-min: 0.75rem;
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-md: 1.125rem;
+  --text-data-min: 0.6875rem;
+  --text-xs: 0.6875rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+  --text-md: 1.0625rem;
   --spacing-xs: 0.5rem;
   --spacing-sm: 0.75rem;
   --spacing-md: 1rem;
@@ -184,11 +184,11 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
     }
   },
   "size": {
-    "textDataMin": { "$value": "0.75rem", "$type": "dimension" },
-    "textXs": { "$value": "0.75rem", "$type": "dimension" },
-    "textSm": { "$value": "0.875rem", "$type": "dimension" },
-    "textBase": { "$value": "1rem", "$type": "dimension" },
-    "textMd": { "$value": "1.125rem", "$type": "dimension" }
+    "textDataMin": { "$value": "0.6875rem", "$type": "dimension" },
+    "textXs": { "$value": "0.6875rem", "$type": "dimension" },
+    "textSm": { "$value": "0.8125rem", "$type": "dimension" },
+    "textBase": { "$value": "0.9375rem", "$type": "dimension" },
+    "textMd": { "$value": "1.0625rem", "$type": "dimension" }
   },
   "space": {
     "md": { "$value": "1rem", "$type": "dimension" },

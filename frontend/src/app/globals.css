@@ -3,7 +3,7 @@
 
 /* Hallmark · genre: modern-minimal · tone: technical · macrostructure: Workbench + Index-First · theme: custom Mineral Signal · vibe: "quiet analysis, night tactical signal" · anchor hue: 245/252 · design-system: design.md · designed-as-app
  * paper: light oklch(97% 0.008 245), dark oklch(14% 0.018 252) · accent: light oklch(43% 0.15 245), dark oklch(83% 0.15 245) · display/body: Pretendard · axes: dual-mode / geometric-sans / chromatic-mineral-blue
- * pre-emit critique: P5 H5 E5 S5 R5 V4 · contrast: pass (40–41) · readability: pass (13px floor) · nav: N1b · footer: Ft4 · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50–57)
+ * pre-emit critique: P5 H5 E5 S5 R5 V4 · contrast: pass (40–41) · readability: pass (11px dense-label floor) · nav: N1b · footer: Ft4 · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50–57)
  */
 
 @theme {
@@ -119,6 +119,7 @@
     background: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-plex-sans-kr);
+    font-size: var(--text-base);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings:
