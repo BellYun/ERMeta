@@ -40,7 +40,10 @@ import {
 import type { TrioWeaponResult, SortBy } from "./types";
 
 const MIN_MEANINGFUL_GAMES = 10;
-const VIRTUAL_CARD_ESTIMATE = 245; // 운영·역할·상성 설명이 포함된 접힌 카드의 실측 높이
+// 접힌 카드 실측 높이(약 67px)와 행 하단 여백을 합친 값이다.
+// 펼친 높이는 ResizeObserver가 즉시 보정하므로 초기 추정치는 접힌 상태에 맞춰야
+// 모바일에서 아직 측정하지 않은 행 때문에 긴 빈 공간과 스크롤 점프가 생기지 않는다.
+const VIRTUAL_CARD_ESTIMATE = 76;
 const VISIBLE_RESULTS_STEP = 30;
 const DETAIL_BUCKET_MEMORY_CACHE_LIMIT = 8;
 const RESULT_QUERY_DEBOUNCE_MS = 50;

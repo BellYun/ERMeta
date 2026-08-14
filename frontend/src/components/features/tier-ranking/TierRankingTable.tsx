@@ -436,7 +436,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
 
         {/* Mobile List */}
         <div className="sm:hidden">
-          <div className="grid grid-cols-[28px_minmax(0,1.7fr)_48px_48px_60px] items-center gap-1.5 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/72 px-2.5 py-2 text-[10px] font-semibold text-[var(--color-muted-foreground)]">
+          <div className="grid grid-cols-[28px_minmax(0,1.7fr)_48px_48px_60px] items-center gap-1.5 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/72 px-2.5 py-2 text-[9px] font-semibold text-[var(--color-muted-foreground)]">
             <span className="text-center">#</span>
             <span>{t("columns.character")}</span>
             <button
@@ -518,7 +518,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                     {/* Rank */}
                     <span
                       className={cn(
-                        "w-5 text-center font-mono text-[0.88rem] font-bold tabular-nums",
+                        "w-5 text-center font-mono text-xs font-bold tabular-nums",
                         char.rank <= 3
                           ? "text-[var(--color-accent-gold)]"
                           : "text-[var(--color-muted-foreground)]"
@@ -528,7 +528,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                     </span>
                     {/* Tier */}
                     <div className="flex min-w-0 items-center gap-1.5">
-                      <TierBadge tier={char.tier} />
+                      <TierBadge tier={char.tier} className="text-[10px]" />
                       <div className="relative h-8 w-8 shrink-0">
                         <span className="absolute inset-0 overflow-hidden rounded-md bg-[var(--color-surface-2)]">
                           <Image
@@ -557,7 +557,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <p className="truncate text-[0.82rem] font-semibold leading-tight text-[var(--color-foreground)]">
+                          <p className="truncate text-xs font-semibold leading-tight text-[var(--color-foreground)]">
                             {char.name}
                           </p>
                           {char.patchNote &&
@@ -580,20 +580,20 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                               );
                             })()}
                         </div>
-                        <p className="truncate text-[10px] text-[var(--color-muted-foreground)]">
+                        <p className="truncate text-[9px] text-[var(--color-muted-foreground)]">
                           {char.weaponName}
                         </p>
                       </div>
                     </div>
-                    <span className="text-right font-mono text-[0.78rem] font-medium tabular-nums text-[var(--color-foreground)]">
+                    <span className="text-right font-mono text-[11px] font-medium tabular-nums text-[var(--color-foreground)]">
                       {char.winRate.toFixed(1)}%
                     </span>
-                    <span className="text-right font-mono text-[0.78rem] font-medium tabular-nums text-[var(--color-foreground)]">
+                    <span className="text-right font-mono text-[11px] font-medium tabular-nums text-[var(--color-foreground)]">
                       {char.pickRate.toFixed(1)}%
                     </span>
                     <span
                       className={cn(
-                        "text-right font-mono text-[0.82rem] font-semibold tabular-nums",
+                        "text-right font-mono text-xs font-semibold tabular-nums",
                         char.averageRP >= 0
                           ? "text-[var(--color-accent-gold)]"
                           : "text-[var(--color-muted-foreground)]"
