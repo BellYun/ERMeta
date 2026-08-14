@@ -487,6 +487,18 @@
     "games": "場次",
     "averageRank": "平均名次",
     "moreTraits": "再顯示 {count} 個特性",
+    "affinity": {
+      "summary": "上升組合符合 {matched}/{classified}",
+      "title": "第10·11賽季新分類組合依據",
+      "description": "基於精確雙隊友角色組合，並套用入場分與樣本可信度修正的固定資料。",
+      "matched": "符合推薦組合 · +{rp} RP · {games}場",
+      "unmatched": "未發現代表性上升組合",
+      "unclassified": "新模型中未分類",
+      "prototypeSummary": {
+        "exact": "成功類型組合符合 · {profiles}個檔案",
+        "nearest": "相似成功組合 {similarity}% · {profiles}個檔案"
+      }
+    },
     "insight": {
       "operationLabel": "營運傾向：{value}",
       "metricSummary": "與相似候選比較 · RP 前 {rpTop}% · 勝率前 {winTop}% · {rankStanding} · {games} 場（{confidence}）",
@@ -530,7 +542,21 @@
       "powerSpikeLabel": "強勢條件",
       "favorableLabel": "可能有利",
       "cautionLabel": "需要注意",
-      "hypothesisNotice": "勝率與 RP 來自跨版本累積陣容資料庫，定位與戰術特徵採用 ERMeta 分類。由於沒有直接時間與交戰日誌，強勢期和剋制關係屬於啟發式分析。",
+      "hypothesisNotice": "戰鬥職責優先採用第10·11賽季新分類，僅對未分類角色使用原有功能分類補充。推薦交戰方案屬於沒有直接交戰日誌的類型化解讀。",
+      "prototypeNotice": {
+        "exact": "此方案以第10與第11賽季皆有提升，且在至少3個實驗體武器檔案中重複出現的相同類型組合為基準。",
+        "nearest": "沒有完全相同的成功樣本，因此採用相同職責構成中最接近的重複上升類型組合。"
+      },
+      "analysisBasis": {
+        "successfulPrototypeExact": "成功組合模式符合",
+        "successfulPrototypeNearest": "參考相似成功組合",
+        "affinityEvidence": "已採用上升組合依據",
+        "affinityTypes": "新分類參考",
+        "legacyCapabilities": "原有功能參考"
+      },
+      "prototype": {
+        "title": "各實驗體的職責"
+      },
       "roles": {
         "tank": "坦克",
         "warrior": "戰士",
@@ -573,7 +599,7 @@
         "finish": "完成收割"
       },
       "combatDoctrine": {
-        "title": "基於陣容特性的交戰法",
+        "title": "基於分類的推薦交戰方案",
         "memberDutyTitle": "角色分工",
         "labels": {
           "winCondition": "勝利條件",

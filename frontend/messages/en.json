@@ -601,6 +601,18 @@
     "games": "Games",
     "averageRank": "Avg Rank",
     "moreTraits": "Show {count} more traits",
+    "affinity": {
+      "summary": "Positive context match {matched}/{classified}",
+      "title": "Season 10–11 new-type composition evidence",
+      "description": "Frozen exact two-partner role contexts with entry-cost and sample-confidence adjustments.",
+      "matched": "Recommended context match · +{rp} RP · {games} games",
+      "unmatched": "No representative positive context match",
+      "unclassified": "Not classified in the new model",
+      "prototypeSummary": {
+        "exact": "Successful type trio match · {profiles} profiles",
+        "nearest": "Similar successful trio {similarity}% · {profiles} profiles"
+      }
+    },
     "insight": {
       "operationLabel": "Playstyle Profile: {value}",
       "metricSummary": "Compared with similar candidates · top {rpTop}% RP · top {winTop}% win rate · {rankStanding} · {games} games ({confidence})",
@@ -644,7 +656,21 @@
       "powerSpikeLabel": "Power-spike condition",
       "favorableLabel": "Can favor",
       "cautionLabel": "Watch for",
-      "hypothesisNotice": "Win rate and RP come from the cumulative cross-patch trio database; roles and tactical traits use ERMeta labels. Power-spike and matchup notes are heuristic analysis because direct timing and fight logs are unavailable.",
+      "hypothesisNotice": "Combat roles prioritize the Season 10–11 new-type model and fall back to legacy capability labels only for unclassified characters. The fight plan is type-based guidance without direct combat logs.",
+      "prototypeNotice": {
+        "exact": "This plan uses the same type trio that improved in both Seasons 10 and 11 and repeated across at least three character-weapon profiles.",
+        "nearest": "No exact successful sample was available, so this plan uses the closest repeatedly positive type trio within the same role composition."
+      },
+      "analysisBasis": {
+        "successfulPrototypeExact": "Successful trio pattern match",
+        "successfulPrototypeNearest": "Similar successful trio reference",
+        "affinityEvidence": "Positive-context evidence applied",
+        "affinityTypes": "New-type guidance",
+        "legacyCapabilities": "Legacy capability guidance"
+      },
+      "prototype": {
+        "title": "Role of each character"
+      },
       "roles": {
         "tank": "Tank",
         "warrior": "Bruiser",
@@ -687,7 +713,7 @@
         "finish": "Finish"
       },
       "combatDoctrine": {
-        "title": "Fight plan from comp traits",
+        "title": "Recommended fight plan from types",
         "memberDutyTitle": "Member assignments",
         "labels": {
           "winCondition": "Win condition",

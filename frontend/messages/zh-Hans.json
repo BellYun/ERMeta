@@ -487,6 +487,18 @@
     "games": "场次",
     "averageRank": "平均名次",
     "moreTraits": "再显示 {count} 个特性",
+    "affinity": {
+      "summary": "上升组合匹配 {matched}/{classified}",
+      "title": "第10·11赛季新分类阵容依据",
+      "description": "基于精确双队友角色组合，并进行了入场分与样本可信度修正的固定数据。",
+      "matched": "匹配推荐组合 · +{rp} RP · {games}场",
+      "unmatched": "未发现代表性上升组合",
+      "unclassified": "新模型中未分类",
+      "prototypeSummary": {
+        "exact": "成功类型组合匹配 · {profiles}个档案",
+        "nearest": "相似成功组合 {similarity}% · {profiles}个档案"
+      }
+    },
     "insight": {
       "operationLabel": "运营倾向：{value}",
       "metricSummary": "与相似候选比较 · RP 前 {rpTop}% · 胜率前 {winTop}% · {rankStanding} · {games} 场（{confidence}）",
@@ -530,7 +542,21 @@
       "powerSpikeLabel": "强势条件",
       "favorableLabel": "可能有利",
       "cautionLabel": "需要注意",
-      "hypothesisNotice": "胜率与 RP 来自跨版本累计阵容数据库，定位与战术特征采用 ERMeta 分类。由于没有直接时间与交战日志，强势期和克制关系属于启发式分析。",
+      "hypothesisNotice": "战斗职责优先采用第10·11赛季新分类，仅对未分类角色使用原有功能分类补充。推荐交战方案属于没有直接交战日志的类型化解读。",
+      "prototypeNotice": {
+        "exact": "该方案基于第10和第11赛季均有提升、且在至少3个实验体武器档案中重复出现的相同类型组合。",
+        "nearest": "没有完全一致的成功样本，因此采用相同职责构成中最接近的重复上升类型组合。"
+      },
+      "analysisBasis": {
+        "successfulPrototypeExact": "成功组合模式匹配",
+        "successfulPrototypeNearest": "参考相似成功组合",
+        "affinityEvidence": "已采用上升组合依据",
+        "affinityTypes": "新分类参考",
+        "legacyCapabilities": "原有功能参考"
+      },
+      "prototype": {
+        "title": "各实验体的职责"
+      },
       "roles": {
         "tank": "坦克",
         "warrior": "战士",
@@ -573,7 +599,7 @@
         "finish": "完成收割"
       },
       "combatDoctrine": {
-        "title": "基于阵容特性的交战法",
+        "title": "基于分类的推荐交战方案",
         "memberDutyTitle": "角色分工",
         "labels": {
           "winCondition": "胜利条件",
