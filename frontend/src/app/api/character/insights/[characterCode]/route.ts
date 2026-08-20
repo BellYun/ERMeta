@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getStatsPatchVersions } from "@/data/patch-notes";
 import { isRouteLocale, LANGUAGE_BY_ROUTE_LOCALE } from "@/i18n/routing";
 import { buildCharacterInsight } from "@/lib/characterInsights";
 import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
 import { getCachedCharacterStats } from "@/lib/characterStats";
 import { DEFAULT_CHARACTER_ANALYSIS_TIER } from "@/lib/characterTier";
+import { getPatches } from "@/lib/getPatches";
 import { tryNestApiProxy } from "@/lib/server/nestProxy";
 import { loadL10nMap } from "@/lib/serverL10n";
 import { resolveWeaponName } from "@/lib/weaponMap";
@@ -25,8 +25,9 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
   }
 
   const searchParams = request.nextUrl.searchParams;
-  const patchVersion = searchParams.get("patchVersion") ?? getStatsPatchVersions()[0] ?? "";
-  const previousPatch = getStatsPatchVersions().find((patch) => patch !== patchVersion) ?? null;
+  const patches = await getPatches();
+  const patchVersion = searchParams.get("patchVersion") ?? patches[0] ?? "";
+  const previousPatch = patches.find((patch) => patch !== patchVersion) ?? null;
   const tier = searchParams.get("tier") ?? DEFAULT_CHARACTER_ANALYSIS_TIER;
   const localeParam = searchParams.get("locale");
   const locale = localeParam && isRouteLocale(localeParam) ? localeParam : "ko";

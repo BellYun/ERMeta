@@ -189,7 +189,7 @@
     },
     "preseasonNotice": "11.0 버전은 프리시즌 데이터이므로 제공하지 않습니다.",
     "preseasonPolicyNotice": "프리시즌 기간에는 통계를 집계하지 않습니다.",
-    "collectionPolicyNotice": "이터널리턴 랭크가 오후 7시 15분에 열려 데이터 집계에 시간이 걸리고 있습니다.",
+    "collectionPolicyNotice": "새 패치 통계는 다이아 이상 랭크 표본 50,000게임을 확보한 뒤 공개합니다.",
     "collecting": {
       "subtitle": "패치 {patch} 메타 분석을 위한 랭크 데이터를 집계하고 있습니다.",
       "kicker": "패치 {patch} 집계 중",

@@ -195,7 +195,7 @@
     },
     "preseasonNotice": "Patch 11.0 uses preseason data and is not provided.",
     "preseasonPolicyNotice": "Preseason matches are not included in our statistics.",
-    "collectionPolicyNotice": "Eternal Return ranked play opened at 7:15 PM KST, so data collection is taking some time.",
+    "collectionPolicyNotice": "New patch statistics are published after 50,000 Diamond+ ranked games are collected.",
     "collecting": {
       "subtitle": "Ranked data for patch {patch} is being collected for meta analysis.",
       "kicker": "Collecting patch {patch}",

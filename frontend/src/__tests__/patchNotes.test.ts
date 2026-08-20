@@ -46,7 +46,7 @@ describe("12.0 patch notes", () => {
 
   it("프리시즌 12.0을 통계 패치 목록에서는 제외한다", () => {
     expect(getStatsPatchVersions()).not.toContain("12.0");
-    expect(getStatsPatchVersions()[0]).toBe("12.1");
+    expect(getStatsPatchVersions()).toContain("12.1");
   });
 
   it("공식 실험체 변경 수와 유형을 보존한다", () => {
@@ -69,9 +69,9 @@ describe("12.0 patch notes", () => {
 });
 
 describe("12.1 patch notes", () => {
-  it("12.1을 최신 패치 및 통계 패치로 노출한다", () => {
-    expect(getAllPatchVersions()[0]).toBe("12.1");
-    expect(getStatsPatchVersions()[0]).toBe("12.1");
+  it("12.1을 패치 및 통계 이력에 보존한다", () => {
+    expect(getAllPatchVersions()).toContain("12.1");
+    expect(getStatsPatchVersions()).toContain("12.1");
   });
 
   it("공식 실험체 변경 수와 유형을 보존한다", () => {
@@ -97,5 +97,32 @@ describe("12.1 patch notes", () => {
     const elena = getCharacterPatchNote(50, "12.1");
 
     expect(elena?.changes.map((change) => change.changeType)).toEqual(["buff", "nerf"]);
+  });
+});
+
+describe("12.2 patch notes", () => {
+  it("12.2를 최신 패치 및 통계 후보로 노출한다", () => {
+    expect(getAllPatchVersions()[0]).toBe("12.2");
+    expect(getStatsPatchVersions()[0]).toBe("12.2");
+  });
+
+  it("공식 실험체 변경 수와 유형을 보존한다", () => {
+    expect(getNotesByPatch("12.2")).toHaveLength(37);
+    expect(getPatchSummary("12.2")).toEqual({
+      patch: "12.2",
+      totalChanges: 52,
+      buffs: 32,
+      nerfs: 20,
+      reworks: 0,
+      characterCount: 37,
+    });
+  });
+
+  it("무기별 상향과 하향이 함께 있는 재키 변경을 각각 기록한다", () => {
+    expect(getCharacterPatchNote(1, "12.2")?.changes.map((change) => change.changeType)).toEqual([
+      "nerf",
+      "nerf",
+      "buff",
+    ]);
   });
 });

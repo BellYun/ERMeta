@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getStatsPatchVersions } from "@/data/patch-notes";
 import { getCacheHeaders, SERVER_ERROR_HEADERS, withCacheObservability } from "@/lib/cache";
 import { getCachedCharacterStats, type CharacterStatsResponse } from "@/lib/characterStats";
 import { DEFAULT_CHARACTER_ANALYSIS_TIER } from "@/lib/characterTier";
+import { getPatches } from "@/lib/getPatches";
 import { tryNestApiProxy } from "@/lib/server/nestProxy";
 
 export type { CharacterStatsResponse, WeaponStatItem } from "@/lib/characterStats";
@@ -23,7 +23,7 @@ export async function GET(
 
   const { searchParams } = new URL(request.url);
   const tier = searchParams.get("tier") ?? DEFAULT_CHARACTER_ANALYSIS_TIER;
-  const patchVersion = searchParams.get("patchVersion") ?? getStatsPatchVersions()[0];
+  const patchVersion = searchParams.get("patchVersion") ?? (await getPatches())[0];
 
   try {
     const t0 = Date.now();

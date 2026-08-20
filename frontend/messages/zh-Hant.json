@@ -148,7 +148,7 @@
     },
     "preseasonNotice": "11.0 為季前賽資料，因此不提供。",
     "preseasonPolicyNotice": "季前賽期間的資料不納入統計。",
-    "collectionPolicyNotice": "永恆輪迴牌位模式於韓國時間晚上7點15分開放，因此資料收集需要一些時間。",
+    "collectionPolicyNotice": "新版本統計將在收集到50,000場鑽石及以上牌位賽後發布。",
     "collecting": {
       "subtitle": "正在收集12.1版本的牌位資料用於版本分析。",
       "kicker": "正在收集{patch}版本",

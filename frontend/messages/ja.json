@@ -149,7 +149,7 @@
     },
     "preseasonNotice": "11.0はプレシーズンデータのため提供していません。",
     "preseasonPolicyNotice": "プレシーズン期間の統計は集計していません。",
-    "collectionPolicyNotice": "エターナルリターンのランクが午後7時15分（KST）に解放されたため、データ集計に時間がかかっています。",
+    "collectionPolicyNotice": "新パッチの統計は、ダイヤモンド以上のランク戦を50,000ゲーム集計した後に公開します。",
     "collecting": {
       "subtitle": "パッチ{patch}のメタ分析に向けてランクデータを集計しています。",
       "kicker": "パッチ{patch}集計中",

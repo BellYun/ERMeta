@@ -148,7 +148,7 @@
     },
     "preseasonNotice": "11.0 为季前赛数据，因此不提供。",
     "preseasonPolicyNotice": "季前赛期间的数据不纳入统计。",
-    "collectionPolicyNotice": "永恒轮回排位模式于韩国时间晚上7点15分开放，因此数据收集需要一些时间。",
+    "collectionPolicyNotice": "新版本统计将在收集到50,000场钻石及以上排位赛后发布。",
     "collecting": {
       "subtitle": "正在收集12.1版本的排位数据用于版本分析。",
       "kicker": "正在收集{patch}版本",

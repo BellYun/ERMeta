@@ -4,7 +4,7 @@ import { createServerClient } from "@/lib/supabase";
 import {
   HOME_BASE_TIERS,
   HOME_META_COMPARISON_PATCH,
-  HOME_META_CURRENT_PATCH,
+  HOME_META_TARGET_PATCH,
   type HomeBaseTier,
   type HomeMetaStatRow,
   type HomeMetaStats,
@@ -68,7 +68,7 @@ async function fetchHomeMetaStats(patchVersion: string): Promise<HomeMetaStats> 
   );
   const currentIndex = patchList.indexOf(patchVersion);
   let previousPatch: string | null =
-    patchVersion === HOME_META_CURRENT_PATCH ? HOME_META_COMPARISON_PATCH : null;
+    patchVersion === HOME_META_TARGET_PATCH ? HOME_META_COMPARISON_PATCH : null;
 
   if (!previousPatch && currentIndex >= 0) {
     for (let i = currentIndex + 1; i < patchList.length; i++) {
@@ -126,7 +126,7 @@ async function fetchHomeMetaStats(patchVersion: string): Promise<HomeMetaStats> 
 export async function getCachedHomeMetaStats(patchVersion: string): Promise<HomeMetaStats> {
   return unstable_cache(
     async () => fetchHomeMetaStats(patchVersion),
-    ["home-meta-stats-v5-11-7-comparison", patchVersion],
+    ["home-meta-stats-v6-12-2-comparison", patchVersion],
     {
       revalidate: 21600,
       tags: ["home-meta-stats", `home-meta-stats:${patchVersion}`],

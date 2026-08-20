@@ -12,7 +12,12 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { CharacterSearchCombobox } from "@/components/features/character-analysis/CharacterSearchCombobox";
 import type { HomeMetaStats } from "@/lib/homeMetaShared";
-import { HOME_META_CURRENT_PATCH, HOME_META_MIN_COLLECTED_GAMES } from "@/lib/homeMetaShared";
+import {
+  HOME_META_FALLBACK_PATCH,
+  HOME_META_MIN_COLLECTED_GAMES,
+  HOME_META_TARGET_PATCH,
+  isHomeMetaTargetReady,
+} from "@/lib/homeMetaShared";
 import type { RankingResponse } from "@/lib/ranking";
 import { HomeDashboardSections } from "./HomeDashboardSections";
 
@@ -44,8 +49,7 @@ export async function HomePageContent({
   const collectedGames = homeMetaStats.collectedGames ?? 0;
   const hasRankingData = rankingData.rankings.length > 0 && rankingGames > 0;
   const isCollectionReady =
-    homeMetaStats.patchVersion === HOME_META_CURRENT_PATCH &&
-    collectedGames >= HOME_META_MIN_COLLECTED_GAMES;
+    homeMetaStats.patchVersion !== HOME_META_TARGET_PATCH || isHomeMetaTargetReady(collectedGames);
   const collectionProgress = Math.min(
     100,
     Math.floor((collectedGames / HOME_META_MIN_COLLECTED_GAMES) * 100)
@@ -53,7 +57,7 @@ export async function HomePageContent({
   const trackedMatches = isCollectionReady
     ? formatMetricNumber(collectedGames / ESTIMATED_PARTICIPANTS_PER_MATCH)
     : "";
-  const fallbackPatch = currentPatch || defaultPatch || "12.1";
+  const fallbackPatch = currentPatch || defaultPatch || HOME_META_FALLBACK_PATCH;
   const patchAnalysisHref = `/${locale}/patch-analysis/11.5`;
   const isPreseasonPreparing = currentPatch === "12.0";
   const isCollectionPending = !isPreseasonPreparing && !isCollectionReady;
@@ -183,9 +187,7 @@ export async function HomePageContent({
           <p>
             <Info className="h-3.5 w-3.5" aria-hidden="true" />
             <span>
-              {currentPatch === HOME_META_CURRENT_PATCH
-                ? t("collectionPolicyNotice")
-                : t("preseasonPolicyNotice")}
+              {isPreseasonPreparing ? t("preseasonPolicyNotice") : t("collectionPolicyNotice")}
             </span>
           </p>
           {showHomeStats ? (

@@ -3,6 +3,7 @@ import { getStatsPatchVersions } from "@/data/patch-notes";
 import { getCacheHeaders, SERVER_ERROR_HEADERS, withCacheObservability } from "@/lib/cache";
 import { getCachedCharacterStats, type CharacterStatsResponse } from "@/lib/characterStats";
 import { DEFAULT_CHARACTER_ANALYSIS_TIER } from "@/lib/characterTier";
+import { getPatches } from "@/lib/getPatches";
 
 interface CharacterStatsHistoryResponse {
   characterCode: number;
@@ -11,9 +12,9 @@ interface CharacterStatsHistoryResponse {
   stats: Array<CharacterStatsResponse | null>;
 }
 
-function parseRequestedPatches(raw: string | null): string[] {
+function parseRequestedPatches(raw: string | null, defaultPatches: string[]): string[] {
   const allowed = new Set(getStatsPatchVersions());
-  if (!raw) return getStatsPatchVersions();
+  if (!raw) return defaultPatches;
 
   const requested = Array.from(
     new Set(
@@ -24,7 +25,7 @@ function parseRequestedPatches(raw: string | null): string[] {
     )
   );
 
-  return requested.length > 0 ? requested : getStatsPatchVersions();
+  return requested.length > 0 ? requested : defaultPatches;
 }
 
 export async function GET(
@@ -40,7 +41,7 @@ export async function GET(
 
   const { searchParams } = new URL(request.url);
   const tier = searchParams.get("tier") ?? DEFAULT_CHARACTER_ANALYSIS_TIER;
-  const patches = parseRequestedPatches(searchParams.get("patchVersions"));
+  const patches = parseRequestedPatches(searchParams.get("patchVersions"), await getPatches());
 
   try {
     const t0 = Date.now();

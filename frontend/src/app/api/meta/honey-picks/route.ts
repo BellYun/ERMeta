@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getStatsPatchVersions } from "@/data/patch-notes";
 import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
+import { getPatches } from "@/lib/getPatches";
 import { getCachedHoneyPicks } from "@/lib/honeyPicks";
 import { tryNestApiProxy } from "@/lib/server/nestProxy";
 
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   if (proxied) return proxied;
 
   const { searchParams } = new URL(request.url);
-  const patchVersion = searchParams.get("patchVersion") ?? getStatsPatchVersions()[0];
+  const patchVersion = searchParams.get("patchVersion") ?? (await getPatches())[0];
   const requestedTier = searchParams.get("tier") ?? "DIAMOND";
 
   try {

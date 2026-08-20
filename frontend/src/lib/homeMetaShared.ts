@@ -9,9 +9,22 @@ export type HomeSelectableTier = HomeBaseTier | HomePlusTier;
 
 export const DEFAULT_HOME_TIER: HomePlusTier = "DIAMOND_PLUS";
 export const HOME_BASE_TIERS: HomeBaseTier[] = ["DIAMOND", "METEORITE", "MITHRIL"];
-export const HOME_META_CURRENT_PATCH = "12.1";
-export const HOME_META_COMPARISON_PATCH = "11.7";
+export const HOME_META_TARGET_PATCH = "12.2";
+export const HOME_META_FALLBACK_PATCH = "12.1";
+export const HOME_META_COMPARISON_PATCH = HOME_META_FALLBACK_PATCH;
 export const HOME_META_MIN_COLLECTED_GAMES = 50_000;
+
+export function isHomeMetaTargetReady(collectedGames: number): boolean {
+  return collectedGames >= HOME_META_MIN_COLLECTED_GAMES;
+}
+
+export function filterReadyStatsPatchVersions(
+  patches: string[],
+  targetCollectedGames: number
+): string[] {
+  if (isHomeMetaTargetReady(targetCollectedGames)) return patches;
+  return patches.filter((patch) => patch !== HOME_META_TARGET_PATCH);
+}
 
 export const HOME_PLUS_TIER_MAP: Record<HomePlusTier, HomeBaseTier[]> = {
   DIAMOND_PLUS: ["DIAMOND", "METEORITE", "MITHRIL"],

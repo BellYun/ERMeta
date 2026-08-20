@@ -3,11 +3,11 @@ import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { CharacterPageContent } from "@/components/features/character-analysis/CharacterPageContent";
 import { CHARACTER_CODES } from "@/components/features/character-analysis/constants";
-import { getVisibleStatsPatchVersions } from "@/data/patch-notes";
 import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
 import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
 import { getCachedCharacterStats } from "@/lib/characterStats";
 import { DEFAULT_CHARACTER_ANALYSIS_TIER } from "@/lib/characterTier";
+import { getPatches } from "@/lib/getPatches";
 import { buildLocalizedAlternates, localizeRoutePath } from "@/lib/seoLocales";
 import { loadL10nMap } from "@/lib/serverL10n";
 import { BASE_URL } from "@/lib/siteMetadata";
@@ -15,6 +15,7 @@ import { getStaticTranslator, OG_LOCALE_BY_LANGUAGE } from "@/lib/staticIntl";
 
 export const dynamic = "force-static";
 export const dynamicParams = false;
+export const revalidate = 900;
 
 interface Props {
   params: Promise<{ locale: string; code: string }>;
@@ -36,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const code = parseInt(rawCode, 10);
   const translatorPromise = getStaticTranslator("characterMetadata", language);
-  const currentPatch = getVisibleStatsPatchVersions()[0];
+  const currentPatch = (await getPatches())[0];
   const name =
     !Number.isNaN(code) && CHARACTER_CODES.includes(code)
       ? resolveCharacterName(code, loadL10nMap(language), buildFallbackMap())
@@ -169,8 +170,8 @@ export default async function LocalizedCharacterPage({ params }: Props) {
     notFound();
   }
 
-  // 통계용 패치 목록(제외 패치 제외). 최신 버전이 자동으로 맨 앞(기본 선택)에 온다.
-  const patches = getVisibleStatsPatchVersions();
+  // 최신 패치는 기준 표본을 채운 뒤 자동으로 맨 앞(기본 선택)에 온다.
+  const patches = await getPatches();
   const [currentPatch, previousPatch] = patches;
   const [initialStats, initialPrevStats] = await Promise.all([
     currentPatch
