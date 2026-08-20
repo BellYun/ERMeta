@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { buildHomeMetaView, type HomeMetaStats } from "@/lib/homeMetaShared";
+import {
+  buildHomeMetaView,
+  filterReadyStatsPatchVersions,
+  HOME_META_MIN_COLLECTED_GAMES,
+  type HomeMetaStats,
+} from "@/lib/homeMetaShared";
 
 const stats: HomeMetaStats = {
   patchVersion: "12.1",
@@ -49,5 +54,20 @@ describe("buildHomeMetaView cumulative tiers", () => {
   ])("%s 누적 범위를 적용한다", (tier, expectedGames) => {
     const view = buildHomeMetaView(stats, tier);
     expect(view.rankingData.rankings[0]?.totalGames).toBe(expectedGames);
+  });
+});
+
+describe("latest stats patch sample gate", () => {
+  const patches = ["12.2", "12.1", "11.7"];
+
+  it("기준 판수 전에는 12.1을 최신 통계 패치로 유지한다", () => {
+    expect(filterReadyStatsPatchVersions(patches, HOME_META_MIN_COLLECTED_GAMES - 1)).toEqual([
+      "12.1",
+      "11.7",
+    ]);
+  });
+
+  it("기준 판수를 채우면 12.2를 최신 통계 패치로 공개한다", () => {
+    expect(filterReadyStatsPatchVersions(patches, HOME_META_MIN_COLLECTED_GAMES)).toEqual(patches);
   });
 });

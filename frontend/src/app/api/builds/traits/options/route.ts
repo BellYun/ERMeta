@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getStatsPatchVersions } from "@/data/patch-notes";
 import { getCacheHeaders } from "@/lib/cache";
+import { getPatches } from "@/lib/getPatches";
 import { tryNestApiProxy } from "@/lib/server/nestProxy";
 import { createServerClient } from "@/lib/supabase";
 import { expandCumulativeTier } from "@/utils/tier";
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const characterCode = Number(searchParams.get("characterCode"));
   const tier = searchParams.get("tier") ?? "DIAMOND";
-  const patchVersion = searchParams.get("patchVersion") ?? getStatsPatchVersions()[0];
+  const patchVersion = searchParams.get("patchVersion") ?? (await getPatches())[0];
   const bestWeapon = searchParams.get("bestWeapon");
 
   if (!characterCode || isNaN(characterCode)) {

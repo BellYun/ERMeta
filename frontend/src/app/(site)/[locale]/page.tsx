@@ -7,7 +7,7 @@ import { getPatches } from "@/lib/getPatches";
 import { getCachedHomeMetaStats } from "@/lib/homeMetaServer";
 import {
   DEFAULT_HOME_TIER,
-  HOME_META_CURRENT_PATCH,
+  HOME_META_FALLBACK_PATCH,
   buildHomeMetaView,
   createEmptyHomeMetaStats,
 } from "@/lib/homeMetaShared";
@@ -15,7 +15,7 @@ import { buildLocalizedAlternates, localizeRoutePath } from "@/lib/seoLocales";
 import { BASE_URL } from "@/lib/siteMetadata";
 import { getMessage, loadIntlMessages, OG_LOCALE_BY_LANGUAGE } from "@/lib/staticIntl";
 
-export const revalidate = 3600;
+export const revalidate = 900;
 export const dynamic = "force-static";
 export const dynamicParams = false;
 
@@ -80,11 +80,8 @@ export default async function LocalizedHomePage({ params }: LocalePageProps) {
   setRequestLocale(locale);
 
   const availablePatches = await getPatches();
-  const patches = [
-    HOME_META_CURRENT_PATCH,
-    ...availablePatches.filter((patch) => patch !== HOME_META_CURRENT_PATCH),
-  ];
-  const currentPatch = HOME_META_CURRENT_PATCH;
+  const currentPatch = availablePatches[0] ?? HOME_META_FALLBACK_PATCH;
+  const patches = [currentPatch, ...availablePatches.filter((patch) => patch !== currentPatch)];
   let homeMetaStats = createEmptyHomeMetaStats(currentPatch);
 
   try {
