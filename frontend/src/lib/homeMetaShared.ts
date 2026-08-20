@@ -13,9 +13,14 @@ export const HOME_META_TARGET_PATCH = "12.2";
 export const HOME_META_FALLBACK_PATCH = "12.1";
 export const HOME_META_COMPARISON_PATCH = HOME_META_FALLBACK_PATCH;
 export const HOME_META_MIN_COLLECTED_GAMES = 50_000;
+export const HOME_META_COLLECTION_MULTIPLIER = 8;
+
+export function getHomeMetaQualificationGames(collectedGames: number): number {
+  return collectedGames * HOME_META_COLLECTION_MULTIPLIER;
+}
 
 export function isHomeMetaTargetReady(collectedGames: number): boolean {
-  return collectedGames >= HOME_META_MIN_COLLECTED_GAMES;
+  return getHomeMetaQualificationGames(collectedGames) >= HOME_META_MIN_COLLECTED_GAMES;
 }
 
 export function filterReadyStatsPatchVersions(

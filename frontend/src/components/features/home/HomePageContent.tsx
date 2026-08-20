@@ -13,6 +13,7 @@ import { getTranslations } from "next-intl/server";
 import { CharacterSearchCombobox } from "@/components/features/character-analysis/CharacterSearchCombobox";
 import type { HomeMetaStats } from "@/lib/homeMetaShared";
 import {
+  getHomeMetaQualificationGames,
   HOME_META_FALLBACK_PATCH,
   HOME_META_MIN_COLLECTED_GAMES,
   HOME_META_TARGET_PATCH,
@@ -47,12 +48,13 @@ export async function HomePageContent({
   const defaultPatch = patches[0] ?? "";
   const rankingGames = rankingData.rankings.reduce((sum, row) => sum + row.totalGames, 0);
   const collectedGames = homeMetaStats.collectedGames ?? 0;
+  const qualificationGames = getHomeMetaQualificationGames(collectedGames);
   const hasRankingData = rankingData.rankings.length > 0 && rankingGames > 0;
   const isCollectionReady =
     homeMetaStats.patchVersion !== HOME_META_TARGET_PATCH || isHomeMetaTargetReady(collectedGames);
   const collectionProgress = Math.min(
     100,
-    Math.floor((collectedGames / HOME_META_MIN_COLLECTED_GAMES) * 100)
+    Math.floor((qualificationGames / HOME_META_MIN_COLLECTED_GAMES) * 100)
   );
   const trackedMatches = isCollectionReady
     ? formatMetricNumber(collectedGames / ESTIMATED_PARTICIPANTS_PER_MATCH)
