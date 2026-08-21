@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { isRouteLocale, type RouteLocale } from "@/i18n/routing";
+import { localizeRoutePath } from "@/lib/seoLocales";
 import assassinsData from "../../../../../public/data/lab/assassins.json";
 import rangersData from "../../../../../public/data/lab/rangers.json";
 import skilldealersData from "../../../../../public/data/lab/skilldealers.json";
@@ -213,7 +214,7 @@ export async function LegacyCharacterLabPage({ params }: LegacyCharacterLabPageP
             return (
               <li key={slug}>
                 <Link
-                  href={`/character-lab/${slug}`}
+                  href={localizeRoutePath(`/character-lab/${slug}`, locale)}
                   className="char-card group flex h-full flex-col gap-3 p-5 transition-colors"
                   data-accent={index === 0 ? "true" : undefined}
                 >

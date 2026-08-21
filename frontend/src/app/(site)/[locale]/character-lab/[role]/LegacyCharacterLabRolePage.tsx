@@ -5,6 +5,7 @@ import { setRequestLocale } from "next-intl/server";
 import { LabPageContent } from "@/components/features/lab/LabPageContent";
 import type { LabData } from "@/components/features/lab/types";
 import { isRouteLocale, type RouteLocale } from "@/i18n/routing";
+import { localizeRoutePath } from "@/lib/seoLocales";
 import assassinsData from "../../../../../../public/data/lab/assassins.json";
 import rangersData from "../../../../../../public/data/lab/rangers.json";
 import skilldealersData from "../../../../../../public/data/lab/skilldealers.json";
@@ -130,7 +131,7 @@ export async function LegacyCharacterLabRolePage({ params }: LegacyCharacterLabR
     <main className="page-shell mx-auto max-w-6xl px-3 py-6 sm:px-5 sm:py-8">
       <nav className="mb-4 flex items-center gap-1.5 text-xs text-[var(--color-muted-foreground)]">
         <Link
-          href="/character-lab"
+          href={localizeRoutePath("/character-lab", locale)}
           className="dashboard-tab inline-flex items-center gap-1 px-2 py-1"
         >
           <ArrowLeft className="h-3 w-3" strokeWidth={2.4} />
