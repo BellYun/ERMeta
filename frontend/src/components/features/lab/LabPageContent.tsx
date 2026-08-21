@@ -1,23 +1,50 @@
 "use client";
 
 import * as React from "react";
+import { useL10n } from "@/components/L10nProvider";
+import type { ActiveRouteLocale } from "@/i18n/routing";
+import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
 import { LabCharacterCard } from "./LabCharacterCard";
+import {
+  getLocalizedLabGroupLabel,
+  getLocalizedProfileCopy,
+  LAB_COPY,
+  localizeLabRoleText,
+} from "./labLocale";
 import { LabSearchFilter } from "./LabSearchFilter";
 import type { LabCharacter, LabData, LabGroup } from "./types";
+
+const CHARACTER_FALLBACK_MAP = buildFallbackMap();
 
 interface GroupSectionProps {
   group: LabGroup | null; // null = 미분류
   characters: LabCharacter[];
   query: string;
+  locale: ActiveRouteLocale;
 }
 
-function GroupSection({ group, characters, query }: GroupSectionProps) {
-  const filtered = query ? characters.filter((c) => c.characterName.includes(query)) : characters;
+function GroupSection({ group, characters, query, locale }: GroupSectionProps) {
+  const { l10n } = useL10n();
+  const normalizedQuery = query.trim().toLocaleLowerCase();
+  const filtered = normalizedQuery
+    ? characters.filter((character) => {
+        const localizedName = resolveCharacterName(
+          character.characterCode,
+          l10n,
+          CHARACTER_FALLBACK_MAP
+        );
+        return `${localizedName} ${character.characterName}`
+          .toLocaleLowerCase()
+          .includes(normalizedQuery);
+      })
+    : characters;
 
   if (filtered.length === 0) return null;
 
-  const label = group ? group.label : "미분류";
-  const partnerRoles = group ? (group.topPartnerRoles ?? []) : [];
+  const label = getLocalizedLabGroupLabel(group, locale);
+  const partnerRoles = group
+    ? (group.topPartnerRoles ?? []).map((role) => localizeLabRoleText(role, locale))
+    : [];
   const internalRoleMap = new Map<
     string,
     {
@@ -46,7 +73,7 @@ function GroupSection({ group, characters, query }: GroupSectionProps) {
     internalRoleMap.set(key, internalRole);
   }
   const internalRoles = [...internalRoleMap.values()].sort(
-    (a, b) => b.totalGames - a.totalGames || a.label.localeCompare(b.label, "ko")
+    (a, b) => b.totalGames - a.totalGames || a.label.localeCompare(b.label, locale)
   );
 
   return (
@@ -65,37 +92,45 @@ function GroupSection({ group, characters, query }: GroupSectionProps) {
         ))}
       </div>
       <div className="flex flex-col gap-5 border-l border-[var(--color-border)] pl-3 sm:pl-4">
-        {internalRoles.map((internalRole) => (
-          <div
-            key={`${internalRole.label}::${internalRole.reason}`}
-            className="flex flex-col gap-2.5"
-          >
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-sm font-semibold text-[var(--color-foreground)]">
-                  {internalRole.label}
-                </h3>
-                <span className="text-[11px] tabular-nums text-[var(--color-muted-foreground)]">
-                  {internalRole.characters.length}명
-                </span>
+        {internalRoles.map((internalRole, index) => {
+          const profileCopy = getLocalizedProfileCopy(
+            internalRole.characters[0],
+            index + 1,
+            locale
+          );
+          return (
+            <div
+              key={`${internalRole.label}::${internalRole.reason}`}
+              className="flex flex-col gap-2.5"
+            >
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="text-sm font-semibold text-[var(--color-foreground)]">
+                    {profileCopy.label}
+                  </h3>
+                  <span className="text-[11px] tabular-nums text-[var(--color-muted-foreground)]">
+                    {LAB_COPY[locale].memberCount(internalRole.characters.length)}
+                  </span>
+                </div>
+                <p className="mt-0.5 text-xs leading-relaxed text-[var(--color-muted-foreground)]">
+                  {profileCopy.reason}
+                </p>
+                <p className="mt-1 text-[11px] font-medium tabular-nums text-[var(--color-accent-foreground)]">
+                  {profileCopy.metricSummary}
+                </p>
               </div>
-              <p className="mt-0.5 text-xs leading-relaxed text-[var(--color-muted-foreground)]">
-                {internalRole.reason}
-              </p>
-              <p className="mt-1 text-[11px] font-medium tabular-nums text-[var(--color-accent-foreground)]">
-                {internalRole.metricSummary}
-              </p>
+              <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+                {internalRole.characters.map((character) => (
+                  <LabCharacterCard
+                    key={`${character.characterCode}_${character.weapon}`}
+                    character={character}
+                    locale={locale}
+                  />
+                ))}
+              </div>
             </div>
-            <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-              {internalRole.characters.map((character) => (
-                <LabCharacterCard
-                  key={`${character.characterCode}_${character.weapon}`}
-                  character={character}
-                />
-              ))}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
@@ -103,9 +138,11 @@ function GroupSection({ group, characters, query }: GroupSectionProps) {
 
 interface Props {
   data: LabData;
+  locale: ActiveRouteLocale;
 }
 
-export function LabPageContent({ data }: Props) {
+export function LabPageContent({ data, locale }: Props) {
+  const { l10n } = useL10n();
   const [query, setQuery] = React.useState("");
 
   // Build a map from groupId -> characters, preserving group order
@@ -131,7 +168,11 @@ export function LabPageContent({ data }: Props) {
   return (
     <div className="flex flex-col gap-8">
       {/* Search */}
-      <LabSearchFilter value={query} onChange={setQuery} />
+      <LabSearchFilter
+        value={query}
+        onChange={setQuery}
+        placeholder={LAB_COPY[locale].searchPlaceholder}
+      />
 
       {/* Group sections */}
       {orderedGroups.map(({ group, characters }) => (
@@ -140,16 +181,27 @@ export function LabPageContent({ data }: Props) {
           group={group}
           characters={characters}
           query={query}
+          locale={locale}
         />
       ))}
 
       {/* Empty state when search yields nothing */}
       {query &&
         orderedGroups.every(({ characters }) => {
-          return !characters.some((c) => c.characterName.includes(query));
+          const normalizedQuery = query.trim().toLocaleLowerCase();
+          return !characters.some((character) => {
+            const localizedName = resolveCharacterName(
+              character.characterCode,
+              l10n,
+              CHARACTER_FALLBACK_MAP
+            );
+            return `${localizedName} ${character.characterName}`
+              .toLocaleLowerCase()
+              .includes(normalizedQuery);
+          });
         }) && (
           <p className="text-sm text-[var(--color-muted-foreground)]">
-            &ldquo;{query}&rdquo;에 해당하는 실험체가 없습니다.
+            {LAB_COPY[locale].noResults(query)}
           </p>
         )}
     </div>

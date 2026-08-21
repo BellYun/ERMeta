@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
+import { formatLabNumber } from "@/components/features/lab/labLocale";
 import { LabPageContent } from "@/components/features/lab/LabPageContent";
 import type { LabData } from "@/components/features/lab/types";
 import { isRouteLocale, type RouteLocale } from "@/i18n/routing";
@@ -125,7 +126,7 @@ export async function LegacyCharacterLabRolePage({ params }: LegacyCharacterLabR
   const data = LAB_DATA[supportedRole];
   const copy = COPY[locale];
   const roleLabel = ROLE_LABELS[locale][supportedRole];
-  const minGames = data.minGames.toLocaleString("ko-KR");
+  const minGames = formatLabNumber(data.minGames, locale);
 
   return (
     <main className="page-shell mx-auto max-w-6xl px-3 py-6 sm:px-5 sm:py-8">
@@ -153,28 +154,7 @@ export async function LegacyCharacterLabRolePage({ params }: LegacyCharacterLabR
         <p className="text-sm text-[var(--color-muted-foreground)]">{copy.body(minGames)}</p>
       </header>
 
-      {locale === "ko" ? (
-        <LabPageContent data={data} />
-      ) : (
-        <section className="grid gap-3 sm:grid-cols-3">
-          <div className="metric-card px-4 py-4" data-accent="true">
-            <p className="text-xs text-[var(--color-muted-foreground)]">{copy.back}</p>
-            <p className="mt-2 text-2xl font-bold text-[var(--color-accent-foreground)]">
-              {data.characters.length}
-            </p>
-          </div>
-          <div className="metric-card px-4 py-4">
-            <p className="text-xs text-[var(--color-muted-foreground)]">{copy.title(roleLabel)}</p>
-            <p className="mt-2 text-2xl font-bold text-[var(--color-foreground)]">{data.groupK}</p>
-          </div>
-          <div className="metric-card px-4 py-4">
-            <p className="text-xs text-[var(--color-muted-foreground)]">{copy.badge}</p>
-            <p className="mt-2 text-2xl font-bold text-[var(--color-foreground)]">
-              {data.minGames}+
-            </p>
-          </div>
-        </section>
-      )}
+      <LabPageContent data={data} locale={locale} />
     </main>
   );
 }

@@ -4,11 +4,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
+import { formatLabNumber } from "@/components/features/lab/labLocale";
 import { LabPageContent } from "@/components/features/lab/LabPageContent";
 import type { ComboTrend, LabData } from "@/components/features/lab/types";
 import { isRouteLocale, ROUTE_LOCALES, type RouteLocale } from "@/i18n/routing";
 import type { LabPartnerType } from "@/lib/labCompositionTypes";
-import { BASE_URL } from "@/lib/siteMetadata";
+import { localizeMetadata } from "@/lib/routeMetadata";
+import { localizeRoutePath } from "@/lib/seoLocales";
 import assassinsData from "../../../../../../public/data/lab/assassins.json";
 import compositionData from "../../../../../../public/data/lab/composition-types.json";
 import adjustedAssassinsData from "../../../../../../public/data/lab/entry-adjusted/assassins.json";
@@ -351,14 +353,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const roleLabel = ROLE_LABELS[locale][role as SupportedRole];
   const title = copy.metadataTitle(roleLabel);
   const description = copy.description(roleLabel);
-  return {
-    metadataBase: new URL(BASE_URL),
-    title,
-    description,
-    openGraph: { title, description, url: `/character-lab/${role}` },
-    twitter: { title, description },
-    robots: { index: true, follow: true },
-  };
+  return localizeMetadata(
+    {
+      title,
+      description,
+      openGraph: { title, description },
+      twitter: { title, description },
+      robots: { index: true, follow: true },
+    },
+    `/character-lab/${role}`,
+    locale
+  );
 }
 
 export default async function NewCharacterLabRolePage({ params, searchParams }: Props) {
@@ -394,13 +399,14 @@ export default async function NewCharacterLabRolePage({ params, searchParams }: 
   );
   const copy = COPY[locale];
   const roleLabel = ROLE_LABELS[locale][supportedRole];
-  const minGames = data.minGames.toLocaleString("ko-KR");
+  const minGames = formatLabNumber(data.minGames, locale);
+  const roleBasePath = localizeRoutePath(`/character-lab/new/${supportedRole}`, locale);
 
   return (
     <main className="page-shell mx-auto max-w-6xl px-3 py-6 sm:px-5 sm:py-8">
       <nav className="mb-4 flex items-center gap-1.5 text-xs text-[var(--color-muted-foreground)]">
         <Link
-          href="/character-lab/new"
+          href={localizeRoutePath("/character-lab/new", locale)}
           className="dashboard-tab inline-flex items-center gap-1 px-2 py-1"
         >
           <ArrowLeft className="h-3 w-3" strokeWidth={2.4} />
@@ -430,25 +436,25 @@ export default async function NewCharacterLabRolePage({ params, searchParams }: 
                 label: "1. 관측 RP",
                 description: "기존 분류",
                 active: metricMode === null,
-                href: `/${locale}/character-lab/new/${supportedRole}`,
+                href: roleBasePath,
               },
               {
                 label: "2. 입장료 보정",
                 description: "티어 차이 반영",
                 active: isEntryAdjusted,
-                href: `/${locale}/character-lab/new/${supportedRole}?metric=entry`,
+                href: `${roleBasePath}?metric=entry`,
               },
               {
                 label: "3. 판수 신뢰 보정",
                 description: "상승폭 × √판수",
                 active: isSampleConfidence,
-                href: `/${locale}/character-lab/new/${supportedRole}?metric=sample`,
+                href: `${roleBasePath}?metric=sample`,
               },
               {
                 label: "4. 입장료+판수 보정",
                 description: "두 보정 동시 적용",
                 active: isCombinedConfidence,
-                href: `/${locale}/character-lab/new/${supportedRole}?metric=combined`,
+                href: `${roleBasePath}?metric=combined`,
               },
             ].map((item) => (
               <Link
@@ -488,28 +494,7 @@ export default async function NewCharacterLabRolePage({ params, searchParams }: 
         ) : null}
       </header>
 
-      {locale === "ko" ? (
-        <LabPageContent data={data} />
-      ) : (
-        <section className="grid gap-3 sm:grid-cols-3">
-          <div className="metric-card px-4 py-4" data-accent="true">
-            <p className="text-xs text-[var(--color-muted-foreground)]">{copy.back}</p>
-            <p className="mt-2 text-2xl font-bold text-[var(--color-accent-foreground)]">
-              {data.characters.length}
-            </p>
-          </div>
-          <div className="metric-card px-4 py-4">
-            <p className="text-xs text-[var(--color-muted-foreground)]">{copy.title(roleLabel)}</p>
-            <p className="mt-2 text-2xl font-bold text-[var(--color-foreground)]">{data.groupK}</p>
-          </div>
-          <div className="metric-card px-4 py-4">
-            <p className="text-xs text-[var(--color-muted-foreground)]">{copy.badge}</p>
-            <p className="mt-2 text-2xl font-bold text-[var(--color-foreground)]">
-              {data.minGames}+
-            </p>
-          </div>
-        </section>
-      )}
+      <LabPageContent data={data} locale={locale} />
     </main>
   );
 }

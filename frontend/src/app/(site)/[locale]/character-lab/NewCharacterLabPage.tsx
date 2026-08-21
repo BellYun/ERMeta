@@ -4,10 +4,19 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
+import {
+  getLocalizedLabGroupLabel,
+  getLocalizedProfileCopy,
+  localizeLabRoleText,
+} from "@/components/features/lab/labLocale";
 import type { LabCharacter, LabData } from "@/components/features/lab/types";
-import { isRouteLocale, type RouteLocale } from "@/i18n/routing";
+import { LANGUAGE_BY_ROUTE_LOCALE, isRouteLocale, type RouteLocale } from "@/i18n/routing";
+import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
 import { findCrossGroupStatisticalPairs } from "@/lib/labStatisticalSimilarity";
-import { BASE_URL } from "@/lib/siteMetadata";
+import { localizeMetadata } from "@/lib/routeMetadata";
+import { localizeRoutePath } from "@/lib/seoLocales";
+import { loadL10nSeed } from "@/lib/serverL10n";
+import { resolveWeaponName } from "@/lib/weaponMap";
 import assassinsData from "../../../../../public/data/lab/assassins.json";
 import adjustedAssassinsData from "../../../../../public/data/lab/entry-adjusted/assassins.json";
 import adjustedRangersData from "../../../../../public/data/lab/entry-adjusted/rangers.json";
@@ -34,6 +43,8 @@ interface LocalePageProps {
 }
 
 type MetricMode = "observed" | "entry" | "sample";
+
+const CHARACTER_FALLBACK_MAP = buildFallbackMap();
 
 const ROLES = [
   {
@@ -81,12 +92,13 @@ function getMetricMode(metric?: string): MetricMode {
   return "observed";
 }
 
-function metricHref(metric: MetricMode): string {
-  return metric === "observed" ? "/character-lab/new" : `/character-lab/new?metric=${metric}`;
+function metricHref(metric: MetricMode, locale: RouteLocale): string {
+  const base = localizeRoutePath("/character-lab/new", locale);
+  return metric === "observed" ? base : `${base}?metric=${metric}`;
 }
 
-function roleHref(role: SupportedRole, metric: MetricMode): string {
-  const base = `/character-lab/new/${role}`;
+function roleHref(role: SupportedRole, metric: MetricMode, locale: RouteLocale): string {
+  const base = localizeRoutePath(`/character-lab/new/${role}`, locale);
   return metric === "observed" ? base : `${base}?metric=${metric}`;
 }
 
@@ -442,14 +454,17 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
   const copy = COPY[locale];
   const title = copy.metadataTitle;
   const description = copy.description;
-  return {
-    metadataBase: new URL(BASE_URL),
-    title,
-    description,
-    openGraph: { title, description, url: "/character-lab" },
-    twitter: { title, description },
-    robots: { index: true, follow: true },
-  };
+  return localizeMetadata(
+    {
+      title,
+      description,
+      openGraph: { title, description },
+      twitter: { title, description },
+      robots: { index: true, follow: true },
+    },
+    "/character-lab",
+    locale
+  );
 }
 
 export default async function NewCharacterLabPage({ params, searchParams }: LocalePageProps) {
@@ -459,6 +474,9 @@ export default async function NewCharacterLabPage({ params, searchParams }: Loca
   const copy = COPY[locale];
   const indexCopy = INDEX_COPY[locale];
   const roleLabels = ROLE_LABELS[locale];
+  const l10n = new Map(
+    Object.entries(loadL10nSeed(LANGUAGE_BY_ROUTE_LOCALE[locale]) ?? {})
+  );
   const metricMode = getMetricMode(query.metric);
   const activeRoles = ROLES.map((role) => ({
     slug: role.slug,
@@ -519,7 +537,7 @@ export default async function NewCharacterLabPage({ params, searchParams }: Loca
 
       <nav className="grid gap-2 sm:grid-cols-2" aria-label="Character analysis pages">
         <Link
-          href={metricHref(metricMode)}
+          href={metricHref(metricMode, locale)}
           aria-current="page"
           className="char-card flex items-center gap-3 border-[var(--color-accent)] p-4"
           data-accent="true"
@@ -534,7 +552,9 @@ export default async function NewCharacterLabPage({ params, searchParams }: Loca
         </Link>
         <Link
           href={
-            metricMode === "observed" ? "/composition-lab" : `/composition-lab?metric=${metricMode}`
+            metricMode === "observed"
+              ? localizeRoutePath("/composition-lab", locale)
+              : `${localizeRoutePath("/composition-lab", locale)}?metric=${metricMode}`
           }
           className="char-card group flex items-center justify-between gap-4 p-4"
         >
@@ -578,7 +598,7 @@ export default async function NewCharacterLabPage({ params, searchParams }: Loca
             return (
               <Link
                 key={metric}
-                href={metricHref(metric)}
+                href={metricHref(metric, locale)}
                 aria-current={isActive ? "page" : undefined}
                 className="char-card flex min-h-11 min-w-0 items-center justify-between gap-3 px-3 py-2.5"
                 data-accent={isActive ? "true" : undefined}
@@ -663,7 +683,7 @@ export default async function NewCharacterLabPage({ params, searchParams }: Loca
                 </p>
               </div>
               <Link
-                href={roleHref(slug, metricMode)}
+                href={roleHref(slug, metricMode, locale)}
                 className="inline-flex min-h-11 shrink-0 items-center gap-2 self-start whitespace-nowrap text-sm font-bold text-[var(--color-accent-foreground)] sm:self-auto"
               >
                 {indexCopy.viewDetail}
@@ -695,20 +715,34 @@ export default async function NewCharacterLabPage({ params, searchParams }: Loca
                       >
                         <div className="min-w-0">
                           <p className="text-xs font-bold text-[var(--color-accent-foreground)]">
-                            {pair.fitRole}
+                            {locale === "ko" ? pair.fitRole : indexCopy.crossGroupTitle}
                           </p>
                           <p className="mt-1 break-words text-sm leading-5 text-[var(--color-foreground)]">
-                            <strong>{pair.left.characterName}</strong>{" "}
+                            <strong>
+                              {resolveCharacterName(
+                                pair.left.characterCode,
+                                l10n,
+                                CHARACTER_FALLBACK_MAP
+                              )}
+                            </strong>{" "}
                             <span className="text-[var(--color-muted-foreground)]">
-                              {pair.left.weaponName}
+                              {resolveWeaponName(pair.left.weapon, l10n)}
                             </span>{" "}
-                            ↔ <strong>{pair.right.characterName}</strong>{" "}
+                            ↔{" "}
+                            <strong>
+                              {resolveCharacterName(
+                                pair.right.characterCode,
+                                l10n,
+                                CHARACTER_FALLBACK_MAP
+                              )}
+                            </strong>{" "}
                             <span className="text-[var(--color-muted-foreground)]">
-                              {pair.right.weaponName}
+                              {resolveWeaponName(pair.right.weapon, l10n)}
                             </span>
                           </p>
                           <p className="mt-1 text-xs leading-5 text-[var(--color-muted-foreground)]">
-                            {leftGroup?.label ?? "—"} ↔ {rightGroup?.label ?? "—"}
+                            {leftGroup ? getLocalizedLabGroupLabel(leftGroup, locale) : "—"} ↔{" "}
+                            {rightGroup ? getLocalizedLabGroupLabel(rightGroup, locale) : "—"}
                           </p>
                         </div>
 
@@ -767,7 +801,7 @@ export default async function NewCharacterLabPage({ params, searchParams }: Loca
                   >
                     <header className="min-w-0">
                       <h3 className="break-words text-sm font-bold leading-5 text-[var(--color-foreground)]">
-                        {group.label}
+                        {getLocalizedLabGroupLabel(group, locale)}
                       </h3>
                       <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
                         {internalGroups.length} {indexCopy.internalTypes} · {groupCharacters.length}{" "}
@@ -778,56 +812,74 @@ export default async function NewCharacterLabPage({ params, searchParams }: Loca
                           <span className="font-bold text-[var(--color-foreground)]">
                             {indexCopy.representativeFit}
                           </span>{" "}
-                          · {group.topPartnerRoles.join(" + ")}
+                          ·{" "}
+                          {group.topPartnerRoles
+                            .map((role) => localizeLabRoleText(role, locale))
+                            .join(" + ")}
                         </p>
                       ) : null}
                     </header>
 
                     <ul className="min-w-0 divide-y divide-[var(--color-border)] border-y border-[var(--color-border)]">
-                      {internalGroups.map((internalGroup) => (
-                        <li
-                          key={internalGroup.label}
-                          className="grid min-w-0 gap-2 py-3 sm:grid-cols-[minmax(9rem,0.7fr)_minmax(0,1.5fr)] sm:gap-4"
-                        >
-                          <div className="min-w-0">
-                            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                              <h4 className="text-sm font-bold leading-5 text-[var(--color-foreground)]">
-                                {internalGroup.label}
-                              </h4>
-                              <span className="font-mono text-[11px] tabular-nums text-[var(--color-muted-foreground)]">
-                                {internalGroup.characters.length}
-                              </span>
-                            </div>
-                            <p className="mt-1 text-xs leading-5 text-[var(--color-muted-foreground)]">
-                              {internalGroup.summary}
-                            </p>
-                          </div>
+                      {internalGroups.map((internalGroup, internalGroupIndex) => {
+                        const localizedProfile = getLocalizedProfileCopy(
+                          internalGroup.characters[0],
+                          internalGroupIndex + 1,
+                          locale
+                        );
+                        const localizedCharacters = internalGroup.characters
+                          .map((character) => ({
+                            character,
+                            name: resolveCharacterName(
+                              character.characterCode,
+                              l10n,
+                              CHARACTER_FALLBACK_MAP
+                            ),
+                          }))
+                          .sort((a, b) => a.name.localeCompare(b.name, locale));
 
-                          <div className="min-w-0">
-                            <p className="sr-only">{indexCopy.characters}</p>
-                            <ul className="flex min-w-0 flex-wrap gap-x-3 gap-y-1.5">
-                              {internalGroup.characters
-                                .slice()
-                                .sort((a, b) =>
-                                  a.characterName.localeCompare(b.characterName, "ko")
-                                )
-                                .map((character) => (
+                        return (
+                          <li
+                            key={internalGroup.label}
+                            className="grid min-w-0 gap-2 py-3 sm:grid-cols-[minmax(9rem,0.7fr)_minmax(0,1.5fr)] sm:gap-4"
+                          >
+                            <div className="min-w-0">
+                              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                                <h4 className="text-sm font-bold leading-5 text-[var(--color-foreground)]">
+                                  {localizedProfile.label}
+                                </h4>
+                                <span className="font-mono text-[11px] tabular-nums text-[var(--color-muted-foreground)]">
+                                  {internalGroup.characters.length}
+                                </span>
+                              </div>
+                              <p className="mt-1 text-xs leading-5 text-[var(--color-muted-foreground)]">
+                                {locale === "ko"
+                                  ? internalGroup.summary
+                                  : localizedProfile.metricSummary}
+                              </p>
+                            </div>
+
+                            <div className="min-w-0">
+                              <p className="sr-only">{indexCopy.characters}</p>
+                              <ul className="flex min-w-0 flex-wrap gap-x-3 gap-y-1.5">
+                                {localizedCharacters.map(({ character, name }) => (
                                   <li
                                     key={`${character.characterCode}-${character.weapon ?? "none"}`}
                                     className="min-w-0 text-xs leading-5"
                                   >
                                     <span className="font-bold text-[var(--color-foreground)]">
-                                      {character.characterName}
+                                      {name}
                                     </span>{" "}
                                     <span className="text-[var(--color-muted-foreground)]">
-                                      {character.weaponName}
+                                      {resolveWeaponName(character.weapon, l10n)}
                                     </span>
                                   </li>
                                 ))}
-                            </ul>
-                          </div>
-                        </li>
-                      ))}
+                              </ul>
+                            </div>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </section>
                 );

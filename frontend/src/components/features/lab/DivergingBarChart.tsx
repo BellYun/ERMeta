@@ -1,6 +1,8 @@
 /* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V4 */
 import { ChevronDown } from "lucide-react";
+import type { ActiveRouteLocale } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
+import { formatLabNumber, LAB_COPY, localizeLabRoleText } from "./labLocale";
 import type { ComboEntry, ComboTrend } from "./types";
 
 // ── helpers ────────────────────────────────────────────────────────────────
@@ -9,19 +11,9 @@ function formatDelta(n: number): string {
   return (n >= 0 ? "+" : "") + n.toFixed(1);
 }
 
-function formatGames(n: number): string {
-  return n.toLocaleString("ko-KR");
-}
-
 function formatRp(n: number): string {
   return `${n >= 0 ? "+" : ""}${n.toFixed(2)}`;
 }
-
-const CONFIDENCE_LABEL = {
-  high: "높음",
-  medium: "보통",
-  low: "낮음",
-} as const;
 
 // ── BarRow ─────────────────────────────────────────────────────────────────
 
@@ -30,12 +22,13 @@ interface BarRowProps {
   /** 0–100: bar fill width as % of the half-track */
   pct: number;
   variant: "strong" | "weak";
+  locale: ActiveRouteLocale;
 }
 
-function BarStats({ entry, pct, variant }: BarRowProps) {
+function BarStats({ entry, pct, variant, locale }: BarRowProps) {
   const isStrong = variant === "strong";
   const deltaText = formatDelta(entry.delta);
-  const gamesText = formatGames(entry.games);
+  const gamesText = formatLabNumber(entry.games, locale);
 
   return (
     <div
@@ -75,23 +68,27 @@ function BarStats({ entry, pct, variant }: BarRowProps) {
 
       {/* Games */}
       <span className="w-[44px] shrink-0 text-right text-[10px] tabular-nums text-[var(--color-muted-foreground)]">
-        {gamesText}판
+        {LAB_COPY[locale].games(gamesText)}
       </span>
     </div>
   );
 }
 
-function TrendPanel({ trend }: { trend: ComboTrend }) {
+function TrendPanel({ trend, locale }: { trend: ComboTrend; locale: ActiveRouteLocale }) {
+  const copy = LAB_COPY[locale];
+  const focalLabel = localizeLabRoleText(trend.focalLabel, locale);
+  const compositionLabel = localizeLabRoleText(trend.compositionLabel, locale);
+
   return (
     <div className="border-t border-[var(--color-border)] bg-[var(--color-surface-2)]/45 px-2.5 py-2.5">
       <p className="text-[13px] font-semibold text-[var(--color-foreground)]">
-        {trend.focalLabel}과 잘 맞는 실험체 조합 경향
+        {copy.comboTrend(focalLabel)}
       </p>
 
       {trend.patterns.length === 0 ? (
         <div className="mt-1.5 text-[13px] leading-5 text-[var(--color-muted-foreground)]">
-          <p>{trend.compositionLabel} 조합에서 상승하는 경향이 있습니다.</p>
-          <p>세부 실험체 유형은 아직 표본이 부족합니다.</p>
+          <p>{copy.risingTrend(compositionLabel)}</p>
+          <p>{copy.insufficientProfile}</p>
         </div>
       ) : (
         <table className="mt-2 w-full table-fixed border-collapse text-left">
@@ -105,13 +102,13 @@ function TrendPanel({ trend }: { trend: ComboTrend }) {
                 scope="col"
                 className="py-1.5 pr-2 text-sm font-semibold text-[var(--color-foreground)]"
               >
-                내부 역할군
+                {copy.internalRole}
               </th>
               <th
                 scope="col"
                 className="border-l border-[var(--color-border)] py-1.5 pl-2 text-sm font-semibold text-[var(--color-foreground)]"
               >
-                해당 실험체
+                {copy.characters}
               </th>
             </tr>
           </thead>
@@ -125,9 +122,9 @@ function TrendPanel({ trend }: { trend: ComboTrend }) {
                   colSpan={2}
                   className="break-keep px-2 py-2 text-[13px] leading-5 tabular-nums text-[var(--color-foreground)]"
                 >
-                  <span className="font-semibold">유형 전체</span>
+                  <span className="font-semibold">{copy.entireType}</span>
                   <span className="text-[var(--color-muted-foreground)]">
-                    {` — ${formatGames(pattern.games)}판 · 평균 ${formatRp(pattern.avgRp)} RP · 보정 상승 ${formatRp(pattern.adjustedLift)} RP · 신뢰 ${CONFIDENCE_LABEL[pattern.confidence]}`}
+                    {` — ${copy.games(formatLabNumber(pattern.games, locale))} · ${copy.average} ${formatRp(pattern.avgRp)} RP · ${copy.adjustedLift} ${formatRp(pattern.adjustedLift)} RP · ${copy.confidence} ${copy.confidenceLabel[pattern.confidence]}`}
                   </span>
                 </td>
               </tr>
@@ -137,10 +134,12 @@ function TrendPanel({ trend }: { trend: ComboTrend }) {
                     scope="row"
                     className="break-keep align-top py-2 pr-2 text-[13px] font-semibold leading-5 text-[var(--color-foreground)]"
                   >
-                    {group.fitRole}형 {group.role}
+                    {localizeLabRoleText(group.role, locale)}
                   </th>
                   <td className="break-keep border-l border-[var(--color-border)] align-top py-2 pl-2 text-[13px] leading-5 text-[var(--color-muted-foreground)]">
-                    {group.characters.length > 0 ? group.characters.join(" · ") : "신뢰 표본 부족"}
+                    {group.characters.length > 0
+                      ? group.characters.join(" · ")
+                      : copy.noReliableSample}
                   </td>
                 </tr>
               ))}
@@ -150,7 +149,7 @@ function TrendPanel({ trend }: { trend: ComboTrend }) {
                   className="px-2 py-2 text-[13px] leading-5 text-[var(--color-muted-foreground)]"
                 >
                   <p className="mb-1 font-semibold text-[var(--color-foreground)]">
-                    확인된 실제 3인 성적
+                    {copy.actualResults}
                   </p>
                   {pattern.actualCombinations.length > 0 ? (
                     <ul className="space-y-1.5">
@@ -163,14 +162,16 @@ function TrendPanel({ trend }: { trend: ComboTrend }) {
                             {combination.characters.join(" · ")}
                           </span>
                           <span className="tabular-nums">
-                            {` — ${formatGames(combination.games)}판 · 평균 ${formatRp(combination.avgRp)} RP · 보정 상승 ${formatRp(combination.adjustedLift)} RP`}
+                            {` — ${copy.games(formatLabNumber(combination.games, locale))} · ${copy.average} ${formatRp(combination.avgRp)} RP · ${copy.adjustedLift} ${formatRp(combination.adjustedLift)} RP`}
                           </span>
                         </li>
                       ))}
                     </ul>
                   ) : (
                     <span>
-                      {formatGames(pattern.characterMinGames)}판 이상 상위 상승 조합에 없음
+                      {copy.noTopCombination(
+                        copy.games(formatLabNumber(pattern.characterMinGames, locale))
+                      )}
                     </span>
                   )}
                 </td>
@@ -181,14 +182,18 @@ function TrendPanel({ trend }: { trend: ComboTrend }) {
       )}
 
       <p className="mt-2 border-t border-[var(--color-border)]/60 pt-1.5 text-[13px] text-[var(--color-muted-foreground)]">
-        시즌 10·11 · {formatGames(trend.minGames)}판 이상 내부 유형 기준
+        {copy.trendBasis(copy.games(formatLabNumber(trend.minGames, locale)))}
       </p>
     </div>
   );
 }
 
-function BarRow({ entry, pct, variant }: BarRowProps) {
-  const rowLabel = `${entry.multiset}: ${formatDelta(entry.delta)} RP, ${formatGames(entry.games)}게임`;
+function BarRow({ entry, pct, variant, locale }: BarRowProps) {
+  const copy = LAB_COPY[locale];
+  const multiset = localizeLabRoleText(entry.multiset, locale);
+  const rowLabel = `${multiset}: ${formatDelta(entry.delta)} RP, ${copy.gameAria(
+    formatLabNumber(entry.games, locale)
+  )}`;
 
   if (variant === "strong" && entry.trend) {
     return (
@@ -196,20 +201,20 @@ function BarRow({ entry, pct, variant }: BarRowProps) {
         <details className="group">
           <summary
             className="min-h-11 cursor-pointer list-none px-1 py-1.5 outline-none active:bg-[var(--color-surface-2)]/35 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--color-accent)] [&::-webkit-details-marker]:hidden"
-            aria-label={`${rowLabel}. 조합 경향 보기`}
+            aria-label={`${rowLabel}. ${copy.viewTrend}`}
           >
             <div className="mb-1.5 flex min-w-0 items-center justify-between gap-2">
               <p className="min-w-0 truncate text-[11px] leading-snug text-[var(--color-muted-foreground)]">
-                {entry.multiset}
+                {multiset}
               </p>
               <ChevronDown
                 aria-hidden="true"
                 className="h-3.5 w-3.5 shrink-0 text-[var(--color-muted-foreground)] transition-transform duration-200 group-open:rotate-180 motion-reduce:transition-none"
               />
             </div>
-            <BarStats entry={entry} pct={pct} variant={variant} />
+            <BarStats entry={entry} pct={pct} variant={variant} locale={locale} />
           </summary>
-          <TrendPanel trend={entry.trend} />
+          <TrendPanel trend={entry.trend} locale={locale} />
         </details>
       </li>
     );
@@ -221,9 +226,9 @@ function BarRow({ entry, pct, variant }: BarRowProps) {
       aria-label={rowLabel}
     >
       <p className="mb-1.5 break-keep text-[11px] leading-snug text-[var(--color-muted-foreground)]">
-        {entry.multiset}
+        {multiset}
       </p>
-      <BarStats entry={entry} pct={pct} variant={variant} />
+      <BarStats entry={entry} pct={pct} variant={variant} locale={locale} />
     </li>
   );
 }
@@ -237,9 +242,18 @@ interface HalfPanelProps {
   maxDelta: number;
   variant: "strong" | "weak";
   className?: string;
+  locale: ActiveRouteLocale;
 }
 
-function HalfPanel({ label, labelColor, entries, maxDelta, variant, className }: HalfPanelProps) {
+function HalfPanel({
+  label,
+  labelColor,
+  entries,
+  maxDelta,
+  variant,
+  className,
+  locale,
+}: HalfPanelProps) {
   const pct = (delta: number) =>
     maxDelta > 0 ? Math.round((Math.abs(delta) / maxDelta) * 100) : 0;
 
@@ -250,11 +264,19 @@ function HalfPanel({ label, labelColor, entries, maxDelta, variant, className }:
       </p>
 
       {entries.length === 0 ? (
-        <p className="text-xs text-[var(--color-muted-foreground)] italic">표본 부족</p>
+        <p className="text-xs text-[var(--color-muted-foreground)] italic">
+          {LAB_COPY[locale].insufficientSample}
+        </p>
       ) : (
         <ul className="m-0 p-0 list-none">
           {entries.map((entry) => (
-            <BarRow key={entry.multiset} entry={entry} pct={pct(entry.delta)} variant={variant} />
+            <BarRow
+              key={entry.multiset}
+              entry={entry}
+              pct={pct(entry.delta)}
+              variant={variant}
+              locale={locale}
+            />
           ))}
         </ul>
       )}
@@ -269,9 +291,10 @@ interface DivergingBarChartProps {
   strong: ComboEntry[];
   /** Sorted asc by delta (most negative first) */
   weak: ComboEntry[];
+  locale: ActiveRouteLocale;
 }
 
-export function DivergingBarChart({ strong, weak }: DivergingBarChartProps) {
+export function DivergingBarChart({ strong, weak, locale }: DivergingBarChartProps) {
   // Shared scale: largest |delta| across all shown rows in this card
   const allDeltas = [...strong, ...weak].map((e) => Math.abs(e.delta));
   const maxDelta = allDeltas.length > 0 ? Math.max(...allDeltas) : 1;
@@ -280,22 +303,24 @@ export function DivergingBarChart({ strong, weak }: DivergingBarChartProps) {
     // On mobile: stack vertically. On sm+: side-by-side with a center divider.
     <div className="grid grid-cols-1 sm:grid-cols-[1fr_1px_1fr] divide-y sm:divide-y-0 divide-[var(--color-border)]">
       <HalfPanel
-        label="강한 조합"
+        label={LAB_COPY[locale].strong}
         labelColor="var(--color-tier-s)"
         entries={strong}
         maxDelta={maxDelta}
         variant="strong"
+        locale={locale}
       />
 
       {/* Center axis divider (visible only on sm+) */}
       <div aria-hidden="true" className="hidden sm:block self-stretch bg-[var(--color-border)]" />
 
       <HalfPanel
-        label="약한 조합"
+        label={LAB_COPY[locale].weak}
         labelColor="var(--color-danger)"
         entries={weak}
         maxDelta={maxDelta}
         variant="weak"
+        locale={locale}
       />
     </div>
   );
