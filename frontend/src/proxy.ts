@@ -113,6 +113,6 @@ export function proxy(request: NextRequest) {
 // 정적 자산/내부 라우트에서는 미들웨어 스킵 (불필요한 edge 호출 줄이기)
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon\\.ico|robots\\.txt|ads\\.txt|sitemap|manifest|apple-icon|icon|brand/|lab(?:/|$)|landing|character-test|performance-lab/|characters/|CharactER/|weapon-icons/|TraitSkill/|Item/|ItemIcon_|l10n/|data/|api/).*)",
+    "/((?!_next/static|_next/image|favicon\\.ico|robots\\.txt|ads\\.txt|sitemap|manifest|apple-icon|icon|brand/|sprites/|lab(?:/|$)|landing|character-test|performance-lab/|characters/|CharactER/|weapon-icons/|TraitSkill/|Item/|ItemIcon_|l10n/|data/|api/).*)",
   ],
 };

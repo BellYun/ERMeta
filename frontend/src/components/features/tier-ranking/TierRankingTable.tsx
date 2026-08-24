@@ -17,19 +17,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { WeaponIconSprite } from "@/components/ui/WeaponIconSprite";
 import { getCharacterPatchNote } from "@/data/patch-notes";
+import { getWeaponIconSpritePosition } from "@/generated/weaponIconSprite";
 import { analytics, type TierGroupEnum } from "@/lib/analytics";
 import type { CharacterRole } from "@/lib/characterMap";
 import {
   resolveCharacterName,
   buildFallbackMap,
-  getCharacterImageUrl,
+  getVersionedCharacterMiniWebpUrl,
   getComboRoles,
 } from "@/lib/characterMap";
 import { withCurrentSeoLocale } from "@/lib/localizedPath";
 import type { CharacterRankingData, RankingResponse } from "@/lib/ranking";
 import { cn } from "@/lib/utils";
-import { getWeaponGroupImageUrl, resolveWeaponName } from "@/lib/weaponMap";
+import { resolveWeaponName } from "@/lib/weaponMap";
 import { TierBadge } from "../TierBadge";
 import { DeltaIndicator } from "./DeltaIndicator";
 import { PatchNoteTooltip } from "./PatchNoteTooltip";
@@ -102,10 +104,10 @@ function buildDisplayRows(
     code: r.characterNum,
     roles: getComboRoles(r.characterNum, r.bestWeapon),
     weaponCode: r.bestWeapon,
+    hasWeaponIcon: getWeaponIconSpritePosition(r.bestWeapon) !== null,
     name: resolveCharacterName(r.characterNum, l10n, fallbackMap),
     weaponName: resolveWeaponName(r.bestWeapon, l10n),
-    weaponIconUrl: getWeaponGroupImageUrl(r.bestWeapon),
-    imageUrl: getCharacterImageUrl(r.characterNum),
+    imageUrl: getVersionedCharacterMiniWebpUrl(r.characterNum),
     tier: assignTier(scores.get(r.characterNum * 1000 + r.bestWeapon) ?? 0),
     pickRate: r.pickRate,
     winRate: r.winRate,
@@ -357,6 +359,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                                   src={char.imageUrl}
                                   alt={char.name}
                                   fill
+                                  unoptimized
                                   className="object-cover"
                                   sizes="28px"
                                 />
@@ -364,16 +367,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                               {char.patchNote && (
                                 <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded border border-[var(--color-surface)] bg-[var(--color-muted-foreground)]" />
                               )}
-                              {char.weaponIconUrl ? (
+                              {char.hasWeaponIcon ? (
                                 <span className="weapon-icon-backdrop absolute -bottom-1 -right-1 z-10 grid h-4 w-4 place-items-center rounded-full border shadow-sm">
-                                  <Image
-                                    src={char.weaponIconUrl}
-                                    alt=""
-                                    width={12}
-                                    height={12}
-                                    className="h-3 w-3 object-contain"
-                                    aria-hidden="true"
-                                  />
+                                  <WeaponIconSprite code={char.weaponCode} size={12} />
                                 </span>
                               ) : null}
                             </div>
@@ -580,6 +576,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                             src={char.imageUrl}
                             alt={char.name}
                             fill
+                            unoptimized
                             className="object-cover"
                             sizes="32px"
                           />
@@ -587,16 +584,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                         {char.patchNote && (
                           <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded border border-[var(--color-surface)] bg-[var(--color-muted-foreground)]" />
                         )}
-                        {char.weaponIconUrl ? (
+                        {char.hasWeaponIcon ? (
                           <span className="weapon-icon-backdrop absolute -bottom-1 -right-1 z-10 grid h-4 w-4 place-items-center rounded-full border shadow-sm">
-                            <Image
-                              src={char.weaponIconUrl}
-                              alt=""
-                              width={12}
-                              height={12}
-                              className="h-3 w-3 object-contain"
-                              aria-hidden="true"
-                            />
+                            <WeaponIconSprite code={char.weaponCode} size={12} />
                           </span>
                         ) : null}
                       </div>

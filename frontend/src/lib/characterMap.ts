@@ -1,3 +1,5 @@
+import { getVersionedStaticGameAssetUrl } from "@/lib/staticGameAssets";
+
 // characterCode(숫자) → 이름 매핑 (정적 fallback, l10n API 기준)
 // 식별자는 항상 숫자 코드. 이름은 코드 → 이름 방향으로만 변환.
 const CHARACTER_NAMES: Record<number, string> = {
@@ -230,6 +232,13 @@ export function getCharacterImageUrl(code: number): string {
 export function getCharacterMiniWebpUrl(code: number): string {
   if (CHARACTER_MINI_IMAGES[code]) return `/characters/mini/${code}.webp`;
   return `/characters/placeholder.png`;
+}
+
+/** 브라우저에 직접 전달하는 48x48 WebP. immutable cache를 위해 URL에 버전을 포함한다. */
+export function getVersionedCharacterMiniWebpUrl(code: number): string {
+  const pathname = getCharacterMiniWebpUrl(code);
+  if (!CHARACTER_MINI_IMAGES[code]) return pathname;
+  return getVersionedStaticGameAssetUrl(pathname);
 }
 
 // 직업군 타입
