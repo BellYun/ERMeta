@@ -1,26 +1,39 @@
 "use client";
 
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, CircleHelp } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useL10n } from "@/components/L10nProvider";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { WeaponIconSprite } from "@/components/ui/WeaponIconSprite";
 import { getCharacterPatchNote } from "@/data/patch-notes";
+import { getWeaponIconSpritePosition } from "@/generated/weaponIconSprite";
 import { analytics, type TierGroupEnum } from "@/lib/analytics";
 import type { CharacterRole } from "@/lib/characterMap";
 import {
   resolveCharacterName,
   buildFallbackMap,
-  getCharacterImageUrl,
+  getVersionedCharacterMiniWebpUrl,
   getComboRoles,
 } from "@/lib/characterMap";
 import { withCurrentSeoLocale } from "@/lib/localizedPath";
 import type { CharacterRankingData, RankingResponse } from "@/lib/ranking";
 import { cn } from "@/lib/utils";
-import { getWeaponGroupImageUrl, resolveWeaponName } from "@/lib/weaponMap";
+import { resolveWeaponName } from "@/lib/weaponMap";
 import { TierBadge } from "../TierBadge";
+import { DeltaIndicator } from "./DeltaIndicator";
 import { PatchNoteTooltip } from "./PatchNoteTooltip";
 import { type DisplayRow, type PrevStats } from "./types";
 import { computeMetaScores, assignTier } from "./utils";
@@ -91,10 +104,10 @@ function buildDisplayRows(
     code: r.characterNum,
     roles: getComboRoles(r.characterNum, r.bestWeapon),
     weaponCode: r.bestWeapon,
+    hasWeaponIcon: getWeaponIconSpritePosition(r.bestWeapon) !== null,
     name: resolveCharacterName(r.characterNum, l10n, fallbackMap),
     weaponName: resolveWeaponName(r.bestWeapon, l10n),
-    weaponIconUrl: getWeaponGroupImageUrl(r.bestWeapon),
-    imageUrl: getCharacterImageUrl(r.characterNum),
+    imageUrl: getVersionedCharacterMiniWebpUrl(r.characterNum),
     tier: assignTier(scores.get(r.characterNum * 1000 + r.bestWeapon) ?? 0),
     pickRate: r.pickRate,
     winRate: r.winRate,
@@ -201,29 +214,30 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
   return (
     <div className="flex flex-col gap-3">
       {/* ── Role Filter ── */}
-      <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 scrollbar-hide">
-        {roleTabs.map(({ value, label }) => (
-          <button
-            key={value}
-            className="role-pill shrink-0"
-            data-active={activeRole === value}
-            onClick={() => {
-              setActiveRole(value);
-              analytics.rankingTierTabChanged(value);
-            }}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
+      <Tabs
+        value={activeRole}
+        onValueChange={(value) => {
+          const nextRole = value as RoleTabValue;
+          setActiveRole(nextRole);
+          analytics.rankingTierTabChanged(nextRole);
+        }}
+      >
+        <TabsList aria-label={t("columns.character")} className="tier-role-tabs w-full sm:w-auto">
+          {roleTabs.map(({ value, label }) => (
+            <TabsTrigger key={value} value={value} className="min-h-11 sm:min-h-10">
+              {label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
 
       {/* ── Table ── */}
-      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
+      <div className="tier-ranking-surface">
         {/* Desktop Table */}
-        <div className="hidden sm:block overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/72">
+        <div className="hidden sm:block">
+          <Table className="tier-ranking-table">
+            <TableHeader>
+              <TableRow className="hover:bg-[var(--color-surface-2)]">
                 <SortableHead
                   label="#"
                   sortKey="rank"
@@ -232,12 +246,8 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                   onSort={handleSort}
                   className="w-14 text-center"
                 />
-                <th className="w-12 px-2 py-2 text-left text-[11px] font-semibold text-[var(--color-muted-foreground)]">
-                  {t("columns.tier")}
-                </th>
-                <th className="px-2 py-2 text-left text-[11px] font-semibold text-[var(--color-muted-foreground)]">
-                  {t("columns.character")}
-                </th>
+                <TableHead className="w-12 px-2">{t("columns.tier")}</TableHead>
+                <TableHead className="px-2">{t("columns.character")}</TableHead>
                 <SortableHead
                   label={t("columns.pickRate")}
                   sortKey="pickRate"
@@ -265,48 +275,56 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                   className="w-32 text-right"
                   tooltip={t("tooltips.averageRp")}
                 />
-              </tr>
-            </thead>
-            <tbody>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {isLoading
                 ? Array.from({ length: 10 }).map((_, i) => (
-                    <tr key={i} className="border-b border-[var(--color-border)]/30">
-                      <td className="px-3 py-2.5 text-center">
+                    <TableRow key={i} className="border-b border-[var(--color-border)]/30">
+                      <TableCell className="px-3 py-2.5 text-center">
                         <Skeleton className="h-4 w-5 mx-auto" />
-                      </td>
-                      <td className="px-2 py-2.5">
+                      </TableCell>
+                      <TableCell className="px-2 py-2.5">
                         <Skeleton className="h-6 w-6 rounded" />
-                      </td>
-                      <td className="px-2 py-2.5">
+                      </TableCell>
+                      <TableCell className="px-2 py-2.5">
                         <div className="flex items-center gap-2.5">
                           <Skeleton className="h-8 w-8 rounded-md shrink-0" />
                           <Skeleton className="h-4 w-24" />
                         </div>
-                      </td>
-                      <td className="px-3 py-2.5 text-right">
+                      </TableCell>
+                      <TableCell className="px-3 py-2.5 text-right">
                         <Skeleton className="h-4 w-12 ml-auto" />
-                      </td>
-                      <td className="px-3 py-2.5 text-right">
+                      </TableCell>
+                      <TableCell className="px-3 py-2.5 text-right">
                         <Skeleton className="h-4 w-12 ml-auto" />
-                      </td>
-                      <td className="px-3 py-2.5 text-right">
+                      </TableCell>
+                      <TableCell className="px-3 py-2.5 text-right">
                         <Skeleton className="h-4 w-14 ml-auto" />
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))
                 : visible.map((char) => {
                     const key = `${char.code}-${char.weaponCode}`;
                     return (
-                      <tr
+                      <TableRow
                         key={key}
                         className={cn(
-                          "group cursor-pointer border-b border-[var(--color-border)]/35 last:border-b-0",
+                          "group cursor-pointer border-b border-[var(--color-border)]/35 last:border-b-0 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-focus)]",
                           char.rank <= 3
-                            ? "data-table-highlight border-l-2 border-l-[var(--color-accent)]"
+                            ? "data-table-highlight"
                             : "hover:bg-[var(--color-surface-2)]"
                         )}
+                        role="link"
+                        tabIndex={0}
                         onClick={() => {
                           navigateToCharacter(char);
+                        }}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            navigateToCharacter(char);
+                          }
                         }}
                         onMouseEnter={() => {
                           if (char.patchNote) setActiveKey(key);
@@ -316,7 +334,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                         }}
                       >
                         {/* Rank */}
-                        <td className="px-3 py-1.5 text-center">
+                        <TableCell className="px-3 py-1.5 text-center">
                           <span
                             className={cn(
                               "font-mono text-sm font-bold tabular-nums",
@@ -327,13 +345,13 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           >
                             {char.rank}
                           </span>
-                        </td>
+                        </TableCell>
                         {/* Tier */}
-                        <td className="px-2 py-1.5">
+                        <TableCell className="px-2 py-1.5">
                           <TierBadge tier={char.tier} />
-                        </td>
+                        </TableCell>
                         {/* Character */}
-                        <td className="px-2 py-1.5">
+                        <TableCell className="px-2 py-1.5">
                           <div className="relative flex items-center gap-2.5">
                             <div className="relative h-7 w-7 shrink-0">
                               <span className="absolute inset-0 overflow-hidden rounded-md bg-[var(--color-surface-2)]">
@@ -341,6 +359,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                                   src={char.imageUrl}
                                   alt={char.name}
                                   fill
+                                  unoptimized
                                   className="object-cover"
                                   sizes="28px"
                                 />
@@ -348,16 +367,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                               {char.patchNote && (
                                 <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded border border-[var(--color-surface)] bg-[var(--color-muted-foreground)]" />
                               )}
-                              {char.weaponIconUrl ? (
+                              {char.hasWeaponIcon ? (
                                 <span className="weapon-icon-backdrop absolute -bottom-1 -right-1 z-10 grid h-4 w-4 place-items-center rounded-full border shadow-sm">
-                                  <Image
-                                    src={char.weaponIconUrl}
-                                    alt=""
-                                    width={12}
-                                    height={12}
-                                    className="h-3 w-3 object-contain"
-                                    aria-hidden="true"
-                                  />
+                                  <WeaponIconSprite code={char.weaponCode} size={12} />
                                 </span>
                               ) : null}
                             </div>
@@ -377,7 +389,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                                         })} · ${badge.label}`}
                                         onClick={(e) => togglePatchNote(e, key)}
                                         className={cn(
-                                          "shrink-0 rounded border px-1.5 py-0.5 text-sm font-semibold leading-none hover:brightness-95",
+                                          "relative min-h-7 shrink-0 rounded border px-1.5 py-0.5 text-xs font-semibold leading-none after:absolute after:-inset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]",
                                           badge.className
                                         )}
                                       >
@@ -394,48 +406,63 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                               <PatchNoteTooltip patchNote={char.patchNote} />
                             )}
                           </div>
-                        </td>
+                        </TableCell>
                         {/* Pick Rate */}
-                        <td className="px-3 py-1.5 text-right">
-                          <span className="font-mono text-[0.82rem] tabular-nums text-[var(--color-foreground)]">
-                            {char.pickRate.toFixed(1)}%
+                        <TableCell className="px-3 py-1.5 text-right">
+                          <span className="tier-ranking-value">
+                            <span>{char.pickRate.toFixed(1)}%</span>
+                            <DeltaIndicator
+                              current={char.pickRate}
+                              previous={char.prev?.pickRate}
+                              suffix="p"
+                            />
                           </span>
-                        </td>
+                        </TableCell>
                         {/* Win Rate */}
-                        <td className="px-3 py-1.5 text-right">
-                          <span className="font-mono text-[0.82rem] font-medium tabular-nums text-[var(--color-foreground)]">
-                            {char.winRate.toFixed(1)}%
+                        <TableCell className="px-3 py-1.5 text-right">
+                          <span className="tier-ranking-value">
+                            <span>{char.winRate.toFixed(1)}%</span>
+                            <DeltaIndicator
+                              current={char.winRate}
+                              previous={char.prev?.winRate}
+                              suffix="p"
+                            />
                           </span>
-                        </td>
+                        </TableCell>
                         {/* Average RP */}
-                        <td className="px-3 py-1.5 text-right">
-                          <span
-                            className={cn(
-                              "font-mono text-[0.82rem] font-semibold tabular-nums",
-                              char.averageRP >= 0
-                                ? "text-[var(--color-accent-gold)]"
-                                : "text-[var(--color-muted-foreground)]"
-                            )}
-                          >
-                            {char.averageRP >= 0 ? "+" : ""}
-                            {char.averageRP.toFixed(1)}
+                        <TableCell className="px-3 py-1.5 text-right">
+                          <span className="tier-ranking-value">
+                            <span
+                              className={cn(
+                                char.averageRP >= 0
+                                  ? "text-[var(--color-accent-gold)]"
+                                  : "text-[var(--color-muted-foreground)]"
+                              )}
+                            >
+                              {char.averageRP >= 0 ? "+" : ""}
+                              {char.averageRP.toFixed(1)}
+                            </span>
+                            <DeltaIndicator
+                              current={char.averageRP}
+                              previous={char.prev?.averageRP}
+                            />
                           </span>
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     );
                   })}
               {!isLoading && visible.length === 0 && (
-                <tr>
-                  <td
+                <TableRow>
+                  <TableCell
                     colSpan={6}
                     className="text-center text-sm text-[var(--color-muted-foreground)] py-16"
                   >
                     {t("empty")}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
 
         {/* Mobile List */}
@@ -446,8 +473,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
             <button
               type="button"
               onClick={() => handleSort("winRate")}
+              aria-pressed={sortKey === "winRate"}
               className={cn(
-                "text-right",
+                "min-h-11 whitespace-nowrap text-right",
                 sortKey === "winRate"
                   ? "text-[var(--color-accent-foreground)]"
                   : "text-[var(--color-muted-foreground)]"
@@ -458,8 +486,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
             <button
               type="button"
               onClick={() => handleSort("pickRate")}
+              aria-pressed={sortKey === "pickRate"}
               className={cn(
-                "text-right",
+                "min-h-11 whitespace-nowrap text-right",
                 sortKey === "pickRate"
                   ? "text-[var(--color-accent-foreground)]"
                   : "text-[var(--color-muted-foreground)]"
@@ -470,8 +499,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
             <button
               type="button"
               onClick={() => handleSort("averageRP")}
+              aria-pressed={sortKey === "averageRP"}
               className={cn(
-                "text-right",
+                "min-h-11 whitespace-nowrap text-right",
                 sortKey === "averageRP"
                   ? "text-[var(--color-accent-foreground)]"
                   : "text-[var(--color-muted-foreground)]"
@@ -511,12 +541,19 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                   <div
                     key={key}
                     className={cn(
-                      "relative grid grid-cols-[28px_minmax(0,1.7fr)_48px_48px_60px] items-center gap-1.5 px-2.5 py-2 cursor-pointer touch-manipulation active:bg-[var(--color-surface-2)]",
-                      char.rank <= 3 &&
-                        "data-table-highlight border-l-2 border-l-[var(--color-accent)]"
+                      "relative grid grid-cols-[28px_minmax(0,1.7fr)_48px_48px_60px] items-center gap-1.5 px-2.5 py-2 cursor-pointer touch-manipulation active:bg-[var(--color-surface-2)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-focus)]",
+                      char.rank <= 3 && "data-table-highlight"
                     )}
+                    role="link"
+                    tabIndex={0}
                     onClick={() => {
                       navigateToCharacter(char);
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        navigateToCharacter(char);
+                      }
                     }}
                   >
                     {/* Rank */}
@@ -539,6 +576,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                             src={char.imageUrl}
                             alt={char.name}
                             fill
+                            unoptimized
                             className="object-cover"
                             sizes="32px"
                           />
@@ -546,16 +584,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                         {char.patchNote && (
                           <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded border border-[var(--color-surface)] bg-[var(--color-muted-foreground)]" />
                         )}
-                        {char.weaponIconUrl ? (
+                        {char.hasWeaponIcon ? (
                           <span className="weapon-icon-backdrop absolute -bottom-1 -right-1 z-10 grid h-4 w-4 place-items-center rounded-full border shadow-sm">
-                            <Image
-                              src={char.weaponIconUrl}
-                              alt=""
-                              width={12}
-                              height={12}
-                              className="h-3 w-3 object-contain"
-                              aria-hidden="true"
-                            />
+                            <WeaponIconSprite code={char.weaponCode} size={12} />
                           </span>
                         ) : null}
                       </div>
@@ -576,7 +607,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                                   })} · ${badge.label}`}
                                   onClick={(e) => togglePatchNote(e, key)}
                                   className={cn(
-                                    "grid h-5 w-5 shrink-0 place-items-center rounded-full border",
+                                    "relative grid h-5 w-5 shrink-0 place-items-center rounded-full border after:absolute after:-inset-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]",
                                     badge.className
                                   )}
                                 >
@@ -621,12 +652,14 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
 
       {/* ── 전체 보기 토글 ── */}
       {!isLoading && hasMore && (
-        <button
+        <Button
+          type="button"
+          variant="outline"
           onClick={() => setShowAll((v) => !v)}
-          className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] py-2.5 text-xs font-medium text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+          className="w-full text-xs text-[var(--color-muted-foreground)]"
         >
           {showAll ? t("collapse") : t("showAll", { count: filtered.length })}
-        </button>
+        </Button>
       )}
     </div>
   );
@@ -653,51 +686,37 @@ function SortableHead({
 }) {
   const isActive = currentKey === sortKey;
   return (
-    <th
-      className={cn(
-        "px-3 py-2 text-[11px] font-semibold select-none cursor-pointer group/th",
-        isActive
-          ? "text-[var(--color-accent-foreground)]"
-          : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]",
-        className
-      )}
-      onClick={() => onSort(sortKey)}
+    <TableHead
+      aria-sort={isActive ? (dir === "asc" ? "ascending" : "descending") : "none"}
+      className={cn("px-2", className)}
     >
-      <span className="inline-flex items-center gap-1">
-        {label}
-        {tooltip && (
-          <span className="relative group/tip">
-            <svg
-              className="w-3 h-3 opacity-40 group-hover/tip:opacity-80 cursor-help"
-              viewBox="0 0 16 16"
-              fill="currentColor"
-            >
-              <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2.5a1 1 0 110 2 1 1 0 010-2zM6.5 7h2v4.5h-2V7z" />
-            </svg>
-            <span className="fixed z-[9999] mt-1 hidden -translate-x-1/2 whitespace-nowrap rounded-md border border-[var(--color-border)] bg-[var(--color-surface-3)] px-2.5 py-1.5 text-[10px] font-normal text-[var(--color-foreground)] group-hover/tip:block">
-              {tooltip}
-            </span>
-          </span>
+      <button
+        type="button"
+        className={cn(
+          "group/th inline-flex min-h-10 w-full select-none items-center gap-1 whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]",
+          className?.includes("text-right") ? "justify-end" : "justify-center",
+          isActive
+            ? "text-[var(--color-accent-foreground)]"
+            : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
         )}
-        <SortIcon active={isActive} dir={dir} />
-      </span>
-    </th>
-  );
-}
-
-function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
-  return (
-    <svg
-      className={cn("w-3 h-3", active ? "opacity-100" : "opacity-0 group-hover/th:opacity-40")}
-      viewBox="0 0 12 12"
-      fill="currentColor"
-    >
-      {(!active || dir === "asc") && (
-        <path d="M6 2L9 5.5H3L6 2Z" opacity={active && dir === "asc" ? 1 : 0.3} />
-      )}
-      {(!active || dir === "desc") && (
-        <path d="M6 10L3 6.5H9L6 10Z" opacity={active && dir === "desc" ? 1 : 0.3} />
-      )}
-    </svg>
+        onClick={() => onSort(sortKey)}
+        aria-label={tooltip ? `${label} — ${tooltip}` : label}
+      >
+        {label}
+        {tooltip && <CircleHelp className="h-3 w-3 shrink-0 opacity-55" aria-hidden="true" />}
+        {isActive ? (
+          dir === "asc" ? (
+            <ArrowUp className="h-3 w-3 shrink-0" aria-hidden="true" />
+          ) : (
+            <ArrowDown className="h-3 w-3 shrink-0" aria-hidden="true" />
+          )
+        ) : (
+          <ArrowUpDown
+            className="h-3 w-3 shrink-0 opacity-0 group-hover/th:opacity-45 group-focus-visible/th:opacity-45"
+            aria-hidden="true"
+          />
+        )}
+      </button>
+    </TableHead>
   );
 }

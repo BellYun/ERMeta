@@ -11,6 +11,8 @@ import {
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { CharacterSearchCombobox } from "@/components/features/character-analysis/CharacterSearchCombobox";
+import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
+import { Badge } from "@/components/ui/badge";
 import type { HomeMetaStats } from "@/lib/homeMetaShared";
 import {
   getHomeMetaQualificationGames,
@@ -67,10 +69,10 @@ export async function HomePageContent({
   const showHomeStats = hasRankingData && !isPreparing;
 
   return (
-    <div className="page-shell home-shell flex flex-col">
+    <div className="page-shell home-shell home-shell--shadcn flex flex-col">
       {isPreparing ? (
         <section aria-labelledby="home-season-recap-title">
-          <Link className="home-season-recap" href={`/${locale}/season11-recap`}>
+          <Link className="home-season-recap" href={`/${locale}/season11-recap`} prefetch={false}>
             <span className="home-season-recap__season" aria-hidden="true">
               <Trophy />
               <span>SEASON</span>
@@ -89,13 +91,20 @@ export async function HomePageContent({
         </section>
       ) : null}
 
-      <section className="home-search-hero" aria-labelledby="home-search-title">
+      <section
+        className="home-search-hero home-search-hero--shadcn"
+        aria-labelledby="home-search-title"
+      >
         <div className="home-search-hero__inner">
           <div className="home-search-hero__main">
             <div className="home-search-hero__eyebrow">
-              <span>ER&amp;GG</span>
+              <Badge variant="outline" className="font-sans">
+                ER&amp;GG
+              </Badge>
               {defaultPatch && !isPreseasonPreparing ? (
-                <span>{t("patch", { patch: defaultPatch })}</span>
+                <Badge variant="gold" className="font-sans">
+                  {t("patch", { patch: defaultPatch })}
+                </Badge>
               ) : null}
             </div>
             <h1 id="home-search-title" className="home-search-hero__title">
@@ -118,18 +127,21 @@ export async function HomePageContent({
             </div>
 
             <nav className="home-search-hero__quick-links" aria-label={t("title")}>
-              <a href={`/${locale}/synergy-detail`}>
+              <IntentPrefetchLink href={`/${locale}/synergy-detail`}>
                 <Network className="h-4 w-4" aria-hidden="true" />
-                {t("guide.comboTitle")}
-              </a>
-              <a href={patchAnalysisHref}>
+                <span>{t("guide.comboTitle")}</span>
+                <ArrowUpRight className="home-search-hero__route-arrow" aria-hidden="true" />
+              </IntentPrefetchLink>
+              <IntentPrefetchLink href={patchAnalysisHref}>
                 <Gauge className="h-4 w-4" aria-hidden="true" />
-                {t("patchAnalysisCta")}
-              </a>
-              <a href={`/${locale}/methodology`}>
+                <span>{t("patchAnalysisCta")}</span>
+                <ArrowUpRight className="home-search-hero__route-arrow" aria-hidden="true" />
+              </IntentPrefetchLink>
+              <IntentPrefetchLink href={`/${locale}/methodology`}>
                 <BookOpenText className="h-4 w-4" aria-hidden="true" />
-                {t("guide.cta")}
-              </a>
+                <span>{t("guide.cta")}</span>
+                <ArrowUpRight className="home-search-hero__route-arrow" aria-hidden="true" />
+              </IntentPrefetchLink>
             </nav>
           </div>
 

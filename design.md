@@ -57,9 +57,17 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 - Command navigation opens with click or Cmd/Ctrl+K and supports arrows, Enter, and Escape.
 - Touch targets are at least 44px; clickable labels never wrap.
 
+## Component implementation
+
+- shadcn/ui source-ownership conventions are the implementation baseline; ER&GG owns and adapts every component under `frontend/src/components/ui`.
+- `new-york` supplies interaction density and state patterns, not the visual identity. Mineral Signal tokens, Pretendard, JetBrains Mono, and ER&GG geometry always override shadcn defaults.
+- Stateful overlays and menus should use accessible shadcn/Radix primitives when introduced. Data-heavy domain components such as character cards, rankings, composition pickers, and matrices remain custom.
+- Cards are reserved for meaningful group boundaries. Related rows inside a section use separators, tables, tabs, or list structure instead of nested cards.
+- One page uses one density mode. ER&GG app and data pages default to compact spacing while preserving 44px touch targets.
+
 ## Navigation and footer
 
-- Navigation: N1b Dense product bar, adapted to preserve the existing destinations and mobile drawer. Search becomes the home page's primary workbench action; Cmd/Ctrl+K remains available on deeper routes.
+- Navigation: N1b Dense product bar, adapted to preserve the existing destinations and mobile drawer. Promotional copy may sit in a compact announcement row but must collapse after the user starts scrolling so the 64px product bar remains the only sticky chrome. Search becomes the home page's primary workbench action; Cmd/Ctrl+K remains available on deeper routes.
 - Footer: Ft4 Compact colophon — one link row followed by the required API attribution and legal disclaimer.
 
 ## CTA voice

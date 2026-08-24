@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
+const IMMUTABLE_ASSET_CACHE_CONTROL = "public, max-age=31536000, immutable";
 
 function parseCsvEnv(value: string | undefined): string[] {
   return (value ?? "")
@@ -39,7 +40,25 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
+            value: IMMUTABLE_ASSET_CACHE_CONTROL,
+          },
+        ],
+      },
+      {
+        source: "/characters/mini/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: IMMUTABLE_ASSET_CACHE_CONTROL,
+          },
+        ],
+      },
+      {
+        source: "/sprites/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: IMMUTABLE_ASSET_CACHE_CONTROL,
           },
         ],
       },

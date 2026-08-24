@@ -13,9 +13,9 @@ export interface DisplayRow {
   code: number;
   roles: CharacterRole[];
   weaponCode: number;
+  hasWeaponIcon: boolean;
   name: string;
   weaponName: string;
-  weaponIconUrl: string | null;
   imageUrl: string;
   tier: Tier;
   pickRate: number;
