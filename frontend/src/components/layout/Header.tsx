@@ -138,13 +138,9 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
 
     syncAnnouncement();
     window.addEventListener("scroll", syncAnnouncement, { passive: true });
-    window.addEventListener("focusin", syncAnnouncement);
-    window.addEventListener("focusout", syncAnnouncement);
 
     return () => {
       window.removeEventListener("scroll", syncAnnouncement);
-      window.removeEventListener("focusin", syncAnnouncement);
-      window.removeEventListener("focusout", syncAnnouncement);
     };
   }, [showSeasonRecapBanner]);
 
