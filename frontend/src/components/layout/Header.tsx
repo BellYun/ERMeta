@@ -27,6 +27,7 @@ import { CharacterSearchCombobox } from "@/components/features/character-analysi
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { LocaleRecommendationBanner } from "@/components/layout/LocaleRecommendationBanner";
 import { Navigation } from "@/components/layout/Navigation";
+import { Button } from "@/components/ui/button";
 import { stripRouteLocaleFromPathname, withCurrentRouteLocale } from "@/lib/localizedPath";
 import { cn } from "@/lib/utils";
 
@@ -43,6 +44,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
   const [mobileSearchOpen, setMobileSearchOpen] = React.useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = React.useState(false);
+  const [announcementCollapsed, setAnnouncementCollapsed] = React.useState(false);
   const [theme, setTheme] = React.useState<"light" | "dark">("light");
   const patchAnalysisPath = patchAnalysisPatch
     ? `/patch-analysis/${patchAnalysisPatch}`
@@ -122,6 +124,29 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
     setMobileMenuOpen(false);
   }, [pathname]);
 
+  React.useEffect(() => {
+    if (!showSeasonRecapBanner) {
+      setAnnouncementCollapsed(false);
+      return;
+    }
+
+    const syncAnnouncement = () => {
+      const announcementHasFocus = document.activeElement?.closest(".site-announcement");
+      setAnnouncementCollapsed(window.scrollY > 48 && !announcementHasFocus);
+    };
+
+    syncAnnouncement();
+    window.addEventListener("scroll", syncAnnouncement, { passive: true });
+    window.addEventListener("focusin", syncAnnouncement);
+    window.addEventListener("focusout", syncAnnouncement);
+
+    return () => {
+      window.removeEventListener("scroll", syncAnnouncement);
+      window.removeEventListener("focusin", syncAnnouncement);
+      window.removeEventListener("focusout", syncAnnouncement);
+    };
+  }, [showSeasonRecapBanner]);
+
   React.useLayoutEffect(() => {
     const applyTheme = (nextTheme: "light" | "dark") => {
       document.documentElement.dataset.theme = nextTheme;
@@ -193,6 +218,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
   return (
     <>
       <header
+        data-announcement-collapsed={announcementCollapsed ? "true" : "false"}
         className={cn(
           "site-header sticky top-0 z-40 border-b border-[var(--color-border)] bg-[var(--color-surface)]",
           normalizedPathname === "/" && "site-header--home"
@@ -205,12 +231,12 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
             href={withCurrentRouteLocale(pathname, seasonRecapPath)}
             className="site-announcement group flex items-center justify-between gap-3 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 sm:px-4 lg:px-6"
           >
-            <div className="flex min-w-0 items-start gap-3">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]">
+            <div className="site-announcement__content flex min-w-0 items-center gap-3">
+              <span className="site-announcement__icon flex h-7 w-7 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]">
                 <Trophy className="h-4.5 w-4.5" strokeWidth={2} />
               </span>
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
+              <div className="site-announcement__copy min-w-0">
+                <div className="site-announcement__meta flex flex-wrap items-center gap-2">
                   <span className="text-[10px] font-medium text-[var(--color-muted-foreground)]">
                     {t("seasonRecapBadge")}
                   </span>
@@ -218,13 +244,13 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                     {t("seasonRecapTitle")}
                   </p>
                 </div>
-                <p className="mt-0.5 text-xs leading-5 text-[var(--color-muted-foreground)] sm:text-sm">
+                <p className="site-announcement__body mt-0.5 text-xs leading-5 text-[var(--color-muted-foreground)] sm:text-sm">
                   {t("seasonRecapBody")}
                 </p>
               </div>
             </div>
 
-            <span className="hidden shrink-0 items-center gap-1.5 text-sm font-medium text-[var(--color-muted-foreground)] transition group-hover:text-[var(--color-foreground)] sm:inline-flex">
+            <span className="site-announcement__cta hidden shrink-0 items-center gap-1.5 text-sm font-medium text-[var(--color-muted-foreground)] transition group-hover:text-[var(--color-foreground)] sm:inline-flex">
               {t("seasonRecapCta")}
               <ArrowRight className="h-4 w-4" strokeWidth={2} />
             </span>
@@ -233,8 +259,10 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
 
         <div className="site-header__container mx-auto w-full max-w-[1440px] px-3 py-3 sm:px-4 lg:px-6 lg:py-0">
           <div className="site-header__bar flex min-h-[54px] items-center gap-2.5 lg:min-h-[64px]">
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               aria-label={mobileMenuOpen ? t("closeMenu") : t("openMenu")}
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-navigation-drawer"
@@ -242,14 +270,14 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                 setMobileSearchOpen(false);
                 setMobileMenuOpen((prev) => !prev);
               }}
-              className="site-icon-button flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)] lg:hidden"
+              className="site-icon-button h-11 w-11 rounded-[var(--radius-input)] lg:hidden"
             >
               {mobileMenuOpen ? (
                 <X className="h-4.5 w-4.5" strokeWidth={2.2} />
               ) : (
                 <Menu className="h-4.5 w-4.5" strokeWidth={2.2} />
               )}
-            </button>
+            </Button>
 
             <Link
               href={withCurrentRouteLocale(pathname, "/")}
@@ -346,43 +374,49 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
             </div>
 
             <div className="ml-auto flex items-center gap-2 lg:gap-3">
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 aria-label={mobileSearchOpen ? t("closeSearch") : t("openSearch")}
                 onClick={() => {
                   setMobileMenuOpen(false);
                   setMobileSearchOpen((prev) => !prev);
                 }}
-                className="site-icon-button flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)] lg:hidden"
+                className="site-icon-button h-11 w-11 rounded-[var(--radius-input)] lg:hidden"
               >
                 {mobileSearchOpen ? (
                   <X className="h-4.5 w-4.5" strokeWidth={2.2} />
                 ) : (
                   <Search className="h-4.5 w-4.5" strokeWidth={2.2} />
                 )}
-              </button>
+              </Button>
 
               <div className="hidden lg:block">
                 <LanguageSwitcher />
               </div>
 
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={toggleTheme}
                 aria-label={theme === "dark" ? t("switchToLightTheme") : t("switchToDarkTheme")}
                 aria-pressed={theme === "dark"}
                 title={theme === "dark" ? t("switchToLightTheme") : t("switchToDarkTheme")}
-                className="site-icon-button flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)] lg:h-9 lg:w-9 lg:rounded-md"
+                className="site-icon-button h-11 w-11 shrink-0 rounded-[var(--radius-input)]"
               >
                 {theme === "dark" ? (
                   <Sun className="h-4.5 w-4.5 lg:h-3.5 lg:w-3.5" strokeWidth={2} />
                 ) : (
                   <Moon className="h-4.5 w-4.5 lg:h-3.5 lg:w-3.5" strokeWidth={2} />
                 )}
-              </button>
+              </Button>
 
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => {
                   window.dispatchEvent(new Event("ergg:feedback-toggle"));
                 }}
@@ -390,7 +424,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                 aria-expanded={isFeedbackOpen}
                 aria-pressed={isFeedbackOpen}
                 className={cn(
-                  "site-action-button hidden h-9 shrink-0 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium lg:inline-flex",
+                  "site-action-button hidden h-11 shrink-0 items-center gap-1.5 rounded-[var(--radius-input)] px-3 text-xs lg:inline-flex",
                   isFeedbackOpen
                     ? "border-[var(--color-border-light)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
                     : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)] hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
@@ -398,7 +432,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
               >
                 <MessageSquarePlus className="h-3.5 w-3.5" strokeWidth={2} />
                 <span>{tNav("feedback")}</span>
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -425,14 +459,16 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
             aria-label={t("mobileMenu")}
             className="mobile-navigation-drawer absolute inset-y-0 left-0 flex h-dvh w-[min(21rem,calc(100vw-2rem))] max-w-full flex-col overflow-hidden border-r border-[var(--color-border)] bg-[var(--color-surface)]"
           >
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               aria-label={t("closeMenu")}
               onClick={() => setMobileMenuOpen(false)}
-              className="site-icon-button absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
+              className="site-icon-button absolute right-3 top-3 z-10 h-11 w-11 rounded-[var(--radius-input)]"
             >
               <X className="h-4.5 w-4.5" strokeWidth={2.2} />
-            </button>
+            </Button>
             <div className="min-h-0 flex-1 overflow-y-auto">
               <Navigation
                 currentPatch={currentPatch}
@@ -445,20 +481,22 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                 <div className="min-w-0 flex-1">
                   <LanguageSwitcher />
                 </div>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon"
                   onClick={toggleTheme}
                   aria-label={theme === "dark" ? t("switchToLightTheme") : t("switchToDarkTheme")}
                   aria-pressed={theme === "dark"}
                   title={theme === "dark" ? t("switchToLightTheme") : t("switchToDarkTheme")}
-                  className="site-icon-button flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]"
+                  className="site-icon-button h-11 w-11 shrink-0 rounded-[var(--radius-input)]"
                 >
                   {theme === "dark" ? (
                     <Sun className="h-4.5 w-4.5" strokeWidth={2} />
                   ) : (
                     <Moon className="h-4.5 w-4.5" strokeWidth={2} />
                   )}
-                </button>
+                </Button>
               </div>
             </div>
           </div>
