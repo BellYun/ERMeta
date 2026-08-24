@@ -27,6 +27,7 @@ import { CharacterSearchCombobox } from "@/components/features/character-analysi
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { LocaleRecommendationBanner } from "@/components/layout/LocaleRecommendationBanner";
 import { Navigation } from "@/components/layout/Navigation";
+import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { Button } from "@/components/ui/button";
 import { stripRouteLocaleFromPathname, withCurrentRouteLocale } from "@/lib/localizedPath";
 import { cn } from "@/lib/utils";
@@ -229,6 +230,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
         {showSeasonRecapBanner && (
           <Link
             href={withCurrentRouteLocale(pathname, seasonRecapPath)}
+            prefetch={false}
             className="site-announcement group flex items-center justify-between gap-3 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 sm:px-4 lg:px-6"
           >
             <div className="site-announcement__content flex min-w-0 items-center gap-3">
@@ -279,7 +281,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
               )}
             </Button>
 
-            <Link
+            <IntentPrefetchLink
               href={withCurrentRouteLocale(pathname, "/")}
               title={t("logoTitle")}
               className="site-wordmark flex min-w-0 items-center gap-2.5"
@@ -297,14 +299,14 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                   {t("logoTitle")}
                 </p>
               </div>
-            </Link>
+            </IntentPrefetchLink>
 
             <nav
               aria-label={tNav("ariaMain")}
               className="site-navigation hidden min-w-0 flex-1 items-center gap-1 px-2 lg:flex"
             >
               {navLinks.map(({ href, label, icon: Icon, isActive }) => (
-                <Link
+                <IntentPrefetchLink
                   key={href}
                   href={href}
                   aria-current={isActive ? "page" : undefined}
@@ -317,7 +319,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                 >
                   <Icon className="h-3.5 w-3.5" strokeWidth={2} />
                   <span>{label}</span>
-                </Link>
+                </IntentPrefetchLink>
               ))}
 
               <details
@@ -347,7 +349,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
 
                 <div className="site-navigation-lab__menu">
                   {labLinks.map(({ href, label, icon: Icon, isActive }) => (
-                    <Link
+                    <IntentPrefetchLink
                       key={href}
                       href={href}
                       aria-current={isActive ? "page" : undefined}
@@ -358,7 +360,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                     >
                       <Icon className="h-4 w-4" strokeWidth={2} />
                       <span>{label}</span>
-                    </Link>
+                    </IntentPrefetchLink>
                   ))}
                 </div>
               </details>

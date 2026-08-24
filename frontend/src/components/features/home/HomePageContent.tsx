@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { CharacterSearchCombobox } from "@/components/features/character-analysis/CharacterSearchCombobox";
+import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { Badge } from "@/components/ui/badge";
 import type { HomeMetaStats } from "@/lib/homeMetaShared";
 import {
@@ -71,7 +72,7 @@ export async function HomePageContent({
     <div className="page-shell home-shell home-shell--shadcn flex flex-col">
       {isPreparing ? (
         <section aria-labelledby="home-season-recap-title">
-          <Link className="home-season-recap" href={`/${locale}/season11-recap`}>
+          <Link className="home-season-recap" href={`/${locale}/season11-recap`} prefetch={false}>
             <span className="home-season-recap__season" aria-hidden="true">
               <Trophy />
               <span>SEASON</span>
@@ -126,21 +127,21 @@ export async function HomePageContent({
             </div>
 
             <nav className="home-search-hero__quick-links" aria-label={t("title")}>
-              <Link href={`/${locale}/synergy-detail`}>
+              <IntentPrefetchLink href={`/${locale}/synergy-detail`}>
                 <Network className="h-4 w-4" aria-hidden="true" />
                 <span>{t("guide.comboTitle")}</span>
                 <ArrowUpRight className="home-search-hero__route-arrow" aria-hidden="true" />
-              </Link>
-              <Link href={patchAnalysisHref}>
+              </IntentPrefetchLink>
+              <IntentPrefetchLink href={patchAnalysisHref}>
                 <Gauge className="h-4 w-4" aria-hidden="true" />
                 <span>{t("patchAnalysisCta")}</span>
                 <ArrowUpRight className="home-search-hero__route-arrow" aria-hidden="true" />
-              </Link>
-              <Link href={`/${locale}/methodology`}>
+              </IntentPrefetchLink>
+              <IntentPrefetchLink href={`/${locale}/methodology`}>
                 <BookOpenText className="h-4 w-4" aria-hidden="true" />
                 <span>{t("guide.cta")}</span>
                 <ArrowUpRight className="home-search-hero__route-arrow" aria-hidden="true" />
-              </Link>
+              </IntentPrefetchLink>
             </nav>
           </div>
 

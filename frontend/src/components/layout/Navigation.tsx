@@ -13,10 +13,10 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { stripRouteLocaleFromPathname, withCurrentRouteLocale } from "@/lib/localizedPath";
 import { cn } from "@/lib/utils";
 
@@ -115,7 +115,7 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
   const renderNavigationLink = (link: NavigationLink) => {
     const { href, label, icon: Icon, isActive, badge } = link;
     return (
-      <Link
+      <IntentPrefetchLink
         key={href}
         href={href}
         onClick={onNavigate}
@@ -143,13 +143,13 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
             {badge}
           </span>
         )}
-      </Link>
+      </IntentPrefetchLink>
     );
   };
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-[var(--color-surface)] px-4 py-5">
-      <Link
+      <IntentPrefetchLink
         href={withCurrentRouteLocale(pathname, "/")}
         onClick={onNavigate}
         className="flex items-center gap-3 px-2"
@@ -167,7 +167,7 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
             {tHeader("logoTitle")}
           </p>
         </div>
-      </Link>
+      </IntentPrefetchLink>
 
       <nav aria-label={t("ariaMain")} className="mt-6 flex flex-1 flex-col gap-2">
         {navLinks.map(renderNavigationLink)}

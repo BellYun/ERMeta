@@ -103,6 +103,7 @@ export function AppFrame({
                 <span className="text-[var(--color-border)]">&middot;</span>
                 <Link
                   href={footerHref("/about")}
+                  prefetch={false}
                   className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
                 >
                   {getMessage(messages, "layout.about")}
@@ -110,6 +111,7 @@ export function AppFrame({
                 <span className="text-[var(--color-border)]">&middot;</span>
                 <Link
                   href={footerHref("/methodology")}
+                  prefetch={false}
                   className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
                 >
                   {getMessage(messages, "layout.methodology")}
@@ -117,6 +119,7 @@ export function AppFrame({
                 <span className="text-[var(--color-border)]">&middot;</span>
                 <Link
                   href={footerHref("/terms")}
+                  prefetch={false}
                   className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
                 >
                   {getMessage(messages, "layout.terms")}
@@ -124,6 +127,7 @@ export function AppFrame({
                 <span className="text-[var(--color-border)]">&middot;</span>
                 <Link
                   href={footerHref("/privacy")}
+                  prefetch={false}
                   className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
                 >
                   {getMessage(messages, "layout.privacy")}
@@ -131,6 +135,7 @@ export function AppFrame({
                 <span className="text-[var(--color-border)]">&middot;</span>
                 <Link
                   href={footerHref("/updates")}
+                  prefetch={false}
                   className="min-h-[44px] sm:min-h-0 flex items-center hover:text-[var(--color-foreground)] transition-colors touch-manipulation"
                 >
                   {getMessage(messages, "layout.updates")}
