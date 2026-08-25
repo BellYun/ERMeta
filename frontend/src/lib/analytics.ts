@@ -1,3 +1,9 @@
+import {
+  AD_BLOCK_RECOVERY_EXPERIMENT,
+  type AdBlockRecoveryDismissReason,
+  type AdBlockRecoveryVariant,
+} from "@/lib/adBlockRecoveryExperiment";
+
 type AmplitudeModule = typeof import("@amplitude/analytics-browser");
 
 const isDev = process.env.NODE_ENV === "development";
@@ -16,6 +22,17 @@ function track(event: string, properties?: Record<string, unknown>) {
   if (isDev) return;
   getAmplitude()
     .then((amplitude) => amplitude.track(event, properties))
+    .catch(() => {});
+}
+
+type FlatAnalyticsProperties = Record<string, string | number | boolean | null | undefined>;
+
+function trackAdBlockRecovery(event: string, properties: FlatAnalyticsProperties) {
+  track(event, properties);
+  if (isDev) return;
+
+  import("@vercel/analytics")
+    .then((vercelAnalytics) => vercelAnalytics.track(event, properties))
     .catch(() => {});
 }
 
@@ -350,6 +367,68 @@ export const analytics = {
       page_path: getCurrentPagePath(),
       reserved_height: args.reservedHeight,
       reserved_width: args.reservedWidth,
+    });
+  },
+
+  /** 광고 차단 해제 팝업 실험 노출 — 감지된 세션에서 실제 dialog가 열린 경우만 기록한다. */
+  adBlockRecoveryPromptShown(args: {
+    variant: AdBlockRecoveryVariant;
+    locale: string;
+    pagePath: string;
+    detectionMethod: "cosmetic_bait";
+  }) {
+    trackAdBlockRecovery("ad_block_recovery_prompt_shown", {
+      experiment: AD_BLOCK_RECOVERY_EXPERIMENT,
+      variant: args.variant,
+      locale: args.locale,
+      page_path: args.pagePath,
+      detection_method: args.detectionMethod,
+    });
+  },
+
+  /** 명시적 닫기, 나중에, backdrop, Escape를 구분해 팝업 거부율을 측정한다. */
+  adBlockRecoveryPromptDismissed(args: {
+    variant: AdBlockRecoveryVariant;
+    reason: AdBlockRecoveryDismissReason;
+    locale: string;
+    pagePath: string;
+  }) {
+    trackAdBlockRecovery("ad_block_recovery_prompt_dismissed", {
+      experiment: AD_BLOCK_RECOVERY_EXPERIMENT,
+      variant: args.variant,
+      reason: args.reason,
+      locale: args.locale,
+      page_path: args.pagePath,
+    });
+  },
+
+  /** 사용자가 광고 허용 후 확인을 위해 새로고침을 선택한 경우. */
+  adBlockRecoveryReloadRequested(args: {
+    variant: AdBlockRecoveryVariant;
+    locale: string;
+    pagePath: string;
+  }) {
+    trackAdBlockRecovery("ad_block_recovery_reload_requested", {
+      experiment: AD_BLOCK_RECOVERY_EXPERIMENT,
+      variant: args.variant,
+      locale: args.locale,
+      page_path: args.pagePath,
+    });
+  },
+
+  /** 새로고침 뒤 광고 차단 bait가 정상 노출되어 해제 성공으로 확인된 경우. */
+  adBlockRecoverySucceeded(args: {
+    variant: AdBlockRecoveryVariant;
+    attemptAgeMs: number;
+    attemptPagePath: string;
+    pagePath: string;
+  }) {
+    trackAdBlockRecovery("ad_block_recovery_succeeded", {
+      experiment: AD_BLOCK_RECOVERY_EXPERIMENT,
+      variant: args.variant,
+      attempt_age_ms: args.attemptAgeMs,
+      attempt_page_path: args.attemptPagePath,
+      page_path: args.pagePath,
     });
   },
 

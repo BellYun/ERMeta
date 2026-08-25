@@ -25,8 +25,9 @@ const sessionStorage = new MemoryStorage();
 
 // ── @amplitude/analytics-browser mock ────────────────────────────────────────
 // vi.mock 은 hoisted 되므로, 외부 참조 변수는 vi.hoisted 로 감싸야 안전하다.
-const { trackMock, identifyMock, IdentifyMock } = vi.hoisted(() => {
+const { trackMock, vercelTrackMock, identifyMock, IdentifyMock } = vi.hoisted(() => {
   const trackMock = vi.fn();
+  const vercelTrackMock = vi.fn();
   const identifyMock = vi.fn();
   class IdentifyMock {
     private props: Record<string, unknown> = {};
@@ -38,7 +39,7 @@ const { trackMock, identifyMock, IdentifyMock } = vi.hoisted(() => {
       return this.props;
     }
   }
-  return { trackMock, identifyMock, IdentifyMock };
+  return { trackMock, vercelTrackMock, identifyMock, IdentifyMock };
 });
 
 vi.mock("@amplitude/analytics-browser", () => ({
@@ -47,11 +48,16 @@ vi.mock("@amplitude/analytics-browser", () => ({
   Identify: IdentifyMock,
 }));
 
+vi.mock("@vercel/analytics", () => ({
+  track: vercelTrackMock,
+}));
+
 // analytics.ts 는 getAmplitude 의 promise 를 module-scope 에 캐시하므로
 // 여러 테스트가 동일한 mock 을 공유한다. clearAllMocks 로 호출 기록만 리셋.
 
 beforeEach(() => {
   trackMock.mockClear();
+  vercelTrackMock.mockClear();
   identifyMock.mockClear();
   window.sessionStorage.clear();
 });
@@ -67,6 +73,28 @@ async function flushAsync() {
 }
 
 describe("analytics — P0 helpers", () => {
+  describe("ad block recovery funnel", () => {
+    it("Amplitude와 Vercel에 동일한 실험 노출 이벤트를 보낸다", async () => {
+      analytics.adBlockRecoveryPromptShown({
+        variant: "direct",
+        locale: "ko",
+        pagePath: "/ko/patches",
+        detectionMethod: "cosmetic_bait",
+      });
+      await flushAsync();
+
+      const properties = {
+        experiment: "adblock_recovery_prompt_v1",
+        variant: "direct",
+        locale: "ko",
+        page_path: "/ko/patches",
+        detection_method: "cosmetic_bait",
+      };
+      expect(trackMock).toHaveBeenCalledWith("ad_block_recovery_prompt_shown", properties);
+      expect(vercelTrackMock).toHaveBeenCalledWith("ad_block_recovery_prompt_shown", properties);
+    });
+  });
+
   describe("coreFeatureUsed (NSM dedupe)", () => {
     it("세션 내 첫 호출은 firstTimeInSession=true 로 fire 한다", async () => {
       analytics.coreFeatureUsed("character_analysis");
