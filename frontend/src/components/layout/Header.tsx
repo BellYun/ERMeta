@@ -25,6 +25,7 @@ import { useTranslations } from "next-intl";
 import * as React from "react";
 import { CharacterSearchCombobox } from "@/components/features/character-analysis/CharacterSearchCombobox";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { resolveAnnouncementCollapsed } from "@/components/layout/announcementScroll";
 import { LocaleRecommendationBanner } from "@/components/layout/LocaleRecommendationBanner";
 import { Navigation } from "@/components/layout/Navigation";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
@@ -132,8 +133,14 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
     }
 
     const syncAnnouncement = () => {
-      const announcementHasFocus = document.activeElement?.closest(".site-announcement");
-      setAnnouncementCollapsed(window.scrollY > 48 && !announcementHasFocus);
+      const announcementHasFocus = Boolean(document.activeElement?.closest(".site-announcement"));
+      setAnnouncementCollapsed((currentlyCollapsed) =>
+        resolveAnnouncementCollapsed({
+          currentlyCollapsed,
+          scrollY: window.scrollY,
+          hasFocus: announcementHasFocus,
+        })
+      );
     };
 
     syncAnnouncement();
