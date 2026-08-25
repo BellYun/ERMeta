@@ -1,5 +1,5 @@
-import type { CharacterRankingData } from "@/app/api/character/mithril-rp-ranking/route";
 import type { Tier } from "@/lib/design-tokens";
+import type { CharacterRankingData } from "@/lib/ranking";
 
 export const META_SCORE_WEIGHTS = {
   averageRP: 0.4,
@@ -7,6 +7,12 @@ export const META_SCORE_WEIGHTS = {
   winRate: 0.2,
   pickRate: 0.2,
 } as const;
+
+export function getMetaRankingKey(
+  ranking: Pick<CharacterRankingData, "characterNum" | "bestWeapon">
+): number {
+  return ranking.characterNum * 1000 + ranking.bestWeapon;
+}
 
 export function computeMetaScores(rankings: CharacterRankingData[]): Map<number, number> {
   const n = rankings.length;
@@ -39,7 +45,7 @@ export function computeMetaScores(rankings: CharacterRankingData[]): Map<number,
     const zRP = rpStd > 0 ? (r.averageRP - rpMean) / rpStd : 0;
     const zPick = pickStd > 0 ? (r.pickRate - pickMean) / pickStd : 0;
     scores.set(
-      r.characterNum * 1000 + r.bestWeapon,
+      getMetaRankingKey(r),
       zRP * META_SCORE_WEIGHTS.averageRP +
         zTop3 * META_SCORE_WEIGHTS.top3Rate +
         zWin * META_SCORE_WEIGHTS.winRate +
@@ -55,4 +61,40 @@ export function assignTier(score: number): Tier {
   if (score >= -0.3) return "B";
   if (score >= -1.0) return "C";
   return "D";
+}
+
+export function sortRankingsByMetaScore(
+  rankings: CharacterRankingData[],
+  scores = computeMetaScores(rankings)
+): CharacterRankingData[] {
+  return [...rankings].sort((a, b) => {
+    const scoreDifference =
+      (scores.get(getMetaRankingKey(b)) ?? 0) - (scores.get(getMetaRankingKey(a)) ?? 0);
+    return scoreDifference || a.rank - b.rank;
+  });
+}
+
+export function computeMetaRankPositions(rankings: CharacterRankingData[]): Map<number, number> {
+  return new Map(
+    sortRankingsByMetaScore(rankings).map((ranking, index) => [
+      getMetaRankingKey(ranking),
+      index + 1,
+    ])
+  );
+}
+
+export function computeCharacterMetaTiers(
+  rankings: CharacterRankingData[],
+  characterNum: number
+): Record<string, Tier> {
+  const scores = computeMetaScores(rankings);
+
+  return Object.fromEntries(
+    rankings.flatMap((ranking) => {
+      if (ranking.characterNum !== characterNum) return [];
+
+      const score = scores.get(getMetaRankingKey(ranking));
+      return score === undefined ? [] : [[String(ranking.bestWeapon), assignTier(score)]];
+    })
+  );
 }
