@@ -10,6 +10,7 @@ import {
 import { AdSlot } from "@/components/ads/AdSlot";
 import { FilterProvider, useFilter } from "@/components/features/FilterContext";
 import { GlobalFilter } from "@/components/features/GlobalFilter";
+import { HomeFilterAside } from "@/components/features/HomeFilterAside";
 import { HoneyPicksSection } from "@/components/features/HoneyPicksSection";
 import { TierRankingTable } from "@/components/features/TierRankingTable";
 import {
@@ -115,6 +116,8 @@ function HomeDashboardSectionsBody({
           />
         </div>
       </section>
+
+      <HomeFilterAside anchorId="home-top-filter" />
 
       {canRenderAdSlot(ADSENSE_SLOTS.homeRanking) ? (
         <AdSlot
