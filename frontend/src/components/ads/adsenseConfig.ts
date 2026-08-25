@@ -1,3 +1,5 @@
+import type { AdBlockRecoveryMode } from "@/lib/adBlockRecoveryExperiment";
+
 const DEFAULT_ADSENSE_CLIENT = "ca-pub-4008956736614349";
 const DEFAULT_DISPLAY_SLOT = "8139813658";
 const ADSENSE_DISABLED = process.env.NEXT_PUBLIC_ADSENSE_DISABLED === "true";
@@ -10,6 +12,23 @@ export const ADSENSE_CLIENT = ADSENSE_DISABLED
 
 export const ADSENSE_PREVIEW =
   !ADSENSE_DISABLED && process.env.NEXT_PUBLIC_ADSENSE_PREVIEW === "true";
+
+function resolveAdBlockRecoveryMode(): AdBlockRecoveryMode {
+  const configured = process.env.NEXT_PUBLIC_AD_BLOCK_RECOVERY_MODE;
+  if (
+    configured === "off" ||
+    configured === "experiment" ||
+    configured === "context" ||
+    configured === "direct"
+  ) {
+    return configured;
+  }
+
+  if (configured) return "off";
+  return process.env.NODE_ENV === "production" ? "experiment" : "off";
+}
+
+export const AD_BLOCK_RECOVERY_MODE = resolveAdBlockRecoveryMode();
 
 export interface AdSlotReservation {
   baseHeight: number;
