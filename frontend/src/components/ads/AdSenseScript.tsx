@@ -18,7 +18,7 @@ function stripLocale(pathname: string) {
   return pathname.replace(/^\/(?:ko|en|ja)(?=\/|$)/, "") || "/";
 }
 
-function canLoadAds(pathname: string) {
+export function canLoadAds(pathname: string) {
   const normalized = stripLocale(pathname);
   if (normalized.includes("/preview")) return false;
   if (normalized === "/") return true;
