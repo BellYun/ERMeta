@@ -211,22 +211,49 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
     );
   }, [rankingData, l10n, patch]);
 
+  const previousRoleRankPositions = React.useMemo(() => {
+    if (!rankingData || activeRole === ALL_ROLE) return null;
+
+    const role = activeRole;
+    return computeMetaRankPositions(rankingData.previousRankings, (ranking) =>
+      getComboRoles(ranking.characterNum, ranking.bestWeapon).includes(role)
+    );
+  }, [activeRole, rankingData]);
+
   const filtered = React.useMemo(() => {
-    const base =
+    const roleRankedRows =
       activeRole === ALL_ROLE
         ? rows
-        : rows.filter((c) => c.roles.includes(activeRole as CharacterRole));
+        : rows
+            .filter((row) => row.roles.includes(activeRole))
+            .map((row, index) => {
+              const rank = index + 1;
+              const previousRank = previousRoleRankPositions?.get(
+                getMetaRankingKey({ characterNum: row.code, bestWeapon: row.weaponCode })
+              );
+
+              return {
+                ...row,
+                rank,
+                rankChange:
+                  rankingData?.previousRankings.length === 0
+                    ? null
+                    : previousRank === undefined
+                      ? "new"
+                      : previousRank - rank,
+              } satisfies DisplayRow;
+            });
 
     if (sortKey === "rank") {
-      return sortDir === "asc" ? base : [...base].reverse();
+      return sortDir === "asc" ? roleRankedRows : [...roleRankedRows].reverse();
     }
 
-    return [...base].sort((a, b) => {
+    return [...roleRankedRows].sort((a, b) => {
       const va = a[sortKey];
       const vb = b[sortKey];
       return sortDir === "asc" ? va - vb : vb - va;
     });
-  }, [rows, activeRole, sortKey, sortDir]);
+  }, [activeRole, previousRoleRankPositions, rankingData, rows, sortDir, sortKey]);
 
   const visible = showAll ? filtered : filtered.slice(0, DEFAULT_VISIBLE);
   const hasMore = filtered.length > DEFAULT_VISIBLE;

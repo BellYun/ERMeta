@@ -74,13 +74,14 @@ export function sortRankingsByMetaScore(
   });
 }
 
-export function computeMetaRankPositions(rankings: CharacterRankingData[]): Map<number, number> {
-  return new Map(
-    sortRankingsByMetaScore(rankings).map((ranking, index) => [
-      getMetaRankingKey(ranking),
-      index + 1,
-    ])
-  );
+export function computeMetaRankPositions(
+  rankings: CharacterRankingData[],
+  include?: (ranking: CharacterRankingData) => boolean
+): Map<number, number> {
+  const sorted = sortRankingsByMetaScore(rankings);
+  const filtered = include ? sorted.filter(include) : sorted;
+
+  return new Map(filtered.map((ranking, index) => [getMetaRankingKey(ranking), index + 1]));
 }
 
 export function computeCharacterMetaTiers(

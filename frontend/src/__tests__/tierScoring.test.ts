@@ -236,6 +236,47 @@ describe("computeMetaRankPositions", () => {
     expect(positions.get(2 * 1000 + 1)).toBe(2);
     expect(positions.get(1 * 1000 + 2)).toBe(3);
   });
+
+  it("필터 내부 순위를 1위부터 다시 계산", () => {
+    const rankings = [
+      {
+        rank: 1,
+        characterNum: 1,
+        bestWeapon: 1,
+        totalGames: 300,
+        pickRate: 10,
+        winRate: 18,
+        averageRP: 15,
+        top3Rate: 48,
+      },
+      {
+        rank: 2,
+        characterNum: 2,
+        bestWeapon: 1,
+        totalGames: 200,
+        pickRate: 5,
+        winRate: 12.5,
+        averageRP: 0,
+        top3Rate: 37.5,
+      },
+      {
+        rank: 3,
+        characterNum: 1,
+        bestWeapon: 2,
+        totalGames: 100,
+        pickRate: 2,
+        winRate: 8,
+        averageRP: -10,
+        top3Rate: 30,
+      },
+    ];
+
+    const positions = computeMetaRankPositions(rankings, (ranking) => ranking.characterNum === 1);
+
+    expect(positions.get(1 * 1000 + 1)).toBe(1);
+    expect(positions.get(1 * 1000 + 2)).toBe(2);
+    expect(positions.has(2 * 1000 + 1)).toBe(false);
+  });
 });
 
 describe("comparePerformanceTierStats", () => {
