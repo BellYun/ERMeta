@@ -121,9 +121,6 @@ export async function HomePageContent({
             </p>
             <div className="home-search-hero__search-wrap">
               <CharacterSearchCombobox className="home-search-hero__search" scroll={false} />
-              <span className="home-search-hero__shortcut" aria-hidden="true">
-                ⌘ K
-              </span>
             </div>
 
             <nav className="home-search-hero__quick-links" aria-label={t("title")}>
