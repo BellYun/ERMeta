@@ -3415,7 +3415,7 @@ body,
 .tier-ranking-value {
   display: inline-flex;
   align-items: baseline;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: var(--space-xs);
   color: var(--color-home-ink);
   font-family: var(--font-mono);

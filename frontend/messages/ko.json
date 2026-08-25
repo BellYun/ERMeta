@@ -269,6 +269,12 @@
       "winRate": "해당 실험체의 1위 달성 비율 (기대값 12.5%)",
       "averageRp": "게임당 평균 획득 랭크 포인트. 양수일수록 랭크 상승에 유리"
     },
+    "rankChange": {
+      "up": "지난 패치보다 {count}단계 상승",
+      "down": "지난 패치보다 {count}단계 하락",
+      "unchanged": "지난 패치와 순위 동일",
+      "new": "지난 패치 순위 없음"
+    },
     "empty": "조건에 맞는 표본을 확인 중입니다",
     "patchNoteTitle": "패치 {patch} 변경사항",
     "patchNoteButton": "패치 {patch} 변경사항 보기",

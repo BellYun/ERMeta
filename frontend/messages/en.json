@@ -275,6 +275,12 @@
       "winRate": "Rate of finishing 1st with this character. Expected baseline: 12.5%.",
       "averageRp": "Average rank points gained per game. Positive values mean climbing."
     },
+    "rankChange": {
+      "up": "Up {count} places from the previous patch",
+      "down": "Down {count} places from the previous patch",
+      "unchanged": "Unchanged from the previous patch",
+      "new": "Not ranked in the previous patch"
+    },
     "empty": "Checking samples for the selected conditions",
     "patchNoteTitle": "Patch {patch} changes",
     "patchNoteButton": "View patch {patch} changes",
