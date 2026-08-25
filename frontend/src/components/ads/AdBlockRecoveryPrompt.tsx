@@ -23,7 +23,7 @@ import {
 } from "@/lib/adBlockRecoveryExperiment";
 import { analytics } from "@/lib/analytics";
 
-const DETECTION_DELAY_MS = 6000;
+const DETECTION_DELAY_MS = 3000;
 
 const memoryStorageValues = new Map<string, string>();
 const memoryStorage: StorageLike = {
