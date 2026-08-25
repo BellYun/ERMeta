@@ -10,6 +10,7 @@ export interface PrevStats {
 
 export interface DisplayRow {
   rank: number;
+  rankChange: number | "new" | null;
   code: number;
   roles: CharacterRole[];
   weaponCode: number;

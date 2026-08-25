@@ -1,15 +1,4 @@
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route";
-import type { Tier } from "@/lib/design-tokens";
-import { assignPerformanceTier } from "@/lib/tierScoring";
-
-export function assignCharTier(stat: {
-  winRate: number;
-  top3Rate?: number;
-  averageRank: number;
-  averageRP: number;
-}): Tier {
-  return assignPerformanceTier(stat);
-}
 
 export async function fetchStats(
   characterCode: number,

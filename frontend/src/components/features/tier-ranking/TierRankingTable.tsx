@@ -36,7 +36,13 @@ import { TierBadge } from "../TierBadge";
 import { DeltaIndicator } from "./DeltaIndicator";
 import { PatchNoteTooltip } from "./PatchNoteTooltip";
 import { type DisplayRow, type PrevStats } from "./types";
-import { computeMetaScores, assignTier } from "./utils";
+import {
+  assignTier,
+  computeMetaRankPositions,
+  computeMetaScores,
+  getMetaRankingKey,
+  sortRankingsByMetaScore,
+} from "./utils";
 
 function getPatchChangeBadge(patchNote: NonNullable<DisplayRow["patchNote"]>) {
   const types = patchNote.changes.map((change) => change.changeType);
@@ -67,6 +73,43 @@ function getPatchChangeBadge(patchNote: NonNullable<DisplayRow["patchNote"]>) {
   };
 }
 
+function RankChangeIndicator({ change }: { change: DisplayRow["rankChange"] }) {
+  const t = useTranslations("tierRanking.rankChange");
+
+  if (change === null) return null;
+
+  const isNew = change === "new";
+  const isUp = typeof change === "number" && change > 0;
+  const isDown = typeof change === "number" && change < 0;
+  const label = isNew
+    ? t("new")
+    : isUp
+      ? t("up", { count: change })
+      : isDown
+        ? t("down", { count: Math.abs(change) })
+        : t("unchanged");
+  const value = isNew ? "NEW" : isUp ? `▲${change}` : isDown ? `▼${Math.abs(change)}` : "–";
+
+  return (
+    <span
+      title={label}
+      className={cn(
+        "font-mono text-[9px] font-semibold leading-none tabular-nums",
+        isUp
+          ? "text-[var(--color-stat-up)]"
+          : isDown
+            ? "text-[var(--color-stat-down)]"
+            : isNew
+              ? "text-[var(--color-accent-gold)]"
+              : "text-[var(--color-muted-foreground)]"
+      )}
+    >
+      <span aria-hidden="true">{value}</span>
+      <span className="sr-only">{label}</span>
+    </span>
+  );
+}
+
 const fallbackMap = buildFallbackMap();
 const ALL_ROLE = "all" as const;
 type RoleTabValue = typeof ALL_ROLE | CharacterRole;
@@ -84,7 +127,7 @@ function buildDisplayRows(
   if (previousRankings.length > 0) {
     const prevGrandTotal = previousRankings.reduce((s, r) => s + r.totalGames, 0);
     for (const r of previousRankings) {
-      prevMap.set(r.characterNum, {
+      prevMap.set(getMetaRankingKey(r), {
         pickRate: prevGrandTotal > 0 ? (r.totalGames / prevGrandTotal) * 100 : 0,
         winRate: r.winRate,
         averageRP: r.averageRP,
@@ -93,28 +136,37 @@ function buildDisplayRows(
   }
 
   const scores = computeMetaScores(rankings);
-  const sorted = [...rankings].sort((a, b) => {
-    const sa = scores.get(a.characterNum * 1000 + a.bestWeapon) ?? 0;
-    const sb = scores.get(b.characterNum * 1000 + b.bestWeapon) ?? 0;
-    return sb - sa;
-  });
+  const sorted = sortRankingsByMetaScore(rankings, scores);
+  const previousRankPositions = computeMetaRankPositions(previousRankings);
+  const hasPreviousRankings = previousRankings.length > 0;
 
-  return sorted.map((r, i) => ({
-    rank: i + 1,
-    code: r.characterNum,
-    roles: getComboRoles(r.characterNum, r.bestWeapon),
-    weaponCode: r.bestWeapon,
-    hasWeaponIcon: getWeaponIconSpritePosition(r.bestWeapon) !== null,
-    name: resolveCharacterName(r.characterNum, l10n, fallbackMap),
-    weaponName: resolveWeaponName(r.bestWeapon, l10n),
-    imageUrl: getVersionedCharacterMiniWebpUrl(r.characterNum),
-    tier: assignTier(scores.get(r.characterNum * 1000 + r.bestWeapon) ?? 0),
-    pickRate: r.pickRate,
-    winRate: r.winRate,
-    averageRP: r.averageRP,
-    prev: prevMap.get(r.characterNum) ?? null,
-    patchNote: getCharacterPatchNote(r.characterNum, currentPatch) ?? null,
-  }));
+  return sorted.map((r, i) => {
+    const rank = i + 1;
+    const rankingKey = getMetaRankingKey(r);
+    const previousRank = previousRankPositions.get(rankingKey);
+
+    return {
+      rank,
+      rankChange: !hasPreviousRankings
+        ? null
+        : previousRank === undefined
+          ? "new"
+          : previousRank - rank,
+      code: r.characterNum,
+      roles: getComboRoles(r.characterNum, r.bestWeapon),
+      weaponCode: r.bestWeapon,
+      hasWeaponIcon: getWeaponIconSpritePosition(r.bestWeapon) !== null,
+      name: resolveCharacterName(r.characterNum, l10n, fallbackMap),
+      weaponName: resolveWeaponName(r.bestWeapon, l10n),
+      imageUrl: getVersionedCharacterMiniWebpUrl(r.characterNum),
+      tier: assignTier(scores.get(rankingKey) ?? 0),
+      pickRate: r.pickRate,
+      winRate: r.winRate,
+      averageRP: r.averageRP,
+      prev: prevMap.get(rankingKey) ?? null,
+      patchNote: getCharacterPatchNote(r.characterNum, currentPatch) ?? null,
+    };
+  });
 }
 
 interface TierRankingTableProps {
@@ -159,22 +211,49 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
     );
   }, [rankingData, l10n, patch]);
 
+  const previousRoleRankPositions = React.useMemo(() => {
+    if (!rankingData || activeRole === ALL_ROLE) return null;
+
+    const role = activeRole;
+    return computeMetaRankPositions(rankingData.previousRankings, (ranking) =>
+      getComboRoles(ranking.characterNum, ranking.bestWeapon).includes(role)
+    );
+  }, [activeRole, rankingData]);
+
   const filtered = React.useMemo(() => {
-    const base =
+    const roleRankedRows =
       activeRole === ALL_ROLE
         ? rows
-        : rows.filter((c) => c.roles.includes(activeRole as CharacterRole));
+        : rows
+            .filter((row) => row.roles.includes(activeRole))
+            .map((row, index) => {
+              const rank = index + 1;
+              const previousRank = previousRoleRankPositions?.get(
+                getMetaRankingKey({ characterNum: row.code, bestWeapon: row.weaponCode })
+              );
+
+              return {
+                ...row,
+                rank,
+                rankChange:
+                  rankingData?.previousRankings.length === 0
+                    ? null
+                    : previousRank === undefined
+                      ? "new"
+                      : previousRank - rank,
+              } satisfies DisplayRow;
+            });
 
     if (sortKey === "rank") {
-      return sortDir === "asc" ? base : [...base].reverse();
+      return sortDir === "asc" ? roleRankedRows : [...roleRankedRows].reverse();
     }
 
-    return [...base].sort((a, b) => {
+    return [...roleRankedRows].sort((a, b) => {
       const va = a[sortKey];
       const vb = b[sortKey];
       return sortDir === "asc" ? va - vb : vb - va;
     });
-  }, [rows, activeRole, sortKey, sortDir]);
+  }, [activeRole, previousRoleRankPositions, rankingData, rows, sortDir, sortKey]);
 
   const visible = showAll ? filtered : filtered.slice(0, DEFAULT_VISIBLE);
   const hasMore = filtered.length > DEFAULT_VISIBLE;
@@ -254,7 +333,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                   currentKey={sortKey}
                   dir={sortDir}
                   onSort={handleSort}
-                  className="w-28 text-right"
+                  className="w-28 text-left"
                   tooltip={t("tooltips.pickRate")}
                 />
                 <SortableHead
@@ -263,7 +342,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                   currentKey={sortKey}
                   dir={sortDir}
                   onSort={handleSort}
-                  className="w-28 text-right"
+                  className="w-28 text-left"
                   tooltip={t("tooltips.winRate")}
                 />
                 <SortableHead
@@ -272,7 +351,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                   currentKey={sortKey}
                   dir={sortDir}
                   onSort={handleSort}
-                  className="w-32 text-right"
+                  className="w-32 text-left"
                   tooltip={t("tooltips.averageRp")}
                 />
               </TableRow>
@@ -293,14 +372,14 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           <Skeleton className="h-4 w-24" />
                         </div>
                       </TableCell>
-                      <TableCell className="px-3 py-2.5 text-right">
-                        <Skeleton className="h-4 w-12 ml-auto" />
+                      <TableCell className="px-3 py-2.5 text-left">
+                        <Skeleton className="h-4 w-12" />
                       </TableCell>
-                      <TableCell className="px-3 py-2.5 text-right">
-                        <Skeleton className="h-4 w-12 ml-auto" />
+                      <TableCell className="px-3 py-2.5 text-left">
+                        <Skeleton className="h-4 w-12" />
                       </TableCell>
-                      <TableCell className="px-3 py-2.5 text-right">
-                        <Skeleton className="h-4 w-14 ml-auto" />
+                      <TableCell className="px-3 py-2.5 text-left">
+                        <Skeleton className="h-4 w-14" />
                       </TableCell>
                     </TableRow>
                   ))
@@ -335,16 +414,19 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                       >
                         {/* Rank */}
                         <TableCell className="px-3 py-1.5 text-center">
-                          <span
-                            className={cn(
-                              "font-mono text-sm font-bold tabular-nums",
-                              char.rank <= 3
-                                ? "text-[var(--color-accent-gold)]"
-                                : "text-[var(--color-muted-foreground)]"
-                            )}
-                          >
-                            {char.rank}
-                          </span>
+                          <div className="flex flex-col items-center gap-0.5">
+                            <span
+                              className={cn(
+                                "font-mono text-sm font-bold leading-none tabular-nums",
+                                char.rank <= 3
+                                  ? "text-[var(--color-accent-gold)]"
+                                  : "text-[var(--color-muted-foreground)]"
+                              )}
+                            >
+                              {char.rank}
+                            </span>
+                            <RankChangeIndicator change={char.rankChange} />
+                          </div>
                         </TableCell>
                         {/* Tier */}
                         <TableCell className="px-2 py-1.5">
@@ -408,7 +490,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           </div>
                         </TableCell>
                         {/* Pick Rate */}
-                        <TableCell className="px-3 py-1.5 text-right">
+                        <TableCell className="px-3 py-1.5 text-left">
                           <span className="tier-ranking-value">
                             <span>{char.pickRate.toFixed(1)}%</span>
                             <DeltaIndicator
@@ -419,7 +501,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           </span>
                         </TableCell>
                         {/* Win Rate */}
-                        <TableCell className="px-3 py-1.5 text-right">
+                        <TableCell className="px-3 py-1.5 text-left">
                           <span className="tier-ranking-value">
                             <span>{char.winRate.toFixed(1)}%</span>
                             <DeltaIndicator
@@ -430,7 +512,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                           </span>
                         </TableCell>
                         {/* Average RP */}
-                        <TableCell className="px-3 py-1.5 text-right">
+                        <TableCell className="px-3 py-1.5 text-left">
                           <span className="tier-ranking-value">
                             <span
                               className={cn(
@@ -467,7 +549,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
 
         {/* Mobile List */}
         <div className="sm:hidden">
-          <div className="grid grid-cols-[28px_minmax(0,1.7fr)_48px_48px_60px] items-center gap-1.5 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/72 px-2.5 py-2 text-[9px] font-semibold text-[var(--color-muted-foreground)]">
+          <div className="grid grid-cols-[34px_minmax(0,1.7fr)_48px_48px_60px] items-center gap-1.5 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/72 px-2.5 py-2 text-[9px] font-semibold text-[var(--color-muted-foreground)]">
             <span className="text-center">#</span>
             <span>{t("columns.character")}</span>
             <button
@@ -517,7 +599,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
               Array.from({ length: 8 }).map((_, i) => (
                 <div
                   key={i}
-                  className="grid grid-cols-[28px_minmax(0,1.7fr)_48px_48px_60px] items-center gap-1.5 px-2.5 py-2"
+                  className="grid grid-cols-[34px_minmax(0,1.7fr)_48px_48px_60px] items-center gap-1.5 px-2.5 py-2"
                 >
                   <Skeleton className="h-4 w-5 shrink-0" />
                   <div className="flex min-w-0 items-center gap-1.5">
@@ -541,7 +623,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                   <div
                     key={key}
                     className={cn(
-                      "relative grid grid-cols-[28px_minmax(0,1.7fr)_48px_48px_60px] items-center gap-1.5 px-2.5 py-2 cursor-pointer touch-manipulation active:bg-[var(--color-surface-2)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-focus)]",
+                      "relative grid grid-cols-[34px_minmax(0,1.7fr)_48px_48px_60px] items-center gap-1.5 px-2.5 py-2 cursor-pointer touch-manipulation active:bg-[var(--color-surface-2)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-focus)]",
                       char.rank <= 3 && "data-table-highlight"
                     )}
                     role="link"
@@ -557,16 +639,19 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                     }}
                   >
                     {/* Rank */}
-                    <span
-                      className={cn(
-                        "w-5 text-center font-mono text-xs font-bold tabular-nums",
-                        char.rank <= 3
-                          ? "text-[var(--color-accent-gold)]"
-                          : "text-[var(--color-muted-foreground)]"
-                      )}
-                    >
-                      {char.rank}
-                    </span>
+                    <div className="flex flex-col items-center gap-0.5 text-center">
+                      <span
+                        className={cn(
+                          "font-mono text-xs font-bold leading-none tabular-nums",
+                          char.rank <= 3
+                            ? "text-[var(--color-accent-gold)]"
+                            : "text-[var(--color-muted-foreground)]"
+                        )}
+                      >
+                        {char.rank}
+                      </span>
+                      <RankChangeIndicator change={char.rankChange} />
+                    </div>
                     {/* Tier */}
                     <div className="flex min-w-0 items-center gap-1.5">
                       <TierBadge tier={char.tier} className="text-[10px]" />
@@ -694,7 +779,11 @@ function SortableHead({
         type="button"
         className={cn(
           "group/th inline-flex min-h-10 w-full select-none items-center gap-1 whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]",
-          className?.includes("text-right") ? "justify-end" : "justify-center",
+          className?.includes("text-right")
+            ? "justify-end"
+            : className?.includes("text-left")
+              ? "justify-start"
+              : "justify-center",
           isActive
             ? "text-[var(--color-accent-foreground)]"
             : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"

@@ -385,7 +385,6 @@
   min-height: 3.5rem;
   border-color: color-mix(in srgb, var(--color-on-brand) 16%, transparent);
   background: var(--color-home-search-surface);
-  padding-right: 4.5rem;
   color: var(--color-home-search-ink);
   font-size: var(--text-base);
   font-weight: 600;
@@ -404,22 +403,6 @@
   border-color: var(--color-home-rule-strong);
   background: var(--color-home-surface);
   color: var(--color-home-ink);
-}
-
-.home-search-hero__shortcut {
-  position: absolute;
-  top: 50%;
-  right: var(--space-sm);
-  z-index: 2;
-  translate: 0 -50%;
-  border-radius: var(--radius-input);
-  background: var(--color-home-key);
-  padding: var(--space-2xs) var(--space-xs);
-  color: var(--color-home-key-ink);
-  font-family: var(--font-outlier);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  pointer-events: none;
 }
 
 .home-search-hero__quick-links {
@@ -889,14 +872,6 @@
 @media (max-width: 22rem) {
   .home-search-hero__inner {
     padding-inline: var(--space-sm);
-  }
-
-  .home-search-hero__shortcut {
-    display: none;
-  }
-
-  .home-search-hero__search input {
-    padding-right: var(--space-md);
   }
 
   .home-search-hero__foot,
@@ -3415,7 +3390,7 @@ body,
 .tier-ranking-value {
   display: inline-flex;
   align-items: baseline;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: var(--space-xs);
   color: var(--color-home-ink);
   font-family: var(--font-mono);

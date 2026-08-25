@@ -10,15 +10,18 @@ import { useL10n } from "@/components/L10nProvider";
 import { Link } from "@/i18n/navigation";
 import { getCharacterMiniWebpUrl, getCharacterName } from "@/lib/characterMap";
 import { DEFAULT_CHARACTER_ANALYSIS_TIER } from "@/lib/characterTier";
+import type { Tier } from "@/lib/design-tokens";
+import { buildHomeMetaView, type HomeMetaStats } from "@/lib/homeMetaShared";
 import { cn } from "@/lib/utils";
 import {
   getRepresentativeWeaponCode,
   getWeaponGroupImageUrl,
   resolveWeaponName,
 } from "@/lib/weaponMap";
+import { computeCharacterMetaTiers } from "../tier-ranking/utils";
 import { CharacterHeader } from "./CharacterHeader";
 import { RoleComboRpPanel } from "./RoleComboRpPanel";
-import { assignCharTier, fetchStats, fetchStatsHistory } from "./utils";
+import { fetchStats, fetchStatsHistory } from "./utils";
 
 // 탭 콘텐츠: lazy import (코드 스플릿)
 const PatchComparisonTab = React.lazy(() =>
@@ -166,6 +169,7 @@ interface CharacterAnalysisClientProps {
   initialPatches?: string[];
   initialStats?: CharacterStatsResponse | null;
   initialPrevStats?: CharacterStatsResponse | null;
+  initialMetaTiers?: Record<string, Tier>;
   code: number;
   weaponTypeProfiles?: Record<
     string,
@@ -211,6 +215,7 @@ export function CharacterAnalysisClient({
   initialPatches,
   initialStats,
   initialPrevStats,
+  initialMetaTiers = {},
   code,
   weaponTypeProfiles = {},
 }: CharacterAnalysisClientProps) {
@@ -413,6 +418,58 @@ export function CharacterAnalysisClient({
   ]);
 
   const currentPatch = selectedPatch ?? patches[0] ?? null;
+  const initialPatch = patches[0] ?? null;
+  const [homeMetaStatsByPatch, setHomeMetaStatsByPatch] = React.useState<
+    Record<string, HomeMetaStats>
+  >({});
+  const currentHomeMetaStats = currentPatch ? homeMetaStatsByPatch[currentPatch] : undefined;
+  const hasInitialMetaTiers = Object.keys(initialMetaTiers).length > 0;
+  const isInitialMetaSelection =
+    currentPatch === initialPatch && selectedTier === DEFAULT_CHARACTER_ANALYSIS_TIER;
+
+  React.useEffect(() => {
+    if (!currentPatch || currentHomeMetaStats) return;
+    if (isInitialMetaSelection && hasInitialMetaTiers) return;
+
+    const controller = new AbortController();
+
+    fetch(`/api/meta/home-stats?patchVersion=${encodeURIComponent(currentPatch)}`, {
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("메타 통계를 불러오지 못했습니다.");
+        return (await response.json()) as HomeMetaStats;
+      })
+      .then((metaStats) => {
+        setHomeMetaStatsByPatch((current) => ({
+          ...current,
+          [currentPatch]: metaStats,
+        }));
+      })
+      .catch((error) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+      });
+
+    return () => controller.abort();
+  }, [currentHomeMetaStats, currentPatch, hasInitialMetaTiers, isInitialMetaSelection]);
+
+  const characterMetaTiers = React.useMemo(() => {
+    if (!currentPatch) return {};
+
+    if (currentHomeMetaStats) {
+      const rankings = buildHomeMetaView(currentHomeMetaStats, selectedTier).rankingData.rankings;
+      return computeCharacterMetaTiers(rankings, code);
+    }
+
+    return isInitialMetaSelection ? initialMetaTiers : {};
+  }, [
+    code,
+    currentHomeMetaStats,
+    currentPatch,
+    initialMetaTiers,
+    isInitialMetaSelection,
+    selectedTier,
+  ]);
 
   const selectedWeaponStat = React.useMemo(() => {
     if (!stats?.weapons || selectedWeapon == null) return null;
@@ -426,7 +483,10 @@ export function CharacterAnalysisClient({
 
   const displayStat = selectedWeaponStat ?? stats;
   const displayPrevStat = prevSelectedWeaponStat ?? previousStats;
-  const charTier = displayStat && displayStat.totalGames > 0 ? assignCharTier(displayStat) : null;
+  const charTier =
+    displayStat && displayStat.totalGames > 0 && selectedWeapon != null
+      ? (characterMetaTiers[String(selectedWeapon)] ?? null)
+      : null;
 
   const chartData = React.useMemo(() => {
     return patches

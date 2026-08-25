@@ -1,7 +1,6 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { ArrowRight, BarChart3, GitBranch, Info, TrendingUp } from "lucide-react";
-import Link from "next/link";
+import { BarChart3, Info } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route";
@@ -14,6 +13,7 @@ import { AdSlot } from "@/components/ads/AdSlot";
 import { CharacterAnalysisClient } from "@/components/features/CharacterAnalysisClient";
 import type { ComboEntry, LabCharacter, LabData } from "@/components/features/lab/types";
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary";
+import { computeCharacterMetaTiers } from "@/components/features/tier-ranking/utils";
 import { LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
 import {
   getCharacterAffinityGroupName,
@@ -33,7 +33,9 @@ import {
   resolveCharacterName,
   type CharacterRole,
 } from "@/lib/characterMap";
-import { getPatchAnalysisVersions } from "@/lib/patchAnalysis";
+import { DEFAULT_CHARACTER_ANALYSIS_TIER } from "@/lib/characterTier";
+import { getCachedHomeMetaStats } from "@/lib/homeMetaServer";
+import { buildHomeMetaView } from "@/lib/homeMetaShared";
 import { localizeRoutePath } from "@/lib/seoLocales";
 import { loadL10nMap } from "@/lib/serverL10n";
 import { BASE_URL } from "@/lib/siteMetadata";
@@ -340,7 +342,7 @@ function buildCharacterSeoJsonLd(
   };
 }
 
-function CharacterSeoSection({
+function CharacterStructuredData({
   locale,
   code,
   stats,
@@ -356,226 +358,14 @@ function CharacterSeoSection({
   const characterName = resolveCharacterName(code, l10n, buildFallbackMap());
   const topWeapon = stats.weapons[0] ?? null;
   const topWeaponName = topWeapon ? resolveWeaponName(topWeapon.bestWeapon, l10n) : null;
-  const tierLabel = formatTierLabel(locale, stats.tier);
-  const patchAnalysisVersion = getPatchAnalysisVersions()[0] ?? null;
-  const patchHref = localizeRoutePath(
-    patchAnalysisVersion ? `/patch-analysis/${patchAnalysisVersion}` : "/patch-analysis",
-    locale
-  );
-  const labHref = localizeRoutePath("/character-lab", locale);
   const jsonLd = buildCharacterSeoJsonLd(locale, code, characterName, stats, topWeaponName);
 
-  const copy =
-    locale === "ko"
-      ? {
-          eyebrow: "검색 요약",
-          title: `${characterName} 빌드/특성/무기 통계`,
-          body: `${characterName}는 패치 ${stats.patchVersion} ${tierLabel} 기준 승률 ${formatPercent(
-            stats.winRate
-          )}, 픽률 ${formatPercent(stats.pickRate)}, 평균 RP ${stats.averageRP.toFixed(
-            1
-          )}를 기록했습니다. 무기, 특성, 장비 빌드는 표본 수와 함께 표시됩니다.`,
-          weapon: "주 사용 무기",
-          noWeapon: "무기 표본 확인 중",
-          winRate: "승률",
-          pickRate: "픽률",
-          averageRp: "평균 RP",
-          sample: "분석 표본",
-          sampleSuffix: "판",
-          actionTitle: "연결 데이터",
-          patch: patchAnalysisVersion ? `${patchAnalysisVersion} 패치 분석` : "패치 분석",
-          patchDesc: "제공 중인 패치 메타 분석",
-          lab: "역할 비교",
-          labDesc: "같은 역할군 안에서 성과 비교",
-        }
-      : locale === "ja"
-        ? {
-            eyebrow: "検索サマリー",
-            title: `${characterName} ビルド・特性・武器統計`,
-            body: `${characterName}はパッチ${stats.patchVersion}の${tierLabel}基準で、勝率${formatPercent(
-              stats.winRate
-            )}、ピック率${formatPercent(stats.pickRate)}、平均RP ${stats.averageRP.toFixed(
-              1
-            )}を記録しています。武器、特性、装備ビルドはサンプル数とあわせて表示します。`,
-            weapon: "主な武器",
-            noWeapon: "武器標本を確認中",
-            winRate: "勝率",
-            pickRate: "ピック率",
-            averageRp: "平均RP",
-            sample: "分析標本",
-            sampleSuffix: "試合",
-            actionTitle: "関連データ",
-            patch: patchAnalysisVersion ? `パッチ${patchAnalysisVersion}分析` : "パッチ分析",
-            patchDesc: "提供中のパッチメタ分析",
-            lab: "ロール比較",
-            labDesc: "同じロール内の成績比較",
-          }
-        : locale === "zh-Hans"
-          ? {
-              eyebrow: "搜索摘要",
-              title: `${characterName} 出装、特性与武器统计`,
-              body: `${characterName} 在 ${stats.patchVersion} 版本 ${tierLabel} 条件下，胜率 ${formatPercent(
-                stats.winRate
-              )}、选取率 ${formatPercent(stats.pickRate)}、平均 RP ${stats.averageRP.toFixed(
-                1
-              )}。武器、特性和装备统计会与样本数一起显示。`,
-              weapon: "主要武器",
-              noWeapon: "正在确认武器样本",
-              winRate: "胜率",
-              pickRate: "选取率",
-              averageRp: "平均 RP",
-              sample: "分析样本",
-              sampleSuffix: "场",
-              actionTitle: "相关数据",
-              patch: patchAnalysisVersion ? `${patchAnalysisVersion} 版本分析` : "版本分析",
-              patchDesc: "当前提供的版本 Meta 分析",
-              lab: "定位比较",
-              labDesc: "同一定位内的表现比较",
-            }
-          : locale === "zh-Hant"
-            ? {
-                eyebrow: "搜尋摘要",
-                title: `${characterName} 出裝、特性與武器統計`,
-                body: `${characterName} 在 ${stats.patchVersion} 版本 ${tierLabel} 條件下，勝率 ${formatPercent(
-                  stats.winRate
-                )}、選取率 ${formatPercent(stats.pickRate)}、平均 RP ${stats.averageRP.toFixed(
-                  1
-                )}。武器、特性和裝備統計會與樣本數一起顯示。`,
-                weapon: "主要武器",
-                noWeapon: "正在確認武器樣本",
-                winRate: "勝率",
-                pickRate: "選取率",
-                averageRp: "平均 RP",
-                sample: "分析樣本",
-                sampleSuffix: "場",
-                actionTitle: "相關資料",
-                patch: patchAnalysisVersion ? `${patchAnalysisVersion} 版本分析` : "版本分析",
-                patchDesc: "目前提供的版本 Meta 分析",
-                lab: "定位比較",
-                labDesc: "同一定位內的表現比較",
-              }
-            : {
-                eyebrow: "Search Summary",
-                title: `${characterName} Build, Traits, and Weapon Stats`,
-                body: `${characterName} has a ${formatPercent(
-                  stats.winRate
-                )} win rate, ${formatPercent(stats.pickRate)} pick rate, and ${stats.averageRP.toFixed(
-                  1
-                )} average RP on patch ${stats.patchVersion} in ${tierLabel}. Weapons, traits, equipment builds, and sample size are shown below.`,
-                weapon: "Main weapon",
-                noWeapon: "Checking weapon samples",
-                winRate: "Win rate",
-                pickRate: "Pick rate",
-                averageRp: "Average RP",
-                sample: "Sample",
-                sampleSuffix: "matches",
-                actionTitle: "Related data",
-                patch: patchAnalysisVersion
-                  ? `Patch ${patchAnalysisVersion} analysis`
-                  : "Patch analysis",
-                patchDesc: "Available patch meta analysis",
-                lab: "Role comparison",
-                labDesc: "Compare performance in the same role",
-              };
-
-  const cards = [
-    { label: copy.weapon, value: topWeaponName ?? copy.noWeapon },
-    { label: copy.winRate, value: formatPercent(stats.winRate) },
-    { label: copy.pickRate, value: formatPercent(stats.pickRate) },
-    { label: copy.averageRp, value: stats.averageRP.toFixed(1) },
-    { label: copy.sample, value: `${formatNumber(stats.totalGames)} ${copy.sampleSuffix}` },
-  ];
-  const links = [
-    {
-      href: patchHref,
-      label: copy.patch,
-      description: copy.patchDesc,
-      Icon: TrendingUp,
-      primary: true,
-    },
-    {
-      href: labHref,
-      label: copy.lab,
-      description: copy.labDesc,
-      Icon: GitBranch,
-      primary: false,
-    },
-  ];
-
   return (
-    <section className="dashboard-panel p-3">
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(260px,330px)] lg:items-start">
-        <div>
-          <p className="text-xs font-medium text-[var(--color-muted-foreground)]">{copy.eyebrow}</p>
-          <h2 className="mt-1.5 text-[1.25rem] font-bold text-[var(--color-foreground)] sm:text-[1.5rem]">
-            {copy.title}
-          </h2>
-          <p className="mt-1.5 max-w-[58rem] text-sm leading-6 text-[var(--color-muted-foreground)] sm:text-[0.95rem] sm:leading-7">
-            {copy.body}
-          </p>
-        </div>
-
-        <nav
-          className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-1.5"
-          aria-label={copy.title}
-        >
-          <p className="px-2 pb-1.5 text-xs font-bold text-[var(--color-muted-foreground)]">
-            {copy.actionTitle}
-          </p>
-          <div className="grid gap-1.5">
-            {links.map(({ href, label, description, Icon, primary }) => (
-              <Link
-                key={href}
-                href={href}
-                className={`group grid grid-cols-[1.75rem_minmax(0,1fr)_1.25rem] items-center gap-2 rounded-md border px-2 py-2 ${
-                  primary
-                    ? "border-[var(--color-border-light)] bg-[var(--color-surface)] hover:bg-[var(--color-surface-2)]"
-                    : "border-transparent bg-transparent hover:border-[var(--color-border)] hover:bg-[var(--color-surface-2)]"
-                }`}
-              >
-                <span
-                  className={`flex h-7 w-7 items-center justify-center rounded-md border ${
-                    primary
-                      ? "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
-                      : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]"
-                  }`}
-                >
-                  <Icon className="h-4 w-4" />
-                </span>
-                <span className="min-w-0">
-                  <span className="block truncate text-sm font-bold text-[var(--color-foreground)]">
-                    {label}
-                  </span>
-                  <span className="mt-0.5 block truncate text-xs text-[var(--color-muted-foreground)]">
-                    {description}
-                  </span>
-                </span>
-                <ArrowRight className="h-4 w-4 text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]" />
-              </Link>
-            ))}
-          </div>
-        </nav>
-      </div>
-
-      <dl className="mt-3 grid gap-1.5 sm:grid-cols-2 lg:grid-cols-5">
-        {cards.map((card) => (
-          <div
-            key={card.label}
-            className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1.5"
-          >
-            <dt className="text-xs text-[var(--color-muted-foreground)]">{card.label}</dt>
-            <dd className="mt-0.5 truncate text-sm font-bold text-[var(--color-foreground)]">
-              {card.value}
-            </dd>
-          </div>
-        ))}
-      </dl>
-    </section>
+    <script
+      type="application/ld+json"
+      suppressHydrationWarning
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
   );
 }
 
@@ -657,7 +447,22 @@ export async function CharacterPageContent({
   initialStats,
   initialPrevStats,
 }: CharacterPageContentProps) {
-  const t = await getTranslations({ locale, namespace: "characterPage" });
+  const [t, initialMetaTiers] = await Promise.all([
+    getTranslations({ locale, namespace: "characterPage" }),
+    (async () => {
+      const currentPatch = patches[0];
+      if (!currentPatch) return {};
+
+      try {
+        const metaStats = await getCachedHomeMetaStats(currentPatch);
+        const rankings = buildHomeMetaView(metaStats, DEFAULT_CHARACTER_ANALYSIS_TIER).rankingData
+          .rankings;
+        return computeCharacterMetaTiers(rankings, code);
+      } catch {
+        return {};
+      }
+    })(),
+  ]);
   const serverSummary = buildServerSummary(locale, code, initialStats);
   const summaryTitle = getSummaryTitle(locale);
   const insight = buildInsight(locale, code, initialStats, initialPrevStats);
@@ -757,7 +562,7 @@ export async function CharacterPageContent({
       ) : null}
 
       {initialStats ? (
-        <CharacterSeoSection locale={locale} code={code} stats={initialStats} />
+        <CharacterStructuredData locale={locale} code={code} stats={initialStats} />
       ) : null}
 
       {insight ? <CharacterInsightSection insight={insight} /> : null}
@@ -770,6 +575,7 @@ export async function CharacterPageContent({
               initialPatches={patches}
               initialStats={initialStats}
               initialPrevStats={initialPrevStats}
+              initialMetaTiers={initialMetaTiers}
               code={code}
               weaponTypeProfiles={weaponTypeProfiles}
             />

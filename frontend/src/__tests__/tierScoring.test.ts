@@ -1,21 +1,22 @@
 import { describe, it, expect } from "vitest";
-import { assignCharTier } from "@/components/features/character-analysis/utils";
-import { computeMetaScores, assignTier } from "@/components/features/tier-ranking/utils";
 import {
-  assignPerformanceTier,
-  comparePerformanceTierStats,
-  computeComboTierScore,
-} from "@/lib/tierScoring";
+  computeMetaScores,
+  assignTier,
+  computeCharacterMetaTiers,
+  computeMetaRankPositions,
+  META_SCORE_WEIGHTS,
+} from "@/components/features/tier-ranking/utils";
+import { comparePerformanceTierStats, computeComboTierScore } from "@/lib/tierScoring";
 
 describe("assignTier", () => {
-  it("S 티어: score >= 1.0", () => {
-    expect(assignTier(1.0)).toBe("S");
+  it("S 티어: score >= 0.8", () => {
+    expect(assignTier(0.8)).toBe("S");
     expect(assignTier(2.5)).toBe("S");
   });
 
-  it("A 티어: 0.3 <= score < 1.0", () => {
+  it("A 티어: 0.3 <= score < 0.8", () => {
     expect(assignTier(0.3)).toBe("A");
-    expect(assignTier(0.99)).toBe("A");
+    expect(assignTier(0.79)).toBe("A");
   });
 
   it("B 티어: -0.3 <= score < 0.3", () => {
@@ -86,7 +87,14 @@ describe("computeMetaScores", () => {
     expect(score1).toBeGreaterThan(score2);
   });
 
-  it("가중치: averageRP 50%, top3Rate 30%, winRate 20%", () => {
+  it("가중치: averageRP 40%, top3Rate 20%, winRate 20%, pickRate 20%", () => {
+    expect(META_SCORE_WEIGHTS).toEqual({
+      averageRP: 0.4,
+      top3Rate: 0.2,
+      winRate: 0.2,
+      pickRate: 0.2,
+    });
+
     // 두 캐릭터 - 하나는 RP만 높고 하나는 winRate만 높음
     const rankings = [
       {
@@ -113,70 +121,161 @@ describe("computeMetaScores", () => {
     const scores = computeMetaScores(rankings);
     const rpHigh = scores.get(1 * 1000 + 1)!;
     const winHigh = scores.get(2 * 1000 + 1)!;
-    // RP 가중치(50%)가 winRate 가중치(20%)보다 높으므로 RP가 높은 쪽이 스코어 높음
+    // RP 가중치(40%)가 winRate 가중치(20%)보다 높으므로 RP가 높은 쪽이 스코어 높음
     expect(rpHigh).toBeGreaterThan(winHigh);
+  });
+
+  it("성적이 같으면 픽률이 높은 무기군의 메타 스코어가 더 높음", () => {
+    const rankings = [
+      {
+        rank: 1,
+        characterNum: 1,
+        bestWeapon: 1,
+        totalGames: 20,
+        pickRate: 1,
+        winRate: 15,
+        averageRP: 10,
+        top3Rate: 40,
+      },
+      {
+        rank: 2,
+        characterNum: 2,
+        bestWeapon: 1,
+        totalGames: 200,
+        pickRate: 10,
+        winRate: 15,
+        averageRP: 10,
+        top3Rate: 40,
+      },
+    ];
+
+    const scores = computeMetaScores(rankings);
+    expect(scores.get(2 * 1000 + 1)).toBeGreaterThan(scores.get(1 * 1000 + 1)!);
   });
 });
 
-describe("assignCharTier", () => {
-  it("조합에서도 재사용하는 공용 기준과 동일한 티어를 반환", () => {
-    const stats = {
-      winRate: 15,
-      averageRank: 3.5,
-      averageRP: 8,
-    };
-
-    expect(assignCharTier(stats)).toBe(assignPerformanceTier(stats));
-  });
-
-  it("높은 승률 + 높은 RP → S 티어", () => {
-    expect(
-      assignCharTier({
-        winRate: 25, // 기대치 12.5% 대비 매우 높음
-        top3Rate: 60, // 기대치 37.5% 대비 높음
-        averageRank: 2,
-        averageRP: 30,
-      })
-    ).toBe("S");
-  });
-
-  it("평균적 스탯 → B 티어", () => {
-    expect(
-      assignCharTier({
+describe("computeCharacterMetaTiers", () => {
+  it("메인 랭킹과 동일한 분포 점수로 캐릭터 무기 티어를 계산", () => {
+    const rankings = [
+      {
+        rank: 1,
+        characterNum: 40,
+        bestWeapon: 6,
+        totalGames: 300,
+        pickRate: 12,
+        winRate: 20,
+        averageRP: 18,
+        top3Rate: 50,
+      },
+      {
+        rank: 2,
+        characterNum: 1,
+        bestWeapon: 1,
+        totalGames: 200,
+        pickRate: 8,
         winRate: 12.5,
-        top3Rate: 37.5,
-        averageRank: 4.5,
         averageRP: 0,
-      })
-    ).toBe("B");
-  });
-
-  it("낮은 스탯 → D 티어", () => {
-    expect(
-      assignCharTier({
+        top3Rate: 37.5,
+      },
+      {
+        rank: 3,
+        characterNum: 2,
+        bestWeapon: 2,
+        totalGames: 100,
+        pickRate: 4,
         winRate: 5,
-        top3Rate: 20,
-        averageRank: 7,
-        averageRP: -20,
-      })
-    ).toBe("D");
+        averageRP: -18,
+        top3Rate: 25,
+      },
+    ];
+
+    expect(computeCharacterMetaTiers(rankings, 40)).toEqual({ "6": "S" });
+    expect(computeCharacterMetaTiers(rankings, 1)).toEqual({ "1": "B" });
+    expect(computeCharacterMetaTiers(rankings, 999)).toEqual({});
+  });
+});
+
+describe("computeMetaRankPositions", () => {
+  it("동일한 메타 점수 기준으로 무기별 이전 순위를 계산", () => {
+    const rankings = [
+      {
+        rank: 3,
+        characterNum: 1,
+        bestWeapon: 2,
+        totalGames: 100,
+        pickRate: 2,
+        winRate: 8,
+        averageRP: -10,
+        top3Rate: 30,
+      },
+      {
+        rank: 2,
+        characterNum: 2,
+        bestWeapon: 1,
+        totalGames: 200,
+        pickRate: 5,
+        winRate: 12.5,
+        averageRP: 0,
+        top3Rate: 37.5,
+      },
+      {
+        rank: 1,
+        characterNum: 1,
+        bestWeapon: 1,
+        totalGames: 300,
+        pickRate: 10,
+        winRate: 18,
+        averageRP: 15,
+        top3Rate: 48,
+      },
+    ];
+
+    const positions = computeMetaRankPositions(rankings);
+
+    expect(positions.get(1 * 1000 + 1)).toBe(1);
+    expect(positions.get(2 * 1000 + 1)).toBe(2);
+    expect(positions.get(1 * 1000 + 2)).toBe(3);
   });
 
-  it("top3Rate 없으면 averageRank로 대체", () => {
-    const withTop3 = assignCharTier({
-      winRate: 15,
-      top3Rate: 45,
-      averageRank: 3,
-      averageRP: 10,
-    });
-    const withRank = assignCharTier({
-      winRate: 15,
-      averageRank: 3,
-      averageRP: 10,
-    });
-    // top3Rate 45%와 averageRank 3의 Z-score는 비슷 (둘 다 평균보다 좋음)
-    expect(["S", "A"]).toContain(withTop3);
-    expect(["S", "A"]).toContain(withRank);
+  it("필터 내부 순위를 1위부터 다시 계산", () => {
+    const rankings = [
+      {
+        rank: 1,
+        characterNum: 1,
+        bestWeapon: 1,
+        totalGames: 300,
+        pickRate: 10,
+        winRate: 18,
+        averageRP: 15,
+        top3Rate: 48,
+      },
+      {
+        rank: 2,
+        characterNum: 2,
+        bestWeapon: 1,
+        totalGames: 200,
+        pickRate: 5,
+        winRate: 12.5,
+        averageRP: 0,
+        top3Rate: 37.5,
+      },
+      {
+        rank: 3,
+        characterNum: 1,
+        bestWeapon: 2,
+        totalGames: 100,
+        pickRate: 2,
+        winRate: 8,
+        averageRP: -10,
+        top3Rate: 30,
+      },
+    ];
+
+    const positions = computeMetaRankPositions(rankings, (ranking) => ranking.characterNum === 1);
+
+    expect(positions.get(1 * 1000 + 1)).toBe(1);
+    expect(positions.get(1 * 1000 + 2)).toBe(2);
+    expect(positions.has(2 * 1000 + 1)).toBe(false);
   });
 });
 

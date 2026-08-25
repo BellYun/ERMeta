@@ -61,7 +61,10 @@ export function AppFrame({
             }
           >
             {showRailAds ? (
-              <aside className="hidden min-[1280px]:block" aria-label="Left advertisement">
+              <aside
+                className="relative z-10 hidden min-[1280px]:block"
+                aria-label="Left advertisement"
+              >
                 {showLeftRailAd ? (
                   <div className="sticky top-[5.5rem] w-full">
                     <AdSlot
@@ -80,7 +83,10 @@ export function AppFrame({
               {children}
             </main>
             {showRailAds ? (
-              <aside className="hidden min-[1700px]:block" aria-label="Right advertisement">
+              <aside
+                className="relative z-10 hidden min-[1700px]:block"
+                aria-label="Right advertisement"
+              >
                 {showRightRailAd ? (
                   <div className="sticky top-[5.5rem] w-full">
                     <AdSlot
