@@ -1,6 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { assignCharTier } from "@/components/features/character-analysis/utils";
-import { computeMetaScores, assignTier } from "@/components/features/tier-ranking/utils";
+import {
+  computeMetaScores,
+  assignTier,
+  META_SCORE_WEIGHTS,
+} from "@/components/features/tier-ranking/utils";
 import {
   assignPerformanceTier,
   comparePerformanceTierStats,
@@ -8,14 +12,14 @@ import {
 } from "@/lib/tierScoring";
 
 describe("assignTier", () => {
-  it("S 티어: score >= 1.0", () => {
-    expect(assignTier(1.0)).toBe("S");
+  it("S 티어: score >= 0.8", () => {
+    expect(assignTier(0.8)).toBe("S");
     expect(assignTier(2.5)).toBe("S");
   });
 
-  it("A 티어: 0.3 <= score < 1.0", () => {
+  it("A 티어: 0.3 <= score < 0.8", () => {
     expect(assignTier(0.3)).toBe("A");
-    expect(assignTier(0.99)).toBe("A");
+    expect(assignTier(0.79)).toBe("A");
   });
 
   it("B 티어: -0.3 <= score < 0.3", () => {
@@ -86,7 +90,14 @@ describe("computeMetaScores", () => {
     expect(score1).toBeGreaterThan(score2);
   });
 
-  it("가중치: averageRP 50%, top3Rate 30%, winRate 20%", () => {
+  it("가중치: averageRP 40%, top3Rate 20%, winRate 20%, pickRate 20%", () => {
+    expect(META_SCORE_WEIGHTS).toEqual({
+      averageRP: 0.4,
+      top3Rate: 0.2,
+      winRate: 0.2,
+      pickRate: 0.2,
+    });
+
     // 두 캐릭터 - 하나는 RP만 높고 하나는 winRate만 높음
     const rankings = [
       {
@@ -113,8 +124,36 @@ describe("computeMetaScores", () => {
     const scores = computeMetaScores(rankings);
     const rpHigh = scores.get(1 * 1000 + 1)!;
     const winHigh = scores.get(2 * 1000 + 1)!;
-    // RP 가중치(50%)가 winRate 가중치(20%)보다 높으므로 RP가 높은 쪽이 스코어 높음
+    // RP 가중치(40%)가 winRate 가중치(20%)보다 높으므로 RP가 높은 쪽이 스코어 높음
     expect(rpHigh).toBeGreaterThan(winHigh);
+  });
+
+  it("성적이 같으면 픽률이 높은 무기군의 메타 스코어가 더 높음", () => {
+    const rankings = [
+      {
+        rank: 1,
+        characterNum: 1,
+        bestWeapon: 1,
+        totalGames: 20,
+        pickRate: 1,
+        winRate: 15,
+        averageRP: 10,
+        top3Rate: 40,
+      },
+      {
+        rank: 2,
+        characterNum: 2,
+        bestWeapon: 1,
+        totalGames: 200,
+        pickRate: 10,
+        winRate: 15,
+        averageRP: 10,
+        top3Rate: 40,
+      },
+    ];
+
+    const scores = computeMetaScores(rankings);
+    expect(scores.get(2 * 1000 + 1)).toBeGreaterThan(scores.get(1 * 1000 + 1)!);
   });
 });
 
