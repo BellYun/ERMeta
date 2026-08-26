@@ -10,7 +10,7 @@ import { createServerClient } from "@/lib/supabase";
 /**
  * 활성 패치 목록은 변경 빈도가 낮아서 요청 간 캐시로 묶는다.
  * 같은 프로세스 내 재요청은 Next Data Cache가 재사용하고,
- * 1시간 뒤 자동 재검증되도록 둔다.
+ * 6시간 뒤 자동 재검증되도록 둔다.
  */
 export const getPatches = unstable_cache(
   async (): Promise<string[]> => {
@@ -51,7 +51,7 @@ export const getPatches = unstable_cache(
   },
   ["patches", "patch-notes-v9-12-2-sample-gate-x8"],
   {
-    revalidate: 900,
+    revalidate: 21600,
     tags: ["patches"],
   }
 );
