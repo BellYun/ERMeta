@@ -15,7 +15,7 @@ import { buildLocalizedAlternates, localizeRoutePath } from "@/lib/seoLocales";
 import { BASE_URL } from "@/lib/siteMetadata";
 import { getMessage, loadIntlMessages, OG_LOCALE_BY_LANGUAGE } from "@/lib/staticIntl";
 
-export const revalidate = 900;
+export const revalidate = 3600;
 export const dynamic = "force-static";
 export const dynamicParams = false;
 

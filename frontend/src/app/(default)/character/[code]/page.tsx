@@ -14,7 +14,6 @@ import { getStaticTranslator, OG_LOCALE_BY_LANGUAGE } from "@/lib/staticIntl";
 
 export const dynamic = "force-static";
 export const dynamicParams = false;
-export const revalidate = 900;
 
 interface Props {
   params: Promise<{ code: string }>;
