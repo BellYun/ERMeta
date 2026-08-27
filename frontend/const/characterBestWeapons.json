@@ -757,5 +757,12 @@
       "label": "권총",
       "isDefault": true
     }
+  ],
+  "90": [
+    {
+      "weaponCode": 11,
+      "label": "저격총",
+      "isDefault": true
+    }
   ]
 }

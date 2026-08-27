@@ -362,6 +362,8 @@ const CHARACTER_TRAITS: Record<number, CompositionTraitKey[]> = {
   87: ["zoneControl", "sustain"],
   88: ["engage", "sustain"],
   89: ["poke", "burst"],
+  // 저격총 장거리 사격과 E 강화 Q/R 연계로 선제 견제 후 짧은 화력 집중을 담당.
+  90: ["poke", "burst"],
 };
 
 /**

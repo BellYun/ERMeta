@@ -592,6 +592,7 @@ describe("buildTrioCompositionInsight", () => {
       // 누적 시너지 매트릭스 생성 이후 추가된 현재 실험체·무기 조합
       { character: 88, weapon: 3 },
       { character: 89, weapon: 9 },
+      { character: 90, weapon: 11 },
     ].filter(
       (member, index, all) =>
         all.findIndex(
@@ -684,8 +685,8 @@ describe("buildTrioCompositionInsight", () => {
       }
     }
 
-    expect(memberInputs).toHaveLength(117);
-    expect(checked).toBe(256_010);
+    expect(memberInputs).toHaveLength(118);
+    expect(checked).toBe(262_760);
     expect(invalid).toEqual([]);
   }, 10_000);
 });
