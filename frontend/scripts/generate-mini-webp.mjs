@@ -37,7 +37,7 @@ const CHARACTERS = {
   77: "077. Yumin", 78: "078. Hisui", 79: "079. Justyna", 80: "080. István",
   81: "081. NiaH", 82: "082. Xuelin", 83: "083. Henry", 84: "084. Blair",
   85: "085. Mirka", 86: "086. Fenrir", 87: "087. Coraline",
-  88: "088. Bihyung", 89: "089. Craver",
+  88: "088. Bihyung", 89: "089. Craver", 90: "090. Lucia",
 };
 
 // 일부 캐릭터는 "Default - 기본" 폴더명 사용

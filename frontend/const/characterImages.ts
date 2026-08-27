@@ -88,4 +88,5 @@ export const CHARACTER_MINI_IMAGE_BY_CODE: Record<number, string> = {
   87: "/CharactER/087. Coraline/02. Default/Mini.png",
   88: "/CharactER/088. Bihyung/02. Default/Mini.png",
   89: "/CharactER/089. Craver/02. Default/Mini.png",
+  90: "/CharactER/090. Lucia/02. Default/Mini.png",
 };
