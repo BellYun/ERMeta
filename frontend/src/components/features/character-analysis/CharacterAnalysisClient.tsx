@@ -21,7 +21,7 @@ import {
 import { computeCharacterMetaTiers } from "../tier-ranking/utils";
 import { CharacterHeader } from "./CharacterHeader";
 import { RoleComboRpPanel } from "./RoleComboRpPanel";
-import { fetchStats, fetchStatsHistory } from "./utils";
+import { fetchStats, fetchStatsHistory, mergeSuccessfulPatchStats } from "./utils";
 
 // 탭 콘텐츠: lazy import (코드 스플릿)
 const PatchComparisonTab = React.lazy(() =>
@@ -385,15 +385,16 @@ export function CharacterAnalysisClient({
       ]);
       if (cancelled) return;
 
-      setAllPatchStats((prev) => {
-        const merged =
-          prev.length === patches.length ? [...prev] : Array(patches.length).fill(null);
-        merged[selectedPatchIndex] = selectedResult ?? null;
-        if (selectedPreviousPatch) {
-          merged[selectedPatchIndex + 1] = previousResult;
-        }
-        return merged;
-      });
+      setAllPatchStats((prev) =>
+        mergeSuccessfulPatchStats(
+          prev,
+          patches.length,
+          selectedPatchIndex,
+          selectedResult,
+          previousResult,
+          Boolean(selectedPreviousPatch)
+        )
+      );
       setSelectedWeapon(
         readWeaponFromLocation() ?? selectedResult?.weapons?.[0]?.bestWeapon ?? null
       );

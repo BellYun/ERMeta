@@ -3,11 +3,13 @@
 import { useLocale } from "next-intl";
 import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  ADSENSE_CHANNELS,
   ADSENSE_CLIENT,
   ADSENSE_PREVIEW,
   type AdSlotReservation,
 } from "@/components/ads/adsenseConfig";
 import type { RouteLocale } from "@/i18n/routing";
+import { markAdSlotState } from "@/lib/adPerformance";
 import { analytics, type AdSlotName } from "@/lib/analytics";
 
 declare global {
@@ -37,6 +39,8 @@ const AD_LABEL: Record<RouteLocale, string> = {
 };
 
 type AdSlotStatus = "reserved" | "requested" | "filled" | "unfilled" | "timeout";
+type TrackedAdSlotStatus = Exclude<AdSlotStatus, "reserved">;
+const AD_REQUEST_ROOT_MARGIN = "800px 0px";
 
 type AdSlotStyle = CSSProperties & {
   "--ad-reserved-height": string;
@@ -95,53 +99,96 @@ export function AdSlot({
   const pushedElement = useRef<HTMLModElement | null>(null);
   const renderedTracked = useRef(false);
   const viewedTracked = useRef(false);
-  const statusTracked = useRef<Set<AdSlotStatus>>(new Set());
+  const statusTracked = useRef<Set<TrackedAdSlotStatus>>(new Set());
+  const renderedAt = useRef<number | null>(null);
+  const requestedAt = useRef<number | null>(null);
+  const filledAt = useRef<number | null>(null);
   const [status, setStatus] = useState<AdSlotStatus>("reserved");
+  const slotKey = `${slotName}:${slot}`;
   const reservedStyle = useMemo(
     () => getReservationStyle(reservation, minHeight),
     [minHeight, reservation]
   );
 
   const trackStatus = useCallback(
-    (nextStatus: AdSlotStatus) => {
+    (nextStatus: TrackedAdSlotStatus) => {
       if (!slot || statusTracked.current.has(nextStatus)) return;
       statusTracked.current.add(nextStatus);
+      const currentTime = performance.now();
+      if (nextStatus === "requested" && requestedAt.current === null) {
+        requestedAt.current = currentTime;
+      }
+      if (nextStatus === "filled" && filledAt.current === null) {
+        filledAt.current = currentTime;
+      }
+      markAdSlotState(slotKey, nextStatus);
       analytics.adSlotStateChanged({
         slotName,
         adSlotId: slot,
         status: nextStatus,
         reservedHeight: getCurrentReservedHeight(reservation, minHeight),
         reservedWidth: reservation?.width ?? null,
+        elapsedSinceRenderMs:
+          renderedAt.current === null ? undefined : currentTime - renderedAt.current,
+        requestToStateMs:
+          requestedAt.current === null ? undefined : currentTime - requestedAt.current,
       });
     },
-    [minHeight, reservation, slot, slotName]
+    [minHeight, reservation, slot, slotKey, slotName]
   );
 
-  useEffect(() => {
+  const requestSlot = useCallback(() => {
     const element = insRef.current;
     if (ADSENSE_PREVIEW || !ADSENSE_CLIENT || !slot || !element) return;
     if (pushedElement.current === element) return;
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
       pushedElement.current = element;
+      setStatus("requested");
       trackStatus("requested");
     } catch {
-      // adsbygoogle may not be loaded yet; loader script will retry on script load
+      // A queued adsbygoogle command is normally accepted before the loader finishes.
     }
   }, [slot, trackStatus]);
+
+  useEffect(() => {
+    if (!slot || renderedTracked.current) return;
+    renderedTracked.current = true;
+    renderedAt.current = performance.now();
+    markAdSlotState(slotKey, "rendered");
+    analytics.adSlotRendered({
+      slotName,
+      adSlotId: slot,
+      reservedHeight: getCurrentReservedHeight(reservation, minHeight),
+      reservedWidth: reservation?.width ?? null,
+    });
+  }, [minHeight, reservation, slot, slotKey, slotName]);
+
+  useEffect(() => {
+    if (ADSENSE_PREVIEW || !ADSENSE_CLIENT || !slot) return;
+    const element = rootRef.current;
+    if (!element) return;
+    if (typeof IntersectionObserver === "undefined") {
+      const timeoutId = setTimeout(requestSlot, 0);
+      return () => clearTimeout(timeoutId);
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+        requestSlot();
+        observer.disconnect();
+      },
+      { rootMargin: AD_REQUEST_ROOT_MARGIN, threshold: 0 }
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [requestSlot, slot]);
 
   useEffect(() => {
     if (ADSENSE_PREVIEW || !ADSENSE_CLIENT || !slot) return;
     const element = insRef.current;
     if (!element || typeof MutationObserver === "undefined") return;
-
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-    const clearStatusTimeout = () => {
-      if (!timeoutId) return;
-      clearTimeout(timeoutId);
-      timeoutId = null;
-    };
 
     const updateStatus = () => {
       const adStatus = element.getAttribute("data-ad-status");
@@ -149,42 +196,34 @@ export function AdSlot({
       if (!nextStatus) return;
       setStatus(nextStatus);
       trackStatus(nextStatus);
-      clearStatusTimeout();
     };
 
     const observer = new MutationObserver(updateStatus);
     observer.observe(element, { attributes: true, attributeFilter: ["data-ad-status"] });
 
-    timeoutId = setTimeout(() => {
+    updateStatus();
+
+    return () => observer.disconnect();
+  }, [slot, trackStatus]);
+
+  useEffect(() => {
+    if (status !== "requested") return;
+    const element = insRef.current;
+    if (!element) return;
+
+    const timeoutId = setTimeout(() => {
       if (element.getAttribute("data-ad-status")) return;
       if (element.querySelector("iframe")) return;
       setStatus("timeout");
       trackStatus("timeout");
-      timeoutId = null;
-    }, 6000);
+    }, 10_000);
 
-    updateStatus();
-
-    return () => {
-      observer.disconnect();
-      clearStatusTimeout();
-    };
-  }, [slot, trackStatus]);
+    return () => clearTimeout(timeoutId);
+  }, [status, trackStatus]);
 
   useEffect(() => {
-    if (!slot || renderedTracked.current) return;
-    renderedTracked.current = true;
-    analytics.adSlotRendered({
-      slotName,
-      adSlotId: slot,
-      reservedHeight: getCurrentReservedHeight(reservation, minHeight),
-      reservedWidth: reservation?.width ?? null,
-    });
-  }, [minHeight, reservation, slot, slotName]);
-
-  useEffect(() => {
-    if (!slot || viewedTracked.current) return;
-    const element = rootRef.current;
+    if (!slot || status !== "filled" || viewedTracked.current) return;
+    const element = insRef.current;
     if (!element || typeof IntersectionObserver === "undefined") return;
 
     let viewTimer: ReturnType<typeof setTimeout> | null = null;
@@ -201,12 +240,18 @@ export function AdSlot({
         if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
           if (viewTimer) return;
           viewTimer = setTimeout(() => {
+            const currentTime = performance.now();
             viewedTracked.current = true;
+            markAdSlotState(slotKey, "viewable");
             analytics.adSlotViewed({
               slotName,
               adSlotId: slot,
               reservedHeight: getCurrentReservedHeight(reservation, minHeight),
               reservedWidth: reservation?.width ?? null,
+              renderToViewableMs:
+                renderedAt.current === null ? undefined : currentTime - renderedAt.current,
+              fillToViewableMs:
+                filledAt.current === null ? undefined : currentTime - filledAt.current,
             });
             observer.disconnect();
           }, 1000);
@@ -223,7 +268,7 @@ export function AdSlot({
       clearViewTimer();
       observer.disconnect();
     };
-  }, [minHeight, reservation, slot, slotName]);
+  }, [minHeight, reservation, slot, slotKey, slotName, status]);
 
   if (ADSENSE_PREVIEW) {
     return (
@@ -232,6 +277,7 @@ export function AdSlot({
         className={`ad-placement ad-placement-preview ${className ?? ""}`}
         style={reservedStyle}
         data-ad-slot-name={slotName}
+        data-ad-slot-key={slotKey}
         data-ad-slot-status="preview"
       >
         <span className="ad-placement-label">{label}</span>
@@ -250,6 +296,7 @@ export function AdSlot({
       className={`ad-placement ${className ?? ""}`}
       style={reservedStyle}
       data-ad-slot-name={slotName}
+      data-ad-slot-key={slotKey}
       data-ad-slot-status={status}
     >
       <span className="ad-placement-label">{label}</span>
@@ -260,6 +307,7 @@ export function AdSlot({
         style={{ display: "block", minHeight: 0, width: "100%", height: "100%" }}
         data-ad-client={ADSENSE_CLIENT}
         data-ad-slot={slot}
+        data-ad-channel={ADSENSE_CHANNELS[slotName] || undefined}
         data-ad-format={format}
         data-ad-layout={layout}
         data-ad-layout-key={layoutKey}

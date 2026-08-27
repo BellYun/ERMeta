@@ -1,5 +1,31 @@
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route";
 
+export function mergeSuccessfulPatchStats(
+  current: (CharacterStatsResponse | null)[],
+  patchCount: number,
+  selectedPatchIndex: number,
+  selectedResult: CharacterStatsResponse | null,
+  previousResult: CharacterStatsResponse | null,
+  includePreviousPatch: boolean
+) {
+  let merged = current;
+
+  const writeResult = (index: number, result: CharacterStatsResponse | null) => {
+    if (!result || index < 0 || index >= patchCount || merged[index] === result) return;
+    if (merged === current) {
+      merged = current.length === patchCount ? [...current] : Array(patchCount).fill(null);
+    }
+    merged[index] = result;
+  };
+
+  writeResult(selectedPatchIndex, selectedResult);
+  if (includePreviousPatch) {
+    writeResult(selectedPatchIndex + 1, previousResult);
+  }
+
+  return merged;
+}
+
 export async function fetchStats(
   characterCode: number,
   patchVersion: string,
