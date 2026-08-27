@@ -14,7 +14,9 @@ export function RootDocumentExtras() {
       <AmplitudeLoader />
       <WebVitalsReporter />
       <GoogleAnalytics />
-      <AdSenseScript />
+      <Suspense fallback={null}>
+        <AdSenseScript />
+      </Suspense>
       <Suspense fallback={null}>
         <AdBlockRecoveryPrompt />
       </Suspense>

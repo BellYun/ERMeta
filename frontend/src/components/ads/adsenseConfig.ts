@@ -67,6 +67,18 @@ export const ADSENSE_SLOTS = {
     : (process.env.NEXT_PUBLIC_ADSENSE_SITE_RAIL_RIGHT_SLOT ?? productionDefault),
 } as const;
 
+/**
+ * Optional AdSense custom channels. Assign one channel per placement in AdSense so revenue and
+ * Active View can be joined with the client-side slot_name funnel without tracking ad clicks.
+ */
+export const ADSENSE_CHANNELS = {
+  home_ranking: process.env.NEXT_PUBLIC_ADSENSE_HOME_RANKING_CHANNEL ?? "",
+  synergy_detail_top: process.env.NEXT_PUBLIC_ADSENSE_SYNERGY_DETAIL_CHANNEL ?? "",
+  character_analysis_top: process.env.NEXT_PUBLIC_ADSENSE_CHARACTER_ANALYSIS_CHANNEL ?? "",
+  site_rail_left: process.env.NEXT_PUBLIC_ADSENSE_SITE_RAIL_LEFT_CHANNEL ?? "",
+  site_rail_right: process.env.NEXT_PUBLIC_ADSENSE_SITE_RAIL_RIGHT_CHANNEL ?? "",
+} as const;
+
 export function canRenderAdSlot(slot: string) {
   return ADSENSE_PREVIEW || (Boolean(ADSENSE_CLIENT) && Boolean(slot));
 }
