@@ -322,13 +322,17 @@ describe("analytics — P0 helpers", () => {
         pagePath: "/ko/synergy-detail",
       });
       await flushAsync();
-      expect(trackMock).toHaveBeenCalledWith("ad_slot_rendered", {
-        slot_name: "synergy_detail_top",
-        ad_slot_id: "8139813658",
-        page_path: "/ko/synergy-detail",
-        reserved_height: undefined,
-        reserved_width: undefined,
-      });
+      expect(trackMock).toHaveBeenCalledWith(
+        "ad_slot_rendered",
+        expect.objectContaining({
+          slot_name: "synergy_detail_top",
+          ad_slot_id: "8139813658",
+          page_path: "/ko/synergy-detail",
+          page_surface: "synergy_detail",
+          ad_delivery_state: "no_slot",
+          ad_resource_count: 0,
+        })
+      );
     });
 
     it("ad_slot_viewed 에 슬롯명과 viewport 정보를 전달한다", async () => {
@@ -341,15 +345,18 @@ describe("analytics — P0 helpers", () => {
         pagePath: "/ko",
       });
       await flushAsync();
-      expect(trackMock).toHaveBeenCalledWith("ad_slot_viewed", {
-        slot_name: "home_ranking",
-        ad_slot_id: "8139813658",
-        page_path: "/ko",
-        viewport_width: 390,
-        viewport_height: 844,
-        reserved_height: undefined,
-        reserved_width: undefined,
-      });
+      expect(trackMock).toHaveBeenCalledWith(
+        "ad_slot_viewed",
+        expect.objectContaining({
+          slot_name: "home_ranking",
+          ad_slot_id: "8139813658",
+          page_path: "/ko",
+          page_surface: "home",
+          viewport_width: 390,
+          viewport_height: 844,
+          ad_correlated_long_task_count: 0,
+        })
+      );
     });
 
     it("ad_slot_state_changed 에 슬롯 상태와 예약 크기를 전달한다", async () => {
@@ -361,14 +368,46 @@ describe("analytics — P0 helpers", () => {
         reservedWidth: 160,
       });
       await flushAsync();
-      expect(trackMock).toHaveBeenCalledWith("ad_slot_state_changed", {
-        slot_name: "site_rail_right",
-        ad_slot_id: "8139813658",
-        status: "unfilled",
-        page_path: undefined,
-        reserved_height: 600,
-        reserved_width: 160,
+      expect(trackMock).toHaveBeenCalledWith(
+        "ad_slot_state_changed",
+        expect.objectContaining({
+          slot_name: "site_rail_right",
+          ad_slot_id: "8139813658",
+          status: "unfilled",
+          page_path: undefined,
+          reserved_height: 600,
+          reserved_width: 160,
+          page_long_task_total_ms: 0,
+        })
+      );
+    });
+
+    it("web vital 이벤트에 고정 page path와 attribution을 전달한다", async () => {
+      analytics.webVitalReported({
+        name: "INP",
+        value: 189.6,
+        delta: 189.6,
+        id: "v4-test",
+        pagePath: "/ko/character/1",
+        attribution: {
+          inp_longest_script_is_ad: true,
+          inp_input_delay_ms: 82.4,
+        },
       });
+      await flushAsync();
+
+      expect(trackMock).toHaveBeenCalledWith(
+        "web_vital_measured",
+        expect.objectContaining({
+          metric_name: "INP",
+          value: 190,
+          page_path: "/ko/character/1",
+          page_surface: "character_detail",
+          inp_longest_script_is_ad: true,
+          inp_input_delay_ms: 82.4,
+          ad_delivery_state: "no_slot",
+        })
+      );
     });
   });
 

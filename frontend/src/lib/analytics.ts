@@ -3,6 +3,7 @@ import {
   type AdBlockRecoveryDismissReason,
   type AdBlockRecoveryVariant,
 } from "@/lib/adBlockRecoveryExperiment";
+import { getAdPerformanceSnapshot, type AdScriptState } from "@/lib/adPerformance";
 
 type AmplitudeModule = typeof import("@amplitude/analytics-browser");
 
@@ -39,6 +40,44 @@ function trackAdBlockRecovery(event: string, properties: FlatAnalyticsProperties
 function getCurrentPagePath() {
   if (typeof window === "undefined") return undefined;
   return window.location?.pathname;
+}
+
+function getPageSurface(pagePath: string | undefined) {
+  if (!pagePath) return "unknown";
+  const path = pagePath.replace(/^\/(?:ko|en|ja|zh-Hans|zh-Hant)(?=\/|$)/, "") || "/";
+  if (path === "/") return "home";
+  if (path.startsWith("/character/")) return "character_detail";
+  if (path.startsWith("/character-analysis")) return "character_analysis";
+  if (path.startsWith("/synergy-detail")) return "synergy_detail";
+  if (path.startsWith("/patch-analysis")) return "patch_analysis";
+  if (path.startsWith("/patches")) return "patches";
+  if (path.startsWith("/about")) return "about";
+  if (path.startsWith("/methodology")) return "methodology";
+  return "other";
+}
+
+function getAdPerformanceProperties() {
+  const snapshot = getAdPerformanceSnapshot();
+  return {
+    ad_script_state: snapshot.scriptState,
+    ad_script_load_ms: snapshot.scriptLoadMs,
+    ad_delivery_state: snapshot.deliveryState,
+    ad_rendered_slot_count: snapshot.renderedSlotCount,
+    ad_requested_slot_count: snapshot.requestedSlotCount,
+    ad_filled_slot_count: snapshot.filledSlotCount,
+    ad_viewable_slot_count: snapshot.viewableSlotCount,
+    ad_failed_slot_count: snapshot.failedSlotCount,
+    ad_resource_count: snapshot.adResourceCount,
+    ad_resource_duration_ms: snapshot.adResourceDurationMs,
+    ad_transfer_kb: snapshot.adTransferKb,
+    page_long_task_count: snapshot.pageLongTaskCount,
+    page_long_task_total_ms: snapshot.pageLongTaskTotalMs,
+    page_long_task_max_ms: snapshot.pageLongTaskMaxMs,
+    ad_frame_long_task_count: snapshot.adFrameLongTaskCount,
+    ad_frame_long_task_total_ms: snapshot.adFrameLongTaskTotalMs,
+    ad_correlated_long_task_count: snapshot.adCorrelatedLongTaskCount,
+    ad_correlated_long_task_total_ms: snapshot.adCorrelatedLongTaskTotalMs,
+  };
 }
 
 // ── Types (pm/amplitude-event-design.md §3.3) ────────────────────────────────
@@ -316,12 +355,15 @@ export const analytics = {
     reservedHeight?: number;
     reservedWidth?: number | null;
   }) {
+    const pagePath = args.pagePath ?? getCurrentPagePath();
     track("ad_slot_rendered", {
       slot_name: args.slotName,
       ad_slot_id: args.adSlotId,
-      page_path: args.pagePath ?? getCurrentPagePath(),
+      page_path: pagePath,
+      page_surface: getPageSurface(pagePath),
       reserved_height: args.reservedHeight,
       reserved_width: args.reservedWidth,
+      ...getAdPerformanceProperties(),
     });
   },
 
@@ -332,7 +374,10 @@ export const analytics = {
     pagePath?: string;
     reservedHeight?: number;
     reservedWidth?: number | null;
+    renderToViewableMs?: number;
+    fillToViewableMs?: number;
   }) {
+    const pagePath = args.pagePath ?? getCurrentPagePath();
     const viewport =
       typeof window !== "undefined"
         ? {
@@ -344,11 +389,15 @@ export const analytics = {
     track("ad_slot_viewed", {
       slot_name: args.slotName,
       ad_slot_id: args.adSlotId,
-      page_path: args.pagePath ?? getCurrentPagePath(),
+      page_path: pagePath,
+      page_surface: getPageSurface(pagePath),
       viewport_width: viewport?.width,
       viewport_height: viewport?.height,
       reserved_height: args.reservedHeight,
       reserved_width: args.reservedWidth,
+      render_to_viewable_ms: args.renderToViewableMs,
+      fill_to_viewable_ms: args.fillToViewableMs,
+      ...getAdPerformanceProperties(),
     });
   },
 
@@ -359,14 +408,32 @@ export const analytics = {
     status: AdSlotStatus;
     reservedHeight: number;
     reservedWidth: number | null;
+    elapsedSinceRenderMs?: number;
+    requestToStateMs?: number;
   }) {
+    const pagePath = getCurrentPagePath();
     track("ad_slot_state_changed", {
       slot_name: args.slotName,
       ad_slot_id: args.adSlotId,
       status: args.status,
-      page_path: getCurrentPagePath(),
+      page_path: pagePath,
+      page_surface: getPageSurface(pagePath),
       reserved_height: args.reservedHeight,
       reserved_width: args.reservedWidth,
+      elapsed_since_render_ms: args.elapsedSinceRenderMs,
+      request_to_state_ms: args.requestToStateMs,
+      ...getAdPerformanceProperties(),
+    });
+  },
+
+  /** AdSense loader 자체의 예약/로드/실패 상태와 그 시점까지의 main-thread 비용. */
+  adScriptStateChanged(args: { state: Exclude<AdScriptState, "not_scheduled" | "loading"> }) {
+    const pagePath = getCurrentPagePath();
+    track("ad_script_state_changed", {
+      state: args.state,
+      page_path: pagePath,
+      page_surface: getPageSurface(pagePath),
+      ...getAdPerformanceProperties(),
     });
   },
 
@@ -480,8 +547,10 @@ export const analytics = {
     id: string;
     rating?: "good" | "needs-improvement" | "poor";
     navigationType?: string;
+    pagePath?: string;
+    attribution?: Record<string, string | number | boolean | null | undefined>;
   }) {
-    const pagePath = getCurrentPagePath();
+    const pagePath = metric.pagePath ?? getCurrentPagePath();
     const connection =
       typeof navigator !== "undefined"
         ? (navigator as unknown as { connection?: { effectiveType?: string } }).connection
@@ -498,11 +567,14 @@ export const analytics = {
       rating: metric.rating,
       navigation_type: metric.navigationType,
       page_path: pagePath,
+      page_surface: getPageSurface(pagePath),
       effective_connection_type: connection?.effectiveType,
       ad_slots_present:
         typeof document !== "undefined"
           ? document.querySelectorAll("[data-ad-slot-name]").length
           : 0,
+      ...metric.attribution,
+      ...getAdPerformanceProperties(),
     });
   },
 };
