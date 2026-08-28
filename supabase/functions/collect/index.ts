@@ -177,7 +177,8 @@ function extractParticipant(raw: any): Participant | null {
 
 /**
  * skillOrderInfo를 정렬된 스킬 순서 배열로 변환한다.
- * BSER 응답에는 실제 장착 무기 외의 무기 스킬도 포함되므로 선택 무기만 남긴다.
+ * BSER 응답에는 무기 스킬의 내부 파생 코드와 다른 무기 타입도 포함되므로
+ * 선택 무기의 대표 스킬 코드만 남긴다.
  */
 function skillOrderToArray(
   info: Record<string, number>,
@@ -189,8 +190,7 @@ function skillOrderToArray(
     .filter((skillCode) => {
       if (skillCode < 3_000_000 || skillCode >= 4_000_000) return true;
 
-      const weaponType = Math.floor((skillCode - 3_000_000) / 1_000);
-      return weaponType === bestWeapon;
+      return skillCode === 3_000_000 + bestWeapon * 1_000;
     });
 }
 

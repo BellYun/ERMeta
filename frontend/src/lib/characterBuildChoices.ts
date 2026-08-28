@@ -46,8 +46,7 @@ function normalizeSkillOrder(value: unknown, bestWeapon: number | null | undefin
       if (code < 3_000_000 || code >= 4_000_000) return true;
       if (!Number.isInteger(bestWeapon) || Number(bestWeapon) <= 0) return true;
 
-      const weaponType = Math.floor((code - 3_000_000) / 1_000);
-      return weaponType === bestWeapon;
+      return code === 3_000_000 + Number(bestWeapon) * 1_000;
     });
 }
 

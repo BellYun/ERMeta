@@ -73,6 +73,20 @@ describe("aggregateSkillOrderChoices", () => {
     ]);
     expect(result[0].averageRP).toBeCloseTo(74.7);
   });
+
+  it("실제 레벨업이 아닌 무기 스킬 내부 파생 코드를 제거한다", () => {
+    const result = aggregateSkillOrderChoices([
+      {
+        best_weapon: 15,
+        skill_order: [3015100, 3015100, 3015100, 1063400, 1063200, 1063300, 3015000],
+        total_games: 1,
+        total_wins: 0,
+        total_rp: 0,
+      },
+    ]);
+
+    expect(result[0].skills).toEqual([1063400, 1063200, 1063300, 3015000]);
+  });
 });
 
 describe("aggregateTacticalSkillChoices", () => {
