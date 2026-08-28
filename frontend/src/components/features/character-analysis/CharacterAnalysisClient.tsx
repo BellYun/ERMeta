@@ -770,7 +770,7 @@ export function CharacterAnalysisClient({
                               return next;
                             })
                           }
-                          className="mt-2 flex min-h-9 w-full items-center justify-center gap-1.5 rounded-md text-xs font-semibold text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-surface)] hover:text-[var(--color-foreground)]"
+                          className="mt-2 flex min-h-9 w-full items-center justify-center gap-1.5 rounded-md text-xs! font-semibold text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-surface)] hover:text-[var(--color-foreground)]"
                         >
                           {signaturesExpanded
                             ? characterHeaderT("collapseSignatures")
