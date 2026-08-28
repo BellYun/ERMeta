@@ -959,6 +959,7 @@
       "secondaryTraits": "サブ特性の組み合わせ",
       "skillChoices": "スキルビルド",
       "skillTree": "スキルツリー",
+      "skillMasterOrder": "スキルマスター順",
       "tacticalSkills": "戦術スキル選択"
     },
     "stats": {
@@ -976,7 +977,10 @@
       "rpValue": "RP {value}",
       "matches": "{count}試合",
       "buildNumber": "ビルド #{number}",
-      "averageRpShort": "平均RP {value}"
+      "averageRpShort": "平均RP {value}",
+      "masterOrder": "マスター順",
+      "levelOrder": "レベルアップ順",
+      "performance": "指標"
     },
     "summaries": {
       "mainTrait": "主特性: {name}",
@@ -987,7 +991,7 @@
       "detailed": "詳細分析データがありません。",
       "itemBuilds": "この特性構成のアイテムビルドデータがありません。",
       "skillBuilds": "スキルツリーのサンプルを確認中です。",
-      "tacticalSkills": "戦術スキルのサンプルを確認中です。"
+      "tacticalSkills": "戦術スキル選択は準備中です。"
     }
   },
   "characterTraitBuild": {

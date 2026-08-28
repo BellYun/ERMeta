@@ -1,0 +1,632 @@
+{
+  "1": {
+    "T": "Jackie_P_Bloodfest.png",
+    "Q": "Jackie_Q1.png",
+    "W": "Jackie_W_Adrenaline Burst.png",
+    "E": "Jackie_E_Leaping Strike.png",
+    "R": "Jackie_R_Chainsaw Murderer.png"
+  },
+  "2": {
+    "T": "Aya_P_Aya_s Justice.png",
+    "Q": "Aya_Q_Double Shot.png",
+    "W": "Aya_W_Steady Shot.png",
+    "E": "Aya_E_Moving Turn.png",
+    "R": "Aya_R_Black Cartridge.png"
+  },
+  "3": {
+    "T": "Fiora_P.png",
+    "Q": "Fiora_Q.png",
+    "W": "Fiora_W.png",
+    "E": "Fiora_E.png",
+    "R": "Fiora_R.png"
+  },
+  "4": {
+    "T": "Magnus_P_Tough Body.png",
+    "Q": "Magnus_Q.png",
+    "W": "Magnus_W.png",
+    "E": "Magnus_E.png",
+    "R": "Magnus_R.png"
+  },
+  "5": {
+    "T": "Zahir_P.png",
+    "Q": "Zahir_Q.png",
+    "W": "Zahir_W.png",
+    "E": "Zahir_E.png",
+    "R": "Zahir_R.png"
+  },
+  "6": {
+    "T": "Nadine_P.png",
+    "Q": "Nadine_Q.png",
+    "W": "Nadine_W.png",
+    "E": "Nadine_E.png",
+    "R": "Nadine_R.png"
+  },
+  "7": {
+    "T": "Hyunwoo_P_Dogfight.png",
+    "Q": "Hyunwoo_Q_Stomping Foot.png",
+    "W": "Hyunwoo_W_Bluff.png",
+    "E": "Hyunwoo_E_First Attack.png",
+    "R": "Hyunwoo_R_Haymaker.png"
+  },
+  "8": {
+    "T": "Hart_P_1.png",
+    "Q": "Hart_Q_1.png",
+    "W": "Hart_W_1.png",
+    "E": "Hart_E_1.png",
+    "R": "Hart_R_1.png"
+  },
+  "9": {
+    "T": "Isol_P.png",
+    "Q": "Isol_Q.png",
+    "W": "Isol_W.png",
+    "E": "Isol_E.png",
+    "R": "Isol_R.png"
+  },
+  "10": {
+    "T": "Li Dailin_P.png",
+    "Q": "Li Dailin_Q.png",
+    "W": "Li Dailin_W.png",
+    "E": "Li Dailin_E.png",
+    "R": "Li Dailin_R.png"
+  },
+  "11": {
+    "T": "Yuki_Passive.png",
+    "Q": "Yuki_Q.png",
+    "W": "Yuki_W.png",
+    "E": "Yuki_E.png",
+    "R": "Yuki_R.png"
+  },
+  "12": {
+    "T": "Hyejin_Passive.png",
+    "Q": "Hyejin_Q.png",
+    "W": "Hyejin_W.png",
+    "E": "Hyejin_E.png",
+    "R": "Hyejin_R.png"
+  },
+  "13": {
+    "T": "00. Xiukai Passive.png",
+    "Q": "01. Xiukai Q.png",
+    "W": "02. Xiukai W.png",
+    "E": "03. Xiukai E1.png",
+    "R": "05. Xiukai R.png"
+  },
+  "14": {
+    "T": "Chiara_P.png",
+    "Q": "Chiara_Q.png",
+    "W": "Chiara_W.png",
+    "E": "Chiara_E.png",
+    "R": "Chiara_R.png"
+  },
+  "15": {
+    "T": "Sissela_Passive.png",
+    "Q": "Sissela_Q.png",
+    "W": "Sissela_W.png",
+    "E": "Sissela_E.png",
+    "R": "Sissela_R.png"
+  },
+  "16": {
+    "T": "Silvia_P.png",
+    "Q": "Silvia_Human_Q.png",
+    "W": "Silvia_Human_W.png",
+    "E": "Silvia_Human_E.png",
+    "R": "Silvia_Human_R.png"
+  },
+  "17": {
+    "T": "Adriana_T.png",
+    "Q": "Adriana_Q.png",
+    "W": "Adriana_W.png",
+    "E": "Adriana_E.png",
+    "R": "Adriana_R.png"
+  },
+  "18": {
+    "T": "Shoichi_P.png",
+    "Q": "Shoichi_Q.png",
+    "W": "Shoichi_W.png",
+    "E": "Shoichi_E.png",
+    "R": "Shoichi_R.png"
+  },
+  "19": {
+    "T": "Emma_P.png",
+    "Q": "Emma_Q.png",
+    "W": "Emma_W.png",
+    "E": "Emma_E.png",
+    "R": "Emma_R.png"
+  },
+  "20": {
+    "T": "Lenox_P.png",
+    "Q": "Lenox_Q.png",
+    "W": "Lenox_W.png",
+    "E": "Lenox_E.png",
+    "R": "Lenox_R.png"
+  },
+  "21": {
+    "T": "Rozzi_P.png",
+    "Q": "Rozzi_Q.png",
+    "W": "Rozzi_W.png",
+    "E": "Rozzi_E.png",
+    "R": "Rozzi_R.png"
+  },
+  "22": {
+    "T": "Luke_P.png",
+    "Q": "Luke_Q.png",
+    "W": "Luke_W.png",
+    "E": "Luke_E.png",
+    "R": "Luke_R.png"
+  },
+  "23": {
+    "T": "Cathy_T.png",
+    "Q": "Cathy_Q.png",
+    "W": "Cathy_W.png",
+    "E": "Cathy_E.png",
+    "R": "Cathy_R.png"
+  },
+  "24": {
+    "T": "Adela_T.png",
+    "Q": "Adela_Q.png",
+    "W": "Adela_W.png",
+    "E": "Adela_E.png",
+    "R": "Adela_R.png"
+  },
+  "25": {
+    "T": "bERnice_T.png",
+    "Q": "bERnice_Q.png",
+    "W": "bERnice_W.png",
+    "E": "bERnice_E.png",
+    "R": "bERnice_R.png"
+  },
+  "26": {
+    "T": "Barbara_P.png",
+    "Q": "Barbara_Q.png",
+    "W": "Barbara_W.png",
+    "E": "Barbara_E.png",
+    "R": "Barbara_R.png"
+  },
+  "27": {
+    "T": "01. Alex_Passive.png",
+    "Q": "02. Alex_Range Q.png",
+    "W": "03. Alex_Range W.png",
+    "E": "04. Alex_Range E.png",
+    "R": "08. Alex_R.png"
+  },
+  "28": {
+    "T": "01. Sua_P.png",
+    "Q": "02. Sua_Q.png",
+    "W": "03. Sua_W.png",
+    "E": "04. Sua_E.png",
+    "R": "05. Sua_R.png"
+  },
+  "29": {
+    "T": "Leon_P.png",
+    "Q": "Leon_Q.png",
+    "W": "Leon_W.png",
+    "E": "Leon_E.png",
+    "R": "Leon_R.png"
+  },
+  "30": {
+    "T": "Eleven_P.png",
+    "Q": "Eleven_Q.png",
+    "W": "Eleven_W.png",
+    "E": "Eleven_E.png",
+    "R": "Eleven_R.png"
+  },
+  "31": {
+    "T": "Rio_T.png",
+    "Q": "Rio_Q.png",
+    "W": "Rio_W.png",
+    "E": "Rio_E.png",
+    "R": "Rio_R.png"
+  },
+  "32": {
+    "T": "William_T.png",
+    "Q": "William_Q.png",
+    "W": "William_W.png",
+    "E": "William_E.png",
+    "R": "William_R.png"
+  },
+  "33": {
+    "T": "Nicky_P.png",
+    "Q": "Nicky_Q.png",
+    "W": "Nicky_W.png",
+    "E": "Nicky_E.png",
+    "R": "Nicky_R.png"
+  },
+  "34": {
+    "T": "Nathapon_P.png",
+    "Q": "Nathapon_Q.png",
+    "W": "Nathapon_W.png",
+    "E": "Nathapon_E.png",
+    "R": "Nathapon_R.png"
+  },
+  "35": {
+    "T": "Jan_P.png",
+    "Q": "Jan_Q.png",
+    "W": "Jan_W.png",
+    "E": "Jan_E.png",
+    "R": "Jan_R.png"
+  },
+  "36": {
+    "T": "Eva_P.png",
+    "Q": "Eva_Q.png",
+    "W": "Eva_W.png",
+    "E": "Eva_E.png",
+    "R": "Eva_R.png"
+  },
+  "37": {
+    "T": "Daniel_P.png",
+    "Q": "Daniel_Q.png",
+    "W": "Daniel_W.png",
+    "E": "Daniel_E.png",
+    "R": "Daniel_R.png"
+  },
+  "38": {
+    "T": "Jenny_P.png",
+    "Q": "Jenny_Q.png",
+    "W": "Jenny_W.png",
+    "E": "Jenny_E.png",
+    "R": "Jenny_R.png"
+  },
+  "39": {
+    "T": "Camilo_P.png",
+    "Q": "Camilo_Q.png",
+    "W": "Camilo_W.png",
+    "E": "Camilo_E.png",
+    "R": "Camilo_R.png"
+  },
+  "40": {
+    "T": "Chloe_P.png",
+    "Q": "Chloe_Q.png",
+    "W": "Chloe_W.png",
+    "E": "Chloe_E.png",
+    "R": "Chloe_R.png"
+  },
+  "41": {
+    "T": "Johann_P.png",
+    "Q": "Johann_Q.png",
+    "W": "Johann_W.png",
+    "E": "Johann_E.png",
+    "R": "Johann_R.png"
+  },
+  "42": {
+    "T": "Bianca_P.png",
+    "Q": "Bianca_Q.png",
+    "W": "Bianca_W.png",
+    "E": "Bianca_E.png",
+    "R": "Bianca_R.png"
+  },
+  "43": {
+    "T": "Celine_Passive.png",
+    "Q": "Celine_Q.png",
+    "W": "Celine_W.png",
+    "E": "Celine_E.png",
+    "R": "Celine_R.png"
+  },
+  "44": {
+    "T": "Echion_P0.png",
+    "Q": "Echion_Q.png",
+    "W": "Echion_W.png",
+    "E": "Echion_E.png",
+    "R": "Echion_R0.png"
+  },
+  "45": {
+    "T": "Mai_P.png",
+    "Q": "Mai_Q.png",
+    "W": "Mai_W.png",
+    "E": "Mai_E.png",
+    "R": "Mai_R.png"
+  },
+  "46": {
+    "T": "Aiden_P.png",
+    "Q": "Aiden_Q.png",
+    "W": "Aiden_W.png",
+    "E": "Aiden_E.png",
+    "R": "Aiden_R.png"
+  },
+  "47": {
+    "T": "Laura_P.png",
+    "Q": "Laura_Q1.png",
+    "W": "Laura_W.png",
+    "E": "Laura_E.png",
+    "R": "Laura_R.png"
+  },
+  "48": {
+    "T": "Tia_P.png",
+    "Q": "Tia_Q1.png",
+    "W": "Tia_W1.png",
+    "E": "Tia_E1.png",
+    "R": "Tia_R.png"
+  },
+  "49": {
+    "T": "Felix_P.png",
+    "Q": "Felix_Q.png",
+    "W": "Felix_W.png",
+    "E": "Felix_E.png",
+    "R": "Felix_R.png"
+  },
+  "50": {
+    "T": "Elena_P.png",
+    "Q": "Elena_Q.png",
+    "W": "Elena_W.png",
+    "E": "Elena_E.png",
+    "R": "Elena_R.png"
+  },
+  "51": {
+    "T": "Priya_P.png",
+    "Q": "Priya_Q.png",
+    "W": "Priya_W.png",
+    "E": "Priya_E.png",
+    "R": "Priya_R.png"
+  },
+  "52": {
+    "T": "Adina_P.png",
+    "Q": "Adina_Q.png",
+    "W": "Adina_W.png",
+    "E": "Adina_E.png",
+    "R": "Adina_R.png"
+  },
+  "53": {
+    "T": "Markus_P.png",
+    "Q": "Markus_Q.png",
+    "W": "Markus_W.png",
+    "E": "Markus_E.png",
+    "R": "Markus_R.png"
+  },
+  "54": {
+    "T": "Karla_P.png",
+    "Q": "Karla_Q.png",
+    "W": "Karla_W.png",
+    "E": "Karla_E.png",
+    "R": "Karla_R.png"
+  },
+  "55": {
+    "T": "Estelle_P.png",
+    "Q": "Estelle_Q.png",
+    "W": "Estelle_W.png",
+    "E": "Estelle_E.png",
+    "R": "Estelle_R.png"
+  },
+  "56": {
+    "T": "Piolo_P.png",
+    "Q": "Piolo_Q.png",
+    "W": "Piolo_W.png",
+    "E": "Piolo_E.png",
+    "R": "Piolo_R.png"
+  },
+  "57": {
+    "T": "Martina_P.png",
+    "Q": "Martina_Q.png",
+    "W": "Martina_W.png",
+    "E": "Martina_E.png",
+    "R": "Martina_R.png"
+  },
+  "58": {
+    "T": "Haze_P.png",
+    "Q": "Haze_Q.png",
+    "W": "Haze_W.png",
+    "E": "Haze_E.png",
+    "R": "Haze_R.png"
+  },
+  "59": {
+    "T": "Isaac_P.png",
+    "Q": "Isaac_Q.png",
+    "W": "Isaac_W.png",
+    "E": "Isaac_E1.png",
+    "R": "Isaac_R.png"
+  },
+  "60": {
+    "T": "Tazia_P.png",
+    "Q": "Tazia_Q1.png",
+    "W": "Tazia_W.png",
+    "E": "Tazia_E.png",
+    "R": "Tazia_R.png"
+  },
+  "61": {
+    "T": "Irem_P.png",
+    "Q": "Irem_Q1.png",
+    "W": "Irem_W1.png",
+    "E": "Irem_E1.png",
+    "R": "Irem_R1.png"
+  },
+  "62": {
+    "T": "Theodore_P.png",
+    "Q": "Theodore_Q.png",
+    "W": "Theodore_W.png",
+    "E": "Theodore_E.png",
+    "R": "Theodore_R.png"
+  },
+  "63": {
+    "T": "LyAnh_P.png",
+    "Q": "LyAnh_Q.png",
+    "W": "LyAnh_W.png",
+    "E": "LyAnh_E.png",
+    "R": "LyAnh_R.png"
+  },
+  "64": {
+    "T": "Vanya_P.png",
+    "Q": "Vanya_Q.png",
+    "W": "Vanya_W.png",
+    "E": "Vanya_E.png",
+    "R": "Vanya_R.png"
+  },
+  "65": {
+    "T": "01. P.png",
+    "Q": "02. Debi_Q.png",
+    "W": "03. Debi_W.png",
+    "E": "04. Debi_E.png",
+    "R": "08. R.png"
+  },
+  "66": {
+    "T": "01. Arda_P.png",
+    "Q": "02. Arda_Q1.png",
+    "W": "03. Arda_W1.png",
+    "E": "04. Arda_E1.png",
+    "R": "05. Arda_R.png"
+  },
+  "67": {
+    "T": "Abigail_P.png",
+    "Q": "Abigail_Q.png",
+    "W": "Abigail_W.png",
+    "E": "Abigail_E.png",
+    "R": "Abigail_R.png"
+  },
+  "68": {
+    "T": "Alonso_P.png",
+    "Q": "Alonso_Q.png",
+    "W": "Alonso_W.png",
+    "E": "Alonso_E.png",
+    "R": "Alonso_R.png"
+  },
+  "69": {
+    "T": "Leni_P.png",
+    "Q": "Leni_Q.png",
+    "W": "Leni_W.png",
+    "E": "Leni_E.png",
+    "R": "Leni_R.png"
+  },
+  "70": {
+    "T": "Tsubame_P.png",
+    "Q": "Tsubame_Q.png",
+    "W": "Tsubame_W.png",
+    "E": "Tsubame_E.png",
+    "R": "Tsubame_R.png"
+  },
+  "71": {
+    "T": "Kenneth_P.png",
+    "Q": "Kenneth_Q.png",
+    "W": "Kenneth_W.png",
+    "E": "Kenneth_E.png",
+    "R": "Kenneth_R.png"
+  },
+  "72": {
+    "T": "Katja_P.png",
+    "Q": "Katja_Q.png",
+    "W": "Katja_W.png",
+    "E": "Katja_E.png",
+    "R": "Katja_R.png"
+  },
+  "73": {
+    "T": "Charlotte_P.png",
+    "Q": "Charlotte_Q.png",
+    "W": "Charlotte_W.png",
+    "E": "Charlotte_E.png",
+    "R": "Charlotte_R.png"
+  },
+  "74": {
+    "T": "Darko_P.png",
+    "Q": "Darko_Q.png",
+    "W": "Darko_W.png",
+    "E": "Darko_E.png",
+    "R": "Darko_R.png"
+  },
+  "75": {
+    "T": "Lenore_P.png",
+    "Q": "Lenore_Q.png",
+    "W": "Lenore_W1.png",
+    "E": "Lenore_E1.png",
+    "R": "Lenore_R.png"
+  },
+  "76": {
+    "T": "Garnet_P.png",
+    "Q": "Garnet_Q1.png",
+    "W": "Garnet_W.png",
+    "E": "Garnet_E.png",
+    "R": "Garnet_R1.png"
+  },
+  "77": {
+    "T": "Yumin_P.png",
+    "Q": "Yumin_Q1.png",
+    "W": "Yumin_W.png",
+    "E": "Yumin_E.png",
+    "R": "Yumin_R.png"
+  },
+  "78": {
+    "T": "Hisui_P.png",
+    "Q": "Hisui_Q.png",
+    "W": "Hisui_W1.png",
+    "E": "Hisui_E.png",
+    "R": "Hisui_R1.png"
+  },
+  "79": {
+    "T": "Justyna_P.png",
+    "Q": "Justyna_Q1.png",
+    "W": "Justyna_W.png",
+    "E": "Justyna_E1.png",
+    "R": "Justyna_R.png"
+  },
+  "80": {
+    "T": "Istvan_P.png",
+    "Q": "Istvan_Q1.png",
+    "W": "Istvan_W1.png",
+    "E": "Istvan_E1.png",
+    "R": "Istvan_R.png"
+  },
+  "81": {
+    "T": "Niah_P.png",
+    "Q": "Niah_Q.png",
+    "W": "Niah_W.png",
+    "E": "Niah_E.png",
+    "R": "Niah_R.png"
+  },
+  "82": {
+    "T": "Xuelin_P.png",
+    "Q": "Xuelin_Q.png",
+    "W": "Xuelin_W.png",
+    "E": "Xuelin_E.png",
+    "R": "Xuelin_R.png"
+  },
+  "83": {
+    "T": "Henry_T.png",
+    "Q": "Henry_Q1.png",
+    "W": "Henry_W.png",
+    "E": "Henry_E.png",
+    "R": "Henry_R.png"
+  },
+  "84": {
+    "T": "Blair_P.png",
+    "Q": "Blair_Q1.png",
+    "W": "Blair_W1.png",
+    "E": "Blair_E1.png",
+    "R": "Blair_R1.png"
+  },
+  "85": {
+    "T": "Mirka_P.png",
+    "Q": "Mirka_Q1.png",
+    "W": "Mirka_W.png",
+    "E": "Mirka_E.png",
+    "R": "Mirka_R.png"
+  },
+  "86": {
+    "T": "Fenrir_P1.png",
+    "Q": "Fenrir_Q1.png",
+    "W": "Fenrir_W1.png",
+    "E": "Fenrir_E.png",
+    "R": "Fenrir_R.png"
+  },
+  "87": {
+    "T": "Coraline_P.png",
+    "Q": "Coraline_Q.png",
+    "W": "Coraline_W1.png",
+    "E": "Coraline_E.png",
+    "R": "Coraline_R.png"
+  },
+  "88": {
+    "T": "Bihyung_P.png",
+    "Q": "Bihyung_Q1.png",
+    "W": "Bihyung_W.png",
+    "E": "Bihyung_E.png",
+    "R": "Bihyung_R.png"
+  },
+  "89": {
+    "T": "01. Craver_P.png",
+    "Q": "02. Craver_Q1.png",
+    "W": "04. Craver_W1.png",
+    "E": "06. Craver_E1.png",
+    "R": "08. Craver_R.png"
+  },
+  "90": {
+    "T": "Lucia_P.png",
+    "Q": "Lucia_Q1.png",
+    "W": "Lucia_W.png",
+    "E": "Lucia_E.png",
+    "R": "Lucia_R.png"
+  }
+}

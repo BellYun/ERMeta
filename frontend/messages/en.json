@@ -495,6 +495,7 @@
       "secondaryTraits": "Secondary Trait Combos",
       "skillChoices": "Skill Builds",
       "skillTree": "Skill Tree",
+      "skillMasterOrder": "Skill Master Order",
       "tacticalSkills": "Tactical Skill Choice"
     },
     "stats": {
@@ -512,7 +513,10 @@
       "rpValue": "RP {value}",
       "matches": "{count} matches",
       "buildNumber": "Build #{number}",
-      "averageRpShort": "Avg RP {value}"
+      "averageRpShort": "Avg RP {value}",
+      "masterOrder": "Master order",
+      "levelOrder": "Level-up order",
+      "performance": "Performance"
     },
     "summaries": {
       "mainTrait": "Main trait: {name}",
@@ -523,7 +527,7 @@
       "detailed": "No detailed analysis data is available.",
       "itemBuilds": "No item build data is available for this trait setup.",
       "skillBuilds": "Skill tree samples are being collected.",
-      "tacticalSkills": "Tactical skill samples are being collected."
+      "tacticalSkills": "Tactical skill choices are coming soon."
     }
   },
   "characterTraitBuild": {

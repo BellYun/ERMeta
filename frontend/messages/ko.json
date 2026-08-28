@@ -489,6 +489,7 @@
       "secondaryTraits": "부특성 조합",
       "skillChoices": "스킬 빌드",
       "skillTree": "스킬 트리",
+      "skillMasterOrder": "스킬 마스터 순서",
       "tacticalSkills": "전술 스킬 선택"
     },
     "stats": {
@@ -506,7 +507,10 @@
       "rpValue": "RP {value}",
       "matches": "{count}판",
       "buildNumber": "빌드 #{number}",
-      "averageRpShort": "평균 RP {value}"
+      "averageRpShort": "평균 RP {value}",
+      "masterOrder": "마스터 순서",
+      "levelOrder": "레벨업 순서",
+      "performance": "지표"
     },
     "summaries": {
       "mainTrait": "주 특성: {name}",
@@ -517,7 +521,7 @@
       "detailed": "상세분석 표본을 확인 중입니다.",
       "itemBuilds": "이 특성의 아이템 빌드 표본을 확인 중입니다.",
       "skillBuilds": "스킬 트리 표본을 확인 중입니다.",
-      "tacticalSkills": "전술 스킬 표본을 확인 중입니다."
+      "tacticalSkills": "전술 스킬 선택은 준비 중입니다."
     }
   },
   "characterTraitBuild": {

@@ -946,6 +946,7 @@
       "secondaryTraits": "副特性组合",
       "skillChoices": "技能配置",
       "skillTree": "技能树",
+      "skillMasterOrder": "技能加点优先顺序",
       "tacticalSkills": "战术技能选择"
     },
     "stats": {
@@ -963,7 +964,10 @@
       "rpValue": "RP {value}",
       "matches": "{count}场",
       "buildNumber": "方案 #{number}",
-      "averageRpShort": "平均RP {value}"
+      "averageRpShort": "平均RP {value}",
+      "masterOrder": "优先顺序",
+      "levelOrder": "升级顺序",
+      "performance": "数据"
     },
     "summaries": {
       "mainTrait": "主特性: {name}",
@@ -974,7 +978,7 @@
       "detailed": "没有详细分析数据。",
       "itemBuilds": "当前特性配置没有道具构筑数据。",
       "skillBuilds": "正在收集技能树样本。",
-      "tacticalSkills": "正在收集战术技能样本。"
+      "tacticalSkills": "战术技能选择即将推出。"
     }
   },
   "characterTraitBuild": {
