@@ -29,6 +29,8 @@ const EMPTY_RESULT: CharacterSkillBuildResult = {
   tacticalSkills: [],
 };
 
+const SKILL_ORDER_LEVEL_LIMIT = 17;
+
 function stripGameMarkup(value: string): string {
   return value.replace(/<[^>]+>/g, "").trim();
 }
@@ -86,7 +88,8 @@ function SkillOrderPanel({
 
           <div className="divide-y divide-[var(--color-border)]">
             {visibleOrders.map((order, orderIndex) => {
-              const masteryOrder = getSkillMasteryOrder(characterCode, order.skills);
+              const visibleSkills = order.skills.slice(0, SKILL_ORDER_LEVEL_LIMIT);
+              const masteryOrder = getSkillMasteryOrder(characterCode, visibleSkills);
               const masteredStepIndices = new Set(
                 masteryOrder.filter((step) => step.isMastered).map((step) => step.stepIndex)
               );
@@ -156,7 +159,7 @@ function SkillOrderPanel({
                       {t("labels.levelOrder")}
                     </span>
                     <ol className="flex min-w-0 flex-wrap gap-1">
-                      {order.skills.map((skillCode, stepIndex) => {
+                      {visibleSkills.map((skillCode, stepIndex) => {
                         const name = resolveSkillName(skillNames, skillCode);
                         const slot = getSkillSlotLabel(characterCode, skillCode);
                         const mastered = masteredStepIndices.has(stepIndex);
@@ -211,12 +214,6 @@ function SkillOrderPanel({
                       </dt>
                       <dd className="font-medium text-[var(--color-foreground)]">
                         {formatSigned(order.averageRP)}
-                      </dd>
-                    </div>
-                    <div className="flex items-center justify-between gap-2">
-                      <dt className="text-[var(--color-muted-foreground)]">{t("stats.total")}</dt>
-                      <dd className="font-medium text-[var(--color-foreground)]">
-                        {order.totalGames.toLocaleString()}
                       </dd>
                     </div>
                   </dl>
