@@ -80,7 +80,9 @@ export async function GET(request: NextRequest) {
 
     const result: CharacterSkillBuildResult = {
       skillOrders: aggregateSkillOrderChoices(
-        (skillOrderResult.data ?? []) as SkillOrderStatsRow[]
+        (skillOrderResult.data ?? []) as SkillOrderStatsRow[],
+        5,
+        characterCode
       ),
       tacticalSkills: aggregateTacticalSkillChoices(
         (tacticalResult.data ?? []) as TacticalSkillStatsRow[]
