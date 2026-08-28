@@ -4,6 +4,7 @@ const PATCH = "12.2";
 
 // 출처:
 // - 12.2 패치노트: https://playeternalreturn.com/posts/news/3783?hl=ko-KR
+// - 12.2b 핫픽스: https://playeternalreturn.com/posts/news/3801?hl=ko-KR
 // 개별 실험체 변경 사항만 기록합니다.
 export const PATCH_NOTES: CharacterPatchNote[] = [
   {
@@ -100,6 +101,30 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         changeType: "buff",
         description: ["스킬 증폭 아이템 세팅의 내구도와 효율을 보완했습니다."],
         valueSummary: "12/14/16/18/20(+스킬 증폭의 2%)% → 12/14/16/18/20(+스킬 증폭의 2.5%)%",
+      },
+    ],
+  },
+  {
+    characterCode: 90, // 루치아
+    patch: PATCH,
+    changes: [
+      {
+        target: "영애의 소양(P) - 피해량 (12.2b 핫픽스)",
+        changeType: "rework",
+        description: ["핫픽스로 기본 피해량을 높이고 스킬 증폭 계수를 낮췄습니다."],
+        valueSummary: "20/60/100(+스킬 증폭의 55%) → 30/70/110(+스킬 증폭의 50%)",
+      },
+      {
+        target: "화려한 낭만 / 찬란한 낭만(Q) - 화려한 낭만 사거리 (12.2b 핫픽스)",
+        changeType: "buff",
+        description: ["핫픽스로 화려한 낭만의 사거리를 늘렸습니다."],
+        valueSummary: "7m → 7.5m",
+      },
+      {
+        target: "총사의 예법(R) - 수정이 부여된 적 기절 지속 시간 (12.2b 핫픽스)",
+        changeType: "buff",
+        description: ["핫픽스로 수정이 부여된 적에게 적중했을 때의 기절 시간을 늘렸습니다."],
+        valueSummary: "0.6초 → 0.7초",
       },
     ],
   },
@@ -411,6 +436,12 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         description: ["무기군별 성능 격차를 줄이기 위해 낮은 도끼 지표를 보완했습니다."],
         valueSummary: "1.9% → 2.1%",
       },
+      {
+        target: "단검 무기 숙련도 레벨 당 기본 공격 증폭 (12.2b 핫픽스)",
+        changeType: "nerf",
+        description: ["핫픽스로 단검 재키의 기본 공격 증폭을 추가로 낮췄습니다."],
+        valueSummary: "2.4% → 2.1%",
+      },
     ],
   },
   {
@@ -472,6 +503,18 @@ export const PATCH_NOTES: CharacterPatchNote[] = [
         description: ["니나의 내구도와 자체 전투 능력을 강화했습니다."],
         valueSummary:
           "70/90/110/130/150(+니나 공격력의 75%) → 70/90/110/130/150(+니나 공격력의 80%)",
+      },
+    ],
+  },
+  {
+    characterCode: 89, // 크레이버
+    patch: PATCH,
+    changes: [
+      {
+        target: "컴뱃 롤 / 퀵 스텝(E) - 컴뱃 롤 쿨다운 (12.2b 핫픽스)",
+        changeType: "nerf",
+        description: ["핫픽스로 컴뱃 롤의 재사용 대기시간을 늘렸습니다."],
+        valueSummary: "13/12.5/12/11.5/11초 → 14/13.5/13/12.5/12초",
       },
     ],
   },
