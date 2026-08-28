@@ -486,7 +486,10 @@
       "topBuilds": "주요 빌드",
       "slotPopularity": "슬롯별 인기 아이템",
       "itemBuilds": "아이템 빌드",
-      "secondaryTraits": "부특성 조합"
+      "secondaryTraits": "부특성 조합",
+      "skillChoices": "스킬 빌드",
+      "skillTree": "스킬 트리",
+      "tacticalSkills": "전술 스킬 선택"
     },
     "stats": {
       "pickRate": "픽률",
@@ -501,7 +504,9 @@
       "winShort": "승 {value}%",
       "rankValue": "순위 #{value}",
       "rpValue": "RP {value}",
-      "matches": "{count}판"
+      "matches": "{count}판",
+      "buildNumber": "빌드 #{number}",
+      "averageRpShort": "평균 RP {value}"
     },
     "summaries": {
       "mainTrait": "주 특성: {name}",
@@ -510,7 +515,9 @@
     },
     "empty": {
       "detailed": "상세분석 표본을 확인 중입니다.",
-      "itemBuilds": "이 특성의 아이템 빌드 표본을 확인 중입니다."
+      "itemBuilds": "이 특성의 아이템 빌드 표본을 확인 중입니다.",
+      "skillBuilds": "스킬 트리 표본을 확인 중입니다.",
+      "tacticalSkills": "전술 스킬 표본을 확인 중입니다."
     }
   },
   "characterTraitBuild": {

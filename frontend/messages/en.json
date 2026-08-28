@@ -492,7 +492,10 @@
       "topBuilds": "Key builds",
       "slotPopularity": "Popular Items by Slot",
       "itemBuilds": "Item Builds",
-      "secondaryTraits": "Secondary Trait Combos"
+      "secondaryTraits": "Secondary Trait Combos",
+      "skillChoices": "Skill Builds",
+      "skillTree": "Skill Tree",
+      "tacticalSkills": "Tactical Skill Choice"
     },
     "stats": {
       "pickRate": "Pick Rate",
@@ -507,7 +510,9 @@
       "winShort": "Win {value}%",
       "rankValue": "Rank #{value}",
       "rpValue": "RP {value}",
-      "matches": "{count} matches"
+      "matches": "{count} matches",
+      "buildNumber": "Build #{number}",
+      "averageRpShort": "Avg RP {value}"
     },
     "summaries": {
       "mainTrait": "Main trait: {name}",
@@ -516,7 +521,9 @@
     },
     "empty": {
       "detailed": "No detailed analysis data is available.",
-      "itemBuilds": "No item build data is available for this trait setup."
+      "itemBuilds": "No item build data is available for this trait setup.",
+      "skillBuilds": "Skill tree samples are being collected.",
+      "tacticalSkills": "Tactical skill samples are being collected."
     }
   },
   "characterTraitBuild": {

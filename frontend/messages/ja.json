@@ -956,7 +956,10 @@
       "topBuilds": "人気ビルド",
       "slotPopularity": "スロット別人気アイテム",
       "itemBuilds": "アイテムビルド",
-      "secondaryTraits": "サブ特性の組み合わせ"
+      "secondaryTraits": "サブ特性の組み合わせ",
+      "skillChoices": "スキルビルド",
+      "skillTree": "スキルツリー",
+      "tacticalSkills": "戦術スキル選択"
     },
     "stats": {
       "pickRate": "ピック率",
@@ -971,7 +974,9 @@
       "winShort": "勝 {value}%",
       "rankValue": "順位 #{value}",
       "rpValue": "RP {value}",
-      "matches": "{count}試合"
+      "matches": "{count}試合",
+      "buildNumber": "ビルド #{number}",
+      "averageRpShort": "平均RP {value}"
     },
     "summaries": {
       "mainTrait": "主特性: {name}",
@@ -980,7 +985,9 @@
     },
     "empty": {
       "detailed": "詳細分析データがありません。",
-      "itemBuilds": "この特性構成のアイテムビルドデータがありません。"
+      "itemBuilds": "この特性構成のアイテムビルドデータがありません。",
+      "skillBuilds": "スキルツリーのサンプルを確認中です。",
+      "tacticalSkills": "戦術スキルのサンプルを確認中です。"
     }
   },
   "characterTraitBuild": {

@@ -10,6 +10,7 @@ import { useL10n, useL10nNamespace } from "@/components/L10nProvider";
 import { useTraitNames } from "@/hooks/useTraitNames";
 import { cn } from "@/lib/utils";
 import { hasTraitIcon } from "@/utils/traitCodes";
+import { CharacterSkillBuildAnalyzer } from "./CharacterSkillBuildAnalyzer";
 import { ItemIcon, WinRateSpan, SLOTS } from "./shared";
 import {
   GameDataTooltip,
@@ -998,6 +999,14 @@ export function CharacterDetailedAnalyzer({
                   </div>
                 );
               })()}
+
+            <CharacterSkillBuildAnalyzer
+              characterCode={characterCode}
+              tier={tier}
+              patchVersion={patchVersion}
+              bestWeapon={bestWeapon}
+              mainCore={selectedMainCore}
+            />
 
             {/* 아이템 빌드 */}
             {equipLoading ? (

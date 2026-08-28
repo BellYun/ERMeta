@@ -943,7 +943,10 @@
       "topBuilds": "热门构筑",
       "slotPopularity": "各槽位热门道具",
       "itemBuilds": "道具构筑",
-      "secondaryTraits": "副特性组合"
+      "secondaryTraits": "副特性组合",
+      "skillChoices": "技能配置",
+      "skillTree": "技能树",
+      "tacticalSkills": "战术技能选择"
     },
     "stats": {
       "pickRate": "选取率",
@@ -958,7 +961,9 @@
       "winShort": "胜 {value}%",
       "rankValue": "排名 #{value}",
       "rpValue": "RP {value}",
-      "matches": "{count}场"
+      "matches": "{count}场",
+      "buildNumber": "方案 #{number}",
+      "averageRpShort": "平均RP {value}"
     },
     "summaries": {
       "mainTrait": "主特性: {name}",
@@ -967,7 +972,9 @@
     },
     "empty": {
       "detailed": "没有详细分析数据。",
-      "itemBuilds": "当前特性配置没有道具构筑数据。"
+      "itemBuilds": "当前特性配置没有道具构筑数据。",
+      "skillBuilds": "正在收集技能树样本。",
+      "tacticalSkills": "正在收集战术技能样本。"
     }
   },
   "characterTraitBuild": {

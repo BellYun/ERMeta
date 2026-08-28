@@ -19,6 +19,7 @@ const NAMESPACES = {
   core: ["Character/Name/", "WeaponType/", "Trait/Name/"],
   "item-names": ["Item/Name/"],
   "game-descriptions": ["Item/Effect/", "Trait/Tooltip/"],
+  "skill-names": ["Skill/Group/Name/", "Skill/Code/Name/", "TacticalSkillSet/Code/Name/"],
 };
 
 const itemEffectsByLanguage = JSON.parse(readFileSync(ITEM_EFFECTS_PATH, "utf8"));
