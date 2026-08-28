@@ -11,6 +11,8 @@ import {
 import { createServerClient } from "@/lib/supabase";
 import { expandCumulativeTier } from "@/utils/tier";
 
+export const revalidate = 1800; // L1: 30분 서버 캐시
+
 export interface CharacterSkillBuildResult {
   skillOrders: SkillOrderChoice[];
   tacticalSkills: TacticalSkillChoice[];
