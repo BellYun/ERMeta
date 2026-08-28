@@ -263,6 +263,7 @@ export function CharacterAnalysisClient({
     }
   );
   const [loading, setLoading] = React.useState(false);
+  const attemptedPatchFetchesRef = React.useRef<Set<string>>(new Set());
 
   const selectedPatchIndex = selectedPatch ? patches.indexOf(selectedPatch) : 0;
   const selectedPreviousPatch =
@@ -273,6 +274,10 @@ export function CharacterAnalysisClient({
     selectedPatchIndex >= 0 && selectedPreviousPatch
       ? (allPatchStats[selectedPatchIndex + 1] ?? null)
       : null;
+
+  React.useEffect(() => {
+    attemptedPatchFetchesRef.current.clear();
+  }, [code, selectedPatch, selectedTier]);
 
   React.useEffect(() => {
     if (!selectablePatches.length) return;
@@ -372,6 +377,10 @@ export function CharacterAnalysisClient({
     const hasPreviousPatchStats =
       !selectedPreviousPatch || Boolean(allPatchStats[selectedPatchIndex + 1]);
     if (hasSelectedPatchStats && hasPreviousPatchStats) return;
+
+    const requestKey = `${code}:${selectedTier}:${selectedPatch}:${selectedPreviousPatch ?? ""}`;
+    if (attemptedPatchFetchesRef.current.has(requestKey)) return;
+    attemptedPatchFetchesRef.current.add(requestKey);
 
     const fetchSelectedPatch = async () => {
       setLoading(true);
