@@ -54,6 +54,15 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        source: "/CharactER/:character/03.%20skill%20Icon/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: IMMUTABLE_ASSET_CACHE_CONTROL,
+          },
+        ],
+      },
+      {
         source: "/sprites/:path*",
         headers: [
           {

@@ -107,22 +107,29 @@ describe("12.2 patch notes", () => {
   });
 
   it("공식 실험체 변경 수와 유형을 보존한다", () => {
-    expect(getNotesByPatch("12.2")).toHaveLength(37);
+    expect(getNotesByPatch("12.2")).toHaveLength(39);
     expect(getPatchSummary("12.2")).toEqual({
       patch: "12.2",
-      totalChanges: 52,
-      buffs: 32,
-      nerfs: 20,
-      reworks: 0,
-      characterCount: 37,
+      totalChanges: 57,
+      buffs: 34,
+      nerfs: 22,
+      reworks: 1,
+      characterCount: 39,
     });
   });
 
-  it("무기별 상향과 하향이 함께 있는 재키 변경을 각각 기록한다", () => {
+  it("12.2b 핫픽스 실험체 변경을 누적한다", () => {
+    expect(getCharacterPatchNote(90, "12.2")?.changes).toHaveLength(3);
+    expect(getCharacterPatchNote(1, "12.2")?.changes).toHaveLength(4);
+    expect(getCharacterPatchNote(89, "12.2")?.changes).toHaveLength(1);
+  });
+
+  it("무기별 상향과 하향 및 핫픽스가 함께 있는 재키 변경을 각각 기록한다", () => {
     expect(getCharacterPatchNote(1, "12.2")?.changes.map((change) => change.changeType)).toEqual([
       "nerf",
       "nerf",
       "buff",
+      "nerf",
     ]);
   });
 });

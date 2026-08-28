@@ -1,0 +1,312 @@
+export interface SkillOrderStatsRow {
+  best_weapon?: number | null;
+  skill_order: unknown;
+  total_games: number | null;
+  total_wins: number | null;
+  total_rp: number | null;
+}
+
+export interface TacticalSkillStatsRow {
+  tactical_skill_group: number | null;
+  total_games: number | null;
+  total_wins: number | null;
+  total_rank_sum: number | null;
+  total_rp: number | null;
+}
+
+export interface SkillOrderChoice {
+  skills: number[];
+  totalGames: number;
+  pickRate: number;
+  winRate: number;
+  averageRP: number;
+}
+
+export interface TacticalSkillChoice {
+  code: number;
+  totalGames: number;
+  pickRate: number;
+  winRate: number;
+  averageRank: number;
+  averageRP: number;
+}
+
+const SKILL_ORDER_PREVIEW_LENGTH = 17;
+
+function finiteNumber(value: unknown): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function normalizeSkillOrder(value: unknown, bestWeapon: number | null | undefined): number[] {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .map((code) => Number(code))
+    .filter((code) => Number.isInteger(code) && code > 0)
+    .filter((code) => {
+      if (code < 3_000_000 || code >= 4_000_000) return true;
+      if (!Number.isInteger(bestWeapon) || Number(bestWeapon) <= 0) return true;
+
+      return code === 3_000_000 + Number(bestWeapon) * 1_000;
+    });
+}
+
+export function aggregateSkillOrderChoices(
+  rows: SkillOrderStatsRow[],
+  limit = 5,
+  characterCode?: number
+): SkillOrderChoice[] {
+  const grouped = new Map<
+    string,
+    {
+      skills: number[];
+      representativeGames: number;
+      totalGames: number;
+      totalWins: number;
+      totalRP: number;
+    }
+  >();
+
+  for (const row of rows) {
+    const skills = normalizeSkillOrder(row.skill_order, row.best_weapon);
+    const totalGames = finiteNumber(row.total_games);
+    if (skills.length === 0 || totalGames <= 0) continue;
+
+    const groupingSkills = skills.slice(0, SKILL_ORDER_PREVIEW_LENGTH);
+
+    const inferredCharacterCode =
+      characterCode ??
+      groupingSkills.reduce<number | undefined>((resolved, skillCode) => {
+        if (resolved != null || skillCode < 1_000_000 || skillCode >= 2_000_000) return resolved;
+        return Math.floor(skillCode / 1_000) - 1_000;
+      }, undefined);
+    const masteryOrder =
+      inferredCharacterCode != null
+        ? getSkillMasteryOrder(inferredCharacterCode, groupingSkills).map((step) => step.slot)
+        : [];
+    const key = masteryOrder.length > 0 ? masteryOrder.join(":") : groupingSkills.join(":");
+    const current = grouped.get(key);
+    if (current) {
+      current.totalGames += totalGames;
+      current.totalWins += finiteNumber(row.total_wins);
+      current.totalRP += finiteNumber(row.total_rp);
+      if (
+        skills.length > current.skills.length ||
+        (skills.length === current.skills.length && totalGames > current.representativeGames)
+      ) {
+        current.skills = skills;
+        current.representativeGames = totalGames;
+      }
+    } else {
+      grouped.set(key, {
+        skills,
+        representativeGames: totalGames,
+        totalGames,
+        totalWins: finiteNumber(row.total_wins),
+        totalRP: finiteNumber(row.total_rp),
+      });
+    }
+  }
+
+  const grandTotal = [...grouped.values()].reduce((sum, row) => sum + row.totalGames, 0);
+
+  return [...grouped.values()]
+    .sort((left, right) => right.totalGames - left.totalGames)
+    .slice(0, Math.max(0, limit))
+    .map((row) => ({
+      skills: row.skills,
+      totalGames: row.totalGames,
+      pickRate: grandTotal > 0 ? (row.totalGames / grandTotal) * 100 : 0,
+      winRate: row.totalGames > 0 ? (row.totalWins / row.totalGames) * 100 : 0,
+      averageRP: row.totalGames > 0 ? row.totalRP / row.totalGames : 0,
+    }));
+}
+
+export function mergeSkillOrderChoices(
+  choices: SkillOrderChoice[],
+  characterCode: number,
+  limit = 5
+): SkillOrderChoice[] {
+  const grouped = new Map<
+    string,
+    {
+      skills: number[];
+      representativeGames: number;
+      totalGames: number;
+      pickRate: number;
+      weightedWinRate: number;
+      totalRP: number;
+    }
+  >();
+
+  for (const choice of choices) {
+    const skills = choice.skills;
+    if (skills.length === 0 || choice.totalGames <= 0) continue;
+
+    const groupingSkills = skills.slice(0, SKILL_ORDER_PREVIEW_LENGTH);
+    const masteryOrder = getSkillMasteryOrder(characterCode, groupingSkills).map(
+      (step) => step.slot
+    );
+    const key = masteryOrder.length > 0 ? masteryOrder.join(":") : groupingSkills.join(":");
+    const current = grouped.get(key);
+    if (current) {
+      current.totalGames += choice.totalGames;
+      current.pickRate += choice.pickRate;
+      current.weightedWinRate += choice.winRate * choice.totalGames;
+      current.totalRP += choice.averageRP * choice.totalGames;
+      if (
+        skills.length > current.skills.length ||
+        (skills.length === current.skills.length && choice.totalGames > current.representativeGames)
+      ) {
+        current.skills = skills;
+        current.representativeGames = choice.totalGames;
+      }
+    } else {
+      grouped.set(key, {
+        skills,
+        representativeGames: choice.totalGames,
+        totalGames: choice.totalGames,
+        pickRate: choice.pickRate,
+        weightedWinRate: choice.winRate * choice.totalGames,
+        totalRP: choice.averageRP * choice.totalGames,
+      });
+    }
+  }
+
+  return [...grouped.values()]
+    .sort((left, right) => right.totalGames - left.totalGames)
+    .slice(0, Math.max(0, limit))
+    .map((group) => ({
+      skills: group.skills,
+      totalGames: group.totalGames,
+      pickRate: group.pickRate,
+      winRate: group.weightedWinRate / group.totalGames,
+      averageRP: group.totalRP / group.totalGames,
+    }));
+}
+
+export function aggregateTacticalSkillChoices(
+  rows: TacticalSkillStatsRow[],
+  limit = 5
+): TacticalSkillChoice[] {
+  const grouped = new Map<
+    number,
+    {
+      totalGames: number;
+      totalWins: number;
+      totalRankSum: number;
+      totalRP: number;
+    }
+  >();
+
+  for (const row of rows) {
+    const code = finiteNumber(row.tactical_skill_group);
+    const totalGames = finiteNumber(row.total_games);
+    if (!Number.isInteger(code) || code <= 0 || totalGames <= 0) continue;
+
+    const current = grouped.get(code);
+    if (current) {
+      current.totalGames += totalGames;
+      current.totalWins += finiteNumber(row.total_wins);
+      current.totalRankSum += finiteNumber(row.total_rank_sum);
+      current.totalRP += finiteNumber(row.total_rp);
+    } else {
+      grouped.set(code, {
+        totalGames,
+        totalWins: finiteNumber(row.total_wins),
+        totalRankSum: finiteNumber(row.total_rank_sum),
+        totalRP: finiteNumber(row.total_rp),
+      });
+    }
+  }
+
+  const grandTotal = [...grouped.values()].reduce((sum, row) => sum + row.totalGames, 0);
+
+  return [...grouped.entries()]
+    .sort((left, right) => right[1].totalGames - left[1].totalGames)
+    .slice(0, Math.max(0, limit))
+    .map(([code, row]) => ({
+      code,
+      totalGames: row.totalGames,
+      pickRate: grandTotal > 0 ? (row.totalGames / grandTotal) * 100 : 0,
+      winRate: row.totalGames > 0 ? (row.totalWins / row.totalGames) * 100 : 0,
+      averageRank: row.totalGames > 0 ? row.totalRankSum / row.totalGames : 0,
+      averageRP: row.totalGames > 0 ? row.totalRP / row.totalGames : 0,
+    }));
+}
+
+export type SkillSlotLabel = "Q" | "W" | "E" | "R" | "T" | "D" | "S";
+
+export interface SkillMasteryStep {
+  isMastered: boolean;
+  skillCode: number;
+  slot: Extract<SkillSlotLabel, "Q" | "W" | "E" | "T">;
+  stepIndex: number;
+}
+
+const SKILL_MASTERY_RANKS: Record<SkillMasteryStep["slot"], number> = {
+  Q: 5,
+  W: 5,
+  E: 5,
+  T: 2,
+};
+
+export function getSkillSlotLabel(characterCode: number, skillCode: number): SkillSlotLabel {
+  const normalizedGroup = Math.floor(skillCode / 100) * 100;
+  const characterSkillBase = 1_000_000 + characterCode * 1_000;
+  const offset = normalizedGroup - characterSkillBase;
+
+  if (offset === 100) return "T";
+  if (offset === 200) return "Q";
+  if (offset === 300) return "W";
+  if (offset === 400) return "E";
+  if (offset === 500) return "R";
+  if (skillCode >= 3_000_000 && skillCode < 4_000_000) return "D";
+  return "S";
+}
+
+export function getSkillMasteryOrder(characterCode: number, skills: number[]): SkillMasteryStep[] {
+  const latestBySlot = new Map<
+    SkillMasteryStep["slot"],
+    Omit<SkillMasteryStep, "isMastered"> & { investedRanks: number }
+  >();
+
+  skills.forEach((skillCode, stepIndex) => {
+    const slot = getSkillSlotLabel(characterCode, skillCode);
+    if (slot !== "Q" && slot !== "W" && slot !== "E" && slot !== "T") return;
+    const current = latestBySlot.get(slot);
+    latestBySlot.set(slot, {
+      skillCode,
+      slot,
+      stepIndex,
+      investedRanks: (current?.investedRanks ?? 0) + 1,
+    });
+  });
+
+  return [...latestBySlot.values()]
+    .map(({ investedRanks, ...step }) => ({
+      ...step,
+      isMastered: investedRanks >= SKILL_MASTERY_RANKS[step.slot],
+      investedRanks,
+    }))
+    .sort((left, right) => {
+      if (left.isMastered !== right.isMastered) return left.isMastered ? -1 : 1;
+      if (left.isMastered) return left.stepIndex - right.stepIndex;
+
+      const progressDifference =
+        right.investedRanks / SKILL_MASTERY_RANKS[right.slot] -
+        left.investedRanks / SKILL_MASTERY_RANKS[left.slot];
+      return progressDifference || left.stepIndex - right.stepIndex;
+    })
+    .map(({ isMastered, skillCode, slot, stepIndex }) => ({
+      isMastered,
+      skillCode,
+      slot,
+      stepIndex,
+    }));
+}
+
+export function normalizeSkillGroupCode(skillCode: number): number {
+  return Math.floor(skillCode / 100) * 100;
+}

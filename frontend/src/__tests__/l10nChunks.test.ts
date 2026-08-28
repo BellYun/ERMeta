@@ -55,12 +55,14 @@ describe("generated l10n chunks", () => {
     core: ["Character/Name/", "WeaponType/", "Trait/Name/"],
     "item-names": ["Item/Name/"],
     "game-descriptions": ["Item/Effect/", "Trait/Tooltip/"],
+    "skill-names": ["Skill/Group/Name/", "Skill/Code/Name/", "TacticalSkillSet/Code/Name/"],
   };
 
   const minimumKeyCount: Record<L10nNamespace, number> = {
     core: 300,
     "item-names": 1_000,
     "game-descriptions": 400,
+    "skill-names": 800,
   };
 
   it.each(Object.entries(L10N_CHUNK_MANIFEST))(

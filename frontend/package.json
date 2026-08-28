@@ -20,6 +20,7 @@
     "test:e2e:install": "playwright install --with-deps chromium",
     "build:synergy-matrix": "node scripts/build-synergy-character-matrix.mjs",
     "build:weapon-sprite": "node scripts/generate-weapon-icon-sprite.mjs",
+    "build:skill-icon-map": "node scripts/generate-character-skill-icon-map.mjs",
     "lab:generate": "node scripts/generate-lab-data-from-search-table.mjs",
     "lab:rising-compositions": "node scripts/generate-character-rising-compositions.mjs",
     "lab:good-composition-prototypes": "node scripts/generate-good-composition-prototypes.mjs",

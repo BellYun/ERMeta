@@ -176,12 +176,22 @@ function extractParticipant(raw: any): Participant | null {
 }
 
 /**
- * skillOrderInfo를 정렬된 스킬 순서 배열로 변환
+ * skillOrderInfo를 정렬된 스킬 순서 배열로 변환한다.
+ * BSER 응답에는 무기 스킬의 내부 파생 코드와 다른 무기 타입도 포함되므로
+ * 선택 무기의 대표 스킬 코드만 남긴다.
  */
-function skillOrderToArray(info: Record<string, number>): number[] {
+function skillOrderToArray(
+  info: Record<string, number>,
+  bestWeapon: number,
+): number[] {
   return Object.entries(info)
     .sort(([a], [b]) => Number(a) - Number(b))
-    .map(([, v]) => v);
+    .map(([, v]) => v)
+    .filter((skillCode) => {
+      if (skillCode < 3_000_000 || skillCode >= 4_000_000) return true;
+
+      return skillCode === 3_000_000 + bestWeapon * 1_000;
+    });
 }
 
 function normalizePatchVersion(value: unknown): string | null {
@@ -329,7 +339,7 @@ function parseGameData(
       tfc: p.traitFirstCore,
       fs: p.traitFirstSub,
       ss: p.traitSecondSub,
-      so: skillOrderToArray(p.skillOrderInfo),
+      so: skillOrderToArray(p.skillOrderInfo, p.bestWeapon),
       soi: p.skillOrderInfo,
       sli: p.skillLevelInfo,
       ts: p.tacticalSkillGroup,
@@ -427,6 +437,23 @@ async function flushBatchRPC(
       if (v2Result?.fail > 0) {
         console.warn(`[Bulk v2] partial: ok=${v2Result.ok}, fail=${v2Result.fail}`, v2Result.errors);
       }
+    }
+
+    const { data: tacticalResult, error: tacticalError } = await supabase.rpc(
+      "process_character_tactical_batch",
+      { p_data: rpcPayload },
+    );
+
+    if (tacticalError) {
+      console.error(
+        `[Bulk tactical] RPC error (patch=${patchVersion}):`,
+        tacticalError.message,
+      );
+    } else if (tacticalResult?.fail > 0) {
+      console.warn(
+        `[Bulk tactical] partial: ok=${tacticalResult.ok}, fail=${tacticalResult.fail}`,
+        tacticalResult.errors,
+      );
     }
 
     // old 테이블 쓰기 제거 — 프론트엔드가 v2_ 테이블만 사용
