@@ -6,8 +6,10 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeBadgeStatic";
+import { TierBadge } from "@/components/features/TierBadge";
 import { hasPatchChangeLocalization, localizePatchNotes } from "@/data/patch-note-localization";
 import { getAllPatchVersions, getNotesByPatch, getPatchSummary } from "@/data/patch-notes";
+import { getCharacterTierForecasts } from "@/data/patch-tier-forecasts";
 import { Link } from "@/i18n/navigation";
 import { LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
 import {
@@ -17,8 +19,90 @@ import {
 } from "@/lib/characterMap";
 import { loadL10nMap } from "@/lib/serverL10n";
 import { getStaticTranslator } from "@/lib/staticIntl";
+import { resolveWeaponName } from "@/lib/weaponMap";
 
 export const dynamicParams = false;
+
+interface ValuePart {
+  text: string;
+  changed: boolean;
+}
+
+function splitChangedValueParts(before: string, after: string): ValuePart[] {
+  const beforeNumbers = Array.from(before.matchAll(/-?\d+(?:\.\d+)?%?/g), (match) => match[0]);
+  const afterNumbers = Array.from(after.matchAll(/-?\d+(?:\.\d+)?%?/g));
+
+  if (beforeNumbers.length !== afterNumbers.length) {
+    return [{ text: after, changed: true }];
+  }
+
+  const parts: ValuePart[] = [];
+  let cursor = 0;
+  let hasChangedNumber = false;
+
+  afterNumbers.forEach((match, index) => {
+    const start = match.index ?? cursor;
+    if (start > cursor) {
+      parts.push({ text: after.slice(cursor, start), changed: false });
+    }
+
+    const changed = match[0] !== beforeNumbers[index];
+    hasChangedNumber ||= changed;
+    parts.push({ text: match[0], changed });
+    cursor = start + match[0].length;
+  });
+
+  if (cursor < after.length) {
+    parts.push({ text: after.slice(cursor), changed: false });
+  }
+
+  if (!hasChangedNumber && before !== after) {
+    return [{ text: after, changed: true }];
+  }
+
+  return parts;
+}
+
+function PatchValueSummary({
+  value,
+  changeType,
+}: {
+  value: string;
+  changeType: "buff" | "nerf" | "rework";
+}) {
+  const arrowIndex = value.indexOf("→");
+  if (arrowIndex < 0) return <>{value}</>;
+
+  const before = value.slice(0, arrowIndex).trim();
+  const after = value.slice(arrowIndex + 1).trim();
+  const changedParts = splitChangedValueParts(before, after);
+  const highlightClass =
+    changeType === "buff"
+      ? "bg-[color-mix(in_srgb,var(--color-stat-up)_12%,transparent)] text-[var(--color-stat-up)]"
+      : changeType === "nerf"
+        ? "bg-[color-mix(in_srgb,var(--color-stat-down)_12%,transparent)] text-[var(--color-stat-down)]"
+        : "bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]";
+
+  return (
+    <>
+      <span className="text-[var(--color-muted-foreground)]">{before}</span>
+      <span className="mx-1.5 text-[var(--color-muted-foreground)]">→</span>
+      {changedParts.map((part, index) =>
+        part.changed ? (
+          <span
+            key={`${part.text}-${index}`}
+            data-patch-value-change
+            className={`rounded-sm px-0.5 font-bold ${highlightClass}`}
+          >
+            {part.text}
+          </span>
+        ) : (
+          <span key={`${part.text}-${index}`}>{part.text}</span>
+        )
+      )}
+    </>
+  );
+}
 
 export function generateStaticParams() {
   return getAllPatchVersions().map((version) => ({ version }));
@@ -63,26 +147,35 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
   const summary = getPatchSummary(version);
   const notes = localizePatchNotes(getNotesByPatch(version), locale);
   const showDetailedPatchNotes = locale === "ko" || hasPatchChangeLocalization(version, locale);
+  const showTierForecastReasons = locale === "ko";
   const l10n = loadL10nMap(language);
   const fallbackMap = buildFallbackMap();
+  const nameCollator = new Intl.Collator(locale, { usage: "sort" });
   const currentVersionIndex = versions.indexOf(version);
   const newerVersion = currentVersionIndex > 0 ? versions[currentVersionIndex - 1] : null;
   const olderVersion = versions[currentVersionIndex + 1] ?? null;
-  const displayNotes = notes.map((note) => {
-    const changeTypes = Array.from(new Set(note.changes.map((change) => change.changeType)));
-    const hasBuff = changeTypes.includes("buff");
-    const hasNerf = changeTypes.includes("nerf");
-    const groupType =
-      changeTypes.includes("rework") || (hasBuff && hasNerf) ? "rework" : hasBuff ? "buff" : "nerf";
+  const displayNotes = notes
+    .map((note) => {
+      const changeTypes = Array.from(new Set(note.changes.map((change) => change.changeType)));
+      const hasBuff = changeTypes.includes("buff");
+      const hasNerf = changeTypes.includes("nerf");
+      const groupType =
+        changeTypes.includes("rework") || (hasBuff && hasNerf)
+          ? "rework"
+          : hasBuff
+            ? "buff"
+            : "nerf";
 
-    return {
-      ...note,
-      name: resolveCharacterName(note.characterCode, l10n, fallbackMap),
-      portrait: getCharacterMiniWebpUrl(note.characterCode),
-      changeTypes,
-      groupType,
-    };
-  });
+      return {
+        ...note,
+        name: resolveCharacterName(note.characterCode, l10n, fallbackMap),
+        portrait: getCharacterMiniWebpUrl(note.characterCode),
+        changeTypes,
+        groupType,
+        tierForecasts: getCharacterTierForecasts(version, note.characterCode),
+      };
+    })
+    .sort((a, b) => nameCollator.compare(a.name, b.name) || a.characterCode - b.characterCode);
   const changeGroups = (["buff", "nerf", "rework"] as const).map((type) => ({
     type,
     notes: displayNotes.filter((note) => note.groupType === type),
@@ -154,20 +247,20 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                       <a
                         key={`${group.type}-${note.characterCode}`}
                         href={`#character-${note.characterCode}`}
-                        className="group flex w-14 min-w-0 flex-col items-center gap-1 rounded-md border border-transparent p-1 text-center outline-none transition-[background-color,border-color] duration-150 hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] active:bg-[var(--color-accent-muted)]"
+                        className="group flex w-12 min-w-0 flex-col items-center gap-1 rounded-md border border-transparent p-1 text-center outline-none transition-[background-color,border-color] duration-150 hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] active:bg-[var(--color-accent-muted)]"
                       >
-                        <span className="relative h-11 w-11 shrink-0">
+                        <span className="relative h-9 w-9 shrink-0">
                           <span className="absolute inset-0 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)]">
                             <Image
                               src={note.portrait}
                               alt=""
                               fill
-                              sizes="44px"
+                              sizes="36px"
                               className="object-cover transition-[filter] duration-150 group-hover:brightness-110"
                             />
                           </span>
                           <span
-                            className={`weapon-icon-backdrop absolute -bottom-1 -right-1 z-10 grid h-5 w-5 place-items-center rounded-full border shadow-sm ${
+                            className={`weapon-icon-backdrop absolute -bottom-1 -right-1 z-10 grid h-4 w-4 place-items-center rounded-full border shadow-sm ${
                               group.type === "buff"
                                 ? "text-[var(--color-success)]"
                                 : group.type === "nerf"
@@ -177,11 +270,11 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                             aria-hidden="true"
                           >
                             {group.type === "buff" ? (
-                              <TrendingUp className="h-3 w-3" strokeWidth={2.5} />
+                              <TrendingUp className="h-2.5 w-2.5" strokeWidth={2.5} />
                             ) : group.type === "nerf" ? (
-                              <TrendingDown className="h-3 w-3" strokeWidth={2.5} />
+                              <TrendingDown className="h-2.5 w-2.5" strokeWidth={2.5} />
                             ) : (
-                              <RefreshCw className="h-3 w-3" strokeWidth={2.5} />
+                              <RefreshCw className="h-2.5 w-2.5" strokeWidth={2.5} />
                             )}
                           </span>
                         </span>
@@ -277,12 +370,12 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                     href={`#character-${note.characterCode}`}
                     className="group flex min-h-10 shrink-0 items-center gap-2 rounded border border-transparent px-2 text-xs text-[var(--color-muted-foreground)] outline-none hover:border-[var(--color-border)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] xl:w-full"
                   >
-                    <span className="relative h-7 w-7 shrink-0 overflow-hidden rounded-sm bg-[var(--color-surface-2)]">
+                    <span className="relative h-6 w-6 shrink-0 overflow-hidden rounded-sm bg-[var(--color-surface-2)]">
                       <Image
                         src={note.portrait}
                         alt=""
                         fill
-                        sizes="28px"
+                        sizes="24px"
                         className="object-cover"
                       />
                     </span>
@@ -310,18 +403,18 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
               <article
                 id={`character-${note.characterCode}`}
                 key={note.characterCode}
-                className="min-w-0 scroll-mt-24 px-4 py-5 sm:px-5 lg:grid lg:grid-cols-[116px_minmax(0,1fr)] lg:gap-5"
+                className="min-w-0 scroll-mt-24 px-4 py-5 sm:px-5 lg:grid lg:grid-cols-[96px_minmax(0,1fr)] lg:gap-4"
               >
                 <header className="flex min-w-0 items-center gap-3 lg:block">
                   <Link
                     href={`/character/${note.characterCode}`}
-                    className="relative block h-14 w-14 shrink-0 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] lg:h-20 lg:w-20"
+                    className="relative block h-10 w-10 shrink-0 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] lg:h-14 lg:w-14"
                   >
                     <Image
                       src={note.portrait}
                       alt={note.name}
                       fill
-                      sizes="80px"
+                      sizes="56px"
                       className="object-cover"
                     />
                   </Link>
@@ -332,9 +425,6 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                     >
                       {note.name}
                     </Link>
-                    <p className="mt-0.5 font-mono text-[10px] text-[var(--color-muted-foreground)]">
-                      #{note.characterCode}
-                    </p>
                     <div className="mt-1.5 flex flex-wrap gap-1 lg:mt-2">
                       {note.changeTypes.map((type) => (
                         <ChangeTypeBadgeStatic
@@ -369,7 +459,10 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                             </h3>
                             {change.valueSummary ? (
                               <p className="mt-1 min-w-0 [overflow-wrap:anywhere] font-mono text-xs leading-5 text-[var(--color-foreground)] sm:text-[13px]">
-                                {change.valueSummary}
+                                <PatchValueSummary
+                                  value={change.valueSummary}
+                                  changeType={change.changeType}
+                                />
                               </p>
                             ) : null}
                             {detailText ? (
@@ -401,6 +494,57 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                     </p>
                   </div>
                 )}
+
+                {note.tierForecasts.length > 0 ? (
+                  <section className="mt-4 min-w-0 border-t border-[var(--color-border)] pt-4 lg:col-start-2">
+                    <header>
+                      <h3 className="text-lg font-bold tracking-[-0.02em] text-[var(--color-foreground)] sm:text-xl">
+                        {t("tierForecastTitle")}
+                      </h3>
+                      <p className="mt-1 text-sm leading-5 text-[var(--color-muted-foreground)]">
+                        {t("tierForecastBasis")}
+                      </p>
+                    </header>
+                    <div className="mt-3 divide-y divide-[var(--color-border)] border-y border-[var(--color-border)]">
+                      {note.tierForecasts.map((forecast) => {
+                        const hasRange = forecast.tierLow !== forecast.tierHigh;
+                        const range = `${forecast.tierLow}~${forecast.tierHigh}`;
+
+                        return (
+                          <div key={forecast.weaponCode} className="min-w-0 py-3.5 sm:py-4">
+                            <div className="flex min-h-7 min-w-0 flex-wrap items-center gap-2">
+                              <span className="mr-1 min-w-20 text-base font-bold text-[var(--color-foreground)] sm:text-lg">
+                                {resolveWeaponName(forecast.weaponCode, l10n)}
+                              </span>
+                              <TierBadge
+                                tier={forecast.currentTier}
+                                className="h-8 min-w-8 text-sm"
+                              />
+                              <ArrowRight
+                                className="h-4 w-4 shrink-0 text-[var(--color-muted-foreground)]"
+                                aria-hidden="true"
+                              />
+                              <TierBadge
+                                tier={forecast.tierMid}
+                                className="h-8 min-w-8 text-sm ring-2"
+                              />
+                              {hasRange ? (
+                                <span className="ml-1 text-sm text-[var(--color-muted-foreground)]">
+                                  {t("tierForecastRange", { range })}
+                                </span>
+                              ) : null}
+                            </div>
+                            {showTierForecastReasons && forecast.reason ? (
+                              <p className="mt-3 max-w-[72ch] text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">
+                                {forecast.reason}
+                              </p>
+                            ) : null}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </section>
+                ) : null}
               </article>
             ))}
           </div>

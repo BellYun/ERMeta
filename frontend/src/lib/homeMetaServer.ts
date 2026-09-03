@@ -126,7 +126,7 @@ async function fetchHomeMetaStats(patchVersion: string): Promise<HomeMetaStats> 
 export async function getCachedHomeMetaStats(patchVersion: string): Promise<HomeMetaStats> {
   return unstable_cache(
     async () => fetchHomeMetaStats(patchVersion),
-    ["home-meta-stats-v6-12-2-comparison", patchVersion],
+    ["home-meta-stats-v7-12-3-comparison", patchVersion],
     {
       revalidate: 21600,
       tags: ["home-meta-stats", `home-meta-stats:${patchVersion}`],

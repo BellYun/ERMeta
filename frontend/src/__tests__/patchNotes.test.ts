@@ -101,9 +101,9 @@ describe("12.1 patch notes", () => {
 });
 
 describe("12.2 patch notes", () => {
-  it("12.2를 최신 패치 및 통계 후보로 노출한다", () => {
-    expect(getAllPatchVersions()[0]).toBe("12.2");
-    expect(getStatsPatchVersions()[0]).toBe("12.2");
+  it("12.2를 패치 및 통계 이력에 유지한다", () => {
+    expect(getAllPatchVersions()).toContain("12.2");
+    expect(getStatsPatchVersions()).toContain("12.2");
   });
 
   it("공식 실험체 변경 수와 유형을 보존한다", () => {
@@ -130,6 +130,44 @@ describe("12.2 patch notes", () => {
       "nerf",
       "buff",
       "nerf",
+    ]);
+  });
+});
+
+describe("12.3 patch notes", () => {
+  it("12.3을 최신 패치 및 통계 후보로 노출한다", () => {
+    expect(getAllPatchVersions()[0]).toBe("12.3");
+    expect(getStatsPatchVersions()[0]).toBe("12.3");
+  });
+
+  it("공식 실험체 변경 수와 유형을 보존한다", () => {
+    expect(getNotesByPatch("12.3")).toHaveLength(39);
+    expect(getPatchSummary("12.3")).toEqual({
+      patch: "12.3",
+      totalChanges: 60,
+      buffs: 37,
+      nerfs: 23,
+      reworks: 0,
+      characterCount: 39,
+    });
+  });
+
+  it("상향과 하향이 함께 있는 재키와 크레이버 변경을 각각 기록한다", () => {
+    expect(getCharacterPatchNote(1, "12.3")?.changes.map((change) => change.changeType)).toEqual([
+      "nerf",
+      "nerf",
+      "buff",
+      "buff",
+      "buff",
+      "nerf",
+      "nerf",
+    ]);
+    expect(getCharacterPatchNote(89, "12.3")?.changes.map((change) => change.changeType)).toEqual([
+      "nerf",
+      "buff",
+      "buff",
+      "nerf",
+      "buff",
     ]);
   });
 });

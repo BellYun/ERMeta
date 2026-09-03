@@ -49,7 +49,7 @@ export const getPatches = unstable_cache(
       return filterReadyStatsPatchVersions(getVisibleStatsPatchVersions(), 0);
     }
   },
-  ["patches", "patch-notes-v9-12-2-sample-gate-x8"],
+  ["patches", "patch-notes-v10-12-3-sample-gate-x8"],
   {
     revalidate: 21600,
     tags: ["patches"],
