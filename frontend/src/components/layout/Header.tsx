@@ -235,31 +235,33 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
           <Link
             href={withCurrentRouteLocale(pathname, patchNotesAnnouncementPath)}
             prefetch={false}
-            className="site-announcement group flex items-center justify-between gap-3 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 sm:px-4 lg:px-6"
+            className="site-announcement group block border-b border-[var(--color-border)] bg-[var(--color-surface-2)]"
           >
-            <div className="site-announcement__content flex min-w-0 items-center gap-3">
-              <span className="site-announcement__icon flex h-7 w-7 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]">
-                <NotebookText className="h-4.5 w-4.5" strokeWidth={2} />
-              </span>
-              <div className="site-announcement__copy min-w-0">
-                <div className="site-announcement__meta flex flex-wrap items-center gap-2">
-                  <span className="text-[10px] font-medium text-[var(--color-muted-foreground)]">
-                    {t("patchAnalysisBadge")}
-                  </span>
-                  <p className="text-sm font-semibold text-[var(--color-foreground)]">
-                    {t("patchAnalysisTitle")}
+            <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-3 px-3 sm:px-4 lg:px-6">
+              <div className="site-announcement__content flex min-w-0 items-center gap-3">
+                <span className="site-announcement__icon flex h-7 w-7 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]">
+                  <NotebookText className="h-4.5 w-4.5" strokeWidth={2} />
+                </span>
+                <div className="site-announcement__copy min-w-0">
+                  <div className="site-announcement__meta flex flex-wrap items-center gap-2">
+                    <span className="text-[10px] font-medium text-[var(--color-muted-foreground)]">
+                      {t("patchAnalysisBadge")}
+                    </span>
+                    <p className="text-sm font-semibold text-[var(--color-foreground)]">
+                      {t("patchAnalysisTitle")}
+                    </p>
+                  </div>
+                  <p className="site-announcement__body mt-0.5 text-xs leading-5 text-[var(--color-muted-foreground)] sm:text-sm">
+                    {t("patchAnalysisBody")}
                   </p>
                 </div>
-                <p className="site-announcement__body mt-0.5 text-xs leading-5 text-[var(--color-muted-foreground)] sm:text-sm">
-                  {t("patchAnalysisBody")}
-                </p>
               </div>
-            </div>
 
-            <span className="site-announcement__cta hidden shrink-0 items-center gap-1.5 text-sm font-medium text-[var(--color-muted-foreground)] transition group-hover:text-[var(--color-foreground)] sm:inline-flex">
-              {t("patchAnalysisCta")}
-              <ArrowRight className="h-4 w-4" strokeWidth={2} />
-            </span>
+              <span className="site-announcement__cta hidden shrink-0 items-center gap-1.5 text-sm font-medium text-[var(--color-muted-foreground)] transition group-hover:text-[var(--color-foreground)] sm:inline-flex">
+                {t("patchAnalysisCta")}
+                <ArrowRight className="h-4 w-4" strokeWidth={2} />
+              </span>
+            </div>
           </Link>
         )}
 
