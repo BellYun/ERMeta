@@ -62,7 +62,7 @@ export async function HomePageContent({
     ? formatMetricNumber(collectedGames / ESTIMATED_PARTICIPANTS_PER_MATCH)
     : "";
   const fallbackPatch = currentPatch || defaultPatch || HOME_META_FALLBACK_PATCH;
-  const patchAnalysisHref = `/${locale}/patch-analysis/11.5`;
+  const patchAnalysisHref = `/${locale}/patch-analysis/12.3`;
   const isPreseasonPreparing = currentPatch === "12.0";
   const isCollectionPending = !isPreseasonPreparing && !isCollectionReady;
   const isPreparing = isPreseasonPreparing || isCollectionPending;

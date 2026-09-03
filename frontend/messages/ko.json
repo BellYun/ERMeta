@@ -8,7 +8,7 @@
     "seasonRecapBody": "패치별 평균 RP 주요 조합과 시즌 누적 메타 흐름을 정리했습니다.",
     "seasonRecapCta": "열기",
     "patchAnalysisBadge": "패치 분석",
-    "patchAnalysisTitle": "12.3 패치노트 분석 공개",
+    "patchAnalysisTitle": "12.3 패치노트 분석 및 티어 예상 공개",
     "patchAnalysisBody": "버프·너프 변경점과 다이아+ 기준 예상 티어를 정리했습니다.",
     "patchAnalysisCta": "분석 보기",
     "openMenu": "메뉴 열기",
@@ -165,7 +165,7 @@
     "heroDescription": "이터널 리턴의 현재 메타를 집계 데이터로 분석합니다.",
     "matchMetric": "현재 집계 게임 수",
     "matchMetricDescription": "패치 {patch} 기준으로 분석에 반영된 전체 랭크 게임 수입니다.",
-    "patchAnalysisCta": "11.5 패치 분석",
+    "patchAnalysisCta": "12.3 패치 분석",
     "winRateMetric": "상위권 평균 승률",
     "rpMetric": "상위권 평균 RP",
     "guide": {
@@ -186,7 +186,7 @@
       "title": "최신 패치 메타를 승률 하나가 아니라 랭크 판단 기준으로 정리합니다",
       "body": "ER&GG는 이터널리턴 랭크 데이터를 실험체 티어, 3인 조합, 무기 선택, 패치 전후 변화까지 함께 비교해 정리합니다. 승률은 1등 전환력, 순방률은 순방 안정성, 평균 RP는 랭크 상승 효율, 픽률과 표본 수는 해당 지표의 신뢰도를 판단하는 기준으로 사용합니다. 같은 실험체라도 패치, 티어, 조합, 무기 선택에 따라 해석이 달라질 수 있으므로 현재 패치 기준 데이터를 우선 제공하고, 실험체 상세 분석과 패치 노트에서 최신 통계와 변경 사항을 연결해 확인할 수 있습니다.",
       "characterCta": "실험체 상세 분석",
-      "analysisCta": "11.5 패치 분석",
+      "analysisCta": "12.3 패치 분석",
       "patchCta": "패치 노트",
       "methodologyCta": "통계 해석 방법"
     },

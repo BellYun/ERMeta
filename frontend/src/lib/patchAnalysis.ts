@@ -18,8 +18,8 @@ import warriorsData from "../../public/data/lab/warriors.json";
 
 const ANALYSIS_TIER = "DIAMOND_PLUS";
 const ANALYSIS_TIERS = ["DIAMOND_PLUS", "MITHRIL_PLUS"] as const;
-const PATCH_ANALYSIS_VERSIONS = ["11.5", "11.4"] as const;
-const PATCH_ANALYSIS_CACHE_VERSION = "role-combos-v9";
+const PATCH_ANALYSIS_VERSIONS = ["12.3", "11.5", "11.4"] as const;
+const PATCH_ANALYSIS_CACHE_VERSION = "role-combos-v10-12-3";
 const ROLES: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
 const PATCH_ROLE_OVERRIDES_BY_PATCH: Record<string, Record<string, CharacterRole>> = {
   "11.5": {

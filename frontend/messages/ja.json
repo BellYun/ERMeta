@@ -9,7 +9,7 @@
     "seasonRecapBody": "パッチ別の主要RP編成とシーズン全体のメタ推移を確認できます。",
     "seasonRecapCta": "開く",
     "patchAnalysisBadge": "パッチ分析",
-    "patchAnalysisTitle": "12.3パッチノート分析を公開",
+    "patchAnalysisTitle": "12.3パッチノート分析と予想ティアを公開",
     "patchAnalysisBody": "バフ・ナーフ内容とダイヤ+基準の予想ティアをまとめました。",
     "patchAnalysisCta": "分析を見る",
     "openMenu": "メニューを開く",
@@ -146,7 +146,7 @@
       "title": "現在パッチのメタを勝率だけでなくランク判断用の指標で整理します",
       "body": "ER&GGはエターナルリターンのランクデータを、キャラクターティア、3人編成、武器選択、パッチ前後の変化まで合わせて整理します。勝率は1位への変換力、入賞率は順位安定性、平均RPはランク上昇効率、ピック率とサンプル数は信頼度を判断するための文脈として扱います。同じキャラクターでもパッチ、ティア、チーム内の役割、武器選択によって解釈が変わるため、現在パッチを基準にし、キャラクター詳細とパッチノートで最新統計と変更点を確認できるようにしています。",
       "characterCta": "キャラクター分析",
-      "analysisCta": "11.5パッチ分析",
+      "analysisCta": "12.3パッチ分析",
       "patchCta": "パッチノート",
       "methodologyCta": "統計の読み方"
     },
@@ -172,7 +172,7 @@
       "cta": "シーズン11リキャップを見る"
     },
     "filterCta": "フィルターを開く",
-    "patchAnalysisCta": "11.5パッチ分析",
+    "patchAnalysisCta": "12.3パッチ分析",
     "honeyPicksTitle": "今パッチの急上昇",
     "honeyPicksDescription": "バフ後にピック率と勝率が上昇したキャラクター",
     "honeySectionName": "今パッチの急上昇",
