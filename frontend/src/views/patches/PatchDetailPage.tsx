@@ -17,6 +17,7 @@ import {
   getCharacterMiniWebpUrl,
   resolveCharacterName,
 } from "@/lib/characterMap";
+import type { Tier } from "@/lib/design-tokens";
 import { loadL10nMap } from "@/lib/serverL10n";
 import { getStaticTranslator } from "@/lib/staticIntl";
 import { resolveWeaponName } from "@/lib/weaponMap";
@@ -101,6 +102,37 @@ function PatchValueSummary({
         )
       )}
     </>
+  );
+}
+
+function TierForecastResult({
+  tierLow,
+  tierMid,
+  tierHigh,
+  label,
+}: {
+  tierLow: Tier;
+  tierMid: Tier;
+  tierHigh: Tier;
+  label: string;
+}) {
+  const hasRange = tierLow !== tierHigh;
+
+  if (!hasRange) {
+    return <TierBadge tier={tierMid} className="h-8 min-w-8 text-sm ring-2" />;
+  }
+
+  return (
+    <span className="inline-flex items-center gap-1.5" aria-label={label}>
+      <TierBadge tier={tierHigh} className="h-8 min-w-8 text-sm ring-2" />
+      <span
+        className="font-mono text-base font-bold text-[var(--color-muted-foreground)]"
+        aria-hidden="true"
+      >
+        ~
+      </span>
+      <TierBadge tier={tierLow} className="h-8 min-w-8 text-sm ring-2" />
+    </span>
   );
 }
 
@@ -508,7 +540,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                     <div className="mt-3 divide-y divide-[var(--color-border)] border-y border-[var(--color-border)]">
                       {note.tierForecasts.map((forecast) => {
                         const hasRange = forecast.tierLow !== forecast.tierHigh;
-                        const range = `${forecast.tierLow}~${forecast.tierHigh}`;
+                        const range = `${forecast.tierHigh}~${forecast.tierLow}`;
 
                         return (
                           <div key={forecast.weaponCode} className="min-w-0 py-3.5 sm:py-4">
@@ -524,15 +556,12 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
                                 className="h-4 w-4 shrink-0 text-[var(--color-muted-foreground)]"
                                 aria-hidden="true"
                               />
-                              <TierBadge
-                                tier={forecast.tierMid}
-                                className="h-8 min-w-8 text-sm ring-2"
+                              <TierForecastResult
+                                tierLow={forecast.tierLow}
+                                tierMid={forecast.tierMid}
+                                tierHigh={forecast.tierHigh}
+                                label={hasRange ? t("tierForecastRange", { range }) : range}
                               />
-                              {hasRange ? (
-                                <span className="ml-1 text-sm text-[var(--color-muted-foreground)]">
-                                  {t("tierForecastRange", { range })}
-                                </span>
-                              ) : null}
                             </div>
                             {showTierForecastReasons && forecast.reason ? (
                               <p className="mt-3 max-w-[72ch] text-sm leading-6 text-[var(--color-foreground)] sm:text-[0.95rem]">
