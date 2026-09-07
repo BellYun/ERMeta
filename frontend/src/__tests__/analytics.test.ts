@@ -316,10 +316,15 @@ describe("analytics — P0 helpers", () => {
 
   describe("ad slot events", () => {
     it("ad_slot_rendered 에 슬롯명과 광고 슬롯 ID 를 전달한다", async () => {
+      Object.defineProperty(window, "innerWidth", { configurable: true, value: 1440 });
+      Object.defineProperty(window, "innerHeight", { configurable: true, value: 900 });
+
       analytics.adSlotRendered({
         slotName: "synergy_detail_top",
         adSlotId: "8139813658",
+        slotInstanceId: "slot-instance-rendered",
         pagePath: "/ko/synergy-detail",
+        eventPagePath: "/ko/synergy-detail",
       });
       await flushAsync();
       expect(trackMock).toHaveBeenCalledWith(
@@ -327,8 +332,15 @@ describe("analytics — P0 helpers", () => {
         expect.objectContaining({
           slot_name: "synergy_detail_top",
           ad_slot_id: "8139813658",
+          slot_instance_id: "slot-instance-rendered",
           page_path: "/ko/synergy-detail",
           page_surface: "synergy_detail",
+          event_page_path: "/ko/synergy-detail",
+          event_page_surface: "synergy_detail",
+          viewport_width: 1440,
+          viewport_height: 900,
+          viewport_eligible: true,
+          ad_measurement_version: 2,
           ad_delivery_state: "no_slot",
           ad_resource_count: 0,
         })
@@ -342,7 +354,9 @@ describe("analytics — P0 helpers", () => {
       analytics.adSlotViewed({
         slotName: "home_ranking",
         adSlotId: "8139813658",
+        slotInstanceId: "slot-instance-viewed",
         pagePath: "/ko",
+        eventPagePath: "/ko",
       });
       await flushAsync();
       expect(trackMock).toHaveBeenCalledWith(
@@ -350,6 +364,7 @@ describe("analytics — P0 helpers", () => {
         expect.objectContaining({
           slot_name: "home_ranking",
           ad_slot_id: "8139813658",
+          slot_instance_id: "slot-instance-viewed",
           page_path: "/ko",
           page_surface: "home",
           viewport_width: 390,
@@ -360,10 +375,19 @@ describe("analytics — P0 helpers", () => {
     });
 
     it("ad_slot_state_changed 에 슬롯 상태와 예약 크기를 전달한다", async () => {
+      Object.defineProperty(window, "innerWidth", { configurable: true, value: 1699 });
+      Object.defineProperty(window, "innerHeight", { configurable: true, value: 900 });
+
       analytics.adSlotStateChanged({
         slotName: "site_rail_right",
         adSlotId: "8139813658",
+        slotInstanceId: "slot-instance-state",
         status: "unfilled",
+        previousStatus: "requested",
+        timedOutBeforeStatus: false,
+        isLateFill: false,
+        pagePath: "/ko",
+        eventPagePath: "/ko/synergy-detail",
         reservedHeight: 600,
         reservedWidth: 160,
       });
@@ -373,11 +397,51 @@ describe("analytics — P0 helpers", () => {
         expect.objectContaining({
           slot_name: "site_rail_right",
           ad_slot_id: "8139813658",
+          slot_instance_id: "slot-instance-state",
           status: "unfilled",
-          page_path: undefined,
+          previous_status: "requested",
+          timed_out_before_status: false,
+          is_late_fill: false,
+          page_path: "/ko",
+          page_surface: "home",
+          event_page_path: "/ko/synergy-detail",
+          event_page_surface: "synergy_detail",
+          viewport_width: 1699,
+          viewport_height: 900,
+          viewport_eligible: false,
           reserved_height: 600,
           reserved_width: 160,
           page_long_task_total_ms: 0,
+        })
+      );
+    });
+
+    it("timeout 이후 fill을 동일 슬롯 인스턴스의 late fill로 전달한다", async () => {
+      analytics.adSlotStateChanged({
+        slotName: "site_rail_left",
+        adSlotId: "8139813658",
+        slotInstanceId: "slot-instance-late-fill",
+        status: "filled",
+        previousStatus: "timeout",
+        timedOutBeforeStatus: true,
+        isLateFill: true,
+        pagePath: "/ko",
+        eventPagePath: "/ko",
+        reservedHeight: 600,
+        reservedWidth: 160,
+        requestToStateMs: 12_500,
+      });
+      await flushAsync();
+
+      expect(trackMock).toHaveBeenCalledWith(
+        "ad_slot_state_changed",
+        expect.objectContaining({
+          slot_instance_id: "slot-instance-late-fill",
+          status: "filled",
+          previous_status: "timeout",
+          timed_out_before_status: true,
+          is_late_fill: true,
+          request_to_state_ms: 12_500,
         })
       );
     });
