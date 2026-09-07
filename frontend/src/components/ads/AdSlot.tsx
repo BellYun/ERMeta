@@ -42,6 +42,19 @@ type AdSlotStatus = "reserved" | "requested" | "filled" | "unfilled" | "timeout"
 type TrackedAdSlotStatus = Exclude<AdSlotStatus, "reserved">;
 const AD_REQUEST_ROOT_MARGIN = "800px 0px";
 
+function createAdSlotInstanceId() {
+  if (typeof globalThis.crypto?.randomUUID === "function") {
+    return globalThis.crypto.randomUUID();
+  }
+
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function getCurrentPagePath() {
+  if (typeof window === "undefined") return undefined;
+  return window.location?.pathname;
+}
+
 type AdSlotStyle = CSSProperties & {
   "--ad-reserved-height": string;
   "--ad-reserved-height-sm": string;
@@ -100,9 +113,12 @@ export function AdSlot({
   const renderedTracked = useRef(false);
   const viewedTracked = useRef(false);
   const statusTracked = useRef<Set<TrackedAdSlotStatus>>(new Set());
+  const previousStatus = useRef<AdSlotStatus>("reserved");
+  const lifecyclePagePath = useRef<string | undefined>(undefined);
   const renderedAt = useRef<number | null>(null);
   const requestedAt = useRef<number | null>(null);
   const filledAt = useRef<number | null>(null);
+  const [slotInstanceId] = useState(createAdSlotInstanceId);
   const [status, setStatus] = useState<AdSlotStatus>("reserved");
   const slotKey = `${slotName}:${slot}`;
   const reservedStyle = useMemo(
@@ -113,6 +129,8 @@ export function AdSlot({
   const trackStatus = useCallback(
     (nextStatus: TrackedAdSlotStatus) => {
       if (!slot || statusTracked.current.has(nextStatus)) return;
+      const timedOutBeforeStatus = statusTracked.current.has("timeout");
+      const priorStatus = previousStatus.current;
       statusTracked.current.add(nextStatus);
       const currentTime = performance.now();
       if (nextStatus === "requested" && requestedAt.current === null) {
@@ -125,7 +143,13 @@ export function AdSlot({
       analytics.adSlotStateChanged({
         slotName,
         adSlotId: slot,
+        slotInstanceId,
         status: nextStatus,
+        previousStatus: priorStatus,
+        timedOutBeforeStatus,
+        isLateFill: nextStatus === "filled" && timedOutBeforeStatus,
+        pagePath: lifecyclePagePath.current,
+        eventPagePath: getCurrentPagePath(),
         reservedHeight: getCurrentReservedHeight(reservation, minHeight),
         reservedWidth: reservation?.width ?? null,
         elapsedSinceRenderMs:
@@ -133,8 +157,9 @@ export function AdSlot({
         requestToStateMs:
           requestedAt.current === null ? undefined : currentTime - requestedAt.current,
       });
+      previousStatus.current = nextStatus;
     },
-    [minHeight, reservation, slot, slotKey, slotName]
+    [minHeight, reservation, slot, slotInstanceId, slotKey, slotName]
   );
 
   const requestSlot = useCallback(() => {
@@ -155,14 +180,19 @@ export function AdSlot({
     if (!slot || renderedTracked.current) return;
     renderedTracked.current = true;
     renderedAt.current = performance.now();
+    const pagePath = getCurrentPagePath();
+    lifecyclePagePath.current = pagePath;
     markAdSlotState(slotKey, "rendered");
     analytics.adSlotRendered({
       slotName,
       adSlotId: slot,
+      slotInstanceId,
+      pagePath,
+      eventPagePath: pagePath,
       reservedHeight: getCurrentReservedHeight(reservation, minHeight),
       reservedWidth: reservation?.width ?? null,
     });
-  }, [minHeight, reservation, slot, slotKey, slotName]);
+  }, [minHeight, reservation, slot, slotInstanceId, slotKey, slotName]);
 
   useEffect(() => {
     if (ADSENSE_PREVIEW || !ADSENSE_CLIENT || !slot) return;
@@ -246,6 +276,9 @@ export function AdSlot({
             analytics.adSlotViewed({
               slotName,
               adSlotId: slot,
+              slotInstanceId,
+              pagePath: lifecyclePagePath.current,
+              eventPagePath: getCurrentPagePath(),
               reservedHeight: getCurrentReservedHeight(reservation, minHeight),
               reservedWidth: reservation?.width ?? null,
               renderToViewableMs:
@@ -268,7 +301,7 @@ export function AdSlot({
       clearViewTimer();
       observer.disconnect();
     };
-  }, [minHeight, reservation, slot, slotKey, slotName, status]);
+  }, [minHeight, reservation, slot, slotInstanceId, slotKey, slotName, status]);
 
   if (ADSENSE_PREVIEW) {
     return (

@@ -8,6 +8,7 @@ import { getAdPerformanceSnapshot, type AdScriptState } from "@/lib/adPerformanc
 type AmplitudeModule = typeof import("@amplitude/analytics-browser");
 
 const isDev = process.env.NODE_ENV === "development";
+const AD_MEASUREMENT_VERSION = 2;
 
 // 동적 import 캐시: 첫 track 호출 시 로드, 이후 재사용
 let amplitudePromise: Promise<AmplitudeModule> | null = null;
@@ -42,6 +43,20 @@ function getCurrentPagePath() {
   return window.location?.pathname;
 }
 
+function getViewportProperties() {
+  if (typeof window === "undefined") {
+    return {
+      viewport_width: undefined,
+      viewport_height: undefined,
+    };
+  }
+
+  return {
+    viewport_width: window.innerWidth,
+    viewport_height: window.innerHeight,
+  };
+}
+
 function getPageSurface(pagePath: string | undefined) {
   if (!pagePath) return "unknown";
   const path = pagePath.replace(/^\/(?:ko|en|ja|zh-Hans|zh-Hant)(?=\/|$)/, "") || "/";
@@ -59,6 +74,8 @@ function getPageSurface(pagePath: string | undefined) {
 function getAdPerformanceProperties() {
   const snapshot = getAdPerformanceSnapshot();
   return {
+    ad_measurement_version: AD_MEASUREMENT_VERSION,
+    ...getViewportProperties(),
     ad_script_state: snapshot.scriptState,
     ad_script_load_ms: snapshot.scriptLoadMs,
     ad_delivery_state: snapshot.deliveryState,
@@ -113,6 +130,29 @@ export type AdSlotName =
   | "site_rail_left"
   | "site_rail_right";
 export type AdSlotStatus = "reserved" | "requested" | "filled" | "unfilled" | "timeout";
+
+const AD_SLOT_MIN_VIEWPORT_WIDTH: Partial<Record<AdSlotName, number>> = {
+  site_rail_left: 1280,
+  site_rail_right: 1700,
+};
+
+function getAdSlotPageProperties(pagePath?: string, eventPagePath?: string) {
+  const resolvedPagePath = pagePath ?? getCurrentPagePath();
+  const resolvedEventPagePath = eventPagePath ?? getCurrentPagePath();
+
+  return {
+    page_path: resolvedPagePath,
+    page_surface: getPageSurface(resolvedPagePath),
+    event_page_path: resolvedEventPagePath,
+    event_page_surface: getPageSurface(resolvedEventPagePath),
+  };
+}
+
+function isAdSlotViewportEligible(slotName: AdSlotName) {
+  if (typeof window === "undefined") return undefined;
+  const minViewportWidth = AD_SLOT_MIN_VIEWPORT_WIDTH[slotName];
+  return minViewportWidth === undefined || window.innerWidth >= minViewportWidth;
+}
 
 export interface SessionProperties {
   session_source?: SessionSource;
@@ -351,16 +391,18 @@ export const analytics = {
   adSlotRendered(args: {
     slotName: AdSlotName;
     adSlotId: string;
+    slotInstanceId: string;
     pagePath?: string;
+    eventPagePath?: string;
     reservedHeight?: number;
     reservedWidth?: number | null;
   }) {
-    const pagePath = args.pagePath ?? getCurrentPagePath();
     track("ad_slot_rendered", {
       slot_name: args.slotName,
       ad_slot_id: args.adSlotId,
-      page_path: pagePath,
-      page_surface: getPageSurface(pagePath),
+      slot_instance_id: args.slotInstanceId,
+      ...getAdSlotPageProperties(args.pagePath, args.eventPagePath),
+      viewport_eligible: isAdSlotViewportEligible(args.slotName),
       reserved_height: args.reservedHeight,
       reserved_width: args.reservedWidth,
       ...getAdPerformanceProperties(),
@@ -371,28 +413,20 @@ export const analytics = {
   adSlotViewed(args: {
     slotName: AdSlotName;
     adSlotId: string;
+    slotInstanceId: string;
     pagePath?: string;
+    eventPagePath?: string;
     reservedHeight?: number;
     reservedWidth?: number | null;
     renderToViewableMs?: number;
     fillToViewableMs?: number;
   }) {
-    const pagePath = args.pagePath ?? getCurrentPagePath();
-    const viewport =
-      typeof window !== "undefined"
-        ? {
-            width: window.innerWidth,
-            height: window.innerHeight,
-          }
-        : undefined;
-
     track("ad_slot_viewed", {
       slot_name: args.slotName,
       ad_slot_id: args.adSlotId,
-      page_path: pagePath,
-      page_surface: getPageSurface(pagePath),
-      viewport_width: viewport?.width,
-      viewport_height: viewport?.height,
+      slot_instance_id: args.slotInstanceId,
+      ...getAdSlotPageProperties(args.pagePath, args.eventPagePath),
+      viewport_eligible: isAdSlotViewportEligible(args.slotName),
       reserved_height: args.reservedHeight,
       reserved_width: args.reservedWidth,
       render_to_viewable_ms: args.renderToViewableMs,
@@ -405,19 +439,28 @@ export const analytics = {
   adSlotStateChanged(args: {
     slotName: AdSlotName;
     adSlotId: string;
+    slotInstanceId: string;
     status: AdSlotStatus;
+    previousStatus: AdSlotStatus;
+    timedOutBeforeStatus: boolean;
+    isLateFill: boolean;
+    pagePath?: string;
+    eventPagePath?: string;
     reservedHeight: number;
     reservedWidth: number | null;
     elapsedSinceRenderMs?: number;
     requestToStateMs?: number;
   }) {
-    const pagePath = getCurrentPagePath();
     track("ad_slot_state_changed", {
       slot_name: args.slotName,
       ad_slot_id: args.adSlotId,
+      slot_instance_id: args.slotInstanceId,
       status: args.status,
-      page_path: pagePath,
-      page_surface: getPageSurface(pagePath),
+      previous_status: args.previousStatus,
+      timed_out_before_status: args.timedOutBeforeStatus,
+      is_late_fill: args.isLateFill,
+      ...getAdSlotPageProperties(args.pagePath, args.eventPagePath),
+      viewport_eligible: isAdSlotViewportEligible(args.slotName),
       reserved_height: args.reservedHeight,
       reserved_width: args.reservedWidth,
       elapsed_since_render_ms: args.elapsedSinceRenderMs,
