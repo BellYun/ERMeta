@@ -34,6 +34,11 @@ Google Active View와 같은 기준으로, 클라이언트의 viewable은 **광�
 | 속성                                                             | 용도                                                                                                             |
 | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | `page_surface`                                                   | `home`, `character_detail`, `character_analysis`, `synergy_detail`, `patches`, `patch_analysis` 등 페이지군 비교 |
+| `event_page_surface`                                             | SPA 이동 뒤에도 최초 render 페이지와 실제 이벤트 발생 페이지를 분리                                              |
+| `slot_instance_id`                                               | 동일 슬롯 인스턴스의 render/request/fill/viewable 상태를 연결                                                    |
+| `viewport_width`, `viewport_height`, `viewport_eligible`         | 왼쪽 1280px, 오른쪽 1700px 기준의 실제 eligible opportunity 계산                                                 |
+| `previous_status`, `timed_out_before_status`, `is_late_fill`     | timeout을 최종 실패로 단정하지 않고 늦은 fill을 분리                                                             |
+| `ad_measurement_version`                                         | 계측 정의 변경 전후를 분리. 현재 보완 버전은 `2`                                                                 |
 | `ad_delivery_state`                                              | `no_slot`, `slot_only`, `requested`, `filled`, `viewable`, `blocked_or_failed` 코호트 분리                       |
 | `ad_*_slot_count`                                                | 한 문서에서 단계별로 도달한 슬롯 수                                                                              |
 | `ad_resource_count`, `ad_resource_duration_ms`, `ad_transfer_kb` | Resource Timing 기반 광고 네트워크 비용. TAO가 없는 응답의 transfer size는 `null`                                |
@@ -44,7 +49,9 @@ Google Active View와 같은 기준으로, 클라이언트의 viewable은 **광�
 
 `web-vitals/attribution`으로 INP를 `input delay / processing / presentation`으로 나누고, LoAF가 지원되는 브라우저에서는 INP와 가장 오래 겹친 script host 및 광고 도메인 여부도 전송한다. CLS는 가장 큰 shift target이 `ad_slot:*`인지 별도로 기록한다.
 
-초기 문서 경로를 `WebVitalsReporter` mount 시 고정한다. 사용자가 SPA 라우팅 후 탭을 닫아도 최초 navigation의 Web Vital이 마지막 URL로 잘못 귀속되지 않는다.
+초기 문서 경로를 `WebVitalsReporter` mount 시 고정한다. 사용자가 SPA 라우팅 후 탭을 닫아도 최초 navigation의 Web Vital이 마지막 URL로 잘못 귀속되지 않는다. 광고 퍼널도 `page_surface`는 슬롯 최초 render 시점으로 고정하고, 이후 상태가 실제 발생한 경로는 `event_page_surface`로 별도 기록한다.
+
+`ad_measurement_version=2`부터는 세 lifecycle 이벤트의 `viewport_width`가 모두 채워진다. Rail request rate의 분모는 전체 `rendered`가 아니라 `viewport_eligible=true`인 고유 `slot_instance_id`만 사용한다.
 
 ## 3. 로딩 전략 변경
 
@@ -74,11 +81,13 @@ Measure: Totals
 
 같이 보는 비율:
 
-- Request rate = requested / rendered
+- Request rate = requested / eligible `slot_instance_id`
 - Fill rate = filled / requested
 - Viewability = viewed / filled
-- 요청 낭비율 = 1 - requested / rendered (의도적인 viewport 지연 포함)
-- Fill 실패율 = (unfilled + timeout) / requested
+- 요청 대기율 = 1 - requested / eligible `slot_instance_id` (의도적인 viewport 지연 포함)
+- Fill 실패율 = 최종 상태가 unfilled 또는 late fill 없는 timeout인 인스턴스 / requested 인스턴스
+
+버전 2 집계에서는 이벤트 수를 단순히 나누지 않고 `slot_instance_id`를 기준으로 각 단계 도달 여부를 1회로 접는다. `is_late_fill=true`인 인스턴스의 timeout은 최종 실패에서 제외한다. Rail의 Request rate는 `requested / eligible slot instance`로 계산한다.
 
 ### 4.2 광고 코호트별 Web Vitals 비용
 
@@ -136,11 +145,13 @@ AdSense 일별 custom-channel report의 `impressions, Active View viewable, esti
 
 ## 5. 운영 순서와 성공 기준
 
-1. 배포 후 7일간 이벤트 누락, unknown/timeout 비율, 속성 cardinality를 검증한다.
+1. `ad_measurement_version=2` 배포 후 7일간 이벤트 누락, unknown/timeout/late-fill 비율, 속성 cardinality를 검증한다.
 2. `page_surface × device × connection`으로 보정한 광고 fill 유무별 Web Vitals p75 baseline을 만든다.
 3. INP poor 표본에서 `inp_longest_script_is_ad`, `ad_frame_long_task_count`, `ad_correlated_long_task_count` 순으로 직접성을 확인한다.
 4. AdSense custom channel report를 연결해 실제 revenue share를 채운다.
 5. 한 번에 하나의 로딩 전략만 변경하고 `app_version` 전후로 viewability/revenue와 Web Vitals를 같이 비교한다.
+
+2026-08-28부터 수집한 버전 1 기준선은 AdSense 노출과 클라이언트 fill/viewability 교차 검증에 유지한다. Eligible 및 페이지×슬롯 퍼널의 14일 기준선은 버전 2 배포일부터 다시 계산한다.
 
 초기 guardrail:
 
