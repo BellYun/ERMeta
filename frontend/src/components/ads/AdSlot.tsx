@@ -9,6 +9,11 @@ import {
   type AdSlotReservation,
 } from "@/components/ads/adsenseConfig";
 import type { RouteLocale } from "@/i18n/routing";
+import {
+  claimRecentAdBlockRecoveryMilestone,
+  getAdBlockRecoverySessionStorage,
+  type AdBlockRecoveryMilestone,
+} from "@/lib/adBlockRecoveryExperiment";
 import { markAdSlotState } from "@/lib/adPerformance";
 import { analytics, type AdSlotName } from "@/lib/analytics";
 
@@ -53,6 +58,34 @@ function createAdSlotInstanceId() {
 function getCurrentPagePath() {
   if (typeof window === "undefined") return undefined;
   return window.location?.pathname;
+}
+
+function trackAdBlockRecoveryDelivery(
+  milestone: Extract<AdBlockRecoveryMilestone, "ad_filled" | "ad_viewed">,
+  args: { slotName: AdSlotName; adSlotId: string; pagePath?: string }
+) {
+  const storage = getAdBlockRecoverySessionStorage();
+  if (!storage) return;
+
+  const now = Date.now();
+  const attempt = claimRecentAdBlockRecoveryMilestone(storage, milestone, now);
+  if (!attempt) return;
+
+  const properties = {
+    variant: attempt.variant,
+    slotName: args.slotName,
+    adSlotId: args.adSlotId,
+    attemptAgeMs: now - attempt.attemptedAt,
+    attemptPagePath: attempt.pagePath,
+    pagePath: args.pagePath,
+  };
+
+  if (milestone === "ad_filled") {
+    analytics.adBlockRecoveryAdFilled(properties);
+    return;
+  }
+
+  analytics.adBlockRecoveryAdViewed(properties);
 }
 
 type AdSlotStyle = CSSProperties & {
@@ -157,6 +190,13 @@ export function AdSlot({
         requestToStateMs:
           requestedAt.current === null ? undefined : currentTime - requestedAt.current,
       });
+      if (nextStatus === "filled") {
+        trackAdBlockRecoveryDelivery("ad_filled", {
+          slotName,
+          adSlotId: slot,
+          pagePath: getCurrentPagePath(),
+        });
+      }
       previousStatus.current = nextStatus;
     },
     [minHeight, reservation, slot, slotInstanceId, slotKey, slotName]
@@ -285,6 +325,11 @@ export function AdSlot({
                 renderedAt.current === null ? undefined : currentTime - renderedAt.current,
               fillToViewableMs:
                 filledAt.current === null ? undefined : currentTime - filledAt.current,
+            });
+            trackAdBlockRecoveryDelivery("ad_viewed", {
+              slotName,
+              adSlotId: slot,
+              pagePath: getCurrentPagePath(),
             });
             observer.disconnect();
           }, 1000);
