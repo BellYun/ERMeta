@@ -585,6 +585,48 @@ export const analytics = {
 
   // ── Identify (User / Session Properties) ───────────────────────────────────
 
+  /** 광고 차단 해제 시도 후 실제 AdSense 슬롯이 filled 상태가 된 경우. */
+  adBlockRecoveryAdFilled(args: {
+    variant: AdBlockRecoveryVariant;
+    slotName: AdSlotName;
+    adSlotId: string;
+    attemptAgeMs: number;
+    attemptPagePath: string;
+    pagePath?: string;
+  }) {
+    trackAdBlockRecovery("ad_block_recovery_ad_filled", {
+      experiment: AD_BLOCK_RECOVERY_EXPERIMENT,
+      variant: args.variant,
+      slot_name: args.slotName,
+      ad_slot_id: args.adSlotId,
+      attempt_age_ms: args.attemptAgeMs,
+      attempt_page_path: args.attemptPagePath,
+      page_path: args.pagePath,
+      page_surface: getPageSurface(args.pagePath),
+    });
+  },
+
+  /** 복구 후 채워진 광고가 viewport 50% 이상에서 1초 노출된 경우. */
+  adBlockRecoveryAdViewed(args: {
+    variant: AdBlockRecoveryVariant;
+    slotName: AdSlotName;
+    adSlotId: string;
+    attemptAgeMs: number;
+    attemptPagePath: string;
+    pagePath?: string;
+  }) {
+    trackAdBlockRecovery("ad_block_recovery_ad_viewed", {
+      experiment: AD_BLOCK_RECOVERY_EXPERIMENT,
+      variant: args.variant,
+      slot_name: args.slotName,
+      ad_slot_id: args.adSlotId,
+      attempt_age_ms: args.attemptAgeMs,
+      attempt_page_path: args.attemptPagePath,
+      page_path: args.pagePath,
+      page_surface: getPageSurface(args.pagePath),
+    });
+  },
+
   /** Session Properties 설정 — AmplitudeProvider init 직후 1회 호출 */
   setSessionProperties(sessionProps: SessionProperties) {
     if (isDev) return;

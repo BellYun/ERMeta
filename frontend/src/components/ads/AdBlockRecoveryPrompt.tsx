@@ -11,7 +11,8 @@ import {
 import { canLoadAds } from "@/components/ads/AdSenseScript";
 import type { RouteLocale } from "@/i18n/routing";
 import {
-  consumeRecentAdBlockRecoveryAttempt,
+  claimRecentAdBlockRecoveryMilestone,
+  getAdBlockRecoverySessionStorage,
   getRandomExperimentBucket,
   isAdBlockRecoveryPromptSuppressed,
   markAdBlockRecoveryAttempt,
@@ -414,11 +415,15 @@ export function AdBlockRecoveryPrompt() {
 
       const blocked = isBaitHidden(bait);
       if (!blocked) {
-        const attempt = consumeRecentAdBlockRecoveryAttempt(storage, Date.now());
+        const now = Date.now();
+        const recoveryStorage = getAdBlockRecoverySessionStorage();
+        const attempt = recoveryStorage
+          ? claimRecentAdBlockRecoveryMilestone(recoveryStorage, "bait_passed", now)
+          : null;
         if (attempt) {
           analytics.adBlockRecoverySucceeded({
             variant: attempt.variant,
-            attemptAgeMs: Date.now() - attempt.attemptedAt,
+            attemptAgeMs: now - attempt.attemptedAt,
             attemptPagePath: attempt.pagePath,
             pagePath: pathname,
           });
@@ -494,11 +499,14 @@ export function AdBlockRecoveryPrompt() {
     }
 
     const now = Date.now();
-    markAdBlockRecoveryAttempt(getClientStorage(), {
-      variant,
-      attemptedAt: now,
-      pagePath: pathname,
-    });
+    const recoveryStorage = getAdBlockRecoverySessionStorage();
+    if (recoveryStorage) {
+      markAdBlockRecoveryAttempt(recoveryStorage, {
+        variant,
+        attemptedAt: now,
+        pagePath: pathname,
+      });
+    }
     analytics.adBlockRecoveryReloadRequested({
       variant,
       locale,

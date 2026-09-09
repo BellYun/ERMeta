@@ -93,6 +93,37 @@ describe("analytics — P0 helpers", () => {
       expect(trackMock).toHaveBeenCalledWith("ad_block_recovery_prompt_shown", properties);
       expect(vercelTrackMock).toHaveBeenCalledWith("ad_block_recovery_prompt_shown", properties);
     });
+
+    it("Amplitude와 Vercel에 실제 광고 filled/viewed 전환을 보낸다", async () => {
+      const args = {
+        variant: "context" as const,
+        slotName: "home_ranking" as const,
+        adSlotId: "8139813658",
+        attemptAgeMs: 4250,
+        attemptPagePath: "/ko",
+        pagePath: "/ko",
+      };
+
+      analytics.adBlockRecoveryAdFilled(args);
+      await flushAsync();
+      analytics.adBlockRecoveryAdViewed(args);
+      await flushAsync();
+
+      const properties = {
+        experiment: "adblock_recovery_prompt_v1",
+        variant: "context",
+        slot_name: "home_ranking",
+        ad_slot_id: "8139813658",
+        attempt_age_ms: 4250,
+        attempt_page_path: "/ko",
+        page_path: "/ko",
+        page_surface: "home",
+      };
+      expect(trackMock).toHaveBeenCalledWith("ad_block_recovery_ad_filled", properties);
+      expect(vercelTrackMock).toHaveBeenCalledWith("ad_block_recovery_ad_filled", properties);
+      expect(trackMock).toHaveBeenCalledWith("ad_block_recovery_ad_viewed", properties);
+      expect(vercelTrackMock).toHaveBeenCalledWith("ad_block_recovery_ad_viewed", properties);
+    });
   });
 
   describe("coreFeatureUsed (NSM dedupe)", () => {
