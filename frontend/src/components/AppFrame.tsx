@@ -5,7 +5,7 @@ import {
   ADSENSE_SLOTS,
   canRenderAdSlot,
 } from "@/components/ads/adsenseConfig";
-import { AdSlot } from "@/components/ads/AdSlot";
+import { ViewportAdSlot } from "@/components/ads/ViewportAdSlot";
 import { Header } from "@/components/layout/Header";
 import type { RouteLocale } from "@/i18n/routing";
 import { localizeRoutePath } from "@/lib/seoLocales";
@@ -67,9 +67,10 @@ export function AppFrame({
               >
                 {showLeftRailAd ? (
                   <div className="sticky top-[5.5rem] w-full">
-                    <AdSlot
+                    <ViewportAdSlot
                       slot={ADSENSE_SLOTS.siteRailLeft}
                       slotName="site_rail_left"
+                      minViewportWidth={1280}
                       format="vertical"
                       responsive={false}
                       reservation={ADSENSE_SLOT_RESERVATIONS.siteRail}
@@ -89,9 +90,10 @@ export function AppFrame({
               >
                 {showRightRailAd ? (
                   <div className="sticky top-[5.5rem] w-full">
-                    <AdSlot
+                    <ViewportAdSlot
                       slot={ADSENSE_SLOTS.siteRailRight}
                       slotName="site_rail_right"
+                      minViewportWidth={1700}
                       format="vertical"
                       responsive={false}
                       reservation={ADSENSE_SLOT_RESERVATIONS.siteRail}
