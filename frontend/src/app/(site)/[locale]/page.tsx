@@ -1,16 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
-import { HomePageContent } from "@/components/features/home/HomePageContent";
+import { PatchHomePage } from "@/components/features/home/PatchHomePage";
 import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
 import { getPatches } from "@/lib/getPatches";
 import { getCachedHomeMetaStats } from "@/lib/homeMetaServer";
-import {
-  DEFAULT_HOME_TIER,
-  HOME_META_FALLBACK_PATCH,
-  buildHomeMetaView,
-  createEmptyHomeMetaStats,
-} from "@/lib/homeMetaShared";
+import { HOME_META_FALLBACK_PATCH, createEmptyHomeMetaStats } from "@/lib/homeMetaShared";
 import { buildLocalizedAlternates, localizeRoutePath } from "@/lib/seoLocales";
 import { BASE_URL } from "@/lib/siteMetadata";
 import { getMessage, loadIntlMessages, OG_LOCALE_BY_LANGUAGE } from "@/lib/staticIntl";
@@ -36,8 +31,8 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
   const language = LANGUAGE_BY_ROUTE_LOCALE[locale];
 
   const messages = await loadIntlMessages(language);
-  const title = `${getMessage(messages, "home.title")} | ${getMessage(messages, "rootMetadata.siteName")}`;
-  const description = getMessage(messages, "rootMetadata.description");
+  const title = `${getMessage(messages, "patchHome.entryTitle").replace(/\s+/g, " ")} | ${getMessage(messages, "rootMetadata.siteName")}`;
+  const description = getMessage(messages, "patchHome.entryDescription");
 
   return {
     metadataBase: new URL(BASE_URL),
@@ -81,7 +76,6 @@ export default async function LocalizedHomePage({ params }: LocalePageProps) {
 
   const availablePatches = await getPatches();
   const currentPatch = availablePatches[0] ?? HOME_META_FALLBACK_PATCH;
-  const patches = [currentPatch, ...availablePatches.filter((patch) => patch !== currentPatch)];
   let homeMetaStats = createEmptyHomeMetaStats(currentPatch);
 
   try {
@@ -90,15 +84,7 @@ export default async function LocalizedHomePage({ params }: LocalePageProps) {
     homeMetaStats = createEmptyHomeMetaStats(currentPatch);
   }
 
-  const initialView = buildHomeMetaView(homeMetaStats, DEFAULT_HOME_TIER);
-
   return (
-    <HomePageContent
-      locale={locale}
-      patches={patches}
-      currentPatch={currentPatch}
-      homeMetaStats={homeMetaStats}
-      rankingData={initialView.rankingData}
-    />
+    <PatchHomePage locale={locale} currentPatch={currentPatch} homeMetaStats={homeMetaStats} />
   );
 }

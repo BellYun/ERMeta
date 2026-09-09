@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import * as React from "react";
 import {
   ADSENSE_SLOT_RESERVATIONS,
@@ -23,6 +23,7 @@ interface HomeDashboardSectionsProps {
   patches: string[];
   homeMetaStats: HomeMetaStats;
   defaultPatch: string;
+  rankingOnly?: boolean;
 }
 
 const DeferredHoneyPicksSection = React.memo(HoneyPicksSection);
@@ -31,8 +32,10 @@ const DeferredTierRankingTable = React.memo(TierRankingTable);
 function HomeDashboardSectionsBody({
   homeMetaStats,
   defaultPatch,
+  rankingOnly = false,
 }: Omit<HomeDashboardSectionsProps, "patches">) {
   const t = useTranslations("home");
+  const format = useFormatter();
   const { patch, tier } = useFilter();
   const selectedPatch = patch || defaultPatch;
   const isPreseasonPatch = selectedPatch === "11.0";
@@ -44,10 +47,10 @@ function HomeDashboardSectionsBody({
   const selectedStats = statsByPatch[selectedPatch];
 
   React.useEffect(() => {
+    setStatsError(null);
     if (!selectedPatch || statsByPatchRef.current[selectedPatch]) return;
 
     const controller = new AbortController();
-    setStatsError(null);
 
     fetch(`/api/meta/home-stats?patchVersion=${encodeURIComponent(selectedPatch)}`, {
       signal: controller.signal,
@@ -81,43 +84,76 @@ function HomeDashboardSectionsBody({
     };
   }, [selectedPatch, selectedStats, tier]);
 
+  const sampleCount = computedView.rankingData.rankings.reduce(
+    (total, row) => total + row.totalGames,
+    0
+  );
+  const isLoading = !selectedStats && !statsError;
+
   return (
     <div className="home-dashboard">
-      <section id="home-mobile-filter" className="home-filter-panel p-3 sm:hidden">
-        <GlobalFilter />
-      </section>
-
-      <section className="home-data-section home-data-section--risers">
-        <div className="flex flex-col gap-5">
-          <div className="home-section-header flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-            <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
-              <h2 className="dashboard-section-title text-base font-bold text-[var(--color-foreground)] sm:text-lg">
-                {t("honeyPicksTitle")}
-              </h2>
-              <p className="pb-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">
-                {t("topFiveCaption")}
-              </p>
-            </div>
-            <div id="home-top-filter" className="hidden sm:block">
-              <GlobalFilter />
-            </div>
+      <section
+        id="home-mobile-filter"
+        className="home-analysis-context"
+        aria-label={t("analysis.conditions")}
+      >
+        <div className="home-analysis-context__controls">
+          <h2>{t("analysis.conditions")}</h2>
+          <div id="home-top-filter">
+            <GlobalFilter />
           </div>
-
-          {isPreseasonPatch ? (
-            <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-3 text-sm font-medium text-[var(--color-muted-foreground)] sm:px-4">
-              {t("preseasonNotice")}
-            </div>
-          ) : null}
-          {statsError ? <p className="text-sm text-[var(--color-danger)]">{statsError}</p> : null}
-
-          <DeferredHoneyPicksSection
-            initialData={computedView.honeyPicks}
-            initialPatchVersion={computedView.honeyPatchVersion}
-          />
         </div>
+        <dl className="home-analysis-context__facts" aria-live="polite" aria-busy={isLoading}>
+          <div>
+            <dt>{t("analysis.sample")}</dt>
+            <dd>{selectedStats && !statsError ? format.number(sampleCount) : "—"}</dd>
+          </div>
+          <div>
+            <dt>{t("analysis.comparison")}</dt>
+            <dd>{selectedStats?.previousPatch ?? "—"}</dd>
+          </div>
+          <div className="home-analysis-context__note">
+            <dt>{t("analysis.reading")}</dt>
+            <dd>{t("analysis.sampleNote")}</dd>
+          </div>
+        </dl>
+        {isPreseasonPatch ? <p className="home-analysis-notice">{t("preseasonNotice")}</p> : null}
+        {isLoading ? (
+          <p className="home-analysis-notice" role="status">
+            {t("analysis.loading")}
+          </p>
+        ) : null}
+        {statsError ? (
+          <p className="home-analysis-notice text-[var(--color-danger)]" role="alert">
+            {t("analysis.error")}
+          </p>
+        ) : null}
       </section>
 
       <HomeFilterAside anchorId="home-top-filter" />
+
+      <section
+        className="home-data-section home-data-section--ranking"
+        aria-labelledby="home-ranking-title"
+        aria-busy={isLoading}
+      >
+        <div className="home-section-header home-analysis-heading">
+          <div>
+            <h2 id="home-ranking-title" className="dashboard-section-title">
+              {t("rankingTitle")}
+            </h2>
+            <p>{t("rankingDescription")}</p>
+          </div>
+          {!rankingOnly && (
+            <a href="#home-risers">
+              {t("analysis.viewChanges")} <span aria-hidden="true">↓</span>
+            </a>
+          )}
+        </div>
+        {selectedStats && !statsError ? (
+          <DeferredTierRankingTable initialData={computedView.rankingData} />
+        ) : null}
+      </section>
 
       {canRenderAdSlot(ADSENSE_SLOTS.homeRanking) ? (
         <AdSlot
@@ -128,17 +164,29 @@ function HomeDashboardSectionsBody({
         />
       ) : null}
 
-      <section className="home-data-section home-data-section--ranking">
-        <div className="home-section-header mb-5 flex flex-wrap items-end gap-x-4 gap-y-2">
-          <h2 className="dashboard-section-title text-base font-bold text-[var(--color-foreground)] sm:text-lg">
-            {t("rankingTitle")}
-          </h2>
-          <p className="pb-1 text-xs text-[var(--color-muted-foreground)] sm:text-sm">
-            {t("rankingDescription")}
-          </p>
-        </div>
-        <DeferredTierRankingTable initialData={computedView.rankingData} />
-      </section>
+      {!rankingOnly && (
+        <section
+          id="home-risers"
+          className="home-data-section home-data-section--risers"
+          aria-labelledby="home-risers-title"
+          aria-busy={isLoading}
+        >
+          <div className="home-section-header home-analysis-heading">
+            <div>
+              <h2 id="home-risers-title" className="dashboard-section-title">
+                {t("honeyPicksTitle")}
+              </h2>
+              <p>{t("topFiveCaption")}</p>
+            </div>
+          </div>
+          {selectedStats && !statsError ? (
+            <DeferredHoneyPicksSection
+              initialData={computedView.honeyPicks}
+              initialPatchVersion={computedView.honeyPatchVersion}
+            />
+          ) : null}
+        </section>
+      )}
     </div>
   );
 }
@@ -149,6 +197,7 @@ export function HomeDashboardSections(props: HomeDashboardSectionsProps) {
       <HomeDashboardSectionsBody
         homeMetaStats={props.homeMetaStats}
         defaultPatch={props.defaultPatch}
+        rankingOnly={props.rankingOnly}
       />
     </FilterProvider>
   );

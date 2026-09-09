@@ -43,7 +43,9 @@
     "seasonRecap": "시즌 리캡",
     "feedback": "피드백 보내기",
     "patchPanel": "패치 {patch}",
-    "updateStatus": "업데이트: 패치 기준 반영"
+    "updateStatus": "업데이트: 패치 기준 반영",
+    "home": "홈",
+    "characterRankings": "실험체 순위"
   },
   "mobileTab": {
     "meta": "메타",
@@ -158,13 +160,24 @@
     "retry": "다시 시도"
   },
   "home": {
+    "analysis": {
+      "estimateMethod": "산출 기준",
+      "conditions": "분석 조건",
+      "sample": "선택 조건 표본",
+      "comparison": "비교 패치",
+      "reading": "표본 기준",
+      "sampleNote": "실험체별 참여 기록의 합계입니다. 고유 경기 수와 다릅니다.",
+      "loading": "선택한 패치의 통계를 불러오는 중입니다.",
+      "error": "통계를 불러오지 못했습니다. 다른 패치를 선택하거나 페이지를 새로고침해 주세요.",
+      "viewChanges": "패치 변화 보기"
+    },
     "live": "패치",
     "patch": "패치 {patch}",
     "title": "메타 분석",
     "subtitle": "{count}판 집계 데이터 기반 메타 분석",
     "heroDescription": "이터널 리턴의 현재 메타를 집계 데이터로 분석합니다.",
-    "matchMetric": "현재 집계 게임 수",
-    "matchMetricDescription": "패치 {patch} 기준으로 분석에 반영된 전체 랭크 게임 수입니다.",
+    "matchMetric": "추정 집계 경기 수",
+    "matchMetricDescription": "패치 {patch} 전체 수집 참여 기록을 경기당 21명으로 환산한 추정치입니다. 아래 선택 조건의 표본과 다릅니다.",
     "patchAnalysisCta": "12.3 패치 분석",
     "winRateMetric": "상위권 평균 승률",
     "rpMetric": "상위권 평균 RP",
@@ -472,11 +485,26 @@
   },
   "characterDetailed": {
     "groups": {
-      "havoc": { "name": "파괴", "letter": "파" },
-      "fortification": { "name": "저항", "letter": "저" },
-      "support": { "name": "지원", "letter": "지" },
-      "chaos": { "name": "혼돈", "letter": "혼" },
-      "unknown": { "name": "기타", "letter": "?" }
+      "havoc": {
+        "name": "파괴",
+        "letter": "파"
+      },
+      "fortification": {
+        "name": "저항",
+        "letter": "저"
+      },
+      "support": {
+        "name": "지원",
+        "letter": "지"
+      },
+      "chaos": {
+        "name": "혼돈",
+        "letter": "혼"
+      },
+      "unknown": {
+        "name": "기타",
+        "letter": "?"
+      }
     },
     "slots": {
       "weapon": "무기",
@@ -529,11 +557,26 @@
   },
   "characterTraitBuild": {
     "groups": {
-      "havoc": { "name": "파괴", "letter": "파" },
-      "fortification": { "name": "저항", "letter": "저" },
-      "support": { "name": "지원", "letter": "지" },
-      "chaos": { "name": "혼돈", "letter": "혼" },
-      "unknown": { "name": "?", "letter": "?" }
+      "havoc": {
+        "name": "파괴",
+        "letter": "파"
+      },
+      "fortification": {
+        "name": "저항",
+        "letter": "저"
+      },
+      "support": {
+        "name": "지원",
+        "letter": "지"
+      },
+      "chaos": {
+        "name": "혼돈",
+        "letter": "혼"
+      },
+      "unknown": {
+        "name": "?",
+        "letter": "?"
+      }
     },
     "labels": {
       "core": "코어",
@@ -1006,5 +1049,147 @@
       "detail": "이터널리턴 상세 조합",
       "character": "{name} 조합"
     }
+  },
+  "patchHome": {
+    "title": "이번 패치, 주목할 실험체",
+    "description": "상승한 실험체부터 확인하고, 내 플레이에 맞는 선택으로 이어가세요.",
+    "patch": "PATCH {patch}",
+    "risers": "이번 패치 상승픽",
+    "conditions": "{previous} → {current} · 다이아몬드 이상 · 동일 티어 비교",
+    "allRankings": "전체 순위 보기",
+    "rp": "평균 RP",
+    "winRate": "승률",
+    "sample": "현재 {current}판 · 이전 {previous}판",
+    "emptyTitle": "상승픽을 확인할 비교 표본이 아직 부족합니다",
+    "emptyBody": "충분한 표본과 상승 조건을 충족한 실험체가 모이면 표시합니다. 전체 순위에서는 현재 집계된 성능을 확인할 수 있습니다.",
+    "methodTitle": "상승픽 선정 기준",
+    "methodBody": "이전 패치와 비교 가능한 실험체·무기 중 현재 패치의 최소 표본 기준을 충족한 후보를 대상으로, 승률·픽률·평균 RP 변화의 종합 점수가 높은 순서로 표시합니다. 변화량은 이전 패치 대비이며, 직접적인 버프 효과나 현재 성능 순위를 뜻하지 않습니다.",
+    "explore": "분석 둘러보기",
+    "compare": "전체 메타를 보고 싶다면",
+    "combine": "함께할 픽을 찾는다면",
+    "read": "변경점 확인",
+    "rankingBody": "티어와 패치를 골라 전체 실험체의 성능을 비교하세요.",
+    "comboBody": "아군 픽과 내 실험체 풀에 맞는 조합을 찾아보세요.",
+    "patchNotes": "패치 노트",
+    "patchBody": "실험체와 무기에 적용된 실제 변경점을 확인하세요.",
+    "pickRate": "픽률",
+    "metricLegend": "현재 수치 · 오른쪽 작은 숫자는 이전 패치 대비 변화량",
+    "spotlight": "주목할 상승픽",
+    "viewAnalysis": "실험체 분석 보기",
+    "teamHomeTitle": "우리 팀의 다음 픽,\n함께 찾아볼까요?",
+    "teamHomeDescription": "아군 한 명부터 시작하세요. 함께할 실험체와 무기를 실제 3인 조합 데이터로 비교할 수 있습니다.",
+    "stepAlly": "정해진 아군을 선택",
+    "stepAllyBody": "실험체와 무기를 고르면 바로 시작합니다.",
+    "stepCompare": "함께할 픽을 비교",
+    "stepCompareBody": "승률·평균 RP·순위와 표본을 함께 확인하세요.",
+    "stepPool": "내 실험체 풀로 좁히기",
+    "stepPoolBody": "필요할 때 내가 할 수 있는 픽을 등록하세요.",
+    "rankingsAlternative": "실험체 자체의 성능이 궁금하다면",
+    "startStep": "아군 선택으로 시작",
+    "chooseAlly": "누구와 함께하나요?",
+    "chooseAllyHint": "실험체를 누르면 선택한 무기로 조합을 찾습니다.",
+    "allySearch": "아군 실험체·무기 검색 (초성 가능)",
+    "searchResults": "검색 결과 {count}개",
+    "allCharacters": "전체 실험체·무기",
+    "popularAllies": "현재 패치에서 많이 선택된 픽",
+    "showPopular": "간단히 보기",
+    "showAll": "전체 보기",
+    "startWith": "{name} · {weapon} 아군으로 조합 찾기",
+    "noAllyResults": "일치하는 실험체나 무기가 없습니다.",
+    "openComposition": "아직 아군이 없다면 조합 페이지 둘러보기",
+    "liveTitle": "픽이 정해지면, 바로 조합 비교",
+    "liveDescription": "미리 켜두고 아군 픽을 추가하세요. 같은 화면에서 결과를 비교하고, 내 실험체 풀로 선택지를 좁힐 수 있습니다.",
+    "workspaceLoading": "조합 도구를 불러오는 중입니다.",
+    "entryTitle": "지금의 메타부터,\n우리 팀의 조합까지.",
+    "entryDescription": "현재 성능과 패치 변화를 읽고, 우리 팀에 맞는 픽을 찾으세요. 실험체 분석과 3인 조합 데이터를 한곳에서 확인할 수 있습니다.",
+    "entryCta": "조합 분석 시작",
+    "entryNote": "픽 전에 조합 분석을 열어두세요. 아군이 정해지면 같은 화면에서 결과를 비교할 수 있습니다.",
+    "entryGuide": "이렇게 사용하세요",
+    "entryPrepare": "픽 전에 열어두기",
+    "entryPrepareBody": "필요하다면 내가 플레이하는 실험체 풀을 미리 설정하세요.",
+    "entryPick": "팀원의 픽 추가하기",
+    "entryPickBody": "정해지는 대로 아군 실험체와 무기를 선택하세요.",
+    "entryCompare": "같은 화면에서 결과 비교",
+    "entryCompareBody": "평균 RP·승률·순위와 표본을 확인하고, 픽이 바뀌면 다시 비교하세요.",
+    "twoWays": "선택을 돕는 두 가지 분석",
+    "valueMeta": "이번 패치, 무엇이 강해졌나?",
+    "valueMetaBody": "현재 성능과 이전 패치 대비 변화를 표본과 함께 비교합니다.",
+    "valueTeam": "우리 팀에는 무엇이 잘 맞나?",
+    "valueTeamBody": "아군 픽과 내 실험체 풀을 기준으로 함께할 조합을 찾습니다.",
+    "currentStrong": "현재 강한 픽",
+    "currentStrongBasis": "패치 {patch} · 다이아몬드 이상 · 실험체·무기별 평균 RP 상위",
+    "sampleLabel": "표본(판)",
+    "currentEmpty": "현재 성능을 비교할 데이터를 집계 중입니다.",
+    "forecastTitle": "패치 예상 티어, 현재는 어떨까?",
+    "forecastBasis": "패치 {patch} · 다이아몬드 이상 · 예상이 있는 실험체·무기 · 표본 많은 순",
+    "forecastSource": "패치 분석 근거 보기",
+    "forecastNote": "패치 전 티어와 예상은 패치노트에 기록된 값입니다. 현재 티어는 실험체 순위와 같은 종합 점수로 계산하며, 패치 변경만의 효과를 뜻하지 않습니다.",
+    "forecastBefore": "패치 전",
+    "forecastExpected": "패치 예상",
+    "forecastActual": "현재 통계",
+    "forecastRange": "범위 {range}",
+    "forecastMore": "나머지 {count}개 비교하기",
+    "forecastEmpty": "이 패치의 예상 티어와 현재 통계를 함께 비교할 데이터가 아직 없습니다.",
+    "forecastWithin": "예상 범위 내",
+    "forecastAbove": "예상보다 높음",
+    "forecastBelow": "예상보다 낮음",
+    "changesLabel": "실험체 패치 내역",
+    "changesMore": "변경 {count}건 더보기",
+    "changesEmpty": "등록된 실험체 직접 변경 없음",
+    "changeTypes": {
+      "buff": "상향",
+      "nerf": "하향",
+      "rework": "조정"
+    },
+    "itemChangesLabel": "관련 아이템 패치",
+    "itemChangesBasis": "기존 예상에 함께 고려한 장비 · 해당 아이템 사용 시 영향",
+    "traitChangesLabel": "공통 특성 패치",
+    "traitChangesBasis": "해당 특성 선택 시 영향 · 기존 예상에 반영 여부는 확인되지 않은 추가 참고 사항입니다.",
+    "indirectSource": "아이템·특성 패치 원문",
+    "masteryChangesLabel": "{weapon} 숙련도",
+    "risingSort": "상승 후보 정렬",
+    "risingOverall": "종합 상승",
+    "risingBy": "{metric} 변화",
+    "risingScope": "상승 후보 {count}명 내 정렬",
+    "risingSelect": "실험체 선택",
+    "risingDetail": "선택한 상승픽 비교",
+    "risingScale": "지표별 눈금은 후보 간 동일합니다. 세로선은 0이며, 패치 전후 변화가 패치만의 효과를 뜻하지는 않습니다.",
+    "motionTransition": "전후 전환 중",
+    "motionSlider": "패치 전후 비교 슬라이더",
+    "motionHint": "슬라이더를 움직여 전후 위치를 비교하세요. 중간 위치는 실제 시계열이 아닌 보간 연출입니다.",
+    "motionComparePick": "{name} 비교 선택",
+    "motionCompare": "두 실험체 비교",
+    "motionClear": "선택 해제",
+    "motionCompareHint": "체크박스로 두 실험체를 고르면 변화량을 나란히 비교합니다.",
+    "motionChanges": "패치 전후 변화량",
+    "motionMetric": "지표",
+    "cardCurrent": "현재 {value}",
+    "cardOpen": "패치와 분석 펼치기",
+    "cardClose": "분석 접기",
+    "cardPatch": "관련 패치",
+    "cardForecast": "예상과 현재 티어",
+    "cardObserved": "실제 성적",
+    "cardNoPatch": "연결된 패치 변경이 없습니다. 상승이 직접 패치 효과를 뜻하지는 않습니다.",
+    "cardNoForecast": "등록된 사전 예측이 없습니다.",
+    "cardOriginal": "변경 내용은 한국어 원문 기준입니다.",
+    "forecastTop3": "TOP3 비율",
+    "forecastPerformanceBasis": "{previous} → {current} · 같은 무기·다이아+ 기준",
+    "forecastPerformanceSamples": "이전 {previous}판 · 현재 {current}판",
+    "forecastNoBaseline": "이전 표본 없음",
+    "forecastDetails": "이전 패치 비교",
+    "welcomeTitle": "팀 조합과 패치 변화를 한눈에 확인하세요.",
+    "welcomeTeamLabel": "팀 조합",
+    "welcomeTeamTitle": "우리 팀, 뭘 골라야 할까?",
+    "welcomeTeamBody": "게임 전에 열어두고, 아군이 픽할 때마다 내 실험체 풀에서 맞는 후보를 찾아보세요.",
+    "welcomeExample": "사용 흐름 예시",
+    "welcomeMyPick": "내 픽",
+    "welcomeResult": "추천 후보 비교",
+    "welcomeResultBody": "내 풀 표시 · 승률 · 평균 RP",
+    "welcomeTeamCta": "조합 찾아보기",
+    "welcomeMetaLabel": "패치 분석",
+    "welcomeMetaTitle": "이번 패치, 내 실험체 괜찮을까?",
+    "welcomeMetaBody": "패치 변경과 예상 티어를 실제 성적과 비교해 판단하세요.",
+    "welcomeLive": "패치 {patch} · 다이아+ 실제 데이터",
+    "welcomeMetaCta": "실험체 분석하기"
   }
 }

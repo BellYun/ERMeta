@@ -5,8 +5,6 @@ import {
   BarChart3,
   ChevronDown,
   Gauge,
-  Layers,
-  Layers3,
   Menu,
   MessageSquarePlus,
   Moon,
@@ -63,9 +61,15 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
   }> = [
     {
       href: withCurrentRouteLocale(pathname, "/"),
-      label: tNav("metaAnalysis"),
+      label: tNav("home"),
       icon: BarChart3,
       isActive: normalizedPathname === "/",
+    },
+    {
+      href: withCurrentRouteLocale(pathname, "/rankings"),
+      label: tNav("characterRankings"),
+      icon: BarChart3,
+      isActive: normalizedPathname === "/rankings",
     },
     {
       href: withCurrentRouteLocale(pathname, "/character/1"),
@@ -80,16 +84,6 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
       isActive: normalizedPathname === "/synergy-detail",
     },
     {
-      href: withCurrentRouteLocale(pathname, "/character-lab"),
-      label: tNav("characterLab"),
-      icon: Layers,
-      isActive:
-        (normalizedPathname.startsWith("/character-lab") &&
-          !normalizedPathname.startsWith("/character-lab/new")) ||
-        normalizedPathname === "/lab" ||
-        normalizedPathname.startsWith("/lab/"),
-    },
-    {
       href: withCurrentRouteLocale(pathname, "/patches"),
       label: tNav("patchNotes"),
       icon: NotebookText,
@@ -102,12 +96,6 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
     icon: LucideIcon;
     isActive: boolean;
   }> = [
-    {
-      href: withCurrentRouteLocale(pathname, "/character-lab/new"),
-      label: tNav("characterLabNew"),
-      icon: Layers3,
-      isActive: normalizedPathname.startsWith("/character-lab/new"),
-    },
     {
       href: withCurrentRouteLocale(pathname, patchAnalysisPath),
       label: tNav("patchAnalysisNav"),
@@ -300,7 +288,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                 className="site-wordmark__mark h-9 w-9 shrink-0"
                 priority
               />
-              <div className="min-w-0">
+              <div className="min-w-0 max-[359px]:hidden">
                 <p className="site-wordmark__title truncate text-[1.05rem] font-bold text-[var(--color-foreground)]">
                   {t("logoTitle")}
                 </p>
@@ -400,7 +388,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                 )}
               </Button>
 
-              <div className="hidden lg:block">
+              <div className="shrink-0">
                 <LanguageSwitcher />
               </div>
 
@@ -412,7 +400,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                 aria-label={theme === "dark" ? t("switchToLightTheme") : t("switchToDarkTheme")}
                 aria-pressed={theme === "dark"}
                 title={theme === "dark" ? t("switchToLightTheme") : t("switchToDarkTheme")}
-                className="site-icon-button h-11 w-11 shrink-0 rounded-[var(--radius-input)]"
+                className="site-icon-button hidden sm:inline-flex h-11 w-11 shrink-0 rounded-[var(--radius-input)]"
               >
                 {theme === "dark" ? (
                   <Sun className="h-4.5 w-4.5 lg:h-3.5 lg:w-3.5" strokeWidth={2} />
