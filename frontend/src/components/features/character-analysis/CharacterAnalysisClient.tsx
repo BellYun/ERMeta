@@ -11,6 +11,7 @@ import { Link } from "@/i18n/navigation";
 import { getCharacterMiniWebpUrl, getCharacterName } from "@/lib/characterMap";
 import { DEFAULT_CHARACTER_ANALYSIS_TIER } from "@/lib/characterTier";
 import type { Tier } from "@/lib/design-tokens";
+import { setFeedbackContextState } from "@/lib/feedbackContext";
 import { buildHomeMetaView, type HomeMetaStats } from "@/lib/homeMetaShared";
 import { cn } from "@/lib/utils";
 import {
@@ -20,6 +21,7 @@ import {
 } from "@/lib/weaponMap";
 import { computeCharacterMetaTiers } from "../tier-ranking/utils";
 import { CharacterHeader } from "./CharacterHeader";
+import { PatchNotesDisclosure } from "./PatchNotesDisclosure";
 import { RoleComboRpPanel } from "./RoleComboRpPanel";
 import { fetchStats, fetchStatsHistory, mergeSuccessfulPatchStats } from "./utils";
 
@@ -166,6 +168,7 @@ function PartnerTypePopover({
 }
 
 interface CharacterAnalysisClientProps {
+  afterOverview?: React.ReactNode;
   initialPatches?: string[];
   initialStats?: CharacterStatsResponse | null;
   initialPrevStats?: CharacterStatsResponse | null;
@@ -212,6 +215,7 @@ function replaceWeaponInLocation(weapon: number | null) {
 }
 
 export function CharacterAnalysisClient({
+  afterOverview,
   initialPatches,
   initialStats,
   initialPrevStats,
@@ -219,6 +223,7 @@ export function CharacterAnalysisClient({
   code,
   weaponTypeProfiles = {},
 }: CharacterAnalysisClientProps) {
+  const comparisonRef = React.useRef<HTMLDivElement>(null);
   const { l10n } = useL10n();
   const t = useTranslations("characterAnalysis");
   const characterHeaderT = useTranslations("characterHeader");
@@ -429,6 +434,18 @@ export function CharacterAnalysisClient({
 
   const currentPatch = selectedPatch ?? patches[0] ?? null;
   const initialPatch = patches[0] ?? null;
+
+  React.useEffect(
+    () =>
+      setFeedbackContextState("character_analysis", {
+        characterCode: code,
+        tier: selectedTier,
+        patch: currentPatch,
+        weaponCode: selectedWeapon,
+      }),
+    [code, currentPatch, selectedTier, selectedWeapon]
+  );
+
   const [homeMetaStatsByPatch, setHomeMetaStatsByPatch] = React.useState<
     Record<string, HomeMetaStats>
   >({});
@@ -635,6 +652,8 @@ export function CharacterAnalysisClient({
         )}
       </div>
 
+      {afterOverview}
+
       {characterTypeEntries.length > 0 ? (
         <section className="dashboard-panel character-analysis-panel character-type-panel z-[30] p-3">
           <div className="flex flex-col gap-1 border-b border-[var(--color-border)] pb-2.5 sm:flex-row sm:items-end sm:justify-between">
@@ -821,14 +840,16 @@ export function CharacterAnalysisClient({
                 {t("patchComparison")}
               </h2>
             </div>
-            <Suspense fallback={<TabFallback />}>
-              <PatchComparisonTab
-                chartData={chartData}
-                stats={stats}
-                loading={loading}
-                selectedCode={code}
-              />
-            </Suspense>
+            <div ref={comparisonRef}>
+              <Suspense fallback={<TabFallback />}>
+                <PatchComparisonTab
+                  chartData={chartData}
+                  stats={stats}
+                  loading={loading}
+                  selectedCode={code}
+                />
+              </Suspense>
+            </div>
           </section>
 
           <section className="dashboard-panel character-analysis-panel p-3">
@@ -838,9 +859,11 @@ export function CharacterAnalysisClient({
                 {t("patchNotes")}
               </h2>
             </div>
-            <Suspense fallback={<TabFallback />}>
-              <PatchLogTab patches={patches} selectedCode={code} />
-            </Suspense>
+            <PatchNotesDisclosure key={code} comparisonRef={comparisonRef}>
+              <Suspense fallback={<TabFallback />}>
+                <PatchLogTab patches={patches} selectedCode={code} />
+              </Suspense>
+            </PatchNotesDisclosure>
           </section>
 
           <section className="dashboard-panel character-analysis-panel p-3 xl:col-span-2">

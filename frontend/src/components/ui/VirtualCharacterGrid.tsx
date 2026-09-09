@@ -25,6 +25,7 @@ interface VirtualCharacterGridProps {
   emptyMessage?: string;
   scrollToCode?: number;
   statsMap?: Map<number, CharacterCellStats>;
+  vocAction?: string;
 }
 
 const TIER_COLOR_MAP: Record<string, string> = {
@@ -42,6 +43,7 @@ const CharacterCell = React.memo(function CharacterCell({
   disabled,
   onSelect,
   cellStats,
+  vocAction,
 }: {
   code: number;
   name: string;
@@ -49,12 +51,15 @@ const CharacterCell = React.memo(function CharacterCell({
   disabled: boolean;
   onSelect: (code: number) => void;
   cellStats?: CharacterCellStats;
+  vocAction?: string;
 }) {
   return (
     <button
       onClick={() => onSelect(code)}
       disabled={disabled}
       title={name}
+      data-voc-action={vocAction}
+      data-voc-code={vocAction ? code : undefined}
       className={cn(
         "flex flex-col items-center gap-0.5 rounded-md px-1 py-1.5",
         selected
@@ -120,6 +125,7 @@ export function VirtualCharacterGrid({
   emptyMessage = "검색 결과 없음",
   scrollToCode,
   statsMap,
+  vocAction,
 }: VirtualCharacterGridProps) {
   // `useVirtualizer` (TanStack Virtual) 훅은 React Compiler가 안전하게 메모이제이션할 수 없는
   // 함수를 반환하며, 이는 UI를 오래된 상태로 만들 수 있습니다.
@@ -209,6 +215,7 @@ export function VirtualCharacterGrid({
                   disabled={isDisabled?.(code) ?? false}
                   onSelect={onSelect}
                   cellStats={statsMap?.get(code)}
+                  vocAction={vocAction}
                 />
               ))}
             </div>

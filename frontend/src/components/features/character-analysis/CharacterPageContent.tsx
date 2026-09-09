@@ -402,11 +402,11 @@ function buildInsight(
 
 function CharacterInsightSection({ insight }: { insight: CharacterInsight }) {
   return (
-    <section className="dashboard-panel p-3">
-      <div className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1">
+    <details className="dashboard-panel character-studio__insight p-3">
+      <summary className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <Info className="h-4 w-4 text-[var(--color-muted-foreground)]" />
         <h2 className="text-sm font-bold text-[var(--color-foreground)]">{insight.headline}</h2>
-      </div>
+      </summary>
 
       <div className="grid gap-2.5 lg:grid-cols-3">
         <InsightCard title={insight.fitTitle} items={insight.fitPoints} />
@@ -420,7 +420,7 @@ function CharacterInsightSection({ insight }: { insight: CharacterInsight }) {
           </p>
         </div>
       </div>
-    </section>
+    </details>
   );
 }
 
@@ -510,8 +510,8 @@ export async function CharacterPageContent({
   );
 
   return (
-    <div className="page-shell flex flex-col gap-4 lg:gap-5">
-      <section className="dashboard-panel px-3 py-2.5 sm:px-3.5">
+    <div className="page-shell character-studio flex flex-col gap-4 lg:gap-5">
+      <section className="dashboard-panel character-studio__intro px-3 py-2.5 sm:px-3.5">
         <div className="grid gap-2.5 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)] lg:items-center">
           <div className="flex min-w-0 flex-col justify-center">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
@@ -527,45 +527,13 @@ export async function CharacterPageContent({
             <p className="mt-1.5 max-w-[46rem] text-xs leading-5 text-[var(--color-foreground)] sm:text-sm">
               {t("subtitle")}
             </p>
-            <p className="mt-1 max-w-[46rem] text-xs leading-5 text-[var(--color-muted-foreground)]">
-              {t("description")}
-            </p>
-            <p className="mt-1.5 text-[10px] leading-4 text-[var(--color-muted-foreground)]">
-              {t("imageNotice")}
-            </p>
           </div>
-
-          {serverSummary ? (
-            <aside className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-2.5">
-              <div className="mb-1.5 flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-md border border-[var(--color-border)] text-[var(--color-muted-foreground)]">
-                  <Info className="h-3 w-3" />
-                </span>
-                <h2 className="text-xs font-bold text-[var(--color-foreground)]">{summaryTitle}</h2>
-              </div>
-              <p className="text-xs leading-5 text-[var(--color-muted-foreground)]">
-                {serverSummary}
-              </p>
-            </aside>
-          ) : null}
         </div>
       </section>
-
-      {canRenderAdSlot(ADSENSE_SLOTS.characterAnalysis) ? (
-        <AdSlot
-          slot={ADSENSE_SLOTS.characterAnalysis}
-          slotName="character_analysis_top"
-          format="horizontal"
-          className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 sm:px-4"
-          reservation={ADSENSE_SLOT_RESERVATIONS.contentHorizontal}
-        />
-      ) : null}
 
       {initialStats ? (
         <CharacterStructuredData locale={locale} code={code} stats={initialStats} />
       ) : null}
-
-      {insight ? <CharacterInsightSection insight={insight} /> : null}
 
       <div className="min-h-[4800px] sm:min-h-[3200px]">
         <SectionErrorBoundary sectionName={t("sectionName")}>
@@ -578,6 +546,30 @@ export async function CharacterPageContent({
               initialMetaTiers={initialMetaTiers}
               code={code}
               weaponTypeProfiles={weaponTypeProfiles}
+              afterOverview={
+                <>
+                  <details className="character-studio__reference">
+                    <summary>{summaryTitle}</summary>
+                    {serverSummary ? <p>{serverSummary}</p> : null}
+                    <p className="mt-1 max-w-[46rem] text-xs leading-5 text-[var(--color-muted-foreground)]">
+                      {t("description")}
+                    </p>
+                    <p className="mt-1.5 text-[10px] leading-4 text-[var(--color-muted-foreground)]">
+                      {t("imageNotice")}
+                    </p>
+                  </details>
+                  {insight ? <CharacterInsightSection insight={insight} /> : null}
+                  {canRenderAdSlot(ADSENSE_SLOTS.characterAnalysis) ? (
+                    <AdSlot
+                      slot={ADSENSE_SLOTS.characterAnalysis}
+                      slotName="character_analysis_top"
+                      format="horizontal"
+                      className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 sm:px-4"
+                      reservation={ADSENSE_SLOT_RESERVATIONS.contentHorizontal}
+                    />
+                  ) : null}
+                </>
+              }
             />
           </Suspense>
         </SectionErrorBoundary>

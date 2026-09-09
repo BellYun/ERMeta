@@ -208,6 +208,7 @@ export function CharacterHeader({
                       }}
                       type="button"
                       role="radio"
+                      data-voc-action="character_analysis_tier"
                       aria-checked={isSelected}
                       tabIndex={isSelected ? 0 : -1}
                       onClick={() => {
@@ -231,6 +232,7 @@ export function CharacterHeader({
                   <span>패치</span>
                   <select
                     value={selectedPatch ?? patches[0]}
+                    data-voc-action="character_analysis_patch"
                     onChange={(event) => setSelectedPatch(event.target.value)}
                     className="bg-transparent text-[var(--color-foreground)] outline-none"
                   >
@@ -269,6 +271,7 @@ export function CharacterHeader({
                     }}
                     type="button"
                     role="radio"
+                    data-voc-action="character_analysis_weapon"
                     aria-checked={isSelected}
                     tabIndex={isSelected ? 0 : -1}
                     onClick={() => {

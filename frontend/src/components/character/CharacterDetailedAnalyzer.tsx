@@ -429,6 +429,7 @@ function TopBuildsTableFiltered({
 
 // ─── 슬롯별 인기 아이템 ────────────────────────────────────────────────────────
 
+/* Hallmark · component-scope · Open Studio · critique: P4 H4 E4 S4 R5 V4 */
 function SlotPopularityGrid({
   slotPopularity,
   itemNames,
@@ -438,173 +439,87 @@ function SlotPopularityGrid({
 }) {
   const t = useTranslations("characterDetailed");
   const slotLabels = React.useMemo(() => createSlotLabels(t), [t]);
+  const [selectedSlot, setSelectedSlot] = React.useState<(typeof SLOTS)[number]>(SLOTS[0]);
+  const headingId = React.useId();
+  const items = [...slotPopularity[selectedSlot]].sort((a, b) => b.pickRate - a.pickRate);
+
   return (
-    <div className="overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]">
-      <div className="border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2">
-        <span className="dashboard-section-title text-xs font-semibold text-[var(--color-foreground)]">
-          {t("sections.slotPopularity")}
-        </span>
+    <section
+      aria-labelledby={headingId}
+      className="min-w-0 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]"
+    >
+      <h3
+        id={headingId}
+        className="dashboard-section-title px-4 py-3 text-sm font-semibold text-[var(--color-foreground)]"
+      >
+        {t("sections.slotPopularity")}
+      </h3>
+      <div
+        role="group"
+        aria-labelledby={headingId}
+        className="grid grid-cols-5 border-y border-[var(--color-border)]"
+      >
+        {SLOTS.map((slot) => (
+          <button
+            key={slot}
+            type="button"
+            aria-pressed={slot === selectedSlot}
+            onClick={() => setSelectedSlot(slot)}
+            className={cn(
+              "min-h-11 min-w-0 whitespace-nowrap border-b-2 px-1 text-xs font-medium focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-accent)] active:bg-[var(--color-surface-2)]",
+              slot === selectedSlot
+                ? "border-[var(--color-accent)] bg-[var(--color-surface-2)] text-[var(--color-foreground)]"
+                : "border-transparent text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
+            )}
+          >
+            {slotLabels[slot]}
+          </button>
+        ))}
       </div>
-
-      {/* 모바일: 슬롯별 가로 스크롤 카드 */}
-      <div className="sm:hidden divide-y divide-[var(--color-border)]">
-        {SLOTS.map((slot) => {
-          const items = slotPopularity[slot];
-          if (items.length === 0) return null;
-          return (
-            <div key={slot} className="px-2.5 py-2">
-              <p className="text-[11px] font-medium text-[var(--color-muted-foreground)] mb-1.5">
-                {slotLabels[slot]}
+      <ol aria-label={slotLabels[selectedSlot]} className="divide-y divide-[var(--color-border)]">
+        {items.map((item, index) => (
+          <li
+            key={item.code}
+            className="grid grid-cols-[1rem_2.5rem_minmax(0,1fr)] items-center gap-3 px-3 py-3 sm:px-4"
+          >
+            <span className="text-xs tabular-nums text-[var(--color-muted-foreground)]">
+              {index + 1}
+            </span>
+            <ItemIcon code={item.code} name={itemNames[item.code]} size={40} />
+            <div className="min-w-0">
+              <p className="text-sm font-medium leading-snug text-[var(--color-foreground)] [overflow-wrap:anywhere]">
+                {itemNames[item.code] ?? item.code}
               </p>
-              <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
-                {items.map((item, i) => (
-                  <div
-                    key={item.code}
-                    className={cn(
-                      "flex flex-col items-center gap-0.5 rounded-md px-1.5 py-1.5 min-w-[52px] shrink-0",
-                      i === 0 && "bg-[var(--color-surface-2)] ring-1 ring-[var(--color-border)]"
-                    )}
-                  >
-                    <ItemIcon code={item.code} name={itemNames[item.code]} size={26} />
-                    <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-[48px] truncate leading-tight">
-                      {itemNames[item.code] ?? item.code}
+              <dl className="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-xs tabular-nums">
+                <div className="flex items-baseline gap-1 whitespace-nowrap">
+                  <dt className="text-[var(--color-muted-foreground)]">{t("stats.pickRate")}</dt>
+                  <dd className="font-semibold text-[var(--color-foreground)]">
+                    {item.pickRate.toFixed(1)}
+                    <span className="ml-0.5 font-normal text-[var(--color-muted-foreground)]">
+                      %
                     </span>
-                    <span className="text-[9px] text-[var(--color-foreground)]">
-                      {item.pickRate.toFixed(1)}%
+                  </dd>
+                </div>
+                <div className="flex items-baseline gap-1 whitespace-nowrap">
+                  <dt className="text-[var(--color-muted-foreground)]">{t("stats.winRate")}</dt>
+                  <dd className="font-semibold text-[var(--color-foreground)]">
+                    {item.winRate.toFixed(1)}
+                    <span className="ml-0.5 font-normal text-[var(--color-muted-foreground)]">
+                      %
                     </span>
-                    <span className="text-[9px] text-[var(--color-foreground)]">
-                      {item.winRate.toFixed(1)}%
-                    </span>
-                  </div>
-                ))}
-              </div>
+                  </dd>
+                </div>
+              </dl>
             </div>
-          );
-        })}
-      </div>
-
-      {/* 태블릿: 3열 + 2열 그리드 (sm~md) */}
-      <div className="hidden sm:block md:hidden">
-        <div className="grid grid-cols-3 divide-x divide-[var(--color-border)]">
-          {SLOTS.slice(0, 3).map((slot) => {
-            const items = slotPopularity[slot];
-            return (
-              <div key={slot} className="flex flex-col">
-                <div className="px-2 py-1.5 text-center text-[11px] font-medium text-[var(--color-muted-foreground)] border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60">
-                  {slotLabels[slot]}
-                </div>
-                {items.length === 0 ? (
-                  <div className="py-4 text-center text-xs text-[var(--color-muted-foreground)]">
-                    -
-                  </div>
-                ) : (
-                  <div className="divide-y divide-[var(--color-border)]/50">
-                    {items.map((item, i) => (
-                      <div
-                        key={item.code}
-                        className={cn(
-                          "flex flex-col items-center gap-0.5 px-1.5 py-1.5 hover:bg-[var(--color-surface-2)]",
-                          i === 0 && "bg-[var(--color-surface-2)]"
-                        )}
-                      >
-                        <ItemIcon code={item.code} name={itemNames[item.code]} size={30} />
-                        <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-full truncate w-full leading-tight">
-                          {itemNames[item.code] ?? item.code}
-                        </span>
-                        <span className="text-[9px] text-[var(--color-foreground)]">
-                          {item.pickRate.toFixed(1)}%
-                        </span>
-                        <WinRateSpan winRate={item.winRate} />
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-        <div className="grid grid-cols-2 divide-x divide-[var(--color-border)] border-t border-[var(--color-border)]">
-          {SLOTS.slice(3).map((slot) => {
-            const items = slotPopularity[slot];
-            return (
-              <div key={slot} className="flex flex-col">
-                <div className="px-2 py-1.5 text-center text-[11px] font-medium text-[var(--color-muted-foreground)] border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60">
-                  {slotLabels[slot]}
-                </div>
-                {items.length === 0 ? (
-                  <div className="py-4 text-center text-xs text-[var(--color-muted-foreground)]">
-                    -
-                  </div>
-                ) : (
-                  <div className="divide-y divide-[var(--color-border)]/50">
-                    {items.map((item, i) => (
-                      <div
-                        key={item.code}
-                        className={cn(
-                          "flex flex-col items-center gap-0.5 px-1.5 py-1.5 hover:bg-[var(--color-surface-2)]",
-                          i === 0 && "bg-[var(--color-surface-2)]"
-                        )}
-                      >
-                        <ItemIcon code={item.code} name={itemNames[item.code]} size={30} />
-                        <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-full truncate w-full leading-tight">
-                          {itemNames[item.code] ?? item.code}
-                        </span>
-                        <span className="text-[9px] text-[var(--color-foreground)]">
-                          {item.pickRate.toFixed(1)}%
-                        </span>
-                        <WinRateSpan winRate={item.winRate} />
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* 데스크탑: 5열 그리드 (md+) */}
-      <div className="hidden md:block">
-        <div className="grid grid-cols-5 divide-x divide-[var(--color-border)]">
-          {SLOTS.map((slot) => {
-            const items = slotPopularity[slot];
-            return (
-              <div key={slot} className="flex flex-col min-w-[84px] flex-1">
-                <div className="px-3 py-2 text-center text-xs font-medium text-[var(--color-muted-foreground)] border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/60">
-                  {slotLabels[slot]}
-                </div>
-                {items.length === 0 ? (
-                  <div className="py-6 text-center text-xs text-[var(--color-muted-foreground)]">
-                    -
-                  </div>
-                ) : (
-                  <div className="divide-y divide-[var(--color-border)]/50">
-                    {items.map((item, i) => (
-                      <div
-                        key={item.code}
-                        className={cn(
-                          "flex flex-col items-center gap-1 px-2 py-2 hover:bg-[var(--color-surface-2)]",
-                          i === 0 && "bg-[var(--color-surface-2)]"
-                        )}
-                      >
-                        <ItemIcon code={item.code} name={itemNames[item.code]} size={34} />
-                        <span className="text-[9px] text-[var(--color-foreground)] text-center max-w-full truncate w-full leading-tight">
-                          {itemNames[item.code] ?? item.code}
-                        </span>
-                        <span className="text-[9px] text-[var(--color-foreground)]">
-                          {item.pickRate.toFixed(1)}%
-                        </span>
-                        <WinRateSpan winRate={item.winRate} />
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
+          </li>
+        ))}
+      </ol>
+      {items.length === 0 && (
+        <p className="px-4 py-6 text-center text-sm text-[var(--color-muted-foreground)]">
+          {t("empty.itemBuilds")}
+        </p>
+      )}
+    </section>
   );
 }
 
