@@ -29,7 +29,7 @@ export function PatchNoteTooltip({ patchNote }: { patchNote: CharacterPatchNote 
 
   return (
     <div
-      className="pointer-events-auto absolute left-0 right-0 top-full z-50 mt-1 w-auto rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3 sm:pointer-events-none sm:left-0 sm:right-auto sm:w-96 sm:p-4"
+      className="pointer-events-auto col-span-full relative mt-1 min-w-0 w-auto rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3 sm:absolute sm:top-full sm:z-50 sm:pointer-events-none sm:left-0 sm:right-auto sm:w-96 sm:p-4"
       onClick={(e) => e.stopPropagation()}
     >
       <p className="text-xs font-medium text-[var(--color-muted-foreground)] mb-3">

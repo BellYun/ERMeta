@@ -3,7 +3,7 @@
 import { ArrowDown, ArrowUp, ArrowUpDown, CircleHelp } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
 import { useL10n } from "@/components/L10nProvider";
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,7 @@ function getPatchChangeBadge(patchNote: NonNullable<DisplayRow["patchNote"]>) {
       label: "버프",
       icon: ArrowUp,
       className:
-        "border-[var(--color-stat-up)]/20 bg-[var(--color-stat-up)]/10 text-[var(--color-stat-up)]",
+        "border-emerald-600/15 bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/20 dark:text-emerald-400",
     };
   }
 
@@ -61,7 +61,7 @@ function getPatchChangeBadge(patchNote: NonNullable<DisplayRow["patchNote"]>) {
       label: "너프",
       icon: ArrowDown,
       className:
-        "border-[var(--color-stat-down)]/20 bg-[var(--color-stat-down)]/10 text-[var(--color-stat-down)]",
+        "border-rose-600/15 bg-rose-500/10 text-rose-700 hover:bg-rose-500/20 dark:text-rose-400",
     };
   }
 
@@ -69,7 +69,7 @@ function getPatchChangeBadge(patchNote: NonNullable<DisplayRow["patchNote"]>) {
     label: "조정",
     icon: ArrowUpDown,
     className:
-      "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-foreground)]",
+      "border-amber-600/15 bg-amber-500/10 text-amber-700 hover:bg-amber-500/20 dark:text-amber-400",
   };
 }
 
@@ -125,10 +125,9 @@ function buildDisplayRows(
 ): DisplayRow[] {
   const prevMap = new Map<number, PrevStats>();
   if (previousRankings.length > 0) {
-    const prevGrandTotal = previousRankings.reduce((s, r) => s + r.totalGames, 0);
     for (const r of previousRankings) {
       prevMap.set(getMetaRankingKey(r), {
-        pickRate: prevGrandTotal > 0 ? (r.totalGames / prevGrandTotal) * 100 : 0,
+        pickRate: r.pickRate,
         winRate: r.winRate,
         averageRP: r.averageRP,
       });
@@ -175,6 +174,7 @@ interface TierRankingTableProps {
 
 export function TierRankingTable({ initialData }: TierRankingTableProps) {
   const t = useTranslations("tierRanking");
+  const locale = useLocale();
   const [activeRole, setActiveRole] = React.useState<RoleTabValue>(ALL_ROLE);
   const rankingData = initialData ?? null;
   const patch = rankingData?.patchVersion ?? "";
@@ -257,7 +257,6 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
 
   const visible = showAll ? filtered : filtered.slice(0, DEFAULT_VISIBLE);
   const hasMore = filtered.length > DEFAULT_VISIBLE;
-
   React.useEffect(() => {
     setActiveKey(null);
   }, [patch, matchmakingTier, activeRole, sortKey, sortDir, showAll]);
@@ -292,6 +291,13 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
 
   return (
     <div className="flex flex-col gap-3">
+      <p className="text-xs text-[var(--color-muted-foreground)]">
+        {locale === "ko"
+          ? "전 패치 대비 · 같은 티어·무기 기준 · 픽률 변화는 인기 증감"
+          : locale === "ja"
+            ? "前パッチ比 · 同ランク帯・武器 · ピック率は人気の変化"
+            : "Vs. previous patch · Same rank tier and weapon · Pick rate tracks popularity"}
+      </p>
       {/* ── Role Filter ── */}
       <Tabs
         value={activeRole}
@@ -301,7 +307,10 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
           analytics.rankingTierTabChanged(nextRole);
         }}
       >
-        <TabsList aria-label={t("columns.character")} className="tier-role-tabs w-full sm:w-auto">
+        <TabsList
+          aria-label={t("columns.character")}
+          className="tier-role-tabs !h-auto !flex-wrap !overflow-visible w-full sm:w-auto"
+        >
           {roleTabs.map(({ value, label }) => (
             <TabsTrigger key={value} value={value} className="min-h-11 sm:min-h-10">
               {label}
@@ -463,6 +472,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                                 {char.patchNote &&
                                   (() => {
                                     const badge = getPatchChangeBadge(char.patchNote);
+                                    const BadgeIcon = badge.icon;
                                     return (
                                       <button
                                         type="button"
@@ -470,11 +480,17 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                                           patch: char.patchNote.patch,
                                         })} · ${badge.label}`}
                                         onClick={(e) => togglePatchNote(e, key)}
+                                        aria-expanded={activeKey === key}
                                         className={cn(
-                                          "relative min-h-7 shrink-0 rounded border px-1.5 py-0.5 text-xs font-semibold leading-none after:absolute after:-inset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]",
+                                          "relative inline-flex h-6 shrink-0 items-center gap-1 rounded-full border px-2 text-[10px] font-semibold leading-none transition-colors after:absolute after:-inset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]",
                                           badge.className
                                         )}
                                       >
+                                        <BadgeIcon
+                                          className="h-3 w-3"
+                                          strokeWidth={2}
+                                          aria-hidden="true"
+                                        />
                                         {badge.label}
                                       </button>
                                     );
@@ -496,7 +512,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                             <DeltaIndicator
                               current={char.pickRate}
                               previous={char.prev?.pickRate}
-                              suffix="p"
+                              suffix="%p"
                             />
                           </span>
                         </TableCell>
@@ -507,7 +523,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                             <DeltaIndicator
                               current={char.winRate}
                               previous={char.prev?.winRate}
-                              suffix="p"
+                              suffix="%p"
                             />
                           </span>
                         </TableCell>
@@ -527,6 +543,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                             <DeltaIndicator
                               current={char.averageRP}
                               previous={char.prev?.averageRP}
+                              suffix=" RP"
                             />
                           </span>
                         </TableCell>
@@ -549,9 +566,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
 
         {/* Mobile List */}
         <div className="sm:hidden">
-          <div className="grid grid-cols-[34px_minmax(0,1.7fr)_48px_48px_60px] items-center gap-1.5 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/72 px-2.5 py-2 text-[9px] font-semibold text-[var(--color-muted-foreground)]">
-            <span className="text-center">#</span>
-            <span>{t("columns.character")}</span>
+          <div className="grid grid-cols-3 items-center gap-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)]/72 px-3 py-2 text-xs font-semibold text-[var(--color-muted-foreground)]">
             <button
               type="button"
               onClick={() => handleSort("winRate")}
@@ -623,7 +638,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                   <div
                     key={key}
                     className={cn(
-                      "relative grid grid-cols-[34px_minmax(0,1.7fr)_48px_48px_60px] items-center gap-1.5 px-2.5 py-2 cursor-pointer touch-manipulation active:bg-[var(--color-surface-2)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-focus)]",
+                      "relative grid grid-cols-[28px_repeat(3,minmax(0,1fr))] items-center gap-x-2 gap-y-3 px-3 py-3 cursor-pointer touch-manipulation active:bg-[var(--color-surface-2)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--color-focus)]",
                       char.rank <= 3 && "data-table-highlight"
                     )}
                     role="link"
@@ -632,6 +647,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                       navigateToCharacter(char);
                     }}
                     onKeyDown={(event) => {
+                      if (event.target !== event.currentTarget) return;
                       if (event.key === "Enter" || event.key === " ") {
                         event.preventDefault();
                         navigateToCharacter(char);
@@ -653,7 +669,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                       <RankChangeIndicator change={char.rankChange} />
                     </div>
                     {/* Tier */}
-                    <div className="flex min-w-0 items-center gap-1.5">
+                    <div className="col-span-3 flex min-w-0 items-center gap-2">
                       <TierBadge tier={char.tier} className="text-[10px]" />
                       <div className="relative h-8 w-8 shrink-0">
                         <span className="absolute inset-0 overflow-hidden rounded-md bg-[var(--color-surface-2)]">
@@ -691,8 +707,9 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                                     patch: char.patchNote.patch,
                                   })} · ${badge.label}`}
                                   onClick={(e) => togglePatchNote(e, key)}
+                                  aria-expanded={activeKey === key}
                                   className={cn(
-                                    "relative grid h-5 w-5 shrink-0 place-items-center rounded-full border after:absolute after:-inset-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]",
+                                    "relative grid h-5 w-5 shrink-0 place-items-center rounded-full border transition-colors after:absolute after:-inset-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]",
                                     badge.className
                                   )}
                                 >
@@ -707,11 +724,27 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                         </p>
                       </div>
                     </div>
-                    <span className="text-right font-mono text-[11px] font-medium tabular-nums text-[var(--color-foreground)]">
+                    <span className="col-start-2 text-right font-mono text-xs font-medium tabular-nums text-[var(--color-foreground)]">
+                      <span className="block text-[10px] font-sans text-[var(--color-muted-foreground)]">
+                        {t("columns.winRate")}
+                      </span>
                       {char.winRate.toFixed(1)}%
+                      <DeltaIndicator
+                        current={char.winRate}
+                        previous={char.prev?.winRate}
+                        suffix="%p"
+                      />
                     </span>
                     <span className="text-right font-mono text-[11px] font-medium tabular-nums text-[var(--color-foreground)]">
+                      <span className="block text-[10px] font-sans text-[var(--color-muted-foreground)]">
+                        {t("columns.pickRate")}
+                      </span>
                       {char.pickRate.toFixed(1)}%
+                      <DeltaIndicator
+                        current={char.pickRate}
+                        previous={char.prev?.pickRate}
+                        suffix="%p"
+                      />
                     </span>
                     <span
                       className={cn(
@@ -723,6 +756,11 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                     >
                       {char.averageRP >= 0 ? "+" : ""}
                       {char.averageRP.toFixed(1)}
+                      <DeltaIndicator
+                        current={char.averageRP}
+                        previous={char.prev?.averageRP}
+                        suffix=" RP"
+                      />
                     </span>
                     {char.patchNote && activeKey === key && (
                       <PatchNoteTooltip patchNote={char.patchNote} />
@@ -777,6 +815,7 @@ function SortableHead({
     >
       <button
         type="button"
+        data-voc-action="tier_ranking_sort"
         className={cn(
           "group/th inline-flex min-h-10 w-full select-none items-center gap-1 whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]",
           className?.includes("text-right")

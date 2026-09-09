@@ -1,0 +1,104 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { setRequestLocale } from "next-intl/server";
+import { HomePageContent } from "@/components/features/home/HomePageContent";
+import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
+import { getPatches } from "@/lib/getPatches";
+import { getCachedHomeMetaStats } from "@/lib/homeMetaServer";
+import {
+  DEFAULT_HOME_TIER,
+  HOME_META_FALLBACK_PATCH,
+  buildHomeMetaView,
+  createEmptyHomeMetaStats,
+} from "@/lib/homeMetaShared";
+import { buildLocalizedAlternates, localizeRoutePath } from "@/lib/seoLocales";
+import { BASE_URL } from "@/lib/siteMetadata";
+import { getMessage, loadIntlMessages, OG_LOCALE_BY_LANGUAGE } from "@/lib/staticIntl";
+
+export const revalidate = 3600;
+export const dynamic = "force-static";
+export const dynamicParams = false;
+
+interface LocalePageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export function generateStaticParams() {
+  return ROUTE_LOCALES.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
+  const { locale } = await params;
+
+  if (!isRouteLocale(locale)) {
+    notFound();
+  }
+  const language = LANGUAGE_BY_ROUTE_LOCALE[locale];
+
+  const messages = await loadIntlMessages(language);
+  const title = `${getMessage(messages, "navigation.characterRankings")} | ${getMessage(messages, "rootMetadata.siteName")}`;
+  const description = getMessage(messages, "rootMetadata.description");
+
+  return {
+    metadataBase: new URL(BASE_URL),
+    title: { absolute: title },
+    description,
+    keywords: [
+      getMessage(messages, "rootMetadata.keywords.brand"),
+      getMessage(messages, "rootMetadata.keywords.gameEn"),
+      getMessage(messages, "rootMetadata.keywords.tierList"),
+      getMessage(messages, "rootMetadata.keywords.meta"),
+      getMessage(messages, "rootMetadata.keywords.winRate"),
+      getMessage(messages, "rootMetadata.keywords.pickRate"),
+      getMessage(messages, "rootMetadata.keywords.stats"),
+    ],
+    openGraph: {
+      locale: OG_LOCALE_BY_LANGUAGE[language] ?? "ja_JP",
+      title,
+      description,
+      url: localizeRoutePath("/rankings", locale),
+    },
+    twitter: {
+      title,
+      description,
+    },
+    alternates: buildLocalizedAlternates("/rankings", locale),
+    robots: {
+      index: locale === "ko" || locale === "ja",
+      follow: true,
+    },
+  };
+}
+
+export default async function LocalizedRankingsPage({ params }: LocalePageProps) {
+  const { locale } = await params;
+
+  if (!isRouteLocale(locale)) {
+    notFound();
+  }
+
+  setRequestLocale(locale);
+
+  const availablePatches = await getPatches();
+  const currentPatch = availablePatches[0] ?? HOME_META_FALLBACK_PATCH;
+  const patches = [currentPatch, ...availablePatches.filter((patch) => patch !== currentPatch)];
+  let homeMetaStats = createEmptyHomeMetaStats(currentPatch);
+
+  try {
+    homeMetaStats = await getCachedHomeMetaStats(currentPatch);
+  } catch {
+    homeMetaStats = createEmptyHomeMetaStats(currentPatch);
+  }
+
+  const initialView = buildHomeMetaView(homeMetaStats, DEFAULT_HOME_TIER);
+
+  return (
+    <HomePageContent
+      locale={locale}
+      patches={patches}
+      currentPatch={currentPatch}
+      homeMetaStats={homeMetaStats}
+      rankingData={initialView.rankingData}
+    />
+  );
+}
