@@ -1,6 +1,7 @@
 export type ChangeType = "buff" | "nerf" | "rework";
 
 export interface PatchChange {
+  weaponMasteryCode?: number; // Set only for character-specific weapon mastery changes.
   target: string; // 예: "Q - 전격 연속공격", "기본 체력"
   changeType: ChangeType;
   description: string[]; // 변경 설명 (여러 줄 지원)

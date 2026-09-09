@@ -9,6 +9,7 @@ import * as React from "react";
 import characterBestWeapons from "@/../const/characterBestWeapons.json";
 import { useL10n } from "@/components/L10nProvider";
 import { resolveCharacterName, getCharacterMiniWebpUrl } from "@/lib/characterMap";
+import { recordFeedbackBreadcrumb, setFeedbackContextState } from "@/lib/feedbackContext";
 import { cn } from "@/lib/utils";
 import { getWeaponGroupImageUrl, resolveWeaponName } from "@/lib/weaponMap";
 import { getFallbackMap, EXCLUDED_CHARACTER_CODES } from "../synergy/constants";
@@ -149,6 +150,9 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
       }}
       disabled={disabled}
       title={localizedWeaponLabel ? `${charName} (${localizedWeaponLabel})` : charName}
+      data-voc-action="synergy_detail_ally_select"
+      data-voc-code={item.charCode}
+      data-voc-weapon-code={item.weaponCode}
       style={{ touchAction: "manipulation" }}
       className={cn(
         "flex flex-col items-center gap-1 rounded-md px-1 py-2 touch-manipulation",
@@ -212,6 +216,7 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
 // ─── 메인 컴포넌트 ──────────────────────────────────────────────────────────
 
 export function WeaponAllySelector() {
+  "use no memo";
   const { l10n } = useL10n();
   const t = useTranslations("weaponAllySelector");
   const pathname = usePathname();
@@ -309,6 +314,16 @@ export function WeaponAllySelector() {
     (next: AllySelectionPair) => {
       // store action은 두 슬롯을 원자적으로 갱신하고, 다음 연속 탭은 getState()로 최신값을 읽는다.
       selectionStore.getState().setAllies(next);
+      recordFeedbackBreadcrumb({
+        type: "state",
+        name: "synergy_detail_selection_committed",
+        metadata: {
+          ally1Code: next[0]?.charCode ?? null,
+          ally1WeaponCode: next[0]?.weaponCode ?? null,
+          ally2Code: next[1]?.charCode ?? null,
+          ally2WeaponCode: next[1]?.weaponCode ?? null,
+        },
+      });
       // URL은 공유와 복원을 위한 외부 표현이며 선택 UI의 선행 조건이 아니다.
       scheduleUrlUpdate(next);
     },
@@ -350,6 +365,39 @@ export function WeaponAllySelector() {
       );
     });
   }, [deferredSearch, getCharName, l10n]);
+
+  const trimmedSearch = deferredSearch.trim();
+  const searchMode = !trimmedSearch
+    ? "empty"
+    : /^[ㄱ-ㅎ]+$/.test(trimmedSearch)
+      ? "chosung"
+      : "text";
+
+  React.useEffect(
+    () =>
+      setFeedbackContextState("synergy_detail_selection", {
+        ally1Code: ally1?.charCode ?? null,
+        ally1WeaponCode: ally1?.weaponCode ?? null,
+        ally2Code: ally2?.charCode ?? null,
+        ally2WeaponCode: ally2?.weaponCode ?? null,
+        selectedCount: selectedAllies.length,
+        availableItemCount: getAllCharWeaponItems().length,
+      }),
+    [ally1, ally2, selectedAllies.length]
+  );
+
+  React.useEffect(
+    () =>
+      setFeedbackContextState("synergy_detail_search", {
+        searchMode,
+        searchLength: trimmedSearch.length,
+        hasWhitespace: /\s/.test(deferredSearch),
+        resultCount: filteredItems.length,
+        firstCharacterCode: filteredItems[0]?.charCode ?? null,
+        firstWeaponCode: filteredItems[0]?.weaponCode ?? null,
+      }),
+    [deferredSearch, filteredItems, searchMode, trimmedSearch.length]
+  );
 
   // 그리드 컬럼 계산
   React.useEffect(() => {
@@ -418,11 +466,14 @@ export function WeaponAllySelector() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("searchPlaceholder")}
+            data-voc-action="synergy_detail_search"
             className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] py-2 pl-8 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-border-light)] focus:outline-none"
           />
           {search && (
             <button
+              type="button"
               onClick={() => setSearch("")}
+              data-voc-action="synergy_detail_search_clear"
               className="absolute right-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)]"
             >
               <X className="h-3.5 w-3.5" />
@@ -540,8 +591,12 @@ function SlotWeaponFilled({
         </span>
       </div>
       <button
+        type="button"
         onClick={onRemove}
         aria-label={`${name} 제거`}
+        data-voc-action="synergy_detail_ally_remove"
+        data-voc-code={code}
+        data-voc-weapon-code={weaponCode ?? 0}
         className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)] active:bg-[var(--color-surface-3)] active:text-[var(--color-foreground)]"
       >
         <X className="h-4 w-4" strokeWidth={2.4} />

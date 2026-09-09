@@ -6,7 +6,17 @@ A locked design system for the ER&GG multi-page app. Every page redesign reads t
 
 - Audience: experienced Eternal Return players who already understand patches, tiers, roles, and team composition.
 - Primary job: read the current meta quickly, then choose a character or composition to investigate.
-- Tone: technical — measured, compact, and explicit.
+- Tone: calm and editorial — clear hierarchy, generous spacing, explicit evidence.
+
+## Trust and reading hierarchy
+
+- Direction: a precise, quiet analysis room. Let aligned data, visible conditions, and honest limitations build trust.
+- Home order: introduce meta and team analysis together, prioritize the composition start action, compare recorded pre-patch and forecast tiers to current ranking tiers with samples and compact performance changes. Distinguish current strength from change. Keep the live workspace on `/synergy-detail` and full rankings on `/rankings`.
+- Home spotlight uses the existing trend score leader, not a claim of highest current performance. Current metrics, patch deltas, and both sample counts remain visible.
+- Keep the selected patch and tier next to results. Sample counts are character participation records, not unique matches; estimated match counts must say estimated.
+- Missing or failed data displays a dash and an explicit state, never a fabricated zero. Comparisons identify their baseline patch.
+- Use restrained headings and neutral surfaces. Reserve strong boundaries for controls and selection; use spacing and thin rules for sections.
+- Preserve semantic status colors and readable secondary text in both themes.
 
 ## Genre
 
@@ -20,15 +30,15 @@ Modern-minimal and technical, using a custom dual-mode data-hub system tuned for
 
 ## Theme
 
-- **Mineral Signal** is the identity: a clear mineral blue around `245°` marks active states, rank emphasis, filters, links, and focus signals.
-- Light mode is a quiet analysis board: a nearly neutral mineral paper canvas (`oklch(97% 0.008 245)`) with bright surfaces, low-chroma separators, and dark blue-black ink. Its working accent remains deliberately deeper (`oklch(43% 0.15 245)`) for legibility.
-- Dark mode is a night tactical screen: a deep blue-black canvas (`oklch(14% 0.018 252)`) with restrained mineral-tinted elevations. Search and form surfaces stay dark instead of flipping bright; the signal accent remains deliberately brighter (`oklch(83% 0.15 245)`).
-- Default rules are intentionally quiet during long reading sessions. Strong rules are reserved for controls, focus, selection, and high-information boundaries.
-- The two modes are not visual inverses and do not need matching surface relationships. They share the accent hue, component geometry, and information hierarchy.
-- The navigation band remains a deep mineral brand strip in both modes so the wordmark and bright signal stay recognizable while the page canvas changes independently.
-- Character art and real game data provide visual richness. Success remains green, warnings amber, and losses red so mineral blue never replaces meaning-bearing status colour.
+**Open Studio** replaces the Open Studio visual direction. The interface is bright, spacious and editorial: neutral near-white canvas, white working surfaces, ink typography, and restrained clear blue selection. The header follows the current surface instead of a dark brand strip. Dark mode uses soft charcoal surfaces with the same geometry.
 
-Canonical values live in `tokens.css`.
+- Major working areas use 16px corners, subtle boundaries and minimal shadow. Nested content uses whitespace and row separators.
+- Page introductions are unboxed, with generous space and large, readable headings. Tables remain compact enough for comparison.
+- Character portraits provide identity; decorative imagery is unnecessary.
+- Home uses an editorial title/search composition followed by a compact context band and a primary ranking surface.
+- Character detail uses a larger portrait/name composition and spacious summary metrics.
+- Composition uses an open introduction and a horizontal guide, followed by distinct selection and result surfaces.
+- Canonical colors, radii and sizes live in the `studio-*` tokens in `tokens.css`. Existing semantic aliases resolve to them.
 
 ## Typography
 
@@ -60,19 +70,19 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 ## Component implementation
 
 - shadcn/ui source-ownership conventions are the implementation baseline; ER&GG owns and adapts every component under `frontend/src/components/ui`.
-- `new-york` supplies interaction density and state patterns, not the visual identity. Mineral Signal tokens, Pretendard, JetBrains Mono, and ER&GG geometry always override shadcn defaults.
+- `new-york` supplies interaction density and state patterns, not the visual identity. Open Studio tokens, Pretendard, JetBrains Mono, and ER&GG geometry always override shadcn defaults.
 - Stateful overlays and menus should use accessible shadcn/Radix primitives when introduced. Data-heavy domain components such as character cards, rankings, composition pickers, and matrices remain custom.
 - Cards are reserved for meaningful group boundaries. Related rows inside a section use separators, tables, tabs, or list structure instead of nested cards.
-- One page uses one density mode. ER&GG app and data pages default to compact spacing while preserving 44px touch targets.
+- Use generous spacing between sections and compact rows within data tables, while preserving 44px touch targets.
 
 ## Navigation and footer
 
-- Navigation: N1b Dense product bar, adapted to preserve the existing destinations and mobile drawer. Promotional copy may sit in a compact announcement row but must collapse after the user starts scrolling so the 64px product bar remains the only sticky chrome. Search becomes the home page's primary workbench action; Cmd/Ctrl+K remains available on deeper routes.
+- Navigation: N1b Open product bar, adapted to preserve the existing destinations and mobile drawer. Promotional copy may sit in a compact announcement row but must collapse after the user starts scrolling so the 64px product bar remains the only sticky chrome. Search becomes the home page's primary workbench action; Cmd/Ctrl+K remains available on deeper routes.
 - Footer: Ft4 Compact colophon — one link row followed by the required API attribution and legal disclaimer.
 
 ## CTA voice
 
-- Primary: compact Mineral Signal treatment, 6px radius, destination-specific verb.
+- Primary: compact Open Studio treatment, 6px radius, destination-specific verb.
 - Secondary: the current mode's surface with a visible mineral rule; no generic “Continue” or “Click here”.
 
 ## Per-page allowances
@@ -84,7 +94,7 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 
 ## What pages MUST share
 
-- Wordmark treatment, deep mineral navigation band, Mineral Signal placement, type roles, focus treatment, button geometry, rules, and spacing tokens.
+- Wordmark treatment, neutral navigation surface, Open Studio placement, type roles, focus treatment, button geometry, rules, and spacing tokens.
 - The `245°` point hue and semantic meaning of every status colour.
 - Loading, empty, error, disabled, and success state language.
 - Dense information geometry, table headers, form controls, and active-tab signals across every route family. Repeated panel and row rules stay subordinate to text and data.
@@ -98,152 +108,16 @@ Use the named 4-point scale in `tokens.css`. Components consume `var(--space-*)`
 
 ## Exports
 
-### tokens.css
+`tokens.css` is the canonical complete export. All `studio-*` values have light and dark definitions; legacy `color-home-*` and `color-app-*` aliases preserve component compatibility.
 
-`tokens.css` at the repository root is the source of truth and includes light/dark values, typography, spacing, motion, rules, radii, shadows, and z-index tokens.
+### Tailwind v4
 
-### Tailwind v4 `@theme`
+Existing application `@theme` utilities are remapped through the semantic aliases in the shared stylesheet. New components consume `var(--studio-surface)`, `var(--studio-ink)`, `var(--studio-rule)` and `var(--studio-accent)`.
 
-```css
-@theme {
-  --color-paper: oklch(98% 0.006 245);
-  --color-paper-2: oklch(97% 0.008 245);
-  --color-paper-3: oklch(94% 0.015 245);
-  --color-ink: oklch(17% 0.025 252);
-  --color-ink-2: oklch(25% 0.03 252);
-  --color-rule: oklch(88% 0.018 245);
-  --color-rule-2: oklch(60% 0.035 245);
-  --color-accent: oklch(43% 0.15 245);
-  --color-brand-deep: oklch(18% 0.03 252);
-  --color-app-canvas: oklch(97% 0.008 245);
-  --color-app-surface: oklch(98% 0.006 245);
-  --color-app-rule: oklch(74% 0.022 245);
-  --color-app-ink: oklch(17% 0.025 252);
-  --font-display: "Pretendard", ui-sans-serif, sans-serif;
-  --font-body: "Pretendard", ui-sans-serif, sans-serif;
-  --font-outlier: "JetBrains Mono", ui-monospace, monospace;
-  --text-data-min: 0.75rem;
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-md: 1.125rem;
-  --spacing-xs: 0.5rem;
-  --spacing-sm: 0.75rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2.5rem;
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --radius-card: 0.625rem;
-}
+### DTCG mapping
 
-[data-theme="dark"] {
-  --color-paper: oklch(14% 0.018 252);
-  --color-paper-2: oklch(18% 0.02 252);
-  --color-paper-3: oklch(22% 0.024 252);
-  --color-ink: oklch(96% 0.016 245);
-  --color-ink-2: oklch(88% 0.02 245);
-  --color-rule: oklch(30% 0.026 250);
-  --color-rule-2: oklch(55% 0.04 248);
-  --color-accent: oklch(83% 0.15 245);
-  --color-brand-deep: oklch(10% 0.028 252);
-  --color-app-canvas: oklch(14% 0.018 252);
-  --color-app-surface: oklch(18% 0.02 252);
-  --color-app-rule: oklch(36% 0.028 250);
-  --color-app-ink: oklch(96% 0.016 245);
-}
-```
+Studio canvas/surface/ink/rule/accent use the `color` type; studio radius uses `dimension`. Export light and dark modes separately from the corresponding blocks in `tokens.css`.
 
-### DTCG `tokens.json`
+### shadcn/ui mapping
 
-```json
-{
-  "$schema": "https://design-tokens.github.io/community-group/format/",
-  "color": {
-    "light": {
-      "paper": { "$value": "oklch(98% 0.006 245)", "$type": "color" },
-      "ink": { "$value": "oklch(17% 0.025 252)", "$type": "color" },
-      "accent": { "$value": "oklch(43% 0.15 245)", "$type": "color" },
-      "brandDeep": { "$value": "oklch(18% 0.03 252)", "$type": "color" },
-      "rule": { "$value": "oklch(74% 0.022 245)", "$type": "color" },
-      "appCanvas": { "$value": "oklch(97% 0.008 245)", "$type": "color" },
-      "appSurface": { "$value": "oklch(98% 0.006 245)", "$type": "color" },
-      "appInk": { "$value": "oklch(17% 0.025 252)", "$type": "color" }
-    },
-    "dark": {
-      "paper": { "$value": "oklch(14% 0.018 252)", "$type": "color" },
-      "ink": { "$value": "oklch(96% 0.016 245)", "$type": "color" },
-      "accent": { "$value": "oklch(83% 0.15 245)", "$type": "color" },
-      "brandDeep": { "$value": "oklch(10% 0.028 252)", "$type": "color" },
-      "rule": { "$value": "oklch(36% 0.028 250)", "$type": "color" },
-      "appCanvas": { "$value": "oklch(14% 0.018 252)", "$type": "color" },
-      "appSurface": { "$value": "oklch(18% 0.02 252)", "$type": "color" },
-      "appInk": { "$value": "oklch(96% 0.016 245)", "$type": "color" }
-    }
-  },
-  "font": {
-    "display": {
-      "$value": "Pretendard, ui-sans-serif",
-      "$type": "fontFamily"
-    },
-    "body": { "$value": "Pretendard, ui-sans-serif", "$type": "fontFamily" },
-    "outlier": {
-      "$value": "JetBrains Mono, ui-monospace",
-      "$type": "fontFamily"
-    }
-  },
-  "size": {
-    "textDataMin": { "$value": "0.75rem", "$type": "dimension" },
-    "textXs": { "$value": "0.75rem", "$type": "dimension" },
-    "textSm": { "$value": "0.875rem", "$type": "dimension" },
-    "textBase": { "$value": "1rem", "$type": "dimension" },
-    "textMd": { "$value": "1.125rem", "$type": "dimension" }
-  },
-  "space": {
-    "md": { "$value": "1rem", "$type": "dimension" },
-    "lg": { "$value": "1.5rem", "$type": "dimension" },
-    "xl": { "$value": "2.5rem", "$type": "dimension" }
-  }
-}
-```
-
-### shadcn/ui CSS variables
-
-```css
-:root {
-  --background: 97% 0.008 245;
-  --foreground: 17% 0.025 252;
-  --card: 98% 0.006 245;
-  --card-foreground: 17% 0.025 252;
-  --popover: 98% 0.006 245;
-  --popover-foreground: 17% 0.025 252;
-  --primary: 43% 0.15 245;
-  --primary-foreground: 98% 0.006 245;
-  --secondary: 94% 0.015 245;
-  --secondary-foreground: 27% 0.03 250;
-  --muted: 94% 0.015 245;
-  --muted-foreground: 44% 0.035 248;
-  --border: 74% 0.022 245;
-  --input: 60% 0.035 245;
-  --ring: 43% 0.18 245;
-  --radius: 0.625rem;
-}
-
-.dark {
-  --background: 14% 0.018 252;
-  --foreground: 96% 0.016 245;
-  --card: 18% 0.02 252;
-  --card-foreground: 96% 0.016 245;
-  --popover: 18% 0.02 252;
-  --popover-foreground: 96% 0.016 245;
-  --primary: 83% 0.15 245;
-  --primary-foreground: 14% 0.018 252;
-  --secondary: 22% 0.024 252;
-  --secondary-foreground: 88% 0.02 245;
-  --muted: 22% 0.024 252;
-  --muted-foreground: 74% 0.032 248;
-  --border: 36% 0.028 250;
-  --input: 55% 0.04 245;
-  --ring: 72% 0.18 245;
-  --radius: 0.625rem;
-}
-```
+Map background → studio-canvas, card/popover → studio-surface, foreground → studio-ink, muted → studio-raised, muted foreground → studio-muted, primary/ring → studio-accent, border → studio-rule, radius → studio-radius. Foreground on accent must use the theme's contrasting ink token.

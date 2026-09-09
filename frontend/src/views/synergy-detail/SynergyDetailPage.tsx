@@ -120,8 +120,8 @@ export default function SynergyDetailPage() {
   const t = useTranslations("synergyPage");
 
   return (
-    <div className="page-shell flex flex-col gap-5 lg:gap-6">
-      <section className="dashboard-panel px-4 py-4 lg:px-5">
+    <div className="page-shell composition-studio flex flex-col gap-5 lg:gap-6">
+      <section className="dashboard-panel composition-studio__intro px-4 py-4 lg:px-5">
         <div className="grid gap-3 xl:grid-cols-[minmax(0,1.08fr)_180px_180px_180px]">
           <div className="flex flex-col justify-center xl:pr-4">
             <div className="flex flex-wrap items-center gap-2.5">

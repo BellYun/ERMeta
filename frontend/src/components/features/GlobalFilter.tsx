@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import { analytics } from "@/lib/analytics";
+import { recordFeedbackBreadcrumb, setFeedbackContextState } from "@/lib/feedbackContext";
 import { cn } from "@/lib/utils";
 import { useFilter } from "./FilterContext";
 
@@ -25,11 +26,18 @@ export function GlobalFilter() {
     setSelectedTier(tier);
   }, [tier]);
 
+  React.useEffect(() => setFeedbackContextState("global_filter", { patch, tier }), [patch, tier]);
+
   const selectTier = React.useCallback(
     (value: string) => {
       setSelectedTier(value);
       React.startTransition(() => setTier(value));
       analytics.tierGroupSelected(value);
+      recordFeedbackBreadcrumb({
+        type: "state",
+        name: "global_filter_changed",
+        metadata: { filter: "tier", value },
+      });
     },
     [setTier]
   );
@@ -76,9 +84,15 @@ export function GlobalFilter() {
           <select
             aria-label={t("patchAria")}
             value={patch || patches[0] || ""}
+            data-voc-action="global_filter_patch"
             onChange={(e) => {
               setPatch(e.target.value);
               analytics.patchSelected(e.target.value);
+              recordFeedbackBreadcrumb({
+                type: "state",
+                name: "global_filter_changed",
+                metadata: { filter: "patch", value: e.target.value },
+              });
             }}
             className={cn(
               "h-12 w-full appearance-none rounded-[5px] border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 pr-6 font-mono text-[12px] font-bold text-[var(--color-foreground)]",
@@ -125,6 +139,7 @@ export function GlobalFilter() {
                 }}
                 type="button"
                 role="radio"
+                data-voc-action="global_filter_tier"
                 aria-checked={isSelected}
                 tabIndex={isSelected ? 0 : -1}
                 onClick={() => selectTier(value)}
@@ -144,9 +159,15 @@ export function GlobalFilter() {
           <select
             aria-label={t("patchAria")}
             value={patch || patches[0] || ""}
+            data-voc-action="global_filter_patch"
             onChange={(e) => {
               setPatch(e.target.value);
               analytics.patchSelected(e.target.value);
+              recordFeedbackBreadcrumb({
+                type: "state",
+                name: "global_filter_changed",
+                metadata: { filter: "patch", value: e.target.value },
+              });
             }}
             className={cn(
               "appearance-none w-full sm:w-auto",
@@ -199,6 +220,7 @@ export function GlobalFilter() {
                 }}
                 type="button"
                 role="radio"
+                data-voc-action="global_filter_tier"
                 aria-checked={isSelected}
                 tabIndex={isSelected ? 0 : -1}
                 onClick={() => selectTier(value)}

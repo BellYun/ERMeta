@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
-import { PatchHomePage } from "@/components/features/home/PatchHomePage";
+import { HomePageContent } from "@/components/features/home/HomePageContent";
 import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
 import { getPatches } from "@/lib/getPatches";
 import { getCachedHomeMetaStats } from "@/lib/homeMetaServer";
-import { HOME_META_FALLBACK_PATCH, createEmptyHomeMetaStats } from "@/lib/homeMetaShared";
+import {
+  DEFAULT_HOME_TIER,
+  HOME_META_FALLBACK_PATCH,
+  buildHomeMetaView,
+  createEmptyHomeMetaStats,
+} from "@/lib/homeMetaShared";
 import { buildLocalizedAlternates, localizeRoutePath } from "@/lib/seoLocales";
 import { BASE_URL } from "@/lib/siteMetadata";
 import { getMessage, loadIntlMessages, OG_LOCALE_BY_LANGUAGE } from "@/lib/staticIntl";
@@ -31,8 +36,8 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
   const language = LANGUAGE_BY_ROUTE_LOCALE[locale];
 
   const messages = await loadIntlMessages(language);
-  const title = `${getMessage(messages, "patchHome.entryTitle").replace(/\s+/g, " ")} | ${getMessage(messages, "rootMetadata.siteName")}`;
-  const description = getMessage(messages, "patchHome.entryDescription");
+  const title = `${getMessage(messages, "navigation.characterRankings")} | ${getMessage(messages, "rootMetadata.siteName")}`;
+  const description = getMessage(messages, "rootMetadata.description");
 
   return {
     metadataBase: new URL(BASE_URL),
@@ -51,13 +56,13 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
       locale: OG_LOCALE_BY_LANGUAGE[language] ?? "ja_JP",
       title,
       description,
-      url: localizeRoutePath("/", locale),
+      url: localizeRoutePath("/rankings", locale),
     },
     twitter: {
       title,
       description,
     },
-    alternates: buildLocalizedAlternates("/", locale),
+    alternates: buildLocalizedAlternates("/rankings", locale),
     robots: {
       index: locale === "ko" || locale === "ja",
       follow: true,
@@ -65,7 +70,7 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
   };
 }
 
-export default async function LocalizedHomePage({ params }: LocalePageProps) {
+export default async function LocalizedRankingsPage({ params }: LocalePageProps) {
   const { locale } = await params;
 
   if (!isRouteLocale(locale)) {
@@ -76,6 +81,7 @@ export default async function LocalizedHomePage({ params }: LocalePageProps) {
 
   const availablePatches = await getPatches();
   const currentPatch = availablePatches[0] ?? HOME_META_FALLBACK_PATCH;
+  const patches = [currentPatch, ...availablePatches.filter((patch) => patch !== currentPatch)];
   let homeMetaStats = createEmptyHomeMetaStats(currentPatch);
 
   try {
@@ -84,7 +90,15 @@ export default async function LocalizedHomePage({ params }: LocalePageProps) {
     homeMetaStats = createEmptyHomeMetaStats(currentPatch);
   }
 
+  const initialView = buildHomeMetaView(homeMetaStats, DEFAULT_HOME_TIER);
+
   return (
-    <PatchHomePage locale={locale} currentPatch={currentPatch} homeMetaStats={homeMetaStats} />
+    <HomePageContent
+      locale={locale}
+      patches={patches}
+      currentPatch={currentPatch}
+      homeMetaStats={homeMetaStats}
+      rankingData={initialView.rankingData}
+    />
   );
 }

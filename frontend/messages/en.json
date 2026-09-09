@@ -43,7 +43,9 @@
     "seasonRecap": "Season Recap",
     "feedback": "Send Feedback",
     "patchPanel": "Patch {patch}",
-    "updateStatus": "Update: patch-based"
+    "updateStatus": "Update: patch-based",
+    "home": "Home",
+    "characterRankings": "Rankings"
   },
   "mobileTab": {
     "meta": "Meta",
@@ -164,13 +166,24 @@
     "retry": "Try again"
   },
   "home": {
+    "analysis": {
+      "estimateMethod": "How this is estimated",
+      "conditions": "Analysis conditions",
+      "sample": "Selected sample",
+      "comparison": "Comparison patch",
+      "reading": "Sample definition",
+      "sampleNote": "Total character participation records, not unique matches.",
+      "loading": "Loading statistics for the selected patch.",
+      "error": "Statistics could not be loaded. Select another patch or reload the page.",
+      "viewChanges": "View patch changes"
+    },
     "live": "Patch",
     "patch": "Patch {patch}",
     "title": "Meta Analysis",
     "subtitle": "Meta analysis based on {count} aggregated matches",
     "heroDescription": "Analyze the current Eternal Return meta through aggregated match data.",
-    "matchMetric": "Current tracked games",
-    "matchMetricDescription": "Total ranked games included in the analysis for patch {patch}.",
+    "matchMetric": "Estimated collected matches",
+    "matchMetricDescription": "Estimated from all participation records for patch {patch}, assuming 21 players per match. This differs from the selected sample below.",
     "patchAnalysisCta": "Patch 12.3 analysis",
     "winRateMetric": "High-rank avg win rate",
     "rpMetric": "High-rank avg RP",
@@ -478,11 +491,26 @@
   },
   "characterDetailed": {
     "groups": {
-      "havoc": { "name": "Havoc", "letter": "H" },
-      "fortification": { "name": "Fortification", "letter": "F" },
-      "support": { "name": "Support", "letter": "S" },
-      "chaos": { "name": "Chaos", "letter": "C" },
-      "unknown": { "name": "Other", "letter": "?" }
+      "havoc": {
+        "name": "Havoc",
+        "letter": "H"
+      },
+      "fortification": {
+        "name": "Fortification",
+        "letter": "F"
+      },
+      "support": {
+        "name": "Support",
+        "letter": "S"
+      },
+      "chaos": {
+        "name": "Chaos",
+        "letter": "C"
+      },
+      "unknown": {
+        "name": "Other",
+        "letter": "?"
+      }
     },
     "slots": {
       "weapon": "Weapon",
@@ -535,11 +563,26 @@
   },
   "characterTraitBuild": {
     "groups": {
-      "havoc": { "name": "Havoc", "letter": "H" },
-      "fortification": { "name": "Fortification", "letter": "F" },
-      "support": { "name": "Support", "letter": "S" },
-      "chaos": { "name": "Chaos", "letter": "C" },
-      "unknown": { "name": "?", "letter": "?" }
+      "havoc": {
+        "name": "Havoc",
+        "letter": "H"
+      },
+      "fortification": {
+        "name": "Fortification",
+        "letter": "F"
+      },
+      "support": {
+        "name": "Support",
+        "letter": "S"
+      },
+      "chaos": {
+        "name": "Chaos",
+        "letter": "C"
+      },
+      "unknown": {
+        "name": "?",
+        "letter": "?"
+      }
     },
     "labels": {
       "core": "Core",
@@ -1012,5 +1055,147 @@
       "detail": "Eternal Return detailed team analysis",
       "character": "{name} team comp"
     }
+  },
+  "patchHome": {
+    "title": "This patch’s picks to watch",
+    "description": "See who is rising, then find the pick that fits your play.",
+    "patch": "PATCH {patch}",
+    "risers": "Rising this patch",
+    "conditions": "{previous} → {current} · Diamond+ · Same tier comparison",
+    "allRankings": "View all rankings",
+    "rp": "Average RP",
+    "winRate": "Win rate",
+    "sample": "Current {current} games · Previous {previous}",
+    "emptyTitle": "More comparison data is needed",
+    "emptyBody": "Rising picks appear when enough samples meet the trend criteria. View current performance in the full rankings.",
+    "methodTitle": "How rising picks are selected",
+    "methodBody": "Characters and weapons with comparable previous-patch data and enough current samples are ordered by a combined score of win rate, pick rate, and average RP changes. Deltas compare patches; they do not establish a buff effect or a current performance ranking.",
+    "explore": "Explore analysis",
+    "compare": "Explore the full meta",
+    "combine": "Find your next team",
+    "read": "READ CHANGES",
+    "rankingBody": "Compare all characters by tier and patch.",
+    "comboBody": "Find teams for your allies and character pool.",
+    "patchNotes": "Patch notes",
+    "patchBody": "Review the actual changes to characters and weapons.",
+    "pickRate": "Pick rate",
+    "metricLegend": "Current stats · Smaller numbers show change from the previous patch",
+    "spotlight": "IN FOCUS",
+    "viewAnalysis": "View character analysis",
+    "teamHomeTitle": "Find the next pick\nfor your team.",
+    "teamHomeDescription": "Start with one ally. Compare characters and weapons using real three-character team data.",
+    "stepAlly": "Choose your ally",
+    "stepAllyBody": "Select a character and weapon to start.",
+    "stepCompare": "Compare your next pick",
+    "stepCompareBody": "Read win rate, RP, rank, and sample size together.",
+    "stepPool": "Narrow to your pool",
+    "stepPoolBody": "Add the characters you play whenever you need.",
+    "rankingsAlternative": "Looking for individual character rankings?",
+    "startStep": "START WITH AN ALLY",
+    "chooseAlly": "Who is on your team?",
+    "chooseAllyHint": "Choose a character–weapon pair to find teams.",
+    "allySearch": "Search ally or weapon",
+    "searchResults": "{count} results",
+    "allCharacters": "All characters & weapons",
+    "popularAllies": "Popular picks this patch",
+    "showPopular": "Show less",
+    "showAll": "View all",
+    "startWith": "Find teams with {name} · {weapon}",
+    "noAllyResults": "No matching character or weapon.",
+    "openComposition": "No ally yet? Explore team recommendations",
+    "liveTitle": "As picks come in, compare teams.",
+    "liveDescription": "Keep this page open and add your allies as they pick. Compare results here and narrow them to your character pool.",
+    "workspaceLoading": "Loading team tools…",
+    "entryTitle": "Read the meta.\nFind your team’s next pick.",
+    "entryDescription": "Compare current performance and patch changes, then find the picks that fit your team with character and three-player team data.",
+    "entryCta": "Start team analysis",
+    "entryNote": "Open team analysis before the draft. Compare results in the same place as your allies pick.",
+    "entryGuide": "How to use it",
+    "entryPrepare": "Open before the draft",
+    "entryPrepareBody": "Optionally set the characters you play ahead of time.",
+    "entryPick": "Add your allies’ picks",
+    "entryPickBody": "Select each ally’s character and weapon as they lock in.",
+    "entryCompare": "Compare in one place",
+    "entryCompareBody": "Check RP, win rate, rank, and sample size. Update picks to compare again.",
+    "twoWays": "Two ways to inform your picks",
+    "valueMeta": "What changed this patch?",
+    "valueMetaBody": "Compare current performance and patch changes alongside sample sizes.",
+    "valueTeam": "What works with our team?",
+    "valueTeamBody": "Find teams based on your allies and the characters you play.",
+    "currentStrong": "Strong picks right now",
+    "currentStrongBasis": "Patch {patch} · Diamond+ · Character–weapon pairs ordered by average RP",
+    "sampleLabel": "Games",
+    "currentEmpty": "Collecting current performance data.",
+    "forecastTitle": "Predicted tiers. Where are they now?",
+    "forecastBasis": "Patch {patch} · Diamond+ · Forecasted character–weapon pairs · Most games first",
+    "forecastSource": "Read the forecast analysis",
+    "forecastNote": "Pre-patch and predicted tiers are recorded in the patch notes. Current tiers use the same combined score as character rankings; differences do not isolate the effect of balance changes.",
+    "forecastBefore": "Before patch",
+    "forecastExpected": "Forecast",
+    "forecastActual": "Current stats",
+    "forecastRange": "Range {range}",
+    "forecastMore": "Compare {count} more",
+    "forecastEmpty": "No matching forecast and current stats are available for this patch yet.",
+    "forecastWithin": "Within range",
+    "forecastAbove": "Above range",
+    "forecastBelow": "Below range",
+    "changesLabel": "Character changes",
+    "changesMore": "Show {count} more changes",
+    "changesEmpty": "No direct character changes recorded",
+    "changeTypes": {
+      "buff": "Buff",
+      "nerf": "Nerf",
+      "rework": "Adjustment"
+    },
+    "itemChangesLabel": "Related item changes",
+    "itemChangesBasis": "Equipment considered in the forecast · Applies when equipped",
+    "traitChangesLabel": "Shared trait changes",
+    "traitChangesBasis": "Applies when selected. Additional context; inclusion in the original forecast is unconfirmed.",
+    "indirectSource": "Official item and trait changes",
+    "masteryChangesLabel": "{weapon} mastery",
+    "risingSort": "Sort rising candidates",
+    "risingOverall": "Overall rise",
+    "risingBy": "{metric} change",
+    "risingScope": "Sort within {count} rising candidates",
+    "risingSelect": "Select character",
+    "risingDetail": "Selected rising pick comparison",
+    "risingScale": "Each metric uses the same scale across candidates. The vertical line marks zero; changes are not necessarily caused solely by the patch.",
+    "motionTransition": "Transition",
+    "motionSlider": "Before and after patch slider",
+    "motionHint": "Drag to compare positions. Intermediate positions are interpolated, not historical observations.",
+    "motionComparePick": "Compare {name}",
+    "motionCompare": "Compare two characters",
+    "motionClear": "Clear",
+    "motionCompareHint": "Check two characters to compare their changes side by side.",
+    "motionChanges": "Patch changes",
+    "motionMetric": "Metric",
+    "cardCurrent": "Current {value}",
+    "cardOpen": "Explore patch and analysis",
+    "cardClose": "Collapse analysis",
+    "cardPatch": "Related changes",
+    "cardForecast": "Forecast and current tier",
+    "cardObserved": "Observed performance",
+    "cardNoPatch": "No linked changes. A rise does not necessarily mean a direct patch effect.",
+    "cardNoForecast": "No prior forecast recorded.",
+    "cardOriginal": "Changes are shown in the original Korean.",
+    "forecastTop3": "Top 3 rate",
+    "forecastPerformanceBasis": "{previous} → {current} · Same weapon · Diamond+",
+    "forecastPerformanceSamples": "Previous {previous} games · Current {current} games",
+    "forecastNoBaseline": "No prior sample",
+    "forecastDetails": "Previous patch comparison",
+    "welcomeTitle": "See team comps and patch changes at a glance.",
+    "welcomeTeamLabel": "Team composition",
+    "welcomeTeamTitle": "What should our team pick?",
+    "welcomeTeamBody": "Open before the game. As teammates pick, find candidates from your character pool.",
+    "welcomeExample": "Example workflow",
+    "welcomeMyPick": "My pick",
+    "welcomeResult": "Compare candidates",
+    "welcomeResultBody": "Your pool · Win rate · Average RP",
+    "welcomeTeamCta": "Find a composition",
+    "welcomeMetaLabel": "Patch analysis",
+    "welcomeMetaTitle": "How is my character doing this patch?",
+    "welcomeMetaBody": "Compare patch changes and forecast tiers with observed performance.",
+    "welcomeLive": "Patch {patch} · Actual Diamond+ data",
+    "welcomeMetaCta": "Analyze a character"
   }
 }

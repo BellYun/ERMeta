@@ -47,6 +47,7 @@ export async function HomePageContent({
   rankingData,
 }: HomePageContentProps) {
   const t = await getTranslations({ locale, namespace: "home" });
+  const nav = await getTranslations({ locale, namespace: "navigation" });
   const defaultPatch = patches[0] ?? "";
   const rankingGames = rankingData.rankings.reduce((sum, row) => sum + row.totalGames, 0);
   const collectedGames = homeMetaStats.collectedGames ?? 0;
@@ -69,7 +70,7 @@ export async function HomePageContent({
   const showHomeStats = hasRankingData && !isPreparing;
 
   return (
-    <div className="page-shell home-shell home-shell--shadcn flex flex-col">
+    <div className="page-shell home-shell home-shell--shadcn home-editorial flex flex-col">
       {isPreparing ? (
         <section aria-labelledby="home-season-recap-title">
           <Link className="home-season-recap" href={`/${locale}/season11-recap`} prefetch={false}>
@@ -108,7 +109,7 @@ export async function HomePageContent({
               ) : null}
             </div>
             <h1 id="home-search-title" className="home-search-hero__title">
-              {t("title")}
+              {nav("characterRankings")}
             </h1>
             <p className="home-search-hero__subtitle">
               {isPreseasonPreparing
@@ -116,7 +117,7 @@ export async function HomePageContent({
                 : isCollectionPending
                   ? t("collecting.subtitle", { patch: fallbackPatch })
                   : hasRankingData
-                    ? t("subtitle", { count: trackedMatches })
+                    ? t("heroDescription")
                     : t("fallback.subtitle", { patch: fallbackPatch })}
             </p>
             <div className="home-search-hero__search-wrap">
@@ -179,15 +180,24 @@ export async function HomePageContent({
                   ? `${collectionProgress}%`
                   : fallbackPatch}
             </p>
-            <p className="home-search-hero__status-body">
-              {isPreseasonPreparing
-                ? t("preparing.body")
-                : isCollectionPending
-                  ? t("collecting.body")
-                  : hasRankingData
-                    ? t("matchMetricDescription", { patch: defaultPatch })
-                    : t("fallback.body")}
-            </p>
+            {showHomeStats ? (
+              <details className="home-estimate-details">
+                <summary>{t("analysis.estimateMethod")}</summary>
+                <p className="home-search-hero__status-body">
+                  {t("matchMetricDescription", { patch: defaultPatch })}
+                </p>
+              </details>
+            ) : (
+              <p className="home-search-hero__status-body">
+                {isPreseasonPreparing
+                  ? t("preparing.body")
+                  : isCollectionPending
+                    ? t("collecting.body")
+                    : hasRankingData
+                      ? t("matchMetricDescription", { patch: defaultPatch })
+                      : t("fallback.body")}
+              </p>
+            )}
             {isPreparing ? (
               <Hourglass className="home-search-hero__status-icon" aria-hidden="true" />
             ) : null}
@@ -215,6 +225,7 @@ export async function HomePageContent({
           patches={patches}
           homeMetaStats={homeMetaStats}
           defaultPatch={defaultPatch}
+          rankingOnly
         />
       ) : (
         <section className="home-empty-index" aria-labelledby="home-empty-title">

@@ -1236,7 +1236,7 @@ function threatMatchupForPattern(pattern: CompositionPatternKey): ThreatMatchupK
 const COMPOSITION_INSIGHT_CACHE_LIMIT = 512;
 const compositionInsightCache = new Map<string, TrioCompositionInsight>();
 
-function getCompositionInsightCacheKey(
+export function getCompositionInsightCacheKey(
   input: readonly [CompositionMemberInput, CompositionMemberInput, CompositionMemberInput],
   affinityEvidence?: CompositionAffinityEvidence | null
 ) {
@@ -1254,6 +1254,15 @@ function getCompositionInsightCacheKey(
     ? `${affinityEvidence.prototype.match}:${affinityEvidence.prototype.key}`
     : "no-prototype";
   return `${trioKey}:${affinityEvidence.matchedMembers}:${prototypeKey}:${profileKey}`;
+}
+
+export function getCachedTrioCompositionInsight(
+  input: readonly [CompositionMemberInput, CompositionMemberInput, CompositionMemberInput],
+  affinityEvidence?: CompositionAffinityEvidence | null
+): TrioCompositionInsight | null {
+  return (
+    compositionInsightCache.get(getCompositionInsightCacheKey(input, affinityEvidence)) ?? null
+  );
 }
 
 function buildPrototypeMemberProfiles(
@@ -1352,13 +1361,15 @@ function computeTrioCompositionInsight(
 
 export function buildTrioCompositionInsight(
   input: readonly [CompositionMemberInput, CompositionMemberInput, CompositionMemberInput],
-  affinityEvidence?: CompositionAffinityEvidence | null
+  affinityEvidence?: CompositionAffinityEvidence | null,
+  options?: { shouldCache?: () => boolean }
 ): TrioCompositionInsight {
   const cacheKey = getCompositionInsightCacheKey(input, affinityEvidence);
-  const cached = compositionInsightCache.get(cacheKey);
+  const cached = getCachedTrioCompositionInsight(input, affinityEvidence);
   if (cached) return cached;
 
   const insight = computeTrioCompositionInsight(input, affinityEvidence);
+  if (options?.shouldCache && !options.shouldCache()) return insight;
   compositionInsightCache.set(cacheKey, insight);
   if (compositionInsightCache.size > COMPOSITION_INSIGHT_CACHE_LIMIT) {
     const oldestKey = compositionInsightCache.keys().next().value;

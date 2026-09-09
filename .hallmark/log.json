@@ -1,5 +1,21 @@
 [
   {
+    "date": "2026-09-08",
+    "scope": "app",
+    "macrostructure": "Open editorial workspace",
+    "theme": "custom — Open Studio",
+    "enrichment": "none",
+    "brief": "Site-wide bright neutral shell with editorial home search, character identity and open composition workflow"
+  },
+  {
+    "date": "2026-09-08",
+    "scope": "app",
+    "macrostructure": "Ranking-first Workbench",
+    "theme": "custom — Mineral Signal",
+    "enrichment": "none",
+    "brief": "Quiet analysis direction: ranking-first home, selected sample context, explicit estimated matches, restrained shared dividers"
+  },
+  {
     "date": "2026-08-23",
     "scope": "app",
     "macrostructure": "Workbench + Index-First — collapsing chrome / segmented route index",

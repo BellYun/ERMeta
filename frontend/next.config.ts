@@ -92,12 +92,22 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/lab",
-        destination: "/character-lab",
+        destination: "/composition-lab",
         permanent: true,
       },
       {
         source: "/lab/:role",
-        destination: "/character-lab/:role",
+        destination: "/composition-lab",
+        permanent: true,
+      },
+      {
+        source: "/character-lab/:path*",
+        destination: "/composition-lab",
+        permanent: true,
+      },
+      {
+        source: "/:locale(ko|en|ja|zh-Hans|zh-Hant)/character-lab/:path*",
+        destination: "/:locale/composition-lab",
         permanent: true,
       },
       {

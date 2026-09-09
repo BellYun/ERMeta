@@ -26,7 +26,10 @@ export function SlotFilled({
       </div>
       <span className="flex-1 text-sm font-medium text-[var(--color-foreground)]">{name}</span>
       <button
+        type="button"
         onClick={onRemove}
+        data-voc-action="synergy_ally_remove"
+        data-voc-code={code}
         className="rounded p-0.5 text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
       >
         <X className="h-4 w-4" />

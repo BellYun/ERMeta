@@ -47,10 +47,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const staticPages: MetadataRoute.Sitemap = [
     buildLocalizedEntry("/", "daily", 1.0),
+    buildLocalizedEntry("/rankings", "daily", 0.95),
+    buildLocalizedEntry(prefixSeoLocalePath("/rankings", SEO_TARGET_LOCALE), "daily", 0.9),
     buildLocalizedEntry("/about", "monthly", 0.45),
     buildLocalizedEntry("/methodology", "monthly", 0.45),
     buildLocalizedEntry("/character/1", "daily", 0.9),
-    buildLocalizedEntry("/character-lab", "daily", 0.85),
     buildLocalizedEntry("/composition-lab", "daily", 0.82),
     buildLocalizedEntry("/synergy-detail", "daily", 0.8),
     buildLocalizedEntry("/synergy-matrix", "daily", 0.78),
@@ -88,13 +89,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.4,
       alternates: buildAlternates("/methodology"),
-    },
-    {
-      url: `${base}${prefixSeoLocalePath("/character-lab", SEO_TARGET_LOCALE)}`,
-      lastModified: now,
-      changeFrequency: "daily",
-      priority: 0.75,
-      alternates: buildAlternates("/character-lab"),
     },
     {
       url: `${base}${prefixSeoLocalePath("/composition-lab", SEO_TARGET_LOCALE)}`,

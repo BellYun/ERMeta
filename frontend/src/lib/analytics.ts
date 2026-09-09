@@ -120,6 +120,11 @@ export type Source =
 
 export type SynergySortBy = "tierScore" | "averageRP" | "winRate" | "averageRank" | "totalGames";
 export type SynergyPrefetchTrigger = "hover" | "viewport";
+export type SpeculativeAnalysisInvalidationReason =
+  | "selection_changed"
+  | "unmounted"
+  | "new_generation";
+export type CandidateAnalysisMode = "speculative_cache_hit" | "cache_hit" | "on_demand";
 
 export type SessionSource = "organic_search" | "community" | "direct" | "social" | "internal";
 
@@ -356,6 +361,42 @@ export const analytics = {
     trigger: SynergyPrefetchTrigger;
   }) {
     track("synergy_recommendation_prefetched", { ...args, source: "synergy" as const });
+  },
+
+  /** 추천 결과 commit 뒤 Top-1 로컬 분석을 idle queue에 등록. */
+  speculativeAnalysisScheduled(args: { candidateRank: number; cacheKey: string; source: string }) {
+    track("speculative_analysis_scheduled", args);
+  },
+
+  /** Top-1 로컬 분석이 shared analysis cache를 채움. */
+  speculativeAnalysisCompleted(args: { candidateRank: number; durationMs: number }) {
+    track("speculative_analysis_completed", args);
+  },
+
+  /** 사용자가 선택한 후보가 speculative cache entry를 재사용. */
+  speculativeAnalysisHit(args: {
+    candidateRank: number;
+    speculativeDurationMs: number;
+    savedCalculationMs: number;
+  }) {
+    track("speculative_analysis_hit", args);
+  },
+
+  /** 예약된 speculative 작업이 현재 selection/generation에서 무효화됨. */
+  speculativeAnalysisInvalidated(args: {
+    candidateRank: number;
+    reason: SpeculativeAnalysisInvalidationReason;
+  }) {
+    track("speculative_analysis_invalidated", args);
+  },
+
+  /** 추천 카드 선택부터 분석 패널이 사용할 수 있는 시점까지의 latency. */
+  synergyCandidateAnalysisReady(args: {
+    candidateRank: number;
+    durationMs: number;
+    mode: CandidateAnalysisMode;
+  }) {
+    track("synergy_candidate_analysis_ready", args);
   },
 
   /**

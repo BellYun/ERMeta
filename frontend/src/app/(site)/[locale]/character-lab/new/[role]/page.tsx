@@ -1,10 +1,10 @@
-import NewCharacterLabRolePage, {
-  generateMetadata,
-  generateStaticParams,
-} from "../../[role]/NewCharacterLabRolePage";
+import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
-export const dynamicParams = false;
+interface NewCharacterLabRoleRouteProps {
+  params: Promise<{ locale: string }>;
+}
 
-export { generateMetadata, generateStaticParams };
-export default NewCharacterLabRolePage;
+export default async function NewCharacterLabRoleRoute({ params }: NewCharacterLabRoleRouteProps) {
+  const { locale } = await params;
+  redirect(`/${locale}/composition-lab`);
+}

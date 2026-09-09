@@ -12,7 +12,12 @@ test("keeps the selected theme when the locale changes", async ({ page }, testIn
     await page.getByRole("button", { name: "메뉴 열기" }).click();
   }
 
-  const languageSelect = page.getByRole("combobox", { name: "언어 선택" });
+  const languageSelect =
+    testInfo.project.name === "chromium-mobile"
+      ? page.getByRole("dialog", { name: "모바일 메뉴" }).getByRole("combobox", {
+          name: "언어 선택",
+        })
+      : page.getByRole("banner").getByRole("combobox", { name: "언어 선택" });
   await expect(async () => {
     await languageSelect.selectOption("English");
     await expect(page).toHaveURL(/\/en\/about$/, { timeout: 1_000 });
@@ -20,6 +25,8 @@ test("keeps the selected theme when the locale changes", async ({ page }, testIn
 
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await expect(page.locator("html")).toHaveCSS("color-scheme", "dark");
-  await expect(page.getByRole("button", { name: "Switch to light mode" })).toBeVisible();
+  if (testInfo.project.name !== "chromium-mobile") {
+    await expect(page.getByRole("button", { name: "Switch to light mode" })).toBeVisible();
+  }
   await expect.poll(() => page.evaluate(() => localStorage.getItem("ergg-theme"))).toBe("dark");
 });
