@@ -27,6 +27,17 @@ function track(event: string, properties?: Record<string, unknown>) {
     .catch(() => {});
 }
 
+function trackOnPageExit(event: string, properties?: Record<string, unknown>) {
+  if (isDev) return;
+  getAmplitude()
+    .then((amplitude) => {
+      amplitude.setTransport("beacon");
+      amplitude.track(event, properties);
+      amplitude.flush();
+    })
+    .catch(() => {});
+}
+
 type FlatAnalyticsProperties = Record<string, string | number | boolean | null | undefined>;
 
 function trackAdBlockRecovery(event: string, properties: FlatAnalyticsProperties) {
@@ -135,6 +146,7 @@ export type AdSlotName =
   | "site_rail_left"
   | "site_rail_right";
 export type AdSlotStatus = "reserved" | "requested" | "filled" | "unfilled" | "timeout";
+export type AdSlotAbandonReason = "pagehide" | "component_unmount";
 
 const AD_SLOT_MIN_VIEWPORT_WIDTH: Partial<Record<AdSlotName, number>> = {
   site_rail_left: 1280,
@@ -508,6 +520,49 @@ export const analytics = {
       request_to_state_ms: args.requestToStateMs,
       ...getAdPerformanceProperties(),
     });
+  },
+
+  /** 요청 후 최종 상태 없이 슬롯 lifecycle이 종료된 원인을 분리한다. */
+  adSlotAbandoned(args: {
+    slotName: AdSlotName;
+    adSlotId: string;
+    slotInstanceId: string;
+    reason: AdSlotAbandonReason;
+    hasIframe: boolean;
+    observedAdStatus: "missing" | "filled" | "unfilled" | "other";
+    documentVisibility: "visible" | "hidden" | "prerender" | "unknown";
+    requestAgeBucket: "under_3s" | "3s_to_10s" | "10s_plus";
+    pagePath?: string;
+    eventPagePath?: string;
+    reservedHeight: number;
+    reservedWidth: number | null;
+    elapsedSinceRenderMs?: number;
+    elapsedSinceRequestMs: number;
+  }) {
+    const properties = {
+      slot_name: args.slotName,
+      ad_slot_id: args.adSlotId,
+      slot_instance_id: args.slotInstanceId,
+      abandon_reason: args.reason,
+      has_iframe: args.hasIframe,
+      observed_ad_status: args.observedAdStatus,
+      document_visibility: args.documentVisibility,
+      request_age_bucket: args.requestAgeBucket,
+      ...getAdSlotPageProperties(args.pagePath, args.eventPagePath),
+      viewport_eligible: isAdSlotViewportEligible(args.slotName),
+      reserved_height: args.reservedHeight,
+      reserved_width: args.reservedWidth,
+      elapsed_since_render_ms: args.elapsedSinceRenderMs,
+      elapsed_since_request_ms: args.elapsedSinceRequestMs,
+      ...getAdPerformanceProperties(),
+    };
+
+    if (args.reason === "pagehide") {
+      trackOnPageExit("ad_slot_abandoned", properties);
+      return;
+    }
+
+    track("ad_slot_abandoned", properties);
   },
 
   /** AdSense loader 자체의 예약/로드/실패 상태와 그 시점까지의 main-thread 비용. */
