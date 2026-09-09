@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
+import { SiteContentAd } from "@/components/ads/SiteContentAd";
 import {
   FullTrendExplorer,
   PartnerAffinityExplorer,
@@ -2328,6 +2329,8 @@ export default async function CompositionLabPage({
               </div>
             ))}
           </section>
+
+          <SiteContentAd />
 
           <section className="dashboard-panel overflow-hidden">
             <header className="border-b border-[var(--color-border)] p-4 sm:p-5">

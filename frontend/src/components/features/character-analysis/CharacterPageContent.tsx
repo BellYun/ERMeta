@@ -531,16 +531,6 @@ export async function CharacterPageContent({
         </div>
       </section>
 
-      {canRenderAdSlot(ADSENSE_SLOTS.characterAnalysis) ? (
-        <AdSlot
-          slot={ADSENSE_SLOTS.characterAnalysis}
-          slotName="character_analysis_top"
-          format="horizontal"
-          className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 sm:px-4"
-          reservation={ADSENSE_SLOT_RESERVATIONS.contentHorizontal}
-        />
-      ) : null}
-
       {initialStats ? (
         <CharacterStructuredData locale={locale} code={code} stats={initialStats} />
       ) : null}
@@ -569,6 +559,15 @@ export async function CharacterPageContent({
                     </p>
                   </details>
                   {insight ? <CharacterInsightSection insight={insight} /> : null}
+                  {canRenderAdSlot(ADSENSE_SLOTS.characterAnalysis) ? (
+                    <AdSlot
+                      slot={ADSENSE_SLOTS.characterAnalysis}
+                      slotName="character_analysis_top"
+                      format="horizontal"
+                      className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 sm:px-4"
+                      reservation={ADSENSE_SLOT_RESERVATIONS.contentHorizontal}
+                    />
+                  ) : null}
                 </>
               }
             />

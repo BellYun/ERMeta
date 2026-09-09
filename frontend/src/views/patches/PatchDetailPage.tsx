@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { SiteContentAd } from "@/components/ads/SiteContentAd";
 import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeBadgeStatic";
 import {
   PatchNotesBrowser,
@@ -271,6 +272,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
       <PatchNotesBrowser
         key={version}
         labels={labels}
+        midContent={<SiteContentAd />}
         entries={displayNotes.map((note) => ({
           code: note.characterCode,
           name: note.name,

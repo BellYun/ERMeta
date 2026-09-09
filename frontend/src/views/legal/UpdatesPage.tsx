@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Fragment } from "react";
+import { SiteContentAd } from "@/components/ads/SiteContentAd";
 import type { RouteLocale } from "@/i18n/routing";
 
 export const metadata: Metadata = {
@@ -397,34 +399,36 @@ export default function UpdatesPage({ locale = "ko" }: { locale?: RouteLocale })
       </header>
 
       <div className="grid gap-3">
-        {entries.map((entry) => (
-          <section
-            key={entry.date}
-            className="metric-card p-4"
-            data-accent={entry === entries[0] ? "true" : undefined}
-          >
-            <div className="mb-3 flex items-center gap-3">
-              <time className="text-sm font-semibold text-[var(--color-accent-foreground)]">
-                {entry.date}
-              </time>
-              {entry.version && (
-                <span className="rounded border border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-2 py-0.5 text-[10px] font-medium text-[var(--color-accent-foreground)]">
-                  {entry.version}
-                </span>
-              )}
-            </div>
-            <ul className="space-y-1.5">
-              {entry.changes.map((change, i) => (
-                <li
-                  key={i}
-                  className="flex items-start gap-2 text-sm leading-relaxed text-[var(--color-muted-foreground)]"
-                >
-                  <span className="mt-1.5 h-1 w-1 shrink-0 rounded bg-[var(--color-accent)]" />
-                  {change}
-                </li>
-              ))}
-            </ul>
-          </section>
+        {entries.map((entry, index) => (
+          <Fragment key={entry.date}>
+            <section
+              className="metric-card p-4"
+              data-accent={entry === entries[0] ? "true" : undefined}
+            >
+              <div className="mb-3 flex items-center gap-3">
+                <time className="text-sm font-semibold text-[var(--color-accent-foreground)]">
+                  {entry.date}
+                </time>
+                {entry.version && (
+                  <span className="rounded border border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-2 py-0.5 text-[10px] font-medium text-[var(--color-accent-foreground)]">
+                    {entry.version}
+                  </span>
+                )}
+              </div>
+              <ul className="space-y-1.5">
+                {entry.changes.map((change, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-2 text-sm leading-relaxed text-[var(--color-muted-foreground)]"
+                  >
+                    <span className="mt-1.5 h-1 w-1 shrink-0 rounded bg-[var(--color-accent)]" />
+                    {change}
+                  </li>
+                ))}
+              </ul>
+            </section>
+            {index === 1 ? <SiteContentAd /> : null}
+          </Fragment>
         ))}
       </div>
     </article>
