@@ -3,13 +3,18 @@ import { expect, test } from "@playwright/test";
 const hasSupabase = !!process.env.NEXT_PUBLIC_SUPABASE_URL;
 
 test.describe("홈 페이지 스모크", () => {
-  test("루트가 200을 반환하고 메타 분석 히어로를 렌더한다", async ({ page }) => {
+  test("루트가 200을 반환하고 메인 히어로를 렌더한다", async ({ page }) => {
     const response = await page.goto("/");
     expect(response?.status()).toBeLessThan(400);
 
     await expect(page).toHaveTitle(/이리와지지/);
 
-    await expect(page.getByRole("heading", { name: /메타 분석/, level: 1 })).toBeVisible();
+    await expect(
+      page.getByRole("heading", {
+        name: "팀 조합과 패치 변화를 한눈에 확인하세요.",
+        level: 1,
+      })
+    ).toBeVisible();
   });
 
   test("GlobalFilter가 patch select + tier 버튼 세그먼트를 노출한다", async ({ page }) => {

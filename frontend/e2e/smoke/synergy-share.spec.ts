@@ -84,7 +84,7 @@ test.describe("시너지 상세 URL 공유·복원", () => {
     await page.getByRole("button", { name: "공유" }).click();
     const sharedUrl = await page.evaluate(() => navigator.clipboard.readText());
     const parsedSharedUrl = new URL(sharedUrl);
-    expect(parsedSharedUrl.pathname).toBe("/synergy-detail/share/6-10");
+    expect(parsedSharedUrl.pathname).toBe("/ko/synergy-detail/share/6-10");
     const sharedParams = parsedSharedUrl.searchParams;
     expect(sharedParams.get("ally1")).toBe("6");
     expect(sharedParams.get("w1")).toBe("8");
