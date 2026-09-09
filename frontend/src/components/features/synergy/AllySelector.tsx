@@ -7,6 +7,7 @@ import { useL10n } from "@/components/L10nProvider";
 import { VirtualCharacterGrid } from "@/components/ui/VirtualCharacterGrid";
 import { analytics } from "@/lib/analytics";
 import { resolveCharacterName } from "@/lib/characterMap";
+import { recordFeedbackBreadcrumb, setFeedbackContextState } from "@/lib/feedbackContext";
 import { getAllCharacterCodes, getFallbackMap } from "./constants";
 import { SlotEmpty } from "./SlotEmpty";
 import { SlotFilled } from "./SlotFilled";
@@ -69,18 +70,38 @@ export function AllySelector() {
   const toggleAlly = React.useCallback(
     (code: number) => {
       if (selectedAllies.includes(code)) {
-        updateAllies(selectedAllies.filter((c) => c !== code));
+        const nextAllies = selectedAllies.filter((c) => c !== code);
+        updateAllies(nextAllies);
+        recordFeedbackBreadcrumb({
+          type: "state",
+          name: "synergy_ally_selection_committed",
+          metadata: { action: "remove", characterCode: code, allyCount: nextAllies.length },
+        });
       } else if (selectedAllies.length < 2) {
         const slot = selectedAllies.length === 0 ? "A" : "B";
+        const nextAllies = [...selectedAllies, code];
         analytics.synergyAllySelected(slot, code, getCharName(code));
-        updateAllies([...selectedAllies, code]);
+        updateAllies(nextAllies);
+        recordFeedbackBreadcrumb({
+          type: "state",
+          name: "synergy_ally_selection_committed",
+          metadata: { action: "add", characterCode: code, allyCount: nextAllies.length },
+        });
       }
     },
     [selectedAllies, updateAllies, getCharName]
   );
 
   const removeAlly = React.useCallback(
-    (code: number) => updateAllies(selectedAllies.filter((c) => c !== code)),
+    (code: number) => {
+      const nextAllies = selectedAllies.filter((c) => c !== code);
+      updateAllies(nextAllies);
+      recordFeedbackBreadcrumb({
+        type: "state",
+        name: "synergy_ally_selection_committed",
+        metadata: { action: "remove", characterCode: code, allyCount: nextAllies.length },
+      });
+    },
     [selectedAllies, updateAllies]
   );
 
@@ -91,6 +112,26 @@ export function AllySelector() {
     const q = deferredSearch.trim();
     return getAllCharacterCodes().filter((code) => matchesChosungSearch(getCharName(code), q));
   }, [deferredSearch, getCharName]);
+
+  const trimmedSearch = deferredSearch.trim();
+  const searchMode = !trimmedSearch
+    ? "empty"
+    : /^[ㄱ-ㅎ]+$/.test(trimmedSearch)
+      ? "chosung"
+      : "text";
+
+  React.useEffect(
+    () =>
+      setFeedbackContextState("synergy_selection", {
+        ally1Code: selectedAllies[0] ?? null,
+        ally2Code: selectedAllies[1] ?? null,
+        searchMode,
+        searchLength: trimmedSearch.length,
+        hasWhitespace: /\s/.test(deferredSearch),
+        resultCount: filteredAllyCodes.length,
+      }),
+    [deferredSearch, filteredAllyCodes.length, searchMode, selectedAllies, trimmedSearch.length]
+  );
 
   const isSelected = React.useCallback(
     (code: number) => selectedAllies.includes(code),
@@ -138,11 +179,14 @@ export function AllySelector() {
             value={allySearch}
             onChange={(e) => setAllySearch(e.target.value)}
             placeholder="아군 검색 (초성 가능: ㅎㅇ)"
+            data-voc-action="synergy_ally_search"
             className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] py-1.5 pl-7 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-accent)] focus:outline-none"
           />
           {allySearch && (
             <button
+              type="button"
               onClick={() => setAllySearch("")}
+              data-voc-action="synergy_ally_search_clear"
               className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors"
             >
               <X className="h-3.5 w-3.5" />
@@ -156,6 +200,7 @@ export function AllySelector() {
           isSelected={isSelected}
           isDisabled={isDisabled}
           onSelect={toggleAlly}
+          vocAction="synergy_ally_select"
           maxHeight="300px"
         />
       </div>

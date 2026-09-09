@@ -10,6 +10,7 @@ import { useFocusCharacters } from "@/hooks/useFocusCharacters";
 import { analytics, type SynergyPrefetchTrigger, type SynergySortBy } from "@/lib/analytics";
 import { resolveCharacterName } from "@/lib/characterMap";
 import { isMobileDevice } from "@/lib/device";
+import { recordFeedbackBreadcrumb, setFeedbackContextState } from "@/lib/feedbackContext";
 import { FetchHttpError, FetchRetriesExhaustedError, fetchWithRetry } from "@/lib/fetchWithRetry";
 import { withCurrentRouteLocale } from "@/lib/localizedPath";
 import { getAllCharacterCodes, getFallbackMap, parseSortByParam, SORT_OPTIONS } from "./constants";
@@ -206,15 +207,33 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
     let cancelled = false;
     const controller = new AbortController();
     setResultsState((prev) => ({ ...prev, error: null, loading: true }));
+    recordFeedbackBreadcrumb({
+      type: "network",
+      name: "synergy_request_started",
+      metadata: {
+        ally1Code: queryAllies[0] ?? null,
+        ally2Code: queryAllies[1] ?? null,
+      },
+    });
 
     fetchTrioWeaponRows(queryAllies, controller.signal)
       .then((data) => {
         if (cancelled) return;
         setResultsState({ data, error: null, loading: false });
+        recordFeedbackBreadcrumb({
+          type: "network",
+          name: "synergy_request_succeeded",
+          metadata: { resultCount: data.length },
+        });
       })
       .catch((err: unknown) => {
         if (cancelled || isAbortError(err)) return;
         setResultsState({ data: [], error: err, loading: false });
+        recordFeedbackBreadcrumb({
+          type: "network",
+          name: "synergy_request_failed",
+          metadata: { errorName: err instanceof Error ? err.name : "UnknownError" },
+        });
       });
 
     return () => {
@@ -264,8 +283,36 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
     return prioritizeFocusResults(sampleAwareSorted, selectedAllies, focusCharacters).slice(0, 20);
   }, [trioResults, selectedAllies, focusCharacters, sortBy]);
 
+  const feedbackStatus =
+    selectedAllies.length === 0
+      ? "idle"
+      : loading
+        ? "loading"
+        : error
+          ? "error"
+          : recommendations.length > 0
+            ? "ready"
+            : "empty";
+
+  React.useEffect(
+    () =>
+      setFeedbackContextState("synergy_results", {
+        ally1Code: selectedAllies[0] ?? null,
+        ally2Code: selectedAllies[1] ?? null,
+        sortBy,
+        focusCount: focusCharacters.length,
+        status: feedbackStatus,
+        resultCount: recommendations.length,
+      }),
+    [feedbackStatus, focusCharacters.length, recommendations.length, selectedAllies, sortBy]
+  );
+
   const clearAllies = React.useCallback(() => {
     router.replace(pathname, { scroll: false });
+    recordFeedbackBreadcrumb({
+      type: "state",
+      name: "synergy_allies_reset_committed",
+    });
   }, [pathname, router]);
 
   const updateSortBy = React.useCallback(
@@ -399,7 +446,9 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
           {SORT_OPTIONS.map(({ value, labelKey }) => (
             <button
               key={value}
+              type="button"
               onClick={() => updateSortBy(value)}
+              data-voc-action="synergy_sort"
               className="dashboard-tab min-h-[30px] px-2.5 py-1 text-xs"
               data-active={sortBy === value ? "true" : undefined}
             >
@@ -424,6 +473,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
               </h2>
               <button
                 type="button"
+                data-voc-action="synergy_share"
                 onClick={() => {
                   const ally1Code = selectedAllies[0] ?? null;
                   const ally2Code = selectedAllies[1] ?? null;
@@ -474,6 +524,7 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
               <button
                 type="button"
                 onClick={clearAllies}
+                data-voc-action="synergy_reset"
                 className="inline-flex items-center gap-1 shrink-0 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 py-1 text-xs font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:border-[var(--color-border-light)] transition-colors"
               >
                 <X className="h-3 w-3" />
@@ -568,7 +619,9 @@ export function SynergyResults({ compact = false }: { compact?: boolean }) {
             <Users className="mb-3 h-10 w-10 text-[var(--color-border)]" />
             <p className="text-sm text-[var(--color-muted-foreground)]">{t("emptyNoData")}</p>
             <button
+              type="button"
               onClick={clearAllies}
+              data-voc-action="synergy_reset"
               className="mt-3 text-xs text-[var(--color-foreground)] hover:underline"
             >
               {t("clearAllies")}

@@ -2,37 +2,44 @@
 
 import { ChevronRight, Loader2, Sparkles } from "lucide-react";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
 import { TierBadge } from "@/components/features/TierBadge";
 import { Link } from "@/i18n/navigation";
+import { analytics, type CandidateAnalysisMode } from "@/lib/analytics";
 import type { CompositionAffinityEvidence } from "@/lib/characterAffinityComposition";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
 import {
   buildTrioCompositionInsight,
+  getCachedTrioCompositionInsight,
+  getCompositionInsightCacheKey,
   type CompositionMemberDuty,
   type TrioCompositionInsight,
 } from "@/lib/synergyComposition";
 import { assignComboTier, COMBO_TIER_WEIGHTS, PERFORMANCE_TIER_MIN_GAMES } from "@/lib/tierScoring";
 import { cn } from "@/lib/utils";
 import { getWeaponGroupImageUrl } from "@/lib/weaponMap";
+import {
+  scheduleCompositionAnalysisIdle,
+  takeCompletedSpeculation,
+  type CompositionAnalysisMembers,
+} from "./speculativeCompositionAnalysis";
 import { TraitIcon } from "./TraitIcon";
 import type { TrioWeaponResult } from "./types";
 import { useTapGuard } from "./useTapGuard";
 
-/*
- * Composition analysis is supplemental to the recommendation statistics.
- * Keep it out of the result commit so a newly arrived result cannot monopolize
- * the main thread before the user's next selection is handled.
- */
-const COMPOSITION_INSIGHT_DELAY_MS = 100;
+const CANDIDATE_ANALYSIS_MEASURE = "ermeta-synergy-candidate-click-to-analysis-ready";
+let analysisInteractionSequence = 0;
 
 function useDeferredCompositionInsight(
   group: GroupedCombo,
-  affinityEvidence?: CompositionAffinityEvidence
+  affinityEvidence: CompositionAffinityEvidence | undefined,
+  active: boolean
 ) {
-  const insightKey = `${group.character1}:${group.weaponType1}|${group.character2}:${group.weaponType2}|${group.character3}:${group.weaponType3}|${affinityEvidence?.key ?? "legacy"}:${affinityEvidence?.matchedMembers ?? 0}:${affinityEvidence?.prototype?.key ?? "no-prototype"}`;
+  const members = React.useMemo(() => getGroupCompositionAnalysisMembers(group), [group]);
+  const insightKey = getCompositionInsightCacheKey(members, affinityEvidence);
   const suppliedInsight = affinityEvidence ? null : (group.compositionInsight ?? null);
+  const cachedInsight = getCachedTrioCompositionInsight(members, affinityEvidence);
   const [computed, setComputed] = React.useState<{
     key: string;
     insight: TrioCompositionInsight;
@@ -43,37 +50,22 @@ function useDeferredCompositionInsight(
       setComputed({ key: insightKey, insight: suppliedInsight });
       return;
     }
+    if (!active || cachedInsight) return;
 
     let cancelled = false;
-    let idleCallbackId: number | null = null;
-    let fallbackTimerId: number | null = null;
-    const computeInsight = () => {
-      const insight = buildTrioCompositionInsight(
-        [
-          { character: group.character1, weapon: group.weaponType1 },
-          { character: group.character2, weapon: group.weaponType2 },
-          { character: group.character3, weapon: group.weaponType3 },
-        ],
-        affinityEvidence
-      );
+    const cancelIdle = scheduleCompositionAnalysisIdle(() => {
+      const insight = buildTrioCompositionInsight(members, affinityEvidence);
       if (cancelled) return;
       React.startTransition(() => setComputed({ key: insightKey, insight }));
-    };
-    const timerId = window.setTimeout(() => {
-      if (typeof window.requestIdleCallback === "function") {
-        idleCallbackId = window.requestIdleCallback(computeInsight, { timeout: 1_500 });
-      } else {
-        fallbackTimerId = window.setTimeout(computeInsight, 0);
-      }
-    }, COMPOSITION_INSIGHT_DELAY_MS);
+    });
 
     return () => {
       cancelled = true;
-      window.clearTimeout(timerId);
-      if (idleCallbackId != null) window.cancelIdleCallback(idleCallbackId);
-      if (fallbackTimerId != null) window.clearTimeout(fallbackTimerId);
+      cancelIdle();
     };
   }, [
+    active,
+    cachedInsight,
     group.character1,
     group.weaponType1,
     group.character2,
@@ -82,10 +74,12 @@ function useDeferredCompositionInsight(
     group.weaponType3,
     affinityEvidence,
     insightKey,
+    members,
     suppliedInsight,
   ]);
 
   if (suppliedInsight) return suppliedInsight;
+  if (cachedInsight) return cachedInsight;
   return computed?.key === insightKey ? computed.insight : null;
 }
 
@@ -104,6 +98,16 @@ export interface GroupedCombo {
   compositionInsight?: TrioCompositionInsight | null;
   /** Level 2 (펼침): 특성별 브레이크다운 */
   traitVariants: TrioWeaponResult[];
+}
+
+export function getGroupCompositionAnalysisMembers(
+  group: GroupedCombo
+): CompositionAnalysisMembers {
+  return [
+    { character: group.character1, weapon: group.weaponType1 },
+    { character: group.character2, weapon: group.weaponType2 },
+    { character: group.character3, weapon: group.weaponType3 },
+  ];
 }
 
 interface OrderedMember {
@@ -175,12 +179,24 @@ function ComboWeaponCardImpl({
   onRecommendationClick,
   affinityEvidence,
 }: ComboWeaponCardProps) {
+  const resultLocale = useLocale();
+  const resultLabels = (
+    {
+      ko: ["아군", "추천", "분석"],
+      en: ["Ally", "Candidate", "Details"],
+      ja: ["味方", "候補", "詳細"],
+      "zh-Hans": ["队友", "推荐", "分析"],
+      "zh-Hant": ["隊友", "推薦", "分析"],
+    } as Record<string, string[]>
+  )[resultLocale] ?? ["Ally", "Candidate", "Details"];
   const t = useTranslations("synergyComboCard");
-  const compositionInsight = useDeferredCompositionInsight(group, affinityEvidence);
+  const [showTraits, setShowTraits] = React.useState(false);
+  const compositionMembers = getGroupCompositionAnalysisMembers(group);
+  const compositionCacheKey = getCompositionInsightCacheKey(compositionMembers, affinityEvidence);
+  const compositionInsight = useDeferredCompositionInsight(group, affinityEvidence, showTraits);
   const compositionAnalysisTitle = t.has("composition.title")
     ? t("composition.title")
     : `${t("composition.rolesLabel")} · ${t("composition.powerSpikeLabel")}`;
-  const [showTraits, setShowTraits] = React.useState(false);
   const [showAllVariants, setShowAllVariants] = React.useState(false);
   const [loadedTraitVariants, setLoadedTraitVariants] = React.useState<TrioWeaponResult[] | null>(
     null
@@ -295,11 +311,68 @@ function ComboWeaponCardImpl({
   // pointer 단계로 토글해 onClick frame 까지 밀리는 커밋을 앞당김
   // (.omc/touch-delay-jscontention-2026-04-15.md — 실측 병목은 Safari dispatch 가 아닌 커밋 비용).
   // ChevronRight rotate 는 urgent 유지하되 패널 mount(10 variant × TraitIcon) 는 startTransition 으로 양보.
-  const toggleTraits = () =>
+  const pendingAnalysisInteractionRef = React.useRef<{
+    startMark: string;
+    startedAt: number;
+    mode: CandidateAnalysisMode;
+  } | null>(null);
+
+  const toggleTraits = () => {
+    if (!showTraits) {
+      const cached = getCachedTrioCompositionInsight(compositionMembers, affinityEvidence);
+      const speculativeMetadata = cached ? takeCompletedSpeculation(compositionCacheKey) : null;
+      const mode: CandidateAnalysisMode = speculativeMetadata
+        ? "speculative_cache_hit"
+        : cached
+          ? "cache_hit"
+          : "on_demand";
+      const interactionId = ++analysisInteractionSequence;
+      const startMark = `${CANDIDATE_ANALYSIS_MEASURE}-start-${interactionId}`;
+      const startedAt = performance.now();
+      performance.mark(startMark);
+      pendingAnalysisInteractionRef.current = { startMark, startedAt, mode };
+
+      if (speculativeMetadata) {
+        analytics.speculativeAnalysisHit({
+          candidateRank: rank,
+          speculativeDurationMs: speculativeMetadata.durationMs,
+          savedCalculationMs: speculativeMetadata.durationMs,
+        });
+      }
+    } else {
+      const pending = pendingAnalysisInteractionRef.current;
+      if (pending) performance.clearMarks(pending.startMark);
+      pendingAnalysisInteractionRef.current = null;
+    }
+
     React.startTransition(() => {
       setShowTraits((prev) => !prev);
       setShowAllVariants(false); // 접을 때 내부 더보기 상태도 초기화
     });
+  };
+
+  React.useEffect(() => {
+    const pending = pendingAnalysisInteractionRef.current;
+    if (!showTraits || !compositionInsight || !pending) return;
+
+    const endMark = `${pending.startMark}-ready`;
+    const durationMs = Math.max(0, performance.now() - pending.startedAt);
+    performance.mark(endMark);
+    performance.measure(CANDIDATE_ANALYSIS_MEASURE, pending.startMark, endMark);
+    performance.measure(
+      `${CANDIDATE_ANALYSIS_MEASURE}-${pending.mode}`,
+      pending.startMark,
+      endMark
+    );
+    performance.clearMarks(pending.startMark);
+    performance.clearMarks(endMark);
+    analytics.synergyCandidateAnalysisReady({
+      candidateRank: rank,
+      durationMs,
+      mode: pending.mode,
+    });
+    pendingAnalysisInteractionRef.current = null;
+  }, [compositionInsight, rank, showTraits]);
 
   // 스크롤 가드 (.omc/touch-delay-jscontention-2026-04-15.md): onPointerUp 은 onClick 과 달리
   // 스크롤 발생 시 브라우저가 차단해주지 않으므로 pointermove 단계에서 SLOP=10px 누적 가드.
@@ -309,8 +382,9 @@ function ComboWeaponCardImpl({
   // content-visibility/contain-intrinsic-size를 함께 쓰면 비동기 펼침 높이가 누락되어 카드가 겹칠 수 있다.
   return (
     <div
+      data-focus-pool={isFocusPoolCombo || undefined}
       className={cn(
-        "rounded-md border bg-[var(--color-surface)] transition-colors",
+        "composition-result-card rounded-md border bg-[var(--color-surface)] transition-colors",
         isFocusPoolCombo
           ? "border-[color-mix(in_srgb,var(--color-accent)_46%,var(--color-border-light))] bg-[color-mix(in_srgb,var(--color-accent-muted)_62%,var(--color-surface))] shadow-[inset_3px_0_0_color-mix(in_srgb,var(--color-accent)_72%,transparent)]"
           : rank <= 3
@@ -330,12 +404,13 @@ function ComboWeaponCardImpl({
           }
         }}
         style={{ touchAction: "manipulation" }}
-        className="w-full flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:py-2 text-left cursor-pointer rounded-md hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]"
+        aria-expanded={showTraits}
+        className="composition-result-card__summary w-full flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:py-2 text-left cursor-pointer rounded-md hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]"
       >
         {/* 순위 */}
         <span
           className={cn(
-            "w-4 sm:w-5 shrink-0 text-center text-xs sm:text-sm font-bold",
+            "composition-result-card__rank w-4 sm:w-5 shrink-0 text-center text-xs sm:text-sm font-bold",
             rank === 1
               ? "text-[var(--color-accent-gold)]"
               : rank === 2
@@ -350,7 +425,7 @@ function ComboWeaponCardImpl({
 
         {tier ? (
           <span
-            className="inline-flex shrink-0"
+            className="composition-result-card__tier inline-flex shrink-0"
             aria-label={`Tier ${tier}: ${tierWeightDescription}`}
             title={tierWeightDescription}
           >
@@ -359,7 +434,20 @@ function ComboWeaponCardImpl({
         ) : null}
 
         {/* 3실험체 + 무기 */}
-        <div className="flex flex-col items-center gap-1">
+        <div className="composition-result-card__members flex flex-col items-center gap-1">
+          {isFocusPoolCombo && (
+            <span className="composition-result-card__pool-label">
+              {(
+                {
+                  ko: "내 풀 포함",
+                  en: "My pool",
+                  ja: "マイプール",
+                  "zh-Hans": "我的英雄池",
+                  "zh-Hant": "我的英雄池",
+                } as Record<string, string>
+              )[resultLocale] ?? "My pool"}
+            </span>
+          )}
           <div className="flex items-center gap-0.5 sm:gap-1">
             {ordered.map((m, i) => {
               const isRecommended = !selectedCharCodes.includes(m.char);
@@ -377,8 +465,12 @@ function ComboWeaponCardImpl({
                     onPointerDown={(e) => e.stopPropagation()}
                     onPointerUp={(e) => e.stopPropagation()}
                     aria-label={`${getCharName(m.char)} ${getWeaponName(m.weapon)} 상세 보기`}
+                    data-recommended={isRecommended || undefined}
                     className="group/member flex flex-col items-center gap-0.5 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
                   >
+                    <span className="composition-result-card__member-label">
+                      {resultLabels[isRecommended ? 1 : 0]}
+                    </span>
                     <div
                       className={cn(
                         "relative h-7 w-7 sm:h-9 sm:w-9",
@@ -440,7 +532,7 @@ function ComboWeaponCardImpl({
 
         {/* 소표본 배지 */}
         {isSmallSample && (
-          <span className="rounded-md border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 px-1.5 py-0.5 text-[8.5px] sm:text-[9.5px] font-bold text-[var(--color-warning)] shrink-0">
+          <span className="composition-result-card__warning rounded-md border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 px-1.5 py-0.5 text-[8.5px] sm:text-[9.5px] font-bold text-[var(--color-warning)] shrink-0">
             {t("smallSample")}
           </span>
         )}
@@ -448,26 +540,34 @@ function ComboWeaponCardImpl({
         {/* 스탯 */}
         <div
           data-combo-toggle-hit-area
-          className="ml-auto flex items-center gap-1.5 sm:gap-4 text-right"
+          className="composition-result-card__metrics ml-auto flex items-center gap-1.5 sm:gap-4 text-right"
         >
-          <StatCol label={t("winRate")} value={`${group.winRate.toFixed(1)}%`} />
+          <StatCol
+            label={t("winRate")}
+            value={`${group.winRate.toFixed(1)}%`}
+            emphasized={group.winRate >= 12.5}
+          />
           <StatCol
             label={t("rp")}
             value={`${group.averageRP > 0 ? "+" : ""}${group.averageRP.toFixed(1)}`}
-            highlight={group.averageRP >= 0 ? "gold" : "muted"}
+            emphasized={group.averageRP > 0}
           />
-          <div className="hidden sm:flex">
+          <div className="composition-result-card__sample hidden sm:flex">
             <StatCol label={t("games")} value={group.totalGames.toLocaleString()} />
           </div>
           <div className="hidden sm:flex flex-col">
             <span className="text-[10px] font-medium text-[var(--color-foreground)]/55">
               {t("averageRank")}
             </span>
-            <span className="text-sm font-bold text-[var(--color-foreground)]">
+            <span
+              data-metric-emphasis={group.averageRank >= 4 || undefined}
+              className="text-sm font-bold text-[var(--color-foreground)]"
+            >
               #{group.averageRank.toFixed(1)}
             </span>
           </div>
 
+          <span className="composition-result-card__action">{resultLabels[2]}</span>
           <ChevronRight
             className={cn(
               "h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-[var(--color-foreground)]/55",
@@ -708,11 +808,16 @@ function ComboWeaponCardImpl({
 
               {/* 스탯 */}
               <div className="ml-auto flex items-center gap-2 sm:gap-5 text-right">
-                <StatCol label={t("winRate")} value={`${v.winRate.toFixed(1)}%`} small />
+                <StatCol
+                  label={t("winRate")}
+                  value={`${v.winRate.toFixed(1)}%`}
+                  emphasized={v.winRate >= 12.5}
+                  small
+                />
                 <StatCol
                   label={t("rp")}
                   value={`${v.averageRP > 0 ? "+" : ""}${v.averageRP.toFixed(1)}`}
-                  highlight={v.averageRP >= 0 ? "gold" : "muted"}
+                  emphasized={v.averageRP > 0}
                   small
                 />
                 <div className="hidden sm:flex">
@@ -780,12 +885,14 @@ function StatCol({
   label,
   value,
   highlight,
+  emphasized = false,
   small,
 }: {
   label: string;
   value: string;
   color?: string;
   highlight?: "gold" | "muted";
+  emphasized?: boolean;
   small?: boolean;
 }) {
   const textColor =
@@ -806,6 +913,7 @@ function StatCol({
         {label}
       </span>
       <span
+        data-metric-emphasis={emphasized || undefined}
         className={cn(
           "font-bold",
           textColor,

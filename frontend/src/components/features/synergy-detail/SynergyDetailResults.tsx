@@ -18,6 +18,7 @@ import {
 } from "@/lib/characterAffinityComposition";
 import { resolveCharacterName } from "@/lib/characterMap";
 import { isMobileDevice } from "@/lib/device";
+import { recordFeedbackBreadcrumb, setFeedbackContextState } from "@/lib/feedbackContext";
 import { FetchHttpError, FetchRetriesExhaustedError, fetchWithRetry } from "@/lib/fetchWithRetry";
 import { buildSynergyShareUrl } from "@/lib/synergyShare";
 import { MINIMUM_GAMES_OPTIONS, parseMinimumGamesParam } from "@/lib/synergyUrlState";
@@ -31,7 +32,15 @@ import {
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
 import { getFallbackMap, SORT_OPTIONS } from "../synergy/constants";
-import { ComboWeaponCard, type GroupedCombo } from "./ComboWeaponCard";
+import {
+  ComboWeaponCard,
+  getGroupCompositionAnalysisMembers,
+  type GroupedCombo,
+} from "./ComboWeaponCard";
+import {
+  scheduleSpeculativeCompositionAnalysis,
+  type SpeculationInvalidationReason,
+} from "./speculativeCompositionAnalysis";
 import {
   type AllySelection,
   useSelectedAllies,
@@ -385,6 +394,7 @@ export function SynergyDetailResults() {
   "use no memo";
   const { l10n } = useL10n();
   const t = useTranslations("synergyResults");
+  const metricT = useTranslations("synergyComboCard");
   const locale = useLocale();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -454,6 +464,11 @@ export function SynergyDetailResults() {
     const requestKey = getAllyQueryKey(queryAllies);
     const controller = new AbortController();
     setResultsState((prev) => ({ ...prev, error: null, loading: true }));
+    recordFeedbackBreadcrumb({
+      type: "network",
+      name: "synergy_detail_request_started",
+      metadata: { queryKey: requestKey },
+    });
 
     fetchDetailRows(queryAllies, controller.signal)
       .then((data) => {
@@ -461,10 +476,20 @@ export function SynergyDetailResults() {
         React.startTransition(() => {
           setResultsState({ data, error: null, loading: false, queryKey: requestKey });
         });
+        recordFeedbackBreadcrumb({
+          type: "network",
+          name: "synergy_detail_request_succeeded",
+          metadata: { resultCount: data.length },
+        });
       })
       .catch((err: unknown) => {
         if (cancelled || isAbortError(err)) return;
         setResultsState({ data: [], error: err, loading: false, queryKey: requestKey });
+        recordFeedbackBreadcrumb({
+          type: "network",
+          name: "synergy_detail_request_failed",
+          metadata: { errorName: err instanceof Error ? err.name : "UnknownError" },
+        });
       });
 
     return () => {
@@ -570,10 +595,55 @@ export function SynergyDetailResults() {
     return prioritizeFocusGroups(sampleAwareGroups, resultCharCodes, focusCharWeapons);
   }, [results, resultAllies, resultCharCodes, focusCharWeapons, minimumGames, sortBy]);
 
+  const feedbackStatus =
+    resultAllies.length === 0
+      ? "idle"
+      : showLoading
+        ? "loading"
+        : error
+          ? "error"
+          : recommendations.length > 0
+            ? "ready"
+            : "empty";
+
+  React.useEffect(
+    () =>
+      setFeedbackContextState("synergy_detail_results", {
+        ally1Code: resultCharCodes[0] ?? null,
+        ally2Code: resultCharCodes[1] ?? null,
+        sortBy,
+        minimumGames,
+        status: feedbackStatus,
+        resultCount: recommendations.length,
+      }),
+    [feedbackStatus, minimumGames, recommendations.length, resultCharCodes, sortBy]
+  );
+
   const resultVersion = React.useMemo(
     () => buildResultVersion(resultsState.queryKey, recommendations),
     [resultsState.queryKey, recommendations]
   );
+  const immediateSelectionKey = React.useMemo(
+    () => getAllyQueryKey(selectedAllies),
+    [selectedAllies]
+  );
+  const isSelectionDeferred = immediateSelectionKey !== resultAlliesKey;
+  const speculationContextKey = `${immediateSelectionKey}::${resultVersion}`;
+  const mountedRef = React.useRef(false);
+  const liveSelectionKeyRef = React.useRef(immediateSelectionKey);
+  const liveSpeculationContextRef = React.useRef(speculationContextKey);
+
+  React.useLayoutEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  React.useLayoutEffect(() => {
+    liveSelectionKeyRef.current = immediateSelectionKey;
+    liveSpeculationContextRef.current = speculationContextKey;
+  }, [immediateSelectionKey, speculationContextKey]);
 
   const visibleResetKey = React.useMemo(() => {
     const allyKey = resultAllies
@@ -655,6 +725,68 @@ export function SynergyDetailResults() {
     return () => controller.abort();
   }, [locale, visibleRecommendations]);
 
+  const topRecommendation = recommendations[0] ?? null;
+  const topRecommendationMembers = React.useMemo(
+    () => (topRecommendation ? getGroupCompositionAnalysisMembers(topRecommendation) : null),
+    [topRecommendation]
+  );
+  const topAffinityEvidence = topRecommendationMembers
+    ? affinityEvidenceByKey[
+        buildCompositionAffinityKey(
+          topRecommendationMembers.map((member) => ({
+            characterCode: member.character,
+            weapon: member.weapon,
+          }))
+        )
+      ]
+    : undefined;
+
+  React.useEffect(() => {
+    // A+B+C 형태로 후보가 하나로 결정되는 pair recommendation만 MVP 대상으로 삼는다.
+    if (
+      showLoading ||
+      isSelectionDeferred ||
+      resultAllies.length !== 2 ||
+      !topRecommendationMembers ||
+      topRecommendationMembers.filter((member) => !resultCharCodes.includes(member.character))
+        .length !== 1
+    ) {
+      return;
+    }
+
+    const scheduledSelectionKey = immediateSelectionKey;
+    const scheduledContextKey = speculationContextKey;
+    const speculation = scheduleSpeculativeCompositionAnalysis({
+      members: topRecommendationMembers,
+      affinityEvidence: topAffinityEvidence,
+      candidateRank: 1,
+      source: "synergy_detail",
+      generation: scheduledContextKey,
+      isCurrent: () =>
+        mountedRef.current &&
+        liveSelectionKeyRef.current === scheduledSelectionKey &&
+        liveSpeculationContextRef.current === scheduledContextKey,
+    });
+
+    return () => {
+      const reason: SpeculationInvalidationReason = !mountedRef.current
+        ? "unmounted"
+        : liveSelectionKeyRef.current !== scheduledSelectionKey
+          ? "selection_changed"
+          : "new_generation";
+      speculation.cancel(reason);
+    };
+  }, [
+    immediateSelectionKey,
+    isSelectionDeferred,
+    resultAllies.length,
+    resultCharCodes,
+    showLoading,
+    speculationContextKey,
+    topAffinityEvidence,
+    topRecommendationMembers,
+  ]);
+
   const replaceSearchParams = React.useCallback(
     (params: URLSearchParams) => {
       const nextUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
@@ -668,6 +800,10 @@ export function SynergyDetailResults() {
     const params = new URLSearchParams(window.location.search);
     ["ally1", "w1", "ally2", "w2", "a", "b"].forEach((key) => params.delete(key));
     replaceSearchParams(params);
+    recordFeedbackBreadcrumb({
+      type: "state",
+      name: "synergy_detail_allies_reset_committed",
+    });
   }, [replaceSearchParams, setAllies]);
 
   const updateSortBy = React.useCallback(
@@ -842,27 +978,30 @@ export function SynergyDetailResults() {
 
   return (
     <>
-      <div className="mb-4 flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
-        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+      <div className="composition-results-controls">
+        <div className="composition-results-header">
+          <div className="composition-results-heading">
+            {resultAllies.length > 0 && (
+              <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.1rem]">
+                {resultCharCodes.length === 1
+                  ? t("titleSingle", { ally: getCharName(resultCharCodes[0]) })
+                  : t("titlePair", {
+                      ally1: getCharName(resultCharCodes[0]),
+                      ally2: getCharName(resultCharCodes[1]),
+                    })}
+              </h2>
+            )}
+            {focusCharWeapons.length > 0 && (
+              <span className="composition-results-pool-status">
+                {t("focusFilter", { count: focusCharWeapons.length })}
+              </span>
+            )}
+          </div>
           {resultAllies.length > 0 && (
-            <h2 className="text-[1.05rem] font-bold text-[var(--color-foreground)] sm:text-[1.1rem]">
-              {resultCharCodes.length === 1
-                ? t("titleSingle", { ally: getCharName(resultCharCodes[0]) })
-                : t("titlePair", {
-                    ally1: getCharName(resultCharCodes[0]),
-                    ally2: getCharName(resultCharCodes[1]),
-                  })}
-            </h2>
-          )}
-          {focusCharWeapons.length > 0 && (
-            <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-[11.5px] font-semibold text-[var(--color-muted-foreground)]">
-              {t("focusFilter", { count: focusCharWeapons.length })}
-            </span>
-          )}
-          {resultAllies.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="composition-results-actions flex items-center gap-2">
               <button
                 type="button"
+                data-voc-action="synergy_detail_share"
                 onClick={() => {
                   const ally1Code = resultCharCodes[0] ?? null;
                   const ally2Code = resultCharCodes[1] ?? null;
@@ -874,7 +1013,9 @@ export function SynergyDetailResults() {
                         })
                       : t("titleSingle", { ally: getCharName(resultCharCodes[0]) });
                   const buildShareUrl = (method: "native" | "clipboard") => {
-                    return buildSynergyShareUrl(window.location.href, resultCharCodes, method);
+                    const shareBase = new URL(window.location.href);
+                    shareBase.pathname = `/${locale}/synergy-detail`;
+                    return buildSynergyShareUrl(shareBase.toString(), resultCharCodes, method);
                   };
                   if (isMobileDevice() && typeof navigator.share === "function") {
                     navigator
@@ -910,6 +1051,7 @@ export function SynergyDetailResults() {
                 type="button"
                 aria-label={t("clearAllies")}
                 onClick={clearAllies}
+                data-voc-action="synergy_detail_reset"
                 className="inline-flex min-h-[34px] shrink-0 items-center justify-center gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--color-muted-foreground)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
               >
                 <X className="h-3 w-3" />
@@ -919,13 +1061,14 @@ export function SynergyDetailResults() {
           )}
         </div>
 
-        <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center xl:w-auto">
+        <div className="composition-results-filters flex w-full flex-col gap-2 sm:flex-row sm:items-center">
           <label className="flex shrink-0 items-center gap-2 text-[12px] font-semibold text-[var(--color-muted-foreground)]">
             <span>{t("minimumGames")}</span>
             <select
               aria-label={t("minimumGames")}
               value={minimumGames}
               onChange={(event) => updateMinimumGames(Number(event.target.value))}
+              data-voc-action="synergy_detail_minimum_games"
               className="min-h-[34px] rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-[12px] font-semibold text-[var(--color-foreground)] outline-none focus:border-[var(--color-border-light)]"
             >
               {MINIMUM_GAMES_OPTIONS.map((value) => (
@@ -939,7 +1082,9 @@ export function SynergyDetailResults() {
             {DETAIL_SORT_OPTIONS.map(({ value, labelKey }) => (
               <button
                 key={value}
+                type="button"
                 onClick={() => updateSortBy(value)}
+                data-voc-action="synergy_detail_sort"
                 className={cn(
                   "dashboard-tab flex min-h-[30px] shrink-0 items-center px-3 py-1 text-[12px] font-semibold",
                   sortBy === value
@@ -1040,43 +1185,53 @@ export function SynergyDetailResults() {
                 {t("infoPair")}
               </p>
             )}
-            <div
-              ref={virtualListRef}
-              className="relative"
-              style={{ height: rowVirtualizer.getTotalSize() }}
-            >
-              {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-                const group = visibleRecommendations[virtualRow.index];
-                return (
-                  <div
-                    key={virtualRow.key}
-                    data-index={virtualRow.index}
-                    ref={rowVirtualizer.measureElement}
-                    className="absolute left-0 top-0 w-full pb-2"
-                    style={{
-                      transform: `translateY(${virtualRow.start - virtualScrollMargin}px)`,
-                    }}
-                  >
-                    <ComboWeaponCard
-                      key={`${group.character1}-${group.weaponType1}-${group.character2}-${group.weaponType2}-${group.character3}-${group.weaponType3}`}
-                      group={group}
-                      rank={virtualRow.index + 1}
-                      getCharName={getCharName}
-                      getWeaponName={getWeaponName}
-                      getTraitName={getTraitName}
-                      selectedCharCodes={resultCharCodes}
-                      isFocusPoolCombo={isFocusPoolCombo(group)}
-                      loadTraitVariants={loadCoreVariants}
-                      onRecommendationClick={onRecommendationClick}
-                      affinityEvidence={
-                        affinityEvidenceByKey[
-                          buildCompositionAffinityKey(getGroupAffinityMembers(group))
-                        ]
-                      }
-                    />
-                  </div>
-                );
-              })}
+            <div className="composition-comparison-scroll" tabIndex={0}>
+              <div className="composition-comparison-heading">
+                <span className="composition-comparison-heading__identity">#</span>
+                <span>{metricT("winRate")}</span>
+                <span>{metricT("rp")}</span>
+                <span>{metricT("games")}</span>
+                <span>{metricT("averageRank")}</span>
+                <span aria-hidden="true" />
+              </div>
+              <div
+                ref={virtualListRef}
+                className="composition-comparison-list relative"
+                style={{ height: rowVirtualizer.getTotalSize() }}
+              >
+                {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                  const group = visibleRecommendations[virtualRow.index];
+                  return (
+                    <div
+                      key={virtualRow.key}
+                      data-index={virtualRow.index}
+                      ref={rowVirtualizer.measureElement}
+                      className="absolute left-0 top-0 w-full pb-2"
+                      style={{
+                        transform: `translateY(${virtualRow.start - virtualScrollMargin}px)`,
+                      }}
+                    >
+                      <ComboWeaponCard
+                        key={`${group.character1}-${group.weaponType1}-${group.character2}-${group.weaponType2}-${group.character3}-${group.weaponType3}`}
+                        group={group}
+                        rank={virtualRow.index + 1}
+                        getCharName={getCharName}
+                        getWeaponName={getWeaponName}
+                        getTraitName={getTraitName}
+                        selectedCharCodes={resultCharCodes}
+                        isFocusPoolCombo={isFocusPoolCombo(group)}
+                        loadTraitVariants={loadCoreVariants}
+                        onRecommendationClick={onRecommendationClick}
+                        affinityEvidence={
+                          affinityEvidenceByKey[
+                            buildCompositionAffinityKey(getGroupAffinityMembers(group))
+                          ]
+                        }
+                      />
+                    </div>
+                  );
+                })}
+              </div>
             </div>
             {hasMoreRecommendations ? (
               <button
