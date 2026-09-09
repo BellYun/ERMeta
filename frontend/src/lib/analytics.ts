@@ -143,6 +143,7 @@ export type AdSlotName =
   | "home_ranking"
   | "synergy_detail_top"
   | "character_analysis_top"
+  | "site_content_top"
   | "site_rail_left"
   | "site_rail_right";
 export type AdSlotStatus = "reserved" | "requested" | "filled" | "unfilled" | "timeout";

@@ -5,28 +5,10 @@ import Script from "next/script";
 import { useEffect, useRef } from "react";
 import { ADSENSE_CLIENT, ADSENSE_PREVIEW } from "@/components/ads/adsenseConfig";
 import { markAdScriptError, markAdScriptLoaded, markAdScriptScheduled } from "@/lib/adPerformance";
+import { canLoadAds } from "@/lib/adRoutes";
 import { analytics } from "@/lib/analytics";
 
-const CONTENT_PATH_PREFIXES = [
-  "/",
-  "/about",
-  "/methodology",
-  "/character/",
-  "/patches",
-  "/patch-analysis",
-  "/synergy-detail",
-];
-
-function stripLocale(pathname: string) {
-  return pathname.replace(/^\/(?:ko|en|ja|zh-Hans|zh-Hant)(?=\/|$)/, "") || "/";
-}
-
-export function canLoadAds(pathname: string) {
-  const normalized = stripLocale(pathname);
-  if (normalized.includes("/preview")) return false;
-  if (normalized === "/") return true;
-  return CONTENT_PATH_PREFIXES.some((prefix) => prefix !== "/" && normalized.startsWith(prefix));
-}
+export { canLoadAds } from "@/lib/adRoutes";
 
 export function AdSenseScript() {
   const pathname = usePathname();
