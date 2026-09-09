@@ -25,26 +25,38 @@ const sessionStorage = new MemoryStorage();
 
 // ── @amplitude/analytics-browser mock ────────────────────────────────────────
 // vi.mock 은 hoisted 되므로, 외부 참조 변수는 vi.hoisted 로 감싸야 안전하다.
-const { trackMock, vercelTrackMock, identifyMock, IdentifyMock } = vi.hoisted(() => {
-  const trackMock = vi.fn();
-  const vercelTrackMock = vi.fn();
-  const identifyMock = vi.fn();
-  class IdentifyMock {
-    private props: Record<string, unknown> = {};
-    set(key: string, value: unknown) {
-      this.props[key] = value;
-      return this;
+const { trackMock, vercelTrackMock, identifyMock, setTransportMock, flushMock, IdentifyMock } =
+  vi.hoisted(() => {
+    const trackMock = vi.fn();
+    const vercelTrackMock = vi.fn();
+    const identifyMock = vi.fn();
+    const setTransportMock = vi.fn();
+    const flushMock = vi.fn();
+    class IdentifyMock {
+      private props: Record<string, unknown> = {};
+      set(key: string, value: unknown) {
+        this.props[key] = value;
+        return this;
+      }
+      getProps() {
+        return this.props;
+      }
     }
-    getProps() {
-      return this.props;
-    }
-  }
-  return { trackMock, vercelTrackMock, identifyMock, IdentifyMock };
-});
+    return {
+      trackMock,
+      vercelTrackMock,
+      identifyMock,
+      setTransportMock,
+      flushMock,
+      IdentifyMock,
+    };
+  });
 
 vi.mock("@amplitude/analytics-browser", () => ({
   track: trackMock,
   identify: identifyMock,
+  setTransport: setTransportMock,
+  flush: flushMock,
   Identify: IdentifyMock,
 }));
 
@@ -59,6 +71,8 @@ beforeEach(() => {
   trackMock.mockClear();
   vercelTrackMock.mockClear();
   identifyMock.mockClear();
+  setTransportMock.mockClear();
+  flushMock.mockClear();
   window.sessionStorage.clear();
 });
 
@@ -523,6 +537,78 @@ describe("analytics — P0 helpers", () => {
           request_to_state_ms: 12_500,
         })
       );
+    });
+
+    it("페이지 종료 시 미확정 슬롯 문맥을 beacon으로 즉시 전송한다", async () => {
+      Object.defineProperty(window, "innerWidth", { configurable: true, value: 390 });
+      Object.defineProperty(window, "innerHeight", { configurable: true, value: 844 });
+
+      analytics.adSlotAbandoned({
+        slotName: "home_ranking",
+        adSlotId: "8139813658",
+        slotInstanceId: "slot-instance-abandoned",
+        reason: "pagehide",
+        hasIframe: false,
+        observedAdStatus: "missing",
+        documentVisibility: "hidden",
+        requestAgeBucket: "3s_to_10s",
+        pagePath: "/ko",
+        eventPagePath: "/ko/character/1",
+        reservedHeight: 100,
+        reservedWidth: null,
+        elapsedSinceRenderMs: 5_200,
+        elapsedSinceRequestMs: 4_800,
+      });
+      await flushAsync();
+
+      expect(setTransportMock).toHaveBeenCalledWith("beacon");
+      expect(trackMock).toHaveBeenCalledWith(
+        "ad_slot_abandoned",
+        expect.objectContaining({
+          slot_name: "home_ranking",
+          slot_instance_id: "slot-instance-abandoned",
+          abandon_reason: "pagehide",
+          has_iframe: false,
+          observed_ad_status: "missing",
+          document_visibility: "hidden",
+          request_age_bucket: "3s_to_10s",
+          page_path: "/ko",
+          event_page_path: "/ko/character/1",
+          elapsed_since_request_ms: 4_800,
+          ad_measurement_version: 2,
+        })
+      );
+      expect(flushMock).toHaveBeenCalledOnce();
+    });
+
+    it("컴포넌트 해제 이벤트는 기본 전송 방식을 유지한다", async () => {
+      analytics.adSlotAbandoned({
+        slotName: "character_analysis_top",
+        adSlotId: "8139813658",
+        slotInstanceId: "slot-instance-unmounted",
+        reason: "component_unmount",
+        hasIframe: true,
+        observedAdStatus: "other",
+        documentVisibility: "visible",
+        requestAgeBucket: "10s_plus",
+        pagePath: "/ko/character/1",
+        eventPagePath: "/ko/character/2",
+        reservedHeight: 100,
+        reservedWidth: null,
+        elapsedSinceRequestMs: 12_000,
+      });
+      await flushAsync();
+
+      expect(trackMock).toHaveBeenCalledWith(
+        "ad_slot_abandoned",
+        expect.objectContaining({
+          abandon_reason: "component_unmount",
+          has_iframe: true,
+          observed_ad_status: "other",
+        })
+      );
+      expect(setTransportMock).not.toHaveBeenCalled();
+      expect(flushMock).not.toHaveBeenCalled();
     });
 
     it("web vital 이벤트에 고정 page path와 attribution을 전달한다", async () => {

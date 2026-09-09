@@ -1,7 +1,15 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  type CSSProperties,
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   ADSENSE_CHANNELS,
   ADSENSE_CLIENT,
@@ -15,7 +23,13 @@ import {
   type AdBlockRecoveryMilestone,
 } from "@/lib/adBlockRecoveryExperiment";
 import { markAdSlotState } from "@/lib/adPerformance";
-import { analytics, type AdSlotName } from "@/lib/analytics";
+import {
+  getAdSlotRequestAgeBucket,
+  getDocumentVisibility,
+  getObservedAdState,
+  shouldTrackAdSlotAbandonment,
+} from "@/lib/adSlotAbandonment";
+import { analytics, type AdSlotAbandonReason, type AdSlotName } from "@/lib/analytics";
 
 declare global {
   interface Window {
@@ -145,6 +159,7 @@ export function AdSlot({
   const pushedElement = useRef<HTMLModElement | null>(null);
   const renderedTracked = useRef(false);
   const viewedTracked = useRef(false);
+  const abandonmentTracked = useRef(false);
   const statusTracked = useRef<Set<TrackedAdSlotStatus>>(new Set());
   const previousStatus = useRef<AdSlotStatus>("reserved");
   const lifecyclePagePath = useRef<string | undefined>(undefined);
@@ -215,6 +230,38 @@ export function AdSlot({
       // A queued adsbygoogle command is normally accepted before the loader finishes.
     }
   }, [slot, trackStatus]);
+
+  const trackAbandonment = useEffectEvent((reason: AdSlotAbandonReason) => {
+    if (
+      !slot ||
+      requestedAt.current === null ||
+      !shouldTrackAdSlotAbandonment(statusTracked.current, abandonmentTracked.current)
+    ) {
+      return;
+    }
+
+    abandonmentTracked.current = true;
+    const currentTime = performance.now();
+    const elapsedSinceRequestMs = currentTime - requestedAt.current;
+    const observedState = getObservedAdState(insRef.current);
+
+    analytics.adSlotAbandoned({
+      slotName,
+      adSlotId: slot,
+      slotInstanceId,
+      reason,
+      ...observedState,
+      documentVisibility: getDocumentVisibility(document.visibilityState),
+      requestAgeBucket: getAdSlotRequestAgeBucket(elapsedSinceRequestMs),
+      pagePath: lifecyclePagePath.current,
+      eventPagePath: getCurrentPagePath(),
+      reservedHeight: getCurrentReservedHeight(reservation, minHeight),
+      reservedWidth: reservation?.width ?? null,
+      elapsedSinceRenderMs:
+        renderedAt.current === null ? undefined : currentTime - renderedAt.current,
+      elapsedSinceRequestMs,
+    });
+  });
 
   useEffect(() => {
     if (!slot || renderedTracked.current) return;
@@ -290,6 +337,19 @@ export function AdSlot({
 
     return () => clearTimeout(timeoutId);
   }, [status, trackStatus]);
+
+  useEffect(() => {
+    const handlePageHide = (event: PageTransitionEvent) => {
+      if (event.persisted) return;
+      trackAbandonment("pagehide");
+    };
+
+    window.addEventListener("pagehide", handlePageHide);
+    return () => {
+      window.removeEventListener("pagehide", handlePageHide);
+      trackAbandonment("component_unmount");
+    };
+  }, []);
 
   useEffect(() => {
     if (!slot || status !== "filled" || viewedTracked.current) return;
