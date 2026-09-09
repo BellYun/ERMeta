@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   DISMISS_COOLDOWN_MS,
   RECOVERY_ATTEMPT_TTL_MS,
-  consumeRecentAdBlockRecoveryAttempt,
+  claimRecentAdBlockRecoveryMilestone,
   getOrCreateAdBlockRecoveryVariant,
   isAdBlockRecoveryPromptSuppressed,
   markAdBlockRecoveryAttempt,
@@ -58,7 +58,7 @@ describe("ad block recovery experiment", () => {
     expect(isAdBlockRecoveryPromptSuppressed(storage, now + DISMISS_COOLDOWN_MS)).toBe(false);
   });
 
-  it("consumes a recent recovery attempt once", () => {
+  it("claims each recovery milestone once without consuming the attempt", () => {
     const storage = new MemoryStorage();
     const now = Date.UTC(2026, 7, 18);
 
@@ -68,12 +68,22 @@ describe("ad block recovery experiment", () => {
       pagePath: "/ko/patches",
     });
 
-    expect(consumeRecentAdBlockRecoveryAttempt(storage, now + 1000)).toEqual({
+    expect(claimRecentAdBlockRecoveryMilestone(storage, "ad_filled", now + 1000)).toEqual({
       variant: "direct",
       attemptedAt: now,
       pagePath: "/ko/patches",
     });
-    expect(consumeRecentAdBlockRecoveryAttempt(storage, now + 1000)).toBeNull();
+    expect(claimRecentAdBlockRecoveryMilestone(storage, "ad_filled", now + 1001)).toBeNull();
+    expect(claimRecentAdBlockRecoveryMilestone(storage, "bait_passed", now + 3000)).toEqual({
+      variant: "direct",
+      attemptedAt: now,
+      pagePath: "/ko/patches",
+    });
+    expect(claimRecentAdBlockRecoveryMilestone(storage, "ad_viewed", now + 4000)).toEqual({
+      variant: "direct",
+      attemptedAt: now,
+      pagePath: "/ko/patches",
+    });
   });
 
   it("rejects stale recovery attempts", () => {
@@ -86,6 +96,6 @@ describe("ad block recovery experiment", () => {
       pagePath: "/",
     });
 
-    expect(consumeRecentAdBlockRecoveryAttempt(storage, now)).toBeNull();
+    expect(claimRecentAdBlockRecoveryMilestone(storage, "ad_filled", now)).toBeNull();
   });
 });

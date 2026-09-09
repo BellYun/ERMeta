@@ -3,6 +3,7 @@ export const AD_BLOCK_RECOVERY_EXPERIMENT = "adblock_recovery_prompt_v1";
 export type AdBlockRecoveryVariant = "context" | "direct";
 export type AdBlockRecoveryMode = "off" | "experiment" | AdBlockRecoveryVariant;
 export type AdBlockRecoveryDismissReason = "close" | "later" | "backdrop" | "escape";
+export type AdBlockRecoveryMilestone = "bait_passed" | "ad_filled" | "ad_viewed";
 
 export interface StorageLike {
   getItem(key: string): string | null;
@@ -14,6 +15,10 @@ export interface RecoveryAttempt {
   variant: AdBlockRecoveryVariant;
   attemptedAt: number;
   pagePath: string;
+}
+
+interface StoredRecoveryAttempt extends RecoveryAttempt {
+  milestones?: Partial<Record<AdBlockRecoveryMilestone, number>>;
 }
 
 const STORAGE_KEYS = {
@@ -80,21 +85,34 @@ export function suppressAdBlockRecoveryPrompt(storage: StorageLike, now: number)
 
 export function markAdBlockRecoveryAttempt(storage: StorageLike, attempt: RecoveryAttempt): void {
   try {
-    storage.setItem(STORAGE_KEYS.recoveryAttempt, JSON.stringify(attempt));
+    storage.setItem(
+      STORAGE_KEYS.recoveryAttempt,
+      JSON.stringify({ ...attempt, milestones: {} } satisfies StoredRecoveryAttempt)
+    );
   } catch {
     // Analytics conversion will be unavailable, but reload must still proceed.
   }
 }
 
-export function consumeRecentAdBlockRecoveryAttempt(
+export function getAdBlockRecoverySessionStorage(): StorageLike | null {
+  if (typeof window === "undefined") return null;
+
+  try {
+    return window.sessionStorage;
+  } catch {
+    return null;
+  }
+}
+
+export function claimRecentAdBlockRecoveryMilestone(
   storage: StorageLike,
+  milestone: AdBlockRecoveryMilestone,
   now: number
 ): RecoveryAttempt | null {
   let raw: string | null = null;
 
   try {
     raw = storage.getItem(STORAGE_KEYS.recoveryAttempt);
-    storage.removeItem(STORAGE_KEYS.recoveryAttempt);
   } catch {
     return null;
   }
@@ -102,15 +120,36 @@ export function consumeRecentAdBlockRecoveryAttempt(
   if (!raw) return null;
 
   try {
-    const parsed = JSON.parse(raw) as Partial<RecoveryAttempt>;
-    if (!isVariant(parsed.variant)) return null;
+    const parsed = JSON.parse(raw) as Partial<StoredRecoveryAttempt>;
+    if (!isVariant(parsed.variant)) {
+      storage.removeItem(STORAGE_KEYS.recoveryAttempt);
+      return null;
+    }
     if (typeof parsed.attemptedAt !== "number" || !Number.isFinite(parsed.attemptedAt)) {
+      storage.removeItem(STORAGE_KEYS.recoveryAttempt);
       return null;
     }
-    if (typeof parsed.pagePath !== "string") return null;
+    if (typeof parsed.pagePath !== "string") {
+      storage.removeItem(STORAGE_KEYS.recoveryAttempt);
+      return null;
+    }
     if (now - parsed.attemptedAt < 0 || now - parsed.attemptedAt > RECOVERY_ATTEMPT_TTL_MS) {
+      storage.removeItem(STORAGE_KEYS.recoveryAttempt);
       return null;
     }
+
+    const milestones = parsed.milestones ?? {};
+    if (typeof milestones[milestone] === "number") return null;
+
+    storage.setItem(
+      STORAGE_KEYS.recoveryAttempt,
+      JSON.stringify({
+        variant: parsed.variant,
+        attemptedAt: parsed.attemptedAt,
+        pagePath: parsed.pagePath,
+        milestones: { ...milestones, [milestone]: now },
+      } satisfies StoredRecoveryAttempt)
+    );
 
     return {
       variant: parsed.variant,
@@ -118,6 +157,11 @@ export function consumeRecentAdBlockRecoveryAttempt(
       pagePath: parsed.pagePath,
     };
   } catch {
+    try {
+      storage.removeItem(STORAGE_KEYS.recoveryAttempt);
+    } catch {
+      // Storage can become unavailable between reads and cleanup.
+    }
     return null;
   }
 }
