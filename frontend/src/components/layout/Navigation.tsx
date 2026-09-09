@@ -3,8 +3,6 @@
 import {
   BarChart3,
   Gauge,
-  Layers,
-  Layers3,
   MessageSquarePlus,
   Network,
   NotebookText,
@@ -58,9 +56,15 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
   const navLinks: NavigationLink[] = [
     {
       href: withCurrentRouteLocale(pathname, "/"),
-      label: t("metaAnalysis"),
+      label: t("home"),
       icon: BarChart3,
       isActive: normalizedPathname === "/",
+    },
+    {
+      href: withCurrentRouteLocale(pathname, "/rankings"),
+      label: t("characterRankings"),
+      icon: BarChart3,
+      isActive: normalizedPathname === "/rankings",
     },
     {
       href: withCurrentRouteLocale(pathname, "/character/1"),
@@ -75,16 +79,6 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
       isActive: normalizedPathname === "/synergy-detail",
     },
     {
-      href: withCurrentRouteLocale(pathname, "/character-lab"),
-      label: t("characterLab"),
-      icon: Layers,
-      isActive:
-        (normalizedPathname.startsWith("/character-lab") &&
-          !normalizedPathname.startsWith("/character-lab/new")) ||
-        normalizedPathname === "/lab" ||
-        normalizedPathname.startsWith("/lab/"),
-    },
-    {
       href: withCurrentRouteLocale(pathname, "/patches"),
       label: t("patchNotes"),
       icon: NotebookText,
@@ -92,12 +86,6 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
     },
   ];
   const labLinks: NavigationLink[] = [
-    {
-      href: withCurrentRouteLocale(pathname, "/character-lab/new"),
-      label: t("characterLabNew"),
-      icon: Layers3,
-      isActive: normalizedPathname.startsWith("/character-lab/new"),
-    },
     {
       href: withCurrentRouteLocale(pathname, patchAnalysisPath),
       label: t("patchAnalysisNav"),

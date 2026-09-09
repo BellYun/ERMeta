@@ -3,7 +3,6 @@
 import {
   BarChart3,
   Gauge,
-  Layers,
   Layers3,
   Network,
   NotebookText,
@@ -57,8 +56,14 @@ export function SiteCommandPalette({ patchAnalysisPatch, className }: SiteComman
     () => [
       {
         key: "meta",
-        label: tNav("metaAnalysis"),
+        label: tNav("home"),
         href: withCurrentRouteLocale(pathname, "/"),
+        icon: BarChart3,
+      },
+      {
+        key: "rankings",
+        label: tNav("characterRankings"),
+        href: withCurrentRouteLocale(pathname, "/rankings"),
         icon: BarChart3,
       },
       {
@@ -74,21 +79,9 @@ export function SiteCommandPalette({ patchAnalysisPatch, className }: SiteComman
         icon: Network,
       },
       {
-        key: "lab",
-        label: tNav("characterLab"),
-        href: withCurrentRouteLocale(pathname, "/character-lab"),
-        icon: Layers,
-      },
-      {
         key: "composition-lab",
         label: tNav("characterCompositionLab"),
         href: withCurrentRouteLocale(pathname, "/composition-lab"),
-        icon: Layers3,
-      },
-      {
-        key: "character-lab-new",
-        label: tNav("characterLabNew"),
-        href: withCurrentRouteLocale(pathname, "/character-lab/new"),
         icon: Layers3,
       },
       {

@@ -1,6 +1,6 @@
 /* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V4 */
 /* Hallmark · macrostructure: Workbench + Index-First · tone: technical-explanatory · anchor hue: mineral-blue 245° */
-import { ArrowUpDown, ChevronDown, Layers, Layers3 } from "lucide-react";
+import { ArrowUpDown, ChevronDown, Layers3 } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -343,7 +343,6 @@ const COPY: Record<
     evidence: string;
     unchanged: string;
     split: string;
-    backToTypes: string;
     exploreGuide: string;
     roleFocus: string;
     roleFocusHint: string;
@@ -409,7 +408,6 @@ const COPY: Record<
     evidence: "확인한 짝",
     unchanged: "그대로",
     split: "나눠 봄",
-    backToTypes: "실험체 유형 분석",
     exploreGuide:
       "먼저 역할 조합을 고르세요. 보고 싶은 역할을 누르면 어울리는 유형과 실험체가 나옵니다. 더 궁금한 항목만 펼쳐 판수를 확인할 수 있습니다.",
     roleFocus: "보고 싶은 역할",
@@ -478,7 +476,6 @@ const COPY: Record<
     evidence: "Evidence",
     unchanged: "Kept",
     split: "Split",
-    backToTypes: "Character type analysis",
     exploreGuide:
       "Choose a role composition, compare one role at a time, then expand only the types whose character and game evidence you need.",
     roleFocus: "Role to analyze",
@@ -547,7 +544,6 @@ const COPY: Record<
     evidence: "比較根拠",
     unchanged: "維持",
     split: "再分割",
-    backToTypes: "キャラクタータイプ分析",
     exploreGuide:
       "ロール構成を選び、ロールごとに比較してください。必要なタイプだけ開いてキャラクターと試合数の根拠を確認できます。",
     roleFocus: "分析するロール",
@@ -615,7 +611,6 @@ const COPY: Record<
     evidence: "比较依据",
     unchanged: "保留",
     split: "拆分",
-    backToTypes: "角色类型分析",
     exploreGuide: "选择定位阵容后逐个比较定位。仅展开需要的类型，查看角色与场次依据。",
     roleFocus: "分析定位",
     roleFocusHint: "比较同一定位中更适合选择的内部类型。",
@@ -680,7 +675,6 @@ const COPY: Record<
     evidence: "比較依據",
     unchanged: "保留",
     split: "拆分",
-    backToTypes: "角色類型分析",
     exploreGuide: "選擇定位陣容後逐個比較定位。僅展開需要的類型，查看角色與場次依據。",
     roleFocus: "分析定位",
     roleFocusHint: "比較同一定位中更適合選擇的內部類型。",
@@ -2194,32 +2188,6 @@ export default async function CompositionLabPage({
         <p className="max-w-3xl text-sm leading-6 text-[var(--color-muted-foreground)]">
           {copy.description}
         </p>
-        <nav
-          className="mt-1 grid gap-2 border-t border-[var(--color-border)] pt-3 sm:grid-cols-2"
-          aria-label="Character analysis pages"
-        >
-          <Link
-            href="/character-lab"
-            className="flex min-h-11 items-center gap-3 rounded-md border border-[var(--color-border)] px-3 py-2.5 text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-muted)] hover:text-[var(--color-foreground)]"
-          >
-            <Layers className="h-4 w-4" />
-            <span>
-              <span className="block text-[10px] font-bold">1</span>
-              <span className="block text-xs font-bold">{copy.backToTypes}</span>
-            </span>
-          </Link>
-          <Link
-            href="/composition-lab"
-            aria-current="page"
-            className="flex min-h-11 items-center gap-3 rounded-md border border-[var(--color-accent)] bg-[var(--color-accent-muted)] px-3 py-2.5 text-[var(--color-accent-foreground)]"
-          >
-            <Layers3 className="h-4 w-4" />
-            <span>
-              <span className="block text-[10px] font-bold">2</span>
-              <span className="block text-xs font-bold">{copy.title}</span>
-            </span>
-          </Link>
-        </nav>
         <nav className="flex gap-2" aria-label="Composition analysis views">
           <Link
             href={{
