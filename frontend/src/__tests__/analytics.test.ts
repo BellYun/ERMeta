@@ -312,6 +312,54 @@ describe("analytics — P0 helpers", () => {
         source: "synergy",
       });
     });
+
+    it("speculative analysis lifecycle과 click-to-ready 속성을 전달한다", async () => {
+      analytics.speculativeAnalysisScheduled({
+        candidateRank: 1,
+        cacheKey: "1:1|2:2|3:3:legacy",
+        source: "synergy_detail",
+      });
+      analytics.speculativeAnalysisCompleted({ candidateRank: 1, durationMs: 2.5 });
+      analytics.speculativeAnalysisHit({
+        candidateRank: 1,
+        speculativeDurationMs: 2.5,
+        savedCalculationMs: 2.5,
+      });
+      analytics.speculativeAnalysisInvalidated({
+        candidateRank: 1,
+        reason: "selection_changed",
+      });
+      analytics.synergyCandidateAnalysisReady({
+        candidateRank: 1,
+        durationMs: 4.25,
+        mode: "speculative_cache_hit",
+      });
+      await flushAsync();
+
+      expect(trackMock).toHaveBeenCalledWith("speculative_analysis_scheduled", {
+        candidateRank: 1,
+        cacheKey: "1:1|2:2|3:3:legacy",
+        source: "synergy_detail",
+      });
+      expect(trackMock).toHaveBeenCalledWith("speculative_analysis_completed", {
+        candidateRank: 1,
+        durationMs: 2.5,
+      });
+      expect(trackMock).toHaveBeenCalledWith("speculative_analysis_hit", {
+        candidateRank: 1,
+        speculativeDurationMs: 2.5,
+        savedCalculationMs: 2.5,
+      });
+      expect(trackMock).toHaveBeenCalledWith("speculative_analysis_invalidated", {
+        candidateRank: 1,
+        reason: "selection_changed",
+      });
+      expect(trackMock).toHaveBeenCalledWith("synergy_candidate_analysis_ready", {
+        candidateRank: 1,
+        durationMs: 4.25,
+        mode: "speculative_cache_hit",
+      });
+    });
   });
 
   describe("ad slot events", () => {
