@@ -59,6 +59,9 @@ export const ADSENSE_SLOTS = {
   characterAnalysis: ADSENSE_DISABLED
     ? ""
     : (process.env.NEXT_PUBLIC_ADSENSE_CHARACTER_ANALYSIS_SLOT ?? productionDefault),
+  siteContent: ADSENSE_DISABLED
+    ? ""
+    : (process.env.NEXT_PUBLIC_ADSENSE_SITE_CONTENT_SLOT ?? productionDefault),
   siteRailLeft: ADSENSE_DISABLED
     ? ""
     : (process.env.NEXT_PUBLIC_ADSENSE_SITE_RAIL_LEFT_SLOT ?? productionDefault),
@@ -75,6 +78,7 @@ export const ADSENSE_CHANNELS = {
   home_ranking: process.env.NEXT_PUBLIC_ADSENSE_HOME_RANKING_CHANNEL ?? "",
   synergy_detail_top: process.env.NEXT_PUBLIC_ADSENSE_SYNERGY_DETAIL_CHANNEL ?? "",
   character_analysis_top: process.env.NEXT_PUBLIC_ADSENSE_CHARACTER_ANALYSIS_CHANNEL ?? "",
+  site_content_top: process.env.NEXT_PUBLIC_ADSENSE_SITE_CONTENT_CHANNEL ?? "",
   site_rail_left: process.env.NEXT_PUBLIC_ADSENSE_SITE_RAIL_LEFT_CHANNEL ?? "",
   site_rail_right: process.env.NEXT_PUBLIC_ADSENSE_SITE_RAIL_RIGHT_CHANNEL ?? "",
 } as const;

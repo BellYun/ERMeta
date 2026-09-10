@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Fragment } from "react";
+import { SiteContentAd } from "@/components/ads/SiteContentAd";
 import type { RouteLocale } from "@/i18n/routing";
 
 export const metadata: Metadata = {
@@ -140,20 +142,23 @@ export default function MethodologyPage({ locale }: { locale: RouteLocale }) {
       </header>
 
       <div className="grid gap-3">
-        {content.sections.map((section) => (
-          <section key={section.title} className="metric-card p-4">
-            <h2 className="dashboard-section-title mb-3 text-base font-semibold text-[var(--color-foreground)]">
-              {section.title}
-            </h2>
-            <ul className="space-y-2 text-sm leading-relaxed text-[var(--color-muted-foreground)]">
-              {section.items.map((item) => (
-                <li key={item} className="flex items-start gap-2">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent)]" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
+        {content.sections.map((section, index) => (
+          <Fragment key={section.title}>
+            <section className="metric-card p-4">
+              <h2 className="dashboard-section-title mb-3 text-base font-semibold text-[var(--color-foreground)]">
+                {section.title}
+              </h2>
+              <ul className="space-y-2 text-sm leading-relaxed text-[var(--color-muted-foreground)]">
+                {section.items.map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent)]" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+            {index === Math.floor((content.sections.length - 1) / 2) ? <SiteContentAd /> : null}
+          </Fragment>
         ))}
       </div>
     </article>

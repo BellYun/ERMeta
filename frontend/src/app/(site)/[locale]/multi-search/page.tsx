@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
+import { SiteContentAd } from "@/components/ads/SiteContentAd";
 import { MultiSearchClient } from "@/components/features/multi-search/MultiSearchClient";
 import { isRouteLocale, type RouteLocale } from "@/i18n/routing";
 import { isMultiSearchEnabled } from "@/lib/featureFlags";
@@ -118,7 +119,7 @@ export default async function MultiSearchPage({ params }: LocalePageProps) {
       </header>
 
       {isMultiSearchEnabled() ? (
-        <MultiSearchClient />
+        <MultiSearchClient afterSearch={<SiteContentAd />} />
       ) : (
         <section className="dashboard-panel p-6 text-center">
           <h2 className="dashboard-section-title text-base font-bold text-[var(--color-foreground)]">

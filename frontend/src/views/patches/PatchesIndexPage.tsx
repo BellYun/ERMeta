@@ -3,6 +3,8 @@
  */
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
+import { Fragment } from "react";
+import { SiteContentAd } from "@/components/ads/SiteContentAd";
 import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeBadgeStatic";
 import { getAllPatchVersions, getPatchSummary } from "@/data/patch-notes";
 import { Link } from "@/i18n/navigation";
@@ -108,87 +110,94 @@ export default async function PatchesIndexPage({ locale = "ko" }: { locale?: Rou
             .filter(([, summaries]) =>
               summaries.some((summary) => summary.patch !== latestSummary?.patch)
             )
-            .map(([season, seasonSummaries]) => (
-              <section key={season} className="grid lg:grid-cols-[116px_minmax(0,1fr)]">
-                <header className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3 lg:block lg:border-b-0 lg:border-r lg:px-4 lg:py-4">
-                  <h3 className="font-mono text-base font-bold text-[var(--color-foreground)]">
-                    {t("patchPrefix")} {season}.x
-                  </h3>
-                  <p className="mt-0 text-xs text-[var(--color-muted-foreground)] lg:mt-1">
-                    {t("trackedPatches")}{" "}
-                    {
-                      seasonSummaries.filter((summary) => summary.patch !== latestSummary?.patch)
-                        .length
-                    }
-                  </p>
-                </header>
+            .map(([season, seasonSummaries], index) => (
+              <Fragment key={season}>
+                <section className="grid lg:grid-cols-[116px_minmax(0,1fr)]">
+                  <header className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3 lg:block lg:border-b-0 lg:border-r lg:px-4 lg:py-4">
+                    <h3 className="font-mono text-base font-bold text-[var(--color-foreground)]">
+                      {t("patchPrefix")} {season}.x
+                    </h3>
+                    <p className="mt-0 text-xs text-[var(--color-muted-foreground)] lg:mt-1">
+                      {t("trackedPatches")}{" "}
+                      {
+                        seasonSummaries.filter((summary) => summary.patch !== latestSummary?.patch)
+                          .length
+                      }
+                    </p>
+                  </header>
 
-                <ol className="divide-y divide-[var(--color-border)]">
-                  {seasonSummaries
-                    .filter((summary) => summary.patch !== latestSummary?.patch)
-                    .map((summary) => {
-                      const isLatest = summary.patch === latestSummary?.patch;
-                      return (
-                        <li key={summary.patch}>
-                          <Link
-                            href={`/patches/${summary.patch}`}
-                            className="group grid min-h-16 min-w-0 grid-cols-[minmax(74px,0.45fr)_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3 outline-none transition-[background-color] duration-150 hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-inset sm:grid-cols-[minmax(92px,0.4fr)_minmax(170px,0.8fr)_minmax(0,1fr)_auto] sm:px-5"
-                            aria-current={isLatest ? "page" : undefined}
-                          >
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-1.5">
-                                <span className="font-mono text-base font-bold text-[var(--color-foreground)]">
-                                  {t("patchPrefix")} {summary.patch}
+                  <ol className="divide-y divide-[var(--color-border)]">
+                    {seasonSummaries
+                      .filter((summary) => summary.patch !== latestSummary?.patch)
+                      .map((summary) => {
+                        const isLatest = summary.patch === latestSummary?.patch;
+                        return (
+                          <li key={summary.patch}>
+                            <Link
+                              href={`/patches/${summary.patch}`}
+                              className="group grid min-h-16 min-w-0 grid-cols-[minmax(74px,0.45fr)_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3 outline-none transition-[background-color] duration-150 hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-inset sm:grid-cols-[minmax(92px,0.4fr)_minmax(170px,0.8fr)_minmax(0,1fr)_auto] sm:px-5"
+                              aria-current={isLatest ? "page" : undefined}
+                            >
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="font-mono text-base font-bold text-[var(--color-foreground)]">
+                                    {t("patchPrefix")} {summary.patch}
+                                  </span>
+                                  {isLatest ? (
+                                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent)]" />
+                                  ) : null}
+                                </div>
+                                <span className="mt-0.5 block text-[10px] text-[var(--color-muted-foreground)] sm:hidden">
+                                  {t("totalChanges", { count: summary.totalChanges })}
                                 </span>
-                                {isLatest ? (
-                                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent)]" />
+                              </div>
+
+                              <div className="hidden min-w-0 sm:block">
+                                <p className="text-sm text-[var(--color-foreground)]">
+                                  {t("characterCount", { count: summary.characterCount })}
+                                </p>
+                                <p className="mt-0.5 text-xs text-[var(--color-muted-foreground)]">
+                                  {t("totalChanges", { count: summary.totalChanges })}
+                                </p>
+                              </div>
+
+                              <div className="flex min-w-0 flex-wrap justify-end gap-1.5 sm:justify-start">
+                                {summary.buffs > 0 ? (
+                                  <ChangeTypeBadgeStatic
+                                    type="buff"
+                                    count={summary.buffs}
+                                    label={t("counts.buff")}
+                                  />
+                                ) : null}
+                                {summary.nerfs > 0 ? (
+                                  <ChangeTypeBadgeStatic
+                                    type="nerf"
+                                    count={summary.nerfs}
+                                    label={t("counts.nerf")}
+                                  />
+                                ) : null}
+                                {summary.reworks > 0 ? (
+                                  <ChangeTypeBadgeStatic
+                                    type="rework"
+                                    count={summary.reworks}
+                                    label={t("counts.rework")}
+                                  />
                                 ) : null}
                               </div>
-                              <span className="mt-0.5 block text-[10px] text-[var(--color-muted-foreground)] sm:hidden">
-                                {t("totalChanges", { count: summary.totalChanges })}
-                              </span>
-                            </div>
 
-                            <div className="hidden min-w-0 sm:block">
-                              <p className="text-sm text-[var(--color-foreground)]">
-                                {t("characterCount", { count: summary.characterCount })}
-                              </p>
-                              <p className="mt-0.5 text-xs text-[var(--color-muted-foreground)]">
-                                {t("totalChanges", { count: summary.totalChanges })}
-                              </p>
-                            </div>
-
-                            <div className="flex min-w-0 flex-wrap justify-end gap-1.5 sm:justify-start">
-                              {summary.buffs > 0 ? (
-                                <ChangeTypeBadgeStatic
-                                  type="buff"
-                                  count={summary.buffs}
-                                  label={t("counts.buff")}
-                                />
-                              ) : null}
-                              {summary.nerfs > 0 ? (
-                                <ChangeTypeBadgeStatic
-                                  type="nerf"
-                                  count={summary.nerfs}
-                                  label={t("counts.nerf")}
-                                />
-                              ) : null}
-                              {summary.reworks > 0 ? (
-                                <ChangeTypeBadgeStatic
-                                  type="rework"
-                                  count={summary.reworks}
-                                  label={t("counts.rework")}
-                                />
-                              ) : null}
-                            </div>
-
-                            <ArrowRight className="h-4 w-4 text-[var(--color-muted-foreground)] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-[var(--color-foreground)]" />
-                          </Link>
-                        </li>
-                      );
-                    })}
-                </ol>
-              </section>
+                              <ArrowRight className="h-4 w-4 text-[var(--color-muted-foreground)] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-[var(--color-foreground)]" />
+                            </Link>
+                          </li>
+                        );
+                      })}
+                  </ol>
+                </section>
+                {index === 0 ? (
+                  <div className="p-3 sm:p-4">
+                    <SiteContentAd />
+                  </div>
+                ) : null}
+              </Fragment>
             ))}
         </div>
       </section>

@@ -5,6 +5,7 @@ import {
   BarChart3,
   ChevronDown,
   Gauge,
+  Layers,
   Menu,
   MessageSquarePlus,
   Moon,
@@ -82,6 +83,12 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
       label: tNav("synergyRecommendation"),
       icon: Network,
       isActive: normalizedPathname === "/synergy-detail",
+    },
+    {
+      href: withCurrentRouteLocale(pathname, "/character-lab"),
+      label: tNav("characterLab"),
+      icon: Layers,
+      isActive: normalizedPathname.startsWith("/character-lab"),
     },
     {
       href: withCurrentRouteLocale(pathname, "/patches"),

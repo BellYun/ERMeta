@@ -2,7 +2,7 @@
 
 import { AlertTriangle, Loader2, Search, Swords, Trophy, Users } from "lucide-react";
 import Image from "next/image";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, type ReactNode, useEffect, useMemo, useState } from "react";
 import { getFallbackMap } from "@/components/features/synergy/constants";
 import { getCharacterWeaponOptions } from "@/components/features/team-combos/searchRequests";
 import {
@@ -71,7 +71,7 @@ const MY_NICKNAME_STORAGE_KEY = "ermeta:multi-search:my-nickname";
 const inputClassName =
   "h-10 w-full min-w-0 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 text-sm font-medium text-[var(--color-foreground)] outline-none transition-colors placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-muted)]";
 
-export function MultiSearchClient() {
+export function MultiSearchClient({ afterSearch }: { afterSearch?: ReactNode }) {
   const [myNickname, setMyNickname] = useState("");
   const [teammateInputs, setTeammateInputs] = useState<[string, string]>(["", ""]);
   const [myProfile, setMyProfile] = useState<PlayerResult | null>(null);
@@ -346,6 +346,8 @@ export function MultiSearchClient() {
           </div>
         )}
       </form>
+
+      {afterSearch}
 
       {data && (
         <section className="flex flex-col gap-3">

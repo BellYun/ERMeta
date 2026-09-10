@@ -36,9 +36,11 @@ type Filter = "all" | "buff" | "nerf" | "rework";
 export function PatchNotesBrowser({
   entries,
   labels,
+  midContent,
 }: {
   entries: { code: number; name: string; types: string[]; content: ReactNode }[];
   labels: Record<Filter | "search" | "empty" | "reset", string>;
+  midContent?: ReactNode;
 }) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
@@ -48,6 +50,15 @@ export function PatchNotesBrowser({
       entry.name.toLocaleLowerCase().includes(normalized) &&
       (filter === "all" || entry.types.includes(filter))
   );
+  const renderedEntries = visible.map((entry) => <div key={entry.code}>{entry.content}</div>);
+  if (midContent && renderedEntries.length > 0) {
+    renderedEntries.splice(
+      Math.min(3, renderedEntries.length),
+      0,
+      <div key="patch-mid-content-ad">{midContent}</div>
+    );
+  }
+
   return (
     <section className="min-w-0">
       <div className="mb-4 flex flex-col gap-3">
@@ -76,11 +87,7 @@ export function PatchNotesBrowser({
           ))}
         </div>
       </div>
-      <div className="grid min-w-0 gap-4">
-        {visible.map((entry) => (
-          <div key={entry.code}>{entry.content}</div>
-        ))}
-      </div>
+      <div className="grid min-w-0 gap-4">{renderedEntries}</div>
       {visible.length === 0 && (
         <div
           role="status"

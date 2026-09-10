@@ -2,6 +2,7 @@ import { ArrowDown, ArrowUp, BarChart3, CalendarDays, Swords, TrendingUp } from 
 import type { Metadata } from "next";
 import Image from "next/image";
 import type { ReactNode } from "react";
+import { SiteContentAd } from "@/components/ads/SiteContentAd";
 import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeBadgeStatic";
 import { localizePatchChanges } from "@/data/patch-note-localization";
 import { Link } from "@/i18n/navigation";
@@ -1430,6 +1431,8 @@ export default async function PatchAnalysisPage({
           </div>
         </>
       ) : null}
+
+      <SiteContentAd />
 
       <CharacterSection
         title={showRawMetrics ? copy.sections.buffTitle : copy.sections.focusedBuffTitle}

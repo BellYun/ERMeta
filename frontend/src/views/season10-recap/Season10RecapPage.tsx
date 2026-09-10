@@ -6,6 +6,7 @@ import { NewCharacterReportBlock } from "@/app/season10-recap/NewCharacterReport
 import { PatchTimelineBlock } from "@/app/season10-recap/PatchTimelineBlock";
 import { RoleStrengthBlock } from "@/app/season10-recap/RoleStrengthBlock";
 import { SeasonHallOfFameBlock } from "@/app/season10-recap/SeasonHallOfFameBlock";
+import { SiteContentAd } from "@/components/ads/SiteContentAd";
 import { Link } from "@/i18n/navigation";
 import type { RouteLocale } from "@/i18n/routing";
 import { getSeasonRecapData } from "@/lib/seasonRecap";
@@ -356,6 +357,7 @@ export default async function SeasonRecapPage({
             patches={patches}
             benchmarks={tierRpTrends}
           />
+          <SiteContentAd />
           <BalancePatchResponseBlock entries={seasonTop} patches={patches} trends={tierRpTrends} />
           <NewCharacterReportBlock entries={seasonTop} benchmarks={tierRpTrends} />
           <SeasonHallOfFameBlock
@@ -366,11 +368,14 @@ export default async function SeasonRecapPage({
           />
         </>
       ) : (
-        <section className="dashboard-panel p-4">
-          <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">
-            {copy.nonKoSummary}
-          </p>
-        </section>
+        <>
+          <section className="dashboard-panel p-4">
+            <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">
+              {copy.nonKoSummary}
+            </p>
+          </section>
+          <SiteContentAd />
+        </>
       )}
 
       <section id="season-recap-basis" className="dashboard-panel scroll-mt-24 p-4 lg:scroll-mt-20">

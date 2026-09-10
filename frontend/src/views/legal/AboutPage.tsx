@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Fragment } from "react";
+import { SiteContentAd } from "@/components/ads/SiteContentAd";
 import { Link } from "@/i18n/navigation";
 import type { RouteLocale } from "@/i18n/routing";
 
@@ -125,15 +127,18 @@ export default function AboutPage({ locale }: { locale: RouteLocale }) {
       </header>
 
       <div className="grid gap-3">
-        {content.sections.map((section) => (
-          <section key={section.title} className="metric-card p-4">
-            <h2 className="dashboard-section-title mb-2 text-base font-semibold text-[var(--color-foreground)]">
-              {section.title}
-            </h2>
-            <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
-              {section.body}
-            </p>
-          </section>
+        {content.sections.map((section, index) => (
+          <Fragment key={section.title}>
+            <section className="metric-card p-4">
+              <h2 className="dashboard-section-title mb-2 text-base font-semibold text-[var(--color-foreground)]">
+                {section.title}
+              </h2>
+              <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
+                {section.body}
+              </p>
+            </section>
+            {index === Math.floor((content.sections.length - 1) / 2) ? <SiteContentAd /> : null}
+          </Fragment>
         ))}
       </div>
 

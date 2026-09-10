@@ -1,6 +1,7 @@
 import { ArrowRight, Network } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { SiteContentAd } from "@/components/ads/SiteContentAd";
 import { SynergyClient } from "@/components/features/SynergyClient";
 import { Link } from "@/i18n/navigation";
 
@@ -64,6 +65,8 @@ export default async function SynergyPage() {
           </div>
         </div>
       </section>
+
+      <SiteContentAd />
 
       <section className="dashboard-panel p-4 lg:p-5">
         <div className="mb-4 flex flex-wrap items-end gap-x-4 gap-y-2">

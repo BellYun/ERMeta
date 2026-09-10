@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
+import { SiteContentAd } from "@/components/ads/SiteContentAd";
 import { SynergyMatrixClient } from "@/components/features/synergy-matrix/SynergyMatrixClient";
 import type { MatrixCopy } from "@/components/features/synergy-matrix/types";
 import { ROUTE_LOCALES, isRouteLocale, type ActiveRouteLocale } from "@/i18n/routing";
@@ -213,6 +214,8 @@ export default async function SynergyMatrixPage({ params }: LocalePageProps) {
           {copy.body}
         </p>
       </header>
+
+      <SiteContentAd />
 
       <SynergyMatrixClient copy={copy} />
     </main>

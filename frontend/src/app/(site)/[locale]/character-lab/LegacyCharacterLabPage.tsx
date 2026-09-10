@@ -2,6 +2,8 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
+import { Fragment } from "react";
+import { SiteContentAd } from "@/components/ads/SiteContentAd";
 import { isRouteLocale, type RouteLocale } from "@/i18n/routing";
 import assassinsData from "../../../../../public/data/lab/assassins.json";
 import rangersData from "../../../../../public/data/lab/rangers.json";
@@ -211,40 +213,48 @@ export async function LegacyCharacterLabPage({ params }: LegacyCharacterLabPageP
           {ROLES.map(({ slug, data }, index) => {
             const curatedGroups = data.groups.filter((group) => group.curated).length;
             return (
-              <li key={slug}>
-                <Link
-                  href={`/character-lab/${slug}`}
-                  className="char-card group flex h-full flex-col gap-3 p-5 transition-colors"
-                  data-accent={index === 0 ? "true" : undefined}
-                >
-                  <header className="flex items-center justify-between">
-                    <span className="text-[11px] text-[var(--color-muted-foreground)]">
-                      {copy.groupType}
-                    </span>
-                    <ArrowRight
-                      className="h-4 w-4 text-[var(--color-muted-foreground)] transition-colors group-hover:text-[var(--color-accent-foreground)]"
-                      strokeWidth={2.2}
-                    />
-                  </header>
-                  <div>
-                    <p className="text-lg font-bold leading-tight tracking-tight text-[var(--color-foreground)]">
-                      {roleLabels[slug]}
-                    </p>
-                    <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
-                      {copy.characterCount(data.characters.length)} · {copy.groupCount(data.groupK)}
-                      {curatedGroups > 0 ? ` (${copy.curated(curatedGroups)})` : ""}
-                    </p>
-                  </div>
-                  <dl className="mt-auto border-t border-[var(--color-border)] pt-3 text-[11px]">
-                    <div className="flex items-baseline justify-between">
-                      <dt className="text-[var(--color-muted-foreground)]">{copy.minSample}</dt>
-                      <dd className="font-mono font-bold tabular-nums text-[var(--color-foreground)]">
-                        {copy.gamesPlus(data.minGames)}
-                      </dd>
+              <Fragment key={slug}>
+                <li>
+                  <Link
+                    href={`/character-lab/${slug}`}
+                    className="char-card group flex h-full flex-col gap-3 p-5 transition-colors"
+                    data-accent={index === 0 ? "true" : undefined}
+                  >
+                    <header className="flex items-center justify-between">
+                      <span className="text-[11px] text-[var(--color-muted-foreground)]">
+                        {copy.groupType}
+                      </span>
+                      <ArrowRight
+                        className="h-4 w-4 text-[var(--color-muted-foreground)] transition-colors group-hover:text-[var(--color-accent-foreground)]"
+                        strokeWidth={2.2}
+                      />
+                    </header>
+                    <div>
+                      <p className="text-lg font-bold leading-tight tracking-tight text-[var(--color-foreground)]">
+                        {roleLabels[slug]}
+                      </p>
+                      <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
+                        {copy.characterCount(data.characters.length)} ·{" "}
+                        {copy.groupCount(data.groupK)}
+                        {curatedGroups > 0 ? ` (${copy.curated(curatedGroups)})` : ""}
+                      </p>
                     </div>
-                  </dl>
-                </Link>
-              </li>
+                    <dl className="mt-auto border-t border-[var(--color-border)] pt-3 text-[11px]">
+                      <div className="flex items-baseline justify-between">
+                        <dt className="text-[var(--color-muted-foreground)]">{copy.minSample}</dt>
+                        <dd className="font-mono font-bold tabular-nums text-[var(--color-foreground)]">
+                          {copy.gamesPlus(data.minGames)}
+                        </dd>
+                      </div>
+                    </dl>
+                  </Link>
+                </li>
+                {index === 3 ? (
+                  <li className="sm:col-span-2 lg:col-span-4">
+                    <SiteContentAd />
+                  </li>
+                ) : null}
+              </Fragment>
             );
           })}
         </ul>
