@@ -3,6 +3,7 @@
 import {
   BarChart3,
   Gauge,
+  Layers,
   MessageSquarePlus,
   Network,
   NotebookText,
@@ -77,6 +78,12 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
       label: t("synergyRecommendation"),
       icon: Network,
       isActive: normalizedPathname === "/synergy-detail",
+    },
+    {
+      href: withCurrentRouteLocale(pathname, "/character-lab"),
+      label: t("characterLab"),
+      icon: Layers,
+      isActive: normalizedPathname.startsWith("/character-lab"),
     },
     {
       href: withCurrentRouteLocale(pathname, "/patches"),

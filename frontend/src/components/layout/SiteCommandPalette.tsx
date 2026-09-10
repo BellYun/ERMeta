@@ -3,6 +3,7 @@
 import {
   BarChart3,
   Gauge,
+  Layers,
   Layers3,
   Network,
   NotebookText,
@@ -77,6 +78,12 @@ export function SiteCommandPalette({ patchAnalysisPatch, className }: SiteComman
         label: tNav("synergyRecommendation"),
         href: withCurrentRouteLocale(pathname, "/synergy-detail"),
         icon: Network,
+      },
+      {
+        key: "character-lab",
+        label: tNav("characterLab"),
+        href: withCurrentRouteLocale(pathname, "/character-lab"),
+        icon: Layers,
       },
       {
         key: "composition-lab",

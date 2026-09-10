@@ -1,10 +1,12 @@
-import { redirect } from "next/navigation";
+import { LegacyCharacterLabPage } from "./LegacyCharacterLabPage";
 
 interface CharacterLabPageProps {
   params: Promise<{ locale: string }>;
 }
 
-export default async function CharacterLabPage({ params }: CharacterLabPageProps) {
-  const { locale } = await params;
-  redirect(`/${locale}/composition-lab`);
+export const dynamic = "force-dynamic";
+export { generateMetadata } from "./NewCharacterLabPage";
+
+export default function CharacterLabPage({ params }: CharacterLabPageProps) {
+  return <LegacyCharacterLabPage params={params} />;
 }

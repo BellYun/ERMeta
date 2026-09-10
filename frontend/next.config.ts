@@ -101,16 +101,6 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: "/character-lab/:path*",
-        destination: "/composition-lab",
-        permanent: true,
-      },
-      {
-        source: "/:locale(ko|en|ja|zh-Hans|zh-Hant)/character-lab/:path*",
-        destination: "/:locale/composition-lab",
-        permanent: true,
-      },
-      {
         source: "/landing",
         destination: "/",
         permanent: true,
