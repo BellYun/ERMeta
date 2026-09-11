@@ -460,6 +460,7 @@
     "share": "공유",
     "reset": "초기화",
     "sectionName": "상세 조합 결과",
+    "sortMetricAria": "{metric} 기준으로 정렬",
     "empty": {
       "prompt": "아군의 픽에 맞춰 무기별 상세 조합을 찾아보세요",
       "step1": "1. 내 실험체 풀을 설정하세요 (선택사항)",

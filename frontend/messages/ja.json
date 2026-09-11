@@ -468,6 +468,7 @@
     "share": "共有",
     "reset": "初期化",
     "sectionName": "詳細編成結果",
+    "sortMetricAria": "{metric}で並べ替え",
     "empty": {
       "prompt": "味方のピックに合わせて武器込みの編成を探しましょう",
       "step1": "1. 自分のキャラプールを設定します (任意)",

@@ -466,6 +466,7 @@
     "share": "Share",
     "reset": "Reset",
     "sectionName": "Detailed Team Results",
+    "sortMetricAria": "Sort by {metric}",
     "empty": {
       "prompt": "Find weapon-specific team comps based on your allies' picks",
       "step1": "1. Set your character pool first (optional)",

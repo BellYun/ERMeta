@@ -1,0 +1,79 @@
+/* Hallmark · component: ally picker · theme: Open Studio
+ * pre-emit critique: P4 H4 E4 S4 R5 V4 */
+.ally-picker-selection > div {
+  padding: var(--space-sm);
+  gap: var(--space-sm);
+  border-radius: var(--radius-input);
+}
+.ally-picker-selection > div > div:first-child {
+  width: var(--space-xl);
+  height: var(--space-xl);
+}
+.ally-picker-candidates {
+  min-width: 0;
+  border-top: 1px solid var(--studio-rule);
+  padding-top: var(--space-md);
+}
+.ally-picker-scroll {
+  overflow-anchor: none;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+.ally-picker-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2xs);
+  min-width: 0;
+  height: 92px;
+  padding: var(--space-xs);
+  border: 1px solid transparent;
+  border-radius: var(--radius-input);
+  text-align: left;
+  touch-action: manipulation;
+}
+.ally-picker-option > div:first-child {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+}
+.ally-picker-option__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+  text-align: center;
+  gap: var(--space-2xs);
+}
+.ally-picker-option__text > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 600;
+}
+.ally-picker-option__text > span + span {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--studio-muted);
+}
+.ally-picker-option[aria-pressed="true"] {
+  border-color: var(--studio-accent);
+  background: var(--studio-accent-soft);
+  outline: none;
+}
+.ally-picker-option:focus-visible {
+  outline: 2px solid var(--studio-accent);
+  outline-offset: -2px;
+}
+.ally-picker-option__check {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: var(--studio-accent-soft);
+  width: var(--space-md);
+  height: var(--space-md);
+  flex-shrink: 0;
+  color: var(--studio-accent);
+}

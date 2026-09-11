@@ -1,9 +1,9 @@
 "use client";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { X, Search, ChevronDown, ChevronUp } from "lucide-react";
+import { Check, X, Search, ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
 import { useL10n } from "@/components/L10nProvider";
 import { useFocusCharWeapons } from "@/hooks/useFocusCharWeapons";
@@ -48,15 +48,23 @@ const FocusCell = React.memo(function FocusCell({
           activate();
         }
       }}
+      aria-pressed={selected}
+      data-focus-option
       title={localizedWeaponLabel ? `${charName} (${localizedWeaponLabel})` : charName}
       style={{ touchAction: "manipulation" }}
       className={cn(
-        "flex flex-col items-center gap-1 rounded-md px-1 py-2 touch-manipulation",
+        "relative flex flex-col items-center gap-1 rounded-md px-1 py-2 touch-manipulation",
         selected
           ? "bg-[var(--color-surface)] outline outline-1 outline-[var(--color-border-light)]"
           : "hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80"
       )}
     >
+      {selected && (
+        <Check
+          className="absolute right-1 top-1 h-3 w-3 text-[var(--studio-accent)]"
+          aria-hidden="true"
+        />
+      )}
       <div className="relative h-10 w-10">
         <span
           className={cn(
@@ -112,6 +120,8 @@ export function FocusWeaponPool() {
   const t = useTranslations("focusWeaponPool");
   const { focusCharWeapons, setFocusCharWeapons, toggleFocus } = useFocusCharWeapons();
   const [isExpanded, setIsExpanded] = React.useState(false);
+  const locale = useLocale();
+  const [selectedOnly, setSelectedOnly] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const parentRef = React.useRef<HTMLDivElement>(null);
   const [columns, setColumns] = React.useState(4);
@@ -123,9 +133,16 @@ export function FocusWeaponPool() {
 
   const deferredSearch = React.useDeferredValue(search);
   const filteredItems = React.useMemo(() => {
-    if (!deferredSearch.trim()) return getAllCharWeaponItems();
+    const items = selectedOnly
+      ? getAllCharWeaponItems().filter((item) =>
+          focusCharWeapons.some(
+            (f) => f.charCode === item.charCode && f.weaponCode === item.weaponCode
+          )
+        )
+      : getAllCharWeaponItems();
+    if (!deferredSearch.trim()) return items;
     const q = deferredSearch.trim().toLowerCase();
-    return getAllCharWeaponItems().filter((item) => {
+    return items.filter((item) => {
       const name = getCharName(item.charCode) ?? "";
       const localizedWeapon =
         item.weaponCode > 0 ? resolveWeaponName(item.weaponCode, l10n).toLowerCase() : "";
@@ -135,7 +152,7 @@ export function FocusWeaponPool() {
         localizedWeapon.includes(q)
       );
     });
-  }, [deferredSearch, getCharName, l10n]);
+  }, [deferredSearch, getCharName, l10n, selectedOnly, focusCharWeapons]);
 
   const isSelected = React.useCallback(
     (item: CharWeaponItem) =>
@@ -145,6 +162,7 @@ export function FocusWeaponPool() {
     [focusCharWeapons]
   );
 
+  const hasFilteredItems = filteredItems.length > 0;
   React.useEffect(() => {
     if (!isExpanded) return;
     const el = parentRef.current;
@@ -159,7 +177,7 @@ export function FocusWeaponPool() {
     const observer = new ResizeObserver(() => update());
     observer.observe(el);
     return () => observer.disconnect();
-  }, [isExpanded]);
+  }, [isExpanded, hasFilteredItems]);
 
   const rowCount = Math.ceil(filteredItems.length / columns);
   const virtualizer = useVirtualizer({
@@ -168,6 +186,10 @@ export function FocusWeaponPool() {
     estimateSize: () => ROW_HEIGHT,
     overscan: 3,
   });
+
+  React.useLayoutEffect(() => {
+    virtualizer.scrollToOffset(0);
+  }, [virtualizer, deferredSearch, selectedOnly]);
 
   const resolveLabel = (f: { charCode: number; weaponCode: number }) => {
     const name = getCharName(f.charCode);
@@ -267,6 +289,23 @@ export function FocusWeaponPool() {
       {/* 펼친 상태: 검색 + 가상화 그리드 */}
       {isExpanded && (
         <div className="border-t border-[var(--color-border)] p-3">
+          <label className="mb-2 flex min-h-[44px] items-center gap-2 text-xs text-[var(--color-foreground)]">
+            <input
+              type="checkbox"
+              checked={selectedOnly}
+              onChange={(e) => setSelectedOnly(e.target.checked)}
+            />
+            {(
+              {
+                ko: "선택한 항목만 보기",
+                en: "Show selected only",
+                ja: "選択した項目のみ",
+                "zh-Hans": "仅显示已选",
+                "zh-Hant": "只顯示已選",
+              } as Record<string, string>
+            )[locale] ?? "Show selected only"}
+            <span>{t("count", { count: focusCharWeapons.length })}</span>
+          </label>
           <div className="relative mb-2">
             <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)]" />
             <input
@@ -316,7 +355,7 @@ export function FocusWeaponPool() {
                         transform: `translateY(${virtualRow.start}px)`,
                         width: "100%",
                         display: "grid",
-                        gridTemplateColumns: `repeat(${columns}, 1fr)`,
+                        gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
                         gap: "4px",
                       }}
                     >

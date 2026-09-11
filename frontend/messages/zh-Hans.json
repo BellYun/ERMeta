@@ -444,6 +444,7 @@
     "share": "分享",
     "reset": "重置",
     "sectionName": "详细阵容结果",
+    "sortMetricAria": "按{metric}排序",
     "empty": {
       "prompt": "根据队友的选择寻找包含武器的详细阵容",
       "step1": "1. 先设置你的角色池（可选）",
