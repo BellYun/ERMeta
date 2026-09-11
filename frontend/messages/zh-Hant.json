@@ -444,6 +444,7 @@
     "share": "分享",
     "reset": "重設",
     "sectionName": "詳細陣容結果",
+    "sortMetricAria": "按{metric}排序",
     "empty": {
       "prompt": "根據隊友的選擇尋找包含武器的詳細陣容",
       "step1": "1. 先設定你的角色池（可選）",

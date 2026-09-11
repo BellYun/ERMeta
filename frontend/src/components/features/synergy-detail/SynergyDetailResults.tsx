@@ -1216,6 +1216,7 @@ export function SynergyDetailResults() {
                     key={value}
                     type="button"
                     onClick={() => updateSortBy(value)}
+                    aria-label={t("sortMetricAria", { metric: metricT(label) })}
                     aria-pressed={sortBy === value}
                     data-active={sortBy === value || undefined}
                   >
