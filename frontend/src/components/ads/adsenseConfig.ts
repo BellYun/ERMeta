@@ -31,7 +31,10 @@ function resolveAdBlockRecoveryMode(): AdBlockRecoveryMode {
 export const AD_BLOCK_RECOVERY_MODE = resolveAdBlockRecoveryMode();
 
 export interface AdSlotReservation {
+  /** Outer reservation includes label, padding and border. */
   baseHeight: number;
+  /** Explicit creative height; disables automatic size expansion. */
+  creativeHeight?: number;
   smHeight?: number;
   lgHeight?: number;
   width?: number;
@@ -39,12 +42,12 @@ export interface AdSlotReservation {
 
 export const ADSENSE_SLOT_RESERVATIONS = {
   contentHorizontal: {
-    baseHeight: 112,
-    smHeight: 120,
-    lgHeight: 120,
+    baseHeight: 140,
+    creativeHeight: 100,
   },
   siteRail: {
-    baseHeight: 600,
+    baseHeight: 640,
+    creativeHeight: 600,
     width: 160,
   },
 } as const satisfies Record<string, AdSlotReservation>;

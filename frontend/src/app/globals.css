@@ -1207,8 +1207,7 @@ html[data-theme="dark"] .char-card.home-pick-card:hover {
   width: 100%;
   min-height: var(--ad-reserved-height, 100px);
   height: var(--ad-reserved-height, 100px);
-  overflow: hidden;
-  contain: layout paint style;
+  contain: layout style;
 }
 
 @media (min-width: 640px) {

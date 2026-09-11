@@ -169,6 +169,13 @@ export function AdSlot({
   const [slotInstanceId] = useState(createAdSlotInstanceId);
   const [status, setStatus] = useState<AdSlotStatus>("reserved");
   const slotKey = `${slotName}:${slot}`;
+  const creativeStyle: CSSProperties = {
+    display: "block",
+    width: reservation?.width ?? "100%",
+    height: reservation?.creativeHeight ?? "100%",
+    minHeight: 0,
+    justifySelf: "center",
+  };
   const reservedStyle = useMemo(
     () => getReservationStyle(reservation, minHeight),
     [minHeight, reservation]
@@ -419,7 +426,7 @@ export function AdSlot({
         data-ad-slot-status="preview"
       >
         <span className="ad-placement-label">{label}</span>
-        <div className="ad-placement-preview-box" aria-hidden="true" />
+        <div className="ad-placement-preview-box" style={creativeStyle} aria-hidden="true" />
       </div>
     );
   }
@@ -442,14 +449,16 @@ export function AdSlot({
         key={`${slotName}:${slot}`}
         ref={insRef}
         className="adsbygoogle block"
-        style={{ display: "block", minHeight: 0, width: "100%", height: "100%" }}
+        style={creativeStyle}
         data-ad-client={ADSENSE_CLIENT}
         data-ad-slot={slot}
         data-ad-channel={ADSENSE_CHANNELS[slotName] || undefined}
-        data-ad-format={format}
+        data-ad-format={reservation?.creativeHeight ? undefined : format}
         data-ad-layout={layout}
         data-ad-layout-key={layoutKey}
-        data-full-width-responsive={responsive ? "true" : "false"}
+        data-full-width-responsive={
+          reservation?.creativeHeight ? undefined : responsive ? "true" : "false"
+        }
       />
       {showFallback ? (
         <div className="ad-placement-fallback" aria-hidden="true">
