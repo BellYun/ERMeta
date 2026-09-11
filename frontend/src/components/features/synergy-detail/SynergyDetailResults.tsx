@@ -1,6 +1,6 @@
 "use client";
 
-import { useWindowVirtualizer } from "@tanstack/react-virtual";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { X, Users, Loader2, Info, Share2 } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -518,6 +518,7 @@ export function SynergyDetailResults() {
     return err instanceof Error ? err.message : t("genericError");
   }, [resultAllies.length, isQueryAlliesPending, resultsState.error, t]);
   const [copied, setCopied] = React.useState(false);
+  const resultsScrollRef = React.useRef<HTMLDivElement>(null);
   const virtualListRef = React.useRef<HTMLDivElement>(null);
   const [virtualScrollMargin, setVirtualScrollMargin] = React.useState(0);
   const traitNames = useTraitNames(l10n);
@@ -950,8 +951,13 @@ export function SynergyDetailResults() {
     [resultAllies]
   );
 
-  const rowVirtualizer = useWindowVirtualizer({
+  const rowVirtualizer = useVirtualizer({
     count: visibleRecommendations.length,
+    getScrollElement: () => resultsScrollRef.current,
+    getItemKey: (index) => {
+      const group = visibleRecommendations[index];
+      return `${group.character1}-${group.weaponType1}-${group.character2}-${group.weaponType2}-${group.character3}-${group.weaponType3}`;
+    },
     estimateSize: () => VIRTUAL_CARD_ESTIMATE,
     overscan: RESULT_CARD_OVERSCAN,
     scrollMargin: virtualScrollMargin,
@@ -963,15 +969,18 @@ export function SynergyDetailResults() {
     if (!el) return;
 
     const updateScrollMargin = () => {
-      setVirtualScrollMargin(el.getBoundingClientRect().top + window.scrollY);
+      setVirtualScrollMargin(el.offsetTop);
     };
 
     updateScrollMargin();
-    window.addEventListener("resize", updateScrollMargin);
-    return () => {
-      window.removeEventListener("resize", updateScrollMargin);
-    };
-  }, [visibleRecommendations.length]);
+    const observer = new ResizeObserver(updateScrollMargin);
+    if (el.previousElementSibling) observer.observe(el.previousElementSibling);
+    return () => observer.disconnect();
+  }, [visibleRecommendations.length, visibleResetKey]);
+
+  React.useLayoutEffect(() => {
+    rowVirtualizer.scrollToOffset(0);
+  }, [rowVirtualizer, visibleResetKey]);
 
   // measureElement의 ref 콜백과 ResizeObserver가 실제 카드 높이를 갱신한다.
   // 여기서 measure()를 호출하면 펼친 카드의 캐시도 추정치로 초기화되어 다음 카드와 겹칠 수 있다.
@@ -1185,13 +1194,35 @@ export function SynergyDetailResults() {
                 {t("infoPair")}
               </p>
             )}
-            <div className="composition-comparison-scroll" tabIndex={0}>
+            <div
+              ref={resultsScrollRef}
+              className="composition-comparison-scroll"
+              data-sort-by={sortBy}
+              tabIndex={0}
+              role="region"
+              aria-label={t("sectionName")}
+            >
               <div className="composition-comparison-heading">
-                <span className="composition-comparison-heading__identity">#</span>
-                <span>{metricT("winRate")}</span>
-                <span>{metricT("rp")}</span>
-                <span>{metricT("games")}</span>
-                <span>{metricT("averageRank")}</span>
+                <span className="composition-comparison-heading__identity">{t("sectionName")}</span>
+                {(
+                  [
+                    ["winRate", "winRate"],
+                    ["averageRP", "rp"],
+                    ["totalGames", "games"],
+                    ["averageRank", "averageRank"],
+                  ] as const
+                ).map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => updateSortBy(value)}
+                    aria-pressed={sortBy === value}
+                    data-active={sortBy === value || undefined}
+                  >
+                    {metricT(label)}
+                    {sortBy === value ? (value === "averageRank" ? " ↑" : " ↓") : ""}
+                  </button>
+                ))}
                 <span aria-hidden="true" />
               </div>
               <div
@@ -1211,6 +1242,19 @@ export function SynergyDetailResults() {
                         transform: `translateY(${virtualRow.start - virtualScrollMargin}px)`,
                       }}
                     >
+                      {virtualRow.index === 0 && isFocusPoolCombo(group) && (
+                        <div className="composition-results-group-label">
+                          {(
+                            {
+                              ko: "내 풀 포함",
+                              en: "My pool",
+                              ja: "マイプール",
+                              "zh-Hans": "我的英雄池",
+                              "zh-Hant": "我的英雄池",
+                            } as Record<string, string>
+                          )[locale] ?? "My pool"}
+                        </div>
+                      )}
                       <ComboWeaponCard
                         key={`${group.character1}-${group.weaponType1}-${group.character2}-${group.weaponType2}-${group.character3}-${group.weaponType3}`}
                         group={group}

@@ -435,19 +435,6 @@ function ComboWeaponCardImpl({
 
         {/* 3실험체 + 무기 */}
         <div className="composition-result-card__members flex flex-col items-center gap-1">
-          {isFocusPoolCombo && (
-            <span className="composition-result-card__pool-label">
-              {(
-                {
-                  ko: "내 풀 포함",
-                  en: "My pool",
-                  ja: "マイプール",
-                  "zh-Hans": "我的英雄池",
-                  "zh-Hant": "我的英雄池",
-                } as Record<string, string>
-              )[resultLocale] ?? "My pool"}
-            </span>
-          )}
           <div className="flex items-center gap-0.5 sm:gap-1">
             {ordered.map((m, i) => {
               const isRecommended = !selectedCharCodes.includes(m.char);
