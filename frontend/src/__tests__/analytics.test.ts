@@ -408,6 +408,48 @@ describe("analytics — P0 helpers", () => {
   });
 
   describe("ad slot events", () => {
+    it("광고 배치 실험 노출과 슬롯 이벤트에 동일한 variant를 전달한다", async () => {
+      Object.defineProperty(window, "innerWidth", { configurable: true, value: 390 });
+      Object.defineProperty(window, "innerHeight", { configurable: true, value: 844 });
+      const attribution = {
+        experiment: "home_ad_placement_v1" as const,
+        variant: "optimized" as const,
+        placement: "before_filters" as const,
+        assignmentSource: "experiment" as const,
+      };
+
+      analytics.adPlacementExperimentExposed({
+        attribution,
+        slotName: "home_ranking",
+        pagePath: "/ko/rankings",
+      });
+      analytics.adSlotViewed({
+        slotName: "home_ranking",
+        adSlotId: "8139813658",
+        slotInstanceId: "slot-instance-experiment",
+        pagePath: "/ko/rankings",
+        eventPagePath: "/ko/rankings",
+        experiment: attribution,
+      });
+      await flushAsync();
+
+      const experimentProperties = expect.objectContaining({
+        experiment: "home_ad_placement_v1",
+        variant: "optimized",
+        placement: "before_filters",
+        assignment_source: "experiment",
+      });
+      expect(trackMock).toHaveBeenCalledWith(
+        "ad_placement_experiment_exposed",
+        experimentProperties
+      );
+      expect(vercelTrackMock).toHaveBeenCalledWith(
+        "ad_placement_experiment_exposed",
+        experimentProperties
+      );
+      expect(trackMock).toHaveBeenCalledWith("ad_slot_viewed", experimentProperties);
+    });
+
     it("ad_slot_rendered 에 슬롯명과 광고 슬롯 ID 를 전달한다", async () => {
       Object.defineProperty(window, "innerWidth", { configurable: true, value: 1440 });
       Object.defineProperty(window, "innerHeight", { configurable: true, value: 900 });
