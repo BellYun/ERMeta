@@ -1,10 +1,12 @@
 "use client";
 
+import "./ally-picker.css";
+
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { X, Search } from "lucide-react";
+import { Check, X, Search } from "lucide-react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
 import characterBestWeapons from "@/../const/characterBestWeapons.json";
 import { useL10n } from "@/components/L10nProvider";
@@ -110,8 +112,8 @@ export function computeNextAllies(
 
 // ─── 셀 ──────────────────────────────────────────────────────────────────
 
-const CELL_MIN_WIDTH = 72;
-const ROW_HEIGHT = 72;
+const CELL_MIN_WIDTH = 68;
+const ROW_HEIGHT = 92;
 
 const CharWeaponCell = React.memo(function CharWeaponCell({
   item,
@@ -149,13 +151,14 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
         }
       }}
       disabled={disabled}
+      aria-pressed={selected}
       title={localizedWeaponLabel ? `${charName} (${localizedWeaponLabel})` : charName}
       data-voc-action="synergy_detail_ally_select"
       data-voc-code={item.charCode}
       data-voc-weapon-code={item.weaponCode}
       style={{ touchAction: "manipulation" }}
       className={cn(
-        "flex flex-col items-center gap-1 rounded-md px-1 py-2 touch-manipulation",
+        "ally-picker-option",
         selected
           ? "bg-[var(--color-surface)] outline outline-1 outline-[var(--color-border-light)]"
           : disabled
@@ -191,24 +194,11 @@ const CharWeaponCell = React.memo(function CharWeaponCell({
           </span>
         ) : null}
       </div>
-      <span
-        className={cn(
-          "w-full truncate text-center text-[11.5px] font-semibold",
-          selected ? "text-[var(--color-primary-hover)]" : "text-[var(--color-foreground)]/92"
-        )}
-      >
-        {charName}
+      <span className="ally-picker-option__text">
+        <span>{charName}</span>
+        {localizedWeaponLabel && <span>{localizedWeaponLabel}</span>}
       </span>
-      {localizedWeaponLabel && (
-        <span
-          className={cn(
-            "w-full truncate text-center text-[10px] font-medium",
-            selected ? "text-[var(--color-foreground)]" : "text-[var(--color-muted-foreground)]"
-          )}
-        >
-          {localizedWeaponLabel}
-        </span>
-      )}
+      {selected && <Check className="ally-picker-option__check" aria-hidden="true" />}
     </button>
   );
 });
@@ -220,6 +210,7 @@ export function WeaponAllySelector() {
   const { l10n } = useL10n();
   const t = useTranslations("weaponAllySelector");
   const pathname = usePathname();
+  const locale = useLocale();
   const [search, setSearch] = React.useState("");
   const parentRef = React.useRef<HTMLDivElement>(null);
   const [columns, setColumns] = React.useState(4);
@@ -399,19 +390,21 @@ export function WeaponAllySelector() {
     [deferredSearch, filteredItems, searchMode, trimmedSearch.length]
   );
 
+  const hasFilteredItems = filteredItems.length > 0;
+
   // 그리드 컬럼 계산
   React.useEffect(() => {
     const el = parentRef.current;
     if (!el) return;
     const update = () => {
       const width = el.clientWidth;
-      setColumns(Math.max(1, Math.floor(width / CELL_MIN_WIDTH)));
+      setColumns(Math.max(1, Math.floor((width + 4) / (CELL_MIN_WIDTH + 4))));
     };
     update();
     const observer = new ResizeObserver(() => update());
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [hasFilteredItems]);
 
   const rowCount = Math.ceil(filteredItems.length / columns);
   const virtualizer = useVirtualizer({
@@ -421,6 +414,10 @@ export function WeaponAllySelector() {
     overscan: 3,
   });
 
+  React.useLayoutEffect(() => {
+    virtualizer.scrollToOffset(0);
+  }, [deferredSearch, virtualizer]);
+
   const resolveWeaponLabel = (a: AllySelection) => {
     if (a.weaponCode == null || a.weaponCode === 0) return t("allWeapons");
     return resolveWeaponName(a.weaponCode, l10n);
@@ -429,7 +426,7 @@ export function WeaponAllySelector() {
   return (
     <>
       {/* 슬롯 표시 — 두 아군은 항상 수직 정렬 */}
-      <div className="mb-3 flex flex-col gap-2.5 sm:gap-3">
+      <div className="ally-picker-selection mb-3 flex flex-col gap-2.5 sm:gap-3">
         {ally1 ? (
           <SlotWeaponFilled
             code={ally1.charCode}
@@ -455,17 +452,24 @@ export function WeaponAllySelector() {
       </div>
 
       {/* 검색 + 가상화 그리드 */}
-      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
-        <p className="mb-3 px-1 text-[12px] font-medium text-[var(--color-foreground)]/72">
-          {t("heading")}
-        </p>
-
+      <div className="ally-picker-candidates">
         <div className="relative mb-2">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)]" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder={t("searchPlaceholder")}
+            placeholder={
+              (
+                {
+                  ko: "이름·무기 검색",
+                  en: "Name or weapon",
+                  ja: "名前・武器を検索",
+                  "zh-Hans": "搜索名称或武器",
+                  "zh-Hant": "搜尋名稱或武器",
+                } as Record<string, string>
+              )[locale] ?? "Name or weapon"
+            }
+            aria-label={t("searchPlaceholder")}
             data-voc-action="synergy_detail_search"
             className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] py-2 pl-8 pr-8 text-xs text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)] focus:border-[var(--color-border-light)] focus:outline-none"
           />
@@ -473,6 +477,17 @@ export function WeaponAllySelector() {
             <button
               type="button"
               onClick={() => setSearch("")}
+              aria-label={
+                (
+                  {
+                    ko: "검색 지우기",
+                    en: "Clear search",
+                    ja: "検索をクリア",
+                    "zh-Hans": "清除搜索",
+                    "zh-Hant": "清除搜尋",
+                  } as Record<string, string>
+                )[locale] ?? "Clear search"
+              }
               data-voc-action="synergy_detail_search_clear"
               className="absolute right-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] active:text-[var(--color-foreground)]"
             >
@@ -488,7 +503,7 @@ export function WeaponAllySelector() {
         ) : (
           <div
             ref={parentRef}
-            className="overflow-y-auto pr-0.5"
+            className="ally-picker-scroll overflow-y-auto pr-0.5"
             style={{ maxHeight: "340px", touchAction: "pan-y", WebkitOverflowScrolling: "touch" }}
           >
             <div
@@ -512,7 +527,7 @@ export function WeaponAllySelector() {
                       transform: `translateY(${virtualRow.start}px)`,
                       width: "100%",
                       display: "grid",
-                      gridTemplateColumns: `repeat(${columns}, 1fr)`,
+                      gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
                       gap: "4px",
                     }}
                   >
