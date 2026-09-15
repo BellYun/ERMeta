@@ -181,12 +181,16 @@ describe("analytics — P0 helpers", () => {
       expect(events).toContain("core_feature_used");
     });
 
-    it("synergyAllySelected 최초 호출 시 NSM(synergy_search) 이 자동 트리거된다", async () => {
+    it("synergyAllySelected는 유효 결과 전 NSM을 트리거하지 않는다", async () => {
       analytics.synergyAllySelected("A", 17, "재키");
       await flushAsync();
+      expect(trackMock).toHaveBeenCalledWith("synergy_ally_selected", {
+        slot: "A",
+        characterCode: 17,
+        characterName: "재키",
+      });
       const nsmCall = trackMock.mock.calls.find(([evt]) => evt === "core_feature_used");
-      expect(nsmCall).toBeDefined();
-      expect((nsmCall![1] as { feature: string }).feature).toBe("synergy_search");
+      expect(nsmCall).toBeUndefined();
     });
   });
 
@@ -253,11 +257,37 @@ describe("analytics — P0 helpers", () => {
     });
   });
 
-  describe("synergyResultViewed", () => {
-    it("isWeaponScope=true 및 nullable ally 허용", async () => {
+  describe("synergy detail funnel", () => {
+    it("탐색 시작에서 직접 선택과 현재 조합 문맥을 전달한다", async () => {
+      analytics.synergySearchStarted({
+        ally1Code: 1,
+        ally2Code: 2,
+        ally1WeaponCode: 15,
+        ally2WeaponCode: 16,
+        selectionCount: 2,
+        selectionSource: "direct_selection",
+        isWeaponScope: true,
+      });
+      await flushAsync();
+      expect(trackMock).toHaveBeenCalledWith("synergy_search_started", {
+        ally1Code: 1,
+        ally2Code: 2,
+        ally1WeaponCode: 15,
+        ally2WeaponCode: 16,
+        selectionCount: 2,
+        selectionSource: "direct_selection",
+        isWeaponScope: true,
+      });
+    });
+
+    it("첫 유효 결과에서만 synergy_search NSM을 기록한다", async () => {
       analytics.synergyResultViewed({
         ally1Code: 1,
         ally2Code: null,
+        ally1WeaponCode: 15,
+        ally2WeaponCode: null,
+        selectionCount: 1,
+        selectionSource: "url_restore",
         resultCount: 15,
         sortBy: "averageRP",
         tier: "",
@@ -268,12 +298,51 @@ describe("analytics — P0 helpers", () => {
       expect(trackMock).toHaveBeenCalledWith("synergy_result_viewed", {
         ally1Code: 1,
         ally2Code: null,
+        ally1WeaponCode: 15,
+        ally2WeaponCode: null,
+        selectionCount: 1,
+        selectionSource: "url_restore",
         resultCount: 15,
         sortBy: "averageRP",
         tier: "",
         patch: "",
         isWeaponScope: true,
       });
+
+      analytics.synergyResultViewed({
+        ally1Code: 1,
+        ally2Code: null,
+        resultCount: 12,
+        sortBy: "winRate",
+        tier: "",
+        patch: "",
+        isWeaponScope: true,
+      });
+      await flushAsync();
+      const nsmCalls = trackMock.mock.calls.filter(([event]) => event === "core_feature_used");
+      expect(nsmCalls).toEqual([
+        [
+          "core_feature_used",
+          {
+            feature: "synergy_search",
+            firstTimeInSession: true,
+          },
+        ],
+      ]);
+    });
+
+    it("빈 결과는 synergy_search NSM으로 집계하지 않는다", async () => {
+      analytics.synergyResultViewed({
+        ally1Code: 1,
+        ally2Code: null,
+        resultCount: 0,
+        sortBy: "averageRP",
+        tier: "",
+        patch: "",
+        isWeaponScope: true,
+      });
+      await flushAsync();
+      expect(trackMock.mock.calls.some(([event]) => event === "core_feature_used")).toBe(false);
     });
   });
 
@@ -282,6 +351,12 @@ describe("analytics — P0 helpers", () => {
       analytics.synergyRecommendationClicked({
         ally1Code: 1,
         ally2Code: 2,
+        ally1WeaponCode: 15,
+        ally2WeaponCode: 16,
+        selectionCount: 2,
+        selectionSource: "direct_selection",
+        resultCount: 20,
+        isWeaponScope: true,
         pickedCode: 3,
         pickedRank: 5,
         sortBy: "averageRP",
@@ -290,6 +365,12 @@ describe("analytics — P0 helpers", () => {
       expect(trackMock).toHaveBeenCalledWith("synergy_recommendation_clicked", {
         ally1Code: 1,
         ally2Code: 2,
+        ally1WeaponCode: 15,
+        ally2WeaponCode: 16,
+        selectionCount: 2,
+        selectionSource: "direct_selection",
+        resultCount: 20,
+        isWeaponScope: true,
         pickedCode: 3,
         pickedRank: 5,
         sortBy: "averageRP",

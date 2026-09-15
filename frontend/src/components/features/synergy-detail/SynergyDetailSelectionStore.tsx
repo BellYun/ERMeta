@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import * as React from "react";
 import { createStore, type StoreApi } from "zustand";
 import { useStore } from "zustand";
+import { analytics, type SynergySelectionSource } from "@/lib/analytics";
 
 export interface AllySelection {
   charCode: number;
@@ -47,15 +48,47 @@ function isSamePair(left: AllySelectionPair, right: AllySelectionPair) {
 
 interface SynergyDetailSelectionState {
   allies: AllySelectionPair;
-  setAllies: (next: AllySelectionPair) => void;
+  selectionSource: SynergySelectionSource | null;
+  analyticsEnabled: boolean;
+  setAllies: (next: AllySelectionPair, source?: SynergySelectionSource) => void;
 }
 
-export function createSynergyDetailSelectionStore(initialAllies: AllySelectionPair) {
+interface SynergyDetailSelectionStoreOptions {
+  selectionSource?: SynergySelectionSource | null;
+  analyticsEnabled?: boolean;
+}
+
+export function buildSynergyFunnelContext(
+  allies: AllySelectionPair,
+  selectionSource: SynergySelectionSource
+) {
+  return {
+    ally1Code: allies[0]?.charCode ?? null,
+    ally2Code: allies[1]?.charCode ?? null,
+    ally1WeaponCode: allies[0]?.weaponCode ?? null,
+    ally2WeaponCode: allies[1]?.weaponCode ?? null,
+    selectionCount: allies.filter(Boolean).length,
+    selectionSource,
+    isWeaponScope: true,
+  } as const;
+}
+
+export function createSynergyDetailSelectionStore(
+  initialAllies: AllySelectionPair,
+  options: SynergyDetailSelectionStoreOptions = {}
+) {
   return createStore<SynergyDetailSelectionState>()((set) => ({
     allies: initialAllies,
-    setAllies: (next) =>
+    selectionSource: options.selectionSource ?? null,
+    analyticsEnabled: options.analyticsEnabled ?? true,
+    setAllies: (next, source) =>
       set((current) => {
-        return isSamePair(current.allies, next) ? current : { allies: next };
+        return isSamePair(current.allies, next)
+          ? current
+          : {
+              allies: next,
+              selectionSource: source ?? current.selectionSource,
+            };
       }),
   }));
 }
@@ -66,10 +99,13 @@ const SynergyDetailSelectionContext = React.createContext<SynergyDetailSelection
 
 export function SynergyDetailPreviewProvider({ children }: React.PropsWithChildren) {
   const [store] = React.useState(() =>
-    createSynergyDetailSelectionStore([
-      { charCode: 6, weaponCode: null },
-      { charCode: 33, weaponCode: null },
-    ])
+    createSynergyDetailSelectionStore(
+      [
+        { charCode: 6, weaponCode: null },
+        { charCode: 33, weaponCode: null },
+      ],
+      { analyticsEnabled: false }
+    )
   );
   return (
     <SynergyDetailSelectionContext.Provider value={store}>
@@ -88,10 +124,30 @@ export function SynergyDetailSelectionProvider({ children }: React.PropsWithChil
     () => parseAllyFromParams(searchParams, "ally2", "w2", "b"),
     [searchParams]
   );
-  const [store] = React.useState(() => createSynergyDetailSelectionStore([urlAlly1, urlAlly2]));
+  const [store] = React.useState(() => {
+    const initialAllies: AllySelectionPair = [urlAlly1, urlAlly2];
+    return createSynergyDetailSelectionStore(initialAllies, {
+      selectionSource: initialAllies.some(Boolean) ? "url_restore" : null,
+    });
+  });
+  const trackedInitialRestoreRef = React.useRef(false);
 
   React.useEffect(() => {
-    store.getState().setAllies([urlAlly1, urlAlly2]);
+    if (trackedInitialRestoreRef.current) return;
+    trackedInitialRestoreRef.current = true;
+    const { allies, selectionSource, analyticsEnabled } = store.getState();
+    if (!analyticsEnabled || selectionSource !== "url_restore" || !allies.some(Boolean)) return;
+    analytics.synergySearchStarted(buildSynergyFunnelContext(allies, selectionSource));
+  }, [store]);
+
+  React.useEffect(() => {
+    const nextAllies: AllySelectionPair = [urlAlly1, urlAlly2];
+    const current = store.getState();
+    const changed = !isSamePair(current.allies, nextAllies);
+    current.setAllies(nextAllies, "url_restore");
+    if (changed && current.analyticsEnabled && nextAllies.some(Boolean)) {
+      analytics.synergySearchStarted(buildSynergyFunnelContext(nextAllies, "url_restore"));
+    }
   }, [store, urlAlly1, urlAlly2]);
 
   return (

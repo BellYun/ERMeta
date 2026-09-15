@@ -123,15 +123,38 @@ describe("SynergyDetailSelectionStore", () => {
 
   it("does not notify subscribers when URL sync repeats the same selections", () => {
     const first: AllySelection = { charCode: 10, weaponCode: 2 };
-    const store = createSynergyDetailSelectionStore([first, null]);
+    const store = createSynergyDetailSelectionStore([first, null], {
+      selectionSource: "direct_selection",
+    });
     let notifications = 0;
     const unsubscribe = store.subscribe(() => {
       notifications += 1;
     });
 
-    store.getState().setAllies([{ ...first }, null]);
+    store.getState().setAllies([{ ...first }, null], "url_restore");
 
     expect(notifications).toBe(0);
+    expect(store.getState().selectionSource).toBe("direct_selection");
     unsubscribe();
+  });
+
+  it("records whether the latest changed selection came from direct input or URL restore", () => {
+    const store = createSynergyDetailSelectionStore([null, null]);
+    const first: AllySelection = { charCode: 10, weaponCode: 2 };
+    const second: AllySelection = { charCode: 20, weaponCode: 5 };
+
+    store.getState().setAllies([first, null], "direct_selection");
+    expect(store.getState().selectionSource).toBe("direct_selection");
+
+    store.getState().setAllies([first, second], "url_restore");
+    expect(store.getState().selectionSource).toBe("url_restore");
+  });
+
+  it("can disable funnel measurement for the inert home preview", () => {
+    const store = createSynergyDetailSelectionStore([null, null], {
+      analyticsEnabled: false,
+    });
+
+    expect(store.getState().analyticsEnabled).toBe(false);
   });
 });

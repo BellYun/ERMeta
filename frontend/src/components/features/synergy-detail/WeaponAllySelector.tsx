@@ -10,6 +10,7 @@ import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
 import characterBestWeapons from "@/../const/characterBestWeapons.json";
 import { useL10n } from "@/components/L10nProvider";
+import { analytics } from "@/lib/analytics";
 import { resolveCharacterName, getCharacterMiniWebpUrl } from "@/lib/characterMap";
 import { recordFeedbackBreadcrumb, setFeedbackContextState } from "@/lib/feedbackContext";
 import { cn } from "@/lib/utils";
@@ -20,6 +21,7 @@ import { matchesChosungSearch } from "../synergy/utils";
 import {
   type AllySelection,
   type AllySelectionPair,
+  buildSynergyFunnelContext,
   useSynergyDetailSelection,
   useSynergyDetailSelectionStoreApi,
 } from "./SynergyDetailSelectionStore";
@@ -222,6 +224,7 @@ export function WeaponAllySelector() {
 
   const selectionStore = useSynergyDetailSelectionStoreApi();
   const [ally1, ally2] = useSynergyDetailSelection((state) => state.allies);
+  const analyticsEnabled = useSynergyDetailSelection((state) => state.analyticsEnabled);
   const pendingUrlSelectionRef = React.useRef<AllySelectionPair | null>(null);
   const urlSyncFrameRef = React.useRef<number | null>(null);
   const urlSyncTimerRef = React.useRef<number | null>(null);
@@ -302,9 +305,12 @@ export function WeaponAllySelector() {
   );
 
   const commitSelection = React.useCallback(
-    (next: AllySelectionPair) => {
+    (next: AllySelectionPair, trackSearchStart = false) => {
       // store action은 두 슬롯을 원자적으로 갱신하고, 다음 연속 탭은 getState()로 최신값을 읽는다.
-      selectionStore.getState().setAllies(next);
+      selectionStore.getState().setAllies(next, "direct_selection");
+      if (trackSearchStart && analyticsEnabled) {
+        analytics.synergySearchStarted(buildSynergyFunnelContext(next, "direct_selection"));
+      }
       recordFeedbackBreadcrumb({
         type: "state",
         name: "synergy_detail_selection_committed",
@@ -318,7 +324,7 @@ export function WeaponAllySelector() {
       // URL은 공유와 복원을 위한 외부 표현이며 선택 UI의 선행 조건이 아니다.
       scheduleUrlUpdate(next);
     },
-    [scheduleUrlUpdate, selectionStore]
+    [analyticsEnabled, scheduleUrlUpdate, selectionStore]
   );
 
   const handleSelect = React.useCallback(
@@ -326,7 +332,10 @@ export function WeaponAllySelector() {
       const [a1, a2] = selectionStore.getState().allies;
       const next = computeNextAllies(a1, a2, item);
       if (!next) return;
-      commitSelection(next);
+      const wasSelected = [a1, a2].some(
+        (ally) => ally?.charCode === item.charCode && (ally.weaponCode ?? 0) === item.weaponCode
+      );
+      commitSelection(next, !wasSelected);
     },
     [commitSelection, selectionStore]
   );
