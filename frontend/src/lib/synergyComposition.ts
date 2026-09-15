@@ -485,6 +485,12 @@ function traitsForMember(member: CompositionMemberInput): CompositionTraitKey[] 
   );
 }
 
+export function getCharacterCompositionTraits(
+  member: CompositionMemberInput
+): CompositionTraitKey[] {
+  return traitsForMember(member);
+}
+
 function affinityMemberForInput(
   evidence: CompositionAffinityEvidence | null | undefined,
   member: CompositionMemberInput

@@ -6,5 +6,5 @@ interface NewCharacterLabRoleRouteProps {
 
 export default async function NewCharacterLabRoleRoute({ params }: NewCharacterLabRoleRouteProps) {
   const { locale } = await params;
-  redirect(`/${locale}/composition-lab`);
+  redirect(`/${locale}/character-lab`);
 }
