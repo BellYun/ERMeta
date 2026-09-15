@@ -9,6 +9,10 @@ export interface PatchTierForecast {
   reason: string;
 }
 
+export interface PatchTierForecastEntry extends PatchTierForecast {
+  characterCode: number;
+}
+
 type StoredPatchTierForecast = Omit<PatchTierForecast, "reason">;
 
 // 2026-09-02 기준 12.2 다이아+ 누적 지표를 바탕으로, 무기군별 스킬 사용 빈도와
@@ -198,6 +202,14 @@ const PATCH_TIER_FORECAST_REASONS: Record<string, Readonly<Record<string, string
   },
 };
 
+export function getPatchTierForecastVersions(): string[] {
+  return Object.keys(PATCH_TIER_FORECASTS).sort((left, right) => {
+    const [leftMajor = 0, leftMinor = 0] = left.split(".").map(Number);
+    const [rightMajor = 0, rightMinor = 0] = right.split(".").map(Number);
+    return rightMajor - leftMajor || rightMinor - leftMinor;
+  });
+}
+
 export function getCharacterTierForecasts(
   patch: string,
   characterCode: number
@@ -209,4 +221,17 @@ export function getCharacterTierForecasts(
     ...forecast,
     reason: reasons[`${characterCode}:${forecast.weaponCode}`] ?? "",
   }));
+}
+
+export function getPatchTierForecasts(patch: string): readonly PatchTierForecastEntry[] {
+  const forecasts = PATCH_TIER_FORECASTS[patch] ?? {};
+  const reasons = PATCH_TIER_FORECAST_REASONS[patch] ?? {};
+
+  return Object.entries(forecasts).flatMap(([characterCode, entries]) =>
+    entries.map((forecast) => ({
+      ...forecast,
+      characterCode: Number(characterCode),
+      reason: reasons[`${characterCode}:${forecast.weaponCode}`] ?? "",
+    }))
+  );
 }

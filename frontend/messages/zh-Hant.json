@@ -1,4 +1,9 @@
 {
+  "patchHome": {
+    "forecastDetailsLink": "比較預測與結果",
+    "rankingsShortcutHint": "想知道目前哪些實驗體更強？",
+    "rankingsShortcutCta": "查看實驗體強度榜"
+  },
   "header": {
     "languageSelectAria": "選擇語言",
     "logoTitle": "ER&GG",
