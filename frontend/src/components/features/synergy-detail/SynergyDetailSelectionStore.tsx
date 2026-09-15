@@ -64,6 +64,20 @@ type SynergyDetailSelectionStore = ReturnType<typeof createSynergyDetailSelectio
 
 const SynergyDetailSelectionContext = React.createContext<SynergyDetailSelectionStore | null>(null);
 
+export function SynergyDetailPreviewProvider({ children }: React.PropsWithChildren) {
+  const [store] = React.useState(() =>
+    createSynergyDetailSelectionStore([
+      { charCode: 6, weaponCode: null },
+      { charCode: 33, weaponCode: null },
+    ])
+  );
+  return (
+    <SynergyDetailSelectionContext.Provider value={store}>
+      {children}
+    </SynergyDetailSelectionContext.Provider>
+  );
+}
+
 export function SynergyDetailSelectionProvider({ children }: React.PropsWithChildren) {
   const searchParams = useSearchParams();
   const urlAlly1 = React.useMemo(
