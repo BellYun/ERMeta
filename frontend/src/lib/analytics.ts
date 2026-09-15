@@ -130,6 +130,17 @@ export type Source =
   | "external";
 
 export type SynergySortBy = "tierScore" | "averageRP" | "winRate" | "averageRank" | "totalGames";
+export type SynergySelectionSource = "direct_selection" | "url_restore";
+export interface SynergyFunnelContext {
+  ally1Code: number | null;
+  ally2Code: number | null;
+  ally1WeaponCode?: number | null;
+  ally2WeaponCode?: number | null;
+  selectionCount?: number;
+  resultCount?: number;
+  selectionSource?: SynergySelectionSource;
+  isWeaponScope?: boolean;
+}
 export type SynergyPrefetchTrigger = "hover" | "viewport";
 export type SpeculativeAnalysisInvalidationReason =
   | "selection_changed"
@@ -252,15 +263,9 @@ export const analytics = {
     track("character_searched", { query });
   },
 
-  /** 시너지 - 동료 실험체 선택 (NSM auto-trigger: synergy_search) */
+  /** 레거시 시너지 - 동료 실험체 선택 */
   synergyAllySelected(slot: "A" | "B", characterCode: number, characterName: string) {
     track("synergy_ally_selected", { slot, characterCode, characterName });
-    if (markAndCheckFirstTime("synergy_search")) {
-      track("core_feature_used", {
-        feature: "synergy_search",
-        firstTimeInSession: true,
-      });
-    }
   },
 
   /** 시너지 - 정렬 방식 변경 */
@@ -272,7 +277,7 @@ export const analytics = {
 
   /**
    * NSM 집계 — 세션당 feature별 1회만 fire.
-   * 일반적으로는 characterViewed/synergyAllySelected 등에서 자동 호출되며,
+   * 일반적으로는 characterViewed/synergyResultViewed 등에서 자동 호출되며,
    * 독립 피처(record_search/meta_dashboard 등) 진입 시 직접 호출한다.
    */
   coreFeatureUsed(feature: FeatureKey) {
@@ -317,27 +322,44 @@ export const analytics = {
     track("honey_pick_clicked", { ...args, source: "honey" as const });
   },
 
-  /** 시너지 추천 결과 렌더 완료 (퍼널 B 완료 단계) */
-  synergyResultViewed(args: {
-    ally1Code: number | null;
-    ally2Code: number | null;
-    resultCount: number;
-    sortBy: SynergySortBy;
-    tier: string;
-    patch: string;
-    isWeaponScope: boolean;
-  }) {
-    track("synergy_result_viewed", args);
+  /** 시너지 상세 - 선택 또는 URL 복원으로 탐색을 시작 */
+  synergySearchStarted(
+    args: SynergyFunnelContext & {
+      selectionCount: number;
+      selectionSource: SynergySelectionSource;
+      isWeaponScope: boolean;
+    }
+  ) {
+    track("synergy_search_started", { ...args });
+  },
+
+  /** 시너지 추천 결과 렌더 완료. 첫 유효 결과에서 NSM을 기록한다. */
+  synergyResultViewed(
+    args: SynergyFunnelContext & {
+      resultCount: number;
+      sortBy: SynergySortBy;
+      tier: string;
+      patch: string;
+      isWeaponScope: boolean;
+    }
+  ) {
+    track("synergy_result_viewed", { ...args });
+    if (args.resultCount > 0 && markAndCheckFirstTime("synergy_search")) {
+      track("core_feature_used", {
+        feature: "synergy_search",
+        firstTimeInSession: true,
+      });
+    }
   },
 
   /** 시너지 추천 3번째 실험체 클릭 */
-  synergyRecommendationClicked(args: {
-    ally1Code: number | null;
-    ally2Code: number | null;
-    pickedCode: number;
-    pickedRank: number;
-    sortBy: SynergySortBy;
-  }) {
+  synergyRecommendationClicked(
+    args: SynergyFunnelContext & {
+      pickedCode: number;
+      pickedRank: number;
+      sortBy: SynergySortBy;
+    }
+  ) {
     track("synergy_recommendation_clicked", { ...args, source: "synergy" as const });
   },
 

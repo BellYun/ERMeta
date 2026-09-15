@@ -43,6 +43,7 @@ import {
 } from "./speculativeCompositionAnalysis";
 import {
   type AllySelection,
+  buildSynergyFunnelContext,
   useSelectedAllies,
   useSynergyDetailSelection,
 } from "./SynergyDetailSelectionStore";
@@ -402,6 +403,9 @@ export function SynergyDetailResults() {
   const selectedAllies = useSelectedAllies();
   const resultAllies = React.useDeferredValue(selectedAllies);
   const setAllies = useSynergyDetailSelection((state) => state.setAllies);
+  const selectionSource = useSynergyDetailSelection((state) => state.selectionSource);
+  const resultSelectionSource = React.useDeferredValue(selectionSource);
+  const analyticsEnabled = useSynergyDetailSelection((state) => state.analyticsEnabled);
 
   const resultCharCodes = React.useMemo(() => resultAllies.map((a) => a.charCode), [resultAllies]);
 
@@ -745,6 +749,7 @@ export function SynergyDetailResults() {
   React.useEffect(() => {
     // A+B+C 형태로 후보가 하나로 결정되는 pair recommendation만 MVP 대상으로 삼는다.
     if (
+      !analyticsEnabled ||
       showLoading ||
       isSelectionDeferred ||
       resultAllies.length !== 2 ||
@@ -786,6 +791,7 @@ export function SynergyDetailResults() {
     speculationContextKey,
     topAffinityEvidence,
     topRecommendationMembers,
+    analyticsEnabled,
   ]);
 
   const replaceSearchParams = React.useCallback(
@@ -797,7 +803,7 @@ export function SynergyDetailResults() {
   );
 
   const clearAllies = React.useCallback(() => {
-    setAllies([null, null]);
+    setAllies([null, null], "direct_selection");
     const params = new URLSearchParams(window.location.search);
     ["ally1", "w1", "ally2", "w2", "a", "b"].forEach((key) => params.delete(key));
     replaceSearchParams(params);
@@ -853,19 +859,29 @@ export function SynergyDetailResults() {
   });
 
   React.useEffect(() => {
-    if (showLoading || resultAllies.length === 0 || recommendations.length === 0) return;
+    if (
+      !analyticsEnabled ||
+      showLoading ||
+      resultAllies.length === 0 ||
+      recommendations.length === 0
+    )
+      return;
     const a1 = resultCharCodes[0] ?? null;
     const a2 = resultCharCodes[1] ?? null;
+    const funnelContext = buildSynergyFunnelContext(
+      [resultAllies[0] ?? null, resultAllies[1] ?? null],
+      resultSelectionSource ?? "direct_selection"
+    );
     const allyKey = getAllyQueryKey(resultAllies);
     const key = `${allyKey}|${sortBy}`;
     if (lastViewedKeyRef.current === key) return;
     const previousKey = lastViewedKeyRef.current;
     const previousAllyKey = previousKey ? previousKey.split("|").slice(0, -1).join("|") : null;
     const source =
-      previousKey === null && typeof window !== "undefined" && window.location.search
-        ? "url_restore"
-        : previousAllyKey === allyKey
-          ? "sort_change"
+      previousAllyKey === allyKey
+        ? "sort_change"
+        : resultSelectionSource === "url_restore"
+          ? "url_restore"
           : "filter_change";
     lastViewedKeyRef.current = key;
     explorationDepthRef.current += 1;
@@ -879,13 +895,11 @@ export function SynergyDetailResults() {
       explorationDepth: explorationDepthRef.current,
     };
     analytics.synergyResultViewed({
-      ally1Code: a1,
-      ally2Code: a2,
+      ...funnelContext,
       resultCount: recommendations.length,
       sortBy: sortBy as SynergySortBy,
       tier: "",
       patch: "",
-      isWeaponScope: true,
     });
     analytics.synergyExplorationAdvanced({
       ally1Code: a1,
@@ -896,7 +910,15 @@ export function SynergyDetailResults() {
       isWeaponScope: true,
       source,
     });
-  }, [showLoading, recommendations, resultAllies, resultCharCodes, sortBy]);
+  }, [
+    analyticsEnabled,
+    showLoading,
+    recommendations,
+    resultAllies,
+    resultCharCodes,
+    resultSelectionSource,
+    sortBy,
+  ]);
 
   const emitFunnelExit = React.useCallback(() => {
     const state = funnelStateRef.current;
@@ -929,16 +951,38 @@ export function SynergyDetailResults() {
   }, [emitFunnelExit]);
 
   // synergy_recommendation_clicked — ref-stable 콜백 (ComboWeaponCard memo 보존)
-  const recClickStateRef = React.useRef({ resultCharCodes, sortBy });
+  const recClickStateRef = React.useRef({
+    analyticsEnabled,
+    recommendationsLength: recommendations.length,
+    resultAllies,
+    selectionSource: resultSelectionSource,
+    sortBy,
+  });
   React.useEffect(() => {
-    recClickStateRef.current = { resultCharCodes, sortBy };
-  }, [resultCharCodes, sortBy]);
+    recClickStateRef.current = {
+      analyticsEnabled,
+      recommendationsLength: recommendations.length,
+      resultAllies,
+      selectionSource: resultSelectionSource,
+      sortBy,
+    };
+  }, [analyticsEnabled, recommendations.length, resultAllies, resultSelectionSource, sortBy]);
   const onRecommendationClick = React.useCallback((pickedCode: number, pickedRank: number) => {
-    const { resultCharCodes: allies, sortBy: currentSortBy } = recClickStateRef.current;
+    const {
+      analyticsEnabled: measurementEnabled,
+      recommendationsLength,
+      resultAllies: allies,
+      selectionSource: currentSelectionSource,
+      sortBy: currentSortBy,
+    } = recClickStateRef.current;
+    if (!measurementEnabled) return;
     funnelStateRef.current.openedDetail = true;
     analytics.synergyRecommendationClicked({
-      ally1Code: allies[0] ?? null,
-      ally2Code: allies[1] ?? null,
+      ...buildSynergyFunnelContext(
+        [allies[0] ?? null, allies[1] ?? null],
+        currentSelectionSource ?? "direct_selection"
+      ),
+      resultCount: recommendationsLength,
       pickedCode,
       pickedRank,
       sortBy: currentSortBy as SynergySortBy,
