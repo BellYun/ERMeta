@@ -1,8 +1,10 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { ADSENSE_SLOTS, canRenderAdSlot } from "@/components/ads/adsenseConfig";
 import { TierRankingTable } from "@/components/features/TierRankingTable";
 import { buildHomeMetaView, DEFAULT_HOME_TIER, type HomeMetaStats } from "@/lib/homeMetaShared";
+import { HomeAdPlacementSlot } from "./HomeAdPlacementSlot";
 import { HomeCompositionPreview } from "./HomeCompositionPreview";
 import { PatchForecastComparison } from "./PatchForecastComparison";
 
@@ -16,7 +18,6 @@ export async function PatchHomePage({
   homeMetaStats: HomeMetaStats;
 }) {
   const t = await getTranslations({ locale, namespace: "patchHome" });
-  const nav = await getTranslations({ locale, namespace: "navigation" });
   const view = buildHomeMetaView(homeMetaStats, DEFAULT_HOME_TIER);
   const rankingsHref = `/${locale}/rankings`;
   return (
@@ -25,6 +26,7 @@ export async function PatchHomePage({
         <header>
           <p className="patch-home__kicker">ER&amp;GG · {t("patch", { patch: currentPatch })}</p>
           <h1 id="home-entry-title">{t("welcomeTitle")}</h1>
+          {canRenderAdSlot(ADSENSE_SLOTS.homeRanking) ? <HomeAdPlacementSlot /> : null}
           <PatchForecastComparison
             locale={locale}
             currentPatch={currentPatch}
@@ -57,20 +59,6 @@ export async function PatchHomePage({
           </article>
         </div>
       </section>
-      <nav className="patch-home__destinations" aria-label={t("explore")}>
-        <Link href={rankingsHref}>
-          <span>{t("compare")}</span>
-          <h2>{nav("characterRankings")}</h2>
-          <p>{t("rankingBody")}</p>
-          <ArrowRight aria-hidden="true" />
-        </Link>
-        <Link href={`/${locale}/synergy-detail`}>
-          <span>{t("combine")}</span>
-          <h2>{nav("synergyRecommendation")}</h2>
-          <p>{t("comboBody")}</p>
-          <ArrowRight aria-hidden="true" />
-        </Link>
-      </nav>
     </div>
   );
 }

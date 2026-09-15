@@ -79,6 +79,8 @@ export const ADSENSE_SLOTS = {
  */
 export const ADSENSE_CHANNELS = {
   home_ranking: process.env.NEXT_PUBLIC_ADSENSE_HOME_RANKING_CHANNEL ?? "",
+  home_before_forecast: process.env.NEXT_PUBLIC_ADSENSE_HOME_BEFORE_FORECAST_CHANNEL ?? "",
+  home_after_forecast: process.env.NEXT_PUBLIC_ADSENSE_HOME_AFTER_FORECAST_CHANNEL ?? "",
   synergy_detail_top: process.env.NEXT_PUBLIC_ADSENSE_SYNERGY_DETAIL_CHANNEL ?? "",
   character_analysis_top: process.env.NEXT_PUBLIC_ADSENSE_CHARACTER_ANALYSIS_CHANNEL ?? "",
   site_content_top: process.env.NEXT_PUBLIC_ADSENSE_SITE_CONTENT_CHANNEL ?? "",

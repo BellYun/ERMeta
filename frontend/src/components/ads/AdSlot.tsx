@@ -23,6 +23,7 @@ import {
   type AdBlockRecoveryMilestone,
 } from "@/lib/adBlockRecoveryExperiment";
 import { markAdSlotState } from "@/lib/adPerformance";
+import type { AdPlacementAttribution } from "@/lib/adPlacementExperiment";
 import {
   getAdSlotRequestAgeBucket,
   getDocumentVisibility,
@@ -47,6 +48,8 @@ interface AdSlotProps {
   className?: string;
   reservation?: AdSlotReservation;
   minHeight?: number;
+  channel?: string;
+  experiment?: AdPlacementAttribution;
 }
 
 const AD_LABEL: Record<RouteLocale, string> = {
@@ -151,6 +154,8 @@ export function AdSlot({
   className,
   reservation,
   minHeight = 100,
+  channel,
+  experiment,
 }: AdSlotProps) {
   const locale = useLocale() as RouteLocale;
   const label = AD_LABEL[locale] ?? AD_LABEL.ko;
@@ -169,6 +174,7 @@ export function AdSlot({
   const [slotInstanceId] = useState(createAdSlotInstanceId);
   const [status, setStatus] = useState<AdSlotStatus>("reserved");
   const slotKey = `${slotName}:${slot}`;
+  const resolvedChannel = channel || ADSENSE_CHANNELS[slotName];
   const creativeStyle: CSSProperties = {
     display: "block",
     width: reservation?.width ?? "100%",
@@ -211,6 +217,7 @@ export function AdSlot({
           renderedAt.current === null ? undefined : currentTime - renderedAt.current,
         requestToStateMs:
           requestedAt.current === null ? undefined : currentTime - requestedAt.current,
+        experiment,
       });
       if (nextStatus === "filled") {
         trackAdBlockRecoveryDelivery("ad_filled", {
@@ -221,7 +228,7 @@ export function AdSlot({
       }
       previousStatus.current = nextStatus;
     },
-    [minHeight, reservation, slot, slotInstanceId, slotKey, slotName]
+    [experiment, minHeight, reservation, slot, slotInstanceId, slotKey, slotName]
   );
 
   const requestSlot = useCallback(() => {
@@ -267,6 +274,7 @@ export function AdSlot({
       elapsedSinceRenderMs:
         renderedAt.current === null ? undefined : currentTime - renderedAt.current,
       elapsedSinceRequestMs,
+      experiment,
     });
   });
 
@@ -277,6 +285,13 @@ export function AdSlot({
     const pagePath = getCurrentPagePath();
     lifecyclePagePath.current = pagePath;
     markAdSlotState(slotKey, "rendered");
+    if (experiment) {
+      analytics.adPlacementExperimentExposed({
+        attribution: experiment,
+        slotName,
+        pagePath,
+      });
+    }
     analytics.adSlotRendered({
       slotName,
       adSlotId: slot,
@@ -285,8 +300,9 @@ export function AdSlot({
       eventPagePath: pagePath,
       reservedHeight: getCurrentReservedHeight(reservation, minHeight),
       reservedWidth: reservation?.width ?? null,
+      experiment,
     });
-  }, [minHeight, reservation, slot, slotInstanceId, slotKey, slotName]);
+  }, [experiment, minHeight, reservation, slot, slotInstanceId, slotKey, slotName]);
 
   useEffect(() => {
     if (ADSENSE_PREVIEW || !ADSENSE_CLIENT || !slot) return;
@@ -392,6 +408,7 @@ export function AdSlot({
                 renderedAt.current === null ? undefined : currentTime - renderedAt.current,
               fillToViewableMs:
                 filledAt.current === null ? undefined : currentTime - filledAt.current,
+              experiment,
             });
             trackAdBlockRecoveryDelivery("ad_viewed", {
               slotName,
@@ -413,7 +430,7 @@ export function AdSlot({
       clearViewTimer();
       observer.disconnect();
     };
-  }, [minHeight, reservation, slot, slotInstanceId, slotKey, slotName, status]);
+  }, [experiment, minHeight, reservation, slot, slotInstanceId, slotKey, slotName, status]);
 
   if (ADSENSE_PREVIEW) {
     return (
@@ -424,6 +441,10 @@ export function AdSlot({
         data-ad-slot-name={slotName}
         data-ad-slot-key={slotKey}
         data-ad-slot-status="preview"
+        data-ad-channel={resolvedChannel || undefined}
+        data-ad-experiment={experiment?.experiment}
+        data-ad-variant={experiment?.variant}
+        data-ad-placement={experiment?.placement}
       >
         <span className="ad-placement-label">{label}</span>
         <div className="ad-placement-preview-box" style={creativeStyle} aria-hidden="true" />
@@ -443,6 +464,10 @@ export function AdSlot({
       data-ad-slot-name={slotName}
       data-ad-slot-key={slotKey}
       data-ad-slot-status={status}
+      data-ad-channel={resolvedChannel || undefined}
+      data-ad-experiment={experiment?.experiment}
+      data-ad-variant={experiment?.variant}
+      data-ad-placement={experiment?.placement}
     >
       <span className="ad-placement-label">{label}</span>
       <ins
@@ -452,7 +477,7 @@ export function AdSlot({
         style={creativeStyle}
         data-ad-client={ADSENSE_CLIENT}
         data-ad-slot={slot}
-        data-ad-channel={ADSENSE_CHANNELS[slotName] || undefined}
+        data-ad-channel={resolvedChannel || undefined}
         data-ad-format={reservation?.creativeHeight ? undefined : format}
         data-ad-layout={layout}
         data-ad-layout-key={layoutKey}
