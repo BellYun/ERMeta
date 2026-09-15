@@ -488,6 +488,83 @@ describe("analytics — P0 helpers", () => {
     });
   });
 
+  describe("home ad placement experiment", () => {
+    const attribution = {
+      experiment: "home_ad_placement_v2" as const,
+      variant: "before_forecast" as const,
+      placement: "before_forecast" as const,
+      assignmentSource: "experiment" as const,
+    };
+
+    it("records exposure and meaningful home navigation with the same variant", async () => {
+      analytics.adPlacementExperimentExposed({
+        attribution,
+        slotName: "home_ranking",
+        pagePath: "/ko",
+      });
+      await flushAsync();
+      analytics.homeAdPlacementExperimentEngaged({
+        attribution,
+        interaction: "forecast",
+        destinationPath: "/ko/patch-forecast/12.3#forecast-results",
+        elapsedMs: 4210.4,
+        pagePath: "/ko",
+      });
+      await flushAsync();
+
+      expect(trackMock).toHaveBeenCalledWith(
+        "ad_placement_experiment_exposed",
+        expect.objectContaining({
+          experiment: "home_ad_placement_v2",
+          variant: "before_forecast",
+          placement: "before_forecast",
+          assignment_source: "experiment",
+          slot_name: "home_ranking",
+          page_path: "/ko",
+        })
+      );
+      expect(trackMock).toHaveBeenCalledWith(
+        "home_ad_placement_experiment_engaged",
+        expect.objectContaining({
+          variant: "before_forecast",
+          interaction: "forecast",
+          destination_path: "/ko/patch-forecast/12.3#forecast-results",
+          elapsed_ms: 4210,
+        })
+      );
+      expect(vercelTrackMock).toHaveBeenCalledWith(
+        "ad_placement_experiment_exposed",
+        expect.objectContaining({ variant: "before_forecast" })
+      );
+      expect(vercelTrackMock).toHaveBeenCalledWith(
+        "home_ad_placement_experiment_engaged",
+        expect.objectContaining({ variant: "before_forecast" })
+      );
+    });
+
+    it("marks a short exit without a CTA click as a fast exit", async () => {
+      analytics.homeAdPlacementExperimentExited({
+        attribution,
+        reason: "component_unmount",
+        engaged: false,
+        durationMs: 7840.7,
+        pagePath: "/ko",
+      });
+      await flushAsync();
+
+      expect(trackMock).toHaveBeenCalledWith(
+        "home_ad_placement_experiment_exited",
+        expect.objectContaining({
+          variant: "before_forecast",
+          exit_reason: "component_unmount",
+          engaged: false,
+          fast_exit: true,
+          duration_ms: 7841,
+        })
+      );
+    });
+  });
+
   describe("ad slot events", () => {
     it("ad_slot_rendered 에 슬롯명과 광고 슬롯 ID 를 전달한다", async () => {
       Object.defineProperty(window, "innerWidth", { configurable: true, value: 1440 });

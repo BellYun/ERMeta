@@ -4,6 +4,7 @@ import {
   type AdBlockRecoveryVariant,
 } from "@/lib/adBlockRecoveryExperiment";
 import { getAdPerformanceSnapshot, type AdScriptState } from "@/lib/adPerformance";
+import type { AdPlacementAttribution } from "@/lib/adPlacementExperiment";
 
 type AmplitudeModule = typeof import("@amplitude/analytics-browser");
 
@@ -40,13 +41,17 @@ function trackOnPageExit(event: string, properties?: Record<string, unknown>) {
 
 type FlatAnalyticsProperties = Record<string, string | number | boolean | null | undefined>;
 
-function trackAdBlockRecovery(event: string, properties: FlatAnalyticsProperties) {
+function trackAdExperiment(event: string, properties: FlatAnalyticsProperties) {
   track(event, properties);
   if (isDev) return;
 
   import("@vercel/analytics")
     .then((vercelAnalytics) => vercelAnalytics.track(event, properties))
     .catch(() => {});
+}
+
+function trackAdBlockRecovery(event: string, properties: FlatAnalyticsProperties) {
+  trackAdExperiment(event, properties);
 }
 
 function getCurrentPagePath() {
@@ -174,6 +179,16 @@ function getAdSlotPageProperties(pagePath?: string, eventPagePath?: string) {
     page_surface: getPageSurface(resolvedPagePath),
     event_page_path: resolvedEventPagePath,
     event_page_surface: getPageSurface(resolvedEventPagePath),
+  };
+}
+
+function getAdPlacementExperimentProperties(attribution?: AdPlacementAttribution) {
+  if (!attribution) return {};
+  return {
+    experiment: attribution.experiment,
+    variant: attribution.variant,
+    placement: attribution.placement,
+    assignment_source: attribution.assignmentSource,
   };
 }
 
@@ -463,6 +478,66 @@ export const analytics = {
     track("synergy_link_landed", args);
   },
 
+  /** 홈 광고 위치 실험군에 광고 슬롯이 할당된 경우 한 번 기록한다. */
+  adPlacementExperimentExposed(args: {
+    attribution: AdPlacementAttribution;
+    slotName: AdSlotName;
+    pagePath?: string;
+  }) {
+    const properties = {
+      ...getAdPlacementExperimentProperties(args.attribution),
+      slot_name: args.slotName,
+      page_path: args.pagePath ?? getCurrentPagePath(),
+      page_surface: getPageSurface(args.pagePath ?? getCurrentPagePath()),
+      ...getViewportProperties(),
+    };
+    trackAdExperiment("ad_placement_experiment_exposed", properties);
+  },
+
+  homeAdPlacementExperimentEngaged(args: {
+    attribution: AdPlacementAttribution;
+    interaction: "forecast" | "rankings" | "synergy" | "other";
+    destinationPath: string;
+    elapsedMs: number;
+    pagePath?: string;
+  }) {
+    const properties = {
+      ...getAdPlacementExperimentProperties(args.attribution),
+      interaction: args.interaction,
+      destination_path: args.destinationPath,
+      elapsed_ms: Math.round(args.elapsedMs),
+      page_path: args.pagePath ?? getCurrentPagePath(),
+      page_surface: getPageSurface(args.pagePath ?? getCurrentPagePath()),
+      ...getViewportProperties(),
+    };
+    trackAdExperiment("home_ad_placement_experiment_engaged", properties);
+  },
+
+  homeAdPlacementExperimentExited(args: {
+    attribution: AdPlacementAttribution;
+    reason: "pagehide" | "component_unmount";
+    engaged: boolean;
+    durationMs: number;
+    pagePath?: string;
+  }) {
+    const properties = {
+      ...getAdPlacementExperimentProperties(args.attribution),
+      exit_reason: args.reason,
+      engaged: args.engaged,
+      fast_exit: !args.engaged && args.durationMs < 10_000,
+      duration_ms: Math.round(args.durationMs),
+      page_path: args.pagePath ?? getCurrentPagePath(),
+      page_surface: getPageSurface(args.pagePath ?? getCurrentPagePath()),
+      ...getViewportProperties(),
+    };
+
+    if (args.reason === "pagehide") {
+      trackOnPageExit("home_ad_placement_experiment_exited", properties);
+      return;
+    }
+    track("home_ad_placement_experiment_exited", properties);
+  },
+
   /** 광고 슬롯 DOM 렌더링 — 실제 광고 fill 여부와 무관하게 슬롯 노출 후보를 측정한다. */
   adSlotRendered(args: {
     slotName: AdSlotName;
@@ -472,6 +547,7 @@ export const analytics = {
     eventPagePath?: string;
     reservedHeight?: number;
     reservedWidth?: number | null;
+    experiment?: AdPlacementAttribution;
   }) {
     track("ad_slot_rendered", {
       slot_name: args.slotName,
@@ -481,6 +557,7 @@ export const analytics = {
       viewport_eligible: isAdSlotViewportEligible(args.slotName),
       reserved_height: args.reservedHeight,
       reserved_width: args.reservedWidth,
+      ...getAdPlacementExperimentProperties(args.experiment),
       ...getAdPerformanceProperties(),
     });
   },
@@ -496,6 +573,7 @@ export const analytics = {
     reservedWidth?: number | null;
     renderToViewableMs?: number;
     fillToViewableMs?: number;
+    experiment?: AdPlacementAttribution;
   }) {
     track("ad_slot_viewed", {
       slot_name: args.slotName,
@@ -507,6 +585,7 @@ export const analytics = {
       reserved_width: args.reservedWidth,
       render_to_viewable_ms: args.renderToViewableMs,
       fill_to_viewable_ms: args.fillToViewableMs,
+      ...getAdPlacementExperimentProperties(args.experiment),
       ...getAdPerformanceProperties(),
     });
   },
@@ -526,6 +605,7 @@ export const analytics = {
     reservedWidth: number | null;
     elapsedSinceRenderMs?: number;
     requestToStateMs?: number;
+    experiment?: AdPlacementAttribution;
   }) {
     track("ad_slot_state_changed", {
       slot_name: args.slotName,
@@ -541,6 +621,7 @@ export const analytics = {
       reserved_width: args.reservedWidth,
       elapsed_since_render_ms: args.elapsedSinceRenderMs,
       request_to_state_ms: args.requestToStateMs,
+      ...getAdPlacementExperimentProperties(args.experiment),
       ...getAdPerformanceProperties(),
     });
   },
@@ -561,6 +642,7 @@ export const analytics = {
     reservedWidth: number | null;
     elapsedSinceRenderMs?: number;
     elapsedSinceRequestMs: number;
+    experiment?: AdPlacementAttribution;
   }) {
     const properties = {
       slot_name: args.slotName,
@@ -577,6 +659,7 @@ export const analytics = {
       reserved_width: args.reservedWidth,
       elapsed_since_render_ms: args.elapsedSinceRenderMs,
       elapsed_since_request_ms: args.elapsedSinceRequestMs,
+      ...getAdPlacementExperimentProperties(args.experiment),
       ...getAdPerformanceProperties(),
     };
 
