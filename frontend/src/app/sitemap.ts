@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getAllPatchVersions } from "@/data/patch-notes";
+import { getPatchTierForecastVersions } from "@/data/patch-tier-forecasts";
 import { getPatchAnalysisVersions } from "@/lib/patchAnalysis";
 import {
   buildSeoAlternateLanguages,
@@ -21,6 +22,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const patchAnalysisPath = latestPatchAnalysisVersion
     ? `/patch-analysis/${latestPatchAnalysisVersion}`
     : "/patch-analysis";
+  const latestPatchForecastVersion = getPatchTierForecastVersions()[0];
+  const patchForecastPath = latestPatchForecastVersion
+    ? `/patch-forecast/${latestPatchForecastVersion}`
+    : "/patch-forecast";
 
   const buildAlternates = (pathname: string) => {
     const languages = buildSeoAlternateLanguages(pathname);
@@ -59,6 +64,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     buildLocalizedEntry("/season11-recap", "daily", 0.85),
     buildLocalizedEntry("/patches", "weekly", 0.7),
     buildLocalizedEntry(patchAnalysisPath, "daily", 0.82),
+    buildLocalizedEntry(patchForecastPath, "daily", 0.8),
     buildLocalizedEntry("/privacy", "monthly", 0.35),
     buildLocalizedEntry("/terms", "monthly", 0.35),
     {
@@ -139,6 +145,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "daily",
       priority: 0.72,
       alternates: buildAlternates(patchAnalysisPath),
+    },
+    {
+      url: `${base}${prefixSeoLocalePath(patchForecastPath, SEO_TARGET_LOCALE)}`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.7,
+      alternates: buildAlternates(patchForecastPath),
     },
     {
       url: `${base}${prefixSeoLocalePath("/privacy", SEO_TARGET_LOCALE)}`,
