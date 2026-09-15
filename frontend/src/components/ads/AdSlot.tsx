@@ -23,6 +23,7 @@ import {
   type AdBlockRecoveryMilestone,
 } from "@/lib/adBlockRecoveryExperiment";
 import { markAdSlotState } from "@/lib/adPerformance";
+import type { AdPlacementAttribution } from "@/lib/adPlacementExperiment";
 import {
   getAdSlotRequestAgeBucket,
   getDocumentVisibility,
@@ -47,6 +48,7 @@ interface AdSlotProps {
   className?: string;
   reservation?: AdSlotReservation;
   minHeight?: number;
+  experiment?: AdPlacementAttribution;
 }
 
 const AD_LABEL: Record<RouteLocale, string> = {
@@ -151,6 +153,7 @@ export function AdSlot({
   className,
   reservation,
   minHeight = 100,
+  experiment,
 }: AdSlotProps) {
   const locale = useLocale() as RouteLocale;
   const label = AD_LABEL[locale] ?? AD_LABEL.ko;
@@ -211,6 +214,7 @@ export function AdSlot({
           renderedAt.current === null ? undefined : currentTime - renderedAt.current,
         requestToStateMs:
           requestedAt.current === null ? undefined : currentTime - requestedAt.current,
+        experiment,
       });
       if (nextStatus === "filled") {
         trackAdBlockRecoveryDelivery("ad_filled", {
@@ -221,7 +225,7 @@ export function AdSlot({
       }
       previousStatus.current = nextStatus;
     },
-    [minHeight, reservation, slot, slotInstanceId, slotKey, slotName]
+    [experiment, minHeight, reservation, slot, slotInstanceId, slotKey, slotName]
   );
 
   const requestSlot = useCallback(() => {
@@ -267,6 +271,7 @@ export function AdSlot({
       elapsedSinceRenderMs:
         renderedAt.current === null ? undefined : currentTime - renderedAt.current,
       elapsedSinceRequestMs,
+      experiment,
     });
   });
 
@@ -277,6 +282,13 @@ export function AdSlot({
     const pagePath = getCurrentPagePath();
     lifecyclePagePath.current = pagePath;
     markAdSlotState(slotKey, "rendered");
+    if (experiment) {
+      analytics.adPlacementExperimentExposed({
+        attribution: experiment,
+        slotName,
+        pagePath,
+      });
+    }
     analytics.adSlotRendered({
       slotName,
       adSlotId: slot,
@@ -285,8 +297,9 @@ export function AdSlot({
       eventPagePath: pagePath,
       reservedHeight: getCurrentReservedHeight(reservation, minHeight),
       reservedWidth: reservation?.width ?? null,
+      experiment,
     });
-  }, [minHeight, reservation, slot, slotInstanceId, slotKey, slotName]);
+  }, [experiment, minHeight, reservation, slot, slotInstanceId, slotKey, slotName]);
 
   useEffect(() => {
     if (ADSENSE_PREVIEW || !ADSENSE_CLIENT || !slot) return;
@@ -392,6 +405,7 @@ export function AdSlot({
                 renderedAt.current === null ? undefined : currentTime - renderedAt.current,
               fillToViewableMs:
                 filledAt.current === null ? undefined : currentTime - filledAt.current,
+              experiment,
             });
             trackAdBlockRecoveryDelivery("ad_viewed", {
               slotName,
@@ -413,7 +427,7 @@ export function AdSlot({
       clearViewTimer();
       observer.disconnect();
     };
-  }, [minHeight, reservation, slot, slotInstanceId, slotKey, slotName, status]);
+  }, [experiment, minHeight, reservation, slot, slotInstanceId, slotKey, slotName, status]);
 
   if (ADSENSE_PREVIEW) {
     return (

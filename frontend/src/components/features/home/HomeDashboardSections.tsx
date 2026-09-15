@@ -13,6 +13,7 @@ import { GlobalFilter } from "@/components/features/GlobalFilter";
 import { HomeFilterAside } from "@/components/features/HomeFilterAside";
 import { HoneyPicksSection } from "@/components/features/HoneyPicksSection";
 import { TierRankingTable } from "@/components/features/TierRankingTable";
+import { getCurrentAdPlacementAttribution } from "@/lib/adPlacementExperiment";
 import {
   buildHomeMetaView,
   createEmptyHomeMetaStats,
@@ -39,6 +40,7 @@ function HomeDashboardSectionsBody({
   const { patch, tier } = useFilter();
   const selectedPatch = patch || defaultPatch;
   const isPreseasonPatch = selectedPatch === "11.0";
+  const adPlacementExperiment = React.useMemo(() => getCurrentAdPlacementAttribution(), []);
   const [statsByPatch, setStatsByPatch] = React.useState<Record<string, HomeMetaStats>>(() => ({
     [homeMetaStats.patchVersion]: homeMetaStats,
   }));
@@ -92,14 +94,6 @@ function HomeDashboardSectionsBody({
 
   return (
     <div className="home-dashboard">
-      {canRenderAdSlot(ADSENSE_SLOTS.homeRanking) ? (
-        <AdSlot
-          slot={ADSENSE_SLOTS.homeRanking}
-          slotName="home_ranking"
-          className="home-data-ad px-3 py-2.5 sm:px-4"
-          reservation={ADSENSE_SLOT_RESERVATIONS.contentHorizontal}
-        />
-      ) : null}
       <section
         id="home-mobile-filter"
         className="home-analysis-context"
@@ -162,6 +156,16 @@ function HomeDashboardSectionsBody({
           <DeferredTierRankingTable initialData={computedView.rankingData} />
         ) : null}
       </section>
+
+      {canRenderAdSlot(ADSENSE_SLOTS.homeRanking) ? (
+        <AdSlot
+          slot={ADSENSE_SLOTS.homeRanking}
+          slotName="home_ranking"
+          className="home-data-ad home-ad-placement-experiment px-3 py-2.5 sm:px-4"
+          reservation={ADSENSE_SLOT_RESERVATIONS.contentHorizontal}
+          experiment={adPlacementExperiment}
+        />
+      ) : null}
 
       {!rankingOnly && (
         <section

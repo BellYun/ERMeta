@@ -647,6 +647,10 @@
   gap: var(--space-lg);
 }
 
+html[data-ad-placement-variant="optimized"] .home-ad-placement-experiment {
+  order: -1;
+}
+
 .home-empty-index {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(18rem, 1.1fr);
