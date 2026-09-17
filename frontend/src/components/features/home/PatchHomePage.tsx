@@ -34,7 +34,9 @@ export async function PatchHomePage({
             preview
           />
           <div className="home-entry__rankings">
-            <p className="home-entry__rankings-caption">{t("rankingsShortcutHint")}</p>
+            <p className="home-entry__rankings-caption">
+              {t("rankingsShortcutHint")} · {t("patch", { patch: homeMetaStats.patchVersion })}
+            </p>
             <div className="home-entry__rankings-intro" inert aria-hidden="true">
               <TierRankingTable initialData={view.rankingData} />
             </div>

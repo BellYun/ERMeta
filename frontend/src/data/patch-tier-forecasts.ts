@@ -1,4 +1,5 @@
 import type { Tier } from "@/lib/design-tokens";
+import { PATCH_12_4_TIER_FORECASTS } from "./12.4-tier-forecasts";
 
 export interface PatchTierForecast {
   weaponCode: number;
@@ -20,8 +21,9 @@ type StoredPatchTierForecast = Omit<PatchTierForecast, "reason">;
 // 실제 12.3 관측 티어와 구분하기 위해 패치 아카이브에서는 항상 "예상"으로 표시합니다.
 const PATCH_TIER_FORECASTS: Record<
   string,
-  Readonly<Record<number, readonly StoredPatchTierForecast[]>>
+  Readonly<Record<number, readonly (StoredPatchTierForecast | PatchTierForecast)[]>>
 > = {
+  "12.4": PATCH_12_4_TIER_FORECASTS,
   "12.3": {
     1: [
       { weaponCode: 14, currentTier: "A", tierLow: "B", tierMid: "B", tierHigh: "A" },
@@ -219,7 +221,10 @@ export function getCharacterTierForecasts(
 
   return forecasts.map((forecast) => ({
     ...forecast,
-    reason: reasons[`${characterCode}:${forecast.weaponCode}`] ?? "",
+    reason:
+      "reason" in forecast
+        ? forecast.reason
+        : (reasons[`${characterCode}:${forecast.weaponCode}`] ?? ""),
   }));
 }
 
@@ -231,7 +236,10 @@ export function getPatchTierForecasts(patch: string): readonly PatchTierForecast
     entries.map((forecast) => ({
       ...forecast,
       characterCode: Number(characterCode),
-      reason: reasons[`${characterCode}:${forecast.weaponCode}`] ?? "",
+      reason:
+        "reason" in forecast
+          ? forecast.reason
+          : (reasons[`${characterCode}:${forecast.weaponCode}`] ?? ""),
     }))
   );
 }

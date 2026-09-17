@@ -3,7 +3,10 @@ import {
   buildHomeMetaView,
   filterReadyStatsPatchVersions,
   getHomeMetaQualificationGames,
+  HOME_META_COMPARISON_PATCH,
+  HOME_META_FALLBACK_PATCH,
   HOME_META_MIN_COLLECTED_GAMES,
+  HOME_META_TARGET_PATCH,
   type HomeMetaStats,
 } from "@/lib/homeMetaShared";
 
@@ -59,18 +62,25 @@ describe("buildHomeMetaView cumulative tiers", () => {
 });
 
 describe("latest stats patch sample gate", () => {
-  const patches = ["12.3", "12.2", "12.1"];
+  const patches = ["12.4", "12.3", "12.2"];
+
+  it("12.4 통계 공개 전에는 12.3 순위와 비교 데이터를 사용한다", () => {
+    expect(HOME_META_TARGET_PATCH).toBe("12.4");
+    expect(HOME_META_FALLBACK_PATCH).toBe("12.3");
+    expect(HOME_META_COMPARISON_PATCH).toBe("12.3");
+  });
 
   it("원본 수집량에 8배 환산을 적용한다", () => {
     expect(getHomeMetaQualificationGames(6_249)).toBe(49_992);
     expect(getHomeMetaQualificationGames(6_250)).toBe(HOME_META_MIN_COLLECTED_GAMES);
   });
 
-  it("환산 기준 판수 전에는 12.2를 최신 통계 패치로 유지한다", () => {
-    expect(filterReadyStatsPatchVersions(patches, 6_249)).toEqual(["12.2", "12.1"]);
+  it("12.4 표본이 없거나 기준 판수 전에는 12.3을 최신 통계 패치로 유지한다", () => {
+    expect(filterReadyStatsPatchVersions(patches, 0)).toEqual(["12.3", "12.2"]);
+    expect(filterReadyStatsPatchVersions(patches, 6_249)).toEqual(["12.3", "12.2"]);
   });
 
-  it("환산 기준 판수를 채우면 12.3을 최신 통계 패치로 공개한다", () => {
+  it("환산 기준 판수를 채우면 12.4를 최신 통계 패치로 공개한다", () => {
     expect(filterReadyStatsPatchVersions(patches, 6_250)).toEqual(patches);
   });
 });

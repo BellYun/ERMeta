@@ -92,7 +92,14 @@ interface CausalEvaluationComment {
 
 const PATCH_12_4_COPY: Record<
   RouteLocale,
-  { intro: string; pending: string; caution: string; forecast: string; source: string }
+  {
+    intro: string;
+    pending: string;
+    caution: string;
+    forecast: string;
+    tierForecast: string;
+    source: string;
+  }
 > = {
   ko: {
     intro:
@@ -102,6 +109,7 @@ const PATCH_12_4_COPY: Record<
     caution:
       "12.4에는 갬빗 RP 배율과 매치메이킹 변경도 적용됩니다. API에서 갬빗 여부가 분리 검증되기 전에는 12.3 대비 평균 RP 차이를 실험체 패치 효과로 해석하지 않습니다.",
     forecast: "사전 전망",
+    tierForecast: "무기별 예상 티어 보기",
     source: "공식 12.4 패치노트",
   },
   en: {
@@ -112,6 +120,7 @@ const PATCH_12_4_COPY: Record<
     caution:
       "12.4 also introduced Gambit RP multipliers and matchmaking changes. Until Gambit participation is identifiable in the API, average RP changes cannot be attributed to character balance changes.",
     forecast: "Pre-patch outlook",
+    tierForecast: "View weapon-specific tier forecasts",
     source: "Official 12.4 patch notes",
   },
   ja: {
@@ -121,6 +130,7 @@ const PATCH_12_4_COPY: Record<
     caution:
       "12.4ではギャンビットのRP倍率とマッチング変更も導入されました。APIで参加状況を区別できるまでは、平均RPの差をキャラクター調整の効果とは見なしません。",
     forecast: "事前予測",
+    tierForecast: "武器別の予想ティアを見る",
     source: "公式12.4パッチノート",
   },
   "zh-Hans": {
@@ -130,6 +140,7 @@ const PATCH_12_4_COPY: Record<
     caution:
       "12.4还引入了Gambit RP倍率和匹配改动。在API无法区分参与情况前，平均RP差异不能归因于角色平衡调整。",
     forecast: "事前预测",
+    tierForecast: "查看各武器预测梯队",
     source: "12.4官方更新公告",
   },
   "zh-Hant": {
@@ -139,6 +150,7 @@ const PATCH_12_4_COPY: Record<
     caution:
       "12.4亦引入Gambit RP倍率和配對改動。在API無法區分參與情況前，平均RP差異不能歸因於角色平衡調整。",
     forecast: "事前預測",
+    tierForecast: "查看各武器預測梯隊",
     source: "12.4官方更新公告",
   },
 };
@@ -1512,14 +1524,22 @@ export default async function PatchAnalysisPage({
           <p className="mt-2 text-sm leading-6 text-[var(--color-muted-foreground)]">
             {PATCH_12_4_COPY[locale].caution}
           </p>
-          <a
-            href={PATCH_12_4_SOURCE}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 inline-flex text-sm font-semibold text-[var(--color-accent-foreground)] underline underline-offset-4"
-          >
-            {PATCH_12_4_COPY[locale].source}
-          </a>
+          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-[var(--color-accent-foreground)]">
+            <Link
+              href="/patch-forecast/12.4#forecast-results"
+              className="underline underline-offset-4"
+            >
+              {PATCH_12_4_COPY[locale].tierForecast}
+            </Link>
+            <a
+              href={PATCH_12_4_SOURCE}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-4"
+            >
+              {PATCH_12_4_COPY[locale].source}
+            </a>
+          </div>
         </section>
       ) : null}
 

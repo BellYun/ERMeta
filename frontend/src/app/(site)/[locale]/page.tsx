@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { PatchHomePage } from "@/components/features/home/PatchHomePage";
+import { getAllPatchVersions } from "@/data/patch-notes";
 import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
 import { getPatches } from "@/lib/getPatches";
 import { getCachedHomeMetaStats } from "@/lib/homeMetaServer";
@@ -75,13 +76,14 @@ export default async function LocalizedHomePage({ params }: LocalePageProps) {
   setRequestLocale(locale);
 
   const availablePatches = await getPatches();
-  const currentPatch = availablePatches[0] ?? HOME_META_FALLBACK_PATCH;
-  let homeMetaStats = createEmptyHomeMetaStats(currentPatch);
+  const currentStatsPatch = availablePatches[0] ?? HOME_META_FALLBACK_PATCH;
+  const currentPatch = getAllPatchVersions()[0] ?? currentStatsPatch;
+  let homeMetaStats = createEmptyHomeMetaStats(currentStatsPatch);
 
   try {
-    homeMetaStats = await getCachedHomeMetaStats(currentPatch);
+    homeMetaStats = await getCachedHomeMetaStats(currentStatsPatch);
   } catch {
-    homeMetaStats = createEmptyHomeMetaStats(currentPatch);
+    homeMetaStats = createEmptyHomeMetaStats(currentStatsPatch);
   }
 
   return (
