@@ -51,7 +51,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
     ? `/patch-analysis/${patchAnalysisPatch}`
     : "/patch-analysis";
   const seasonRecapPath = "/season11-recap";
-  const patchNotesAnnouncementPath = "/patches/12.3";
+  const patchNotesAnnouncementPath = "/patches/12.4";
   const showPatchNotesAnnouncement = normalizedPathname !== patchNotesAnnouncementPath;
 
   const navLinks: Array<{

@@ -4,6 +4,7 @@ import Image from "next/image";
 import type { ReactNode } from "react";
 import { SiteContentAd } from "@/components/ads/SiteContentAd";
 import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeBadgeStatic";
+import { PATCH_12_4_SOURCE } from "@/data/12.4-balance-context";
 import { localizePatchChanges } from "@/data/patch-note-localization";
 import { Link } from "@/i18n/navigation";
 import { LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
@@ -89,6 +90,59 @@ interface CausalEvaluationComment {
   tone: "positive" | "negative" | "neutral";
 }
 
+const PATCH_12_4_COPY: Record<
+  RouteLocale,
+  { intro: string; pending: string; caution: string; forecast: string; source: string }
+> = {
+  ko: {
+    intro:
+      "12.3 지표를 기준선으로 삼아 12.4의 공식 변경점과 관찰 포인트를 정리했습니다. 아래 해석은 사전 전망이며 12.4 관측 결과가 아닙니다.",
+    pending:
+      "12.4 랭크 표본을 집계 중입니다. 통계가 쌓이기 전에는 버프·너프의 실제 효과를 단정하지 않습니다.",
+    caution:
+      "12.4에는 갬빗 RP 배율과 매치메이킹 변경도 적용됩니다. API에서 갬빗 여부가 분리 검증되기 전에는 12.3 대비 평균 RP 차이를 실험체 패치 효과로 해석하지 않습니다.",
+    forecast: "사전 전망",
+    source: "공식 12.4 패치노트",
+  },
+  en: {
+    intro:
+      "This preview maps official 12.4 changes against the 12.3 baseline. Its impact notes are forecasts, not observed 12.4 results.",
+    pending:
+      "12.4 ranked samples are still being collected. No performance conclusion is drawn from missing data.",
+    caution:
+      "12.4 also introduced Gambit RP multipliers and matchmaking changes. Until Gambit participation is identifiable in the API, average RP changes cannot be attributed to character balance changes.",
+    forecast: "Pre-patch outlook",
+    source: "Official 12.4 patch notes",
+  },
+  ja: {
+    intro:
+      "12.3の指標を基準に、12.4の公式変更と注目点を整理しました。影響の記述は事前予測であり、12.4の観測結果ではありません。",
+    pending: "12.4のランク標本を集計中です。十分なデータがない段階で効果を断定しません。",
+    caution:
+      "12.4ではギャンビットのRP倍率とマッチング変更も導入されました。APIで参加状況を区別できるまでは、平均RPの差をキャラクター調整の効果とは見なしません。",
+    forecast: "事前予測",
+    source: "公式12.4パッチノート",
+  },
+  "zh-Hans": {
+    intro:
+      "以12.3数据为基线，整理12.4官方改动及观察重点。以下影响判断是事前预测，并非12.4实测结果。",
+    pending: "12.4排位样本仍在收集中；数据不足时不判断调整的实际效果。",
+    caution:
+      "12.4还引入了Gambit RP倍率和匹配改动。在API无法区分参与情况前，平均RP差异不能归因于角色平衡调整。",
+    forecast: "事前预测",
+    source: "12.4官方更新公告",
+  },
+  "zh-Hant": {
+    intro:
+      "以12.3數據為基線，整理12.4官方改動及觀察重點。以下影響判斷是事前預測，並非12.4實測結果。",
+    pending: "12.4排位樣本仍在收集中；數據不足時不判斷調整的實際效果。",
+    caution:
+      "12.4亦引入Gambit RP倍率和配對改動。在API無法區分參與情況前，平均RP差異不能歸因於角色平衡調整。",
+    forecast: "事前預測",
+    source: "12.4官方更新公告",
+  },
+};
+
 function patchContextComment(
   body: string,
   tone: CausalEvaluationComment["tone"] = "neutral"
@@ -97,6 +151,44 @@ function patchContextComment(
 }
 
 const PATCH_CONTEXT_COMMENTS: Record<string, Record<number, CausalEvaluationComment[]>> = {
+  "12.4": {
+    9: patchContextComment(
+      "권총 아이솔의 R 스킬 증폭 계수만 5%p 올랐습니다. 다른 무기 빌드까지 같은 상향으로 해석하지 않고 권총 표본을 따로 확인해야 합니다."
+    ),
+    15: patchContextComment(
+      "투척 숙련도는 레벨당 스킬 증폭이 0.1%p 낮아지고 암기는 0.2%p 높아집니다. 두 무기의 패치 반응을 합산하면 방향이 가려질 수 있습니다."
+    ),
+    16: patchContextComment(
+      "스페어휠의 최소·최대 스킬 증폭 계수가 모두 올랐지만 근접 E 적중 조건이 있습니다. 빌드별 스킬 증폭과 교전 거리 차이를 함께 봐야 합니다."
+    ),
+    23: patchContextComment(
+      "R의 2·3레벨 기본 피해가 최소·최대 구간에서 함께 줄었습니다. 후반 광역 교전 영향이 예상되지만 초기 RP 변화만으로 크기를 판단하기는 어렵습니다."
+    ),
+    29: patchContextComment(
+      "잠영 E의 스킬 증폭 계수가 10%p 줄어 적중 순간 화력이 낮아집니다. E 적중률과 스킬 증폭 빌드 비중에 따라 체감 차이가 클 수 있습니다."
+    ),
+    44: patchContextComment(
+      "블랙맘바 R의 후반 기본 피해와 추가 체력 계수가 하향됩니다. 반면 VF 안정화 중 블링크 사용도 가능해져, 블랙맘바와 다른 VF 의수 유형을 분리해 추적해야 합니다."
+    ),
+    46: patchContextComment(
+      "낙뢰 R의 1·2차 피해가 함께 상향됩니다. 두 타격을 모두 적중시키는 교전에서 상승 폭이 크겠지만 픽률 변화가 지표에 미치는 영향도 확인해야 합니다."
+    ),
+    52: patchContextComment(
+      "12.3에서 의도치 않게 E 2타까지 높아진 피해가 수정됩니다. 공식 문서에 정확한 실효 감소 수치가 없어 피해량 하향 폭은 추정하지 않습니다."
+    ),
+    70: patchContextComment(
+      "성장 체력과 공격력이 함께 하향돼 게임 후반일수록 누적 효과가 커집니다. 단기 표본에서는 플레이어 구성 변화와 분리해 살펴봐야 합니다."
+    ),
+    73: patchContextComment(
+      "성장 방어력과 R 쿨다운이 동시에 하향돼 후반 생존과 재교전 간격 모두 영향을 받습니다. 승률과 픽률을 함께 확인할 필요가 있습니다."
+    ),
+    81: patchContextComment(
+      "Q 경로 피해의 스킬 증폭 계수가 5%p 올랐습니다. 경로 적중에 한정된 상향이어서 전체 Q 피해가 같은 비율로 오르는 것은 아닙니다."
+    ),
+    90: patchContextComment(
+      "이동 속도 증가 시간과 R 기절 시간이 동시에 늘어 교전 위치 선정과 연계가 좋아집니다. 실제 성과는 적중률과 팀 조합에 좌우될 수 있습니다."
+    ),
+  },
   "11.5": {
     2: patchContextComment(
       "아야는 패시브 보호막 버프를 받았고, 일부 아이템 버프의 수혜도 있었으나 지표가 크게 상승하지는 않았습니다. 원거리 딜러 강세로 인해 함께 기용되던 전사 실험체들의 지표가 좋지 않은 점도 영향을 준 것으로 보입니다. 현재까지는 버프가 크게 유의미하게 반영되었다고 보기는 어렵고, 남은 패치 흐름을 더 지켜볼 필요가 있습니다."
@@ -625,7 +717,10 @@ export async function generateMetadata(version?: string): Promise<Metadata> {
   return {
     metadataBase: new URL(BASE_URL),
     title: `패치 메타 분석 - ${data.currentPatch} 통계 변화`,
-    description: `이터널리턴 최신 패치 기준 다이아 이상 통계 분석. ${data.currentPatch}과 ${data.previousPatch}의 평균 RP, 승률, 픽률, 순방률 변화를 비교합니다.`,
+    description:
+      data.currentPatch === "12.4"
+        ? "이터널리턴 12.4 공식 변경점과 12.3 기준 사전 전망. 관측 통계와 갬빗 RP 영향은 분리합니다."
+        : `이터널리턴 최신 패치 기준 다이아 이상 통계 분석. ${data.currentPatch}과 ${data.previousPatch}의 평균 RP, 승률, 픽률, 순방률 변화를 비교합니다.`,
     alternates: { canonical: pathname },
     openGraph: {
       title: "패치 메타 분석",
@@ -840,7 +935,7 @@ function CharacterDeltaCard({
         {causalComments.length > 0 ? (
           <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-3">
             <p className="text-[11px] font-semibold text-[var(--color-foreground)]">
-              {copy.evaluation}
+              {entry.note.patch === "12.4" ? PATCH_12_4_COPY[locale].forecast : copy.evaluation}
             </p>
             <div className="mt-2 grid gap-2">
               {causalComments.map((comment) => (
@@ -889,7 +984,7 @@ function DiamondMetricPanel({
         <DiamondMetricStat
           label={copy.card.averageRP}
           value={metric.current ? formatSigned(metric.current.averageRP, 1) : "-"}
-          delta={hasComparableMetrics ? metric.deltaAverageRP : null}
+          delta={hasComparableMetrics && entry.note.patch !== "12.4" ? metric.deltaAverageRP : null}
         />
         <DiamondMetricStat
           label={copy.card.deltaWinRate}
@@ -1311,6 +1406,8 @@ export default async function PatchAnalysisPage({
   const worstRoleLabel = worstRole ? getRoleLabel(locale, worstRole.role) : "";
   const showDescriptions = data.currentPatch !== "11.4";
   const showRawMetrics = data.currentPatch !== "11.5";
+  const isPatch124 = data.currentPatch === "12.4";
+  const hasCurrentSample = data.totalMatches > 0;
 
   return (
     <main className="page-shell flex flex-col gap-5 lg:gap-6">
@@ -1337,7 +1434,7 @@ export default async function PatchAnalysisPage({
             </h1>
             {showDescriptions ? (
               <p className="mt-2 max-w-[44rem] text-base leading-7 text-[var(--color-foreground)]">
-                {copy.intro}
+                {isPatch124 ? PATCH_12_4_COPY[locale].intro : copy.intro}
               </p>
             ) : null}
             {showDescriptions && showRawMetrics && bestRole && worstRole ? (
@@ -1402,7 +1499,31 @@ export default async function PatchAnalysisPage({
         </div>
       </section>
 
-      {showRawMetrics ? (
+      {isPatch124 ? (
+        <section
+          className="dashboard-panel border-l-4 border-l-[var(--color-accent)] p-4 lg:p-6"
+          aria-label={PATCH_12_4_COPY[locale].forecast}
+        >
+          {!hasCurrentSample ? (
+            <p className="text-base font-semibold leading-7 text-[var(--color-foreground)]">
+              {PATCH_12_4_COPY[locale].pending}
+            </p>
+          ) : null}
+          <p className="mt-2 text-sm leading-6 text-[var(--color-muted-foreground)]">
+            {PATCH_12_4_COPY[locale].caution}
+          </p>
+          <a
+            href={PATCH_12_4_SOURCE}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-flex text-sm font-semibold text-[var(--color-accent-foreground)] underline underline-offset-4"
+          >
+            {PATCH_12_4_COPY[locale].source}
+          </a>
+        </section>
+      ) : null}
+
+      {showRawMetrics && !isPatch124 && hasCurrentSample ? (
         <>
           <RoleTable
             roles={data.roleMetrics}
@@ -1435,13 +1556,21 @@ export default async function PatchAnalysisPage({
       <SiteContentAd />
 
       <CharacterSection
-        title={showRawMetrics ? copy.sections.buffTitle : copy.sections.focusedBuffTitle}
+        title={
+          isPatch124
+            ? `${copy.changeLabels.buff} · ${PATCH_12_4_COPY[locale].forecast}`
+            : showRawMetrics
+              ? copy.sections.buffTitle
+              : copy.sections.focusedBuffTitle
+        }
         description={
-          showDescriptions
-            ? showRawMetrics
-              ? copy.sections.buffDescription
-              : copy.sections.focusedBuffDescription
-            : undefined
+          isPatch124
+            ? undefined
+            : showDescriptions
+              ? showRawMetrics
+                ? copy.sections.buffDescription
+                : copy.sections.focusedBuffDescription
+              : undefined
         }
         entries={data.buffed}
         copy={copy}
@@ -1450,13 +1579,21 @@ export default async function PatchAnalysisPage({
         fallbackMap={fallbackMap}
       />
       <CharacterSection
-        title={showRawMetrics ? copy.sections.nerfTitle : copy.sections.focusedNerfTitle}
+        title={
+          isPatch124
+            ? `${copy.changeLabels.nerf} · ${PATCH_12_4_COPY[locale].forecast}`
+            : showRawMetrics
+              ? copy.sections.nerfTitle
+              : copy.sections.focusedNerfTitle
+        }
         description={
-          showDescriptions
-            ? showRawMetrics
-              ? copy.sections.nerfDescription
-              : copy.sections.focusedNerfDescription
-            : undefined
+          isPatch124
+            ? undefined
+            : showDescriptions
+              ? showRawMetrics
+                ? copy.sections.nerfDescription
+                : copy.sections.focusedNerfDescription
+              : undefined
         }
         entries={data.nerfed}
         copy={copy}
@@ -1465,13 +1602,21 @@ export default async function PatchAnalysisPage({
         fallbackMap={fallbackMap}
       />
       <CharacterSection
-        title={showRawMetrics ? copy.sections.mixedTitle : copy.sections.focusedMixedTitle}
+        title={
+          isPatch124
+            ? `${copy.changeLabels.adjust} · ${PATCH_12_4_COPY[locale].forecast}`
+            : showRawMetrics
+              ? copy.sections.mixedTitle
+              : copy.sections.focusedMixedTitle
+        }
         description={
-          showDescriptions
-            ? showRawMetrics
-              ? copy.sections.mixedDescription
-              : copy.sections.focusedMixedDescription
-            : undefined
+          isPatch124
+            ? undefined
+            : showDescriptions
+              ? showRawMetrics
+                ? copy.sections.mixedDescription
+                : copy.sections.focusedMixedDescription
+              : undefined
         }
         entries={data.mixed}
         copy={copy}
@@ -1480,7 +1625,7 @@ export default async function PatchAnalysisPage({
         fallbackMap={fallbackMap}
       />
 
-      {showDescriptions && showRawMetrics ? (
+      {showDescriptions && showRawMetrics && !isPatch124 ? (
         <section className="dashboard-panel p-4 lg:p-6">
           <div className="flex flex-col gap-2">
             <p className="dashboard-kicker">{copy.guideKicker}</p>

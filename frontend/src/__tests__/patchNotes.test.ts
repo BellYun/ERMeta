@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { PATCH_12_4_BALANCE_CONTEXT, PATCH_12_4_SOURCE } from "@/data/12.4-balance-context";
 import {
   getAllPatchVersions,
   getCharacterPatchNote,
@@ -135,9 +136,9 @@ describe("12.2 patch notes", () => {
 });
 
 describe("12.3 patch notes", () => {
-  it("12.3을 최신 패치 및 통계 후보로 노출한다", () => {
-    expect(getAllPatchVersions()[0]).toBe("12.3");
-    expect(getStatsPatchVersions()[0]).toBe("12.3");
+  it("12.3을 이전 패치 및 통계 후보로 유지한다", () => {
+    expect(getAllPatchVersions()).toContain("12.3");
+    expect(getStatsPatchVersions()).toContain("12.3");
   });
 
   it("공식 실험체 변경 수와 유형을 보존한다", () => {
@@ -169,5 +170,52 @@ describe("12.3 patch notes", () => {
       "nerf",
       "buff",
     ]);
+  });
+});
+
+describe("12.4 patch notes", () => {
+  it("12.4를 최신 패치로 노출하고 12.3 이력을 유지한다", () => {
+    expect(getAllPatchVersions().slice(0, 2)).toEqual(["12.4", "12.3"]);
+    expect(getStatsPatchVersions().slice(0, 2)).toEqual(["12.4", "12.3"]);
+  });
+
+  it("공식 실험체 35명의 변경 방향을 보존한다", () => {
+    expect(getNotesByPatch("12.4")).toHaveLength(35);
+    expect(getPatchSummary("12.4")).toEqual({
+      patch: "12.4",
+      totalChanges: 45,
+      buffs: 24,
+      nerfs: 21,
+      reworks: 0,
+      characterCount: 35,
+    });
+  });
+
+  it("무기별 조정과 전체 VF 의수 개선을 혼합 변경으로 유지한다", () => {
+    expect(
+      getCharacterPatchNote(15, "12.4")?.changes.map((change) => [
+        change.weaponMasteryCode,
+        change.changeType,
+      ])
+    ).toEqual([
+      [5, "nerf"],
+      [6, "buff"],
+    ]);
+    expect(getCharacterPatchNote(44, "12.4")?.changes.map((change) => change.changeType)).toEqual([
+      "nerf",
+      "buff",
+    ]);
+    expect(getCharacterPatchNote(9, "12.4")?.changes[0].weaponMasteryCode).toBe(9);
+  });
+
+  it("시스템·특성·장비 변경과 공식 출처를 별도로 보존한다", () => {
+    expect(PATCH_12_4_SOURCE).toContain("/news/3838");
+    expect(PATCH_12_4_BALANCE_CONTEXT.map((section) => section.title)).toEqual([
+      "맵·경제·무기 스킬",
+      "특성",
+      "무기",
+      "방어구·강화",
+    ]);
+    expect(PATCH_12_4_BALANCE_CONTEXT.flatMap((section) => section.entries)).toHaveLength(43);
   });
 });

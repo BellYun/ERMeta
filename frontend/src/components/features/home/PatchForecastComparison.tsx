@@ -352,6 +352,21 @@ export async function PatchForecastComparison({
       </article>
     );
   }
+  if (preview && currentPatch === "12.4" && comparisons.length === 0) {
+    return (
+      <section className="home-forecast-preview" aria-labelledby="home-forecast-preview-title">
+        <div className="patch-home__section-heading">
+          <div>
+            <h2 id="home-forecast-preview-title">{t("patchImpactTitle")}</h2>
+            <p>{t("patchImpactBody")}</p>
+          </div>
+        </div>
+        <Link className="home-forecast-preview__cta" href={`/${locale}/patch-analysis/12.4`}>
+          {t("patchImpactLink")} <ArrowUpRight size={16} aria-hidden="true" />
+        </Link>
+      </section>
+    );
+  }
   if (preview) {
     const observedCandidates = comparisons.filter(
       (comparison) => comparison.actual && (comparison.row?.totalGames ?? 0) >= 100
