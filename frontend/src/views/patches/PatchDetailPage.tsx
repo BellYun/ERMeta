@@ -12,6 +12,7 @@ import {
   PatchVersionSelect,
 } from "@/components/features/patches/PatchNotesBrowser";
 import { TierBadge } from "@/components/features/TierBadge";
+import { PATCH_12_4_BALANCE_CONTEXT, PATCH_12_4_SOURCE } from "@/data/12.4-balance-context";
 import { hasPatchChangeLocalization, localizePatchNotes } from "@/data/patch-note-localization";
 import { getAllPatchVersions, getNotesByPatch, getPatchSummary } from "@/data/patch-notes";
 import { getCharacterTierForecasts } from "@/data/patch-tier-forecasts";
@@ -426,6 +427,60 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
           ),
         }))}
       />
+      {version === "12.4" && locale === "ko" ? (
+        <section className="dashboard-panel p-4 sm:p-6" aria-labelledby="patch-balance-context">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="dashboard-kicker">공식 변경점 · 루미아 섬</p>
+              <h2
+                id="patch-balance-context"
+                className="mt-2 text-lg font-bold text-[var(--color-foreground)]"
+              >
+                장비·특성·시스템 변경
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-[var(--color-muted-foreground)]">
+                실험체별 직접 조정과 별도로 적용되는 변경입니다. 코발트 프로토콜 전용 보정은
+                포함하지 않았습니다.
+              </p>
+            </div>
+            <a
+              href={PATCH_12_4_SOURCE}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-semibold text-[var(--color-accent-foreground)] underline underline-offset-4"
+            >
+              12.4 공식 원문
+            </a>
+          </div>
+          <div className="mt-5 grid gap-3 md:grid-cols-2">
+            {PATCH_12_4_BALANCE_CONTEXT.map((section) => (
+              <details
+                key={section.title}
+                className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+              >
+                <summary className="cursor-pointer text-sm font-bold text-[var(--color-foreground)]">
+                  {section.title}{" "}
+                  <span className="font-normal text-[var(--color-muted-foreground)]">
+                    · {section.entries.length}건
+                  </span>
+                </summary>
+                <ul className="mt-3 divide-y divide-[var(--color-border)]">
+                  {section.entries.map((entry) => (
+                    <li key={entry.target} className="py-2 text-sm leading-6">
+                      <span className="font-semibold text-[var(--color-foreground)]">
+                        {entry.target}
+                      </span>
+                      <span className="ml-2 font-mono text-[var(--color-muted-foreground)]">
+                        {entry.value}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            ))}
+          </div>
+        </section>
+      ) : null}
       <nav
         aria-label={t("breadcrumb")}
         className="flex justify-between gap-4 border-t border-[var(--color-border)] pt-3 text-sm text-[var(--color-muted-foreground)]"

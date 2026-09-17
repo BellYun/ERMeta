@@ -8,8 +8,8 @@
     "seasonRecapBody": "Review per-patch top RP comps and the full season meta flow in one place.",
     "seasonRecapCta": "Open recap",
     "patchAnalysisBadge": "Patch analysis",
-    "patchAnalysisTitle": "Patch 12.3 notes analysis and tier forecast are live",
-    "patchAnalysisBody": "Review balance changes and Diamond+ tier forecasts.",
+    "patchAnalysisTitle": "Patch 12.4 notes and pre-patch analysis are live",
+    "patchAnalysisBody": "Review official changes and watch points, with forecasts kept separate from observed stats.",
     "patchAnalysisCta": "Open analysis",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
@@ -184,7 +184,7 @@
     "heroDescription": "Analyze the current Eternal Return meta through aggregated match data.",
     "matchMetric": "Estimated collected matches",
     "matchMetricDescription": "Estimated from all participation records for patch {patch}, assuming 21 players per match. This differs from the selected sample below.",
-    "patchAnalysisCta": "Patch 12.3 analysis",
+    "patchAnalysisCta": "Patch 12.4 analysis",
     "winRateMetric": "High-rank avg win rate",
     "rpMetric": "High-rank avg RP",
     "guide": {
@@ -205,7 +205,7 @@
       "title": "Current patch meta is summarized with ranked decision metrics, not win rate alone",
       "body": "ER&GG organizes Eternal Return ranked data across character tiers, trio compositions, weapon choices, and patch changes. Win rate is treated as first-place conversion, placement rate as placement stability, average RP as climb efficiency, and pick rate with sample size as context for reliability. The same character can read differently by patch, tier, team role, and weapon choice, so the current patch is used as the default baseline. Character pages and patch notes connect current statistics with balance changes.",
       "characterCta": "Character analysis",
-      "analysisCta": "Patch 12.3 analysis",
+      "analysisCta": "Patch 12.4 analysis",
       "patchCta": "Patch notes",
       "methodologyCta": "Methodology"
     },
@@ -1058,6 +1058,9 @@
     }
   },
   "patchHome": {
+    "patchImpactTitle": "Patch 12.4 · pre-patch outlook",
+    "patchImpactBody": "Explore 35 character changes plus equipment, trait, and system updates. Observed stats are tracked separately.",
+    "patchImpactLink": "View 12.4 analysis",
     "forecastDetailsLink": "Compare forecasts and results",
     "forecastPendingDetailsLink": "View all patch forecasts",
     "rankingsShortcutHint": "Looking for strong picks right now?",
