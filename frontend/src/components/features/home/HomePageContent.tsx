@@ -13,6 +13,7 @@ import { getTranslations } from "next-intl/server";
 import { CharacterSearchCombobox } from "@/components/features/character-analysis/CharacterSearchCombobox";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { Badge } from "@/components/ui/badge";
+import type { ActiveRouteLocale } from "@/i18n/routing";
 import type { HomeMetaStats } from "@/lib/homeMetaShared";
 import {
   getHomeMetaQualificationGames,
@@ -22,10 +23,11 @@ import {
   isHomeMetaTargetReady,
 } from "@/lib/homeMetaShared";
 import type { RankingResponse } from "@/lib/ranking";
+import { localizeRoutePath } from "@/lib/seoLocales";
 import { HomeDashboardSections } from "./HomeDashboardSections";
 
 interface HomePageContentProps {
-  locale: string;
+  locale: ActiveRouteLocale;
   patches: string[];
   currentPatch: string;
   homeMetaStats: HomeMetaStats;
@@ -63,7 +65,7 @@ export async function HomePageContent({
     ? formatMetricNumber(collectedGames / ESTIMATED_PARTICIPANTS_PER_MATCH)
     : "";
   const fallbackPatch = currentPatch || defaultPatch || HOME_META_FALLBACK_PATCH;
-  const patchAnalysisHref = `/${locale}/patch-analysis/12.4`;
+  const patchAnalysisHref = localizeRoutePath("/patch-analysis/12.4", locale);
   const isPreseasonPreparing = currentPatch === "12.0";
   const isCollectionPending = !isPreseasonPreparing && !isCollectionReady;
   const isPreparing = isPreseasonPreparing || isCollectionPending;
@@ -73,7 +75,11 @@ export async function HomePageContent({
     <div className="page-shell home-shell home-shell--shadcn home-editorial flex flex-col">
       {isPreparing ? (
         <section aria-labelledby="home-season-recap-title">
-          <Link className="home-season-recap" href={`/${locale}/season11-recap`} prefetch={false}>
+          <Link
+            className="home-season-recap"
+            href={localizeRoutePath("/season11-recap", locale)}
+            prefetch={false}
+          >
             <span className="home-season-recap__season" aria-hidden="true">
               <Trophy />
               <span>SEASON</span>
@@ -125,7 +131,7 @@ export async function HomePageContent({
             </div>
 
             <nav className="home-search-hero__quick-links" aria-label={t("title")}>
-              <IntentPrefetchLink href={`/${locale}/synergy-detail`}>
+              <IntentPrefetchLink href={localizeRoutePath("/synergy-detail", locale)}>
                 <Network className="h-4 w-4" aria-hidden="true" />
                 <span>{t("guide.comboTitle")}</span>
                 <ArrowUpRight className="home-search-hero__route-arrow" aria-hidden="true" />
@@ -135,7 +141,7 @@ export async function HomePageContent({
                 <span>{t("patchAnalysisCta")}</span>
                 <ArrowUpRight className="home-search-hero__route-arrow" aria-hidden="true" />
               </IntentPrefetchLink>
-              <IntentPrefetchLink href={`/${locale}/methodology`}>
+              <IntentPrefetchLink href={localizeRoutePath("/methodology", locale)}>
                 <BookOpenText className="h-4 w-4" aria-hidden="true" />
                 <span>{t("guide.cta")}</span>
                 <ArrowUpRight className="home-search-hero__route-arrow" aria-hidden="true" />
@@ -254,10 +260,16 @@ export async function HomePageContent({
           </div>
           <nav className="home-empty-index__links" aria-label={t("title")}>
             {[
-              { href: `/${locale}/character/1`, label: t("fallback.characterCta") },
-              { href: `/${locale}/synergy-detail`, label: t("guide.comboTitle") },
-              { href: `/${locale}/patches`, label: t("fallback.patchCta") },
-              { href: `/${locale}/methodology`, label: t("fallback.methodologyCta") },
+              {
+                href: localizeRoutePath("/character/1", locale),
+                label: t("fallback.characterCta"),
+              },
+              { href: localizeRoutePath("/synergy-detail", locale), label: t("guide.comboTitle") },
+              { href: localizeRoutePath("/patches", locale), label: t("fallback.patchCta") },
+              {
+                href: localizeRoutePath("/methodology", locale),
+                label: t("fallback.methodologyCta"),
+              },
             ].map((link, index) => (
               <a key={link.href} href={link.href}>
                 <span>{String(index + 1).padStart(2, "0")}</span>

@@ -144,10 +144,13 @@ export default async function LocalizedPatchForecastPage({ params }: LocalePageP
           {pageDescription}
         </p>
         <nav className="mt-4 flex flex-wrap gap-2" aria-label={pageTitle}>
-          <Link className="dashboard-tab" href={`/${locale}/patches/${version}`}>
+          <Link className="dashboard-tab" href={localizeRoutePath(`/patches/${version}`, locale)}>
             {copy.patchNotes}
           </Link>
-          <Link className="dashboard-tab" href={`/${locale}/patch-analysis/${version}`}>
+          <Link
+            className="dashboard-tab"
+            href={localizeRoutePath(`/patch-analysis/${version}`, locale)}
+          >
             {copy.trendAnalysis}
           </Link>
         </nav>

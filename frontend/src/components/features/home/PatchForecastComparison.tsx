@@ -17,7 +17,7 @@ import {
 import { localizePatchChanges, hasPatchChangeLocalization } from "@/data/patch-note-localization";
 import { getCharacterPatchNote, type PatchChange } from "@/data/patch-notes";
 import { getPatchTierForecasts, type PatchTierForecast } from "@/data/patch-tier-forecasts";
-import { LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
+import { LANGUAGE_BY_ROUTE_LOCALE, type ActiveRouteLocale, type RouteLocale } from "@/i18n/routing";
 import {
   buildFallbackMap,
   getCharacterMiniWebpUrl,
@@ -33,6 +33,7 @@ import {
 } from "@/lib/homeMetaShared";
 import { diffPatchValue } from "@/lib/patchValueDiff";
 import type { CharacterRankingData } from "@/lib/ranking";
+import { localizeRoutePath } from "@/lib/seoLocales";
 import { loadL10nSeed } from "@/lib/serverL10n";
 import { resolveWeaponName } from "@/lib/weaponMap";
 
@@ -87,7 +88,7 @@ export async function PatchForecastComparison({
   homeMetaStats,
   preview = false,
 }: {
-  locale: string;
+  locale: ActiveRouteLocale;
   currentPatch: string;
   homeMetaStats: HomeMetaStats;
   preview?: boolean;
@@ -195,7 +196,7 @@ export async function PatchForecastComparison({
       >
         <Link
           className="home-forecast-identity"
-          href={`/${locale}/character/${characterCode}?weapon=${forecast.weaponCode}`}
+          href={`${localizeRoutePath(`/character/${characterCode}`, locale)}?weapon=${forecast.weaponCode}`}
         >
           <Image src={getCharacterMiniWebpUrl(characterCode)} alt="" width={40} height={40} />
           <span>
@@ -423,7 +424,7 @@ export async function PatchForecastComparison({
         )}
         <Link
           className="home-forecast-preview__cta"
-          href={`/${locale}/patch-forecast/${currentPatch}#forecast-results`}
+          href={`${localizeRoutePath(`/patch-forecast/${currentPatch}`, locale)}#forecast-results`}
         >
           {t(ready ? "forecastDetailsLink" : "forecastPendingDetailsLink")}{" "}
           <ArrowUpRight size={16} aria-hidden="true" />
@@ -448,7 +449,7 @@ export async function PatchForecastComparison({
             })}
           </p>
         </div>
-        <Link href={`/${locale}/patches/${currentPatch}`}>
+        <Link href={localizeRoutePath(`/patches/${currentPatch}`, locale)}>
           {t("forecastSource")} <ArrowUpRight size={16} aria-hidden="true" />
         </Link>
       </div>
