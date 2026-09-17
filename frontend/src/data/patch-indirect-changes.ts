@@ -1,3 +1,5 @@
+import { PATCH_12_4_BALANCE_CONTEXT } from "./12.4-balance-context";
+import { get12_4ItemExposure } from "./12.4-item-exposure";
 import type { PatchChange } from "./patch-notes";
 
 // Official 12.3 values. Character/weapon links come from PATCH_TIER_FORECAST_REASONS,
@@ -54,11 +56,46 @@ const FORECAST_ITEM_LINKS: Record<string, string[]> = {
   "23:18": ["cyber"],
   "89:9": ["cyber"],
 };
+
+const PATCH_12_4_ITEM_TARGETS: Readonly<
+  Record<number, { target: string; changeType: PatchChange["changeType"] }>
+> = {
+  102409: { target: "양손검 · 레바테인 공격력", changeType: "buff" },
+  102412: { target: "양손검 · 빛의 검 공격력", changeType: "buff" },
+  201504: { target: "머리 · 예언자의 터번 스킬 증폭", changeType: "buff" },
+  201507: { target: "머리 · 우주 비행사의 헬멧 스킬 증폭", changeType: "buff" },
+  201537: { target: "머리 · 야생의 허기 포식 추가 체력 회복 계수", changeType: "nerf" },
+  202504: { target: "옷 · 버건디 47 방어력", changeType: "buff" },
+  202516: { target: "옷 · 엘프 드레스 방어력", changeType: "buff" },
+  202529: { target: "옷 · 화령장 공격 속도", changeType: "buff" },
+  203412: { target: "팔 · 플라즈마 아크 공격력", changeType: "buff" },
+  203515: { target: "팔 · 노바 실드 맞춤형 능력치", changeType: "buff" },
+  204507: { target: "다리 · 갤럭시 스텝 공격력", changeType: "nerf" },
+  204511: { target: "다리 · 로즈 스텝 스킬 증폭", changeType: "buff" },
+  205503: { target: "머리 · 쿤달라 스킬 증폭", changeType: "buff" },
+  705608: { target: "팔 · 임세티 스킬 증폭", changeType: "buff" },
+};
+
+const PATCH_12_4_CONTEXT_VALUES = new Map(
+  PATCH_12_4_BALANCE_CONTEXT.flatMap((section) => section.entries).map((entry) => [
+    entry.target,
+    entry.value,
+  ])
+);
+
 export function getForecastItemChanges(
   patch: string,
   characterCode: number,
   weaponCode: number
 ): PatchChange[] {
+  if (patch === "12.4") {
+    return get12_4ItemExposure(characterCode, weaponCode).flatMap(({ itemCode, pickRate }) => {
+      const item = PATCH_12_4_ITEM_TARGETS[itemCode];
+      const value = item && PATCH_12_4_CONTEXT_VALUES.get(item.target);
+      if (!item || !value) return [];
+      return [change(`${item.target} · 12.3 사용 ${pickRate}%`, item.changeType, value)];
+    });
+  }
   if (patch !== "12.3") return [];
   return (FORECAST_ITEM_LINKS[`${characterCode}:${weaponCode}`] ?? []).flatMap((key) => ITEMS[key]);
 }

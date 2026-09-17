@@ -1142,6 +1142,7 @@
     "forecastNote": "Pre-patch and predicted tiers are recorded in the patch notes. Current tiers use the same combined score as character rankings; differences do not isolate the effect of balance changes.",
     "forecastPendingNote": "These forecasts were recorded when the patch notes were published. This page will compare them with results once enough data is available.",
     "forecastGambitPendingNote": "These 12.4 forecasts use Diamond+ results from 12.3 as the baseline. Gambit also changes RP multipliers in 12.4, so we will not compare RP-based observed tiers until Gambit participation can be identified in the API.",
+    "forecastNewItemsUncertain": "Related item changes are weighted by 12.3 Diamond+ final-equipment usage. The two new legendary accessories have no pre-patch usage data, so no character receives an assumed tier boost from them.",
     "forecastBefore": "Before patch",
     "forecastExpected": "Forecast",
     "forecastActual": "Current stats",

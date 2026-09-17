@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { PATCH_12_4_BALANCE_CONTEXT, PATCH_12_4_SOURCE } from "@/data/12.4-balance-context";
+import { get12_4ItemExposure, PATCH_12_4_ITEM_EXPOSURE } from "@/data/12.4-item-exposure";
+import { getForecastItemChanges } from "@/data/patch-indirect-changes";
 import {
   getAllPatchVersions,
   getCharacterPatchNote,
@@ -224,34 +226,62 @@ describe("12.4 patch notes", () => {
     expect(PATCH_12_4_BALANCE_CONTEXT.flatMap((section) => section.entries)).toHaveLength(43);
   });
 
-  it("변경 실험체 35명 모두의 무기별 예상 티어와 이유를 제공한다", () => {
+  it("직접 조정 35명과 장비 간접 영향 조합의 무기별 예상 티어를 제공한다", () => {
     const forecasts = getPatchTierForecasts("12.4");
     const tierOrder = { D: 0, C: 1, B: 2, A: 3, S: 4 };
+    const directCharacters = new Set(
+      getNotesByPatch("12.4").map(({ characterCode }) => characterCode)
+    );
 
     expect(getPatchTierForecastVersions()[0]).toBe("12.4");
-    expect(forecasts).toHaveLength(43);
-    expect(new Set(forecasts.map(({ characterCode }) => characterCode))).toEqual(
-      new Set(getNotesByPatch("12.4").map(({ characterCode }) => characterCode))
-    );
+    expect(forecasts).toHaveLength(60);
+    expect(directCharacters.size).toBe(35);
+    expect(
+      [...directCharacters].every((code) =>
+        forecasts.some(({ characterCode }) => code === characterCode)
+      )
+    ).toBe(true);
     expect(
       new Set(forecasts.map(({ characterCode, weaponCode }) => `${characterCode}:${weaponCode}`))
         .size
     ).toBe(forecasts.length);
+    const itemOnlyForecasts = forecasts.filter(({ characterCode, weaponCode }) => {
+      const note = getCharacterPatchNote(characterCode, "12.4");
+      return !note?.changes.some(
+        (change) =>
+          change.weaponMasteryCode === undefined || change.weaponMasteryCode === weaponCode
+      );
+    });
+    expect(itemOnlyForecasts).toHaveLength(17);
+    for (const { characterCode, weaponCode } of itemOnlyForecasts) {
+      expect(get12_4ItemExposure(characterCode, weaponCode).length).toBeGreaterThan(0);
+    }
     for (const forecast of forecasts) {
       expect(forecast.reason.length).toBeGreaterThan(20);
       expect(tierOrder[forecast.tierLow]).toBeLessThanOrEqual(tierOrder[forecast.tierMid]);
       expect(tierOrder[forecast.tierMid]).toBeLessThanOrEqual(tierOrder[forecast.tierHigh]);
+      if (!directCharacters.has(forecast.characterCode)) {
+        expect(
+          get12_4ItemExposure(forecast.characterCode, forecast.weaponCode).length
+        ).toBeGreaterThan(0);
+      }
     }
   });
 
-  it("무기별 변경은 해당 무기의 예상에만 적용한다", () => {
+  it("실험체 직접 변경과 장비만의 간접 변경을 무기별로 구분한다", () => {
     expect(
       getCharacterTierForecasts("12.4", 9).map(({ weaponCode, currentTier, tierMid }) => [
         weaponCode,
         currentTier,
         tierMid,
       ])
-    ).toEqual([[9, "C", "B"]]);
+    ).toEqual([
+      [9, "C", "B"],
+      [10, "A", "A"],
+    ]);
+    expect(getCharacterTierForecasts("12.4", 9)[1]?.reason).toContain(
+      "권총 전용 R 상향은 적용되지"
+    );
     expect(
       getCharacterTierForecasts("12.4", 15).map(({ weaponCode, tierMid }) => [weaponCode, tierMid])
     ).toEqual([
@@ -259,5 +289,42 @@ describe("12.4 patch notes", () => {
       [6, "A"],
     ]);
     expect(getCharacterTierForecasts("12.4", 25).map(({ weaponCode }) => weaponCode)).toEqual([11]);
+  });
+
+  it("12.3 장비 사용률이 확인된 조합에만 관련 12.4 아이템 패치를 연결한다", () => {
+    const linkedKeys = Object.keys(PATCH_12_4_ITEM_EXPOSURE);
+    expect(linkedKeys.length).toBeGreaterThan(30);
+
+    for (const key of linkedKeys) {
+      const [characterCode, weaponCode] = key.split(":").map(Number);
+      const exposure = get12_4ItemExposure(characterCode, weaponCode);
+      const changes = getForecastItemChanges("12.4", characterCode, weaponCode);
+      expect(changes).toHaveLength(exposure.length);
+      for (const { pickRate } of exposure) {
+        expect(pickRate).toBeGreaterThan(0);
+        expect(pickRate).toBeLessThanOrEqual(100);
+        expect(changes.some(({ target }) => target.includes(`12.3 사용 ${pickRate}%`))).toBe(true);
+      }
+    }
+
+    expect(getForecastItemChanges("12.4", 25, 11).map(({ changeType }) => changeType)).toEqual([
+      "buff",
+      "nerf",
+    ]);
+    expect(getForecastItemChanges("12.4", 44, 25)[0]?.changeType).toBe("nerf");
+    expect(getForecastItemChanges("12.4", 31, 7)[0]?.target).toContain("갤럭시 스텝");
+    expect(getForecastItemChanges("12.4", 9, 9)).toHaveLength(1);
+    expect(getForecastItemChanges("12.4", 9, 10)[0]?.target).toContain("화령장");
+    expect(getForecastItemChanges("12.4", 62, 11)).toEqual([]);
+    expect(
+      Object.values(PATCH_12_4_ITEM_EXPOSURE)
+        .flat()
+        .map(({ itemCode }) => itemCode)
+    ).not.toContain(205305);
+    expect(
+      Object.values(PATCH_12_4_ITEM_EXPOSURE)
+        .flat()
+        .map(({ itemCode }) => itemCode)
+    ).not.toContain(705619);
   });
 });
