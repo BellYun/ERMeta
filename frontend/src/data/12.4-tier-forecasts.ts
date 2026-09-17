@@ -415,7 +415,7 @@ export const PATCH_12_4_TIER_FORECASTS: Readonly<Record<number, readonly PatchTi
       "B",
       "B",
       "A",
-      "뚝딱! Q의 공격력 계수가 전 레벨에서 오릅니다. 반복 사용 이득은 있지만 12.3 B 중단이라 B 유지가 중심입니다."
+      "비형의 Q(뚝딱!) 공격력 계수가 전 레벨에서 오릅니다. 반복 사용 이득은 있지만 12.3 B 중단이라 B 유지가 중심입니다."
     ),
   ],
   90: [
