@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { getPathname } from "@/i18n/navigation";
 import { DEFAULT_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
 
 // 일본어만 별도 locale path + hreflang 대상으로 운영한다.
@@ -13,7 +12,8 @@ export interface SeoLanguageAlternates {
 }
 
 export function localizeRoutePath(pathname: string, locale: RouteLocale): string {
-  return getPathname({ href: pathname, locale });
+  if (locale === DEFAULT_ROUTE_LOCALE) return pathname;
+  return pathname === "/" ? `/${locale}` : `/${locale}${pathname}`;
 }
 
 export function prefixSeoLocalePath(pathname: string, locale: SeoLocaleSegment): string {
