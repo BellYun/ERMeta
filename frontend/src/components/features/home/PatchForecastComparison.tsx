@@ -8,6 +8,7 @@ import {
   getMetaRankingKey,
 } from "@/components/features/tier-ranking/utils";
 import { TierBadge } from "@/components/features/TierBadge";
+import { PATCH_12_4_SOURCE } from "@/data/12.4-balance-context";
 import {
   getForecastItemChanges,
   getSharedTraitChanges,
@@ -349,6 +350,13 @@ export async function PatchForecastComparison({
               {locale !== "ko" && (
                 <p className="home-forecast-changes-source">{patchText("detailSourceNotice")}</p>
               )}
+              <a
+                href={currentPatch === "12.4" ? PATCH_12_4_SOURCE : INDIRECT_PATCH_SOURCE}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {t("indirectSource")} <ArrowUpRight size={12} aria-hidden="true" />
+              </a>
             </div>
           </div>
         )}
@@ -453,6 +461,9 @@ export async function PatchForecastComparison({
               : "forecastPendingNote"
         )}
       </p>
+      {currentPatch === "12.4" && (
+        <p className="home-forecast-note">{t("forecastNewItemsUncertain")}</p>
+      )}
       {comparisons.length ? (
         <div className="home-forecast-list">{comparisons.map(renderComparison)}</div>
       ) : (
