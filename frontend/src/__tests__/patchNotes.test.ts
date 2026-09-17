@@ -8,6 +8,11 @@ import {
   getStatsPatchVersions,
   getVisibleStatsPatchVersions,
 } from "@/data/patch-notes";
+import {
+  getCharacterTierForecasts,
+  getPatchTierForecasts,
+  getPatchTierForecastVersions,
+} from "@/data/patch-tier-forecasts";
 
 describe("11.7 patch notes", () => {
   it("11.7을 패치 목록에 노출한다", () => {
@@ -217,5 +222,42 @@ describe("12.4 patch notes", () => {
       "방어구·강화",
     ]);
     expect(PATCH_12_4_BALANCE_CONTEXT.flatMap((section) => section.entries)).toHaveLength(43);
+  });
+
+  it("변경 실험체 35명 모두의 무기별 예상 티어와 이유를 제공한다", () => {
+    const forecasts = getPatchTierForecasts("12.4");
+    const tierOrder = { D: 0, C: 1, B: 2, A: 3, S: 4 };
+
+    expect(getPatchTierForecastVersions()[0]).toBe("12.4");
+    expect(forecasts).toHaveLength(43);
+    expect(new Set(forecasts.map(({ characterCode }) => characterCode))).toEqual(
+      new Set(getNotesByPatch("12.4").map(({ characterCode }) => characterCode))
+    );
+    expect(
+      new Set(forecasts.map(({ characterCode, weaponCode }) => `${characterCode}:${weaponCode}`))
+        .size
+    ).toBe(forecasts.length);
+    for (const forecast of forecasts) {
+      expect(forecast.reason.length).toBeGreaterThan(20);
+      expect(tierOrder[forecast.tierLow]).toBeLessThanOrEqual(tierOrder[forecast.tierMid]);
+      expect(tierOrder[forecast.tierMid]).toBeLessThanOrEqual(tierOrder[forecast.tierHigh]);
+    }
+  });
+
+  it("무기별 변경은 해당 무기의 예상에만 적용한다", () => {
+    expect(
+      getCharacterTierForecasts("12.4", 9).map(({ weaponCode, currentTier, tierMid }) => [
+        weaponCode,
+        currentTier,
+        tierMid,
+      ])
+    ).toEqual([[9, "C", "B"]]);
+    expect(
+      getCharacterTierForecasts("12.4", 15).map(({ weaponCode, tierMid }) => [weaponCode, tierMid])
+    ).toEqual([
+      [5, "B"],
+      [6, "A"],
+    ]);
+    expect(getCharacterTierForecasts("12.4", 25).map(({ weaponCode }) => weaponCode)).toEqual([11]);
   });
 });

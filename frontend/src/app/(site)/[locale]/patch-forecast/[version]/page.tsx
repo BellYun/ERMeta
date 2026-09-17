@@ -26,6 +26,7 @@ const COPY: Record<
     pendingTitle: (version: string) => string;
     description: (version: string) => string;
     pendingDescription: (version: string) => string;
+    gambitPendingDescription: string;
     patchNotes: string;
     trendAnalysis: string;
   }
@@ -39,6 +40,8 @@ const COPY: Record<
       `${version} 패치 전 예상 티어와 다이아몬드 이상 실제 통계를 비교합니다.`,
     pendingDescription: (version) =>
       `${version} 패치노트를 기준으로 티어 변화를 예상했습니다. 실제 데이터가 충분히 쌓이면 결과를 함께 비교합니다.`,
+    gambitPendingDescription:
+      "12.3 다이아몬드 이상 지표와 12.4 패치노트를 바탕으로 무기별 예상 티어를 제시합니다. 갬빗 참여 여부를 분리 검증하기 전에는 RP 기반 실제 티어 비교를 보류합니다.",
     patchNotes: "패치노트 보기",
     trendAnalysis: "패치 경향 분석 보기",
   },
@@ -51,6 +54,8 @@ const COPY: Record<
       `Compare the pre-patch tier forecast for ${version} with observed Diamond+ performance.`,
     pendingDescription: (version) =>
       `See expected tier changes based on the Patch ${version} notes. Results will appear once enough data is available.`,
+    gambitPendingDescription:
+      "Weapon-specific tier forecasts use 12.3 Diamond+ results and the 12.4 notes. RP-based observed tiers remain on hold until Gambit participation can be identified.",
     patchNotes: "View patch notes",
     trendAnalysis: "View patch trend analysis",
   },
@@ -63,6 +68,8 @@ const COPY: Record<
       `パッチ${version}前のティア予想とダイヤモンド以上の実データを比較します。`,
     pendingDescription: (version) =>
       `パッチ${version}ノートを基準にティア変動を予想しました。十分なデータが集まり次第、結果も表示します。`,
+    gambitPendingDescription:
+      "12.3のダイヤ以上の指標と12.4のパッチノートを基に、武器別の予想ティアを示します。ギャンビット参加状況を区別できるまではRPベースの実測ティアとの比較を保留します。",
     patchNotes: "パッチノートを見る",
     trendAnalysis: "パッチ傾向分析を見る",
   },
@@ -87,7 +94,8 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
 
   const copy = COPY[locale];
   const title = copy.pendingTitle(version);
-  const description = copy.pendingDescription(version);
+  const description =
+    version === "12.4" ? copy.gambitPendingDescription : copy.pendingDescription(version);
   const pathname = `/patch-forecast/${version}`;
 
   return {
@@ -118,9 +126,12 @@ export default async function LocalizedPatchForecastPage({ params }: LocalePageP
   );
   const actualReady = isPatchForecastActualReady(version, stats);
   const pageTitle = actualReady ? copy.title(version) : copy.pendingTitle(version);
-  const pageDescription = actualReady
-    ? copy.description(version)
-    : copy.pendingDescription(version);
+  const pageDescription =
+    version === "12.4"
+      ? copy.gambitPendingDescription
+      : actualReady
+        ? copy.description(version)
+        : copy.pendingDescription(version);
 
   return (
     <main className="page-shell flex flex-col gap-5 lg:gap-6">
