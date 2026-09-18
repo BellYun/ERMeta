@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { SupabaseService } from '../../common/database/supabase.service';
 import { RedisService } from '../../common/redis/redis.service';
+import { getAverageRP, hasComparableRP } from '../../common/rp-metric';
 
 const TIER_FALLBACK_ORDER = ['DIAMOND', 'METEORITE', 'MITHRIL', 'IN1000'];
 const STATS_EXCLUDED_PATCHES = new Set(['11.0']);
@@ -144,7 +145,8 @@ function buildCharacterInsightPayload(
   const korean = locale === 'ko';
   const tier = formatInsightTier(locale, stats.tier);
   const sample = sampleLabel(stats.totalGames);
-  const rpDelta = previousStats ? stats.averageRP - previousStats.averageRP : null;
+  const rpDelta = previousStats && hasComparableRP(stats.patchVersion, previousStats.patchVersion)
+    ? stats.averageRP - previousStats.averageRP : null;
   const winDelta = previousStats ? stats.winRate - previousStats.winRate : null;
   const concentrated = weaponSpread(stats) >= 25;
   const stable = stats.totalGames >= 1000;
@@ -340,7 +342,7 @@ function buildEmptyCharacterStats(characterCode: number, patchVersion: string, t
   };
 }
 
-function buildRankings(rows: CharacterStatRow[]): CharacterRankingData[] {
+function buildRankings(rows: CharacterStatRow[], patchVersion: string, tier: string): CharacterRankingData[] {
   const grandTotal = rows.reduce((sum, row) => sum + (row.totalGames ?? 0), 0);
 
   const rankings = rows.map((row) => ({
@@ -349,7 +351,7 @@ function buildRankings(rows: CharacterStatRow[]): CharacterRankingData[] {
     totalGames: row.totalGames ?? 0,
     pickRate: grandTotal > 0 ? ((row.totalGames ?? 0) / grandTotal) * 100 : 0,
     winRate: row.totalGames > 0 ? ((row.totalWins ?? 0) / row.totalGames) * 100 : 0,
-    averageRP: row.totalGames > 0 ? ((row.totalRP ?? 0) / row.totalGames) : 0,
+    averageRP: getAverageRP(row.totalRP ?? 0, row.totalGames, patchVersion, tier),
     top3Rate: row.totalGames > 0 ? ((row.totalTop3 ?? 0) / row.totalGames) * 100 : 0,
   }));
 
@@ -360,13 +362,14 @@ function buildRankings(rows: CharacterStatRow[]): CharacterRankingData[] {
 function selectRankings(
   rows: RankingStatRow[],
   requestedTier: string,
+  patchVersion: string,
 ): { rankings: CharacterRankingData[]; usedTier: string } {
   const cumulativeTiers = new Set(expandCumulativeTier(requestedTier));
   const filtered = rows.filter((row) => cumulativeTiers.has(row.tier));
   if (filtered.length === 0) return { rankings: [], usedTier: requestedTier };
   const merged = aggregateCharacterStatsAcrossTiers(filtered);
   return {
-    rankings: buildRankings(collapseWeaponAgnosticRows(merged)),
+    rankings: buildRankings(collapseWeaponAgnosticRows(merged), patchVersion, requestedTier),
     usedTier: requestedTier,
   };
 }
@@ -379,7 +382,7 @@ export class CharacterService {
   ) {}
 
   async fetchRankingData(patchVersion: string, requestedTier: string) {
-    const cacheKey = `ranking:${patchVersion || 'latest'}:${requestedTier}`;
+    const cacheKey = `ranking:fixed-entry-cost-v1:${patchVersion || 'latest'}:${requestedTier}`;
     return this.redis.getOrSet(cacheKey, 1800, () =>
       this._fetchRankingData(patchVersion, requestedTier),
     );
@@ -449,10 +452,10 @@ export class CharacterService {
       ? typedData.filter((r) => r.patchVersion === previousPatch)
       : [];
 
-    const { rankings, usedTier } = selectRankings(currentRows, requestedTier);
+    const { rankings, usedTier } = selectRankings(currentRows, requestedTier, effectivePatch);
     const { rankings: previousRankings } =
       prevRows.length > 0
-        ? selectRankings(prevRows, usedTier)
+        ? selectRankings(prevRows, usedTier, previousPatch!)
         : { rankings: [] as CharacterRankingData[] };
 
     return {
@@ -473,7 +476,7 @@ export class CharacterService {
       return buildEmptyCharacterStats(characterCode, patchVersion, tier);
     }
 
-    const cacheKey = `char-stats:${characterCode}:${patchVersion || 'latest'}:${tier}`;
+    const cacheKey = `char-stats:fixed-entry-cost-v1:${characterCode}:${patchVersion || 'latest'}:${tier}`;
     return this.redis.getOrSet(cacheKey, 1800, () =>
       this._getCharacterStats(characterCode, patchVersion, tier),
     );
@@ -593,7 +596,7 @@ export class CharacterService {
         pickRate: totalGames > 0 ? (r.totalGames / totalGames) * 100 : 0,
         winRate: r.totalGames > 0 ? (r.totalWins / r.totalGames) * 100 : 0,
         averageRank: r.averageRank ?? 0,
-        averageRP: r.totalGames > 0 ? r.totalRP / r.totalGames : 0,
+        averageRP: getAverageRP(r.totalRP, r.totalGames, effectivePatch, tier),
       }))
       .sort((a, b) => b.totalGames - a.totalGames);
 
@@ -605,7 +608,7 @@ export class CharacterService {
       pickRate: grandTotal > 0 ? (totalGames / grandTotal) * 100 : 0,
       winRate: totalGames > 0 ? (totalWins / totalGames) * 100 : 0,
       averageRank: weightedAverageRank,
-      averageRP: totalGames > 0 ? totalRP / totalGames : 0,
+      averageRP: getAverageRP(totalRP, totalGames, effectivePatch, tier),
       top3Rate: totalGames > 0 ? (totalTop3 / totalGames) * 100 : 0,
       weapons,
     };

@@ -6,6 +6,7 @@ import {
 } from "@/data/patch-notes";
 import { type CharacterRole, getComboRoles, getCharacterName } from "@/lib/characterMap";
 import { fetchRankingData, type CharacterRankingData, type RankingResponse } from "@/lib/ranking";
+import { getAverageRP, hasComparableRP } from "@/lib/rpMetric";
 import { createServerClient } from "@/lib/supabase";
 import { resolveWeaponName, WEAPON_KOR_BY_CODE } from "@/lib/weaponMap";
 import { expandCumulativeTier } from "@/utils/tier";
@@ -19,7 +20,7 @@ import warriorsData from "../../public/data/lab/warriors.json";
 const ANALYSIS_TIER = "DIAMOND_PLUS";
 const ANALYSIS_TIERS = ["DIAMOND_PLUS", "MITHRIL_PLUS"] as const;
 const PATCH_ANALYSIS_VERSIONS = ["12.4", "12.3", "11.5", "11.4"] as const;
-const PATCH_ANALYSIS_CACHE_VERSION = "role-combos-v11-12-4";
+const PATCH_ANALYSIS_CACHE_VERSION = "role-combos-v12-fixed-entry-cost";
 const ROLES: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
 const PATCH_ROLE_OVERRIDES_BY_PATCH: Record<string, Record<string, CharacterRole>> = {
   "11.5": {
@@ -211,6 +212,8 @@ interface RoleAccumulator {
 
 interface PatchTierContext {
   tier: (typeof ANALYSIS_TIERS)[number];
+  currentPatch: string;
+  previousPatch: string;
   rankings: CharacterRankingData[];
   previousRankings: CharacterRankingData[];
   totalMatches: number;
@@ -404,7 +407,8 @@ function getPatchRoleOverrideMap(patchVersion: string) {
 function aggregateRoles(
   rankings: CharacterRankingData[],
   previousRankings: CharacterRankingData[],
-  patchVersion: string
+  patchVersion: string,
+  previousPatch: string
 ) {
   const currentTotal = rankings.reduce((sum, row) => sum + row.totalGames, 0);
   const previousByRole = aggregateRoleMap(previousRankings, patchVersion);
@@ -414,7 +418,10 @@ function aggregateRoles(
     const cur = currentByRole.get(role);
     const prev = previousByRole.get(role);
     const averageRP = cur && cur.totalGames > 0 ? cur.totalRP / cur.totalGames : 0;
-    const previousAverageRP = prev && prev.totalGames > 0 ? prev.totalRP / prev.totalGames : null;
+    const previousAverageRP =
+      hasComparableRP(patchVersion, previousPatch) && prev && prev.totalGames > 0
+        ? prev.totalRP / prev.totalGames
+        : null;
     return {
       role,
       totalGames: cur?.totalGames ?? 0,
@@ -575,13 +582,16 @@ function buildRoleComboMetricsFromRows(
       totalGamesByScopePatch.get([focusKey, tier, previousPatch].join("|")) ?? 0;
     const currentValue =
       current && current.totalGames > 0
-        ? { totalGames: current.totalGames, averageRP: current.totalRP / current.totalGames / 3 }
+        ? {
+            totalGames: current.totalGames,
+            averageRP: getAverageRP(current.totalRP, current.totalGames, currentPatch, tier, 3),
+          }
         : null;
     const previousValue =
       previous && previous.totalGames > 0
         ? {
             totalGames: previous.totalGames,
-            averageRP: previous.totalRP / previous.totalGames / 3,
+            averageRP: getAverageRP(previous.totalRP, previous.totalGames, previousPatch, tier, 3),
           }
         : null;
     const currentShare =
@@ -610,9 +620,12 @@ function buildRoleComboMetricsFromRows(
       previousContribution,
       deltaGames: (currentValue?.totalGames ?? 0) - (previousValue?.totalGames ?? 0),
       deltaAverageRP:
-        currentValue && previousValue ? currentValue.averageRP - previousValue.averageRP : null,
+        currentValue && previousValue && hasComparableRP(currentPatch, previousPatch)
+          ? currentValue.averageRP - previousValue.averageRP : null,
       deltaContribution:
-        currentContribution != null && previousContribution != null
+        currentContribution != null &&
+        previousContribution != null &&
+        hasComparableRP(currentPatch, previousPatch)
           ? currentContribution - previousContribution
           : null,
     });
@@ -765,6 +778,8 @@ function buildTierMetricForScope(
     weaponCodes
   );
   const hasComparableMetrics = current !== null && previous !== null;
+  const comparableRP =
+    hasComparableMetrics && hasComparableRP(context.currentPatch, context.previousPatch);
 
   return {
     tier: context.tier,
@@ -774,7 +789,7 @@ function buildTierMetricForScope(
     deltaPickRate: hasComparableMetrics ? current.pickRate - previous.pickRate : 0,
     deltaWinRate: hasComparableMetrics ? current.winRate - previous.winRate : 0,
     deltaTop3Rate: hasComparableMetrics ? current.top3Rate - previous.top3Rate : 0,
-    deltaAverageRP: hasComparableMetrics ? current.averageRP - previous.averageRP : 0,
+    deltaAverageRP: comparableRP ? current.averageRP - previous.averageRP : 0,
   };
 }
 
@@ -920,6 +935,8 @@ async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAna
     );
     return {
       tier: ANALYSIS_TIERS[index],
+      currentPatch,
+      previousPatch,
       rankings: rankingData.rankings,
       previousRankings: rankingData.previousRankings,
       totalMatches,
@@ -957,7 +974,8 @@ async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAna
         : b.deltaAverageRP - a.deltaAverageRP
     );
 
-  const comparable = deltas.filter((entry) => entry.current && entry.previous);
+  const comparable = hasComparableRP(currentPatch, previousPatch)
+    ? deltas.filter((entry) => entry.current && entry.previous) : [];
 
   return {
     currentPatch,
@@ -972,7 +990,8 @@ async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAna
     roleMetrics: aggregateRoles(
       primaryContext.rankings,
       primaryContext.previousRankings,
-      currentPatch
+      currentPatch,
+      previousPatch
     ),
     rising: [...comparable].sort((a, b) => b.deltaAverageRP - a.deltaAverageRP).slice(0, 6),
     falling: [...comparable].sort((a, b) => a.deltaAverageRP - b.deltaAverageRP).slice(0, 6),

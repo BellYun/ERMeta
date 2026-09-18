@@ -3,7 +3,7 @@
     "patchImpactTitle": "12.4版本影响 · 事前分析",
     "patchImpactBody": "整理35名角色及装备、特性和系统改动；实测数据将在收集后单独展示。",
     "patchImpactLink": "查看12.4分析",
-    "forecastGambitPendingNote": "12.4预测以12.3钻石及以上统计为基准。12.4也调整了Gambit的RP倍率；在API能够区分参与情况前，暂不比较基于RP的实际梯队。",
+    "forecastFormulaPendingNote": "12.4预测以12.3钻石及以上统计为基准。12.4起平均 RP 改为减去固定入场费；模型重新校准前，暂不直接比较预测与实际梯队。",
     "forecastNewItemsUncertain": "已参考相关装备在12.3钻石及以上对局中的最终装备使用率。新传说装备缺少补丁前使用数据，因此未预先提高特定角色的预测梯队。",
     "forecastDetailsLink": "对比预测与结果",
     "rankingsShortcutHint": "想知道当前哪些实验体更强？",

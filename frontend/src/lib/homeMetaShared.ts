@@ -1,5 +1,6 @@
 import type { HoneyPickData } from "@/lib/honeyPicks";
 import type { CharacterRankingData, RankingResponse } from "@/lib/ranking";
+import { getAverageRP, hasComparableRP } from "@/lib/rpMetric";
 import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
 import { calculateMetaChanges, calculateTrendScore } from "@/utils/metaAnalysis";
 
@@ -127,7 +128,11 @@ function aggregateRows(rows: HomeMetaStatRow[]): HomeMetaStatRow[] {
   return collapseWeaponAgnosticRows(merged);
 }
 
-function buildRankings(rows: HomeMetaStatRow[]): CharacterRankingData[] {
+function buildRankings(
+  rows: HomeMetaStatRow[],
+  patchVersion: string,
+  tier: string
+): CharacterRankingData[] {
   const grandTotal = rows.reduce((sum, row) => sum + (row.totalGames ?? 0), 0);
 
   const rankings = rows.map((row) => ({
@@ -136,7 +141,7 @@ function buildRankings(rows: HomeMetaStatRow[]): CharacterRankingData[] {
     totalGames: row.totalGames ?? 0,
     pickRate: grandTotal > 0 ? ((row.totalGames ?? 0) / grandTotal) * 100 : 0,
     winRate: row.totalGames > 0 ? ((row.totalWins ?? 0) / row.totalGames) * 100 : 0,
-    averageRP: row.totalGames > 0 ? (row.totalRP ?? 0) / row.totalGames : 0,
+    averageRP: getAverageRP(row.totalRP ?? 0, row.totalGames, patchVersion, tier),
     top3Rate: row.totalGames > 0 ? ((row.totalTop3 ?? 0) / row.totalGames) * 100 : 0,
   }));
 
@@ -246,12 +251,13 @@ export function buildHomeMetaView(stats: HomeMetaStats, tier: string): HomeMetaV
       )
     : [];
 
-  const rankings = buildRankings(currentRows);
-  const previousRankings = buildRankings(previousRows);
+  const rankings = buildRankings(currentRows, stats.patchVersion, tier);
+  const previousRankings = buildRankings(previousRows, stats.previousPatch ?? "", tier);
+  const comparable = hasComparableRP(stats.patchVersion, stats.previousPatch);
 
   return {
-    honeyPicks: buildHoneyPicks(currentRows, rankings, previousRankings),
-    risingPicks: buildRisingPicks(currentRows, rankings, previousRankings),
+    honeyPicks: comparable ? buildHoneyPicks(currentRows, rankings, previousRankings) : [],
+    risingPicks: comparable ? buildRisingPicks(currentRows, rankings, previousRankings) : [],
     rankingData: {
       rankings,
       previousRankings,

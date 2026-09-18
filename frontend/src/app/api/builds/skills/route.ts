@@ -8,6 +8,7 @@ import {
   type TacticalSkillChoice,
   type TacticalSkillStatsRow,
 } from "@/lib/characterBuildChoices";
+import { getFixedEntryCost } from "@/lib/rpMetric";
 import { createServerClient } from "@/lib/supabase";
 import { expandCumulativeTier } from "@/utils/tier";
 
@@ -90,6 +91,18 @@ export async function GET(request: NextRequest) {
         (tacticalResult.data ?? []) as TacticalSkillStatsRow[]
       ),
     };
+
+    const entryCost = getFixedEntryCost(patchVersion, tier);
+    if (entryCost > 0) {
+      result.skillOrders = result.skillOrders.map((choice) => ({
+        ...choice,
+        averageRP: choice.averageRP - entryCost,
+      }));
+      result.tacticalSkills = result.tacticalSkills.map((choice) => ({
+        ...choice,
+        averageRP: choice.averageRP - entryCost,
+      }));
+    }
 
     return NextResponse.json(result, { headers: getCacheHeaders("daily") });
   } catch (error) {

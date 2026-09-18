@@ -1,6 +1,7 @@
 import "server-only";
 
 import { unstable_cache } from "next/cache";
+import { getAverageRP } from "@/lib/rpMetric";
 import { createServerClient } from "@/lib/supabase";
 import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
 import { expandCumulativeTier } from "@/utils/tier";
@@ -164,7 +165,7 @@ function buildCharacterStatsResponse(
       pickRate: totalGames > 0 ? ((row.totalGames ?? 0) / totalGames) * 100 : 0,
       winRate: row.totalGames > 0 ? ((row.totalWins ?? 0) / row.totalGames) * 100 : 0,
       averageRank: row.averageRank ?? 0,
-      averageRP: row.totalGames > 0 ? (row.totalRP ?? 0) / row.totalGames : 0,
+      averageRP: getAverageRP(row.totalRP ?? 0, row.totalGames, patchVersion, tier),
     }))
     .sort((a, b) => b.totalGames - a.totalGames);
 
@@ -176,7 +177,7 @@ function buildCharacterStatsResponse(
     pickRate: grandTotal > 0 ? (totalGames / grandTotal) * 100 : 0,
     winRate: totalGames > 0 ? (totalWins / totalGames) * 100 : 0,
     averageRank: weightedAverageRank,
-    averageRP: totalGames > 0 ? totalRP / totalGames : 0,
+    averageRP: getAverageRP(totalRP, totalGames, patchVersion, tier),
     top3Rate: totalGames > 0 ? (totalTop3 / totalGames) * 100 : 0,
     weapons,
   };

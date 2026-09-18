@@ -3,7 +3,7 @@
     "patchImpactTitle": "12.4版本影響 · 事前分析",
     "patchImpactBody": "整理35名角色及裝備、特性和系統改動；實測數據將在收集後單獨展示。",
     "patchImpactLink": "查看12.4分析",
-    "forecastGambitPendingNote": "12.4預測以12.3鑽石及以上統計為基準。12.4也調整了Gambit的RP倍率；在API能夠區分參與情況前，暫不比較基於RP的實際梯隊。",
+    "forecastFormulaPendingNote": "12.4預測以12.3鑽石及以上統計為基準。12.4起平均 RP 改為減去固定入場費；模型重新校準前，暫不直接比較預測與實際梯隊。",
     "forecastNewItemsUncertain": "已參考相關裝備在12.3鑽石及以上對局中的最終裝備使用率。新傳說裝備缺少改版前使用資料，因此未預先提高特定角色的預測梯隊。",
     "forecastDetailsLink": "比較預測與結果",
     "rankingsShortcutHint": "想知道目前哪些實驗體更強？",

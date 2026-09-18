@@ -1,5 +1,6 @@
 import { type RouteLocale } from "@/i18n/routing";
 import type { CharacterStatsResponse, WeaponStatItem } from "@/lib/characterStats";
+import { hasComparableRP } from "@/lib/rpMetric";
 
 export interface CharacterInsight {
   patchVersion: string;
@@ -149,7 +150,8 @@ function buildKoreanInsight(
   const tier = formatTier("ko", stats.tier);
   const sample = sampleLabel(stats.totalGames);
   const weapon = bestWeapon(stats);
-  const rpDelta = previousStats ? stats.averageRP - previousStats.averageRP : null;
+  const rpDelta = previousStats && hasComparableRP(stats.patchVersion, previousStats.patchVersion)
+    ? stats.averageRP - previousStats.averageRP : null;
   const winDelta = previousStats ? stats.winRate - previousStats.winRate : null;
   const concentrated = weaponSpread(stats) >= 25;
   const stable = stats.totalGames >= 1000;
@@ -232,7 +234,8 @@ function buildEnglishInsight(
 ): CharacterInsight {
   const tier = formatTier("en", stats.tier);
   const sample = sampleLabel(stats.totalGames);
-  const rpDelta = previousStats ? stats.averageRP - previousStats.averageRP : null;
+  const rpDelta = previousStats && hasComparableRP(stats.patchVersion, previousStats.patchVersion)
+    ? stats.averageRP - previousStats.averageRP : null;
   const concentrated = weaponSpread(stats) >= 25;
   const climbing = stats.averageRP >= 8;
   const convertToWin = stats.winRate >= 12.5;
@@ -298,7 +301,8 @@ function buildLocalizedInsight(
 ): CharacterInsight {
   const tier = formatTier(locale, stats.tier);
   const sample = sampleLabel(stats.totalGames);
-  const rpDelta = previousStats ? stats.averageRP - previousStats.averageRP : null;
+  const rpDelta = previousStats && hasComparableRP(stats.patchVersion, previousStats.patchVersion)
+    ? stats.averageRP - previousStats.averageRP : null;
   const concentrated = weaponSpread(stats) >= 25;
   const climbing = stats.averageRP >= 8;
   const convertToWin = stats.winRate >= 12.5;

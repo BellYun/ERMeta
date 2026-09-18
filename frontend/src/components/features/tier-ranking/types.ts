@@ -5,7 +5,7 @@ import type { Tier } from "@/lib/design-tokens";
 export interface PrevStats {
   pickRate: number;
   winRate: number;
-  averageRP: number;
+  averageRP?: number;
 }
 
 export interface DisplayRow {

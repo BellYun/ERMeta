@@ -21,15 +21,17 @@ import {
   MIN_COLLECT_MMR,
   MIN_COLLECT_TIER,
 } from "../_shared/tier-utils.ts";
+import { getCollectedRP } from "../_shared/rp-utils.ts";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // ── 상수 ──────────────────────────────────────────────────
 const SEASON_ID = 41;
 const TEAM_MODE = 3; // 스쿼드
-const FORWARD_BUDGET_MS = 135_000; // forward 최대 (RECENT 도달 시 즉시 중단)
+const FORWARD_BUDGET_MS = 95_000; // 경기별 RPC 저장 시간을 확보한다.
 const FORWARD_START_GAME = 58540099;
-const BATCH_LIMIT = 150;
+const BATCH_LIMIT = 100;
+const MAX_CONSECUTIVE_NOT_FOUND = 20; // 아직 생성되지 않은 경기 번호를 건너뛰지 않도록 제한
 const STABLE_DELAY_MS = 1 * 60 * 60 * 1000; // 최근 1시간 이내 게임은 아직 변동 가능하므로 중단
 
 // ── 타입 ──────────────────────────────────────────────────
@@ -61,6 +63,7 @@ interface Participant {
   placeOfStart: string;
   mmrBefore: number;
   mmrAfter: number;
+  mmrGainInGame: number | null;
   rankPoint: number;
   victory: number;
   matchingMode: number;
@@ -167,6 +170,7 @@ function extractParticipant(raw: any): Participant | null {
     placeOfStart: raw.placeOfStart ?? "",
     mmrBefore: raw.mmrBefore ?? 0,
     mmrAfter: raw.mmrAfter ?? 0,
+    mmrGainInGame: raw.mmrGainInGame ?? null,
     rankPoint: raw.rankPoint ?? 0,
     victory: raw.victory ?? 0,
     matchingMode: raw.matchingMode ?? 0,
@@ -208,6 +212,9 @@ function extractGamePatchVersion(gameDetail: any): string | null {
     gameDetail?.patch_version,
     first?.patchVersion,
     first?.patch_version,
+    first?.versionSeason != null && first?.versionMajor != null
+      ? `${first.versionSeason}.${first.versionMajor}`
+      : null,
   ];
 
   for (const source of sources) {
@@ -289,7 +296,7 @@ function parseGameData(
   patchIntervals: PatchInterval[],
   rank1000MMR: number | null,
   isForward: boolean
-): ParsedGame | null | "RECENT" {
+): ParsedGame | null | "RECENT" | "MISSING_RP" | "UNREGISTERED_PATCH" {
   const userGames = gameDetail?.userGames;
   if (!Array.isArray(userGames) || userGames.length === 0) return null;
 
@@ -305,6 +312,10 @@ function parseGameData(
     return "RECENT";
   }
 
+  const apiPatchVersion = extractGamePatchVersion(gameDetail);
+  if (apiPatchVersion && !patchIntervals.some((patch) => patch.version === apiPatchVersion)) {
+    return "UNREGISTERED_PATCH";
+  }
   const patchVersion = resolvePatchVersion(gameDetail, startDate, patchIntervals);
   if (!patchVersion) return null;
 
@@ -314,6 +325,18 @@ function parseGameData(
     .filter((p): p is Participant => p !== null);
 
   if (participants.length === 0) return null;
+
+  // 12.4+에서는 순 RP에 입장료, 갬빗 배율, 승급 보너스가 섞일 수 있다.
+  // 필요한 값이 없으면 커서를 진행하지 않고 다음 수집 때 다시 시도한다.
+  const rpByParticipant = new Map<Participant, number>();
+  for (const p of participants) {
+    if (getCollectableTiers(p.mmrBefore, rank1000MMR).length === 0) continue;
+    const rp = getCollectedRP(
+      patchVersion, p.mmrBefore, p.mmrAfter, p.mmrGainInGame,
+    );
+    if (rp === null) return "MISSING_RP";
+    rpByParticipant.set(p, rp);
+  }
 
   // ── 참가자 JSONB 페이로드 ──
   const pData = participants.map((p) => {
@@ -349,6 +372,7 @@ function parseGameData(
       pos: p.placeOfStart || null,
       mb: p.mmrBefore,
       ma: p.mmrAfter,
+      rp: rpByParticipant.get(p),
       rkp: p.rankPoint,
       vic: p.victory,
       dur: p.duration,
@@ -382,7 +406,7 @@ function parseGameData(
     if (commonTiers.length === 0) continue;
 
     const sorted = [...teamMembers].sort((a, b) => a.characterNum - b.characterNum);
-    const avgRP = teamMembers.reduce((s, m) => s + (m.mmrAfter - m.mmrBefore), 0) / 3;
+    const avgRP = teamMembers.reduce((s, m) => s + (rpByParticipant.get(m) ?? 0), 0) / 3;
     const hasWeapons = teamMembers.every((m) => m.bestWeapon > 0);
 
     trios.push({
@@ -405,61 +429,36 @@ function parseGameData(
   return { patchVersion, participants: pData, trios };
 }
 
-// ── 배치 RPC 호출 ────────────────────────────────────────
+// ── 경기별 원자적 RPC 호출 ───────────────────────────────
 
-async function flushBatchRPC(
+async function flushGameRPC(
   supabase: any,
-  byPatch: Map<string, { participants: any[]; trios: any[] }>,
-  isForward: boolean
-): Promise<{ ok: number; fail: number }> {
-  let totalOk = 0;
-  let totalFail = 0;
+  games: { gameNumber: number; parsed: ParsedGame }[],
+): Promise<{ saved: number; failedGameNumber: number | null }> {
+  let saved = 0;
 
-  for (const [patchVersion, data] of byPatch) {
+  for (const { gameNumber, parsed } of games) {
     const rpcPayload = {
-      patch_version: patchVersion,
-      is_forward: isForward,
-      participants: data.participants,
-      trios: data.trios,
+      patch_version: parsed.patchVersion,
+      is_forward: true,
+      participants: parsed.participants,
+      trios: parsed.trios,
     };
 
-    // v2_ 테이블 (메인)
-    const { data: v2Result, error: v2Error } = await supabase.rpc("process_game_v2", {
+    const { data: result, error } = await supabase.rpc("process_collected_game_v2", {
+      p_game_number: gameNumber,
       p_data: rpcPayload,
     });
 
-    if (v2Error) {
-      console.error(`[Bulk v2] RPC error (patch=${patchVersion}):`, v2Error.message);
-      totalFail += data.participants.length;
-    } else {
-      totalOk += v2Result?.ok ?? 0;
-      totalFail += v2Result?.fail ?? 0;
-      if (v2Result?.fail > 0) {
-        console.warn(`[Bulk v2] partial: ok=${v2Result.ok}, fail=${v2Result.fail}`, v2Result.errors);
-      }
+    if (error) {
+      console.error(`[Forward] 경기별 RPC 오류: gameNumber=${gameNumber}, patch=${parsed.patchVersion}:`, error.message);
+      return { saved, failedGameNumber: gameNumber };
     }
 
-    const { data: tacticalResult, error: tacticalError } = await supabase.rpc(
-      "process_character_tactical_batch",
-      { p_data: rpcPayload },
-    );
-
-    if (tacticalError) {
-      console.error(
-        `[Bulk tactical] RPC error (patch=${patchVersion}):`,
-        tacticalError.message,
-      );
-    } else if (tacticalResult?.fail > 0) {
-      console.warn(
-        `[Bulk tactical] partial: ok=${tacticalResult.ok}, fail=${tacticalResult.fail}`,
-        tacticalResult.errors,
-      );
-    }
-
-    // old 테이블 쓰기 제거 — 프론트엔드가 v2_ 테이블만 사용
+    if (!result?.duplicate) saved++;
   }
 
-  return { ok: totalOk, fail: totalFail };
+  return { saved, failedGameNumber: null };
 }
 
 // ── 메인 핸들러 ────────────────────────────────────────────
@@ -561,8 +560,10 @@ serve(async (req: Request) => {
       let currentGame = (forwardStatus.last_game_number ?? FORWARD_START_GAME) + 1;
       console.log(`[Forward] 시작: worker=${forwardWorkerType}, gameNumber=${currentGame}`);
 
-      const byPatch = new Map<string, { participants: any[]; trios: any[] }>();
+      const parsedGames: { gameNumber: number; parsed: ParsedGame }[] = [];
+      const skippedGameNumbers: number[] = [];
       let lastGameNumber = currentGame - 1;
+      let consecutiveNotFound = 0;
 
       for (let i = 0; i < BATCH_LIMIT; i++) {
         if (Date.now() - forwardStartMs >= FORWARD_BUDGET_MS) break;
@@ -570,6 +571,7 @@ serve(async (req: Request) => {
         try {
           const game = await fetchGame(currentGame);
           if (game !== null) {
+            consecutiveNotFound = 0;
             const parsed = parseGameData(game, patchIntervals, rank1000MMR, true);
             if (parsed === "RECENT") {
               forwardHitRecent = true;
@@ -581,19 +583,39 @@ serve(async (req: Request) => {
               );
               break;
             }
+            if (parsed === "MISSING_RP") {
+              forwardFailed++;
+              lastGameNumber = currentGame - 1;
+              console.error(`[Forward] 경기 중 기본 획득 RP 누락: gameNumber=${currentGame}, 재시도 대기`);
+              break;
+            }
+            if (parsed === "UNREGISTERED_PATCH") {
+              forwardFailed++;
+              lastGameNumber = currentGame - 1;
+              console.error(`[Forward] API 패치 버전이 PatchVersion에 없음: gameNumber=${currentGame}, 재시도 대기`);
+              break;
+            }
             if (parsed) {
-              const group = byPatch.get(parsed.patchVersion) || { participants: [], trios: [] };
-              group.participants.push(...parsed.participants);
-              group.trios.push(...parsed.trios);
-              byPatch.set(parsed.patchVersion, group);
-              forwardCollected++;
+              parsedGames.push({ gameNumber: currentGame, parsed });
             } else {
-              forwardSkipped++;
+              skippedGameNumbers.push(currentGame);
+            }
+          } else {
+            consecutiveNotFound++;
+            if (consecutiveNotFound >= MAX_CONSECUTIVE_NOT_FOUND) {
+              // 첫 404부터 다시 확인해야 뒤늦게 생성된 경기를 놓치지 않는다.
+              lastGameNumber = currentGame - consecutiveNotFound;
+              console.log(
+                `[Forward] 연속 ${consecutiveNotFound}개 경기 없음: 다음 실행은 gameNumber=${lastGameNumber + 1}부터 재탐색`
+              );
+              break;
             }
           }
         } catch (e) {
           forwardFailed++;
           console.error("[Forward] parseGameData error:", e);
+          lastGameNumber = currentGame - 1;
+          break;
         }
 
         lastGameNumber = currentGame;
@@ -601,11 +623,16 @@ serve(async (req: Request) => {
         await sleep(1000); // rate limit 1req/s
       }
 
-      if (byPatch.size > 0) {
-        console.log(`[Forward] 배치 RPC: ${byPatch.size}개 패치, 총 ${[...byPatch.values()].reduce((s, g) => s + g.participants.length, 0)}명 참가자`);
-        const { fail } = await flushBatchRPC(supabase, byPatch, true);
-        forwardFailed += fail;
+      if (parsedGames.length > 0) {
+        console.log(`[Forward] 경기별 RPC: ${parsedGames.length}경기, 총 ${parsedGames.reduce((s, g) => s + g.parsed.participants.length, 0)}명 참가자`);
+        const { saved, failedGameNumber } = await flushGameRPC(supabase, parsedGames);
+        forwardCollected = saved;
+        if (failedGameNumber !== null) {
+          forwardFailed++;
+          lastGameNumber = Math.min(lastGameNumber, failedGameNumber - 1);
+        }
       }
+      forwardSkipped = skippedGameNumbers.filter((gameNumber) => gameNumber <= lastGameNumber).length;
 
       await supabase
         .from("v2_CollectionStatus")

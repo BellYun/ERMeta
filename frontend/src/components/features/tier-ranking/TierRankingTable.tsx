@@ -30,6 +30,7 @@ import {
 } from "@/lib/characterMap";
 import { withCurrentSeoLocale } from "@/lib/localizedPath";
 import type { CharacterRankingData, RankingResponse } from "@/lib/ranking";
+import { getFixedEntryCost, hasComparableRP } from "@/lib/rpMetric";
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
 import { TierBadge } from "../TierBadge";
@@ -121,6 +122,7 @@ function buildDisplayRows(
   rankings: CharacterRankingData[],
   previousRankings: CharacterRankingData[],
   currentPatch: string,
+  previousPatch: string | null,
   l10n: Map<string, string>
 ): DisplayRow[] {
   const prevMap = new Map<number, PrevStats>();
@@ -129,7 +131,7 @@ function buildDisplayRows(
       prevMap.set(getMetaRankingKey(r), {
         pickRate: r.pickRate,
         winRate: r.winRate,
-        averageRP: r.averageRP,
+        averageRP: hasComparableRP(currentPatch, previousPatch) ? r.averageRP : undefined,
       });
     }
   }
@@ -179,6 +181,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
   const rankingData = initialData ?? null;
   const patch = rankingData?.patchVersion ?? "";
   const matchmakingTier = rankingData?.tier ?? "";
+  const entryCost = getFixedEntryCost(patch, matchmakingTier);
   const isLoading = !initialData;
   const [activeKey, setActiveKey] = React.useState<string | null>(null);
   const [sortKey, setSortKey] = React.useState<SortKey>("rank");
@@ -207,6 +210,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
       rankingData.rankings,
       rankingData.previousRankings,
       rankingData.patchVersion ?? patch ?? "",
+      rankingData.previousPatch,
       l10n
     );
   }, [rankingData, l10n, patch]);
@@ -298,6 +302,19 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
             ? "前パッチ比 · 同ランク帯・武器 · ピック率は人気の変化"
             : "Vs. previous patch · Same rank tier and weapon · Pick rate tracks popularity"}
       </p>
+      {entryCost > 0 ? (
+        <p className="text-xs text-[var(--color-muted-foreground)]">
+          {locale === "ko"
+            ? `평균 RP는 경기 중 획득 점수에서 선택한 분석 티어의 고정 입장료 ${entryCost}점을 뺀 값입니다.`
+            : locale === "ja"
+              ? `平均RPは試合中の獲得RPから選択ランク帯の固定入場料${entryCost}を差し引いた値です。`
+              : locale === "zh-Hans"
+                ? `平均 RP 为比赛内获得的 RP 减去所选段位的固定入场费 ${entryCost}。`
+                : locale === "zh-Hant"
+                  ? `平均 RP 為對局中獲得的 RP 減去所選牌位的固定入場費 ${entryCost}。`
+                  : `Average RP is in-match earned RP minus this analysis tier's fixed ${entryCost} entry cost.`}
+        </p>
+      ) : null}
       {/* ── Role Filter ── */}
       <Tabs
         value={activeRole}

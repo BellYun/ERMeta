@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SupabaseService } from '../../common/database/supabase.service';
 import { RedisService } from '../../common/redis/redis.service';
+import { getAverageRP, hasComparableRP } from '../../common/rp-metric';
 
 const TIER_FALLBACK_ORDER = ['DIAMOND', 'METEORITE', 'MITHRIL', 'IN1000'];
 const HOME_BASE_TIERS = ['DIAMOND', 'METEORITE', 'MITHRIL'] as const;
@@ -70,7 +71,7 @@ function normalizeHomeRows(rows: unknown[]): HomeMetaStatRow[] {
   });
 }
 
-function computeRates(rows: StatRow[]) {
+function computeRates(rows: StatRow[], patchVersion: string, tier: string) {
   const grandTotal = rows.reduce((sum, r) => sum + (r.totalGames ?? 0), 0);
   return rows.map((r) => ({
     characterNum: r.characterNum,
@@ -78,7 +79,7 @@ function computeRates(rows: StatRow[]) {
     totalGames: r.totalGames ?? 0,
     pickRate: grandTotal > 0 ? ((r.totalGames ?? 0) / grandTotal) * 100 : 0,
     winRate: r.totalGames > 0 ? ((r.totalWins ?? 0) / r.totalGames) * 100 : 0,
-    averageRP: r.totalGames > 0 ? (r.totalRP ?? 0) / r.totalGames : 0,
+    averageRP: getAverageRP(r.totalRP ?? 0, r.totalGames, patchVersion, tier),
   }));
 }
 
@@ -169,7 +170,7 @@ export class MetaService {
   ) {}
 
   async getHoneyPicks(patchVersion: string | undefined, requestedTier: string) {
-    const cacheKey = `honey:${patchVersion ?? 'latest'}:${requestedTier}`;
+    const cacheKey = `honey:fixed-entry-cost-v1:${patchVersion ?? 'latest'}:${requestedTier}`;
     return this.redis.getOrSet(cacheKey, 1800, () =>
       this._getHoneyPicks(patchVersion, requestedTier),
     );
@@ -269,7 +270,7 @@ export class MetaService {
       }
     }
 
-    if (!previousPatch) {
+    if (!previousPatch || !hasComparableRP(currentPatch, previousPatch)) {
       return { picks: [], patchVersion: currentPatch, previousPatch: null, tier: requestedTier };
     }
 
@@ -315,8 +316,8 @@ export class MetaService {
       return { picks: [], patchVersion: currentPatch, previousPatch, tier: usedTier };
     }
 
-    const currentRates = computeRates(currentRows);
-    const prevRates = computeRates(prevRows);
+    const currentRates = computeRates(currentRows, currentPatch, usedTier);
+    const prevRates = computeRates(prevRows, previousPatch, usedTier);
     const prevMap = new Map(
       prevRates.map((r) => [getHoneyPickKey(r.characterNum, r.bestWeapon), r]),
     );

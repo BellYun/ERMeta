@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import itemGradeMap from "@/../const/itemGradeMap.json";
 import weaponItemTypeMap from "@/../const/weaponItemTypeMap.json";
 import { getCacheHeaders } from "@/lib/cache";
+import { getAverageRP } from "@/lib/rpMetric";
 import { tryNestApiProxy } from "@/lib/server/nestProxy";
 import { createServerClient } from "@/lib/supabase";
 import { expandCumulativeTier } from "@/utils/tier";
@@ -248,7 +249,7 @@ export async function GET(request: NextRequest) {
         pickRate: grandTotal > 0 ? (b.games / grandTotal) * 100 : 0,
         winRate: b.games > 0 ? (b.wins / b.games) * 100 : 0,
         averageRank: b.games > 0 ? b.rankSum / b.games : 0,
-        averageRP: b.games > 0 ? b.rpSum / b.games : 0,
+        averageRP: getAverageRP(b.rpSum, b.games, patchVersion, tier),
       }));
 
     // ② slotPopularity

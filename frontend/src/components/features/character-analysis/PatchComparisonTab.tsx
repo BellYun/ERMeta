@@ -2,9 +2,10 @@
 
 import { BarChart2 } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
 import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route";
+import { usesEarnedRP } from "@/lib/rpMetric";
 import { cn } from "@/lib/utils";
 
 // recharts 는 ~250KB. 두 LineChart 는 chartData.length>=2 분기에서만 렌더되므로 dynamic.
@@ -32,6 +33,9 @@ export function PatchComparisonTab({
   selectedCode,
 }: PatchComparisonTabProps) {
   const t = useTranslations("characterPatch");
+  const locale = useLocale();
+  const hasMixedRPFormula = chartData.some((row) => usesEarnedRP(row.patch)) &&
+    chartData.some((row) => !usesEarnedRP(row.patch));
 
   if (loading) {
     return <div className="h-32 rounded-md bg-[var(--color-surface)]" />;
@@ -48,6 +52,19 @@ export function PatchComparisonTab({
 
   return (
     <div className="space-y-3 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-3 sm:p-4">
+      {hasMixedRPFormula ? (
+        <p className="text-xs text-[var(--color-muted-foreground)]">
+          {locale === "ko"
+            ? "12.4부터 평균 RP 산식이 바뀌어 이전 패치와 RP 증감을 직접 비교하지 않습니다."
+            : locale === "ja"
+              ? "12.4から平均RPの算出方法が変わったため、以前のパッチとのRP差は直接比較しません。"
+              : locale === "zh-Hans"
+                ? "12.4 起平均 RP 的计算方式已变更，因此不直接比较跨版本的 RP 变化。"
+                : locale === "zh-Hant"
+                  ? "12.4 起平均 RP 的計算方式已變更，因此不直接比較跨版本的 RP 變化。"
+                  : "Average RP uses a different formula from 12.4, so RP changes across this boundary are not directly compared."}
+        </p>
+      ) : null}
       {/* 멀티 패치 트렌드 차트 */}
       {chartData.length < 2 ? (
         <div className="flex flex-col items-center gap-2 py-5 sm:py-6 text-[var(--color-muted-foreground)]">

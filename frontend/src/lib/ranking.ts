@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { getAverageRP } from "@/lib/rpMetric";
 import { createServerClient } from "@/lib/supabase";
 import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
 import { expandCumulativeTier } from "@/utils/tier";
@@ -34,7 +35,11 @@ export interface RankingResponse {
   tier: string;
 }
 
-export function buildRankings(rows: StatRow[]): CharacterRankingData[] {
+export function buildRankings(
+  rows: StatRow[],
+  patchVersion = "",
+  tier = ""
+): CharacterRankingData[] {
   const grandTotal = rows.reduce((sum, r) => sum + (r.totalGames ?? 0), 0);
 
   const rankings = rows.map((r) => ({
@@ -43,7 +48,7 @@ export function buildRankings(rows: StatRow[]): CharacterRankingData[] {
     totalGames: r.totalGames ?? 0,
     pickRate: grandTotal > 0 ? ((r.totalGames ?? 0) / grandTotal) * 100 : 0,
     winRate: r.totalGames > 0 ? ((r.totalWins ?? 0) / r.totalGames) * 100 : 0,
-    averageRP: r.totalGames > 0 ? (r.totalRP ?? 0) / r.totalGames : 0,
+    averageRP: getAverageRP(r.totalRP ?? 0, r.totalGames, patchVersion, tier),
     top3Rate: r.totalGames > 0 ? ((r.totalTop3 ?? 0) / r.totalGames) * 100 : 0,
   }));
 
@@ -84,7 +89,8 @@ function aggregateAcrossTiers(rows: (StatRow & { tier: string })[]): StatRow[] {
 
 function selectRankings(
   data: (StatRow & { tier: string })[],
-  requestedTier: string
+  requestedTier: string,
+  patchVersion: string
 ): { rankings: CharacterRankingData[]; usedTier: string } {
   // 누적(+) tier 필터: 요청 tier 와 그 위 모든 tier row 를 합산.
   const cumulativeTiers = new Set(expandCumulativeTier(requestedTier));
@@ -95,7 +101,7 @@ function selectRankings(
   // 같은 (characterNum, bestWeapon) 의 multiple tier row 합산.
   const merged = aggregateAcrossTiers(rows);
   return {
-    rankings: buildRankings(collapseWeaponAgnosticRows(merged)),
+    rankings: buildRankings(collapseWeaponAgnosticRows(merged), patchVersion, requestedTier),
     usedTier: requestedTier,
   };
 }
@@ -158,10 +164,10 @@ export async function fetchRankingData(
   const currentData = typedData.filter((r) => r.patchVersion === patchVersion);
   const prevData = previousPatch ? typedData.filter((r) => r.patchVersion === previousPatch) : [];
 
-  const { rankings, usedTier } = selectRankings(currentData, requestedTier);
+  const { rankings, usedTier } = selectRankings(currentData, requestedTier, patchVersion);
   const { rankings: previousRankings } =
     prevData.length > 0
-      ? selectRankings(prevData, usedTier)
+      ? selectRankings(prevData, usedTier, previousPatch!)
       : { rankings: [] as CharacterRankingData[] };
 
   return {
@@ -179,7 +185,7 @@ export async function getCachedRankingData(
 ): Promise<RankingResponse> {
   return unstable_cache(
     async () => fetchRankingData(patchVersion, requestedTier),
-    ["character-rankings", patchVersion, requestedTier],
+    ["character-rankings", "fixed-entry-cost-v1", patchVersion, requestedTier],
     {
       revalidate: 21600,
       tags: [
