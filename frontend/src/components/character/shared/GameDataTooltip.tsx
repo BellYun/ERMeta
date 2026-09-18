@@ -232,6 +232,7 @@ interface GameDataTooltipProps {
 
 export function GameDataTooltip({ children, description, title }: GameDataTooltipProps) {
   const anchorRef = React.useRef<HTMLSpanElement>(null);
+  const touchOpenRef = React.useRef(false);
   const tooltipId = React.useId();
   const [position, setPosition] = React.useState<{ left: number; top: number } | null>(null);
 
@@ -251,12 +252,20 @@ export function GameDataTooltip({ children, description, title }: GameDataToolti
   React.useEffect(() => {
     if (!position) return;
 
-    const hide = () => setPosition(null);
+    const hide = () => {
+      touchOpenRef.current = false;
+      setPosition(null);
+    };
+    const hideOnOutsidePointerDown = (event: PointerEvent) => {
+      if (!anchorRef.current?.contains(event.target as Node)) hide();
+    };
     window.addEventListener("scroll", hide, true);
     window.addEventListener("resize", hide);
+    document.addEventListener("pointerdown", hideOnOutsidePointerDown);
     return () => {
       window.removeEventListener("scroll", hide, true);
       window.removeEventListener("resize", hide);
+      document.removeEventListener("pointerdown", hideOnOutsidePointerDown);
     };
   }, [position]);
 
@@ -267,7 +276,19 @@ export function GameDataTooltip({ children, description, title }: GameDataToolti
         className="inline-flex"
         aria-describedby={position ? tooltipId : undefined}
         onMouseEnter={updatePosition}
-        onMouseLeave={() => setPosition(null)}
+        onMouseLeave={() => {
+          if (!touchOpenRef.current) setPosition(null);
+        }}
+        onPointerDown={(event) => {
+          if (event.pointerType === "mouse") return;
+          if (touchOpenRef.current) {
+            touchOpenRef.current = false;
+            setPosition(null);
+          } else {
+            touchOpenRef.current = true;
+            updatePosition();
+          }
+        }}
       >
         {children}
       </span>

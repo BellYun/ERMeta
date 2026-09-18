@@ -38,6 +38,8 @@ export function ItemIcon({
   const icon = !imgPath ? (
     <div
       className={cn("rounded-md flex items-center justify-center", gradeBg, gradeBorder)}
+      role="img"
+      aria-label={name ?? String(code)}
       style={{ width: size, height: size }}
     >
       <span
@@ -54,7 +56,7 @@ export function ItemIcon({
     >
       <Image
         src={imgPath}
-        alt={String(code)}
+        alt={name ?? String(code)}
         fill
         className="rounded-md object-cover"
         sizes={`${size}px`}

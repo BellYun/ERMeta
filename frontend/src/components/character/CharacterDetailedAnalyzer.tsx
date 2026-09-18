@@ -328,21 +328,16 @@ function TopBuildsTableFiltered({
                 <WinRateSpan winRate={b.winRate} />
               </div>
             </div>
-            <div className="flex items-start justify-center gap-0.5 pb-0.5">
+            <div className="flex items-center justify-center gap-0.5 pb-0.5">
               {SLOTS.map((s) => {
                 const code = b[s];
                 return (
-                  <div key={s} className="flex min-w-0 flex-1 flex-col items-center gap-1">
+                  <div key={s} className="flex min-w-0 flex-1 justify-center">
                     <ItemIcon
                       code={code}
                       name={code != null ? itemNames[code] : undefined}
                       size={28}
                     />
-                    {code != null && (
-                      <span className="w-full whitespace-normal text-center text-xs leading-tight text-[var(--color-muted-foreground)] [overflow-wrap:anywhere]">
-                        {itemNames[code] ?? code}
-                      </span>
-                    )}
                   </div>
                 );
               })}
@@ -368,7 +363,9 @@ function TopBuildsTableFiltered({
               ))}
               <th className="px-3 py-2 text-right font-medium w-16">{t("stats.pickRate")}</th>
               <th className="px-3 py-2 text-right font-medium w-16">{t("stats.winRate")}</th>
-              <th className="px-3 py-2 text-right font-medium w-16">{t("stats.averageRank")}</th>
+              <th className="px-3 py-2 text-right font-medium w-16 whitespace-nowrap">
+                {t("stats.averageRank")}
+              </th>
               <th className="px-3 py-2 text-right font-medium w-16">{t("stats.averageRp")}</th>
             </tr>
           </thead>
@@ -391,17 +388,12 @@ function TopBuildsTableFiltered({
                   const code = b[s];
                   return (
                     <td key={s} className="px-2 py-2 text-center align-top">
-                      <div className="flex min-w-24 flex-col items-center gap-1">
+                      <div className="flex min-w-24 justify-center">
                         <ItemIcon
                           code={code}
                           name={code != null ? itemNames[code] : undefined}
                           size={36}
                         />
-                        {code != null && (
-                          <span className="w-full max-w-28 whitespace-normal text-center text-xs leading-snug text-[var(--color-muted-foreground)] [overflow-wrap:anywhere]">
-                            {itemNames[code] ?? code}
-                          </span>
-                        )}
                       </div>
                     </td>
                   );
@@ -487,10 +479,7 @@ function SlotPopularityGrid({
             </span>
             <ItemIcon code={item.code} name={itemNames[item.code]} size={40} />
             <div className="min-w-0">
-              <p className="text-sm font-medium leading-snug text-[var(--color-foreground)] [overflow-wrap:anywhere]">
-                {itemNames[item.code] ?? item.code}
-              </p>
-              <dl className="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-xs tabular-nums">
+              <dl className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-xs tabular-nums">
                 <div className="flex items-baseline gap-1 whitespace-nowrap">
                   <dt className="text-[var(--color-muted-foreground)]">{t("stats.pickRate")}</dt>
                   <dd className="font-semibold text-[var(--color-foreground)]">
