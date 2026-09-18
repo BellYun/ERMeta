@@ -104,20 +104,20 @@ export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
                   return (
                     <div
                       key={idx}
-                      className="flex gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 hover:bg-[var(--color-surface-2)] overflow-hidden"
+                      className="flex min-w-0 gap-2 px-3 py-2 hover:bg-[var(--color-surface-2)] sm:gap-3 sm:px-4 sm:py-3"
                     >
                       <div className="pt-0.5 shrink-0">
                         <ChangeTypeBadge type={change.changeType} />
                       </div>
-                      <div className="flex flex-1 flex-col gap-0.5 sm:gap-1 min-w-0 overflow-hidden">
+                      <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:gap-1">
                         <div className="flex items-start justify-between gap-1.5 sm:gap-2 flex-wrap min-w-0">
-                          <span className="text-[13px] sm:text-sm font-medium text-[var(--color-foreground)] break-words min-w-0">
+                          <span className="min-w-0 text-[13px] font-medium text-[var(--color-foreground)] [overflow-wrap:anywhere] sm:text-sm">
                             {change.target}
                           </span>
                           {change.valueSummary && (
                             <span
                               className={cn(
-                                "text-[11px] sm:text-xs font-mono shrink-0",
+                                "min-w-0 max-w-full font-mono text-[11px] [overflow-wrap:anywhere] sm:text-xs",
                                 config.colorClass
                               )}
                             >
@@ -129,7 +129,7 @@ export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
                           {change.description.map((desc, di) => (
                             <li
                               key={di}
-                              className="text-[11px] sm:text-xs text-[var(--color-muted-foreground)] before:content-['•'] before:mr-1 sm:before:mr-1.5 break-words"
+                              className="text-[11px] text-[var(--color-muted-foreground)] [overflow-wrap:anywhere] before:mr-1 before:content-['•'] sm:text-xs sm:before:mr-1.5"
                             >
                               {desc}
                             </li>
