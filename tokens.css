@@ -182,7 +182,7 @@
   --studio-accent-soft: #edf2ff;
   --studio-shadow: 0 8px 32px #18202d06;
   --studio-radius: 1rem;
-  --studio-title: clamp(2rem, 4vw, 3.25rem);
+  --studio-title: clamp(1.75rem, 2.5vw, 2.25rem);
   --studio-content: 90rem;
   --color-home-canvas: var(--studio-canvas);
   --color-home-surface: var(--studio-surface);

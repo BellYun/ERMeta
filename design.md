@@ -46,8 +46,9 @@ Modern-minimal and technical, using a custom dual-mode data-hub system tuned for
 - Body: Pretendard 400.
 - Outlier: JetBrains Mono 500, only for patch/version labels and headline metrics.
 - Display tracking: `-0.035em`.
+- Overview page introductions using `--studio-title` use a 28–36px scale. Character detail keeps its character name larger than the compact page label.
 - Body copy uses a compact 16px baseline; supporting UI copy uses 14px.
-- Dense data labels, badges, chart annotations, and version markers keep their component-authored scale. Shared labels use a 12px baseline.
+- Dense table values and shared labels use a 12px baseline. Compact mobile annotations may use 11px; essential text does not drop to 9–10px.
 
 ## Spacing
 

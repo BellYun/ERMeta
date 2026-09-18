@@ -554,7 +554,7 @@ export async function CharacterPageContent({
                     <p className="mt-1 max-w-[46rem] text-xs leading-5 text-[var(--color-muted-foreground)]">
                       {t("description")}
                     </p>
-                    <p className="mt-1.5 text-[10px] leading-4 text-[var(--color-muted-foreground)]">
+                    <p className="mt-1.5 text-xs leading-4 text-[var(--color-muted-foreground)]">
                       {t("imageNotice")}
                     </p>
                   </details>

@@ -312,7 +312,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                   href={href}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "site-navigation__link inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium xl:px-3 xl:text-[13px]",
+                    "site-navigation__link inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium xl:px-3 xl:text-sm",
                     isActive
                       ? "border-[var(--color-border-light)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
                       : "border-transparent text-[var(--color-muted-foreground)] hover:border-[var(--color-border)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"
@@ -334,7 +334,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                 <summary
                   aria-current={isLabActive ? "page" : undefined}
                   className={cn(
-                    "site-navigation__link inline-flex h-9 cursor-pointer list-none items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium xl:px-3 xl:text-[13px]",
+                    "site-navigation__link inline-flex h-9 cursor-pointer list-none items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium xl:px-3 xl:text-sm",
                     isLabActive
                       ? "border-[var(--color-border-light)] bg-[var(--color-surface)] text-[var(--color-foreground)]"
                       : "border-transparent text-[var(--color-muted-foreground)] hover:border-[var(--color-border)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-foreground)]"

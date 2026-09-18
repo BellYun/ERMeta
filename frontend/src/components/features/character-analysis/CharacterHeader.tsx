@@ -180,12 +180,12 @@ export function CharacterHeader({
               </h2>
               <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                 {currentPatch && (
-                  <span className="rounded border border-[var(--color-border)] px-2 py-0.5 text-[10px] font-medium text-[var(--color-muted-foreground)]">
+                  <span className="rounded border border-[var(--color-border)] px-2 py-0.5 text-xs font-medium text-[var(--color-muted-foreground)]">
                     {t("patch", { patch: currentPatch })}
                   </span>
                 )}
                 {displayStat && displayStat.totalGames > 0 && (
-                  <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2 py-0.5 text-[10px] text-[var(--color-muted-foreground)]">
+                  <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2 py-0.5 text-xs text-[var(--color-muted-foreground)]">
                     {t("games", { count: displayStat.totalGames.toLocaleString() })}
                   </span>
                 )}
@@ -217,7 +217,7 @@ export function CharacterHeader({
                       }}
                       onKeyDown={(e) => handleTierKey(e, i)}
                       className={cn(
-                        "dashboard-tab min-h-[30px] whitespace-nowrap px-2.5 py-1 text-[10px] sm:px-3 sm:text-[11px]"
+                        "dashboard-tab min-h-[30px] whitespace-nowrap px-2.5 py-1 text-xs sm:px-3"
                       )}
                       data-active={isSelected ? "true" : undefined}
                     >
@@ -228,7 +228,7 @@ export function CharacterHeader({
               </div>
 
               {patches.length > 0 && (
-                <label className="flex min-h-[32px] items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 text-[10px] font-medium text-[var(--color-muted-foreground)] sm:text-[11px]">
+                <label className="flex min-h-[32px] items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 text-xs font-medium text-[var(--color-muted-foreground)]">
                   <span>패치</span>
                   <select
                     value={selectedPatch ?? patches[0]}
@@ -250,7 +250,7 @@ export function CharacterHeader({
 
         {availableWeaponCodes.length > 0 ? (
           <div className="mt-2.5 border-t border-[var(--color-border)] pt-2.5">
-            <span className="mb-1.5 block text-[10px] font-semibold text-[var(--color-muted-foreground)]">
+            <span className="mb-1.5 block text-xs font-semibold text-[var(--color-muted-foreground)]">
               {t("weapon")}
             </span>
             <div
@@ -284,7 +284,7 @@ export function CharacterHeader({
                     }}
                     onKeyDown={(e) => handleWeaponKey(e, weaponIndex)}
                     className={cn(
-                      "dashboard-tab min-w-[82px] shrink-0 flex-col px-2 py-1.5 text-[11px] sm:min-w-[90px] sm:px-2.5 sm:text-xs"
+                      "dashboard-tab min-w-[82px] shrink-0 flex-col px-2 py-1.5 text-xs sm:min-w-[90px] sm:px-2.5"
                     )}
                     data-active={isSelected ? "true" : undefined}
                   >
@@ -307,7 +307,7 @@ export function CharacterHeader({
                       {weaponStat ? (
                         <span
                           className={cn(
-                            "text-[10px] tabular-nums",
+                            "text-[11px] tabular-nums",
                             isSelected
                               ? "text-[var(--color-accent-foreground)]"
                               : "text-[var(--color-muted-foreground)]"

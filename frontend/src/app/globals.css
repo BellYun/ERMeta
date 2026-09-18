@@ -3375,6 +3375,8 @@ body,
 
 .tier-role-tabs > [role="tab"] {
   flex: 1 0 auto;
+  font-size: var(--text-sm);
+  font-weight: 600;
   white-space: nowrap;
 }
 

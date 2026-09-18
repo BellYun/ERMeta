@@ -15,7 +15,7 @@ export function DeltaIndicator({
   const locale = useLocale();
   if (previous === undefined)
     return (
-      <span className="block text-[10px] font-normal text-[var(--color-muted-foreground)]">
+      <span className="block text-[11px] font-normal text-[var(--color-muted-foreground)]">
         {locale === "ko" ? "비교 없음" : locale === "ja" ? "比較なし" : "No comparison"}
       </span>
     );

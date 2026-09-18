@@ -94,7 +94,7 @@ function RankChangeIndicator({ change }: { change: DisplayRow["rankChange"] }) {
     <span
       title={label}
       className={cn(
-        "font-mono text-[9px] font-semibold leading-none tabular-nums",
+        "font-mono text-[11px] font-semibold leading-none tabular-nums",
         isUp
           ? "text-[var(--color-stat-up)]"
           : isDown
@@ -482,7 +482,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                                         onClick={(e) => togglePatchNote(e, key)}
                                         aria-expanded={activeKey === key}
                                         className={cn(
-                                          "relative inline-flex h-6 shrink-0 items-center gap-1 rounded-full border px-2 text-[10px] font-semibold leading-none transition-colors after:absolute after:-inset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]",
+                                          "relative inline-flex h-6 shrink-0 items-center gap-1 rounded-full border px-2 text-[11px] font-semibold leading-none transition-colors after:absolute after:-inset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]",
                                           badge.className
                                         )}
                                       >
@@ -496,7 +496,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                                     );
                                   })()}
                               </span>
-                              <span className="text-[11px] text-[var(--color-muted-foreground)] truncate block">
+                              <span className="text-xs text-[var(--color-muted-foreground)] truncate block">
                                 {char.weaponName}
                               </span>
                             </div>
@@ -670,7 +670,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                     </div>
                     {/* Tier */}
                     <div className="col-span-3 flex min-w-0 items-center gap-2">
-                      <TierBadge tier={char.tier} className="text-[10px]" />
+                      <TierBadge tier={char.tier} className="text-[11px]" />
                       <div className="relative h-8 w-8 shrink-0">
                         <span className="absolute inset-0 overflow-hidden rounded-md bg-[var(--color-surface-2)]">
                           <Image
@@ -693,7 +693,7 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <p className="truncate text-xs font-semibold leading-tight text-[var(--color-foreground)]">
+                          <p className="truncate text-[13px] font-semibold leading-tight text-[var(--color-foreground)]">
                             {char.name}
                           </p>
                           {char.patchNote &&
@@ -719,13 +719,13 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                               );
                             })()}
                         </div>
-                        <p className="truncate text-[9px] text-[var(--color-muted-foreground)]">
+                        <p className="truncate text-[11px] text-[var(--color-muted-foreground)]">
                           {char.weaponName}
                         </p>
                       </div>
                     </div>
                     <span className="col-start-2 text-right font-mono text-xs font-medium tabular-nums text-[var(--color-foreground)]">
-                      <span className="block text-[10px] font-sans text-[var(--color-muted-foreground)]">
+                      <span className="block text-[11px] font-sans text-[var(--color-muted-foreground)]">
                         {t("columns.winRate")}
                       </span>
                       {char.winRate.toFixed(1)}%
@@ -735,8 +735,8 @@ export function TierRankingTable({ initialData }: TierRankingTableProps) {
                         suffix="%p"
                       />
                     </span>
-                    <span className="text-right font-mono text-[11px] font-medium tabular-nums text-[var(--color-foreground)]">
-                      <span className="block text-[10px] font-sans text-[var(--color-muted-foreground)]">
+                    <span className="text-right font-mono text-xs font-medium tabular-nums text-[var(--color-foreground)]">
+                      <span className="block text-[11px] font-sans text-[var(--color-muted-foreground)]">
                         {t("columns.pickRate")}
                       </span>
                       {char.pickRate.toFixed(1)}%
