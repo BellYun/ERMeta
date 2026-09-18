@@ -10,6 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { usesEarnedRP } from "@/lib/rpMetric";
 import { PatchTooltip } from "./PatchNoteComponents";
 
 export interface PatchTrendDatum {
@@ -33,6 +34,12 @@ export default function PatchComparisonCharts({
   averageRpLabel,
   expectedLabel,
 }: PatchComparisonChartsProps) {
+  // The RP formula changed at 12.4. Break the trend line at that boundary.
+  const rpChartData = chartData.map((row) => ({
+    ...row,
+    oldRP: usesEarnedRP(row.patch) ? null : row.averageRP,
+    normalizedRP: usesEarnedRP(row.patch) ? row.averageRP : null,
+  }));
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
       {/* 승률 트렌드 */}
@@ -102,7 +109,7 @@ export default function PatchComparisonCharts({
         </p>
         <div className="h-[160px] sm:h-[220px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData} margin={{ top: 4, right: 8, left: -12, bottom: 16 }}>
+            <LineChart data={rpChartData} margin={{ top: 4, right: 8, left: -12, bottom: 16 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
               <XAxis
                 dataKey="patch"
@@ -131,7 +138,14 @@ export default function PatchComparisonCharts({
                 )}
               />
               <Line
-                dataKey="averageRP"
+                dataKey="oldRP"
+                stroke="var(--color-stat-up)"
+                strokeWidth={2}
+                dot={{ r: 3, fill: "var(--color-stat-up)" }}
+                activeDot={{ r: 5 }}
+              />
+              <Line
+                dataKey="normalizedRP"
                 stroke="var(--color-stat-up)"
                 strokeWidth={2}
                 dot={{ r: 3, fill: "var(--color-stat-up)" }}

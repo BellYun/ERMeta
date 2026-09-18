@@ -107,7 +107,7 @@ const PATCH_12_4_COPY: Record<
     pending:
       "12.4 랭크 표본을 집계 중입니다. 통계가 쌓이기 전에는 버프·너프의 실제 효과를 단정하지 않습니다.",
     caution:
-      "12.4에는 갬빗 RP 배율과 매치메이킹 변경도 적용됩니다. API에서 갬빗 여부가 분리 검증되기 전에는 12.3 대비 평균 RP 차이를 실험체 패치 효과로 해석하지 않습니다.",
+      "12.4 평균 RP는 경기 중 기본 획득 점수에서 다이아+ 기준 입장료 45점을 뺀 값입니다. 갬빗 배율은 제외하며, 산식이 다른 12.3과 RP 증감은 직접 비교하지 않습니다.",
     forecast: "사전 전망",
     tierForecast: "무기별 예상 티어 보기",
     source: "공식 12.4 패치노트",
@@ -118,7 +118,7 @@ const PATCH_12_4_COPY: Record<
     pending:
       "12.4 ranked samples are still being collected. No performance conclusion is drawn from missing data.",
     caution:
-      "12.4 also introduced Gambit RP multipliers and matchmaking changes. Until Gambit participation is identifiable in the API, average RP changes cannot be attributed to character balance changes.",
+      "From 12.4, average RP is base in-match earned RP minus the fixed Diamond+ entry cost of 45. Gambit multipliers are excluded, and RP changes are not directly compared with 12.3's different formula.",
     forecast: "Pre-patch outlook",
     tierForecast: "View weapon-specific tier forecasts",
     source: "Official 12.4 patch notes",
@@ -128,7 +128,7 @@ const PATCH_12_4_COPY: Record<
       "12.3の指標を基準に、12.4の公式変更と注目点を整理しました。影響の記述は事前予測であり、12.4の観測結果ではありません。",
     pending: "12.4のランク標本を集計中です。十分なデータがない段階で効果を断定しません。",
     caution:
-      "12.4ではギャンビットのRP倍率とマッチング変更も導入されました。APIで参加状況を区別できるまでは、平均RPの差をキャラクター調整の効果とは見なしません。",
+      "12.4の平均RPは試合中の基本獲得RPからダイヤ以上の固定入場料45を差し引きます。ギャンビット倍率は含めず、算出方法が異なる12.3とのRP差は直接比較しません。",
     forecast: "事前予測",
     tierForecast: "武器別の予想ティアを見る",
     source: "公式12.4パッチノート",
@@ -138,7 +138,7 @@ const PATCH_12_4_COPY: Record<
       "以12.3数据为基线，整理12.4官方改动及观察重点。以下影响判断是事前预测，并非12.4实测结果。",
     pending: "12.4排位样本仍在收集中；数据不足时不判断调整的实际效果。",
     caution:
-      "12.4还引入了Gambit RP倍率和匹配改动。在API无法区分参与情况前，平均RP差异不能归因于角色平衡调整。",
+      "12.4 的平均 RP 为对局内基础获得 RP 减去钻石以上的固定入场费 45。该值不含 Gambit 倍率，也不直接与计算方式不同的 12.3 比较 RP 变化。",
     forecast: "事前预测",
     tierForecast: "查看各武器预测梯队",
     source: "12.4官方更新公告",
@@ -148,7 +148,7 @@ const PATCH_12_4_COPY: Record<
       "以12.3數據為基線，整理12.4官方改動及觀察重點。以下影響判斷是事前預測，並非12.4實測結果。",
     pending: "12.4排位樣本仍在收集中；數據不足時不判斷調整的實際效果。",
     caution:
-      "12.4亦引入Gambit RP倍率和配對改動。在API無法區分參與情況前，平均RP差異不能歸因於角色平衡調整。",
+      "12.4 的平均 RP 為對局內基本獲得 RP 減去鑽石以上的固定入場費 45。此值不含 Gambit 倍率，也不直接與計算方式不同的 12.3 比較 RP 變化。",
     forecast: "事前預測",
     tierForecast: "查看各武器預測梯隊",
     source: "12.4官方更新公告",

@@ -59,6 +59,23 @@ describe("buildHomeMetaView cumulative tiers", () => {
     const view = buildHomeMetaView(stats, tier);
     expect(view.rankingData.rankings[0]?.totalGames).toBe(expectedGames);
   });
+
+  it("12.4 누적 범위에서는 원본 티어와 무관하게 같은 기준 입장료를 뺀다", () => {
+    const earnedStats: HomeMetaStats = {
+      patchVersion: "12.4",
+      previousPatch: "12.3",
+      rows: stats.rows.map((row) => ({
+        ...row,
+        patchVersion: "12.4",
+        totalRP: row.totalGames * 60,
+      })),
+    };
+
+    expect(buildHomeMetaView(earnedStats, "DIAMOND_PLUS").rankingData.rankings[0].averageRP).toBe(15);
+    expect(buildHomeMetaView(earnedStats, "METEORITE_PLUS").rankingData.rankings[0].averageRP).toBe(7);
+    expect(buildHomeMetaView(earnedStats, "MITHRIL_PLUS").rankingData.rankings[0].averageRP).toBe(2);
+    expect(buildHomeMetaView(earnedStats, "DIAMOND_PLUS").honeyPicks).toEqual([]);
+  });
 });
 
 describe("latest stats patch sample gate", () => {

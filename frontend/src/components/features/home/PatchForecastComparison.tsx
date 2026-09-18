@@ -51,8 +51,8 @@ export function isPatchForecastActualReady(
   currentPatch: string,
   homeMetaStats: HomeMetaStats
 ): boolean {
-  // 12.4 changed Gambit RP multipliers; do not turn raw RP-based tiers into
-  // observed patch results until Gambit participation can be separated.
+  // Forecast thresholds were calibrated on pre-12.4 net RP. Wait until they
+  // are recalibrated for the fixed-fee 12.4 metric before showing actual tiers.
   if (currentPatch === "12.4") return false;
   const hasCurrentData = homeMetaStats.rows.some(
     (row) => row.patchVersion === currentPatch && row.totalGames > 0
@@ -456,7 +456,7 @@ export async function PatchForecastComparison({
       <p className="home-forecast-note">
         {t(
           currentPatch === "12.4"
-            ? "forecastGambitPendingNote"
+            ? "forecastFormulaPendingNote"
             : ready
               ? "forecastNote"
               : "forecastPendingNote"

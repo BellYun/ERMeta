@@ -3,6 +3,7 @@ import itemGradeMap from './data/itemGradeMap.json';
 import weaponItemTypeMap from './data/weaponItemTypeMap.json';
 import { SupabaseService } from '../../common/database/supabase.service';
 import { RedisService } from '../../common/redis/redis.service';
+import { getAverageRP } from '../../common/rp-metric';
 
 const ITEM_GRADE = itemGradeMap as Record<string, string>;
 const WEAPON_ITEM_TYPE = weaponItemTypeMap as Record<string, number>;
@@ -194,7 +195,7 @@ export class BuildsService {
 
     if (!characterCode || isNaN(characterCode)) return empty;
 
-    const cacheKey = `builds:equip:${characterCode}:${tier}:${patchVersion}:${mainCoreParam ?? 'all'}:${bestWeaponParam ?? 'all'}:${legendOnly ? 'legend' : 'all'}`;
+    const cacheKey = `builds:equip:fixed-entry-cost-v1:${characterCode}:${tier}:${patchVersion}:${mainCoreParam ?? 'all'}:${bestWeaponParam ?? 'all'}:${legendOnly ? 'legend' : 'all'}`;
     return this.redis.getOrSet(cacheKey, 1800, () =>
       this._getEquipmentBuilds(
         characterCode,
@@ -297,7 +298,7 @@ export class BuildsService {
         pickRate: grandTotal > 0 ? (b.games / grandTotal) * 100 : 0,
         winRate: b.games > 0 ? (b.wins / b.games) * 100 : 0,
         averageRank: b.games > 0 ? b.rankSum / b.games : 0,
-        averageRP: b.games > 0 ? b.rpSum / b.games : 0,
+        averageRP: getAverageRP(b.rpSum, b.games, patchVersion, tier),
       }));
 
     // slotPopularity

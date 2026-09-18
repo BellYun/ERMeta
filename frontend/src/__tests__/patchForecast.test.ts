@@ -15,7 +15,7 @@ const row: HomeMetaStats["rows"][number] = {
 };
 
 describe("patch tier forecast observation gate", () => {
-  it("갬빗 여부를 분리하기 전에는 12.4 RP 기반 실제 티어를 표시하지 않는다", () => {
+  it("12.4 RP 산식에 맞춰 모델을 재조정하기 전에는 실제 티어를 표시하지 않는다", () => {
     const stats: HomeMetaStats = {
       patchVersion: "12.4",
       previousPatch: "12.3",
@@ -26,7 +26,7 @@ describe("patch tier forecast observation gate", () => {
     expect(isPatchForecastActualReady("12.4", stats)).toBe(false);
   });
 
-  it("갬빗 영향이 없는 이전 패치의 관측 비교는 유지한다", () => {
+  it("이전 패치의 관측 비교는 유지한다", () => {
     const stats: HomeMetaStats = {
       patchVersion: "12.2",
       previousPatch: "12.1",

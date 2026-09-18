@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { STATS_EXCLUDED_PATCHES } from "@/data/patch-notes";
+import { getAverageRP, hasComparableRP } from "@/lib/rpMetric";
 import { createServerClient } from "@/lib/supabase";
 import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
 import { expandCumulativeTier } from "@/utils/tier";
@@ -72,7 +73,7 @@ function computeCurrentPatchMinGames(rows: StatRow[]): number {
   return Math.ceil(estimatedMatchCount * CURRENT_PATCH_MIN_MATCH_RATIO);
 }
 
-function computeRates(rows: StatRow[]): ComputedRate[] {
+function computeRates(rows: StatRow[], patchVersion: string, tier: string): ComputedRate[] {
   const grandTotal = rows.reduce((sum, r) => sum + (r.totalGames ?? 0), 0);
   return rows.map((r) => ({
     characterNum: r.characterNum,
@@ -80,7 +81,7 @@ function computeRates(rows: StatRow[]): ComputedRate[] {
     totalGames: r.totalGames ?? 0,
     pickRate: grandTotal > 0 ? ((r.totalGames ?? 0) / grandTotal) * 100 : 0,
     winRate: r.totalGames > 0 ? ((r.totalWins ?? 0) / r.totalGames) * 100 : 0,
-    averageRP: r.totalGames > 0 ? (r.totalRP ?? 0) / r.totalGames : 0,
+    averageRP: getAverageRP(r.totalRP ?? 0, r.totalGames, patchVersion, tier),
   }));
 }
 
@@ -154,7 +155,7 @@ export async function fetchHoneyPicksServer(
       }
     }
 
-    if (!previousPatch) return empty;
+    if (!previousPatch || !hasComparableRP(patchVersion, previousPatch)) return empty;
 
     // 현재 + 이전 패치 데이터 조회 (v2 → old fallback)
     const selectCols =
@@ -204,8 +205,8 @@ export async function fetchHoneyPicksServer(
       return { ...empty, previousPatch, tier: usedTier };
     }
 
-    const currentRates = computeRates(currentRows);
-    const prevRates = computeRates(prevRows);
+    const currentRates = computeRates(currentRows, patchVersion, usedTier);
+    const prevRates = computeRates(prevRows, previousPatch, usedTier);
     const prevMap = new Map(
       prevRates.map((r) => [getHoneyPickKey(r.characterNum, r.bestWeapon), r])
     );
@@ -262,7 +263,7 @@ export async function getCachedHoneyPicks(
 ): Promise<HoneyPicksResult> {
   return unstable_cache(
     async () => fetchHoneyPicksServer(patchVersion, requestedTier),
-    ["honey-picks", patchVersion, requestedTier],
+    ["honey-picks", "fixed-entry-cost-v1", patchVersion, requestedTier],
     {
       revalidate: 21600,
       tags: ["honey-picks", `honey-picks:${patchVersion}`, `honey-picks:tier:${requestedTier}`],

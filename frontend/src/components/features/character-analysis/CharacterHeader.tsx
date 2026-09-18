@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
 import characterBestWeapons from "@/../const/characterBestWeapons.json";
 import type {
@@ -13,6 +13,7 @@ import { analytics } from "@/lib/analytics";
 import { buildFallbackMap, getCharacterImageUrl, resolveCharacterName } from "@/lib/characterMap";
 import { CHARACTER_ANALYSIS_TIERS } from "@/lib/characterTier";
 import type { Tier } from "@/lib/design-tokens";
+import { getFixedEntryCost, hasComparableRP } from "@/lib/rpMetric";
 import { cn } from "@/lib/utils";
 import { getWeaponGroupImageUrl, resolveWeaponName } from "@/lib/weaponMap";
 import { TierBadge } from "../TierBadge";
@@ -83,6 +84,8 @@ export function CharacterHeader({
 }: CharacterHeaderProps) {
   const { l10n } = useL10n();
   const t = useTranslations("characterHeader");
+  const locale = useLocale();
+  const entryCost = getFixedEntryCost(currentPatch ?? "", selectedTier);
   const characterName = resolveCharacterName(selectedCode, l10n, FALLBACK_MAP);
   const tierRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
   const weaponRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
@@ -388,7 +391,8 @@ export function CharacterHeader({
           <StatCard
             label={t("averageRp")}
             value={displayStat.averageRP.toFixed(1)}
-            delta={hasPreviousData ? displayStat.averageRP - displayPrevStat!.averageRP : undefined}
+            delta={hasPreviousData && hasComparableRP(currentPatch ?? "", previousStats?.patchVersion ?? null)
+              ? displayStat.averageRP - displayPrevStat!.averageRP : undefined}
             accent="green"
           />
         </div>
@@ -399,6 +403,19 @@ export function CharacterHeader({
           </p>
         </div>
       )}
+      {entryCost > 0 && displayStat && displayStat.totalGames > 0 ? (
+        <p className="text-xs text-[var(--color-muted-foreground)]">
+          {locale === "ko"
+            ? `평균 RP는 경기 중 획득 점수에서 선택한 분석 티어의 고정 입장료 ${entryCost}점을 뺀 값입니다.`
+            : locale === "ja"
+              ? `平均RPは試合中の獲得RPから選択ランク帯の固定入場料${entryCost}を差し引いた値です。`
+              : locale === "zh-Hans"
+                ? `平均 RP 为比赛内获得的 RP 减去所选段位的固定入场费 ${entryCost}。`
+                : locale === "zh-Hant"
+                  ? `平均 RP 為對局中獲得的 RP 減去所選牌位的固定入場費 ${entryCost}。`
+                  : `Average RP is in-match earned RP minus the selected tier's fixed ${entryCost} entry cost.`}
+        </p>
+      ) : null}
     </div>
   );
 }
