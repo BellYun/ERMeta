@@ -15,7 +15,7 @@ const row: HomeMetaStats["rows"][number] = {
 };
 
 describe("patch tier forecast observation gate", () => {
-  it("12.4 RP 산식에 맞춰 모델을 재조정하기 전에는 실제 티어를 표시하지 않는다", () => {
+  it("12.4의 현재 통계가 공개 표본 기준을 넘으면 실제 티어를 표시한다", () => {
     const stats: HomeMetaStats = {
       patchVersion: "12.4",
       previousPatch: "12.3",
@@ -23,7 +23,21 @@ describe("patch tier forecast observation gate", () => {
       rows: [row],
     };
 
+    expect(isPatchForecastActualReady("12.4", stats)).toBe(true);
+  });
+
+  it("12.4 현재 통계가 없거나 공개 표본 기준 전이면 예상 상태를 유지한다", () => {
+    const stats: HomeMetaStats = {
+      patchVersion: "12.4",
+      previousPatch: "12.3",
+      collectedGames: 6_249,
+      rows: [row],
+    };
+
     expect(isPatchForecastActualReady("12.4", stats)).toBe(false);
+    expect(isPatchForecastActualReady("12.4", { ...stats, collectedGames: 6_250, rows: [] })).toBe(
+      false
+    );
   });
 
   it("이전 패치의 관측 비교는 유지한다", () => {

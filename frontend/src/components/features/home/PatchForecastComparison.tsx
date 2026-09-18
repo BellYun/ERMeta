@@ -33,6 +33,7 @@ import {
 } from "@/lib/homeMetaShared";
 import { diffPatchValue } from "@/lib/patchValueDiff";
 import type { CharacterRankingData } from "@/lib/ranking";
+import { hasComparableRP } from "@/lib/rpMetric";
 import { localizeRoutePath } from "@/lib/seoLocales";
 import { loadL10nSeed } from "@/lib/serverL10n";
 import { resolveWeaponName } from "@/lib/weaponMap";
@@ -51,9 +52,6 @@ export function isPatchForecastActualReady(
   currentPatch: string,
   homeMetaStats: HomeMetaStats
 ): boolean {
-  // Forecast thresholds were calibrated on pre-12.4 net RP. Wait until they
-  // are recalibrated for the fixed-fee 12.4 metric before showing actual tiers.
-  if (currentPatch === "12.4") return false;
   const hasCurrentData = homeMetaStats.rows.some(
     (row) => row.patchVersion === currentPatch && row.totalGames > 0
   );
@@ -153,6 +151,7 @@ export async function PatchForecastComparison({
     const previous = view.rankingData.previousRankings?.find(
       (item) => item.characterNum === characterCode && item.bestWeapon === forecast.weaponCode
     );
+    const canCompareRp = hasComparableRP(currentPatch, homeMetaStats.previousPatch);
     const metricFields = ["averageRP", "winRate", "top3Rate", "pickRate"] as const;
     const metricLabels = {
       averageRP: "rp",
@@ -260,7 +259,12 @@ export async function PatchForecastComparison({
             <dl>
               {metricFields.map((metric) => {
                 const value = row[metric];
-                const old = previous && previous.totalGames > 0 ? previous[metric] : null;
+                const rpFormulaChanged =
+                  metric === "averageRP" && homeMetaStats.previousPatch !== null && !canCompareRp;
+                const old =
+                  previous && previous.totalGames > 0 && !rpFormulaChanged
+                    ? previous[metric]
+                    : null;
                 const delta = old === null ? null : Number((value - old).toFixed(1));
                 const unit = metric === "averageRP" ? "" : "%";
                 return (
@@ -276,7 +280,7 @@ export async function PatchForecastComparison({
                       }
                     >
                       {delta === null || row.totalGames <= 0
-                        ? t("forecastNoBaseline")
+                        ? t(rpFormulaChanged ? "forecastRpNotComparable" : "forecastNoBaseline")
                         : `${delta > 0 ? "+" : ""}${delta.toFixed(1)}${metric === "averageRP" ? " RP" : "%p"}`}
                     </dd>
                   </div>
@@ -296,7 +300,9 @@ export async function PatchForecastComparison({
                   <div key={metric}>
                     <dt>{t(metricLabels[metric])}</dt>
                     <dd>
-                      {previous && previous.totalGames > 0
+                      {previous &&
+                      previous.totalGames > 0 &&
+                      (metric !== "averageRP" || canCompareRp)
                         ? `${previous[metric].toFixed(1)}${metric === "averageRP" ? "" : "%"}`
                         : "—"}{" "}
                       →{" "}
@@ -453,17 +459,12 @@ export async function PatchForecastComparison({
           {t("forecastSource")} <ArrowUpRight size={16} aria-hidden="true" />
         </Link>
       </div>
-      <p className="home-forecast-note">
-        {t(
-          currentPatch === "12.4"
-            ? "forecastFormulaPendingNote"
-            : ready
-              ? "forecastNote"
-              : "forecastPendingNote"
-        )}
-      </p>
+      <p className="home-forecast-note">{t(ready ? "forecastNote" : "forecastPendingNote")}</p>
       {currentPatch === "12.4" && (
-        <p className="home-forecast-note">{t("forecastNewItemsUncertain")}</p>
+        <>
+          <p className="home-forecast-note">{t("forecastFormulaNote")}</p>
+          <p className="home-forecast-note">{t("forecastNewItemsUncertain")}</p>
+        </>
       )}
       {comparisons.length ? (
         <div className="home-forecast-list">{comparisons.map(renderComparison)}</div>

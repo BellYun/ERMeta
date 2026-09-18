@@ -26,7 +26,6 @@ const COPY: Record<
     pendingTitle: (version: string) => string;
     description: (version: string) => string;
     pendingDescription: (version: string) => string;
-    formulaPendingDescription: string;
     patchNotes: string;
     trendAnalysis: string;
   }
@@ -40,8 +39,6 @@ const COPY: Record<
       `${version} 패치 전 예상 티어와 다이아몬드 이상 실제 통계를 비교합니다.`,
     pendingDescription: (version) =>
       `${version} 패치노트를 기준으로 티어 변화를 예상했습니다. 실제 데이터가 충분히 쌓이면 결과를 함께 비교합니다.`,
-    formulaPendingDescription:
-      "12.3 다이아몬드 이상 지표와 12.4 패치노트를 바탕으로 무기별 예상 티어를 제시합니다. 12.4 평균 RP 산식에 맞춰 모델을 재조정하기 전까지 실제 티어와 직접 비교하지 않습니다.",
     patchNotes: "패치노트 보기",
     trendAnalysis: "패치 경향 분석 보기",
   },
@@ -54,8 +51,6 @@ const COPY: Record<
       `Compare the pre-patch tier forecast for ${version} with observed Diamond+ performance.`,
     pendingDescription: (version) =>
       `See expected tier changes based on the Patch ${version} notes. Results will appear once enough data is available.`,
-    formulaPendingDescription:
-      "Weapon-specific forecasts use 12.3 Diamond+ results and the 12.4 notes. Observed tiers remain on hold until the model is recalibrated for the new average RP formula.",
     patchNotes: "View patch notes",
     trendAnalysis: "View patch trend analysis",
   },
@@ -68,8 +63,6 @@ const COPY: Record<
       `パッチ${version}前のティア予想とダイヤモンド以上の実データを比較します。`,
     pendingDescription: (version) =>
       `パッチ${version}ノートを基準にティア変動を予想しました。十分なデータが集まり次第、結果も表示します。`,
-    formulaPendingDescription:
-      "12.3のダイヤ以上の指標と12.4のパッチノートを基に、武器別の予想ティアを示します。新しい平均RPの算出方法に合わせてモデルを再調整するまで、実測ティアとの直接比較を保留します。",
     patchNotes: "パッチノートを見る",
     trendAnalysis: "パッチ傾向分析を見る",
   },
@@ -93,9 +86,12 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
   }
 
   const copy = COPY[locale];
-  const title = copy.pendingTitle(version);
-  const description =
-    version === "12.4" ? copy.formulaPendingDescription : copy.pendingDescription(version);
+  const stats = await getCachedHomeMetaStats(version).catch(() =>
+    createEmptyHomeMetaStats(version)
+  );
+  const actualReady = isPatchForecastActualReady(version, stats);
+  const title = actualReady ? copy.title(version) : copy.pendingTitle(version);
+  const description = actualReady ? copy.description(version) : copy.pendingDescription(version);
   const pathname = `/patch-forecast/${version}`;
 
   return {
@@ -126,12 +122,9 @@ export default async function LocalizedPatchForecastPage({ params }: LocalePageP
   );
   const actualReady = isPatchForecastActualReady(version, stats);
   const pageTitle = actualReady ? copy.title(version) : copy.pendingTitle(version);
-  const pageDescription =
-    version === "12.4"
-      ? copy.formulaPendingDescription
-      : actualReady
-        ? copy.description(version)
-        : copy.pendingDescription(version);
+  const pageDescription = actualReady
+    ? copy.description(version)
+    : copy.pendingDescription(version);
 
   return (
     <main className="page-shell flex flex-col gap-5 lg:gap-6">
