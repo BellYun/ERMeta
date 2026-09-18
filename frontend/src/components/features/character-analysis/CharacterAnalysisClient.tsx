@@ -9,7 +9,11 @@ import type { CharacterStatsResponse } from "@/app/api/character/stats/[characte
 import { useL10n } from "@/components/L10nProvider";
 import { Link } from "@/i18n/navigation";
 import { getCharacterMiniWebpUrl, getCharacterName } from "@/lib/characterMap";
-import { DEFAULT_CHARACTER_ANALYSIS_TIER } from "@/lib/characterTier";
+import {
+  CHARACTER_ANALYSIS_TIERS,
+  DEFAULT_CHARACTER_ANALYSIS_TIER,
+  type CharacterAnalysisTier,
+} from "@/lib/characterTier";
 import type { Tier } from "@/lib/design-tokens";
 import { setFeedbackContextState } from "@/lib/feedbackContext";
 import { buildHomeMetaView, type HomeMetaStats } from "@/lib/homeMetaShared";
@@ -214,6 +218,50 @@ function replaceWeaponInLocation(weapon: number | null) {
   window.history.replaceState(null, "", url.pathname + url.search + url.hash);
 }
 
+const TIER_PREFERENCE_KEY = "ergg-character-analysis-tier";
+const TIER_PREFERENCE_EVENT = "ergg-character-analysis-tier-changed";
+let inMemoryTier: CharacterAnalysisTier = DEFAULT_CHARACTER_ANALYSIS_TIER;
+let tierStorageWriteFailed = false;
+
+function isCharacterAnalysisTier(value: string | null): value is CharacterAnalysisTier {
+  return CHARACTER_ANALYSIS_TIERS.some((tier) => tier === value);
+}
+
+function readTierPreference(): CharacterAnalysisTier {
+  if (tierStorageWriteFailed) return inMemoryTier;
+  try {
+    const stored = window.localStorage.getItem(TIER_PREFERENCE_KEY);
+    return isCharacterAnalysisTier(stored) ? stored : DEFAULT_CHARACTER_ANALYSIS_TIER;
+  } catch {
+    return inMemoryTier;
+  }
+}
+
+function subscribeToTierPreference(onChange: () => void) {
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === TIER_PREFERENCE_KEY || event.key === null) onChange();
+  };
+  window.addEventListener("storage", onStorage);
+  window.addEventListener(TIER_PREFERENCE_EVENT, onChange);
+  return () => {
+    window.removeEventListener("storage", onStorage);
+    window.removeEventListener(TIER_PREFERENCE_EVENT, onChange);
+  };
+}
+
+function saveTierPreference(tier: string) {
+  if (!isCharacterAnalysisTier(tier)) return;
+  inMemoryTier = tier;
+  try {
+    window.localStorage.setItem(TIER_PREFERENCE_KEY, tier);
+    tierStorageWriteFailed = false;
+  } catch {
+    // 저장소를 사용할 수 없어도 현재 탭에서는 선택을 유지한다.
+    tierStorageWriteFailed = true;
+  }
+  window.dispatchEvent(new Event(TIER_PREFERENCE_EVENT));
+}
+
 export function CharacterAnalysisClient({
   afterOverview,
   initialPatches,
@@ -230,7 +278,12 @@ export function CharacterAnalysisClient({
   const patches = React.useMemo(() => initialPatches ?? [], [initialPatches]);
   const selectablePatches = patches;
 
-  const [selectedTier, setSelectedTier] = React.useState<string>(DEFAULT_CHARACTER_ANALYSIS_TIER);
+  const selectedTier = React.useSyncExternalStore(
+    subscribeToTierPreference,
+    readTierPreference,
+    () => DEFAULT_CHARACTER_ANALYSIS_TIER
+  );
+  const setSelectedTier = React.useCallback((tier: string) => saveTierPreference(tier), []);
   const [selectedPatch, setSelectedPatch] = React.useState<string | null>(() => patches[0] ?? null);
   const [expandedSignatureProfiles, setExpandedSignatureProfiles] = React.useState<Set<string>>(
     () => new Set()
