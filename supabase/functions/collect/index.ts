@@ -22,6 +22,7 @@ import {
   MIN_COLLECT_TIER,
 } from "../_shared/tier-utils.ts";
 import { getCollectedRP } from "../_shared/rp-utils.ts";
+import { buildRpSourceRows, type RpSourceRow } from "../_shared/rp-source.ts";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -33,6 +34,9 @@ const FORWARD_START_GAME = 58540099;
 const BATCH_LIMIT = 100;
 const MAX_CONSECUTIVE_NOT_FOUND = 20; // 아직 생성되지 않은 경기 번호를 건너뛰지 않도록 제한
 const STABLE_DELAY_MS = 1 * 60 * 60 * 1000; // 최근 1시간 이내 게임은 아직 변동 가능하므로 중단
+const RP_BACKFILL_PATCH = "12.4";
+const RP_BACKFILL_LIMIT = 20; // 기존 3분 크론에서 회당 최대 20경기 재조회
+const TOTAL_BUDGET_MS = 125_000;
 
 // ── 타입 ──────────────────────────────────────────────────
 interface Participant {
@@ -75,6 +79,7 @@ interface ParsedGame {
   patchVersion: string;
   participants: any[];
   trios: any[];
+  rpSources: RpSourceRow[];
 }
 
 interface PatchVersionRow {
@@ -292,6 +297,7 @@ function extractLegendarySlots(
 // ── 게임 1건 파싱 (순수 함수, DB 호출 없음) ─────────────
 
 function parseGameData(
+  gameNumber: number,
   gameDetail: any,
   patchIntervals: PatchInterval[],
   rank1000MMR: number | null,
@@ -385,6 +391,12 @@ function parseGameData(
 
   if (pData.length === 0) return null;
 
+  const [major, minor] = patchVersion.split(".").map(Number);
+  const hasRpSources = major > 12 || (major === 12 && minor >= 4);
+  const rpSources = hasRpSources
+    ? buildRpSourceRows(gameNumber, patchVersion, userGames, MIN_COLLECT_MMR)
+    : [];
+
   // ── 팀별 3인 조합 구성 ──
   const teams = new Map<number, Participant[]>();
   for (const p of participants) {
@@ -426,7 +438,7 @@ function parseGameData(
     });
   }
 
-  return { patchVersion, participants: pData, trios };
+  return { patchVersion, participants: pData, trios, rpSources };
 }
 
 // ── 경기별 원자적 RPC 호출 ───────────────────────────────
@@ -455,10 +467,118 @@ async function flushGameRPC(
       return { saved, failedGameNumber: gameNumber };
     }
 
+    if (parsed.rpSources.length > 0) {
+      const { error: rpError } = await supabase
+        .from("v2_CollectedGameRP")
+        .upsert(parsed.rpSources, {
+          onConflict: "game_number,team_number,character_num",
+        });
+      if (rpError) {
+        console.error(`[Forward] RP 원본 저장 오류: gameNumber=${gameNumber}:`, rpError.message);
+        return { saved, failedGameNumber: gameNumber };
+      }
+    }
+
     if (!result?.duplicate) saved++;
   }
 
   return { saved, failedGameNumber: null };
+}
+
+// 기존 집계는 재실행하지 않고 ledger에 기록된 12.4 경기의 RP 원본만 채운다.
+async function backfillRpSources(supabase: any, startedAt: number): Promise<{
+  games: number;
+  players: number;
+  alreadyStored: number;
+  lastGameNumber: number;
+  error: string | null;
+}> {
+  const { data: status, error: statusError } = await supabase
+    .from("v2_RPBackfillStatus")
+    .select("last_game_number,processed_games,processed_players")
+    .eq("patch_version", RP_BACKFILL_PATCH)
+    .single();
+  if (statusError || !status) {
+    throw new Error(`RP 백필 상태 조회 실패: ${statusError?.message ?? "missing row"}`);
+  }
+
+  const { data: games, error: ledgerError } = await supabase
+    .from("v2_CollectedGame")
+    .select("game_number")
+    .eq("patch_version", RP_BACKFILL_PATCH)
+    .gt("game_number", status.last_game_number)
+    .order("game_number", { ascending: true })
+    .limit(RP_BACKFILL_LIMIT);
+  if (ledgerError) throw new Error(`RP 백필 ledger 조회 실패: ${ledgerError.message}`);
+
+  let processedGames = 0;
+  let processedPlayers = 0;
+  let alreadyStored = 0;
+  let lastGameNumber = status.last_game_number;
+  let errorMessage: string | null = null;
+  for (const row of games ?? []) {
+    if (Date.now() - startedAt >= TOTAL_BUDGET_MS) break;
+    const gameNumber = Number(row.game_number);
+    try {
+      // 배포 후 신규 수집에서 저장한 경기는 API를 다시 호출하지 않는다.
+      const { data: existing, error: lookupError } = await supabase
+        .from("v2_CollectedGameRP")
+        .select("game_number")
+        .eq("game_number", gameNumber)
+        .limit(1);
+      if (lookupError) throw new Error(lookupError.message);
+      if (existing?.length) {
+        const { error: skipError } = await supabase
+          .from("v2_RPBackfillStatus")
+          .update({ last_game_number: gameNumber, last_error: null,
+            updated_at: new Date().toISOString() })
+          .eq("patch_version", RP_BACKFILL_PATCH);
+        if (skipError) throw new Error(skipError.message);
+        lastGameNumber = gameNumber;
+        alreadyStored++;
+        continue;
+      }
+
+      const game = await fetchGame(gameNumber);
+      if (!game) throw new Error("API 경기 없음");
+      const rpSources = buildRpSourceRows(
+        gameNumber, RP_BACKFILL_PATCH, game.userGames, MIN_COLLECT_MMR,
+      );
+      const { error: upsertError } = await supabase
+        .from("v2_CollectedGameRP")
+        .upsert(rpSources, {
+          onConflict: "game_number,team_number,character_num",
+        });
+      if (upsertError) throw new Error(upsertError.message);
+
+      const { error: progressError } = await supabase
+        .from("v2_RPBackfillStatus")
+        .update({
+          last_game_number: gameNumber,
+          processed_games: (status.processed_games ?? 0) + processedGames + 1,
+          processed_players: (status.processed_players ?? 0) + processedPlayers + rpSources.length,
+          last_error: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("patch_version", RP_BACKFILL_PATCH);
+      if (progressError) throw new Error(progressError.message);
+      lastGameNumber = gameNumber;
+      processedGames++;
+      processedPlayers += rpSources.length;
+      await sleep(1000); // BSER API 1req/s
+    } catch (error) {
+      errorMessage = `game ${gameNumber}: ${error instanceof Error ? error.message : String(error)}`;
+      console.error(`[RP Backfill] ${errorMessage}`);
+      await supabase.from("v2_RPBackfillStatus").update({
+        last_error: errorMessage.slice(0, 500),
+        updated_at: new Date().toISOString(),
+      }).eq("patch_version", RP_BACKFILL_PATCH);
+      break;
+    }
+  }
+
+  return { games: processedGames, players: processedPlayers,
+    alreadyStored, lastGameNumber, error: errorMessage };
 }
 
 // ── 메인 핸들러 ────────────────────────────────────────────
@@ -572,7 +692,7 @@ serve(async (req: Request) => {
           const game = await fetchGame(currentGame);
           if (game !== null) {
             consecutiveNotFound = 0;
-            const parsed = parseGameData(game, patchIntervals, rank1000MMR, true);
+            const parsed = parseGameData(currentGame, game, patchIntervals, rank1000MMR, true);
             if (parsed === "RECENT") {
               forwardHitRecent = true;
               // 아직 안정화되지 않은 현재 게임은 처리 완료로 기록하지 않는다.
@@ -650,6 +770,17 @@ serve(async (req: Request) => {
       console.log(`[Forward] 완료: collected=${forwardCollected}, skipped=${forwardSkipped}, failed=${forwardFailed}, lastGame=${lastGameNumber}, hitRecent=${forwardHitRecent}`);
     }
 
+    // 신규 수집과 별개로 기존 12.4 집계의 RP 원본을 점진적으로 복구한다.
+    let rpBackfill = null;
+    try {
+      rpBackfill = await backfillRpSources(supabase, startTime);
+      console.log(`[RP Backfill] ${JSON.stringify(rpBackfill)}`);
+    } catch (error) {
+      console.error("[RP Backfill] 실행 오류:", error);
+      rpBackfill = { games: 0, players: 0, alreadyStored: 0, lastGameNumber: 0,
+        error: error instanceof Error ? error.message : String(error) };
+    }
+
     // ── 5. 결과 반환 ────────────────────────────────────
     const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
     const result = {
@@ -666,6 +797,7 @@ serve(async (req: Request) => {
         skipped: forwardSkipped,
         failed: forwardFailed,
       },
+      rpBackfill,
     };
 
     console.log("[Collect] 결과:", JSON.stringify(result));
