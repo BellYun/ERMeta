@@ -251,30 +251,32 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
                 sourcePath: normalizedPathname,
               })
             }
-            className="site-announcement group block border-b border-[var(--color-border)] bg-[var(--color-surface-2)]"
+            className="site-announcement group block"
           >
             <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-3 px-3 sm:px-4 lg:px-6">
               <div className="site-announcement__content flex min-w-0 items-center gap-3">
-                <span className="site-announcement__icon flex h-7 w-7 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]">
+                <span className="site-announcement__icon flex h-8 w-8 shrink-0 items-center justify-center rounded">
                   <Sparkles className="h-4.5 w-4.5" strokeWidth={2} />
                 </span>
                 <div className="site-announcement__copy min-w-0">
                   <div className="site-announcement__meta flex flex-wrap items-center gap-2">
-                    <span className="text-[10px] font-medium text-[var(--color-muted-foreground)]">
+                    <span className="site-announcement__badge text-[10px] font-semibold">
                       {t("characterRecommendationBadge")}
                     </span>
-                    <p className="text-sm font-semibold text-[var(--color-foreground)]">
+                    <p className="site-announcement__title text-sm font-bold">
                       {t("characterRecommendationTitle")}
                     </p>
                   </div>
-                  <p className="site-announcement__body mt-0.5 text-xs leading-5 text-[var(--color-muted-foreground)] sm:text-sm">
+                  <p className="site-announcement__body mt-0.5 text-xs leading-5 sm:text-sm">
                     {t("characterRecommendationBody")}
                   </p>
                 </div>
               </div>
 
-              <span className="site-announcement__cta hidden shrink-0 items-center gap-1.5 text-sm font-medium text-[var(--color-muted-foreground)] transition group-hover:text-[var(--color-foreground)] sm:inline-flex">
-                {t("characterRecommendationCta")}
+              <span className="site-announcement__cta inline-flex shrink-0 items-center justify-center gap-1.5 text-sm font-semibold">
+                <span className="site-announcement__cta-label">
+                  {t("characterRecommendationCta")}
+                </span>
                 <ArrowRight className="h-4 w-4" strokeWidth={2} />
               </span>
             </div>
