@@ -116,9 +116,12 @@ function getAdPerformanceProperties() {
 // ── Types (pm/amplitude-event-design.md §3.3) ────────────────────────────────
 export type FeatureKey =
   | "character_analysis"
+  | "character_pool_gap"
   | "synergy_search"
   | "record_search"
   | "meta_dashboard";
+
+export type CharacterPoolDifficultyPreference = "auto" | "easy" | "medium" | "any";
 
 export type TierGroupEnum = "DIAMOND" | "METEORITE" | "MITHRIL" | "IN1000";
 
@@ -476,6 +479,67 @@ export const analytics = {
     method: "native" | "clipboard" | null;
   }) {
     track("synergy_link_landed", args);
+  },
+
+  /** 캐릭터 풀 분석기 - 사용 캐릭터·무기 추가/제거. */
+  characterPoolProfileToggled(args: {
+    action: "added" | "removed";
+    characterCode: number;
+    weaponCode: number | null;
+    role: string;
+    poolSize: number;
+  }) {
+    track("character_pool_profile_toggled", args);
+  },
+
+  /** 캐릭터 풀 분석기 - 선택한 픽풀 전체 초기화. */
+  characterPoolReset(args: { previousPoolSize: number }) {
+    track("character_pool_reset", args);
+  },
+
+  /** 캐릭터 풀 분석기 - 추천에 적용할 공식 조작 난이도 범위 변경. */
+  characterPoolDifficultySelected(args: {
+    preference: CharacterPoolDifficultyPreference;
+    previousPreference: CharacterPoolDifficultyPreference;
+    poolSize: number;
+  }) {
+    track("character_pool_difficulty_selected", args);
+  },
+
+  /** 캐릭터 풀 분석기 - 현재 조건의 추천 결과가 렌더된 시점. */
+  characterPoolRecommendationsViewed(args: {
+    poolSize: number;
+    difficultyPreference: CharacterPoolDifficultyPreference;
+    recommendationCount: number;
+    vulnerableCount: number;
+    limitedCount: number;
+    coveredCount: number;
+    topCharacterCode: number | null;
+    topDifficultyRating: number | null;
+  }) {
+    track("character_pool_recommendations_viewed", args);
+    if (args.recommendationCount > 0 && markAndCheckFirstTime("character_pool_gap")) {
+      track("core_feature_used", {
+        feature: "character_pool_gap",
+        firstTimeInSession: true,
+      });
+    }
+  },
+
+  /** 캐릭터 풀 분석기 - 추천 후보의 실험체 상세 페이지로 이동. */
+  characterPoolRecommendationClicked(args: {
+    characterCode: number;
+    weaponCode: number | null;
+    rank: number;
+    difficultyRating: number | null;
+    difficultyPreference: CharacterPoolDifficultyPreference;
+    poolSize: number;
+    improvedScenarioCount: number;
+  }) {
+    track("character_pool_recommendation_clicked", {
+      ...args,
+      source: "character_pool" as const,
+    });
   },
 
   /** 홈 광고 위치 실험군에 광고 슬롯이 할당된 경우 한 번 기록한다. */

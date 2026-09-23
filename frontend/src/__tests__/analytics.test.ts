@@ -379,6 +379,98 @@ describe("analytics — P0 helpers", () => {
     });
   });
 
+  describe("character pool gap funnel", () => {
+    it("픽풀 변경과 난이도 선택을 기록한다", async () => {
+      analytics.characterPoolProfileToggled({
+        action: "added",
+        characterCode: 17,
+        weaponCode: 2,
+        role: "전사",
+        poolSize: 3,
+      });
+      analytics.characterPoolDifficultySelected({
+        preference: "medium",
+        previousPreference: "auto",
+        poolSize: 3,
+      });
+      analytics.characterPoolReset({ previousPoolSize: 3 });
+      await flushAsync();
+
+      expect(trackMock).toHaveBeenCalledWith("character_pool_profile_toggled", {
+        action: "added",
+        characterCode: 17,
+        weaponCode: 2,
+        role: "전사",
+        poolSize: 3,
+      });
+      expect(trackMock).toHaveBeenCalledWith("character_pool_difficulty_selected", {
+        preference: "medium",
+        previousPreference: "auto",
+        poolSize: 3,
+      });
+      expect(trackMock).toHaveBeenCalledWith("character_pool_reset", {
+        previousPoolSize: 3,
+      });
+    });
+
+    it("추천 결과 노출과 첫 유효 사용을 기록한다", async () => {
+      const args = {
+        poolSize: 4,
+        difficultyPreference: "easy" as const,
+        recommendationCount: 10,
+        vulnerableCount: 2,
+        limitedCount: 6,
+        coveredCount: 13,
+        topCharacterCode: 17,
+        topDifficultyRating: 1,
+      };
+
+      analytics.characterPoolRecommendationsViewed(args);
+      analytics.characterPoolRecommendationsViewed(args);
+      await flushAsync();
+
+      expect(trackMock).toHaveBeenCalledWith("character_pool_recommendations_viewed", args);
+      const featureCalls = trackMock.mock.calls.filter(
+        ([event, properties]) =>
+          event === "core_feature_used" &&
+          (properties as { feature?: string }).feature === "character_pool_gap"
+      );
+      expect(featureCalls).toEqual([
+        [
+          "core_feature_used",
+          {
+            feature: "character_pool_gap",
+            firstTimeInSession: true,
+          },
+        ],
+      ]);
+    });
+
+    it("추천 상세 클릭의 순위와 문맥을 기록한다", async () => {
+      analytics.characterPoolRecommendationClicked({
+        characterCode: 84,
+        weaponCode: 9,
+        rank: 4,
+        difficultyRating: 4,
+        difficultyPreference: "any",
+        poolSize: 4,
+        improvedScenarioCount: 3,
+      });
+      await flushAsync();
+
+      expect(trackMock).toHaveBeenCalledWith("character_pool_recommendation_clicked", {
+        characterCode: 84,
+        weaponCode: 9,
+        rank: 4,
+        difficultyRating: 4,
+        difficultyPreference: "any",
+        poolSize: 4,
+        improvedScenarioCount: 3,
+        source: "character_pool",
+      });
+    });
+  });
+
   describe("synergy exploration funnel events", () => {
     it("탐색 깊이 증가 이벤트를 전달한다", async () => {
       analytics.synergyExplorationAdvanced({
