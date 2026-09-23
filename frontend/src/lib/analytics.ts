@@ -10,6 +10,11 @@ type AmplitudeModule = typeof import("@amplitude/analytics-browser");
 
 const isDev = process.env.NODE_ENV === "development";
 const AD_MEASUREMENT_VERSION = 2;
+const CHARACTER_RECOMMENDATION_ANNOUNCEMENT = {
+  campaign: "character_recommendation_beta_v1",
+  placement: "site_header",
+  destinationPath: "/character-recommendation",
+} as const;
 
 // 동적 import 캐시: 첫 track 호출 시 로드, 이후 재사용
 let amplitudePromise: Promise<AmplitudeModule> | null = null;
@@ -481,9 +486,20 @@ export const analytics = {
     track("synergy_link_landed", args);
   },
 
-  /** 상단 공지 배너에서 실험체 추천 베타 페이지로 이동. */
+  /** 실험체 추천 베타 상단 공지 배너가 표시됨. CTR 분모. */
+  characterRecommendationAnnouncementViewed(args: { sourcePath: string }) {
+    track("character_recommendation_announcement_viewed", {
+      ...CHARACTER_RECOMMENDATION_ANNOUNCEMENT,
+      ...args,
+    });
+  },
+
+  /** 상단 공지 배너에서 실험체 추천 베타 페이지로 이동. CTR 분자. */
   characterRecommendationAnnouncementClicked(args: { sourcePath: string }) {
-    track("character_recommendation_announcement_clicked", args);
+    track("character_recommendation_announcement_clicked", {
+      ...CHARACTER_RECOMMENDATION_ANNOUNCEMENT,
+      ...args,
+    });
   },
 
   /** 캐릭터 풀 분석기 - 사용 캐릭터·무기 추가/제거. */

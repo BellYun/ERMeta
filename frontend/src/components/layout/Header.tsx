@@ -132,6 +132,13 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
   }, [pathname]);
 
   React.useEffect(() => {
+    if (!showCharacterRecommendationAnnouncement) return;
+    analytics.characterRecommendationAnnouncementViewed({
+      sourcePath: normalizedPathname,
+    });
+  }, [normalizedPathname, showCharacterRecommendationAnnouncement]);
+
+  React.useEffect(() => {
     if (!showCharacterRecommendationAnnouncement) {
       setAnnouncementCollapsed(false);
       return;
