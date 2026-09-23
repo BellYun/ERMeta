@@ -38,6 +38,7 @@ const SAFE_PATH_SEGMENTS = new Set([
   "character",
   "character-analysis",
   "character-lab",
+  "character-recommendation",
   "composition-lab",
   "design-lab",
   "en",

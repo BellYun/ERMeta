@@ -12,6 +12,7 @@ import {
   Network,
   NotebookText,
   Search,
+  Sparkles,
   Sun,
   Trophy,
   X,
@@ -103,6 +104,12 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
     icon: LucideIcon;
     isActive: boolean;
   }> = [
+    {
+      href: withCurrentRouteLocale(pathname, "/character-recommendation"),
+      label: tNav("characterRecommendation"),
+      icon: Sparkles,
+      isActive: normalizedPathname === "/character-recommendation",
+    },
     {
       href: withCurrentRouteLocale(pathname, patchAnalysisPath),
       label: tNav("patchAnalysisNav"),

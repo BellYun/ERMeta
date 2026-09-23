@@ -4,18 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
-import { PoolGapAnalyzer } from "@/components/features/lab/PoolGapAnalyzer";
 import { isRouteLocale, type RouteLocale } from "@/i18n/routing";
 import {
   getCharacterAffinityGroupName,
-  getCharacterAffinitySubtype,
   getCharacterAffinityTypeMembers,
 } from "@/lib/characterAffinity";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
-import { getCompositionTypeTraits } from "@/lib/compositionTypeSemantics";
-import type { PoolProfile } from "@/lib/poolGapAnalysis";
-import { deriveCharacterProfileVector } from "@/lib/server/characterProfileVector";
-import { getPoolRoleContextEvidence } from "@/lib/server/poolRoleContextEvidence";
 import { getCharacterCompositionTraits, type CompositionTraitKey } from "@/lib/synergyComposition";
 import editorialOverridesJson from "../../../../../analysis-snapshots/composition-affinity/season10-11-exact-two-partner-affinity-v1/editorial-overrides.json";
 import frozenGroupsJson from "../../../../../analysis-snapshots/composition-affinity/season10-11-exact-two-partner-affinity-v1/groups.json";
@@ -776,66 +770,10 @@ export default async function FrozenCharacterAffinityPage({
   setRequestLocale(localeParam);
   const locale = localeParam as RouteLocale;
   const copy = locale === "ko" ? COPY.ko : COPY.fallback;
-  const roleContextEvidence = getPoolRoleContextEvidence();
 
   const profileCount = new Set(
     effectiveGroups.flatMap((group) => group.primaryMembers.map((member) => member.profileKey))
   ).size;
-  const profileCatalog = [
-    ...new Map(
-      effectiveGroups.flatMap((group) => {
-        const evidence = group.signatureContexts.toSorted(
-          (left, right) =>
-            right.adjustedResidual - left.adjustedResidual || right.games - left.games
-        )[0];
-        return group.primaryMembers.map((member) => {
-          // The group label describes partner contexts for some clusters. The profile
-          // vector must use this character/weapon's own detailed combat type instead.
-          const typeName = getCharacterAffinitySubtype(member);
-          const traits = [
-            ...new Set([
-              ...getCharacterCompositionTraits({
-                character: member.characterCode,
-                weapon: member.weapon ?? 0,
-              }),
-              ...getCompositionTypeTraits(typeName),
-            ]),
-          ];
-          const profileModel = deriveCharacterProfileVector({
-            characterCode: member.characterCode,
-            weapon: member.weapon,
-            role: member.role,
-            typeName,
-            traits,
-          });
-          const profile: PoolProfile = {
-            profileKey: member.profileKey,
-            characterCode: member.characterCode,
-            characterName: member.characterName,
-            weapon: member.weapon,
-            weaponName: member.weaponName,
-            role: member.role,
-            typeName,
-            traits,
-            profileVector: profileModel.vector,
-            vectorEvidence: profileModel.evidence,
-            controlDifficulty: profileModel.controlDifficulty.score,
-            difficultyRating: profileModel.controlDifficulty.rating,
-            difficultyEvidence: profileModel.controlDifficulty.evidence,
-            synergyContexts: roleContextEvidence[member.profileKey] ?? [],
-            evidenceGames: evidence?.games ?? 0,
-            evidenceRp: evidence?.adjustedResidual ?? null,
-            seasonConsistency: group.seasonConsistency,
-          };
-          return [member.profileKey, profile] as const;
-        });
-      })
-    ).values(),
-  ].sort(
-    (left, right) =>
-      left.characterName.localeCompare(right.characterName, "ko") ||
-      left.weaponName.localeCompare(right.weaponName, "ko")
-  );
 
   return (
     <main className="page-shell mx-auto flex max-w-7xl flex-col gap-8 px-4 py-8 sm:px-5 sm:py-10">
@@ -868,8 +806,6 @@ export default async function FrozenCharacterAffinityPage({
           ))}
         </dl>
       </header>
-
-      <PoolGapAnalyzer profiles={profileCatalog} locale={locale} />
 
       <div className="grid min-w-0 gap-8 lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start">
         <aside className="grid min-w-0 gap-3 lg:sticky lg:top-24">
