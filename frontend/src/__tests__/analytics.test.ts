@@ -380,6 +380,15 @@ describe("analytics — P0 helpers", () => {
   });
 
   describe("character pool gap funnel", () => {
+    it("추천 베타 공지 배너의 유입 경로를 기록한다", async () => {
+      analytics.characterRecommendationAnnouncementClicked({ sourcePath: "/rankings" });
+      await flushAsync();
+
+      expect(trackMock).toHaveBeenCalledWith("character_recommendation_announcement_clicked", {
+        sourcePath: "/rankings",
+      });
+    });
+
     it("픽풀 변경과 난이도 선택을 기록한다", async () => {
       analytics.characterPoolProfileToggled({
         action: "added",

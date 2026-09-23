@@ -481,6 +481,11 @@ export const analytics = {
     track("synergy_link_landed", args);
   },
 
+  /** 상단 공지 배너에서 실험체 추천 베타 페이지로 이동. */
+  characterRecommendationAnnouncementClicked(args: { sourcePath: string }) {
+    track("character_recommendation_announcement_clicked", args);
+  },
+
   /** 캐릭터 풀 분석기 - 사용 캐릭터·무기 추가/제거. */
   characterPoolProfileToggled(args: {
     action: "added" | "removed";
