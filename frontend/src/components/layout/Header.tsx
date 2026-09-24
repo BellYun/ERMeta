@@ -12,6 +12,7 @@ import {
   Network,
   NotebookText,
   Search,
+  Sparkles,
   Sun,
   Trophy,
   X,
@@ -29,6 +30,7 @@ import { LocaleRecommendationBanner } from "@/components/layout/LocaleRecommenda
 import { Navigation } from "@/components/layout/Navigation";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { Button } from "@/components/ui/button";
+import { analytics } from "@/lib/analytics";
 import { stripRouteLocaleFromPathname, withCurrentRouteLocale } from "@/lib/localizedPath";
 import { cn } from "@/lib/utils";
 
@@ -51,8 +53,9 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
     ? `/patch-analysis/${patchAnalysisPatch}`
     : "/patch-analysis";
   const seasonRecapPath = "/season11-recap";
-  const patchNotesAnnouncementPath = "/patches/12.4";
-  const showPatchNotesAnnouncement = normalizedPathname !== patchNotesAnnouncementPath;
+  const characterRecommendationAnnouncementPath = "/character-recommendation";
+  const showCharacterRecommendationAnnouncement =
+    normalizedPathname !== characterRecommendationAnnouncementPath;
 
   const navLinks: Array<{
     href: string;
@@ -104,6 +107,12 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
     isActive: boolean;
   }> = [
     {
+      href: withCurrentRouteLocale(pathname, "/character-recommendation"),
+      label: tNav("characterRecommendation"),
+      icon: Sparkles,
+      isActive: normalizedPathname === "/character-recommendation",
+    },
+    {
       href: withCurrentRouteLocale(pathname, patchAnalysisPath),
       label: tNav("patchAnalysisNav"),
       icon: Gauge,
@@ -123,7 +132,14 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
   }, [pathname]);
 
   React.useEffect(() => {
-    if (!showPatchNotesAnnouncement) {
+    if (!showCharacterRecommendationAnnouncement) return;
+    analytics.characterRecommendationAnnouncementViewed({
+      sourcePath: normalizedPathname,
+    });
+  }, [normalizedPathname, showCharacterRecommendationAnnouncement]);
+
+  React.useEffect(() => {
+    if (!showCharacterRecommendationAnnouncement) {
       setAnnouncementCollapsed(false);
       return;
     }
@@ -145,7 +161,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
     return () => {
       window.removeEventListener("scroll", syncAnnouncement);
     };
-  }, [showPatchNotesAnnouncement]);
+  }, [showCharacterRecommendationAnnouncement]);
 
   React.useLayoutEffect(() => {
     const applyTheme = (nextTheme: "light" | "dark") => {
@@ -226,34 +242,41 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
       >
         <LocaleRecommendationBanner />
 
-        {showPatchNotesAnnouncement && (
+        {showCharacterRecommendationAnnouncement && (
           <Link
-            href={withCurrentRouteLocale(pathname, patchNotesAnnouncementPath)}
+            href={withCurrentRouteLocale(pathname, characterRecommendationAnnouncementPath)}
             prefetch={false}
-            className="site-announcement group block border-b border-[var(--color-border)] bg-[var(--color-surface-2)]"
+            onClick={() =>
+              analytics.characterRecommendationAnnouncementClicked({
+                sourcePath: normalizedPathname,
+              })
+            }
+            className="site-announcement group block"
           >
             <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-3 px-3 sm:px-4 lg:px-6">
               <div className="site-announcement__content flex min-w-0 items-center gap-3">
-                <span className="site-announcement__icon flex h-7 w-7 shrink-0 items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-foreground)]">
-                  <NotebookText className="h-4.5 w-4.5" strokeWidth={2} />
+                <span className="site-announcement__icon flex h-8 w-8 shrink-0 items-center justify-center rounded">
+                  <Sparkles className="h-4.5 w-4.5" strokeWidth={2} />
                 </span>
                 <div className="site-announcement__copy min-w-0">
                   <div className="site-announcement__meta flex flex-wrap items-center gap-2">
-                    <span className="text-[10px] font-medium text-[var(--color-muted-foreground)]">
-                      {t("patchAnalysisBadge")}
+                    <span className="site-announcement__badge text-[10px] font-semibold">
+                      {t("characterRecommendationBadge")}
                     </span>
-                    <p className="text-sm font-semibold text-[var(--color-foreground)]">
-                      {t("patchAnalysisTitle")}
+                    <p className="site-announcement__title text-sm font-bold">
+                      {t("characterRecommendationTitle")}
                     </p>
                   </div>
-                  <p className="site-announcement__body mt-0.5 text-xs leading-5 text-[var(--color-muted-foreground)] sm:text-sm">
-                    {t("patchAnalysisBody")}
+                  <p className="site-announcement__body mt-0.5 text-xs leading-5 sm:text-sm">
+                    {t("characterRecommendationBody")}
                   </p>
                 </div>
               </div>
 
-              <span className="site-announcement__cta hidden shrink-0 items-center gap-1.5 text-sm font-medium text-[var(--color-muted-foreground)] transition group-hover:text-[var(--color-foreground)] sm:inline-flex">
-                {t("patchAnalysisCta")}
+              <span className="site-announcement__cta inline-flex shrink-0 items-center justify-center gap-1.5 text-sm font-semibold">
+                <span className="site-announcement__cta-label">
+                  {t("characterRecommendationCta")}
+                </span>
                 <ArrowRight className="h-4 w-4" strokeWidth={2} />
               </span>
             </div>

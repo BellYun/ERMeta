@@ -8,6 +8,7 @@ import {
   Network,
   NotebookText,
   Search,
+  Sparkles,
   Trophy,
   type LucideIcon,
 } from "lucide-react";
@@ -84,6 +85,12 @@ export function SiteCommandPalette({ patchAnalysisPatch, className }: SiteComman
         label: tNav("characterLab"),
         href: withCurrentRouteLocale(pathname, "/character-lab"),
         icon: Layers,
+      },
+      {
+        key: "character-recommendation",
+        label: tNav("characterRecommendation"),
+        href: withCurrentRouteLocale(pathname, "/character-recommendation"),
+        icon: Sparkles,
       },
       {
         key: "composition-lab",

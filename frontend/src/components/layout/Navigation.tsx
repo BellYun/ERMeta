@@ -8,6 +8,7 @@ import {
   Network,
   NotebookText,
   Search,
+  Sparkles,
   Trophy,
   type LucideIcon,
 } from "lucide-react";
@@ -93,6 +94,13 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
     },
   ];
   const labLinks: NavigationLink[] = [
+    {
+      href: withCurrentRouteLocale(pathname, "/character-recommendation"),
+      label: t("characterRecommendation"),
+      icon: Sparkles,
+      isActive: normalizedPathname === "/character-recommendation",
+      badge: "BETA",
+    },
     {
       href: withCurrentRouteLocale(pathname, patchAnalysisPath),
       label: t("patchAnalysisNav"),

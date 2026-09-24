@@ -380,6 +380,27 @@ describe("analytics — P0 helpers", () => {
   });
 
   describe("character pool gap funnel", () => {
+    it("추천 베타 공지 배너의 노출과 클릭을 같은 캠페인 문맥으로 기록한다", async () => {
+      analytics.characterRecommendationAnnouncementViewed({ sourcePath: "/rankings" });
+      analytics.characterRecommendationAnnouncementClicked({ sourcePath: "/rankings" });
+      await flushAsync();
+
+      const context = {
+        campaign: "character_recommendation_beta_v1",
+        placement: "site_header",
+        destinationPath: "/character-recommendation",
+        sourcePath: "/rankings",
+      };
+      expect(trackMock).toHaveBeenCalledWith(
+        "character_recommendation_announcement_viewed",
+        context
+      );
+      expect(trackMock).toHaveBeenCalledWith(
+        "character_recommendation_announcement_clicked",
+        context
+      );
+    });
+
     it("픽풀 변경과 난이도 선택을 기록한다", async () => {
       analytics.characterPoolProfileToggled({
         action: "added",
