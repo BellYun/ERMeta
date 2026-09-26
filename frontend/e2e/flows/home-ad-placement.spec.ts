@@ -33,12 +33,27 @@ test.describe("홈 광고 배치", () => {
     }
   });
 
-  test("데스크톱에서는 본문 광고 대신 왼쪽 레일 광고를 노출한다", async ({ page }) => {
+  test("데스크톱에서는 고정 본문 광고와 기존 왼쪽 레일 광고를 함께 노출한다", async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto("/ko?homeAdPlacementVariant=before_forecast");
+    await page.goto("/ko?homeAdPlacementVariant=after_forecast");
 
-    await expect(page.locator('[data-ad-slot-name="home_ranking"]')).toHaveCount(0);
+    const homeAd = page.locator('[data-ad-slot-name="home_ranking"]');
+    const forecast = page.locator(".home-forecast-preview");
+
+    await expect(homeAd).toHaveCount(1);
+    await expect(homeAd).toBeVisible();
+    await expect(homeAd).toHaveAttribute("data-ad-slot-status", "preview");
+    await expect(homeAd).not.toHaveAttribute("data-ad-experiment");
     await expect(page.locator('[data-ad-slot-name="site_rail_left"]')).toBeVisible();
     await expect(page.locator('[data-ad-slot-name="site_rail_right"]')).toHaveCount(0);
+
+    const homeAdBox = await homeAd.boundingBox();
+    const forecastBox = await forecast.boundingBox();
+
+    expect(homeAdBox).not.toBeNull();
+    expect(forecastBox).not.toBeNull();
+    expect(homeAdBox!.y + homeAdBox!.height).toBeLessThanOrEqual(forecastBox!.y);
   });
 });
