@@ -16,15 +16,16 @@ import { analytics } from "@/lib/analytics";
 const subscribeToHydration = () => () => {};
 const getClientSnapshot = () => true;
 const getServerSnapshot = () => false;
-const HOME_AD_VIEWPORT_QUERY = "(max-width: 1279px)";
+const HOME_AD_EXPERIMENT_VIEWPORT_QUERY = "(max-width: 1279px)";
 
 const subscribeToEligibleViewport = (onStoreChange: () => void) => {
-  const mediaQuery = window.matchMedia(HOME_AD_VIEWPORT_QUERY);
+  const mediaQuery = window.matchMedia(HOME_AD_EXPERIMENT_VIEWPORT_QUERY);
   mediaQuery.addEventListener("change", onStoreChange);
   return () => mediaQuery.removeEventListener("change", onStoreChange);
 };
 
-const getEligibleViewportSnapshot = () => window.matchMedia(HOME_AD_VIEWPORT_QUERY).matches;
+const getEligibleViewportSnapshot = () =>
+  window.matchMedia(HOME_AD_EXPERIMENT_VIEWPORT_QUERY).matches;
 
 function getInteraction(link: HTMLAnchorElement) {
   if (link.closest(".home-forecast-preview")) return "forecast" as const;
@@ -90,16 +91,17 @@ function useHomeAdPlacementOutcome(attribution: AdPlacementAttribution | undefin
 
 export function HomeAdPlacementSlot() {
   const hydrated = useSyncExternalStore(subscribeToHydration, getClientSnapshot, getServerSnapshot);
-  const eligibleViewport = useSyncExternalStore(
+  const experimentEligibleViewport = useSyncExternalStore(
     subscribeToEligibleViewport,
     getEligibleViewportSnapshot,
     getServerSnapshot
   );
   const attribution = useMemo(
-    () => (hydrated ? getCurrentAdPlacementAttribution() : undefined),
-    [hydrated]
+    () =>
+      hydrated && experimentEligibleViewport ? getCurrentAdPlacementAttribution() : undefined,
+    [experimentEligibleViewport, hydrated]
   );
-  useHomeAdPlacementOutcome(eligibleViewport ? attribution : undefined);
+  useHomeAdPlacementOutcome(attribution);
 
   const experimentChannel =
     attribution?.variant === "before_forecast"
@@ -108,7 +110,7 @@ export function HomeAdPlacementSlot() {
         ? ADSENSE_CHANNELS.home_after_forecast
         : "";
 
-  if (!hydrated || !eligibleViewport) {
+  if (!hydrated) {
     return (
       <div
         className="home-data-ad home-entry__ad"

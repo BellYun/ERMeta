@@ -7060,18 +7060,18 @@ body,
   order: 4;
   min-width: 0;
 }
-html[data-home-ad-placement-variant="after_forecast"] .home-entry > header > .home-entry__ad {
-  order: 2;
-}
-html[data-home-ad-placement-variant="after_forecast"]
-  .home-entry
-  > header
-  > .home-forecast-preview {
-  order: 1;
-}
-@media (min-width: 80rem) {
-  .home-entry__ad {
-    display: none;
+@media (max-width: 79.999rem) {
+  html[data-home-ad-placement-variant="after_forecast"]
+    .home-entry
+    > header
+    > .home-entry__ad {
+    order: 2;
+  }
+  html[data-home-ad-placement-variant="after_forecast"]
+    .home-entry
+    > header
+    > .home-forecast-preview {
+    order: 1;
   }
 }
 @media (max-width: 63.999rem) {
