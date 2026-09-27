@@ -1031,6 +1031,34 @@ export function SynergyDetailResults() {
 
   return (
     <>
+      {locale === "ko" && analyticsEnabled && feedbackStatus === "ready" && (
+        <aside
+          aria-label="이리와지지 사용 경험 설문"
+          className="mb-4 flex flex-col gap-4 rounded-lg border border-[var(--color-accent)] border-l-4 bg-[var(--color-accent-muted)] p-4 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div className="min-w-0">
+            <p className="mb-1 text-xs font-bold text-[var(--color-accent-foreground)]">
+              사용자 설문
+            </p>
+            <p className="text-base font-bold text-[var(--color-foreground)]">
+              이리와지지, 어떻게 사용하고 계신가요?
+            </p>
+            <p className="mt-1 text-sm leading-5 text-[var(--color-muted-foreground)]">
+              도움이 된 점과 아쉬웠던 점을 알려주세요.
+            </p>
+          </div>
+          <a
+            href="https://forms.gle/rJFyE7CDBRXMUQce7"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-md bg-[var(--color-accent)] px-4 py-2.5 text-sm font-bold text-[var(--color-accent-ink)] transition-opacity hover:opacity-85 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
+          >
+            설문 참여하기
+            <span aria-hidden="true">↗</span>
+            <span className="sr-only"> (새 탭에서 열림)</span>
+          </a>
+        </aside>
+      )}
       <div className="composition-results-controls">
         <div className="composition-results-header">
           <div className="composition-results-heading">
