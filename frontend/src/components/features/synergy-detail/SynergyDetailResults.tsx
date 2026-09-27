@@ -1031,6 +1031,25 @@ export function SynergyDetailResults() {
 
   return (
     <>
+      {locale === "ko" && analyticsEnabled && feedbackStatus === "ready" && (
+        <aside
+          aria-label="이리와지지 사용 경험 설문"
+          className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-md border border-[var(--color-border)] px-3 py-2.5 text-sm"
+        >
+          <p className="text-[var(--color-muted-foreground)]">
+            이리와지지, 어떻게 사용하고 계신가요?
+          </p>
+          <a
+            href="https://forms.gle/rJFyE7CDBRXMUQce7"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center rounded px-2 font-semibold text-[var(--color-foreground)] underline underline-offset-4 hover:text-[var(--color-accent-foreground)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
+          >
+            설문 참여하기
+            <span className="sr-only"> (새 탭에서 열림)</span>
+          </a>
+        </aside>
+      )}
       <div className="composition-results-controls">
         <div className="composition-results-header">
           <div className="composition-results-heading">
