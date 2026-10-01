@@ -6,7 +6,7 @@ import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
 import { getCachedCharacterStats } from "@/lib/characterStats";
 import { DEFAULT_CHARACTER_ANALYSIS_TIER } from "@/lib/characterTier";
 import { DEFAULT_LANGUAGE } from "@/lib/detectLanguage";
-import { getPatches } from "@/lib/getPatches";
+import { getPatches, selectCharacterPatches } from "@/lib/getPatches";
 import { buildDefaultAlternates } from "@/lib/seoLocales";
 import { loadL10nMap } from "@/lib/serverL10n";
 import { BASE_URL } from "@/lib/siteMetadata";
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const code = parseInt(rawCode, 10);
   const t = await getStaticTranslator("characterMetadata", DEFAULT_LANGUAGE);
-  const currentPatch = (await getPatches())[0];
+  const currentPatch = selectCharacterPatches(code, await getPatches())[0];
   const name =
     !Number.isNaN(code) && CHARACTER_CODES.includes(code)
       ? resolveCharacterName(code, loadL10nMap(DEFAULT_LANGUAGE), buildFallbackMap())
@@ -124,7 +124,7 @@ export default async function DefaultCharacterPage({ params }: Props) {
   }
 
   // 최신 패치는 기준 표본을 채운 뒤 자동으로 맨 앞(기본 선택)에 온다.
-  const patches = await getPatches();
+  const patches = selectCharacterPatches(code, await getPatches());
   const [currentPatch, previousPatch] = patches;
   const [initialStats, initialPrevStats] = await Promise.all([
     currentPatch

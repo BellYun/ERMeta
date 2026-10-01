@@ -1,5 +1,6 @@
 import type { Tier } from "@/lib/design-tokens";
 import { PATCH_12_4_TIER_FORECASTS } from "./12.4-tier-forecasts";
+import { PATCH_12_5_TIER_FORECASTS } from "./12.5-tier-forecasts";
 
 export interface PatchTierForecast {
   weaponCode: number;
@@ -23,6 +24,7 @@ const PATCH_TIER_FORECASTS: Record<
   string,
   Readonly<Record<number, readonly (StoredPatchTierForecast | PatchTierForecast)[]>>
 > = {
+  "12.5": PATCH_12_5_TIER_FORECASTS,
   "12.4": PATCH_12_4_TIER_FORECASTS,
   "12.3": {
     1: [

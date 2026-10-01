@@ -1,4 +1,4 @@
-export const STATIC_GAME_ASSET_VERSION = "2026-08-25.1";
+export const STATIC_GAME_ASSET_VERSION = "2026-10-01.1";
 
 /**
  * Public game assets are served with a one-year immutable browser cache.

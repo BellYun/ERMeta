@@ -1,5 +1,7 @@
 import { PATCH_12_4_BALANCE_CONTEXT } from "./12.4-balance-context";
 import { get12_4ItemExposure } from "./12.4-item-exposure";
+import { PATCH_12_5_BALANCE_CONTEXT } from "./12.5-balance-context";
+import { get12_5ItemExposure } from "./12.5-item-exposure";
 import type { PatchChange } from "./patch-notes";
 
 // Official 12.3 values. Character/weapon links come from PATCH_TIER_FORECAST_REASONS,
@@ -83,11 +85,49 @@ const PATCH_12_4_CONTEXT_VALUES = new Map(
   ])
 );
 
+const PATCH_12_5_ITEM_TARGETS: Readonly<
+  Record<number, readonly { target: string; changeType: PatchChange["changeType"] }[]>
+> = {
+  131402: [{ target: "VF 의수 · 블랙맘바킹 모든 피해 흡혈", changeType: "nerf" }],
+  131504: [{ target: "VF 의수 · 블랙맘바킹-TL 모든 피해 흡혈", changeType: "nerf" }],
+  601504: [{ target: "VF 의수 · 블랙맘바킹-TL 모든 피해 흡혈", changeType: "nerf" }],
+  202511: [
+    { target: "옷 · 핏빛 망토 스킬 증폭", changeType: "nerf" },
+    { target: "옷 · 핏빛 망토 부패 대상 최대 체력 계수", changeType: "buff" },
+  ],
+  201536: [{ target: "머리 · 백야의 관 스킬 증폭", changeType: "buff" }],
+  201507: [
+    { target: "머리 · 우주 비행사의 헬멧 스킬 증폭", changeType: "nerf" },
+    { target: "머리 · 우주 비행사의 헬멧 부패 대상 최대 체력 계수", changeType: "buff" },
+  ],
+  201506: [{ target: "머리 · 황야의 별 추적 바늘 추가 타격 탐지 범위", changeType: "buff" }],
+  705619: [
+    { target: "팔 · 별 조각 스킬 증폭", changeType: "nerf" },
+    { target: "팔 · 별 조각 최대 체력", changeType: "nerf" },
+  ],
+  705604: [{ target: "팔 · 클라다 반지 스킬 증폭", changeType: "buff" }],
+  705607: [{ target: "팔 · 토템 방어력", changeType: "nerf" }],
+};
+const PATCH_12_5_CONTEXT_VALUES = new Map(
+  PATCH_12_5_BALANCE_CONTEXT.flatMap((section) => section.entries).map((entry) => [
+    entry.target,
+    entry.value,
+  ])
+);
+
 export function getForecastItemChanges(
   patch: string,
   characterCode: number,
   weaponCode: number
 ): PatchChange[] {
+  if (patch === "12.5") {
+    return get12_5ItemExposure(characterCode, weaponCode).flatMap(({ itemCode, pickRate }) =>
+      (PATCH_12_5_ITEM_TARGETS[itemCode] ?? []).flatMap(({ target, changeType }) => {
+        const value = PATCH_12_5_CONTEXT_VALUES.get(target);
+        return value ? [change(`${target} · 12.4 사용 ${pickRate}%`, changeType, value)] : [];
+      })
+    );
+  }
   if (patch === "12.4") {
     return get12_4ItemExposure(characterCode, weaponCode).flatMap(({ itemCode, pickRate }) => {
       const item = PATCH_12_4_ITEM_TARGETS[itemCode];
@@ -100,6 +140,10 @@ export function getForecastItemChanges(
   return (FORECAST_ITEM_LINKS[`${characterCode}:${weaponCode}`] ?? []).flatMap((key) => ITEMS[key]);
 }
 export function getSharedTraitChanges(patch: string): PatchChange[] {
+  if (patch === "12.5") return [
+    change("벽력 · 추가 공격력 계수", "buff", "45% → 65% (스킬 증폭 계수 유지)"),
+    change("와류 · 최대 체력 회복 계수", "buff", "7% → 8%"),
+  ];
   if (patch !== "12.3") return [];
   return [
     change("불괴 · 근거리 받는 피해 감소", "nerf", "12(+캐릭터 레벨×1)% → 10(+캐릭터 레벨×1)%"),

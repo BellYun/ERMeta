@@ -13,6 +13,7 @@ import {
 } from "@/components/features/patches/PatchNotesBrowser";
 import { TierBadge } from "@/components/features/TierBadge";
 import { PATCH_12_4_BALANCE_CONTEXT, PATCH_12_4_SOURCE } from "@/data/12.4-balance-context";
+import { PATCH_12_5_BALANCE_CONTEXT, PATCH_12_5_SOURCE } from "@/data/12.5-balance-context";
 import { hasPatchChangeLocalization, localizePatchNotes } from "@/data/patch-note-localization";
 import { getAllPatchVersions, getNotesByPatch, getPatchSummary } from "@/data/patch-notes";
 import { getCharacterTierForecasts } from "@/data/patch-tier-forecasts";
@@ -427,7 +428,28 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
           ),
         }))}
       />
-      {version === "12.4" && locale === "ko" ? (
+      {version === "12.5" && locale === "ko" ? (
+        <section className="dashboard-panel flex items-center gap-4 p-4 sm:p-6" aria-labelledby="patch-new-character">
+          <Image
+            src="/characters/91.png"
+            alt="세레스"
+            width={122}
+            height={160}
+            className="h-24 w-auto shrink-0 object-contain sm:h-32"
+          />
+          <div>
+            <p className="dashboard-kicker">신규 실험체 · 양손검</p>
+            <h2 id="patch-new-character" className="mt-1 text-lg font-bold text-[var(--color-foreground)]">세레스</h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--color-muted-foreground)]">
+              경호(E)는 지정 아군이 받는 피해 일부를 대신 받고, 그 아군이 입힌 피해에 비례해 회복합니다. 루치아를 경호할 때 사거리·피해 분담·회복 효과가 강화됩니다.
+            </p>
+            <p className="mt-2 text-sm font-semibold text-[var(--color-foreground)]">
+              10월 6일까지 랭크 대전에서 선택할 수 없습니다.
+            </p>
+          </div>
+        </section>
+      ) : null}
+      {(version === "12.5" || version === "12.4") && locale === "ko" ? (
         <section className="dashboard-panel p-4 sm:p-6" aria-labelledby="patch-balance-context">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
@@ -444,16 +466,16 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
               </p>
             </div>
             <a
-              href={PATCH_12_4_SOURCE}
+              href={version === "12.5" ? PATCH_12_5_SOURCE : PATCH_12_4_SOURCE}
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm font-semibold text-[var(--color-accent-foreground)] underline underline-offset-4"
             >
-              12.4 공식 원문
+              {version} 공식 원문
             </a>
           </div>
           <div className="mt-5 grid gap-3 md:grid-cols-2">
-            {PATCH_12_4_BALANCE_CONTEXT.map((section) => (
+            {(version === "12.5" ? PATCH_12_5_BALANCE_CONTEXT : PATCH_12_4_BALANCE_CONTEXT).map((section) => (
               <details
                 key={section.title}
                 className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-4"

@@ -49,9 +49,17 @@ export const getPatches = unstable_cache(
       return filterReadyStatsPatchVersions(getVisibleStatsPatchVersions(), 0);
     }
   },
-  ["patches", "patch-notes-v11-12-4-sample-gate-x8"],
+  ["patches", "patch-notes-v12-12-5-sample-gate-x8"],
   {
     revalidate: 21600,
     tags: ["patches"],
   }
 );
+
+/** New characters have no ranked history before their release patch. */
+export function selectCharacterPatches(characterCode: number, patches: string[]): string[] {
+  if (characterCode !== 91) return patches;
+  return [...new Set(["12.5", ...patches.filter(
+    (patch) => patch.localeCompare("12.5", undefined, { numeric: true }) >= 0
+  )])].sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+}

@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { PATCH_12_4_BALANCE_CONTEXT, PATCH_12_4_SOURCE } from "@/data/12.4-balance-context";
 import { get12_4ItemExposure, PATCH_12_4_ITEM_EXPOSURE } from "@/data/12.4-item-exposure";
+import { PATCH_12_5_BALANCE_CONTEXT, PATCH_12_5_SOURCE } from "@/data/12.5-balance-context";
+import { get12_5ItemExposure, get12_5TraitExposure } from "@/data/12.5-item-exposure";
+import prepatchStats from "@/data/12.5-prepatch-stats.json";
 import { getForecastItemChanges } from "@/data/patch-indirect-changes";
 import {
   getAllPatchVersions,
@@ -181,9 +184,9 @@ describe("12.3 patch notes", () => {
 });
 
 describe("12.4 patch notes", () => {
-  it("12.4를 최신 패치로 노출하고 12.3 이력을 유지한다", () => {
-    expect(getAllPatchVersions().slice(0, 2)).toEqual(["12.4", "12.3"]);
-    expect(getStatsPatchVersions().slice(0, 2)).toEqual(["12.4", "12.3"]);
+  it("12.4와 12.3 이력을 유지한다", () => {
+    expect(getAllPatchVersions().slice(1, 3)).toEqual(["12.4", "12.3"]);
+    expect(getStatsPatchVersions().slice(1, 3)).toEqual(["12.4", "12.3"]);
   });
 
   it("공식 실험체 35명의 변경 방향을 보존한다", () => {
@@ -233,7 +236,7 @@ describe("12.4 patch notes", () => {
       getNotesByPatch("12.4").map(({ characterCode }) => characterCode)
     );
 
-    expect(getPatchTierForecastVersions()[0]).toBe("12.4");
+    expect(getPatchTierForecastVersions()).toContain("12.4");
     expect(forecasts).toHaveLength(60);
     expect(directCharacters.size).toBe(35);
     expect(
@@ -326,5 +329,51 @@ describe("12.4 patch notes", () => {
         .flat()
         .map(({ itemCode }) => itemCode)
     ).not.toContain(705619);
+  });
+});
+
+describe("12.5 patch notes", () => {
+  it("최신 이력과 공식 실험체 33명의 직접 변경을 보존한다", () => {
+    expect(getAllPatchVersions()[0]).toBe("12.5");
+    expect(getNotesByPatch("12.5")).toHaveLength(33);
+    expect(getPatchSummary("12.5")).toEqual({
+      patch: "12.5",
+      totalChanges: 44,
+      buffs: 25,
+      nerfs: 19,
+      reworks: 0,
+      characterCount: 33,
+    });
+  });
+
+  it("유키 두 무기와 쌍검 캐시의 변경 범위를 구분한다", () => {
+    expect(getCharacterPatchNote(11, "12.5")?.changes.map((change) => change.weaponMasteryCode)).toEqual([16, 18]);
+    expect(getCharacterPatchNote(23, "12.5")?.changes[0].weaponMasteryCode).toBe(18);
+    expect(getCharacterPatchNote(37, "12.5")?.changes[0].weaponMasteryCode).toBe(15);
+  });
+
+  it("특성·무기 스킬·장비와 공식 출처를 별도로 보존한다", () => {
+    expect(PATCH_12_5_SOURCE).toContain("/news/3867");
+    expect(PATCH_12_5_BALANCE_CONTEXT.map((section) => section.title)).toEqual([
+      "매칭·특성", "무기 스킬·무기", "방어구",
+    ]);
+    expect(PATCH_12_5_BALANCE_CONTEXT.flatMap((section) => section.entries)).toHaveLength(17);
+  });
+
+  it("12.4 원본 통계를 기준으로 직접 변경 실험체의 무기별 사전 전망을 제공한다", () => {
+    const forecasts = getPatchTierForecasts("12.5");
+    const directCharacters = new Set(getNotesByPatch("12.5").map((note) => note.characterCode));
+    expect(getPatchTierForecastVersions()[0]).toBe("12.5");
+    expect(forecasts).toHaveLength(66);
+    expect([...directCharacters].every((code) => forecasts.some((item) => item.characterCode === code))).toBe(true);
+    expect(forecasts.every((item) => item.reason.length > 20)).toBe(true);
+    expect(new Set(forecasts.map((item) => `${item.characterCode}:${item.weaponCode}`)).size).toBe(forecasts.length);
+    expect(prepatchStats.rows).toHaveLength(354);
+  });
+
+  it("장비의 양방향 변경과 무기별 채택률을 분리한다", () => {
+    expect(get12_5ItemExposure(44, 25).map((item) => item.itemCode)).toEqual([131402, 131504, 705607]);
+    expect(getForecastItemChanges("12.5", 9, 9).filter((change) => change.target.includes("핏빛 망토")).map((change) => change.changeType)).toEqual(["nerf", "buff"]);
+    expect(get12_5TraitExposure(67, 14).find((trait) => trait.traitCode === 7300301)?.pickRate).toBe(98.1);
   });
 });

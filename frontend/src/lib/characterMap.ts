@@ -93,6 +93,7 @@ const CHARACTER_NAMES: Record<number, string> = {
   88: "비형",
   89: "크레이버",
   90: "루치아",
+  91: "세레스",
   9998: "Dr. 하나",
   9999: "나쟈",
 };
@@ -223,6 +224,7 @@ const CHARACTER_MINI_IMAGES: Record<number, string> = {
   88: "/CharactER/088.%20Bihyung/02.%20Default/Mini.png",
   89: "/CharactER/089.%20Craver/02.%20Default/Mini.png",
   90: "/CharactER/090.%20Lucia/02.%20Default/Mini.png",
+  91: "/characters/91.png", // 세레스 · 12.5 공식 일러스트에서 추출
 };
 
 /** characterNum으로 Mini 이미지 경로 반환. 없으면 placeholder. */
@@ -340,6 +342,7 @@ const COMBO_ROLES: Record<string, CharacterRole[]> = {
   "58_10": ["스킬딜러"], // 헤이즈+돌격 소총
   "89_9": ["스킬딜러"], // 크레이버+권총
   "90_11": ["스킬딜러"], // 루치아+저격총
+  "91_16": ["탱커", "지원가"], // 세레스+양손검
   // 원거리 딜러
   "21_9": ["원거리 딜러"], // 로지+권총
   "40_6": ["원거리 딜러"], // 클로에+암기
