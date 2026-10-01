@@ -2,24 +2,24 @@
 // Do not edit manually.
 
 export const L10N_CHUNK_MANIFEST = {
-  Korean: {
-    core: "/l10n/chunks/Korean/core.cdcc32f1b16c.json",
+  "Korean": {
+    "core": "/l10n/chunks/Korean/core.b4166adf0f40.json",
     "item-names": "/l10n/chunks/Korean/item-names.5e59b6ad4c65.json",
     "game-descriptions": "/l10n/chunks/Korean/game-descriptions.404003e72ab1.json",
-    "skill-names": "/l10n/chunks/Korean/skill-names.3026d4acb612.json",
+    "skill-names": "/l10n/chunks/Korean/skill-names.75b2912b688b.json"
   },
-  English: {
-    core: "/l10n/chunks/English/core.ee6c5fd965c6.json",
-    "item-names": "/l10n/chunks/English/item-names.e5e9fb2c4e77.json",
+  "English": {
+    "core": "/l10n/chunks/English/core.a25935ee8b2a.json",
+    "item-names": "/l10n/chunks/English/item-names.806b5eaa0b2e.json",
     "game-descriptions": "/l10n/chunks/English/game-descriptions.5463292f1ed9.json",
-    "skill-names": "/l10n/chunks/English/skill-names.e54c5ed60cf6.json",
+    "skill-names": "/l10n/chunks/English/skill-names.2943eff416f2.json"
   },
-  Japanese: {
-    core: "/l10n/chunks/Japanese/core.65c78203ff0c.json",
-    "item-names": "/l10n/chunks/Japanese/item-names.1a925a71dab8.json",
+  "Japanese": {
+    "core": "/l10n/chunks/Japanese/core.96608bcdf07e.json",
+    "item-names": "/l10n/chunks/Japanese/item-names.6aa049500b50.json",
     "game-descriptions": "/l10n/chunks/Japanese/game-descriptions.9bd48ba55082.json",
-    "skill-names": "/l10n/chunks/Japanese/skill-names.feb9606fe01e.json",
-  },
+    "skill-names": "/l10n/chunks/Japanese/skill-names.0755e135b5f6.json"
+  }
 } as const;
 
 export type L10nNamespace = keyof (typeof L10N_CHUNK_MANIFEST)["Korean"];

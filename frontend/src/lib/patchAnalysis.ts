@@ -19,7 +19,7 @@ import warriorsData from "../../public/data/lab/warriors.json";
 
 const ANALYSIS_TIER = "DIAMOND_PLUS";
 const ANALYSIS_TIERS = ["DIAMOND_PLUS", "MITHRIL_PLUS"] as const;
-const PATCH_ANALYSIS_VERSIONS = ["12.4", "12.3", "11.5", "11.4"] as const;
+const PATCH_ANALYSIS_VERSIONS = ["12.5", "12.4", "12.3", "11.5", "11.4"] as const;
 const PATCH_ANALYSIS_CACHE_VERSION = "role-combos-v12-fixed-entry-cost";
 const ROLES: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
 const PATCH_ROLE_OVERRIDES_BY_PATCH: Record<string, Record<string, CharacterRole>> = {
@@ -955,21 +955,21 @@ async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAna
   const buffed = deltas
     .filter((entry) => entry.changeTypes.includes("buff") && !entry.changeTypes.includes("nerf"))
     .sort((a, b) =>
-      currentPatch === "12.4"
+      currentPatch === "12.5" || currentPatch === "12.4"
         ? a.characterNum - b.characterNum
         : b.deltaAverageRP - a.deltaAverageRP
     );
   const nerfed = deltas
     .filter((entry) => entry.changeTypes.includes("nerf") && !entry.changeTypes.includes("buff"))
     .sort((a, b) =>
-      currentPatch === "12.4"
+      currentPatch === "12.5" || currentPatch === "12.4"
         ? a.characterNum - b.characterNum
         : a.deltaAverageRP - b.deltaAverageRP
     );
   const mixed = deltas
     .filter((entry) => entry.changeTypes.includes("buff") && entry.changeTypes.includes("nerf"))
     .sort((a, b) =>
-      currentPatch === "12.4"
+      currentPatch === "12.5" || currentPatch === "12.4"
         ? a.characterNum - b.characterNum
         : b.deltaAverageRP - a.deltaAverageRP
     );
@@ -1007,8 +1007,8 @@ export async function getPatchAnalysisData(version?: string): Promise<PatchAnaly
   const promise = fetchPatchAnalysisData(patchVersion);
   patchAnalysisDataCache.set(cacheKey, {
     promise,
-    // 12.4 starts as a pre-patch preview; refresh it as ranked samples arrive.
-    expiresAt: patchVersion === "12.4" ? Date.now() + 5 * 60 * 1000 : Infinity,
+    // New patches begin as previews; refresh them as ranked samples arrive.
+    expiresAt: patchVersion === "12.5" || patchVersion === "12.4" ? Date.now() + 5 * 60 * 1000 : Infinity,
   });
   return promise;
 }

@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { SiteContentAd } from "@/components/ads/SiteContentAd";
 import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeBadgeStatic";
 import { PATCH_12_4_SOURCE } from "@/data/12.4-balance-context";
+import { PATCH_12_5_SOURCE } from "@/data/12.5-balance-context";
 import { localizePatchChanges } from "@/data/patch-note-localization";
 import { Link } from "@/i18n/navigation";
 import { LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
@@ -15,6 +16,8 @@ import {
   getCharacterMiniWebpUrl,
   resolveCharacterName,
 } from "@/lib/characterMap";
+import { getCachedHomeMetaStats } from "@/lib/homeMetaServer";
+import { isHomeMetaTargetReady } from "@/lib/homeMetaShared";
 import {
   getPatchAnalysisData,
   getPatchAnalysisVersions,
@@ -155,6 +158,49 @@ const PATCH_12_4_COPY: Record<
   },
 };
 
+const PATCH_12_5_COPY: typeof PATCH_12_4_COPY = {
+  ko: {
+    intro: "12.4 지표를 기준선으로 12.5 공식 변경점과 관찰 포인트를 정리했습니다. 아래 해석은 사전 전망이며 12.5 관측 결과가 아닙니다.",
+    pending: "12.5 랭크 표본을 집계 중입니다. 세레스는 10월 6일까지 랭크에서 선택할 수 없습니다.",
+    caution: "12.4와 12.5는 동일한 평균 RP 산식을 사용합니다. 표본이 충분히 쌓인 뒤 무기별 성적과 선택률을 함께 비교해야 합니다.",
+    forecast: "사전 전망",
+    tierForecast: "무기별 예상 티어 보기",
+    source: "공식 12.5 패치노트",
+  },
+  en: {
+    intro: "This preview maps official 12.5 changes against the 12.4 baseline. Its impact notes are forecasts, not observed 12.5 results.",
+    pending: "12.5 ranked samples are being collected. Seres is unavailable in ranked until October 6.",
+    caution: "12.4 and 12.5 use the same average RP formula. Compare weapon-specific performance and pick rates once enough samples arrive.",
+    forecast: "Pre-patch outlook",
+    tierForecast: "View weapon-specific tier forecasts",
+    source: "Official 12.5 patch notes",
+  },
+  ja: {
+    intro: "12.4の指標を基準に、12.5の公式変更と注目点を整理しました。以下は事前予測であり、12.5の実測結果ではありません。",
+    pending: "12.5のランク標本を集計中です。セレスは10月6日までランクで選択できません。",
+    caution: "12.4と12.5は同じ平均RP算式を使用します。十分な標本が集まってから武器別の成績と選択率を比較します。",
+    forecast: "事前予測",
+    tierForecast: "武器別の予想ティアを見る",
+    source: "公式12.5パッチノート",
+  },
+  "zh-Hans": {
+    intro: "以12.4数据为基线整理12.5官方改动。以下为事前预测，并非12.5实测结果。",
+    pending: "12.5排位样本仍在收集中。Seres在10月6日前不可用于排位。",
+    caution: "12.4与12.5使用相同的平均RP公式。样本充足后再比较各武器表现和选取率。",
+    forecast: "事前预测",
+    tierForecast: "查看各武器预测梯队",
+    source: "12.5官方更新公告",
+  },
+  "zh-Hant": {
+    intro: "以12.4數據為基線整理12.5官方改動。以下為事前預測，並非12.5實測結果。",
+    pending: "12.5排位樣本仍在收集中。Seres在10月6日前不可用於排位。",
+    caution: "12.4與12.5使用相同的平均RP公式。樣本充足後再比較各武器表現和選取率。",
+    forecast: "事前預測",
+    tierForecast: "查看各武器預測梯隊",
+    source: "12.5官方更新公告",
+  },
+};
+
 function patchContextComment(
   body: string,
   tone: CausalEvaluationComment["tone"] = "neutral"
@@ -163,6 +209,18 @@ function patchContextComment(
 }
 
 const PATCH_CONTEXT_COMMENTS: Record<string, Record<number, CausalEvaluationComment[]>> = {
+  "12.5": {
+    2: patchContextComment("Q·W 공격력 계수 상향은 세 무기 모두에 적용됩니다. 12.4에서 특히 낮았던 돌격 소총 성적과 권총·저격총 성적을 분리해 확인해야 합니다."),
+    7: patchContextComment("Q 상향은 초중반 기본 피해와 쿨다운에 집중됩니다. 글러브와 톤파의 패치 전 성적 차이가 커 같은 티어 이동을 가정할 수 없습니다."),
+    11: patchContextComment("양손검과 쌍검의 숙련도 기본 공격 증폭이 각각 0.1%p씩 낮아집니다. 무기별 표본을 합치면 변화 폭이 가려집니다."),
+    17: patchContextComment("투척 숙련도와 R 피해가 함께 하향됩니다. 12.4 투척 성적을 기준으로 관찰하되 이번 패치 결과로 단정하지 않습니다."),
+    23: patchContextComment("직접 하향은 쌍검 숙련도에만 적용됩니다. 단검 캐시를 같은 하향 대상으로 분류하지 않습니다."),
+    28: patchContextComment("W 보호막의 스킬 증폭 계수가 5%p 줄어듭니다. 상대 조합과 W 사용 빈도에 따라 영향이 달라질 수 있습니다."),
+    37: patchContextComment("단검 숙련도 기본 공격 증폭이 레벨당 0.1%p 줄어듭니다. 치명타 빌드 선택률과 함께 확인해야 합니다."),
+    44: patchContextComment("블랙맘바킹과 TL의 모든 피해 흡혈이 10%에서 8%로 줄어듭니다. 다른 VF 의수 유형과 구분해야 합니다."),
+    50: patchContextComment("Q의 1·2타 계수가 모두 오릅니다. 2타 적중률과 추가 체력 빌드 비중이 실제 성과를 좌우합니다."),
+    73: patchContextComment("아르카나 숙련도와 성장 방어력이 함께 하향됩니다. 기존 승률은 픽률과 표본 수를 함께 확인해야 합니다."),
+  },
   "12.4": {
     9: patchContextComment(
       "권총 아이솔의 R 스킬 증폭 계수만 5%p 올랐습니다. 다른 무기 빌드까지 같은 상향으로 해석하지 않고 권총 표본을 따로 확인해야 합니다."
@@ -730,7 +788,9 @@ export async function generateMetadata(version?: string): Promise<Metadata> {
     metadataBase: new URL(BASE_URL),
     title: `패치 메타 분석 - ${data.currentPatch} 통계 변화`,
     description:
-      data.currentPatch === "12.4"
+      data.currentPatch === "12.5"
+        ? "이터널리턴 12.5 공식 변경점과 12.4 기준 사전 전망. 관측 통계와 사전 해석을 구분합니다."
+        : data.currentPatch === "12.4"
         ? "이터널리턴 12.4 공식 변경점과 12.3 기준 사전 전망. 관측 통계와 갬빗 RP 영향은 분리합니다."
         : `이터널리턴 최신 패치 기준 다이아 이상 통계 분석. ${data.currentPatch}과 ${data.previousPatch}의 평균 RP, 승률, 픽률, 순방률 변화를 비교합니다.`,
     alternates: { canonical: pathname },
@@ -854,12 +914,14 @@ function CharacterDeltaCard({
   locale,
   l10n,
   fallbackMap,
+  isPreviewPatch,
 }: {
   entry: PatchCharacterDelta;
   copy: PatchAnalysisCopy;
   locale: RouteLocale;
   l10n: Map<string, string>;
   fallbackMap: Map<number, string>;
+  isPreviewPatch: boolean;
 }) {
   const firstChanges = localizePatchChanges(entry.note, locale).slice(0, 3);
   const weaponNames =
@@ -921,7 +983,7 @@ function CharacterDeltaCard({
           </div>
         </div>
 
-        <DiamondMetricPanel entry={entry} copy={copy} displayName={displayName} />
+        <DiamondMetricPanel entry={entry} copy={copy} displayName={displayName} isPreviewPatch={isPreviewPatch} />
       </div>
 
       <div className="flex flex-col gap-3">
@@ -947,7 +1009,7 @@ function CharacterDeltaCard({
         {causalComments.length > 0 ? (
           <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-3">
             <p className="text-[11px] font-semibold text-[var(--color-foreground)]">
-              {entry.note.patch === "12.4" ? PATCH_12_4_COPY[locale].forecast : copy.evaluation}
+              {entry.note.patch === "12.5" ? PATCH_12_5_COPY[locale].forecast : entry.note.patch === "12.4" ? PATCH_12_4_COPY[locale].forecast : copy.evaluation}
             </p>
             <div className="mt-2 grid gap-2">
               {causalComments.map((comment) => (
@@ -970,15 +1032,17 @@ function DiamondMetricPanel({
   entry,
   copy,
   displayName,
+  isPreviewPatch,
 }: {
   entry: PatchCharacterDelta;
   copy: PatchAnalysisCopy;
   displayName: string;
+  isPreviewPatch: boolean;
 }) {
   const metric = entry.tierMetrics.find((candidate) => candidate.tier === "DIAMOND_PLUS");
   if (!metric) return null;
 
-  const hasComparableMetrics = metric.current != null && metric.previous != null;
+  const hasComparableMetrics = !isPreviewPatch && metric.current != null && metric.previous != null;
 
   return (
     <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5">
@@ -1315,6 +1379,7 @@ function CharacterSection({
   locale,
   l10n,
   fallbackMap,
+  isPreviewPatch,
 }: {
   title: string;
   description?: string;
@@ -1323,6 +1388,7 @@ function CharacterSection({
   locale: RouteLocale;
   l10n: Map<string, string>;
   fallbackMap: Map<number, string>;
+  isPreviewPatch: boolean;
 }) {
   if (entries.length === 0) return null;
   const groups = groupEntriesByRole(entries);
@@ -1364,6 +1430,7 @@ function CharacterSection({
                   locale={locale}
                   l10n={l10n}
                   fallbackMap={fallbackMap}
+                  isPreviewPatch={isPreviewPatch}
                 />
               ))}
             </div>
@@ -1419,6 +1486,10 @@ export default async function PatchAnalysisPage({
   const showDescriptions = data.currentPatch !== "11.4";
   const showRawMetrics = data.currentPatch !== "11.5";
   const isPatch124 = data.currentPatch === "12.4";
+  const isPatch125 = data.currentPatch === "12.5";
+  const targetStats = isPatch125 ? await getCachedHomeMetaStats("12.5").catch(() => null) : null;
+  const isPreviewPatch = isPatch124 || (isPatch125 && !isHomeMetaTargetReady(targetStats?.collectedGames ?? 0));
+  const previewCopy = isPatch125 ? PATCH_12_5_COPY[locale] : PATCH_12_4_COPY[locale];
   const hasCurrentSample = data.totalMatches > 0;
 
   return (
@@ -1446,7 +1517,7 @@ export default async function PatchAnalysisPage({
             </h1>
             {showDescriptions ? (
               <p className="mt-2 max-w-[44rem] text-base leading-7 text-[var(--color-foreground)]">
-                {isPatch124 ? PATCH_12_4_COPY[locale].intro : copy.intro}
+                {isPreviewPatch ? previewCopy.intro : copy.intro}
               </p>
             ) : null}
             {showDescriptions && showRawMetrics && bestRole && worstRole ? (
@@ -1511,39 +1582,38 @@ export default async function PatchAnalysisPage({
         </div>
       </section>
 
-      {isPatch124 ? (
+      {isPreviewPatch ? (
         <section
           className="dashboard-panel border-l-4 border-l-[var(--color-accent)] p-4 lg:p-6"
-          aria-label={PATCH_12_4_COPY[locale].forecast}
+          aria-label={previewCopy.forecast}
         >
           {!hasCurrentSample ? (
             <p className="text-base font-semibold leading-7 text-[var(--color-foreground)]">
-              {PATCH_12_4_COPY[locale].pending}
+              {previewCopy.pending}
             </p>
           ) : null}
           <p className="mt-2 text-sm leading-6 text-[var(--color-muted-foreground)]">
-            {PATCH_12_4_COPY[locale].caution}
+            {previewCopy.caution}
           </p>
           <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-[var(--color-accent-foreground)]">
-            <Link
-              href="/patch-forecast/12.4#forecast-results"
-              className="underline underline-offset-4"
-            >
-              {PATCH_12_4_COPY[locale].tierForecast}
-            </Link>
+            {isPreviewPatch ? (
+              <Link href={`/patch-forecast/${data.currentPatch}#forecast-results`} className="underline underline-offset-4">
+                {previewCopy.tierForecast}
+              </Link>
+            ) : null}
             <a
-              href={PATCH_12_4_SOURCE}
+              href={isPatch125 ? PATCH_12_5_SOURCE : PATCH_12_4_SOURCE}
               target="_blank"
               rel="noopener noreferrer"
               className="underline underline-offset-4"
             >
-              {PATCH_12_4_COPY[locale].source}
+              {previewCopy.source}
             </a>
           </div>
         </section>
       ) : null}
 
-      {showRawMetrics && !isPatch124 && hasCurrentSample ? (
+      {showRawMetrics && !isPreviewPatch && hasCurrentSample ? (
         <>
           <RoleTable
             roles={data.roleMetrics}
@@ -1577,14 +1647,14 @@ export default async function PatchAnalysisPage({
 
       <CharacterSection
         title={
-          isPatch124
-            ? `${copy.changeLabels.buff} · ${PATCH_12_4_COPY[locale].forecast}`
+          isPreviewPatch
+            ? `${copy.changeLabels.buff} · ${previewCopy.forecast}`
             : showRawMetrics
               ? copy.sections.buffTitle
               : copy.sections.focusedBuffTitle
         }
         description={
-          isPatch124
+          isPreviewPatch
             ? undefined
             : showDescriptions
               ? showRawMetrics
@@ -1597,17 +1667,18 @@ export default async function PatchAnalysisPage({
         locale={locale}
         l10n={l10n}
         fallbackMap={fallbackMap}
+        isPreviewPatch={isPreviewPatch}
       />
       <CharacterSection
         title={
-          isPatch124
-            ? `${copy.changeLabels.nerf} · ${PATCH_12_4_COPY[locale].forecast}`
+          isPreviewPatch
+            ? `${copy.changeLabels.nerf} · ${previewCopy.forecast}`
             : showRawMetrics
               ? copy.sections.nerfTitle
               : copy.sections.focusedNerfTitle
         }
         description={
-          isPatch124
+          isPreviewPatch
             ? undefined
             : showDescriptions
               ? showRawMetrics
@@ -1620,17 +1691,18 @@ export default async function PatchAnalysisPage({
         locale={locale}
         l10n={l10n}
         fallbackMap={fallbackMap}
+        isPreviewPatch={isPreviewPatch}
       />
       <CharacterSection
         title={
-          isPatch124
-            ? `${copy.changeLabels.adjust} · ${PATCH_12_4_COPY[locale].forecast}`
+          isPreviewPatch
+            ? `${copy.changeLabels.adjust} · ${previewCopy.forecast}`
             : showRawMetrics
               ? copy.sections.mixedTitle
               : copy.sections.focusedMixedTitle
         }
         description={
-          isPatch124
+          isPreviewPatch
             ? undefined
             : showDescriptions
               ? showRawMetrics
@@ -1643,9 +1715,10 @@ export default async function PatchAnalysisPage({
         locale={locale}
         l10n={l10n}
         fallbackMap={fallbackMap}
+        isPreviewPatch={isPreviewPatch}
       />
 
-      {showDescriptions && showRawMetrics && !isPatch124 ? (
+      {showDescriptions && showRawMetrics && !isPreviewPatch ? (
         <section className="dashboard-panel p-4 lg:p-6">
           <div className="flex flex-col gap-2">
             <p className="dashboard-kicker">{copy.guideKicker}</p>

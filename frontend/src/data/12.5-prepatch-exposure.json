@@ -1,0 +1,3897 @@
+{
+  "capturedAt": "2026-10-01T06:01:51.908Z",
+  "patch": "12.4",
+  "scope": "DIAMOND_PLUS",
+  "source": [
+    "v2_CharacterEquipmentBuildStats",
+    "v2_CharacterTraitBuildStats"
+  ],
+  "equipmentRows": 325282,
+  "traitRows": 30295,
+  "profiles": [
+    {
+      "characterCode": 1,
+      "weaponCode": 14,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 10,
+          "slotGames": 8665,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 464,
+          "slotGames": 8664,
+          "pickRate": 5.4
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 34,
+          "totalGames": 7423,
+          "pickRate": 0.5
+        }
+      ]
+    },
+    {
+      "characterCode": 1,
+      "weaponCode": 15,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 2,
+          "slotGames": 1882,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 3,
+          "totalGames": 1618,
+          "pickRate": 0.2
+        }
+      ]
+    },
+    {
+      "characterCode": 1,
+      "weaponCode": 16,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 8,
+          "slotGames": 10162,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 1,
+          "slotGames": 10157,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 7,
+          "totalGames": 8685,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 1,
+      "weaponCode": 18,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 66,
+          "slotGames": 9276,
+          "pickRate": 0.7
+        },
+        {
+          "itemCode": 705607,
+          "games": 4,
+          "slotGames": 9275,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 2,
+          "totalGames": 8038,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 2,
+      "weaponCode": 9,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 7,
+          "slotGames": 7227,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 67,
+          "slotGames": 7228,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 705619,
+          "games": 44,
+          "slotGames": 7225,
+          "pickRate": 0.6
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 6697,
+          "totalGames": 7258,
+          "pickRate": 92.3
+        }
+      ]
+    },
+    {
+      "characterCode": 2,
+      "weaponCode": 10,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 484,
+          "slotGames": 11092,
+          "pickRate": 4.4
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 1,
+          "totalGames": 10691,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 2,
+      "weaponCode": 11,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 19,
+          "slotGames": 12758,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 41,
+          "slotGames": 12757,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 705619,
+          "games": 32,
+          "slotGames": 12753,
+          "pickRate": 0.3
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 12296,
+          "totalGames": 13244,
+          "pickRate": 92.8
+        }
+      ]
+    },
+    {
+      "characterCode": 3,
+      "weaponCode": 16,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 8,
+          "slotGames": 2550,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 202511,
+          "games": 1,
+          "slotGames": 2548,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 424,
+          "slotGames": 2549,
+          "pickRate": 16.6
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 9,
+          "totalGames": 2320,
+          "pickRate": 0.4
+        }
+      ]
+    },
+    {
+      "characterCode": 3,
+      "weaponCode": 19,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 29,
+          "slotGames": 2424,
+          "pickRate": 1.2
+        },
+        {
+          "itemCode": 202511,
+          "games": 1,
+          "slotGames": 2426,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705604,
+          "games": 5,
+          "slotGames": 2425,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705619,
+          "games": 925,
+          "slotGames": 2425,
+          "pickRate": 38.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 22,
+          "totalGames": 2465,
+          "pickRate": 0.9
+        }
+      ]
+    },
+    {
+      "characterCode": 3,
+      "weaponCode": 21,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 5,
+          "slotGames": 4479,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 1,
+          "slotGames": 4483,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705604,
+          "games": 1,
+          "slotGames": 4479,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 244,
+          "slotGames": 4479,
+          "pickRate": 5.4
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 4,
+      "weaponCode": 3,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 216,
+          "slotGames": 6431,
+          "pickRate": 3.4
+        },
+        {
+          "itemCode": 201507,
+          "games": 1,
+          "slotGames": 6431,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 1,
+          "slotGames": 6432,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 20,
+          "slotGames": 6428,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 705619,
+          "games": 2,
+          "slotGames": 6428,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 9,
+          "totalGames": 6398,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 4,
+      "weaponCode": 13,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 548,
+          "slotGames": 12858,
+          "pickRate": 4.3
+        },
+        {
+          "itemCode": 202511,
+          "games": 150,
+          "slotGames": 12860,
+          "pickRate": 1.2
+        },
+        {
+          "itemCode": 705607,
+          "games": 4,
+          "slotGames": 12852,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 127,
+          "slotGames": 12852,
+          "pickRate": 1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 67,
+          "totalGames": 13533,
+          "pickRate": 0.5
+        },
+        {
+          "traitCode": 7300301,
+          "games": 16,
+          "totalGames": 13533,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 5,
+      "weaponCode": 5,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 96,
+          "slotGames": 4171,
+          "pickRate": 2.3
+        },
+        {
+          "itemCode": 202511,
+          "games": 24,
+          "slotGames": 4173,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 705619,
+          "games": 65,
+          "slotGames": 4170,
+          "pickRate": 1.6
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 58,
+          "totalGames": 4172,
+          "pickRate": 1.4
+        }
+      ]
+    },
+    {
+      "characterCode": 5,
+      "weaponCode": 6,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 28,
+          "slotGames": 2116,
+          "pickRate": 1.3
+        },
+        {
+          "itemCode": 202511,
+          "games": 14,
+          "slotGames": 2118,
+          "pickRate": 0.7
+        },
+        {
+          "itemCode": 705619,
+          "games": 107,
+          "slotGames": 2117,
+          "pickRate": 5.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 55,
+          "totalGames": 2121,
+          "pickRate": 2.6
+        }
+      ]
+    },
+    {
+      "characterCode": 6,
+      "weaponCode": 7,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 2,
+          "slotGames": 2728,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 476,
+          "slotGames": 2728,
+          "pickRate": 17.4
+        },
+        {
+          "itemCode": 705619,
+          "games": 2,
+          "slotGames": 2727,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 787,
+          "totalGames": 2730,
+          "pickRate": 28.8
+        }
+      ]
+    },
+    {
+      "characterCode": 7,
+      "weaponCode": 1,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 3,
+          "slotGames": 10923,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 274,
+          "slotGames": 10921,
+          "pickRate": 2.5
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 22,
+          "totalGames": 11299,
+          "pickRate": 0.2
+        }
+      ]
+    },
+    {
+      "characterCode": 7,
+      "weaponCode": 2,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 129,
+          "slotGames": 2582,
+          "pickRate": 5
+        },
+        {
+          "itemCode": 202511,
+          "games": 17,
+          "slotGames": 2582,
+          "pickRate": 0.7
+        },
+        {
+          "itemCode": 705619,
+          "games": 410,
+          "slotGames": 2585,
+          "pickRate": 15.9
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 31,
+          "totalGames": 2806,
+          "pickRate": 1.1
+        },
+        {
+          "traitCode": 7300301,
+          "games": 173,
+          "totalGames": 2806,
+          "pickRate": 6.2
+        }
+      ]
+    },
+    {
+      "characterCode": 8,
+      "weaponCode": 22,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 34,
+          "slotGames": 7525,
+          "pickRate": 0.5
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 9,
+      "weaponCode": 9,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 1045,
+          "slotGames": 6704,
+          "pickRate": 15.6
+        },
+        {
+          "itemCode": 201536,
+          "games": 7,
+          "slotGames": 6704,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 3454,
+          "slotGames": 6709,
+          "pickRate": 51.5
+        },
+        {
+          "itemCode": 705607,
+          "games": 24,
+          "slotGames": 6708,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 705619,
+          "games": 716,
+          "slotGames": 6708,
+          "pickRate": 10.7
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 3451,
+          "totalGames": 6619,
+          "pickRate": 52.1
+        }
+      ]
+    },
+    {
+      "characterCode": 9,
+      "weaponCode": 10,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 148,
+          "slotGames": 12052,
+          "pickRate": 1.2
+        },
+        {
+          "itemCode": 705607,
+          "games": 2,
+          "slotGames": 12057,
+          "pickRate": 0
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 10,
+      "weaponCode": 1,
+      "items": [
+        {
+          "itemCode": 705607,
+          "games": 97,
+          "slotGames": 6100,
+          "pickRate": 1.6
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 36,
+          "totalGames": 7538,
+          "pickRate": 0.5
+        }
+      ]
+    },
+    {
+      "characterCode": 10,
+      "weaponCode": 20,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 2,
+          "slotGames": 3625,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 46,
+          "totalGames": 3943,
+          "pickRate": 1.2
+        }
+      ]
+    },
+    {
+      "characterCode": 11,
+      "weaponCode": 16,
+      "items": [
+        {
+          "itemCode": 705607,
+          "games": 109,
+          "slotGames": 26424,
+          "pickRate": 0.4
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 1,
+          "totalGames": 19848,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7300301,
+          "games": 62,
+          "totalGames": 19848,
+          "pickRate": 0.3
+        }
+      ]
+    },
+    {
+      "characterCode": 11,
+      "weaponCode": 18,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 6,
+          "slotGames": 23304,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 8,
+          "slotGames": 23308,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 53,
+          "totalGames": 19307,
+          "pickRate": 0.3
+        }
+      ]
+    },
+    {
+      "characterCode": 12,
+      "weaponCode": 6,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 2,
+          "slotGames": 2273,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 364,
+          "slotGames": 2276,
+          "pickRate": 16
+        },
+        {
+          "itemCode": 705619,
+          "games": 27,
+          "slotGames": 2273,
+          "pickRate": 1.2
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 41,
+          "totalGames": 2301,
+          "pickRate": 1.8
+        }
+      ]
+    },
+    {
+      "characterCode": 12,
+      "weaponCode": 7,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 18,
+          "slotGames": 4478,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 202511,
+          "games": 68,
+          "slotGames": 4482,
+          "pickRate": 1.5
+        },
+        {
+          "itemCode": 705619,
+          "games": 122,
+          "slotGames": 4476,
+          "pickRate": 2.7
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 41,
+          "totalGames": 5387,
+          "pickRate": 0.8
+        }
+      ]
+    },
+    {
+      "characterCode": 13,
+      "weaponCode": 15,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 491,
+          "slotGames": 3823,
+          "pickRate": 12.8
+        },
+        {
+          "itemCode": 201536,
+          "games": 43,
+          "slotGames": 3823,
+          "pickRate": 1.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 10,
+          "slotGames": 3831,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 705604,
+          "games": 6,
+          "slotGames": 3825,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705607,
+          "games": 36,
+          "slotGames": 3825,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 705619,
+          "games": 384,
+          "slotGames": 3825,
+          "pickRate": 10
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 13,
+          "totalGames": 4093,
+          "pickRate": 0.3
+        },
+        {
+          "traitCode": 7300301,
+          "games": 14,
+          "totalGames": 4093,
+          "pickRate": 0.3
+        }
+      ]
+    },
+    {
+      "characterCode": 13,
+      "weaponCode": 19,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 1016,
+          "slotGames": 5488,
+          "pickRate": 18.5
+        },
+        {
+          "itemCode": 201536,
+          "games": 41,
+          "slotGames": 5488,
+          "pickRate": 0.7
+        },
+        {
+          "itemCode": 202511,
+          "games": 20,
+          "slotGames": 5492,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 705604,
+          "games": 32,
+          "slotGames": 5487,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 705607,
+          "games": 2,
+          "slotGames": 5487,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 455,
+          "slotGames": 5487,
+          "pickRate": 8.3
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 3,
+          "totalGames": 5770,
+          "pickRate": 0.1
+        },
+        {
+          "traitCode": 7300301,
+          "games": 5,
+          "totalGames": 5770,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 14,
+      "weaponCode": 21,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 419,
+          "slotGames": 12733,
+          "pickRate": 3.3
+        },
+        {
+          "itemCode": 201536,
+          "games": 3,
+          "slotGames": 12733,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 2,
+          "slotGames": 12742,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705604,
+          "games": 11,
+          "slotGames": 12735,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 567,
+          "slotGames": 12735,
+          "pickRate": 4.5
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 6,
+          "totalGames": 13180,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7300301,
+          "games": 35,
+          "totalGames": 13180,
+          "pickRate": 0.3
+        }
+      ]
+    },
+    {
+      "characterCode": 15,
+      "weaponCode": 5,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 38,
+          "slotGames": 5825,
+          "pickRate": 0.7
+        },
+        {
+          "itemCode": 202511,
+          "games": 4110,
+          "slotGames": 5832,
+          "pickRate": 70.5
+        },
+        {
+          "itemCode": 705619,
+          "games": 21,
+          "slotGames": 5829,
+          "pickRate": 0.4
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 6219,
+          "totalGames": 6330,
+          "pickRate": 98.2
+        }
+      ]
+    },
+    {
+      "characterCode": 15,
+      "weaponCode": 6,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 15,
+          "slotGames": 9384,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 202511,
+          "games": 6431,
+          "slotGames": 9381,
+          "pickRate": 68.6
+        },
+        {
+          "itemCode": 705619,
+          "games": 87,
+          "slotGames": 9386,
+          "pickRate": 0.9
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 9872,
+          "totalGames": 9906,
+          "pickRate": 99.7
+        }
+      ]
+    },
+    {
+      "characterCode": 16,
+      "weaponCode": 9,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 2807,
+          "slotGames": 7412,
+          "pickRate": 37.9
+        },
+        {
+          "itemCode": 201536,
+          "games": 44,
+          "slotGames": 7412,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 202511,
+          "games": 11,
+          "slotGames": 7421,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705604,
+          "games": 1,
+          "slotGames": 7414,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 4,
+          "slotGames": 7414,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 582,
+          "slotGames": 7414,
+          "pickRate": 7.9
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 304,
+          "totalGames": 7431,
+          "pickRate": 4.1
+        }
+      ]
+    },
+    {
+      "characterCode": 17,
+      "weaponCode": 5,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 38,
+          "slotGames": 18489,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 201536,
+          "games": 1,
+          "slotGames": 18489,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 15225,
+          "slotGames": 18503,
+          "pickRate": 82.3
+        },
+        {
+          "itemCode": 705619,
+          "games": 12,
+          "slotGames": 18502,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 18211,
+          "totalGames": 18541,
+          "pickRate": 98.2
+        }
+      ]
+    },
+    {
+      "characterCode": 18,
+      "weaponCode": 15,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 30,
+          "slotGames": 20819,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 12,
+          "slotGames": 20841,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 1473,
+          "slotGames": 20815,
+          "pickRate": 7.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 32,
+          "totalGames": 24977,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 19,
+      "weaponCode": 6,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 36,
+          "slotGames": 6614,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 201536,
+          "games": 1,
+          "slotGames": 6614,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 37,
+          "slotGames": 6620,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 705619,
+          "games": 185,
+          "slotGames": 6613,
+          "pickRate": 2.8
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 100,
+          "totalGames": 7222,
+          "pickRate": 1.4
+        },
+        {
+          "traitCode": 7300301,
+          "games": 3,
+          "totalGames": 7222,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 19,
+      "weaponCode": 24,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 2,
+          "slotGames": 3379,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 20,
+          "slotGames": 3380,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 705619,
+          "games": 24,
+          "slotGames": 3376,
+          "pickRate": 0.7
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 423,
+          "totalGames": 3613,
+          "pickRate": 11.7
+        }
+      ]
+    },
+    {
+      "characterCode": 20,
+      "weaponCode": 4,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 1041,
+          "slotGames": 17995,
+          "pickRate": 5.8
+        },
+        {
+          "itemCode": 202511,
+          "games": 8,
+          "slotGames": 18011,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 17,
+          "slotGames": 18001,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 243,
+          "slotGames": 18001,
+          "pickRate": 1.3
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 37,
+          "totalGames": 18034,
+          "pickRate": 0.2
+        }
+      ]
+    },
+    {
+      "characterCode": 21,
+      "weaponCode": 9,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 86,
+          "slotGames": 15885,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 705607,
+          "games": 29,
+          "slotGames": 15890,
+          "pickRate": 0.2
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 6,
+          "totalGames": 15918,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 22,
+      "weaponCode": 3,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 14,
+          "slotGames": 22221,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 1498,
+          "slotGames": 22229,
+          "pickRate": 6.7
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 4,
+          "totalGames": 23866,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7300301,
+          "games": 2378,
+          "totalGames": 23866,
+          "pickRate": 10
+        }
+      ]
+    },
+    {
+      "characterCode": 23,
+      "weaponCode": 15,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 79,
+          "slotGames": 4038,
+          "pickRate": 2
+        },
+        {
+          "itemCode": 202511,
+          "games": 1003,
+          "slotGames": 4039,
+          "pickRate": 24.8
+        },
+        {
+          "itemCode": 705619,
+          "games": 129,
+          "slotGames": 4036,
+          "pickRate": 3.2
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 8,
+          "totalGames": 4041,
+          "pickRate": 0.2
+        },
+        {
+          "traitCode": 7300301,
+          "games": 93,
+          "totalGames": 4041,
+          "pickRate": 2.3
+        }
+      ]
+    },
+    {
+      "characterCode": 23,
+      "weaponCode": 18,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 413,
+          "slotGames": 13766,
+          "pickRate": 3
+        },
+        {
+          "itemCode": 202511,
+          "games": 5,
+          "slotGames": 13776,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 909,
+          "slotGames": 13764,
+          "pickRate": 6.6
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 1,
+          "totalGames": 13804,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7300301,
+          "games": 69,
+          "totalGames": 13804,
+          "pickRate": 0.5
+        }
+      ]
+    },
+    {
+      "characterCode": 24,
+      "weaponCode": 3,
+      "items": [
+        {
+          "itemCode": 202511,
+          "games": 8,
+          "slotGames": 5610,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 2,
+          "slotGames": 5609,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 2,
+          "totalGames": 5613,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 24,
+      "weaponCode": 21,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 1,
+          "slotGames": 2999,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 16,
+          "slotGames": 3000,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 705619,
+          "games": 2,
+          "slotGames": 2999,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 25,
+      "weaponCode": 11,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 370,
+          "slotGames": 11768,
+          "pickRate": 3.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 4,
+          "totalGames": 13085,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 26,
+      "weaponCode": 9,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 482,
+          "slotGames": 13497,
+          "pickRate": 3.6
+        },
+        {
+          "itemCode": 202511,
+          "games": 278,
+          "slotGames": 13505,
+          "pickRate": 2.1
+        },
+        {
+          "itemCode": 705604,
+          "games": 3,
+          "slotGames": 13495,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 581,
+          "slotGames": 13495,
+          "pickRate": 4.3
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 7177,
+          "totalGames": 13513,
+          "pickRate": 53.1
+        }
+      ]
+    },
+    {
+      "characterCode": 27,
+      "weaponCode": 2,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 5,
+          "slotGames": 2627,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 201507,
+          "games": 4,
+          "slotGames": 2627,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705607,
+          "games": 1,
+          "slotGames": 2628,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 6,
+          "totalGames": 2631,
+          "pickRate": 0.2
+        },
+        {
+          "traitCode": 7300301,
+          "games": 1,
+          "totalGames": 2631,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 27,
+      "weaponCode": 6,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 2,
+          "slotGames": 1858,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201507,
+          "games": 1,
+          "slotGames": 1858,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 8,
+          "totalGames": 1860,
+          "pickRate": 0.4
+        },
+        {
+          "traitCode": 7300301,
+          "games": 1,
+          "totalGames": 1860,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 27,
+      "weaponCode": 9,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 10,
+          "slotGames": 4881,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 201507,
+          "games": 7,
+          "slotGames": 4881,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201536,
+          "games": 1,
+          "slotGames": 4881,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 6,
+          "totalGames": 4892,
+          "pickRate": 0.1
+        },
+        {
+          "traitCode": 7300301,
+          "games": 3,
+          "totalGames": 4892,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 27,
+      "weaponCode": 16,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 10,
+          "slotGames": 4746,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 201507,
+          "games": 5,
+          "slotGames": 4746,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 1,
+          "slotGames": 4746,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 8,
+          "totalGames": 4767,
+          "pickRate": 0.2
+        },
+        {
+          "traitCode": 7300301,
+          "games": 1,
+          "totalGames": 4767,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 28,
+      "weaponCode": 3,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 7,
+          "slotGames": 20541,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 4,
+          "slotGames": 20553,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 13925,
+          "slotGames": 20547,
+          "pickRate": 67.8
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 1720,
+          "totalGames": 17786,
+          "pickRate": 9.7
+        }
+      ]
+    },
+    {
+      "characterCode": 28,
+      "weaponCode": 13,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 1,
+          "slotGames": 1310,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 1,
+          "slotGames": 1311,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 555,
+          "slotGames": 1311,
+          "pickRate": 42.3
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 1,
+          "totalGames": 1272,
+          "pickRate": 0.1
+        },
+        {
+          "traitCode": 7300301,
+          "games": 375,
+          "totalGames": 1272,
+          "pickRate": 29.5
+        }
+      ]
+    },
+    {
+      "characterCode": 29,
+      "weaponCode": 1,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 43,
+          "slotGames": 20253,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 201536,
+          "games": 1,
+          "slotGames": 20253,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 10,
+          "slotGames": 20274,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705604,
+          "games": 1,
+          "slotGames": 20254,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 330,
+          "slotGames": 20254,
+          "pickRate": 1.6
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 1,
+          "totalGames": 20291,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7300301,
+          "games": 34,
+          "totalGames": 20291,
+          "pickRate": 0.2
+        }
+      ]
+    },
+    {
+      "characterCode": 29,
+      "weaponCode": 2,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 322,
+          "slotGames": 1645,
+          "pickRate": 19.6
+        },
+        {
+          "itemCode": 201536,
+          "games": 124,
+          "slotGames": 1645,
+          "pickRate": 7.5
+        },
+        {
+          "itemCode": 202511,
+          "games": 357,
+          "slotGames": 1645,
+          "pickRate": 21.7
+        },
+        {
+          "itemCode": 705604,
+          "games": 8,
+          "slotGames": 1645,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 705607,
+          "games": 5,
+          "slotGames": 1645,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 705619,
+          "games": 114,
+          "slotGames": 1645,
+          "pickRate": 6.9
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 879,
+          "totalGames": 1646,
+          "pickRate": 53.4
+        }
+      ]
+    },
+    {
+      "characterCode": 30,
+      "weaponCode": 13,
+      "items": [
+        {
+          "itemCode": 705607,
+          "games": 9,
+          "slotGames": 11841,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 3,
+          "totalGames": 11883,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 31,
+      "weaponCode": 7,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 188,
+          "slotGames": 34079,
+          "pickRate": 0.6
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 32,
+      "weaponCode": 5,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 10,
+          "slotGames": 11715,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 1,
+          "totalGames": 11736,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 33,
+      "weaponCode": 1,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 298,
+          "slotGames": 43426,
+          "pickRate": 0.7
+        },
+        {
+          "itemCode": 201536,
+          "games": 6,
+          "slotGames": 43426,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 38,
+          "slotGames": 43448,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 63,
+          "slotGames": 43431,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 19011,
+          "slotGames": 43431,
+          "pickRate": 43.8
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 18,
+          "totalGames": 43504,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7300301,
+          "games": 611,
+          "totalGames": 43504,
+          "pickRate": 1.4
+        }
+      ]
+    },
+    {
+      "characterCode": 34,
+      "weaponCode": 23,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 316,
+          "slotGames": 8987,
+          "pickRate": 3.5
+        },
+        {
+          "itemCode": 202511,
+          "games": 58,
+          "slotGames": 8991,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 705619,
+          "games": 1344,
+          "slotGames": 8988,
+          "pickRate": 15
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 307,
+          "totalGames": 8998,
+          "pickRate": 3.4
+        }
+      ]
+    },
+    {
+      "characterCode": 35,
+      "weaponCode": 1,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 1,
+          "slotGames": 4360,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 5,
+          "slotGames": 4360,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 12,
+          "totalGames": 4367,
+          "pickRate": 0.3
+        }
+      ]
+    },
+    {
+      "characterCode": 35,
+      "weaponCode": 2,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 7,
+          "slotGames": 11121,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 12,
+          "slotGames": 11118,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 257,
+          "slotGames": 11118,
+          "pickRate": 2.3
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 1,
+          "totalGames": 11145,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7300301,
+          "games": 1,
+          "totalGames": 11145,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 36,
+      "weaponCode": 5,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 78,
+          "slotGames": 10226,
+          "pickRate": 0.8
+        },
+        {
+          "itemCode": 202511,
+          "games": 1610,
+          "slotGames": 10230,
+          "pickRate": 15.7
+        },
+        {
+          "itemCode": 705607,
+          "games": 2,
+          "slotGames": 10226,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 139,
+          "slotGames": 10226,
+          "pickRate": 1.4
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 7830,
+          "totalGames": 10243,
+          "pickRate": 76.4
+        },
+        {
+          "traitCode": 7300301,
+          "games": 13,
+          "totalGames": 10243,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 37,
+      "weaponCode": 15,
+      "items": [
+        {
+          "itemCode": 705607,
+          "games": 7,
+          "slotGames": 11307,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 20,
+          "totalGames": 10274,
+          "pickRate": 0.2
+        },
+        {
+          "traitCode": 7300301,
+          "games": 707,
+          "totalGames": 10274,
+          "pickRate": 6.9
+        }
+      ]
+    },
+    {
+      "characterCode": 38,
+      "weaponCode": 9,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 2,
+          "slotGames": 6372,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 50,
+          "slotGames": 6374,
+          "pickRate": 0.8
+        },
+        {
+          "itemCode": 705619,
+          "games": 1,
+          "slotGames": 6374,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 2,
+          "totalGames": 6381,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 39,
+      "weaponCode": 18,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 13,
+          "slotGames": 10875,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 14,
+          "totalGames": 10900,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 39,
+      "weaponCode": 21,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 2,
+          "slotGames": 7654,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 2,
+          "slotGames": 7657,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 184,
+          "totalGames": 7667,
+          "pickRate": 2.4
+        }
+      ]
+    },
+    {
+      "characterCode": 40,
+      "weaponCode": 6,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 1332,
+          "slotGames": 10297,
+          "pickRate": 12.9
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 41,
+      "weaponCode": 24,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 4,
+          "slotGames": 2067,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 201536,
+          "games": 795,
+          "slotGames": 2067,
+          "pickRate": 38.5
+        },
+        {
+          "itemCode": 202511,
+          "games": 1,
+          "slotGames": 2074,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705604,
+          "games": 887,
+          "slotGames": 2068,
+          "pickRate": 42.9
+        },
+        {
+          "itemCode": 705607,
+          "games": 2,
+          "slotGames": 2068,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 37,
+          "slotGames": 2068,
+          "pickRate": 1.8
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 20,
+          "totalGames": 2080,
+          "pickRate": 1
+        }
+      ]
+    },
+    {
+      "characterCode": 42,
+      "weaponCode": 24,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 553,
+          "slotGames": 13450,
+          "pickRate": 4.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 46,
+          "slotGames": 13464,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 705604,
+          "games": 3,
+          "slotGames": 13454,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 736,
+          "slotGames": 13454,
+          "pickRate": 5.5
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 58,
+          "totalGames": 13472,
+          "pickRate": 0.4
+        }
+      ]
+    },
+    {
+      "characterCode": 43,
+      "weaponCode": 5,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 10,
+          "slotGames": 11130,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 5927,
+          "slotGames": 11132,
+          "pickRate": 53.2
+        },
+        {
+          "itemCode": 705619,
+          "games": 22,
+          "slotGames": 11130,
+          "pickRate": 0.2
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 10957,
+          "totalGames": 11145,
+          "pickRate": 98.3
+        }
+      ]
+    },
+    {
+      "characterCode": 44,
+      "weaponCode": 25,
+      "items": [
+        {
+          "itemCode": 131402,
+          "games": 3246,
+          "slotGames": 12209,
+          "pickRate": 26.6
+        },
+        {
+          "itemCode": 131504,
+          "games": 2667,
+          "slotGames": 12209,
+          "pickRate": 21.8
+        },
+        {
+          "itemCode": 705607,
+          "games": 4138,
+          "slotGames": 12174,
+          "pickRate": 34
+        },
+        {
+          "itemCode": 705619,
+          "games": 1,
+          "slotGames": 12174,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 4,
+          "totalGames": 12209,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7300301,
+          "games": 53,
+          "totalGames": 12209,
+          "pickRate": 0.4
+        }
+      ]
+    },
+    {
+      "characterCode": 45,
+      "weaponCode": 4,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 2,
+          "slotGames": 4952,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 758,
+          "slotGames": 4952,
+          "pickRate": 15.3
+        },
+        {
+          "itemCode": 705619,
+          "games": 5,
+          "slotGames": 4952,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 3,
+          "totalGames": 4958,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 46,
+      "weaponCode": 16,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 5,
+          "slotGames": 18674,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 6,
+          "slotGames": 18669,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 9,
+          "totalGames": 18708,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 47,
+      "weaponCode": 4,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 4,
+          "slotGames": 9715,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 9,
+          "slotGames": 9722,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 93,
+          "slotGames": 9717,
+          "pickRate": 1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 1,
+          "totalGames": 9730,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7300301,
+          "games": 10,
+          "totalGames": 9730,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 48,
+      "weaponCode": 3,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 357,
+          "slotGames": 13446,
+          "pickRate": 2.7
+        },
+        {
+          "itemCode": 202511,
+          "games": 5822,
+          "slotGames": 13452,
+          "pickRate": 43.3
+        },
+        {
+          "itemCode": 705619,
+          "games": 1691,
+          "slotGames": 13451,
+          "pickRate": 12.6
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 101,
+          "totalGames": 13474,
+          "pickRate": 0.7
+        }
+      ]
+    },
+    {
+      "characterCode": 49,
+      "weaponCode": 19,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 28,
+          "slotGames": 10828,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 201536,
+          "games": 1,
+          "slotGames": 10828,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705604,
+          "games": 1,
+          "slotGames": 10828,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 5,
+          "slotGames": 10828,
+          "pickRate": 0
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 50,
+      "weaponCode": 21,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 178,
+          "slotGames": 6757,
+          "pickRate": 2.6
+        },
+        {
+          "itemCode": 705607,
+          "games": 2,
+          "slotGames": 6763,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 82,
+          "slotGames": 6763,
+          "pickRate": 1.2
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 48,
+          "totalGames": 6780,
+          "pickRate": 0.7
+        }
+      ]
+    },
+    {
+      "characterCode": 51,
+      "weaponCode": 22,
+      "items": [
+        {
+          "itemCode": 202511,
+          "games": 161,
+          "slotGames": 4339,
+          "pickRate": 3.7
+        },
+        {
+          "itemCode": 705619,
+          "games": 1301,
+          "slotGames": 4334,
+          "pickRate": 30
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 815,
+          "totalGames": 4347,
+          "pickRate": 18.7
+        }
+      ]
+    },
+    {
+      "characterCode": 52,
+      "weaponCode": 24,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 257,
+          "slotGames": 8396,
+          "pickRate": 3.1
+        },
+        {
+          "itemCode": 201536,
+          "games": 2,
+          "slotGames": 8396,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 3718,
+          "slotGames": 8395,
+          "pickRate": 44.3
+        },
+        {
+          "itemCode": 705604,
+          "games": 3,
+          "slotGames": 8395,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 145,
+          "slotGames": 8395,
+          "pickRate": 1.7
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 158,
+          "totalGames": 8405,
+          "pickRate": 1.9
+        }
+      ]
+    },
+    {
+      "characterCode": 53,
+      "weaponCode": 13,
+      "items": [
+        {
+          "itemCode": 705607,
+          "games": 2095,
+          "slotGames": 3878,
+          "pickRate": 54
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 4,
+          "totalGames": 3884,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 53,
+      "weaponCode": 14,
+      "items": [
+        {
+          "itemCode": 705607,
+          "games": 9883,
+          "slotGames": 16856,
+          "pickRate": 58.6
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 3,
+          "totalGames": 16898,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 54,
+      "weaponCode": 8,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 2,
+          "slotGames": 8887,
+          "pickRate": 0
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 55,
+      "weaponCode": 14,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 7620,
+          "slotGames": 16817,
+          "pickRate": 45.3
+        },
+        {
+          "itemCode": 201536,
+          "games": 6,
+          "slotGames": 16817,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 3,
+          "slotGames": 16825,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705604,
+          "games": 3,
+          "slotGames": 16818,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 19,
+          "slotGames": 16818,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 1994,
+          "slotGames": 16818,
+          "pickRate": 11.9
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 1872,
+          "totalGames": 16851,
+          "pickRate": 11.1
+        }
+      ]
+    },
+    {
+      "characterCode": 56,
+      "weaponCode": 20,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 235,
+          "slotGames": 12286,
+          "pickRate": 1.9
+        },
+        {
+          "itemCode": 202511,
+          "games": 3,
+          "slotGames": 12299,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 6208,
+          "slotGames": 12289,
+          "pickRate": 50.5
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 515,
+          "totalGames": 12319,
+          "pickRate": 4.2
+        }
+      ]
+    },
+    {
+      "characterCode": 57,
+      "weaponCode": 23,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 2,
+          "slotGames": 3724,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 58,
+      "weaponCode": 10,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 83,
+          "slotGames": 24105,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 202511,
+          "games": 7920,
+          "slotGames": 24113,
+          "pickRate": 32.8
+        },
+        {
+          "itemCode": 705619,
+          "games": 144,
+          "slotGames": 24109,
+          "pickRate": 0.6
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 24040,
+          "totalGames": 24147,
+          "pickRate": 99.6
+        }
+      ]
+    },
+    {
+      "characterCode": 59,
+      "weaponCode": 2,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 69,
+          "slotGames": 15798,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 705607,
+          "games": 112,
+          "slotGames": 15796,
+          "pickRate": 0.7
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 4,
+          "totalGames": 15824,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7300301,
+          "games": 298,
+          "totalGames": 15824,
+          "pickRate": 1.9
+        }
+      ]
+    },
+    {
+      "characterCode": 60,
+      "weaponCode": 6,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 3,
+          "slotGames": 5193,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 11,
+          "slotGames": 5200,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705619,
+          "games": 918,
+          "slotGames": 5193,
+          "pickRate": 17.7
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 40,
+          "totalGames": 5203,
+          "pickRate": 0.8
+        }
+      ]
+    },
+    {
+      "characterCode": 61,
+      "weaponCode": 5,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 245,
+          "slotGames": 9081,
+          "pickRate": 2.7
+        },
+        {
+          "itemCode": 201536,
+          "games": 3,
+          "slotGames": 9081,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 477,
+          "slotGames": 9090,
+          "pickRate": 5.2
+        },
+        {
+          "itemCode": 705607,
+          "games": 30,
+          "slotGames": 9081,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 705619,
+          "games": 1100,
+          "slotGames": 9081,
+          "pickRate": 12.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 1826,
+          "totalGames": 9106,
+          "pickRate": 20.1
+        },
+        {
+          "traitCode": 7300301,
+          "games": 5,
+          "totalGames": 9106,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 62,
+      "weaponCode": 11,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 5,
+          "slotGames": 8277,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201536,
+          "games": 1,
+          "slotGames": 8277,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 21,
+          "slotGames": 8280,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 705604,
+          "games": 1,
+          "slotGames": 8279,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 13,
+          "slotGames": 8279,
+          "pickRate": 0.2
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 30,
+          "totalGames": 8285,
+          "pickRate": 0.4
+        }
+      ]
+    },
+    {
+      "characterCode": 63,
+      "weaponCode": 15,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 229,
+          "slotGames": 7807,
+          "pickRate": 2.9
+        },
+        {
+          "itemCode": 705607,
+          "games": 3,
+          "slotGames": 7805,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 1,
+          "totalGames": 7824,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7300301,
+          "games": 54,
+          "totalGames": 7824,
+          "pickRate": 0.7
+        }
+      ]
+    },
+    {
+      "characterCode": 64,
+      "weaponCode": 24,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 2845,
+          "slotGames": 15954,
+          "pickRate": 17.8
+        },
+        {
+          "itemCode": 202511,
+          "games": 337,
+          "slotGames": 15960,
+          "pickRate": 2.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 2200,
+          "slotGames": 15950,
+          "pickRate": 13.8
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 176,
+          "totalGames": 15970,
+          "pickRate": 1.1
+        },
+        {
+          "traitCode": 7300301,
+          "games": 4,
+          "totalGames": 15970,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 65,
+      "weaponCode": 16,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 82,
+          "slotGames": 40020,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705607,
+          "games": 429,
+          "slotGames": 40020,
+          "pickRate": 1.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 22,
+          "totalGames": 40083,
+          "pickRate": 0.1
+        },
+        {
+          "traitCode": 7300301,
+          "games": 114,
+          "totalGames": 40083,
+          "pickRate": 0.3
+        }
+      ]
+    },
+    {
+      "characterCode": 66,
+      "weaponCode": 24,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 206,
+          "slotGames": 7621,
+          "pickRate": 2.7
+        },
+        {
+          "itemCode": 201536,
+          "games": 21,
+          "slotGames": 7621,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 202511,
+          "games": 1122,
+          "slotGames": 7624,
+          "pickRate": 14.7
+        },
+        {
+          "itemCode": 705604,
+          "games": 9,
+          "slotGames": 7620,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 2,
+          "slotGames": 7620,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 217,
+          "slotGames": 7620,
+          "pickRate": 2.8
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 3542,
+          "totalGames": 7645,
+          "pickRate": 46.3
+        }
+      ]
+    },
+    {
+      "characterCode": 67,
+      "weaponCode": 14,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 180,
+          "slotGames": 22029,
+          "pickRate": 0.8
+        },
+        {
+          "itemCode": 202511,
+          "games": 12,
+          "slotGames": 22041,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 3,
+          "slotGames": 22031,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 513,
+          "slotGames": 22031,
+          "pickRate": 2.3
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 2,
+          "totalGames": 22050,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7300301,
+          "games": 21627,
+          "totalGames": 22050,
+          "pickRate": 98.1
+        }
+      ]
+    },
+    {
+      "characterCode": 68,
+      "weaponCode": 1,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 36,
+          "slotGames": 12253,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 202511,
+          "games": 2,
+          "slotGames": 12256,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 71,
+          "slotGames": 12252,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 705619,
+          "games": 45,
+          "slotGames": 12252,
+          "pickRate": 0.4
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 94,
+          "totalGames": 12275,
+          "pickRate": 0.8
+        }
+      ]
+    },
+    {
+      "characterCode": 69,
+      "weaponCode": 9,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 14,
+          "slotGames": 5839,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 201507,
+          "games": 32,
+          "slotGames": 5839,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 201536,
+          "games": 406,
+          "slotGames": 5839,
+          "pickRate": 7
+        },
+        {
+          "itemCode": 202511,
+          "games": 13,
+          "slotGames": 5849,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705604,
+          "games": 1271,
+          "slotGames": 5845,
+          "pickRate": 21.7
+        },
+        {
+          "itemCode": 705607,
+          "games": 23,
+          "slotGames": 5845,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 705619,
+          "games": 179,
+          "slotGames": 5845,
+          "pickRate": 3.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 77,
+          "totalGames": 5869,
+          "pickRate": 1.3
+        }
+      ]
+    },
+    {
+      "characterCode": 70,
+      "weaponCode": 6,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 523,
+          "slotGames": 23127,
+          "pickRate": 2.3
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 71,
+      "weaponCode": 14,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 6,
+          "slotGames": 18028,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 85,
+          "slotGames": 18033,
+          "pickRate": 0.5
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 82,
+          "totalGames": 18072,
+          "pickRate": 0.5
+        }
+      ]
+    },
+    {
+      "characterCode": 72,
+      "weaponCode": 11,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 35,
+          "slotGames": 42881,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 14,
+          "totalGames": 42927,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 73,
+      "weaponCode": 24,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 6,
+          "slotGames": 4690,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201536,
+          "games": 1998,
+          "slotGames": 4690,
+          "pickRate": 42.6
+        },
+        {
+          "itemCode": 202511,
+          "games": 150,
+          "slotGames": 4703,
+          "pickRate": 3.2
+        },
+        {
+          "itemCode": 705604,
+          "games": 1792,
+          "slotGames": 4689,
+          "pickRate": 38.2
+        },
+        {
+          "itemCode": 705619,
+          "games": 23,
+          "slotGames": 4689,
+          "pickRate": 0.5
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 144,
+          "totalGames": 4709,
+          "pickRate": 3.1
+        }
+      ]
+    },
+    {
+      "characterCode": 74,
+      "weaponCode": 3,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 1,
+          "slotGames": 28433,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 2643,
+          "slotGames": 28430,
+          "pickRate": 9.3
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 1,
+          "totalGames": 28472,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7300301,
+          "games": 10882,
+          "totalGames": 28472,
+          "pickRate": 38.2
+        }
+      ]
+    },
+    {
+      "characterCode": 75,
+      "weaponCode": 22,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 405,
+          "slotGames": 17707,
+          "pickRate": 2.3
+        },
+        {
+          "itemCode": 202511,
+          "games": 9340,
+          "slotGames": 17718,
+          "pickRate": 52.7
+        },
+        {
+          "itemCode": 705619,
+          "games": 313,
+          "slotGames": 17704,
+          "pickRate": 1.8
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 17658,
+          "totalGames": 17729,
+          "pickRate": 99.6
+        }
+      ]
+    },
+    {
+      "characterCode": 76,
+      "weaponCode": 3,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 240,
+          "slotGames": 19475,
+          "pickRate": 1.2
+        },
+        {
+          "itemCode": 201536,
+          "games": 1,
+          "slotGames": 19475,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705604,
+          "games": 6,
+          "slotGames": 19467,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 27,
+          "slotGames": 19467,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 228,
+          "slotGames": 19467,
+          "pickRate": 1.2
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 28,
+          "totalGames": 19528,
+          "pickRate": 0.1
+        },
+        {
+          "traitCode": 7300301,
+          "games": 867,
+          "totalGames": 19528,
+          "pickRate": 4.4
+        }
+      ]
+    },
+    {
+      "characterCode": 77,
+      "weaponCode": 24,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 290,
+          "slotGames": 23770,
+          "pickRate": 1.2
+        },
+        {
+          "itemCode": 202511,
+          "games": 4754,
+          "slotGames": 23777,
+          "pickRate": 20
+        },
+        {
+          "itemCode": 705604,
+          "games": 1,
+          "slotGames": 23770,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 801,
+          "slotGames": 23770,
+          "pickRate": 3.4
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 78,
+          "totalGames": 23795,
+          "pickRate": 0.3
+        }
+      ]
+    },
+    {
+      "characterCode": 78,
+      "weaponCode": 16,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 307,
+          "slotGames": 25938,
+          "pickRate": 1.2
+        },
+        {
+          "itemCode": 201507,
+          "games": 1,
+          "slotGames": 25938,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705604,
+          "games": 1,
+          "slotGames": 25938,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 6,
+          "totalGames": 25976,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 79,
+      "weaponCode": 8,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 2,
+          "slotGames": 25289,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201536,
+          "games": 1,
+          "slotGames": 25289,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 1889,
+          "slotGames": 25295,
+          "pickRate": 7.5
+        },
+        {
+          "itemCode": 705619,
+          "games": 9,
+          "slotGames": 25291,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 24641,
+          "totalGames": 25329,
+          "pickRate": 97.3
+        }
+      ]
+    },
+    {
+      "characterCode": 80,
+      "weaponCode": 19,
+      "items": [
+        {
+          "itemCode": 705607,
+          "games": 1,
+          "slotGames": 19701,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 1151,
+          "totalGames": 19722,
+          "pickRate": 5.8
+        }
+      ]
+    },
+    {
+      "characterCode": 81,
+      "weaponCode": 9,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 5,
+          "slotGames": 19110,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201536,
+          "games": 1,
+          "slotGames": 19110,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 37,
+          "slotGames": 19117,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705604,
+          "games": 2,
+          "slotGames": 19105,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 246,
+          "slotGames": 19105,
+          "pickRate": 1.3
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 188,
+          "totalGames": 19130,
+          "pickRate": 1
+        }
+      ]
+    },
+    {
+      "characterCode": 82,
+      "weaponCode": 21,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 12,
+          "slotGames": 17265,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 7,
+          "slotGames": 17258,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 55,
+          "totalGames": 17290,
+          "pickRate": 0.3
+        }
+      ]
+    },
+    {
+      "characterCode": 83,
+      "weaponCode": 6,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 1441,
+          "slotGames": 17107,
+          "pickRate": 8.4
+        },
+        {
+          "itemCode": 201536,
+          "games": 2,
+          "slotGames": 17107,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 5580,
+          "slotGames": 17114,
+          "pickRate": 32.6
+        },
+        {
+          "itemCode": 705619,
+          "games": 9273,
+          "slotGames": 17117,
+          "pickRate": 54.2
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 983,
+          "totalGames": 17147,
+          "pickRate": 5.7
+        }
+      ]
+    },
+    {
+      "characterCode": 84,
+      "weaponCode": 18,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 61,
+          "slotGames": 12424,
+          "pickRate": 0.5
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 1,
+          "totalGames": 12447,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 85,
+      "weaponCode": 13,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 40,
+          "slotGames": 9573,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 705607,
+          "games": 36,
+          "slotGames": 9570,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 705619,
+          "games": 88,
+          "slotGames": 9570,
+          "pickRate": 0.9
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 1705,
+          "totalGames": 9600,
+          "pickRate": 17.8
+        }
+      ]
+    },
+    {
+      "characterCode": 86,
+      "weaponCode": 1,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 7,
+          "slotGames": 20037,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 9,
+          "slotGames": 20043,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7300301,
+          "games": 205,
+          "totalGames": 20070,
+          "pickRate": 1
+        }
+      ]
+    },
+    {
+      "characterCode": 87,
+      "weaponCode": 24,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 18,
+          "slotGames": 12616,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 212,
+          "slotGames": 12624,
+          "pickRate": 1.7
+        },
+        {
+          "itemCode": 705604,
+          "games": 1,
+          "slotGames": 12618,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 84,
+          "slotGames": 12618,
+          "pickRate": 0.7
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 256,
+          "totalGames": 12636,
+          "pickRate": 2
+        }
+      ]
+    },
+    {
+      "characterCode": 88,
+      "weaponCode": 3,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 1,
+          "slotGames": 39315,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 13537,
+          "slotGames": 39319,
+          "pickRate": 34.4
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 5,
+          "totalGames": 39406,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7300301,
+          "games": 648,
+          "totalGames": 39406,
+          "pickRate": 1.6
+        }
+      ]
+    },
+    {
+      "characterCode": 89,
+      "weaponCode": 9,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 292,
+          "slotGames": 35305,
+          "pickRate": 0.8
+        },
+        {
+          "itemCode": 201536,
+          "games": 1,
+          "slotGames": 35305,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 369,
+          "slotGames": 35323,
+          "pickRate": 1
+        },
+        {
+          "itemCode": 705604,
+          "games": 1,
+          "slotGames": 35321,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 31,
+          "slotGames": 35321,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 4830,
+          "slotGames": 35321,
+          "pickRate": 13.7
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 2302,
+          "totalGames": 35396,
+          "pickRate": 6.5
+        },
+        {
+          "traitCode": 7300301,
+          "games": 9,
+          "totalGames": 35396,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 90,
+      "weaponCode": 11,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 284,
+          "slotGames": 31664,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 202511,
+          "games": 89,
+          "slotGames": 31683,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 705619,
+          "games": 16332,
+          "slotGames": 31663,
+          "pickRate": 51.6
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000501,
+          "games": 18774,
+          "totalGames": 31715,
+          "pickRate": 59.2
+        }
+      ]
+    }
+  ]
+}

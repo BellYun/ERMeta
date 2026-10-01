@@ -5840,6 +5840,9 @@ body,
 .home-forecast-tiers[data-phase="forecast"] {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
+.home-forecast-tiers[data-show-current-tier="true"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
 .home-forecast-tiers dt {
   color: var(--studio-muted);
   font-size: var(--text-xs);
@@ -7061,10 +7064,7 @@ body,
   min-width: 0;
 }
 @media (max-width: 79.999rem) {
-  html[data-home-ad-placement-variant="after_forecast"]
-    .home-entry
-    > header
-    > .home-entry__ad {
+  html[data-home-ad-placement-variant="after_forecast"] .home-entry > header > .home-entry__ad {
     order: 2;
   }
   html[data-home-ad-placement-variant="after_forecast"]
