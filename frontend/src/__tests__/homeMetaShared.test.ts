@@ -9,6 +9,7 @@ import {
   HOME_META_TARGET_PATCH,
   type HomeMetaStats,
 } from "@/lib/homeMetaShared";
+import { buildHomePersonalizedPerformances } from "@/lib/homePersonalization";
 
 const stats: HomeMetaStats = {
   patchVersion: "12.1",
@@ -71,9 +72,15 @@ describe("buildHomeMetaView cumulative tiers", () => {
       })),
     };
 
-    expect(buildHomeMetaView(earnedStats, "DIAMOND_PLUS").rankingData.rankings[0].averageRP).toBe(15);
-    expect(buildHomeMetaView(earnedStats, "METEORITE_PLUS").rankingData.rankings[0].averageRP).toBe(7);
-    expect(buildHomeMetaView(earnedStats, "MITHRIL_PLUS").rankingData.rankings[0].averageRP).toBe(2);
+    expect(buildHomeMetaView(earnedStats, "DIAMOND_PLUS").rankingData.rankings[0].averageRP).toBe(
+      15
+    );
+    expect(buildHomeMetaView(earnedStats, "METEORITE_PLUS").rankingData.rankings[0].averageRP).toBe(
+      7
+    );
+    expect(buildHomeMetaView(earnedStats, "MITHRIL_PLUS").rankingData.rankings[0].averageRP).toBe(
+      2
+    );
     expect(buildHomeMetaView(earnedStats, "DIAMOND_PLUS").honeyPicks).toEqual([]);
   });
 });
@@ -99,5 +106,70 @@ describe("latest stats patch sample gate", () => {
 
   it("환산 기준 판수를 채우면 12.5를 최신 통계 패치로 공개한다", () => {
     expect(filterReadyStatsPatchVersions(patches, 6_250)).toEqual(patches);
+  });
+});
+
+describe("home personalization", () => {
+  const personalizedStats: HomeMetaStats = {
+    patchVersion: "12.2",
+    previousPatch: "12.1",
+    rows: [
+      {
+        characterNum: 1,
+        bestWeapon: 16,
+        totalGames: 60,
+        totalWins: 12,
+        totalRP: 1200,
+        totalTop3: 24,
+        averageRank: 3.5,
+        tier: "DIAMOND",
+        patchVersion: "12.2",
+      },
+      {
+        characterNum: 1,
+        bestWeapon: 16,
+        totalGames: 30,
+        totalWins: 3,
+        totalRP: 300,
+        totalTop3: 9,
+        averageRank: 4.5,
+        tier: "DIAMOND",
+        patchVersion: "12.1",
+      },
+    ],
+  };
+
+  it("저장된 실험체·무기의 현재 성적과 이전 패치 변화량을 계산한다", () => {
+    const [performance] = buildHomePersonalizedPerformances(personalizedStats, [
+      { charCode: 1, weaponCode: 16 },
+    ]);
+
+    expect(performance).toMatchObject({
+      charCode: 1,
+      weaponCode: 16,
+      currentTier: "B",
+      previousTier: "B",
+      averageRP: 20,
+      averageRPDelta: 10,
+      winRate: 20,
+      winRateDelta: 10,
+      currentGames: 60,
+      previousGames: 30,
+    });
+  });
+
+  it("현재 패치 표본이 없는 등록 항목은 집계 중 상태로 남긴다", () => {
+    const [performance] = buildHomePersonalizedPerformances(personalizedStats, [
+      { charCode: 999, weaponCode: 1 },
+    ]);
+
+    expect(performance).toMatchObject({
+      currentTier: null,
+      averageRP: null,
+      averageRPDelta: null,
+      winRate: null,
+      winRateDelta: null,
+      currentGames: 0,
+    });
   });
 });
