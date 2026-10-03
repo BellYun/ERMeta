@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import * as React from "react";
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary";
 import { FocusWeaponPool } from "./FocusWeaponPool";
 import { SynergyDetailResults } from "./SynergyDetailResults";
@@ -13,6 +14,14 @@ export function SynergyDetailInteractive() {
   const searchParams = useSearchParams();
   const isShareLanding =
     searchParams.get("source") === "share" || searchParams.get("utm_source") === "ergg_share";
+
+  React.useEffect(() => {
+    if (searchParams.get("focusPool") !== "open") return;
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById("focus-weapon-pool")?.scrollIntoView({ block: "start" });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [searchParams]);
 
   return (
     <SynergyDetailSelectionProvider>
@@ -26,7 +35,7 @@ export function SynergyDetailInteractive() {
           </div>
         )}
 
-        <section className="dashboard-panel p-3.5 sm:p-4">
+        <section id="focus-weapon-pool" className="dashboard-panel scroll-mt-24 p-3.5 sm:p-4">
           <div className="home-section-header mb-3.5 flex flex-wrap items-center gap-x-3 gap-y-2 pb-3 sm:mb-4">
             <div className="flex items-center gap-2.5">
               <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--color-accent)] bg-[var(--color-accent-muted)] font-mono text-xs font-bold text-[var(--color-accent-foreground)]">

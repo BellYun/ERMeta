@@ -345,6 +345,27 @@ export const analytics = {
     track("honey_pick_clicked", { ...args, source: "honey" as const });
   },
 
+  /** 내 실험체 풀에 첫 실험체·무기를 저장해 등록을 완료한 시점. */
+  focusCharacterPoolRegistered(args: {
+    source: "synergy_detail";
+    characterCode: number;
+    weaponCode: number;
+    poolSize: number;
+  }) {
+    track("focus_character_pool_registered", args);
+  },
+
+  /** 홈 개인화 성적 카드에서 실험체 상세 분석으로 이동. */
+  homePersonalizedCardClicked(args: {
+    characterCode: number;
+    weaponCode: number;
+    patch: string;
+    currentTier: string | null;
+    sampleState: "ready" | "collecting";
+  }) {
+    track("home_personalized_performance_clicked", { ...args, source: "home" as const });
+  },
+
   /** 시너지 상세 - 선택 또는 URL 복원으로 탐색을 시작 */
   synergySearchStarted(
     args: SynergyFunnelContext & {

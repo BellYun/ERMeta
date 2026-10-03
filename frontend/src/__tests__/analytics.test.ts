@@ -257,6 +257,45 @@ describe("analytics — P0 helpers", () => {
     });
   });
 
+  describe("home personalization events", () => {
+    it("첫 풀 등록 완료 이벤트에 실험체와 무기 정보를 담는다", async () => {
+      analytics.focusCharacterPoolRegistered({
+        source: "synergy_detail",
+        characterCode: 1,
+        weaponCode: 16,
+        poolSize: 1,
+      });
+      await flushAsync();
+
+      expect(trackMock).toHaveBeenCalledWith("focus_character_pool_registered", {
+        source: "synergy_detail",
+        characterCode: 1,
+        weaponCode: 16,
+        poolSize: 1,
+      });
+    });
+
+    it("개인화 카드 클릭 이벤트에 홈 유입과 표본 상태를 담는다", async () => {
+      analytics.homePersonalizedCardClicked({
+        characterCode: 1,
+        weaponCode: 16,
+        patch: "12.2",
+        currentTier: "A",
+        sampleState: "ready",
+      });
+      await flushAsync();
+
+      expect(trackMock).toHaveBeenCalledWith("home_personalized_performance_clicked", {
+        characterCode: 1,
+        weaponCode: 16,
+        patch: "12.2",
+        currentTier: "A",
+        sampleState: "ready",
+        source: "home",
+      });
+    });
+  });
+
   describe("synergy detail funnel", () => {
     it("탐색 시작에서 직접 선택과 현재 조합 문맥을 전달한다", async () => {
       analytics.synergySearchStarted({

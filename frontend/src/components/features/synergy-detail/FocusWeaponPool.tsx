@@ -3,10 +3,12 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Check, X, Search, ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
 import { useL10n } from "@/components/L10nProvider";
 import { useFocusCharWeapons } from "@/hooks/useFocusCharWeapons";
+import { analytics } from "@/lib/analytics";
 import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMap";
 import { cn } from "@/lib/utils";
 import { getWeaponGroupImageUrl, resolveWeaponName } from "@/lib/weaponMap";
@@ -119,7 +121,10 @@ export function FocusWeaponPool() {
   const { l10n } = useL10n();
   const t = useTranslations("focusWeaponPool");
   const { focusCharWeapons, setFocusCharWeapons, toggleFocus } = useFocusCharWeapons();
-  const [isExpanded, setIsExpanded] = React.useState(false);
+  const searchParams = useSearchParams();
+  const [isExpanded, setIsExpanded] = React.useState(
+    () => searchParams.get("focusPool") === "open"
+  );
   const locale = useLocale();
   const [selectedOnly, setSelectedOnly] = React.useState(false);
   const [search, setSearch] = React.useState("");
@@ -160,6 +165,25 @@ export function FocusWeaponPool() {
         (f) => f.charCode === item.charCode && f.weaponCode === item.weaponCode
       ),
     [focusCharWeapons]
+  );
+
+  const handleToggleFocus = React.useCallback(
+    (charCode: number, weaponCode: number) => {
+      const isAlreadySelected = focusCharWeapons.some(
+        (item) => item.charCode === charCode && item.weaponCode === weaponCode
+      );
+      toggleFocus(charCode, weaponCode);
+
+      if (!isAlreadySelected && focusCharWeapons.length === 0) {
+        analytics.focusCharacterPoolRegistered({
+          source: "synergy_detail",
+          characterCode: charCode,
+          weaponCode,
+          poolSize: 1,
+        });
+      }
+    },
+    [focusCharWeapons, toggleFocus]
   );
 
   const hasFilteredItems = filteredItems.length > 0;
@@ -267,7 +291,7 @@ export function FocusWeaponPool() {
           {focusCharWeapons.map((f) => (
             <button
               key={`${f.charCode}-${f.weaponCode}`}
-              onClick={() => toggleFocus(f.charCode, f.weaponCode)}
+              onClick={() => handleToggleFocus(f.charCode, f.weaponCode)}
               className="inline-flex min-h-[44px] items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)]"
             >
               <span className="relative h-4 w-4 shrink-0 overflow-hidden rounded ring-1 ring-[var(--color-border)]">
@@ -365,7 +389,7 @@ export function FocusWeaponPool() {
                           item={item}
                           charName={getCharName(item.charCode)}
                           selected={isSelected(item)}
-                          onSelect={toggleFocus}
+                          onSelect={handleToggleFocus}
                         />
                       ))}
                     </div>

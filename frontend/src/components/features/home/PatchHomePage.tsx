@@ -8,6 +8,7 @@ import { buildHomeMetaView, DEFAULT_HOME_TIER, type HomeMetaStats } from "@/lib/
 import { localizeRoutePath } from "@/lib/seoLocales";
 import { HomeAdPlacementSlot } from "./HomeAdPlacementSlot";
 import { HomeCompositionPreview } from "./HomeCompositionPreview";
+import { HomePersonalizedPerformance } from "./HomePersonalizedPerformance";
 import { PatchForecastComparison } from "./PatchForecastComparison";
 
 export async function PatchHomePage({
@@ -24,6 +25,11 @@ export async function PatchHomePage({
   const rankingsHref = localizeRoutePath("/rankings", locale);
   return (
     <div className="page-shell home-shell patch-home patch-home--editorial">
+      <HomePersonalizedPerformance
+        locale={locale}
+        currentPatch={currentPatch}
+        homeMetaStats={homeMetaStats}
+      />
       <section className="home-entry" aria-labelledby="home-entry-title">
         <header>
           <p className="patch-home__kicker">ER&amp;GG · {t("patch", { patch: currentPatch })}</p>
