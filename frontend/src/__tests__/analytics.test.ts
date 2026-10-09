@@ -87,6 +87,39 @@ async function flushAsync() {
 }
 
 describe("analytics — P0 helpers", () => {
+  describe("survey prompt funnel", () => {
+    it("같은 노출 ID로 렌더·실제 조회·클릭을 두 분석 도구에 기록한다", async () => {
+      const context = { impressionId: "impression-1", resultCount: 12, selectionCount: 2 };
+
+      analytics.surveyPromptRendered(context);
+      await flushAsync();
+      analytics.surveyPromptViewed(context);
+      await flushAsync();
+      analytics.surveyPromptClicked(context);
+      await flushAsync();
+
+      const properties = {
+        campaign: "service_usage_survey_2026",
+        placement: "synergy_detail_results",
+        measurement_version: 1,
+        locale: "ko",
+        page_path: undefined,
+        page_surface: "unknown",
+        impression_id: "impression-1",
+        result_count: 12,
+        selection_count: 2,
+      };
+      for (const event of [
+        "survey_prompt_rendered",
+        "survey_prompt_viewed",
+        "survey_prompt_clicked",
+      ]) {
+        expect(trackMock).toHaveBeenCalledWith(event, properties);
+        expect(vercelTrackMock).toHaveBeenCalledWith(event, properties);
+      }
+    });
+  });
+
   describe("ad block recovery funnel", () => {
     it("Amplitude와 Vercel에 동일한 실험 노출 이벤트를 보낸다", async () => {
       analytics.adBlockRecoveryPromptShown({
