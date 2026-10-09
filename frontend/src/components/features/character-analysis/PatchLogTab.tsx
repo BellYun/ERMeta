@@ -18,47 +18,35 @@ const PATCH_VERSIONS = getAllPatchVersions();
 const COPY: Record<
   RouteLocale,
   {
-    historyCount: (count: number) => string;
     coverage: (oldest: string, newest: string) => string;
     changeCount: (count: number) => string;
     noHistory: string;
-    sourceNotice: string;
   }
 > = {
   ko: {
-    historyCount: (count) => count + "개 버전에서 변경",
     coverage: (oldest, newest) => "패치노트 수집 범위 " + oldest + "–" + newest,
     changeCount: (count) => count + "개 변경",
     noHistory: "수집된 패치노트에 이 실험체의 변경 기록이 없습니다.",
-    sourceNotice: "",
   },
   en: {
-    historyCount: (count) => "Changes in " + count + (count === 1 ? " patch" : " patches"),
     coverage: (oldest, newest) => "Patch notes collected: " + oldest + "–" + newest,
     changeCount: (count) => count + " balance " + (count === 1 ? "change" : "changes"),
     noHistory: "No changes for this character in the collected patch notes.",
-    sourceNotice: "Untranslated details appear in Korean, the source language.",
   },
   ja: {
-    historyCount: (count) => count + "件のパッチで変更",
     coverage: (oldest, newest) => "収録パッチノート: " + oldest + "–" + newest,
     changeCount: (count) => count + "件のバランス変更",
     noHistory: "収録済みのパッチノートにこのキャラクターの変更はありません。",
-    sourceNotice: "未翻訳の詳細は原文の韓国語で表示します。",
   },
   "zh-Hans": {
-    historyCount: (count) => count + " 个版本有改动",
     coverage: (oldest, newest) => "已收录版本说明：" + oldest + "–" + newest,
     changeCount: (count) => count + " 项平衡调整",
     noHistory: "已收录的版本说明中没有该角色的改动。",
-    sourceNotice: "未翻译的详情以韩文原文显示。",
   },
   "zh-Hant": {
-    historyCount: (count) => count + " 個版本有改動",
     coverage: (oldest, newest) => "已收錄版本說明：" + oldest + "–" + newest,
     changeCount: (count) => count + " 項平衡調整",
     noHistory: "已收錄的版本說明中沒有該角色的改動。",
-    sourceNotice: "未翻譯的詳情以韓文原文顯示。",
   },
 };
 
@@ -81,18 +69,11 @@ export function PatchLogTab({ selectedCode }: PatchLogTabProps) {
 
   return (
     <div className="min-w-0 space-y-3">
-      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 sm:px-4">
-        <p className="text-sm font-semibold text-[var(--color-foreground)]">
-          {copy.historyCount(history.length)}
-        </p>
-        {coverage && (
-          <p className="mt-0.5 text-[11px] text-[var(--color-muted-foreground)]">{coverage}</p>
-        )}
-        {copy.sourceNotice && (
-          <p className="mt-1 text-[11px] text-[var(--color-muted-foreground)]">
-            {copy.sourceNotice}
-          </p>
-        )}
+      <div
+        data-patch-history-intro
+        className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 text-xs text-[var(--color-muted-foreground)] sm:px-4"
+      >
+        {coverage}
       </div>
 
       <div className="space-y-2">
@@ -102,6 +83,7 @@ export function PatchLogTab({ selectedCode }: PatchLogTabProps) {
           return (
             <div
               key={note.patch}
+              data-patch-history-card
               className="min-w-0 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]"
             >
               <div className="flex min-w-0 flex-wrap items-center gap-2 bg-[var(--color-surface-2)] px-3 py-2.5 text-xs sm:px-4">

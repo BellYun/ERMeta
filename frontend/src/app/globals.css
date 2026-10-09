@@ -4240,13 +4240,16 @@ body,
 .patch-notes-disclosure__viewport {
   min-height: 0;
 }
-.patch-notes-disclosure__viewport[data-collapsed] {
+.patch-notes-disclosure__viewport[data-clipped] {
   overflow: hidden;
-  flex: 1 1 0;
+}
+.patch-notes-disclosure__actions {
+  display: flex;
+  gap: var(--space-xs);
 }
 .patch-notes-disclosure__toggle {
   display: flex;
-  flex: 0 0 auto;
+  flex: 1 1 0;
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);
