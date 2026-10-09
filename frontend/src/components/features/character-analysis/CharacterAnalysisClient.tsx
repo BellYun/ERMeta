@@ -25,6 +25,7 @@ import {
 } from "@/lib/weaponMap";
 import { computeCharacterMetaTiers } from "../tier-ranking/utils";
 import { CharacterHeader } from "./CharacterHeader";
+import { PatchNotesDisclosure } from "./PatchNotesDisclosure";
 import { RoleComboRpPanel } from "./RoleComboRpPanel";
 import { fetchStats, fetchStatsHistory, mergeSuccessfulPatchStats } from "./utils";
 
@@ -320,6 +321,7 @@ export function CharacterAnalysisClient({
   );
   const [loading, setLoading] = React.useState(false);
   const attemptedPatchFetchesRef = React.useRef<Set<string>>(new Set());
+  const comparisonRef = React.useRef<HTMLDivElement>(null);
 
   const selectedPatchIndex = selectedPatch ? patches.indexOf(selectedPatch) : 0;
   const selectedPreviousPatch =
@@ -891,14 +893,16 @@ export function CharacterAnalysisClient({
                 {t("patchComparison")}
               </h2>
             </div>
-            <Suspense fallback={<TabFallback />}>
-              <PatchComparisonTab
-                chartData={chartData}
-                stats={stats}
-                loading={loading}
-                selectedCode={code}
-              />
-            </Suspense>
+            <div ref={comparisonRef}>
+              <Suspense fallback={<TabFallback />}>
+                <PatchComparisonTab
+                  chartData={chartData}
+                  stats={stats}
+                  loading={loading}
+                  selectedCode={code}
+                />
+              </Suspense>
+            </div>
           </section>
 
           <section className="dashboard-panel character-analysis-panel p-3">
@@ -908,9 +912,11 @@ export function CharacterAnalysisClient({
                 {t("patchNotes")}
               </h2>
             </div>
-            <Suspense fallback={<TabFallback />}>
-              <PatchLogTab key={code} selectedCode={code} />
-            </Suspense>
+            <PatchNotesDisclosure key={code} comparisonRef={comparisonRef}>
+              <Suspense fallback={<TabFallback />}>
+                <PatchLogTab selectedCode={code} />
+              </Suspense>
+            </PatchNotesDisclosure>
           </section>
 
           <section className="dashboard-panel character-analysis-panel p-3 xl:col-span-2">
