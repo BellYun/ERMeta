@@ -12,6 +12,8 @@ export function ChangeTypeBadge({ type }: { type: ChangeType }) {
   const t = useTranslations("characterPatch");
   return (
     <span
+      role="img"
+      aria-label={t(`types.${config.labelKey}`)}
       className={cn(
         "inline-flex items-center gap-1 rounded border px-1.5 sm:px-2 py-0.5 text-xs font-semibold shrink-0",
         config.bgClass,

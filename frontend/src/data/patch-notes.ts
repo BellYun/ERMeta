@@ -67,6 +67,13 @@ export function getAllPatchVersions(): string[] {
   return [...set].sort(compareVersionDesc);
 }
 
+/** 통계 수집 여부와 관계없이, 변경이 기록된 실험체 패치를 최신순으로 반환한다. */
+export function getCharacterPatchHistory(characterCode: number): CharacterPatchNote[] {
+  return PATCH_NOTES.filter(
+    (note) => note.characterCode === characterCode && note.changes.length > 0
+  ).sort((a, b) => compareVersionDesc(a.patch, b.patch));
+}
+
 // 통계 계산에서 제외할 패치 (표본/메타가 왜곡된 프리시즌 등). 패치노트 이력에는 그대로 노출.
 export const STATS_EXCLUDED_PATCHES = new Set(["11.0", "12.0"]);
 

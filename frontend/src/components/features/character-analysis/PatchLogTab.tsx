@@ -1,123 +1,185 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { ChevronDown } from "lucide-react";
+import { useLocale } from "next-intl";
 import * as React from "react";
-import { hasPatchChangeLocalization, localizePatchNote } from "@/data/patch-note-localization";
-import { getCharacterPatchNote } from "@/data/patch-notes";
+import { localizePatchNote } from "@/data/patch-note-localization";
+import { getAllPatchVersions, getCharacterPatchHistory } from "@/data/patch-notes";
 import type { RouteLocale } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { CHANGE_TYPE_CONFIG } from "./constants";
 import { ChangeTypeBadge } from "./PatchNoteComponents";
 
 interface PatchLogTabProps {
-  patches: string[];
   selectedCode: number;
 }
+
+const PATCH_VERSIONS = getAllPatchVersions();
 
 const COPY: Record<
   RouteLocale,
   {
-    summaryTitle: (count: number) => string;
-    summaryBody: string;
+    historyCount: (count: number) => string;
+    coverage: (oldest: string, newest: string) => string;
+    jumpLabel: string;
+    jumpPlaceholder: string;
+    changeCount: (count: number) => string;
+    noHistory: string;
+    sourceNotice: string;
   }
 > = {
   ko: {
-    summaryTitle: (count) => `${count}개 변경`,
-    summaryBody: "",
+    historyCount: (count) => count + "개 버전에서 변경",
+    coverage: (oldest, newest) => "패치노트 수집 범위 " + oldest + "–" + newest,
+    jumpLabel: "버전으로 이동",
+    jumpPlaceholder: "버전 선택",
+    changeCount: (count) => count + "개 변경",
+    noHistory: "수집된 패치노트에 이 실험체의 변경 기록이 없습니다.",
+    sourceNotice: "",
   },
   en: {
-    summaryTitle: (count) => `${count} balance ${count === 1 ? "change" : "changes"}`,
-    summaryBody: "Change details are based on the Korean patch-note source.",
+    historyCount: (count) => "Changes in " + count + (count === 1 ? " patch" : " patches"),
+    coverage: (oldest, newest) => "Patch notes collected: " + oldest + "–" + newest,
+    jumpLabel: "Jump to patch",
+    jumpPlaceholder: "Select a patch",
+    changeCount: (count) => count + " balance " + (count === 1 ? "change" : "changes"),
+    noHistory: "No changes for this character in the collected patch notes.",
+    sourceNotice: "Untranslated details appear in Korean, the source language.",
   },
   ja: {
-    summaryTitle: (count) => `${count}件のバランス変更`,
-    summaryBody: "変更内容は韓国語パッチノート原文を基準に集計しています。",
+    historyCount: (count) => count + "件のパッチで変更",
+    coverage: (oldest, newest) => "収録パッチノート: " + oldest + "–" + newest,
+    jumpLabel: "パッチへ移動",
+    jumpPlaceholder: "パッチを選択",
+    changeCount: (count) => count + "件のバランス変更",
+    noHistory: "収録済みのパッチノートにこのキャラクターの変更はありません。",
+    sourceNotice: "未翻訳の詳細は原文の韓国語で表示します。",
   },
   "zh-Hans": {
-    summaryTitle: (count) => `${count} 项平衡调整`,
-    summaryBody: "变更内容以韩文版本说明原文为基准汇总。",
+    historyCount: (count) => count + " 个版本有改动",
+    coverage: (oldest, newest) => "已收录版本说明：" + oldest + "–" + newest,
+    jumpLabel: "跳转到版本",
+    jumpPlaceholder: "选择版本",
+    changeCount: (count) => count + " 项平衡调整",
+    noHistory: "已收录的版本说明中没有该角色的改动。",
+    sourceNotice: "未翻译的详情以韩文原文显示。",
   },
   "zh-Hant": {
-    summaryTitle: (count) => `${count} 項平衡調整`,
-    summaryBody: "變更內容以韓文版本說明原文為基準彙整。",
+    historyCount: (count) => count + " 個版本有改動",
+    coverage: (oldest, newest) => "已收錄版本說明：" + oldest + "–" + newest,
+    jumpLabel: "跳轉到版本",
+    jumpPlaceholder: "選擇版本",
+    changeCount: (count) => count + " 項平衡調整",
+    noHistory: "已收錄的版本說明中沒有該角色的改動。",
+    sourceNotice: "未翻譯的詳情以韓文原文顯示。",
   },
 };
 
-export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
-  const t = useTranslations("characterPatch");
+export function PatchLogTab({ selectedCode }: PatchLogTabProps) {
   const locale = useLocale() as RouteLocale;
   const copy = COPY[locale] ?? COPY.ko;
+  const history = React.useMemo(() => getCharacterPatchHistory(selectedCode), [selectedCode]);
+  const oldest = PATCH_VERSIONS[PATCH_VERSIONS.length - 1];
+  const newest = PATCH_VERSIONS[0];
+  const coverage = oldest && newest ? copy.coverage(oldest, newest) : null;
 
-  if (patches.length === 0) {
+  if (history.length === 0) {
     return (
-      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted-foreground)]">
-        {t("loadingPatches")}
+      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-sm text-[var(--color-muted-foreground)]">
+        <p>{copy.noHistory}</p>
+        {coverage && <p className="mt-1 text-xs">{coverage}</p>}
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      {patches.slice(0, 5).map((patch, i) => {
-        const sourceNote = getCharacterPatchNote(selectedCode, patch);
-        const note = sourceNote ? localizePatchNote(sourceNote, locale) : undefined;
-        const showDetailedPatchNote = locale === "ko" || hasPatchChangeLocalization(patch, locale);
-        return (
-          <div
-            key={patch}
-            className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden min-w-0"
+    <div className="min-w-0 space-y-3">
+      <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 sm:px-4">
+        <p className="text-sm font-semibold text-[var(--color-foreground)]">
+          {copy.historyCount(history.length)}
+        </p>
+        {coverage && (
+          <p className="mt-0.5 text-[11px] text-[var(--color-muted-foreground)]">{coverage}</p>
+        )}
+        {copy.sourceNotice && (
+          <p className="mt-1 text-[11px] text-[var(--color-muted-foreground)]">
+            {copy.sourceNotice}
+          </p>
+        )}
+      </div>
+
+      {history.length > 1 && (
+        <label className="flex min-w-0 items-center gap-2 text-xs text-[var(--color-muted-foreground)]">
+          <span className="shrink-0">{copy.jumpLabel}</span>
+          <select
+            defaultValue=""
+            className="min-w-0 flex-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1.5 text-xs text-[var(--color-foreground)]"
+            onChange={(event) => {
+              const patch = event.currentTarget.value;
+              document
+                .getElementById("character-patch-" + selectedCode + "-" + patch.replace(".", "-"))
+                ?.scrollIntoView({ behavior: "smooth", block: "start" });
+              event.currentTarget.value = "";
+            }}
           >
-            {/* 패치 버전 헤더 */}
-            <div className="flex items-center gap-2 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 sm:px-4 py-2">
-              <span className="text-xs font-semibold text-[var(--color-foreground)]">{patch}</span>
-              {i === 0 && (
-                <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 text-[10px] text-[var(--color-muted-foreground)]">
-                  {t("current")}
+            <option value="" disabled>
+              {copy.jumpPlaceholder}
+            </option>
+            {history.map((note) => (
+              <option key={note.patch} value={note.patch}>
+                {note.patch}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+
+      <div className="space-y-2">
+        {history.map((sourceNote, index) => {
+          const note = localizePatchNote(sourceNote, locale);
+          const changeTypes = Array.from(new Set(note.changes.map((change) => change.changeType)));
+          return (
+            <details
+              key={note.patch}
+              id={"character-patch-" + selectedCode + "-" + note.patch.replace(".", "-")}
+              open={index === 0}
+              className="group min-w-0 scroll-mt-24 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-surface)]"
+            >
+              <summary className="flex min-w-0 cursor-pointer list-none flex-wrap items-center gap-2 bg-[var(--color-surface-2)] px-3 py-2.5 text-xs marker:hidden hover:bg-[var(--color-surface)] sm:px-4 [&::-webkit-details-marker]:hidden">
+                <span className="font-semibold text-[var(--color-foreground)]">{note.patch}</span>
+                <span className="flex items-center gap-1.5">
+                  {changeTypes.map((type) => (
+                    <ChangeTypeBadge key={type} type={type} />
+                  ))}
                 </span>
-              )}
-            </div>
-            {/* 변경 내역 */}
-            {!note || note.changes.length === 0 ? (
-              <div className="px-3 sm:px-4 py-2 sm:py-3 text-xs text-[var(--color-muted-foreground)]">
-                {t("noChanges")}
-              </div>
-            ) : !showDetailedPatchNote ? (
-              <div className="px-3 sm:px-4 py-2 sm:py-3">
-                <div className="flex flex-wrap items-center gap-1.5">
-                  {Array.from(new Set(note.changes.map((change) => change.changeType))).map(
-                    (type) => (
-                      <ChangeTypeBadge key={type} type={type} />
-                    )
-                  )}
-                  <span className="text-[13px] sm:text-sm font-medium text-[var(--color-foreground)]">
-                    {copy.summaryTitle(note.changes.length)}
-                  </span>
-                </div>
-                <p className="mt-1 text-[11px] sm:text-xs text-[var(--color-muted-foreground)]">
-                  {copy.summaryBody}
-                </p>
-              </div>
-            ) : (
-              <div className="divide-y divide-[var(--color-border)]">
+                <span className="ml-auto text-[11px] text-[var(--color-muted-foreground)]">
+                  {copy.changeCount(note.changes.length)}
+                </span>
+                <ChevronDown
+                  className="h-3.5 w-3.5 shrink-0 text-[var(--color-muted-foreground)] transition-transform group-open:rotate-180"
+                  aria-hidden="true"
+                />
+              </summary>
+              <div className="divide-y divide-[var(--color-border)] border-t border-[var(--color-border)]">
                 {note.changes.map((change, idx) => {
                   const config = CHANGE_TYPE_CONFIG[change.changeType];
                   return (
                     <div
                       key={idx}
-                      className="flex gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 hover:bg-[var(--color-surface-2)] overflow-hidden"
+                      className="flex min-w-0 gap-2 overflow-hidden px-3 py-2 hover:bg-[var(--color-surface-2)] sm:gap-3 sm:px-4 sm:py-3"
                     >
-                      <div className="pt-0.5 shrink-0">
+                      <div className="shrink-0 pt-0.5">
                         <ChangeTypeBadge type={change.changeType} />
                       </div>
-                      <div className="flex flex-1 flex-col gap-0.5 sm:gap-1 min-w-0 overflow-hidden">
-                        <div className="flex items-start justify-between gap-1.5 sm:gap-2 flex-wrap min-w-0">
-                          <span className="text-[13px] sm:text-sm font-medium text-[var(--color-foreground)] break-words min-w-0">
+                      <div className="flex min-w-0 flex-1 flex-col gap-0.5 overflow-hidden sm:gap-1">
+                        <div className="flex min-w-0 flex-wrap items-start justify-between gap-1.5 sm:gap-2">
+                          <span className="min-w-0 break-words text-[13px] font-medium text-[var(--color-foreground)] sm:text-sm">
                             {change.target}
                           </span>
                           {change.valueSummary && (
                             <span
                               className={cn(
-                                "text-[11px] sm:text-xs font-mono shrink-0",
+                                "min-w-0 break-words font-mono text-[11px] sm:text-xs",
                                 config.colorClass
                               )}
                             >
@@ -125,11 +187,11 @@ export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
                             </span>
                           )}
                         </div>
-                        <ul className="space-y-0.5 min-w-0">
+                        <ul className="min-w-0 space-y-0.5">
                           {change.description.map((desc, di) => (
                             <li
                               key={di}
-                              className="text-[11px] sm:text-xs text-[var(--color-muted-foreground)] before:content-['•'] before:mr-1 sm:before:mr-1.5 break-words"
+                              className="break-words text-[11px] text-[var(--color-muted-foreground)] before:mr-1 before:content-['•'] sm:text-xs sm:before:mr-1.5"
                             >
                               {desc}
                             </li>
@@ -140,10 +202,10 @@ export function PatchLogTab({ patches, selectedCode }: PatchLogTabProps) {
                   );
                 })}
               </div>
-            )}
-          </div>
-        );
-      })}
+            </details>
+          );
+        })}
+      </div>
     </div>
   );
 }

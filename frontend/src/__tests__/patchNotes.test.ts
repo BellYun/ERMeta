@@ -7,6 +7,7 @@ import prepatchStats from "@/data/12.5-prepatch-stats.json";
 import { getForecastItemChanges } from "@/data/patch-indirect-changes";
 import {
   getAllPatchVersions,
+  getCharacterPatchHistory,
   getCharacterPatchNote,
   getNotesByPatch,
   getPatchSummary,
@@ -18,6 +19,28 @@ import {
   getPatchTierForecasts,
   getPatchTierForecastVersions,
 } from "@/data/patch-tier-forecasts";
+
+describe("character patch history", () => {
+  it("shows every recorded change beyond the five recent stats patches", () => {
+    const history = getCharacterPatchHistory(5);
+    const patches = history.map((note) => note.patch);
+
+    expect(patches.length).toBeGreaterThan(5);
+    expect(patches).toContain("10.1");
+    expect(patches).toContain("12.0");
+    expect(patches.indexOf("12.0")).toBeLessThan(patches.indexOf("10.1"));
+    expect(history.every((note) => note.changes.length > 0)).toBe(true);
+    expect(getVisibleStatsPatchVersions()).not.toContain("10.1");
+    expect(getVisibleStatsPatchVersions()).not.toContain("12.0");
+  });
+
+  it("includes preseason changes that are excluded from stats", () => {
+    const patches = getCharacterPatchHistory(6).map((note) => note.patch);
+
+    expect(patches).toContain("11.0");
+    expect(patches).toContain("12.0");
+  });
+});
 
 describe("11.7 patch notes", () => {
   it("11.7을 패치 목록에 노출한다", () => {

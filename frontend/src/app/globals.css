@@ -4230,37 +4230,6 @@ body,
   }
 }
 
-.patch-notes-disclosure {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  gap: var(--space-xs);
-  scroll-margin-top: var(--space-4xl);
-}
-.patch-notes-disclosure__viewport {
-  min-height: 0;
-}
-.patch-notes-disclosure__viewport[data-collapsed] {
-  overflow: hidden;
-  flex: 1 1 0;
-}
-.patch-notes-disclosure__toggle {
-  display: flex;
-  flex: 0 0 auto;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  min-height: 2.75rem;
-  border-top: var(--rule-hair) solid var(--color-border);
-  color: var(--color-accent);
-  background: var(--color-surface);
-  cursor: pointer;
-  white-space: nowrap;
-}
-.patch-notes-disclosure__toggle:hover {
-  background: var(--color-surface-2);
-}
-
 /* Composition results: clear identity, aligned metrics, open detail sections. */
 .app-shell .composition-result-card {
   border-color: var(--studio-rule);
