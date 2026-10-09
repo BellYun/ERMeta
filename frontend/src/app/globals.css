@@ -1614,6 +1614,22 @@ textarea {
   }
 }
 
+@media (min-width: 80rem) {
+  .site-header-search--home {
+    width: 11rem;
+  }
+
+  .site-header-search--home .site-header-search__field,
+  .site-header-search--home:hover .site-header-search__field,
+  .site-header-search--home:focus-within .site-header-search__field {
+    width: 11rem;
+  }
+
+  .site-header-search--home .site-header-search__field input::placeholder {
+    opacity: 1;
+  }
+}
+
 .site-navigation__link,
 .site-icon-button,
 .site-action-button,
