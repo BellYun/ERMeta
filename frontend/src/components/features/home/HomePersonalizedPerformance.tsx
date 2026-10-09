@@ -95,28 +95,28 @@ function PerformanceCard({
           sampleState: hasCurrentSample ? "ready" : "collecting",
         })
       }
-      className="group flex min-w-0 flex-col rounded-[var(--studio-radius)] border border-[var(--studio-rule)] bg-[var(--studio-surface)] p-4 text-[var(--studio-ink)] outline-none transition-[border-color,background-color,transform] duration-[var(--dur-micro)] ease-[var(--ease-out)] hover:border-[var(--studio-control)] hover:bg-[var(--studio-raised)] focus-visible:ring-2 focus-visible:ring-[var(--studio-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--studio-canvas)] active:translate-y-px aria-disabled:cursor-not-allowed aria-disabled:opacity-50 sm:p-5"
+      className="group flex min-w-0 flex-col rounded-[var(--studio-radius)] border border-[var(--studio-rule)] bg-[var(--studio-surface)] p-3 text-[var(--studio-ink)] outline-none transition-[border-color,background-color,transform] duration-[var(--dur-micro)] ease-[var(--ease-out)] hover:border-[var(--studio-control)] hover:bg-[var(--studio-raised)] focus-visible:ring-2 focus-visible:ring-[var(--studio-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--studio-canvas)] active:translate-y-px aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
     >
       <div className="flex min-w-0 items-center gap-3">
-        <span className="relative h-12 w-12 shrink-0">
+        <span className="relative h-9 w-9 shrink-0">
           <span className="relative block h-full w-full overflow-hidden rounded-lg bg-[var(--studio-raised)] ring-1 ring-[var(--studio-rule)]">
             <Image
               src={getCharacterMiniWebpUrl(performance.charCode)}
               alt=""
               fill
               className="object-cover"
-              sizes="48px"
+              sizes="36px"
             />
           </span>
           {weaponIconUrl ? (
-            <span className="weapon-icon-backdrop absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-full border shadow-sm">
-              <Image src={weaponIconUrl} alt="" width={18} height={18} aria-hidden="true" />
+            <span className="weapon-icon-backdrop absolute -bottom-1 -right-1 grid h-5 w-5 place-items-center rounded-full border shadow-sm">
+              <Image src={weaponIconUrl} alt="" width={14} height={14} aria-hidden="true" />
             </span>
           ) : null}
         </span>
         <span className="min-w-0 flex-1">
-          <strong className="block truncate text-base font-bold">{name}</strong>
-          <span className="block truncate text-sm text-[var(--studio-muted)]">{weaponName}</span>
+          <strong className="block truncate text-sm font-bold">{name}</strong>
+          <span className="block truncate text-xs text-[var(--studio-muted)]">{weaponName}</span>
         </span>
         <ArrowRight
           className="h-4 w-4 shrink-0 text-[var(--studio-muted)] group-hover:text-[var(--studio-accent)]"
@@ -126,10 +126,10 @@ function PerformanceCard({
 
       {hasCurrentSample ? (
         <>
-          <dl className="mt-4 grid grid-cols-3 gap-3 border-t border-[var(--studio-rule)] pt-4">
+          <dl className="mt-2.5 grid grid-cols-3 gap-2 border-t border-[var(--studio-rule)] pt-2.5">
             <div className="min-w-0">
               <dt className="text-xs text-[var(--studio-muted)]">{t("tier")}</dt>
-              <dd className="mt-2 flex min-h-11 flex-col items-start gap-1">
+              <dd className="mt-1 flex flex-col items-start gap-1">
                 <TierBadge tier={performance.currentTier!} />
                 <span className="whitespace-nowrap text-xs text-[var(--studio-muted)]">
                   {performance.previousTier
@@ -140,8 +140,8 @@ function PerformanceCard({
             </div>
             <div className="min-w-0">
               <dt className="text-xs text-[var(--studio-muted)]">{t("averageRp")}</dt>
-              <dd className="mt-2 flex min-h-11 flex-col gap-1 font-mono tabular-nums">
-                <strong className="text-lg leading-7">
+              <dd className="mt-1 flex flex-col gap-1 font-mono tabular-nums">
+                <strong className="text-base leading-6">
                   {format.number(performance.averageRP ?? 0, { maximumFractionDigits: 1 })}
                 </strong>
                 <Delta
@@ -152,8 +152,8 @@ function PerformanceCard({
             </div>
             <div className="min-w-0">
               <dt className="text-xs text-[var(--studio-muted)]">{t("winRate")}</dt>
-              <dd className="mt-2 flex min-h-11 flex-col gap-1 font-mono tabular-nums">
-                <strong className="text-lg leading-7">
+              <dd className="mt-1 flex flex-col gap-1 font-mono tabular-nums">
+                <strong className="text-base leading-6">
                   {format.number(performance.winRate ?? 0, {
                     minimumFractionDigits: 1,
                     maximumFractionDigits: 1,
@@ -167,7 +167,7 @@ function PerformanceCard({
               </dd>
             </div>
           </dl>
-          <p className="mt-4 text-xs text-[var(--studio-muted)]">
+          <p className="mt-2 text-xs leading-4 text-[var(--studio-muted)]">
             {t("sample", {
               current: format.number(performance.currentGames),
               previous: performance.previousGames ? format.number(performance.previousGames) : "—",
@@ -175,9 +175,9 @@ function PerformanceCard({
           </p>
         </>
       ) : (
-        <div className="mt-4 border-t border-[var(--studio-rule)] pt-4" role="status">
+        <div className="mt-2.5 border-t border-[var(--studio-rule)] pt-2.5" role="status">
           <strong className="block text-sm">{t("collecting")}</strong>
-          <p className="mt-1 text-sm leading-6 text-[var(--studio-muted)]">{t("collectingBody")}</p>
+          <p className="mt-1 text-xs leading-5 text-[var(--studio-muted)]">{t("collectingBody")}</p>
         </div>
       )}
       <span className="sr-only">
@@ -248,16 +248,16 @@ export function HomePersonalizedPerformance({
 
   return (
     <section
-      className="rounded-[var(--studio-radius)] border border-[var(--studio-rule)] bg-[var(--studio-raised)] p-4 text-[var(--studio-ink)] sm:p-5"
+      className="rounded-[var(--studio-radius)] border border-[var(--studio-rule)] bg-[var(--studio-raised)] p-3 text-[var(--studio-ink)] sm:p-4"
       aria-labelledby="home-personalization-title"
       data-testid="home-personalization-ready"
     >
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <header className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p id="home-personalization-title" className="text-lg font-bold tracking-[-0.03em]">
+          <p id="home-personalization-title" className="text-base font-bold tracking-[-0.03em]">
             {t("title")}
           </p>
-          <p className="mt-1 text-sm leading-6 text-[var(--studio-muted)]">
+          <p className="mt-0.5 text-xs leading-5 text-[var(--studio-muted)]">
             {t("basis", { patch: currentPatch })}
             {homeMetaStats.previousPatch
               ? ` · ${t("comparison", { patch: homeMetaStats.previousPatch })}`
@@ -266,13 +266,13 @@ export function HomePersonalizedPerformance({
         </div>
         <Link
           href={poolHref}
-          className="inline-flex min-h-11 items-center gap-2 self-start whitespace-nowrap rounded-md px-2 text-sm font-semibold text-[var(--studio-accent)] outline-none transition-[background-color,transform] duration-[var(--dur-micro)] ease-[var(--ease-out)] hover:bg-[var(--studio-accent-soft)] focus-visible:ring-2 focus-visible:ring-[var(--studio-accent)] active:translate-y-px sm:self-auto"
+          className="inline-flex min-h-11 shrink-0 items-center gap-1.5 self-start whitespace-nowrap rounded-md px-2 text-sm font-semibold text-[var(--studio-accent)] outline-none transition-[background-color,transform] duration-[var(--dur-micro)] ease-[var(--ease-out)] hover:bg-[var(--studio-accent-soft)] focus-visible:ring-2 focus-visible:ring-[var(--studio-accent)] active:translate-y-px sm:self-auto"
         >
           <Settings2 className="h-4 w-4" aria-hidden="true" />
           {t("editCta")}
         </Link>
       </header>
-      <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="mt-2 grid min-w-0 gap-2 sm:grid-cols-2 xl:grid-cols-3">
         {performances.map((performance) => (
           <PerformanceCard
             key={`${performance.charCode}:${performance.weaponCode}`}
