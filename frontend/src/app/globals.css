@@ -1614,6 +1614,22 @@ textarea {
   }
 }
 
+@media (min-width: 80rem) {
+  .site-header-search--home {
+    width: 11rem;
+  }
+
+  .site-header-search--home .site-header-search__field,
+  .site-header-search--home:hover .site-header-search__field,
+  .site-header-search--home:focus-within .site-header-search__field {
+    width: 11rem;
+  }
+
+  .site-header-search--home .site-header-search__field input::placeholder {
+    opacity: 1;
+  }
+}
+
 .site-navigation__link,
 .site-icon-button,
 .site-action-button,
@@ -4240,13 +4256,16 @@ body,
 .patch-notes-disclosure__viewport {
   min-height: 0;
 }
-.patch-notes-disclosure__viewport[data-collapsed] {
+.patch-notes-disclosure__viewport[data-clipped] {
   overflow: hidden;
-  flex: 1 1 0;
+}
+.patch-notes-disclosure__actions {
+  display: flex;
+  gap: var(--space-xs);
 }
 .patch-notes-disclosure__toggle {
   display: flex;
-  flex: 0 0 auto;
+  flex: 1 1 0;
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);

@@ -392,8 +392,8 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
 
             <div
               className={cn(
-                "site-header-search hidden shrink-0",
-                normalizedPathname !== "/" && "lg:block"
+                "site-header-search hidden shrink-0 lg:block",
+                normalizedPathname === "/" && "site-header-search--home"
               )}
             >
               <CharacterSearchCombobox className="site-header-search__field" />

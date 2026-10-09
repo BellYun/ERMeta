@@ -271,7 +271,6 @@ export function CharacterAnalysisClient({
   code,
   weaponTypeProfiles = {},
 }: CharacterAnalysisClientProps) {
-  const comparisonRef = React.useRef<HTMLDivElement>(null);
   const { l10n } = useL10n();
   const t = useTranslations("characterAnalysis");
   const characterHeaderT = useTranslations("characterHeader");
@@ -322,6 +321,7 @@ export function CharacterAnalysisClient({
   );
   const [loading, setLoading] = React.useState(false);
   const attemptedPatchFetchesRef = React.useRef<Set<string>>(new Set());
+  const comparisonRef = React.useRef<HTMLDivElement>(null);
 
   const selectedPatchIndex = selectedPatch ? patches.indexOf(selectedPatch) : 0;
   const selectedPreviousPatch =
@@ -914,7 +914,7 @@ export function CharacterAnalysisClient({
             </div>
             <PatchNotesDisclosure key={code} comparisonRef={comparisonRef}>
               <Suspense fallback={<TabFallback />}>
-                <PatchLogTab patches={patches} selectedCode={code} />
+                <PatchLogTab selectedCode={code} />
               </Suspense>
             </PatchNotesDisclosure>
           </section>
