@@ -9,6 +9,8 @@
 // 고정 간격 뒤 두 번째 탭을 예약한다. 첫 결과 계산이 무거워져도 입력 시점이 함께
 // 뒤로 밀리지 않는다. 결과 완료는 안내 문구나 마운트된 카드 DOM을 다시 직렬화하지
 // 않고 전체 결과 배열에서 만든 data-result-version 변경으로 판정한다.
+// BENCH_DATA_MODE=fixture 는 야간 CI에서 100개 조합의 고정 tuple 응답을 사용한다.
+// live 모드는 실제 API 상태를 확인할 때 사용한다.
 //
 // 사용:
 //   RUNS=30 CPU_THROTTLE=6 \
@@ -18,7 +20,7 @@ import fs from "node:fs";
 import { chromium } from "playwright";
 
 const LABEL = process.argv[2] ?? "run";
-const URL = process.env.BENCH_URL ?? "http://127.0.0.1:3456/synergy-detail";
+const TARGET_URL = process.env.BENCH_URL ?? "http://127.0.0.1:3456/synergy-detail";
 const CPU_THROTTLE = Number(process.env.CPU_THROTTLE ?? 6);
 const RUNS = Number(process.env.RUNS ?? 30);
 const WARMUP_RUNS = Number(process.env.WARMUP_RUNS ?? 0);
@@ -29,14 +31,49 @@ const EXPECTED_RESULT_SELECTION_COUNT = Number(process.env.EXPECTED_RESULT_SELEC
 const SECOND_TAP_OFFSET_X = Number(process.env.SECOND_TAP_OFFSET_X ?? 0);
 const SECOND_TAP_OFFSET_Y = Number(process.env.SECOND_TAP_OFFSET_Y ?? 0);
 const ALLOW_MISSING_EVENT_TIMING = process.env.ALLOW_MISSING_EVENT_TIMING === "1";
+const BENCH_DATA_MODE = process.env.BENCH_DATA_MODE ?? "live";
 const OUTPUT_PATH = process.env.OUTPUT_PATH;
 const TRACE_PATH = process.env.TRACE_PATH;
 const MEASURE_RESULT_COMPLETION = process.env.MEASURE_RESULT_COMPLETION !== "0";
 const MEASURE_URL_COMPLETION = process.env.MEASURE_URL_COMPLETION !== "0";
 const EVENT_NAMES = new Set(["pointerdown", "pointerup", "click"]);
+const FIXTURE_COMBO_COUNT = 100;
 
 if (!["after-response", "after-api-response", "fixed-delay"].includes(SECOND_TAP_MODE)) {
   throw new Error(`unsupported SECOND_TAP_MODE: ${SECOND_TAP_MODE}`);
+}
+if (!["live", "fixture"].includes(BENCH_DATA_MODE)) {
+  throw new Error(`unsupported BENCH_DATA_MODE: ${BENCH_DATA_MODE}`);
+}
+
+function createFixtureBucket(first, second) {
+  const weapons = JSON.parse(
+    fs.readFileSync(new URL("../const/characterBestWeapons.json", import.meta.url), "utf8")
+  );
+  const thirdMembers = Object.entries(weapons)
+    .filter(([code]) => ![first.character, second.character].includes(Number(code)))
+    .flatMap(([code, entries]) => entries.map(({ weaponCode }) => [Number(code), weaponCode]))
+    .slice(0, FIXTURE_COMBO_COUNT);
+  if (thirdMembers.length !== FIXTURE_COMBO_COUNT) {
+    throw new Error(`benchmark fixture has too few members (${thirdMembers.length})`);
+  }
+
+  const items = thirdMembers.map(([thirdCharacter, thirdWeapon], index) => {
+    const games = 80 + (index % 40);
+    return [
+      first.character,
+      first.weapon,
+      second.character,
+      second.weapon,
+      thirdCharacter,
+      thirdWeapon,
+      games,
+      Math.round(games * 0.22),
+      games * 45,
+      games * 4,
+    ];
+  });
+  return { version: 1, itemCount: items.length, items };
 }
 
 function percentile(values, p) {
@@ -501,8 +538,14 @@ async function runOnce(browser, run) {
     } catch {}
   });
 
+  if (BENCH_DATA_MODE === "fixture") {
+    await page.route("**/api/patches/history*", (route) =>
+      route.fulfill({ status: 200, contentType: "application/json", json: { patches: [] } })
+    );
+  }
+
   try {
-    await page.goto(URL, { waitUntil: "domcontentloaded", timeout: 30_000 });
+    await page.goto(TARGET_URL, { waitUntil: "domcontentloaded", timeout: 30_000 });
     await page.addStyleTag({
       content: `
         header.sticky { display: none !important; }
@@ -532,6 +575,44 @@ async function runOnce(browser, run) {
     const apiResponseAnchored = SECOND_TAP_MODE === "after-api-response";
     const firstCell = cells.nth(0);
     const secondCell = cells.nth(secondIndex);
+    if (BENCH_DATA_MODE === "fixture") {
+      const readSelection = async (cell) => ({
+        character: Number(await cell.getAttribute("data-voc-code")),
+        weapon: Number(await cell.getAttribute("data-voc-weapon-code")),
+      });
+      const first = await readSelection(firstCell);
+      const second = await readSelection(secondCell);
+      if (!first.character || !first.weapon || !second.character) {
+        throw new Error(`invalid fixture selections: ${JSON.stringify({ first, second })}`);
+      }
+      const bucket = createFixtureBucket(first, second);
+      await page.route(/\/api\/stats\/trios-weapon(?:\?.*)?$/, async (route) => {
+        const params = new URL(route.request().url()).searchParams;
+        if (
+          params.get("format") !== "tuple" ||
+          Number(params.get("character1")) !== first.character ||
+          Number(params.get("weapon1")) !== first.weapon
+        ) {
+          await route.fulfill({
+            status: 409,
+            contentType: "application/json",
+            json: { error: "unexpected_benchmark_bucket_request" },
+          });
+          return;
+        }
+        await route.fulfill({ status: 200, contentType: "application/json", json: bucket });
+      });
+      await page.route("**/api/traits/names*", (route) =>
+        route.fulfill({ status: 200, contentType: "application/json", json: { names: {} } })
+      );
+      await page.route("**/api/analysis/composition-affinity", (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          json: { snapshotId: "benchmark-fixture", results: {} },
+        })
+      );
+    }
     await firstCell.scrollIntoViewIfNeeded();
     await secondCell.scrollIntoViewIfNeeded();
     const firstTapBox = apiResponseAnchored ? await firstCell.boundingBox() : null;
@@ -561,17 +642,23 @@ async function runOnce(browser, run) {
     }
     let responseObserved = false;
     let responseObservedAt = null;
+    let responseError = null;
     const responsePromise = page
       .waitForResponse(
-        (response) =>
-          response.url().includes("/api/stats/trios-weapon") && response.status() === 200,
+        (response) => new URL(response.url()).pathname === "/api/stats/trios-weapon",
         { timeout: 10_000 }
       )
-      .then(() => {
-        responseObserved = true;
-        responseObservedAt = performance.now();
+      .then((response) => {
+        if (response.status() === 200) {
+          responseObserved = true;
+          responseObservedAt = performance.now();
+        } else {
+          responseError = `HTTP ${response.status()}`;
+        }
       })
-      .catch(() => {});
+      .catch((error) => {
+        responseError = error.message;
+      });
 
     const shouldTrace = Boolean(TRACE_PATH) && run === 1;
     if (shouldTrace) await startPerformanceTrace(client);
@@ -580,7 +667,7 @@ async function runOnce(browser, run) {
     if (SECOND_TAP_MODE === "after-response" || SECOND_TAP_MODE === "after-api-response") {
       await responsePromise;
       if (!responseObserved) {
-        throw new Error("first result response was not observed");
+        throw new Error(`first result response was not observed (${responseError ?? "unknown"})`);
       }
     }
     if (SECOND_TAP_MODE === "after-response") {
@@ -816,11 +903,12 @@ const interactionLongTasks = {
 };
 const output = {
   label: LABEL,
-  url: URL,
+  url: TARGET_URL,
   cpuThrottle: CPU_THROTTLE,
   interTapMs: INTER_TAP_MS,
   firstResultTimeoutMs: FIRST_RESULT_TIMEOUT_MS,
   secondTapMode: SECOND_TAP_MODE,
+  benchDataMode: BENCH_DATA_MODE,
   expectedResultSelectionCount: EXPECTED_RESULT_SELECTION_COUNT,
   secondTapOffset: { x: SECOND_TAP_OFFSET_X, y: SECOND_TAP_OFFSET_Y },
   resultCompletion: MEASURE_RESULT_COMPLETION ? "full-result-version-marker" : "disabled",

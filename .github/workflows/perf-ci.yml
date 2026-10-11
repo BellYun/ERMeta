@@ -35,8 +35,6 @@ jobs:
       - name: Build
         env:
           NEXT_PUBLIC_BASE_URL: http://localhost:3000
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           NEXT_PUBLIC_ADSENSE_DISABLED: "true"
         run: npm run build
 
@@ -52,6 +50,7 @@ jobs:
       - name: Run 50ms stress scenario
         env:
           BENCH_URL: http://localhost:3000/synergy-detail
+          BENCH_DATA_MODE: fixture
           RUNS: 30
           WARMUP_RUNS: 2
           CPU_THROTTLE: 6
@@ -63,6 +62,7 @@ jobs:
       - name: Run 1s general scenario
         env:
           BENCH_URL: http://localhost:3000/synergy-detail
+          BENCH_DATA_MODE: fixture
           RUNS: 30
           WARMUP_RUNS: 2
           CPU_THROTTLE: 6
