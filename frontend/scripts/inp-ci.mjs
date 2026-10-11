@@ -12,6 +12,7 @@ const WARMUP_RUNS = Number(process.env.WARMUP_RUNS ?? 2);
 const CPU_THROTTLE = Number(process.env.CPU_THROTTLE ?? 6);
 const INTER_TAP_MS = Number(process.env.INTER_TAP_MS ?? 50);
 const URL = process.env.BENCH_URL ?? "http://localhost:3000/synergy-detail";
+const DATA_MODE = process.env.BENCH_DATA_MODE ?? "live";
 const HARD_GATE = process.env.PERF_HARD_GATE === "1";
 const OUTPUT_PATH = process.env.CI_OUTPUT_PATH ?? "inp-ci-result.json";
 const parseOptionalNumber = (value) => (value == null || value === "" ? null : Number(value));
@@ -28,6 +29,7 @@ console.log(`  url=${URL}`);
 console.log(
   `  warmups=${WARMUP_RUNS} runs=${RUNS} throttle=${CPU_THROTTLE}x interval=${INTER_TAP_MS}ms`
 );
+console.log(`  data=${DATA_MODE}`);
 
 const benchmark = spawnSync(
   process.execPath,
@@ -49,6 +51,35 @@ const benchmark = spawnSync(
 if (benchmark.stdout) process.stdout.write(benchmark.stdout);
 if (benchmark.stderr) process.stderr.write(benchmark.stderr);
 if (benchmark.status !== 0) {
+  let raw = null;
+  try {
+    raw = JSON.parse(readFileSync(rawOutputPath, "utf8"));
+    unlinkSync(rawOutputPath);
+  } catch {}
+  const failedReport = {
+    status: "failed",
+    url: URL,
+    dataMode: DATA_MODE,
+    runs: RUNS,
+    warmupRuns: WARMUP_RUNS,
+    cpuThrottle: CPU_THROTTLE,
+    interTapMs: INTER_TAP_MS,
+    benchmarkExitCode: benchmark.status,
+    spawnError: benchmark.error?.message ?? null,
+    successfulRuns: raw?.successfulRuns ?? 0,
+    failures: raw?.failures ?? [],
+  };
+  writeFileSync(OUTPUT_PATH, `${JSON.stringify(failedReport, null, 2)}\n`);
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    appendFileSync(
+      process.env.GITHUB_STEP_SUMMARY,
+      `## Mobile interaction benchmark failed (${INTER_TAP_MS}ms)\n\n` +
+        `- Data mode: ${DATA_MODE}\n` +
+        `- Successful runs: ${failedReport.successfulRuns}/${RUNS}\n` +
+        `- Failed runs: ${failedReport.failures.length}\n` +
+        `- Download the benchmark artifact for per-run errors.\n\n`
+    );
+  }
   console.error(`❌ Mobile interaction benchmark failed with exit ${benchmark.status}`);
   process.exit(2);
 }
@@ -130,6 +161,7 @@ const summary = [
     : []),
   "",
   `- URL: \`${URL}\``,
+  `- Data mode: ${DATA_MODE}`,
   `- CPU throttle: ${CPU_THROTTLE}x`,
   `- Runs: ${RUNS}`,
   `- Warm-up runs: ${WARMUP_RUNS}`,
@@ -149,6 +181,7 @@ writeFileSync(
   `${JSON.stringify(
     {
       url: URL,
+      dataMode: DATA_MODE,
       runs: RUNS,
       cpuThrottle: CPU_THROTTLE,
       interTapMs: INTER_TAP_MS,
