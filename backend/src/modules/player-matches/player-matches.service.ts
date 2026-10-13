@@ -11,11 +11,34 @@ export interface PlayerMatchesResponse {
   isStale: boolean;
 }
 
+export interface PlayerMatchStatsResponse {
+  nickname: string;
+  seasonId: number;
+  matchingMode: number;
+  source: 'stored_matches';
+  sampleSize: number;
+  period: { from: string; to: string } | null;
+  stats: {
+    totalGames: number;
+    wins: number;
+    top3: number;
+    winRate: number;
+    top3Rate: number;
+    averageRank: number | null;
+    averageKills: number | null;
+    averageAssists: number | null;
+  };
+  lastSyncedAt: string;
+  isStale: boolean;
+}
+
 class UpstreamFailure extends Error {
   constructor(readonly statusCode?: number) {
     super('BSER API unavailable');
   }
 }
+
+type SyncedPlayerLookup = PlayerLookup & { matchesSyncedAt: Date };
 
 @Injectable()
 export class PlayerMatchesService {
@@ -38,9 +61,57 @@ export class PlayerMatchesService {
 
   async getMatches(nicknameParam: string, limitParam?: string, cursorParam?: string): Promise<PlayerMatchesResponse> {
     const nickname = this.parseNickname(nicknameParam);
-    const nicknameKey = nickname.toLocaleLowerCase('ko-KR');
     const limit = this.parseLimit(limitParam);
     const cursor = this.parseCursor(cursorParam);
+    const { lookup, isStale } = await this.ensureFreshMatches(nickname);
+    if (cursor && cursor.playerId !== lookup.id) {
+      throw new BadRequestException({ code: 'INVALID_CURSOR', message: '다른 플레이어의 커서입니다.' });
+    }
+    const page = await this.repository.listMatches(lookup.id, limit, cursor);
+    const last = page.matches.at(-1);
+    return {
+      nickname: lookup.nickname,
+      matches: page.matches.map((match) => ({ ...match, startedAt: match.startedAt.toISOString() })),
+      nextCursor: page.hasMore && last ? this.encodeCursor(lookup.id, last) : null,
+      lastSyncedAt: lookup.matchesSyncedAt.toISOString(),
+      isStale,
+    };
+  }
+
+  async getMatchStats(nicknameParam: string, seasonParam?: string, modeParam?: string): Promise<PlayerMatchStatsResponse> {
+    const nickname = this.parseNickname(nicknameParam);
+    const seasonId = this.parseSeasonId(seasonParam);
+    const matchingMode = this.parseMatchingMode(modeParam);
+    const { lookup, isStale } = await this.ensureFreshMatches(nickname);
+    const aggregate = await this.repository.aggregateMatches(lookup.id, seasonId, matchingMode);
+    const { sampleSize, wins, top3 } = aggregate;
+    const round = (value: number | null): number | null => value === null ? null : Math.round(value * 100) / 100;
+    return {
+      nickname: lookup.nickname,
+      seasonId,
+      matchingMode,
+      source: 'stored_matches',
+      sampleSize,
+      period: aggregate.periodStart && aggregate.periodEnd
+        ? { from: aggregate.periodStart.toISOString(), to: aggregate.periodEnd.toISOString() }
+        : null,
+      stats: {
+        totalGames: sampleSize,
+        wins,
+        top3,
+        winRate: sampleSize ? Math.round(wins / sampleSize * 10000) / 100 : 0,
+        top3Rate: sampleSize ? Math.round(top3 / sampleSize * 10000) / 10000 : 0,
+        averageRank: round(aggregate.averageRank),
+        averageKills: round(aggregate.averageKills),
+        averageAssists: round(aggregate.averageAssists),
+      },
+      lastSyncedAt: lookup.matchesSyncedAt.toISOString(),
+      isStale,
+    };
+  }
+
+  private async ensureFreshMatches(nickname: string): Promise<{ lookup: SyncedPlayerLookup; isStale: boolean }> {
+    const nicknameKey = nickname.toLocaleLowerCase('ko-KR');
     let lookup = await this.repository.findByNicknameKey(nicknameKey);
     let isStale = false;
 
@@ -64,18 +135,7 @@ export class PlayerMatchesService {
     if (!lookup?.matchesSyncedAt) {
       throw new HttpException({ code: 'MATCHES_NOT_READY', message: '전적을 아직 조회할 수 없습니다.' }, HttpStatus.BAD_GATEWAY);
     }
-    if (cursor && cursor.playerId !== lookup.id) {
-      throw new BadRequestException({ code: 'INVALID_CURSOR', message: '다른 플레이어의 커서입니다.' });
-    }
-    const page = await this.repository.listMatches(lookup.id, limit, cursor);
-    const last = page.matches.at(-1);
-    return {
-      nickname: lookup.nickname,
-      matches: page.matches.map((match) => ({ ...match, startedAt: match.startedAt.toISOString() })),
-      nextCursor: page.hasMore && last ? this.encodeCursor(lookup.id, last) : null,
-      lastSyncedAt: lookup.matchesSyncedAt.toISOString(),
-      isStale,
-    };
+    return { lookup: { ...lookup, matchesSyncedAt: lookup.matchesSyncedAt }, isStale };
   }
 
   private async refreshShared(nickname: string, nicknameKey: string): Promise<void> {
@@ -176,6 +236,24 @@ export class PlayerMatchesService {
       throw new BadRequestException({ code: 'INVALID_LIMIT', message: 'limit은 1~50의 정수여야 합니다.' });
     }
     return limit;
+  }
+
+  private parseSeasonId(value?: string): number {
+    if (typeof value !== 'string' || !/^[1-9]\d*$/.test(value)) {
+      throw new BadRequestException({ code: 'INVALID_SEASON_ID', message: 'seasonId는 양의 정수여야 합니다.' });
+    }
+    const seasonId = Number(value);
+    if (!Number.isSafeInteger(seasonId) || seasonId > 9999) {
+      throw new BadRequestException({ code: 'INVALID_SEASON_ID', message: 'seasonId는 1~9999여야 합니다.' });
+    }
+    return seasonId;
+  }
+
+  private parseMatchingMode(value?: string): number {
+    if (value !== '2' && value !== '3') {
+      throw new BadRequestException({ code: 'INVALID_MATCHING_MODE', message: 'matchingMode는 2(일반) 또는 3(랭크)여야 합니다.' });
+    }
+    return Number(value);
   }
 
   private parseCursor(value?: string): (MatchCursor & { playerId: string }) | null {
