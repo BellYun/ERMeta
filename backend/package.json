@@ -8,10 +8,12 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main",
+    "test": "npm run build && node --test test/recent-matches.test.cjs test/player-matches.test.js test/player-matches.db.test.js test/player-season-stats.test.js test/player-season-stats.db.test.js",
     "test:recent-matches": "npm run build && node --test test/recent-matches.test.cjs",
     "lint": "eslint \"{src,test}/**/*.ts\"",
     "db:migrate:player-history": "node scripts/migrate-player-history.js",
-    "test:player-matches": "npm run build && node --test test/player-matches.test.js test/player-matches.db.test.js"
+    "test:player-matches": "npm run build && node --test test/player-matches.test.js test/player-matches.db.test.js",
+    "test:player-season-stats": "npm run build && node --test test/player-season-stats.test.js test/player-season-stats.db.test.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",

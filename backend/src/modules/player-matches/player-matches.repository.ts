@@ -93,6 +93,10 @@ export class PlayerMatchesRepository {
           'DELETE FROM player_history.player_match_records WHERE player_lookup_id = $1',
           [playerId],
         );
+        await client.query(
+          'DELETE FROM player_history.player_season_stats WHERE player_lookup_id = $1',
+          [playerId],
+        );
       }
 
       for (const chunk of chunks(games, 100)) {
