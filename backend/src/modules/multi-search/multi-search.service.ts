@@ -4,7 +4,9 @@ import { RedisService } from '../../common/redis/redis.service';
 import {
   BserApiService,
   BSERLookupResult,
+  BSERPlayerData,
   BSERUserByNickname,
+  BSERUserMatchesResult,
   BSERUserSeasonStats,
   BSERUserStatsResult,
 } from '../collect/bser-api.service';
@@ -15,6 +17,7 @@ const MAX_NICKNAMES = 3;
 const NICKNAME_CACHE_TTL_SEC = 24 * 60 * 60;
 const NOT_FOUND_CACHE_TTL_SEC = 5 * 60;
 const USER_STATS_CACHE_TTL_SEC = 10 * 60;
+const RECENT_MATCHES_CACHE_TTL_SEC = 2 * 60;
 
 type LookupCache =
   | { status: 'found'; user: BSERUserByNickname }
@@ -23,6 +26,28 @@ type LookupCache =
 type StatsCache =
   | { status: 'found'; stats: BSERUserSeasonStats }
   | { status: 'not_found' };
+
+type MatchesCache = { status: 'found'; matches: RecentMatchSummary[] };
+
+export interface RecentMatchSummary {
+  gameId: number;
+  matchingMode: number;
+  matchingTeamMode: number;
+  seasonId: number;
+  characterNum: number;
+  gameRank: number;
+  playerKill: number;
+  playerAssistant: number;
+  startDtm: string;
+}
+
+export interface RecentMatchesResponse {
+  input: string;
+  status: 'ok' | 'not_found' | 'no_matches' | 'error';
+  nickname?: string;
+  matches: RecentMatchSummary[];
+  reason?: MultiSearchFailureReason;
+}
 
 export type MultiSearchPlayerStatus = 'ok' | 'not_found' | 'no_stats' | 'error';
 
@@ -127,6 +152,53 @@ export class MultiSearchService {
         failed: results.length - ok,
       },
     };
+  }
+
+  async searchRecentMatches(
+    nickname: string,
+    limit = 10,
+  ): Promise<RecentMatchesResponse> {
+    const input = nickname.trim();
+
+    try {
+      const user = await this.findUser(input);
+      if (!user) {
+        return {
+          input,
+          status: 'not_found',
+          matches: [],
+          reason: 'nickname_not_found',
+        };
+      }
+
+      const cacheKey = `bser:user-matches:${this.cacheKeyPart(user.userId)}`;
+      const cached = await this.redis.getOrSet<MatchesCache>(
+        cacheKey,
+        RECENT_MATCHES_CACHE_TTL_SEC,
+        async () =>
+          toMatchesCache(
+            await this.bserApi.fetchUserMatchesDetailed(user.userId),
+          ),
+      );
+      const matches = cached.matches.slice(0, limit);
+
+      return {
+        input,
+        status: matches.length ? 'ok' : 'no_matches',
+        nickname: user.nickname,
+        matches,
+      };
+    } catch (error) {
+      return {
+        input,
+        status: 'error',
+        matches: [],
+        reason:
+          error instanceof MultiSearchUpstreamError
+            ? error.reason
+            : 'unknown_error',
+      };
+    }
   }
 
   private normalizeNicknames(nicknames: string[]) {
@@ -300,4 +372,46 @@ function toStatsCache(result: BSERUserStatsResult): StatsCache {
   if (result.status === 'not_configured')
     throw new MultiSearchUpstreamError('bser_api_key_missing');
   throw new MultiSearchUpstreamError('bser_api_unavailable');
+}
+
+function toMatchesCache(result: BSERUserMatchesResult): MatchesCache {
+  if (result.status === 'found') {
+    return {
+      status: 'found',
+      matches: result.games
+        .filter(isRecentMatch)
+        .sort((a, b) => Date.parse(b.startDtm) - Date.parse(a.startDtm))
+        .slice(0, 20)
+        .map((match) => ({
+          gameId: match.gameId,
+          matchingMode: match.matchingMode,
+          matchingTeamMode: match.matchingTeamMode,
+          seasonId: match.seasonId,
+          characterNum: match.characterNum,
+          gameRank: match.gameRank,
+          playerKill: match.playerKill,
+          playerAssistant: match.playerAssistant,
+          startDtm: new Date(match.startDtm).toISOString(),
+        })),
+    };
+  }
+  if (result.status === 'not_found') return { status: 'found', matches: [] };
+  if (result.status === 'not_configured')
+    throw new MultiSearchUpstreamError('bser_api_key_missing');
+  throw new MultiSearchUpstreamError('bser_api_unavailable');
+}
+
+function isRecentMatch(match: BSERPlayerData): match is BSERPlayerData {
+  return (
+    Number.isSafeInteger(match?.gameId) &&
+    Number.isInteger(match.matchingMode) &&
+    Number.isInteger(match.matchingTeamMode) &&
+    Number.isInteger(match.seasonId) &&
+    Number.isInteger(match.characterNum) &&
+    Number.isInteger(match.gameRank) &&
+    Number.isInteger(match.playerKill) &&
+    Number.isInteger(match.playerAssistant) &&
+    typeof match.startDtm === 'string' &&
+    Number.isFinite(Date.parse(match.startDtm))
+  );
 }
