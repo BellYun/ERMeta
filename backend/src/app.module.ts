@@ -19,6 +19,7 @@ import { FeedbackModule } from './modules/feedback/feedback.module';
 import { CollectModule } from './modules/collect/collect.module';
 import { SynergyPairsModule } from './modules/synergy-pairs/synergy-pairs.module';
 import { MultiSearchModule } from './modules/multi-search/multi-search.module';
+import { PlayerMatchesModule } from './modules/player-matches/player-matches.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { MultiSearchModule } from './modules/multi-search/multi-search.module';
     FeedbackModule,
     SynergyPairsModule,
     MultiSearchModule,
+    PlayerMatchesModule,
     CollectModule,
   ],
   controllers: [HealthController],

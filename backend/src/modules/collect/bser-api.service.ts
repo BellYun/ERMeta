@@ -69,6 +69,9 @@ export interface BSERUserCharacterStats {
 
 export interface BSERPlayerData {
   gameId: number;
+  seasonId: number;
+  matchingMode: number;
+  matchingTeamMode: number;
   teamNumber: number;
   characterNum: number;
   bestWeapon: number;
@@ -98,6 +101,12 @@ export interface BSERPlayerData {
   versionMajor: number;
   startDtm: string;
 }
+
+export type BSERUserMatchesResult =
+  | { status: 'found'; games: BSERPlayerData[] }
+  | { status: 'not_found' }
+  | { status: 'not_configured' }
+  | { status: 'unavailable'; statusCode?: number; message?: string };
 
 @Injectable()
 export class BserApiService implements OnModuleDestroy {
@@ -211,15 +220,51 @@ export class BserApiService implements OnModuleDestroy {
 
       const json = (await res.json()) as {
         code?: number;
-        user?: BSERUserByNickname;
+        user?: { uid?: string; userId?: string; nickname?: string };
       };
 
-      if (json.code !== 200 || !json.user?.userId)
-        return { status: 'not_found' };
-      return { status: 'found', user: json.user };
+      if (json.code === 404) return { status: 'not_found' };
+      const userId = json.user?.uid ?? json.user?.userId;
+      if (json.code !== 200 || typeof userId !== 'string' || !userId ||
+          typeof json.user?.nickname !== 'string' || !json.user.nickname) {
+        return { status: 'unavailable', message: 'Invalid nickname response' };
+      }
+      return { status: 'found', user: { nickname: json.user.nickname, userId } };
     } catch (err) {
       this.logger.warn(`BSER nickname 조회 실패: ${(err as Error).message}`);
-      return { status: 'unavailable', message: (err as Error).message };
+      return {
+        status: 'unavailable',
+        statusCode: err instanceof BserRateLimitQueueError ? 429 : undefined,
+        message: (err as Error).message,
+      };
+    }
+  }
+
+  async fetchUserMatchesDetailed(userId: string): Promise<BSERUserMatchesResult> {
+    if (!this.apiKey) return { status: 'not_configured' };
+
+    try {
+      const res = await this.fetchWithRetry(
+        `${this.baseUrl}/v1/user/games/uid/${encodeURIComponent(userId)}`,
+        { headers: { 'x-api-key': this.apiKey } },
+      );
+      if (res.status === 404) return { status: 'not_found' };
+      if (!res.ok) {
+        return { status: 'unavailable', statusCode: res.status, message: res.statusText };
+      }
+      const json = (await res.json()) as { code?: number; userGames?: BSERPlayerData[] };
+      if (json.code === 404) return { status: 'not_found' };
+      if (json.code !== 200 || !Array.isArray(json.userGames)) {
+        return { status: 'unavailable', message: 'Invalid user games response' };
+      }
+      return { status: 'found', games: json.userGames };
+    } catch (err) {
+      this.logger.warn(`BSER 최근 경기 조회 실패: ${(err as Error).message}`);
+      return {
+        status: 'unavailable',
+        statusCode: err instanceof BserRateLimitQueueError ? 429 : undefined,
+        message: (err as Error).message,
+      };
     }
   }
 
