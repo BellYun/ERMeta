@@ -25,3 +25,5 @@ TEST_DATABASE_URL='postgres://user:password@localhost:5432/ermeta_test' npm run 
 ```
 
 첫 명령은 서비스 단위 테스트를 실행하고 DB 통합 테스트는 건너뛴다. 두 번째 명령은 **테스트 전용 DB**에 마이그레이션을 먼저 적용한 뒤 실행한다. 실제 BSER API 키를 사용하는 라이브 호출은 포함하지 않는다. 실 API의 `startDtm`은 `+0900` 오프셋을 포함하므로 이를 정규화한다. 시간대가 없는 응답에만 `BSER_MATCH_TIME_OFFSET`(기본 `+09:00`)을 적용한다.
+
+`backend/**` 변경 PR의 GitHub Actions는 Node.js 22에서 빌드한 뒤 `npm run test --if-present`를 실행한다. 현재는 표준 `test` 스크립트가 없어 빌드만 검증한다. 이후 `backend/package.json`에 `test` 스크립트를 추가하면 같은 CI에서 자동으로 실행된다. 프론트와 백엔드를 함께 변경한 PR에는 두 CI가 모두 실행된다.
