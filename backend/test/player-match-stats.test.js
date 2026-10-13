@@ -96,3 +96,33 @@ test('stale stored data remains available when an upstream refresh fails', async
   assert.equal(result.lastSyncedAt, lastSyncedAt.toISOString());
   assert.equal(result.stats.wins, 1);
 });
+
+test('NestJS exposes the stored-match stats route with the expected filters', async () => {
+  require('reflect-metadata');
+  const { Module } = require('@nestjs/common');
+  const { NestFactory } = require('@nestjs/core');
+  const { PlayerMatchesController } = require('../dist/modules/player-matches/player-matches.controller');
+  const calls = [];
+  const service = {
+    getMatchStats: async (...args) => {
+      calls.push(args);
+      return { source: 'stored_matches', sampleSize: 0 };
+    },
+  };
+  class TestModule {}
+  Module({
+    controllers: [PlayerMatchesController],
+    providers: [{ provide: PlayerMatchesService, useValue: service }],
+  })(TestModule);
+  const app = await NestFactory.create(TestModule, { logger: false });
+  try {
+    await app.listen(0, '127.0.0.1');
+    const { port } = app.getHttpServer().address();
+    const response = await fetch(`http://127.0.0.1:${port}/v1/players/%ED%85%8C%EC%8A%A4%ED%84%B0/match-stats?seasonId=39&matchingMode=3`);
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), { source: 'stored_matches', sampleSize: 0 });
+    assert.deepEqual(calls, [['테스터', '39', '3']]);
+  } finally {
+    await app.close();
+  }
+});
