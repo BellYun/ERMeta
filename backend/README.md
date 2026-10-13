@@ -1,0 +1,27 @@
+# ERMeta Backend
+
+## 단일 플레이어 전적 개발 (#300)
+
+Node.js 22와 PostgreSQL이 필요하다. `.env.example`을 참고해 `BSER_API_KEY`와 `DATABASE_URL`을 로컬 환경에 설정한다. API 키를 Git에 커밋하지 않는다. 전적 테이블은 지정한 DB의 `player_history` 스키마에 생성되므로, 이 DB 사용자에게 스키마·테이블 생성 권한이 필요하다.
+
+```sh
+cd backend
+npm ci
+DATABASE_URL='postgres://user:password@localhost:5432/ermeta' npm run db:migrate:player-history
+npm run start:dev
+```
+
+서버를 시작할 때는 `DATABASE_URL`과 `BSER_API_KEY`가 환경변수 또는 `backend/.env`에 있어야 한다. 마이그레이션 스크립트는 `.env`를 자동으로 읽지 않으므로 위처럼 URL을 전달한다. 기존 분석 API는 `DATABASE_URL` 없이도 시작할 수 있지만 전적 API는 503을 반환한다.
+
+```text
+GET /v1/players/{URL-encoded nickname}/matches?limit=20&cursor=...
+```
+
+`limit`은 1~50, 기본값은 20이다. `cursor`는 이전 응답의 `nextCursor`를 그대로 사용한다. `matches[].gameId`는 문자열이고 `startedAt`과 `lastSyncedAt`은 UTC ISO 8601이다. `isStale=true`는 공식 API 갱신 실패 후 저장 데이터로 응답했다는 뜻이다. 저장은 최근 경기 최대 300건이며, 공식 API에서 제공하는 기간은 최근 90일이다.
+
+```sh
+npm run test:player-matches
+TEST_DATABASE_URL='postgres://user:password@localhost:5432/ermeta_test' npm run test:player-matches
+```
+
+첫 명령은 서비스 단위 테스트를 실행하고 DB 통합 테스트는 건너뛴다. 두 번째 명령은 **테스트 전용 DB**에 마이그레이션을 먼저 적용한 뒤 실행한다. 실제 BSER API 키를 사용하는 라이브 호출은 포함하지 않는다. `startDtm`에 시간대가 없는 실제 응답은 현재 `BSER_MATCH_TIME_OFFSET`(기본 `+09:00`)으로 해석하므로, 실제 응답을 확인해 확정해야 한다.

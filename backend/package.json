@@ -9,7 +9,8 @@
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,test}/**/*.ts\"",
-    "db:migrate:player-history": "node scripts/migrate-player-history.js"
+    "db:migrate:player-history": "node scripts/migrate-player-history.js",
+    "test:player-matches": "npm run build && node --test test/player-matches.test.js test/player-matches.db.test.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",

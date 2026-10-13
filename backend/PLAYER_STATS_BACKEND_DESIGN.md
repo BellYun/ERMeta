@@ -212,3 +212,13 @@ PostgreSQL과 HTTP API 계약을 유지하며 구현을 교체한다. 같은 요
 기존 최근 전적 구현은 외부 API 조회와 캐시 중심의 초안이다. 본 설계의 PostgreSQL 저장·갱신 흐름을 구현한 것으로 간주하지 않는다. 기존 코드에서 재사용할 부분은 새 API 계약과 데이터 모델이 확정된 뒤 판단한다.
 
 관련 작업: [이슈 #297](https://github.com/BellYun/ERMeta/issues/297), [PR #299](https://github.com/BellYun/ERMeta/pull/299).
+
+## 11. 1단계 구현 결정 (#300)
+
+- 기존 분석용 테이블과 분리하기 위해 `DATABASE_URL`이 가리키는 PostgreSQL의 `player_history` 스키마를 사용한다. DB 접근은 `pg`와 명시적 트랜잭션으로 구현했다. 마이그레이션은 수동 실행하며 애플리케이션 시작 시 자동 적용하지 않는다.
+- 닉네임은 대소문자를 구분하지 않는 `nickname_key`로 조회한다. UID는 [공식 문서](https://developer.eternalreturn.io/static/media/OpenAPI_EN_20260917_01.html)의 임시 식별자다. 같은 닉네임에서 UID가 바뀌면 기존 플레이어별 경기 기록을 트랜잭션 안에서 제거하고 새 결과로 대체한다. 다른 닉네임 간 사용자를 자동 연결하지 않는다.
+- 공식 최근 경기 API는 최근 90일의 경기 목록을 반환하며 별도 페이지 매개변수가 없다. 첫 구현은 시작 시각·경기 ID 순으로 정렬한 최대 300건을 저장한다. API 페이지네이션은 저장된 DB 기록을 대상으로 한다.
+- 기본 갱신 간격은 300초(`PLAYER_MATCH_TTL_SECONDS`)다. 단일 프로세스 안의 같은 닉네임 동시 요청은 하나의 외부 조회를 공유한다. 여러 인스턴스의 중복 외부 호출 조정은 배포 단계에서 다룬다. DB 저장에는 닉네임별 트랜잭션 잠금과 유니크 제약을 적용했다.
+- `startDtm`에 시간대가 포함되면 그대로 해석한다. 시간대가 없으면 임시로 `BSER_MATCH_TIME_OFFSET`(기본 `+09:00`)을 적용한다. 실제 응답의 시간대 의미는 실 API 검증 후 확정해야 한다.
+- `GET /v1/players/:nickname/matches`는 `matches`, `nextCursor`, `lastSyncedAt`, `isStale`을 반환한다. PostgreSQL `BIGINT` 정밀도 유지를 위해 `gameId`는 문자열이다. 커서는 플레이어 ID·경기 시각·경기 ID를 인코딩하며 다른 플레이어 요청에 재사용할 수 없다.
+- 현재 단계의 빈 경기 목록은 정상 200 응답이다. 닉네임 없음은 404, 입력 오류는 400, 저장 데이터 없는 외부 장애는 502, 공식 API 429는 429다. 외부 장애 시 저장된 전적이 있으면 `isStale=true`로 제공한다.
