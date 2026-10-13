@@ -71,8 +71,9 @@ npm run test:e2e:ui
 
 ## CI 게이트
 
-- 트리거: `pull_request` (frontend 변경) + `workflow_dispatch`
-- 러너: `ubuntu-latest`, Node 20, chromium 전용 (desktop + Pixel 5 모바일 프로젝트 모두 실행)
+- 트리거: `pull_request` (frontend 또는 루트 테스트 의존성 변경) + `workflow_dispatch`
+- 러너: `ubuntu-latest`, `frontend/.nvmrc`의 Node 버전, chromium 전용 (desktop + Pixel 5 모바일 프로젝트 모두 실행)
+- 프론트 CI는 ESLint·Vitest 작업과 기존 빌드·Playwright 작업을 병렬로 실행한다. 단위 테스트 작업은 루트의 Vitest 의존성도 설치한다.
 - 실패 시 `playwright-report/`, `test-results/`를 14일간 아티팩트로 보관해 스크린샷/트레이스 열람 가능
 - `retries=2`로 Supabase 레이턴시 흔들림 흡수
 

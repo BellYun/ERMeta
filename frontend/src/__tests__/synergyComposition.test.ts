@@ -688,5 +688,5 @@ describe("buildTrioCompositionInsight", () => {
     expect(memberInputs).toHaveLength(118);
     expect(checked).toBe(262_760);
     expect(invalid).toEqual([]);
-  }, 10_000);
+  }, 60_000);
 });
