@@ -2,7 +2,7 @@
 
 import { AlertTriangle, Loader2, Search, Swords, Trophy, Users } from "lucide-react";
 import Image from "next/image";
-import { FormEvent, type ReactNode, useEffect, useMemo, useState } from "react";
+import { FormEvent, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { getFallbackMap } from "@/components/features/synergy/constants";
 import { getCharacterWeaponOptions } from "@/components/features/team-combos/searchRequests";
 import {
@@ -66,6 +66,24 @@ interface TeamCombosResponse {
   results: TrioWeaponCombo[];
 }
 
+interface RecentMatchesResponse {
+  input: string;
+  status: "ok" | "not_found" | "no_matches" | "error";
+  nickname?: string;
+  matches: Array<{
+    gameId: number;
+    matchingMode: number;
+    matchingTeamMode: number;
+    seasonId: number;
+    characterNum: number;
+    gameRank: number;
+    playerKill: number;
+    playerAssistant: number;
+    startDtm: string;
+  }>;
+  reason?: "bser_api_key_missing" | "bser_api_unavailable" | "unknown_error";
+}
+
 const TOP_CHARACTER_LIMIT = 3;
 const MY_NICKNAME_STORAGE_KEY = "ermeta:multi-search:my-nickname";
 const inputClassName =
@@ -87,6 +105,10 @@ export function MultiSearchClient({ afterSearch }: { afterSearch?: ReactNode }) 
   const [error, setError] = useState<string | null>(null);
   const [isMyLoading, setIsMyLoading] = useState(false);
   const [isTeamLoading, setIsTeamLoading] = useState(false);
+  const [recentMatches, setRecentMatches] = useState<RecentMatchesResponse | null>(null);
+  const [recentMatchesError, setRecentMatchesError] = useState<string | null>(null);
+  const [isRecentMatchesLoading, setIsRecentMatchesLoading] = useState(false);
+  const recentRequestId = useRef(0);
   const characterNames = useMemo(() => getFallbackMap(), []);
 
   const teammateNicknames = useMemo(() => {
@@ -241,6 +263,37 @@ export function MultiSearchClient({ afterSearch }: { afterSearch?: ReactNode }) 
     }
   }
 
+  async function handleRecentMatches() {
+    const nickname = myNickname.trim();
+    if (!nickname) {
+      setRecentMatchesError("닉네임을 입력해주세요.");
+      return;
+    }
+
+    const requestId = ++recentRequestId.current;
+    setIsRecentMatchesLoading(true);
+    setRecentMatches(null);
+    setRecentMatchesError(null);
+
+    try {
+      const query = new URLSearchParams({ nickname, limit: "10" });
+      const response = await fetch(`/api/multi-search/recent-matches?${query}`, {
+        cache: "no-store",
+      });
+      if (!response.ok) throw new Error("최근 전적을 불러오지 못했습니다.");
+      const payload = (await response.json()) as RecentMatchesResponse;
+      if (requestId === recentRequestId.current) setRecentMatches(payload);
+    } catch (err) {
+      if (requestId === recentRequestId.current) {
+        setRecentMatchesError(
+          err instanceof Error ? err.message : "최근 전적을 불러오지 못했습니다."
+        );
+      }
+    } finally {
+      if (requestId === recentRequestId.current) setIsRecentMatchesLoading(false);
+    }
+  }
+
   function updateMyWeaponFilter(characterCode: number, weaponCode: number) {
     setMyWeaponFilters((current) => {
       const next = { ...current };
@@ -281,12 +334,18 @@ export function MultiSearchClient({ afterSearch }: { afterSearch?: ReactNode }) 
   return (
     <div className="flex flex-col gap-5">
       <form onSubmit={handleMySubmit} className="dashboard-panel p-3 sm:p-4">
-        <div className="grid gap-2 lg:grid-cols-[minmax(180px,0.45fr)_auto]">
+        <div className="grid gap-2 lg:grid-cols-[minmax(180px,0.45fr)_auto_auto]">
           <label className="min-w-0">
             <span className="sr-only">내 닉네임</span>
             <input
               value={myNickname}
-              onChange={(event) => setMyNickname(event.target.value)}
+              onChange={(event) => {
+                recentRequestId.current += 1;
+                setMyNickname(event.target.value);
+                setRecentMatches(null);
+                setRecentMatchesError(null);
+                setIsRecentMatchesLoading(false);
+              }}
               maxLength={16}
               autoComplete="nickname"
               placeholder="내 닉네임"
@@ -297,6 +356,20 @@ export function MultiSearchClient({ afterSearch }: { afterSearch?: ReactNode }) 
             {isMyLoading ? <Loader2 className="h-4 w-4" /> : <Search className="h-4 w-4" />}내 정보
             검색
           </Button>
+          <Button
+            type="button"
+            size="lg"
+            disabled={isRecentMatchesLoading}
+            onClick={() => void handleRecentMatches()}
+            className="h-10 md:min-w-28"
+          >
+            {isRecentMatchesLoading ? (
+              <Loader2 className="h-4 w-4" />
+            ) : (
+              <Search className="h-4 w-4" />
+            )}
+            최근 전적
+          </Button>
         </div>
         {error && !myProfile && (
           <div className="mt-4 flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-danger)]">
@@ -305,6 +378,14 @@ export function MultiSearchClient({ afterSearch }: { afterSearch?: ReactNode }) 
           </div>
         )}
       </form>
+
+      {(recentMatches || recentMatchesError) && (
+        <RecentMatchesCard
+          data={recentMatches}
+          error={recentMatchesError}
+          getCharacterName={(code) => characterNames.get(code) ?? `#${code}`}
+        />
+      )}
 
       {myProfile && (
         <MyProfileSetupCard
@@ -382,6 +463,61 @@ export function MultiSearchClient({ afterSearch }: { afterSearch?: ReactNode }) 
         />
       )}
     </div>
+  );
+}
+
+function RecentMatchesCard({
+  data,
+  error,
+  getCharacterName,
+}: {
+  data: RecentMatchesResponse | null;
+  error: string | null;
+  getCharacterName: (code: number) => string;
+}) {
+  const message =
+    error ||
+    (data?.status === "not_found"
+      ? "닉네임을 찾을 수 없습니다."
+      : data?.status === "no_matches"
+        ? "최근 90일 동안 조회 가능한 경기가 없습니다."
+        : data?.reason === "bser_api_key_missing"
+          ? "서버의 전적 API 설정이 필요합니다."
+          : data?.status === "error"
+            ? "전적 API가 응답하지 않습니다. 잠시 뒤 다시 시도해주세요."
+            : null);
+
+  return (
+    <section className="dashboard-panel p-3 sm:p-4" aria-live="polite">
+      <h2 className="dashboard-section-title text-base font-bold text-[var(--color-foreground)]">
+        {data?.nickname ?? data?.input ?? "최근 전적"} 최근 전적
+      </h2>
+      {message ? (
+        <p className="mt-2 text-sm text-[var(--color-muted-foreground)]">{message}</p>
+      ) : (
+        <ol className="mt-3 grid gap-2">
+          {data?.matches.map((match) => (
+            <li
+              key={match.gameId}
+              className="grid gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm sm:grid-cols-[1fr_auto] sm:items-center"
+            >
+              <div className="min-w-0">
+                <p className="font-semibold text-[var(--color-foreground)]">
+                  {getCharacterName(match.characterNum)} · {match.gameRank}위
+                </p>
+                <p className="text-xs text-[var(--color-muted-foreground)]">
+                  {new Date(match.startDtm).toLocaleString("ko-KR")} ·{" "}
+                  {match.matchingMode === 3 ? "랭크" : "일반"}
+                </p>
+              </div>
+              <p className="font-semibold text-[var(--color-foreground)]">
+                {match.playerKill}킬 · {match.playerAssistant}어시스트
+              </p>
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
   );
 }
 
