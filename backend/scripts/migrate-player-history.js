@@ -1,4 +1,4 @@
-const { readFileSync } = require('node:fs');
+const { readFileSync, readdirSync } = require('node:fs');
 const { join } = require('node:path');
 const { Pool } = require('pg');
 
@@ -20,21 +20,26 @@ async function main() {
         applied_at TIMESTAMPTZ NOT NULL DEFAULT now()
       )
     `);
-    const name = '001_initial.sql';
-    const existing = await client.query(
-      'SELECT 1 FROM player_history.schema_migrations WHERE name = $1',
-      [name],
-    );
-    if (existing.rowCount === 0) {
-      const sql = readFileSync(join(__dirname, '../migrations/player_history', name), 'utf8');
-      await client.query(sql);
-      await client.query(
-        'INSERT INTO player_history.schema_migrations (name) VALUES ($1)',
+    const migrationDirectory = join(__dirname, '../migrations/player_history');
+    const names = readdirSync(migrationDirectory)
+      .filter((name) => /^\d{3}_[\w-]+\.sql$/.test(name))
+      .sort();
+    for (const name of names) {
+      const existing = await client.query(
+        'SELECT 1 FROM player_history.schema_migrations WHERE name = $1',
         [name],
       );
-      console.log(`Applied ${name}`);
-    } else {
-      console.log(`Already applied ${name}`);
+      if (existing.rowCount === 0) {
+        const sql = readFileSync(join(migrationDirectory, name), 'utf8');
+        await client.query(sql);
+        await client.query(
+          'INSERT INTO player_history.schema_migrations (name) VALUES ($1)',
+          [name],
+        );
+        console.log(`Applied ${name}`);
+      } else {
+        console.log(`Already applied ${name}`);
+      }
     }
     await client.query('COMMIT');
   } catch (error) {
