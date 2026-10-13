@@ -222,3 +222,10 @@ PostgreSQL과 HTTP API 계약을 유지하며 구현을 교체한다. 같은 요
 - 2026-10-13 실 API 확인 결과 닉네임 조회 응답은 `userId`를, 경기 시작 시각은 `2026-10-12T20:16:08.008+0900`처럼 콜론 없는 UTC 오프셋을 사용했다. 문서의 `uid` 형식도 허용하고, 시간대 오프셋은 `+09:00` 형식으로 정규화해 저장한다. 시간대가 아예 없는 응답에만 `BSER_MATCH_TIME_OFFSET`(기본 `+09:00`)을 적용한다.
 - `GET /v1/players/:nickname/matches`는 `matches`, `nextCursor`, `lastSyncedAt`, `isStale`을 반환한다. PostgreSQL `BIGINT` 정밀도 유지를 위해 `gameId`는 문자열이다. 커서는 플레이어 ID·경기 시각·경기 ID를 인코딩하며 다른 플레이어 요청에 재사용할 수 없다.
 - 현재 단계의 빈 경기 목록은 정상 200 응답이다. 닉네임 없음은 404, 입력 오류는 400, 저장 데이터 없는 외부 장애는 502, 공식 API 429는 429다. 외부 장애 시 저장된 전적이 있으면 `isStale=true`로 제공한다.
+
+## 12. 2단계 1차 구현 결정 (#303)
+
+- 공식 시즌 통계는 `player_history.player_season_stats`에 시즌·매칭 모드·팀 모드별 최신 스냅샷으로 저장한다. 주요 지표는 컬럼으로, API 응답에 필요한 정규화된 지표와 실험체별 기록은 JSONB로 보존한다.
+- `GET /v1/players/:nickname/stats`는 필수 `seasonId`, `matchingMode`를 받아 공식 통계와 `source=bser_official`, `fetchedAt`, `isStale`을 반환한다. 랭크 전용 지표가 없으면 `null`이다. 빈 공식 통계는 정상 200의 `stats=null`이다.
+- 기본 재조회 간격은 600초(`PLAYER_STATS_TTL_SECONDS`)다. 공식 API 장애 시 저장된 스냅샷만 오래된 데이터로 제공한다. 빈 결과는 저장하지 않는다.
+- UID가 변경되면 같은 닉네임에 보관된 이전 UID의 전적과 시즌 통계를 모두 제거한다. 저장 경기 기준 집계는 2단계 후속 작업으로 남긴다.
