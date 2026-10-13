@@ -4,7 +4,7 @@ const { PlayerMatchesService } = require('../dist/modules/player-matches/player-
 const { PlayerMatchesRepository } = require('../dist/modules/player-matches/player-matches.repository');
 const { BserApiService } = require('../dist/modules/collect/bser-api.service');
 
-function sampleGame(gameId = 10, startDtm = '2026-10-12T10:00:00+09:00') {
+function sampleGame(gameId = 10, startDtm = '2026-10-12T10:00:00+0900') {
   return {
     gameId, seasonId: 39, matchingMode: 3, matchingTeamMode: 3,
     startDtm, characterNum: 1, bestWeapon: 2,
@@ -52,7 +52,7 @@ function fixture(initialLookup = null, games = [sampleGame()]) {
 }
 
 test('recent games are validated, sorted, paged, and reused while fresh', async () => {
-  const f = fixture(null, [sampleGame(10), sampleGame(11), sampleGame(12, '2026-10-11T10:00:00+09:00')]);
+  const f = fixture(null, [sampleGame(10), sampleGame(11), sampleGame(12, '2026-10-11T10:00:00+0900')]);
   const first = await f.service.getMatches(' 테스터 ', '1');
   assert.equal(first.matches[0].gameId, '11');
   assert.equal(first.matches[0].startedAt, '2026-10-12T01:00:00.000Z');

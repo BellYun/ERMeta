@@ -136,7 +136,9 @@ export class PlayerMatchesService {
     };
     if (typeof game.startDtm !== 'string') throw new Error('Invalid match time');
     const rawTime = game.startDtm.trim();
-    const withOffset = /(Z|[+-]\d{2}:\d{2})$/i.test(rawTime) ? rawTime : `${rawTime}${this.timeOffset}`;
+    const hasOffset = /(Z|[+-]\d{2}:?\d{2})$/i.test(rawTime);
+    const normalizedTime = rawTime.replace(/([+-]\d{2})(\d{2})$/, '$1:$2');
+    const withOffset = hasOffset ? normalizedTime : `${rawTime}${this.timeOffset}`;
     const startedAt = new Date(withOffset);
     if (!Number.isFinite(startedAt.getTime())) throw new Error('Invalid match time');
     return {
