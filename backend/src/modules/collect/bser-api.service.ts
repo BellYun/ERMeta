@@ -11,6 +11,24 @@ export interface BSERUserByNickname {
   userId: string;
 }
 
+export interface BSERRecentMatch {
+  gameId: number;
+  matchingMode: number;
+  matchingTeamMode: number;
+  seasonId: number;
+  characterNum: number;
+  gameRank: number;
+  playerKill: number;
+  playerAssistant: number;
+  startDtm: string;
+}
+
+export type BSERUserMatchesResult =
+  | { status: 'found'; matches: BSERRecentMatch[] }
+  | { status: 'not_found' }
+  | { status: 'not_configured' }
+  | { status: 'unavailable'; statusCode?: number; message?: string };
+
 export type BSERLookupResult =
   | { status: 'found'; user: BSERUserByNickname }
   | { status: 'not_found' }
@@ -211,14 +229,57 @@ export class BserApiService implements OnModuleDestroy {
 
       const json = (await res.json()) as {
         code?: number;
-        user?: BSERUserByNickname;
+        user?: { nickname?: string; uid?: string; userId?: string };
       };
 
-      if (json.code !== 200 || !json.user?.userId)
+      const userId = json.user?.uid ?? json.user?.userId;
+      if (json.code !== 200 || !userId || !json.user?.nickname)
         return { status: 'not_found' };
-      return { status: 'found', user: json.user };
+      return {
+        status: 'found',
+        user: { nickname: json.user.nickname, userId },
+      };
     } catch (err) {
       this.logger.warn(`BSER nickname 조회 실패: ${(err as Error).message}`);
+      return { status: 'unavailable', message: (err as Error).message };
+    }
+  }
+
+  async fetchUserMatchesDetailed(
+    userId: string,
+  ): Promise<BSERUserMatchesResult> {
+    if (!this.apiKey) return { status: 'not_configured' };
+
+    try {
+      const res = await this.fetchWithRetry(
+        `${this.baseUrl}/v1/user/games/uid/${encodeURIComponent(userId)}`,
+        { headers: { 'x-api-key': this.apiKey } },
+      );
+
+      if (res.status === 404) return { status: 'not_found' };
+      if (!res.ok) {
+        return {
+          status: 'unavailable',
+          statusCode: res.status,
+          message: res.statusText,
+        };
+      }
+
+      const json = (await res.json()) as {
+        code?: number;
+        userGames?: BSERRecentMatch[];
+      };
+      if (json.code !== 200 || !Array.isArray(json.userGames)) {
+        return {
+          status: 'unavailable',
+          message: 'Invalid user matches response',
+        };
+      }
+      return { status: 'found', matches: json.userGames };
+    } catch (err) {
+      this.logger.warn(
+        `BSER user matches 조회 실패: ${(err as Error).message}`,
+      );
       return { status: 'unavailable', message: (err as Error).message };
     }
   }
