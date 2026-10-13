@@ -68,6 +68,25 @@ test('empty filtered sample is a valid result and does not invent averages or a 
   });
 });
 
+test('matches and stored-match stats share one concurrent upstream refresh', async () => {
+  const f = fixture({
+    sampleSize: 0, wins: 0, top3: 0, averageRank: null,
+    averageKills: null, averageAssists: null, periodStart: null, periodEnd: null,
+  });
+  const original = f.bser.findUserByNicknameDetailed;
+  f.bser.findUserByNicknameDetailed = async (...args) => {
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    return original(...args);
+  };
+  const [matches, stats] = await Promise.all([
+    f.service.getMatches('테스터'),
+    f.service.getMatchStats('테스터', '39', '3'),
+  ]);
+  assert.deepEqual(matches.matches, []);
+  assert.equal(stats.sampleSize, 0);
+  assert.equal(f.upstreamCalls, 1);
+});
+
 test('invalid filters fail before BSER calls; missing players and outages keep existing semantics', async () => {
   const f = fixture({});
   await assert.rejects(f.service.getMatchStats('테스터', '0', '3'), (error) => error.status === 400);
