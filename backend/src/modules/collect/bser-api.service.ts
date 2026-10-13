@@ -211,12 +211,16 @@ export class BserApiService implements OnModuleDestroy {
 
       const json = (await res.json()) as {
         code?: number;
-        user?: BSERUserByNickname;
+        user?: { nickname?: string; uid?: string; userId?: string };
       };
 
-      if (json.code !== 200 || !json.user?.userId)
+      const userId = json.user?.uid ?? json.user?.userId;
+      if (json.code !== 200 || !userId || !json.user?.nickname)
         return { status: 'not_found' };
-      return { status: 'found', user: json.user };
+      return {
+        status: 'found',
+        user: { nickname: json.user.nickname, userId },
+      };
     } catch (err) {
       this.logger.warn(`BSER nickname 조회 실패: ${(err as Error).message}`);
       return { status: 'unavailable', message: (err as Error).message };
