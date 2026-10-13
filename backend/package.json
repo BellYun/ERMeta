@@ -9,7 +9,9 @@
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main",
     "test:recent-matches": "npm run build && node --test test/recent-matches.test.cjs",
-    "lint": "eslint \"{src,test}/**/*.ts\""
+    "lint": "eslint \"{src,test}/**/*.ts\"",
+    "db:migrate:player-history": "node scripts/migrate-player-history.js",
+    "test:player-matches": "npm run build && node --test test/player-matches.test.js test/player-matches.db.test.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
@@ -22,6 +24,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "ioredis": "^5.10.0",
+    "pg": "^8.23.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
@@ -30,6 +33,7 @@
     "@types/express": "^5.0.0",
     "@types/ioredis": "^4.28.10",
     "@types/node": "^20",
+    "@types/pg": "^8.23.1",
     "typescript": "^5.7.0"
   }
 }

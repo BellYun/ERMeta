@@ -58,6 +58,7 @@ export class RateLimitGuard implements CanActivate {
       response.setHeader('Retry-After', Math.ceil((result.resetAt - Date.now()) / 1000));
       throw new HttpException(
         {
+          code: 'RATE_LIMITED',
           statusCode: HttpStatus.TOO_MANY_REQUESTS,
           message: '요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.',
           retryAfter: Math.ceil((result.resetAt - Date.now()) / 1000),

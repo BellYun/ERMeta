@@ -91,7 +91,7 @@ function createService(matchesResult) {
 test('recent matches are sorted, limited, and expose only the response contract', async () => {
   const service = createService({
     status: 'found',
-    matches: [
+    games: [
       match(1, '2026-10-11T12:00:00Z'),
       match(2, '2026-10-12T12:00:00Z'),
       match(3, 'invalid-date'),
@@ -108,10 +108,19 @@ test('recent matches are sorted, limited, and expose only the response contract'
   assert.equal(result.input, '테스트');
 });
 
+test('recent match dates with the live BSER +0900 offset are normalized', async () => {
+  const service = createService({
+    status: 'found',
+    games: [match(7, '2026-10-12T20:16:08.008+0900')],
+  });
+  const result = await service.searchRecentMatches('테스트');
+  assert.equal(result.matches[0].startDtm, '2026-10-12T11:16:08.008Z');
+});
+
 test('empty matches and unavailable upstream have distinct states', async () => {
   assert.equal(
     (
-      await createService({ status: 'found', matches: [] }).searchRecentMatches(
+      await createService({ status: 'found', games: [] }).searchRecentMatches(
         '테스트',
       )
     ).status,

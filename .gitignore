@@ -12,6 +12,7 @@
 !**/README.md
 !frontend/docs/NEXT_RENDERING_STRATEGY_AUDIT_2026-07-20.md
 !pm/ad-monetization-performance-measurement.md
+!backend/PLAYER_STATS_BACKEND_DESIGN.md
 
 # Backend
 backend/dist/

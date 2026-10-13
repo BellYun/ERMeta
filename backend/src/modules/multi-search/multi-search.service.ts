@@ -4,7 +4,7 @@ import { RedisService } from '../../common/redis/redis.service';
 import {
   BserApiService,
   BSERLookupResult,
-  BSERRecentMatch,
+  BSERPlayerData,
   BSERUserByNickname,
   BSERUserMatchesResult,
   BSERUserSeasonStats,
@@ -27,7 +27,7 @@ type StatsCache =
   | { status: 'found'; stats: BSERUserSeasonStats }
   | { status: 'not_found' };
 
-type MatchesCache = { status: 'found'; matches: BSERRecentMatch[] };
+type MatchesCache = { status: 'found'; matches: RecentMatchSummary[] };
 
 export interface RecentMatchSummary {
   gameId: number;
@@ -378,7 +378,7 @@ function toMatchesCache(result: BSERUserMatchesResult): MatchesCache {
   if (result.status === 'found') {
     return {
       status: 'found',
-      matches: result.matches
+      matches: result.games
         .filter(isRecentMatch)
         .sort((a, b) => Date.parse(b.startDtm) - Date.parse(a.startDtm))
         .slice(0, 20)
@@ -391,7 +391,7 @@ function toMatchesCache(result: BSERUserMatchesResult): MatchesCache {
           gameRank: match.gameRank,
           playerKill: match.playerKill,
           playerAssistant: match.playerAssistant,
-          startDtm: match.startDtm,
+          startDtm: new Date(match.startDtm).toISOString(),
         })),
     };
   }
@@ -401,7 +401,7 @@ function toMatchesCache(result: BSERUserMatchesResult): MatchesCache {
   throw new MultiSearchUpstreamError('bser_api_unavailable');
 }
 
-function isRecentMatch(match: BSERRecentMatch): match is RecentMatchSummary {
+function isRecentMatch(match: BSERPlayerData): match is BSERPlayerData {
   return (
     Number.isSafeInteger(match?.gameId) &&
     Number.isInteger(match.matchingMode) &&
