@@ -1,6 +1,6 @@
 # ERMeta Backend
 
-## 플레이어 전적·공식 시즌 통계 (#300, #303)
+## 플레이어 전적·개인 통계 (#300, #303, #305)
 
 Node.js 22와 PostgreSQL이 필요하다. `.env.example`을 참고해 `BSER_API_KEY`와 `DATABASE_URL`을 로컬 환경에 설정한다. API 키를 Git에 커밋하지 않는다. 전적 테이블은 지정한 DB의 `player_history` 스키마에 생성되므로, 이 DB 사용자에게 스키마·테이블 생성 권한이 필요하다.
 
@@ -34,11 +34,20 @@ GET /v1/players/{URL-encoded nickname}/stats?seasonId=39&matchingMode=3
 
 `seasonId`는 1~9999 정수이며 `matchingMode`는 공식 API가 지원하는 2(일반) 또는 3(랭크)이다. 둘 다 필수다. 응답의 `source`는 `bser_official`이고, `stats.totalGames`는 **공식 시즌 전체 경기 수**다. 저장된 최근 경기 일부에서 계산한 수치가 아니다. `stats`에는 승리·승률·평균 순위·랭크 정보·실험체별 기록이 포함된다. 공식 API에 해당 시즌 통계가 없으면 `stats: null`, `fetchedAt: null`을 반환한다.
 
-저장된 통계는 기본 600초(`PLAYER_STATS_TTL_SECONDS`) 동안 재사용한다. 갱신 실패 시 저장 통계가 있으면 `isStale: true`로 반환하며, 없으면 502(공식 API 장애) 또는 429(요청 제한)를 반환한다. 빈 통계 결과는 현재 저장하지 않아 다음 조회에서 공식 API에 다시 확인한다. 닉네임의 임시 UID가 바뀌면 이전 UID의 전적·통계를 제거한다. 저장 경기 기준 개인 통계는 후속 작업이다.
+저장된 통계는 기본 600초(`PLAYER_STATS_TTL_SECONDS`) 동안 재사용한다. 갱신 실패 시 저장 통계가 있으면 `isStale: true`로 반환하며, 없으면 502(공식 API 장애) 또는 429(요청 제한)를 반환한다. 빈 통계 결과는 현재 저장하지 않아 다음 조회에서 공식 API에 다시 확인한다. 닉네임의 임시 UID가 바뀌면 이전 UID의 전적·통계를 제거한다.
+
+저장 경기 기준 개인 통계는 별도 경로로 조회한다. 이 요청은 전적 API와 같은 300초 갱신 규칙을 사용하고, 집계는 PostgreSQL에 저장된 경기만 대상으로 한다.
+
+```text
+GET /v1/players/{URL-encoded nickname}/match-stats?seasonId=39&matchingMode=3
+```
+
+`seasonId`(1~9999)와 `matchingMode`(2 또는 3)는 필수다. 응답의 `source`는 `stored_matches`, `sampleSize`는 해당 시즌·모드에 저장된 경기 수다. `period.from`/`period.to`는 표본 중 가장 이른·늦은 경기 시각(UTC ISO 8601)이고, 표본이 없으면 `period: null`이다. `stats`는 경기 수·승수·3위 이내 횟수·승률·3위 이내 비율·평균 순위·평균 킬·평균 어시스트를 포함한다. `winRate`는 0~100 퍼센트, `top3Rate`는 0~1 비율이며 평균값은 소수 둘째 자리까지 반환한다. 표본이 없으면 횟수와 비율은 0, 평균은 `null`이다. `lastSyncedAt`은 전적 갱신 시점이고 `isStale=true`는 공식 API 갱신에 실패해 기존 저장 데이터를 사용했다는 뜻이다. 최근 경기 일부의 집계이므로 공식 시즌 전체 성적으로 해석하면 안 된다. 이 API에는 별도 테이블이나 마이그레이션이 필요 없다.
 
 ```sh
 npm test
 TEST_DATABASE_URL='postgres://user:password@localhost:5432/ermeta_test' npm run test:player-season-stats
+TEST_DATABASE_URL='postgres://user:password@localhost:5432/ermeta_test' npm run test:player-match-stats
 ```
 
 DB 통합 테스트를 실행할 때는 테스트 전용 DB에 먼저 마이그레이션을 적용한다. `npm test`는 최근 전적과 시즌 통계의 단위 테스트를 모두 실행하며, `TEST_DATABASE_URL`이 없으면 DB 통합 테스트를 건너뛴다. `backend/**` 변경 PR의 GitHub Actions도 `npm test`를 실행한다.

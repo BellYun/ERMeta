@@ -223,6 +223,13 @@ PostgreSQL과 HTTP API 계약을 유지하며 구현을 교체한다. 같은 요
 - `GET /v1/players/:nickname/matches`는 `matches`, `nextCursor`, `lastSyncedAt`, `isStale`을 반환한다. PostgreSQL `BIGINT` 정밀도 유지를 위해 `gameId`는 문자열이다. 커서는 플레이어 ID·경기 시각·경기 ID를 인코딩하며 다른 플레이어 요청에 재사용할 수 없다.
 - 현재 단계의 빈 경기 목록은 정상 200 응답이다. 닉네임 없음은 404, 입력 오류는 400, 저장 데이터 없는 외부 장애는 502, 공식 API 429는 429다. 외부 장애 시 저장된 전적이 있으면 `isStale=true`로 제공한다.
 
+## 12. 2단계 저장 경기 통계 결정 (#305)
+
+- 공식 시즌 전체 통계(`/stats`)와 구분하기 위해 저장 경기 집계는 `GET /v1/players/:nickname/match-stats?seasonId=…&matchingMode=…`로 제공한다. `source=stored_matches`와 `sampleSize`, 표본 경기 기간을 응답에 포함한다.
+- 새 저장 모델을 만들지 않고 `player_match_records`와 `matches`를 조인해 시즌·매칭 모드별로 집계한다. 이미 적용된 플레이어·경기 유니크 제약 덕분에 같은 경기를 반복 수집해도 표본이 중복되지 않는다.
+- 전적 API의 닉네임 검증·갱신·장애 시 저장 데이터 사용 규칙을 재사용한다. 표본이 없더라도 유효한 플레이어라면 200과 0건을 반환하며, 평균과 표본 기간은 `null`이다.
+- 저장된 최근 경기만 계산하므로 공식 시즌 전체 성적과 다를 수 있다. 승률은 0~100 퍼센트, 3위 이내 비율은 0~1 비율로 반환한다.
+
 ## 12. 2단계 1차 구현 결정 (#303)
 
 - 공식 시즌 통계는 `player_history.player_season_stats`에 시즌·매칭 모드·팀 모드별 최신 스냅샷으로 저장한다. 주요 지표는 컬럼으로, API 응답에 필요한 정규화된 지표와 실험체별 기록은 JSONB로 보존한다.

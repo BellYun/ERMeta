@@ -39,6 +39,17 @@ export interface StoredMatch {
   assists: number;
 }
 
+export interface StoredMatchAggregate {
+  sampleSize: number;
+  wins: number;
+  top3: number;
+  averageRank: number | null;
+  averageKills: number | null;
+  averageAssists: number | null;
+  periodStart: Date | null;
+  periodEnd: Date | null;
+}
+
 interface LookupRow {
   id: string;
   nickname: string;
@@ -190,6 +201,43 @@ export class PlayerMatchesRepository {
         assists: row.assists,
       })),
       hasMore: result.rows.length > limit,
+    };
+  }
+
+  async aggregateMatches(playerId: string, seasonId: number, matchingMode: number): Promise<StoredMatchAggregate> {
+    const result = await this.database.getPool().query<{
+      sample_size: number;
+      wins: number;
+      top3: number;
+      average_rank: number | null;
+      average_kills: number | null;
+      average_assists: number | null;
+      period_start: Date | null;
+      period_end: Date | null;
+    }>(
+      `SELECT COUNT(*)::integer AS sample_size,
+              COUNT(*) FILTER (WHERE r.rank = 1)::integer AS wins,
+              COUNT(*) FILTER (WHERE r.rank <= 3)::integer AS top3,
+              AVG(r.rank)::double precision AS average_rank,
+              AVG(r.kills)::double precision AS average_kills,
+              AVG(r.assists)::double precision AS average_assists,
+              MIN(m.started_at) AS period_start,
+              MAX(m.started_at) AS period_end
+       FROM player_history.player_match_records r
+       JOIN player_history.matches m ON m.game_id = r.game_id
+       WHERE r.player_lookup_id = $1 AND m.season_id = $2 AND m.matching_mode = $3`,
+      [playerId, seasonId, matchingMode],
+    );
+    const row = result.rows[0];
+    return {
+      sampleSize: row.sample_size,
+      wins: row.wins,
+      top3: row.top3,
+      averageRank: row.average_rank,
+      averageKills: row.average_kills,
+      averageAssists: row.average_assists,
+      periodStart: row.period_start,
+      periodEnd: row.period_end,
     };
   }
 }
