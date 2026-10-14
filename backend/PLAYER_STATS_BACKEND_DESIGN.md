@@ -236,3 +236,10 @@ PostgreSQL과 HTTP API 계약을 유지하며 구현을 교체한다. 같은 요
 - `GET /v1/players/:nickname/stats`는 필수 `seasonId`, `matchingMode`를 받아 공식 통계와 `source=bser_official`, `fetchedAt`, `isStale`을 반환한다. 랭크 전용 지표가 없으면 `null`이다. 빈 공식 통계는 정상 200의 `stats=null`이다.
 - 기본 재조회 간격은 600초(`PLAYER_STATS_TTL_SECONDS`)다. 공식 API 장애 시 저장된 스냅샷만 오래된 데이터로 제공한다. 빈 결과는 저장하지 않는다.
 - UID가 변경되면 같은 닉네임에 보관된 이전 UID의 전적과 시즌 통계를 모두 제거한다. 저장 경기 기준 집계는 2단계 후속 작업으로 남긴다.
+
+## 3단계 멀티서치 구현 결정 (#307)
+
+- `POST /v1/players/compare`는 요청 본문의 닉네임 1~3개, 필수 `seasonId`(1~9999)와 `matchingMode`(2/3)를 받는다. 공백과 대소문자를 무시한 중복은 첫 입력만 남긴다.
+- 저장 경기 표본과 시즌 전체 성적을 혼합하지 않도록 첫 비교 대상은 공식 시즌 통계로 한정한다. `PlayerSeasonStatsService`를 최대 3명 병렬 호출하고, 내부의 동일 플레이어 갱신 공유와 BSER 요청 큐를 그대로 사용한다.
+- 응답은 입력 순서대로 `ok`, `no_stats`, `not_found`, `error`를 구분한다. 사용자별 실패는 다른 사용자의 결과를 버리지 않으며, 중복 제거 후 요청 인원과 성공·실패 수를 함께 반환한다.
+- 기존 Redis 기반 `POST /multi-search/players`는 프론트엔드가 사용 중이므로 유지한다. 화면 전환은 별도 작업으로 검토한다.
