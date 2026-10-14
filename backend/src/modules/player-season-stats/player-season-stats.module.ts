@@ -9,5 +9,6 @@ import { PlayerSeasonStatsService } from './player-season-stats.service';
   imports: [PlayerHistoryDatabaseModule, CollectModule],
   controllers: [PlayerSeasonStatsController],
   providers: [PlayerSeasonStatsRepository, PlayerSeasonStatsService],
+  exports: [PlayerSeasonStatsService],
 })
 export class PlayerSeasonStatsModule {}
