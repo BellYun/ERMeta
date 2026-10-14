@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isMultiSearchEnabled } from "@/lib/featureFlags";
+import { adaptPlayerCompare, type PlayerCompareResponse } from "@/lib/playerApiAdapter";
 
 const DEFAULT_MULTI_SEARCH_API_BASE_URL = "https://ermeta-production.up.railway.app";
 
@@ -9,6 +10,11 @@ export async function POST(request: NextRequest) {
       { error: "not_found" },
       { status: 404, headers: { "Cache-Control": "no-store" } }
     );
+  }
+
+  const playerApiBaseUrl = process.env.PLAYER_API_BASE_URL?.trim();
+  if (playerApiBaseUrl) {
+    return postToPlayerApi(request, playerApiBaseUrl);
   }
 
   const baseUrl =
@@ -38,6 +44,28 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json(
       { error: "multi_search_unavailable" },
+      { status: 503, headers: { "Cache-Control": "no-store" } }
+    );
+  }
+}
+
+async function postToPlayerApi(request: NextRequest, baseUrl: string) {
+  try {
+    const body = await request.json();
+    const response = await fetch(`${baseUrl.replace(/\/$/, "")}/v1/players/compare`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...body, seasonId: 39, matchingMode: 3 }),
+      cache: "no-store",
+    });
+    const payload = await response.json();
+    return NextResponse.json(
+      response.ok ? adaptPlayerCompare(payload as PlayerCompareResponse) : payload,
+      { status: response.status, headers: { "Cache-Control": "no-store" } }
+    );
+  } catch {
+    return NextResponse.json(
+      { code: "PLAYER_API_UNAVAILABLE", message: "플레이어 API에 연결하지 못했습니다." },
       { status: 503, headers: { "Cache-Control": "no-store" } }
     );
   }
