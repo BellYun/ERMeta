@@ -1,5 +1,11 @@
 # ERMeta Backend
 
+## 플레이어 전용 실행·배포 (#309)
+
+기존 전체 백엔드(`npm run start:dev`)와 별도로, 전적·통계·멀티서치만 실행하는 진입점은 `npm run start:player`다. 이 진입점은 Supabase·Redis 설정 없이 시작한다. 로컬에서는 `DATABASE_URL`, Google Cloud에서는 Cloud SQL Unix socket 설정을 사용한다. `/health/live`는 프로세스 상태, `/health/ready`는 BSER API 키와 PostgreSQL 연결·전적 테이블 적용 상태를 확인한다.
+
+Cloud Run 이미지, 마이그레이션 Job, Secret Manager, 예상 비용과 배포 순서는 [CLOUD_RUN_DEPLOYMENT.md](./CLOUD_RUN_DEPLOYMENT.md)에 정리했다. 실제 프로젝트와 예산을 확정하기 전에는 Google Cloud 리소스를 만들지 않는다.
+
 ## 플레이어 전적·개인 통계·멀티서치 (#300, #303, #305, #307)
 
 Node.js 22와 PostgreSQL이 필요하다. `.env.example`을 참고해 `BSER_API_KEY`와 `DATABASE_URL`을 로컬 환경에 설정한다. API 키를 Git에 커밋하지 않는다. 전적 테이블은 지정한 DB의 `player_history` 스키마에 생성되므로, 이 DB 사용자에게 스키마·테이블 생성 권한이 필요하다.
