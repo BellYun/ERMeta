@@ -1,13 +1,10 @@
 const { readFileSync, readdirSync } = require('node:fs');
 const { join } = require('node:path');
 const { Pool } = require('pg');
+const { playerHistoryPoolOptions } = require('../dist/common/database/player-history-pool-options');
 
 async function main() {
-  if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is required');
-  }
-
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const pool = new Pool(playerHistoryPoolOptions((name) => process.env[name]));
   let client;
   try {
     client = await pool.connect();
