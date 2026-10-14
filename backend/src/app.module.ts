@@ -21,6 +21,7 @@ import { SynergyPairsModule } from './modules/synergy-pairs/synergy-pairs.module
 import { MultiSearchModule } from './modules/multi-search/multi-search.module';
 import { PlayerMatchesModule } from './modules/player-matches/player-matches.module';
 import { PlayerSeasonStatsModule } from './modules/player-season-stats/player-season-stats.module';
+import { PlayerCompareModule } from './modules/player-compare/player-compare.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { PlayerSeasonStatsModule } from './modules/player-season-stats/player-se
     MultiSearchModule,
     PlayerMatchesModule,
     PlayerSeasonStatsModule,
+    PlayerCompareModule,
     CollectModule,
   ],
   controllers: [HealthController],
