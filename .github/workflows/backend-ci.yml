@@ -36,3 +36,6 @@ jobs:
 
       - name: Run tests when configured
         run: npm run test --if-present
+
+      - name: Build player API image
+        run: docker build -f Dockerfile.player-api -t ermeta-player-api:ci .
