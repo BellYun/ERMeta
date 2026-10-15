@@ -22,6 +22,7 @@ import { MultiSearchModule } from './modules/multi-search/multi-search.module';
 import { PlayerMatchesModule } from './modules/player-matches/player-matches.module';
 import { PlayerSeasonStatsModule } from './modules/player-season-stats/player-season-stats.module';
 import { PlayerCompareModule } from './modules/player-compare/player-compare.module';
+import { PlayerRefreshModule } from './modules/player-refresh/player-refresh.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { PlayerCompareModule } from './modules/player-compare/player-compare.mod
     PlayerMatchesModule,
     PlayerSeasonStatsModule,
     PlayerCompareModule,
+    PlayerRefreshModule,
     CollectModule,
   ],
   controllers: [HealthController],
