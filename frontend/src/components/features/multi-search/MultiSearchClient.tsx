@@ -44,15 +44,16 @@ interface PlayerResult {
   averageRank?: number;
   averageKills?: number;
   averageAssistants?: number;
+  source?: "bser_official";
+  fetchedAt?: string | null;
+  isStale?: boolean;
   topCharacters?: Array<{
     characterCode: number;
     totalGames: number;
     wins: number;
     winRate: number;
-    top3: number;
     top3Rate: number;
     averageRank: number;
-    maxKillings: number;
   }>;
   reason?:
     | "nickname_not_found"
@@ -71,7 +72,7 @@ interface RecentMatchesResponse {
   status: "ok" | "not_found" | "no_matches" | "error";
   nickname?: string;
   matches: Array<{
-    gameId: number;
+    gameId: number | string;
     matchingMode: number;
     matchingTeamMode: number;
     seasonId: number;
@@ -82,6 +83,8 @@ interface RecentMatchesResponse {
     startDtm: string;
   }>;
   reason?: "bser_api_key_missing" | "bser_api_unavailable" | "unknown_error";
+  lastSyncedAt?: string;
+  isStale?: boolean;
 }
 
 const TOP_CHARACTER_LIMIT = 3;
@@ -492,6 +495,12 @@ function RecentMatchesCard({
       <h2 className="dashboard-section-title text-base font-bold text-[var(--color-foreground)]">
         {data?.nickname ?? data?.input ?? "최근 전적"} 최근 전적
       </h2>
+      {data?.lastSyncedAt && (
+        <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
+          저장된 경기 · {new Date(data.lastSyncedAt).toLocaleString("ko-KR")} 갱신
+          {data.isStale ? " · 최신 조회 실패로 저장된 기록 표시" : ""}
+        </p>
+      )}
       {message ? (
         <p className="mt-2 text-sm text-[var(--color-muted-foreground)]">{message}</p>
       ) : (
@@ -570,6 +579,7 @@ function PlayerCard({
             <p className="text-xs font-semibold text-[var(--color-muted-foreground)]">
               #{formatNumber(result.rank)} · MMR {formatNumber(result.mmr)}
             </p>
+            {result.source && <PlayerStatsProvenance result={result} />}
           </div>
           <div className="flex h-9 w-9 items-center justify-center rounded border border-[var(--color-accent)] bg-[var(--color-accent-muted)] text-[var(--color-accent-foreground)]">
             <Trophy className="h-4 w-4" />
@@ -706,6 +716,7 @@ function MyProfileSetupCard({
             <h2 className="dashboard-section-title mt-1 truncate text-lg font-bold text-[var(--color-foreground)]">
               {result.nickname}
             </h2>
+            {result.source && <PlayerStatsProvenance result={result} />}
           </div>
           <div className="grid grid-cols-3 gap-2 text-center">
             <Metric label="승률" value={`${formatNumber(result.winRate)}%`} />
@@ -811,6 +822,16 @@ function playerStatusDescription(result: PlayerResult) {
 function formatNumber(value: number | undefined) {
   if (value == null || Number.isNaN(value)) return "-";
   return new Intl.NumberFormat("ko-KR", { maximumFractionDigits: 2 }).format(value);
+}
+
+function PlayerStatsProvenance({ result }: { result: PlayerResult }) {
+  return (
+    <p className="mt-1 text-[11px] text-[var(--color-muted-foreground)]">
+      공식 시즌 통계
+      {result.fetchedAt ? ` · ${new Date(result.fetchedAt).toLocaleString("ko-KR")} 갱신` : ""}
+      {result.isStale ? " · 최신 조회 실패로 저장된 통계 표시" : ""}
+    </p>
+  );
 }
 
 function splitNicknameInput(value: string): string[] {
