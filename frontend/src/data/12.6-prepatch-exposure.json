@@ -1,0 +1,7093 @@
+{
+  "capturedAt": "2026-10-15T04:57:19.385Z",
+  "patch": "12.5",
+  "scope": "DIAMOND_PLUS",
+  "source": ["v2_CharacterEquipmentBuildStats", "v2_CharacterTraitBuildStats"],
+  "denominator": "v2_CharacterStats.totalGames",
+  "equipmentRows": 161959,
+  "traitRows": 1835,
+  "unmappedWeaponGames": 129,
+  "profiles": [
+    {
+      "characterCode": 1,
+      "weaponCode": 14,
+      "totalGames": 5412,
+      "items": [
+        {
+          "itemCode": 105407,
+          "games": 2439,
+          "pickRate": 45.1
+        },
+        {
+          "itemCode": 201506,
+          "games": 5,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201507,
+          "games": 3,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201537,
+          "games": 39,
+          "pickRate": 0.7
+        },
+        {
+          "itemCode": 201701,
+          "games": 3,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202509,
+          "games": 4,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202525,
+          "games": 25,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 203408,
+          "games": 106,
+          "pickRate": 2
+        },
+        {
+          "itemCode": 203513,
+          "games": 17,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 203516,
+          "games": 66,
+          "pickRate": 1.2
+        },
+        {
+          "itemCode": 204509,
+          "games": 12,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 204510,
+          "games": 72,
+          "pickRate": 1.3
+        },
+        {
+          "itemCode": 204511,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205407,
+          "games": 104,
+          "pickRate": 1.9
+        },
+        {
+          "itemCode": 701451,
+          "games": 16,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 705607,
+          "games": 293,
+          "pickRate": 5.4
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 9,
+          "pickRate": 0.2
+        }
+      ]
+    },
+    {
+      "characterCode": 1,
+      "weaponCode": 15,
+      "totalGames": 1777,
+      "items": [
+        {
+          "itemCode": 201537,
+          "games": 1,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 2,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202509,
+          "games": 2,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202525,
+          "games": 183,
+          "pickRate": 10.3
+        },
+        {
+          "itemCode": 203408,
+          "games": 60,
+          "pickRate": 3.4
+        },
+        {
+          "itemCode": 203513,
+          "games": 5,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 204509,
+          "games": 24,
+          "pickRate": 1.4
+        },
+        {
+          "itemCode": 204510,
+          "games": 47,
+          "pickRate": 2.6
+        },
+        {
+          "itemCode": 204511,
+          "games": 1,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 205407,
+          "games": 38,
+          "pickRate": 2.1
+        },
+        {
+          "itemCode": 701451,
+          "games": 1,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 5,
+          "pickRate": 0.3
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 38,
+          "pickRate": 2.1
+        }
+      ]
+    },
+    {
+      "characterCode": 1,
+      "weaponCode": 16,
+      "totalGames": 9858,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 13,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201537,
+          "games": 7,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 17,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 202509,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202525,
+          "games": 818,
+          "pickRate": 8.3
+        },
+        {
+          "itemCode": 203408,
+          "games": 7647,
+          "pickRate": 77.6
+        },
+        {
+          "itemCode": 203513,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204509,
+          "games": 119,
+          "pickRate": 1.2
+        },
+        {
+          "itemCode": 204510,
+          "games": 876,
+          "pickRate": 8.9
+        },
+        {
+          "itemCode": 205407,
+          "games": 12,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 701451,
+          "games": 14,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 1,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 43,
+          "pickRate": 0.4
+        }
+      ]
+    },
+    {
+      "characterCode": 1,
+      "weaponCode": 18,
+      "totalGames": 7399,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 123,
+          "pickRate": 1.7
+        },
+        {
+          "itemCode": 201537,
+          "games": 18,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 201701,
+          "games": 158,
+          "pickRate": 2.1
+        },
+        {
+          "itemCode": 202509,
+          "games": 151,
+          "pickRate": 2
+        },
+        {
+          "itemCode": 202525,
+          "games": 534,
+          "pickRate": 7.2
+        },
+        {
+          "itemCode": 203408,
+          "games": 5276,
+          "pickRate": 71.3
+        },
+        {
+          "itemCode": 203513,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 24,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 204509,
+          "games": 257,
+          "pickRate": 3.5
+        },
+        {
+          "itemCode": 204510,
+          "games": 292,
+          "pickRate": 3.9
+        },
+        {
+          "itemCode": 205407,
+          "games": 83,
+          "pickRate": 1.1
+        },
+        {
+          "itemCode": 701451,
+          "games": 337,
+          "pickRate": 4.6
+        },
+        {
+          "itemCode": 705607,
+          "games": 2,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 31,
+          "pickRate": 0.4
+        }
+      ]
+    },
+    {
+      "characterCode": 2,
+      "weaponCode": 9,
+      "totalGames": 8287,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 8,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 8,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 202,
+          "pickRate": 2.4
+        },
+        {
+          "itemCode": 204511,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205508,
+          "games": 7,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 7,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 2,
+      "weaponCode": 10,
+      "totalGames": 19329,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 559,
+          "pickRate": 2.9
+        },
+        {
+          "itemCode": 201701,
+          "games": 135,
+          "pickRate": 0.7
+        },
+        {
+          "itemCode": 202509,
+          "games": 192,
+          "pickRate": 1
+        },
+        {
+          "itemCode": 202525,
+          "games": 8,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 44,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204509,
+          "games": 1258,
+          "pickRate": 6.5
+        },
+        {
+          "itemCode": 204510,
+          "games": 2040,
+          "pickRate": 10.6
+        },
+        {
+          "itemCode": 205407,
+          "games": 33,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 701451,
+          "games": 3,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 4,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 2,
+      "weaponCode": 11,
+      "totalGames": 19670,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 19,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 15,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 36,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 203408,
+          "games": 5,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 12,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 205508,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 25,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 7,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7211301,
+          "games": 1,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 3,
+      "weaponCode": 16,
+      "totalGames": 2135,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 5,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 202511,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 134,
+          "pickRate": 6.3
+        },
+        {
+          "itemCode": 205508,
+          "games": 24,
+          "pickRate": 1.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 344,
+          "pickRate": 16.1
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 3,
+      "weaponCode": 19,
+      "totalGames": 7462,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 42,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 201701,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 150,
+          "pickRate": 2
+        },
+        {
+          "itemCode": 205508,
+          "games": 24,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 705619,
+          "games": 5634,
+          "pickRate": 75.5
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 3,
+      "weaponCode": 21,
+      "totalGames": 3187,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 14,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 204511,
+          "games": 20,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 205508,
+          "games": 17,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 705619,
+          "games": 190,
+          "pickRate": 6
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 4,
+      "weaponCode": 3,
+      "totalGames": 6685,
+      "items": [
+        {
+          "itemCode": 108505,
+          "games": 928,
+          "pickRate": 13.9
+        },
+        {
+          "itemCode": 201506,
+          "games": 148,
+          "pickRate": 2.2
+        },
+        {
+          "itemCode": 201507,
+          "games": 7,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201537,
+          "games": 9,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 26,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 202509,
+          "games": 286,
+          "pickRate": 4.3
+        },
+        {
+          "itemCode": 202525,
+          "games": 90,
+          "pickRate": 1.3
+        },
+        {
+          "itemCode": 203408,
+          "games": 140,
+          "pickRate": 2.1
+        },
+        {
+          "itemCode": 203513,
+          "games": 16,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 203516,
+          "games": 63,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 204509,
+          "games": 411,
+          "pickRate": 6.1
+        },
+        {
+          "itemCode": 204510,
+          "games": 206,
+          "pickRate": 3.1
+        },
+        {
+          "itemCode": 205407,
+          "games": 683,
+          "pickRate": 10.2
+        },
+        {
+          "itemCode": 701451,
+          "games": 4,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 20,
+          "pickRate": 0.3
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 1953,
+          "pickRate": 29.2
+        }
+      ]
+    },
+    {
+      "characterCode": 4,
+      "weaponCode": 13,
+      "totalGames": 16663,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 1647,
+          "pickRate": 9.9
+        },
+        {
+          "itemCode": 201537,
+          "games": 27,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 202511,
+          "games": 169,
+          "pickRate": 1
+        },
+        {
+          "itemCode": 203513,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 319,
+          "pickRate": 1.9
+        },
+        {
+          "itemCode": 204511,
+          "games": 42,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 705607,
+          "games": 35,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705619,
+          "games": 111,
+          "pickRate": 0.7
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 5,
+      "weaponCode": 5,
+      "totalGames": 5424,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 112,
+          "pickRate": 2.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 10,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 204511,
+          "games": 10,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 205508,
+          "games": 12,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705619,
+          "games": 59,
+          "pickRate": 1.1
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 5,
+      "weaponCode": 6,
+      "totalGames": 2055,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 34,
+          "pickRate": 1.7
+        },
+        {
+          "itemCode": 202511,
+          "games": 19,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 204511,
+          "games": 2,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 205508,
+          "games": 35,
+          "pickRate": 1.7
+        },
+        {
+          "itemCode": 705619,
+          "games": 60,
+          "pickRate": 2.9
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 6,
+      "weaponCode": 7,
+      "totalGames": 2859,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 13,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 201507,
+          "games": 4,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 41,
+          "pickRate": 1.4
+        },
+        {
+          "itemCode": 202511,
+          "games": 522,
+          "pickRate": 18.3
+        },
+        {
+          "itemCode": 203408,
+          "games": 12,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 204509,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 53,
+          "pickRate": 1.9
+        },
+        {
+          "itemCode": 705619,
+          "games": 1,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 874,
+          "pickRate": 30.6
+        },
+        {
+          "traitCode": 7211301,
+          "games": 5,
+          "pickRate": 0.2
+        }
+      ]
+    },
+    {
+      "characterCode": 6,
+      "weaponCode": 8,
+      "totalGames": 11114,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 9,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 10,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202509,
+          "games": 56,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 202525,
+          "games": 8157,
+          "pickRate": 73.4
+        },
+        {
+          "itemCode": 203408,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204509,
+          "games": 869,
+          "pickRate": 7.8
+        },
+        {
+          "itemCode": 204510,
+          "games": 1253,
+          "pickRate": 11.3
+        },
+        {
+          "itemCode": 205407,
+          "games": 3,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 45,
+          "pickRate": 0.4
+        }
+      ]
+    },
+    {
+      "characterCode": 7,
+      "weaponCode": 1,
+      "totalGames": 14024,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 11,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201537,
+          "games": 1039,
+          "pickRate": 7.4
+        },
+        {
+          "itemCode": 201701,
+          "games": 10,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202509,
+          "games": 16,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202525,
+          "games": 5,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 4618,
+          "pickRate": 32.9
+        },
+        {
+          "itemCode": 203513,
+          "games": 26,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 203516,
+          "games": 209,
+          "pickRate": 1.5
+        },
+        {
+          "itemCode": 204509,
+          "games": 123,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 204510,
+          "games": 24,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 205407,
+          "games": 25,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 701451,
+          "games": 2249,
+          "pickRate": 16
+        },
+        {
+          "itemCode": 705607,
+          "games": 175,
+          "pickRate": 1.2
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 278,
+          "pickRate": 2
+        },
+        {
+          "traitCode": 7211301,
+          "games": 2,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 7,
+      "weaponCode": 2,
+      "totalGames": 2987,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 86,
+          "pickRate": 2.9
+        },
+        {
+          "itemCode": 201537,
+          "games": 3,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 2,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 8,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 203516,
+          "games": 4,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 204511,
+          "games": 107,
+          "pickRate": 3.6
+        },
+        {
+          "itemCode": 205508,
+          "games": 11,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 705607,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 430,
+          "pickRate": 14.4
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 12,
+          "pickRate": 0.4
+        }
+      ]
+    },
+    {
+      "characterCode": 8,
+      "weaponCode": 22,
+      "totalGames": 10895,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 180,
+          "pickRate": 1.7
+        },
+        {
+          "itemCode": 201701,
+          "games": 506,
+          "pickRate": 4.6
+        },
+        {
+          "itemCode": 202509,
+          "games": 716,
+          "pickRate": 6.6
+        },
+        {
+          "itemCode": 202525,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 2043,
+          "pickRate": 18.8
+        },
+        {
+          "itemCode": 204509,
+          "games": 263,
+          "pickRate": 2.4
+        },
+        {
+          "itemCode": 204510,
+          "games": 805,
+          "pickRate": 7.4
+        },
+        {
+          "itemCode": 204511,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205407,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 701451,
+          "games": 4,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 63,
+          "pickRate": 0.6
+        }
+      ]
+    },
+    {
+      "characterCode": 9,
+      "weaponCode": 9,
+      "totalGames": 7092,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 982,
+          "pickRate": 13.8
+        },
+        {
+          "itemCode": 202511,
+          "games": 3885,
+          "pickRate": 54.8
+        },
+        {
+          "itemCode": 204511,
+          "games": 16,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 205508,
+          "games": 18,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 705607,
+          "games": 8,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 565,
+          "pickRate": 8
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7211301,
+          "games": 1924,
+          "pickRate": 27.1
+        }
+      ]
+    },
+    {
+      "characterCode": 9,
+      "weaponCode": 10,
+      "totalGames": 17588,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 222,
+          "pickRate": 1.3
+        },
+        {
+          "itemCode": 201537,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 47,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 202509,
+          "games": 127,
+          "pickRate": 0.7
+        },
+        {
+          "itemCode": 202525,
+          "games": 10,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203408,
+          "games": 1850,
+          "pickRate": 10.5
+        },
+        {
+          "itemCode": 203513,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204509,
+          "games": 6246,
+          "pickRate": 35.5
+        },
+        {
+          "itemCode": 204510,
+          "games": 1979,
+          "pickRate": 11.3
+        },
+        {
+          "itemCode": 205407,
+          "games": 16,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 24,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 10,
+      "weaponCode": 1,
+      "totalGames": 7398,
+      "items": [
+        {
+          "itemCode": 201537,
+          "games": 180,
+          "pickRate": 2.4
+        },
+        {
+          "itemCode": 201701,
+          "games": 13,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 202509,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202525,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 28,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 203513,
+          "games": 22,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 203516,
+          "games": 66,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 204509,
+          "games": 108,
+          "pickRate": 1.5
+        },
+        {
+          "itemCode": 204510,
+          "games": 196,
+          "pickRate": 2.6
+        },
+        {
+          "itemCode": 205407,
+          "games": 7,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 701451,
+          "games": 13,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705607,
+          "games": 40,
+          "pickRate": 0.5
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 57,
+          "pickRate": 0.8
+        },
+        {
+          "traitCode": 7211301,
+          "games": 23,
+          "pickRate": 0.3
+        }
+      ]
+    },
+    {
+      "characterCode": 10,
+      "weaponCode": 20,
+      "totalGames": 4943,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 33,
+          "pickRate": 0.7
+        },
+        {
+          "itemCode": 201537,
+          "games": 19,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 201701,
+          "games": 28,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 202509,
+          "games": 41,
+          "pickRate": 0.8
+        },
+        {
+          "itemCode": 202525,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 207,
+          "pickRate": 4.2
+        },
+        {
+          "itemCode": 203513,
+          "games": 3,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204509,
+          "games": 219,
+          "pickRate": 4.4
+        },
+        {
+          "itemCode": 204510,
+          "games": 165,
+          "pickRate": 3.3
+        },
+        {
+          "itemCode": 204511,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205407,
+          "games": 31,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 701451,
+          "games": 30,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 705607,
+          "games": 1,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 264,
+          "pickRate": 5.3
+        }
+      ]
+    },
+    {
+      "characterCode": 11,
+      "weaponCode": 16,
+      "totalGames": 20886,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 11,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201507,
+          "games": 25,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201537,
+          "games": 20,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202509,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202525,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 128,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 203513,
+          "games": 13,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203516,
+          "games": 460,
+          "pickRate": 2.2
+        },
+        {
+          "itemCode": 204509,
+          "games": 1900,
+          "pickRate": 9.1
+        },
+        {
+          "itemCode": 204510,
+          "games": 360,
+          "pickRate": 1.7
+        },
+        {
+          "itemCode": 205407,
+          "games": 1485,
+          "pickRate": 7.1
+        },
+        {
+          "itemCode": 701451,
+          "games": 1039,
+          "pickRate": 5
+        },
+        {
+          "itemCode": 705607,
+          "games": 108,
+          "pickRate": 0.5
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 63,
+          "pickRate": 0.3
+        },
+        {
+          "traitCode": 7211301,
+          "games": 2,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 11,
+      "weaponCode": 18,
+      "totalGames": 19000,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 13,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201537,
+          "games": 10,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 75,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 202509,
+          "games": 26,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203408,
+          "games": 3632,
+          "pickRate": 19.1
+        },
+        {
+          "itemCode": 203513,
+          "games": 108,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 203516,
+          "games": 25,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 204509,
+          "games": 289,
+          "pickRate": 1.5
+        },
+        {
+          "itemCode": 204510,
+          "games": 348,
+          "pickRate": 1.8
+        },
+        {
+          "itemCode": 205407,
+          "games": 436,
+          "pickRate": 2.3
+        },
+        {
+          "itemCode": 701451,
+          "games": 80,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 705607,
+          "games": 38,
+          "pickRate": 0.2
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 2803,
+          "pickRate": 14.8
+        }
+      ]
+    },
+    {
+      "characterCode": 12,
+      "weaponCode": 6,
+      "totalGames": 3150,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 4,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 418,
+          "pickRate": 13.3
+        },
+        {
+          "itemCode": 204511,
+          "games": 205,
+          "pickRate": 6.5
+        },
+        {
+          "itemCode": 205508,
+          "games": 17,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 705619,
+          "games": 25,
+          "pickRate": 0.8
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 12,
+      "weaponCode": 7,
+      "totalGames": 6105,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 83,
+          "pickRate": 1.4
+        },
+        {
+          "itemCode": 201701,
+          "games": 4,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 65,
+          "pickRate": 1.1
+        },
+        {
+          "itemCode": 204511,
+          "games": 273,
+          "pickRate": 4.5
+        },
+        {
+          "itemCode": 205508,
+          "games": 26,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 705619,
+          "games": 64,
+          "pickRate": 1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 34,
+          "pickRate": 0.6
+        }
+      ]
+    },
+    {
+      "characterCode": 13,
+      "weaponCode": 15,
+      "totalGames": 4204,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 586,
+          "pickRate": 13.9
+        },
+        {
+          "itemCode": 201537,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 14,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 203516,
+          "games": 61,
+          "pickRate": 1.5
+        },
+        {
+          "itemCode": 204511,
+          "games": 31,
+          "pickRate": 0.7
+        },
+        {
+          "itemCode": 205508,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 44,
+          "pickRate": 1
+        },
+        {
+          "itemCode": 705619,
+          "games": 290,
+          "pickRate": 6.9
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 17,
+          "pickRate": 0.4
+        }
+      ]
+    },
+    {
+      "characterCode": 13,
+      "weaponCode": 19,
+      "totalGames": 5627,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 1204,
+          "pickRate": 21.4
+        },
+        {
+          "itemCode": 201537,
+          "games": 4,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 13,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 203516,
+          "games": 63,
+          "pickRate": 1.1
+        },
+        {
+          "itemCode": 204511,
+          "games": 104,
+          "pickRate": 1.8
+        },
+        {
+          "itemCode": 205508,
+          "games": 3,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 8,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 269,
+          "pickRate": 4.8
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 33,
+          "pickRate": 0.6
+        }
+      ]
+    },
+    {
+      "characterCode": 14,
+      "weaponCode": 21,
+      "totalGames": 14236,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 325,
+          "pickRate": 2.3
+        },
+        {
+          "itemCode": 201701,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 11,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203516,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 1307,
+          "pickRate": 9.2
+        },
+        {
+          "itemCode": 205508,
+          "games": 319,
+          "pickRate": 2.2
+        },
+        {
+          "itemCode": 705619,
+          "games": 548,
+          "pickRate": 3.8
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 1,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 15,
+      "weaponCode": 5,
+      "totalGames": 7004,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 22,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 201701,
+          "games": 4,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 5309,
+          "pickRate": 75.8
+        },
+        {
+          "itemCode": 204511,
+          "games": 26,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 205508,
+          "games": 8,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 5,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 1,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 15,
+      "weaponCode": 6,
+      "totalGames": 11539,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 42,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 201701,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 8211,
+          "pickRate": 71.2
+        },
+        {
+          "itemCode": 204510,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 38,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 205508,
+          "games": 605,
+          "pickRate": 5.2
+        },
+        {
+          "itemCode": 705619,
+          "games": 69,
+          "pickRate": 0.6
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 8,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 16,
+      "weaponCode": 9,
+      "totalGames": 7567,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 1736,
+          "pickRate": 22.9
+        },
+        {
+          "itemCode": 201701,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 4,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 18,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 205508,
+          "games": 14,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705619,
+          "games": 297,
+          "pickRate": 3.9
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 10,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 17,
+      "weaponCode": 5,
+      "totalGames": 19223,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 114,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 201701,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 15926,
+          "pickRate": 82.8
+        },
+        {
+          "itemCode": 204511,
+          "games": 116,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 205407,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 77,
+          "pickRate": 0.4
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 25,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 18,
+      "weaponCode": 15,
+      "totalGames": 26927,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 31,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 10,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204510,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 295,
+          "pickRate": 1.1
+        },
+        {
+          "itemCode": 205508,
+          "games": 11,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 1978,
+          "pickRate": 7.3
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7211301,
+          "games": 1,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 19,
+      "weaponCode": 6,
+      "totalGames": 9308,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 84,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 201701,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 41,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 204511,
+          "games": 107,
+          "pickRate": 1.1
+        },
+        {
+          "itemCode": 205508,
+          "games": 698,
+          "pickRate": 7.5
+        },
+        {
+          "itemCode": 705619,
+          "games": 263,
+          "pickRate": 2.8
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7211301,
+          "games": 1,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 19,
+      "weaponCode": 24,
+      "totalGames": 3022,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 6,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 202511,
+          "games": 11,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 204511,
+          "games": 73,
+          "pickRate": 2.4
+        },
+        {
+          "itemCode": 205508,
+          "games": 26,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 705619,
+          "games": 12,
+          "pickRate": 0.4
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 20,
+      "weaponCode": 4,
+      "totalGames": 16622,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 1032,
+          "pickRate": 6.2
+        },
+        {
+          "itemCode": 201537,
+          "games": 12,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203513,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 843,
+          "pickRate": 5.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 36,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705619,
+          "games": 116,
+          "pickRate": 0.7
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 1336,
+          "pickRate": 8
+        }
+      ]
+    },
+    {
+      "characterCode": 21,
+      "weaponCode": 9,
+      "totalGames": 15949,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 77,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 201537,
+          "games": 53,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 201701,
+          "games": 8,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202509,
+          "games": 210,
+          "pickRate": 1.3
+        },
+        {
+          "itemCode": 202525,
+          "games": 82,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 203408,
+          "games": 53,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 203513,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204509,
+          "games": 266,
+          "pickRate": 1.7
+        },
+        {
+          "itemCode": 204510,
+          "games": 149,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 205407,
+          "games": 8,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 701451,
+          "games": 213,
+          "pickRate": 1.3
+        },
+        {
+          "itemCode": 705607,
+          "games": 20,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 2,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 22,
+      "weaponCode": 3,
+      "totalGames": 25465,
+      "items": [
+        {
+          "itemCode": 108505,
+          "games": 10521,
+          "pickRate": 41.3
+        },
+        {
+          "itemCode": 201506,
+          "games": 30,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201537,
+          "games": 3181,
+          "pickRate": 12.5
+        },
+        {
+          "itemCode": 201701,
+          "games": 13,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202509,
+          "games": 577,
+          "pickRate": 2.3
+        },
+        {
+          "itemCode": 202525,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 369,
+          "pickRate": 1.4
+        },
+        {
+          "itemCode": 203513,
+          "games": 1999,
+          "pickRate": 7.8
+        },
+        {
+          "itemCode": 203516,
+          "games": 501,
+          "pickRate": 2
+        },
+        {
+          "itemCode": 204509,
+          "games": 1156,
+          "pickRate": 4.5
+        },
+        {
+          "itemCode": 204510,
+          "games": 207,
+          "pickRate": 0.8
+        },
+        {
+          "itemCode": 205407,
+          "games": 127,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 701451,
+          "games": 1951,
+          "pickRate": 7.7
+        },
+        {
+          "itemCode": 705607,
+          "games": 1561,
+          "pickRate": 6.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 1,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 186,
+          "pickRate": 0.7
+        },
+        {
+          "traitCode": 7211301,
+          "games": 43,
+          "pickRate": 0.2
+        }
+      ]
+    },
+    {
+      "characterCode": 23,
+      "weaponCode": 15,
+      "totalGames": 6036,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 145,
+          "pickRate": 2.4
+        },
+        {
+          "itemCode": 201701,
+          "games": 247,
+          "pickRate": 4.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 926,
+          "pickRate": 15.3
+        },
+        {
+          "itemCode": 204511,
+          "games": 336,
+          "pickRate": 5.6
+        },
+        {
+          "itemCode": 205508,
+          "games": 14,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705619,
+          "games": 105,
+          "pickRate": 1.7
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 2981,
+          "pickRate": 49.4
+        }
+      ]
+    },
+    {
+      "characterCode": 23,
+      "weaponCode": 18,
+      "totalGames": 10895,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 354,
+          "pickRate": 3.2
+        },
+        {
+          "itemCode": 201537,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 5,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 134,
+          "pickRate": 1.2
+        },
+        {
+          "itemCode": 205508,
+          "games": 6,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 701451,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 903,
+          "pickRate": 8.3
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 6,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 24,
+      "weaponCode": 3,
+      "totalGames": 7177,
+      "items": [
+        {
+          "itemCode": 201701,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 10,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 204511,
+          "games": 14,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705619,
+          "games": 2,
+          "pickRate": 0
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 24,
+      "weaponCode": 21,
+      "totalGames": 3052,
+      "items": [
+        {
+          "itemCode": 201701,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 46,
+          "pickRate": 1.5
+        },
+        {
+          "itemCode": 204511,
+          "games": 10,
+          "pickRate": 0.3
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 25,
+      "weaponCode": 11,
+      "totalGames": 14594,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 1711,
+          "pickRate": 11.7
+        },
+        {
+          "itemCode": 201537,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 479,
+          "pickRate": 3.3
+        },
+        {
+          "itemCode": 202509,
+          "games": 469,
+          "pickRate": 3.2
+        },
+        {
+          "itemCode": 202525,
+          "games": 73,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 203408,
+          "games": 6,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203513,
+          "games": 16,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204509,
+          "games": 248,
+          "pickRate": 1.7
+        },
+        {
+          "itemCode": 204510,
+          "games": 553,
+          "pickRate": 3.8
+        },
+        {
+          "itemCode": 205407,
+          "games": 45,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 701451,
+          "games": 9,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 2,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 5,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 26,
+      "weaponCode": 9,
+      "totalGames": 14556,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 1312,
+          "pickRate": 9
+        },
+        {
+          "itemCode": 201701,
+          "games": 9,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 230,
+          "pickRate": 1.6
+        },
+        {
+          "itemCode": 204511,
+          "games": 1139,
+          "pickRate": 7.8
+        },
+        {
+          "itemCode": 205508,
+          "games": 189,
+          "pickRate": 1.3
+        },
+        {
+          "itemCode": 705619,
+          "games": 821,
+          "pickRate": 5.6
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 11,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 27,
+      "weaponCode": 2,
+      "totalGames": 2555,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 14,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 201507,
+          "games": 73,
+          "pickRate": 2.9
+        },
+        {
+          "itemCode": 201537,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 5,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 202509,
+          "games": 149,
+          "pickRate": 5.8
+        },
+        {
+          "itemCode": 202525,
+          "games": 19,
+          "pickRate": 0.7
+        },
+        {
+          "itemCode": 203408,
+          "games": 24,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 203513,
+          "games": 2065,
+          "pickRate": 80.8
+        },
+        {
+          "itemCode": 204509,
+          "games": 42,
+          "pickRate": 1.6
+        },
+        {
+          "itemCode": 204510,
+          "games": 27,
+          "pickRate": 1.1
+        },
+        {
+          "itemCode": 205407,
+          "games": 4,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 701451,
+          "games": 12,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 705607,
+          "games": 1,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 2,
+          "pickRate": 0.1
+        },
+        {
+          "traitCode": 7211301,
+          "games": 6,
+          "pickRate": 0.2
+        }
+      ]
+    },
+    {
+      "characterCode": 27,
+      "weaponCode": 6,
+      "totalGames": 2048,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 13,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 201507,
+          "games": 52,
+          "pickRate": 2.5
+        },
+        {
+          "itemCode": 201537,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202509,
+          "games": 191,
+          "pickRate": 9.3
+        },
+        {
+          "itemCode": 202525,
+          "games": 20,
+          "pickRate": 1
+        },
+        {
+          "itemCode": 203408,
+          "games": 24,
+          "pickRate": 1.2
+        },
+        {
+          "itemCode": 203513,
+          "games": 1567,
+          "pickRate": 76.5
+        },
+        {
+          "itemCode": 204509,
+          "games": 47,
+          "pickRate": 2.3
+        },
+        {
+          "itemCode": 204510,
+          "games": 33,
+          "pickRate": 1.6
+        },
+        {
+          "itemCode": 205407,
+          "games": 2,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 701451,
+          "games": 5,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705607,
+          "games": 2,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 5,
+          "pickRate": 0.2
+        }
+      ]
+    },
+    {
+      "characterCode": 27,
+      "weaponCode": 9,
+      "totalGames": 4894,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 26,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 201507,
+          "games": 116,
+          "pickRate": 2.4
+        },
+        {
+          "itemCode": 201537,
+          "games": 4,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 10,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 202509,
+          "games": 533,
+          "pickRate": 10.9
+        },
+        {
+          "itemCode": 202525,
+          "games": 30,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 203408,
+          "games": 99,
+          "pickRate": 2
+        },
+        {
+          "itemCode": 203513,
+          "games": 3668,
+          "pickRate": 74.9
+        },
+        {
+          "itemCode": 204509,
+          "games": 137,
+          "pickRate": 2.8
+        },
+        {
+          "itemCode": 204510,
+          "games": 92,
+          "pickRate": 1.9
+        },
+        {
+          "itemCode": 205407,
+          "games": 3,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 701451,
+          "games": 19,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 705607,
+          "games": 2,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 8,
+          "pickRate": 0.2
+        },
+        {
+          "traitCode": 7211301,
+          "games": 22,
+          "pickRate": 0.4
+        }
+      ]
+    },
+    {
+      "characterCode": 27,
+      "weaponCode": 16,
+      "totalGames": 4611,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 10,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 201507,
+          "games": 110,
+          "pickRate": 2.4
+        },
+        {
+          "itemCode": 201537,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 9,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 202509,
+          "games": 365,
+          "pickRate": 7.9
+        },
+        {
+          "itemCode": 202525,
+          "games": 42,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 203408,
+          "games": 46,
+          "pickRate": 1
+        },
+        {
+          "itemCode": 203513,
+          "games": 3666,
+          "pickRate": 79.5
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204509,
+          "games": 91,
+          "pickRate": 2
+        },
+        {
+          "itemCode": 204510,
+          "games": 79,
+          "pickRate": 1.7
+        },
+        {
+          "itemCode": 205407,
+          "games": 6,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 701451,
+          "games": 8,
+          "pickRate": 0.2
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7211301,
+          "games": 9,
+          "pickRate": 0.2
+        }
+      ]
+    },
+    {
+      "characterCode": 28,
+      "weaponCode": 3,
+      "totalGames": 17754,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 30,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 201537,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 7,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204510,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 18,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 205508,
+          "games": 56,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 705619,
+          "games": 9631,
+          "pickRate": 54.2
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 1,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 28,
+      "weaponCode": 13,
+      "totalGames": 1425,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 4,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 202511,
+          "games": 2,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 204511,
+          "games": 3,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 205508,
+          "games": 6,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 705619,
+          "games": 865,
+          "pickRate": 60.7
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 34,
+          "pickRate": 2.4
+        },
+        {
+          "traitCode": 7211301,
+          "games": 1,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 29,
+      "weaponCode": 1,
+      "totalGames": 20386,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 50,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 201537,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 209,
+          "pickRate": 1
+        },
+        {
+          "itemCode": 202511,
+          "games": 12,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203408,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204510,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 10,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205407,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 304,
+          "pickRate": 1.5
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 7958,
+          "pickRate": 39
+        }
+      ]
+    },
+    {
+      "characterCode": 29,
+      "weaponCode": 2,
+      "totalGames": 1424,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 290,
+          "pickRate": 20.4
+        },
+        {
+          "itemCode": 201537,
+          "games": 2,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 1,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202509,
+          "games": 1,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 431,
+          "pickRate": 30.3
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 204511,
+          "games": 9,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 205508,
+          "games": 4,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 705607,
+          "games": 3,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705619,
+          "games": 67,
+          "pickRate": 4.7
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 5,
+          "pickRate": 0.4
+        },
+        {
+          "traitCode": 7211301,
+          "games": 253,
+          "pickRate": 17.8
+        }
+      ]
+    },
+    {
+      "characterCode": 30,
+      "weaponCode": 13,
+      "totalGames": 11560,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201537,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 370,
+          "pickRate": 3.2
+        },
+        {
+          "itemCode": 204509,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 13,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7211301,
+          "games": 3,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 31,
+      "weaponCode": 7,
+      "totalGames": 38830,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 639,
+          "pickRate": 1.6
+        },
+        {
+          "itemCode": 201701,
+          "games": 82,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 202509,
+          "games": 10397,
+          "pickRate": 26.8
+        },
+        {
+          "itemCode": 202525,
+          "games": 5,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 10,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203513,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204509,
+          "games": 1337,
+          "pickRate": 3.4
+        },
+        {
+          "itemCode": 204510,
+          "games": 1353,
+          "pickRate": 3.5
+        },
+        {
+          "itemCode": 204511,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205407,
+          "games": 9,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 701451,
+          "games": 1,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 1,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 32,
+      "weaponCode": 5,
+      "totalGames": 12338,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 47,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 201701,
+          "games": 9,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202509,
+          "games": 733,
+          "pickRate": 5.9
+        },
+        {
+          "itemCode": 202525,
+          "games": 407,
+          "pickRate": 3.3
+        },
+        {
+          "itemCode": 203408,
+          "games": 30,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 204509,
+          "games": 223,
+          "pickRate": 1.8
+        },
+        {
+          "itemCode": 204510,
+          "games": 304,
+          "pickRate": 2.5
+        },
+        {
+          "itemCode": 205407,
+          "games": 294,
+          "pickRate": 2.4
+        },
+        {
+          "itemCode": 701451,
+          "games": 1,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 1,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 33,
+      "weaponCode": 1,
+      "totalGames": 31337,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 336,
+          "pickRate": 1.1
+        },
+        {
+          "itemCode": 201537,
+          "games": 15,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 39,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202509,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 33,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202525,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 64,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 204509,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204510,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 16,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 701451,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 14,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 20715,
+          "pickRate": 66.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 7,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7211301,
+          "games": 16,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 34,
+      "weaponCode": 23,
+      "totalGames": 9888,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 1322,
+          "pickRate": 13.4
+        },
+        {
+          "itemCode": 201701,
+          "games": 8,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 76,
+          "pickRate": 0.8
+        },
+        {
+          "itemCode": 204511,
+          "games": 7,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 205508,
+          "games": 413,
+          "pickRate": 4.2
+        },
+        {
+          "itemCode": 705619,
+          "games": 3941,
+          "pickRate": 39.9
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 7,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 35,
+      "weaponCode": 1,
+      "totalGames": 3928,
+      "items": [
+        {
+          "itemCode": 201537,
+          "games": 11,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 201701,
+          "games": 8,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 202509,
+          "games": 5,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202525,
+          "games": 28,
+          "pickRate": 0.7
+        },
+        {
+          "itemCode": 203408,
+          "games": 34,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 203513,
+          "games": 68,
+          "pickRate": 1.7
+        },
+        {
+          "itemCode": 203516,
+          "games": 5,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 204509,
+          "games": 93,
+          "pickRate": 2.4
+        },
+        {
+          "itemCode": 204510,
+          "games": 72,
+          "pickRate": 1.8
+        },
+        {
+          "itemCode": 205407,
+          "games": 12,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 701451,
+          "games": 148,
+          "pickRate": 3.8
+        },
+        {
+          "itemCode": 705607,
+          "games": 17,
+          "pickRate": 0.4
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 1,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 35,
+      "weaponCode": 2,
+      "totalGames": 11242,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 27,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 203516,
+          "games": 29,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 204510,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 34,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 205508,
+          "games": 5,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 6,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 187,
+          "pickRate": 1.7
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 36,
+      "weaponCode": 5,
+      "totalGames": 13260,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 114,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 201701,
+          "games": 7,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 2246,
+          "pickRate": 16.9
+        },
+        {
+          "itemCode": 204510,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 65,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 205508,
+          "games": 3221,
+          "pickRate": 24.3
+        },
+        {
+          "itemCode": 705619,
+          "games": 121,
+          "pickRate": 0.9
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 39,
+          "pickRate": 0.3
+        }
+      ]
+    },
+    {
+      "characterCode": 37,
+      "weaponCode": 15,
+      "totalGames": 10345,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201537,
+          "games": 25,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 201701,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202509,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202525,
+          "games": 5,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 43,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 203513,
+          "games": 45,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 204509,
+          "games": 67,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 204510,
+          "games": 312,
+          "pickRate": 3
+        },
+        {
+          "itemCode": 205407,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 701451,
+          "games": 6,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 6,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 214,
+          "pickRate": 2.1
+        },
+        {
+          "traitCode": 7211301,
+          "games": 2,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 38,
+      "weaponCode": 9,
+      "totalGames": 8081,
+      "items": [
+        {
+          "itemCode": 201701,
+          "games": 177,
+          "pickRate": 2.2
+        },
+        {
+          "itemCode": 202511,
+          "games": 34,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 204509,
+          "games": 17,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 204511,
+          "games": 1,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 31,
+          "pickRate": 0.4
+        }
+      ]
+    },
+    {
+      "characterCode": 39,
+      "weaponCode": 18,
+      "totalGames": 11455,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 41,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 201537,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 27,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 202509,
+          "games": 167,
+          "pickRate": 1.5
+        },
+        {
+          "itemCode": 202525,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 7,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203513,
+          "games": 11,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203516,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204509,
+          "games": 3196,
+          "pickRate": 27.9
+        },
+        {
+          "itemCode": 204510,
+          "games": 1264,
+          "pickRate": 11
+        },
+        {
+          "itemCode": 205407,
+          "games": 15,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 1,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 1,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 39,
+      "weaponCode": 21,
+      "totalGames": 6283,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 5,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201537,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 17,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 202509,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 9,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203513,
+          "games": 6,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203516,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204509,
+          "games": 975,
+          "pickRate": 15.5
+        },
+        {
+          "itemCode": 204510,
+          "games": 267,
+          "pickRate": 4.2
+        },
+        {
+          "itemCode": 204511,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205407,
+          "games": 111,
+          "pickRate": 1.8
+        },
+        {
+          "itemCode": 701451,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 1,
+          "pickRate": 0
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 40,
+      "weaponCode": 6,
+      "totalGames": 10677,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 1359,
+          "pickRate": 12.7
+        },
+        {
+          "itemCode": 201701,
+          "games": 449,
+          "pickRate": 4.2
+        },
+        {
+          "itemCode": 202509,
+          "games": 1449,
+          "pickRate": 13.6
+        },
+        {
+          "itemCode": 202525,
+          "games": 554,
+          "pickRate": 5.2
+        },
+        {
+          "itemCode": 203408,
+          "games": 91,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 203513,
+          "games": 12,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 204509,
+          "games": 643,
+          "pickRate": 6
+        },
+        {
+          "itemCode": 204510,
+          "games": 1024,
+          "pickRate": 9.6
+        },
+        {
+          "itemCode": 205407,
+          "games": 90,
+          "pickRate": 0.8
+        },
+        {
+          "itemCode": 701451,
+          "games": 43,
+          "pickRate": 0.4
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 100,
+          "pickRate": 0.9
+        }
+      ]
+    },
+    {
+      "characterCode": 41,
+      "weaponCode": 24,
+      "totalGames": 1786,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 4,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 202511,
+          "games": 11,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 705619,
+          "games": 19,
+          "pickRate": 1.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 43,
+          "pickRate": 2.4
+        }
+      ]
+    },
+    {
+      "characterCode": 42,
+      "weaponCode": 24,
+      "totalGames": 14933,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 1040,
+          "pickRate": 7
+        },
+        {
+          "itemCode": 202511,
+          "games": 95,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 203408,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 1821,
+          "pickRate": 12.2
+        },
+        {
+          "itemCode": 205508,
+          "games": 9,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 701451,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 3446,
+          "pickRate": 23.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 5,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 43,
+      "weaponCode": 5,
+      "totalGames": 12925,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 17,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 6968,
+          "pickRate": 53.9
+        },
+        {
+          "itemCode": 204511,
+          "games": 53,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 205508,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 20,
+          "pickRate": 0.2
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 16,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 44,
+      "weaponCode": 25,
+      "totalGames": 11538,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 11,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201537,
+          "games": 4549,
+          "pickRate": 39.4
+        },
+        {
+          "itemCode": 202509,
+          "games": 10,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202525,
+          "games": 827,
+          "pickRate": 7.2
+        },
+        {
+          "itemCode": 203408,
+          "games": 43,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 203513,
+          "games": 26,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 203516,
+          "games": 390,
+          "pickRate": 3.4
+        },
+        {
+          "itemCode": 204509,
+          "games": 190,
+          "pickRate": 1.6
+        },
+        {
+          "itemCode": 204510,
+          "games": 150,
+          "pickRate": 1.3
+        },
+        {
+          "itemCode": 205407,
+          "games": 72,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 701451,
+          "games": 85,
+          "pickRate": 0.7
+        },
+        {
+          "itemCode": 705607,
+          "games": 3225,
+          "pickRate": 28
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 679,
+          "pickRate": 5.9
+        }
+      ]
+    },
+    {
+      "characterCode": 45,
+      "weaponCode": 4,
+      "totalGames": 4756,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 4,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201537,
+          "games": 253,
+          "pickRate": 5.3
+        },
+        {
+          "itemCode": 203408,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 201,
+          "pickRate": 4.2
+        },
+        {
+          "itemCode": 701451,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 714,
+          "pickRate": 15
+        },
+        {
+          "itemCode": 705619,
+          "games": 1,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 55,
+          "pickRate": 1.2
+        }
+      ]
+    },
+    {
+      "characterCode": 46,
+      "weaponCode": 16,
+      "totalGames": 16491,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 70,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 201537,
+          "games": 15,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 12,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202509,
+          "games": 33,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 202525,
+          "games": 421,
+          "pickRate": 2.6
+        },
+        {
+          "itemCode": 203408,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203513,
+          "games": 403,
+          "pickRate": 2.4
+        },
+        {
+          "itemCode": 203516,
+          "games": 10,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 204509,
+          "games": 6,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204510,
+          "games": 10,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 205407,
+          "games": 3542,
+          "pickRate": 21.5
+        },
+        {
+          "itemCode": 701451,
+          "games": 41,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705607,
+          "games": 5,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 7,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7211301,
+          "games": 1,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 47,
+      "weaponCode": 4,
+      "totalGames": 9310,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 22,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 201537,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 7,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203408,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 206,
+          "pickRate": 2.2
+        },
+        {
+          "itemCode": 705619,
+          "games": 50,
+          "pickRate": 0.5
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 48,
+      "weaponCode": 3,
+      "totalGames": 13393,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 291,
+          "pickRate": 2.2
+        },
+        {
+          "itemCode": 202511,
+          "games": 5709,
+          "pickRate": 42.6
+        },
+        {
+          "itemCode": 204511,
+          "games": 23,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 205508,
+          "games": 7,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 2144,
+          "pickRate": 16
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 2,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 49,
+      "weaponCode": 19,
+      "totalGames": 12448,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 88,
+          "pickRate": 0.7
+        },
+        {
+          "itemCode": 201537,
+          "games": 922,
+          "pickRate": 7.4
+        },
+        {
+          "itemCode": 201701,
+          "games": 138,
+          "pickRate": 1.1
+        },
+        {
+          "itemCode": 202509,
+          "games": 326,
+          "pickRate": 2.6
+        },
+        {
+          "itemCode": 202525,
+          "games": 73,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 203408,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 87,
+          "pickRate": 0.7
+        },
+        {
+          "itemCode": 204509,
+          "games": 3056,
+          "pickRate": 24.6
+        },
+        {
+          "itemCode": 204510,
+          "games": 646,
+          "pickRate": 5.2
+        },
+        {
+          "itemCode": 205407,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 701451,
+          "games": 493,
+          "pickRate": 4
+        },
+        {
+          "itemCode": 705607,
+          "games": 2,
+          "pickRate": 0
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 50,
+      "weaponCode": 21,
+      "totalGames": 7922,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 298,
+          "pickRate": 3.8
+        },
+        {
+          "itemCode": 201537,
+          "games": 6,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203516,
+          "games": 258,
+          "pickRate": 3.3
+        },
+        {
+          "itemCode": 705607,
+          "games": 8,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 26,
+          "pickRate": 0.3
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 1,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 51,
+      "weaponCode": 22,
+      "totalGames": 5261,
+      "items": [
+        {
+          "itemCode": 202511,
+          "games": 527,
+          "pickRate": 10
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205508,
+          "games": 164,
+          "pickRate": 3.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 1086,
+          "pickRate": 20.6
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 29,
+          "pickRate": 0.6
+        }
+      ]
+    },
+    {
+      "characterCode": 52,
+      "weaponCode": 24,
+      "totalGames": 9641,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 290,
+          "pickRate": 3
+        },
+        {
+          "itemCode": 201701,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 4404,
+          "pickRate": 45.7
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 5,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 205508,
+          "games": 4648,
+          "pickRate": 48.2
+        },
+        {
+          "itemCode": 705619,
+          "games": 98,
+          "pickRate": 1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7211301,
+          "games": 7,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 53,
+      "weaponCode": 13,
+      "totalGames": 2666,
+      "items": [
+        {
+          "itemCode": 201537,
+          "games": 1156,
+          "pickRate": 43.4
+        },
+        {
+          "itemCode": 202525,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 11,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 203513,
+          "games": 2,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203516,
+          "games": 168,
+          "pickRate": 6.3
+        },
+        {
+          "itemCode": 204509,
+          "games": 7,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 701451,
+          "games": 9,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 705607,
+          "games": 1214,
+          "pickRate": 45.5
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 22,
+          "pickRate": 0.8
+        }
+      ]
+    },
+    {
+      "characterCode": 53,
+      "weaponCode": 14,
+      "totalGames": 17527,
+      "items": [
+        {
+          "itemCode": 105407,
+          "games": 254,
+          "pickRate": 1.4
+        },
+        {
+          "itemCode": 201537,
+          "games": 13949,
+          "pickRate": 79.6
+        },
+        {
+          "itemCode": 203408,
+          "games": 11,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203513,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 1102,
+          "pickRate": 6.3
+        },
+        {
+          "itemCode": 204509,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 701451,
+          "games": 31,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705607,
+          "games": 9357,
+          "pickRate": 53.4
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 8,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 54,
+      "weaponCode": 8,
+      "totalGames": 9779,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 6,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201507,
+          "games": 6,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 440,
+          "pickRate": 4.5
+        },
+        {
+          "itemCode": 202509,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204509,
+          "games": 5088,
+          "pickRate": 52
+        },
+        {
+          "itemCode": 204510,
+          "games": 930,
+          "pickRate": 9.5
+        },
+        {
+          "itemCode": 204511,
+          "games": 2,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 2554,
+          "pickRate": 26.1
+        }
+      ]
+    },
+    {
+      "characterCode": 55,
+      "weaponCode": 14,
+      "totalGames": 16411,
+      "items": [
+        {
+          "itemCode": 105407,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201507,
+          "games": 7744,
+          "pickRate": 47.2
+        },
+        {
+          "itemCode": 201537,
+          "games": 5,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202525,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 206,
+          "pickRate": 1.3
+        },
+        {
+          "itemCode": 204511,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205508,
+          "games": 6,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 54,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 705619,
+          "games": 1439,
+          "pickRate": 8.8
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 82,
+          "pickRate": 0.5
+        }
+      ]
+    },
+    {
+      "characterCode": 56,
+      "weaponCode": 20,
+      "totalGames": 10429,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 192,
+          "pickRate": 1.8
+        },
+        {
+          "itemCode": 201537,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 8,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 205508,
+          "games": 490,
+          "pickRate": 4.7
+        },
+        {
+          "itemCode": 705607,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 6886,
+          "pickRate": 66
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 6,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 57,
+      "weaponCode": 23,
+      "totalGames": 3547,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201507,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 130,
+          "pickRate": 3.7
+        },
+        {
+          "itemCode": 202525,
+          "games": 517,
+          "pickRate": 14.6
+        },
+        {
+          "itemCode": 203513,
+          "games": 8,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204509,
+          "games": 82,
+          "pickRate": 2.3
+        },
+        {
+          "itemCode": 204510,
+          "games": 328,
+          "pickRate": 9.2
+        },
+        {
+          "itemCode": 205407,
+          "games": 3,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 3521,
+          "pickRate": 99.3
+        },
+        {
+          "traitCode": 7211301,
+          "games": 3,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 58,
+      "weaponCode": 10,
+      "totalGames": 26855,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 226,
+          "pickRate": 0.8
+        },
+        {
+          "itemCode": 201701,
+          "games": 12,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 10089,
+          "pickRate": 37.6
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 321,
+          "pickRate": 1.2
+        },
+        {
+          "itemCode": 205508,
+          "games": 21,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 328,
+          "pickRate": 1.2
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 1,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 59,
+      "weaponCode": 2,
+      "totalGames": 17061,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 335,
+          "pickRate": 2
+        },
+        {
+          "itemCode": 201537,
+          "games": 38,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 201701,
+          "games": 10,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202509,
+          "games": 5562,
+          "pickRate": 32.6
+        },
+        {
+          "itemCode": 202525,
+          "games": 15,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203408,
+          "games": 831,
+          "pickRate": 4.9
+        },
+        {
+          "itemCode": 203513,
+          "games": 756,
+          "pickRate": 4.4
+        },
+        {
+          "itemCode": 203516,
+          "games": 33,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 204509,
+          "games": 13,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 204510,
+          "games": 7,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205407,
+          "games": 89,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 701451,
+          "games": 147,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 705607,
+          "games": 37,
+          "pickRate": 0.2
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 9,
+          "pickRate": 0.1
+        },
+        {
+          "traitCode": 7211301,
+          "games": 4,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 60,
+      "weaponCode": 6,
+      "totalGames": 4635,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 31,
+          "pickRate": 0.7
+        },
+        {
+          "itemCode": 201701,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 3,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 204511,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205508,
+          "games": 6,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 660,
+          "pickRate": 14.2
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 61,
+      "weaponCode": 5,
+      "totalGames": 10904,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 328,
+          "pickRate": 3
+        },
+        {
+          "itemCode": 201701,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 370,
+          "pickRate": 3.4
+        },
+        {
+          "itemCode": 204511,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205508,
+          "games": 18,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705607,
+          "games": 28,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 705619,
+          "games": 558,
+          "pickRate": 5.1
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 62,
+      "weaponCode": 11,
+      "totalGames": 9384,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 9,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 648,
+          "pickRate": 6.9
+        },
+        {
+          "itemCode": 202511,
+          "games": 42,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 203408,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 7,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 63,
+      "weaponCode": 15,
+      "totalGames": 8755,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 179,
+          "pickRate": 2
+        },
+        {
+          "itemCode": 201537,
+          "games": 26,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 201701,
+          "games": 780,
+          "pickRate": 8.9
+        },
+        {
+          "itemCode": 202509,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202525,
+          "games": 91,
+          "pickRate": 1
+        },
+        {
+          "itemCode": 203408,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203513,
+          "games": 277,
+          "pickRate": 3.2
+        },
+        {
+          "itemCode": 203516,
+          "games": 8,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 204510,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205407,
+          "games": 80,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 701451,
+          "games": 5,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 3,
+          "pickRate": 0
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 64,
+      "weaponCode": 24,
+      "totalGames": 16874,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 2982,
+          "pickRate": 17.7
+        },
+        {
+          "itemCode": 201701,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 279,
+          "pickRate": 1.7
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 11,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 205508,
+          "games": 540,
+          "pickRate": 3.2
+        },
+        {
+          "itemCode": 705619,
+          "games": 2190,
+          "pickRate": 13
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 65,
+      "weaponCode": 16,
+      "totalGames": 44864,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 344,
+          "pickRate": 0.8
+        },
+        {
+          "itemCode": 201537,
+          "games": 376,
+          "pickRate": 0.8
+        },
+        {
+          "itemCode": 201701,
+          "games": 34,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202509,
+          "games": 68,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 202525,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 7,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203513,
+          "games": 1598,
+          "pickRate": 3.6
+        },
+        {
+          "itemCode": 203516,
+          "games": 366,
+          "pickRate": 0.8
+        },
+        {
+          "itemCode": 204509,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204510,
+          "games": 17,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205407,
+          "games": 227,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 701451,
+          "games": 495,
+          "pickRate": 1.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 595,
+          "pickRate": 1.3
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7211301,
+          "games": 14,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 66,
+      "weaponCode": 24,
+      "totalGames": 9467,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 215,
+          "pickRate": 2.3
+        },
+        {
+          "itemCode": 202511,
+          "games": 2563,
+          "pickRate": 27.1
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204509,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 79,
+          "pickRate": 0.8
+        },
+        {
+          "itemCode": 205508,
+          "games": 881,
+          "pickRate": 9.3
+        },
+        {
+          "itemCode": 705619,
+          "games": 194,
+          "pickRate": 2
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 1902,
+          "pickRate": 20.1
+        }
+      ]
+    },
+    {
+      "characterCode": 67,
+      "weaponCode": 14,
+      "totalGames": 27918,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 139,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 201537,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 11,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 17,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202525,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 14,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 204511,
+          "games": 17,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 205508,
+          "games": 91,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 705607,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 305,
+          "pickRate": 1.1
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 68,
+      "weaponCode": 1,
+      "totalGames": 12376,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 58,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 201537,
+          "games": 68,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 203408,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203513,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 252,
+          "pickRate": 2
+        },
+        {
+          "itemCode": 701451,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 109,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 705619,
+          "games": 18,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 41,
+          "pickRate": 0.3
+        }
+      ]
+    },
+    {
+      "characterCode": 69,
+      "weaponCode": 9,
+      "totalGames": 7349,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 35,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 201701,
+          "games": 4,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202509,
+          "games": 5,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 17,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 202525,
+          "games": 5,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203408,
+          "games": 7,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203513,
+          "games": 19,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 203516,
+          "games": 18,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 204509,
+          "games": 7,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 204510,
+          "games": 7,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 205508,
+          "games": 5,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 701451,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 30,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 705619,
+          "games": 212,
+          "pickRate": 2.9
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7211301,
+          "games": 197,
+          "pickRate": 2.7
+        }
+      ]
+    },
+    {
+      "characterCode": 70,
+      "weaponCode": 6,
+      "totalGames": 19786,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 300,
+          "pickRate": 1.5
+        },
+        {
+          "itemCode": 201537,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 53,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 202509,
+          "games": 1380,
+          "pickRate": 7
+        },
+        {
+          "itemCode": 202525,
+          "games": 10327,
+          "pickRate": 52.2
+        },
+        {
+          "itemCode": 203408,
+          "games": 260,
+          "pickRate": 1.3
+        },
+        {
+          "itemCode": 204509,
+          "games": 709,
+          "pickRate": 3.6
+        },
+        {
+          "itemCode": 204510,
+          "games": 2280,
+          "pickRate": 11.5
+        },
+        {
+          "itemCode": 205407,
+          "games": 72,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 701451,
+          "games": 5,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 1,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 20,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 71,
+      "weaponCode": 14,
+      "totalGames": 31880,
+      "items": [
+        {
+          "itemCode": 105407,
+          "games": 10867,
+          "pickRate": 34.1
+        },
+        {
+          "itemCode": 201506,
+          "games": 6,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201537,
+          "games": 47,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 6,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202509,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202525,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 15269,
+          "pickRate": 47.9
+        },
+        {
+          "itemCode": 203513,
+          "games": 89,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 203516,
+          "games": 144,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 204509,
+          "games": 5,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204510,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205407,
+          "games": 31,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 701451,
+          "games": 416,
+          "pickRate": 1.3
+        },
+        {
+          "itemCode": 705607,
+          "games": 63,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 705619,
+          "games": 1,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 2,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 72,
+      "weaponCode": 11,
+      "totalGames": 52242,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 280,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 201701,
+          "games": 70,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202509,
+          "games": 1452,
+          "pickRate": 2.8
+        },
+        {
+          "itemCode": 202525,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 35,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203513,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204509,
+          "games": 1120,
+          "pickRate": 2.1
+        },
+        {
+          "itemCode": 204510,
+          "games": 818,
+          "pickRate": 1.6
+        },
+        {
+          "itemCode": 205407,
+          "games": 22,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 701451,
+          "games": 1,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 929,
+          "pickRate": 1.8
+        },
+        {
+          "traitCode": 7211301,
+          "games": 1,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 73,
+      "weaponCode": 24,
+      "totalGames": 5638,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 11,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 201701,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 93,
+          "pickRate": 1.6
+        },
+        {
+          "itemCode": 203408,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 5,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 205508,
+          "games": 8,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 24,
+          "pickRate": 0.4
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 29,
+          "pickRate": 0.5
+        }
+      ]
+    },
+    {
+      "characterCode": 74,
+      "weaponCode": 3,
+      "totalGames": 25917,
+      "items": [
+        {
+          "itemCode": 108505,
+          "games": 6117,
+          "pickRate": 23.6
+        },
+        {
+          "itemCode": 201506,
+          "games": 8,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201537,
+          "games": 582,
+          "pickRate": 2.2
+        },
+        {
+          "itemCode": 201701,
+          "games": 13,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202509,
+          "games": 36,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202525,
+          "games": 28,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203408,
+          "games": 1618,
+          "pickRate": 6.2
+        },
+        {
+          "itemCode": 203513,
+          "games": 201,
+          "pickRate": 0.8
+        },
+        {
+          "itemCode": 203516,
+          "games": 569,
+          "pickRate": 2.2
+        },
+        {
+          "itemCode": 204509,
+          "games": 2172,
+          "pickRate": 8.4
+        },
+        {
+          "itemCode": 204510,
+          "games": 544,
+          "pickRate": 2.1
+        },
+        {
+          "itemCode": 204511,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205407,
+          "games": 34,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 701451,
+          "games": 110,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 705607,
+          "games": 3840,
+          "pickRate": 14.8
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 240,
+          "pickRate": 0.9
+        },
+        {
+          "traitCode": 7211301,
+          "games": 3,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 75,
+      "weaponCode": 22,
+      "totalGames": 18223,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 303,
+          "pickRate": 1.7
+        },
+        {
+          "itemCode": 201701,
+          "games": 16,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 9913,
+          "pickRate": 54.4
+        },
+        {
+          "itemCode": 204511,
+          "games": 70,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 205508,
+          "games": 23,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 104,
+          "pickRate": 0.6
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 76,
+      "weaponCode": 3,
+      "totalGames": 19937,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 247,
+          "pickRate": 1.2
+        },
+        {
+          "itemCode": 201537,
+          "games": 5,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 383,
+          "pickRate": 1.9
+        },
+        {
+          "itemCode": 204510,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 17,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 193,
+          "pickRate": 1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 83,
+          "pickRate": 0.4
+        }
+      ]
+    },
+    {
+      "characterCode": 77,
+      "weaponCode": 24,
+      "totalGames": 29710,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 314,
+          "pickRate": 1.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 5840,
+          "pickRate": 19.7
+        },
+        {
+          "itemCode": 202525,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 87,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 205508,
+          "games": 15,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 583,
+          "pickRate": 2
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 78,
+      "weaponCode": 16,
+      "totalGames": 30357,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 443,
+          "pickRate": 1.5
+        },
+        {
+          "itemCode": 201507,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201537,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 51,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 202509,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202525,
+          "games": 55,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 203513,
+          "games": 7,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 13,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204509,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205407,
+          "games": 314,
+          "pickRate": 1
+        },
+        {
+          "itemCode": 701451,
+          "games": 1,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 21,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 79,
+      "weaponCode": 8,
+      "totalGames": 23397,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 19,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 2786,
+          "pickRate": 11.9
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 28,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 205508,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705619,
+          "games": 29,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 80,
+      "weaponCode": 19,
+      "totalGames": 15809,
+      "items": [
+        {
+          "itemCode": 201537,
+          "games": 10,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 5,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202525,
+          "games": 9,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203408,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203513,
+          "games": 585,
+          "pickRate": 3.7
+        },
+        {
+          "itemCode": 203516,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 26,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 205407,
+          "games": 19,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7211301,
+          "games": 2,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 81,
+      "weaponCode": 9,
+      "totalGames": 21344,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 10,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 11,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 29,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203408,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 1199,
+          "pickRate": 5.6
+        },
+        {
+          "itemCode": 205508,
+          "games": 454,
+          "pickRate": 2.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 296,
+          "pickRate": 1.4
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 10,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 82,
+      "weaponCode": 21,
+      "totalGames": 15844,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 21,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 201537,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 10,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202509,
+          "games": 12,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202525,
+          "games": 4103,
+          "pickRate": 25.9
+        },
+        {
+          "itemCode": 203408,
+          "games": 8880,
+          "pickRate": 56
+        },
+        {
+          "itemCode": 203513,
+          "games": 465,
+          "pickRate": 2.9
+        },
+        {
+          "itemCode": 203516,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204509,
+          "games": 400,
+          "pickRate": 2.5
+        },
+        {
+          "itemCode": 204510,
+          "games": 511,
+          "pickRate": 3.2
+        },
+        {
+          "itemCode": 204511,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205407,
+          "games": 211,
+          "pickRate": 1.3
+        },
+        {
+          "itemCode": 701451,
+          "games": 44,
+          "pickRate": 0.3
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 24,
+          "pickRate": 0.2
+        }
+      ]
+    },
+    {
+      "characterCode": 83,
+      "weaponCode": 6,
+      "totalGames": 34588,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 7585,
+          "pickRate": 21.9
+        },
+        {
+          "itemCode": 201701,
+          "games": 18,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 11136,
+          "pickRate": 32.2
+        },
+        {
+          "itemCode": 204509,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204510,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 117,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 205508,
+          "games": 155,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 705619,
+          "games": 27239,
+          "pickRate": 78.8
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 290,
+          "pickRate": 0.8
+        }
+      ]
+    },
+    {
+      "characterCode": 84,
+      "weaponCode": 18,
+      "totalGames": 24246,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 88,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 201537,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201701,
+          "games": 136,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 202509,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202525,
+          "games": 8,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 7,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203513,
+          "games": 48,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 203516,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204509,
+          "games": 11,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204510,
+          "games": 35,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 205407,
+          "games": 259,
+          "pickRate": 1.1
+        },
+        {
+          "itemCode": 701451,
+          "games": 5,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 2,
+          "pickRate": 0
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 6,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7211301,
+          "games": 1,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 85,
+      "weaponCode": 13,
+      "totalGames": 12282,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 22,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 202511,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 174,
+          "pickRate": 1.4
+        },
+        {
+          "itemCode": 205508,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 705607,
+          "games": 54,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 705619,
+          "games": 27,
+          "pickRate": 0.2
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 6,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 86,
+      "weaponCode": 1,
+      "totalGames": 21615,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 7,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201507,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201537,
+          "games": 40,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 201701,
+          "games": 9,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202509,
+          "games": 3,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202525,
+          "games": 100,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 203408,
+          "games": 25,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 203513,
+          "games": 4933,
+          "pickRate": 22.8
+        },
+        {
+          "itemCode": 203516,
+          "games": 14,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 204509,
+          "games": 46,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 204510,
+          "games": 23,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 204511,
+          "games": 13,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 205407,
+          "games": 185,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 701451,
+          "games": 15,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 16,
+          "pickRate": 0.1
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 167,
+          "pickRate": 0.8
+        }
+      ]
+    },
+    {
+      "characterCode": 87,
+      "weaponCode": 24,
+      "totalGames": 17746,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 33,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 201701,
+          "games": 16,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 202511,
+          "games": 283,
+          "pickRate": 1.6
+        },
+        {
+          "itemCode": 204511,
+          "games": 50,
+          "pickRate": 0.3
+        },
+        {
+          "itemCode": 205508,
+          "games": 103,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 705619,
+          "games": 89,
+          "pickRate": 0.5
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7211301,
+          "games": 5,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 88,
+      "weaponCode": 3,
+      "totalGames": 43436,
+      "items": [
+        {
+          "itemCode": 108505,
+          "games": 28329,
+          "pickRate": 65.2
+        },
+        {
+          "itemCode": 201506,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201537,
+          "games": 17865,
+          "pickRate": 41.1
+        },
+        {
+          "itemCode": 201701,
+          "games": 5,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202509,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202525,
+          "games": 21,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 2706,
+          "pickRate": 6.2
+        },
+        {
+          "itemCode": 203513,
+          "games": 770,
+          "pickRate": 1.8
+        },
+        {
+          "itemCode": 203516,
+          "games": 2036,
+          "pickRate": 4.7
+        },
+        {
+          "itemCode": 204509,
+          "games": 10,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204510,
+          "games": 10,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 205407,
+          "games": 20,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 701451,
+          "games": 4010,
+          "pickRate": 9.2
+        },
+        {
+          "itemCode": 705607,
+          "games": 13050,
+          "pickRate": 30
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 43,
+          "pickRate": 0.1
+        }
+      ]
+    },
+    {
+      "characterCode": 89,
+      "weaponCode": 9,
+      "totalGames": 28488,
+      "items": [
+        {
+          "itemCode": 201506,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 201507,
+          "games": 733,
+          "pickRate": 2.6
+        },
+        {
+          "itemCode": 201701,
+          "games": 7,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 265,
+          "pickRate": 0.9
+        },
+        {
+          "itemCode": 203408,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 46,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 205508,
+          "games": 107,
+          "pickRate": 0.4
+        },
+        {
+          "itemCode": 705607,
+          "games": 18,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705619,
+          "games": 2577,
+          "pickRate": 9
+        }
+      ],
+      "traits": []
+    },
+    {
+      "characterCode": 90,
+      "weaponCode": 11,
+      "totalGames": 27853,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 507,
+          "pickRate": 1.8
+        },
+        {
+          "itemCode": 201701,
+          "games": 130,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 202509,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 150,
+          "pickRate": 0.5
+        },
+        {
+          "itemCode": 204509,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204510,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 44,
+          "pickRate": 0.2
+        },
+        {
+          "itemCode": 205508,
+          "games": 534,
+          "pickRate": 1.9
+        },
+        {
+          "itemCode": 705619,
+          "games": 15430,
+          "pickRate": 55.4
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 42,
+          "pickRate": 0.2
+        },
+        {
+          "traitCode": 7211301,
+          "games": 10,
+          "pickRate": 0
+        }
+      ]
+    },
+    {
+      "characterCode": 91,
+      "weaponCode": 16,
+      "totalGames": 50466,
+      "items": [
+        {
+          "itemCode": 201507,
+          "games": 672,
+          "pickRate": 1.3
+        },
+        {
+          "itemCode": 201537,
+          "games": 285,
+          "pickRate": 0.6
+        },
+        {
+          "itemCode": 201701,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 202511,
+          "games": 7,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203408,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203513,
+          "games": 4,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 203516,
+          "games": 1949,
+          "pickRate": 3.9
+        },
+        {
+          "itemCode": 204509,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204510,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 204511,
+          "games": 1,
+          "pickRate": 0
+        },
+        {
+          "itemCode": 701451,
+          "games": 36,
+          "pickRate": 0.1
+        },
+        {
+          "itemCode": 705607,
+          "games": 1531,
+          "pickRate": 3
+        },
+        {
+          "itemCode": 705619,
+          "games": 369,
+          "pickRate": 0.7
+        }
+      ],
+      "traits": [
+        {
+          "traitCode": 7000701,
+          "games": 2,
+          "pickRate": 0
+        },
+        {
+          "traitCode": 7211301,
+          "games": 675,
+          "pickRate": 1.3
+        }
+      ]
+    }
+  ]
+}

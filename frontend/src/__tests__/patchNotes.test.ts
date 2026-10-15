@@ -1,9 +1,16 @@
 import { describe, expect, it } from "vitest";
+import {
+  assignTier,
+  computeMetaScores,
+  getMetaRankingKey,
+} from "@/components/features/tier-ranking/utils";
 import { PATCH_12_4_BALANCE_CONTEXT, PATCH_12_4_SOURCE } from "@/data/12.4-balance-context";
 import { get12_4ItemExposure, PATCH_12_4_ITEM_EXPOSURE } from "@/data/12.4-item-exposure";
 import { PATCH_12_5_BALANCE_CONTEXT, PATCH_12_5_SOURCE } from "@/data/12.5-balance-context";
 import { get12_5ItemExposure, get12_5TraitExposure } from "@/data/12.5-item-exposure";
 import prepatchStats from "@/data/12.5-prepatch-stats.json";
+import { get12_6ItemExposure } from "@/data/12.6-item-exposure";
+import prepatch126Stats from "@/data/12.6-prepatch-stats.json";
 import { getForecastItemChanges } from "@/data/patch-indirect-changes";
 import {
   getAllPatchVersions,
@@ -19,6 +26,7 @@ import {
   getPatchTierForecasts,
   getPatchTierForecastVersions,
 } from "@/data/patch-tier-forecasts";
+import { buildHomeMetaView, DEFAULT_HOME_TIER, type HomeMetaStatRow } from "@/lib/homeMetaShared";
 
 describe("character patch history", () => {
   it("shows every recorded change beyond the five recent stats patches", () => {
@@ -208,8 +216,12 @@ describe("12.3 patch notes", () => {
 
 describe("12.4 patch notes", () => {
   it("12.4와 12.3 이력을 유지한다", () => {
-    expect(getAllPatchVersions().slice(1, 3)).toEqual(["12.4", "12.3"]);
-    expect(getStatsPatchVersions().slice(1, 3)).toEqual(["12.4", "12.3"]);
+    expect(
+      getAllPatchVersions()
+        .filter((version) => version !== "12.6")
+        .slice(1, 3)
+    ).toEqual(["12.4", "12.3"]);
+    expect(getStatsPatchVersions().slice(2, 4)).toEqual(["12.4", "12.3"]);
   });
 
   it("공식 실험체 35명의 변경 방향을 보존한다", () => {
@@ -357,7 +369,7 @@ describe("12.4 patch notes", () => {
 
 describe("12.5 patch notes", () => {
   it("최신 이력과 공식 실험체 33명의 직접 변경을 보존한다", () => {
-    expect(getAllPatchVersions()[0]).toBe("12.5");
+    expect(getAllPatchVersions()).toContain("12.5");
     expect(getNotesByPatch("12.5")).toHaveLength(33);
     expect(getPatchSummary("12.5")).toEqual({
       patch: "12.5",
@@ -370,7 +382,9 @@ describe("12.5 patch notes", () => {
   });
 
   it("유키 두 무기와 쌍검 캐시의 변경 범위를 구분한다", () => {
-    expect(getCharacterPatchNote(11, "12.5")?.changes.map((change) => change.weaponMasteryCode)).toEqual([16, 18]);
+    expect(
+      getCharacterPatchNote(11, "12.5")?.changes.map((change) => change.weaponMasteryCode)
+    ).toEqual([16, 18]);
     expect(getCharacterPatchNote(23, "12.5")?.changes[0].weaponMasteryCode).toBe(18);
     expect(getCharacterPatchNote(37, "12.5")?.changes[0].weaponMasteryCode).toBe(15);
   });
@@ -378,7 +392,9 @@ describe("12.5 patch notes", () => {
   it("특성·무기 스킬·장비와 공식 출처를 별도로 보존한다", () => {
     expect(PATCH_12_5_SOURCE).toContain("/news/3867");
     expect(PATCH_12_5_BALANCE_CONTEXT.map((section) => section.title)).toEqual([
-      "매칭·특성", "무기 스킬·무기", "방어구",
+      "매칭·특성",
+      "무기 스킬·무기",
+      "방어구",
     ]);
     expect(PATCH_12_5_BALANCE_CONTEXT.flatMap((section) => section.entries)).toHaveLength(17);
   });
@@ -386,17 +402,88 @@ describe("12.5 patch notes", () => {
   it("12.4 원본 통계를 기준으로 직접 변경 실험체의 무기별 사전 전망을 제공한다", () => {
     const forecasts = getPatchTierForecasts("12.5");
     const directCharacters = new Set(getNotesByPatch("12.5").map((note) => note.characterCode));
-    expect(getPatchTierForecastVersions()[0]).toBe("12.5");
+    expect(getPatchTierForecastVersions()).toContain("12.5");
     expect(forecasts).toHaveLength(66);
-    expect([...directCharacters].every((code) => forecasts.some((item) => item.characterCode === code))).toBe(true);
+    expect(
+      [...directCharacters].every((code) => forecasts.some((item) => item.characterCode === code))
+    ).toBe(true);
     expect(forecasts.every((item) => item.reason.length > 20)).toBe(true);
-    expect(new Set(forecasts.map((item) => `${item.characterCode}:${item.weaponCode}`)).size).toBe(forecasts.length);
+    expect(new Set(forecasts.map((item) => `${item.characterCode}:${item.weaponCode}`)).size).toBe(
+      forecasts.length
+    );
     expect(prepatchStats.rows).toHaveLength(354);
   });
 
   it("장비의 양방향 변경과 무기별 채택률을 분리한다", () => {
-    expect(get12_5ItemExposure(44, 25).map((item) => item.itemCode)).toEqual([131402, 131504, 705607]);
-    expect(getForecastItemChanges("12.5", 9, 9).filter((change) => change.target.includes("핏빛 망토")).map((change) => change.changeType)).toEqual(["nerf", "buff"]);
-    expect(get12_5TraitExposure(67, 14).find((trait) => trait.traitCode === 7300301)?.pickRate).toBe(98.1);
+    expect(get12_5ItemExposure(44, 25).map((item) => item.itemCode)).toEqual([
+      131402, 131504, 705607,
+    ]);
+    expect(
+      getForecastItemChanges("12.5", 9, 9)
+        .filter((change) => change.target.includes("핏빛 망토"))
+        .map((change) => change.changeType)
+    ).toEqual(["nerf", "buff"]);
+    expect(
+      get12_5TraitExposure(67, 14).find((trait) => trait.traitCode === 7300301)?.pickRate
+    ).toBe(98.1);
+  });
+});
+
+describe("12.6 publication", () => {
+  it("publishes notes and makes the analysis preview available", () => {
+    expect(getAllPatchVersions()[0]).toBe("12.6");
+    expect(getNotesByPatch("12.6")).toHaveLength(28);
+    expect(getStatsPatchVersions()[0]).toBe("12.6");
+    expect(getVisibleStatsPatchVersions()[0]).toBe("12.6");
+  });
+  it("preserves weapon-specific scope and previous patch history", () => {
+    expect(getCharacterPatchNote(90, "12.6")?.changes[0].weaponMasteryCode).toBe(11);
+    expect(getCharacterPatchNote(26, "12.6")?.changes[0].weaponMasteryCode).toBe(9);
+    expect(getCharacterPatchNote(84, "12.6")?.changes[0].weaponMasteryCode).toBe(18);
+    expect(getCharacterPatchNote(91, "12.6")?.changes[0].valueSummary).toBe("1.2% → 1%");
+  });
+
+  it("covers every directly changed character with a 12.5 baseline", () => {
+    const forecasts = getPatchTierForecasts("12.6");
+    const directCharacters = new Set(getNotesByPatch("12.6").map((note) => note.characterCode));
+    expect(getPatchTierForecastVersions()[0]).toBe("12.6");
+    expect(
+      [...directCharacters].every((code) =>
+        forecasts.some((forecast) => forecast.characterCode === code)
+      )
+    ).toBe(true);
+    expect(forecasts.every((forecast) => forecast.reason.length > 20)).toBe(true);
+    expect(prepatch126Stats.rows).toHaveLength(357);
+    expect(get12_6ItemExposure(71, 14).find((item) => item.itemCode === 105407)?.pickRate).toBe(
+      34.1
+    );
+  });
+
+  it("uses the same 12.5 pre-patch tiers as character rankings", () => {
+    const rankings = buildHomeMetaView(
+      {
+        patchVersion: "12.5",
+        previousPatch: null,
+        rows: prepatch126Stats.rows as HomeMetaStatRow[],
+      },
+      DEFAULT_HOME_TIER
+    ).rankingData.rankings;
+    const scores = computeMetaScores(rankings);
+    const expected = new Map(
+      rankings.map((row) => [
+        `${row.characterNum}:${row.bestWeapon}`,
+        assignTier(scores.get(getMetaRankingKey(row)) ?? 0),
+      ])
+    );
+    const mismatches = getPatchTierForecasts("12.6")
+      .filter(
+        (forecast) =>
+          expected.get(`${forecast.characterCode}:${forecast.weaponCode}`) !== forecast.currentTier
+      )
+      .map(
+        (forecast) =>
+          `${forecast.characterCode}:${forecast.weaponCode} ${forecast.currentTier}/${expected.get(`${forecast.characterCode}:${forecast.weaponCode}`)}`
+      );
+    expect(mismatches).toEqual([]);
   });
 });

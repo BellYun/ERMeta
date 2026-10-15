@@ -7,6 +7,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { SiteContentAd } from "@/components/ads/SiteContentAd";
 import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeBadgeStatic";
+import { Patch126Intro, Patch126Extras } from "@/components/features/patches/Patch126Overview";
 import {
   PatchNotesBrowser,
   PatchVersionSelect,
@@ -271,6 +272,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
         current={version}
         label={locale === "ko" ? "패치 선택" : t("breadcrumb")}
       />
+      {version === "12.6" && locale === "ko" ? <Patch126Intro /> : null}
       <PatchNotesBrowser
         key={version}
         labels={labels}
@@ -428,8 +430,12 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
           ),
         }))}
       />
+      {version === "12.6" && locale === "ko" ? <Patch126Extras /> : null}
       {version === "12.5" && locale === "ko" ? (
-        <section className="dashboard-panel flex items-center gap-4 p-4 sm:p-6" aria-labelledby="patch-new-character">
+        <section
+          className="dashboard-panel flex items-center gap-4 p-4 sm:p-6"
+          aria-labelledby="patch-new-character"
+        >
           <Image
             src="/characters/91.png"
             alt="세레스"
@@ -439,9 +445,15 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
           />
           <div>
             <p className="dashboard-kicker">신규 실험체 · 양손검</p>
-            <h2 id="patch-new-character" className="mt-1 text-lg font-bold text-[var(--color-foreground)]">세레스</h2>
+            <h2
+              id="patch-new-character"
+              className="mt-1 text-lg font-bold text-[var(--color-foreground)]"
+            >
+              세레스
+            </h2>
             <p className="mt-2 text-sm leading-6 text-[var(--color-muted-foreground)]">
-              경호(E)는 지정 아군이 받는 피해 일부를 대신 받고, 그 아군이 입힌 피해에 비례해 회복합니다. 루치아를 경호할 때 사거리·피해 분담·회복 효과가 강화됩니다.
+              경호(E)는 지정 아군이 받는 피해 일부를 대신 받고, 그 아군이 입힌 피해에 비례해
+              회복합니다. 루치아를 경호할 때 사거리·피해 분담·회복 효과가 강화됩니다.
             </p>
             <p className="mt-2 text-sm font-semibold text-[var(--color-foreground)]">
               10월 6일까지 랭크 대전에서 선택할 수 없습니다.
@@ -475,31 +487,33 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
             </a>
           </div>
           <div className="mt-5 grid gap-3 md:grid-cols-2">
-            {(version === "12.5" ? PATCH_12_5_BALANCE_CONTEXT : PATCH_12_4_BALANCE_CONTEXT).map((section) => (
-              <details
-                key={section.title}
-                className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
-              >
-                <summary className="cursor-pointer text-sm font-bold text-[var(--color-foreground)]">
-                  {section.title}{" "}
-                  <span className="font-normal text-[var(--color-muted-foreground)]">
-                    · {section.entries.length}건
-                  </span>
-                </summary>
-                <ul className="mt-3 divide-y divide-[var(--color-border)]">
-                  {section.entries.map((entry) => (
-                    <li key={entry.target} className="py-2 text-sm leading-6">
-                      <span className="font-semibold text-[var(--color-foreground)]">
-                        {entry.target}
-                      </span>
-                      <span className="ml-2 font-mono text-[var(--color-muted-foreground)]">
-                        {entry.value}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </details>
-            ))}
+            {(version === "12.5" ? PATCH_12_5_BALANCE_CONTEXT : PATCH_12_4_BALANCE_CONTEXT).map(
+              (section) => (
+                <details
+                  key={section.title}
+                  className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+                >
+                  <summary className="cursor-pointer text-sm font-bold text-[var(--color-foreground)]">
+                    {section.title}{" "}
+                    <span className="font-normal text-[var(--color-muted-foreground)]">
+                      · {section.entries.length}건
+                    </span>
+                  </summary>
+                  <ul className="mt-3 divide-y divide-[var(--color-border)]">
+                    {section.entries.map((entry) => (
+                      <li key={entry.target} className="py-2 text-sm leading-6">
+                        <span className="font-semibold text-[var(--color-foreground)]">
+                          {entry.target}
+                        </span>
+                        <span className="ml-2 font-mono text-[var(--color-muted-foreground)]">
+                          {entry.value}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              )
+            )}
           </div>
         </section>
       ) : null}
