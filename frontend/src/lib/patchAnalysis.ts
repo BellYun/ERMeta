@@ -19,7 +19,7 @@ import warriorsData from "../../public/data/lab/warriors.json";
 
 const ANALYSIS_TIER = "DIAMOND_PLUS";
 const ANALYSIS_TIERS = ["DIAMOND_PLUS", "MITHRIL_PLUS"] as const;
-const PATCH_ANALYSIS_VERSIONS = ["12.5", "12.4", "12.3", "11.5", "11.4"] as const;
+const PATCH_ANALYSIS_VERSIONS = ["12.6", "12.5", "12.4", "12.3", "11.5", "11.4"] as const;
 const PATCH_ANALYSIS_CACHE_VERSION = "role-combos-v12-fixed-entry-cost";
 const ROLES: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
 const PATCH_ROLE_OVERRIDES_BY_PATCH: Record<string, Record<string, CharacterRole>> = {
@@ -621,7 +621,8 @@ function buildRoleComboMetricsFromRows(
       deltaGames: (currentValue?.totalGames ?? 0) - (previousValue?.totalGames ?? 0),
       deltaAverageRP:
         currentValue && previousValue && hasComparableRP(currentPatch, previousPatch)
-          ? currentValue.averageRP - previousValue.averageRP : null,
+          ? currentValue.averageRP - previousValue.averageRP
+          : null,
       deltaContribution:
         currentContribution != null &&
         previousContribution != null &&
@@ -946,36 +947,37 @@ async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAna
   const primaryContext = contexts[0];
   const primaryRankingData = tierRankingData[0];
   const notes = getNotesByPatch(currentPatch);
-  const deltas = await attachRoleComboMetrics(
-    notes.flatMap((note) => buildDeltas(note, contexts)),
-    currentPatch,
-    previousPatch
-  );
+  const baseDeltas = notes.flatMap((note) => buildDeltas(note, contexts));
+  const deltas =
+    currentPatch === "12.6" && primaryContext.totalMatches === 0
+      ? baseDeltas
+      : await attachRoleComboMetrics(baseDeltas, currentPatch, previousPatch);
 
   const buffed = deltas
     .filter((entry) => entry.changeTypes.includes("buff") && !entry.changeTypes.includes("nerf"))
     .sort((a, b) =>
-      currentPatch === "12.5" || currentPatch === "12.4"
+      currentPatch === "12.6" || currentPatch === "12.5" || currentPatch === "12.4"
         ? a.characterNum - b.characterNum
         : b.deltaAverageRP - a.deltaAverageRP
     );
   const nerfed = deltas
     .filter((entry) => entry.changeTypes.includes("nerf") && !entry.changeTypes.includes("buff"))
     .sort((a, b) =>
-      currentPatch === "12.5" || currentPatch === "12.4"
+      currentPatch === "12.6" || currentPatch === "12.5" || currentPatch === "12.4"
         ? a.characterNum - b.characterNum
         : a.deltaAverageRP - b.deltaAverageRP
     );
   const mixed = deltas
     .filter((entry) => entry.changeTypes.includes("buff") && entry.changeTypes.includes("nerf"))
     .sort((a, b) =>
-      currentPatch === "12.5" || currentPatch === "12.4"
+      currentPatch === "12.6" || currentPatch === "12.5" || currentPatch === "12.4"
         ? a.characterNum - b.characterNum
         : b.deltaAverageRP - a.deltaAverageRP
     );
 
   const comparable = hasComparableRP(currentPatch, previousPatch)
-    ? deltas.filter((entry) => entry.current && entry.previous) : [];
+    ? deltas.filter((entry) => entry.current && entry.previous)
+    : [];
 
   return {
     currentPatch,
@@ -1008,7 +1010,9 @@ export async function getPatchAnalysisData(version?: string): Promise<PatchAnaly
   patchAnalysisDataCache.set(cacheKey, {
     promise,
     // New patches begin as previews; refresh them as ranked samples arrive.
-    expiresAt: patchVersion === "12.5" || patchVersion === "12.4" ? Date.now() + 5 * 60 * 1000 : Infinity,
+    expiresAt: ["12.6", "12.5", "12.4"].includes(patchVersion)
+      ? Date.now() + 5 * 60 * 1000
+      : Infinity,
   });
   return promise;
 }

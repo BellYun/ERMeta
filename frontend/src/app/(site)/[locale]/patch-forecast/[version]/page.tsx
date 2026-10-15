@@ -75,7 +75,7 @@ const COPY: Record<
   },
 };
 
-export const revalidate = 21600;
+export const revalidate = 300;
 export const dynamic = "force-static";
 export const dynamicParams = true;
 

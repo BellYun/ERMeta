@@ -118,7 +118,12 @@ export async function fetchRankingData(
     .order("startDate", { ascending: false })
     .limit(50);
 
+  // New notes can have a preview before their PatchVersion row is registered.
+  // Keep the local previous patch available for that forecast baseline.
   const patchList = (patches ?? []).map((p: { version: string }) => p.version);
+  if (patchVersion === "12.6" && !patchList.includes("12.6")) {
+    patchList.unshift("12.6");
+  }
   const currentIndex = patchList.indexOf(patchVersion);
   const previousPatch =
     currentIndex >= 0 && currentIndex + 1 < patchList.length ? patchList[currentIndex + 1] : null;
@@ -187,7 +192,7 @@ export async function getCachedRankingData(
     async () => fetchRankingData(patchVersion, requestedTier),
     ["character-rankings", "fixed-entry-cost-v1", patchVersion, requestedTier],
     {
-      revalidate: 21600,
+      revalidate: patchVersion === "12.6" ? 300 : 21600,
       tags: [
         "character-rankings",
         `character-rankings:${patchVersion}`,

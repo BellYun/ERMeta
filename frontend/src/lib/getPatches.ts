@@ -10,7 +10,7 @@ import { createServerClient } from "@/lib/supabase";
 /**
  * 활성 패치 목록은 변경 빈도가 낮아서 요청 간 캐시로 묶는다.
  * 같은 프로세스 내 재요청은 Next Data Cache가 재사용하고,
- * 6시간 뒤 자동 재검증되도록 둔다.
+ * 새 패치 표본이 준비되는 동안 5분마다 재검증한다.
  */
 export const getPatches = unstable_cache(
   async (): Promise<string[]> => {
@@ -49,9 +49,9 @@ export const getPatches = unstable_cache(
       return filterReadyStatsPatchVersions(getVisibleStatsPatchVersions(), 0);
     }
   },
-  ["patches", "patch-notes-v12-12-5-sample-gate-x8"],
+  ["patches", "patch-notes-v13-12-6-sample-gate-x8"],
   {
-    revalidate: 21600,
+    revalidate: 300,
     tags: ["patches"],
   }
 );
@@ -59,7 +59,10 @@ export const getPatches = unstable_cache(
 /** New characters have no ranked history before their release patch. */
 export function selectCharacterPatches(characterCode: number, patches: string[]): string[] {
   if (characterCode !== 91) return patches;
-  return [...new Set(["12.5", ...patches.filter(
-    (patch) => patch.localeCompare("12.5", undefined, { numeric: true }) >= 0
-  )])].sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+  return [
+    ...new Set([
+      "12.5",
+      ...patches.filter((patch) => patch.localeCompare("12.5", undefined, { numeric: true }) >= 0),
+    ]),
+  ].sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
 }
