@@ -26,7 +26,7 @@ ENABLE_MULTI_SEARCH=true
 PLAYER_API_BASE_URL=http://localhost:4000
 ```
 
-프론트엔드를 다시 시작하면 기존 `/multi-search` 화면의 검색은 `POST /v1/players/compare`, 최근 전적은 `GET /v1/players/{nickname}/matches`를 사용합니다. 화면은 현재 시즌 39 랭크 모드에 맞춰 요청하며, 공식 시즌 통계와 저장된 최근 경기의 출처·갱신 시점·오래된 데이터 여부를 표시합니다. `PLAYER_API_BASE_URL`이 없으면 기존 경로를 유지합니다. API 키는 백엔드에만 설정하며 프론트엔드 환경변수에 넣지 않습니다.
+프론트엔드를 다시 시작하면 기존 `/multi-search` 화면의 검색은 `POST /v1/players/compare`, 최근 전적은 `GET /v1/players/{nickname}/matches`를 사용합니다. 화면은 현재 시즌 41 랭크 모드에 맞춰 요청하며, 공식 시즌 통계와 저장된 최근 경기의 출처·갱신 시점·오래된 데이터 여부를 표시합니다. `PLAYER_API_BASE_URL`이 없으면 기존 경로를 유지합니다. API 키는 백엔드에만 설정하며 프론트엔드 환경변수에 넣지 않습니다.
 
 ## Getting Started
 
