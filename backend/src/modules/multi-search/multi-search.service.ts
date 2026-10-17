@@ -11,7 +11,7 @@ import {
   BSERUserStatsResult,
 } from '../collect/bser-api.service';
 
-const DEFAULT_SEASON_ID = 39;
+const DEFAULT_SEASON_ID = 41;
 const DEFAULT_MATCHING_MODE = 3;
 const MAX_NICKNAMES = 3;
 const NICKNAME_CACHE_TTL_SEC = 24 * 60 * 60;

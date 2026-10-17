@@ -206,7 +206,7 @@ export function MultiSearchClient({ afterSearch }: { afterSearch?: ReactNode }) 
       const payload = await fetchPlayers([myNickname.trim()]);
       const profile = payload.results[0] ?? null;
       if (!profile || profile.status !== "ok") {
-        throw new Error("내 시즌 39 랭크 정보를 찾지 못했습니다.");
+        throw new Error("내 시즌 41 랭크 정보를 찾지 못했습니다.");
       }
 
       setMyProfile(profile);
@@ -816,7 +816,7 @@ function playerStatusDescription(result: PlayerResult) {
   if (result.reason === "bser_api_unavailable") {
     return "외부 전적 API 지연 또는 장애로 조회하지 못했습니다. 잠시 뒤 다시 시도해주세요.";
   }
-  return "닉네임 또는 시즌 39 랭크 기록을 확인해주세요.";
+  return "닉네임 또는 시즌 41 랭크 기록을 확인해주세요.";
 }
 
 function formatNumber(value: number | undefined) {
