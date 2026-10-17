@@ -22,7 +22,7 @@ describe("멀티서치의 새 플레이어 API 연결", () => {
     fetchMock.mockResolvedValue(
       new Response(
         JSON.stringify({
-          seasonId: 39,
+          seasonId: 41,
           matchingMode: 3,
           summary: { requested: 2, ok: 0, failed: 2 },
           results: [
@@ -38,7 +38,7 @@ describe("멀티서치의 새 플레이어 API 연결", () => {
       new NextRequest("http://localhost/api/multi-search/players", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nicknames: ["A", "B"] }),
+        body: JSON.stringify({ nicknames: ["A", "B"], seasonId: 39 }),
       })
     );
     expect(response.status).toBe(200);
@@ -46,7 +46,7 @@ describe("멀티서치의 새 플레이어 API 연결", () => {
       "http://localhost:3001/v1/players/compare",
       expect.objectContaining({
         method: "POST",
-        body: JSON.stringify({ nicknames: ["A", "B"], seasonId: 39, matchingMode: 3 }),
+        body: JSON.stringify({ nicknames: ["A", "B"], seasonId: 41, matchingMode: 3 }),
       })
     );
     expect((await response.json()).results).toMatchObject([
@@ -80,11 +80,14 @@ describe("멀티서치의 새 플레이어 API 연결", () => {
     await POST(
       new NextRequest("http://localhost/api/multi-search/players", {
         method: "POST",
-        body: JSON.stringify({ nicknames: ["A"] }),
+        body: JSON.stringify({ nicknames: ["A"], seasonId: 39 }),
       })
     );
     expect(fetchMock.mock.calls[0][0]).toBe(
       "https://ermeta-production.up.railway.app/multi-search/players"
     );
+    expect(fetchMock.mock.calls[0][1]).toMatchObject({
+      body: JSON.stringify({ nicknames: ["A"], seasonId: 41, matchingMode: 3 }),
+    });
   });
 });
