@@ -66,7 +66,9 @@ function buildAllCharWeaponItems(): CharWeaponItem[] {
       items.push({ charCode, weaponCode: 0, weaponLabel: "" });
       continue;
     }
-    const sorted = [...weapons].sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
+    const sorted = weapons
+      .filter((weapon) => Number.isInteger(weapon.weaponCode) && weapon.weaponCode > 0)
+      .sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
     for (const w of sorted) {
       items.push({ charCode, weaponCode: w.weaponCode, weaponLabel: w.label });
     }

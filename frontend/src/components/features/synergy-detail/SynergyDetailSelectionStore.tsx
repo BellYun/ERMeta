@@ -5,6 +5,8 @@ import * as React from "react";
 import { createStore, type StoreApi } from "zustand";
 import { useStore } from "zustand";
 import { analytics, type SynergySelectionSource } from "@/lib/analytics";
+import { isWeaponAgnosticCharacter } from "@/lib/characterMap";
+import { getOnlyWeaponCode } from "@/lib/weaponMap";
 
 export interface AllySelection {
   charCode: number;
@@ -30,9 +32,12 @@ export function parseAllyFromParams(
   if (isNaN(charCode)) return null;
   const weaponStr = params.get(weaponKey) ?? (legacyWeaponKey ? params.get(legacyWeaponKey) : null);
   const weaponCode = weaponStr ? parseInt(weaponStr, 10) : null;
+  const selectedWeapon = weaponCode && !isNaN(weaponCode) ? weaponCode : null;
   return {
     charCode,
-    weaponCode: weaponCode && !isNaN(weaponCode) ? weaponCode : null,
+    weaponCode: isWeaponAgnosticCharacter(charCode)
+      ? null
+      : (selectedWeapon ?? getOnlyWeaponCode(charCode)),
   };
 }
 
