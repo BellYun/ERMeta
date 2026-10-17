@@ -148,3 +148,25 @@ test('recent match query trims nickname and rejects an excessive limit', async (
   });
   assert.equal((await validate(invalid)).length, 2);
 });
+
+test('multi-search uses the current season by default and still accepts a historical season', async () => {
+  const requests = [];
+  const service = new MultiSearchService({
+    findUserByNicknameDetailed: async () => ({ status: 'found', user }),
+    fetchUserStatsDetailed: async (_userId, seasonId, matchingMode) => {
+      requests.push([seasonId, matchingMode]);
+      return { status: 'not_found' };
+    },
+  }, {
+    get: async () => null,
+    set: async () => {},
+    getOrSet: async (_key, _ttl, factory) => factory(),
+  }, { get: (_key, fallback) => fallback });
+
+  const current = await service.searchPlayers(['테스트']);
+  const historical = await service.searchPlayers(['테스트'], 39, 3);
+
+  assert.deepEqual(requests, [[41, 3], [39, 3]]);
+  assert.equal(current.seasonId, 41);
+  assert.equal(historical.seasonId, 39);
+});

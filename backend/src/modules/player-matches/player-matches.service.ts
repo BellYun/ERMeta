@@ -11,6 +11,11 @@ export interface PlayerMatchesResponse {
   isStale: boolean;
 }
 
+export interface PlayerMatchesRefreshResult {
+  nickname: string;
+  lastSyncedAt: string;
+}
+
 export interface PlayerMatchStatsResponse {
   nickname: string;
   seasonId: number;
@@ -110,6 +115,22 @@ export class PlayerMatchesService {
     };
   }
 
+  async refreshMatches(nicknameParam: string): Promise<PlayerMatchesRefreshResult> {
+    const nickname = this.parseNickname(nicknameParam);
+    const nicknameKey = nickname.toLocaleLowerCase('ko-KR');
+    try {
+      await this.refreshShared(nickname, nicknameKey);
+    } catch (error) {
+      if (error instanceof UpstreamFailure) throw this.upstreamException(error);
+      throw error;
+    }
+    const lookup = await this.repository.findByNicknameKey(nicknameKey);
+    if (!lookup?.matchesSyncedAt) {
+      throw new HttpException({ code: 'MATCHES_NOT_READY', message: '전적을 아직 조회할 수 없습니다.' }, HttpStatus.BAD_GATEWAY);
+    }
+    return { nickname: lookup.nickname, lastSyncedAt: lookup.matchesSyncedAt.toISOString() };
+  }
+
   private async ensureFreshMatches(nickname: string): Promise<{ lookup: SyncedPlayerLookup; isStale: boolean }> {
     const nicknameKey = nickname.toLocaleLowerCase('ko-KR');
     let lookup = await this.repository.findByNicknameKey(nicknameKey);
@@ -122,11 +143,7 @@ export class PlayerMatchesService {
       } catch (error) {
         if (!(error instanceof UpstreamFailure)) throw error;
         if (!lookup?.matchesSyncedAt) {
-          const status = error.statusCode === 429 ? HttpStatus.TOO_MANY_REQUESTS : HttpStatus.BAD_GATEWAY;
-          throw new HttpException({
-            code: status === 429 ? 'BSER_RATE_LIMITED' : 'BSER_UNAVAILABLE',
-            message: status === 429 ? '공식 API 요청 제한에 도달했습니다.' : '공식 API에서 전적을 가져오지 못했습니다.',
-          }, status);
+          throw this.upstreamException(error);
         }
         isStale = true;
       }
@@ -136,6 +153,14 @@ export class PlayerMatchesService {
       throw new HttpException({ code: 'MATCHES_NOT_READY', message: '전적을 아직 조회할 수 없습니다.' }, HttpStatus.BAD_GATEWAY);
     }
     return { lookup: { ...lookup, matchesSyncedAt: lookup.matchesSyncedAt }, isStale };
+  }
+
+  private upstreamException(error: UpstreamFailure): HttpException {
+    const limited = error.statusCode === 429;
+    return new HttpException({
+      code: limited ? 'BSER_RATE_LIMITED' : 'BSER_UNAVAILABLE',
+      message: limited ? '공식 API 요청 제한에 도달했습니다.' : '공식 API에서 전적을 가져오지 못했습니다.',
+    }, limited ? HttpStatus.TOO_MANY_REQUESTS : HttpStatus.BAD_GATEWAY);
   }
 
   private async refreshShared(nickname: string, nicknameKey: string): Promise<void> {

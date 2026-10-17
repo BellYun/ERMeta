@@ -2,6 +2,8 @@ import { PATCH_12_4_BALANCE_CONTEXT } from "./12.4-balance-context";
 import { get12_4ItemExposure } from "./12.4-item-exposure";
 import { PATCH_12_5_BALANCE_CONTEXT } from "./12.5-balance-context";
 import { get12_5ItemExposure } from "./12.5-item-exposure";
+import { get12_6ItemExposure } from "./12.6-item-exposure";
+import { FEATURED_EQUIPMENT, OTHER_EQUIPMENT } from "./12.6-overview";
 import type { PatchChange } from "./patch-notes";
 
 // Official 12.3 values. Character/weapon links come from PATCH_TIER_FORECAST_REASONS,
@@ -120,6 +122,23 @@ export function getForecastItemChanges(
   characterCode: number,
   weaponCode: number
 ): PatchChange[] {
+  if (patch === "12.6") {
+    const changesByCode = new Map(
+      [...FEATURED_EQUIPMENT, ...OTHER_EQUIPMENT].map((item) => [item.code, item])
+    );
+    return get12_6ItemExposure(characterCode, weaponCode).flatMap(({ itemCode, pickRate }) => {
+      const item = changesByCode.get(itemCode);
+      return item
+        ? [
+            change(
+              `${item.name} · 12.5 사용 ${pickRate}%`,
+              item.direction,
+              item.changes.join(" / ")
+            ),
+          ]
+        : [];
+    });
+  }
   if (patch === "12.5") {
     return get12_5ItemExposure(characterCode, weaponCode).flatMap(({ itemCode, pickRate }) =>
       (PATCH_12_5_ITEM_TARGETS[itemCode] ?? []).flatMap(({ target, changeType }) => {
@@ -140,10 +159,16 @@ export function getForecastItemChanges(
   return (FORECAST_ITEM_LINKS[`${characterCode}:${weaponCode}`] ?? []).flatMap((key) => ITEMS[key]);
 }
 export function getSharedTraitChanges(patch: string): PatchChange[] {
-  if (patch === "12.5") return [
-    change("벽력 · 추가 공격력 계수", "buff", "45% → 65% (스킬 증폭 계수 유지)"),
-    change("와류 · 최대 체력 회복 계수", "buff", "7% → 8%"),
-  ];
+  if (patch === "12.6")
+    return [
+      change("액셀러레이터 · 공격 속도 증가", "buff", "120% → 130%"),
+      change("폭발 선인장 · 대상 최대 체력 계수", "buff", "6% → 7%"),
+    ];
+  if (patch === "12.5")
+    return [
+      change("벽력 · 추가 공격력 계수", "buff", "45% → 65% (스킬 증폭 계수 유지)"),
+      change("와류 · 최대 체력 회복 계수", "buff", "7% → 8%"),
+    ];
   if (patch !== "12.3") return [];
   return [
     change("불괴 · 근거리 받는 피해 감소", "nerf", "12(+캐릭터 레벨×1)% → 10(+캐릭터 레벨×1)%"),

@@ -17,6 +17,7 @@ import {
   type TrioCompositionInsight,
 } from "@/lib/synergyComposition";
 import { assignComboTier, COMBO_TIER_WEIGHTS, PERFORMANCE_TIER_MIN_GAMES } from "@/lib/tierScoring";
+import { groupTrioCoreVariants } from "@/lib/trioWeaponGrouping";
 import { cn } from "@/lib/utils";
 import { getWeaponGroupImageUrl } from "@/lib/weaponMap";
 import {
@@ -190,6 +191,7 @@ function ComboWeaponCardImpl({
     } as Record<string, string[]>
   )[resultLocale] ?? ["Ally", "Candidate", "Details"];
   const t = useTranslations("synergyComboCard");
+  const weaponSelectionT = useTranslations("weaponAllySelector");
   const [showTraits, setShowTraits] = React.useState(false);
   const compositionMembers = getGroupCompositionAnalysisMembers(group);
   const compositionCacheKey = getCompositionInsightCacheKey(compositionMembers, affinityEvidence);
@@ -296,7 +298,10 @@ function ComboWeaponCardImpl({
   // 상위 10개까지 잘라두고, 초기 펼침에서는 상위 3개만 노출하여 첫 커밋 비용을 줄임.
   // 나머지는 "더보기" 로 유저 의도 있을 때만 mount (TraitIcon n×3 서브트리가 무거워서 INP 주요 기여자).
   const sortedVariants = React.useMemo(
-    () => [...traitVariants].sort((a, b) => b.averageRP - a.averageRP).slice(0, 10),
+    () =>
+      groupTrioCoreVariants(traitVariants)
+        .sort((a, b) => b.averageRP - a.averageRP)
+        .slice(0, 10),
     [traitVariants]
   );
   const INITIAL_VARIANTS = 3;
@@ -442,7 +447,7 @@ function ComboWeaponCardImpl({
               return (
                 <React.Fragment key={`${m.char}-${m.weapon}`}>
                   <Link
-                    href={`/character/${m.char}?weapon=${m.weapon}`}
+                    href={`/character/${m.char}${m.weapon > 0 ? `?weapon=${m.weapon}` : ""}`}
                     onClick={(e) => {
                       e.stopPropagation();
                       if (isRecommended) onRecommendationClick?.(m.char, rank);
@@ -451,7 +456,7 @@ function ComboWeaponCardImpl({
                     // 외부 div[role=button]가 특성 토글을 처리하므로 링크의 포인터 이벤트를 분리한다.
                     onPointerDown={(e) => e.stopPropagation()}
                     onPointerUp={(e) => e.stopPropagation()}
-                    aria-label={`${getCharName(m.char)} ${getWeaponName(m.weapon)} 상세 보기`}
+                    aria-label={`${getCharName(m.char)} ${m.weapon > 0 ? getWeaponName(m.weapon) : weaponSelectionT("allWeapons")} 상세 보기`}
                     data-recommended={isRecommended || undefined}
                     className="group/member flex flex-col items-center gap-0.5 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
                   >

@@ -16,13 +16,14 @@ import {
   type CompositionAffinityEvidence,
   type CompositionAffinityMemberInput,
 } from "@/lib/characterAffinityComposition";
-import { resolveCharacterName } from "@/lib/characterMap";
+import { isWeaponAgnosticCharacter, resolveCharacterName } from "@/lib/characterMap";
 import { isMobileDevice } from "@/lib/device";
 import { recordFeedbackBreadcrumb, setFeedbackContextState } from "@/lib/feedbackContext";
 import { FetchHttpError, FetchRetriesExhaustedError, fetchWithRetry } from "@/lib/fetchWithRetry";
 import { buildSynergyShareUrl } from "@/lib/synergyShare";
 import { MINIMUM_GAMES_OPTIONS, parseMinimumGamesParam } from "@/lib/synergyUrlState";
 import { comparePerformanceTierStats } from "@/lib/tierScoring";
+import { groupTrioCoreVariants, groupTrioWeaponResults } from "@/lib/trioWeaponGrouping";
 import {
   filterTrioWeaponTuples,
   parseTrioWeaponTupleBucket,
@@ -74,84 +75,6 @@ function parseDetailSortByParam(value: string | null): SortBy {
   return DETAIL_SORT_OPTIONS.some((option) => option.value === value)
     ? (value as SortBy)
     : "tierScore";
-}
-
-/** 코어만 무시하고 실험체+무기(c:w) 기준으로 그룹화 */
-function groupByCharWeapon(results: TrioWeaponResult[]): GroupedCombo[] {
-  const map = new Map<
-    string,
-    {
-      c1: number;
-      w1: number;
-      c2: number;
-      w2: number;
-      c3: number;
-      w3: number;
-      topVariantGames: number;
-      totalGames: number;
-      totalWins: number;
-      totalRP: number;
-      rankSum: number;
-      variants: TrioWeaponResult[];
-    }
-  >();
-
-  for (const r of results) {
-    const key = [
-      `${r.character1}:${r.weaponType1}`,
-      `${r.character2}:${r.weaponType2}`,
-      `${r.character3}:${r.weaponType3}`,
-    ].join("-");
-    const existing = map.get(key);
-    const games = r.totalGames;
-    const wins = (r.winRate * games) / 100;
-    const rp = r.averageRP * games * 3; // averageRP는 /3 된 값이므로 복원
-    const rankSum = r.averageRank * games;
-
-    if (!existing) {
-      map.set(key, {
-        c1: r.character1,
-        w1: r.weaponType1,
-        c2: r.character2,
-        w2: r.weaponType2,
-        c3: r.character3,
-        w3: r.weaponType3,
-        topVariantGames: games,
-        totalGames: games,
-        totalWins: wins,
-        totalRP: rp,
-        rankSum,
-        variants: [r],
-      });
-    } else {
-      existing.totalGames += games;
-      existing.totalWins += wins;
-      existing.totalRP += rp;
-      existing.rankSum += rankSum;
-      existing.variants.push(r);
-      // 무기 대표 = totalGames 가장 큰 variant의 무기
-      if (games > existing.topVariantGames) {
-        existing.topVariantGames = games;
-        existing.w1 = r.weaponType1;
-        existing.w2 = r.weaponType2;
-        existing.w3 = r.weaponType3;
-      }
-    }
-  }
-
-  return Array.from(map.values()).map((v) => ({
-    character1: v.c1,
-    weaponType1: v.w1,
-    character2: v.c2,
-    weaponType2: v.w2,
-    character3: v.c3,
-    weaponType3: v.w3,
-    totalGames: v.totalGames,
-    winRate: v.totalGames > 0 ? (v.totalWins / v.totalGames) * 100 : 0,
-    averageRP: v.totalGames > 0 ? v.totalRP / v.totalGames / 3 : 0,
-    averageRank: v.totalGames > 0 ? v.rankSum / v.totalGames : 0,
-    traitVariants: v.variants,
-  }));
 }
 
 function getGroupAffinityMembers(group: GroupedCombo): CompositionAffinityMemberInput[] {
@@ -274,20 +197,20 @@ async function fetchDetailRows(allies: AllySelection[], signal?: AbortSignal) {
   return data.results ?? [];
 }
 
-function getGroupWeaponForCharacter(group: GroupedCombo, charCode: number): number | null {
-  if (group.character1 === charCode) return group.weaponType1;
-  if (group.character2 === charCode) return group.weaponType2;
-  if (group.character3 === charCode) return group.weaponType3;
+function getResultWeaponForCharacter(result: TrioWeaponResult, charCode: number): number | null {
+  if (result.character1 === charCode) return result.weaponType1;
+  if (result.character2 === charCode) return result.weaponType2;
+  if (result.character3 === charCode) return result.weaponType3;
   return null;
 }
 
-function buildCoreVariantSearchParams(allies: AllySelection[], group: GroupedCombo) {
+function buildCoreVariantSearchParams(allies: AllySelection[], result: TrioWeaponResult) {
   if (allies.length !== 2) return null;
   const queryAllies = sortAllyPair(allies);
   const ally1 = queryAllies[0];
   const ally2 = queryAllies[1];
-  const pairWeapon1 = ally1.weaponCode ?? getGroupWeaponForCharacter(group, ally1.charCode);
-  const pairWeapon2 = ally2.weaponCode ?? getGroupWeaponForCharacter(group, ally2.charCode);
+  const pairWeapon1 = ally1.weaponCode ?? getResultWeaponForCharacter(result, ally1.charCode);
+  const pairWeapon2 = ally2.weaponCode ?? getResultWeaponForCharacter(result, ally2.charCode);
   if (pairWeapon1 == null || pairWeapon2 == null) return null;
 
   return new URLSearchParams({
@@ -295,12 +218,12 @@ function buildCoreVariantSearchParams(allies: AllySelection[], group: GroupedCom
     pairWeapon1: String(pairWeapon1),
     pairCharacter2: String(ally2.charCode),
     pairWeapon2: String(pairWeapon2),
-    trioCharacter1: String(group.character1),
-    trioWeapon1: String(group.weaponType1),
-    trioCharacter2: String(group.character2),
-    trioWeapon2: String(group.weaponType2),
-    trioCharacter3: String(group.character3),
-    trioWeapon3: String(group.weaponType3),
+    trioCharacter1: String(result.character1),
+    trioWeapon1: String(result.weaponType1),
+    trioCharacter2: String(result.character2),
+    trioWeapon2: String(result.weaponType2),
+    trioCharacter3: String(result.character3),
+    trioWeapon3: String(result.weaponType3),
   });
 }
 
@@ -309,14 +232,25 @@ async function fetchCoreVariantRows(
   group: GroupedCombo,
   signal?: AbortSignal
 ) {
-  const params = buildCoreVariantSearchParams(allies, group);
-  if (!params) return group.traitVariants;
-
-  const data = await fetchWithRetry<{ results?: TrioWeaponResult[]; error?: string }>(
-    `/api/stats/trios-weapon/core-variants?${params.toString()}`,
-    { signal }
+  const requests = Array.from(
+    new Set(
+      group.traitVariants
+        .map((variant) => buildCoreVariantSearchParams(allies, variant)?.toString())
+        .filter((params): params is string => Boolean(params))
+    )
   );
-  return data.results && data.results.length > 0 ? data.results : group.traitVariants;
+  if (requests.length === 0) return groupTrioCoreVariants(group.traitVariants);
+
+  const responses = await Promise.all(
+    requests.map((params) =>
+      fetchWithRetry<{ results?: TrioWeaponResult[]; error?: string }>(
+        `/api/stats/trios-weapon/core-variants?${params}`,
+        { signal }
+      )
+    )
+  );
+  const rows = responses.flatMap((response) => response.results ?? []);
+  return groupTrioCoreVariants(rows.length > 0 ? rows : group.traitVariants);
 }
 
 function isAbortError(error: unknown) {
@@ -333,7 +267,10 @@ function prioritizeFocusGroups(
   const matchesFocus = (charCode: number, weaponType: number) =>
     focusCharWeapons.some(
       (focus) =>
-        focus.charCode === charCode && (focus.weaponCode === 0 || focus.weaponCode === weaponType)
+        focus.charCode === charCode &&
+        (isWeaponAgnosticCharacter(charCode) ||
+          focus.weaponCode === 0 ||
+          focus.weaponCode === weaponType)
     );
 
   const matchesGroup = (group: GroupedCombo) => {
@@ -541,7 +478,9 @@ export function SynergyDetailResults() {
         focusCharWeapons.some(
           (focus) =>
             focus.charCode === charCode &&
-            (focus.weaponCode === 0 || focus.weaponCode === weaponCode)
+            (isWeaponAgnosticCharacter(charCode) ||
+              focus.weaponCode === 0 ||
+              focus.weaponCode === weaponCode)
         );
       const members = [
         { c: group.character1, w: group.weaponType1 },
@@ -572,7 +511,7 @@ export function SynergyDetailResults() {
     if (resultAllies.length === 0) return [];
 
     // Group by character+weapon (Level 1)
-    const grouped = groupByCharWeapon(results);
+    const grouped = groupTrioWeaponResults(results);
     const filteredBySample =
       minimumGames > 0 ? grouped.filter((group) => group.totalGames >= minimumGames) : grouped;
 
@@ -677,7 +616,9 @@ export function SynergyDetailResults() {
   React.useEffect(() => {
     if (visibleRecommendations.length === 0) return;
 
-    const combos = visibleRecommendations.map(getGroupAffinityMembers);
+    const combos = visibleRecommendations
+      .map(getGroupAffinityMembers)
+      .filter((members) => members.every((member) => member.weapon > 0));
     const cachedEntries = combos.flatMap((members) => {
       const key = buildCompositionAffinityKey(members);
       const evidence = affinityEvidenceMemoryCache.get(key);

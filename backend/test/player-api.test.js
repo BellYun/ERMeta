@@ -49,6 +49,10 @@ test('player-only app boots without Supabase or Redis and exposes health routes'
       method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ nicknames: [] }),
     });
     assert.equal(invalid.status, 400);
+    const invalidRefresh = await fetch(`${base}/v1/players/test/refresh`, {
+      method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}',
+    });
+    assert.equal(invalidRefresh.status, 400);
     const unknown = await fetch(`${base}/multi-search/players`, { method: 'POST' });
     assert.equal(unknown.status, 404);
   } finally {

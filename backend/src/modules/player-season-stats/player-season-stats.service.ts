@@ -13,6 +13,12 @@ export interface PlayerSeasonStatsResponse {
   isStale: boolean;
 }
 
+export interface PlayerSeasonStatsRefreshResult {
+  nickname: string;
+  status: 'updated' | 'no_stats';
+  fetchedAt: string | null;
+}
+
 interface RefreshResult {
   nickname: string;
   stats: OfficialSeasonStats | null;
@@ -65,12 +71,34 @@ export class PlayerSeasonStatsService {
     } catch (error) {
       if (!(error instanceof UpstreamFailure)) throw error;
       if (snapshot) return response(lookup!.nickname, seasonId, matchingMode, snapshot, true);
-      const status = error.statusCode === 429 ? HttpStatus.TOO_MANY_REQUESTS : HttpStatus.BAD_GATEWAY;
-      throw new HttpException({
-        code: status === 429 ? 'BSER_RATE_LIMITED' : 'BSER_UNAVAILABLE',
-        message: status === 429 ? '공식 API 요청 제한에 도달했습니다.' : '공식 API에서 통계를 가져오지 못했습니다.',
-      }, status);
+      throw this.upstreamException(error);
     }
+  }
+
+  async refreshStats(nicknameParam: string, seasonParam?: string, modeParam?: string): Promise<PlayerSeasonStatsRefreshResult> {
+    const nickname = parseNickname(nicknameParam);
+    const nicknameKey = nickname.toLocaleLowerCase('ko-KR');
+    const seasonId = parseSeasonId(seasonParam);
+    const matchingMode = parseMatchingMode(modeParam);
+    try {
+      const refreshed = await this.refreshShared(nickname, nicknameKey, seasonId, matchingMode);
+      return {
+        nickname: refreshed.nickname,
+        status: refreshed.stats === null ? 'no_stats' : 'updated',
+        fetchedAt: refreshed.fetchedAt?.toISOString() ?? null,
+      };
+    } catch (error) {
+      if (error instanceof UpstreamFailure) throw this.upstreamException(error);
+      throw error;
+    }
+  }
+
+  private upstreamException(error: UpstreamFailure): HttpException {
+    const limited = error.statusCode === 429;
+    return new HttpException({
+      code: limited ? 'BSER_RATE_LIMITED' : 'BSER_UNAVAILABLE',
+      message: limited ? '공식 API 요청 제한에 도달했습니다.' : '공식 API에서 통계를 가져오지 못했습니다.',
+    }, limited ? HttpStatus.TOO_MANY_REQUESTS : HttpStatus.BAD_GATEWAY);
   }
 
   private async refreshShared(

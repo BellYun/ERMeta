@@ -9,5 +9,6 @@ import { PlayerMatchesService } from './player-matches.service';
   imports: [PlayerHistoryDatabaseModule, BserApiModule],
   controllers: [PlayerMatchesController],
   providers: [PlayerMatchesRepository, PlayerMatchesService],
+  exports: [PlayerMatchesService],
 })
 export class PlayerMatchesModule {}

@@ -6,6 +6,7 @@ import { SiteContentAd } from "@/components/ads/SiteContentAd";
 import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeBadgeStatic";
 import { PATCH_12_4_SOURCE } from "@/data/12.4-balance-context";
 import { PATCH_12_5_SOURCE } from "@/data/12.5-balance-context";
+import { PATCH_12_6_SOURCE } from "@/data/12.6-overview";
 import { localizePatchChanges } from "@/data/patch-note-localization";
 import { Link } from "@/i18n/navigation";
 import { LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
@@ -160,25 +161,32 @@ const PATCH_12_4_COPY: Record<
 
 const PATCH_12_5_COPY: typeof PATCH_12_4_COPY = {
   ko: {
-    intro: "12.4 지표를 기준선으로 12.5 공식 변경점과 관찰 포인트를 정리했습니다. 아래 해석은 사전 전망이며 12.5 관측 결과가 아닙니다.",
+    intro:
+      "12.4 지표를 기준선으로 12.5 공식 변경점과 관찰 포인트를 정리했습니다. 아래 해석은 사전 전망이며 12.5 관측 결과가 아닙니다.",
     pending: "12.5 랭크 표본을 집계 중입니다. 세레스는 10월 6일까지 랭크에서 선택할 수 없습니다.",
-    caution: "12.4와 12.5는 동일한 평균 RP 산식을 사용합니다. 표본이 충분히 쌓인 뒤 무기별 성적과 선택률을 함께 비교해야 합니다.",
+    caution:
+      "12.4와 12.5는 동일한 평균 RP 산식을 사용합니다. 표본이 충분히 쌓인 뒤 무기별 성적과 선택률을 함께 비교해야 합니다.",
     forecast: "사전 전망",
     tierForecast: "무기별 예상 티어 보기",
     source: "공식 12.5 패치노트",
   },
   en: {
-    intro: "This preview maps official 12.5 changes against the 12.4 baseline. Its impact notes are forecasts, not observed 12.5 results.",
-    pending: "12.5 ranked samples are being collected. Seres is unavailable in ranked until October 6.",
-    caution: "12.4 and 12.5 use the same average RP formula. Compare weapon-specific performance and pick rates once enough samples arrive.",
+    intro:
+      "This preview maps official 12.5 changes against the 12.4 baseline. Its impact notes are forecasts, not observed 12.5 results.",
+    pending:
+      "12.5 ranked samples are being collected. Seres is unavailable in ranked until October 6.",
+    caution:
+      "12.4 and 12.5 use the same average RP formula. Compare weapon-specific performance and pick rates once enough samples arrive.",
     forecast: "Pre-patch outlook",
     tierForecast: "View weapon-specific tier forecasts",
     source: "Official 12.5 patch notes",
   },
   ja: {
-    intro: "12.4の指標を基準に、12.5の公式変更と注目点を整理しました。以下は事前予測であり、12.5の実測結果ではありません。",
+    intro:
+      "12.4の指標を基準に、12.5の公式変更と注目点を整理しました。以下は事前予測であり、12.5の実測結果ではありません。",
     pending: "12.5のランク標本を集計中です。セレスは10月6日までランクで選択できません。",
-    caution: "12.4と12.5は同じ平均RP算式を使用します。十分な標本が集まってから武器別の成績と選択率を比較します。",
+    caution:
+      "12.4と12.5は同じ平均RP算式を使用します。十分な標本が集まってから武器別の成績と選択率を比較します。",
     forecast: "事前予測",
     tierForecast: "武器別の予想ティアを見る",
     source: "公式12.5パッチノート",
@@ -201,6 +209,61 @@ const PATCH_12_5_COPY: typeof PATCH_12_4_COPY = {
   },
 };
 
+const PATCH_12_6_COPY: typeof PATCH_12_4_COPY = {
+  ko: {
+    intro:
+      "12.5 다이아 이상 지표를 기준선으로 12.6 공식 변경과 예상 영향을 정리했습니다. 아래 평가는 사전 전망이며 12.6 관측 결과가 아닙니다.",
+    pending:
+      "12.6 랭크 표본을 집계 중입니다. 충분한 표본이 쌓일 때까지 12.5 통계를 기준으로 표시합니다.",
+    caution:
+      "무기별 직접 조정과 장비·특성의 간접 영향을 분리했습니다. 패치 후 승률·순방률·평균 RP·선택률을 함께 확인해야 합니다.",
+    forecast: "사전 전망",
+    tierForecast: "무기별 예상 티어 보기",
+    source: "공식 12.6 패치노트",
+  },
+  en: {
+    intro:
+      "This preview uses Diamond+ results from 12.5 as the baseline for official 12.6 changes. The impact notes are forecasts, not observed 12.6 results.",
+    pending:
+      "12.6 ranked samples are being collected. The site keeps 12.5 as the statistics baseline until the sample is ready.",
+    caution:
+      "Direct weapon changes and indirect item or trait effects are evaluated separately. Compare win rate, top-three rate, average RP and pick rate after the patch.",
+    forecast: "Pre-patch outlook",
+    tierForecast: "View weapon-specific tier forecasts",
+    source: "Official 12.6 patch notes",
+  },
+  ja: {
+    intro:
+      "12.5のダイヤ以上の指標を基準に、12.6の公式変更と予想される影響を整理しました。以下は事前予測であり、12.6の実測結果ではありません。",
+    pending: "12.6のランク標本を集計中です。十分な標本が集まるまでは12.5の統計を基準に表示します。",
+    caution:
+      "武器の直接調整と装備・特性の間接的な影響を分けています。パッチ後は勝率、トップ3率、平均RP、選択率を合わせて確認します。",
+    forecast: "事前予測",
+    tierForecast: "武器別の予想ティアを見る",
+    source: "公式12.6パッチノート",
+  },
+  "zh-Hans": {
+    intro:
+      "以12.5钻石以上数据为基线，整理12.6官方改动及预期影响。以下是事前预测，并非12.6实测结果。",
+    pending: "正在收集12.6排位样本。样本充足前继续以12.5统计为基线。",
+    caution:
+      "分别评估武器直接调整与装备、特性的间接影响。更新后需一起查看胜率、前三率、平均RP和选取率。",
+    forecast: "事前预测",
+    tierForecast: "查看各武器预测梯队",
+    source: "12.6官方更新公告",
+  },
+  "zh-Hant": {
+    intro:
+      "以12.5鑽石以上數據為基線，整理12.6官方改動及預期影響。以下是事前預測，並非12.6實測結果。",
+    pending: "正在收集12.6排位樣本。樣本充足前繼續以12.5統計為基線。",
+    caution:
+      "分別評估武器直接調整與裝備、特性的間接影響。更新後需一起查看勝率、前三率、平均RP和選取率。",
+    forecast: "事前預測",
+    tierForecast: "查看各武器預測梯隊",
+    source: "12.6官方更新公告",
+  },
+};
+
 function patchContextComment(
   body: string,
   tone: CausalEvaluationComment["tone"] = "neutral"
@@ -209,17 +272,57 @@ function patchContextComment(
 }
 
 const PATCH_CONTEXT_COMMENTS: Record<string, Record<number, CausalEvaluationComment[]>> = {
+  "12.6": {
+    6: patchContextComment(
+      "Q 스킬 증폭 계수 상향은 활과 석궁에 모두 적용됩니다. 석궁은 현자의 로브 이동 속도 하향이 겹쳐 무기별 결과를 분리해야 합니다."
+    ),
+    28: patchContextComment(
+      "패시브 회복 상향은 방망이·망치 모두 받습니다. 별 조각 하향과 방망이 D 기절 하향을 함께 고려하면 무기별 체감이 달라질 수 있습니다."
+    ),
+    65: patchContextComment(
+      "데비 W 최대 체력 비례 피해가 줄어듭니다. 12.5 A가 B 경계에 가까워 실제 성과가 경계를 넘는지 확인해야 합니다."
+    ),
+    71: patchContextComment(
+      "Q 피해와 회복, E 피해가 모두 하향됩니다. 저거너트 사용 약 34%의 장비 하향도 겹쳐 단일 변경으로 해석하기 어렵습니다."
+    ),
+    83: patchContextComment(
+      "W 쿨다운과 별 조각 스킬 증폭 하향이 함께 적용됩니다. 12.5 S 성적이 경계에 가까워 표본 충분성을 확인해야 합니다."
+    ),
+    88: patchContextComment(
+      "패시브·E의 직접 하향에 시체매·야생의 허기 하향도 겹칩니다. 장비 선택 변화까지 확인해야 합니다."
+    ),
+  },
   "12.5": {
-    2: patchContextComment("Q·W 공격력 계수 상향은 세 무기 모두에 적용됩니다. 12.4에서 특히 낮았던 돌격 소총 성적과 권총·저격총 성적을 분리해 확인해야 합니다."),
-    7: patchContextComment("Q 상향은 초중반 기본 피해와 쿨다운에 집중됩니다. 글러브와 톤파의 패치 전 성적 차이가 커 같은 티어 이동을 가정할 수 없습니다."),
-    11: patchContextComment("양손검과 쌍검의 숙련도 기본 공격 증폭이 각각 0.1%p씩 낮아집니다. 무기별 표본을 합치면 변화 폭이 가려집니다."),
-    17: patchContextComment("투척 숙련도와 R 피해가 함께 하향됩니다. 12.4 투척 성적을 기준으로 관찰하되 이번 패치 결과로 단정하지 않습니다."),
-    23: patchContextComment("직접 하향은 쌍검 숙련도에만 적용됩니다. 단검 캐시를 같은 하향 대상으로 분류하지 않습니다."),
-    28: patchContextComment("W 보호막의 스킬 증폭 계수가 5%p 줄어듭니다. 상대 조합과 W 사용 빈도에 따라 영향이 달라질 수 있습니다."),
-    37: patchContextComment("단검 숙련도 기본 공격 증폭이 레벨당 0.1%p 줄어듭니다. 치명타 빌드 선택률과 함께 확인해야 합니다."),
-    44: patchContextComment("블랙맘바킹과 TL의 모든 피해 흡혈이 10%에서 8%로 줄어듭니다. 다른 VF 의수 유형과 구분해야 합니다."),
-    50: patchContextComment("Q의 1·2타 계수가 모두 오릅니다. 2타 적중률과 추가 체력 빌드 비중이 실제 성과를 좌우합니다."),
-    73: patchContextComment("아르카나 숙련도와 성장 방어력이 함께 하향됩니다. 기존 승률은 픽률과 표본 수를 함께 확인해야 합니다."),
+    2: patchContextComment(
+      "Q·W 공격력 계수 상향은 세 무기 모두에 적용됩니다. 12.4에서 특히 낮았던 돌격 소총 성적과 권총·저격총 성적을 분리해 확인해야 합니다."
+    ),
+    7: patchContextComment(
+      "Q 상향은 초중반 기본 피해와 쿨다운에 집중됩니다. 글러브와 톤파의 패치 전 성적 차이가 커 같은 티어 이동을 가정할 수 없습니다."
+    ),
+    11: patchContextComment(
+      "양손검과 쌍검의 숙련도 기본 공격 증폭이 각각 0.1%p씩 낮아집니다. 무기별 표본을 합치면 변화 폭이 가려집니다."
+    ),
+    17: patchContextComment(
+      "투척 숙련도와 R 피해가 함께 하향됩니다. 12.4 투척 성적을 기준으로 관찰하되 이번 패치 결과로 단정하지 않습니다."
+    ),
+    23: patchContextComment(
+      "직접 하향은 쌍검 숙련도에만 적용됩니다. 단검 캐시를 같은 하향 대상으로 분류하지 않습니다."
+    ),
+    28: patchContextComment(
+      "W 보호막의 스킬 증폭 계수가 5%p 줄어듭니다. 상대 조합과 W 사용 빈도에 따라 영향이 달라질 수 있습니다."
+    ),
+    37: patchContextComment(
+      "단검 숙련도 기본 공격 증폭이 레벨당 0.1%p 줄어듭니다. 치명타 빌드 선택률과 함께 확인해야 합니다."
+    ),
+    44: patchContextComment(
+      "블랙맘바킹과 TL의 모든 피해 흡혈이 10%에서 8%로 줄어듭니다. 다른 VF 의수 유형과 구분해야 합니다."
+    ),
+    50: patchContextComment(
+      "Q의 1·2타 계수가 모두 오릅니다. 2타 적중률과 추가 체력 빌드 비중이 실제 성과를 좌우합니다."
+    ),
+    73: patchContextComment(
+      "아르카나 숙련도와 성장 방어력이 함께 하향됩니다. 기존 승률은 픽률과 표본 수를 함께 확인해야 합니다."
+    ),
   },
   "12.4": {
     9: patchContextComment(
@@ -788,11 +891,13 @@ export async function generateMetadata(version?: string): Promise<Metadata> {
     metadataBase: new URL(BASE_URL),
     title: `패치 메타 분석 - ${data.currentPatch} 통계 변화`,
     description:
-      data.currentPatch === "12.5"
-        ? "이터널리턴 12.5 공식 변경점과 12.4 기준 사전 전망. 관측 통계와 사전 해석을 구분합니다."
-        : data.currentPatch === "12.4"
-        ? "이터널리턴 12.4 공식 변경점과 12.3 기준 사전 전망. 관측 통계와 갬빗 RP 영향은 분리합니다."
-        : `이터널리턴 최신 패치 기준 다이아 이상 통계 분석. ${data.currentPatch}과 ${data.previousPatch}의 평균 RP, 승률, 픽률, 순방률 변화를 비교합니다.`,
+      data.currentPatch === "12.6"
+        ? "이터널리턴 12.6 공식 변경점과 12.5 기준 사전 전망. 관측 통계와 사전 해석을 구분합니다."
+        : data.currentPatch === "12.5"
+          ? "이터널리턴 12.5 공식 변경점과 12.4 기준 사전 전망. 관측 통계와 사전 해석을 구분합니다."
+          : data.currentPatch === "12.4"
+            ? "이터널리턴 12.4 공식 변경점과 12.3 기준 사전 전망. 관측 통계와 갬빗 RP 영향은 분리합니다."
+            : `이터널리턴 최신 패치 기준 다이아 이상 통계 분석. ${data.currentPatch}과 ${data.previousPatch}의 평균 RP, 승률, 픽률, 순방률 변화를 비교합니다.`,
     alternates: { canonical: pathname },
     openGraph: {
       title: "패치 메타 분석",
@@ -983,7 +1088,12 @@ function CharacterDeltaCard({
           </div>
         </div>
 
-        <DiamondMetricPanel entry={entry} copy={copy} displayName={displayName} isPreviewPatch={isPreviewPatch} />
+        <DiamondMetricPanel
+          entry={entry}
+          copy={copy}
+          displayName={displayName}
+          isPreviewPatch={isPreviewPatch}
+        />
       </div>
 
       <div className="flex flex-col gap-3">
@@ -1009,7 +1119,13 @@ function CharacterDeltaCard({
         {causalComments.length > 0 ? (
           <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-3">
             <p className="text-[11px] font-semibold text-[var(--color-foreground)]">
-              {entry.note.patch === "12.5" ? PATCH_12_5_COPY[locale].forecast : entry.note.patch === "12.4" ? PATCH_12_4_COPY[locale].forecast : copy.evaluation}
+              {entry.note.patch === "12.6"
+                ? PATCH_12_6_COPY[locale].forecast
+                : entry.note.patch === "12.5"
+                  ? PATCH_12_5_COPY[locale].forecast
+                  : entry.note.patch === "12.4"
+                    ? PATCH_12_4_COPY[locale].forecast
+                    : copy.evaluation}
             </p>
             <div className="mt-2 grid gap-2">
               {causalComments.map((comment) => (
@@ -1487,9 +1603,19 @@ export default async function PatchAnalysisPage({
   const showRawMetrics = data.currentPatch !== "11.5";
   const isPatch124 = data.currentPatch === "12.4";
   const isPatch125 = data.currentPatch === "12.5";
-  const targetStats = isPatch125 ? await getCachedHomeMetaStats("12.5").catch(() => null) : null;
-  const isPreviewPatch = isPatch124 || (isPatch125 && !isHomeMetaTargetReady(targetStats?.collectedGames ?? 0));
-  const previewCopy = isPatch125 ? PATCH_12_5_COPY[locale] : PATCH_12_4_COPY[locale];
+  const isPatch126 = data.currentPatch === "12.6";
+  const targetStats =
+    isPatch125 || isPatch126
+      ? await getCachedHomeMetaStats(data.currentPatch).catch(() => null)
+      : null;
+  const isPreviewPatch =
+    isPatch124 ||
+    ((isPatch125 || isPatch126) && !isHomeMetaTargetReady(targetStats?.collectedGames ?? 0));
+  const previewCopy = isPatch126
+    ? PATCH_12_6_COPY[locale]
+    : isPatch125
+      ? PATCH_12_5_COPY[locale]
+      : PATCH_12_4_COPY[locale];
   const hasCurrentSample = data.totalMatches > 0;
 
   return (
@@ -1597,12 +1723,17 @@ export default async function PatchAnalysisPage({
           </p>
           <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-[var(--color-accent-foreground)]">
             {isPreviewPatch ? (
-              <Link href={`/patch-forecast/${data.currentPatch}#forecast-results`} className="underline underline-offset-4">
+              <Link
+                href={`/patch-forecast/${data.currentPatch}#forecast-results`}
+                className="underline underline-offset-4"
+              >
                 {previewCopy.tierForecast}
               </Link>
             ) : null}
             <a
-              href={isPatch125 ? PATCH_12_5_SOURCE : PATCH_12_4_SOURCE}
+              href={
+                isPatch126 ? PATCH_12_6_SOURCE : isPatch125 ? PATCH_12_5_SOURCE : PATCH_12_4_SOURCE
+              }
               target="_blank"
               rel="noopener noreferrer"
               className="underline underline-offset-4"
