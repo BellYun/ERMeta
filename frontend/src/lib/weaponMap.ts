@@ -5,6 +5,13 @@ const CHARACTER_WEAPONS = characterBestWeapons as Record<
   Array<{ weaponCode: number; label: string; isDefault: boolean }>
 >;
 
+export function getOnlyWeaponCode(characterCode: number): number | null {
+  const codes = (CHARACTER_WEAPONS[String(characterCode)] ?? [])
+    .map((weapon) => weapon.weaponCode)
+    .filter((code) => Number.isInteger(code) && code > 0);
+  return codes.length === 1 ? codes[0] : null;
+}
+
 export function getRepresentativeWeaponCode(characterCode: number): number | null {
   const weapons = CHARACTER_WEAPONS[String(characterCode)] ?? [];
   return weapons.find((weapon) => weapon.isDefault)?.weaponCode ?? weapons[0]?.weaponCode ?? null;

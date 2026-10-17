@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { createSynergyDetailSelectionStore } from "@/components/features/synergy-detail/SynergyDetailSelectionStore";
 import {
   computeNextAllies,
+  getAllCharWeaponItems,
   parseAllyFromParams,
   type AllySelection,
 } from "@/components/features/synergy-detail/WeaponAllySelector";
@@ -10,6 +11,17 @@ const item = (charCode: number, weaponCode: number) => ({
   charCode,
   weaponCode,
   weaponLabel: "",
+});
+
+describe("character weapon options", () => {
+  it("shows Shoichi only with dagger and Alex only as an all-weapons choice", () => {
+    expect(getAllCharWeaponItems().filter((option) => option.charCode === 18)).toEqual([
+      { charCode: 18, weaponCode: 15, weaponLabel: "단검" },
+    ]);
+    expect(getAllCharWeaponItems().filter((option) => option.charCode === 27)).toEqual([
+      item(27, 0),
+    ]);
+  });
 });
 
 describe("parseAllyFromParams", () => {
@@ -31,6 +43,22 @@ describe("parseAllyFromParams", () => {
     expect(parseAllyFromParams(params, "ally1", "w1")).toEqual({
       charCode: 5,
       weaponCode: 3,
+    });
+  });
+
+  it("restores Alex as a single all-weapons selection from an old weapon URL", () => {
+    const params = new URLSearchParams("ally1=27&w1=9");
+    expect(parseAllyFromParams(params, "ally1", "w1")).toEqual({
+      charCode: 27,
+      weaponCode: null,
+    });
+  });
+
+  it("restores an old Shoichi all-weapons URL as dagger", () => {
+    const params = new URLSearchParams("ally1=18");
+    expect(parseAllyFromParams(params, "ally1", "w1")).toEqual({
+      charCode: 18,
+      weaponCode: 15,
     });
   });
 
