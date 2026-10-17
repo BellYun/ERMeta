@@ -3,6 +3,8 @@ import { isMultiSearchEnabled } from "@/lib/featureFlags";
 import { adaptPlayerCompare, type PlayerCompareResponse } from "@/lib/playerApiAdapter";
 
 const DEFAULT_MULTI_SEARCH_API_BASE_URL = "https://ermeta-production.up.railway.app";
+const CURRENT_SEASON_ID = 41;
+const CURRENT_MATCHING_MODE = 3;
 
 export async function POST(request: NextRequest) {
   if (!isMultiSearchEnabled()) {
@@ -23,7 +25,7 @@ export async function POST(request: NextRequest) {
     DEFAULT_MULTI_SEARCH_API_BASE_URL;
 
   try {
-    const body = await request.text();
+    const body = withCurrentSeason(await request.text());
     const response = await fetch(`${baseUrl.replace(/\/$/, "")}/multi-search/players`, {
       method: "POST",
       headers: {
@@ -55,7 +57,11 @@ async function postToPlayerApi(request: NextRequest, baseUrl: string) {
     const response = await fetch(`${baseUrl.replace(/\/$/, "")}/v1/players/compare`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...body, seasonId: 39, matchingMode: 3 }),
+      body: JSON.stringify({
+        ...body,
+        seasonId: CURRENT_SEASON_ID,
+        matchingMode: CURRENT_MATCHING_MODE,
+      }),
       cache: "no-store",
     });
     const payload = await response.json();
@@ -68,5 +74,19 @@ async function postToPlayerApi(request: NextRequest, baseUrl: string) {
       { code: "PLAYER_API_UNAVAILABLE", message: "플레이어 API에 연결하지 못했습니다." },
       { status: 503, headers: { "Cache-Control": "no-store" } }
     );
+  }
+}
+
+function withCurrentSeason(body: string): string {
+  try {
+    const parsed: unknown = JSON.parse(body);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return body;
+    return JSON.stringify({
+      ...parsed,
+      seasonId: CURRENT_SEASON_ID,
+      matchingMode: CURRENT_MATCHING_MODE,
+    });
+  } catch {
+    return body;
   }
 }

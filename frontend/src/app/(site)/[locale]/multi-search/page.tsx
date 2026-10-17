@@ -26,10 +26,10 @@ const COPY: Record<
 > = {
   ko: {
     title: "팀원 멀티서치",
-    metadataTitle: "팀원 멀티서치 - 시즌 39 랭크 요약",
+    metadataTitle: "팀원 멀티서치 - 시즌 41 랭크 요약",
     description:
-      "이터널리턴 팀원 닉네임 3개를 동시에 검색해 시즌 39 랭크, MMR, 승률, 순방률, 주력 실험체를 확인합니다.",
-    kicker: "시즌 39 기준",
+      "이터널리턴 팀원 닉네임 3개를 동시에 검색해 시즌 41 랭크, MMR, 승률, 순방률, 주력 실험체를 확인합니다.",
+    kicker: "시즌 41 기준",
     subtitle: "닉네임 3개를 동시에 검색해 현재 시즌 랭크 지표와 주력 실험체를 비교합니다.",
     body: "BSER 공식 API 기반으로 MMR, 순위, 승률, 순방률, 실험체별 기록을 정리합니다.",
     disabledTitle: "멀티서치를 제공하지 않습니다",
@@ -37,9 +37,9 @@ const COPY: Record<
   },
   en: {
     title: "Team Multi Search",
-    metadataTitle: "Team Multi Search - Season 39 ranked summary",
+    metadataTitle: "Team Multi Search - Season 41 ranked summary",
     description: "Search three Eternal Return player names and compare ranked indicators.",
-    kicker: "Season 39 baseline",
+    kicker: "Season 41 baseline",
     subtitle: "Search three nicknames at once and compare current ranked indicators.",
     body: "Uses the BSER official API to summarize MMR, rank, win rate, placement rate, and main characters.",
     disabledTitle: "Team Multi Search is unavailable",
@@ -47,9 +47,9 @@ const COPY: Record<
   },
   ja: {
     title: "チーム複数検索",
-    metadataTitle: "チーム複数検索 - シーズン39ランク要約",
+    metadataTitle: "チーム複数検索 - シーズン41ランク要約",
     description: "Eternal Return のプレイヤー3名を同時に検索し、ランク指標を比較します。",
-    kicker: "シーズン39基準",
+    kicker: "シーズン41基準",
     subtitle: "3つのニックネームを同時に検索し、現在シーズンのランク指標を比較します。",
     body: "BSER公式APIをもとにMMR、順位、勝率、入賞率、主力キャラクターを整理します。",
     disabledTitle: "チーム複数検索は利用できません",
@@ -57,9 +57,9 @@ const COPY: Record<
   },
   "zh-Hans": {
     title: "队友多重搜索",
-    metadataTitle: "队友多重搜索 - 第 39 赛季排位摘要",
+    metadataTitle: "队友多重搜索 - 第 41 赛季排位摘要",
     description: "同时搜索三名 Eternal Return 玩家并比较排位指标。",
-    kicker: "第 39 赛季基准",
+    kicker: "第 41 赛季基准",
     subtitle: "同时搜索三个昵称，比较当前赛季排位指标。",
     body: "基于 BSER 官方 API 汇总 MMR、排名、胜率、前三率和主力角色。",
     disabledTitle: "队友多重搜索暂不可用",
@@ -67,9 +67,9 @@ const COPY: Record<
   },
   "zh-Hant": {
     title: "隊友多重搜尋",
-    metadataTitle: "隊友多重搜尋 - 第 39 賽季牌位摘要",
+    metadataTitle: "隊友多重搜尋 - 第 41 賽季牌位摘要",
     description: "同時搜尋三名 Eternal Return 玩家並比較牌位指標。",
-    kicker: "第 39 賽季基準",
+    kicker: "第 41 賽季基準",
     subtitle: "同時搜尋三個暱稱，比較目前賽季牌位指標。",
     body: "基於 BSER 官方 API 彙總 MMR、排名、勝率、前三率和主力角色。",
     disabledTitle: "隊友多重搜尋暫不可用",
