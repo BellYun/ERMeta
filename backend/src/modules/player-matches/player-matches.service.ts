@@ -38,7 +38,7 @@ export interface PlayerMatchStatsResponse {
 }
 
 class UpstreamFailure extends Error {
-  constructor(readonly statusCode?: number) {
+  constructor(readonly statusCode?: number, readonly retryAfter?: number) {
     super('BSER API unavailable');
   }
 }
@@ -160,6 +160,7 @@ export class PlayerMatchesService {
     return new HttpException({
       code: limited ? 'BSER_RATE_LIMITED' : 'BSER_UNAVAILABLE',
       message: limited ? '공식 API 요청 제한에 도달했습니다.' : '공식 API에서 전적을 가져오지 못했습니다.',
+      ...(limited ? { retryAfter: error.retryAfter ?? 1 } : {}),
     }, limited ? HttpStatus.TOO_MANY_REQUESTS : HttpStatus.BAD_GATEWAY);
   }
 
@@ -181,12 +182,18 @@ export class PlayerMatchesService {
       throw new NotFoundException({ code: 'PLAYER_NOT_FOUND', message: '플레이어를 찾을 수 없습니다.' });
     }
     if (userResult.status !== 'found') {
-      throw new UpstreamFailure(userResult.status === 'unavailable' ? userResult.statusCode : undefined);
+      throw new UpstreamFailure(
+        userResult.status === 'unavailable' ? userResult.statusCode : undefined,
+        userResult.status === 'unavailable' ? userResult.retryAfter : undefined,
+      );
     }
 
     const matchResult: BSERUserMatchesResult = await this.bserApi.fetchUserMatchesDetailed(userResult.user.userId);
     if (matchResult.status === 'unavailable' || matchResult.status === 'not_configured') {
-      throw new UpstreamFailure(matchResult.status === 'unavailable' ? matchResult.statusCode : undefined);
+      throw new UpstreamFailure(
+        matchResult.status === 'unavailable' ? matchResult.statusCode : undefined,
+        matchResult.status === 'unavailable' ? matchResult.retryAfter : undefined,
+      );
     }
     // A resolved player with no user-games resource has an empty recent history.
     const rawGames = matchResult.status === 'found' ? matchResult.games : [];

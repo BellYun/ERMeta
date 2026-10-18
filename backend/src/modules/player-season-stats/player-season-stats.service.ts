@@ -26,7 +26,7 @@ interface RefreshResult {
 }
 
 class UpstreamFailure extends Error {
-  constructor(readonly statusCode?: number) {
+  constructor(readonly statusCode?: number, readonly retryAfter?: number) {
     super('BSER API unavailable or returned invalid stats');
   }
 }
@@ -98,6 +98,7 @@ export class PlayerSeasonStatsService {
     return new HttpException({
       code: limited ? 'BSER_RATE_LIMITED' : 'BSER_UNAVAILABLE',
       message: limited ? '공식 API 요청 제한에 도달했습니다.' : '공식 API에서 통계를 가져오지 못했습니다.',
+      ...(limited ? { retryAfter: error.retryAfter ?? 1 } : {}),
     }, limited ? HttpStatus.TOO_MANY_REQUESTS : HttpStatus.BAD_GATEWAY);
   }
 
@@ -130,12 +131,18 @@ export class PlayerSeasonStatsService {
       throw new NotFoundException({ code: 'PLAYER_NOT_FOUND', message: '플레이어를 찾을 수 없습니다.' });
     }
     if (userResult.status !== 'found') {
-      throw new UpstreamFailure(userResult.status === 'unavailable' ? userResult.statusCode : undefined);
+      throw new UpstreamFailure(
+        userResult.status === 'unavailable' ? userResult.statusCode : undefined,
+        userResult.status === 'unavailable' ? userResult.retryAfter : undefined,
+      );
     }
 
     const statsResult = await this.bserApi.fetchUserStatsDetailed(userResult.user.userId, seasonId, matchingMode);
     if (statsResult.status === 'unavailable' || statsResult.status === 'not_configured') {
-      throw new UpstreamFailure(statsResult.status === 'unavailable' ? statsResult.statusCode : undefined);
+      throw new UpstreamFailure(
+        statsResult.status === 'unavailable' ? statsResult.statusCode : undefined,
+        statsResult.status === 'unavailable' ? statsResult.retryAfter : undefined,
+      );
     }
     const stats = statsResult.status === 'found'
       ? normalizeStats(statsResult.stats, seasonId, matchingMode)

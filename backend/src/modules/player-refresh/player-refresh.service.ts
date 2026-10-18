@@ -52,10 +52,14 @@ export class PlayerRefreshService {
       .filter((settled): settled is PromiseRejectedResult => settled.status === 'rejected')
       .map((settled) => settled.reason);
     const status = failureHttpStatus(failures, failed === 2);
+    const retryAfter = status === HttpStatus.TOO_MANY_REQUESTS
+      ? Math.max(1, ...failures.map(retryAfterFromError))
+      : undefined;
     throw new HttpException({
       code: failed === 2 ? 'PLAYER_REFRESH_FAILED' : 'PLAYER_REFRESH_PARTIAL',
       message: failed === 2 ? '전적과 시즌 통계를 갱신하지 못했습니다.' : '일부 데이터를 갱신하지 못했습니다.',
       ...result,
+      ...(retryAfter ? { retryAfter } : {}),
     }, status);
   }
 
@@ -69,6 +73,14 @@ export class PlayerRefreshService {
       ? (response as { code: unknown }).code : undefined;
     return { status: 'failed', code: typeof code === 'string' ? code : 'INTERNAL_ERROR' };
   }
+}
+
+function retryAfterFromError(error: unknown): number {
+  if (!(error instanceof HttpException)) return 0;
+  const response = error.getResponse();
+  const value = typeof response === 'object' && response !== null && 'retryAfter' in response
+    ? (response as { retryAfter: unknown }).retryAfter : undefined;
+  return typeof value === 'number' && Number.isInteger(value) && value > 0 ? value : 0;
 }
 
 function failureHttpStatus(errors: unknown[], allFailed: boolean): number {
