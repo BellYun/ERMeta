@@ -3,7 +3,7 @@ const test = require('node:test');
 const { PlayerHistoryDatabaseService } = require('../dist/common/database/player-history-database.service');
 const { PlayerMatchesRepository } = require('../dist/modules/player-matches/player-matches.repository');
 
-test('PostgreSQL aggregates only the selected season and mode, handles upserts, and resets on UID changes',
+test('PostgreSQL aggregates selected matches across repeated nickname refreshes',
   { skip: !process.env.TEST_DATABASE_URL }, async () => {
     const database = new PlayerHistoryDatabaseService({
       get: (key) => key === 'DATABASE_URL' ? process.env.TEST_DATABASE_URL : undefined,
@@ -29,11 +29,11 @@ test('PostgreSQL aggregates only the selected season and mode, handles upserts, 
     ];
     let playerId;
     try {
-      const player = await repository.saveSnapshot(nickname, nicknameKey, 'uid-one', [
+      const player = await repository.saveSnapshot(nickname, nicknameKey, [
         ...selected, game(3, 38, 3, 1, 99, 99), game(4, 39, 2, 1, 99, 99),
       ], new Date());
       playerId = player.id;
-      await repository.saveSnapshot(nickname, nicknameKey, 'uid-one', selected, new Date());
+      await repository.saveSnapshot(nickname, nicknameKey, selected, new Date());
       const aggregate = await repository.aggregateMatches(playerId, 39, 3);
       assert.equal(aggregate.sampleSize, 3);
       assert.equal(aggregate.wins, 1);
@@ -49,13 +49,13 @@ test('PostgreSQL aggregates only the selected season and mode, handles upserts, 
       assert.equal(empty.averageRank, null);
       assert.equal(empty.periodStart, null);
 
-      await repository.saveSnapshot(nickname, nicknameKey, 'uid-two', [
+      await repository.saveSnapshot(nickname, nicknameKey, [
         game(5, 39, 3, 2, 7, 8, dates[2]),
       ], new Date());
-      const replaced = await repository.aggregateMatches(playerId, 39, 3);
-      assert.equal(replaced.sampleSize, 1);
-      assert.equal(replaced.wins, 0);
-      assert.equal(replaced.averageKills, 7);
+      const accumulated = await repository.aggregateMatches(playerId, 39, 3);
+      assert.equal(accumulated.sampleSize, 4);
+      assert.equal(accumulated.wins, 1);
+      assert.equal(accumulated.averageKills, 4);
     } finally {
       if (playerId) {
         await database.getPool().query('DELETE FROM player_history.player_match_records WHERE player_lookup_id = $1', [playerId]);

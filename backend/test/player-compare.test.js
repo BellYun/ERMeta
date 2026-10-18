@@ -85,8 +85,8 @@ test('simultaneous comparisons reuse the single-player service upstream refresh'
   const single = new PlayerSeasonStatsService({
     findByNicknameKey: async () => lookup,
     findSnapshot: async () => snapshot,
-    saveResult: async (nickname, _key, providerUid, _season, _mode, result, fetchedAt) => {
-      lookup = { id: '1', nickname, providerUid };
+    saveResult: async (nickname, _key, _season, _mode, result, fetchedAt) => {
+      lookup = { id: '1', nickname };
       snapshot = { stats: result, fetchedAt };
     },
   }, {

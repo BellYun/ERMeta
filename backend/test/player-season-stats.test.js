@@ -14,7 +14,7 @@ function sampleStats(overrides = {}) {
 }
 
 function fixture(initialSnapshot = null) {
-  let lookup = initialSnapshot ? { id: '1', nickname: '테스터', providerUid: 'uid-one' } : null;
+  let lookup = initialSnapshot ? { id: '1', nickname: '테스터' } : null;
   let snapshot = initialSnapshot;
   let saveCount = 0;
   let userCalls = 0;
@@ -22,9 +22,9 @@ function fixture(initialSnapshot = null) {
   const repository = {
     findByNicknameKey: async () => lookup,
     findSnapshot: async () => snapshot,
-    saveResult: async (nickname, _key, providerUid, _season, _mode, stats, fetchedAt) => {
+    saveResult: async (nickname, _key, _season, _mode, stats, fetchedAt) => {
       saveCount += 1;
-      lookup = { id: '1', nickname, providerUid };
+      lookup = { id: '1', nickname };
       snapshot = stats ? { stats, fetchedAt } : null;
     },
   };
