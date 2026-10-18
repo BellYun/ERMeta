@@ -244,6 +244,14 @@ PostgreSQL과 HTTP API 계약을 유지하며 구현을 교체한다. 같은 요
 - 응답은 입력 순서대로 `ok`, `no_stats`, `not_found`, `error`를 구분한다. 사용자별 실패는 다른 사용자의 결과를 버리지 않으며, 중복 제거 후 요청 인원과 성공·실패 수를 함께 반환한다.
 - 기존 Redis 기반 `POST /multi-search/players`는 프론트엔드가 사용 중이므로 유지한다. 화면 전환은 별도 작업으로 검토한다.
 
+## 4단계 Cloud Run 배포 준비 결정 (#309)
+
+- 기존 전체 앱은 Supabase 설정을 시작 시 요구한다. 플레이어 API만 배포하기 위해 전적·통계·멀티서치 모듈을 묶은 별도 NestJS 진입점을 만들고, BSER API 클라이언트를 수집 기능에서 독립 모듈로 분리한다. Redis 없이 동작하는 인메모리 요청 제한을 이 진입점에 적용한다.
+- 로컬 `DATABASE_URL`과 Cloud SQL의 Unix socket 연결 설정을 같은 PostgreSQL 풀과 마이그레이션에 사용한다. 애플리케이션 시작 시 마이그레이션을 실행하지 않고, 같은 컨테이너 이미지를 Cloud Run Job으로 실행해 먼저 적용한다.
+- 컨테이너의 `/health/live`는 프로세스, `/health/ready`는 DB 연결과 전적 테이블을 검증한다. Supabase/Redis 및 기존 전체 앱의 `/health`는 그대로 유지한다.
+- 공식 API 호출 큐와 동시 갱신 공유는 프로세스 단위이므로 첫 배포는 Cloud Run 서비스 최대 인스턴스 1개로 제한한다. 이 제한은 전역 호출량의 절대 보장이 아니며, 다중 인스턴스 전에는 공유 조정 장치를 설계한다.
+- 첫 배포는 프로젝트·예산 확인 후 수동으로 진행한다. 운영이 검증되면 장기 서비스 계정 키 대신 Workload Identity Federation으로 배포 자동화를 추가한다. 명령과 비용 전제는 `CLOUD_RUN_DEPLOYMENT.md`에 기록한다.
+
 ## 명시적 갱신 API 구현 결정 (#315)
 
 - `POST /v1/players/:nickname/refresh`는 `seasonId`와 `matchingMode`를 받아 전적과 공식 시즌 통계를 강제로 갱신한다. GET의 TTL·stale 폴백과 구분하고 기존 서비스의 외부 응답 검증·DB 저장·동시 요청 공유를 재사용한다.
