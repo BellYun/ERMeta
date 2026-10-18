@@ -144,7 +144,6 @@ export class PlayerSeasonStatsService {
     await this.repository.saveResult(
       userResult.user.nickname,
       nicknameKey,
-      userResult.user.userId,
       seasonId,
       matchingMode,
       stats,

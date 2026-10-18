@@ -30,7 +30,6 @@ export interface OfficialSeasonStats {
 export interface PlayerLookup {
   id: string;
   nickname: string;
-  providerUid: string;
 }
 
 export interface StoredSeasonStats {
@@ -41,7 +40,6 @@ export interface StoredSeasonStats {
 interface LookupRow {
   id: string;
   nickname: string;
-  provider_uid: string;
 }
 
 @Injectable()
@@ -50,7 +48,7 @@ export class PlayerSeasonStatsRepository {
 
   async findByNicknameKey(nicknameKey: string): Promise<PlayerLookup | null> {
     const result = await this.database.getPool().query<LookupRow>(
-      `SELECT id, nickname, provider_uid
+      `SELECT id, nickname
        FROM player_history.player_lookups WHERE nickname_key = $1`,
       [nicknameKey],
     );
@@ -76,7 +74,6 @@ export class PlayerSeasonStatsRepository {
   async saveResult(
     nickname: string,
     nicknameKey: string,
-    providerUid: string,
     seasonId: number,
     matchingMode: number,
     stats: OfficialSeasonStats | null,
@@ -86,37 +83,17 @@ export class PlayerSeasonStatsRepository {
     try {
       await client.query('BEGIN');
       await client.query('SELECT pg_advisory_xact_lock(hashtext($1)::bigint)', [nicknameKey]);
-      const previous = await client.query<LookupRow>(
-        'SELECT id, provider_uid FROM player_history.player_lookups WHERE nickname_key = $1 FOR UPDATE',
-        [nicknameKey],
-      );
       const lookup = await client.query<LookupRow>(
         `INSERT INTO player_history.player_lookups
-           (nickname, nickname_key, provider_uid, resolved_at)
-         VALUES ($1, $2, $3, $4)
+           (nickname, nickname_key, resolved_at)
+         VALUES ($1, $2, $3)
          ON CONFLICT (nickname_key) DO UPDATE SET
            nickname = EXCLUDED.nickname,
-           provider_uid = EXCLUDED.provider_uid,
            resolved_at = EXCLUDED.resolved_at
-         RETURNING id, nickname, provider_uid`,
-        [nickname, nicknameKey, providerUid, fetchedAt],
+         RETURNING id, nickname`,
+        [nickname, nicknameKey, fetchedAt],
       );
       const playerId = lookup.rows[0].id;
-
-      if (previous.rows[0] && previous.rows[0].provider_uid !== providerUid) {
-        await client.query(
-          'DELETE FROM player_history.player_match_records WHERE player_lookup_id = $1',
-          [playerId],
-        );
-        await client.query(
-          'DELETE FROM player_history.player_season_stats WHERE player_lookup_id = $1',
-          [playerId],
-        );
-        await client.query(
-          'UPDATE player_history.player_lookups SET matches_synced_at = NULL WHERE id = $1',
-          [playerId],
-        );
-      }
 
       await client.query(
         `DELETE FROM player_history.player_season_stats
@@ -153,5 +130,5 @@ export class PlayerSeasonStatsRepository {
 }
 
 function mapLookup(row: LookupRow): PlayerLookup {
-  return { id: row.id, nickname: row.nickname, providerUid: row.provider_uid };
+  return { id: row.id, nickname: row.nickname };
 }
