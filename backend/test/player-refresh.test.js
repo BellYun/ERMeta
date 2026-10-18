@@ -9,7 +9,7 @@ const body = { seasonId: 39, matchingMode: 3 };
 
 test('explicit match refresh bypasses a fresh TTL and fails instead of serving stale data', async () => {
   const originalSyncedAt = new Date();
-  let lookup = { id: '1', nickname: '테스터', providerUid: 'uid', matchesSyncedAt: originalSyncedAt };
+  let lookup = { id: '1', nickname: '테스터', matchesSyncedAt: originalSyncedAt };
   let calls = 0;
   let saves = 0;
   const bser = {
@@ -22,9 +22,9 @@ test('explicit match refresh bypasses a fresh TTL and fails instead of serving s
   const service = new PlayerMatchesService({
     findByNicknameKey: async () => lookup,
     listMatches: async () => ({ matches: [], hasMore: false }),
-    saveSnapshot: async (nickname, _key, providerUid, _games, syncedAt) => {
+    saveSnapshot: async (nickname, _key, _games, syncedAt) => {
       saves += 1;
-      lookup = { ...lookup, nickname, providerUid, matchesSyncedAt: syncedAt };
+      lookup = { ...lookup, nickname, matchesSyncedAt: syncedAt };
     },
   }, bser, { get: () => undefined });
 
@@ -63,9 +63,9 @@ test('explicit season refresh bypasses a fresh TTL and preserves an old snapshot
     },
   };
   const service = new PlayerSeasonStatsService({
-    findByNicknameKey: async () => ({ id: '1', nickname: '테스터', providerUid: 'uid' }),
+    findByNicknameKey: async () => ({ id: '1', nickname: '테스터' }),
     findSnapshot: async () => snapshot,
-    saveResult: async (_nickname, _key, _uid, _season, _mode, stats, fetchedAt) => {
+    saveResult: async (_nickname, _key, _season, _mode, stats, fetchedAt) => {
       saves += 1;
       snapshot = { stats, fetchedAt };
     },
@@ -107,8 +107,8 @@ test('simultaneous explicit refreshes share each service upstream request', asyn
   const user = { status: 'found', user: { nickname: '테스터', userId: 'uid' } };
   const matches = new PlayerMatchesService({
     findByNicknameKey: async () => lookup,
-    saveSnapshot: async (nickname, _key, providerUid, _games, syncedAt) => {
-      lookup = { id: '1', nickname, providerUid, matchesSyncedAt: syncedAt };
+    saveSnapshot: async (nickname, _key, _games, syncedAt) => {
+      lookup = { id: '1', nickname, matchesSyncedAt: syncedAt };
     },
   }, {
     findUserByNicknameDetailed: async () => {

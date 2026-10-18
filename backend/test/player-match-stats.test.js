@@ -7,8 +7,8 @@ function fixture(aggregate, initialLookup = null) {
   let upstreamCalls = 0;
   const repository = {
     findByNicknameKey: async () => lookup,
-    saveSnapshot: async (nickname, _key, providerUid, _matches, syncedAt) => {
-      lookup = { id: '1', nickname, providerUid, matchesSyncedAt: syncedAt };
+    saveSnapshot: async (nickname, _key, _matches, syncedAt) => {
+      lookup = { id: '1', nickname, matchesSyncedAt: syncedAt };
     },
     aggregateMatches: async (_id, seasonId, matchingMode) => {
       assert.equal(seasonId, 39);
@@ -108,7 +108,7 @@ test('stale stored data remains available when an upstream refresh fails', async
     averageKills: 2, averageAssists: 3,
     periodStart: new Date('2026-10-10T00:00:00Z'),
     periodEnd: new Date('2026-10-10T00:00:00Z'),
-  }, { id: '1', nickname: '테스터', providerUid: 'uid', matchesSyncedAt: lastSyncedAt });
+  }, { id: '1', nickname: '테스터', matchesSyncedAt: lastSyncedAt });
   f.bser.findUserByNicknameDetailed = async () => ({ status: 'unavailable', statusCode: 503 });
   const result = await f.service.getMatchStats('테스터', '39', '3');
   assert.equal(result.isStale, true);

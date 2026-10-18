@@ -206,7 +206,6 @@ export class PlayerMatchesService {
     await this.repository.saveSnapshot(
       userResult.user.nickname,
       nicknameKey,
-      userResult.user.userId,
       games,
       new Date(),
     );

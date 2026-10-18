@@ -19,10 +19,10 @@ function fixture(initialLookup = null, games = [sampleGame()]) {
   let externalCalls = 0;
   const repository = {
     findByNicknameKey: async () => lookup,
-    saveSnapshot: async (nickname, _key, providerUid, matches, syncedAt) => {
+    saveSnapshot: async (nickname, _key, matches, syncedAt) => {
       saveCount += 1;
       saved = matches;
-      lookup = { id: '1', nickname, providerUid, matchesSyncedAt: syncedAt };
+      lookup = { id: '1', nickname, matchesSyncedAt: syncedAt };
     },
     listMatches: async (_id, limit, cursor) => {
       const filtered = cursor
@@ -65,7 +65,7 @@ test('recent games are validated, sorted, paged, and reused while fresh', async 
 
 test('upstream outage returns stale saved data and fails without it', async () => {
   const old = new Date(Date.now() - 600_000);
-  const f = fixture({ id: '1', nickname: '테스터', providerUid: 'uid', matchesSyncedAt: old });
+  const f = fixture({ id: '1', nickname: '테스터', matchesSyncedAt: old });
   f.bser.findUserByNicknameDetailed = async () => ({ status: 'unavailable', statusCode: 503 });
   const response = await f.service.getMatches('테스터');
   assert.equal(response.isStale, true);
@@ -113,7 +113,6 @@ test('repository rolls back when a record insert fails', async () => {
   const client = {
     query: async (sql) => {
       queries.push(sql);
-      if (sql.startsWith('SELECT id, provider_uid')) return { rows: [] };
       if (sql.includes('INSERT INTO player_history.player_lookups')) return { rows: [{ id: '1' }] };
       if (sql.includes('INSERT INTO player_history.player_match_records')) throw new Error('constraint failed');
       return { rows: [] };
@@ -125,7 +124,7 @@ test('repository rolls back when a record insert fails', async () => {
     gameId: 10, seasonId: 39, matchingMode: 3, matchingTeamMode: 3,
     startedAt: new Date(), characterCode: 1, weaponCode: 2, rank: 1, kills: 0, assists: 0,
   };
-  await assert.rejects(repository.saveSnapshot('테스터', '테스터', 'uid', [game], new Date()));
+  await assert.rejects(repository.saveSnapshot('테스터', '테스터', [game], new Date()));
   assert.ok(queries.includes('ROLLBACK'));
   assert.equal(queries.some((sql) => sql.includes('SET matches_synced_at')), false);
   assert.equal(released, true);

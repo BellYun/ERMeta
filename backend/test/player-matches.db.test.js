@@ -19,9 +19,9 @@ test('PostgreSQL prevents duplicates, pages deterministically and rolls back a f
     });
     const syncedAt = new Date('2026-10-13T00:00:00.000Z');
     try {
-      const player = await repository.saveSnapshot(nickname, nickname, 'uid-one',
+      const player = await repository.saveSnapshot(nickname, nickname,
         [makeGame(firstId), makeGame(firstId + 1)], syncedAt);
-      await repository.saveSnapshot(nickname, nickname, 'uid-one',
+      await repository.saveSnapshot(nickname, nickname,
         [makeGame(firstId), makeGame(firstId + 1)], syncedAt);
       const page = await repository.listMatches(player.id, 1, null);
       assert.equal(page.matches[0].gameId, String(firstId + 1));
@@ -38,7 +38,7 @@ test('PostgreSQL prevents duplicates, pages deterministically and rolls back a f
       );
       assert.equal(count.rows[0].count, 2);
 
-      await assert.rejects(repository.saveSnapshot(nickname, nickname, 'uid-one',
+      await assert.rejects(repository.saveSnapshot(nickname, nickname,
         [makeGame(firstId + 2), makeGame(firstId + 3, 0)], new Date()));
       const after = await repository.findByNicknameKey(nickname);
       assert.equal(after.matchesSyncedAt.toISOString(), syncedAt.toISOString());
@@ -48,9 +48,10 @@ test('PostgreSQL prevents duplicates, pages deterministically and rolls back a f
       );
       assert.equal(countAfter.rows[0].count, 2);
 
-      await repository.saveSnapshot(nickname, nickname, 'uid-two', [makeGame(firstId + 4)], new Date());
-      const replaced = await repository.listMatches(player.id, 10, null);
-      assert.deepEqual(replaced.matches.map((match) => match.gameId), [String(firstId + 4)]);
+      await repository.saveSnapshot(nickname, nickname, [makeGame(firstId + 4)], new Date());
+      const accumulated = await repository.listMatches(player.id, 10, null);
+      assert.deepEqual(accumulated.matches.map((match) => match.gameId),
+        [String(firstId + 4), String(firstId + 1), String(firstId)]);
     } finally {
       await database.onModuleDestroy();
     }

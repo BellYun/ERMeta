@@ -4,7 +4,6 @@ import { PlayerHistoryDatabaseService } from '../../common/database/player-histo
 export interface PlayerLookup {
   id: string;
   nickname: string;
-  providerUid: string;
   matchesSyncedAt: Date | null;
 }
 
@@ -53,7 +52,6 @@ export interface StoredMatchAggregate {
 interface LookupRow {
   id: string;
   nickname: string;
-  provider_uid: string;
   matches_synced_at: Date | null;
 }
 
@@ -63,7 +61,7 @@ export class PlayerMatchesRepository {
 
   async findByNicknameKey(nicknameKey: string): Promise<PlayerLookup | null> {
     const result = await this.database.getPool().query<LookupRow>(
-      `SELECT id, nickname, provider_uid, matches_synced_at
+      `SELECT id, nickname, matches_synced_at
        FROM player_history.player_lookups WHERE nickname_key = $1`,
       [nicknameKey],
     );
@@ -73,7 +71,6 @@ export class PlayerMatchesRepository {
   async saveSnapshot(
     nickname: string,
     nicknameKey: string,
-    providerUid: string,
     games: MatchSnapshot[],
     syncedAt: Date,
   ): Promise<PlayerLookup> {
@@ -81,34 +78,17 @@ export class PlayerMatchesRepository {
     try {
       await client.query('BEGIN');
       await client.query('SELECT pg_advisory_xact_lock(hashtext($1)::bigint)', [nicknameKey]);
-      const previous = await client.query<LookupRow>(
-        'SELECT id, provider_uid FROM player_history.player_lookups WHERE nickname_key = $1 FOR UPDATE',
-        [nicknameKey],
-      );
       const lookup = await client.query<LookupRow>(
         `INSERT INTO player_history.player_lookups
-           (nickname, nickname_key, provider_uid, resolved_at)
-         VALUES ($1, $2, $3, $4)
+           (nickname, nickname_key, resolved_at)
+         VALUES ($1, $2, $3)
          ON CONFLICT (nickname_key) DO UPDATE SET
            nickname = EXCLUDED.nickname,
-           provider_uid = EXCLUDED.provider_uid,
            resolved_at = EXCLUDED.resolved_at
-         RETURNING id, nickname, provider_uid, matches_synced_at`,
-        [nickname, nicknameKey, providerUid, syncedAt],
+         RETURNING id, nickname, matches_synced_at`,
+        [nickname, nicknameKey, syncedAt],
       );
       const playerId = lookup.rows[0].id;
-
-      // A nickname can point to a different temporary UID after a rename.
-      if (previous.rows[0] && previous.rows[0].provider_uid !== providerUid) {
-        await client.query(
-          'DELETE FROM player_history.player_match_records WHERE player_lookup_id = $1',
-          [playerId],
-        );
-        await client.query(
-          'DELETE FROM player_history.player_season_stats WHERE player_lookup_id = $1',
-          [playerId],
-        );
-      }
 
       for (const chunk of chunks(games, 100)) {
         const matchValues = chunk.flatMap((game) => [
@@ -147,7 +127,7 @@ export class PlayerMatchesRepository {
 
       const updated = await client.query<LookupRow>(
         `UPDATE player_history.player_lookups SET matches_synced_at = $2
-         WHERE id = $1 RETURNING id, nickname, provider_uid, matches_synced_at`,
+         WHERE id = $1 RETURNING id, nickname, matches_synced_at`,
         [playerId, syncedAt],
       );
       await client.query('COMMIT');
@@ -246,7 +226,6 @@ function mapLookup(row: LookupRow): PlayerLookup {
   return {
     id: row.id,
     nickname: row.nickname,
-    providerUid: row.provider_uid,
     matchesSyncedAt: row.matches_synced_at,
   };
 }
