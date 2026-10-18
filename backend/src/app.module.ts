@@ -23,6 +23,7 @@ import { PlayerMatchesModule } from './modules/player-matches/player-matches.mod
 import { PlayerSeasonStatsModule } from './modules/player-season-stats/player-season-stats.module';
 import { PlayerCompareModule } from './modules/player-compare/player-compare.module';
 import { PlayerRefreshModule } from './modules/player-refresh/player-refresh.module';
+import { PlayerRetryAfterInterceptor } from './player-api/player-retry-after.interceptor';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { PlayerRefreshModule } from './modules/player-refresh/player-refresh.mod
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
+    { provide: APP_INTERCEPTOR, useClass: PlayerRetryAfterInterceptor },
     { provide: APP_GUARD, useClass: RateLimitGuard },
   ],
 })
