@@ -161,6 +161,7 @@ test('partial refresh returns a failure HTTP status and preserves which section 
       nickname: '테스터', seasonId: 39, matchingMode: 3, refreshStatus: 'partial',
       matches: { status: 'updated', lastSyncedAt: '2026-10-15T00:00:00.000Z' },
       seasonStats: { status: 'failed', code: 'BSER_RATE_LIMITED' },
+      retryAfter: 1,
     });
     return true;
   });
