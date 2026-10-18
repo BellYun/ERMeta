@@ -5,7 +5,7 @@ type FailureCode = 'PLAYER_NOT_FOUND' | 'BSER_RATE_LIMITED' | 'BSER_UNAVAILABLE'
 
 export type PlayerCompareResult =
   | ({ input: string; status: 'ok' | 'no_stats' } & PlayerSeasonStatsResponse)
-  | { input: string; status: 'not_found' | 'error'; code: FailureCode };
+  | { input: string; status: 'not_found' | 'error'; code: FailureCode; retryAfter?: number };
 
 export interface PlayerCompareResponse {
   seasonId: number;
@@ -39,7 +39,13 @@ export class PlayerCompareService {
     } catch (error) {
       if (error instanceof HttpException) {
         const code = errorCode(error);
-        return { input, status: code === 'PLAYER_NOT_FOUND' ? 'not_found' : 'error', code };
+        const response = error.getResponse();
+        const retryAfter = typeof response === 'object' && response !== null && 'retryAfter' in response
+          ? (response as { retryAfter: unknown }).retryAfter : undefined;
+        return {
+          input, status: code === 'PLAYER_NOT_FOUND' ? 'not_found' : 'error', code,
+          ...(code === 'BSER_RATE_LIMITED' && typeof retryAfter === 'number' && retryAfter > 0 ? { retryAfter } : {}),
+        };
       }
       this.logger.error(`Player comparison failed for ${input}`, error instanceof Error ? error.stack : String(error));
       return { input, status: 'error', code: 'INTERNAL_ERROR' };

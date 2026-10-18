@@ -15,7 +15,7 @@ export type BSERLookupResult =
   | { status: 'found'; user: BSERUserByNickname }
   | { status: 'not_found' }
   | { status: 'not_configured' }
-  | { status: 'unavailable'; statusCode?: number; message?: string };
+  | { status: 'unavailable'; statusCode?: number; message?: string; retryAfter?: number };
 
 export interface BSERUserStatsResponse {
   code: number;
@@ -52,7 +52,7 @@ export type BSERUserStatsResult =
   | { status: 'found'; stats: BSERUserSeasonStats }
   | { status: 'not_found' }
   | { status: 'not_configured' }
-  | { status: 'unavailable'; statusCode?: number; message?: string };
+  | { status: 'unavailable'; statusCode?: number; message?: string; retryAfter?: number };
 
 export interface BSERUserCharacterStats {
   characterCode: number;
@@ -106,7 +106,13 @@ export type BSERUserMatchesResult =
   | { status: 'found'; games: BSERPlayerData[] }
   | { status: 'not_found' }
   | { status: 'not_configured' }
-  | { status: 'unavailable'; statusCode?: number; message?: string };
+  | { status: 'unavailable'; statusCode?: number; message?: string; retryAfter?: number };
+
+interface RateLimitWaiter {
+  resolve: () => void;
+  reject: (error: BserRateLimitQueueError) => void;
+  timer: ReturnType<typeof setTimeout>;
+}
 
 @Injectable()
 export class BserApiService implements OnModuleDestroy {
@@ -118,7 +124,9 @@ export class BserApiService implements OnModuleDestroy {
   private readonly rateLimitRps: number;
   private readonly rateLimitBurst: number;
   private readonly rateLimitQueueMax: number;
-  private readonly rateLimitQueue: Array<() => void> = [];
+  private readonly rateLimitMaxWaitMs: number;
+  private readonly rateLimitQueue: RateLimitWaiter[] = [];
+  private readonly inFlightNicknameLookups = new Map<string, Promise<BSERLookupResult>>();
   private rateLimitTokens: number;
   private rateLimitRefilledAt = Date.now();
   private rateLimitTimer: ReturnType<typeof setTimeout> | null = null;
@@ -139,6 +147,8 @@ export class BserApiService implements OnModuleDestroy {
       1,
       this.config.get<number>('BSER_API_RATE_LIMIT_QUEUE_MAX', 50),
     );
+    const maxWaitMs = Number(this.config.get('BSER_API_RATE_LIMIT_MAX_WAIT_MS', 10_000));
+    this.rateLimitMaxWaitMs = Number.isFinite(maxWaitMs) && maxWaitMs > 0 ? maxWaitMs : 10_000;
     this.rateLimitTokens = this.rateLimitBurst;
   }
 
@@ -202,6 +212,19 @@ export class BserApiService implements OnModuleDestroy {
   ): Promise<BSERLookupResult> {
     if (!this.apiKey) return { status: 'not_configured' };
 
+    const nicknameKey = nickname.trim().toLocaleLowerCase('ko-KR');
+    const existing = this.inFlightNicknameLookups.get(nicknameKey);
+    if (existing) return existing;
+    const pending = this.lookupUserByNickname(nickname);
+    this.inFlightNicknameLookups.set(nicknameKey, pending);
+    try {
+      return await pending;
+    } finally {
+      this.inFlightNicknameLookups.delete(nicknameKey);
+    }
+  }
+
+  private async lookupUserByNickname(nickname: string): Promise<BSERLookupResult> {
     try {
       const url = new URL(`${this.baseUrl}/v1/user/nickname`);
       url.searchParams.set('query', nickname);
@@ -215,6 +238,7 @@ export class BserApiService implements OnModuleDestroy {
           status: 'unavailable',
           statusCode: res.status,
           message: res.statusText,
+          retryAfter: res.status === 429 ? parseRetryAfter(res) : undefined,
         };
       }
 
@@ -236,6 +260,7 @@ export class BserApiService implements OnModuleDestroy {
         status: 'unavailable',
         statusCode: err instanceof BserRateLimitQueueError ? 429 : undefined,
         message: (err as Error).message,
+        retryAfter: err instanceof BserRateLimitQueueError ? err.retryAfter : undefined,
       };
     }
   }
@@ -250,7 +275,12 @@ export class BserApiService implements OnModuleDestroy {
       );
       if (res.status === 404) return { status: 'not_found' };
       if (!res.ok) {
-        return { status: 'unavailable', statusCode: res.status, message: res.statusText };
+        return {
+          status: 'unavailable',
+          statusCode: res.status,
+          message: res.statusText,
+          retryAfter: res.status === 429 ? parseRetryAfter(res) : undefined,
+        };
       }
       const json = (await res.json()) as { code?: number; userGames?: BSERPlayerData[] };
       if (json.code === 404) return { status: 'not_found' };
@@ -264,6 +294,7 @@ export class BserApiService implements OnModuleDestroy {
         status: 'unavailable',
         statusCode: err instanceof BserRateLimitQueueError ? 429 : undefined,
         message: (err as Error).message,
+        retryAfter: err instanceof BserRateLimitQueueError ? err.retryAfter : undefined,
       };
     }
   }
@@ -300,6 +331,7 @@ export class BserApiService implements OnModuleDestroy {
           status: 'unavailable',
           statusCode: res.status,
           message: res.statusText,
+          retryAfter: res.status === 429 ? parseRetryAfter(res) : undefined,
         };
       }
 
@@ -309,7 +341,12 @@ export class BserApiService implements OnModuleDestroy {
       return stats ? { status: 'found', stats } : { status: 'not_found' };
     } catch (err) {
       this.logger.warn(`BSER user stats 조회 실패: ${(err as Error).message}`);
-      return { status: 'unavailable', message: (err as Error).message };
+      return {
+        status: 'unavailable',
+        statusCode: err instanceof BserRateLimitQueueError ? 429 : undefined,
+        message: (err as Error).message,
+        retryAfter: err instanceof BserRateLimitQueueError ? err.retryAfter : undefined,
+      };
     }
   }
 
@@ -357,13 +394,27 @@ export class BserApiService implements OnModuleDestroy {
   private waitForRateLimitToken(): Promise<void> {
     if (this.rateLimitRps <= 0) return Promise.resolve();
     if (this.rateLimitQueue.length >= this.rateLimitQueueMax) {
-      throw new BserRateLimitQueueError(this.rateLimitQueue.length);
+      throw new BserRateLimitQueueError('full', this.retryAfterSeconds());
     }
 
-    return new Promise((resolve) => {
-      this.rateLimitQueue.push(resolve);
+    return new Promise((resolve, reject) => {
+      const waiter: RateLimitWaiter = {
+        resolve,
+        reject,
+        timer: setTimeout(() => {
+          const index = this.rateLimitQueue.indexOf(waiter);
+          if (index < 0) return;
+          this.rateLimitQueue.splice(index, 1);
+          reject(new BserRateLimitQueueError('timeout', this.retryAfterSeconds()));
+        }, this.rateLimitMaxWaitMs),
+      };
+      this.rateLimitQueue.push(waiter);
       this.drainRateLimitQueue();
     });
+  }
+
+  private retryAfterSeconds(): number {
+    return Math.max(1, Math.ceil((this.rateLimitQueue.length + 1) / this.rateLimitRps));
   }
 
   private drainRateLimitQueue(): void {
@@ -373,7 +424,11 @@ export class BserApiService implements OnModuleDestroy {
 
     while (this.rateLimitTokens >= 1 && this.rateLimitQueue.length > 0) {
       this.rateLimitTokens -= 1;
-      this.rateLimitQueue.shift()?.();
+      const waiter = this.rateLimitQueue.shift();
+      if (waiter) {
+        clearTimeout(waiter.timer);
+        waiter.resolve();
+      }
     }
 
     if (this.rateLimitQueue.length === 0) return;
@@ -409,17 +464,31 @@ export class BserApiService implements OnModuleDestroy {
       clearTimeout(this.rateLimitTimer);
       this.rateLimitTimer = null;
     }
+    for (const waiter of this.rateLimitQueue.splice(0)) {
+      clearTimeout(waiter.timer);
+      waiter.reject(new BserRateLimitQueueError('shutdown', 1));
+    }
   }
 }
 
 class BserRateLimitQueueError extends Error {
-  constructor(queueLength: number) {
-    super(`BSER rate limit queue is full (${queueLength})`);
+  constructor(reason: 'full' | 'timeout' | 'shutdown', readonly retryAfter: number) {
+    super(`BSER rate limit queue ${reason}`);
   }
 }
 
 function isRetryableStatus(status: number): boolean {
-  return status === 429 || status >= 500;
+  return status >= 500;
+}
+
+function parseRetryAfter(response: Response): number | undefined {
+  const value = response.headers?.get('retry-after');
+  if (!value) return undefined;
+  const seconds = Number(value);
+  if (Number.isFinite(seconds) && seconds >= 0) return Math.max(1, Math.ceil(seconds));
+  const timestamp = Date.parse(value);
+  if (Number.isFinite(timestamp)) return Math.max(1, Math.ceil((timestamp - Date.now()) / 1000));
+  return undefined;
 }
 
 function sleep(ms: number): Promise<void> {

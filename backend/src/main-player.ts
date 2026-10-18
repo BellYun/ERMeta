@@ -11,7 +11,7 @@ async function bootstrap(): Promise<void> {
   }));
   const origins = (process.env.FRONTEND_ORIGINS ?? 'https://erwagg.com,https://www.erwagg.com,http://localhost:3000,http://localhost:3001')
     .split(',').map((origin) => origin.trim()).filter(Boolean);
-  app.enableCors({ origin: origins, methods: ['GET', 'POST', 'OPTIONS'] });
+  app.enableCors({ origin: origins, methods: ['GET', 'POST', 'OPTIONS'], exposedHeaders: ['Retry-After'] });
   await app.listen(Number(process.env.PORT ?? 4000), '0.0.0.0');
 }
 
