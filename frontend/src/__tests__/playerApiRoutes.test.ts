@@ -70,7 +70,72 @@ describe("멀티서치의 새 플레이어 API 연결", () => {
     expect(await response.json()).toMatchObject({
       input: "한 글",
       status: "not_found",
+      reason: "nickname_not_found",
       matches: [],
+    });
+  });
+
+  it("전적 커서와 갱신 상태를 다음 페이지까지 전달한다", async () => {
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          nickname: "테스터",
+          matches: [
+            {
+              gameId: "9007199254740993",
+              seasonId: 41,
+              matchingMode: 3,
+              matchingTeamMode: 3,
+              startedAt: "2026-10-18T00:00:00.000Z",
+              characterCode: 1,
+              rank: 2,
+              kills: 5,
+              assists: 6,
+            },
+          ],
+          nextCursor: "eyJpZCI6IjEifQ==",
+          lastSyncedAt: "2026-10-19T00:00:00.000Z",
+          isStale: true,
+        }),
+        { status: 200 }
+      )
+    );
+    const response = await GET(
+      new NextRequest(
+        "http://localhost/api/multi-search/recent-matches?nickname=%ED%85%8C%EC%8A%A4%ED%84%B0&limit=10&cursor=eyJpZCI6IjEifQ%3D%3D"
+      )
+    );
+
+    expect(fetchMock.mock.calls[0][0].searchParams.get("cursor")).toBe("eyJpZCI6IjEifQ==");
+    expect(await response.json()).toMatchObject({
+      status: "ok",
+      nextCursor: "eyJpZCI6IjEifQ==",
+      lastSyncedAt: "2026-10-19T00:00:00.000Z",
+      isStale: true,
+      matches: [{ gameId: "9007199254740993", gameRank: 2, playerKill: 5 }],
+    });
+  });
+
+  it("전적 요청 제한의 재시도 시간을 본문 또는 헤더에서 보존한다", async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ code: "BSER_RATE_LIMITED", retryAfter: 7 }), { status: 429 })
+    );
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ code: "RATE_LIMITED" }), {
+        status: 429,
+        headers: { "Retry-After": "9" },
+      })
+    );
+    const request = new NextRequest("http://localhost/api/multi-search/recent-matches?nickname=A");
+    expect(await (await GET(request)).json()).toMatchObject({
+      status: "error",
+      reason: "rate_limited",
+      retryAfter: 7,
+    });
+    expect(await (await GET(request)).json()).toMatchObject({
+      status: "error",
+      reason: "rate_limited",
+      retryAfter: 9,
     });
   });
 

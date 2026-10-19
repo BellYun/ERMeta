@@ -46,7 +46,7 @@ const compare: PlayerCompareResponse = {
       fetchedAt: null,
       isStale: false,
     },
-    { input: "C", status: "error", code: "BSER_RATE_LIMITED" },
+    { input: "C", status: "error", code: "BSER_RATE_LIMITED", retryAfter: 7 },
   ],
 };
 
@@ -75,7 +75,9 @@ describe("새 플레이어 API 화면 어댑터", () => {
     expect(payload.results[2]).toMatchObject({
       input: "C",
       status: "error",
-      reason: "bser_api_unavailable",
+      code: "BSER_RATE_LIMITED",
+      reason: "rate_limited",
+      retryAfter: 7,
     });
   });
 
@@ -83,7 +85,7 @@ describe("새 플레이어 API 화면 어댑터", () => {
     expect(
       adaptPlayerMatches("A", {
         nickname: "A",
-        nextCursor: null,
+        nextCursor: "next-page",
         lastSyncedAt: "2026-10-14T00:00:00.000Z",
         isStale: true,
         matches: [
@@ -104,6 +106,7 @@ describe("새 플레이어 API 화면 어댑터", () => {
       status: "ok",
       lastSyncedAt: "2026-10-14T00:00:00.000Z",
       isStale: true,
+      nextCursor: "next-page",
       matches: [
         {
           gameId: "9007199254740993",
