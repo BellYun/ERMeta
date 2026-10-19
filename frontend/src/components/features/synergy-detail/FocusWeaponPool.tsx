@@ -4,7 +4,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { Check, X, Search, ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useL10n } from "@/components/L10nProvider";
 import { useFocusCharWeapons } from "@/hooks/useFocusCharWeapons";
@@ -57,21 +57,23 @@ const FocusCell = React.memo(function FocusCell({
       className={cn(
         "relative flex flex-col items-center gap-1 rounded-md px-1 py-2 touch-manipulation",
         selected
-          ? "bg-[var(--color-surface)] outline outline-1 outline-[var(--color-border-light)]"
+          ? "bg-[var(--studio-accent-soft)] outline outline-2 -outline-offset-2 outline-[var(--studio-accent)]"
           : "hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-2)]/80"
       )}
     >
       {selected && (
-        <Check
-          className="absolute right-1 top-1 h-3 w-3 text-[var(--studio-accent)]"
+        <span
+          className="absolute right-1 top-1 z-20 grid h-5 w-5 place-items-center rounded-full bg-[var(--studio-accent)] text-white"
           aria-hidden="true"
-        />
+        >
+          <Check className="h-3.5 w-3.5" strokeWidth={3} />
+        </span>
       )}
       <div className="relative h-10 w-10">
         <span
           className={cn(
             "relative block h-full w-full overflow-hidden rounded-md bg-[var(--color-border)]",
-            selected && "outline outline-1 outline-[var(--color-border-light)]"
+            selected && "outline outline-2 outline-[var(--studio-accent)]"
           )}
         >
           <Image
@@ -125,8 +127,6 @@ export function FocusWeaponPool() {
   const [isExpanded, setIsExpanded] = React.useState(
     () => searchParams.get("focusPool") === "open"
   );
-  const locale = useLocale();
-  const [selectedOnly, setSelectedOnly] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const parentRef = React.useRef<HTMLDivElement>(null);
   const [columns, setColumns] = React.useState(4);
@@ -138,13 +138,7 @@ export function FocusWeaponPool() {
 
   const deferredSearch = React.useDeferredValue(search);
   const filteredItems = React.useMemo(() => {
-    const items = selectedOnly
-      ? getAllCharWeaponItems().filter((item) =>
-          focusCharWeapons.some(
-            (f) => f.charCode === item.charCode && f.weaponCode === item.weaponCode
-          )
-        )
-      : getAllCharWeaponItems();
+    const items = getAllCharWeaponItems();
     if (!deferredSearch.trim()) return items;
     const q = deferredSearch.trim().toLowerCase();
     return items.filter((item) => {
@@ -157,7 +151,7 @@ export function FocusWeaponPool() {
         localizedWeapon.includes(q)
       );
     });
-  }, [deferredSearch, getCharName, l10n, selectedOnly, focusCharWeapons]);
+  }, [deferredSearch, getCharName, l10n]);
 
   const isSelected = React.useCallback(
     (item: CharWeaponItem) =>
@@ -213,7 +207,7 @@ export function FocusWeaponPool() {
 
   React.useLayoutEffect(() => {
     virtualizer.scrollToOffset(0);
-  }, [virtualizer, deferredSearch, selectedOnly]);
+  }, [virtualizer, deferredSearch]);
 
   const resolveLabel = (f: { charCode: number; weaponCode: number }) => {
     const name = getCharName(f.charCode);
@@ -285,12 +279,14 @@ export function FocusWeaponPool() {
         </div>
       </div>
 
-      {/* 접힌 상태: 선택된 칩 표시 */}
-      {!isExpanded && focusCharWeapons.length > 0 && (
+      {/* 검색·스크롤 중에도 현재 선택한 실험체와 무기를 확인할 수 있는 목록 */}
+      {focusCharWeapons.length > 0 && (
         <div className="px-4 pb-3 flex flex-wrap gap-1.5">
           {focusCharWeapons.map((f) => (
             <button
               key={`${f.charCode}-${f.weaponCode}`}
+              type="button"
+              title={resolveLabel(f)}
               onClick={() => handleToggleFocus(f.charCode, f.weaponCode)}
               className="inline-flex min-h-[44px] items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-foreground)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)]"
             >
@@ -303,8 +299,11 @@ export function FocusWeaponPool() {
                   sizes="16px"
                 />
               </span>
-              <span className="max-w-24 truncate">{resolveLabel(f)}</span>
-              <X className="h-3 w-3 text-[var(--color-muted-foreground)]" strokeWidth={2.6} />
+              <span>{resolveLabel(f)}</span>
+              <X
+                className="h-3 w-3 shrink-0 text-[var(--color-muted-foreground)]"
+                strokeWidth={2.6}
+              />
             </button>
           ))}
         </div>
@@ -313,23 +312,6 @@ export function FocusWeaponPool() {
       {/* 펼친 상태: 검색 + 가상화 그리드 */}
       {isExpanded && (
         <div className="border-t border-[var(--color-border)] p-3">
-          <label className="mb-2 flex min-h-[44px] items-center gap-2 text-xs text-[var(--color-foreground)]">
-            <input
-              type="checkbox"
-              checked={selectedOnly}
-              onChange={(e) => setSelectedOnly(e.target.checked)}
-            />
-            {(
-              {
-                ko: "선택한 항목만 보기",
-                en: "Show selected only",
-                ja: "選択した項目のみ",
-                "zh-Hans": "仅显示已选",
-                "zh-Hant": "只顯示已選",
-              } as Record<string, string>
-            )[locale] ?? "Show selected only"}
-            <span>{t("count", { count: focusCharWeapons.length })}</span>
-          </label>
           <div className="relative mb-2">
             <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-foreground)]" />
             <input
