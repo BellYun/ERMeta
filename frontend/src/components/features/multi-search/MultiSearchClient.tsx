@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getCharacterMiniWebpUrl } from "@/lib/characterMap";
+import { mergeRecentMatches, type RecentMatchesResponse } from "@/lib/recentMatches";
 import { cn } from "@/lib/utils";
 
 interface MultiSearchResponse {
@@ -47,6 +48,8 @@ interface PlayerResult {
   source?: "bser_official";
   fetchedAt?: string | null;
   isStale?: boolean;
+  code?: string;
+  retryAfter?: number;
   topCharacters?: Array<{
     characterCode: number;
     totalGames: number;
@@ -60,31 +63,12 @@ interface PlayerResult {
     | "season_stats_not_found"
     | "bser_api_key_missing"
     | "bser_api_unavailable"
+    | "rate_limited"
     | "unknown_error";
 }
 
 interface TeamCombosResponse {
   results: TrioWeaponCombo[];
-}
-
-interface RecentMatchesResponse {
-  input: string;
-  status: "ok" | "not_found" | "no_matches" | "error";
-  nickname?: string;
-  matches: Array<{
-    gameId: number | string;
-    matchingMode: number;
-    matchingTeamMode: number;
-    seasonId: number;
-    characterNum: number;
-    gameRank: number;
-    playerKill: number;
-    playerAssistant: number;
-    startDtm: string;
-  }>;
-  reason?: "bser_api_key_missing" | "bser_api_unavailable" | "unknown_error";
-  lastSyncedAt?: string;
-  isStale?: boolean;
 }
 
 const TOP_CHARACTER_LIMIT = 3;
@@ -111,7 +95,9 @@ export function MultiSearchClient({ afterSearch }: { afterSearch?: ReactNode }) 
   const [recentMatches, setRecentMatches] = useState<RecentMatchesResponse | null>(null);
   const [recentMatchesError, setRecentMatchesError] = useState<string | null>(null);
   const [isRecentMatchesLoading, setIsRecentMatchesLoading] = useState(false);
+  const [isRecentMatchesLoadingMore, setIsRecentMatchesLoadingMore] = useState(false);
   const recentRequestId = useRef(0);
+  const recentLoadingRef = useRef(false);
   const characterNames = useMemo(() => getFallbackMap(), []);
 
   const teammateNicknames = useMemo(() => {
@@ -206,7 +192,11 @@ export function MultiSearchClient({ afterSearch }: { afterSearch?: ReactNode }) 
       const payload = await fetchPlayers([myNickname.trim()]);
       const profile = payload.results[0] ?? null;
       if (!profile || profile.status !== "ok") {
-        throw new Error("내 시즌 41 랭크 정보를 찾지 못했습니다.");
+        throw new Error(
+          profile
+            ? `${playerStatusText(profile)} ${playerStatusDescription(profile)}`
+            : "내 시즌 41 랭크 정보를 찾지 못했습니다."
+        );
       }
 
       setMyProfile(profile);
@@ -252,9 +242,15 @@ export function MultiSearchClient({ afterSearch }: { afterSearch?: ReactNode }) 
 
     try {
       const teammateData = await fetchPlayers(teammateNicknames);
+      const results = [myProfile, ...teammateData.results];
       setData({
         ...teammateData,
-        results: [myProfile, ...teammateData.results],
+        results,
+        summary: {
+          requested: results.length,
+          ok: results.filter((result) => result.status === "ok").length,
+          failed: results.filter((result) => result.status !== "ok").length,
+        },
       });
     } catch (err) {
       setData(null);
@@ -266,34 +262,51 @@ export function MultiSearchClient({ afterSearch }: { afterSearch?: ReactNode }) 
     }
   }
 
-  async function handleRecentMatches() {
+  async function handleRecentMatches(cursor?: string) {
     const nickname = myNickname.trim();
     if (!nickname) {
       setRecentMatchesError("닉네임을 입력해주세요.");
       return;
     }
+    if (recentLoadingRef.current) return;
 
     const requestId = ++recentRequestId.current;
-    setIsRecentMatchesLoading(true);
-    setRecentMatches(null);
+    recentLoadingRef.current = true;
+    if (cursor) setIsRecentMatchesLoadingMore(true);
+    else {
+      setIsRecentMatchesLoading(true);
+      setRecentMatches(null);
+    }
     setRecentMatchesError(null);
 
     try {
       const query = new URLSearchParams({ nickname, limit: "10" });
+      if (cursor) query.set("cursor", cursor);
       const response = await fetch(`/api/multi-search/recent-matches?${query}`, {
         cache: "no-store",
       });
-      if (!response.ok) throw new Error("최근 전적을 불러오지 못했습니다.");
+      if (!response.ok) throw new Error("전적 목록을 불러오지 못했습니다.");
       const payload = (await response.json()) as RecentMatchesResponse;
-      if (requestId === recentRequestId.current) setRecentMatches(payload);
+      if (requestId !== recentRequestId.current) return;
+      if (cursor && payload.status !== "ok" && payload.status !== "no_matches") {
+        setRecentMatchesError(recentMatchesStatusMessage(payload));
+      } else if (cursor) {
+        setRecentMatches((current) => (current ? mergeRecentMatches(current, payload) : payload));
+      } else {
+        setRecentMatches(payload);
+      }
     } catch (err) {
       if (requestId === recentRequestId.current) {
         setRecentMatchesError(
-          err instanceof Error ? err.message : "최근 전적을 불러오지 못했습니다."
+          err instanceof Error ? err.message : "전적 목록을 불러오지 못했습니다."
         );
       }
     } finally {
-      if (requestId === recentRequestId.current) setIsRecentMatchesLoading(false);
+      if (requestId === recentRequestId.current) {
+        recentLoadingRef.current = false;
+        setIsRecentMatchesLoading(false);
+        setIsRecentMatchesLoadingMore(false);
+      }
     }
   }
 
@@ -344,10 +357,12 @@ export function MultiSearchClient({ afterSearch }: { afterSearch?: ReactNode }) 
               value={myNickname}
               onChange={(event) => {
                 recentRequestId.current += 1;
+                recentLoadingRef.current = false;
                 setMyNickname(event.target.value);
                 setRecentMatches(null);
                 setRecentMatchesError(null);
                 setIsRecentMatchesLoading(false);
+                setIsRecentMatchesLoadingMore(false);
               }}
               maxLength={16}
               autoComplete="nickname"
@@ -362,7 +377,7 @@ export function MultiSearchClient({ afterSearch }: { afterSearch?: ReactNode }) 
           <Button
             type="button"
             size="lg"
-            disabled={isRecentMatchesLoading}
+            disabled={isRecentMatchesLoading || isRecentMatchesLoadingMore}
             onClick={() => void handleRecentMatches()}
             className="h-10 md:min-w-28"
           >
@@ -371,7 +386,7 @@ export function MultiSearchClient({ afterSearch }: { afterSearch?: ReactNode }) 
             ) : (
               <Search className="h-4 w-4" />
             )}
-            최근 전적
+            전적 검색
           </Button>
         </div>
         {error && !myProfile && (
@@ -386,6 +401,8 @@ export function MultiSearchClient({ afterSearch }: { afterSearch?: ReactNode }) 
         <RecentMatchesCard
           data={recentMatches}
           error={recentMatchesError}
+          loadingMore={isRecentMatchesLoadingMore}
+          onLoadMore={(cursor) => void handleRecentMatches(cursor)}
           getCharacterName={(code) => characterNames.get(code) ?? `#${code}`}
         />
       )}
@@ -472,28 +489,23 @@ export function MultiSearchClient({ afterSearch }: { afterSearch?: ReactNode }) 
 function RecentMatchesCard({
   data,
   error,
+  loadingMore,
+  onLoadMore,
   getCharacterName,
 }: {
   data: RecentMatchesResponse | null;
   error: string | null;
+  loadingMore: boolean;
+  onLoadMore: (cursor: string) => void;
   getCharacterName: (code: number) => string;
 }) {
-  const message =
-    error ||
-    (data?.status === "not_found"
-      ? "닉네임을 찾을 수 없습니다."
-      : data?.status === "no_matches"
-        ? "최근 90일 동안 조회 가능한 경기가 없습니다."
-        : data?.reason === "bser_api_key_missing"
-          ? "서버의 전적 API 설정이 필요합니다."
-          : data?.status === "error"
-            ? "전적 API가 응답하지 않습니다. 잠시 뒤 다시 시도해주세요."
-            : null);
+  const message = error || (data ? recentMatchesStatusMessage(data) : null);
+  const nextCursor = data?.status === "ok" ? data.nextCursor : null;
 
   return (
     <section className="dashboard-panel p-3 sm:p-4" aria-live="polite">
       <h2 className="dashboard-section-title text-base font-bold text-[var(--color-foreground)]">
-        {data?.nickname ?? data?.input ?? "최근 전적"} 최근 전적
+        {(data?.nickname ?? data?.input) ? `${data.nickname ?? data.input} 전적 목록` : "전적 목록"}
       </h2>
       {data?.lastSyncedAt && (
         <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
@@ -501,11 +513,10 @@ function RecentMatchesCard({
           {data.isStale ? " · 최신 조회 실패로 저장된 기록 표시" : ""}
         </p>
       )}
-      {message ? (
-        <p className="mt-2 text-sm text-[var(--color-muted-foreground)]">{message}</p>
-      ) : (
+      {message && <p className="mt-2 text-sm text-[var(--color-muted-foreground)]">{message}</p>}
+      {data?.matches && data.matches.length > 0 && (
         <ol className="mt-3 grid gap-2">
-          {data?.matches.map((match) => (
+          {data.matches.map((match) => (
             <li
               key={match.gameId}
               className="grid gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm sm:grid-cols-[1fr_auto] sm:items-center"
@@ -526,8 +537,32 @@ function RecentMatchesCard({
           ))}
         </ol>
       )}
+      {nextCursor && (
+        <Button
+          type="button"
+          variant="outline"
+          disabled={loadingMore}
+          onClick={() => onLoadMore(nextCursor)}
+          className="mt-3 w-full"
+        >
+          {loadingMore ? <Loader2 className="h-4 w-4" /> : null}더 보기
+        </Button>
+      )}
     </section>
   );
+}
+
+function recentMatchesStatusMessage(data: RecentMatchesResponse): string | null {
+  if (data.status === "not_found") return "닉네임을 찾을 수 없습니다.";
+  if (data.status === "no_matches") return "최근 90일 동안 조회 가능한 경기가 없습니다.";
+  if (data.reason === "bser_api_key_missing") return "서버의 전적 API 설정이 필요합니다.";
+  if (data.reason === "rate_limited") {
+    return data.retryAfter
+      ? `요청이 제한되었습니다. ${data.retryAfter}초 뒤 다시 시도해주세요.`
+      : "요청이 제한되었습니다. 잠시 뒤 다시 시도해주세요.";
+  }
+  if (data.status === "error") return "전적 API가 응답하지 않습니다. 잠시 뒤 다시 시도해주세요.";
+  return null;
 }
 
 function PlayerCard({
@@ -805,6 +840,7 @@ function playerStatusText(result: PlayerResult) {
   if (result.status === "not_found") return "닉네임을 찾을 수 없습니다.";
   if (result.status === "no_stats") return "시즌 통계가 없습니다.";
   if (result.reason === "bser_api_key_missing") return "API 설정이 필요합니다.";
+  if (result.reason === "rate_limited") return "요청이 제한되었습니다.";
   if (result.reason === "bser_api_unavailable") return "전적 API가 응답하지 않습니다.";
   return "검색 중 오류가 발생했습니다.";
 }
@@ -812,6 +848,11 @@ function playerStatusText(result: PlayerResult) {
 function playerStatusDescription(result: PlayerResult) {
   if (result.reason === "bser_api_key_missing") {
     return "서버의 BSER API 키 설정을 확인해야 합니다.";
+  }
+  if (result.reason === "rate_limited") {
+    return result.retryAfter
+      ? `${result.retryAfter}초 뒤 다시 시도해주세요.`
+      : "잠시 뒤 다시 시도해주세요.";
   }
   if (result.reason === "bser_api_unavailable") {
     return "외부 전적 API 지연 또는 장애로 조회하지 못했습니다. 잠시 뒤 다시 시도해주세요.";

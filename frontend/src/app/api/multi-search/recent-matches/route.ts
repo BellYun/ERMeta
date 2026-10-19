@@ -55,6 +55,8 @@ async function getFromPlayerApi(request: NextRequest, baseUrl: string) {
       `${baseUrl.replace(/\/$/, "")}/v1/players/${encodeURIComponent(nickname)}/matches`
     );
     url.searchParams.set("limit", request.nextUrl.searchParams.get("limit") ?? "10");
+    const cursor = request.nextUrl.searchParams.get("cursor");
+    if (cursor) url.searchParams.set("cursor", cursor);
     const response = await fetch(url, { cache: "no-store" });
     if (response.ok) {
       const payload = (await response.json()) as PlayerMatchesResponse;
@@ -63,15 +65,33 @@ async function getFromPlayerApi(request: NextRequest, baseUrl: string) {
       });
     }
     const error = await response.json();
+    const rateLimited =
+      response.status === 429 ||
+      error?.code === "BSER_RATE_LIMITED" ||
+      error?.code === "RATE_LIMITED";
+    const bodyRetryAfter = Number(error?.retryAfter);
+    const headerRetryAfter = Number(response.headers.get("Retry-After"));
+    const retryAfter =
+      Number.isInteger(bodyRetryAfter) && bodyRetryAfter > 0
+        ? bodyRetryAfter
+        : Number.isInteger(headerRetryAfter) && headerRetryAfter > 0
+          ? headerRetryAfter
+          : undefined;
     return NextResponse.json(
       {
         input: nickname,
         status: response.status === 404 ? "not_found" : "error",
         matches: [],
+        code: error?.code,
+        ...(rateLimited && retryAfter ? { retryAfter } : {}),
         reason:
-          error?.code === "BSER_UNAVAILABLE" || error?.code === "BSER_RATE_LIMITED"
-            ? "bser_api_unavailable"
-            : "unknown_error",
+          response.status === 404
+            ? "nickname_not_found"
+            : rateLimited
+              ? "rate_limited"
+              : error?.code === "BSER_UNAVAILABLE"
+                ? "bser_api_unavailable"
+                : "unknown_error",
       },
       { headers: { "Cache-Control": "no-store" } }
     );

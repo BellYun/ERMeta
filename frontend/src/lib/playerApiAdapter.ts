@@ -32,6 +32,7 @@ interface PlayerCompareResult {
   fetchedAt?: string | null;
   isStale?: boolean;
   code?: string;
+  retryAfter?: number;
 }
 
 export interface PlayerCompareResponse {
@@ -76,6 +77,8 @@ export function adaptPlayerCompare(payload: PlayerCompareResponse) {
         source: result.source,
         fetchedAt: result.fetchedAt,
         isStale: result.isStale,
+        code: result.code,
+        retryAfter: result.retryAfter,
       };
       if (result.status !== "ok" || !result.stats) {
         return {
@@ -86,9 +89,11 @@ export function adaptPlayerCompare(payload: PlayerCompareResponse) {
               ? "nickname_not_found"
               : result.status === "no_stats"
                 ? "season_stats_not_found"
-                : result.code === "BSER_UNAVAILABLE" || result.code === "BSER_RATE_LIMITED"
-                  ? "bser_api_unavailable"
-                  : "unknown_error",
+                : result.code === "BSER_RATE_LIMITED" || result.code === "RATE_LIMITED"
+                  ? "rate_limited"
+                  : result.code === "BSER_UNAVAILABLE"
+                    ? "bser_api_unavailable"
+                    : "unknown_error",
         };
       }
 
@@ -131,6 +136,7 @@ export function adaptPlayerMatches(input: string, payload: PlayerMatchesResponse
     nickname: payload.nickname,
     lastSyncedAt: payload.lastSyncedAt,
     isStale: payload.isStale,
+    nextCursor: payload.nextCursor,
     matches: payload.matches.map((match) => ({
       gameId: match.gameId,
       seasonId: match.seasonId,
