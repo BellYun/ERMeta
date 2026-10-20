@@ -249,6 +249,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
           };
   return (
     <div className="page-shell flex min-w-0 flex-col gap-6">
+      <SiteContentAd />
       <header className="min-w-0">
         <Link
           href="/patches"
@@ -276,7 +277,6 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
       <PatchNotesBrowser
         key={version}
         labels={labels}
-        midContent={<SiteContentAd />}
         entries={displayNotes.map((note) => ({
           code: note.characterCode,
           name: note.name,
