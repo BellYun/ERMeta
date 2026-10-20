@@ -18,7 +18,7 @@ export class PlayerRateLimitGuard implements CanActivate {
       context.getHandler(), context.getClass(),
     ]) ?? { maxRequests: 100, windowSeconds: 60 };
     const request = context.switchToHttp().getRequest<Request>();
-    if (request.path === '/health/live' || request.path === '/health/ready') return true;
+    if (['/health/live', '/health/ready', '/health/database'].includes(request.path)) return true;
     const response = context.switchToHttp().getResponse<Response>();
     const forwarded = request.headers['x-forwarded-for'];
     const candidate = typeof forwarded === 'string' ? forwarded.split(',')[0].trim() : '';
