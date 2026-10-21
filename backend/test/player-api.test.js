@@ -40,6 +40,9 @@ test('player-only app boots without Supabase or Redis and exposes health routes'
     const ready = await fetch(`${base}/health/ready`);
     assert.equal(ready.status, 503);
     assert.equal((await ready.json()).code, 'BSER_API_KEY_NOT_CONFIGURED');
+    const databaseWithoutConfig = await fetch(`${base}/health/database`);
+    assert.equal(databaseWithoutConfig.status, 503);
+    assert.equal((await databaseWithoutConfig.json()).code, 'PLAYER_DATABASE_NOT_READY');
     process.env.BSER_API_KEY = 'test-key';
     const dbReady = await fetch(`${base}/health/ready`);
     assert.equal(dbReady.status, 503);
@@ -61,6 +64,44 @@ test('player-only app boots without Supabase or Redis and exposes health routes'
       if (previous[name] === undefined) delete process.env[name];
       else process.env[name] = previous[name];
     }
+  }
+});
+
+test('keyless preview checks the database while full readiness still requires an API key', async () => {
+  const { NestFactory } = require('@nestjs/core');
+  const { PlayerApiModule } = require('../dist/player-api/player-api.module');
+  const { PlayerHistoryDatabaseService } = require('../dist/common/database/player-history-database.service');
+  const previous = process.env.BSER_API_KEY;
+  delete process.env.BSER_API_KEY;
+  const app = await NestFactory.create(PlayerApiModule, { logger: false });
+  let queries = 0;
+  const result = { lookups: 'player_lookups', matches: 'matches', records: 'records', stats: 'stats' };
+  app.get(PlayerHistoryDatabaseService).getPool = () => ({ query: async () => {
+    queries += 1;
+    return { rows: [result] };
+  } });
+  try {
+    await app.listen(0, '127.0.0.1');
+    const { port } = app.getHttpServer().address();
+    const base = `http://127.0.0.1:${port}`;
+    const database = await fetch(`${base}/health/database`);
+    assert.equal(database.status, 200);
+    assert.deepEqual(await database.json(), { status: 'ok' });
+    assert.equal(queries, 1);
+
+    const ready = await fetch(`${base}/health/ready`);
+    assert.equal(ready.status, 503);
+    assert.equal((await ready.json()).code, 'BSER_API_KEY_NOT_CONFIGURED');
+    assert.equal(queries, 1, 'full readiness must not bypass the missing key');
+
+    result.stats = null;
+    const incomplete = await fetch(`${base}/health/database`);
+    assert.equal(incomplete.status, 503);
+    assert.equal((await incomplete.json()).code, 'PLAYER_DATABASE_NOT_READY');
+  } finally {
+    await app.close();
+    if (previous === undefined) delete process.env.BSER_API_KEY;
+    else process.env.BSER_API_KEY = previous;
   }
 });
 
