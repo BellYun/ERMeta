@@ -15,6 +15,11 @@ const CHARACTER_RECOMMENDATION_ANNOUNCEMENT = {
   placement: "site_header",
   destinationPath: "/character-recommendation",
 } as const;
+const SERVICE_USAGE_SURVEY = {
+  campaign: "service_usage_survey_2026",
+  placement: "synergy_detail_results",
+  measurement_version: 1,
+} as const;
 
 // 동적 import 캐시: 첫 track 호출 시 로드, 이후 재사용
 let amplitudePromise: Promise<AmplitudeModule> | null = null;
@@ -46,7 +51,7 @@ function trackOnPageExit(event: string, properties?: Record<string, unknown>) {
 
 type FlatAnalyticsProperties = Record<string, string | number | boolean | null | undefined>;
 
-function trackAdExperiment(event: string, properties: FlatAnalyticsProperties) {
+function trackProductEvent(event: string, properties: FlatAnalyticsProperties) {
   track(event, properties);
   if (isDev) return;
 
@@ -56,7 +61,7 @@ function trackAdExperiment(event: string, properties: FlatAnalyticsProperties) {
 }
 
 function trackAdBlockRecovery(event: string, properties: FlatAnalyticsProperties) {
-  trackAdExperiment(event, properties);
+  trackProductEvent(event, properties);
 }
 
 function getCurrentPagePath() {
@@ -144,6 +149,11 @@ export type Source =
 
 export type SynergySortBy = "tierScore" | "averageRP" | "winRate" | "averageRank" | "totalGames";
 export type SynergySelectionSource = "direct_selection" | "url_restore";
+export interface SurveyPromptContext {
+  impressionId: string;
+  resultCount: number;
+  selectionCount: number;
+}
 export interface SynergyFunnelContext {
   ally1Code: number | null;
   ally2Code: number | null;
@@ -188,6 +198,19 @@ function getAdSlotPageProperties(pagePath?: string, eventPagePath?: string) {
     event_page_path: resolvedEventPagePath,
     event_page_surface: getPageSurface(resolvedEventPagePath),
   };
+}
+
+function trackSurveyPrompt(event: string, context: SurveyPromptContext) {
+  const pagePath = getCurrentPagePath();
+  trackProductEvent(event, {
+    ...SERVICE_USAGE_SURVEY,
+    locale: "ko",
+    page_path: pagePath,
+    page_surface: getPageSurface(pagePath),
+    impression_id: context.impressionId,
+    result_count: context.resultCount,
+    selection_count: context.selectionCount,
+  });
 }
 
 function getAdPlacementExperimentProperties(attribution?: AdPlacementAttribution) {
@@ -396,6 +419,21 @@ export const analytics = {
     }
   },
 
+  /** 설문 배너가 결과 화면에 실제로 렌더됨. */
+  surveyPromptRendered(context: SurveyPromptContext) {
+    trackSurveyPrompt("survey_prompt_rendered", context);
+  },
+
+  /** 배너의 절반 이상이 1초 동안 화면에 보임. */
+  surveyPromptViewed(context: SurveyPromptContext) {
+    trackSurveyPrompt("survey_prompt_viewed", context);
+  },
+
+  /** 설문 링크를 누름. */
+  surveyPromptClicked(context: SurveyPromptContext) {
+    trackSurveyPrompt("survey_prompt_clicked", context);
+  },
+
   /** 시너지 추천 3번째 실험체 클릭 */
   synergyRecommendationClicked(
     args: SynergyFunnelContext & {
@@ -597,7 +635,7 @@ export const analytics = {
       page_surface: getPageSurface(args.pagePath ?? getCurrentPagePath()),
       ...getViewportProperties(),
     };
-    trackAdExperiment("ad_placement_experiment_exposed", properties);
+    trackProductEvent("ad_placement_experiment_exposed", properties);
   },
 
   homeAdPlacementExperimentEngaged(args: {
@@ -616,7 +654,7 @@ export const analytics = {
       page_surface: getPageSurface(args.pagePath ?? getCurrentPagePath()),
       ...getViewportProperties(),
     };
-    trackAdExperiment("home_ad_placement_experiment_engaged", properties);
+    trackProductEvent("home_ad_placement_experiment_engaged", properties);
   },
 
   homeAdPlacementExperimentExited(args: {
