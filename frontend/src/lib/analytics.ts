@@ -166,6 +166,7 @@ export type SessionSource = "organic_search" | "community" | "direct" | "social"
 export type AdSlotName =
   | "home_ranking"
   | "synergy_detail_top"
+  | "trio_builder_top"
   | "character_analysis_top"
   | "site_content_top"
   | "site_rail_left"

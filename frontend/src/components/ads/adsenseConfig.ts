@@ -82,6 +82,7 @@ export const ADSENSE_CHANNELS = {
   home_before_forecast: process.env.NEXT_PUBLIC_ADSENSE_HOME_BEFORE_FORECAST_CHANNEL ?? "",
   home_after_forecast: process.env.NEXT_PUBLIC_ADSENSE_HOME_AFTER_FORECAST_CHANNEL ?? "",
   synergy_detail_top: process.env.NEXT_PUBLIC_ADSENSE_SYNERGY_DETAIL_CHANNEL ?? "",
+  trio_builder_top: process.env.NEXT_PUBLIC_ADSENSE_SYNERGY_DETAIL_CHANNEL ?? "",
   character_analysis_top: process.env.NEXT_PUBLIC_ADSENSE_CHARACTER_ANALYSIS_CHANNEL ?? "",
   site_content_top: process.env.NEXT_PUBLIC_ADSENSE_SITE_CONTENT_CHANNEL ?? "",
   site_rail_left: process.env.NEXT_PUBLIC_ADSENSE_SITE_RAIL_LEFT_CHANNEL ?? "",
