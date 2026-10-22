@@ -47,7 +47,7 @@ test("one ally shows static partner stats on both recommendation pages", async (
     if (url.includes("synergy-detail")) {
       await panel.getByRole("heading").click();
       await page.screenshot({
-        path: `/private/tmp/ermeta-single-partner-${test.info().project.name}.png`,
+        path: test.info().outputPath("ermeta-single-partner.png"),
       });
     }
     await panel.getByRole("button", { name: "아군 초기화하기" }).click();

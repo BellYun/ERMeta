@@ -23,8 +23,7 @@ async function hideOverlays(page: Page) {
 // 응답을 합성으로 mock. 이 테스트는 "데이터 fetch 가 정확한가" 가 아니라 "탭이 pointer 단계에서
 // 동작해 카드를 토글하는가" 를 보므로 데이터는 결정론적 dummy 가 더 안정적이다.
 //
-// `weaponType=0` (전체 무기) + `mainCore=0` 으로 두면 weapon label/trait icon 렌더 분기가
-// 단순화되어 외부 의존(fetch /api/traits/names) 도 최소화된다.
+// 고정 아군은 가넷(방망이)과 재키(도끼)다. mainCore=0 으로 특성 이름 의존을 최소화한다.
 async function mockTriosWeapon(page: Page) {
   await page.route("**/api/stats/trios-weapon*", async (route) => {
     await route.fulfill({
@@ -37,9 +36,9 @@ async function mockTriosWeapon(page: Page) {
             character1: 76,
             weaponType1: 3,
             character2: 1,
-            weaponType2: 0,
+            weaponType2: 14,
             character3: 2,
-            weaponType3: 0,
+            weaponType3: 9,
             mainCore1: 0,
             mainCore2: 0,
             mainCore3: 0,
@@ -51,10 +50,10 @@ async function mockTriosWeapon(page: Page) {
           {
             character1: 76,
             weaponType1: 3,
-            character2: 4,
-            weaponType2: 0,
+            character2: 1,
+            weaponType2: 14,
             character3: 5,
-            weaponType3: 0,
+            weaponType3: 5,
             mainCore1: 0,
             mainCore2: 0,
             mainCore3: 0,
@@ -115,23 +114,10 @@ test.describe("Flow: /synergy-detail 모바일 터치(pointer-phase)", () => {
 
     // mockTriosWeapon 은 page.goto 보다 먼저 등록되어야 첫 client fetch 부터 가로챈다.
     await mockTriosWeapon(page);
-    await page.goto("/synergy-detail");
+    await page.goto("/synergy-detail?ally1=76&w1=3&ally2=1&w2=14");
     await hideOverlays(page);
 
-    const allySection = page
-      .locator("section")
-      .filter({ has: page.getByRole("heading", { name: "아군 선택" }) })
-      .first();
-    await expect(allySection).toBeVisible({ timeout: 25_000 });
-
-    // 1) 아군 1명 선택 (조합 목록이 등장하려면 필요)
-    const firstCell = allySection.locator("button[title]:has(img[alt])").first();
-    await expect(firstCell).toBeVisible({ timeout: 25_000 });
-    await firstCell.scrollIntoViewIfNeeded();
-    await firstCell.tap();
-    await page.waitForURL(/[?&]ally1=\d+/, { timeout: 10_000 });
-
-    // 2) mock 응답으로 카드가 mount 될 때까지 대기.
+    // 두 아군의 mock 응답으로 상세 조합 카드가 mount 될 때까지 대기.
     const card = page
       .locator('div[role="button"][tabindex="0"]')
       .filter({ has: page.locator('a[href^="/character/"]') })
@@ -139,7 +125,7 @@ test.describe("Flow: /synergy-detail 모바일 터치(pointer-phase)", () => {
     await expect(card).toBeVisible({ timeout: 20_000 });
     await card.scrollIntoViewIfNeeded();
 
-    // 3) onPointerUp 토글이 동작하면 특성 브레이크다운 영역이 sibling div 로 렌더됨.
+    // onPointerUp 토글이 동작하면 특성 브레이크다운 영역이 sibling div 로 렌더됨.
     const toggleHitArea = card.locator("[data-combo-toggle-hit-area]");
     await expect(toggleHitArea).toBeVisible();
     await toggleHitArea.tap();
@@ -148,7 +134,7 @@ test.describe("Flow: /synergy-detail 모바일 터치(pointer-phase)", () => {
     const breakdownRow = card.locator("xpath=following-sibling::div[@data-trait-breakdown]");
     await expect(breakdownRow).toBeVisible({ timeout: 5_000 });
 
-    // 4) 한 번 더 탭하면 닫혀야 함 (토글 동작 확인)
+    // 한 번 더 탭하면 닫혀야 함 (토글 동작 확인)
     await toggleHitArea.tap();
     await expect(breakdownRow).toBeHidden({ timeout: 5_000 });
   });
@@ -162,18 +148,8 @@ test.describe("Flow: /synergy-detail 모바일 터치(pointer-phase)", () => {
     test.skip(testInfo.project.name !== "chromium-mobile", "chromium-mobile 프로젝트 전용");
 
     await mockTriosWeapon(page);
-    await page.goto("/synergy-detail");
+    await page.goto("/synergy-detail?ally1=76&w1=3&ally2=1&w2=14");
     await hideOverlays(page);
-
-    const allySection = page
-      .locator("section")
-      .filter({ has: page.getByRole("heading", { name: "아군 선택" }) })
-      .first();
-    await expect(allySection).toBeVisible({ timeout: 25_000 });
-    const firstCell = allySection.locator("button[title]:has(img[alt])").first();
-    await firstCell.scrollIntoViewIfNeeded();
-    await firstCell.tap();
-    await page.waitForURL(/[?&]ally1=\d+/, { timeout: 10_000 });
 
     const card = page
       .locator('div[role="button"][tabindex="0"]')

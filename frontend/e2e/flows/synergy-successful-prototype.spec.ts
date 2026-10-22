@@ -142,14 +142,8 @@ test.describe("Flow: 성공 조합 프로토타입 분석", () => {
       });
     });
 
-    await page.goto("/synergy-detail");
-    const allySection = page
-      .locator("section")
-      .filter({ has: page.getByRole("heading", { name: "아군 선택" }) })
-      .first();
-    const firstCell = allySection.locator("button[title]:has(img[alt])").first();
-    await expect(firstCell).toBeVisible({ timeout: 25_000 });
-    await firstCell.click();
+    // 상세 조합 분석은 두 아군을 고정했을 때 제공된다.
+    await page.goto("/synergy-detail?ally1=1&w1=16&ally2=3&w2=21");
 
     const card = page
       .locator('div[role="button"][tabindex="0"]')

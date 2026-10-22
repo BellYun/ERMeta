@@ -38,7 +38,7 @@ test("builds every assignment including missing records and restores pools", asy
     true
   );
   await page.screenshot({
-    path: `/private/tmp/trio-builder-${test.info().project.name}.png`,
+    path: test.info().outputPath("trio-builder.png"),
     fullPage: true,
   });
 });
