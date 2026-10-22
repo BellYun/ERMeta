@@ -14,6 +14,7 @@ import { recordFeedbackBreadcrumb, setFeedbackContextState } from "@/lib/feedbac
 import { FetchHttpError, FetchRetriesExhaustedError, fetchWithRetry } from "@/lib/fetchWithRetry";
 import { withCurrentRouteLocale } from "@/lib/localizedPath";
 import { getAllCharacterCodes, getFallbackMap, parseSortByParam, SORT_OPTIONS } from "./constants";
+import { SinglePartnerResults } from "./SinglePartnerResults";
 import type { TrioResult, SortBy } from "./types";
 import { getThirdCharacter, deduplicateResults } from "./utils";
 const ComboCard = React.lazy(() => import("./ComboCard").then((m) => ({ default: m.ComboCard })));
@@ -138,6 +139,29 @@ function prioritizeFocusResults(
  * SynergyClient에서 분리된 독립 Client Component
  */
 export function SynergyResults({ compact = false }: { compact?: boolean }) {
+  const params = useSearchParams();
+  const pathname = usePathname();
+  const { focusCharacters } = useFocusCharacters();
+  const allies = [
+    ...new Set([params.get("ally1"), params.get("ally2")].filter(Boolean).map(Number)),
+  ].filter((code) => getAllCharacterCodes().includes(code));
+  if (allies.length === 1) {
+    return (
+      <SinglePartnerResults
+        ally={{ charCode: allies[0], weaponCode: null }}
+        focus={focusCharacters.map((charCode) => ({ charCode, weaponCode: 0 }))}
+        onReset={() => {
+          const next = new URLSearchParams(window.location.search);
+          ["ally1", "ally2", "w1", "w2"].forEach((key) => next.delete(key));
+          window.history.replaceState(null, "", `${pathname}${next.size ? `?${next}` : ""}`);
+        }}
+      />
+    );
+  }
+  return <TrioSynergyResults compact={compact} />;
+}
+
+function TrioSynergyResults({ compact = false }: { compact?: boolean }) {
   const { l10n } = useL10n();
   const t = useTranslations("synergyMainResults");
   const searchParams = useSearchParams();

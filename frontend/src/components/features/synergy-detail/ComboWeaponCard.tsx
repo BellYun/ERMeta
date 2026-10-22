@@ -552,7 +552,7 @@ function ComboWeaponCardImpl({
               {t("averageRank")}
             </span>
             <span
-              data-metric-emphasis={group.averageRank >= 4 || undefined}
+              data-metric-emphasis={group.averageRank <= 3.5 || undefined}
               className="text-sm font-bold text-[var(--color-foreground)]"
             >
               #{group.averageRank.toFixed(1)}

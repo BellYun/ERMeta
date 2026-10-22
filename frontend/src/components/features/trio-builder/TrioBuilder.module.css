@@ -1,0 +1,348 @@
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R5 V3 */
+.intro,
+.pool,
+.results {
+  padding: 20px;
+}
+.intro p {
+  margin-top: 10px;
+  line-height: 1.7;
+}
+.note,
+.actions > span {
+  color: var(--color-muted-foreground);
+  font-size: 12px;
+}
+.actions button,
+.editButton,
+.pagination button {
+  padding: 10px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+}
+.primary {
+  background: var(--studio-accent-soft);
+  color: var(--studio-accent);
+}
+.pools {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.poolHeading,
+.toolbar,
+.actions,
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.poolHeading h2,
+.toolbar h2 {
+  font-weight: 700;
+}
+.poolHeading h2 span {
+  color: var(--studio-accent);
+  margin-left: 8px;
+}
+.poolHeading button {
+  font-size: 12px;
+  min-height: 44px;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0;
+  min-height: 48px;
+}
+.chips > p {
+  color: var(--color-muted-foreground);
+  font-size: 13px;
+  padding: 12px 0;
+}
+.chips button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 6px;
+  font-size: 11px;
+}
+.portrait {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+.portrait > img:first-child {
+  border-radius: 4px;
+}
+.weapon {
+  position: absolute;
+  bottom: -2px;
+  right: -3px;
+  border-radius: 50%;
+  background: var(--color-surface-2);
+}
+.editButton {
+  width: 100%;
+}
+.search {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 10px;
+  margin: 12px 0;
+  font-size: 13px;
+}
+.picker {
+  max-height: 330px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+  gap: 4px;
+}
+.picker button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 2px;
+  gap: 4px;
+  border-radius: 6px;
+  font-size: 11px;
+}
+.picker [aria-pressed="true"] {
+  background: var(--studio-accent-soft);
+  outline: 2px solid var(--studio-accent);
+  outline-offset: -2px;
+}
+.picker small {
+  display: block;
+  font-size: 10px;
+  color: var(--color-muted-foreground);
+}
+.actions {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+.actions button,
+.pool button,
+.pagination button {
+  cursor: pointer;
+}
+.actions button:disabled,
+.pool button:disabled,
+.pagination button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.toolbar select {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 8px;
+  border-radius: 6px;
+}
+.results > p {
+  margin: 12px 0;
+}
+
+.pagination {
+  justify-content: center;
+  margin-top: 16px;
+}
+@media (max-width: 767px) {
+  .pools {
+    grid-template-columns: 1fr;
+  }
+  .intro,
+  .pool,
+  .results {
+    padding: 14px;
+  }
+}
+
+/* Match the existing composition studio's compact panels and comparison rows. */
+.shell section.intro {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+.shell .intro h1 {
+  font-size: var(--studio-title);
+  margin-top: 16px;
+}
+.shell .intro p {
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.shell .intro .note {
+  font-size: 12px;
+}
+.shell section.pool,
+.shell section.results {
+  border: 1px solid var(--studio-rule);
+  border-radius: 6px;
+  background: var(--studio-surface);
+  box-shadow: none;
+  padding: 0;
+  overflow: hidden;
+}
+.shell section.pool::before,
+.shell section.results::before {
+  display: none;
+}
+.shell .pools {
+  gap: 12px;
+  align-items: start;
+}
+.shell .poolHeading {
+  padding: 8px 14px;
+  background: var(--studio-raised);
+  border-bottom: 1px solid var(--studio-rule);
+}
+.shell .poolHeading h2 {
+  font-size: 14px;
+}
+.shell .poolHeading h2 span {
+  display: inline-block;
+  padding: 2px 6px;
+  border: 1px solid var(--studio-rule);
+  border-radius: 4px;
+  background: var(--studio-surface);
+  color: var(--studio-muted);
+  font-size: 11px;
+}
+.shell .poolHeading button {
+  color: var(--studio-muted);
+}
+.shell .chips {
+  padding: 12px 14px;
+  margin: 0;
+  min-height: 84px;
+  align-content: flex-start;
+}
+.shell .chips button {
+  min-height: 44px;
+  font-weight: 600;
+  background: var(--studio-surface);
+}
+.shell .chips .portrait {
+  width: 24px;
+  height: 24px;
+}
+.shell .chips .portrait > img:first-child {
+  width: 24px;
+  height: 24px;
+}
+.shell .chips .weapon {
+  width: 14px;
+  height: 14px;
+}
+.shell .editButton {
+  border: 0;
+  border-top: 1px solid var(--studio-rule);
+  border-radius: 0;
+  color: var(--studio-muted);
+  min-height: 44px;
+}
+.shell .search {
+  width: calc(100% - 24px);
+  margin: 12px;
+  background: var(--studio-surface);
+}
+.shell .picker {
+  padding: 4px 10px 12px;
+}
+.shell .actions {
+  gap: 8px;
+}
+.shell .actions .primary {
+  background: var(--studio-accent);
+  color: #fff;
+  border-color: var(--studio-accent);
+}
+.shell .actions > span {
+  margin-left: auto;
+}
+.shell .status {
+  font-size: 13px;
+  color: var(--studio-muted);
+  padding: 0 2px;
+}
+.shell .status[data-state="error"] {
+  color: var(--color-foreground);
+  border-left: 2px solid var(--studio-accent);
+  padding-left: 10px;
+}
+.shell .toolbar {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--studio-rule);
+}
+.shell .toolbar h2 {
+  font-size: 14px;
+}
+.shell .toolbar label {
+  font-size: 12px;
+  color: var(--studio-muted);
+}
+.shell .toolbar select {
+  padding: 6px 8px;
+  color: var(--studio-ink);
+}
+.shell .results > p {
+  margin: 12px 14px;
+}
+
+.shell .pagination {
+  padding: 12px;
+  margin: 0;
+  font-size: 12px;
+}
+.shell button:not(:disabled):hover {
+  background: var(--studio-raised);
+}
+.shell .actions .primary:not(:disabled):hover {
+  background: var(--studio-accent);
+  filter: brightness(0.92);
+}
+.shell button:focus-visible,
+.shell a:focus-visible,
+.shell input:focus-visible,
+.shell select:focus-visible {
+  outline: 2px solid var(--studio-accent);
+  outline-offset: 2px;
+}
+.shell button:not(:disabled):active {
+  filter: brightness(0.94);
+}
+@media (max-width: 767px) {
+  .shell .intro h1 {
+    font-size: 22px;
+  }
+  .shell .intro p {
+    font-size: 13px;
+  }
+  .shell .pools {
+    gap: 10px;
+  }
+  .shell .chips {
+    min-height: 60px;
+  }
+  .shell .actions > span {
+    width: 100%;
+    margin: 2px 0 0;
+  }
+}
+
+.comparison {
+  margin: 12px;
+  min-width: 0;
+}

@@ -4552,7 +4552,7 @@ body,
 .composition-comparison-heading {
   position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: 20;
   display: grid;
   grid-template-columns: var(--comparison-columns);
   gap: var(--space-xs);
@@ -4655,22 +4655,12 @@ body,
   font: inherit;
   font-weight: 700;
 }
+/* Keep sorting distinct from performance emphasis without filling result cells. */
 .composition-comparison-heading > button[data-active] {
   color: var(--studio-accent);
-}
-.composition-comparison-scroll[data-sort-by="winRate"]
-  .composition-result-card__metrics
-  > div:nth-child(1),
-.composition-comparison-scroll[data-sort-by="averageRP"]
-  .composition-result-card__metrics
-  > div:nth-child(2),
-.composition-comparison-scroll[data-sort-by="totalGames"]
-  .composition-result-card__metrics
-  > div:nth-child(3),
-.composition-comparison-scroll[data-sort-by="averageRank"]
-  .composition-result-card__metrics
-  > div:nth-child(4) {
-  background: var(--studio-accent-soft);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
 }
 @container composition-results (min-width: 30.001rem) {
   .composition-comparison-scroll .composition-result-card__summary {

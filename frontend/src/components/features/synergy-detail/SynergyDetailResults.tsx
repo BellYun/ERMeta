@@ -33,6 +33,7 @@ import {
 import { cn } from "@/lib/utils";
 import { resolveWeaponName } from "@/lib/weaponMap";
 import { getFallbackMap, SORT_OPTIONS } from "../synergy/constants";
+import { SinglePartnerResults } from "../synergy/SinglePartnerResults";
 import {
   ComboWeaponCard,
   getGroupCompositionAnalysisMembers,
@@ -329,6 +330,30 @@ function buildResultVersion(selectionKey: string, groups: GroupedCombo[]): strin
 }
 
 export function SynergyDetailResults() {
+  const allies = useSelectedAllies();
+  const analyticsEnabled = useSynergyDetailSelection((state) => state.analyticsEnabled);
+  const setAllies = useSynergyDetailSelection((state) => state.setAllies);
+  const { focusCharWeapons } = useFocusCharWeapons();
+  const pathname = usePathname();
+  if (allies.length === 1) {
+    return (
+      <SinglePartnerResults
+        ally={allies[0]}
+        analyticsEnabled={analyticsEnabled}
+        focus={focusCharWeapons}
+        onReset={() => {
+          setAllies([null, null], "direct_selection");
+          const params = new URLSearchParams(window.location.search);
+          ["ally1", "w1", "ally2", "w2", "a", "b"].forEach((key) => params.delete(key));
+          window.history.replaceState(null, "", `${pathname}${params.size ? `?${params}` : ""}`);
+        }}
+      />
+    );
+  }
+  return <TrioSynergyDetailResults />;
+}
+
+function TrioSynergyDetailResults() {
   "use no memo";
   const { l10n } = useL10n();
   const t = useTranslations("synergyResults");

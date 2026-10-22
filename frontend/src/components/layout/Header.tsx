@@ -85,7 +85,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
       href: withCurrentRouteLocale(pathname, "/synergy-detail"),
       label: tNav("synergyRecommendation"),
       icon: Network,
-      isActive: normalizedPathname === "/synergy-detail",
+      isActive: normalizedPathname === "/synergy-detail" || normalizedPathname === "/trio-builder",
     },
     {
       href: withCurrentRouteLocale(pathname, "/character-lab"),

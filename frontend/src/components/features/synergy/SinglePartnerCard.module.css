@@ -1,0 +1,22 @@
+.unknown {
+  min-width: 0;
+  padding: var(--space-2xs);
+}
+.portrait {
+  width: 32px;
+  height: 32px;
+}
+@container composition-results (max-width: 30rem) {
+  .unknown {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 3px;
+    min-height: 26px;
+    padding: 0;
+  }
+  .portrait {
+    width: 22px;
+    height: 22px;
+    font-size: 14px;
+  }
+}

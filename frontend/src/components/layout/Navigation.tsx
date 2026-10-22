@@ -78,7 +78,7 @@ export function Navigation({ currentPatch, patchAnalysisPatch, onNavigate }: Nav
       href: withCurrentRouteLocale(pathname, "/synergy-detail"),
       label: t("synergyRecommendation"),
       icon: Network,
-      isActive: normalizedPathname === "/synergy-detail",
+      isActive: normalizedPathname === "/synergy-detail" || normalizedPathname === "/trio-builder",
     },
     {
       href: withCurrentRouteLocale(pathname, "/character-lab"),
