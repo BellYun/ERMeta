@@ -3,6 +3,12 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  ADSENSE_SLOT_RESERVATIONS,
+  ADSENSE_SLOTS,
+  canRenderAdSlot,
+} from "@/components/ads/adsenseConfig";
+import { AdSlot } from "@/components/ads/AdSlot";
 import { useL10n } from "@/components/L10nProvider";
 import { getCharacterMiniWebpUrl, resolveCharacterName } from "@/lib/characterMap";
 import {
@@ -227,6 +233,14 @@ export function TrioBuilder() {
         <p>{t("description")}</p>
         <p className={styles.note}>{t("rules")}</p>
       </section>
+      {canRenderAdSlot(ADSENSE_SLOTS.synergyDetail) ? (
+        <AdSlot
+          slot={ADSENSE_SLOTS.synergyDetail}
+          slotName="trio_builder_top"
+          className="dashboard-panel px-3 py-2.5 sm:px-4"
+          reservation={ADSENSE_SLOT_RESERVATIONS.contentHorizontal}
+        />
+      ) : null}
       <div className={styles.pools}>
         {PLAYERS.map((player, i) => (
           <PoolEditor
