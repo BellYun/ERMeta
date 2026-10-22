@@ -1,0 +1,858 @@
+{
+  "schemaVersion": 1,
+  "builtAt": "2026-10-22T00:11:36.445Z",
+  "scope": "s10-s12-through-12.4",
+  "seasons": [
+    10,
+    11,
+    12
+  ],
+  "lastIncludedPatch": "12.4",
+  "excludedPatches": [
+    "12.5",
+    "12.6"
+  ],
+  "tierScope": "DIAMOND+",
+  "sourceTable": "v2_CharacterTrioWeaponSearch_all",
+  "sourceLatestRefreshedAt": "2026-10-03T09:00:50.89335+00:00",
+  "sourceTrioGames": 3554762,
+  "sourceRowCount": 970745,
+  "sourceMaxId": 3524163,
+  "sourceScopeVerification": {
+    "verifiedAt": "2026-10-22",
+    "through12_3Games": 3109336,
+    "patch12_4Games": 445426
+  },
+  "minimumGamesFilter": null,
+  "aggregation": "Sum the published core-specific trio rows for each anchor and partner character+weapon; marginalize over cores and the third member. Retain every observed partner. Each trio contributes once to each member baseline and once to each directed pair.",
+  "rpDefinition": "Same as the recommendation API: sum(total_rp) / sum(total_games) / 3. Patches 12.4 use the published actual-entry-cost correction allocated by tier and three characters over weapon/core rows.",
+  "precision": "Raw sums retained; derived averages rounded to four decimal places.",
+  "files": [
+    {
+      "characterCode": 1,
+      "weaponCode": 14,
+      "file": "001-14.json",
+      "partnerCount": 114,
+      "sha256": "d0658c79c14564fa72faa613bf3f1903f2e24c49aa07b7970f350f571c224197"
+    },
+    {
+      "characterCode": 1,
+      "weaponCode": 15,
+      "file": "001-15.json",
+      "partnerCount": 114,
+      "sha256": "40fb8b988453c1a32375126f6f2e1199cc783d68610495c364b72245af046c96"
+    },
+    {
+      "characterCode": 1,
+      "weaponCode": 16,
+      "file": "001-16.json",
+      "partnerCount": 114,
+      "sha256": "94d2836d2e7ef2b896433e1f3424fa09f03205a236c4211684663ad41be8f6b3"
+    },
+    {
+      "characterCode": 1,
+      "weaponCode": 18,
+      "file": "001-18.json",
+      "partnerCount": 114,
+      "sha256": "677330344da67cf5c127787cf58269dc28d6bc1a85102907ed00e854f1204de8"
+    },
+    {
+      "characterCode": 2,
+      "weaponCode": 9,
+      "file": "002-09.json",
+      "partnerCount": 115,
+      "sha256": "1064a68f73877c91d62c0c48faadc45b01c094d31f4686fff424ecad0ed90f31"
+    },
+    {
+      "characterCode": 2,
+      "weaponCode": 10,
+      "file": "002-10.json",
+      "partnerCount": 115,
+      "sha256": "f4a7a23fa1ea87d029b57125c05eca5984ef23d09c588f2b01f7bbf019c83fe2"
+    },
+    {
+      "characterCode": 2,
+      "weaponCode": 11,
+      "file": "002-11.json",
+      "partnerCount": 115,
+      "sha256": "3701285afa711bd5f120207819065e792f5122c10b76377db000b2e6e086eff1"
+    },
+    {
+      "characterCode": 3,
+      "weaponCode": 16,
+      "file": "003-16.json",
+      "partnerCount": 115,
+      "sha256": "687e3a8036022c9ca4bfa31793b4b9b91da6caf0b447012f009780953f653794"
+    },
+    {
+      "characterCode": 3,
+      "weaponCode": 19,
+      "file": "003-19.json",
+      "partnerCount": 115,
+      "sha256": "a7ee7c91008ac60e9e3f486246edfb4471d4ce843ba1c6e26706c2e058dd3b33"
+    },
+    {
+      "characterCode": 3,
+      "weaponCode": 21,
+      "file": "003-21.json",
+      "partnerCount": 115,
+      "sha256": "de2982571f2cc1f074f49751168aef569570ac9267bb1f36a5e9211ba999b26f"
+    },
+    {
+      "characterCode": 4,
+      "weaponCode": 3,
+      "file": "004-03.json",
+      "partnerCount": 116,
+      "sha256": "d753979af678c254413e697ff481bd3060e81158d2a8fff8547d03d7a80ba90a"
+    },
+    {
+      "characterCode": 4,
+      "weaponCode": 13,
+      "file": "004-13.json",
+      "partnerCount": 116,
+      "sha256": "74b2a6e3b98811ce6a2b119eb053c022a1dd2add2c09cc9fa9e20ba31c8500b7"
+    },
+    {
+      "characterCode": 5,
+      "weaponCode": 5,
+      "file": "005-05.json",
+      "partnerCount": 116,
+      "sha256": "ffbec7cbf39c89cd626ae0faee2f8545ff2b3c6e55c212240cfdeb9c03aad3b5"
+    },
+    {
+      "characterCode": 5,
+      "weaponCode": 6,
+      "file": "005-06.json",
+      "partnerCount": 116,
+      "sha256": "65a8a16738c7e12811710f0514aa5bc4c1681c588a1ec53a958e83d596bc200b"
+    },
+    {
+      "characterCode": 6,
+      "weaponCode": 7,
+      "file": "006-07.json",
+      "partnerCount": 116,
+      "sha256": "6433179c8515673adc349d2caa8bdf8d2f82e16e37c02a2cefd5b1951e07ec55"
+    },
+    {
+      "characterCode": 6,
+      "weaponCode": 8,
+      "file": "006-08.json",
+      "partnerCount": 116,
+      "sha256": "92672f0bbc18fa473364236d3e670396ec35c70103cd58ba7e6753fbf63f0132"
+    },
+    {
+      "characterCode": 7,
+      "weaponCode": 1,
+      "file": "007-01.json",
+      "partnerCount": 116,
+      "sha256": "56f5011f89185fd6f9f87d2b4bc79e8cae20d88bc5c64b712c61886ad936ca93"
+    },
+    {
+      "characterCode": 7,
+      "weaponCode": 2,
+      "file": "007-02.json",
+      "partnerCount": 116,
+      "sha256": "7fdac9c75a47df9a9d2bea58b84153becf8ffa56003b4060d710f48f4dfb1182"
+    },
+    {
+      "characterCode": 8,
+      "weaponCode": 22,
+      "file": "008-22.json",
+      "partnerCount": 117,
+      "sha256": "d8cab13d9a6398dcfeca25a1bc881412c1303d4ae97953c6cfda3025876efe6b"
+    },
+    {
+      "characterCode": 9,
+      "weaponCode": 9,
+      "file": "009-09.json",
+      "partnerCount": 116,
+      "sha256": "b5ec76e62ec410a0a5e35a8014bcef26a69bcfb3ab59c16723892d09f60ef2f1"
+    },
+    {
+      "characterCode": 9,
+      "weaponCode": 10,
+      "file": "009-10.json",
+      "partnerCount": 116,
+      "sha256": "ec677e9a0fffafe8957c7fc3d67a50c68a19224a29ec1b1be2490118887b44ac"
+    },
+    {
+      "characterCode": 10,
+      "weaponCode": 1,
+      "file": "010-01.json",
+      "partnerCount": 116,
+      "sha256": "3c9e2e2340874171e13343d395ec7ec6b95e189beafc3678a6ba1d35fecf4753"
+    },
+    {
+      "characterCode": 10,
+      "weaponCode": 20,
+      "file": "010-20.json",
+      "partnerCount": 116,
+      "sha256": "b13fcbb918ee8e89d5a1408b97e0b4d401279048a628bf5daabb20d79feea0a3"
+    },
+    {
+      "characterCode": 11,
+      "weaponCode": 16,
+      "file": "011-16.json",
+      "partnerCount": 116,
+      "sha256": "40c447bb0f4bf0af93b1835397f65f15c7e3d541d627480455e6d96d113bf8c3"
+    },
+    {
+      "characterCode": 11,
+      "weaponCode": 18,
+      "file": "011-18.json",
+      "partnerCount": 116,
+      "sha256": "35fefbcff50459adc9a22d1445fe02a06bc4e75d2ed44263911e888bcb5fc728"
+    },
+    {
+      "characterCode": 12,
+      "weaponCode": 6,
+      "file": "012-06.json",
+      "partnerCount": 116,
+      "sha256": "0c2eb67005594508f3826cc51ccb637f4707544210d3a307dc02c6e9e44a9d4d"
+    },
+    {
+      "characterCode": 12,
+      "weaponCode": 7,
+      "file": "012-07.json",
+      "partnerCount": 116,
+      "sha256": "0ab3c459b08f7981f450fe66dea32bc617c3795b7e3632df8f37d9d231b19a88"
+    },
+    {
+      "characterCode": 13,
+      "weaponCode": 15,
+      "file": "013-15.json",
+      "partnerCount": 116,
+      "sha256": "afb4b2f51a676e0486e5e43645359f816eaa32346312747c2bf2537787b559cd"
+    },
+    {
+      "characterCode": 13,
+      "weaponCode": 19,
+      "file": "013-19.json",
+      "partnerCount": 116,
+      "sha256": "92c4e6a99094b8e05d702b7fca6233d3bda35ecbe4b0e042c7b498402453a281"
+    },
+    {
+      "characterCode": 14,
+      "weaponCode": 21,
+      "file": "014-21.json",
+      "partnerCount": 117,
+      "sha256": "4f965b031224d11d0514aac8706fa2ad54d359c2800c172dfe26c4c6c10b1c2f"
+    },
+    {
+      "characterCode": 15,
+      "weaponCode": 5,
+      "file": "015-05.json",
+      "partnerCount": 116,
+      "sha256": "602699c2538eaf4aea4138f0dfed43ad866c589c9529257064fb6014ab719c5f"
+    },
+    {
+      "characterCode": 15,
+      "weaponCode": 6,
+      "file": "015-06.json",
+      "partnerCount": 116,
+      "sha256": "69d18931107bb5cd95a249367f9de4b2975e213206eae1de8a220a9dc2372a3a"
+    },
+    {
+      "characterCode": 16,
+      "weaponCode": 9,
+      "file": "016-09.json",
+      "partnerCount": 117,
+      "sha256": "49ad2a88b20af1a24708b26ef1524a16f9e6b1e2e81c9e563827fce3471e063b"
+    },
+    {
+      "characterCode": 17,
+      "weaponCode": 5,
+      "file": "017-05.json",
+      "partnerCount": 117,
+      "sha256": "ba4d74020dd78d17e1f574297acfefeb86d5d1b749bde43ad754ad9312b509da"
+    },
+    {
+      "characterCode": 18,
+      "weaponCode": 15,
+      "file": "018-15.json",
+      "partnerCount": 117,
+      "sha256": "9ca5e87e789efe166879fec27e13d7ef86fd099434a94a3b06eaed8fba91280d"
+    },
+    {
+      "characterCode": 19,
+      "weaponCode": 6,
+      "file": "019-06.json",
+      "partnerCount": 116,
+      "sha256": "30428ba6aa0a2e6436db23a6907a3355d6683836006c353ffa6c0a4f47935f9c"
+    },
+    {
+      "characterCode": 19,
+      "weaponCode": 24,
+      "file": "019-24.json",
+      "partnerCount": 116,
+      "sha256": "7eaa87c9d2e3bd9bd9be610e3c4369baa81b3e5f51701c7b08af7cab84392d0d"
+    },
+    {
+      "characterCode": 20,
+      "weaponCode": 4,
+      "file": "020-04.json",
+      "partnerCount": 117,
+      "sha256": "17cad50afdfcad92ae61ce359111fe9f39aad9bc789936dc454ae3855bc7de99"
+    },
+    {
+      "characterCode": 21,
+      "weaponCode": 9,
+      "file": "021-09.json",
+      "partnerCount": 117,
+      "sha256": "afeb7da7891c5fbe49d07a40a2f959af0f0101ada5378da00e570607c9d6fd0d"
+    },
+    {
+      "characterCode": 22,
+      "weaponCode": 3,
+      "file": "022-03.json",
+      "partnerCount": 117,
+      "sha256": "8c3515e326cad76f7eb633ff3f4bf49e4155bc7a15deeb55a8f04934be80e7f4"
+    },
+    {
+      "characterCode": 23,
+      "weaponCode": 15,
+      "file": "023-15.json",
+      "partnerCount": 116,
+      "sha256": "410d1d271113612d93d66503262aba1697f1d5b20dacd11e5560c4f959f6fda1"
+    },
+    {
+      "characterCode": 23,
+      "weaponCode": 18,
+      "file": "023-18.json",
+      "partnerCount": 116,
+      "sha256": "ad1529d3ea36a1ba2b3a1dbae1e76842b6c660f153819583b036cdcdc0091b0f"
+    },
+    {
+      "characterCode": 24,
+      "weaponCode": 3,
+      "file": "024-03.json",
+      "partnerCount": 116,
+      "sha256": "3f1130c022820d0d3cc9ef2333566d253a7be90defe20fca727ed2cd1cb074cc"
+    },
+    {
+      "characterCode": 24,
+      "weaponCode": 21,
+      "file": "024-21.json",
+      "partnerCount": 116,
+      "sha256": "64184dda5addee9b5747b33dd9f0c5928a6e4ada33bac520b5a27bc45d994bd5"
+    },
+    {
+      "characterCode": 25,
+      "weaponCode": 11,
+      "file": "025-11.json",
+      "partnerCount": 117,
+      "sha256": "f371256abc09d17f13089e99634e9c6008ec102de5fdb6d3061bdf814c326375"
+    },
+    {
+      "characterCode": 26,
+      "weaponCode": 9,
+      "file": "026-09.json",
+      "partnerCount": 117,
+      "sha256": "f4d992d51417c156f15f2fe3680247e9af128cef00fa3f931aeb45c7f013c4c8"
+    },
+    {
+      "characterCode": 27,
+      "weaponCode": 2,
+      "file": "027-02.json",
+      "partnerCount": 114,
+      "sha256": "9d5173e0d334ad26ebb7411a98989e0d189e60fde06cd19a45553eb2a1110f7a"
+    },
+    {
+      "characterCode": 27,
+      "weaponCode": 6,
+      "file": "027-06.json",
+      "partnerCount": 114,
+      "sha256": "7c083f3b229ebf0641a877c5345a5dea2810fb2ec91f95cc963b5575d880bbce"
+    },
+    {
+      "characterCode": 27,
+      "weaponCode": 9,
+      "file": "027-09.json",
+      "partnerCount": 114,
+      "sha256": "d0897c66cbaa9fe149facd3991b881debaf4f1d9a6eee3796092f1a6e41a976e"
+    },
+    {
+      "characterCode": 27,
+      "weaponCode": 16,
+      "file": "027-16.json",
+      "partnerCount": 114,
+      "sha256": "08b6c1daffd8c628e92c70fd059566a0fc5e554e73c978148b1ff13ee0bdf27a"
+    },
+    {
+      "characterCode": 28,
+      "weaponCode": 3,
+      "file": "028-03.json",
+      "partnerCount": 116,
+      "sha256": "c948a617de5a4f53f113cbf749ae34f5c27e40b7d48db928d178c6969da48a42"
+    },
+    {
+      "characterCode": 28,
+      "weaponCode": 13,
+      "file": "028-13.json",
+      "partnerCount": 116,
+      "sha256": "9a534a6952e432e853f35b2c263760238b25d69b8db305836e3c0ec79499ada7"
+    },
+    {
+      "characterCode": 29,
+      "weaponCode": 1,
+      "file": "029-01.json",
+      "partnerCount": 116,
+      "sha256": "19abbf4ad4026321b5bce62b0c44a20a1bd411a90232694099757536b20c2a58"
+    },
+    {
+      "characterCode": 29,
+      "weaponCode": 2,
+      "file": "029-02.json",
+      "partnerCount": 116,
+      "sha256": "60a6a234e21105441b766be97188a10d1ecd45c1333a4efe9135107074aee6aa"
+    },
+    {
+      "characterCode": 30,
+      "weaponCode": 13,
+      "file": "030-13.json",
+      "partnerCount": 117,
+      "sha256": "d99e7c00c882efccf62e4bbddabd96ce097b6e6747f1f59a6fec67dbaf9b03ae"
+    },
+    {
+      "characterCode": 31,
+      "weaponCode": 7,
+      "file": "031-07.json",
+      "partnerCount": 117,
+      "sha256": "14a3a00e139ded36880d00c33e8ebccd8c420ab7c803e0494bd0498a6589a2e3"
+    },
+    {
+      "characterCode": 32,
+      "weaponCode": 5,
+      "file": "032-05.json",
+      "partnerCount": 117,
+      "sha256": "3e1a6d05e0ba764bc1060f636baf0dd6e18a01507946b652dc1ee4a6179f03d4"
+    },
+    {
+      "characterCode": 33,
+      "weaponCode": 1,
+      "file": "033-01.json",
+      "partnerCount": 117,
+      "sha256": "59ade3c467b456b9e7e4d802dea28f6327967bb88a7aa1006e4cf999c2596075"
+    },
+    {
+      "characterCode": 34,
+      "weaponCode": 23,
+      "file": "034-23.json",
+      "partnerCount": 117,
+      "sha256": "ce90b1cde9e538152c6f75c0461303118cdb9dded5ace65ee9fba217a252d74b"
+    },
+    {
+      "characterCode": 35,
+      "weaponCode": 1,
+      "file": "035-01.json",
+      "partnerCount": 116,
+      "sha256": "66c93ab1a58de68dbf97f51417c0a26b0a78e9055f6e2ecfc3e0d40c1c8f596f"
+    },
+    {
+      "characterCode": 35,
+      "weaponCode": 2,
+      "file": "035-02.json",
+      "partnerCount": 116,
+      "sha256": "a9bbfff6d5fe4de30ec382ed21c8f5a0049e28c32f45706557c820fb31b46ab0"
+    },
+    {
+      "characterCode": 36,
+      "weaponCode": 5,
+      "file": "036-05.json",
+      "partnerCount": 117,
+      "sha256": "fafc2fa537e303dbf8497f7d31aaddde4133929e0a3e1530c9851d26e42dd74f"
+    },
+    {
+      "characterCode": 37,
+      "weaponCode": 15,
+      "file": "037-15.json",
+      "partnerCount": 117,
+      "sha256": "f60c79d6bf408bef110664235722e6a8f6273135d28f821dc8897e6e804e3345"
+    },
+    {
+      "characterCode": 38,
+      "weaponCode": 9,
+      "file": "038-09.json",
+      "partnerCount": 117,
+      "sha256": "2969d7d468dabeb4be15afc25ba1161fe8f47d08b4b0b89d7caf64056396897e"
+    },
+    {
+      "characterCode": 39,
+      "weaponCode": 18,
+      "file": "039-18.json",
+      "partnerCount": 116,
+      "sha256": "7e1cda40a39e0a44e131704a01da0278b0e7bc58334ad221df23d207e3b0bdb5"
+    },
+    {
+      "characterCode": 39,
+      "weaponCode": 21,
+      "file": "039-21.json",
+      "partnerCount": 116,
+      "sha256": "683a5eda3d1c045bb09e10344e633d5f31a6477a7a9af457ee09ac1f42054188"
+    },
+    {
+      "characterCode": 40,
+      "weaponCode": 6,
+      "file": "040-06.json",
+      "partnerCount": 117,
+      "sha256": "a60f1c89de3f167efe96d1aed234a9ce6a2d0cefbdff27473f9e79319ae1abd2"
+    },
+    {
+      "characterCode": 41,
+      "weaponCode": 24,
+      "file": "041-24.json",
+      "partnerCount": 117,
+      "sha256": "f489869abd69233f3ac560a425751db4c36f15a08c6640ad878c584445cc4c5f"
+    },
+    {
+      "characterCode": 42,
+      "weaponCode": 24,
+      "file": "042-24.json",
+      "partnerCount": 117,
+      "sha256": "76aa7b7d191ee229b7bcaa5121932e326fb77be90e86efa859cae61ddaebe98d"
+    },
+    {
+      "characterCode": 43,
+      "weaponCode": 5,
+      "file": "043-05.json",
+      "partnerCount": 117,
+      "sha256": "a5e8ce8104291cf4c11f520a442830883445fa20e1bb6ddce4fdce5a49cf528a"
+    },
+    {
+      "characterCode": 44,
+      "weaponCode": 25,
+      "file": "044-25.json",
+      "partnerCount": 117,
+      "sha256": "efe37f0e902e20fcaecaa1e492e68c3b9de4fe981fdce1ac81d18517ef9e9265"
+    },
+    {
+      "characterCode": 45,
+      "weaponCode": 4,
+      "file": "045-04.json",
+      "partnerCount": 117,
+      "sha256": "db428378425798523bc43fe74cafa431ecffe741677ab252cbc8fb192bd6362b"
+    },
+    {
+      "characterCode": 46,
+      "weaponCode": 16,
+      "file": "046-16.json",
+      "partnerCount": 117,
+      "sha256": "6a715580ee7b3ca7a390a6b341d690e6ef2c8af11251e436388227016b37e90d"
+    },
+    {
+      "characterCode": 47,
+      "weaponCode": 4,
+      "file": "047-04.json",
+      "partnerCount": 117,
+      "sha256": "9793547ec278b859c46d38db27c4f8fce48efd32fc15b14537123522440bb6a6"
+    },
+    {
+      "characterCode": 48,
+      "weaponCode": 3,
+      "file": "048-03.json",
+      "partnerCount": 117,
+      "sha256": "d28e3ce0df135a704f00e7a4863354d4ee28d2f40c485030c3770b448227d396"
+    },
+    {
+      "characterCode": 49,
+      "weaponCode": 19,
+      "file": "049-19.json",
+      "partnerCount": 117,
+      "sha256": "8724f5602a419f409f73152e192fca6d2c8acdb627d8ec73cb38ddbc60ed7fa1"
+    },
+    {
+      "characterCode": 50,
+      "weaponCode": 21,
+      "file": "050-21.json",
+      "partnerCount": 117,
+      "sha256": "dffa34997f5202ec59b76ff8b7df10325b0319ac181d196071e37056f5fda591"
+    },
+    {
+      "characterCode": 51,
+      "weaponCode": 22,
+      "file": "051-22.json",
+      "partnerCount": 117,
+      "sha256": "2816973491143b60c043c4f950e5f4b3ec60521d19cb46264bda9e3cb4df3b96"
+    },
+    {
+      "characterCode": 52,
+      "weaponCode": 24,
+      "file": "052-24.json",
+      "partnerCount": 117,
+      "sha256": "9b0bac29edb4b2727a4cbbafe99309eaf9887653b78ea481dcf0c45da3954494"
+    },
+    {
+      "characterCode": 53,
+      "weaponCode": 13,
+      "file": "053-13.json",
+      "partnerCount": 116,
+      "sha256": "69fad435143299b9a3de2309f67a84a53a604c58b371aa0eb7d1922154e2f84f"
+    },
+    {
+      "characterCode": 53,
+      "weaponCode": 14,
+      "file": "053-14.json",
+      "partnerCount": 116,
+      "sha256": "a25977b68b29d9f9f5f233b1800cf923843ef44b5ffb5317e2b922176d820cd3"
+    },
+    {
+      "characterCode": 54,
+      "weaponCode": 8,
+      "file": "054-08.json",
+      "partnerCount": 117,
+      "sha256": "c249ce7f2900c6653a7065945fdf6e084699235352d61a7892c44b88a4199fd4"
+    },
+    {
+      "characterCode": 55,
+      "weaponCode": 14,
+      "file": "055-14.json",
+      "partnerCount": 117,
+      "sha256": "ff4e6858fcd1dc0ff09842910eb4fa8f7221f7d9edcfee8ce140639443a4add1"
+    },
+    {
+      "characterCode": 56,
+      "weaponCode": 20,
+      "file": "056-20.json",
+      "partnerCount": 117,
+      "sha256": "4c0cf2b119a036659acae03cbdebd850400437b57a678dc7045e3c2a8a0997d5"
+    },
+    {
+      "characterCode": 57,
+      "weaponCode": 23,
+      "file": "057-23.json",
+      "partnerCount": 117,
+      "sha256": "7df9e0249952c84f0de04ed3dec3b3cc9fa641df89ce53f14a8caa09bbf362b5"
+    },
+    {
+      "characterCode": 58,
+      "weaponCode": 10,
+      "file": "058-10.json",
+      "partnerCount": 117,
+      "sha256": "0d858b2bcd852b04c8bf1530465fd294234e523ae486b24ab7e8aa1fbac219d5"
+    },
+    {
+      "characterCode": 59,
+      "weaponCode": 2,
+      "file": "059-02.json",
+      "partnerCount": 117,
+      "sha256": "d29385deb649ff2a0d4ae5bcbc43fc1e4b39d4992023f2111c0dbeddb51b9cd5"
+    },
+    {
+      "characterCode": 60,
+      "weaponCode": 6,
+      "file": "060-06.json",
+      "partnerCount": 117,
+      "sha256": "c80bb3cdebd4c3b7d81e664d665ff2f2c8374f7d2e3bef032eb676673c61b53e"
+    },
+    {
+      "characterCode": 61,
+      "weaponCode": 5,
+      "file": "061-05.json",
+      "partnerCount": 117,
+      "sha256": "b3fee9a00bf2da3f4db597a7fe8286c95621b0a1fa41afa3f739f3ef6190659c"
+    },
+    {
+      "characterCode": 62,
+      "weaponCode": 11,
+      "file": "062-11.json",
+      "partnerCount": 117,
+      "sha256": "e62c73bce4c84aeded6adbfb03237934f2599ab4f0e3e7dfd78bd87c8ab9c4cb"
+    },
+    {
+      "characterCode": 63,
+      "weaponCode": 15,
+      "file": "063-15.json",
+      "partnerCount": 117,
+      "sha256": "033b42828be217ef8d57614a022d205cb066ad4b921e877eb0aed1a92c57f3e9"
+    },
+    {
+      "characterCode": 64,
+      "weaponCode": 24,
+      "file": "064-24.json",
+      "partnerCount": 117,
+      "sha256": "e4d238e78f851e12f6fcd034942498f8423fb59cedd25f698d658f82ffbde91d"
+    },
+    {
+      "characterCode": 65,
+      "weaponCode": 16,
+      "file": "065-16.json",
+      "partnerCount": 117,
+      "sha256": "b8ad65ada39c0b7f09a383c1c56ee1cb2a82874a226bb68759a9b82cbf6de671"
+    },
+    {
+      "characterCode": 66,
+      "weaponCode": 24,
+      "file": "066-24.json",
+      "partnerCount": 117,
+      "sha256": "cc6259707f586b7815ff439c9de3920909f7a9034e6ecccd020faa1c5ed4c9aa"
+    },
+    {
+      "characterCode": 67,
+      "weaponCode": 14,
+      "file": "067-14.json",
+      "partnerCount": 117,
+      "sha256": "a7dec52b7e99bd75ae844841e86d27ca439566a8a7f23623018b1f8a5872731f"
+    },
+    {
+      "characterCode": 68,
+      "weaponCode": 1,
+      "file": "068-01.json",
+      "partnerCount": 117,
+      "sha256": "3ccd80440651f860a17684aa7b37f7970484b3650deddf97210090a1caa72fd7"
+    },
+    {
+      "characterCode": 69,
+      "weaponCode": 9,
+      "file": "069-09.json",
+      "partnerCount": 117,
+      "sha256": "50a2627fde079d12b2a6caaf0d8dc4a9dd1af2775ac6f64aaf685bf8ea01afbf"
+    },
+    {
+      "characterCode": 70,
+      "weaponCode": 6,
+      "file": "070-06.json",
+      "partnerCount": 117,
+      "sha256": "083d39c5917f6bf978f6f1cb2f66f2c4b9f8d468fd47862076d31b14ba3dac91"
+    },
+    {
+      "characterCode": 71,
+      "weaponCode": 14,
+      "file": "071-14.json",
+      "partnerCount": 117,
+      "sha256": "e98cc8a7f52564ab6c807b0ac3d600c5006525b4d14bbcbf5b956ccb80f283f0"
+    },
+    {
+      "characterCode": 72,
+      "weaponCode": 11,
+      "file": "072-11.json",
+      "partnerCount": 117,
+      "sha256": "35cd640f59af3599e70c95072810fcd521c65b802b2c5968e236d5a95ff00bb9"
+    },
+    {
+      "characterCode": 73,
+      "weaponCode": 24,
+      "file": "073-24.json",
+      "partnerCount": 117,
+      "sha256": "884edd977d714a224088b11f771cf235a550fd0cdd107851a148971a4c305ec3"
+    },
+    {
+      "characterCode": 74,
+      "weaponCode": 3,
+      "file": "074-03.json",
+      "partnerCount": 117,
+      "sha256": "e8e26683090b3b55f7ee976fde19148ff3a3e1e0c1d9b5d4d53f1287cc1dfd76"
+    },
+    {
+      "characterCode": 75,
+      "weaponCode": 22,
+      "file": "075-22.json",
+      "partnerCount": 117,
+      "sha256": "a140c88c4327e1fe27de49169a9484a10ee9761553a0e6c618cddc6969712c4f"
+    },
+    {
+      "characterCode": 76,
+      "weaponCode": 3,
+      "file": "076-03.json",
+      "partnerCount": 117,
+      "sha256": "26e4f23ac2516fa6f172bc4ba0a8e7e5a62024929c4b3a7a702223cc3705029d"
+    },
+    {
+      "characterCode": 77,
+      "weaponCode": 24,
+      "file": "077-24.json",
+      "partnerCount": 117,
+      "sha256": "4eb4f216dbfbd9fd124d9063872d5c29c94b8d71a030cbe6311da0e9e7b1dbdf"
+    },
+    {
+      "characterCode": 78,
+      "weaponCode": 16,
+      "file": "078-16.json",
+      "partnerCount": 117,
+      "sha256": "a83c5e158b6b2a50e56032ad8e92140ca409c338e15b5d537883dccb916bf23a"
+    },
+    {
+      "characterCode": 79,
+      "weaponCode": 8,
+      "file": "079-08.json",
+      "partnerCount": 117,
+      "sha256": "ee0744e23be80149342c605e9e4b79956f3c60ad38edfd31d192decf2783efa5"
+    },
+    {
+      "characterCode": 80,
+      "weaponCode": 19,
+      "file": "080-19.json",
+      "partnerCount": 117,
+      "sha256": "fcc331e8521726ba87c47078fe90053ec7bcdb8378548612e25c4b33f5483613"
+    },
+    {
+      "characterCode": 81,
+      "weaponCode": 9,
+      "file": "081-09.json",
+      "partnerCount": 117,
+      "sha256": "3d696a1d35bb3a06a0d9fd5eb706fd6fed7f537ea1240063344ca5413cdfa3e2"
+    },
+    {
+      "characterCode": 82,
+      "weaponCode": 21,
+      "file": "082-21.json",
+      "partnerCount": 117,
+      "sha256": "7b69c8baf8034fa109c9862624da508b53f6124d87afaff5a742dd5d4e5849c9"
+    },
+    {
+      "characterCode": 83,
+      "weaponCode": 6,
+      "file": "083-06.json",
+      "partnerCount": 117,
+      "sha256": "0f5851500be19b180730eb1fb38ea87ea6310a34ec6f9d6396244b291cc4c6ae"
+    },
+    {
+      "characterCode": 84,
+      "weaponCode": 18,
+      "file": "084-18.json",
+      "partnerCount": 117,
+      "sha256": "4c6c628d661c095f9d170dce658f9b41993fdee6885e99d26912d64471e546e1"
+    },
+    {
+      "characterCode": 85,
+      "weaponCode": 13,
+      "file": "085-13.json",
+      "partnerCount": 117,
+      "sha256": "885d99e38da0b717b2b2ef57b3bc587450c61ab53ad6b5353a841bb1607ed7ea"
+    },
+    {
+      "characterCode": 86,
+      "weaponCode": 1,
+      "file": "086-01.json",
+      "partnerCount": 117,
+      "sha256": "094d00c89bab6d01a434b0da6521e56802ba5b4925e5e82e0dbbcdb1d3416fe5"
+    },
+    {
+      "characterCode": 87,
+      "weaponCode": 24,
+      "file": "087-24.json",
+      "partnerCount": 117,
+      "sha256": "d2147ca90696f76789c64098b5965b3eccac38a8c2dc86b781658d193182d148"
+    },
+    {
+      "characterCode": 88,
+      "weaponCode": 3,
+      "file": "088-03.json",
+      "partnerCount": 117,
+      "sha256": "34587e5779a279e1c451a6f044c2ff339fc3654ba9f615b2eb168ab66ad813db"
+    },
+    {
+      "characterCode": 89,
+      "weaponCode": 9,
+      "file": "089-09.json",
+      "partnerCount": 117,
+      "sha256": "2b2c7740267807f793b3c3de2810fae13a49b83aab92f5b3b251ea16b84b6c45"
+    },
+    {
+      "characterCode": 90,
+      "weaponCode": 11,
+      "file": "090-11.json",
+      "partnerCount": 117,
+      "sha256": "9f77cbf7e5b10c80e86f317dfff9205357f704cbbac12a799c0c8938fe8d44bf"
+    }
+  ]
+}
