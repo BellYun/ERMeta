@@ -4552,7 +4552,7 @@ body,
 .composition-comparison-heading {
   position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: 20;
   display: grid;
   grid-template-columns: var(--comparison-columns);
   gap: var(--space-xs);
