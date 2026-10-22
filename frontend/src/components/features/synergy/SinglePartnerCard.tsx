@@ -138,10 +138,12 @@ export function SinglePartnerCard({
             ],
             [metricT("games"), partner.totalGames.toLocaleString()],
             [metricT("averageRank"), partner.averageRank.toFixed(2)],
-          ].map(([label, value]) => (
+          ].map(([label, value], index) => (
             <div key={label}>
               <span>{label}</span>
-              <span>{value}</span>
+              <span data-metric-emphasis={(index === 3 && partner.averageRank <= 3.5) || undefined}>
+                {value}
+              </span>
             </div>
           ))}
         </div>
