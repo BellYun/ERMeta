@@ -1053,5 +1053,22 @@
       "builds": "沒有特性構築資料。",
       "cell": "沒有資料"
     }
+  },
+  "singlePartnerResults": {
+    "title": "與{ally}搭配的自選角色",
+    "scope": "第10、11賽季＋第12賽季截至12.4版本 · 鑽石以上",
+    "description": "包含這兩名角色的三人陣容戰績，合併第三名隊友與核心的資料。",
+    "sort": "排序",
+    "retry": "重試",
+    "noData": "所選角色與武器暫無搭檔統計。",
+    "noSamples": "沒有符合最低場次的候選，請降低門檻。",
+    "allWeapons": "全部武器",
+    "inPool": "我的角色池",
+    "showMore": "查看更多候選",
+    "unknown": "未定",
+    "unknownAlly": "未選擇的隊友",
+    "selected": "隊友",
+    "recommended": "推薦",
+    "lineup": "隊友 · 未定 · 自選"
   }
 }

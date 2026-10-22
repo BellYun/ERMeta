@@ -49,21 +49,15 @@ test.describe("시너지 상세 요청 경쟁", () => {
       });
     });
 
-    await page.goto("/synergy-detail?ally1=6&w1=8");
+    await page.goto("/synergy-detail?ally1=6&w1=8&ally2=1&w2=16");
     await bucketRequestStarted;
 
-    const allySection = page
-      .locator("section")
-      .filter({ has: page.getByRole("heading", { name: "아군 선택" }) })
-      .first();
-    await allySection.locator("input").fill("재키");
-    const nextAlly = allySection.locator('button[title="재키 (양손검)"]');
-    await expect(nextAlly).toBeVisible();
-    await nextAlly.click();
-    await page.waitForURL(/[?&]ally2=1(?:&|$)/, { timeout: 10_000 });
-
-    await expect(page.locator('a[href^="/character/5?"]').first()).toBeVisible();
-    await expect(page.locator('a[href^="/character/2?"]')).toHaveCount(0);
+    // Both pairs share A's pending bucket; only the latest B may render.
+    await page.evaluate(() => {
+      window.history.replaceState(null, "", "/synergy-detail?ally1=6&w1=8&ally2=2&w2=9");
+    });
+    await expect(page.locator('a[href^="/character/3?"]').first()).toBeVisible();
+    await expect(page.locator('a[href^="/character/5?"]')).toHaveCount(0);
     expect(requestCount).toBe(1);
   });
 });

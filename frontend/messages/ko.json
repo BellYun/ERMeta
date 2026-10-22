@@ -1240,5 +1240,22 @@
     "welcomeMetaBody": "패치 변경과 예상 티어를 실제 성적과 비교해 판단하세요.",
     "welcomeLive": "패치 {patch} · 다이아+ 실제 데이터",
     "welcomeMetaCta": "실험체 분석하기"
+  },
+  "singlePartnerResults": {
+    "title": "{ally} 기준 내 픽 추천",
+    "scope": "시즌 10·11 + 시즌 12의 12.4까지 · 다이아몬드 이상",
+    "description": "두 실험체가 함께한 3인 조합의 성적입니다. 나머지 한 명과 코어는 합산했습니다.",
+    "sort": "정렬",
+    "retry": "다시 시도",
+    "noData": "선택한 실험체·무기의 파트너 통계가 없습니다.",
+    "noSamples": "최소 경기 수를 만족하는 후보가 없습니다. 기준을 낮춰보세요.",
+    "allWeapons": "전체 무기",
+    "inPool": "내 풀",
+    "showMore": "후보 더 보기",
+    "unknown": "미정",
+    "unknownAlly": "미정인 팀원",
+    "selected": "선택",
+    "recommended": "추천",
+    "lineup": "아군 · 미정 · 내 픽"
   }
 }

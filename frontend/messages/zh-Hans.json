@@ -1053,5 +1053,22 @@
       "builds": "没有特性构筑数据。",
       "cell": "没有数据"
     }
+  },
+  "singlePartnerResults": {
+    "title": "与{ally}搭配的自选角色",
+    "scope": "第10、11赛季＋第12赛季截至12.4补丁 · 钻石以上",
+    "description": "包含这两名角色的三人阵容战绩，合并第三名队友和核心的数据。",
+    "sort": "排序",
+    "retry": "重试",
+    "noData": "所选角色与武器暂无搭档统计。",
+    "noSamples": "没有满足最低场次的候选，请降低门槛。",
+    "allWeapons": "全部武器",
+    "inPool": "我的角色池",
+    "showMore": "查看更多候选",
+    "unknown": "未定",
+    "unknownAlly": "未选择的队友",
+    "selected": "队友",
+    "recommended": "推荐",
+    "lineup": "队友 · 未定 · 自选"
   }
 }

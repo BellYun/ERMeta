@@ -1237,5 +1237,22 @@
     "welcomeMetaBody": "変更内容と予想ティアを実際の成績と比較しましょう。",
     "welcomeLive": "パッチ{patch} · ダイヤ+の実データ",
     "welcomeMetaCta": "実験体を分析"
+  },
+  "singlePartnerResults": {
+    "title": "{ally}と組む自分のピック",
+    "scope": "シーズン10・11＋シーズン12の12.4まで · ダイヤモンド以上",
+    "description": "両実験体を含む3人構成の成績です。残り1人とコアは合算しています。",
+    "sort": "並び順",
+    "retry": "再試行",
+    "noData": "選択した実験体・武器の相性統計がありません。",
+    "noSamples": "最低試合数を満たす候補がありません。条件を下げてください。",
+    "allWeapons": "全武器",
+    "inPool": "自分のプール",
+    "showMore": "候補をもっと見る",
+    "unknown": "未定",
+    "unknownAlly": "未選択の味方",
+    "selected": "味方",
+    "recommended": "推薦",
+    "lineup": "味方・未定・自分のピック"
   }
 }
