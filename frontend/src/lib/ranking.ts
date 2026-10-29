@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { HOME_META_TARGET_PATCH } from "@/lib/homeMetaShared";
 import { getAverageRP } from "@/lib/rpMetric";
 import { createServerClient } from "@/lib/supabase";
 import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
@@ -124,7 +125,7 @@ export async function fetchRankingData(
   // New notes can have a preview before their PatchVersion row is registered.
   // Keep the local previous patch available for that forecast baseline.
   const patchList = (patches ?? []).map((p: { version: string }) => p.version);
-  if (["12.6", "12.7"].includes(patchVersion) && !patchList.includes(patchVersion)) {
+  if (patchVersion === HOME_META_TARGET_PATCH && !patchList.includes(patchVersion)) {
     patchList.unshift(patchVersion);
   }
   const currentIndex = patchList.indexOf(patchVersion);
@@ -197,7 +198,7 @@ export async function getCachedRankingData(
     async () => fetchRankingData(patchVersion, requestedTier),
     ["character-rankings", "fixed-entry-cost-v1", patchVersion, requestedTier],
     {
-      revalidate: ["12.6", "12.7"].includes(patchVersion) ? 300 : 21600,
+      revalidate: patchVersion === HOME_META_TARGET_PATCH ? 300 : 21600,
       tags: [
         "character-rankings",
         `character-rankings:${patchVersion}`,
