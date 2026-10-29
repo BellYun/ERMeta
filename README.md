@@ -267,6 +267,7 @@ ERMeta/
 git clone https://github.com/BellYun/ERMeta.git
 cd ERMeta
 cd frontend
+nvm use
 npm ci
 cp .env.example .env.local
 npm run dev
