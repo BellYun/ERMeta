@@ -11,6 +11,8 @@ import { get12_5ItemExposure, get12_5TraitExposure } from "@/data/12.5-item-expo
 import prepatchStats from "@/data/12.5-prepatch-stats.json";
 import { get12_6ItemExposure } from "@/data/12.6-item-exposure";
 import prepatch126Stats from "@/data/12.6-prepatch-stats.json";
+import { get12_7ItemExposure } from "@/data/12.7-item-exposure";
+import prepatch127Stats from "@/data/12.7-prepatch-stats.json";
 import { getForecastItemChanges } from "@/data/patch-indirect-changes";
 import {
   getAllPatchVersions,
@@ -218,10 +220,11 @@ describe("12.4 patch notes", () => {
   it("12.4와 12.3 이력을 유지한다", () => {
     expect(
       getAllPatchVersions()
-        .filter((version) => version !== "12.6")
+        .filter((version) => version !== "12.7" && version !== "12.6")
         .slice(1, 3)
     ).toEqual(["12.4", "12.3"]);
-    expect(getStatsPatchVersions().slice(2, 4)).toEqual(["12.4", "12.3"]);
+    expect(getStatsPatchVersions()).toContain("12.4");
+    expect(getStatsPatchVersions()).toContain("12.3");
   });
 
   it("공식 실험체 35명의 변경 방향을 보존한다", () => {
@@ -431,10 +434,10 @@ describe("12.5 patch notes", () => {
 
 describe("12.6 publication", () => {
   it("publishes notes and makes the analysis preview available", () => {
-    expect(getAllPatchVersions()[0]).toBe("12.6");
+    expect(getAllPatchVersions()).toContain("12.6");
     expect(getNotesByPatch("12.6")).toHaveLength(28);
-    expect(getStatsPatchVersions()[0]).toBe("12.6");
-    expect(getVisibleStatsPatchVersions()[0]).toBe("12.6");
+    expect(getStatsPatchVersions()).toContain("12.6");
+    expect(getVisibleStatsPatchVersions()).toContain("12.6");
   });
   it("preserves weapon-specific scope and previous patch history", () => {
     expect(getCharacterPatchNote(90, "12.6")?.changes[0].weaponMasteryCode).toBe(11);
@@ -446,7 +449,7 @@ describe("12.6 publication", () => {
   it("covers every directly changed character with a 12.5 baseline", () => {
     const forecasts = getPatchTierForecasts("12.6");
     const directCharacters = new Set(getNotesByPatch("12.6").map((note) => note.characterCode));
-    expect(getPatchTierForecastVersions()[0]).toBe("12.6");
+    expect(getPatchTierForecastVersions()).toContain("12.6");
     expect(
       [...directCharacters].every((code) =>
         forecasts.some((forecast) => forecast.characterCode === code)
@@ -485,5 +488,60 @@ describe("12.6 publication", () => {
           `${forecast.characterCode}:${forecast.weaponCode} ${forecast.currentTier}/${expected.get(`${forecast.characterCode}:${forecast.weaponCode}`)}`
       );
     expect(mismatches).toEqual([]);
+  });
+});
+
+describe("12.7 publication", () => {
+  it("publishes the official Lumia Island roster and weapon scopes", () => {
+    expect(getAllPatchVersions()[0]).toBe("12.7");
+    expect(getNotesByPatch("12.7")).toHaveLength(26);
+    expect(getStatsPatchVersions()[0]).toBe("12.7");
+    expect(getVisibleStatsPatchVersions()[0]).toBe("12.7");
+    expect(getCharacterPatchNote(2, "12.7")?.changes[0].weaponMasteryCode).toBe(10);
+    expect(getCharacterPatchNote(84, "12.7")?.changes[0].weaponMasteryCode).toBe(18);
+    expect(getCharacterPatchNote(66, "12.7")?.changes.map((change) => change.changeType)).toEqual([
+      "buff",
+      "nerf",
+    ]);
+  });
+
+  it("covers every directly changed character with the 12.6 snapshot", () => {
+    const forecasts = getPatchTierForecasts("12.7");
+    const directCharacters = new Set(getNotesByPatch("12.7").map((note) => note.characterCode));
+    expect(getPatchTierForecastVersions()[0]).toBe("12.7");
+    expect(
+      [...directCharacters].every((code) => forecasts.some((item) => item.characterCode === code))
+    ).toBe(true);
+    expect(forecasts.every((item) => item.reason.length > 20)).toBe(true);
+    expect(prepatch127Stats.rows).toHaveLength(357);
+    expect(get12_7ItemExposure(66, 24).find((item) => item.itemCode === 202526)?.pickRate).toBe(
+      39.9
+    );
+    expect(
+      getForecastItemChanges("12.7", 66, 24).some((item) => item.target.includes("이단심판관"))
+    ).toBe(true);
+  });
+
+  it("uses the same 12.6 pre-patch tiers as character rankings", () => {
+    const rankings = buildHomeMetaView(
+      {
+        patchVersion: "12.6",
+        previousPatch: null,
+        rows: prepatch127Stats.rows as HomeMetaStatRow[],
+      },
+      DEFAULT_HOME_TIER
+    ).rankingData.rankings;
+    const scores = computeMetaScores(rankings);
+    const expected = new Map(
+      rankings.map((row) => [
+        `${row.characterNum}:${row.bestWeapon}`,
+        assignTier(scores.get(getMetaRankingKey(row)) ?? 0),
+      ])
+    );
+    expect(
+      getPatchTierForecasts("12.7").filter(
+        (item) => expected.get(`${item.characterCode}:${item.weaponCode}`) !== item.currentTier
+      )
+    ).toEqual([]);
   });
 });

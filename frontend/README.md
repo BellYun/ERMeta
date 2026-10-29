@@ -33,6 +33,7 @@ PLAYER_API_BASE_URL=http://localhost:4000
 First, run the development server:
 
 ```bash
+nvm use
 npm run dev
 # or
 yarn dev
