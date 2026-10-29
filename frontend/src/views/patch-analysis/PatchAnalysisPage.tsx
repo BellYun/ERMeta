@@ -17,7 +17,7 @@ import {
   getCharacterMiniWebpUrl,
   resolveCharacterName,
 } from "@/lib/characterMap";
-import { getCachedHomeMetaStats } from "@/lib/homeMetaServer";
+import { getPatchPageMetaStats } from "@/lib/homeMetaServer";
 import { isHomeMetaTargetReady } from "@/lib/homeMetaShared";
 import {
   getPatchAnalysisData,
@@ -1605,9 +1605,7 @@ export default async function PatchAnalysisPage({
   const isPatch125 = data.currentPatch === "12.5";
   const isPatch126 = data.currentPatch === "12.6";
   const targetStats =
-    isPatch125 || isPatch126
-      ? await getCachedHomeMetaStats(data.currentPatch).catch(() => null)
-      : null;
+    isPatch125 || isPatch126 ? await getPatchPageMetaStats(data.currentPatch) : null;
   const isPreviewPatch =
     isPatch124 ||
     ((isPatch125 || isPatch126) && !isHomeMetaTargetReady(targetStats?.collectedGames ?? 0));

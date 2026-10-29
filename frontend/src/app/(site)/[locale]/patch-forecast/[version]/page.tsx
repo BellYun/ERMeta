@@ -8,8 +8,7 @@ import {
 } from "@/components/features/home/PatchForecastComparison";
 import { getPatchTierForecastVersions } from "@/data/patch-tier-forecasts";
 import { ROUTE_LOCALES, isRouteLocale, type ActiveRouteLocale } from "@/i18n/routing";
-import { getCachedHomeMetaStats } from "@/lib/homeMetaServer";
-import { createEmptyHomeMetaStats } from "@/lib/homeMetaShared";
+import { getPatchPageMetaStats } from "@/lib/homeMetaServer";
 import { buildLocalizedAlternates, localizeRoutePath } from "@/lib/seoLocales";
 import { BASE_URL } from "@/lib/siteMetadata";
 
@@ -75,7 +74,8 @@ const COPY: Record<
   },
 };
 
-export const revalidate = 300;
+// 패치별 데이터 캐시가 현재 패치에만 1시간 ISR을 설정한다.
+export const revalidate = false;
 export const dynamic = "force-static";
 export const dynamicParams = true;
 
@@ -121,9 +121,7 @@ export default async function LocalizedPatchForecastPage({ params }: LocalePageP
 
   setRequestLocale(locale);
   const copy = COPY[locale];
-  const stats = await getCachedHomeMetaStats(version).catch(() =>
-    createEmptyHomeMetaStats(version)
-  );
+  const stats = await getPatchPageMetaStats(version);
   const actualReady = isPatchForecastActualReady(version, stats);
   const pageTitle = actualReady ? copy.title(version) : copy.pendingTitle(version);
   const pageDescription =

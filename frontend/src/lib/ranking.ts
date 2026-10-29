@@ -108,15 +108,18 @@ function selectRankings(
 
 export async function fetchRankingData(
   patchVersion: string,
-  requestedTier: string
+  requestedTier: string,
+  strict = false
 ): Promise<RankingResponse> {
   const supabase = createServerClient();
 
-  const { data: patches } = await supabase
+  const { data: patches, error: patchesError } = await supabase
     .from("PatchVersion")
     .select("version")
     .order("startDate", { ascending: false })
     .limit(50);
+
+  if (strict && patchesError) throw new Error("Failed to load patch versions");
 
   // New notes can have a preview before their PatchVersion row is registered.
   // Keep the local previous patch available for that forecast baseline.
@@ -144,17 +147,19 @@ export async function fetchRankingData(
   if (previousPatch && data) {
     const hasV2Prev = data.some((r: { patchVersion: string }) => r.patchVersion === previousPatch);
     if (!hasV2Prev) {
-      const { data: oldData } = await supabase
+      const { data: oldData, error: oldError } = await supabase
         .from("CharacterStats")
         .select(selectCols)
         .eq("patchVersion", previousPatch)
         .in("tier", TIER_FALLBACK_ORDER);
+      if (strict && oldError) throw new Error("Failed to load previous rankings");
       if (oldData && oldData.length > 0) {
         data = [...data, ...oldData];
       }
     }
   }
 
+  if (strict && (error || !data)) throw new Error("Failed to load patch rankings");
   if (error || !data) {
     return {
       rankings: [],
