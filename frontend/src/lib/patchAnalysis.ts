@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import {
   getNotesByPatch,
   getStatsPatchVersions,
@@ -5,22 +6,21 @@ import {
   type ChangeType,
 } from "@/data/patch-notes";
 import { type CharacterRole, getComboRoles, getCharacterName } from "@/lib/characterMap";
-import { fetchRankingData, type CharacterRankingData, type RankingResponse } from "@/lib/ranking";
-import { getAverageRP, hasComparableRP } from "@/lib/rpMetric";
-import { createServerClient } from "@/lib/supabase";
+import { fetchRankingData, type CharacterRankingData } from "@/lib/ranking";
+import { hasComparableRP } from "@/lib/rpMetric";
 import { resolveWeaponName, WEAPON_KOR_BY_CODE } from "@/lib/weaponMap";
-import { expandCumulativeTier } from "@/utils/tier";
 import assassinsData from "../../public/data/lab/assassins.json";
 import rangersData from "../../public/data/lab/rangers.json";
 import skilldealersData from "../../public/data/lab/skilldealers.json";
 import supportsData from "../../public/data/lab/supports.json";
 import tanksData from "../../public/data/lab/tanks.json";
 import warriorsData from "../../public/data/lab/warriors.json";
+import { getPatchPageRevalidate } from "./patchPageCache";
 
 const ANALYSIS_TIER = "DIAMOND_PLUS";
 const ANALYSIS_TIERS = ["DIAMOND_PLUS", "MITHRIL_PLUS"] as const;
 const PATCH_ANALYSIS_VERSIONS = ["12.6", "12.5", "12.4", "12.3", "11.5", "11.4"] as const;
-const PATCH_ANALYSIS_CACHE_VERSION = "role-combos-v12-fixed-entry-cost";
+const PATCH_ANALYSIS_CACHE_VERSION = "displayed-metrics-v1";
 const ROLES: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
 const PATCH_ROLE_OVERRIDES_BY_PATCH: Record<string, Record<string, CharacterRole>> = {
   "11.5": {
@@ -42,10 +42,6 @@ const WEAPON_ORDER = Object.keys(WEAPON_KOR_BY_CODE).map(Number);
 const WEAPON_ALIASES: Partial<Record<number, string[]>> = {
   18: ["쌍날검"],
 };
-const patchAnalysisDataCache = new Map<
-  string,
-  { promise: Promise<PatchAnalysisData>; expiresAt: number }
->();
 const LAB_ROLE_DATA = [
   tanksData,
   warriorsData,
@@ -58,52 +54,6 @@ const LAB_ROLE_DATA = [
   groups: Array<{ id: number; label: string }>;
   characters: Array<{ characterCode: number; weapon: number; groupId: number | null }>;
 }>;
-
-function emptyRankingData(
-  patchVersion: string,
-  previousPatch: string | null,
-  tier: string
-): RankingResponse {
-  return {
-    rankings: [],
-    previousRankings: [],
-    patchVersion,
-    previousPatch,
-    tier,
-  };
-}
-
-function hasSupabaseEnv() {
-  return Boolean(
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
-  );
-}
-
-async function getPatchRankingData(
-  currentPatch: string,
-  previousPatch: string,
-  tier = ANALYSIS_TIER
-): Promise<RankingResponse> {
-  if (!hasSupabaseEnv()) {
-    console.warn("[patch-analysis] Supabase env missing; using empty ranking fallback.");
-    return emptyRankingData(currentPatch, previousPatch, tier);
-  }
-
-  try {
-    return await fetchRankingData(currentPatch, tier);
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      error.message.includes("Supabase environment variables are missing")
-    ) {
-      console.warn("[patch-analysis] Supabase env missing; using empty ranking fallback.");
-      return emptyRankingData(currentPatch, previousPatch, tier);
-    }
-
-    throw error;
-  }
-}
 
 export interface PatchCharacterMetric {
   characterNum: number;
@@ -135,7 +85,6 @@ export interface PatchCharacterDelta {
   isAggregate: boolean;
   roles: CharacterRole[];
   tierMetrics: PatchCharacterTierMetric[];
-  roleComboMetrics: PatchRoleComboMetric[];
 }
 
 export interface PatchCharacterTierMetric {
@@ -158,25 +107,6 @@ export interface PatchRoleMetric {
   averageRP: number;
   previousAverageRP: number | null;
   deltaAverageRP: number | null;
-}
-
-export interface PatchRoleComboValue {
-  totalGames: number;
-  averageRP: number;
-}
-
-export interface PatchRoleComboMetric {
-  tier: (typeof ANALYSIS_TIERS)[number];
-  roleCombo: string[];
-  current: PatchRoleComboValue | null;
-  previous: PatchRoleComboValue | null;
-  currentShare: number | null;
-  previousShare: number | null;
-  currentContribution: number | null;
-  previousContribution: number | null;
-  deltaGames: number;
-  deltaAverageRP: number | null;
-  deltaContribution: number | null;
 }
 
 export interface PatchAnalysisData {
@@ -218,26 +148,6 @@ interface PatchTierContext {
   previousRankings: CharacterRankingData[];
   totalMatches: number;
   previousTotalMatches: number;
-}
-
-interface PatchRoleComboRpcRow {
-  focus_key: string;
-  tier: string;
-  patch_version: string;
-  role_combo: unknown;
-  total_games: number | string | null;
-  total_rp: number | string | null;
-}
-
-interface RoleComboAccumulator {
-  totalGames: number;
-  totalRP: number;
-}
-
-interface PatchRoleComboFocusSpec {
-  key: string;
-  character: number;
-  weapon: number | null;
 }
 
 function aggregateCharacters(rankings: CharacterRankingData[]) {
@@ -458,309 +368,6 @@ function aggregateRoleMap(rankings: CharacterRankingData[], patchVersion: string
   return map;
 }
 
-function buildPatchRoleMap(patchVersion: string) {
-  const roleMap: Record<string, string> = {};
-
-  for (let characterCode = 1; characterCode <= 120; characterCode += 1) {
-    if (getCharacterName(characterCode).startsWith("코드:")) continue;
-
-    for (const weaponCode of WEAPON_ORDER) {
-      const key = `${characterCode}:${weaponCode}`;
-      const roles = getComboRoles(characterCode, weaponCode);
-      if (roles.length > 0) {
-        roleMap[key] = roles[0];
-      }
-    }
-  }
-
-  for (const data of LAB_ROLE_DATA) {
-    for (const character of data.characters) {
-      const key = `${character.characterCode}:${character.weapon}`;
-      if (!roleMap[key]) {
-        roleMap[key] = data.role;
-      }
-    }
-  }
-
-  for (const [key, role] of Object.entries(getPatchRoleOverrideMap(patchVersion))) {
-    roleMap[key] = role;
-  }
-
-  return roleMap;
-}
-
-function normalizeRoleCombo(value: unknown) {
-  if (Array.isArray(value)) {
-    return value.map((role) => String(role)).filter(Boolean);
-  }
-
-  if (typeof value === "string") {
-    return value
-      .replace(/^\{|\}$/g, "")
-      .split(",")
-      .map((role) => role.trim().replace(/^"|"$/g, ""))
-      .filter(Boolean);
-  }
-
-  return [];
-}
-
-function getFocusKey(entry: Pick<PatchCharacterDelta, "characterNum" | "scopeKey">) {
-  return `${entry.characterNum}:${entry.scopeKey}`;
-}
-
-function getRoleComboMetricSortValue(metric: PatchRoleComboMetric) {
-  return Math.abs(
-    metric.deltaContribution ?? metric.currentContribution ?? metric.previousContribution ?? 0
-  );
-}
-
-function buildRoleComboMetricsFromRows(
-  rows: PatchRoleComboRpcRow[],
-  currentPatch: string,
-  previousPatch: string,
-  allowedRolesByFocus: Map<string, CharacterRole[]>
-) {
-  const tierSets = new Map(
-    ANALYSIS_TIERS.map((tier) => [tier, new Set(expandCumulativeTier(tier))] as const)
-  );
-  const accumulators = new Map<string, RoleComboAccumulator>();
-  const totalGamesByScopePatch = new Map<string, number>();
-  const comboLabels = new Map<string, string[]>();
-
-  for (const row of rows) {
-    const roleCombo = normalizeRoleCombo(row.role_combo);
-    if (
-      roleCombo.length === 0 ||
-      roleCombo.some((role) => !ROLES.includes(role as CharacterRole))
-    ) {
-      continue;
-    }
-    const allowedRoles = allowedRolesByFocus.get(row.focus_key) ?? [];
-    if (allowedRoles.length > 0 && !allowedRoles.some((role) => roleCombo.includes(role))) {
-      continue;
-    }
-
-    const roleComboKey = roleCombo.join(" + ");
-    comboLabels.set(roleComboKey, roleCombo);
-
-    for (const tier of ANALYSIS_TIERS) {
-      const tierSet = tierSets.get(tier);
-      if (!tierSet?.has(row.tier)) continue;
-
-      const key = [row.focus_key, tier, row.patch_version, roleComboKey].join("|");
-      const current = accumulators.get(key) ?? { totalGames: 0, totalRP: 0 };
-      const totalGames = Number(row.total_games ?? 0);
-      current.totalGames += totalGames;
-      current.totalRP += Number(row.total_rp ?? 0);
-      accumulators.set(key, current);
-
-      const totalKey = [row.focus_key, tier, row.patch_version].join("|");
-      totalGamesByScopePatch.set(
-        totalKey,
-        (totalGamesByScopePatch.get(totalKey) ?? 0) + totalGames
-      );
-    }
-  }
-
-  const metricsByFocus = new Map<string, PatchRoleComboMetric[]>();
-  const metricKeys = new Set<string>();
-
-  for (const key of accumulators.keys()) {
-    const [focusKey, tier, patchVersion, roleComboKey] = key.split("|");
-    if (patchVersion !== currentPatch && patchVersion !== previousPatch) continue;
-    metricKeys.add([focusKey, tier, roleComboKey].join("|"));
-  }
-
-  for (const metricKey of metricKeys) {
-    const [focusKey, tier, roleComboKey] = metricKey.split("|");
-    const current = accumulators.get([focusKey, tier, currentPatch, roleComboKey].join("|"));
-    const previous = accumulators.get([focusKey, tier, previousPatch, roleComboKey].join("|"));
-    const currentScopeGames =
-      totalGamesByScopePatch.get([focusKey, tier, currentPatch].join("|")) ?? 0;
-    const previousScopeGames =
-      totalGamesByScopePatch.get([focusKey, tier, previousPatch].join("|")) ?? 0;
-    const currentValue =
-      current && current.totalGames > 0
-        ? {
-            totalGames: current.totalGames,
-            averageRP: getAverageRP(current.totalRP, current.totalGames, currentPatch, tier, 3),
-          }
-        : null;
-    const previousValue =
-      previous && previous.totalGames > 0
-        ? {
-            totalGames: previous.totalGames,
-            averageRP: getAverageRP(previous.totalRP, previous.totalGames, previousPatch, tier, 3),
-          }
-        : null;
-    const currentShare =
-      currentValue && currentScopeGames > 0
-        ? (currentValue.totalGames / currentScopeGames) * 100
-        : null;
-    const previousShare =
-      previousValue && previousScopeGames > 0
-        ? (previousValue.totalGames / previousScopeGames) * 100
-        : null;
-    const currentContribution =
-      currentValue && currentShare != null ? currentValue.averageRP * (currentShare / 100) : null;
-    const previousContribution =
-      previousValue && previousShare != null
-        ? previousValue.averageRP * (previousShare / 100)
-        : null;
-    const bucket = metricsByFocus.get(focusKey) ?? [];
-    bucket.push({
-      tier: tier as (typeof ANALYSIS_TIERS)[number],
-      roleCombo: comboLabels.get(roleComboKey) ?? roleComboKey.split(" + "),
-      current: currentValue,
-      previous: previousValue,
-      currentShare,
-      previousShare,
-      currentContribution,
-      previousContribution,
-      deltaGames: (currentValue?.totalGames ?? 0) - (previousValue?.totalGames ?? 0),
-      deltaAverageRP:
-        currentValue && previousValue && hasComparableRP(currentPatch, previousPatch)
-          ? currentValue.averageRP - previousValue.averageRP
-          : null,
-      deltaContribution:
-        currentContribution != null &&
-        previousContribution != null &&
-        hasComparableRP(currentPatch, previousPatch)
-          ? currentContribution - previousContribution
-          : null,
-    });
-    metricsByFocus.set(focusKey, bucket);
-  }
-
-  for (const metrics of metricsByFocus.values()) {
-    metrics.sort(
-      (a, b) =>
-        ANALYSIS_TIERS.indexOf(a.tier) - ANALYSIS_TIERS.indexOf(b.tier) ||
-        getRoleComboMetricSortValue(b) - getRoleComboMetricSortValue(a) ||
-        (b.current?.totalGames ?? 0) - (a.current?.totalGames ?? 0)
-    );
-  }
-
-  return metricsByFocus;
-}
-
-function chunkArray<T>(items: T[], size: number) {
-  const chunks: T[][] = [];
-  for (let index = 0; index < items.length; index += size) {
-    chunks.push(items.slice(index, index + size));
-  }
-  return chunks;
-}
-
-async function fetchRoleComboRpcRows(
-  focusSpecs: PatchRoleComboFocusSpec[],
-  currentPatch: string,
-  previousPatch: string,
-  rawTiers: string[],
-  roleMap: Record<string, string>
-) {
-  const supabase = createServerClient();
-  const chunks = chunkArray(focusSpecs, 3);
-  const rows: PatchRoleComboRpcRow[] = [];
-
-  for (let index = 0; index < chunks.length; index += 3) {
-    const batch = chunks.slice(index, index + 3);
-    const results = await Promise.all(
-      batch.map((chunk) =>
-        supabase.rpc("get_patch_role_combo_stats_for_focus", {
-          p_current_patch: currentPatch,
-          p_previous_patch: previousPatch,
-          p_tiers: rawTiers,
-          p_focus_specs: chunk,
-          p_role_map: roleMap,
-        })
-      )
-    );
-
-    for (const result of results) {
-      if (result.error || !result.data) {
-        console.warn(
-          "[patch-analysis] role combo RPC chunk failed; using partial combo metrics.",
-          result.error
-        );
-        continue;
-      }
-      rows.push(...(result.data as PatchRoleComboRpcRow[]));
-    }
-  }
-
-  return rows;
-}
-
-async function attachRoleComboMetrics(
-  deltas: PatchCharacterDelta[],
-  currentPatch: string,
-  previousPatch: string
-) {
-  const allowedRolesByFocus = new Map<string, CharacterRole[]>();
-  const focusSpecs = [
-    ...new Map(
-      deltas.flatMap((entry) => {
-        const focusKey = getFocusKey(entry);
-        if (entry.roles.length > 0) {
-          allowedRolesByFocus.set(focusKey, entry.roles);
-        }
-        const weapons = entry.weaponCodes.length > 0 ? entry.weaponCodes : [null];
-        return weapons.map((weapon) => [
-          `${focusKey}:${weapon ?? "all"}`,
-          {
-            key: focusKey,
-            character: entry.characterNum,
-            weapon,
-          },
-        ]);
-      })
-    ).values(),
-  ];
-
-  if (focusSpecs.length === 0 || !hasSupabaseEnv()) {
-    return deltas.map((entry) => ({ ...entry, roleComboMetrics: [] }));
-  }
-
-  const rawTierSet = new Set<string>();
-  for (const tier of ANALYSIS_TIERS) {
-    for (const rawTier of expandCumulativeTier(tier)) {
-      rawTierSet.add(rawTier);
-    }
-  }
-
-  try {
-    const rows = await fetchRoleComboRpcRows(
-      focusSpecs,
-      currentPatch,
-      previousPatch,
-      [...rawTierSet],
-      buildPatchRoleMap(currentPatch)
-    );
-
-    if (rows.length === 0) {
-      console.warn("[patch-analysis] role combo RPC returned no rows.");
-      return deltas.map((entry) => ({ ...entry, roleComboMetrics: [] }));
-    }
-
-    const metricsByFocus = buildRoleComboMetricsFromRows(
-      rows,
-      currentPatch,
-      previousPatch,
-      allowedRolesByFocus
-    );
-
-    return deltas.map((entry) => ({
-      ...entry,
-      roleComboMetrics: metricsByFocus.get(getFocusKey(entry)) ?? [],
-    }));
-  } catch (error) {
-    console.warn("[patch-analysis] role combo metrics unavailable.", error);
-    return deltas.map((entry) => ({ ...entry, roleComboMetrics: [] }));
-  }
-}
-
 function buildTierMetricForScope(
   note: CharacterPatchNote,
   context: PatchTierContext,
@@ -831,7 +438,6 @@ function buildDeltaForScope(
     isAggregate,
     roles: getCharacterRoles(note.patch, note.characterCode, weaponCodes),
     tierMetrics,
-    roleComboMetrics: [],
   };
 }
 
@@ -927,7 +533,7 @@ async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAna
   }
 
   const tierRankingData = await Promise.all(
-    ANALYSIS_TIERS.map((tier) => getPatchRankingData(currentPatch, previousPatch, tier))
+    ANALYSIS_TIERS.map((tier) => fetchRankingData(currentPatch, tier, true))
   );
   const contexts = tierRankingData.map((rankingData, index) => {
     const { totalMatches } = aggregateCharacters(rankingData.rankings);
@@ -947,11 +553,8 @@ async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAna
   const primaryContext = contexts[0];
   const primaryRankingData = tierRankingData[0];
   const notes = getNotesByPatch(currentPatch);
-  const baseDeltas = notes.flatMap((note) => buildDeltas(note, contexts));
-  const deltas =
-    currentPatch === "12.6" && primaryContext.totalMatches === 0
-      ? baseDeltas
-      : await attachRoleComboMetrics(baseDeltas, currentPatch, previousPatch);
+  // 화면에서 사용하는 실험체/역할 지표만 계산한다.
+  const deltas = notes.flatMap((note) => buildDeltas(note, contexts));
 
   const buffed = deltas
     .filter((entry) => entry.changeTypes.includes("buff") && !entry.changeTypes.includes("nerf"))
@@ -1002,17 +605,18 @@ async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAna
 
 export async function getPatchAnalysisData(version?: string): Promise<PatchAnalysisData> {
   const patchVersion = version ?? getPatchAnalysisVersions()[0] ?? "";
-  const cacheKey = `${patchVersion}:${PATCH_ANALYSIS_CACHE_VERSION}`;
-  const cached = patchAnalysisDataCache.get(cacheKey);
-  if (cached && cached.expiresAt > Date.now()) return cached.promise;
-
-  const promise = fetchPatchAnalysisData(patchVersion);
-  patchAnalysisDataCache.set(cacheKey, {
-    promise,
-    // New patches begin as previews; refresh them as ranked samples arrive.
-    expiresAt: ["12.6", "12.5", "12.4"].includes(patchVersion)
-      ? Date.now() + 5 * 60 * 1000
-      : Infinity,
-  });
-  return promise;
+  // 같은 패치의 계산 결과를 모든 언어와 서버 인스턴스에서 재사용한다.
+  return unstable_cache(
+    () => fetchPatchAnalysisData(patchVersion),
+    [
+      "patch-analysis-strict-v1",
+      PATCH_ANALYSIS_CACHE_VERSION,
+      process.env.VERCEL_GIT_COMMIT_SHA ?? "local",
+      patchVersion,
+    ],
+    {
+      revalidate: getPatchPageRevalidate(patchVersion),
+      tags: [`patch-page:${patchVersion}`],
+    }
+  )();
 }

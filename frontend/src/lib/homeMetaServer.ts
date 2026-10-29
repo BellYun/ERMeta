@@ -9,6 +9,7 @@ import {
   type HomeMetaStatRow,
   type HomeMetaStats,
 } from "./homeMetaShared";
+import { getPatchPageRevalidate } from "./patchPageCache";
 
 const SELECT_COLS =
   "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank,tier,patchVersion";
@@ -39,9 +40,9 @@ function normalizeRows(rows: unknown[]): HomeMetaStatRow[] {
   });
 }
 
-async function fetchHomeMetaStats(patchVersion: string): Promise<HomeMetaStats> {
+async function fetchHomeMetaStats(patchVersion: string, strict = false): Promise<HomeMetaStats> {
   const supabase = createServerClient();
-  const [{ data: patches }, collectionResult] = await Promise.all([
+  const [{ data: patches, error: patchesError }, collectionResult] = await Promise.all([
     supabase
       .from("PatchVersion")
       .select("version")
@@ -53,6 +54,9 @@ async function fetchHomeMetaStats(patchVersion: string): Promise<HomeMetaStats> 
       .eq("patchVersion", patchVersion)
       .in("tier", HOME_BASE_TIERS),
   ]);
+  if (strict && (patchesError || collectionResult.error)) {
+    throw new Error("Failed to load patch metadata or collection counts");
+  }
   const collectedGames = collectionResult.error
     ? 0
     : (collectionResult.data ?? []).reduce(
@@ -95,17 +99,19 @@ async function fetchHomeMetaStats(patchVersion: string): Promise<HomeMetaStats> 
       (row: { patchVersion: string }) => row.patchVersion === previousPatch
     );
     if (!hasV2Prev) {
-      const { data: oldData } = await supabase
+      const { data: oldData, error: oldError } = await supabase
         .from("CharacterStats")
         .select(SELECT_COLS)
         .eq("patchVersion", previousPatch)
         .in("tier", HOME_BASE_TIERS);
+      if (strict && oldError) throw new Error("Failed to load previous patch stats");
       if (oldData && oldData.length > 0) {
         data = [...data, ...oldData];
       }
     }
   }
 
+  if (strict && (error || !data)) throw new Error("Failed to load patch stats");
   if (error || !data) {
     return {
       patchVersion,
@@ -130,6 +136,18 @@ export async function getCachedHomeMetaStats(patchVersion: string): Promise<Home
     {
       revalidate: patchVersion === HOME_META_TARGET_PATCH ? 300 : 21600,
       tags: ["home-meta-stats", `home-meta-stats:${patchVersion}`],
+    }
+  )();
+}
+
+// 홈의 5분 캐시와 분리해 상세 페이지의 ISR 주기가 짧아지는 것을 방지한다.
+export async function getPatchPageMetaStats(patchVersion: string): Promise<HomeMetaStats> {
+  return unstable_cache(
+    async () => fetchHomeMetaStats(patchVersion, true),
+    ["patch-page-meta-strict-v1", process.env.VERCEL_GIT_COMMIT_SHA ?? "local", patchVersion],
+    {
+      revalidate: getPatchPageRevalidate(patchVersion),
+      tags: [`patch-page:${patchVersion}`],
     }
   )();
 }
