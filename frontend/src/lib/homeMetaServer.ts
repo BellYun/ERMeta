@@ -2,6 +2,7 @@ import { unstable_cache } from "next/cache";
 import { STATS_EXCLUDED_PATCHES, getStatsPatchVersions } from "@/data/patch-notes";
 import { createServerClient } from "@/lib/supabase";
 import {
+  createEmptyHomeMetaStats,
   HOME_BASE_TIERS,
   HOME_META_COMPARISON_PATCH,
   HOME_META_TARGET_PATCH,
@@ -9,7 +10,7 @@ import {
   type HomeMetaStatRow,
   type HomeMetaStats,
 } from "./homeMetaShared";
-import { getPatchPageRevalidate } from "./patchPageCache";
+import { getPatchPageRevalidate, isPatchPageTestFixtureMode } from "./patchPageCache";
 
 const SELECT_COLS =
   "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank,tier,patchVersion";
@@ -142,6 +143,7 @@ export async function getCachedHomeMetaStats(patchVersion: string): Promise<Home
 
 // 홈의 5분 캐시와 분리해 상세 페이지의 ISR 주기가 짧아지는 것을 방지한다.
 export async function getPatchPageMetaStats(patchVersion: string): Promise<HomeMetaStats> {
+  if (isPatchPageTestFixtureMode()) return createEmptyHomeMetaStats(patchVersion);
   return unstable_cache(
     async () => fetchHomeMetaStats(patchVersion, true),
     ["patch-page-meta-strict-v1", process.env.VERCEL_GIT_COMMIT_SHA ?? "local", patchVersion],

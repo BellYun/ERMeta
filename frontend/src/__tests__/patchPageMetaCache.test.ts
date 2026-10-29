@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getCachedHomeMetaStats, getPatchPageMetaStats } from "@/lib/homeMetaServer";
 import { HOME_META_TARGET_PATCH } from "@/lib/homeMetaShared";
 import { fetchRankingData } from "@/lib/ranking";
@@ -70,4 +70,17 @@ describe("archived analysis ranking failures", () => {
     responses.push({ data: [], error: null }, { data: null, error: { message: "offline" } });
     await expect(fetchRankingData("11.4", "DIAMOND_PLUS")).resolves.toMatchObject({ rankings: [] });
   });
+});
+
+afterEach(() => vi.unstubAllEnvs());
+
+it("does not persist empty offline page stats", async () => {
+  vi.stubEnv("PATCH_PAGE_TEST_FIXTURES", "1");
+  vi.stubEnv("VERCEL", "");
+  vi.stubEnv("VERCEL_ENV", "");
+  await expect(getPatchPageMetaStats("12.6")).resolves.toMatchObject({
+    rows: [],
+    collectedGames: 0,
+  });
+  expect(cached).not.toHaveBeenCalled();
 });

@@ -15,7 +15,7 @@ import skilldealersData from "../../public/data/lab/skilldealers.json";
 import supportsData from "../../public/data/lab/supports.json";
 import tanksData from "../../public/data/lab/tanks.json";
 import warriorsData from "../../public/data/lab/warriors.json";
-import { getPatchPageRevalidate } from "./patchPageCache";
+import { getPatchPageRevalidate, isPatchPageTestFixtureMode } from "./patchPageCache";
 
 const ANALYSIS_TIER = "DIAMOND_PLUS";
 const ANALYSIS_TIERS = ["DIAMOND_PLUS", "MITHRIL_PLUS"] as const;
@@ -533,7 +533,11 @@ async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAna
   }
 
   const tierRankingData = await Promise.all(
-    ANALYSIS_TIERS.map((tier) => fetchRankingData(currentPatch, tier, true))
+    ANALYSIS_TIERS.map((tier) =>
+      isPatchPageTestFixtureMode()
+        ? { rankings: [], previousRankings: [], patchVersion: currentPatch, previousPatch, tier }
+        : fetchRankingData(currentPatch, tier, true)
+    )
   );
   const contexts = tierRankingData.map((rankingData, index) => {
     const { totalMatches } = aggregateCharacters(rankingData.rankings);
@@ -605,6 +609,7 @@ async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAna
 
 export async function getPatchAnalysisData(version?: string): Promise<PatchAnalysisData> {
   const patchVersion = version ?? getPatchAnalysisVersions()[0] ?? "";
+  if (isPatchPageTestFixtureMode()) return fetchPatchAnalysisData(patchVersion);
   // 같은 패치의 계산 결과를 모든 언어와 서버 인스턴스에서 재사용한다.
   return unstable_cache(
     () => fetchPatchAnalysisData(patchVersion),

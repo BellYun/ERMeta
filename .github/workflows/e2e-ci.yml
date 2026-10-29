@@ -46,6 +46,8 @@ jobs:
         run: npm test
 
   e2e:
+    env:
+      PATCH_PAGE_TEST_FIXTURES: "1"
     name: Playwright E2E
     runs-on: ubuntu-latest
     timeout-minutes: 20

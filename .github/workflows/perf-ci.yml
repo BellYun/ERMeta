@@ -11,6 +11,8 @@ concurrency:
 
 jobs:
   inp-bench:
+    env:
+      PATCH_PAGE_TEST_FIXTURES: "1"
     name: Mobile Interaction Report (synergy-detail)
     runs-on: ubuntu-latest
     timeout-minutes: 35

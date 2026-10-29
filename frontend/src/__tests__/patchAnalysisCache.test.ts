@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { HOME_META_TARGET_PATCH } from "@/lib/homeMetaShared";
 import { getPatchAnalysisData } from "@/lib/patchAnalysis";
 
@@ -51,4 +51,22 @@ describe("patch analysis computation", () => {
     await expect(getPatchAnalysisData("11.4")).rejects.toThrow("offline");
     expect(cached.mock.calls[0][2]).toMatchObject({ revalidate: false });
   });
+});
+
+afterEach(() => vi.unstubAllEnvs());
+
+it("uses explicit offline fixtures without persisting them", async () => {
+  vi.stubEnv("PATCH_PAGE_TEST_FIXTURES", "1");
+  vi.stubEnv("VERCEL", "");
+  vi.stubEnv("VERCEL_ENV", "");
+  const data = await getPatchAnalysisData("12.6");
+  expect(data.totalMatches).toBe(0);
+  expect(ranking).not.toHaveBeenCalled();
+  expect(cached).not.toHaveBeenCalled();
+});
+it("never allows test fixtures on Vercel", async () => {
+  vi.stubEnv("PATCH_PAGE_TEST_FIXTURES", "1");
+  vi.stubEnv("VERCEL", "1");
+  ranking.mockRejectedValue(new Error("missing credentials"));
+  await expect(getPatchAnalysisData("12.6")).rejects.toThrow("missing credentials");
 });
