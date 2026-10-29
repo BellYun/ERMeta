@@ -19,7 +19,7 @@ import { getPatchPageRevalidate, isPatchPageTestFixtureMode } from "./patchPageC
 
 const ANALYSIS_TIER = "DIAMOND_PLUS";
 const ANALYSIS_TIERS = ["DIAMOND_PLUS", "MITHRIL_PLUS"] as const;
-const PATCH_ANALYSIS_VERSIONS = ["12.6", "12.5", "12.4", "12.3", "11.5", "11.4"] as const;
+const PATCH_ANALYSIS_VERSIONS = ["12.7", "12.6", "12.5", "12.4", "12.3", "11.5", "11.4"] as const;
 const PATCH_ANALYSIS_CACHE_VERSION = "displayed-metrics-v1";
 const ROLES: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
 const PATCH_ROLE_OVERRIDES_BY_PATCH: Record<string, Record<string, CharacterRole>> = {
@@ -563,21 +563,21 @@ async function fetchPatchAnalysisData(requestedPatch?: string): Promise<PatchAna
   const buffed = deltas
     .filter((entry) => entry.changeTypes.includes("buff") && !entry.changeTypes.includes("nerf"))
     .sort((a, b) =>
-      currentPatch === "12.6" || currentPatch === "12.5" || currentPatch === "12.4"
+      ["12.7", "12.6", "12.5", "12.4"].includes(currentPatch)
         ? a.characterNum - b.characterNum
         : b.deltaAverageRP - a.deltaAverageRP
     );
   const nerfed = deltas
     .filter((entry) => entry.changeTypes.includes("nerf") && !entry.changeTypes.includes("buff"))
     .sort((a, b) =>
-      currentPatch === "12.6" || currentPatch === "12.5" || currentPatch === "12.4"
+      ["12.7", "12.6", "12.5", "12.4"].includes(currentPatch)
         ? a.characterNum - b.characterNum
         : a.deltaAverageRP - b.deltaAverageRP
     );
   const mixed = deltas
     .filter((entry) => entry.changeTypes.includes("buff") && entry.changeTypes.includes("nerf"))
     .sort((a, b) =>
-      currentPatch === "12.6" || currentPatch === "12.5" || currentPatch === "12.4"
+      ["12.7", "12.6", "12.5", "12.4"].includes(currentPatch)
         ? a.characterNum - b.characterNum
         : b.deltaAverageRP - a.deltaAverageRP
     );

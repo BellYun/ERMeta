@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 import { SiteContentAd } from "@/components/ads/SiteContentAd";
 import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeBadgeStatic";
 import { Patch126Intro, Patch126Extras } from "@/components/features/patches/Patch126Overview";
+import { Patch127Intro, Patch127Extras } from "@/components/features/patches/Patch127Overview";
 import {
   PatchNotesBrowser,
   PatchVersionSelect,
@@ -274,6 +275,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
         label={locale === "ko" ? "패치 선택" : t("breadcrumb")}
       />
       {version === "12.6" && locale === "ko" ? <Patch126Intro /> : null}
+      {version === "12.7" && locale === "ko" ? <Patch127Intro /> : null}
       <PatchNotesBrowser
         key={version}
         labels={labels}
@@ -431,6 +433,7 @@ export default async function PatchDetailPage({ params, locale = "ko" }: PagePro
         }))}
       />
       {version === "12.6" && locale === "ko" ? <Patch126Extras /> : null}
+      {version === "12.7" && locale === "ko" ? <Patch127Extras /> : null}
       {version === "12.5" && locale === "ko" ? (
         <section
           className="dashboard-panel flex items-center gap-4 p-4 sm:p-6"

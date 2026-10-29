@@ -7,6 +7,7 @@ import { ChangeTypeBadgeStatic } from "@/components/features/patches/ChangeTypeB
 import { PATCH_12_4_SOURCE } from "@/data/12.4-balance-context";
 import { PATCH_12_5_SOURCE } from "@/data/12.5-balance-context";
 import { PATCH_12_6_SOURCE } from "@/data/12.6-overview";
+import { PATCH_12_7_SOURCE } from "@/data/12.7-overview";
 import { localizePatchChanges } from "@/data/patch-note-localization";
 import { Link } from "@/i18n/navigation";
 import { LANGUAGE_BY_ROUTE_LOCALE, type RouteLocale } from "@/i18n/routing";
@@ -264,6 +265,59 @@ const PATCH_12_6_COPY: typeof PATCH_12_4_COPY = {
   },
 };
 
+const PATCH_12_7_COPY: typeof PATCH_12_4_COPY = {
+  ko: {
+    intro:
+      "12.6 다이아 이상 지표를 기준선으로 12.7 공식 변경과 예상 영향을 정리했습니다. 아래 평가는 사전 전망이며 12.7 관측 결과가 아닙니다.",
+    pending:
+      "12.7 랭크 표본을 집계 중입니다. 충분한 표본이 쌓일 때까지 12.6 통계를 기준으로 표시합니다.",
+    caution:
+      "무기별 직접 조정과 장비의 간접 영향을 분리했습니다. 패치 후 승률·순방률·평균 RP·선택률을 함께 확인해야 합니다.",
+    forecast: "사전 전망",
+    tierForecast: "무기별 예상 티어 보기",
+    source: "공식 12.7 패치노트",
+  },
+  en: {
+    intro:
+      "This preview uses Diamond+ results from 12.6 as the baseline for official 12.7 changes. The impact notes are forecasts, not observed 12.7 results.",
+    pending:
+      "12.7 ranked samples are being collected. The site keeps 12.6 as the statistics baseline until the sample is ready.",
+    caution:
+      "Direct weapon changes and indirect equipment effects are evaluated separately. Compare win rate, top-three rate, average RP and pick rate after the patch.",
+    forecast: "Pre-patch outlook",
+    tierForecast: "View weapon-specific tier forecasts",
+    source: "Official 12.7 patch notes",
+  },
+  ja: {
+    intro:
+      "12.6のダイヤ以上の指標を基準に、12.7の公式変更と予想される影響を整理しました。以下は事前予測であり、12.7の実測結果ではありません。",
+    pending: "12.7のランク標本を集計中です。十分な標本が集まるまでは12.6の統計を基準に表示します。",
+    caution:
+      "武器の直接調整と装備の間接的な影響を分けています。パッチ後は勝率、トップ3率、平均RP、選択率を合わせて確認します。",
+    forecast: "事前予測",
+    tierForecast: "武器別の予想ティアを見る",
+    source: "公式12.7パッチノート",
+  },
+  "zh-Hans": {
+    intro:
+      "以12.6钻石以上数据为基线，整理12.7官方改动及预期影响。以下是事前预测，并非12.7实测结果。",
+    pending: "正在收集12.7排位样本。样本充足前继续以12.6统计为基线。",
+    caution: "分别评估武器直接调整与装备的间接影响。更新后需一起查看胜率、前三率、平均RP和选取率。",
+    forecast: "事前预测",
+    tierForecast: "查看各武器预测梯队",
+    source: "12.7官方更新公告",
+  },
+  "zh-Hant": {
+    intro:
+      "以12.6鑽石以上數據為基線，整理12.7官方改動及預期影響。以下是事前預測，並非12.7實測結果。",
+    pending: "正在收集12.7排位樣本。樣本充足前繼續以12.6統計為基線。",
+    caution: "分別評估武器直接調整與裝備的間接影響。更新後需一起查看勝率、前三率、平均RP和選取率。",
+    forecast: "事前預測",
+    tierForecast: "查看各武器預測梯隊",
+    source: "12.7官方更新公告",
+  },
+};
+
 function patchContextComment(
   body: string,
   tone: CausalEvaluationComment["tone"] = "neutral"
@@ -272,6 +326,20 @@ function patchContextComment(
 }
 
 const PATCH_CONTEXT_COMMENTS: Record<string, Record<number, CausalEvaluationComment[]>> = {
+  "12.7": {
+    2: patchContextComment(
+      "돌격 소총 숙련도만 상향됩니다. 권총·저격총 성적과 분리해 확인해야 합니다."
+    ),
+    7: patchContextComment(
+      "Q·R 계수 상향은 글러브와 톤파 모두 받지만 12.6 기준 티어는 각각 C·D입니다. 톤파의 이단심판관 사용은 약 6.9%입니다."
+    ),
+    24: patchContextComment(
+      "방망이 숙련도 하향은 양손검에 적용되지 않습니다. 무기별 실제 변화를 분리해 확인해야 합니다."
+    ),
+    66: patchContextComment(
+      "P 회복 상향, RE 지속 시간 하향, 이단심판관 상향이 함께 적용됩니다. 12.6 장비 사용 약 39.9%를 고려해야 합니다."
+    ),
+  },
   "12.6": {
     6: patchContextComment(
       "Q 스킬 증폭 계수 상향은 활과 석궁에 모두 적용됩니다. 석궁은 현자의 로브 이동 속도 하향이 겹쳐 무기별 결과를 분리해야 합니다."
@@ -891,13 +959,15 @@ export async function generateMetadata(version?: string): Promise<Metadata> {
     metadataBase: new URL(BASE_URL),
     title: `패치 메타 분석 - ${data.currentPatch} 통계 변화`,
     description:
-      data.currentPatch === "12.6"
-        ? "이터널리턴 12.6 공식 변경점과 12.5 기준 사전 전망. 관측 통계와 사전 해석을 구분합니다."
-        : data.currentPatch === "12.5"
-          ? "이터널리턴 12.5 공식 변경점과 12.4 기준 사전 전망. 관측 통계와 사전 해석을 구분합니다."
-          : data.currentPatch === "12.4"
-            ? "이터널리턴 12.4 공식 변경점과 12.3 기준 사전 전망. 관측 통계와 갬빗 RP 영향은 분리합니다."
-            : `이터널리턴 최신 패치 기준 다이아 이상 통계 분석. ${data.currentPatch}과 ${data.previousPatch}의 평균 RP, 승률, 픽률, 순방률 변화를 비교합니다.`,
+      data.currentPatch === "12.7"
+        ? "이터널리턴 12.7 공식 변경점과 12.6 기준 사전 전망. 관측 통계와 사전 해석을 구분합니다."
+        : data.currentPatch === "12.6"
+          ? "이터널리턴 12.6 공식 변경점과 12.5 기준 사전 전망. 관측 통계와 사전 해석을 구분합니다."
+          : data.currentPatch === "12.5"
+            ? "이터널리턴 12.5 공식 변경점과 12.4 기준 사전 전망. 관측 통계와 사전 해석을 구분합니다."
+            : data.currentPatch === "12.4"
+              ? "이터널리턴 12.4 공식 변경점과 12.3 기준 사전 전망. 관측 통계와 갬빗 RP 영향은 분리합니다."
+              : `이터널리턴 최신 패치 기준 다이아 이상 통계 분석. ${data.currentPatch}과 ${data.previousPatch}의 평균 RP, 승률, 픽률, 순방률 변화를 비교합니다.`,
     alternates: { canonical: pathname },
     openGraph: {
       title: "패치 메타 분석",
@@ -1119,13 +1189,15 @@ function CharacterDeltaCard({
         {causalComments.length > 0 ? (
           <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-3">
             <p className="text-[11px] font-semibold text-[var(--color-foreground)]">
-              {entry.note.patch === "12.6"
-                ? PATCH_12_6_COPY[locale].forecast
-                : entry.note.patch === "12.5"
-                  ? PATCH_12_5_COPY[locale].forecast
-                  : entry.note.patch === "12.4"
-                    ? PATCH_12_4_COPY[locale].forecast
-                    : copy.evaluation}
+              {entry.note.patch === "12.7"
+                ? PATCH_12_7_COPY[locale].forecast
+                : entry.note.patch === "12.6"
+                  ? PATCH_12_6_COPY[locale].forecast
+                  : entry.note.patch === "12.5"
+                    ? PATCH_12_5_COPY[locale].forecast
+                    : entry.note.patch === "12.4"
+                      ? PATCH_12_4_COPY[locale].forecast
+                      : copy.evaluation}
             </p>
             <div className="mt-2 grid gap-2">
               {causalComments.map((comment) => (
@@ -1604,16 +1676,22 @@ export default async function PatchAnalysisPage({
   const isPatch124 = data.currentPatch === "12.4";
   const isPatch125 = data.currentPatch === "12.5";
   const isPatch126 = data.currentPatch === "12.6";
+  const isPatch127 = data.currentPatch === "12.7";
   const targetStats =
-    isPatch125 || isPatch126 ? await getPatchPageMetaStats(data.currentPatch) : null;
+    isPatch125 || isPatch126 || isPatch127
+      ? await getPatchPageMetaStats(data.currentPatch)
+      : null;
   const isPreviewPatch =
     isPatch124 ||
-    ((isPatch125 || isPatch126) && !isHomeMetaTargetReady(targetStats?.collectedGames ?? 0));
-  const previewCopy = isPatch126
-    ? PATCH_12_6_COPY[locale]
-    : isPatch125
-      ? PATCH_12_5_COPY[locale]
-      : PATCH_12_4_COPY[locale];
+    ((isPatch125 || isPatch126 || isPatch127) &&
+      !isHomeMetaTargetReady(targetStats?.collectedGames ?? 0));
+  const previewCopy = isPatch127
+    ? PATCH_12_7_COPY[locale]
+    : isPatch126
+      ? PATCH_12_6_COPY[locale]
+      : isPatch125
+        ? PATCH_12_5_COPY[locale]
+        : PATCH_12_4_COPY[locale];
   const hasCurrentSample = data.totalMatches > 0;
 
   return (
@@ -1730,7 +1808,13 @@ export default async function PatchAnalysisPage({
             ) : null}
             <a
               href={
-                isPatch126 ? PATCH_12_6_SOURCE : isPatch125 ? PATCH_12_5_SOURCE : PATCH_12_4_SOURCE
+                isPatch127
+                  ? PATCH_12_7_SOURCE
+                  : isPatch126
+                    ? PATCH_12_6_SOURCE
+                    : isPatch125
+                      ? PATCH_12_5_SOURCE
+                      : PATCH_12_4_SOURCE
               }
               target="_blank"
               rel="noopener noreferrer"

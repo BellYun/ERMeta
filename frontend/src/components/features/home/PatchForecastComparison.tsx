@@ -11,6 +11,7 @@ import { TierBadge } from "@/components/features/TierBadge";
 import { PATCH_12_4_SOURCE } from "@/data/12.4-balance-context";
 import { PATCH_12_5_SOURCE } from "@/data/12.5-balance-context";
 import { PATCH_12_6_SOURCE } from "@/data/12.6-overview";
+import { PATCH_12_7_SOURCE } from "@/data/12.7-overview";
 import {
   getForecastItemChanges,
   getSharedTraitChanges,
@@ -190,7 +191,7 @@ export async function PatchForecastComparison({
         : TIER_ORDER[forecast.tierMid] < TIER_ORDER[forecast.currentTier]
           ? "down"
           : "flat";
-    const showCurrentTier = currentPatch === "12.5" || currentPatch === "12.6";
+    const showCurrentTier = ["12.5", "12.6", "12.7"].includes(currentPatch);
     return (
       <article
         className="home-forecast-row"
@@ -219,7 +220,10 @@ export async function PatchForecastComparison({
           <div>
             <dt>
               {showCurrentTier
-                ? t("forecastBeforePatch", { patch: currentPatch === "12.6" ? "12.5" : "12.4" })
+                ? t("forecastBeforePatch", {
+                    patch:
+                      currentPatch === "12.7" ? "12.6" : currentPatch === "12.6" ? "12.5" : "12.4",
+                  })
                 : t("forecastBefore")}
             </dt>
             <dd>
@@ -374,13 +378,15 @@ export async function PatchForecastComparison({
               )}
               <a
                 href={
-                  currentPatch === "12.6"
-                    ? PATCH_12_6_SOURCE
-                    : currentPatch === "12.5"
-                      ? PATCH_12_5_SOURCE
-                      : currentPatch === "12.4"
-                        ? PATCH_12_4_SOURCE
-                        : INDIRECT_PATCH_SOURCE
+                  currentPatch === "12.7"
+                    ? PATCH_12_7_SOURCE
+                    : currentPatch === "12.6"
+                      ? PATCH_12_6_SOURCE
+                      : currentPatch === "12.5"
+                        ? PATCH_12_5_SOURCE
+                        : currentPatch === "12.4"
+                          ? PATCH_12_4_SOURCE
+                          : INDIRECT_PATCH_SOURCE
                 }
                 target="_blank"
                 rel="noreferrer"
@@ -491,9 +497,15 @@ export async function PatchForecastComparison({
               : "forecastPendingNote"
         )}
       </p>
-      {(currentPatch === "12.5" || currentPatch === "12.6") && !ready && (
+      {["12.5", "12.6", "12.7"].includes(currentPatch) && !ready && (
         <p className="home-forecast-note">
-          {t(currentPatch === "12.6" ? "forecastCurrentBasis126" : "forecastCurrentBasis")}
+          {t(
+            currentPatch === "12.7"
+              ? "forecastCurrentBasis127"
+              : currentPatch === "12.6"
+                ? "forecastCurrentBasis126"
+                : "forecastCurrentBasis"
+          )}
         </p>
       )}
       {currentPatch === "12.4" && (
@@ -517,11 +529,13 @@ export async function PatchForecastComparison({
             )}
             <a
               href={
-                currentPatch === "12.6"
-                  ? PATCH_12_6_SOURCE
-                  : currentPatch === "12.5"
-                    ? PATCH_12_5_SOURCE
-                    : INDIRECT_PATCH_SOURCE
+                currentPatch === "12.7"
+                  ? PATCH_12_7_SOURCE
+                  : currentPatch === "12.6"
+                    ? PATCH_12_6_SOURCE
+                    : currentPatch === "12.5"
+                      ? PATCH_12_5_SOURCE
+                      : INDIRECT_PATCH_SOURCE
               }
               target="_blank"
               rel="noreferrer"

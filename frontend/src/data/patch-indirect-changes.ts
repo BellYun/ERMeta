@@ -4,6 +4,8 @@ import { PATCH_12_5_BALANCE_CONTEXT } from "./12.5-balance-context";
 import { get12_5ItemExposure } from "./12.5-item-exposure";
 import { get12_6ItemExposure } from "./12.6-item-exposure";
 import { FEATURED_EQUIPMENT, OTHER_EQUIPMENT } from "./12.6-overview";
+import { get12_7ItemExposure } from "./12.7-item-exposure";
+import { FEATURED_EQUIPMENT as PATCH_12_7_EQUIPMENT } from "./12.7-overview";
 import type { PatchChange } from "./patch-notes";
 
 // Official 12.3 values. Character/weapon links come from PATCH_TIER_FORECAST_REASONS,
@@ -122,6 +124,21 @@ export function getForecastItemChanges(
   characterCode: number,
   weaponCode: number
 ): PatchChange[] {
+  if (patch === "12.7") {
+    const changesByCode = new Map(PATCH_12_7_EQUIPMENT.map((item) => [item.code, item]));
+    return get12_7ItemExposure(characterCode, weaponCode).flatMap(({ itemCode, pickRate }) => {
+      const item = changesByCode.get(itemCode);
+      return item
+        ? [
+            change(
+              `${item.name} · 12.6 사용 ${pickRate}%`,
+              item.direction,
+              item.changes.join(" / ")
+            ),
+          ]
+        : [];
+    });
+  }
   if (patch === "12.6") {
     const changesByCode = new Map(
       [...FEATURED_EQUIPMENT, ...OTHER_EQUIPMENT].map((item) => [item.code, item])
