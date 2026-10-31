@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import itemGradeMap from "@/../const/itemGradeMap.json";
 import weaponItemTypeMap from "@/../const/weaponItemTypeMap.json";
+import {
+  buildEquipmentStats,
+  type EquipmentRow,
+  type EquipmentBuildResult,
+} from "@/domain/equipmentStats";
 import { getCacheHeaders } from "@/lib/cache";
-import { getAverageRP } from "@/lib/rpMetric";
 import { tryNestApiProxy } from "@/lib/server/nestProxy";
 import { createServerClient } from "@/lib/supabase";
 import { expandCumulativeTier } from "@/utils/tier";
@@ -12,102 +16,13 @@ const WEAPON_ITEM_TYPE = weaponItemTypeMap as Record<string, number>;
 
 export const revalidate = 1800; // L1: 30분 서버 캐시
 
-export interface BuildSummary {
-  mainCore: number | null;
-  weapon: number | null;
-  chest: number | null;
-  head: number | null;
-  arm: number | null;
-  leg: number | null;
-  totalGames: number;
-  pickRate: number;
-  winRate: number;
-  averageRank: number;
-  averageRP: number;
-}
-
-export interface SlotItem {
-  code: number;
-  totalGames: number;
-  pickRate: number;
-  winRate: number;
-}
-
-export interface CoreItem {
-  code: number;
-  totalGames: number;
-  pickRate: number;
-  winRate: number;
-}
-
-export interface EquipmentBuildResult {
-  topBuilds: BuildSummary[];
-  slotPopularity: {
-    weapon: SlotItem[];
-    chest: SlotItem[];
-    head: SlotItem[];
-    arm: SlotItem[];
-    leg: SlotItem[];
-  };
-  coreItems: CoreItem[];
-}
-
-type EquipmentRow = {
-  mainCore: number | null;
-  weapon: number | null;
-  chest: number | null;
-  head: number | null;
-  arm: number | null;
-  leg: number | null;
-  totalGames: number;
-  totalWins: number;
-  rankSum: number;
-  totalRP: number;
-};
-
-function isLegendItem(code: number | null): boolean {
-  if (code == null) return false;
-  return ITEM_GRADE[String(code)] === "Legend";
-}
-
-function isFullLegendBuild(row: EquipmentRow): boolean {
-  return (
-    isLegendItem(row.weapon) &&
-    isLegendItem(row.chest) &&
-    isLegendItem(row.head) &&
-    isLegendItem(row.arm) &&
-    isLegendItem(row.leg)
-  );
-}
-
-function aggregateSlot(
-  rows: EquipmentRow[],
-  slot: keyof Pick<EquipmentRow, "weapon" | "chest" | "head" | "arm" | "leg">,
-  slotTotal: number,
-  limit = 5
-): SlotItem[] {
-  const map = new Map<number, { games: number; wins: number }>();
-  for (const row of rows) {
-    const code = row[slot];
-    if (code == null) continue;
-    const existing = map.get(code);
-    if (existing) {
-      existing.games += row.totalGames;
-      existing.wins += row.totalWins;
-    } else {
-      map.set(code, { games: row.totalGames, wins: row.totalWins });
-    }
-  }
-  return [...map.entries()]
-    .sort((a, b) => b[1].games - a[1].games)
-    .slice(0, limit)
-    .map(([code, { games, wins }]) => ({
-      code,
-      totalGames: games,
-      pickRate: slotTotal > 0 ? (games / slotTotal) * 100 : 0,
-      winRate: games > 0 ? (wins / games) * 100 : 0,
-    }));
-}
+// 기존 타입 import 경로를 사용하는 UI와의 호환성을 유지한다.
+export type {
+  BuildSummary,
+  SlotItem,
+  CoreItem,
+  EquipmentBuildResult,
+} from "@/domain/equipmentStats";
 
 export async function GET(request: NextRequest) {
   const proxied = await tryNestApiProxy(request, "/builds/equipment");
@@ -169,127 +84,21 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    let rows = data as EquipmentRow[];
+    const result = buildEquipmentStats(data as EquipmentRow[], {
+      patchVersion,
+      tier,
+      bestWeapon: bestWeaponParam == null ? null : Number(bestWeaponParam),
+      legendOnly,
+      itemGrades: ITEM_GRADE,
+      weaponItemTypes: WEAPON_ITEM_TYPE,
+    });
 
-    // bestWeapon 파라미터가 있으면 weapon 아이템 코드 → 무기 타입 매핑으로 필터
-    if (bestWeaponParam != null) {
-      const targetType = Number(bestWeaponParam);
-      rows = rows.filter((r) => {
-        if (r.weapon == null) return false;
-        return WEAPON_ITEM_TYPE[String(r.weapon)] === targetType;
-      });
+    // 필터 후 빈 결과는 기존과 같이 캐시 헤더 없이 반환한다.
+    if (result.topBuilds.length === 0) {
+      return NextResponse.json<EquipmentBuildResult>(result);
     }
 
-    if (legendOnly) {
-      rows = rows.filter(isFullLegendBuild);
-    }
-
-    if (rows.length === 0) {
-      return NextResponse.json<EquipmentBuildResult>({
-        topBuilds: [],
-        slotPopularity: { weapon: [], chest: [], head: [], arm: [], leg: [] },
-        coreItems: [],
-      });
-    }
-
-    const grandTotal = rows.reduce((s, r) => s + r.totalGames, 0);
-
-    // ① topBuilds — mainCore+weapon+chest+head+arm+leg 조합 그룹화
-    const buildMap = new Map<
-      string,
-      {
-        mainCore: number | null;
-        weapon: number | null;
-        chest: number | null;
-        head: number | null;
-        arm: number | null;
-        leg: number | null;
-        games: number;
-        wins: number;
-        rankSum: number;
-        rpSum: number;
-      }
-    >();
-
-    for (const row of rows) {
-      const key = `${row.mainCore ?? ""}|${row.weapon ?? ""}|${row.chest ?? ""}|${row.head ?? ""}|${row.arm ?? ""}|${row.leg ?? ""}`;
-      const existing = buildMap.get(key);
-      if (existing) {
-        existing.games += row.totalGames;
-        existing.wins += row.totalWins;
-        existing.rankSum += row.rankSum;
-        existing.rpSum += row.totalRP;
-      } else {
-        buildMap.set(key, {
-          mainCore: row.mainCore,
-          weapon: row.weapon,
-          chest: row.chest,
-          head: row.head,
-          arm: row.arm,
-          leg: row.leg,
-          games: row.totalGames,
-          wins: row.totalWins,
-          rankSum: row.rankSum,
-          rpSum: row.totalRP,
-        });
-      }
-    }
-
-    const topBuilds: BuildSummary[] = [...buildMap.values()]
-      .sort((a, b) => b.games - a.games)
-      .slice(0, 5)
-      .map((b) => ({
-        mainCore: b.mainCore,
-        weapon: b.weapon,
-        chest: b.chest,
-        head: b.head,
-        arm: b.arm,
-        leg: b.leg,
-        totalGames: b.games,
-        pickRate: grandTotal > 0 ? (b.games / grandTotal) * 100 : 0,
-        winRate: b.games > 0 ? (b.wins / b.games) * 100 : 0,
-        averageRank: b.games > 0 ? b.rankSum / b.games : 0,
-        averageRP: getAverageRP(b.rpSum, b.games, patchVersion, tier),
-      }));
-
-    // ② slotPopularity
-    const slots = ["weapon", "chest", "head", "arm", "leg"] as const;
-    const slotPopularity = {} as EquipmentBuildResult["slotPopularity"];
-    for (const slot of slots) {
-      const slotTotal = rows.reduce((s, r) => s + (r[slot] != null ? r.totalGames : 0), 0);
-      slotPopularity[slot] = aggregateSlot(rows, slot, slotTotal);
-    }
-
-    // ③ coreItems — 5슬롯 전체에서 itemCode 집계
-    const coreMap = new Map<number, { games: number; wins: number }>();
-    for (const row of rows) {
-      for (const slot of slots) {
-        const code = row[slot];
-        if (code == null) continue;
-        const existing = coreMap.get(code);
-        if (existing) {
-          existing.games += row.totalGames;
-          existing.wins += row.totalWins;
-        } else {
-          coreMap.set(code, { games: row.totalGames, wins: row.totalWins });
-        }
-      }
-    }
-
-    const coreItems: CoreItem[] = [...coreMap.entries()]
-      .sort((a, b) => b[1].games - a[1].games)
-      .slice(0, 5)
-      .map(([code, { games, wins }]) => ({
-        code,
-        totalGames: games,
-        pickRate: grandTotal > 0 ? (games / grandTotal) * 100 : 0,
-        winRate: games > 0 ? (wins / games) * 100 : 0,
-      }));
-
-    return NextResponse.json<EquipmentBuildResult>(
-      { topBuilds, slotPopularity, coreItems },
-      { headers: getCacheHeaders("daily") }
-    );
+    return NextResponse.json<EquipmentBuildResult>(result, { headers: getCacheHeaders("daily") });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("[builds/equipment] request failed:", message);
