@@ -76,6 +76,9 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: npm run build
 
+      - name: Verify effective character page ISR cache lifetime
+        run: node scripts/check-character-page-cache.mjs
+
       - name: Run Playwright tests
         env:
           CI: "true"
