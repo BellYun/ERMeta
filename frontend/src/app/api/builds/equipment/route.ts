@@ -16,14 +16,6 @@ const WEAPON_ITEM_TYPE = weaponItemTypeMap as Record<string, number>;
 
 export const revalidate = 1800; // L1: 30분 서버 캐시
 
-// 기존 타입 import 경로를 사용하는 UI와의 호환성을 유지한다.
-export type {
-  BuildSummary,
-  SlotItem,
-  CoreItem,
-  EquipmentBuildResult,
-} from "@/domain/equipmentStats";
-
 export async function GET(request: NextRequest) {
   const proxied = await tryNestApiProxy(request, "/builds/equipment");
   if (proxied) return proxied;

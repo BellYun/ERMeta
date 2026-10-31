@@ -64,7 +64,7 @@ export interface EquipmentStatsOptions {
 
 /** 입력 행·매핑을 변경하지 않고 필터 적용 후의 표본을 분모로 집계한다. */
 export function buildEquipmentStats(
-  inputRows: readonly EquipmentRow[],
+  inputRows: ReadonlyArray<Readonly<EquipmentRow>>,
   options: EquipmentStatsOptions
 ): EquipmentBuildResult {
   const { patchVersion, tier, bestWeapon, legendOnly, itemGrades, weaponItemTypes } = options;
@@ -180,7 +180,7 @@ export function buildEquipmentStats(
 }
 
 function aggregateSlot(
-  rows: readonly EquipmentRow[],
+  rows: ReadonlyArray<Readonly<EquipmentRow>>,
   slot: keyof Pick<EquipmentRow, "weapon" | "chest" | "head" | "arm" | "leg">,
   slotTotal: number,
   limit = 5

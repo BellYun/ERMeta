@@ -3,12 +3,8 @@
 import Image from "next/image";
 import * as React from "react";
 import itemNameMap from "@/../const/itemNameMap.json";
-import type {
-  EquipmentBuildResult,
-  BuildSummary,
-  CoreItem,
-} from "@/app/api/builds/equipment/route";
 import { useL10n, useL10nNamespace } from "@/components/L10nProvider";
+import type { EquipmentBuildResult, BuildSummary, CoreItem } from "@/domain/equipmentStats";
 import { useTraitNames } from "@/hooks/useTraitNames";
 import { cn } from "@/lib/utils";
 import { TierGroup } from "@/utils/tier";
