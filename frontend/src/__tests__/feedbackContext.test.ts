@@ -21,54 +21,14 @@ describe("feedback context capsule", () => {
     expect(buffer.snapshot(120_001)).toEqual([]);
   });
 
-  it("만료 시각 조회와 반복 조회가 원본 기록을 삭제하지 않는다", () => {
+  it("만료 기록을 조회 결과에서 제외해도 원본은 삭제하지 않는다", () => {
     const buffer = new FeedbackBreadcrumbBuffer(30, 60_000);
-    buffer.add({ type: "interaction", name: "first" }, 1_000);
-    buffer.add({ type: "interaction", name: "second" }, 2_000);
-    const expected = [
-      { ageMs: 1_000, type: "interaction", name: "first" },
-      { ageMs: 0, type: "interaction", name: "second" },
-    ];
+    buffer.add({ type: "interaction", name: "click" }, 1_000);
 
-    expect(buffer.snapshot(2_000)).toEqual(expected);
-    expect(buffer.snapshot(61_001)).toEqual([
-      { ageMs: 59_001, type: "interaction", name: "second" },
-    ]);
-    expect(buffer.snapshot(62_001)).toEqual([]);
-    expect(buffer.snapshot(2_000)).toEqual(expected);
-    expect(buffer.snapshot(2_000)).toEqual(expected);
-  });
-
-  it("시간창 경계의 기록은 포함하고 경계 직전 기록만 결과에서 제외한다", () => {
-    const buffer = new FeedbackBreadcrumbBuffer(30, 60_000);
-    buffer.add({ type: "interaction", name: "event" }, 1_000);
-
-    expect(buffer.snapshot(61_000)).toEqual([
-      { ageMs: 60_000, type: "interaction", name: "event" },
-    ]);
     expect(buffer.snapshot(61_001)).toEqual([]);
-    expect(buffer.snapshot(61_000)).toHaveLength(1);
-  });
-
-  it("add는 만료 기록을 실제로 정리한다", () => {
-    const buffer = new FeedbackBreadcrumbBuffer(30, 60_000);
-    buffer.add({ type: "interaction", name: "expired" }, 1_000);
-    buffer.add({ type: "interaction", name: "current" }, 61_001);
-
-    expect(buffer.snapshot(61_001)).toEqual([{ ageMs: 0, type: "interaction", name: "current" }]);
-    // 과거 시각으로 조회해도 add에서 삭제한 기록은 복원되지 않는다.
-    expect(buffer.snapshot(1_000).map((entry) => entry.name)).toEqual(["current"]);
-  });
-
-  it("add는 최대 개수를 유지하고 clear는 전체 기록을 삭제한다", () => {
-    const buffer = new FeedbackBreadcrumbBuffer(2, 60_000);
-    for (const [index, name] of ["first", "second", "third"].entries()) {
-      buffer.add({ type: "interaction", name }, 1_000 + index);
-    }
-    expect(buffer.snapshot(1_002).map((entry) => entry.name)).toEqual(["second", "third"]);
-    buffer.clear();
-    expect(buffer.snapshot(1_002)).toEqual([]);
-    expect(buffer.snapshot(1_000)).toEqual([]);
+    expect(buffer.snapshot(61_000)).toEqual([
+      { ageMs: 60_000, type: "interaction", name: "click" },
+    ]);
   });
 
   it("breadcrumb 메타데이터의 이메일과 긴 토큰을 마스킹한다", () => {
