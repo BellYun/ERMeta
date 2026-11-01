@@ -309,7 +309,7 @@ export class FeedbackBreadcrumbBuffer {
       name,
       metadata: sanitizeMetadata(input.metadata),
     });
-    this.prune(timestamp);
+    this.removeExpiredAndExcessEntries(timestamp);
   }
 
   snapshot(timestamp = Date.now()): FeedbackBreadcrumb[] {
@@ -329,7 +329,7 @@ export class FeedbackBreadcrumbBuffer {
     this.entries = [];
   }
 
-  private prune(timestamp: number) {
+  private removeExpiredAndExcessEntries(timestamp: number) {
     const cutoff = timestamp - this.windowMs;
     this.entries = this.entries.filter((entry) => entry.timestamp >= cutoff);
     if (this.entries.length > this.maxEntries) {
