@@ -5,6 +5,7 @@ import { useLocale } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import type { RouteLocale } from "@/i18n/routing";
+import { captureFeedbackContext, startFeedbackContextCapture } from "@/lib/feedbackContext";
 
 type Category = "버그 신고" | "기능 제안" | "일반 문의";
 type FormState = "idle" | "submitting" | "success" | "error";
@@ -168,6 +169,8 @@ export default function FeedbackWidget() {
     return () => window.removeEventListener("resize", updatePanelTop);
   }, [isOpen]);
 
+  useEffect(() => startFeedbackContextCapture(), []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim().length < 5) return;
@@ -176,7 +179,12 @@ export default function FeedbackWidget() {
       const res = await fetch("/api/feedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ category, message: message.trim(), contact: contact.trim() }),
+        body: JSON.stringify({
+          category,
+          message: message.trim(),
+          contact: contact.trim(),
+          context: captureFeedbackContext(),
+        }),
       });
       if (!res.ok) throw new Error("request failed");
       setFormState("success");
