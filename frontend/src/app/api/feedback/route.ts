@@ -1,3 +1,5 @@
+import { sanitizeFeedbackContext } from "@/lib/feedbackContext";
+
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
 function checkRateLimit(ip: string): boolean {
@@ -30,28 +32,33 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ error: "rate_limited" }, { status: 429 });
   }
 
-  let body: { category?: string; message?: string; contact?: string };
+  let body: unknown;
   try {
     body = await request.json();
   } catch {
     return Response.json({ error: "message_required" }, { status: 400 });
   }
 
-  const { category, message, contact } = body;
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return Response.json({ error: "message_required" }, { status: 400 });
+  }
 
-  if (!message || message.trim() === "") {
+  const { category, message, contact, context } = body as Record<string, unknown>;
+
+  if (typeof message !== "string" || message.trim() === "") {
     return Response.json({ error: "message_required" }, { status: 400 });
   }
 
   const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
 
   if (!webhookUrl) {
-    console.warn("[feedback] GOOGLE_SHEETS_WEBHOOK_URL is not set. Skipping webhook.");
+    return Response.json({ error: "feedback_unavailable" }, { status: 503 });
   } else {
     const payload = {
-      category: category ?? "",
+      category: typeof category === "string" ? category : "",
       message: message.trim(),
-      contact: contact ?? "",
+      contact: typeof contact === "string" ? contact : "",
+      context: sanitizeFeedbackContext(context),
       timestamp: getKSTTimestamp(),
       userAgent: request.headers.get("user-agent") ?? "",
     };
@@ -65,9 +72,11 @@ export async function POST(request: Request): Promise<Response> {
 
       if (!res.ok) {
         console.error(`[feedback] Webhook responded with status ${res.status}`);
+        return Response.json({ error: "feedback_delivery_failed" }, { status: 502 });
       }
     } catch (err) {
       console.error("[feedback] Failed to send to webhook:", err);
+      return Response.json({ error: "feedback_delivery_failed" }, { status: 502 });
     }
   }
 
