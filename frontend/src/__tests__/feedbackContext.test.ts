@@ -21,6 +21,16 @@ describe("feedback context capsule", () => {
     expect(buffer.snapshot(120_001)).toEqual([]);
   });
 
+  it("만료 기록을 조회 결과에서 제외해도 원본은 삭제하지 않는다", () => {
+    const buffer = new FeedbackBreadcrumbBuffer(30, 60_000);
+    buffer.add({ type: "interaction", name: "click" }, 1_000);
+
+    expect(buffer.snapshot(61_001)).toEqual([]);
+    expect(buffer.snapshot(61_000)).toEqual([
+      { ageMs: 60_000, type: "interaction", name: "click" },
+    ]);
+  });
+
   it("breadcrumb 메타데이터의 이메일과 긴 토큰을 마스킹한다", () => {
     const buffer = new FeedbackBreadcrumbBuffer();
     buffer.add(

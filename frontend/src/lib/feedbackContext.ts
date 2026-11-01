@@ -309,24 +309,27 @@ export class FeedbackBreadcrumbBuffer {
       name,
       metadata: sanitizeMetadata(input.metadata),
     });
-    this.prune(timestamp);
+    this.removeExpiredAndExcessEntries(timestamp);
   }
 
   snapshot(timestamp = Date.now()): FeedbackBreadcrumb[] {
-    this.prune(timestamp);
-    return this.entries.map(({ timestamp: occurredAt, type, name, metadata }) => ({
-      ageMs: Math.max(0, timestamp - occurredAt),
-      type,
-      name,
-      ...(metadata ? { metadata } : {}),
-    }));
+    // 조회는 원본을 유지한다. 만료·개수 정리는 add(), 전체 삭제는 clear()가 담당한다.
+    const cutoff = timestamp - this.windowMs;
+    return this.entries
+      .filter((entry) => entry.timestamp >= cutoff)
+      .map(({ timestamp: occurredAt, type, name, metadata }) => ({
+        ageMs: Math.max(0, timestamp - occurredAt),
+        type,
+        name,
+        ...(metadata ? { metadata } : {}),
+      }));
   }
 
   clear() {
     this.entries = [];
   }
 
-  private prune(timestamp: number) {
+  private removeExpiredAndExcessEntries(timestamp: number) {
     const cutoff = timestamp - this.windowMs;
     this.entries = this.entries.filter((entry) => entry.timestamp >= cutoff);
     if (this.entries.length > this.maxEntries) {
