@@ -11,8 +11,8 @@
 //   3) build-synergy-pairs.mjs spawn → frontend/public/data/synergy-pairs/{padded}.json 생성
 //
 // 사용:
-//   node backend/scripts/fetch-and-build-trio-pair-synergy.mjs           # 전체 87
-//   node backend/scripts/fetch-and-build-trio-pair-synergy.mjs 1 5 55    # 특정 코드만
+//   node tools/synergy/fetch-and-build-trio-pair-synergy.mjs           # 전체 87
+//   node tools/synergy/fetch-and-build-trio-pair-synergy.mjs 1 5 55    # 특정 코드만
 // ============================================================
 
 import { spawn } from "node:child_process";
@@ -23,7 +23,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
 const ENV_FILE = join(ROOT, "frontend", ".env");
-const RAW_DIR = join(__dirname, "..", "manual_sql", "trio_pair_synergy");
+const RAW_DIR = join(__dirname, "..", "..", "backend", "manual_sql", "trio_pair_synergy");
 const BUILD_SCRIPT = join(__dirname, "build-synergy-pairs.mjs");
 
 // .env 단순 파서 (KEY=VALUE 줄만, 따옴표 제거)

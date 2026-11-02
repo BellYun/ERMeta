@@ -22,6 +22,13 @@ ER&GG는 이터널리턴의 패치·티어별 통계를 수집하고, 여러 조
 
 실제 사용자의 피드백과 운영 지표를 기반으로 개선하고 있습니다.
 
+### 개발 원칙
+
+- 승률과 티어뿐 아니라 표본, 비교 조건, 실험체·무기 조합의 맥락을 함께 제공합니다.
+- 연구 과정과 도메인 지식은 `knowledge/`에 보존하고, 수동 연구 도구는 `tools/`에서 관리합니다.
+- 사용자 조회는 사전 집계 통계와 캐시를 재사용하고, 데이터 수집과 분리해 DB 조회 비용과 외부 API 호출량을 통제합니다.
+- 모바일 상호작용 성능과 실제 사용자의 피드백을 기준으로 개선합니다.
+
 | 항목        | 내용                                                              |
 | ----------- | ----------------------------------------------------------------- |
 | 개발 기간   | 2026.03 ~ 현재                                                    |
@@ -139,7 +146,7 @@ flowchart LR
 
 - 데이터 변경 주기와 요청 특성에 맞는 캐시 경계를 적용하고, 조합 순서만 다른 중복 집계를 제거했습니다.
 
-관련 문서: [조합 API 캐싱 설계](blog-trios-caching.md) · [Next.js 캐싱 전략](caching.md)
+관련 문서: [통계 API 캐싱 설계](docs/API_CACHING_STRATEGY.md) · [캐싱 전략](docs/CACHING_STRATEGY.md)
 
 ### 4. 3인 조합 탐색을 위한 사전 집계 구조
 
@@ -242,12 +249,12 @@ ERMeta/
 │   ├── src/lib/                   # 데이터 접근, 캐시, 분석, analytics
 │   ├── messages/                  # locale 번역 리소스
 │   ├── e2e/                       # Playwright smoke/flow/a11y
-│   └── scripts/                   # 성능 계측과 데이터 작업
+│   └── scripts/                   # 빌드·CI·데이터 생성과 성능 계측
 ├── backend/                       # NestJS API, 전적·통계 저장, 수집·가공
 ├── supabase/                      # Edge Functions
 ├── desktop/                       # Electron 데스크톱 클라이언트
 ├── knowledge/eternal-return/      # 게임·데이터·커뮤니티 도메인 지식
-├── DATA/                          # 통계 분석 자료
+├── tools/                         # 수동 조합 연구·시너지 작업·구형 도구
 └── docs/                          # 아키텍처와 운영 문서
 ```
 
@@ -269,7 +276,7 @@ cd ERMeta
 cd frontend
 nvm use
 npm ci
-cp .env.example .env.local
+# .env.local에 사용할 Supabase·BSER 환경 변수 설정
 npm run dev
 # http://localhost:3000
 ```
@@ -293,15 +300,27 @@ npm run start:dev
 # http://localhost:4000
 ```
 
-환경 변수의 기본 설정은 [`frontend/.env.example`](frontend/.env.example)과 [`backend/.env.example`](backend/.env.example)을 참고하세요.
+프론트엔드의 전체 데이터 기능에는 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `BSER_API_KEY` 설정이 필요합니다. 서버 전용 키는 `NEXT_PUBLIC_` 접두사 없이 관리합니다. 백엔드 환경 변수는 [`backend/.env.example`](backend/.env.example)과 [실행 가이드](backend/README.md)를 참고하세요.
+
+## 수동 도구와 개발 흐름
+
+[도구 안내](tools/README.md)에서 각 스크립트의 목적, 실행 명령, 입력·출력과 DB/API 호출 여부를 확인할 수 있습니다. `DATA/`를 입력으로 사용하는 과거 연구 도구는 별도로 보존한 로컬 분석 자료가 필요합니다.
+
+- `main`: 배포 기준 브랜치
+- `develop`: 다음 변경을 통합하는 개발 브랜치
+- 작업 브랜치: 관련 이슈가 있으면 `feat/#이슈번호`, `fix/#이슈번호`, 그 외에는 작업 내용을 나타내는 이름
+- 커밋과 PR 제목: `<type>: <한국어 요약>`, 관련 이슈가 있으면 `(#이슈번호)` 추가
+- PR: `.github/pull_request_template.md`를 따르고 Ready for Review로 생성
+
+작업 브랜치는 검증과 병합을 마친 뒤 정리합니다. 미병합 작업과 사용 중인 worktree는 보존 여부를 먼저 확인합니다.
 
 ## Technical Notes
 
 - [Frontend E2E 가이드](frontend/e2e/README.md)
-- [조합 통계 API 캐싱](blog-trios-caching.md)
-- [Next.js 캐싱 전략](caching.md)
-- [RSC 최적화](RSC-optimization.md)
-- [API 캐시 정규화 설계](docs/API_CACHE_NORMALIZATION_PLAN_FRONTEND.md)
+- [통계 API 캐싱](docs/API_CACHING_STRATEGY.md)
+- [캐싱 전략](docs/CACHING_STRATEGY.md)
+- [Next.js 렌더링 전략](frontend/docs/NEXT_RENDERING_STRATEGY_AUDIT_2026-07-20.md)
+- [이터널리턴 도메인 지식](knowledge/eternal-return/README.md)
 
 ## License
 

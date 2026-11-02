@@ -1,7 +1,7 @@
 // raw_character_multiset.json 에서 전체 (캐릭+무기) 의 21-페어 핑거프린트 일람 HTML 생성.
 // 그룹 수동 분류용 — 사용자가 보면서 그룹 라벨 클릭해 묶을 수 있는 인터랙티브 페이지.
 // output: DATA/trio-role-combinations/all_characters_fingerprint.html
-// run: node frontend/scripts/build-all-characters-fingerprint.mjs
+// run: node tools/composition/build-all-characters-fingerprint.mjs
 
 import fs from "node:fs";
 import path from "node:path";

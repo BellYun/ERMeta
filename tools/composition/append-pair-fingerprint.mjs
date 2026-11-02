@@ -1,6 +1,6 @@
 // 각 role 의 visualization.html 에 21-페어 핑거프린트 섹션 append.
 // idempotent: 마커 발견 시 스킵.
-// run: node frontend/scripts/append-pair-fingerprint.mjs
+// run: node tools/composition/append-pair-fingerprint.mjs
 
 import fs from "node:fs";
 import path from "node:path";
