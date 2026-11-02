@@ -1,7 +1,7 @@
 // visualization_above_avg_cards.html 에 "그룹별 21-페어 핑거프린트" 섹션 추가.
 // clusters_v2.json 의 그룹 매핑을 inline 한 뒤 DATA.combos[] 를 그룹 합산.
 // idempotent: 마커 발견 시 스킵 (또는 --force 로 갱신).
-// run: node frontend/scripts/append-pair-fingerprint-cards.mjs
+// run: node tools/composition/append-pair-fingerprint-cards.mjs
 
 import fs from "node:fs";
 import path from "node:path";

@@ -4,8 +4,8 @@
 // 출력 : frontend/public/data/synergy-pairs/{code}.json (lift 계산 + Top/Bottom 5)
 //
 // 사용:
-//   node backend/scripts/build-synergy-pairs.mjs            # 모든 채워진 캐릭 빌드
-//   node backend/scripts/build-synergy-pairs.mjs 001 005    # 특정 코드만 빌드
+//   node tools/synergy/build-synergy-pairs.mjs            # 모든 채워진 캐릭 빌드
+//   node tools/synergy/build-synergy-pairs.mjs 001 005    # 특정 코드만 빌드
 // ============================================================
 
 import { readFile, writeFile, mkdir, readdir } from "node:fs/promises";
@@ -13,7 +13,7 @@ import { dirname, join, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const INPUT_DIR = join(__dirname, "..", "manual_sql", "trio_pair_synergy");
+const INPUT_DIR = join(__dirname, "..", "..", "backend", "manual_sql", "trio_pair_synergy");
 const OUTPUT_DIR = join(__dirname, "..", "..", "frontend", "public", "data", "synergy-pairs");
 
 const TOP_N = 5;

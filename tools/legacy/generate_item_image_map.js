@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const repositoryRoot = path.resolve(__dirname, '..', '..');
 
 // 영어 l10n 데이터를 가져와서 모든 장비 이미지와 매핑하는 스크립트
 async function generateItemImageMap() {
@@ -11,7 +12,7 @@ async function generateItemImageMap() {
 
     console.log(`l10n 데이터 로드 완료: ${Object.keys(l10n).length}개 항목`);
 
-    const itemPath = path.join(__dirname, 'frontend', 'public', 'Item');
+    const itemPath = path.join(repositoryRoot, 'frontend', 'public', 'Item');
     const itemImageMap = {};
 
     // 이름 정규화 함수
@@ -149,7 +150,7 @@ async function generateItemImageMap() {
     }
 
     // JSON 파일로 저장
-    const outputPath = path.join(__dirname, 'frontend', 'src', 'const', 'itemImageMap.json');
+    const outputPath = path.join(repositoryRoot, 'frontend', 'src', 'const', 'itemImageMap.json');
     const sortedMap = {};
     Object.keys(itemImageMap)
       .sort((a, b) => parseInt(a) - parseInt(b))

@@ -5,7 +5,7 @@
 //   backend/manual_sql/trio_pair_synergy/{padded}.json  ← 실행 결과 paste 받음
 //
 // 사용:
-//   1) node backend/scripts/generate-trio-pair-templates.mjs
+//   1) node tools/synergy/generate-trio-pair-templates.mjs
 //   2) {padded}.sql 열어서 Supabase SQL Editor 에 붙여넣고 Run
 //      - QUERY 1 결과 → {padded}.json 의 "pairs" 배열에 paste
 //      - QUERY 2 결과 → {padded}.json 의 "soloBaseline" 배열에 paste
@@ -17,7 +17,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const OUT_DIR = join(__dirname, "..", "manual_sql", "trio_pair_synergy");
+const OUT_DIR = join(__dirname, "..", "..", "backend", "manual_sql", "trio_pair_synergy");
 
 const CHARACTER_NAMES = {
   1: "재키", 2: "아야", 3: "피오라", 4: "매그너스", 5: "자히르",
