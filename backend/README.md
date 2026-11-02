@@ -4,7 +4,7 @@
 
 기존 전체 백엔드(`npm run start:dev`)와 별도로, 전적·통계·멀티서치만 실행하는 진입점은 `npm run start:player`다. 이 진입점은 Supabase·Redis 설정 없이 시작한다. 로컬에서는 `DATABASE_URL`, Google Cloud에서는 Cloud SQL Unix socket 설정을 사용한다. `/health/live`는 프로세스 상태, `/health/ready`는 BSER API 키와 PostgreSQL 연결·전적 테이블 적용 상태를 확인한다.
 
-Cloud Run 이미지, 마이그레이션 Job, Secret Manager, 예상 비용과 배포 순서는 [CLOUD_RUN_DEPLOYMENT.md](./CLOUD_RUN_DEPLOYMENT.md)에 정리했다. 실제 프로젝트와 예산을 확정하기 전에는 Google Cloud 리소스를 만들지 않는다.
+Cloud Run 이미지, 마이그레이션 Job, Secret Manager, 예상 비용과 배포 순서는 [CLOUD_RUN_DEPLOYMENT.md](./CLOUD_RUN_DEPLOYMENT.md)에 정리했다. 운영 키 발급 전에는 이 문서의 비공개 프리뷰 절차로 기동과 DB 상태를 구분해 확인한다. 실제 프로젝트와 예산을 확정하기 전에는 Google Cloud 리소스를 만들지 않는다.
 
 ## 플레이어 전적·개인 통계·멀티서치 (#300, #303, #305, #307)
 

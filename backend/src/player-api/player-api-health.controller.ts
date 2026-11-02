@@ -22,6 +22,11 @@ export class PlayerApiHealthController {
         message: '공식 API 키가 설정되지 않았습니다.',
       });
     }
+    return this.databaseReady();
+  }
+
+  @Get('database')
+  async databaseReady(): Promise<{ status: 'ok' }> {
     try {
       const result = await this.database.getPool().query<{
         lookups: string | null;
