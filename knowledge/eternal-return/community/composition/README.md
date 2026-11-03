@@ -14,6 +14,106 @@
 
 > **12.0 재검증:** 2026-08-06의 무기 스킬 대규모 개편으로 진입·방어·연계 방식이 달라질 수 있다. 역할·사거리라는 분석 축은 유지하되 실험체별 배정은 현재 패치 통계로 다시 확인한다.
 
+현재 조합 학습 기준: [전체 기간 통합 비교 규칙](POOLED-ANALYSIS-RULES.md), [사전집계 원시 RP를 포함한 전수 비교](validations/2026-10-13-preaggregate-raw-rp/README.md). [첫 통합 분석](validations/2026-10-13-pooled-restart/README.md)과 [번호별 50개 사례](validations/2026-10-13-composition-learning/README.md)는 탐색 기록이며 현재 결과를 대체하지 않는다.
+
+정확한 3인 조합의 스킬 근거 판정은 [교전 설명 검토 규칙](EXPLANATION-REVIEW-PROTOCOL.md)을 따른다. `frontend/analysis-snapshots/composition-affinity/review-worklist-2026-10-14.json`은 전체 조합의 통계 비교 작업 목록이고, `frontend/analysis-snapshots/composition-affinity/explanation-coverage-2026-10-14.json`은 스킬 자료 커버리지의 이전 스냅샷이다. 현재 S 조합의 개별 설명 상태는 [전수 근거 요약](../../../../frontend/analysis-snapshots/composition-affinity/s-reasoning-2026-10-14-summary.json)을 본다.
+
+[2026-10-14 정확한 조합 4건 개별 검토](validations/2026-10-14-individual-reviews/README.md)는 스킬상 가능한 교전 설명 3건과 설명 보류 1건의 근거·조건·반례를 정리한다.
+
+[전체 기간 통합 성적의 유형 경향과 조합 설명 사례](validations/2026-10-14-pooled-tendency-reasoning/README.md)는 모든 고정쌍의 동료 교체를 비교하고, 기존 유형 분석과 스킬 문구를 활용해 나딘·일레븐·아디나의 이유를 서술한다. 같은 절차는 [ERMeta 조합 판단 스킬](../../../../.agents/skills/ermeta-composition-reasoning/SKILL.md)에 보존한다.
+
+[정확한 3인 조합 설명 첫 배치](validations/2026-10-14-narrative-first-batch/README.md)는 교전 방식이 다른 S 조합 일곱 개를 검토해 다섯 개의 설명문과 두 개의 보류 판단을 기록한다. 사용자 확인 사례와 제안한 교전 해석을 구분한다.
+
+[S 조합 전수 근거 묶음](validations/2026-10-14-s-scale/README.md)은 화면 S 11,015개 전부의 세 고정쌍·동료 교체 359만 건을 설명 생성 입력과 출처 감사에 연결한다. 이 전수 근거 자료는 개별 전술 설명의 완료 상태와 분리한다.
+
+[S 조합 전술 설명 두 번째 묶음](validations/2026-10-14-s-narrative-batch-2/README.md)은 추가 5개 조합의 교전 구도와 강한 동료 교체 반례를 기록한다.
+
+[S 조합 전술 설명 세 번째 묶음](validations/2026-10-14-s-narrative-batch-3/README.md)은 추가 6개 조합의 조건부 교전 설명과 제어 방향이 충돌하는 상황을 기록한다.
+
+[S 조합 전술 설명 네 번째 묶음](validations/2026-10-14-s-narrative-batch-4/README.md)은 추가 6개 조합의 사격선·설치물·방향성 화력과 전선 유지 조건을 기록한다.
+
+[S 조합 전술 설명 다섯 번째 묶음](validations/2026-10-14-s-narrative-batch-5/README.md)은 추가 6개 조합에서 무기별 사거리·공격 방식과 보호자의 위치 선택을 검토한다.
+
+[S 조합 전술 설명 여섯 번째 묶음](validations/2026-10-14-s-narrative-batch-6/README.md)은 추가 6개 조합에서 조건부 스킬 연결과 밀어내기·무적의 충돌 가능성을 검토한다.
+
+[S 조합 전술 설명 일곱 번째 묶음](validations/2026-10-14-s-narrative-batch-7/README.md)은 추가 6개 조합에서 설치 구역, 화염 견제, 제어 방향의 차이를 검토한다.
+
+[S 조합 전술 설명 여덟 번째 묶음](validations/2026-10-14-s-narrative-batch-8/README.md)은 추가 6개 조합에서 무기 차이와 수면·밀어내기·자원 조건을 검토한다.
+
+[S 조합 전술 설명 아홉 번째 묶음](validations/2026-10-14-s-narrative-batch-9/README.md)은 추가 6개 조합에서 사거리 차이, 공연의 양측 불사, 제어 방향을 검토한다.
+
+[S 조합 전술 설명 열 번째 묶음](validations/2026-10-14-s-narrative-batch-10/README.md)은 추가 6개 조합에서 근접 제어 방향, 전열 없는 거리 유지, 형태·자원 조건을 검토한다.
+
+[S 조합 전술 설명 열한 번째 묶음](validations/2026-10-14-s-narrative-batch-11/README.md)은 추가 6개 조합에서 프레임과 이동 제어의 순서, 수면과 지속 피해의 충돌을 검토한다.
+
+[S 조합 전술 설명 열두 번째 묶음](validations/2026-10-14-s-narrative-batch-12/README.md)은 추가 6개 조합에서 무기·총기 형태의 거리 차이와 고정 공격 영역을 벗어나는 제어를 검토한다.
+
+[S 조합 전술 설명 열세 번째 묶음](validations/2026-10-14-s-narrative-batch-13/README.md)은 추가 6개 조합에서 지연 보호, 같은 고정쌍의 이동 방식, 전열 없는 원거리 교전의 이탈 조건을 검토한다.
+
+[S 조합 전술 설명 열네 번째 묶음](validations/2026-10-14-s-narrative-batch-14/README.md)은 추가 6개 조합에서 설치물과 사격선의 위치, 무기·형태별 거리 제약, 보호·밀어내기 조건을 검토한다.
+
+[S 조합 전술 설명 열다섯 번째 묶음](validations/2026-10-14-s-narrative-batch-15/README.md)은 추가 6개 조합에서 쇼우의 무기별 거리, 아이솔의 사격 위치, 공연과 설치물의 조건을 검토한다.
+
+[S 조합 서술 90건 교차 검토](validations/2026-10-14-s-narrative-cross-review/README.md)는 세 고정쌍·반례 표시를 정정하고, 같은 두 명을 고정한 4개 교체 맥락에서 사거리·전열·설치물 설명이 통계와 어디까지 맞는지 대조한다.
+
+[S 조합 전술 설명 열여섯 번째 묶음](validations/2026-10-14-s-narrative-batch-16/README.md)은 기존 전술 계획·가설 6개를 개별 설명문으로 확장했다.
+
+[S 조합 전술 설명 열일곱 번째 묶음](validations/2026-10-14-s-narrative-batch-17/README.md)은 이전 검토가 없던 S 조합 6개에 대해 전선, 설치 위치, 조건부 제어와 사격선의 연결을 검토했다.
+
+[S 조합 전술 설명 열여덟 번째 묶음](validations/2026-10-14-s-narrative-batch-18/README.md)은 신규 S 조합 6개에서 두 전열의 중복, 사격선과 이동 제어의 충돌, 자원·표식 조건을 검토했다.
+
+[S 조합 전술 설명 열아홉 번째 묶음](validations/2026-10-14-s-narrative-batch-19/README.md)은 신규 S 조합 6개에서 설치 위치, 조건부 제어, 근접 지원과 전열 없는 사격 구도를 검토했다.
+
+[S 조합 전술 설명 스무 번째 묶음](validations/2026-10-14-s-narrative-batch-20/README.md)은 신규 S 조합 6개에서 자원·형태 조건과 화염·소용돌이 영역을 벗어나는 이동 제어를 검토했다.
+
+[S 조합 전술 설명 스물한 번째 묶음](validations/2026-10-14-s-narrative-batch-21/README.md)은 신규 S 조합 6개에서 이중 저격수의 거리, 프리야 꽃의 보호 조건, 미르카 게이지와 테오도르 사격선을 검토했다.
+[S 조합 전술 설명 스물두 번째 묶음](validations/2026-10-14-s-narrative-batch-22/README.md)은 신규 S 조합 30개의 사거리·제어 위치·형태 전환 조건을 검토하고 원시 RP가 음수인 S 표시 사례도 따로 기록했다.
+[S 조합 전술 설명 스물세 번째 묶음](validations/2026-10-14-s-narrative-batch-23/README.md)은 추가 S 조합 30개의 긴 사거리와 첫 충돌 위치, 지연·중첩 스킬의 성립 조건을 검토했다.
+[S 조합 전술 설명 스물네 번째 묶음](validations/2026-10-14-s-narrative-batch-24/README.md)은 추가 S 조합 30개의 설치 위치, 첫 충돌 방향, 자원·중첩 조건과 무기명만으로 판단하기 어려운 유효 거리를 검토했다.
+[S 조합 전술 설명 스물다섯 번째 묶음](validations/2026-10-14-s-narrative-batch-25/README.md)은 추가 S 조합 30개의 설치 범위, 형태·중첩 전제, 밀어내기 방향과 후열 사격선을 검토했다.
+[S 조합 전술 설명 스물여섯 번째 묶음](validations/2026-10-14-s-narrative-batch-26/README.md)은 추가 S 조합 30개의 교전 거리·조건부 제어를 검토하고 원시 RP 음수 사례의 별도 원천 추출을 기록했다.
+[S 조합 전술 설명 스물일곱 번째 묶음](validations/2026-10-14-s-narrative-batch-27/README.md)은 추가 S 조합 30개의 지연 교전, 형태·자원·재장전 조건과 음수 RP 사례를 검토했다.
+[S 조합 전술 설명 스물여덟 번째 묶음](validations/2026-10-14-s-narrative-batch-28/README.md)은 추가 S 조합 30개의 충전 사격선, 형태 전환, 설치 기술의 발동 시점을 검토했다.
+[S 조합 전술 설명 스물아홉 번째 묶음](validations/2026-10-14-s-narrative-batch-29/README.md)은 추가 S 조합 30개의 사거리·전선 유지와 조건부 제어를 검토하고 원시 RP 음수 사례를 기록했다.
+[S 조합 전술 설명 서른 번째 묶음](validations/2026-10-14-s-narrative-batch-30/README.md)은 추가 S 조합 30개의 형태·자원 조건과 화력 유효 거리를 검토하고 원시 RP 음수 사례를 기록했다.
+[S 조합 전술 설명 서른한 번째 묶음](validations/2026-10-14-s-narrative-batch-31/README.md)은 추가 S 조합 30개의 사격선·설치 위치·형태 조건을 검토하고 원시 RP 음수 사례를 기록했다.
+[S 조합 전술 설명 서른두 번째 묶음](validations/2026-10-14-s-narrative-batch-32/README.md)은 추가 S 조합 30개의 형태·자원 조건과 설치·사격선의 충돌 가능성을 검토했다.
+[S 조합 전술 설명 서른세 번째 묶음](validations/2026-10-14-s-narrative-batch-33/README.md)은 추가 S 조합 30개의 연계·빙결 해제·형태 조건과 제어 방향에 따른 후열 사격선의 변화를 검토했다.
+[S 조합 전술 설명 서른네 번째 묶음](validations/2026-10-14-s-narrative-batch-34/README.md)은 추가 S 조합 100개의 조건부 제어·설치 범위·형태 전환과 후열 사격선의 충돌 가능성을 검토했다.
+[S 조합 전술 설명 서른다섯 번째 묶음](validations/2026-10-14-s-narrative-batch-35/README.md)은 추가 S 조합 100개의 지연 제어·설치 위치·사격선을 검토하고 음수 원시 RP 사례 2개를 별도 원천 추출로 점검했다.
+
+[S 조합 전술 설명 서른여섯 번째 묶음](validations/2026-10-14-s-narrative-batch-36/README.md)은 추가 S 조합 200개의 개별 교전 가설과 스킬 발동 조건을 기록하고 음수 원시 RP 사례 2개를 별도 원천 추출로 점검했다.
+
+[S 조합 전술 설명 서른일곱 번째 묶음](validations/2026-10-14-s-narrative-batch-37/README.md)은 추가 S 조합 200개의 개별 교전 가설을 기록하고 음수 원시 RP 사례 2개와 세 지표 모두 앞선 고정쌍 1개를 점검했다.
+
+[S 조합 전술 설명 서른여덟 번째 묶음](validations/2026-10-14-s-narrative-batch-38/README.md)은 추가 S 조합 300개의 개별 교전 가설, 고정쌍 900개 비교, 음수 원시 RP 사례 1개를 기록했다.
+
+[S 조합 전술 설명 서른아홉 번째 묶음](validations/2026-10-14-s-narrative-batch-39/README.md)은 추가 S 조합 400개의 개별 교전 가설, 고정쌍 1,200개 비교, 음수 원시 RP 사례 2개를 기록했다.
+
+[S 조합 전술 설명 마흔 번째 묶음](validations/2026-10-14-s-narrative-batch-40/README.md)은 추가 S 조합 500개의 개별 교전 가설, 고정쌍 1,500개 비교, 음수 원시 RP 사례 1개를 기록했다.
+
+[S 조합 전술 설명 마흔한 번째 묶음](validations/2026-10-14-s-narrative-batch-41/README.md)은 추가 S 조합 1,000개의 개별 교전 가설, 고정쌍 3,000개 비교, 음수 원시 RP 사례 1개를 기록했다.
+
+[S 조합 전술 설명 마흔두 번째 묶음](validations/2026-10-14-s-narrative-batch-42/README.md)은 추가 S 조합 2,000개의 1차 판단 초안(1,872개 제안·128개 보류), 고정쌍 6,000개 비교, 음수 원시 RP 사례 3개를 기록했다.
+
+[S 조합 전술 설명 마흔세 번째 묶음](validations/2026-10-15-s-narrative-batch-43/README.md)은 추가 S 조합 3,000개의 1차 판단 초안(2,660개 제안·340개 보류), 고정쌍 9,000개 비교, 음수 원시 RP 사례 2개를 기록했다.
+
+[S 조합 전술 설명 마흔네 번째 묶음](validations/2026-10-15-s-narrative-batch-44/README.md)은 남은 새 S 조합 2,725개 전부의 1차 판단 초안(2,359개 제안·366개 보류), 고정쌍 8,175개 비교, 근소한 음수 원시 RP 사례 4개를 기록했다.
+
+[S 조합 보류 834개 경향](validations/2026-10-15-s-held-tendencies/README.md)은 보류 집단의 전체 기간 통합 성적, 설명 규칙의 빈틈, 스킬별 반례와 우선 재검토 대상을 정리했다.
+
+옛 `제어·지원` 보류 36개를 [무기 기준으로 재확인](validations/2026-10-15-s-held-tendencies/README.md#옛-제어지원-보류-36개를-무기로-다시-확인)한 결과 원거리 무기 3인 25개와 근접 무기 포함 11개였다. 아디나·헤이즈·바냐는 바냐의 옛 `전사` 주석과 달리 원거리 3인 구도이며, 36개 전체나 하트 후보를 뺀 31개를 하나의 제어·지원 유형으로 취급하지 않는다.
+
+같은 옛 보류 묶음의 [나타폰·제니·마이와 나타폰·띠아·마이](validations/2026-10-15-s-held-tendencies/README.md#옛-제어지원-보류-36개를-무기로-다시-확인)는 마이 1선과 두 원딜/스증 화력의 **쌍포 조합**으로 수정했다. 마이 포함 8개 중 원거리 무기 2명과 짝을 이룬 6개에 띠아 방망이의 스증 화력 사례 1개를 더해 **7개**가 이 구도다. 무기 분류만으로 띠아를 제외하지 않는다.
+
+사용자 교정에 따라 [클로에 + 원딜/스증 딜러 2명](validations/2026-10-15-s-held-tendencies/README.md#클로에와-딜러-둘의-1선-교정)은 클로에·니나가 1선을 만드는 구도로 먼저 검토한다. 기존 `세 명 모두 사격` 보류 94개 중 해당 조합 11개는 일부 사례일 뿐이며, 개별 조합의 교전 설명은 별도로 검토한다.
+
+클로에를 제외한 [83개 정확한 조합](validations/2026-10-15-s-held-tendencies/three-shooters-roster.md#그-밖의-83개)은 사용자 선택에 따라 경향 분석에서 `3원딜 편성`으로 묶는다. 유형 이름을 조합별 승리 이유나 개별 교전 설명 완료로 취급하지 않는다.
+
+[하트 + 원딜/스증 딜러 2명과 엠마의 별도 구도](validations/2026-10-15-s-held-tendencies/README.md#하트와-딜러-둘의-세이브-및-엠마-별도-구도)도 사용자 교정으로 기록했다. 하트·프리야·유스티나는 옛 `제어·지원` 보류에 속하지만 하트의 궁극기 세이브가 중심인 사례다. 원딜과 스증 딜러가 섞인 두 동료도 이 구도에 포함한다. 엠마의 변이·위치 이동은 옛 `첫 충돌 담당 없음` 사유만으로 평가하지 않는다. 하트 포함 보류 34개와 엠마 사유 89개 전체를 같은 교전 방식으로 일반화하지 않는다.
+
+[탱커 포함 근접 전열 보류 조합 재검토](validations/2026-10-15-s-held-tank-frontline-reviews/README.md)는 옛 탱커 주석이 붙은 181개 정확한 조합을 모두 개별 검토했다. 조건부 교전 설명 147개와 설명 보류 34개를 기록했으며, [추가 167개 검토 본문](validations/2026-10-15-s-held-tank-frontline-reviews/individual-reviews.md)에는 각 조합의 스킬 연결 조건과 비교 반례가 있다.
+
 ## 확인된 공략 항목
 
 ### 1. `1탱·1근·1원`은 별도로 검토할 조합 사례다
