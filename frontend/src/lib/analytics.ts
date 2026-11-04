@@ -1,12 +1,20 @@
 import {
   AD_BLOCK_RECOVERY_EXPERIMENT,
+  AD_BLOCK_RECOVERY_PILOT,
   type AdBlockRecoveryDismissReason,
+  type AdBlockRecoveryExperimentId,
   type AdBlockRecoveryVariant,
 } from "@/lib/adBlockRecoveryExperiment";
+import {
+  AD_BLOCK_RECOVERY_PILOT_CONFIG,
+  claimAdBlockRecoveryPilotCoreUse,
+  type AdBlockRecoveryPilotAssignment,
+} from "@/lib/adBlockRecoveryPilot";
 import { getAdPerformanceSnapshot, type AdScriptState } from "@/lib/adPerformance";
 import type { AdPlacementAttribution } from "@/lib/adPlacementExperiment";
 
 type AmplitudeModule = typeof import("@amplitude/analytics-browser");
+type AmplitudeEventOptions = NonNullable<Parameters<AmplitudeModule["track"]>[2]>;
 
 const isDev = process.env.NODE_ENV === "development";
 const AD_MEASUREMENT_VERSION = 2;
@@ -26,10 +34,14 @@ function getAmplitude(): Promise<AmplitudeModule> {
   return amplitudePromise;
 }
 
-function track(event: string, properties?: Record<string, unknown>) {
+function track(
+  event: string,
+  properties?: Record<string, unknown>,
+  ...options: [] | [AmplitudeEventOptions]
+) {
   if (isDev) return;
   getAmplitude()
-    .then((amplitude) => amplitude.track(event, properties))
+    .then((amplitude) => amplitude.track(event, properties, ...options))
     .catch(() => {});
 }
 
@@ -46,8 +58,12 @@ function trackOnPageExit(event: string, properties?: Record<string, unknown>) {
 
 type FlatAnalyticsProperties = Record<string, string | number | boolean | null | undefined>;
 
-function trackAdExperiment(event: string, properties: FlatAnalyticsProperties) {
-  track(event, properties);
+function trackAdExperiment(
+  event: string,
+  properties: FlatAnalyticsProperties,
+  ...options: [] | [AmplitudeEventOptions]
+) {
+  track(event, properties, ...options);
   if (isDev) return;
 
   import("@vercel/analytics")
@@ -238,6 +254,47 @@ function markAndCheckFirstTime(feature: FeatureKey): boolean {
   }
 }
 
+function trackPilotEvent(
+  event: string,
+  assignment: AdBlockRecoveryPilotAssignment,
+  observedAt: number,
+  properties?: FlatAnalyticsProperties
+) {
+  trackAdExperiment(
+    event,
+    {
+      ...properties,
+      experiment: AD_BLOCK_RECOVERY_PILOT,
+      variant: assignment.variant,
+      enrollment_half: assignment.half,
+      assignment_id: assignment.id,
+      assigned_at_ms: assignment.assignedAt,
+      pilot_start_ms: assignment.pilotStart,
+      assignment_age_ms: observedAt - assignment.assignedAt,
+    },
+    { insert_id: assignment.id + ":" + event, time: observedAt }
+  );
+}
+
+function trackCoreFeatureUsed(feature: FeatureKey) {
+  if (AD_BLOCK_RECOVERY_PILOT_CONFIG && !isDev) {
+    const observedAt = Date.now();
+    void claimAdBlockRecoveryPilotCoreUse(AD_BLOCK_RECOVERY_PILOT_CONFIG, observedAt).then(
+      (assignment) => {
+        if (assignment) {
+          trackPilotEvent("ad_block_recovery_pilot_core_feature_used", assignment, observedAt, {
+            feature,
+          });
+        }
+      }
+    );
+  }
+
+  if (markAndCheckFirstTime(feature)) {
+    track("core_feature_used", { feature, firstTimeInSession: true });
+  }
+}
+
 export const analytics = {
   // ── 기존 10개 (시그니처 유지) ──────────────────────────────────────────────
 
@@ -259,12 +316,7 @@ export const analytics = {
   /** 실험체 분석 - 실험체 조회 (NSM auto-trigger: character_analysis) */
   characterViewed(characterCode: number, characterName: string) {
     track("character_viewed", { characterCode, characterName });
-    if (markAndCheckFirstTime("character_analysis")) {
-      track("core_feature_used", {
-        feature: "character_analysis",
-        firstTimeInSession: true,
-      });
-    }
+    trackCoreFeatureUsed("character_analysis");
   },
 
   /** 실험체 분석 - 무기 선택 */
@@ -305,12 +357,7 @@ export const analytics = {
    * 독립 피처(record_search/meta_dashboard 등) 진입 시 직접 호출한다.
    */
   coreFeatureUsed(feature: FeatureKey) {
-    if (markAndCheckFirstTime(feature)) {
-      track("core_feature_used", {
-        feature,
-        firstTimeInSession: true,
-      });
-    }
+    trackCoreFeatureUsed(feature);
   },
 
   /** 메인 티어 랭킹 행/카드 클릭 (메인→상세 전환 퍼널) */
@@ -389,12 +436,7 @@ export const analytics = {
     }
   ) {
     track("synergy_result_viewed", { ...args });
-    if (args.resultCount > 0 && markAndCheckFirstTime("synergy_search")) {
-      track("core_feature_used", {
-        feature: "synergy_search",
-        firstTimeInSession: true,
-      });
-    }
+    if (args.resultCount > 0) trackCoreFeatureUsed("synergy_search");
   },
 
   /** 시너지 추천 3번째 실험체 클릭 */
@@ -561,12 +603,7 @@ export const analytics = {
     topDifficultyRating: number | null;
   }) {
     track("character_pool_recommendations_viewed", args);
-    if (args.recommendationCount > 0 && markAndCheckFirstTime("character_pool_gap")) {
-      track("core_feature_used", {
-        feature: "character_pool_gap",
-        firstTimeInSession: true,
-      });
-    }
+    if (args.recommendationCount > 0) trackCoreFeatureUsed("character_pool_gap");
   },
 
   /** 캐릭터 풀 분석기 - 추천 후보의 실험체 상세 페이지로 이동. */
@@ -789,15 +826,20 @@ export const analytics = {
     });
   },
 
+  adBlockRecoveryPilotAssigned(assignment: AdBlockRecoveryPilotAssignment) {
+    trackPilotEvent("ad_block_recovery_pilot_assigned", assignment, assignment.assignedAt);
+  },
+
   /** 광고 차단 해제 팝업 실험 노출 — 감지된 세션에서 실제 dialog가 열린 경우만 기록한다. */
   adBlockRecoveryPromptShown(args: {
     variant: AdBlockRecoveryVariant;
+    experiment?: AdBlockRecoveryExperimentId;
     locale: string;
     pagePath: string;
     detectionMethod: "cosmetic_bait";
   }) {
     trackAdBlockRecovery("ad_block_recovery_prompt_shown", {
-      experiment: AD_BLOCK_RECOVERY_EXPERIMENT,
+      experiment: args.experiment ?? AD_BLOCK_RECOVERY_EXPERIMENT,
       variant: args.variant,
       locale: args.locale,
       page_path: args.pagePath,
@@ -808,12 +850,13 @@ export const analytics = {
   /** 명시적 닫기, 나중에, backdrop, Escape를 구분해 팝업 거부율을 측정한다. */
   adBlockRecoveryPromptDismissed(args: {
     variant: AdBlockRecoveryVariant;
+    experiment?: AdBlockRecoveryExperimentId;
     reason: AdBlockRecoveryDismissReason;
     locale: string;
     pagePath: string;
   }) {
     trackAdBlockRecovery("ad_block_recovery_prompt_dismissed", {
-      experiment: AD_BLOCK_RECOVERY_EXPERIMENT,
+      experiment: args.experiment ?? AD_BLOCK_RECOVERY_EXPERIMENT,
       variant: args.variant,
       reason: args.reason,
       locale: args.locale,
@@ -824,11 +867,12 @@ export const analytics = {
   /** 사용자가 광고 허용 후 확인을 위해 새로고침을 선택한 경우. */
   adBlockRecoveryReloadRequested(args: {
     variant: AdBlockRecoveryVariant;
+    experiment?: AdBlockRecoveryExperimentId;
     locale: string;
     pagePath: string;
   }) {
     trackAdBlockRecovery("ad_block_recovery_reload_requested", {
-      experiment: AD_BLOCK_RECOVERY_EXPERIMENT,
+      experiment: args.experiment ?? AD_BLOCK_RECOVERY_EXPERIMENT,
       variant: args.variant,
       locale: args.locale,
       page_path: args.pagePath,
@@ -838,12 +882,13 @@ export const analytics = {
   /** 새로고침 뒤 광고 차단 bait가 정상 노출되어 해제 성공으로 확인된 경우. */
   adBlockRecoverySucceeded(args: {
     variant: AdBlockRecoveryVariant;
+    experiment?: AdBlockRecoveryExperimentId;
     attemptAgeMs: number;
     attemptPagePath: string;
     pagePath: string;
   }) {
     trackAdBlockRecovery("ad_block_recovery_succeeded", {
-      experiment: AD_BLOCK_RECOVERY_EXPERIMENT,
+      experiment: args.experiment ?? AD_BLOCK_RECOVERY_EXPERIMENT,
       variant: args.variant,
       attempt_age_ms: args.attemptAgeMs,
       attempt_page_path: args.attemptPagePath,
@@ -856,6 +901,7 @@ export const analytics = {
   /** 광고 차단 해제 시도 후 실제 AdSense 슬롯이 filled 상태가 된 경우. */
   adBlockRecoveryAdFilled(args: {
     variant: AdBlockRecoveryVariant;
+    experiment?: AdBlockRecoveryExperimentId;
     slotName: AdSlotName;
     adSlotId: string;
     attemptAgeMs: number;
@@ -863,7 +909,7 @@ export const analytics = {
     pagePath?: string;
   }) {
     trackAdBlockRecovery("ad_block_recovery_ad_filled", {
-      experiment: AD_BLOCK_RECOVERY_EXPERIMENT,
+      experiment: args.experiment ?? AD_BLOCK_RECOVERY_EXPERIMENT,
       variant: args.variant,
       slot_name: args.slotName,
       ad_slot_id: args.adSlotId,
@@ -877,6 +923,7 @@ export const analytics = {
   /** 복구 후 채워진 광고가 viewport 50% 이상에서 1초 노출된 경우. */
   adBlockRecoveryAdViewed(args: {
     variant: AdBlockRecoveryVariant;
+    experiment?: AdBlockRecoveryExperimentId;
     slotName: AdSlotName;
     adSlotId: string;
     attemptAgeMs: number;
@@ -884,7 +931,7 @@ export const analytics = {
     pagePath?: string;
   }) {
     trackAdBlockRecovery("ad_block_recovery_ad_viewed", {
-      experiment: AD_BLOCK_RECOVERY_EXPERIMENT,
+      experiment: args.experiment ?? AD_BLOCK_RECOVERY_EXPERIMENT,
       variant: args.variant,
       slot_name: args.slotName,
       ad_slot_id: args.adSlotId,

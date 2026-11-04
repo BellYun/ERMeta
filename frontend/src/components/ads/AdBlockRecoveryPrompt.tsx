@@ -11,6 +11,8 @@ import {
 import { canLoadAds } from "@/components/ads/AdSenseScript";
 import type { RouteLocale } from "@/i18n/routing";
 import {
+  AD_BLOCK_RECOVERY_EXPERIMENT,
+  AD_BLOCK_RECOVERY_PILOT,
   claimRecentAdBlockRecoveryMilestone,
   getAdBlockRecoverySessionStorage,
   getRandomExperimentBucket,
@@ -19,9 +21,14 @@ import {
   resolveAdBlockRecoveryVariant,
   suppressAdBlockRecoveryPrompt,
   type AdBlockRecoveryDismissReason,
+  type AdBlockRecoveryExperimentId,
   type AdBlockRecoveryVariant,
   type StorageLike,
 } from "@/lib/adBlockRecoveryExperiment";
+import {
+  AD_BLOCK_RECOVERY_PILOT_CONFIG,
+  assignAdBlockRecoveryPilot,
+} from "@/lib/adBlockRecoveryPilot";
 import { analytics } from "@/lib/analytics";
 
 const DETECTION_DELAY_MS = 3000;
@@ -367,6 +374,7 @@ export function AdBlockRecoveryPrompt() {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
   const primaryButtonRef = useRef<HTMLButtonElement | null>(null);
   const shownPathRef = useRef<string | null>(null);
+  const shownExperimentRef = useRef<AdBlockRecoveryExperimentId>(AD_BLOCK_RECOVERY_EXPERIMENT);
   const dismissInProgressRef = useRef(false);
   const [variant, setVariant] = useState<AdBlockRecoveryVariant>("context");
   const [isOpen, setIsOpen] = useState(false);
@@ -397,6 +405,7 @@ export function AdBlockRecoveryPrompt() {
 
     if (
       AD_BLOCK_RECOVERY_MODE === "off" ||
+      (AD_BLOCK_RECOVERY_MODE === "pilot" && !AD_BLOCK_RECOVERY_PILOT_CONFIG) ||
       !ADSENSE_CLIENT ||
       ADSENSE_PREVIEW ||
       !canLoadAds(pathname)
@@ -407,9 +416,33 @@ export function AdBlockRecoveryPrompt() {
     if (isAdBlockRecoveryPromptSuppressed(storage, Date.now())) return;
 
     let timerId: ReturnType<typeof setTimeout> | null = null;
+    let cancelled = false;
+
+    const canDetect = () =>
+      !cancelled && document.visibilityState === "visible" && navigator.onLine !== false;
+
+    const showPrompt = (
+      assignedVariant: AdBlockRecoveryVariant,
+      experiment: AdBlockRecoveryExperimentId
+    ) => {
+      if (!canDetect() || shownPathRef.current === pathname) return;
+      shownPathRef.current = pathname;
+      shownExperimentRef.current = experiment;
+      setVariant(assignedVariant);
+      setUiState("default");
+      dismissInProgressRef.current = false;
+      setIsOpen(true);
+      analytics.adBlockRecoveryPromptShown({
+        experiment,
+        variant: assignedVariant,
+        locale,
+        pagePath: pathname,
+        detectionMethod: "cosmetic_bait",
+      });
+    };
 
     const runDetection = () => {
-      if (document.visibilityState !== "visible" || navigator.onLine === false) return;
+      if (!canDetect()) return;
       const bait = baitRef.current;
       if (!bait) return;
 
@@ -423,6 +456,7 @@ export function AdBlockRecoveryPrompt() {
         if (attempt) {
           analytics.adBlockRecoverySucceeded({
             variant: attempt.variant,
+            experiment: attempt.experiment,
             attemptAgeMs: now - attempt.attemptedAt,
             attemptPagePath: attempt.pagePath,
             pagePath: pathname,
@@ -432,23 +466,28 @@ export function AdBlockRecoveryPrompt() {
       }
 
       if (shownPathRef.current === pathname) return;
+      if (AD_BLOCK_RECOVERY_PILOT_CONFIG) {
+        void assignAdBlockRecoveryPilot(
+          AD_BLOCK_RECOVERY_PILOT_CONFIG,
+          () => canDetect() && !isAdBlockRecoveryPromptSuppressed(storage, Date.now())
+        ).then((result) => {
+          if (!result) return;
+          if (result.isNew) {
+            analytics.adBlockRecoveryPilotAssigned(result.assignment);
+          }
+          if (result.assignment.variant === "context") {
+            showPrompt("context", AD_BLOCK_RECOVERY_PILOT);
+          }
+        });
+        return;
+      }
+
       const assignedVariant = resolveAdBlockRecoveryVariant(
         storage,
         AD_BLOCK_RECOVERY_MODE,
         getRandomExperimentBucket()
       );
-      if (!assignedVariant) return;
-      shownPathRef.current = pathname;
-      setVariant(assignedVariant);
-      setUiState("default");
-      dismissInProgressRef.current = false;
-      setIsOpen(true);
-      analytics.adBlockRecoveryPromptShown({
-        variant: assignedVariant,
-        locale,
-        pagePath: pathname,
-        detectionMethod: "cosmetic_bait",
-      });
+      if (assignedVariant) showPrompt(assignedVariant, AD_BLOCK_RECOVERY_EXPERIMENT);
     };
 
     const scheduleDetection = () => {
@@ -465,6 +504,7 @@ export function AdBlockRecoveryPrompt() {
     window.addEventListener("online", handleOnline);
 
     return () => {
+      cancelled = true;
       if (timerId) clearTimeout(timerId);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("online", handleOnline);
@@ -479,6 +519,7 @@ export function AdBlockRecoveryPrompt() {
       if (!isPreviewMode) {
         suppressAdBlockRecoveryPrompt(getClientStorage(), Date.now());
         analytics.adBlockRecoveryPromptDismissed({
+          experiment: shownExperimentRef.current,
           variant,
           reason,
           locale,
@@ -502,12 +543,14 @@ export function AdBlockRecoveryPrompt() {
     const recoveryStorage = getAdBlockRecoverySessionStorage();
     if (recoveryStorage) {
       markAdBlockRecoveryAttempt(recoveryStorage, {
+        experiment: shownExperimentRef.current,
         variant,
         attemptedAt: now,
         pagePath: pathname,
       });
     }
     analytics.adBlockRecoveryReloadRequested({
+      experiment: shownExperimentRef.current,
       variant,
       locale,
       pagePath: pathname,

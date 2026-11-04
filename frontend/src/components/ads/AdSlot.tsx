@@ -22,6 +22,7 @@ import {
   getAdBlockRecoverySessionStorage,
   type AdBlockRecoveryMilestone,
 } from "@/lib/adBlockRecoveryExperiment";
+import { getAdBlockRecoveryPilotChannel } from "@/lib/adBlockRecoveryPilot";
 import { markAdSlotState } from "@/lib/adPerformance";
 import type { AdPlacementAttribution } from "@/lib/adPlacementExperiment";
 import {
@@ -88,8 +89,9 @@ function trackAdBlockRecoveryDelivery(
   const attempt = claimRecentAdBlockRecoveryMilestone(storage, milestone, now);
   if (!attempt) return;
 
-  const properties = {
+  const properties: Parameters<typeof analytics.adBlockRecoveryAdFilled>[0] = {
     variant: attempt.variant,
+    experiment: attempt.experiment,
     slotName: args.slotName,
     adSlotId: args.adSlotId,
     attemptAgeMs: now - attempt.attemptedAt,
@@ -236,6 +238,10 @@ export function AdSlot({
     if (ADSENSE_PREVIEW || !ADSENSE_CLIENT || !slot || !element) return;
     if (pushedElement.current === element) return;
     try {
+      const requestChannel = getAdBlockRecoveryPilotChannel() ?? resolvedChannel;
+      if (requestChannel) element.setAttribute("data-ad-channel", requestChannel);
+      else element.removeAttribute("data-ad-channel");
+
       (window.adsbygoogle = window.adsbygoogle || []).push({});
       pushedElement.current = element;
       setStatus("requested");
@@ -243,7 +249,7 @@ export function AdSlot({
     } catch {
       // A queued adsbygoogle command is normally accepted before the loader finishes.
     }
-  }, [slot, trackStatus]);
+  }, [resolvedChannel, slot, trackStatus]);
 
   const trackAbandonment = useEffectEvent((reason: AdSlotAbandonReason) => {
     if (

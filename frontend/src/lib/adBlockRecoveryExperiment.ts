@@ -1,7 +1,11 @@
 export const AD_BLOCK_RECOVERY_EXPERIMENT = "adblock_recovery_prompt_v1";
+export const AD_BLOCK_RECOVERY_PILOT = "adblock_recovery_prompt_v2";
 
 export type AdBlockRecoveryVariant = "context" | "direct";
-export type AdBlockRecoveryMode = "off" | "experiment" | AdBlockRecoveryVariant;
+export type AdBlockRecoveryMode = "off" | "experiment" | "pilot" | AdBlockRecoveryVariant;
+export type AdBlockRecoveryExperimentId =
+  | typeof AD_BLOCK_RECOVERY_EXPERIMENT
+  | typeof AD_BLOCK_RECOVERY_PILOT;
 export type AdBlockRecoveryDismissReason = "close" | "later" | "backdrop" | "escape";
 export type AdBlockRecoveryMilestone = "bait_passed" | "ad_filled" | "ad_viewed";
 
@@ -15,6 +19,7 @@ export interface RecoveryAttempt {
   variant: AdBlockRecoveryVariant;
   attemptedAt: number;
   pagePath: string;
+  experiment?: AdBlockRecoveryExperimentId;
 }
 
 interface StoredRecoveryAttempt extends RecoveryAttempt {
@@ -61,7 +66,7 @@ export function resolveAdBlockRecoveryVariant(
   mode: AdBlockRecoveryMode,
   randomBucket: number
 ): AdBlockRecoveryVariant | null {
-  if (mode === "off") return null;
+  if (mode === "off" || mode === "pilot") return null;
   if (mode === "context" || mode === "direct") return mode;
   return getOrCreateAdBlockRecoveryVariant(storage, randomBucket);
 }
@@ -138,24 +143,24 @@ export function claimRecentAdBlockRecoveryMilestone(
       return null;
     }
 
+    const attempt: RecoveryAttempt = {
+      variant: parsed.variant,
+      attemptedAt: parsed.attemptedAt,
+      pagePath: parsed.pagePath,
+      ...(parsed.experiment && { experiment: parsed.experiment }),
+    };
     const milestones = parsed.milestones ?? {};
     if (typeof milestones[milestone] === "number") return null;
 
     storage.setItem(
       STORAGE_KEYS.recoveryAttempt,
       JSON.stringify({
-        variant: parsed.variant,
-        attemptedAt: parsed.attemptedAt,
-        pagePath: parsed.pagePath,
+        ...attempt,
         milestones: { ...milestones, [milestone]: now },
       } satisfies StoredRecoveryAttempt)
     );
 
-    return {
-      variant: parsed.variant,
-      attemptedAt: parsed.attemptedAt,
-      pagePath: parsed.pagePath,
-    };
+    return attempt;
   } catch {
     try {
       storage.removeItem(STORAGE_KEYS.recoveryAttempt);

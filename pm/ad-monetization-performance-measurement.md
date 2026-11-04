@@ -161,6 +161,38 @@ AdSense 일별 custom-channel report의 `impressions, Active View viewable, esti
 - Fill rate 또는 AdSense estimated earnings가 유의하게 하락하면 로딩 margin을 재조정
 - 광고 성능 속성 때문에 `web_vital_measured` 이벤트 전송량이 늘어나지 않아야 함
 
+## 6. 광고 차단 안내 6주 파일럿
+
+[#352](https://github.com/BellYun/ERMeta/issues/352). Context 안내와 팝업 미노출을 브라우저 단위로 50:50 배정한다. 팝업 표시 전에 배정을 기록하고, 표시 여부나 광고 차단 해제 여부와 관계없이 배정 브라우저 전체를 분모로 사용한다.
+
+### 시작 전 2일 점검
+
+- Preview에서 차단기를 켠 브라우저로 팝업 표시 및 미노출, 새로고침·탭 간 동일 배정, 차단 해제 뒤 슬롯 채널을 확인한다. Amplitude와 Vercel Analytics에서 양군 배정과 핵심 기능 이벤트가 도착하는지 확인한다. 계측 점검에는 운영 파일럿과 다른 시작 시각과 테스트용 채널을 사용한다.
+- AdSense for Content에 전반 Context, 전반 미노출, 후반 Context, 후반 미노출 순으로 전용 커스텀 채널을 만든다. 채널을 기존 광고 단위에 일괄 연결하지 않는다. 정상 광고 요청의 리포트로 채널 귀속을 확인한다.
+- 운영 설정에서 아래 세 값을 함께 배포한다. 시작 시각은 타임존을 명시한 ISO 8601 값으로 입력하고, 채널 ID는 위 순서로 입력한다. 시작 시각과 채널 목록은 파일럿 동안 고정한다. 설정이 누락되거나 중복 채널이 있으면 파일럿의 배정과 팝업이 꺼진다.
+
+~~~text
+NEXT_PUBLIC_AD_BLOCK_RECOVERY_MODE=pilot
+NEXT_PUBLIC_AD_BLOCK_RECOVERY_PILOT_START_AT=<ISO 8601 시작 시각>
+NEXT_PUBLIC_AD_BLOCK_RECOVERY_PILOT_CHANNELS=<전반 Context>,<전반 미노출>,<후반 Context>,<후반 미노출>
+~~~
+
+### 모집 및 관찰
+
+- 시작 시각부터 30일간 신규 배정한다. 전·후반 경계는 15일이다. 브라우저의 최초 배정은 localStorage에 저장하며, 저장소 또는 Web Locks를 사용할 수 없는 브라우저는 배정하지 않는다. 마지막 배정자는 개인별 7일 관찰을 마치며, 그 뒤 해당 브라우저에 팝업과 파일럿 채널 적용이 끝난다.
+- Amplitude의 `ad_block_recovery_pilot_assigned`와 `ad_block_recovery_pilot_core_feature_used`를 같은 `pilot_start_ms`와 `assignment_id`로 연결한다. 분자는 최초 배정 후 24시간 이내 핵심 기능 이용, 분모는 양군 각각의 전체 고유 배정이다. 기존 NSM 이벤트는 세션 단위 중복 제거를 유지한다. 배정 건수와 핵심 기능 이벤트 전달은 Vercel Analytics와 교차 점검한다.
+- 최초 배정 후 7일 이내 정상적으로 요청된 수동 광고 슬롯에는 기존 위치 채널 대신 파일럿 채널 한 개를 붙인다. 배정 전 요청과 태깅할 수 없는 Auto ads는 수익 집계 범위에서 제외한다. AdSense의 `DATE × CUSTOM_CHANNEL_ID`별 `ESTIMATED_EARNINGS`를 같은 보고 시간대·통화로 읽고, 군별 예상 수익을 최초 배정 브라우저 1,000명당 환산한다.
+
+### 종료
+
+마지막 7일 관찰이 끝난 뒤 72시간 후 한 번 판정한다. 중간에는 양군 배정, 이벤트 누락과 채널 오귀속을 점검한다.
+
+| 관측 결과 | 다음 액션 |
+| --- | --- |
+| Context 핵심 기능 이용률이 5%p 이상 낮음 | 미노출을 기본으로 두고 UX를 수정한다. 통계적 불확실성은 별도로 보고한다. |
+| Context 순증이 1,000명당 ₩2,000 이상, 모집 전·후반 및 최대 수익일을 양군에서 제외한 뒤에도 양의 방향, 핵심 기능 이용률 차이 95% 하한이 −10%p 초과 | 새 코호트에서 한 번 더 검증한다. 전면 적용 기준은 −5%p 하락 배제다. |
+| 나머지 결과 | 미노출을 기본으로 두고 마감한다. 계측 오류가 있으면 계측부터 수정한다. |
+
 ## 참고
 
 - [Google AdSense: Viewability and Active View](https://support.google.com/adsense/answer/4510652?hl=en)

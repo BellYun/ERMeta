@@ -88,6 +88,35 @@ async function flushAsync() {
 
 describe("analytics — P0 helpers", () => {
   describe("ad block recovery funnel", () => {
+    it("파일럿 배정을 최초 시각과 고정 식별자로 양쪽 분석 도구에 보낸다", async () => {
+      const assignedAt = Date.UTC(2026, 10, 11);
+      const pilotStart = Date.UTC(2026, 10, 10);
+      analytics.adBlockRecoveryPilotAssigned({
+        id: "assignment-1",
+        variant: "holdout",
+        half: "first",
+        assignedAt,
+        pilotStart,
+      });
+      await flushAsync();
+
+      const event = "ad_block_recovery_pilot_assigned";
+      const properties = {
+        experiment: "adblock_recovery_prompt_v2",
+        variant: "holdout",
+        enrollment_half: "first",
+        assignment_id: "assignment-1",
+        assigned_at_ms: assignedAt,
+        pilot_start_ms: pilotStart,
+        assignment_age_ms: 0,
+      };
+      expect(trackMock).toHaveBeenCalledWith(event, properties, {
+        insert_id: "assignment-1:" + event,
+        time: assignedAt,
+      });
+      expect(vercelTrackMock).toHaveBeenCalledWith(event, properties);
+    });
+
     it("Amplitude와 Vercel에 동일한 실험 노출 이벤트를 보낸다", async () => {
       analytics.adBlockRecoveryPromptShown({
         variant: "direct",
