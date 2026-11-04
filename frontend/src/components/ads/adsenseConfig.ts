@@ -18,6 +18,7 @@ function resolveAdBlockRecoveryMode(): AdBlockRecoveryMode {
   if (
     configured === "off" ||
     configured === "experiment" ||
+    configured === "pilot" ||
     configured === "context" ||
     configured === "direct"
   ) {
