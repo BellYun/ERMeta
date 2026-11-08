@@ -248,6 +248,11 @@
       "weaponCode": 15,
       "label": "단검",
       "isDefault": true
+    },
+    {
+      "weaponCode": 18,
+      "label": "쌍검",
+      "isDefault": false
     }
   ],
   "24": [
@@ -761,6 +766,13 @@
     {
       "weaponCode": 11,
       "label": "저격총",
+      "isDefault": true
+    }
+  ],
+  "91": [
+    {
+      "weaponCode": 16,
+      "label": "양손검",
       "isDefault": true
     }
   ]
