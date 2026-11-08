@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import characterBestWeapons from "@/../const/characterBestWeapons.json";
 import { createSynergyDetailSelectionStore } from "@/components/features/synergy-detail/SynergyDetailSelectionStore";
 import {
   computeNextAllies,
@@ -6,6 +7,7 @@ import {
   parseAllyFromParams,
   type AllySelection,
 } from "@/components/features/synergy-detail/WeaponAllySelector";
+import { OFFICIAL_CONTROL_DIFFICULTY_BY_PROFILE } from "@/generated/characterControlDifficulty";
 
 const item = (charCode: number, weaponCode: number) => ({
   charCode,
@@ -14,6 +16,31 @@ const item = (charCode: number, weaponCode: number) => ({
 });
 
 describe("character weapon options", () => {
+  it("covers every official character and weapon in the catalog and shared picker", () => {
+    const officialKeys = Object.keys(OFFICIAL_CONTROL_DIFFICULTY_BY_PROFILE);
+    const registeredKeys = Object.entries(characterBestWeapons).flatMap(([code, weapons]) =>
+      weapons.map((weapon) => `${code}:${weapon.weaponCode}`)
+    );
+    expect(registeredKeys.toSorted()).toEqual(officialKeys.toSorted());
+
+    // Alex switches weapons in one loadout and is presented as one all-weapons option.
+    const selectableKeys = [
+      ...new Set(officialKeys.map((key) => (key.startsWith("27:") ? "27:0" : key))),
+    ];
+    expect(
+      getAllCharWeaponItems()
+        .map((option) => `${option.charCode}:${option.weaponCode}`)
+        .toSorted()
+    ).toEqual(selectableKeys.toSorted());
+  });
+
+  it("offers Cathy with both dagger and dual swords in the shared ally and focus pool list", () => {
+    expect(getAllCharWeaponItems().filter((option) => option.charCode === 23)).toEqual([
+      { charCode: 23, weaponCode: 15, weaponLabel: "단검" },
+      { charCode: 23, weaponCode: 18, weaponLabel: "쌍검" },
+    ]);
+  });
+
   it("shows Shoichi only with dagger and Alex only as an all-weapons choice", () => {
     expect(getAllCharWeaponItems().filter((option) => option.charCode === 18)).toEqual([
       { charCode: 18, weaponCode: 15, weaponLabel: "단검" },
