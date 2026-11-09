@@ -1,0 +1,94 @@
+name: Generate Patch Notes Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "패치 버전 (예: 12.8)"
+        required: true
+        type: string
+      url:
+        description: "님블뉴런 공식 패치 노트 공지 URL"
+        required: false
+        type: string
+      raw_text:
+        description: "패치 노트 원문 텍스트 (URL 대신 직접 붙여넣을 때 사용)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  generate:
+    name: Generate Patch Data & PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Prepare raw text file if provided
+        if: ${{ inputs.raw_text != '' }}
+        run: |
+          cat << 'EOF' > /tmp/patch_raw.txt
+          ${{ inputs.raw_text }}
+          EOF
+
+      - name: Run Patch Note Generator
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -n "${{ inputs.url }}" ]; then
+            node frontend/scripts/generate-patch-note.mjs --version "${{ inputs.version }}" --url "${{ inputs.url }}"
+          elif [ -f /tmp/patch_raw.txt ]; then
+            node frontend/scripts/generate-patch-note.mjs --version "${{ inputs.version }}" --file /tmp/patch_raw.txt
+          else
+            echo "❌ Error: Either URL or raw_text must be provided."
+            exit 1
+          fi
+
+      - name: Run Unit Tests
+        working-directory: frontend
+        run: npm test
+
+      - name: Commit and Create Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          BRANCH_NAME="feat/patch-${VERSION}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git checkout -b "$BRANCH_NAME"
+          git add frontend/src/data/
+          git commit -m "feat: 패치 ${VERSION} 밸런스 데이터 자동 등록"
+          git push -u origin "$BRANCH_NAME"
+
+          gh pr create \
+            --base main \
+            --head "$BRANCH_NAME" \
+            --title "feat: 패치 ${VERSION} 밸런스 데이터 자동 등록" \
+            --body "## 변경 사항
+- 님블뉴런 공식 패치 노트를 기반으로 \`frontend/src/data/${VERSION}.ts\` 데이터를 자동 생성했습니다.
+- \`frontend/src/data/patch-notes.ts\` 인덱스에 패치 버전을 등록했습니다.
+
+## 테스트 결과
+- \`npm test\` 통과 완료
+- Gemini PR Architecture Auditor 검토 대기"
