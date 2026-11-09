@@ -25,7 +25,7 @@ function resolveAdBlockRecoveryMode(): AdBlockRecoveryMode {
   }
 
   if (configured) return "off";
-  return process.env.NODE_ENV === "production" ? "context" : "off";
+  return process.env.NODE_ENV === "production" ? "experiment" : "off";
 }
 
 export const AD_BLOCK_RECOVERY_MODE = resolveAdBlockRecoveryMode();

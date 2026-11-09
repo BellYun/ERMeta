@@ -1,7 +1,6 @@
 import { Analytics } from "@vercel/analytics/next";
 import Script from "next/script";
 import { Suspense } from "react";
-import { AdBlockRecoveryPrompt } from "@/components/ads/AdBlockRecoveryPrompt";
 import { AdSenseScript } from "@/components/ads/AdSenseScript";
 import { AmplitudeLoader } from "@/components/AmplitudeLoader";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
@@ -16,9 +15,6 @@ export function RootDocumentExtras() {
       <GoogleAnalytics />
       <Suspense fallback={null}>
         <AdSenseScript />
-      </Suspense>
-      <Suspense fallback={null}>
-        <AdBlockRecoveryPrompt />
       </Suspense>
       {process.env.NEXT_PUBLIC_SENTRY_DSN && (
         <Script
