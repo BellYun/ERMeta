@@ -1,0 +1,51 @@
+name: Issue-to-Plan Architectural Spec Generator
+
+on:
+  issues:
+    types: [opened, labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: "기획안을 생성할 이슈 번호"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: issue-plan-${{ github.event.issue.number || github.event.inputs.issue_number }}
+  cancel-in-progress: true
+
+jobs:
+  plan:
+    name: Gemini Issue Planner
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    # Run if triggered via dispatch OR if labeled with 'agent:plan' OR if new issue (optional flag)
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.action == 'labeled' && github.event.label.name == 'agent:plan') ||
+      (github.event.action == 'opened' && contains(github.event.issue.labels.*.name, 'agent:plan'))
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run Issue Planner
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || github.event.inputs.issue_number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          node .github/scripts/plan-issue.mjs
