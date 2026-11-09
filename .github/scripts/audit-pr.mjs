@@ -138,30 +138,47 @@ Use this structure:
 }
 
 async function callGemini(prompt) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-  
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.2,
-      },
-    }),
-  });
+  const models = [
+    process.env.GEMINI_MODEL,
+    "gemini-3.8-flash",
+    "gemini-1.5-flash",
+    "gemini-2.0-flash",
+  ].filter(Boolean);
 
-  if (!response.ok) {
-    const errorBody = await response.text();
-    throw new Error(`Gemini API request failed (${response.status}): ${errorBody}`);
+  let lastError = null;
+
+  for (const model of models) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.2,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`[${model}] (${response.status}): ${errorBody}`);
+      }
+
+      const data = await response.json();
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!text) {
+        throw new Error(`Empty response from model ${model}`);
+      }
+      return text.trim();
+    } catch (err) {
+      console.warn(`⚠️ Model ${model} failed, trying next candidate:`, err.message);
+      lastError = err;
+    }
   }
 
-  const data = await response.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) {
-    throw new Error("Empty response from Gemini API");
-  }
-  return text.trim();
+  throw lastError;
 }
 
 async function postOrUpdateComment(body) {
