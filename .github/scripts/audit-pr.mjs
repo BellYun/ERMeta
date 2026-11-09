@@ -138,30 +138,63 @@ Use this structure:
 }
 
 async function callGemini(prompt) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-  
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.2,
-      },
-    }),
-  });
+  const models = [
+    process.env.GEMINI_MODEL,
+    "gemini-3.8-flash",
+    "gemini-3.8-pro",
+  ].filter(Boolean);
 
-  if (!response.ok) {
-    const errorBody = await response.text();
-    throw new Error(`Gemini API request failed (${response.status}): ${errorBody}`);
+  let lastError = null;
+
+  for (const model of models) {
+    // Retry up to 3 times on temporary errors (503 / 429)
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              temperature: 0.2,
+            },
+          }),
+        });
+
+        if (!response.ok) {
+          const errorBody = await response.text();
+          // If temporary 503 (high demand) or 429 (rate limit), retry after backoff
+          if ((response.status === 503 || response.status === 429) && attempt < 3) {
+            const waitMs = attempt * 2000;
+            console.warn(`⏳ [${model}] ${response.status} High demand. Retrying in ${waitMs / 1000}s (attempt ${attempt}/3)...`);
+            await new Promise((r) => setTimeout(r, waitMs));
+            continue;
+          }
+          throw new Error(`[${model}] (${response.status}): ${errorBody}`);
+        }
+
+        const data = await response.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!text) {
+          throw new Error(`Empty response from model ${model}`);
+        }
+        return text.trim();
+      } catch (err) {
+        if (attempt < 3 && (err.message.includes("503") || err.message.includes("429"))) {
+          const waitMs = attempt * 2000;
+          console.warn(`⏳ [${model}] Temporary error. Retrying in ${waitMs / 1000}s...`);
+          await new Promise((r) => setTimeout(r, waitMs));
+          continue;
+        }
+        console.warn(`⚠️ Model ${model} failed:`, err.message);
+        lastError = err;
+        break; // break retry loop to try next model
+      }
+    }
   }
 
-  const data = await response.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) {
-    throw new Error("Empty response from Gemini API");
-  }
-  return text.trim();
+  throw lastError;
 }
 
 async function postOrUpdateComment(body) {
