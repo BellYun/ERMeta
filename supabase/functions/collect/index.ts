@@ -17,6 +17,7 @@ import {
   fetchTopRanks,
 } from "../_shared/bser-api.ts";
 import {
+  getCollectableTrioTier,
   getCollectableTiers,
   MIN_COLLECT_MMR,
   MIN_COLLECT_TIER,
@@ -409,13 +410,8 @@ function parseGameData(
   for (const [, teamMembers] of teams) {
     if (teamMembers.length !== 3) continue;
 
-    const tierSets = teamMembers.map((m) =>
-      getCollectableTiers(m.mmrBefore, rank1000MMR)
-    );
-    const commonTiers = tierSets[0].filter(
-      (t) => tierSets[1].includes(t) && tierSets[2].includes(t)
-    );
-    if (commonTiers.length === 0) continue;
+    const teamTier = getCollectableTrioTier(teamMembers.map((m) => m.mmrBefore));
+    if (teamTier === null) continue;
 
     const sorted = [...teamMembers].sort((a, b) => a.characterNum - b.characterNum);
     const avgRP = teamMembers.reduce((s, m) => s + (rpByParticipant.get(m) ?? 0), 0) / 3;
@@ -434,7 +430,7 @@ function parseGameData(
       gr: sorted[0].gameRank,
       rp: avgRP,
       hw: hasWeapons,
-      tiers: commonTiers,
+      tiers: [teamTier],
     });
   }
 

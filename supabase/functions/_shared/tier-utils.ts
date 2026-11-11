@@ -74,3 +74,20 @@ export function getCollectableTiers(
     COLLECT_TIERS.includes(tier)
   );
 }
+
+/** 전원 다이아+인 3인 팀을 가장 낮은 팀원 기준의 단일 티어에 집계한다. */
+export function getCollectableTrioTier(
+  memberMMRs: readonly (number | null | undefined)[],
+): TierGroup | null {
+  if (memberMMRs.length !== 3) return null;
+
+  let minimumMMR = Infinity;
+  for (const mmr of memberMMRs) {
+    if (typeof mmr !== "number" || !Number.isFinite(mmr) || mmr < MIN_COLLECT_MMR) {
+      return null;
+    }
+    minimumMMR = Math.min(minimumMMR, mmr);
+  }
+
+  return getCollectableTiers(minimumMMR)[0] ?? null;
+}
