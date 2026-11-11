@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { HomePageContent } from "@/components/features/home/HomePageContent";
 import { LANGUAGE_BY_ROUTE_LOCALE, ROUTE_LOCALES, isRouteLocale } from "@/i18n/routing";
-import { getPatches } from "@/lib/getPatches";
+import { getHomePagePatches } from "@/lib/getPatches";
 import { getCachedHomeMetaStats } from "@/lib/homeMetaServer";
 import {
   DEFAULT_HOME_TIER,
@@ -15,7 +15,7 @@ import { buildLocalizedAlternates, localizeRoutePath } from "@/lib/seoLocales";
 import { BASE_URL } from "@/lib/siteMetadata";
 import { getMessage, loadIntlMessages, OG_LOCALE_BY_LANGUAGE } from "@/lib/staticIntl";
 
-export const revalidate = 300;
+export const revalidate = 1800;
 export const dynamic = "force-static";
 export const dynamicParams = false;
 
@@ -79,7 +79,7 @@ export default async function LocalizedRankingsPage({ params }: LocalePageProps)
 
   setRequestLocale(locale);
 
-  const availablePatches = await getPatches();
+  const availablePatches = await getHomePagePatches();
   const currentPatch = availablePatches[0] ?? HOME_META_FALLBACK_PATCH;
   const patches = [currentPatch, ...availablePatches.filter((patch) => patch !== currentPatch)];
   let homeMetaStats = createEmptyHomeMetaStats(currentPatch);

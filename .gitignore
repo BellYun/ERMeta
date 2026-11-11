@@ -13,10 +13,27 @@
 !frontend/docs/NEXT_RENDERING_STRATEGY_AUDIT_2026-07-20.md
 !pm/ad-monetization-performance-measurement.md
 !backend/PLAYER_STATS_BACKEND_DESIGN.md
+!.agents/skills/ermeta-composition-reasoning/SKILL.md
+
+# Large local composition validation evidence and draft queues
+/knowledge/eternal-return/community/composition/validations/**/*-evidence.json
+/knowledge/eternal-return/community/composition/validations/**/queue.json
+/knowledge/eternal-return/community/composition/validations/**/drafts.ndjson
 
 # Backend
 backend/dist/
 node_modules/
+
+# Local cache, backups & python artifacts
+/.cleanup-backups/
+/.pnpm-store/
+**/__pycache__/
+*.pyc
+
+# Large local research snapshots & AI batch outputs
+/frontend/analysis-snapshots/composition-affinity/*
+!/frontend/analysis-snapshots/composition-affinity/season10-11-exact-two-partner-affinity-v1/
+/frontend/data/composition-explanations/
 # Perf CI artifacts
 .lighthouseci/
 lh-*.json

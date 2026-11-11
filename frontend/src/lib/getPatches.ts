@@ -51,6 +51,13 @@ export const getPatches = unstable_cache(
   { revalidate: 300, tags: ["patches"] }
 );
 
+// 홈·랭킹은 30분마다 갱신한다. API의 5분 TTL을 페이지 ISR에 전파하지 않는다.
+export const getHomePagePatches = unstable_cache(
+  fetchPatches,
+  ["home-page-patches", "patch-notes-v14-12-7-sample-gate-x8"],
+  { revalidate: 1800, tags: ["patches"] }
+);
+
 // 상세 페이지가 5분 TTL을 상속하지 않도록 원본 조회부터 별도로 캐시한다.
 // getPatches()를 감싸면 내부의 짧은 TTL이 다시 페이지 ISR에 전파된다.
 export const getCharacterPagePatches = unstable_cache(
