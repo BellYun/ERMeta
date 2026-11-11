@@ -37,7 +37,7 @@ describe("patch detail cache dependencies", () => {
     });
     success();
     await getCachedHomeMetaStats(HOME_META_TARGET_PATCH);
-    expect(cached.mock.calls[1][2]).toMatchObject({ revalidate: 300 });
+    expect(cached.mock.calls[1][2]).toMatchObject({ revalidate: 1800 });
     expect(cached.mock.calls[0][1]).not.toEqual(cached.mock.calls[1][1]);
   });
   it("does not attach a finite TTL to an archived patch", async () => {
