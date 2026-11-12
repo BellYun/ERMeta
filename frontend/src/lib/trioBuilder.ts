@@ -1,4 +1,5 @@
 import characterBestWeapons from "@/../const/characterBestWeapons.json";
+import { getTrioWeaponBucketUrl } from "./trioStaticBuckets";
 import { type CachedTrioWeaponTuple, parseTrioWeaponTupleBucket } from "./trioWeaponTuple";
 
 export interface PoolPick {
@@ -124,12 +125,9 @@ export async function loadTeamMetrics(pools: TeamPools, signal: AbortSignal) {
     Array.from({ length: Math.min(4, anchors.length) }, async () => {
       while (next < anchors.length) {
         const pick = anchors[next++]!;
-        const query = new URLSearchParams({
-          character1: String(pick.charCode),
-          weapon1: String(pick.weaponCode),
-          format: "tuple",
+        const response = await fetch(getTrioWeaponBucketUrl(pick.charCode, pick.weaponCode), {
+          signal,
         });
-        const response = await fetch(`/api/stats/trios-weapon?${query}`, { signal });
         if (!response.ok) throw new Error("team_stats_unavailable");
         tuples.push(...parseTrioWeaponTupleBucket(await response.json()).items);
       }

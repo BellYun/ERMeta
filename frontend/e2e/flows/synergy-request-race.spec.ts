@@ -30,14 +30,11 @@ test.describe("시너지 상세 요청 경쟁", () => {
       markBucketRequestStarted = resolve;
     });
 
-    await page.route(/\/api\/stats\/trios-weapon(?:\?.*)?$/, async (route) => {
+    await page.route("**/data/trio-builder/*/*.json", async (route) => {
       const url = new URL(route.request().url());
       requestCount += 1;
-      expect(url.searchParams.get("format")).toBe("tuple");
-      expect(url.searchParams.get("character1")).toBe("6");
-      expect(url.searchParams.get("weapon1")).toBe("8");
-      expect(url.searchParams.has("character2")).toBe(false);
-      expect(url.searchParams.has("weapon2")).toBe(false);
+      expect(url.pathname).toMatch(/\/6-8\.json$/);
+      expect(url.search).toBe("");
 
       markBucketRequestStarted?.();
       await new Promise((resolve) => setTimeout(resolve, 1_000));

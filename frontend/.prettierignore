@@ -1,2 +1,4 @@
 public/l10n/chunks/**/*.json
 public/data/pick-partners/**/*.json
+public/data/trio-builder/**/*.json
+public/data/trio-detail-pairs/**/*.json

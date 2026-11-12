@@ -4,28 +4,14 @@ test.describe("Flow: 성공 조합 프로토타입 분석", () => {
   test("반복 상승 유형 조합의 근거와 교전 운영을 함께 표시", async ({ page }) => {
     const runtimeErrors: string[] = [];
     page.on("pageerror", (error) => runtimeErrors.push(error.message));
-    await page.route("**/api/stats/trios-weapon*", async (route) => {
+    await page.route("**/data/trio-builder/*/*.json", async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
         body: JSON.stringify({
-          results: [
-            {
-              character1: 1,
-              weaponType1: 16,
-              character2: 3,
-              weaponType2: 21,
-              character3: 48,
-              weaponType3: 3,
-              mainCore1: 0,
-              mainCore2: 0,
-              mainCore3: 0,
-              totalGames: 420,
-              winRate: 28.2,
-              averageRP: 11.4,
-              averageRank: 3.2,
-            },
-          ],
+          version: 1,
+          itemCount: 1,
+          items: [[1, 16, 3, 21, 48, 3, 420, 118.44, 14364, 1344]],
         }),
       });
     });

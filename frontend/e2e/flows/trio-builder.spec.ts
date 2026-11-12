@@ -1,4 +1,7 @@
 import { test, expect } from "@playwright/test";
+
+const bucketRoute = "**/data/trio-builder/*/*.json";
+
 const pools = [
   [
     { charCode: 1, weaponCode: 14 },
@@ -14,7 +17,7 @@ const pools = [
   ],
 ];
 test("builds every assignment including missing records and restores pools", async ({ page }) => {
-  await page.route("**/api/stats/trios-weapon?**", (route) =>
+  await page.route(bucketRoute, (route) =>
     route.fulfill({
       json: { version: 1, itemCount: 1, items: [[1, 14, 2, 9, 3, 16, 20, 4, 600, 80]] },
     })
@@ -51,7 +54,7 @@ test("handles failure and ignores a late response after pool changes", async ({ 
   const requested = new Promise<void>((resolve) => {
     started = resolve;
   });
-  await page.route("**/api/stats/trios-weapon?**", async (route) => {
+  await page.route(bucketRoute, async (route) => {
     started();
     await waiting;
     await route.fulfill({ json: { version: 1, itemCount: 0, items: [] } }).catch(() => {});
@@ -66,8 +69,8 @@ test("handles failure and ignores a late response after pool changes", async ({ 
   release();
   await expect(page.getByRole("button", { name: "가능한 조합 모두 보기" })).toBeDisabled();
   await expect(page.getByTestId("trio-assignment")).toHaveCount(0);
-  await page.unroute("**/api/stats/trios-weapon?**");
-  await page.route("**/api/stats/trios-weapon?**", (route) =>
+  await page.unroute(bucketRoute);
+  await page.route(bucketRoute, (route) =>
     route.fulfill({ status: 500, json: { error: "unavailable" } })
   );
   await page.goto(`/trio-builder?pools=${encodeURIComponent(JSON.stringify(pools))}`);

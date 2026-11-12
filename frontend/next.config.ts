@@ -40,6 +40,15 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        source: "/data/:snapshot(trio-builder|trio-detail-pairs)/:version/:bucket",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: IMMUTABLE_ASSET_CACHE_CONTROL,
+          },
+        ],
+      },
+      {
         source: "/l10n/chunks/:path*",
         headers: [
           {
