@@ -6,7 +6,6 @@ const { Client } = require('pg');
 
 const LOCK_ID = 372001;
 const BATCH_SIZE = 50;
-const PENDING_BATCH_SIZE = 5;
 const POLL_MS = 60_000;
 const REQUEST_TIMEOUT_MS = 15_000;
 
@@ -47,20 +46,19 @@ function createBserLookup(apiKey, intervalMs, settleMs, { request = fetch, targe
         redirect: 'error',
         signal: requestSignal,
       });
-      if (response.ok) bytes = Buffer.from(await response.arrayBuffer());
+      if (response.ok || response.status === 404) bytes = Buffer.from(await response.arrayBuffer());
       else await response.body?.cancel();
     } catch (error) {
       signal.throwIfAborted();
       throw new RetryableBserError(`BSER request failed for game ${gameId}: ${error.message}`);
     }
 
-    if (response.status === 404) return { status: 'missing' };
     const retryAfter = response.headers.get('Retry-After');
     if (response.status === 429 || response.status === 408 || response.status >= 500 ||
         (response.status === 403 && retryAfter)) {
       throw new RetryableBserError(`BSER HTTP ${response.status} for game ${gameId}`, retryDelay(retryAfter));
     }
-    if (!response.ok) throw new Error(`BSER HTTP ${response.status} for game ${gameId}`);
+    if (!response.ok && response.status !== 404) throw new Error(`BSER HTTP ${response.status} for game ${gameId}`);
 
     let result;
     try {
@@ -68,14 +66,17 @@ function createBserLookup(apiKey, intervalMs, settleMs, { request = fetch, targe
     } catch {
       throw new RetryableBserError(`BSER returned invalid JSON for game ${gameId}`);
     }
-    if (result?.code === 404) return { status: 'missing' };
+    if (result?.code === 404) return { status: 'skipped' };
+    if (response.status === 404) {
+      throw new RetryableBserError(`BSER HTTP 404 without code=404 for game ${gameId}`, retryDelay(retryAfter));
+    }
     if (result?.code === 429 || result?.code === 408 || result?.code >= 500) {
       throw new RetryableBserError(`BSER code ${result.code} for game ${gameId}`, retryDelay(retryAfter));
     }
     if (result?.code !== 200 || !Array.isArray(result.userGames)) {
       throw new Error(`Unexpected BSER response for game ${gameId}`);
     }
-    if (result.userGames.length === 0) return { status: 'missing' };
+    if (result.userGames.length === 0) return { status: 'deferred' };
 
     const first = result.userGames[0];
     if (!Number.isInteger(first?.matchingMode) || !result.userGames.every(
@@ -83,21 +84,20 @@ function createBserLookup(apiKey, intervalMs, settleMs, { request = fetch, targe
     )) {
       throw new Error(`BSER game ID or matching mode is inconsistent for game ${gameId}`);
     }
+    const startedAt = Date.parse(first.startDtm);
+    if (settleMs > 0 && Number.isFinite(startedAt) && fetchedAt.getTime() - startedAt < settleMs) {
+      return { status: 'deferred' };
+    }
+
     if (first.matchingMode !== 3) return { status: 'skipped' };
 
     const seasonId = Number.isInteger(first.seasonId) && first.seasonId >= 0 && first.seasonId <= 2_147_483_647
       ? first.seasonId : null;
     if (targetSeasonId !== undefined) {
       if (seasonId === null || !result.userGames.every((row) => row.seasonId === seasonId)) {
-        // Revisit games whose season cannot be confirmed instead of permanently skipping them.
-        return { status: 'missing' };
+        return { status: 'deferred' };
       }
       if (seasonId !== targetSeasonId) return { status: 'skipped' };
-    }
-
-    const startedAt = Date.parse(first.startDtm);
-    if (settleMs > 0 && Number.isFinite(startedAt) && fetchedAt.getTime() - startedAt < settleMs) {
-      return { status: 'deferred' };
     }
 
     const version = [first.versionSeason, first.versionMajor, first.versionMinor];
@@ -111,29 +111,16 @@ function createBserLookup(apiKey, intervalMs, settleMs, { request = fetch, targe
   };
 }
 
-async function saveResult(client, gameId, result, nextGameId, gaps = []) {
+async function saveRankedMatch(client, gameId, result) {
   await client.query('BEGIN');
   try {
-    if (result.status === 'ranked') {
-      await client.query(
-        `INSERT INTO match_collection.raw_matches
-          (game_id, matching_mode, season_id, patch_version, fetched_at, payload_gzip)
-         VALUES ($1, 3, $2, $3, $4, $5) ON CONFLICT (game_id) DO NOTHING`,
-        [gameId, result.seasonId, result.patchVersion, result.fetchedAt, result.payload],
-      );
-    }
-    await client.query('DELETE FROM match_collection.pending_games WHERE game_id = $1', [gameId]);
-
-    if (nextGameId !== undefined) {
-      if (gaps.length) {
-        await client.query(
-          `INSERT INTO match_collection.pending_games (game_id)
-           SELECT unnest($1::bigint[]) ON CONFLICT (game_id) DO NOTHING`,
-          [gaps],
-        );
-      }
-      await client.query('UPDATE match_collection.cursor SET next_game_id = $1', [nextGameId]);
-    }
+    await client.query(
+      `INSERT INTO match_collection.raw_matches
+        (game_id, matching_mode, season_id, patch_version, fetched_at, payload_gzip)
+       VALUES ($1, 3, $2, $3, $4, $5) ON CONFLICT (game_id) DO NOTHING`,
+      [gameId, result.seasonId, result.patchVersion, result.fetchedAt, result.payload],
+    );
+    await client.query('UPDATE match_collection.cursor SET next_game_id = $1', [gameId + 1]);
     await client.query('COMMIT');
   } catch (error) {
     await client.query('ROLLBACK').catch(() => {});
@@ -141,49 +128,23 @@ async function saveResult(client, gameId, result, nextGameId, gaps = []) {
   }
 }
 
-async function collectBatch(client, lookup, lookahead, signal) {
-  const { rows: pending } = await client.query(
-    `SELECT game_id FROM match_collection.pending_games
-     WHERE retry_at <= now() ORDER BY retry_at, game_id LIMIT $1`,
-    [PENDING_BATCH_SIZE],
-  );
-  for (const row of pending) {
-    signal.throwIfAborted();
-    const gameId = Number(row.game_id);
-    const result = await lookup(gameId, signal);
-    if (result.status === 'missing' || result.status === 'deferred') {
-      await client.query(
-        `UPDATE match_collection.pending_games
-         SET attempts = LEAST(attempts + 1, 8),
-             retry_at = now() + LEAST(21600, 300 * (1 << LEAST(attempts, 7))) * interval '1 second'
-         WHERE game_id = $1`,
-        [gameId],
-      );
-    } else {
-      await saveResult(client, gameId, result);
-    }
-  }
-
+async function collectBatch(client, lookup, signal) {
   const { rows: [cursor] } = await client.query('SELECT next_game_id FROM match_collection.cursor');
   let gameId = Number(cursor.next_game_id);
-  const gaps = [];
-  for (let scanned = 0; scanned < BATCH_SIZE || gaps.length > 0; scanned += 1, gameId += 1) {
+  for (let scanned = 0; scanned < BATCH_SIZE; scanned += 1, gameId += 1) {
     signal.throwIfAborted();
     const result = await lookup(gameId, signal);
     if (result.status === 'deferred') return false;
-    if (result.status === 'missing') {
-      gaps.push(gameId);
-      // An unresolved run may be the live edge. Advance only after a later game is confirmed.
-      if (gaps.length >= lookahead) return false;
-      continue;
+    if (result.status === 'ranked') {
+      await saveRankedMatch(client, gameId, result);
+    } else {
+      await client.query('UPDATE match_collection.cursor SET next_game_id = $1', [gameId + 1]);
     }
-    await saveResult(client, gameId, result, gameId + 1, gaps);
-    gaps.length = 0;
   }
   return true;
 }
 
-async function run(client, lookup, { startGameId, lookahead, once, signal }) {
+async function run(client, lookup, { startGameId, once, signal }) {
   const { rows: [lock] } = await client.query('SELECT pg_try_advisory_lock($1) AS acquired', [LOCK_ID]);
   if (!lock.acquired) throw new Error('A match collector is already running on this database');
 
@@ -196,7 +157,7 @@ async function run(client, lookup, { startGameId, lookahead, once, signal }) {
 
     while (!signal.aborted) {
       try {
-        const more = await collectBatch(client, lookup, lookahead, signal);
+        const more = await collectBatch(client, lookup, signal);
         if (once) return;
         if (!more) await sleep(POLL_MS, undefined, { signal });
       } catch (error) {
@@ -242,7 +203,6 @@ async function main() {
     if (!key) throw new Error('BSER_API_KEY is required');
     const intervalMs = readInteger(process.env.MATCH_COLLECTION_REQUEST_INTERVAL_MS ?? '1000', 'MATCH_COLLECTION_REQUEST_INTERVAL_MS', 1, 60_000);
     const settleSeconds = readInteger(process.env.MATCH_COLLECTION_SETTLE_SECONDS ?? '3600', 'MATCH_COLLECTION_SETTLE_SECONDS', 0, 86_400);
-    const lookahead = readInteger(process.env.MATCH_COLLECTION_404_LOOKAHEAD ?? '20', 'MATCH_COLLECTION_404_LOOKAHEAD', 1, 1000);
     const seasonSetting = process.env.MATCH_COLLECTION_SEASON_ID?.trim();
     const targetSeasonId = seasonSetting
       ? readInteger(seasonSetting, 'MATCH_COLLECTION_SEASON_ID', 1, 2_147_483_647)
@@ -251,7 +211,6 @@ async function main() {
     console.log(`Starting ranked match collection (season: ${targetSeasonId ?? 'all'})`);
     await run(client, lookup, {
       startGameId: process.env.MATCH_COLLECTION_START_GAME_ID,
-      lookahead,
       once: command === '--once',
       signal: shutdown.signal,
     });

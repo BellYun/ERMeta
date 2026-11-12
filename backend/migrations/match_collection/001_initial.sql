@@ -18,13 +18,4 @@ CREATE TABLE IF NOT EXISTS match_collection.cursor (
   next_game_id BIGINT NOT NULL CHECK (next_game_id > 0)
 );
 
-CREATE TABLE IF NOT EXISTS match_collection.pending_games (
-  game_id BIGINT PRIMARY KEY CHECK (game_id > 0),
-  attempts INTEGER NOT NULL DEFAULT 0 CHECK (attempts >= 0),
-  retry_at TIMESTAMPTZ NOT NULL DEFAULT (now() + interval '5 minutes')
-);
-
-CREATE INDEX IF NOT EXISTS match_collection_pending_retry_idx
-  ON match_collection.pending_games (retry_at, game_id);
-
 COMMIT;
