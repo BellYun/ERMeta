@@ -2,13 +2,15 @@
 
 # ER&GG — 이리와지지
 
-**실사용 지표와 성능 계측을 바탕으로 운영하는 이터널리턴 메타 분석 서비스**
+**실사용 지표와 성능 계측을 바탕으로 운영한 이터널리턴 메타 분석 서비스**
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.2-black?logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![NestJS](https://img.shields.io/badge/NestJS-11-E0234E?logo=nestjs&logoColor=white)](https://nestjs.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3FCF8E?logo=supabase&logoColor=white)](https://supabase.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Vitest](https://img.shields.io/badge/Vitest-Testing-6E9F18?logo=vitest&logoColor=white)](https://vitest.dev/)
 
 **[서비스 바로가기](https://erwagg.com)** · **[GitHub](https://github.com/BellYun)**
 
@@ -16,276 +18,211 @@
 
 ---
 
-## 프로젝트 소개
+## Overview
 
-ER&GG는 이터널리턴의 패치·티어별 통계를 수집하고, 여러 조건의 캐릭터 성과와 3인 조합을 비교·분석하는 웹 서비스입니다.
+ER&GG는 이터널리턴의 패치·티어별 통계를 수집하고, 실험체 성과와 3인 조합 시너지를 비교·분석하는 웹 서비스입니다.
 
-실제 사용자의 피드백과 운영 지표를 기반으로 개선하고 있습니다.
+2026년 3월부터 1인 기획·개발·운영을 통해 최고 DAU 1,300을 기록하며 실제 사용자 VOC와 운영 지표를 기반으로 성능을 개선했습니다. 현재는 운영 비용 최적화를 위해 **패치 12.7 기준 정적 스냅샷 아키텍처로 전환**하여 DB·외부 API 의존성 없이 서비스를 유지하고 있습니다.
 
-### 개발 원칙
-
-- 승률과 티어뿐 아니라 표본, 비교 조건, 실험체·무기 조합의 맥락을 함께 제공합니다.
-- 연구 과정과 도메인 지식은 `knowledge/`에 보존하고, 수동 연구 도구는 `tools/`에서 관리합니다.
-- 데이터 수집과 사용자 조회를 분리하고, 사전 집계와 정적 스냅샷을 활용해 DB 조회 비용과 외부 API 호출량을 통제합니다.
-- 모바일 상호작용 성능과 실제 사용자의 피드백을 기준으로 개선합니다.
-
-| 항목        | 내용                                                              |
-| ----------- | ----------------------------------------------------------------- |
-| 개발 기간   | 2026.03 ~ 현재                                                    |
-| 개발 형태   | 개인 프로젝트 · 1인 개발 및 운영                                  |
-| 담당 범위   | 제품 기획, UI, Frontend, Backend, DB, 데이터 수집, 배포, 모니터링 |
-| 지원 언어   | 한국어 · 영어 · 일본어                                            |
+| 항목      | 내용                                                                 |
+| --------- | -------------------------------------------------------------------- |
+| 운영 기간 | 2026.03 ~ 2026.11 (현재 패치 12.7 정적 스냅샷 모드 운영)             |
+| 개발 형태 | 1인 개발 및 운영 (기획 · UI · Frontend · Backend · DB · 수집 · 배포) |
+| 지원 언어 | 한국어 (`/`) · 영어 (`/en`) · 일본어 (`/ja`)                         |
 
 ## Key Results
 
-| 영역           | 결과                                        | 설계·검증 기준                              |
-| -------------- | ------------------------------------------- | ------------------------------------------- |
-| 서비스 운영    | **최고 DAU 1,300**                          | Vercel Analytics                            |
-| DB 조회 최적화 | 대표 조회 기준 DB row 수 **약 85% 감소**    | canonical key 기반 사전 집계 · 조회 인덱스  |
-| API 응답 성능  | 평균 응답시간 **약 51% 단축**               | 요청 시 원본 집계에서 사전 집계 조회로 전환 |
+| 영역                 | 성과                                                                   | 측정 기준                                    |
+| -------------------- | ---------------------------------------------------------------------- | -------------------------------------------- |
+| 서비스 운영          | **최고 DAU 1,300**                                                     | Vercel Analytics                             |
+| 모바일 입력 지연     | Input Delay p95 **1,060 → 183ms**, lab INP p95 **1,128 → 216ms (80.9% ↓)** | Playwright (CPU 6x) · Event Timing           |
+| 캐시 히트율 개선     | 운영 완전 MISS 비율 **72.5% → 22.4% (50.1%p ↓)**                       | Vercel CDN Cache · Next.js Data Cache        |
+| DB 조회 최적화       | 대표 조회 기준 DB row 수 **약 85% ↓**, 평균 응답시간 **약 51% ↓**      | Canonical key 기반 사전 집계 · 조회 인덱스   |
+| RSC 직렬화 최적화    | `.next/server/app` **약 6.6GB → 237MB (약 96.5% ↓)**                  | 빌드 산출물 감사 · L10n 청크 분리            |
+| 다국어 유입 전환     | 일본어 환경 사용자의 `/ja` 도달률 **23.4% → 60.9%**                    | Middleware rewrite · Locale SEO              |
+| 운영 공수 자동화     | 공식 패치 공지 → TypeScript 데이터 변환 및 **자동 PR 파이프라인 구축** | Gemini LLM API · GitHub Actions              |
 
-> 수치는 실제 서비스 운영 및 대표 조회 시나리오에서 측정한 값입니다. DB row 수와 응답시간 개선율은 3인 조합 대표 조회를 기준으로 합니다.
+## Core Features
 
-## 주요 기능
-
-| 기능              | 사용자 가치                                                    |
-| ----------------- | -------------------------------------------------------------- |
-| 캐릭터 티어표     | 패치·티어별 승률, 픽률, 평균 RP를 종합해 메타를 빠르게 파악    |
-| 캐릭터 상세 분석  | 무기, 장비, 특성, 조합 통계와 스킬 빌드·선마 순서를 한 페이지에서 비교 |
-| 실험체 패치 이력  | 실험체별 패치 변경사항을 모아 보고 이전 변경 이력까지 확인     |
-| 3인 조합 분석     | 비교 조건, 최소 표본 필터, 소표본 안내를 제공하는 조합 탐색    |
-| 3인큐 조합 추천   | 팀원의 실험체 폭을 기반으로 조합을 추천하고, 아군 선택에 따른 무기별 파트너 성적 비교 |
-| 실험체 추천 (베타) | 내 실험체 풀에서 부족한 역할을 보완할 실험체 추천              |
-| 홈 개인화         | 내 실험체 풀을 설정하고 홈에서 해당 실험체의 패치 성적 확인    |
-| 캐릭터 연구소     | 역할군별 성과와 포지션 메타를 비교                             |
-| 패치 분석         | 이전 패치 대비 지표 변화와 밸런스 변경사항 확인                |
-| 플레이어 전적·통계 API | 최근 전적 저장·조회, 공식 시즌 통계 비교, 강제 갱신 — **구현 완료·배포 예정** |
-| 공유 기능         | 선택한 조합을 URL 상태와 동적 OG 이미지로 공유                 |
-| 다국어 서비스     | 한국어, 영어, 일본어 locale 라우팅과 검색엔진별 대체 링크 제공 |
-
-> 플레이어 전적·통계 API는 구현과 Cloud Run 배포 구성을 완료했으며, BSER API 호출 한도 확대 후 배포할 예정입니다.
+| 기능                | 설명                                                                     |
+| ------------------- | ------------------------------------------------------------------------ |
+| **캐릭터 티어표 & 패치 분석** | 패치·티어별 승률, 픽률, 평균 RP와 이전 패치 대비 지표 변화를 한눈에 비교 |
+| **캐릭터 상세 분석**          | 무기·장비·특성·스킬 빌드와 추천 조합 통계를 단일 페이지에서 탐색         |
+| **3인 조합 분석 & 추천**      | 팀원의 실험체 폭을 기반으로 조합을 추천하고 최소 표본 필터와 소표본 안내 제공 |
+| **다국어 & 공유**             | 한국어·영어·일본어 URL 라우팅 및 선택 조건 URL 상태·동적 OG 공유         |
 
 ## System Architecture
 
-### 12.7 통계의 정적 전환
+### 운영기 → 정적 스냅샷 전환 (비용 최적화)
 
-홈, 랭킹, 실험체 상세, 패치 분석, 3인큐 추천과 조합 상세는 저장소에 포함된 12.7까지의 통계 스냅샷을 사용합니다. 페이지에 필요한 초기 데이터는 Next.js 빌드에서 읽고, 패치·무기·특성 선택에 필요한 데이터는 브라우저가 버전별 JSON으로 가져옵니다.
+실운영 기간에는 BSER Open API에서 수집한 데이터를 Supabase PostgreSQL에 사전 집계하고, Next.js BFF·Data Cache·CDN·NestJS(Redis)를 조합해 서빙했습니다. ([전환 전 소스](https://github.com/BellYun/ERMeta/tree/affb58f3501689ca9c35cdba34112ae10a34f602))
 
-- 빌드에서 사전 생성한 통계 페이지에는 시간 기반 ISR을 적용하지 않습니다. 스냅샷을 갱신할 때는 새 버전 파일과 매니페스트를 같은 배포에 포함합니다.
-- 버전이 포함된 정적 데이터 URL에는 1년 `immutable` 캐시를 적용합니다. 통계 조회에 필요한 파일을 CDN에서 제공해 요청 시 DB 조회와 반복적인 페이지 재생성을 줄였습니다.
-
-[정적 전환 PR #371](https://github.com/BellYun/ERMeta/pull/371) · [시즌 통계 스냅샷 생성 코드](frontend/scripts/export-season-snapshot.py)
-
-### 정적 전환 전의 데이터 수집·조회 구조
-
-BSER Open API에서 수집한 데이터를 Supabase PostgreSQL에 사전 집계하고, Next.js Route Handler와 캐시를 통해 통계 화면에 전달했습니다. [전환 전 소스](https://github.com/BellYun/ERMeta/tree/affb58f3501689ca9c35cdba34112ae10a34f602)
+서비스 축소 단계에서는 실시간 DB 조회와 주기적 ISR 비용을 제거하기 위해 **패치 12.7까지의 통계를 버전드 JSON 스냅샷으로 내보내고, 정적 자산에 1년 `immutable` CDN 캐시를 적용하는 구조**로 전환했습니다. ([정적 전환 PR #371](https://github.com/BellYun/ERMeta/pull/371) · [스냅샷 생성 스크립트](frontend/scripts/export-season-snapshot.py))
 
 ```mermaid
 flowchart LR
-  USER["사용자 · 검색엔진"] --> NEXT["Next.js App Router"]
-  NEXT --> RSC["RSC · SSG/ISR"]
-  NEXT --> CLIENT["Client Interaction"]
-  NEXT --> BFF["Route Handlers · BFF"]
-  BFF --> CACHE["unstable_cache · Edge Cache"]
-  CACHE --> DB["Supabase PostgreSQL"]
-  BFF --> NEST["NestJS API"]
-  NEST --> REDIS["L1 Memory · L2 Redis"]
-  NEST --> BSER["BSER Open API"]
-  BFF -.-> PLAYER
-  subgraph PLANNED["구현 완료 · 배포 예정"]
-    PLAYER["NestJS Player API · Cloud Run 배포 구성"]
-    HISTORY["PostgreSQL · 전적 및 시즌 통계"]
-    PLAYER --> HISTORY
+  subgraph ACTIVE["실운영기 (동적 수집 · 다계층 캐시)"]
+    direction LR
+    BSER["BSER Open API"] --> COLLECTOR["Edge Collector"]
+    COLLECTOR --> DB["Supabase PostgreSQL<br/>(사전 집계 테이블)"]
+    DB --> CACHE["Next.js Data Cache · CDN"]
+    CACHE --> APP1["Next.js App Router"]
   end
-  PLAYER -.-> BSER
-  COLLECTOR["Supabase Edge Collector"] --> BSER
-  COLLECTOR --> DB
-  NEXT --> OBS["Vercel · Sentry · Amplitude · GA4"]
+
+  subgraph STATIC["현재 (패치 12.7 정적 스냅샷)"]
+    direction LR
+    SNAP["Versioned JSON Snapshot<br/>(1년 immutable CDN 캐시)"] --> APP2["Next.js SSG"]
+    APP2 --> USER["사용자 · 검색엔진"]
+  end
+
+  ACTIVE -. "운영 비용 최적화 전환 (#369, #371)" .-> STATIC
 ```
 
-> 플레이어 API는 별도 NestJS 진입점과 PostgreSQL 저장소를 사용합니다. 점선은 배포 예정 연동입니다.
+### 핵심 설계 원칙 (Design Principles)
 
-- 조회 중심 페이지는 Server Component와 정적 생성을 활용해 초기 HTML과 SEO 표면을 확보합니다.
-- 필터, 검색, 터치 선택, 모달처럼 상호작용이 필요한 영역만 Client Component로 분리합니다.
-- 통계 API는 Next.js 서버 캐시, CDN/브라우저 HTTP 캐시, NestJS Redis를 데이터 휘발성에 따라 조합합니다.
-- 데이터 수집과 사용자 요청의 BSER API 예산을 분리해 외부 API 제한 안에서 운영합니다.
+- **수집과 조회의 물리적 분리**: 외부 BSER API 호출 및 원본 매치 로그는 Edge Collector와 사전 집계 테이블로 격리하고, 사용자 요청 경로는 사전 집계·캐시·정적 스냅샷만 조회하도록 설계해 DB 스캔 비용과 외부 API Rate Limit 리스크를 차단했습니다.
+- **데이터 휘발성 기반 다계층 캐시 & 경계 설계**: 변경 주기에 따라 `1년 immutable 정적 자산`, `Versioned JSON 스냅샷`, `Next.js Data Cache / CDN`, `Redis(L1/L2)`를 분리하고, Server/Client Component 경계에서도 직렬화 비용을 최소화했습니다.
+- **순서 무관 Canonical Key 정규화**: 3인 조합 탐색과 캐시 키를 정렬된 canonical key로 표준화해 동일 조합의 중복 집계와 캐시 분산을 방지했습니다.
+- **CI 기반 성능·비용 회귀 방어**: E2E, 접근성(`axe-core`), 모바일 INP(CPU 6x), 캐시 수명, PR 아키텍처·비용 감사를 CI 파이프라인에 편입해 품질과 인프라 비용을 구조적으로 통제했습니다.
+
+---
 
 ## Engineering Highlights
 
-### 1. 복합 통계 비교 UX와 브라우저 기반 품질 자동화
+### 1. 모바일 연속 선택 시 발생한 입력 지연 개선
+> 관련 글: [메인 스레드 교통정리하기 (Medium)](https://medium.com/@whd3558/%EB%A9%94%EC%9D%B8-%EC%8A%A4%EB%A0%88%EB%93%9C-%EA%B5%90%ED%86%B5%EC%A0%95%EB%A6%AC%ED%95%98%EA%B8%B0-1de8da9302ad?sharedUserId=whd3558)
 
-비교 조건이 공유·새로고침 시 사라지거나, 연속 필터 변경 중 이전 응답이 최신 결과를 덮어쓰는 문제를 해결했습니다.
+- **문제**: 모바일에서 실험체를 연속 터치할 때 반응이 끊긴다는 VOC를 접수하고, Event Timing 분석으로 이전 Long Task가 메인 스레드를 **1,060ms** 점유하던 병목을 식별했습니다.
+- **해결**:
+  - 선택 UI 상태 반영을 URL 갱신과 분리해 즉각적인 시각 피드백을 제공했습니다.
+  - 무거운 결과 렌더링은 `useDeferredValue`로 지연하고, `requestIdleCallback`으로 연산을 분산했습니다.
+  - TanStack Virtual과 `ResizeObserver`를 적용해 긴 목록에서 동시 마운트되는 노드 수를 제한했습니다.
+- **결과**: Playwright 모바일 환경(CPU 6x) 기준 **Input Delay p95를 1,060 → 183ms**, **lab INP p95를 1,128 → 216ms(80.9% 단축)**로 개선했으며, Nightly CPU 6x 벤치마크(30회 반복 측정)를 구축해 INP 회귀를 상시 추적하고 있습니다.
 
-- URL을 비교 상태의 기준으로 삼아 패치·티어·캐릭터·무기 조건을 저장하고 복원했습니다.
-- `AbortController`로 이전 요청을 취소해 마지막 선택에 맞는 결과를 표시했습니다.
-- 최소 표본 필터와 소표본 안내로 통계 해석을 도왔습니다.
-- 상태 복원·핵심 탐색 흐름·접근성을 검증하는 Playwright·axe 검사를 PR 필수 체크로 구성했습니다.
+---
 
-### 2. 모바일 상호작용 성능과 INP 회귀 차단
+### 2. Vercel CDN Cache · Next.js Data Cache 재사용 경계 및 탐색 구조 개선
+> 관련 글: [7일짜리 캐시가 하루 만에 다시 MISS가 난 이유 (Medium)](https://medium.com/@whd3558/7%EC%9D%BC%EC%A7%9C%EB%A6%AC-%EC%BA%90%EC%8B%9C%EA%B0%80-%ED%95%98%EB%A3%A8-%EB%A7%8C%EC%97%90-%EB%8B%A4%EC%8B%9C-miss%EA%B0%80-%EB%82%9C-%EC%9D%B4%EC%9C%A0-9038fe4dcaa2?sharedUserId=whd3558)
 
-**문제**
+- **문제**: CDN Cache와 Data Cache를 분석한 결과, 3인 조합·필터 조건별 요청이 분산되면서 전체 요청의 **72.5%가 완전 MISS**되고 응답에 **약 3.20초**가 소요되는 병목을 확인했습니다.
+- **해결**:
+  - 조회 API 경계를 세부 조합 단위가 아닌 **공용 후보군 단위**로 재설계하고, 세부 필터링은 브라우저에서 수행하도록 전환했습니다.
+  - 조합 파라미터의 튜플 직렬화(canonical key)와 동일 요청 간 Promise 공유를 적용해 중복 계산과 캐시 분산을 제거했습니다.
+- **결과**: 기존 조회와의 데이터 정합성 및 클라이언트 렌더링 비용을 검증한 뒤 반영해, 운영 환경의 **완전 MISS 비율을 72.5%에서 22.4%로 50.1%p 감소**시켰습니다.
 
-3인 조합 화면은 캐릭터·무기 선택 항목과 결과 카드가 많고, API 응답 직후 여러 카드가 갱신됩니다. 모바일 환경에서 이 렌더링과 사용자의 다음 터치가 겹치면 이벤트 처리 시간이 길어져 조합을 연속으로 탐색할 때 반응성이 떨어질 수 있었습니다.
+---
 
-**해결**
+### 3. 일본 사용자 진입을 위한 locale 기반 라우팅 및 SEO 구조 설계
+> 관련 글: [일본 사용자 유입을 실제 사용으로 연결하기 위한 다국어 SEO 개선기 (Medium)](https://medium.com/@whd3558/%EC%9D%BC%EB%B3%B8-%EC%82%AC%EC%9A%A9%EC%9E%90-%EC%9C%A0%EC%9E%85%EC%9D%84-%EC%8B%A4%EC%A0%9C-%EC%82%AC%EC%9A%A9%EC%9C%BC%EB%A1%9C-%EC%97%B0%EA%B2%B0%ED%95%98%EA%B8%B0-%EC%9C%84%ED%95%9C-%EB%8B%A4%EA%B5%AD%EC%96%B4-seo-%EA%B0%9C%EC%84%A0%EA%B8%B0-468a345f6f7e)
 
-- 캐릭터·무기 선택 그리드와 조합 결과 목록에 TanStack Virtual을 적용해 화면에 필요한 항목만 렌더링했습니다.
-- `ResizeObserver`로 펼침 가능한 카드의 실제 높이를 측정해 가상 목록의 위치 계산에 반영했습니다.
-- 즉시 보여야 하는 토글 피드백과 무거운 상세 패널 렌더링을 분리하고, 상세 렌더링은 `startTransition`으로 처리했습니다.
-- Playwright에서 390×844 모바일 터치 환경과 CPU 6배 제한을 재현하고, 실제 캐릭터 선택 흐름의 interaction duration을 반복 측정했습니다.
-- 5회 실행 결과의 p95가 250ms 성능 예산을 초과하면 GitHub Actions가 실패하도록 INP 성능 게이트를 구성했습니다.
+- **문제**: 언어별 고유 URL이 없어 일본어 콘텐츠를 검색엔진에 독립 색인하거나 공유·딥링크로 전달하기 어려웠고, 일본 유입 사용자가 핵심 기능 사용으로 이어지지 못했습니다.
+- **해결**:
+  - 기존 한국어 URL 호환성을 깨지 않기 위해 Next.js middleware `rewrite` 기반의 `/ja` 라우팅을 도입했습니다.
+  - URL을 최우선 언어 결정 기준으로 삼고, 페이지별 `self-canonical`, `hreflang`, 다국어 `sitemap`을 구성했습니다.
+- **결과**: 일본어 환경 사용자의 **`/ja` 도달률을 23.4%에서 60.9%로 개선**했습니다.
 
-**결과**
+---
 
-- 긴 선택 목록과 결과 목록에서 동시에 마운트되는 컴포넌트 수를 제한하면서, 상세 카드의 동적 높이도 안정적으로 반영했습니다.
-- 모바일 핵심 탐색 흐름의 상호작용 성능을 정량적으로 확인하고, 성능 예산을 넘는 회귀를 PR 단계에서 탐지할 수 있게 했습니다.
+### 4. LLM API와 GitHub Actions 기반 패치 데이터 자동 파싱 파이프라인 구축
+> 관련 PR: [패치 데이터 자동 파싱 파이프라인 PR #364](https://github.com/BellYun/ERMeta/pull/364)
 
-### 3. 정적 전환 전의 페이지·API 캐시 설계
+- **문제**: 공식 패치 공지를 서비스용 TypeScript 데이터 파일로 수작업 변환하면서 반복 공수와 휴먼 에러가 발생했습니다.
+- **해결**:
+  - Gemini LLM API로 패치 노트 본문을 구조화해 버전별 TypeScript 데이터 파일을 자동 생성하는 파싱 스크립트를 작성했습니다.
+  - GitHub Actions에서 패치 URL 입력 시 파싱 실행 → `npm test` 정합성 검증 → 자동 PR 생성까지 이어지는 파이프라인을 구축했습니다.
+- **결과**: 매 패치마다 반복되던 수동 데이터 변환 운영 공수를 제거했습니다.
 
-**문제**
+---
 
-캐릭터 상세, 메인 대시보드, 공개 통계 API는 데이터 변경 주기와 접근 패턴이 서로 다릅니다. 모든 경로에 같은 렌더링·캐시 정책을 적용하면 정적 페이지의 캐시 효율을 놓치거나 변경된 통계가 오래 남을 수 있었습니다.
+### 5. 3인 조합 탐색의 응답 지연을 줄이기 위한 사전 집계 구조 도입
 
-**설계**
+- **문제**: 여러 3인 조합을 비교할 때 요청마다 원본 매치 로그를 전수 집계해, 데이터가 누적될수록 조회 row 수와 응답 지연이 커졌습니다.
+- **해결**:
+  - 세 실험체의 순서를 정렬한 canonical key 기준으로 조합을 1회만 사전 집계하고, 단일·페어·트리오 조회 패턴에 맞는 테이블과 인덱스를 설계했습니다.
+- **결과**: 대표 조회 기준 **DB 조회 row 수를 약 85%**, **평균 응답시간을 약 51% 단축**했습니다.
 
-- 88개 캐릭터 상세 페이지는 `generateStaticParams`로 정적 생성하고, 메인 페이지는 ISR로 분리했습니다.
-- 공개 통계는 변경 주기에 따라 Next.js Data Cache와 CDN `Cache-Control` 정책을 다르게 적용했습니다.
-- 종료 패치, 패치 목록, 캐릭터 통계, 조합 통계를 캐시 프리셋으로 분류해 Browser·CDN·SWR 정책을 표준화했습니다.
-- 3인 캐릭터 조합은 순서와 무관한 canonical key로 정규화해 동일 조합의 집계와 캐시를 재사용했습니다.
-- 데이터 수집 이후 tag-based invalidation을 수행해 긴 TTL에서도 갱신 시점을 제어했습니다.
+---
 
-**결과**
+### 6. 광고 슬롯별 실제 가시율 계측 및 배치 A/B 실험
 
-- 데이터 변경 주기와 요청 특성에 맞는 캐시 경계를 적용하고, 조합 순서만 다른 중복 집계를 제거했습니다.
+- **문제**: 광고 슬롯 로드 횟수만으로는 실제 화면 노출 여부를 알기 어려웠고, 광고 배치가 핵심 콘텐츠 이용에 미치는 영향도 정량적으로 판단하기 어려웠습니다.
+- **해결**:
+  - 광고가 채워진 뒤 영역의 **50% 이상이 뷰포트에 1초 이상 연속**으로 들어온 경우를 가시 노출로 정의해 슬롯별 실제 가시율과 이탈 시점을 계측했습니다.
+  - 홈 광고를 패치 예상 콘텐츠 앞·뒤에 배치하는 A/B 실험을 구현하고, 브라우저에 배정 결과를 고정 저장해 재방문 시에도 동일 실험군을 유지하도록 했습니다.
+- **결과**: 10일간(8/28~9/6) 실측 결과 본문 광고 가시율은 **71.7%**, 좌우 사이드 광고는 **94%대**였으며, AdSense Active View에서도 동일한 순서를 확인했습니다.
 
-관련 문서: [통계 API 캐싱 설계](docs/API_CACHING_STRATEGY.md) · [캐싱 전략](docs/CACHING_STRATEGY.md)
+| 광고 슬롯     | 브라우저 실측 가시율 | AdSense Active View |
+| ------------- | -------------------- | ------------------- |
+| 콘텐츠 본문   | 71.7%                | 64.83%              |
+| 왼쪽 사이드   | 94.3%                | 90.21%              |
+| 오른쪽 사이드 | 94.8%                | 90.79%              |
 
-### 4. 3인 조합 탐색을 위한 사전 집계 구조
+---
 
-**문제**
+### 7. Next.js RSC Payload 및 다국어 사전 직렬화 경계 최적화
+> 관련 기록: [Next.js RSC 다국어 사전 직렬화 개선 회고](blog-l10n-rsc-payload.md)
 
-여러 3인 조합을 비교하는 기능에서 요청마다 원본 매치 로그를 집계했습니다. 데이터가 늘어날수록 조회 row 수와 집계 비용이 함께 커져 조합 탐색의 응답시간이 증가했습니다.
+- **문제**: 전역 `L10nProvider`(Client Component)에 언어별 3.3~3.9MB 게임 사전을 통째로 전달하면서, 모든 정적 HTML과 RSC payload에 전체 사전이 중복 직렬화되었습니다. (빌드 감사 기준 `.next/server/app` 약 6.6GB, 전체 `.next` 약 8.3GB)
+- **해결**:
+  - 초기 렌더링에 필요한 **322개 core key만 12~14KB seed**로 전달해 첫 화면 깜빡임을 방지했습니다.
+  - 나머지 번역 데이터는 **기능별 내용 해시(content-hash) 정적 JSON 청크**와 TypeScript manifest로 분리해 필요한 기능에서만 지연 로드하도록 경계를 재설계하고, 네트워크 요청 검증 회귀 테스트를 추가했습니다.
+- **결과**: 빌드 감사 기준 `.next/server/app`을 **약 6.6GB → 237MB(약 96.5% ↓)**, 전체 `.next`를 **약 8.3GB → 927MB(약 89.1% ↓)**로 축소하고, 사전과 무관한 페이지 HTML에서 수 MB 규모의 직렬화 데이터를 제거했습니다.
 
-**해결**
+---
 
-- 세 캐릭터의 순서를 정렬한 canonical key를 기준으로 조합을 한 번만 사전 집계했습니다.
-- 단일 캐릭터, 캐릭터 쌍, 3인 조합 조회 패턴에 맞는 검색 테이블과 인덱스를 구성했습니다.
-- API에서는 원본 로그를 다시 집계하지 않고 canonical key 기반 집계 결과를 조회하도록 변경했습니다.
-- 같은 조합의 순서만 다른 요청은 동일한 집계와 캐시를 재사용하도록 정규화했습니다.
+<details>
+<summary><strong>아카이브: 외부 API 호출 제한을 고려한 플레이어 전적·통계 API 설계 (미배포)</strong></summary>
 
-**결과**
+- BSER Open API 호출 한도를 고려해 동일 프로세스 내 중복 닉네임·갱신 요청을 coalescing하고, 호출 큐 크기와 대기 시간을 제한했습니다.
+- 갱신 실패 시 저장된 데이터와 `isStale` 상태를 반환하며, 멀티서치는 플레이어별 부분 성공·실패를 분리 응답하도록 설계했습니다. (구현 및 Cloud Run 배포 구성 완료 후, 외부 API 쿼터 및 서비스 축소 결정에 따라 프로덕션 배포는 보류했습니다. — [백엔드 실행·계약 문서](backend/README.md))
 
-대표 조회 기준으로 DB 조회 row 수를 **약 85%**, 평균 응답시간을 **약 51%** 줄였습니다.
+</details>
 
-### 5. 일본 사용자 진입을 위한 locale 기반 라우팅·SEO
+---
 
-**문제**
+## CI Quality & Performance Gates
 
-일본 사용자가 기존 한국어 페이지로 유입되고 있었지만 핵심 기능 사용으로 이어지는 비율이 낮았습니다. UI 번역만 바꾸는 방식으로는 일본어 화면을 공유하거나 검색엔진이 독립된 진입 경로로 색인하기 어려웠습니다.
+단순 린트·단위 테스트를 넘어, 프로덕션 성능·접근성·아키텍처 비용 회귀를 GitHub Actions 파이프라인으로 자동 검증합니다.
 
-**해결**
+| 워크플로우 | 검증 대상 및 역할 | 설정 |
+| --- | --- | --- |
+| **Frontend PR CI** | ESLint, Vitest, Playwright E2E(`axe-core` 접근성 포함) 및 캐릭터 페이지 캐시 수명 검증 | [e2e-ci.yml](.github/workflows/e2e-ci.yml) |
+| **Nightly Mobile Interaction** | Playwright CPU 6x 환경에서 30회 반복 측정으로 모바일 INP 회귀 추적 | [perf-ci.yml](.github/workflows/perf-ci.yml) |
+| **PR Architecture & Cost Auditor** | PR 변경분 대상 Gemini 기반 아키텍처·인프라 비용 자동 감사 | [pr-architecture-auditor.yml](.github/workflows/pr-architecture-auditor.yml) |
+| **Patch Data Automation** | 패치 URL 입력 → Gemini LLM 파싱 → `npm test` 검증 → 자동 PR 생성 | [generate-patch-notes.yml](.github/workflows/generate-patch-notes.yml) |
 
-- URL을 locale 상태의 기준으로 삼고 `next-intl` 기반 locale 라우팅을 도입했습니다.
-- 기존 한국어 URL은 rewrite로 유지해 기존 링크와 검색 유입이 깨지지 않도록 했습니다.
-- 일본어에는 `/ja` 경로를 제공해 같은 상세 화면을 일본어 URL로 직접 공유할 수 있게 했습니다.
-- 일본어 페이지마다 self-canonical을 설정하고, 한국어·일본어 `hreflang`과 sitemap을 구성했습니다.
-
-**결과**
-
-- 기존 한국어 경로의 호환성을 유지하면서 일본 사용자가 검색·공유로 직접 진입할 수 있는 독립 URL 구조를 만들었습니다.
-- URL 단위로 locale별 유입과 핵심 기능 사용을 분석할 수 있는 기반을 마련했습니다.
-
-[일본 사용자 유입을 실제 사용으로 연결하기 위한 다국어 SEO 개선기](https://medium.com/@whd3558/%EC%9D%BC%EB%B3%B8-%EC%82%AC%EC%9A%A9%EC%9E%90-%EC%9C%A0%EC%9E%85%EC%9D%84-%EC%8B%A4%EC%A0%9C-%EC%82%AC%EC%9A%A9%EC%9C%BC%EB%A1%9C-%EC%97%B0%EA%B2%B0%ED%95%98%EA%B8%B0-%EC%9C%84%ED%95%9C-%EB%8B%A4%EA%B5%AD%EC%96%B4-seo-%EA%B0%9C%EC%84%A0%EA%B8%B0-468a345f6f7e)
-
-### 6. 사용자 행동 계측과 광고 배치 A/B 실험
-
-**문제**
-
-페이지 조회 수만으로는 사용자가 조합 검색 결과를 확인한 뒤 탐색을 이어가는지, 어느 단계에서 이탈하는지 알기 어려웠습니다. 광고 역시 슬롯을 불러온 횟수만으로는 실제 화면 노출 여부나 핵심 콘텐츠 이용에 미치는 영향을 판단하기 어려웠습니다.
-
-**해결**
-
-- 조합 검색 시작, 결과 확인, 추천 클릭, 추가 탐색, 이탈을 이벤트로 기록해 탐색 단계별 전환을 분석할 수 있도록 했습니다.
-- 광고 슬롯의 렌더링, 실제 노출, 노출까지 걸린 시간, 이탈 시점의 상태를 구분해 기록하고 성능 계측에 광고 상태를 함께 남겼습니다.
-- 홈 광고를 패치 예상 콘텐츠 앞·뒤에 배치하는 A/B 실험을 구현하고, 브라우저에 배정 결과를 저장해 재방문 시에도 같은 실험군을 유지하도록 했습니다.
-- 실험군별 광고 노출뿐 아니라 홈 콘텐츠 상호작용과 이탈도 함께 기록해 배치 변경의 영향을 비교할 수 있도록 했습니다.
-- 이벤트 속성과 광고 배치 동작에 대한 회귀 검증을 추가했습니다.
-
-**결과**
-
-조합 탐색의 중단 지점과 광고의 실제 노출 여부를 구분하고, 광고 배치를 콘텐츠 이용 지표와 함께 비교할 수 있는 측정 기반을 마련했습니다.
-
-### 7. 외부 API 호출 제한을 고려한 플레이어 전적·통계 API
-
-**문제**
-
-여러 사용자가 동시에 전적과 시즌 통계를 조회하면 같은 플레이어에 대한 외부 API 호출이 중복될 수 있습니다. 호출 한도나 외부 장애로 일부 조회가 실패하더라도, 저장된 기록과 다른 플레이어의 조회 결과를 활용할 수 있도록 응답을 설계해야 했습니다.
-
-**해결**
-
-- 최근 전적과 공식 시즌 통계를 PostgreSQL에 저장하고, 저장 경기에서 계산한 개인 통계는 공식 시즌 전체 통계와 출처·표본을 구분해 제공합니다.
-- 동일 프로세스에서 겹치는 닉네임 확인과 동일 대상의 갱신 요청을 공유하고, 외부 API 호출 속도·대기 큐 크기·최대 대기 시간을 제한했습니다.
-- 일반 조회의 갱신 실패 시 저장 데이터와 `isStale` 상태를 반환하고, 멀티서치는 플레이어별 성공·실패를 구분해 일부 실패에도 나머지 결과를 제공합니다.
-- 명시적 강제 갱신은 전적·시즌 통계별 성공 여부와 부분 실패를 전달하며, 요청 제한 응답에는 재시도 정보를 포함했습니다.
-- 플레이어 전용 실행 진입점, 상태 확인 경로, Cloud Run용 이미지와 DB 마이그레이션 절차를 준비했습니다.
-
-**현재 상태**
-
-API와 관련 회귀 테스트, 배포 구성을 구현했습니다. BSER API 호출 한도 확대 후 배포할 예정이며, 운영 환경의 성능·안정성 성과는 아직 측정하지 않았습니다. 호출량과 갱신 제한은 프로세스 단위이므로, 여러 인스턴스로 확장할 때는 전역 제한을 별도로 고려해야 합니다.
-
-관련 문서: [플레이어 API 실행·계약](backend/README.md) · [Cloud Run 배포 구성](backend/CLOUD_RUN_DEPLOYMENT.md)
+---
 
 ## Tech Stack
 
-| 영역              | 기술                                                        |
-| ----------------- | ----------------------------------------------------------- |
-| Frontend          | Next.js 16.2, React 19.2, TypeScript 5, next-intl 4         |
-| UI                | Tailwind CSS v4, CSS Variables, Recharts, TanStack Virtual  |
-| Backend           | NestJS 11, Node.js, TypeScript                              |
-| Data              | Supabase PostgreSQL, Supabase Edge Functions, BSER Open API |
-| Cache             | Next.js Server Cache, CDN/Browser HTTP Cache, Redis         |
-| Testing           | Vitest, Playwright, axe-core                                |
-| Observability     | Vercel Analytics, Vercel Observability, Sentry, Web Vitals  |
-| Product Analytics | Amplitude, Google Analytics 4, Google Search Console        |
-| Quality           | ESLint 9, Prettier, Husky, lint-staged, GitHub Actions      |
-| Desktop           | Electron 36, Vite 6, Windows NSIS                           |
+| 영역              | 기술                                                               |
+| ----------------- | ------------------------------------------------------------------ |
+| **Frontend**      | Next.js 16.2, React 19.2, TypeScript 5, Tailwind CSS v4, next-intl |
+| **Backend & Data**| NestJS 11, Supabase PostgreSQL, Redis, BSER Open API               |
+| **Testing & Perf**| Vitest, Playwright, axe-core, Web Vitals, Vercel Analytics, Sentry |
+| **Automation**    | GitHub Actions, Gemini LLM API                                     |
 
 ## Repository Structure
 
 ```text
 ERMeta/
-├── frontend/
-│   ├── src/app/(site)/[locale]/   # ko/en/ja 페이지와 Server Components
-│   ├── src/app/api/               # BFF, 통계 API, 캐시 무효화
-│   ├── src/components/features/   # 티어, 캐릭터, 조합 도메인 UI
-│   ├── src/lib/                   # 데이터 접근, 캐시, 분석, analytics
-│   ├── messages/                  # locale 번역 리소스
-│   ├── e2e/                       # Playwright smoke/flow/a11y
-│   └── scripts/                   # 빌드·CI·데이터 생성과 성능 계측
-├── backend/                       # NestJS API, 전적·통계 저장, 수집·가공
-├── supabase/                      # Edge Functions
-├── desktop/                       # Electron 데스크톱 클라이언트
-├── knowledge/eternal-return/      # 게임·데이터·커뮤니티 도메인 지식
-├── tools/                         # 수동 조합 연구·시너지 작업·구형 도구
-└── docs/                          # 아키텍처와 운영 문서
+├── frontend/                  # Next.js App Router, BFF, 정적 스냅샷, E2E/성능 테스트
+│   ├── src/app/(site)/[locale]/  # ko/en/ja 페이지 및 Server Components
+│   ├── src/components/features/  # 티어, 캐릭터, 3인 조합 UI
+│   ├── e2e/                      # Playwright smoke · flow · a11y · INP 검증
+│   └── scripts/                  # 스냅샷 생성, 빌드 및 성능 계측 스크립트
+├── backend/                   # NestJS API, 전적·통계 저장 및 수집·가공 모듈
+├── supabase/                  # Edge Functions 및 마이그레이션
+└── docs/                      # 캐싱 전략 및 아키텍처 문서
 ```
 
-## Getting Started
+## Quick Start
 
-### Prerequisites
-
-- Node.js >= 20.9.0
-- npm
-- 수집 파이프라인과 DB 연동 기능 실행 시 Supabase 프로젝트와 BSER API Key
-- NestJS 멀티서치 캐시 사용 시 Redis
-- 플레이어 전적·통계 API 실행 시 Node.js 22와 PostgreSQL ([실행 가이드](backend/README.md))
-
-### Frontend
+현재 프론트엔드는 저장소 내 정적 스냅샷을 사용해 별도 DB·API 키 없이 바로 실행할 수 있습니다.
 
 ```bash
 git clone https://github.com/BellYun/ERMeta.git
-cd ERMeta
-cd frontend
+cd ERMeta/frontend
 nvm use
 npm ci
 npm run dev
@@ -293,45 +230,19 @@ npm run dev
 ```
 
 ```bash
-npm run lint       # ESLint
-npm run test       # Vitest
-npm run test:e2e   # Playwright
-npm run build      # Production build
+npm run lint                                # ESLint
+npm run test                                # Vitest
+PATCH_PAGE_TEST_FIXTURES=1 npm run test:e2e # Playwright (Fixture 모드)
+npm run build                               # Production build
 ```
 
-### Backend
-
-저장소 루트에서 실행합니다.
-
-```bash
-cd backend
-npm ci
-cp .env.example .env
-npm run start:dev
-# http://localhost:4000
-```
-
-정적 통계 화면은 저장소의 스냅샷으로 실행할 수 있습니다. Supabase·BSER에 연동하는 기능을 실행할 때는 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `BSER_API_KEY`를 설정합니다. 서버 전용 키는 `NEXT_PUBLIC_` 접두사 없이 관리합니다. 백엔드 환경 변수는 [`backend/.env.example`](backend/.env.example)과 [실행 가이드](backend/README.md)를 참고하세요.
-
-## 수동 도구와 개발 흐름
-
-[도구 안내](tools/README.md)에서 각 스크립트의 목적, 실행 명령, 입력·출력과 DB/API 호출 여부를 확인할 수 있습니다. `DATA/`를 입력으로 사용하는 과거 연구 도구는 별도로 보존한 로컬 분석 자료가 필요합니다.
-
-- `main`: 배포 기준 브랜치
-- `develop`: 다음 변경을 통합하는 개발 브랜치
-- 작업 브랜치: 관련 이슈가 있으면 `feat/#이슈번호`, `fix/#이슈번호`, 그 외에는 작업 내용을 나타내는 이름
-- 커밋과 PR 제목: `<type>: <한국어 요약>`, 관련 이슈가 있으면 `(#이슈번호)` 추가
-- PR: `.github/pull_request_template.md`를 따르고 Ready for Review로 생성
-
-작업 브랜치는 검증과 병합을 마친 뒤 정리합니다. 미병합 작업과 사용 중인 worktree는 보존 여부를 먼저 확인합니다.
+> 백엔드 및 DB 연동 실행 방법은 [backend/README.md](backend/README.md)를 참고하세요.
 
 ## Technical Notes
 
-- [Frontend E2E 가이드](frontend/e2e/README.md)
-- [통계 API 캐싱](docs/API_CACHING_STRATEGY.md)
-- [캐싱 전략](docs/CACHING_STRATEGY.md)
-- [Next.js 렌더링 전략](frontend/docs/NEXT_RENDERING_STRATEGY_AUDIT_2026-07-20.md)
-- [이터널리턴 도메인 지식](knowledge/eternal-return/README.md)
+- [통계 API 캐싱 전략](docs/API_CACHING_STRATEGY.md) · [캐싱 전략](docs/CACHING_STRATEGY.md)
+- [Next.js 렌더링 전략 감사](frontend/docs/NEXT_RENDERING_STRATEGY_AUDIT_2026-07-20.md)
+- [Frontend E2E 및 성능 검증 가이드](frontend/e2e/README.md)
 
 ## License
 
@@ -341,8 +252,6 @@ Private — All rights reserved.
 
 <div align="center">
 
-**[erwagg.com](https://erwagg.com)**
-
-_이터널리턴, 데이터로 이기자._
+**[erwagg.com](https://erwagg.com)** · _이터널리턴, 데이터로 이기자._
 
 </div>
