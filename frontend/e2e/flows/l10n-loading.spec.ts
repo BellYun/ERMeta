@@ -23,12 +23,16 @@ test("static content does not download the game dictionary", async ({ page }) =>
   expect(l10nRequests).toEqual([]);
 });
 
-test("character detail lazily loads only item names", async ({ page }) => {
+test("character detail loads only the dictionary chunks used by its builds", async ({ page }) => {
   const l10nRequests = trackL10nRequests(page);
 
   await page.goto("/ko/character/1", { waitUntil: "domcontentloaded" });
-  await expect.poll(() => l10nRequests.length).toBeGreaterThan(0);
 
-  expect(l10nRequests).toHaveLength(1);
-  expect(l10nRequests[0]).toMatch(/^\/l10n\/chunks\/Korean\/item-names\.[a-f0-9]{12}\.json$/);
+  await expect
+    .poll(() => l10nRequests.slice().sort())
+    .toEqual([
+      expect.stringMatching(/^\/l10n\/chunks\/Korean\/game-descriptions\.[a-f0-9]{12}\.json$/),
+      expect.stringMatching(/^\/l10n\/chunks\/Korean\/item-names\.[a-f0-9]{12}\.json$/),
+      expect.stringMatching(/^\/l10n\/chunks\/Korean\/skill-names\.[a-f0-9]{12}\.json$/),
+    ]);
 });

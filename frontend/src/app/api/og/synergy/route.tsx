@@ -4,7 +4,7 @@ import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 import sharp from "sharp";
 import { getCharacterName } from "@/lib/characterMap";
-import { readSeasonSnapshot } from "@/lib/server/seasonSnapshot";
+import { readOgSeasonSnapshot } from "@/lib/server/seasonSnapshot";
 
 // Satori 가 WebP 디코딩을 못 하므로 미리 PNG dataURL 로 변환해서 임베드한다.
 // 실험체 mini 이미지는 정적 자산이라 instance 메모리에 캐시 (87 chars × ~3KB ≈ 260KB)
@@ -76,7 +76,7 @@ function score(r: AggTrio, gAvg: number, rpRange: { min: number; max: number }):
 }
 
 async function fetchTop3(char1: number | null, char2: number | null): Promise<AggTrio[]> {
-  ogRows ??= readSeasonSnapshot<OgSnapshotRow[]>("og.json.gz").catch((error) => {
+  ogRows ??= readOgSeasonSnapshot<OgSnapshotRow[]>().catch((error) => {
     ogRows = undefined;
     throw error;
   });

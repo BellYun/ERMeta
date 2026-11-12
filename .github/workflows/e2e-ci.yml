@@ -48,6 +48,7 @@ jobs:
   e2e:
     env:
       PATCH_PAGE_TEST_FIXTURES: "1"
+      NEXT_PUBLIC_ADSENSE_PREVIEW: "true"
     name: Playwright E2E
     runs-on: ubuntu-latest
     timeout-minutes: 20

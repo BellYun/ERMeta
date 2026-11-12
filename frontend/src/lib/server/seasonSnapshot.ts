@@ -3,11 +3,14 @@ import "server-only";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { gunzipSync } from "node:zlib";
-import { seasonSnapshot, seasonSnapshotPath, type SnapshotStatRow } from "@/lib/seasonSnapshot";
+import { seasonSnapshot, type SnapshotStatRow } from "@/lib/seasonSnapshot";
 
-export async function readSeasonSnapshot<T>(file: string): Promise<T> {
-  const buffer = await readFile(join(process.cwd(), "public", seasonSnapshotPath(file)));
-  return JSON.parse((file.endsWith(".gz") ? gunzipSync(buffer) : buffer).toString("utf8"));
+// Next.js 파일 추적이 public 전체를 포함하지 않도록 파일 경로를 용도별로 지정한다.
+export async function readOgSeasonSnapshot<T>(): Promise<T> {
+  const buffer = await readFile(
+    join(process.cwd(), "public/data/season-stats", seasonSnapshot.version, "og.json.gz")
+  );
+  return JSON.parse(gunzipSync(buffer).toString("utf8"));
 }
 
 const patchRequests = new Map<string, Promise<SnapshotStatRow[]>>();
@@ -17,12 +20,21 @@ export function readSnapshotStatRows(patch: string): Promise<SnapshotStatRow[]> 
   const cached = patchRequests.get(patch);
   if (cached) return cached;
 
-  const request = readSeasonSnapshot<SnapshotStatRow[]>("stats/" + patch + ".json").catch(
-    (error) => {
+  const request = readFile(
+    join(
+      process.cwd(),
+      "public/data/season-stats",
+      seasonSnapshot.version,
+      "stats",
+      patch + ".json"
+    ),
+    "utf8"
+  )
+    .then((source): SnapshotStatRow[] => JSON.parse(source))
+    .catch((error) => {
       patchRequests.delete(patch);
       throw error;
-    }
-  );
+    });
   patchRequests.set(patch, request);
   return request;
 }
