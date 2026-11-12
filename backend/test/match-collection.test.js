@@ -16,8 +16,8 @@ function rawMatch(gameId, matchingMode, extra = {}) {
 test('keeps exact ranked JSON bytes and skips both non-ranked modes', async () => {
   const ranked = rawMatch(100, 3, { timeSpentInBriefingRoom: 92 });
   const fixtures = new Map([[100, ranked], [101, rawMatch(101, 2)], [102, rawMatch(102, 6)]]);
-  const lookup = createBserLookup('test-key', 1, 0, async (url) => {
-    return new Response(fixtures.get(Number(url.split('/').at(-1))));
+  const lookup = createBserLookup('test-key', 1, 0, {
+    request: async (url) => new Response(fixtures.get(Number(url.split('/').at(-1)))),
   });
   const signal = new AbortController().signal;
   const result = await lookup(100, signal);
@@ -29,6 +29,36 @@ test('keeps exact ranked JSON bytes and skips both non-ranked modes', async () =
   assert.equal((await lookup(102, signal)).status, 'skipped');
 });
 
+test('collects only the configured ranked season and revisits ambiguous season metadata', async () => {
+  const ranked = rawMatch(100, 3, { seasonId: 43 });
+  const fixtures = new Map([
+    [100, ranked],
+    [101, rawMatch(101, 3, { seasonId: 42, startDtm: new Date().toISOString() })],
+    [102, rawMatch(102, 3)],
+    [103, JSON.stringify({
+      code: 200,
+      userGames: [
+        { gameId: 103, matchingMode: 3, seasonId: 43 },
+        { gameId: 103, matchingMode: 3, seasonId: 42 },
+      ],
+    })],
+    [104, rawMatch(104, 2, { seasonId: 43 })],
+  ]);
+  const lookup = createBserLookup('test-key', 1, 3_600_000, {
+    targetSeasonId: 43,
+    request: async (url) => new Response(fixtures.get(Number(url.split('/').at(-1)))),
+  });
+  const signal = new AbortController().signal;
+  const result = await lookup(100, signal);
+  assert.equal(result.status, 'ranked');
+  assert.equal(result.seasonId, 43);
+  assert.deepEqual(gunzipSync(result.payload), ranked);
+  assert.equal((await lookup(101, signal)).status, 'skipped');
+  assert.equal((await lookup(102, signal)).status, 'missing');
+  assert.equal((await lookup(103, signal)).status, 'missing');
+  assert.equal((await lookup(104, signal)).status, 'skipped');
+});
+
 test('distinguishes 404, throttling, inconsistent rows and a recently started ranked game', async () => {
   const fixtures = new Map([
     [100, new Response(null, { status: 404 })],
@@ -36,8 +66,8 @@ test('distinguishes 404, throttling, inconsistent rows and a recently started ra
     [102, new Response(rawMatch(999, 3))],
     [103, new Response(rawMatch(103, 3, { startDtm: new Date().toISOString() }))],
   ]);
-  const lookup = createBserLookup('test-key', 1, 3_600_000, async (url) => {
-    return fixtures.get(Number(url.split('/').at(-1)));
+  const lookup = createBserLookup('test-key', 1, 3_600_000, {
+    request: async (url) => fixtures.get(Number(url.split('/').at(-1))),
   });
   const signal = new AbortController().signal;
   assert.equal((await lookup(100, signal)).status, 'missing');
@@ -62,16 +92,19 @@ test('PostgreSQL preserves progress, retries gaps and rolls back an interrupted 
     await client.query(sql);
     await client.query(sql);
 
-    const ranked = rawMatch(100, 3);
-    const delayedRanked = rawMatch(101, 3);
-    const laterRanked = rawMatch(103, 3);
-    const fixtures = new Map([[100, ranked], [102, rawMatch(102, 2)], [103, 503]]);
+    const ranked = rawMatch(100, 3, { seasonId: 43 });
+    const delayedRanked = rawMatch(101, 3, { seasonId: 43 });
+    const laterRanked = rawMatch(103, 3, { seasonId: 43 });
+    const fixtures = new Map([[100, ranked], [102, rawMatch(102, 3, { seasonId: 42 })], [103, 503]]);
     const requests = [];
-    const lookup = createBserLookup('test-key', 1, 0, async (url) => {
-      const gameId = Number(url.split('/').at(-1));
-      requests.push(gameId);
-      const fixture = fixtures.get(gameId) ?? 404;
-      return typeof fixture === 'number' ? new Response(null, { status: fixture }) : new Response(fixture);
+    const lookup = createBserLookup('test-key', 1, 0, {
+      targetSeasonId: 43,
+      request: async (url) => {
+        const gameId = Number(url.split('/').at(-1));
+        requests.push(gameId);
+        const fixture = fixtures.get(gameId) ?? 404;
+        return typeof fixture === 'number' ? new Response(null, { status: fixture }) : new Response(fixture);
+      },
     });
     const config = { startGameId: '100', lookahead: 3, once: true, signal: new AbortController().signal };
     const cursor = async () => (await client.query('SELECT next_game_id FROM match_collection.cursor')).rows[0].next_game_id;

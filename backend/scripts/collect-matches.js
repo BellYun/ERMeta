@@ -32,7 +32,7 @@ function retryDelay(header) {
   return Number.isFinite(delay) ? Math.min(2_147_483_647, Math.max(0, delay)) : 0;
 }
 
-function createBserLookup(apiKey, intervalMs, settleMs, request = fetch) {
+function createBserLookup(apiKey, intervalMs, settleMs, { request = fetch, targetSeasonId } = {}) {
   let nextRequestAt = 0;
   return async (gameId, signal) => {
     await sleep(Math.max(0, nextRequestAt - Date.now()), undefined, { signal });
@@ -85,14 +85,22 @@ function createBserLookup(apiKey, intervalMs, settleMs, request = fetch) {
     }
     if (first.matchingMode !== 3) return { status: 'skipped' };
 
+    const seasonId = Number.isInteger(first.seasonId) && first.seasonId >= 0 && first.seasonId <= 2_147_483_647
+      ? first.seasonId : null;
+    if (targetSeasonId !== undefined) {
+      if (seasonId === null || !result.userGames.every((row) => row.seasonId === seasonId)) {
+        // Revisit games whose season cannot be confirmed instead of permanently skipping them.
+        return { status: 'missing' };
+      }
+      if (seasonId !== targetSeasonId) return { status: 'skipped' };
+    }
+
     const startedAt = Date.parse(first.startDtm);
     if (settleMs > 0 && Number.isFinite(startedAt) && fetchedAt.getTime() - startedAt < settleMs) {
       return { status: 'deferred' };
     }
 
     const version = [first.versionSeason, first.versionMajor, first.versionMinor];
-    const seasonId = Number.isInteger(first.seasonId) && first.seasonId >= 0 && first.seasonId <= 2_147_483_647
-      ? first.seasonId : null;
     return {
       status: 'ranked',
       seasonId,
@@ -165,7 +173,7 @@ async function collectBatch(client, lookup, lookahead, signal) {
     if (result.status === 'deferred') return false;
     if (result.status === 'missing') {
       gaps.push(gameId);
-      // A trailing run of 404s may be the live edge. Advance only after a later game is confirmed.
+      // An unresolved run may be the live edge. Advance only after a later game is confirmed.
       if (gaps.length >= lookahead) return false;
       continue;
     }
@@ -235,8 +243,12 @@ async function main() {
     const intervalMs = readInteger(process.env.MATCH_COLLECTION_REQUEST_INTERVAL_MS ?? '1000', 'MATCH_COLLECTION_REQUEST_INTERVAL_MS', 1, 60_000);
     const settleSeconds = readInteger(process.env.MATCH_COLLECTION_SETTLE_SECONDS ?? '3600', 'MATCH_COLLECTION_SETTLE_SECONDS', 0, 86_400);
     const lookahead = readInteger(process.env.MATCH_COLLECTION_404_LOOKAHEAD ?? '20', 'MATCH_COLLECTION_404_LOOKAHEAD', 1, 1000);
-    const lookup = createBserLookup(key, intervalMs, settleSeconds * 1000);
-    console.log('Starting ranked match collection');
+    const seasonSetting = process.env.MATCH_COLLECTION_SEASON_ID?.trim();
+    const targetSeasonId = seasonSetting
+      ? readInteger(seasonSetting, 'MATCH_COLLECTION_SEASON_ID', 1, 2_147_483_647)
+      : undefined;
+    const lookup = createBserLookup(key, intervalMs, settleSeconds * 1000, { targetSeasonId });
+    console.log(`Starting ranked match collection (season: ${targetSeasonId ?? 'all'})`);
     await run(client, lookup, {
       startGameId: process.env.MATCH_COLLECTION_START_GAME_ID,
       lookahead,
