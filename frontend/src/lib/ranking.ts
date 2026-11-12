@@ -1,4 +1,3 @@
-import { unstable_cache } from "next/cache";
 import { HOME_META_TARGET_PATCH } from "@/lib/homeMetaShared";
 import { getAverageRP } from "@/lib/rpMetric";
 import { seasonSnapshot } from "@/lib/seasonSnapshot";
@@ -158,28 +157,4 @@ export async function fetchRankingData(
     previousPatch,
     tier: usedTier,
   };
-}
-
-export async function getCachedRankingData(
-  patchVersion: string,
-  requestedTier: string
-): Promise<RankingResponse> {
-  return unstable_cache(
-    async () => fetchRankingData(patchVersion, requestedTier),
-    [
-      "character-rankings",
-      "fixed-entry-cost-v1",
-      seasonSnapshot.version,
-      patchVersion,
-      requestedTier,
-    ],
-    {
-      revalidate: patchVersion === HOME_META_TARGET_PATCH ? 1800 : 21600,
-      tags: [
-        "character-rankings",
-        `character-rankings:${patchVersion}`,
-        `character-rankings:tier:${requestedTier}`,
-      ],
-    }
-  )();
 }
