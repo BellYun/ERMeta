@@ -26,7 +26,7 @@ ER&GG는 이터널리턴의 패치·티어별 통계를 수집하고, 여러 조
 
 - 승률과 티어뿐 아니라 표본, 비교 조건, 실험체·무기 조합의 맥락을 함께 제공합니다.
 - 연구 과정과 도메인 지식은 `knowledge/`에 보존하고, 수동 연구 도구는 `tools/`에서 관리합니다.
-- 사용자 조회는 사전 집계 통계와 캐시를 재사용하고, 데이터 수집과 분리해 DB 조회 비용과 외부 API 호출량을 통제합니다.
+- 데이터 수집과 사용자 조회를 분리하고, 사전 집계와 정적 스냅샷을 활용해 DB 조회 비용과 외부 API 호출량을 통제합니다.
 - 모바일 상호작용 성능과 실제 사용자의 피드백을 기준으로 개선합니다.
 
 | 항목        | 내용                                                              |
@@ -59,7 +59,6 @@ ER&GG는 이터널리턴의 패치·티어별 통계를 수집하고, 여러 조
 | 홈 개인화         | 내 실험체 풀을 설정하고 홈에서 해당 실험체의 패치 성적 확인    |
 | 캐릭터 연구소     | 역할군별 성과와 포지션 메타를 비교                             |
 | 패치 분석         | 이전 패치 대비 지표 변화와 밸런스 변경사항 확인                |
-| 플레이어 멀티서치 | 닉네임별 시즌 통계와 주력 캐릭터 기반 팀 조합 추천             |
 | 플레이어 전적·통계 API | 최근 전적 저장·조회, 공식 시즌 통계 비교, 강제 갱신 — **구현 완료·배포 예정** |
 | 공유 기능         | 선택한 조합을 URL 상태와 동적 OG 이미지로 공유                 |
 | 다국어 서비스     | 한국어, 영어, 일본어 locale 라우팅과 검색엔진별 대체 링크 제공 |
@@ -67,6 +66,19 @@ ER&GG는 이터널리턴의 패치·티어별 통계를 수집하고, 여러 조
 > 플레이어 전적·통계 API는 구현과 Cloud Run 배포 구성을 완료했으며, BSER API 호출 한도 확대 후 배포할 예정입니다.
 
 ## System Architecture
+
+### 12.7 통계의 정적 전환
+
+홈, 랭킹, 실험체 상세, 패치 분석, 3인큐 추천과 조합 상세는 저장소에 포함된 12.7까지의 통계 스냅샷을 사용합니다. 페이지에 필요한 초기 데이터는 Next.js 빌드에서 읽고, 패치·무기·특성 선택에 필요한 데이터는 브라우저가 버전별 JSON으로 가져옵니다.
+
+- 빌드에서 사전 생성한 통계 페이지에는 시간 기반 ISR을 적용하지 않습니다. 스냅샷을 갱신할 때는 새 버전 파일과 매니페스트를 같은 배포에 포함합니다.
+- 버전이 포함된 정적 데이터 URL에는 1년 `immutable` 캐시를 적용합니다. 통계 조회에 필요한 파일을 CDN에서 제공해 요청 시 DB 조회와 반복적인 페이지 재생성을 줄였습니다.
+
+[정적 전환 PR #371](https://github.com/BellYun/ERMeta/pull/371) · [시즌 통계 스냅샷 생성 코드](frontend/scripts/export-season-snapshot.py)
+
+### 정적 전환 전의 데이터 수집·조회 구조
+
+BSER Open API에서 수집한 데이터를 Supabase PostgreSQL에 사전 집계하고, Next.js Route Handler와 캐시를 통해 통계 화면에 전달했습니다. [전환 전 소스](https://github.com/BellYun/ERMeta/tree/affb58f3501689ca9c35cdba34112ae10a34f602)
 
 ```mermaid
 flowchart LR
@@ -128,7 +140,7 @@ flowchart LR
 - 긴 선택 목록과 결과 목록에서 동시에 마운트되는 컴포넌트 수를 제한하면서, 상세 카드의 동적 높이도 안정적으로 반영했습니다.
 - 모바일 핵심 탐색 흐름의 상호작용 성능을 정량적으로 확인하고, 성능 예산을 넘는 회귀를 PR 단계에서 탐지할 수 있게 했습니다.
 
-### 3. 데이터 변경 주기에 따른 페이지·API 캐시 정책
+### 3. 정적 전환 전의 페이지·API 캐시 설계
 
 **문제**
 
@@ -264,7 +276,7 @@ ERMeta/
 
 - Node.js >= 20.9.0
 - npm
-- 전체 데이터 기능 사용 시 Supabase 프로젝트와 BSER API Key
+- 수집 파이프라인과 DB 연동 기능 실행 시 Supabase 프로젝트와 BSER API Key
 - NestJS 멀티서치 캐시 사용 시 Redis
 - 플레이어 전적·통계 API 실행 시 Node.js 22와 PostgreSQL ([실행 가이드](backend/README.md))
 
@@ -276,7 +288,6 @@ cd ERMeta
 cd frontend
 nvm use
 npm ci
-# .env.local에 사용할 Supabase·BSER 환경 변수 설정
 npm run dev
 # http://localhost:3000
 ```
@@ -300,7 +311,7 @@ npm run start:dev
 # http://localhost:4000
 ```
 
-프론트엔드의 전체 데이터 기능에는 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `BSER_API_KEY` 설정이 필요합니다. 서버 전용 키는 `NEXT_PUBLIC_` 접두사 없이 관리합니다. 백엔드 환경 변수는 [`backend/.env.example`](backend/.env.example)과 [실행 가이드](backend/README.md)를 참고하세요.
+정적 통계 화면은 저장소의 스냅샷으로 실행할 수 있습니다. Supabase·BSER에 연동하는 기능을 실행할 때는 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `BSER_API_KEY`를 설정합니다. 서버 전용 키는 `NEXT_PUBLIC_` 접두사 없이 관리합니다. 백엔드 환경 변수는 [`backend/.env.example`](backend/.env.example)과 [실행 가이드](backend/README.md)를 참고하세요.
 
 ## 수동 도구와 개발 흐름
 
