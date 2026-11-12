@@ -34,7 +34,7 @@ import {
   type CharacterRole,
 } from "@/lib/characterMap";
 import { DEFAULT_CHARACTER_ANALYSIS_TIER } from "@/lib/characterTier";
-import { getCharacterPageMetaStats } from "@/lib/homeMetaServer";
+import { getCachedHomeMetaStats } from "@/lib/homeMetaServer";
 import { buildHomeMetaView } from "@/lib/homeMetaShared";
 import { localizeRoutePath } from "@/lib/seoLocales";
 import { loadL10nMap } from "@/lib/serverL10n";
@@ -454,7 +454,7 @@ export async function CharacterPageContent({
       if (!currentPatch) return {};
 
       try {
-        const metaStats = await getCharacterPageMetaStats(currentPatch);
+        const metaStats = await getCachedHomeMetaStats(currentPatch);
         const rankings = buildHomeMetaView(metaStats, DEFAULT_CHARACTER_ANALYSIS_TIER).rankingData
           .rankings;
         return computeCharacterMetaTiers(rankings, code);

@@ -27,15 +27,14 @@ export async function fetchCharacterStatsServer(
 async function getCachedCharacterStatRows(patchVersion: string, tier: string) {
   return unstable_cache(
     async () => fetchCharacterStatRowsServer(patchVersion, tier),
-    ["character-stats-rows", seasonSnapshot.version, patchVersion, tier],
-    {
-      revalidate: 43200,
-      tags: [
-        "character-stats:rows",
-        `character-stats:patch:${patchVersion}`,
-        `character-stats:tier:${tier}`,
-      ],
-    }
+    [
+      "character-stats-snapshot-rows",
+      process.env.VERCEL_GIT_COMMIT_SHA ?? "local",
+      seasonSnapshot.version,
+      patchVersion,
+      tier,
+    ],
+    { revalidate: false }
   )();
 }
 

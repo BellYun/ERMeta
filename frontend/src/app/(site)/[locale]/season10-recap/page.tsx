@@ -36,7 +36,7 @@ const SEASON_RECAP_METADATA = {
 } as const;
 
 export const dynamic = "force-static";
-export const revalidate = 86400;
+export const revalidate = false;
 
 export async function generateMetadata({ params }: LocalePageProps): Promise<Metadata> {
   const { locale } = await params;

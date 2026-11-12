@@ -16,19 +16,16 @@ beforeEach(() => {
 });
 
 describe("patch detail cache dependencies", () => {
-  it("keeps current detail pages hourly without changing the home cache", async () => {
+  it("shares the home snapshot cache without time-based or tag-based invalidation", async () => {
     await getPatchPageMetaStats(HOME_META_TARGET_PATCH);
-    expect(cached.mock.calls[0][2]).toEqual({
-      revalidate: 3600,
-      tags: [`patch-page:${HOME_META_TARGET_PATCH}`],
-    });
     await getCachedHomeMetaStats(HOME_META_TARGET_PATCH);
-    expect(cached.mock.calls[1][2]).toMatchObject({ revalidate: 1800 });
-    expect(cached.mock.calls[0][1]).not.toEqual(cached.mock.calls[1][1]);
+    expect(cached.mock.calls[0][2]).toEqual({ revalidate: false });
+    expect(cached.mock.calls[1][2]).toEqual({ revalidate: false });
+    expect(cached.mock.calls[0][1]).toEqual(cached.mock.calls[1][1]);
   });
   it("does not attach a finite TTL to an archived patch", async () => {
     await getPatchPageMetaStats("11.4");
-    expect(cached.mock.calls[0][2]).toEqual({ revalidate: false, tags: ["patch-page:11.4"] });
+    expect(cached.mock.calls[0][2]).toEqual({ revalidate: false });
   });
   it("rejects failed archive reads instead of permanently caching an empty preview", async () => {
     readSnapshotStatRows.mockRejectedValueOnce(new Error("snapshot unavailable"));

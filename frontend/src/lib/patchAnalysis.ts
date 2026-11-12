@@ -8,6 +8,7 @@ import {
 import { type CharacterRole, getComboRoles, getCharacterName } from "@/lib/characterMap";
 import { fetchRankingData, type CharacterRankingData } from "@/lib/ranking";
 import { hasComparableRP } from "@/lib/rpMetric";
+import { seasonSnapshot } from "@/lib/seasonSnapshot";
 import { resolveWeaponName, WEAPON_KOR_BY_CODE } from "@/lib/weaponMap";
 import assassinsData from "../../public/data/lab/assassins.json";
 import rangersData from "../../public/data/lab/rangers.json";
@@ -15,7 +16,7 @@ import skilldealersData from "../../public/data/lab/skilldealers.json";
 import supportsData from "../../public/data/lab/supports.json";
 import tanksData from "../../public/data/lab/tanks.json";
 import warriorsData from "../../public/data/lab/warriors.json";
-import { getPatchPageRevalidate, isPatchPageTestFixtureMode } from "./patchPageCache";
+import { isPatchPageTestFixtureMode } from "./patchPageCache";
 
 const ANALYSIS_TIER = "DIAMOND_PLUS";
 const ANALYSIS_TIERS = ["DIAMOND_PLUS", "MITHRIL_PLUS"] as const;
@@ -617,11 +618,9 @@ export async function getPatchAnalysisData(version?: string): Promise<PatchAnaly
       "patch-analysis-strict-v1",
       PATCH_ANALYSIS_CACHE_VERSION,
       process.env.VERCEL_GIT_COMMIT_SHA ?? "local",
+      seasonSnapshot.version,
       patchVersion,
     ],
-    {
-      revalidate: getPatchPageRevalidate(patchVersion),
-      tags: [`patch-page:${patchVersion}`],
-    }
+    { revalidate: false }
   )();
 }
