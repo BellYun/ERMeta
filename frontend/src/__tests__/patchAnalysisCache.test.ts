@@ -41,15 +41,15 @@ describe("patch analysis computation", () => {
     expect(result.roleMetrics.some((role) => role.totalGames > 0)).toBe(true);
     expect(ranking).toHaveBeenCalledTimes(2);
     expect(directDatabase).not.toHaveBeenCalled();
-    expect(cached.mock.calls[0][2]).toMatchObject({ revalidate: 3600 });
+    expect(cached.mock.calls[0][2]).toEqual({ revalidate: false });
     for (const entry of [...result.buffed, ...result.nerfed, ...result.mixed]) {
       expect(entry).not.toHaveProperty("roleComboMetrics");
     }
   });
-  it("propagates database failure so an archived page cannot cache an empty analysis", async () => {
+  it("propagates snapshot read failure so an archived page cannot cache an empty analysis", async () => {
     ranking.mockRejectedValue(new Error("offline"));
     await expect(getPatchAnalysisData("11.4")).rejects.toThrow("offline");
-    expect(cached.mock.calls[0][2]).toMatchObject({ revalidate: false });
+    expect(cached.mock.calls[0][2]).toEqual({ revalidate: false });
   });
 });
 

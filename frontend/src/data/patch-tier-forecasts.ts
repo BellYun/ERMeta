@@ -1,4 +1,5 @@
 import type { Tier } from "@/lib/design-tokens";
+import { comparePatchVersionsDescending, isPublicPatchVersion } from "@/lib/publicPatchVersion";
 import { PATCH_12_4_TIER_FORECASTS } from "./12.4-tier-forecasts";
 import { PATCH_12_5_TIER_FORECASTS } from "./12.5-tier-forecasts";
 import { PATCH_12_6_TIER_FORECASTS } from "./12.6-tier-forecasts";
@@ -211,11 +212,9 @@ const PATCH_TIER_FORECAST_REASONS: Record<string, Readonly<Record<string, string
 };
 
 export function getPatchTierForecastVersions(): string[] {
-  return Object.keys(PATCH_TIER_FORECASTS).sort((left, right) => {
-    const [leftMajor = 0, leftMinor = 0] = left.split(".").map(Number);
-    const [rightMajor = 0, rightMinor = 0] = right.split(".").map(Number);
-    return rightMajor - leftMajor || rightMinor - leftMinor;
-  });
+  return Object.keys(PATCH_TIER_FORECASTS)
+    .filter(isPublicPatchVersion)
+    .sort(comparePatchVersionsDescending);
 }
 
 export function getCharacterTierForecasts(

@@ -4,58 +4,18 @@ const SPECULATION_COMPLETED_MARK = "ermeta-speculative-analysis-completed";
 const CLICK_TO_READY_MEASURE = "ermeta-synergy-candidate-click-to-analysis-ready";
 
 async function mockAnalysisInputs(page: Page) {
-  await page.route("**/api/stats/trios-weapon*", async (route) => {
+  await page.route("**/data/trio-builder/*/*.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
       body: JSON.stringify({
-        results: [
-          {
-            character1: 1,
-            weaponType1: 16,
-            character2: 2,
-            weaponType2: 9,
-            character3: 76,
-            weaponType3: 3,
-            mainCore1: 0,
-            mainCore2: 0,
-            mainCore3: 0,
-            totalGames: 120,
-            winRate: 26.5,
-            averageRP: 9.2,
-            averageRank: 3.4,
-          },
-          {
-            character1: 1,
-            weaponType1: 16,
-            character2: 4,
-            weaponType2: 2,
-            character3: 76,
-            weaponType3: 3,
-            mainCore1: 0,
-            mainCore2: 0,
-            mainCore3: 0,
-            totalGames: 90,
-            winRate: 23.1,
-            averageRP: 7.4,
-            averageRank: 3.9,
-          },
+        version: 1,
+        itemCount: 2,
+        items: [
+          [1, 16, 2, 9, 76, 3, 120, 31.8, 3312, 408],
+          [1, 16, 4, 2, 76, 3, 90, 20.79, 1998, 351],
         ],
       }),
-    });
-  });
-  await page.route("**/api/traits/names*", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({ names: {} }),
-    });
-  });
-  await page.route("**/api/analysis/composition-affinity", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({ snapshotId: "test", results: {} }),
     });
   });
 }

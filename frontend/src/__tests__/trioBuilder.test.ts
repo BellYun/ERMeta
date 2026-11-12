@@ -1,4 +1,5 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
+import trioSnapshot from "@/data/trio-builder-snapshot.json";
 import {
   buildTeamAssignments,
   indexTeamMetrics,
@@ -63,12 +64,18 @@ describe("trio builder", () => {
       }),
     });
     vi.stubGlobal("fetch", fetcher);
-    const metrics = await loadTeamMetrics([[a, b], [b], [c, a]], new AbortController().signal);
-    expect(fetcher).toHaveBeenCalledTimes(1);
-    expect(fetcher.mock.calls[0]?.[0]).toBe(
-      "/api/stats/trios-weapon?character1=2&weapon1=9&format=tuple"
+    const { signal } = new AbortController();
+    const metrics = await loadTeamMetrics([[a, b], [b], [c, a]], signal);
+    expect(fetcher).toHaveBeenCalledExactlyOnceWith(
+      `/data/trio-builder/${trioSnapshot.version}/2-9.json`,
+      { signal }
     );
-    expect(metrics.size).toBe(1);
+    expect(metrics.get(teamKey([a, b, c]))).toEqual({
+      totalGames: 10,
+      winRate: 20,
+      averageRP: 10,
+      averageRank: 4,
+    });
   });
   it("fails the whole lookup instead of marking failed requests as missing statistics", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false }));

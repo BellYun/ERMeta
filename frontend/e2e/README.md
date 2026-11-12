@@ -21,15 +21,15 @@ frontend/e2e/
 
 페이지가 무너지지 않았는지 확인하는 가용성 체크. 기능 로직은 검증하지 않는다.
 
-| 스펙                             | 대상                                                                                            |
-| -------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `smoke/home.spec.ts`             | `/` (메타 분석, GlobalFilter, TierRankingTable, HoneyPicksSection)                              |
-| `smoke/synergy.spec.ts`          | `/synergy` -> `/synergy-detail` 리다이렉트, `/synergy-detail` h1 노출                           |
-| `smoke/seo.spec.ts`              | `/robots.txt`, `/sitemap.xml`, 홈/캐릭터 canonical                                              |
-| `smoke/api.spec.ts`              | `/api/patches/history`, `/api/meta/honey-picks`, `/api/character/mithril-rp-ranking` 응답 shape |
-| `smoke/synergy-share.spec.ts`    | 🥇 시너지 공유 — `?a=&b=&c=` 조합 URL 복원, 공유 버튼 노출 규칙                                 |
-| `smoke/synergy-share-og.spec.ts` | 🥇 시너지 공유 — Dynamic OG 이미지 엔드포인트 + 페이지 `og:image` meta                          |
-| `smoke/character-qa.spec.ts`     | 🥈 Q&A 파일럿 — 상위 10 캐릭터 상세에 Q&A 섹션 + 5개 카테고리 버튼                              |
+| 스펙                             | 대상                                                                   |
+| -------------------------------- | ---------------------------------------------------------------------- |
+| `smoke/home.spec.ts`             | `/` (메타 분석, GlobalFilter, TierRankingTable, HoneyPicksSection)     |
+| `smoke/synergy.spec.ts`          | `/synergy` -> `/synergy-detail` 리다이렉트, `/synergy-detail` h1 노출  |
+| `smoke/seo.spec.ts`              | `/robots.txt`, `/sitemap.xml`, 홈/캐릭터 canonical                     |
+| `smoke/api.spec.ts`              | `/api/patches/history` 응답 shape                                      |
+| `smoke/synergy-share.spec.ts`    | 🥇 시너지 공유 — `?a=&b=&c=` 조합 URL 복원, 공유 버튼 노출 규칙        |
+| `smoke/synergy-share-og.spec.ts` | 🥇 시너지 공유 — Dynamic OG 이미지 엔드포인트 + 페이지 `og:image` meta |
+| `smoke/character-qa.spec.ts`     | 🥈 Q&A 파일럿 — 상위 10 캐릭터 상세에 Q&A 섹션 + 5개 카테고리 버튼     |
 
 ## 플로 스위트 (flows/)
 

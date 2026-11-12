@@ -4,7 +4,6 @@ const CONTENT_PATHS = [
   "/character-lab",
   "/composition-lab",
   "/methodology",
-  "/multi-search",
   "/patch-analysis",
   "/patches",
   "/rankings",

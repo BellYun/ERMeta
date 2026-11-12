@@ -1,4 +1,10 @@
-import type { CharacterStatsResponse } from "@/app/api/character/stats/[characterCode]/route";
+import {
+  buildCharacterStatsResponse,
+  selectCharacterStatRows,
+  type CharacterStatsResponse,
+} from "@/lib/characterStatsShared";
+import { fetchSeasonSnapshot, type SnapshotStatRow } from "@/lib/seasonSnapshot";
+import { expandCumulativeTier } from "@/utils/tier";
 
 export function mergeSuccessfulPatchStats(
   current: (CharacterStatsResponse | null)[],
@@ -26,55 +32,54 @@ export function mergeSuccessfulPatchStats(
   return merged;
 }
 
+type CharacterSnapshot = Record<
+  string,
+  { rows: SnapshotStatRow[]; gamesByTier: Record<string, number> }
+>;
+
+const characterRequests = new Map<number, Promise<CharacterSnapshot | null>>();
+const MAX_CACHED_CHARACTERS = 8;
+
+function readCharacterStats(characterCode: number) {
+  const cached = characterRequests.get(characterCode);
+  if (cached) {
+    characterRequests.delete(characterCode);
+    characterRequests.set(characterCode, cached);
+    return cached;
+  }
+
+  const request = fetchSeasonSnapshot<CharacterSnapshot>(
+    "character-stats/" + characterCode + ".json"
+  ).catch((error) => {
+    if (characterRequests.get(characterCode) === request) characterRequests.delete(characterCode);
+    throw error;
+  });
+  characterRequests.set(characterCode, request);
+  if (characterRequests.size > MAX_CACHED_CHARACTERS) {
+    const oldest = characterRequests.keys().next().value;
+    if (oldest != null) characterRequests.delete(oldest);
+  }
+  return request;
+}
+
 export async function fetchStats(
   characterCode: number,
   patchVersion: string,
-  tier: string,
-  baseUrl?: string
+  tier: string
 ): Promise<CharacterStatsResponse | null> {
   try {
-    const base = baseUrl ?? "";
-    const res = await fetch(
-      `${base}/api/character/stats/${characterCode}?tier=${tier}&patchVersion=${encodeURIComponent(patchVersion)}`
+    const patch = (await readCharacterStats(characterCode))?.[patchVersion];
+    const rows = selectCharacterStatRows(patch?.rows ?? [], tier);
+    const grandTotal = expandCumulativeTier(tier).reduce(
+      (total, baseTier) => total + (patch?.gamesByTier[baseTier] ?? 0),
+      0
     );
-    if (!res.ok) return null;
-    return res.json();
+    return buildCharacterStatsResponse(rows, characterCode, patchVersion, tier, grandTotal);
   } catch {
     return null;
   }
 }
 
-export async function fetchStatsHistory(
-  characterCode: number,
-  patches: string[],
-  tier: string,
-  baseUrl?: string
-): Promise<(CharacterStatsResponse | null)[] | null> {
-  try {
-    const base = baseUrl ?? "";
-    const params = new URLSearchParams({
-      tier,
-      patchVersions: patches.join(","),
-    });
-    const res = await fetch(`${base}/api/character/stats-history/${characterCode}?${params}`);
-    if (!res.ok) return null;
-
-    const data = await res.json();
-    if (!Array.isArray(data.stats)) return null;
-    return data.stats;
-  } catch {
-    return null;
-  }
-}
-
-export async function fetchPatches(baseUrl?: string): Promise<string[]> {
-  try {
-    const base = baseUrl ?? "";
-    const res = await fetch(`${base}/api/patches/history?limit=10&includeInactive=true`);
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.patches ?? [];
-  } catch {
-    return [];
-  }
+export async function fetchStatsHistory(characterCode: number, patches: string[], tier: string) {
+  return Promise.all(patches.map((patch) => fetchStats(characterCode, patch, tier)));
 }

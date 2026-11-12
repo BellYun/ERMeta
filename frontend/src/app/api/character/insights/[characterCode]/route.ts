@@ -5,7 +5,7 @@ import { buildFallbackMap, resolveCharacterName } from "@/lib/characterMap";
 import { getCachedCharacterStats } from "@/lib/characterStats";
 import { DEFAULT_CHARACTER_ANALYSIS_TIER } from "@/lib/characterTier";
 import { getPatches } from "@/lib/getPatches";
-import { tryNestApiProxy } from "@/lib/server/nestProxy";
+import { getUnsupportedPatchResponse } from "@/lib/server/publicPatchRequest";
 import { loadL10nMap } from "@/lib/serverL10n";
 import { resolveWeaponName } from "@/lib/weaponMap";
 
@@ -15,9 +15,6 @@ interface RouteContext {
 
 export async function GET(request: NextRequest, { params }: RouteContext) {
   const { characterCode } = await params;
-  const proxied = await tryNestApiProxy(request, `/character/insights/${characterCode}`);
-  if (proxied) return proxied;
-
   const code = Number.parseInt(characterCode, 10);
 
   if (!Number.isFinite(code)) {
@@ -25,8 +22,12 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
   }
 
   const searchParams = request.nextUrl.searchParams;
+  const requestedPatch = searchParams.get("patchVersion");
+  const unsupportedPatch = getUnsupportedPatchResponse(requestedPatch);
+  if (unsupportedPatch) return unsupportedPatch;
+
   const patches = await getPatches();
-  const patchVersion = searchParams.get("patchVersion") ?? patches[0] ?? "";
+  const patchVersion = requestedPatch ?? patches[0] ?? "";
   const previousPatch = patches.find((patch) => patch !== patchVersion) ?? null;
   const tier = searchParams.get("tier") ?? DEFAULT_CHARACTER_ANALYSIS_TIER;
   const localeParam = searchParams.get("locale");

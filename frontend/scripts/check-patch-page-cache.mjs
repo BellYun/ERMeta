@@ -11,23 +11,22 @@ const rows = [];
 for (const [route, config] of Object.entries(manifest.routes)) {
   const match = route.match(/^\/([^/]+)\/(patch-analysis|patch-forecast)\/([^/]+)$/);
   if (!match) continue;
-  const [, locale, kind, version] = match;
-  const expected = version === currentPatch ? 3600 : false;
-  assert.equal(config.initialRevalidateSeconds, expected, `${route}: unexpected effective TTL`);
+  const version = match[3];
+  assert.equal(config.initialRevalidateSeconds, false, `${route}: unexpected effective TTL`);
   const base = join(".next/server/app", route);
   rows.push({
     route,
-    revalidate: expected,
+    version,
     htmlBytes: statSync(`${base}.html`).size,
     rscBytes: statSync(`${base}.rsc`).size,
   });
 }
 assert(
-  rows.some((row) => row.revalidate === 3600),
+  rows.some((row) => row.version === currentPatch),
   "Missing current patch routes"
 );
 assert(
-  rows.some((row) => row.revalidate === false),
+  rows.some((row) => row.version !== currentPatch),
   "Missing archived patch routes"
 );
 console.table(rows);

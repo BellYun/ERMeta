@@ -22,6 +22,7 @@ import {
   getPatchSummary,
   getStatsPatchVersions,
   getVisibleStatsPatchVersions,
+  PATCH_NOTES,
 } from "@/data/patch-notes";
 import {
   getCharacterTierForecasts,
@@ -31,6 +32,20 @@ import {
 import { buildHomeMetaView, DEFAULT_HOME_TIER, type HomeMetaStatRow } from "@/lib/homeMetaShared";
 
 describe("character patch history", () => {
+  it("keeps versions above 12.7 out of the public catalog and character history", () => {
+    const lastPatchNote = getCharacterPatchHistory(5)[0];
+    PATCH_NOTES.push({ ...lastPatchNote, patch: "13.0" }, { ...lastPatchNote, patch: "12.10" });
+
+    try {
+      expect(getAllPatchVersions()[0]).toBe("12.7");
+      expect(getVisibleStatsPatchVersions()[0]).toBe("12.7");
+      expect(getCharacterPatchHistory(5).map((note) => note.patch)).not.toContain("13.0");
+      expect(getCharacterPatchHistory(5).map((note) => note.patch)).not.toContain("12.10");
+    } finally {
+      PATCH_NOTES.splice(-2);
+    }
+  });
+
   it("shows every recorded change beyond the five recent stats patches", () => {
     const history = getCharacterPatchHistory(5);
     const patches = history.map((note) => note.patch);

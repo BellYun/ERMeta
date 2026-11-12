@@ -1,6 +1,7 @@
 import { type ChangeType, getCharacterPatchNote } from "@/data/patch-notes";
 import { type CharacterRole, getComboRoles, isWeaponAgnosticCharacter } from "@/lib/characterMap";
-import { createServerClient } from "@/lib/supabase";
+import { seasonSnapshot } from "@/lib/seasonSnapshot";
+import { readSnapshotStatRows } from "@/lib/server/seasonSnapshot";
 
 const DIAMOND_PLUS_TIERS = ["MITHRIL", "METEORITE", "DIAMOND", "IN1000"];
 const ROLES: CharacterRole[] = ["탱커", "전사", "암살자", "스킬딜러", "원거리 딜러", "지원가"];
@@ -309,47 +310,17 @@ export async function getSeasonRecapData(seasonNumber = 10): Promise<SeasonRecap
       return emptySeasonRecapData();
     }
 
-    const supabase = createServerClient();
     const seasonPatchPrefix = `${seasonNumber}.`;
+    const patches = seasonSnapshot.patches
+      .map(({ version }) => version)
+      .filter((version) => version.startsWith(seasonPatchPrefix) && version !== `${seasonNumber}.0`)
+      .reverse();
+    if (patches.length === 0) return emptySeasonRecapData();
 
-    const { data: patchData, error: patchError } = await supabase
-      .from("PatchVersion")
-      .select("version,startDate")
-      .like("version", `${seasonPatchPrefix}%`)
-      .order("startDate", { ascending: true });
-
-    if (patchError) {
-      console.error(`[seasonRecap] 시즌 ${seasonNumber} PatchVersion 조회 실패:`, patchError);
-    }
-
-    const patches = (patchData ?? [])
-      .map((r: { version: string }) => r.version)
-      .filter((version): version is string => Boolean(version) && version !== `${seasonNumber}.0`);
-
-    if (patches.length === 0) {
-      return emptySeasonRecapData();
-    }
-
-    // 패치 × 4티어 × 평균 90 캐릭 ≈ 패치당 360 row. 패치별로 나눠서 1000-row 기본 제한 회피.
-    const perPatchResults = await Promise.all(
-      patches.map((patch) =>
-        supabase
-          .from("v2_CharacterStats")
-          .select("patchVersion,characterNum,bestWeapon,tier,totalGames,totalWins,totalRP")
-          .eq("patchVersion", patch)
-          .in("tier", DIAMOND_PLUS_TIERS)
-      )
-    );
-
-    const allRows: StatRow[] = [];
-    for (let i = 0; i < perPatchResults.length; i++) {
-      const { data, error } = perPatchResults[i];
-      if (error) {
-        console.error(`[seasonRecap] ${patches[i]} 조회 실패:`, error);
-        continue;
-      }
-      if (data) allRows.push(...(data as StatRow[]));
-    }
+    const allRows: StatRow[] = (await Promise.all(patches.map(readSnapshotStatRows)))
+      .flat()
+      .filter((row) => DIAMOND_PLUS_TIERS.includes(row.tier))
+      .map((row) => ({ ...row, bestWeapon: row.bestWeapon ?? 0 }));
 
     const perPatchTop: PatchTopGroup[] = patches.map((patch) => {
       const patchRows = allRows.filter((r) => r.patchVersion === patch);

@@ -74,7 +74,6 @@ const COPY: Record<
   },
 };
 
-// 패치별 데이터 캐시가 현재 패치에만 1시간 ISR을 설정한다.
 export const revalidate = false;
 export const dynamic = "force-static";
 export const dynamicParams = true;

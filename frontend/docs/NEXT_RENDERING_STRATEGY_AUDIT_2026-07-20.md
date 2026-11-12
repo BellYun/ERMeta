@@ -131,7 +131,7 @@ Trait/Name/*
 | `/patch-analysis/[version]`         | SSG build snapshot                | revalidate 없음                            | snapshot이면 적절, publish 검증은 부족 |
 | `/patch-analysis`                   | 요청별 SSR redirect               | `private, no-store`                        | 정적 redirect로 변경                   |
 | `/season10-recap`                   | ISR 1d                            | 매일 DB 재집계 가능                        | 종료 시즌이면 snapshot 권장            |
-| multi-search, synergy UI            | 정적 shell + Client/API           | API별 public/no-store                      | 적절                                   |
+| synergy UI                          | 정적 shell + Client/API           | API별 public/no-store                      | 적절                                   |
 | 인증, feedback, health              | Dynamic                           | `no-store`                                 | 적절                                   |
 | 통계·빌드 Route Handler             | Dynamic handler + Data/HTTP cache | query key별 cache                          | handler가 `ƒ`인 것은 정상              |
 

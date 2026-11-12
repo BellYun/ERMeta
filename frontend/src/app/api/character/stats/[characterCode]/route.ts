@@ -4,6 +4,7 @@ import { getCachedCharacterStats, type CharacterStatsResponse } from "@/lib/char
 import { DEFAULT_CHARACTER_ANALYSIS_TIER } from "@/lib/characterTier";
 import { getPatches } from "@/lib/getPatches";
 import { tryNestApiProxy } from "@/lib/server/nestProxy";
+import { getUnsupportedPatchResponse } from "@/lib/server/publicPatchRequest";
 
 export type { CharacterStatsResponse, WeaponStatItem } from "@/lib/characterStats";
 
@@ -12,8 +13,10 @@ export async function GET(
   { params }: { params: Promise<{ characterCode: string }> }
 ) {
   const { characterCode: characterCodeStr } = await params;
-  const proxied = await tryNestApiProxy(request, `/character/stats/${characterCodeStr}`);
-  if (proxied) return proxied;
+  const { searchParams } = request.nextUrl;
+  const requestedPatch = searchParams.get("patchVersion");
+  const unsupportedPatch = getUnsupportedPatchResponse(requestedPatch);
+  if (unsupportedPatch) return unsupportedPatch;
 
   const characterCode = Number(characterCodeStr);
 
@@ -21,11 +24,18 @@ export async function GET(
     return NextResponse.json({ error: "Invalid characterCode" }, { status: 400 });
   }
 
-  const { searchParams } = new URL(request.url);
   const tier = searchParams.get("tier") ?? DEFAULT_CHARACTER_ANALYSIS_TIER;
-  const patchVersion = searchParams.get("patchVersion") ?? (await getPatches())[0];
+  const patchVersion = requestedPatch ?? (await getPatches())[0];
 
   try {
+    if (patchVersion) {
+      const proxied = await tryNestApiProxy(
+        request,
+        `/character/stats/${characterCodeStr}`,
+        patchVersion
+      );
+      if (proxied) return proxied;
+    }
     const t0 = Date.now();
     const stats = await getCachedCharacterStats(characterCode, patchVersion, tier);
     const latencyMs = Date.now() - t0;

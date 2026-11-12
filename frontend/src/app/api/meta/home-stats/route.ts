@@ -3,15 +3,15 @@ import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
 import { getPatches } from "@/lib/getPatches";
 import { getCachedHomeMetaStats } from "@/lib/homeMetaServer";
 import { tryNestApiProxy } from "@/lib/server/nestProxy";
+import { getUnsupportedPatchResponse } from "@/lib/server/publicPatchRequest";
 
 export async function GET(request: NextRequest) {
-  const proxied = await tryNestApiProxy(request, "/meta/home-stats");
-  if (proxied) return proxied;
+  const requestedPatch = request.nextUrl.searchParams.get("patchVersion");
+  const unsupportedPatch = getUnsupportedPatchResponse(requestedPatch);
+  if (unsupportedPatch) return unsupportedPatch;
 
   try {
-    const { searchParams } = new URL(request.url);
-    const latestPatch = (await getPatches())[0] ?? "";
-    const patchVersion = searchParams.get("patchVersion") ?? latestPatch;
+    const patchVersion = requestedPatch ?? (await getPatches())[0];
 
     if (!patchVersion) {
       return NextResponse.json(
@@ -19,6 +19,9 @@ export async function GET(request: NextRequest) {
         { headers: NO_CACHE_HEADERS }
       );
     }
+
+    const proxied = await tryNestApiProxy(request, "/meta/home-stats", patchVersion);
+    if (proxied) return proxied;
 
     const result = await getCachedHomeMetaStats(patchVersion);
     return NextResponse.json(result, { headers: getCacheHeaders("daily") });

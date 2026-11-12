@@ -136,6 +136,12 @@ describe("GET /api/builds/equipment", () => {
     expect(await GET(request(""))).toBe(proxied);
     expect(mocks.from).not.toHaveBeenCalled();
   });
+  it.each(["13.0", "12.10"])("공개 범위 밖 패치 %s는 조회 전에 거절한다", async (patch) => {
+    const response = await GET(request(`characterCode=1&patchVersion=${patch}`));
+    expect(response.status).toBe(400);
+    expect(mocks.proxy).not.toHaveBeenCalled();
+    expect(mocks.from).not.toHaveBeenCalled();
+  });
   it.each([false, true])(
     "DB 오류/예외에서도 기존 200 빈 응답을 유지한다: throw=%s",
     async (throws) => {

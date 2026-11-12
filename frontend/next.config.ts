@@ -1,9 +1,11 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { isPublicPatchVersion } from "./src/lib/publicPatchVersion";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const IMMUTABLE_ASSET_CACHE_CONTROL = "public, max-age=31536000, immutable";
+const STAT_SNAPSHOT_FILES = ["./public/data/season-stats/*/stats/*.json"];
 
 function parseCsvEnv(value: string | undefined): string[] {
   return (value ?? "")
@@ -14,7 +16,9 @@ function parseCsvEnv(value: string | undefined): string[] {
 
 function getFrozenPatchAnalysisRewrites() {
   const origin = process.env.PATCH_ANALYSIS_FROZEN_ORIGIN?.replace(/\/$/, "");
-  const versions = parseCsvEnv(process.env.PATCH_ANALYSIS_FROZEN_VERSIONS);
+  const versions = parseCsvEnv(process.env.PATCH_ANALYSIS_FROZEN_VERSIONS).filter(
+    isPublicPatchVersion
+  );
   if (!origin || versions.length === 0) return [];
 
   return versions.flatMap((version) => [
@@ -34,8 +38,32 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react", "recharts"],
   },
+  outputFileTracingIncludes: {
+    "/\\[locale\\]": STAT_SNAPSHOT_FILES,
+    "/character/\\[code\\]": STAT_SNAPSHOT_FILES,
+    "/performance-lab/home-filter": STAT_SNAPSHOT_FILES,
+    "/api/{builds/traits,character,meta}/**": STAT_SNAPSHOT_FILES,
+    "/api/og/synergy": ["./public/data/season-stats/*/og.json.gz"],
+  },
   async headers() {
     return [
+      {
+        source: "/data/season-stats/:version/:path*",
+        headers: [{ key: "Cache-Control", value: IMMUTABLE_ASSET_CACHE_CONTROL }],
+      },
+      {
+        source: "/data/:snapshot(trio-builder|trio-detail-pairs)/:version/:bucket",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: IMMUTABLE_ASSET_CACHE_CONTROL,
+          },
+        ],
+      },
+      {
+        source: "/data/composition-affinity/:version.json.gz",
+        headers: [{ key: "Cache-Control", value: IMMUTABLE_ASSET_CACHE_CONTROL }],
+      },
       {
         source: "/l10n/chunks/:path*",
         headers: [

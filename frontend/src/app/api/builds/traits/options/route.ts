@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCacheHeaders } from "@/lib/cache";
 import { getPatches } from "@/lib/getPatches";
 import { tryNestApiProxy } from "@/lib/server/nestProxy";
+import { getUnsupportedPatchResponse } from "@/lib/server/publicPatchRequest";
 import { createServerClient } from "@/lib/supabase";
 import { expandCumulativeTier } from "@/utils/tier";
 
@@ -15,13 +16,17 @@ export interface TraitOptionItem {
 }
 
 export async function GET(request: NextRequest) {
+  const { searchParams } = request.nextUrl;
+  const requestedPatch = searchParams.get("patchVersion");
+  const unsupportedPatch = getUnsupportedPatchResponse(requestedPatch);
+  if (unsupportedPatch) return unsupportedPatch;
+
   const proxied = await tryNestApiProxy(request, "/builds/traits/options");
   if (proxied) return proxied;
 
-  const { searchParams } = new URL(request.url);
   const characterCode = Number(searchParams.get("characterCode"));
   const tier = searchParams.get("tier") ?? "DIAMOND";
-  const patchVersion = searchParams.get("patchVersion") ?? (await getPatches())[0];
+  const patchVersion = requestedPatch ?? (await getPatches())[0];
   const bestWeapon = searchParams.get("bestWeapon");
 
   if (!characterCode || isNaN(characterCode)) {

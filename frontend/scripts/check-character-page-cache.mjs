@@ -15,6 +15,6 @@ assert(
   "Missing localized character routes"
 );
 for (const [route, config] of routes) {
-  assert.equal(config.initialRevalidateSeconds, 21600, `${route}: unexpected effective TTL`);
+  assert.equal(config.initialRevalidateSeconds, false, `${route}: unexpected effective TTL`);
 }
-console.log(`Verified ${routes.length} character routes: effective ISR TTL is 6 hours.`);
+console.log(`Verified ${routes.length} character routes: no time-based regeneration.`);

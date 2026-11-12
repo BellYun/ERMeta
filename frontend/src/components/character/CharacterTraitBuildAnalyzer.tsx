@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useL10n } from "@/components/L10nProvider";
 import { useTraitNames } from "@/hooks/useTraitNames";
+import { loadSnapshotTraits } from "@/lib/characterBuildSnapshot";
 import { cn } from "@/lib/utils";
 import { TierGroup } from "@/utils/tier";
 import { hasTraitIcon } from "@/utils/traitCodes";
@@ -240,18 +241,18 @@ export function CharacterTraitBuildAnalyzer({
     if (!patchVersion) return;
 
     setLoading(true);
-    const params = new URLSearchParams({
-      characterCode: String(characterCode),
-      tier,
-      patchVersion,
-      ...(bestWeapon != null ? { bestWeapon: String(bestWeapon) } : {}),
-    });
-
-    fetch(`/api/builds/traits/main?${params}`)
-      .then((r) => r.json())
-      .then((d) => setBuilds(d.builds ?? []))
-      .catch(() => setBuilds([]))
-      .finally(() => setLoading(false));
+    const controller = new AbortController();
+    loadSnapshotTraits({ characterCode, tier, patchVersion, bestWeapon }, controller.signal)
+      .then((result) => {
+        if (!controller.signal.aborted) setBuilds(result.builds);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setBuilds([]);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+    return () => controller.abort();
   }, [characterCode, tier, patchVersion, bestWeapon]);
 
   if (loading) {

@@ -6,6 +6,7 @@ import itemNameMap from "@/../const/itemNameMap.json";
 import { useL10n, useL10nNamespace } from "@/components/L10nProvider";
 import type { EquipmentBuildResult, BuildSummary, CoreItem } from "@/domain/equipmentStats";
 import { useTraitNames } from "@/hooks/useTraitNames";
+import { loadSnapshotEquipment } from "@/lib/characterBuildSnapshot";
 import { cn } from "@/lib/utils";
 import { TierGroup } from "@/utils/tier";
 import { ItemIcon, WinRateSpan, SLOTS, SLOT_LABELS } from "./shared";
@@ -541,18 +542,18 @@ export function CharacterEquipmentAnalyzer({
     setLoading(true);
     setData(null);
 
-    const params = new URLSearchParams({
-      characterCode: String(characterCode),
-      tier,
-      patchVersion,
-      ...(bestWeapon != null ? { bestWeapon: String(bestWeapon) } : {}),
-    });
-
-    fetch(`/api/builds/equipment?${params}`)
-      .then((r) => r.json())
-      .then((d) => setData(d))
-      .catch(() => setData(null))
-      .finally(() => setLoading(false));
+    const controller = new AbortController();
+    loadSnapshotEquipment({ characterCode, tier, patchVersion, bestWeapon }, controller.signal)
+      .then((result) => {
+        if (!controller.signal.aborted) setData(result);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setData(null);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+    return () => controller.abort();
   }, [characterCode, tier, patchVersion, bestWeapon]);
 
   if (loading) {

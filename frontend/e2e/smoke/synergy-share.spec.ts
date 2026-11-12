@@ -1,45 +1,21 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const trioRows = [
-  {
-    character1: 6,
-    weaponType1: 8,
-    character2: 10,
-    weaponType2: 1,
-    character3: 1,
-    weaponType3: 1,
-    mainCore1: 0,
-    mainCore2: 0,
-    mainCore3: 0,
-    totalGames: 120,
-    winRate: 24.5,
-    averageRP: 8.7,
-    averageRank: 3.5,
-  },
-  {
-    character1: 6,
-    weaponType1: 8,
-    character2: 10,
-    weaponType2: 1,
-    character3: 2,
-    weaponType3: 2,
-    mainCore1: 0,
-    mainCore2: 0,
-    mainCore3: 0,
-    totalGames: 5,
-    winRate: 40,
-    averageRP: 10.2,
-    averageRank: 3.1,
-  },
-];
+const tupleBucket = {
+  version: 1,
+  itemCount: 2,
+  items: [
+    [6, 8, 10, 1, 1, 1, 120, 30, 3132, 420],
+    [6, 8, 10, 1, 2, 2, 5, 2, 153, 16],
+  ],
+};
 
-async function mockSynergyApis(page: Page) {
-  await page.route(/\/api\/stats\/trios-weapon(?:\?.*)?$/, async (route) => {
+async function mockSynergyData(page: Page) {
+  await page.route("**/data/trio-builder/*/6-8.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
       headers: { "Cache-Control": "no-store" },
-      body: JSON.stringify({ results: trioRows }),
+      body: JSON.stringify(tupleBucket),
     });
   });
   await page.route("**/api/traits/names*", async (route) => {
@@ -54,7 +30,7 @@ async function mockSynergyApis(page: Page) {
 test.describe("시너지 상세 URL 공유·복원", () => {
   test.beforeEach(async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "chromium-desktop", "데스크탑 공유 경로 전용");
-    await mockSynergyApis(page);
+    await mockSynergyData(page);
   });
 
   test("비교·정렬·표본 조건을 새로고침 후 복원하고 공유 URL에 유지한다", async ({

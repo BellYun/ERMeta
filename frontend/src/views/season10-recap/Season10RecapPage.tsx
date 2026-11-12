@@ -47,8 +47,6 @@ export function getSeasonRecapMetadata(seasonNumber: number, socialImagePath?: s
 
 export const metadata = getSeasonRecapMetadata(10);
 
-export const revalidate = 86400;
-
 const COPY = {
   ko: {
     emptyTitle: "시즌 10 리캡",

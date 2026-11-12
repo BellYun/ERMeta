@@ -5,24 +5,28 @@ import { X, Users, Loader2, Info, Share2 } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
+import characterBestWeapons from "@/../const/characterBestWeapons.json";
 import { SectionErrorBoundary } from "@/components/features/SectionErrorBoundary";
 import { useL10n } from "@/components/L10nProvider";
+import detailPairSnapshot from "@/data/trio-detail-pairs-snapshot.json";
 import { useFocusCharWeapons } from "@/hooks/useFocusCharWeapons";
 import { useTraitNames } from "@/hooks/useTraitNames";
 import { analytics, type SynergySortBy } from "@/lib/analytics";
 import {
   buildCompositionAffinityKey,
-  type CompositionAffinityBatchResponse,
   type CompositionAffinityEvidence,
   type CompositionAffinityMemberInput,
 } from "@/lib/characterAffinityComposition";
 import { isWeaponAgnosticCharacter, resolveCharacterName } from "@/lib/characterMap";
+import { loadCompositionAffinity } from "@/lib/compositionAffinitySnapshot";
 import { isMobileDevice } from "@/lib/device";
 import { recordFeedbackBreadcrumb, setFeedbackContextState } from "@/lib/feedbackContext";
 import { FetchHttpError, FetchRetriesExhaustedError, fetchWithRetry } from "@/lib/fetchWithRetry";
 import { buildSynergyShareUrl } from "@/lib/synergyShare";
 import { MINIMUM_GAMES_OPTIONS, parseMinimumGamesParam } from "@/lib/synergyUrlState";
 import { comparePerformanceTierStats } from "@/lib/tierScoring";
+import { loadSnapshotCoreVariants, snapshotTrioKey } from "@/lib/trioCoreSnapshot";
+import { getTrioWeaponBucketUrl } from "@/lib/trioStaticBuckets";
 import { groupTrioCoreVariants, groupTrioWeaponResults } from "@/lib/trioWeaponGrouping";
 import {
   filterTrioWeaponTuples,
@@ -61,11 +65,10 @@ const DETAIL_BUCKET_MEMORY_CACHE_LIMIT = 8;
 const RESULT_QUERY_DEBOUNCE_MS = 50;
 const RESULT_CARD_OVERSCAN = 3;
 
-type DetailBucketData = CachedTrioWeaponTuple[] | TrioWeaponResult[];
-
+const weaponsByCharacter: Record<string, { weaponCode: number }[]> = characterBestWeapons;
+const detailPairKeys = new Set(detailPairSnapshot.pairs);
 const detailBucketMemoryCache = new Map<string, CachedTrioWeaponTuple[]>();
-const detailBucketInFlight = new Map<string, Promise<DetailBucketData>>();
-const affinityEvidenceMemoryCache = new Map<string, CompositionAffinityEvidence>();
+const detailBucketInFlight = new Map<string, Promise<CachedTrioWeaponTuple[]>>();
 
 const DETAIL_SORT_OPTIONS: {
   value: SortBy;
@@ -96,44 +99,6 @@ function getAllyQueryKey(allies: AllySelection[]) {
     .join("|");
 }
 
-function buildLegacyDetailSearchParams(allies: AllySelection[]) {
-  const params = new URLSearchParams({ sortBy: "totalGames", limit: "5000" });
-  const queryAllies = sortAllyPair(allies);
-  const a1 = queryAllies[0];
-  if (a1) {
-    params.set("character1", String(a1.charCode));
-    if (a1.weaponCode) params.set("weapon1", String(a1.weaponCode));
-  }
-  const a2 = queryAllies[1];
-  if (a2) {
-    params.set("character2", String(a2.charCode));
-    if (a2.weaponCode) params.set("weapon2", String(a2.weaponCode));
-  }
-  return params;
-}
-
-function buildDetailTupleSearchParams(allies: AllySelection[]) {
-  // 첫 번째 선택(A)을 고정 anchor로 사용해 B만 바뀔 때 같은 bucket을 재사용한다.
-  const anchor = allies.find(
-    (ally) => ally.charCode > 0 && ally.weaponCode != null && ally.weaponCode > 0
-  );
-  if (!anchor?.weaponCode) return null;
-
-  return new URLSearchParams({
-    format: "tuple",
-    character1: String(anchor.charCode),
-    weapon1: String(anchor.weaponCode),
-  });
-}
-
-function isLegacyDetailResponse(
-  value: unknown
-): value is { results?: TrioWeaponResult[]; error?: string } {
-  if (value == null || typeof value !== "object" || !("results" in value)) return false;
-  const { results } = value as { results?: unknown };
-  return results == null || Array.isArray(results);
-}
-
 function rememberDetailBucket(key: string, tuples: CachedTrioWeaponTuple[]) {
   detailBucketMemoryCache.delete(key);
   detailBucketMemoryCache.set(key, tuples);
@@ -145,8 +110,11 @@ function rememberDetailBucket(key: string, tuples: CachedTrioWeaponTuple[]) {
   }
 }
 
-async function fetchDetailTupleBucket(params: URLSearchParams): Promise<DetailBucketData> {
-  const requestUrl = `/api/stats/trios-weapon?${params.toString()}`;
+async function fetchDetailTupleBucket(
+  character: number,
+  weapon: number
+): Promise<CachedTrioWeaponTuple[]> {
+  const requestUrl = getTrioWeaponBucketUrl(character, weapon);
   const cached = detailBucketMemoryCache.get(requestUrl);
   if (cached) {
     detailBucketMemoryCache.delete(requestUrl);
@@ -159,11 +127,8 @@ async function fetchDetailTupleBucket(params: URLSearchParams): Promise<DetailBu
 
   // 선택 B가 바뀌어도 같은 A+무기 bucket 요청을 공유한다. 호출부의 cancelled guard가
   // 이전 렌더의 state 반영만 막고, 이미 시작한 저카디널리티 요청은 끝까지 재사용한다.
-  const request: Promise<DetailBucketData> = fetchWithRetry<unknown>(requestUrl)
+  const request = fetchWithRetry<unknown>(requestUrl)
     .then((payload) => {
-      // E2E/preview의 기존 object mock과 순차 배포를 위한 호환 경로.
-      if (isLegacyDetailResponse(payload)) return payload.results ?? [];
-
       const tuples = parseTrioWeaponTupleBucket(payload).items;
       rememberDetailBucket(requestUrl, tuples);
       return tuples;
@@ -177,55 +142,25 @@ async function fetchDetailTupleBucket(params: URLSearchParams): Promise<DetailBu
 }
 
 async function fetchDetailRows(allies: AllySelection[], signal?: AbortSignal) {
-  const tupleParams = buildDetailTupleSearchParams(allies);
-  if (tupleParams) {
-    const bucket = await fetchDetailTupleBucket(tupleParams);
-    if (bucket.length === 0) return [];
-
-    // legacy object 응답에는 tuple(길이 10) 대신 result object가 들어온다.
-    if (!Array.isArray(bucket[0])) return bucket as TrioWeaponResult[];
-
-    return filterTrioWeaponTuples(bucket as CachedTrioWeaponTuple[], allies)
-      .slice(0, 5000)
-      .map(trioWeaponTupleToResult);
+  // Keep the first selected weapon as the anchor so changing the other ally reuses its file.
+  const anchor = allies.find((ally) => ally.charCode > 0 && (ally.weaponCode ?? 0) > 0);
+  if (anchor?.weaponCode) {
+    const availableWeapons = weaponsByCharacter[anchor.charCode];
+    if (!availableWeapons?.some(({ weaponCode }) => weaponCode === anchor.weaponCode)) return [];
+    const bucket = await fetchDetailTupleBucket(anchor.charCode, anchor.weaponCode);
+    return filterTrioWeaponTuples(bucket, allies).slice(0, 5000).map(trioWeaponTupleToResult);
   }
 
-  const params = buildLegacyDetailSearchParams(allies);
-  const data = await fetchWithRetry<{ results?: TrioWeaponResult[]; error?: string }>(
-    `/api/stats/trios-weapon?${params.toString()}`,
+  const key = sortAllyPair(allies)
+    .map(({ charCode }) => charCode)
+    .join("-");
+  if (!detailPairKeys.has(key)) return [];
+
+  const { results } = await fetchWithRetry<{ results: TrioWeaponResult[] }>(
+    `/data/trio-detail-pairs/${detailPairSnapshot.version}/${key}.json`,
     { signal }
   );
-  return data.results ?? [];
-}
-
-function getResultWeaponForCharacter(result: TrioWeaponResult, charCode: number): number | null {
-  if (result.character1 === charCode) return result.weaponType1;
-  if (result.character2 === charCode) return result.weaponType2;
-  if (result.character3 === charCode) return result.weaponType3;
-  return null;
-}
-
-function buildCoreVariantSearchParams(allies: AllySelection[], result: TrioWeaponResult) {
-  if (allies.length !== 2) return null;
-  const queryAllies = sortAllyPair(allies);
-  const ally1 = queryAllies[0];
-  const ally2 = queryAllies[1];
-  const pairWeapon1 = ally1.weaponCode ?? getResultWeaponForCharacter(result, ally1.charCode);
-  const pairWeapon2 = ally2.weaponCode ?? getResultWeaponForCharacter(result, ally2.charCode);
-  if (pairWeapon1 == null || pairWeapon2 == null) return null;
-
-  return new URLSearchParams({
-    pairCharacter1: String(ally1.charCode),
-    pairWeapon1: String(pairWeapon1),
-    pairCharacter2: String(ally2.charCode),
-    pairWeapon2: String(pairWeapon2),
-    trioCharacter1: String(result.character1),
-    trioWeapon1: String(result.weaponType1),
-    trioCharacter2: String(result.character2),
-    trioWeapon2: String(result.weaponType2),
-    trioCharacter3: String(result.character3),
-    trioWeapon3: String(result.weaponType3),
-  });
+  return results;
 }
 
 async function fetchCoreVariantRows(
@@ -233,24 +168,11 @@ async function fetchCoreVariantRows(
   group: GroupedCombo,
   signal?: AbortSignal
 ) {
-  const requests = Array.from(
-    new Set(
-      group.traitVariants
-        .map((variant) => buildCoreVariantSearchParams(allies, variant)?.toString())
-        .filter((params): params is string => Boolean(params))
-    )
+  const trios = new Map(group.traitVariants.map((variant) => [snapshotTrioKey(variant), variant]));
+  const results = await Promise.all(
+    [...trios.values()].map((variant) => loadSnapshotCoreVariants(variant, allies, signal))
   );
-  if (requests.length === 0) return groupTrioCoreVariants(group.traitVariants);
-
-  const responses = await Promise.all(
-    requests.map((params) =>
-      fetchWithRetry<{ results?: TrioWeaponResult[]; error?: string }>(
-        `/api/stats/trios-weapon/core-variants?${params}`,
-        { signal }
-      )
-    )
-  );
-  const rows = responses.flatMap((response) => response.results ?? []);
+  const rows = results.flat();
   return groupTrioCoreVariants(rows.length > 0 ? rows : group.traitVariants);
 }
 
@@ -644,53 +566,19 @@ function TrioSynergyDetailResults() {
     const combos = visibleRecommendations
       .map(getGroupAffinityMembers)
       .filter((members) => members.every((member) => member.weapon > 0));
-    const cachedEntries = combos.flatMap((members) => {
-      const key = buildCompositionAffinityKey(members);
-      const evidence = affinityEvidenceMemoryCache.get(key);
-      return evidence ? ([[key, evidence]] as const) : [];
-    });
-    if (cachedEntries.length > 0) {
-      setAffinityEvidenceByKey((current) => ({
-        ...current,
-        ...Object.fromEntries(cachedEntries),
-      }));
-    }
-
-    const missingCombos = combos.filter(
-      (members) => !affinityEvidenceMemoryCache.has(buildCompositionAffinityKey(members))
-    );
-    if (missingCombos.length === 0) return;
+    if (combos.length === 0) return;
 
     const controller = new AbortController();
-    const requestChunks = Array.from({ length: Math.ceil(missingCombos.length / 60) }, (_, index) =>
-      missingCombos.slice(index * 60, (index + 1) * 60)
-    );
-    Promise.all(
-      requestChunks.map((combosChunk) =>
-        fetchWithRetry<CompositionAffinityBatchResponse>("/api/analysis/composition-affinity", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ locale, combos: combosChunk }),
-          signal: controller.signal,
-          maxRetries: 1,
-        })
-      )
-    )
-      .then((responses) => {
-        const affinityResults: Record<string, CompositionAffinityEvidence> = Object.assign(
-          {},
-          ...responses.map((response) => response.results)
-        );
-        for (const [key, evidence] of Object.entries(affinityResults)) {
-          affinityEvidenceMemoryCache.set(key, evidence);
-        }
+    loadCompositionAffinity(combos, locale, controller.signal)
+      .then((results) => {
+        if (controller.signal.aborted) return;
         React.startTransition(() => {
-          setAffinityEvidenceByKey((current) => ({ ...current, ...affinityResults }));
+          setAffinityEvidenceByKey((current) => ({ ...current, ...results }));
         });
       })
       .catch((error: unknown) => {
         if (error instanceof DOMException && error.name === "AbortError") return;
-        console.error("[synergy-detail] composition affinity request failed", error);
+        console.error("[synergy-detail] composition affinity snapshot failed", error);
       });
 
     return () => controller.abort();

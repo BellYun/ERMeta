@@ -8,6 +8,7 @@ import itemNameMap from "@/../const/itemNameMap.json";
 import { useL10n, useL10nNamespace } from "@/components/L10nProvider";
 import type { EquipmentBuildResult, BuildSummary } from "@/domain/equipmentStats";
 import { useTraitNames } from "@/hooks/useTraitNames";
+import { loadSnapshotEquipment, loadSnapshotTraits } from "@/lib/characterBuildSnapshot";
 import { cn } from "@/lib/utils";
 import { hasTraitIcon } from "@/utils/traitCodes";
 import { CharacterSkillBuildAnalyzer } from "./CharacterSkillBuildAnalyzer";
@@ -541,24 +542,20 @@ export function CharacterDetailedAnalyzer({
     setSelectedComboIdx(-1);
     setEquipData(null);
 
-    const params = new URLSearchParams({
-      characterCode: String(characterCode),
-      tier,
-      patchVersion,
-      ...(bestWeapon != null ? { bestWeapon: String(bestWeapon) } : {}),
-    });
-
-    fetch(`/api/builds/traits/main?${params}`)
-      .then((r) => r.json())
-      .then((d) => {
-        const builds: TraitMainGroupData[] = d.builds ?? [];
+    const controller = new AbortController();
+    loadSnapshotTraits({ characterCode, tier, patchVersion, bestWeapon }, controller.signal)
+      .then(({ builds }) => {
+        if (controller.signal.aborted) return;
         setTraitBuilds(builds);
-        if (builds.length > 0) {
-          setSelectedComboIdx(0);
-        }
+        if (builds.length > 0) setSelectedComboIdx(0);
       })
-      .catch(() => setTraitBuilds([]))
-      .finally(() => setTraitLoading(false));
+      .catch(() => {
+        if (!controller.signal.aborted) setTraitBuilds([]);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setTraitLoading(false);
+      });
+    return () => controller.abort();
   }, [characterCode, tier, patchVersion, bestWeapon]);
 
   // 장비 빌드 로드 (조합 선택 시 — 가장 인기 있는 mainCore 기준)
@@ -575,19 +572,21 @@ export function CharacterDetailedAnalyzer({
     setEquipLoading(true);
     setEquipData(null);
 
-    const params = new URLSearchParams({
-      characterCode: String(characterCode),
-      tier,
-      patchVersion,
-      mainCore: String(selectedMainCore),
-      ...(bestWeapon != null ? { bestWeapon: String(bestWeapon) } : {}),
-    });
-
-    fetch(`/api/builds/equipment?${params}`)
-      .then((r) => r.json())
-      .then((d) => setEquipData(d))
-      .catch(() => setEquipData(null))
-      .finally(() => setEquipLoading(false));
+    const controller = new AbortController();
+    loadSnapshotEquipment(
+      { characterCode, tier, patchVersion, bestWeapon, mainCore: selectedMainCore },
+      controller.signal
+    )
+      .then((result) => {
+        if (!controller.signal.aborted) setEquipData(result);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setEquipData(null);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setEquipLoading(false);
+      });
+    return () => controller.abort();
   }, [selectedComboIdx, selectedMainCore, characterCode, tier, patchVersion, bestWeapon]);
 
   const sortedTopBuilds = React.useMemo(() => {

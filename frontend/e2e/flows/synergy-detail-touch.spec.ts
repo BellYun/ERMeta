@@ -25,43 +25,17 @@ async function hideOverlays(page: Page) {
 //
 // 고정 아군은 가넷(방망이)과 재키(도끼)다. mainCore=0 으로 특성 이름 의존을 최소화한다.
 async function mockTriosWeapon(page: Page) {
-  await page.route("**/api/stats/trios-weapon*", async (route) => {
+  await page.route("**/data/trio-builder/*/*.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
       headers: { "Cache-Control": "no-store" },
       body: JSON.stringify({
-        results: [
-          {
-            character1: 76,
-            weaponType1: 3,
-            character2: 1,
-            weaponType2: 14,
-            character3: 2,
-            weaponType3: 9,
-            mainCore1: 0,
-            mainCore2: 0,
-            mainCore3: 0,
-            totalGames: 120,
-            winRate: 26.5,
-            averageRP: 9.2,
-            averageRank: 3.4,
-          },
-          {
-            character1: 76,
-            weaponType1: 3,
-            character2: 1,
-            weaponType2: 14,
-            character3: 5,
-            weaponType3: 5,
-            mainCore1: 0,
-            mainCore2: 0,
-            mainCore3: 0,
-            totalGames: 90,
-            winRate: 23.1,
-            averageRP: 7.4,
-            averageRank: 3.9,
-          },
+        version: 1,
+        itemCount: 2,
+        items: [
+          [76, 3, 1, 14, 2, 9, 120, 31.8, 3312, 408],
+          [76, 3, 1, 14, 5, 5, 90, 20.79, 1998, 351],
         ],
       }),
     });

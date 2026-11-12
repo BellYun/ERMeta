@@ -1,3 +1,4 @@
+import { comparePatchVersionsDescending, isPublicPatchVersion } from "@/lib/publicPatchVersion";
 import { PATCH_NOTES as PATCH_10_1 } from "./10.1";
 import type { ChangeType, CharacterPatchNote } from "./10.1";
 import { PATCH_NOTES as PATCH_10_2 } from "./10.2";
@@ -58,24 +59,19 @@ export function getCharacterPatchNote(
   return PATCH_NOTES.find((note) => note.characterCode === characterCode && note.patch === patch);
 }
 
-// 최신 패치 우선 정렬 ("10.7" > "10.6" > ... > "10.1"). semver-major.minor 형태 가정.
-function compareVersionDesc(a: string, b: string): number {
-  const [a1, a2] = a.split(".").map(Number);
-  const [b1, b2] = b.split(".").map(Number);
-  if (a1 !== b1) return b1 - a1;
-  return b2 - a2;
-}
-
 export function getAllPatchVersions(): string[] {
   const set = new Set(PATCH_NOTES.map((n) => n.patch));
-  return [...set].sort(compareVersionDesc);
+  return [...set].filter(isPublicPatchVersion).sort(comparePatchVersionsDescending);
 }
 
 /** 통계 수집 여부와 관계없이, 변경이 기록된 실험체 패치를 최신순으로 반환한다. */
 export function getCharacterPatchHistory(characterCode: number): CharacterPatchNote[] {
   return PATCH_NOTES.filter(
-    (note) => note.characterCode === characterCode && note.changes.length > 0
-  ).sort((a, b) => compareVersionDesc(a.patch, b.patch));
+    (note) =>
+      note.characterCode === characterCode &&
+      note.changes.length > 0 &&
+      isPublicPatchVersion(note.patch)
+  ).sort((a, b) => comparePatchVersionsDescending(a.patch, b.patch));
 }
 
 // 통계 계산에서 제외할 패치 (표본/메타가 왜곡된 프리시즌 등). 패치노트 이력에는 그대로 노출.
@@ -94,12 +90,13 @@ export const MIN_VISIBLE_STATS_PATCH_VERSION = "11.1";
 
 export function isVisibleStatsPatchVersion(patch: string): boolean {
   return (
+    isPublicPatchVersion(patch) &&
     !STATS_EXCLUDED_PATCHES.has(patch) &&
-    compareVersionDesc(patch, MIN_VISIBLE_STATS_PATCH_VERSION) <= 0
+    comparePatchVersionsDescending(patch, MIN_VISIBLE_STATS_PATCH_VERSION) <= 0
   );
 }
 
-// 메인 및 실험체 분석 선택 목록은 11.1 이상만 노출한다.
+// 메인 및 실험체 분석 선택 목록은 11.1부터 공개 상한까지 노출한다.
 export function getVisibleStatsPatchVersions(): string[] {
   return getAllPatchVersions().filter(isVisibleStatsPatchVersion);
 }

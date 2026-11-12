@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { DEFAULT_ROUTE_LOCALE, LANGUAGE_BY_ROUTE_LOCALE } from "@/i18n/routing";
 import { LANGUAGE_COOKIE } from "@/lib/detectLanguage";
 import { getRouteLocaleSegmentFromPathname } from "@/lib/localizedPath";
+import { isPublicPatchVersion } from "@/lib/publicPatchVersion";
 import { parseSynergyShareSelection } from "@/lib/synergyShare";
 import { getRepresentativeWeaponCode } from "@/lib/weaponMap";
 
@@ -58,6 +59,19 @@ export function proxy(request: NextRequest) {
 
   if (pathname === "/synergy-detail/opengraph-image") {
     return NextResponse.next();
+  }
+
+  const localizedPath = routeLocale ? pathname.slice(routeLocale.length + 1) : pathname;
+  const patchVersion = /^\/(?:patches|patch-analysis|patch-forecast)\/(\d+\.\d+)\/?$/.exec(
+    localizedPath
+  )?.[1];
+  if (patchVersion && !isPublicPatchVersion(patchVersion)) {
+    const notFoundUrl = request.nextUrl.clone();
+    notFoundUrl.pathname = "/_not-found";
+
+    const response = NextResponse.rewrite(notFoundUrl, { status: 404 });
+    applyLanguageCookie(response, cookieLanguage);
+    return response;
   }
 
   const characterCode = getCharacterCodeFromPathname(pathname, routeLocale);

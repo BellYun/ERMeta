@@ -132,7 +132,7 @@ export function SynergyPartnersSection({
   React.useEffect(() => {
     let cancelled = false;
     setData(null);
-    fetch(`/api/synergy-pairs/${characterCode}?scope=s10-s11`)
+    fetch(`/data/synergy-pairs/${String(characterCode).padStart(3, "0")}.json`)
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then((json: SynergyData) => {
         if (!cancelled) setData(json);
