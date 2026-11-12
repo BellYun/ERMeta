@@ -21,14 +21,13 @@ MATCH_COLLECTION_SEASON_ID=43
 MATCH_COLLECTION_START_GAME_ID=
 MATCH_COLLECTION_REQUEST_INTERVAL_MS=1000
 MATCH_COLLECTION_SETTLE_SECONDS=3600
-MATCH_COLLECTION_404_LOOKAHEAD=20
 ```
 
-`MATCH_COLLECTION_SEASON_ID=43`이면 정규 시즌 43의 랭크 경기만 저장한다. 다른 시즌의 랭크는 커서만 전진시키고, 시즌 ID가 누락되거나 참가자마다 다른 응답은 재조회 대상으로 처리한다. 시즌 설정을 비우면 모든 시즌의 랭크를 수집한다.
+`MATCH_COLLECTION_SEASON_ID=43`이면 정규 시즌 43의 랭크 경기만 저장한다. 경기 시작 후 대기 시간이 지난 다른 시즌의 랭크는 커서만 전진시킨다. 랭크 응답의 시즌 ID가 누락되거나 참가자마다 다르면 해당 경기 번호에서 대기한다. 시즌 설정을 비우면 모든 시즌의 랭크를 수집한다.
 
 `MATCH_COLLECTION_START_GAME_ID`는 새 DB에서 처음 조회할 경기 번호다. 13시즌 개막 구간을 수집하려면 11월 19일 13.1 점검 이후 BSER에서 확인한 시작 번호를 넣는다. DB에 수집 위치가 생기면 다음 실행부터 DB의 `next_game_id`를 읽는다. [13시즌 정규 랭크 일정](https://playeternalreturn.com/posts/news/3948)
 
-요청 간격은 키에 할당된 호출량과 같은 키를 쓰는 다른 작업을 기준으로 설정한다. 랭크 원본은 기본적으로 경기 시작 1시간 후 저장하며, `MATCH_COLLECTION_SETTLE_SECONDS=0`으로 이 대기를 해제할 수 있다.
+요청 간격은 키에 할당된 호출량과 같은 키를 쓰는 다른 작업을 기준으로 설정한다. 기본값은 경기 시작 후 1시간이다. 모드나 시즌에 관계없이 이 시간이 지나지 않은 경기에 도달하면 해당 번호에서 이번 수집을 끝낸다. 상시 실행 중에는 60초 뒤 같은 번호부터 확인한다. `MATCH_COLLECTION_SETTLE_SECONDS=0`으로 이 대기를 해제할 수 있다.
 
 ```powershell
 Set-Location C:\ERMeta\backend
@@ -38,7 +37,7 @@ npm.cmd run collect:matches -- --once
 npm.cmd run collect:matches
 ```
 
-`--once`는 한 배치를 처리한 후 다음 경기 번호를 출력한다. 옵션 없는 실행은 계속 수집한다. DB에 원본을 쓰는 트랜잭션에서 수집 위치도 갱신하므로 종료 후 같은 명령으로 재개할 수 있다. 다른 모드로 확인한 경기는 수집 위치만 전진시킨다. 중간에 404가 나와도 뒤 경기의 응답이 확인되면 그 번호를 재조회 목록에 넣는다. 404 등으로 확인할 수 없는 번호가 20개 연속 나오면 그 구간의 첫 번호에서 멈추고 60초 뒤 다시 확인한다. 확인된 번호 사이에 20개 이상의 연속 공백이 있다면 `MATCH_COLLECTION_404_LOOKAHEAD`를 늘리고 재실행한다. 429나 네트워크 오류가 나면 수집 위치를 보존한 채 대기하며, 429의 `Retry-After`도 반영한다.
+`--once`는 한 배치를 처리한 후 다음 경기 번호를 출력한다. 옵션 없는 실행은 계속 수집한다. DB에 원본을 쓰는 트랜잭션에서 수집 위치도 갱신하므로 종료 후 같은 명령으로 재개할 수 있다. BSER 응답 JSON 본문에 `code=404`가 있으면 그 번호를 건너뛰고 다음 번호를 저장한다. 뒤늦게 공개된 경기라도 이미 건너뛴 번호는 자동으로 수집하지 않는다. 본문에서 `code=404`를 확인할 수 없는 HTTP 404, 429, 네트워크 오류에서는 수집 위치를 유지하며 재시도한다. 429의 `Retry-After`도 반영한다.
 
 부팅 후 자동 실행하려면 PostgreSQL의 Windows 서비스 시작 유형을 **자동**으로 설정하고, 작업 스케줄러에 **시스템 시작 시** 작업을 등록한다. 로그인 여부와 관계없이 실행하도록 설정하고, 시작 지연과 실패 시 재시작을 설정한다. 실행 시간 제한은 해제한다. 작업의 프로그램은 `(Get-Command node.exe).Source`로 확인한 절대 경로를 지정하고, 인수는 `--env-file=.env scripts/collect-matches.js`, 시작 위치는 `C:\ERMeta\backend`를 지정한다. 작업 계정에 해당 폴더와 `.env` 읽기 권한을 준다.
 
