@@ -8,6 +8,7 @@ import {
 } from "@/domain/equipmentStats";
 import { getCacheHeaders } from "@/lib/cache";
 import { tryNestApiProxy } from "@/lib/server/nestProxy";
+import { getUnsupportedPatchResponse } from "@/lib/server/publicPatchRequest";
 import { createServerClient } from "@/lib/supabase";
 import { expandCumulativeTier } from "@/utils/tier";
 
@@ -17,13 +18,17 @@ const WEAPON_ITEM_TYPE = weaponItemTypeMap as Record<string, number>;
 export const revalidate = 1800; // L1: 30분 서버 캐시
 
 export async function GET(request: NextRequest) {
+  const { searchParams } = request.nextUrl;
+  const requestedPatch = searchParams.get("patchVersion");
+  const unsupportedPatch = getUnsupportedPatchResponse(requestedPatch);
+  if (unsupportedPatch) return unsupportedPatch;
+
   const proxied = await tryNestApiProxy(request, "/builds/equipment");
   if (proxied) return proxied;
 
-  const { searchParams } = new URL(request.url);
   const characterCode = Number(searchParams.get("characterCode"));
   const tier = searchParams.get("tier") ?? "DIAMOND";
-  const patchVersion = searchParams.get("patchVersion") ?? "";
+  const patchVersion = requestedPatch ?? "";
   const mainCoreParam = searchParams.get("mainCore");
   const bestWeaponParam = searchParams.get("bestWeapon");
   const legendOnly = searchParams.get("legendOnly") === "1";

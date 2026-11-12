@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getStatsPatchVersions } from "@/data/patch-notes";
 import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
-import { tryNestApiProxy } from "@/lib/server/nestProxy";
+import { comparePatchVersionsDescending, isPublicPatchVersion } from "@/lib/publicPatchVersion";
 import { createServerClient } from "@/lib/supabase";
 
 export const revalidate = 3600; // L1: 1시간 서버 캐시
 
 export async function GET(request: NextRequest) {
-  const proxied = await tryNestApiProxy(request, "/patches/history");
-  if (proxied) return proxied;
-
   const { searchParams } = new URL(request.url);
   const limit = Math.min(Number(searchParams.get("limit") ?? "10"), 50);
   const includeInactive = searchParams.get("includeInactive") === "true";
@@ -21,24 +19,26 @@ export async function GET(request: NextRequest) {
       .from("PatchVersion")
       .select("version,startDate,isActive")
       .order("startDate", { ascending: false })
-      .limit(limit);
+      .limit(50);
 
     if (!includeInactive) {
       query = query.eq("isActive", true);
     }
 
     const { data, error } = await query;
+    const publicPatches = (data ?? []).filter((patch) => isPublicPatchVersion(patch.version));
 
-    if (!error && data && data.length > 0) {
-      const patches = data.map((p) => p.version);
-      const latestStartDate = (data[0] as { startDate?: string }).startDate ?? null;
+    if (!error && publicPatches.length > 0) {
+      const patches = publicPatches.slice(0, limit).map((patch) => patch.version);
+      const latestStartDate = publicPatches[0].startDate ?? null;
       return NextResponse.json({ patches, latestStartDate }, { headers: getCacheHeaders("slow") });
     }
 
     // 2차 fallback: CharacterStats에서 distinct patchVersion
     const { data: statsData, error: statsError } = await supabase
       .from("v2_CharacterStats")
-      .select("patchVersion");
+      .select("patchVersion")
+      .in("patchVersion", getStatsPatchVersions());
 
     if (statsError) {
       console.error("[patches/history] fallback failed:", statsError);
@@ -46,8 +46,8 @@ export async function GET(request: NextRequest) {
     }
 
     const patches = [...new Set((statsData ?? []).map((r) => r.patchVersion as string))]
-      .filter(Boolean)
-      .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }))
+      .filter(isPublicPatchVersion)
+      .sort(comparePatchVersionsDescending)
       .slice(0, limit);
 
     return NextResponse.json({ patches }, { headers: getCacheHeaders("slow") });

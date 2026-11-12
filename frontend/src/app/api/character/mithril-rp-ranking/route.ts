@@ -3,16 +3,17 @@ import { getCacheHeaders, NO_CACHE_HEADERS } from "@/lib/cache";
 import { getPatches } from "@/lib/getPatches";
 import { getCachedRankingData } from "@/lib/ranking";
 import { tryNestApiProxy } from "@/lib/server/nestProxy";
+import { getUnsupportedPatchResponse } from "@/lib/server/publicPatchRequest";
 
 export type { CharacterRankingData } from "@/lib/ranking";
 
 export async function GET(request: NextRequest) {
-  const proxied = await tryNestApiProxy(request, "/character/ranking");
-  if (proxied) return proxied;
+  const { searchParams } = request.nextUrl;
+  const requestedPatch = searchParams.get("patchVersion");
+  const unsupportedPatch = getUnsupportedPatchResponse(requestedPatch);
+  if (unsupportedPatch) return unsupportedPatch;
 
-  const { searchParams } = new URL(request.url);
-  const latestPatch = (await getPatches())[0] ?? "";
-  const patchVersion = searchParams.get("patchVersion") ?? latestPatch;
+  const patchVersion = requestedPatch ?? (await getPatches())[0];
   const requestedTier = searchParams.get("tier") ?? "DIAMOND";
 
   if (!patchVersion) {
@@ -29,6 +30,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const proxied = await tryNestApiProxy(request, "/character/ranking", patchVersion);
+    if (proxied) return proxied;
+
     const result = await getCachedRankingData(patchVersion, requestedTier);
 
     return NextResponse.json(result, { headers: getCacheHeaders("daily") });

@@ -1,6 +1,7 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { isPublicPatchVersion } from "./src/lib/publicPatchVersion";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const IMMUTABLE_ASSET_CACHE_CONTROL = "public, max-age=31536000, immutable";
@@ -14,7 +15,9 @@ function parseCsvEnv(value: string | undefined): string[] {
 
 function getFrozenPatchAnalysisRewrites() {
   const origin = process.env.PATCH_ANALYSIS_FROZEN_ORIGIN?.replace(/\/$/, "");
-  const versions = parseCsvEnv(process.env.PATCH_ANALYSIS_FROZEN_VERSIONS);
+  const versions = parseCsvEnv(process.env.PATCH_ANALYSIS_FROZEN_VERSIONS).filter(
+    isPublicPatchVersion
+  );
   if (!origin || versions.length === 0) return [];
 
   return versions.flatMap((version) => [

@@ -35,7 +35,8 @@ function getProxyHeaders(request: Request): Headers {
 
 export async function tryNestApiProxy(
   request: Request,
-  path: string
+  path: string,
+  patchVersion?: string
 ): Promise<NextResponse | null> {
   if (!isNestProxyEnabled()) return null;
 
@@ -44,6 +45,8 @@ export async function tryNestApiProxy(
     console.warn("[nestProxy] NEST_API_BASE_URL is not configured");
     return null;
   }
+
+  if (patchVersion) target.searchParams.set("patchVersion", patchVersion);
 
   try {
     const response = await fetch(target, {
