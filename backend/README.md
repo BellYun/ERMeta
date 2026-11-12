@@ -1,5 +1,56 @@
 # ERMeta Backend
 
+## Windows에서 랭크 경기 원본 수집 (#372)
+
+수집기는 BSER 경기 번호를 순회하고 `matchingMode = 3`인 응답 전체를 gzip으로 압축해 로컬 PostgreSQL의 `match_collection.raw_matches`에 저장한다. 경기 번호가 기본 키다. 패치 버전과 시즌 ID를 읽을 수 있으면 메타데이터로 남긴다. 원본에 있는 참가자 필드와 닉네임은 압축 파일 안에 들어 있으므로 DB 계정과 백업 파일의 접근 범위를 운영 계정으로 제한한다.
+
+Windows에 Node.js 22 LTS와 PostgreSQL을 설치한다. 새 DB를 쓰는 경우 PostgreSQL 관리자 계정으로 `psql`에 접속한 뒤 수집 계정과 DB를 만든다.
+
+```sql
+CREATE ROLE ermeta_collector LOGIN;
+\password ermeta_collector
+CREATE DATABASE ermeta OWNER ermeta_collector;
+```
+
+`\password`는 `psql`에서 새 비밀번호를 입력받는 명령이다. 기존 DB를 사용한다면 수집 계정에 `match_collection` 스키마와 테이블을 생성할 권한을 부여한다. 13시즌 정규 랭크를 수집하려면 `backend/.env`에 아래 설정을 넣는다. DB 암호에 URL 예약 문자가 있으면 퍼센트 인코딩한다.
+
+```dotenv
+MATCH_COLLECTION_DATABASE_URL=postgresql://ermeta_collector:password@127.0.0.1:5432/ermeta
+BSER_API_KEY=your-key
+MATCH_COLLECTION_SEASON_ID=43
+MATCH_COLLECTION_START_GAME_ID=
+MATCH_COLLECTION_REQUEST_INTERVAL_MS=1000
+MATCH_COLLECTION_SETTLE_SECONDS=3600
+MATCH_COLLECTION_404_LOOKAHEAD=20
+```
+
+`MATCH_COLLECTION_SEASON_ID=43`이면 정규 시즌 43의 랭크 경기만 저장한다. 다른 시즌의 랭크는 커서만 전진시키고, 시즌 ID가 누락되거나 참가자마다 다른 응답은 재조회 대상으로 처리한다. 시즌 설정을 비우면 모든 시즌의 랭크를 수집한다.
+
+`MATCH_COLLECTION_START_GAME_ID`는 새 DB에서 처음 조회할 경기 번호다. 13시즌 개막 구간을 수집하려면 11월 19일 13.1 점검 이후 BSER에서 확인한 시작 번호를 넣는다. DB에 수집 위치가 생기면 다음 실행부터 DB의 `next_game_id`를 읽는다. [13시즌 정규 랭크 일정](https://playeternalreturn.com/posts/news/3948)
+
+요청 간격은 키에 할당된 호출량과 같은 키를 쓰는 다른 작업을 기준으로 설정한다. 랭크 원본은 기본적으로 경기 시작 1시간 후 저장하며, `MATCH_COLLECTION_SETTLE_SECONDS=0`으로 이 대기를 해제할 수 있다.
+
+```powershell
+Set-Location C:\ERMeta\backend
+npm.cmd ci --omit=dev
+npm.cmd run db:migrate:match-collection
+npm.cmd run collect:matches -- --once
+npm.cmd run collect:matches
+```
+
+`--once`는 한 배치를 처리한 후 다음 경기 번호를 출력한다. 옵션 없는 실행은 계속 수집한다. DB에 원본을 쓰는 트랜잭션에서 수집 위치도 갱신하므로 종료 후 같은 명령으로 재개할 수 있다. 다른 모드로 확인한 경기는 수집 위치만 전진시킨다. 중간에 404가 나와도 뒤 경기의 응답이 확인되면 그 번호를 재조회 목록에 넣는다. 404 등으로 확인할 수 없는 번호가 20개 연속 나오면 그 구간의 첫 번호에서 멈추고 60초 뒤 다시 확인한다. 확인된 번호 사이에 20개 이상의 연속 공백이 있다면 `MATCH_COLLECTION_404_LOOKAHEAD`를 늘리고 재실행한다. 429나 네트워크 오류가 나면 수집 위치를 보존한 채 대기하며, 429의 `Retry-After`도 반영한다.
+
+부팅 후 자동 실행하려면 PostgreSQL의 Windows 서비스 시작 유형을 **자동**으로 설정하고, 작업 스케줄러에 **시스템 시작 시** 작업을 등록한다. 로그인 여부와 관계없이 실행하도록 설정하고, 시작 지연과 실패 시 재시작을 설정한다. 실행 시간 제한은 해제한다. 작업의 프로그램은 `(Get-Command node.exe).Source`로 확인한 절대 경로를 지정하고, 인수는 `--env-file=.env scripts/collect-matches.js`, 시작 위치는 `C:\ERMeta\backend`를 지정한다. 작업 계정에 해당 폴더와 `.env` 읽기 권한을 준다.
+
+다음 SQL로 마지막에 저장한 원본과 이어서 조회할 경기 번호를 확인한다.
+
+```sql
+SELECT game_id, season_id, patch_version, octet_length(payload_gzip) AS gzip_bytes
+FROM match_collection.raw_matches ORDER BY game_id DESC LIMIT 5;
+
+SELECT next_game_id FROM match_collection.cursor;
+```
+
 ## 플레이어 전용 실행·배포 (#309)
 
 기존 전체 백엔드(`npm run start:dev`)와 별도로, 전적·통계·멀티서치만 실행하는 진입점은 `npm run start:player`다. 이 진입점은 Supabase·Redis 설정 없이 시작한다. 로컬에서는 `DATABASE_URL`, Google Cloud에서는 Cloud SQL Unix socket 설정을 사용한다. `/health/live`는 프로세스 상태, `/health/ready`는 BSER API 키와 PostgreSQL 연결·전적 테이블 적용 상태를 확인한다.
