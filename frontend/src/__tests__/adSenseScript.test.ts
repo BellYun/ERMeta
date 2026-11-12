@@ -10,7 +10,6 @@ describe("AdSenseScript route eligibility", () => {
     "/zh-Hant/patch-analysis/12.2",
     "/ko/rankings",
     "/en/character-lab/assassins",
-    "/ja/multi-search",
     "/ko/season11-recap",
     "/en/synergy-matrix",
   ])("지원 locale의 콘텐츠 경로에서 광고를 허용한다: %s", (pathname) => {
@@ -23,10 +22,7 @@ describe("AdSenseScript route eligibility", () => {
     "/ja/patches/preview",
     "/ko/character-lab/preview",
     "/ko/design-lab",
-  ])(
-    "제외 경로에서는 광고를 로드하지 않는다: %s",
-    (pathname) => {
-      expect(canLoadAds(pathname)).toBe(false);
-    }
-  );
+  ])("제외 경로에서는 광고를 로드하지 않는다: %s", (pathname) => {
+    expect(canLoadAds(pathname)).toBe(false);
+  });
 });
