@@ -61,6 +61,10 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        source: "/data/composition-affinity/:version.json.gz",
+        headers: [{ key: "Cache-Control", value: IMMUTABLE_ASSET_CACHE_CONTROL }],
+      },
+      {
         source: "/l10n/chunks/:path*",
         headers: [
           {

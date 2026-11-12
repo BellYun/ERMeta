@@ -4,6 +4,11 @@ test.describe("Flow: 성공 조합 프로토타입 분석", () => {
   test("반복 상승 유형 조합의 근거와 교전 운영을 함께 표시", async ({ page }) => {
     const runtimeErrors: string[] = [];
     page.on("pageerror", (error) => runtimeErrors.push(error.message));
+    const analysisRequests: string[] = [];
+    page.on("request", (request) => {
+      const pathname = new URL(request.url()).pathname;
+      if (pathname.includes("composition-affinity")) analysisRequests.push(pathname);
+    });
     await page.route("**/data/trio-builder/*/*.json", async (route) => {
       await route.fulfill({
         status: 200,
@@ -12,118 +17,6 @@ test.describe("Flow: 성공 조합 프로토타입 분석", () => {
           version: 1,
           itemCount: 1,
           items: [[1, 16, 3, 21, 48, 3, 420, 118.44, 14364, 1344]],
-        }),
-      });
-    });
-    await page.route("**/api/traits/names*", async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ names: {} }),
-      });
-    });
-    await page.route("**/api/analysis/composition-affinity", async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({
-          snapshotId: "season10-11-good-composition-prototypes-v1",
-          results: {
-            "1:16|3:21|48:3": {
-              key: "1:16|3:21|48:3",
-              classifiedMembers: 3,
-              matchedMembers: 1,
-              members: [
-                {
-                  characterCode: 1,
-                  weapon: 16,
-                  characterName: "재키",
-                  weaponName: "양손검",
-                  classification: {
-                    role: "전사",
-                    groupName: "추격 지속형",
-                    subtype: "추격 지속전형",
-                    firstOrderType: "추격 지속전",
-                  },
-                  trend: null,
-                },
-                {
-                  characterCode: 3,
-                  weapon: 21,
-                  characterName: "피오라",
-                  weaponName: "레이피어",
-                  classification: {
-                    role: "전사",
-                    groupName: "진입 마무리형",
-                    subtype: "진입 마무리형",
-                    firstOrderType: "진입 마무리",
-                  },
-                  trend: null,
-                },
-                {
-                  characterCode: 48,
-                  weapon: 3,
-                  characterName: "띠아",
-                  weaponName: "방망이",
-                  classification: {
-                    role: "스킬딜러",
-                    groupName: "포킹 장악형",
-                    subtype: "포킹 장악형",
-                    firstOrderType: "포킹 장악",
-                  },
-                  trend: {
-                    roleComposition: "전사 + 전사 + 스킬딜러",
-                    games: 1_243,
-                    adjustedResidual: 3.548,
-                  },
-                },
-              ],
-              prototype: {
-                match: "exact",
-                key: "스킬딜러:포킹 장악|전사:진입 마무리|전사:추격 지속전",
-                roleComposition: "스킬딜러 + 전사 + 전사",
-                members: [
-                  { role: "스킬딜러", type: "포킹 장악" },
-                  { role: "전사", type: "진입 마무리" },
-                  { role: "전사", type: "추격 지속전" },
-                ],
-                memberMatches: [
-                  {
-                    characterCode: 1,
-                    weapon: 16,
-                    sourceType: "추격 지속전",
-                    role: "전사",
-                    type: "추격 지속전",
-                    similarity: 1,
-                  },
-                  {
-                    characterCode: 3,
-                    weapon: 21,
-                    sourceType: "진입 마무리",
-                    role: "전사",
-                    type: "진입 마무리",
-                    similarity: 1,
-                  },
-                  {
-                    characterCode: 48,
-                    weapon: 3,
-                    sourceType: "포킹 장악",
-                    role: "스킬딜러",
-                    type: "포킹 장악",
-                    similarity: 1,
-                  },
-                ],
-                similarity: 1,
-                minimumSimilarity: 1,
-                observations: 15,
-                supportingProfiles: 15,
-                reliableObservations: 15,
-                reliableRate: 1,
-                contextGames: 15_135,
-                adjustedResidual: 2.057,
-              },
-            },
-          },
         }),
       });
     });
@@ -148,7 +41,7 @@ test.describe("Flow: 성공 조합 프로토타입 분석", () => {
     await expect(prototype.locator("[data-prototype-member-duty]")).toHaveCount(3);
     await expect(prototype.locator("[data-character-type]")).toHaveCount(3);
     await expect(
-      prototype.getByText("전사 · 추격 지속형 · 추격 지속전형", {
+      prototype.getByText("전사 · 추격 지속 · 진입 마무리형 · 추격 지속전형", {
         exact: true,
       })
     ).toBeVisible();
@@ -175,5 +68,6 @@ test.describe("Flow: 성공 조합 프로토타입 분석", () => {
         .toBe(false);
     }
     expect(runtimeErrors).toEqual([]);
+    expect(analysisRequests).toEqual([expect.stringMatching(/^\/data\/composition-affinity\//)]);
   });
 });

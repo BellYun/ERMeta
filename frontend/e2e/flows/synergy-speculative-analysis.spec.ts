@@ -18,20 +18,6 @@ async function mockAnalysisInputs(page: Page) {
       }),
     });
   });
-  await page.route("**/api/traits/names*", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({ names: {} }),
-    });
-  });
-  await page.route("**/api/analysis/composition-affinity", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({ snapshotId: "test", results: {} }),
-    });
-  });
 }
 
 test.describe("Flow: Top-1 speculative composition analysis", () => {

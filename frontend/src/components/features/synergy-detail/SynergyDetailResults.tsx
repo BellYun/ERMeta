@@ -14,11 +14,11 @@ import { useTraitNames } from "@/hooks/useTraitNames";
 import { analytics, type SynergySortBy } from "@/lib/analytics";
 import {
   buildCompositionAffinityKey,
-  type CompositionAffinityBatchResponse,
   type CompositionAffinityEvidence,
   type CompositionAffinityMemberInput,
 } from "@/lib/characterAffinityComposition";
 import { isWeaponAgnosticCharacter, resolveCharacterName } from "@/lib/characterMap";
+import { loadCompositionAffinity } from "@/lib/compositionAffinitySnapshot";
 import { isMobileDevice } from "@/lib/device";
 import { recordFeedbackBreadcrumb, setFeedbackContextState } from "@/lib/feedbackContext";
 import { FetchHttpError, FetchRetriesExhaustedError, fetchWithRetry } from "@/lib/fetchWithRetry";
@@ -69,7 +69,6 @@ const weaponsByCharacter: Record<string, { weaponCode: number }[]> = characterBe
 const detailPairKeys = new Set(detailPairSnapshot.pairs);
 const detailBucketMemoryCache = new Map<string, CachedTrioWeaponTuple[]>();
 const detailBucketInFlight = new Map<string, Promise<CachedTrioWeaponTuple[]>>();
-const affinityEvidenceMemoryCache = new Map<string, CompositionAffinityEvidence>();
 
 const DETAIL_SORT_OPTIONS: {
   value: SortBy;
@@ -567,53 +566,19 @@ function TrioSynergyDetailResults() {
     const combos = visibleRecommendations
       .map(getGroupAffinityMembers)
       .filter((members) => members.every((member) => member.weapon > 0));
-    const cachedEntries = combos.flatMap((members) => {
-      const key = buildCompositionAffinityKey(members);
-      const evidence = affinityEvidenceMemoryCache.get(key);
-      return evidence ? ([[key, evidence]] as const) : [];
-    });
-    if (cachedEntries.length > 0) {
-      setAffinityEvidenceByKey((current) => ({
-        ...current,
-        ...Object.fromEntries(cachedEntries),
-      }));
-    }
-
-    const missingCombos = combos.filter(
-      (members) => !affinityEvidenceMemoryCache.has(buildCompositionAffinityKey(members))
-    );
-    if (missingCombos.length === 0) return;
+    if (combos.length === 0) return;
 
     const controller = new AbortController();
-    const requestChunks = Array.from({ length: Math.ceil(missingCombos.length / 60) }, (_, index) =>
-      missingCombos.slice(index * 60, (index + 1) * 60)
-    );
-    Promise.all(
-      requestChunks.map((combosChunk) =>
-        fetchWithRetry<CompositionAffinityBatchResponse>("/api/analysis/composition-affinity", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ locale, combos: combosChunk }),
-          signal: controller.signal,
-          maxRetries: 1,
-        })
-      )
-    )
-      .then((responses) => {
-        const affinityResults: Record<string, CompositionAffinityEvidence> = Object.assign(
-          {},
-          ...responses.map((response) => response.results)
-        );
-        for (const [key, evidence] of Object.entries(affinityResults)) {
-          affinityEvidenceMemoryCache.set(key, evidence);
-        }
+    loadCompositionAffinity(combos, locale, controller.signal)
+      .then((results) => {
+        if (controller.signal.aborted) return;
         React.startTransition(() => {
-          setAffinityEvidenceByKey((current) => ({ ...current, ...affinityResults }));
+          setAffinityEvidenceByKey((current) => ({ ...current, ...results }));
         });
       })
       .catch((error: unknown) => {
         if (error instanceof DOMException && error.name === "AbortError") return;
-        console.error("[synergy-detail] composition affinity request failed", error);
+        console.error("[synergy-detail] composition affinity snapshot failed", error);
       });
 
     return () => controller.abort();

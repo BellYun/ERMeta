@@ -1,4 +1,5 @@
 import manifest from "@/data/season-stats-snapshot.json";
+import { fetchStaticJson } from "@/lib/staticJson";
 
 export interface SnapshotStatRow {
   characterNum: number;
@@ -22,13 +23,7 @@ export async function fetchSeasonSnapshot<T>(
   file: string,
   signal?: AbortSignal
 ): Promise<T | null> {
-  const response = await fetch(seasonSnapshotPath(file), { signal });
-  if (response.status === 404) return null;
-  if (!response.ok) throw new Error("statistics_snapshot_unavailable");
-
-  if (!file.endsWith(".gz")) return response.json();
-  if (!response.body) throw new Error("statistics_snapshot_empty");
-  return new Response(response.body.pipeThrough(new DecompressionStream("gzip"))).json();
+  return fetchStaticJson<T>(seasonSnapshotPath(file), signal);
 }
 
 const patchRequests = new Map<string, Promise<SnapshotStatRow[]>>();
