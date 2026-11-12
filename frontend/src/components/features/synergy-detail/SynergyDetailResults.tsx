@@ -25,6 +25,7 @@ import { FetchHttpError, FetchRetriesExhaustedError, fetchWithRetry } from "@/li
 import { buildSynergyShareUrl } from "@/lib/synergyShare";
 import { MINIMUM_GAMES_OPTIONS, parseMinimumGamesParam } from "@/lib/synergyUrlState";
 import { comparePerformanceTierStats } from "@/lib/tierScoring";
+import { loadSnapshotCoreVariants, snapshotTrioKey } from "@/lib/trioCoreSnapshot";
 import { getTrioWeaponBucketUrl } from "@/lib/trioStaticBuckets";
 import { groupTrioCoreVariants, groupTrioWeaponResults } from "@/lib/trioWeaponGrouping";
 import {
@@ -163,59 +164,16 @@ async function fetchDetailRows(allies: AllySelection[], signal?: AbortSignal) {
   return results;
 }
 
-function getResultWeaponForCharacter(result: TrioWeaponResult, charCode: number): number | null {
-  if (result.character1 === charCode) return result.weaponType1;
-  if (result.character2 === charCode) return result.weaponType2;
-  if (result.character3 === charCode) return result.weaponType3;
-  return null;
-}
-
-function buildCoreVariantSearchParams(allies: AllySelection[], result: TrioWeaponResult) {
-  if (allies.length !== 2) return null;
-  const queryAllies = sortAllyPair(allies);
-  const ally1 = queryAllies[0];
-  const ally2 = queryAllies[1];
-  const pairWeapon1 = ally1.weaponCode ?? getResultWeaponForCharacter(result, ally1.charCode);
-  const pairWeapon2 = ally2.weaponCode ?? getResultWeaponForCharacter(result, ally2.charCode);
-  if (pairWeapon1 == null || pairWeapon2 == null) return null;
-
-  return new URLSearchParams({
-    pairCharacter1: String(ally1.charCode),
-    pairWeapon1: String(pairWeapon1),
-    pairCharacter2: String(ally2.charCode),
-    pairWeapon2: String(pairWeapon2),
-    trioCharacter1: String(result.character1),
-    trioWeapon1: String(result.weaponType1),
-    trioCharacter2: String(result.character2),
-    trioWeapon2: String(result.weaponType2),
-    trioCharacter3: String(result.character3),
-    trioWeapon3: String(result.weaponType3),
-  });
-}
-
 async function fetchCoreVariantRows(
   allies: AllySelection[],
   group: GroupedCombo,
   signal?: AbortSignal
 ) {
-  const requests = Array.from(
-    new Set(
-      group.traitVariants
-        .map((variant) => buildCoreVariantSearchParams(allies, variant)?.toString())
-        .filter((params): params is string => Boolean(params))
-    )
+  const trios = new Map(group.traitVariants.map((variant) => [snapshotTrioKey(variant), variant]));
+  const results = await Promise.all(
+    [...trios.values()].map((variant) => loadSnapshotCoreVariants(variant, allies, signal))
   );
-  if (requests.length === 0) return groupTrioCoreVariants(group.traitVariants);
-
-  const responses = await Promise.all(
-    requests.map((params) =>
-      fetchWithRetry<{ results?: TrioWeaponResult[]; error?: string }>(
-        `/api/stats/trios-weapon/core-variants?${params}`,
-        { signal }
-      )
-    )
-  );
-  const rows = responses.flatMap((response) => response.results ?? []);
+  const rows = results.flat();
   return groupTrioCoreVariants(rows.length > 0 ? rows : group.traitVariants);
 }
 

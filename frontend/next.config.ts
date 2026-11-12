@@ -5,6 +5,7 @@ import { isPublicPatchVersion } from "./src/lib/publicPatchVersion";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const IMMUTABLE_ASSET_CACHE_CONTROL = "public, max-age=31536000, immutable";
+const STAT_SNAPSHOT_FILES = ["./public/data/season-stats/*/stats/*.json"];
 
 function parseCsvEnv(value: string | undefined): string[] {
   return (value ?? "")
@@ -37,8 +38,19 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react", "recharts"],
   },
+  outputFileTracingIncludes: {
+    "/\\[locale\\]": STAT_SNAPSHOT_FILES,
+    "/character/\\[code\\]": STAT_SNAPSHOT_FILES,
+    "/performance-lab/home-filter": STAT_SNAPSHOT_FILES,
+    "/api/{builds/traits,character,meta}/**": STAT_SNAPSHOT_FILES,
+    "/api/og/synergy": ["./public/data/season-stats/*/og.json.gz"],
+  },
   async headers() {
     return [
+      {
+        source: "/data/season-stats/:version/:path*",
+        headers: [{ key: "Cache-Control", value: IMMUTABLE_ASSET_CACHE_CONTROL }],
+      },
       {
         source: "/data/:snapshot(trio-builder|trio-detail-pairs)/:version/:bucket",
         headers: [

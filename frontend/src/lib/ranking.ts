@@ -1,7 +1,8 @@
 import { unstable_cache } from "next/cache";
 import { HOME_META_TARGET_PATCH } from "@/lib/homeMetaShared";
 import { getAverageRP } from "@/lib/rpMetric";
-import { createServerClient } from "@/lib/supabase";
+import { seasonSnapshot } from "@/lib/seasonSnapshot";
+import { readSnapshotStatRows } from "@/lib/server/seasonSnapshot";
 import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
 import { expandCumulativeTier } from "@/utils/tier";
 
@@ -112,19 +113,7 @@ export async function fetchRankingData(
   requestedTier: string,
   strict = false
 ): Promise<RankingResponse> {
-  const supabase = createServerClient();
-
-  const { data: patches, error: patchesError } = await supabase
-    .from("PatchVersion")
-    .select("version")
-    .order("startDate", { ascending: false })
-    .limit(50);
-
-  if (strict && patchesError) throw new Error("Failed to load patch versions");
-
-  // New notes can have a preview before their PatchVersion row is registered.
-  // Keep the local previous patch available for that forecast baseline.
-  const patchList = (patches ?? []).map((p: { version: string }) => p.version);
+  const patchList = seasonSnapshot.patches.map(({ version }) => version);
   if (patchVersion === HOME_META_TARGET_PATCH && !patchList.includes(patchVersion)) {
     patchList.unshift(patchVersion);
   }
@@ -132,36 +121,14 @@ export async function fetchRankingData(
   const previousPatch =
     currentIndex >= 0 && currentIndex + 1 < patchList.length ? patchList[currentIndex + 1] : null;
 
-  const patchVersions = previousPatch ? [patchVersion, previousPatch] : [patchVersion];
-
-  const selectCols =
-    "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,averageRank,tier,patchVersion";
-  const queryResult = await supabase
-    .from("v2_CharacterStats")
-    .select(selectCols)
-    .in("patchVersion", patchVersions)
-    .in("tier", TIER_FALLBACK_ORDER);
-  const { error } = queryResult;
-  let { data } = queryResult;
-
-  // v2에 이전 패치 데이터 없으면 old 테이블 fallback 병합
-  if (previousPatch && data) {
-    const hasV2Prev = data.some((r: { patchVersion: string }) => r.patchVersion === previousPatch);
-    if (!hasV2Prev) {
-      const { data: oldData, error: oldError } = await supabase
-        .from("CharacterStats")
-        .select(selectCols)
-        .eq("patchVersion", previousPatch)
-        .in("tier", TIER_FALLBACK_ORDER);
-      if (strict && oldError) throw new Error("Failed to load previous rankings");
-      if (oldData && oldData.length > 0) {
-        data = [...data, ...oldData];
-      }
-    }
-  }
-
-  if (strict && (error || !data)) throw new Error("Failed to load patch rankings");
-  if (error || !data) {
+  const rowsByPatch = await Promise.all([
+    readSnapshotStatRows(patchVersion),
+    previousPatch ? readSnapshotStatRows(previousPatch) : Promise.resolve([]),
+  ]).catch((error: unknown) => {
+    if (strict) throw new Error("Failed to load patch rankings", { cause: error });
+    return null;
+  });
+  if (!rowsByPatch) {
     return {
       rankings: [],
       previousRankings: [],
@@ -170,10 +137,13 @@ export async function fetchRankingData(
       tier: requestedTier,
     };
   }
-
-  const typedData = data as (StatRow & { tier: string; patchVersion: string })[];
-  const currentData = typedData.filter((r) => r.patchVersion === patchVersion);
-  const prevData = previousPatch ? typedData.filter((r) => r.patchVersion === previousPatch) : [];
+  const [currentRows, previousRows] = rowsByPatch;
+  const normalize = (rows: typeof currentRows) =>
+    rows
+      .filter((row) => TIER_FALLBACK_ORDER.includes(row.tier))
+      .map((row) => ({ ...row, bestWeapon: row.bestWeapon ?? 0 }));
+  const currentData = normalize(currentRows);
+  const prevData = normalize(previousRows);
 
   const { rankings, usedTier } = selectRankings(currentData, requestedTier, patchVersion);
   const { rankings: previousRankings } =
@@ -196,7 +166,13 @@ export async function getCachedRankingData(
 ): Promise<RankingResponse> {
   return unstable_cache(
     async () => fetchRankingData(patchVersion, requestedTier),
-    ["character-rankings", "fixed-entry-cost-v1", patchVersion, requestedTier],
+    [
+      "character-rankings",
+      "fixed-entry-cost-v1",
+      seasonSnapshot.version,
+      patchVersion,
+      requestedTier,
+    ],
     {
       revalidate: patchVersion === HOME_META_TARGET_PATCH ? 1800 : 21600,
       tags: [

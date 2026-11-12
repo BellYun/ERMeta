@@ -18,6 +18,7 @@ import {
   createEmptyHomeMetaStats,
   type HomeMetaStats,
 } from "@/lib/homeMetaShared";
+import { loadHomeMetaSnapshot } from "@/lib/homeMetaSnapshot";
 
 interface HomeDashboardSectionsProps {
   patches: string[];
@@ -50,17 +51,11 @@ function HomeDashboardSectionsBody({
     setStatsError(null);
     if (!selectedPatch || statsByPatchRef.current[selectedPatch]) return;
 
-    const controller = new AbortController();
+    let cancelled = false;
 
-    fetch(`/api/meta/home-stats?patchVersion=${encodeURIComponent(selectedPatch)}`, {
-      signal: controller.signal,
-    })
-      .then(async (res) => {
-        const data = (await res.json()) as HomeMetaStats | { error?: string };
-        if (!res.ok) throw new Error("error" in data ? data.error : undefined);
-        return data as HomeMetaStats;
-      })
+    loadHomeMetaSnapshot(selectedPatch)
       .then((stats) => {
+        if (cancelled) return;
         setStatsByPatch((current) => {
           const next = { ...current, [stats.patchVersion]: stats };
           statsByPatchRef.current = next;
@@ -68,11 +63,13 @@ function HomeDashboardSectionsBody({
         });
       })
       .catch((err) => {
-        if (err instanceof DOMException && err.name === "AbortError") return;
+        if (cancelled) return;
         setStatsError(err instanceof Error ? err.message : "데이터를 불러오지 못했습니다.");
       });
 
-    return () => controller.abort();
+    return () => {
+      cancelled = true;
+    };
   }, [selectedPatch]);
 
   const computedView = React.useMemo(() => {

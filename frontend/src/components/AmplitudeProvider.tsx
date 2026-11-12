@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { analytics, type SessionSource } from "@/lib/analytics";
+import { seasonSnapshot } from "@/lib/seasonSnapshot";
 
 const PATCH_DAY_WINDOW_MS = 3 * 24 * 60 * 60 * 1000; // D0 ~ D3
 
@@ -45,18 +46,9 @@ function classifySessionSource(): SessionSource {
   }
 }
 
-async function detectIsPatchDay(): Promise<boolean> {
-  try {
-    const res = await fetch("/api/patches/history?limit=1", { cache: "default" });
-    if (!res.ok) return false;
-    const data = (await res.json()) as { latestStartDate?: string | null };
-    if (!data.latestStartDate) return false;
-    const releasedAt = new Date(data.latestStartDate).getTime();
-    if (Number.isNaN(releasedAt)) return false;
-    return Date.now() - releasedAt <= PATCH_DAY_WINDOW_MS;
-  } catch {
-    return false;
-  }
+function detectIsPatchDay(): boolean {
+  const releasedAt = seasonSnapshot.patches.find((patch) => patch.isActive)?.startDate;
+  return !!releasedAt && Date.now() - new Date(releasedAt).getTime() <= PATCH_DAY_WINDOW_MS;
 }
 
 export function AmplitudeProvider() {
@@ -84,14 +76,12 @@ export function AmplitudeProvider() {
     const isShareLanding = params.get("utm_source") === "ergg_share";
     const effectiveSessionSource = isShareLanding ? "internal" : sessionSource;
 
-    detectIsPatchDay().then((isPatchDay) => {
-      analytics.setSessionProperties({
-        session_source: effectiveSessionSource,
-        is_patch_day: isPatchDay,
-        app_version: appVersion,
-        entry_page_path: entryPath,
-        is_mobile_viewport: isMobileViewport,
-      });
+    analytics.setSessionProperties({
+      session_source: effectiveSessionSource,
+      is_patch_day: detectIsPatchDay(),
+      app_version: appVersion,
+      entry_page_path: entryPath,
+      is_mobile_viewport: isMobileViewport,
     });
 
     if (isShareLanding) {

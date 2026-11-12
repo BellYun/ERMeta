@@ -1,16 +1,10 @@
 import { unstable_cache } from "next/cache";
 import { STATS_EXCLUDED_PATCHES } from "@/data/patch-notes";
 import { getAverageRP, hasComparableRP } from "@/lib/rpMetric";
-import { createServerClient } from "@/lib/supabase";
+import { seasonSnapshot } from "@/lib/seasonSnapshot";
+import { readSnapshotStatRows } from "@/lib/server/seasonSnapshot";
 import { collapseWeaponAgnosticRows } from "@/lib/weaponAgnostic";
 import { expandCumulativeTier } from "@/utils/tier";
-
-/**
- * 꿀챔 데이터 서버 직접 fetch — API Route 경유 없이 Supabase 직접 쿼리
- *
- * 기존: Server Component → fetch("/api/meta/honey-picks") → API Route → Supabase
- * 개선: Server Component → fetchHoneyPicksServer() → Supabase (네트워크 홉 1회 제거)
- */
 
 const TIER_FALLBACK_ORDER = ["DIAMOND", "METEORITE", "MITHRIL", "IN1000"];
 const PLAYERS_PER_MATCH = 24;
@@ -134,16 +128,7 @@ export async function fetchHoneyPicksServer(
   };
 
   try {
-    const supabase = createServerClient();
-
-    // 패치 목록 조회
-    const { data: patches } = await supabase
-      .from("PatchVersion")
-      .select("version")
-      .order("startDate", { ascending: false })
-      .limit(50);
-
-    const patchList = (patches ?? []).map((p: { version: string }) => p.version);
+    const patchList = seasonSnapshot.patches.map(({ version }) => version);
     const currentIndex = patchList.indexOf(patchVersion);
     let previousPatch: string | null = null;
     if (currentIndex >= 0) {
@@ -157,47 +142,16 @@ export async function fetchHoneyPicksServer(
 
     if (!previousPatch || !hasComparableRP(patchVersion, previousPatch)) return empty;
 
-    // 현재 + 이전 패치 데이터 조회 (v2 → old fallback)
-    const selectCols =
-      "characterNum,bestWeapon,totalGames,totalWins,totalRP,totalTop3,tier,patchVersion";
-    const queryResult = await supabase
-      .from("v2_CharacterStats")
-      .select(selectCols)
-      .in("patchVersion", [patchVersion, previousPatch])
-      .in("tier", TIER_FALLBACK_ORDER);
-    const { error } = queryResult;
-    let { data } = queryResult;
-
-    // v2에 이전 패치 데이터 없으면 old 테이블 fallback
-    if (data && previousPatch) {
-      const hasV2Prev = data.some(
-        (r: { patchVersion: string }) => r.patchVersion === previousPatch
-      );
-      if (!hasV2Prev) {
-        const { data: oldData } = await supabase
-          .from("CharacterStats")
-          .select(selectCols)
-          .eq("patchVersion", previousPatch)
-          .in("tier", TIER_FALLBACK_ORDER);
-        if (oldData && oldData.length > 0) {
-          data = [...data, ...oldData];
-        }
-      }
-    }
-
-    if (error || !data) return empty;
-
-    const typedData = data as StatRow[];
-    // selectTierRows 가 cumulative tier filter + (characterNum, bestWeapon) 합산 후,
-    // 무기 무관 실험체(알렉스 등) collapse 는 마지막에 한 번.
-    const { rows: currentMerged, usedTier } = selectTierRows(
-      typedData.filter((r) => r.patchVersion === patchVersion),
-      requestedTier
-    );
-    const { rows: prevMerged } = selectTierRows(
-      typedData.filter((r) => r.patchVersion === previousPatch),
-      usedTier
-    );
+    const [current, previous] = await Promise.all([
+      readSnapshotStatRows(patchVersion),
+      readSnapshotStatRows(previousPatch),
+    ]);
+    const normalize = (rows: typeof current) =>
+      rows
+        .filter((row) => TIER_FALLBACK_ORDER.includes(row.tier))
+        .map((row) => ({ ...row, bestWeapon: row.bestWeapon ?? 0 }));
+    const { rows: currentMerged, usedTier } = selectTierRows(normalize(current), requestedTier);
+    const { rows: prevMerged } = selectTierRows(normalize(previous), usedTier);
     const currentRows = collapseWeaponAgnosticRows(currentMerged);
     const prevRows = collapseWeaponAgnosticRows(prevMerged);
 
@@ -263,7 +217,7 @@ export async function getCachedHoneyPicks(
 ): Promise<HoneyPicksResult> {
   return unstable_cache(
     async () => fetchHoneyPicksServer(patchVersion, requestedTier),
-    ["honey-picks", "fixed-entry-cost-v1", patchVersion, requestedTier],
+    ["honey-picks", "fixed-entry-cost-v1", seasonSnapshot.version, patchVersion, requestedTier],
     {
       revalidate: 21600,
       tags: ["honey-picks", `honey-picks:${patchVersion}`, `honey-picks:tier:${requestedTier}`],

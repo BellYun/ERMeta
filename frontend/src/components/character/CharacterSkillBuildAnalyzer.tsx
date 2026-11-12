@@ -13,6 +13,7 @@ import {
   normalizeSkillGroupCode,
   type SkillOrderChoice,
 } from "@/lib/characterBuildChoices";
+import { loadSnapshotSkills } from "@/lib/characterBuildSnapshot";
 import { getCharacterSkillIconUrl } from "@/lib/characterSkillIcons";
 import { cn } from "@/lib/utils";
 
@@ -289,20 +290,16 @@ export function CharacterSkillBuildAnalyzer({
     }
 
     const controller = new AbortController();
-    const params = new URLSearchParams({
-      characterCode: String(characterCode),
-      tier,
-      patchVersion,
-      ...(bestWeapon != null ? { bestWeapon: String(bestWeapon) } : {}),
-      ...(mainCore != null ? { mainCore: String(mainCore) } : {}),
-    });
-
     setLoading(true);
     setData(EMPTY_RESULT);
 
-    fetch(`/api/builds/skills?${params}`, { signal: controller.signal })
-      .then((response) => response.json())
-      .then((result: CharacterSkillBuildResult) => setData(result))
+    loadSnapshotSkills(
+      { characterCode, tier, patchVersion, bestWeapon, mainCore },
+      controller.signal
+    )
+      .then((result) => {
+        if (!controller.signal.aborted) setData(result);
+      })
       .catch((error) => {
         if (error instanceof DOMException && error.name === "AbortError") return;
         setData(EMPTY_RESULT);

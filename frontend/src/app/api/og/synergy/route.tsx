@@ -4,7 +4,7 @@ import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 import sharp from "sharp";
 import { getCharacterName } from "@/lib/characterMap";
-import { createServerClient } from "@/lib/supabase";
+import { readSeasonSnapshot } from "@/lib/server/seasonSnapshot";
 
 // Satori 가 WebP 디코딩을 못 하므로 미리 PNG dataURL 로 변환해서 임베드한다.
 // 실험체 mini 이미지는 정적 자산이라 instance 메모리에 캐시 (87 chars × ~3KB ≈ 260KB)
@@ -44,18 +44,10 @@ const SIZE = { width: 1200, height: 630 };
 // ─── 추천 점수 계산 (trios/route.ts 동일 로직) ─────────────────────────────
 const BAYESIAN_K = 50;
 const TRIO_MEMBER_COUNT = 3;
-const DIAMOND_PLUS_TIERS = ["DIAMOND", "METEORITE", "MITHRIL"];
 const EXCLUDED = new Set([9998, 9999]);
 
-interface TrioRow {
-  character1: number;
-  character2: number;
-  character3: number;
-  winRate: number;
-  averageRP: number;
-  totalGames: number;
-  averageRank: number;
-}
+type OgSnapshotRow = [number, number, number, number, number, number, number];
+let ogRows: Promise<OgSnapshotRow[]> | undefined;
 
 interface AggTrio {
   character1: number;
@@ -65,42 +57,6 @@ interface AggTrio {
   winRate: number;
   averageRP: number;
   averageRank: number;
-}
-
-function aggregate(rows: TrioRow[]): AggTrio[] {
-  const m = new Map<
-    string,
-    { c1: number; c2: number; c3: number; tg: number; wr: number; rp: number; rk: number }
-  >();
-  for (const r of rows) {
-    const k = `${r.character1}-${r.character2}-${r.character3}`;
-    const e = m.get(k);
-    if (!e)
-      m.set(k, {
-        c1: r.character1,
-        c2: r.character2,
-        c3: r.character3,
-        tg: r.totalGames,
-        wr: r.winRate * r.totalGames,
-        rp: r.averageRP * r.totalGames,
-        rk: r.averageRank * r.totalGames,
-      });
-    else {
-      e.tg += r.totalGames;
-      e.wr += r.winRate * r.totalGames;
-      e.rp += r.averageRP * r.totalGames;
-      e.rk += r.averageRank * r.totalGames;
-    }
-  }
-  return Array.from(m.values()).map((v) => ({
-    character1: v.c1,
-    character2: v.c2,
-    character3: v.c3,
-    totalGames: v.tg,
-    winRate: v.tg > 0 ? v.wr / v.tg : 0,
-    averageRP: v.tg > 0 ? v.rp / v.tg / TRIO_MEMBER_COUNT : 0,
-    averageRank: v.tg > 0 ? v.rk / v.tg : 0,
-  }));
 }
 
 function score(r: AggTrio, gAvg: number, rpRange: { min: number; max: number }): number {
@@ -120,35 +76,29 @@ function score(r: AggTrio, gAvg: number, rpRange: { min: number; max: number }):
 }
 
 async function fetchTop3(char1: number | null, char2: number | null): Promise<AggTrio[]> {
-  const supabase = createServerClient();
-  const ttl = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
-
-  let query = supabase
-    .from("v2_CharacterTrio")
-    .select("character1,character2,character3,winRate,averageRP,totalGames,averageRank")
-    .in("tier", DIAMOND_PLUS_TIERS)
-    .gte("lastUpdated", ttl)
-    .order("totalGames", { ascending: false })
-    .limit(5000);
-
-  if (char1 != null && char2 != null) {
-    const [lo, hi] = [char1, char2].sort((a, b) => a - b);
-    query = query.or(
-      [
-        `and(character1.eq.${lo},character2.eq.${hi})`,
-        `and(character1.eq.${lo},character3.eq.${hi})`,
-        `and(character2.eq.${lo},character3.eq.${hi})`,
-      ].join(",")
-    );
-  } else if (char1 != null) {
-    query = query.or(`character1.eq.${char1},character2.eq.${char1},character3.eq.${char1}`);
-  }
-
-  const { data } = await query;
-  const rows = ((data ?? []) as TrioRow[]).filter(
-    (r) => !EXCLUDED.has(r.character1) && !EXCLUDED.has(r.character2) && !EXCLUDED.has(r.character3)
-  );
-  const agg = aggregate(rows);
+  ogRows ??= readSeasonSnapshot<OgSnapshotRow[]>("og.json.gz").catch((error) => {
+    ogRows = undefined;
+    throw error;
+  });
+  const agg = (await ogRows)
+    .filter(([first, second, third]) => {
+      const members = [first, second, third];
+      return (
+        members.every((member) => !EXCLUDED.has(member)) &&
+        (char1 == null || members.includes(char1)) &&
+        (char2 == null || members.includes(char2))
+      );
+    })
+    .slice(0, 5000)
+    .map(([character1, character2, character3, totalGames, wins, rp, rank]) => ({
+      character1,
+      character2,
+      character3,
+      totalGames,
+      winRate: totalGames > 0 ? (wins / totalGames) * 100 : 0,
+      averageRP: totalGames > 0 ? rp / totalGames / TRIO_MEMBER_COUNT : 0,
+      averageRank: totalGames > 0 ? rank / totalGames : 0,
+    }));
 
   const gAvg = agg.length > 0 ? agg.reduce((s, r) => s + r.averageRP, 0) / agg.length : 0;
   const rps = agg.map((r) => r.averageRP);

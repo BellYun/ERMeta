@@ -17,6 +17,7 @@ import {
 import type { Tier } from "@/lib/design-tokens";
 import { setFeedbackContextState } from "@/lib/feedbackContext";
 import { buildHomeMetaView, type HomeMetaStats } from "@/lib/homeMetaShared";
+import { loadHomeMetaSnapshot } from "@/lib/homeMetaSnapshot";
 import { cn } from "@/lib/utils";
 import {
   getRepresentativeWeaponCode,
@@ -511,26 +512,20 @@ export function CharacterAnalysisClient({
     if (!currentPatch || currentHomeMetaStats) return;
     if (isInitialMetaSelection && hasInitialMetaTiers) return;
 
-    const controller = new AbortController();
-
-    fetch(`/api/meta/home-stats?patchVersion=${encodeURIComponent(currentPatch)}`, {
-      signal: controller.signal,
-    })
-      .then(async (response) => {
-        if (!response.ok) throw new Error("메타 통계를 불러오지 못했습니다.");
-        return (await response.json()) as HomeMetaStats;
-      })
+    let cancelled = false;
+    loadHomeMetaSnapshot(currentPatch)
       .then((metaStats) => {
+        if (cancelled) return;
         setHomeMetaStatsByPatch((current) => ({
           ...current,
           [currentPatch]: metaStats,
         }));
       })
-      .catch((error) => {
-        if (error instanceof DOMException && error.name === "AbortError") return;
-      });
+      .catch(() => {});
 
-    return () => controller.abort();
+    return () => {
+      cancelled = true;
+    };
   }, [currentHomeMetaStats, currentPatch, hasInitialMetaTiers, isInitialMetaSelection]);
 
   const characterMetaTiers = React.useMemo(() => {
