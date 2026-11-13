@@ -24,6 +24,7 @@ import { PlayerSeasonStatsModule } from './modules/player-season-stats/player-se
 import { PlayerCompareModule } from './modules/player-compare/player-compare.module';
 import { PlayerRefreshModule } from './modules/player-refresh/player-refresh.module';
 import { PlayerRetryAfterInterceptor } from './player-api/player-retry-after.interceptor';
+import { AIChatModule } from './modules/ai-chat/ai-chat.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { PlayerRetryAfterInterceptor } from './player-api/player-retry-after.int
     PlayerCompareModule,
     PlayerRefreshModule,
     CollectModule,
+    AIChatModule,
   ],
   controllers: [HealthController],
   providers: [
