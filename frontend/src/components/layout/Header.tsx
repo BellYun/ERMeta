@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ArrowRight,
   BarChart3,
   ChevronDown,
   Gauge,
@@ -12,6 +11,7 @@ import {
   Network,
   NotebookText,
   Search,
+  Server,
   Sparkles,
   Sun,
   Trophy,
@@ -19,7 +19,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import * as React from "react";
@@ -30,7 +29,6 @@ import { LocaleRecommendationBanner } from "@/components/layout/LocaleRecommenda
 import { Navigation } from "@/components/layout/Navigation";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { Button } from "@/components/ui/button";
-import { analytics } from "@/lib/analytics";
 import { stripRouteLocaleFromPathname, withCurrentRouteLocale } from "@/lib/localizedPath";
 import { cn } from "@/lib/utils";
 
@@ -53,9 +51,6 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
     ? `/patch-analysis/${patchAnalysisPatch}`
     : "/patch-analysis";
   const seasonRecapPath = "/season11-recap";
-  const characterRecommendationAnnouncementPath = "/character-recommendation";
-  const showCharacterRecommendationAnnouncement =
-    normalizedPathname !== characterRecommendationAnnouncementPath;
 
   const navLinks: Array<{
     href: string;
@@ -132,25 +127,12 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
   }, [pathname]);
 
   React.useEffect(() => {
-    if (!showCharacterRecommendationAnnouncement) return;
-    analytics.characterRecommendationAnnouncementViewed({
-      sourcePath: normalizedPathname,
-    });
-  }, [normalizedPathname, showCharacterRecommendationAnnouncement]);
-
-  React.useEffect(() => {
-    if (!showCharacterRecommendationAnnouncement) {
-      setAnnouncementCollapsed(false);
-      return;
-    }
-
     const syncAnnouncement = () => {
-      const announcementHasFocus = Boolean(document.activeElement?.closest(".site-announcement"));
       setAnnouncementCollapsed((currentlyCollapsed) =>
         resolveAnnouncementCollapsed({
           currentlyCollapsed,
           scrollY: window.scrollY,
-          hasFocus: announcementHasFocus,
+          hasFocus: false,
         })
       );
     };
@@ -161,7 +143,7 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
     return () => {
       window.removeEventListener("scroll", syncAnnouncement);
     };
-  }, [showCharacterRecommendationAnnouncement]);
+  }, []);
 
   React.useLayoutEffect(() => {
     const applyTheme = (nextTheme: "light" | "dark") => {
@@ -242,46 +224,14 @@ export function Header({ currentPatch, patchAnalysisPatch }: HeaderProps) {
       >
         <LocaleRecommendationBanner />
 
-        {showCharacterRecommendationAnnouncement && (
-          <Link
-            href={withCurrentRouteLocale(pathname, characterRecommendationAnnouncementPath)}
-            prefetch={false}
-            onClick={() =>
-              analytics.characterRecommendationAnnouncementClicked({
-                sourcePath: normalizedPathname,
-              })
-            }
-            className="site-announcement group block"
-          >
-            <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-3 px-3 sm:px-4 lg:px-6">
-              <div className="site-announcement__content flex min-w-0 items-center gap-3">
-                <span className="site-announcement__icon flex h-8 w-8 shrink-0 items-center justify-center rounded">
-                  <Sparkles className="h-4.5 w-4.5" strokeWidth={2} />
-                </span>
-                <div className="site-announcement__copy min-w-0">
-                  <div className="site-announcement__meta flex flex-wrap items-center gap-2">
-                    <span className="site-announcement__badge text-[10px] font-semibold">
-                      {t("characterRecommendationBadge")}
-                    </span>
-                    <p className="site-announcement__title text-sm font-bold">
-                      {t("characterRecommendationTitle")}
-                    </p>
-                  </div>
-                  <p className="site-announcement__body mt-0.5 text-xs leading-5 sm:text-sm">
-                    {t("characterRecommendationBody")}
-                  </p>
-                </div>
-              </div>
-
-              <span className="site-announcement__cta inline-flex shrink-0 items-center justify-center gap-1.5 text-sm font-semibold">
-                <span className="site-announcement__cta-label">
-                  {t("characterRecommendationCta")}
-                </span>
-                <ArrowRight className="h-4 w-4" strokeWidth={2} />
-              </span>
-            </div>
-          </Link>
-        )}
+        <div className="site-announcement flex items-center">
+          <div className="mx-auto flex w-full max-w-[1440px] items-center gap-2 px-3 sm:gap-3 sm:px-4 lg:px-6">
+            <span className="site-announcement__icon flex h-8 w-8 shrink-0 items-center justify-center rounded">
+              <Server aria-hidden="true" className="h-4.5 w-4.5" strokeWidth={2} />
+            </span>
+            <p className="min-w-0 text-xs font-bold sm:text-sm">{t("serverMigrationNotice")}</p>
+          </div>
+        </div>
 
         <div className="site-header__container mx-auto w-full max-w-[1440px] px-3 py-3 sm:px-4 lg:px-6 lg:py-0">
           <div className="site-header__bar flex min-h-[54px] items-center gap-2.5 lg:min-h-[64px]">
