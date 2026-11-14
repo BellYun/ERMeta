@@ -1,6 +1,7 @@
 import { Body, Controller, Post, Res, ValidationPipe } from '@nestjs/common';
 import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import { randomUUID } from 'node:crypto';
 import { once } from 'node:events';
 import { Response } from 'express';
 import { RateLimit } from '../../common/guards/rate-limit.guard';
@@ -16,6 +17,18 @@ export class AIChatStreamDto {
   @IsNotEmpty()
   @MaxLength(500)
   message: string;
+
+  @Transform(({ obj }: { obj: Record<string, unknown> }) => obj.sessionId)
+  @IsOptional()
+  @IsUUID()
+  sessionId?: string;
+
+  @Transform(({ obj }: { obj: Record<string, unknown> }) => obj.userId)
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(64)
+  userId?: string;
 }
 
 @Controller('api/ai-chat')
@@ -31,7 +44,8 @@ export class AIChatController {
     const controller = new AbortController();
     const abort = () => controller.abort();
     response.once('close', abort);
-    const iterator = this.service.stream(body.message, controller.signal);
+    const sessionId = body.sessionId ?? randomUUID();
+    const iterator = this.service.stream(body.message, sessionId, body.userId, controller.signal);
 
     const write = async (event: string, data: unknown): Promise<void> => {
       controller.signal.throwIfAborted();
@@ -52,6 +66,7 @@ export class AIChatController {
         'X-Accel-Buffering': 'no',
       });
       response.flushHeaders();
+      await write('session', { sessionId });
       while (!result.done) {
         await write('token', { text: result.value });
         result = await iterator.next();

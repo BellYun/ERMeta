@@ -3,22 +3,31 @@ import {
   GatewayTimeoutException,
   HttpException,
   Injectable,
+  Logger,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { ORIGINAL_PERSONA_ERI, PersonaDefinition } from './persona.config';
 import { GeminiProvider } from './providers/gemini.provider';
 import { OpenAIProvider } from './providers/openai.provider';
 import { LLMProvider } from './providers/llm-provider.interface';
+import { MemoryService } from './services/memory.service';
+import { ContextBuilderService } from './services/context-builder.service';
 
 @Injectable()
 export class AIChatService {
+  private readonly logger = new Logger(AIChatService.name);
+
   constructor(
     private readonly gemini: GeminiProvider,
     private readonly openai: OpenAIProvider,
+    private readonly memory: MemoryService,
+    private readonly contextBuilder: ContextBuilderService,
   ) {}
 
   async *stream(
     message: string,
+    sessionId?: string,
+    userId?: string,
     signal?: AbortSignal,
     persona: PersonaDefinition = ORIGINAL_PERSONA_ERI,
   ): AsyncGenerator<string> {
@@ -36,13 +45,30 @@ export class AIChatService {
     const timeout = setTimeout(() => controller.abort(), 30_000);
     timeout.unref();
     try {
-      yield* provider.stream({
-        systemPrompt: persona.systemPrompt,
-        messages: [{ role: 'user', content: message }],
+      const [history, context] = await Promise.all([
+        sessionId ? this.memory.getHistory(sessionId) : [],
+        this.contextBuilder.buildContext(userId),
+      ]);
+      controller.signal.throwIfAborted();
+      let answer = '';
+      for await (const token of provider.stream({
+        systemPrompt: [persona.systemPrompt, context].filter(Boolean).join('\n\n'),
+        messages: [...history, { role: 'user', content: message }],
         temperature: persona.temperature,
         maxOutputTokens: persona.maxOutputTokens,
         signal: controller.signal,
-      });
+      })) {
+        controller.signal.throwIfAborted();
+        answer += token;
+        yield token;
+      }
+      controller.signal.throwIfAborted();
+      if (sessionId && answer) {
+        void this.memory.appendMessages(sessionId, [
+          { role: 'user', content: message },
+          { role: 'assistant', content: answer },
+        ]).catch(() => this.logger.warn('AI 대화 기록 저장 실패'));
+      }
     } catch (error) {
       if (signal?.aborted) throw error;
       if (controller.signal.aborted) throw new GatewayTimeoutException('AI 응답 시간이 초과되었습니다.');
