@@ -1,5 +1,39 @@
 # ERMeta Backend
 
+## AI 전술 코치 스트리밍 (#378)
+
+전체 백엔드 진입점(`npm run start:dev`)에서 `POST /api/ai-chat/stream`을 제공한다. Node.js 22를 사용하며, `.env.example`의 `LLM_PROVIDER`를 `gemini`(기본값) 또는 `openai`로 설정한다. 선택한 프로바이더의 `GEMINI_API_KEY` 또는 `OPENAI_API_KEY`만 필요하다. 요청마다 프로바이더를 선택하며, 서버 환경변수를 변경하는 배포에서는 새 설정으로 프로세스를 시작해야 한다.
+
+```http
+POST /api/ai-chat/stream
+Content-Type: application/json
+
+{"message":"오늘 분석할 수 있는 데이터가 있어?"}
+```
+
+`message`는 앞뒤 공백을 제거한 뒤 1~500자인 문자열이어야 한다. 페르소나는 서버의 `persona.config.ts`에서 관리한다. Gemini 2.0 Flash 또는 GPT-4o-mini에 native `fetch`로 요청하며, 출력 한도는 600토큰이다. 스트림 전체에 30초 제한을 적용하고 클라이언트가 연결을 끊으면 외부 요청도 취소한다. 자동 재시도나 다른 유료 프로바이더로의 폴백은 하지 않는다. 기존 전역 가드에 IP당 분당 5회 제한을 지정하며, Redis 장애 시 허용하는 기존 가드 정책을 따른다.
+
+성공 응답은 HTTP 200, `Content-Type: text/event-stream; charset=utf-8`이며, 캐시와 프록시 버퍼링을 비활성화한다. 프런트엔드는 POST `fetch`의 응답 스트림에서 다음 SSE 이벤트를 읽는다. `data`는 JSON이다.
+
+```text
+event: token
+data: {"text":"안녕!"}
+
+event: done
+data: {}
+
+```
+
+입력 오류는 400, 프로바이더·키 설정 오류는 503, 외부 응답 오류는 502, 응답 시간 초과는 504다. 첫 토큰 이후 발생한 오류는 `event: error`, `data: {"message":"..."}`를 보내고 연결을 닫으며, `done`은 보내지 않는다. 이 코어 모듈은 DB·Redis 대화 기억이나 메타 통계 조회를 수행하지 않는다.
+
+`npm test`는 기존 테스트와 `src/modules/ai-chat/ai-chat.service.spec.ts`의 단위·HTTP 스트리밍 테스트를 함께 실행한다. 프로바이더 호출을 모킹하므로 API 키와 LLM 비용이 필요 없다. 백엔드 lint는 저장소의 기존 프런트엔드 ESLint·TypeScript 플러그인을 재사용하므로 먼저 `frontend/`에서 `npm ci`를 실행해야 한다. 백엔드 검증 명령은 `backend/`에서 실행한다.
+
+```sh
+npm run lint
+npm test
+npm run build
+```
+
 ## Windows에서 랭크 경기 원본 수집 (#372)
 
 수집기는 BSER 경기 번호를 순회하고 `matchingMode = 3`인 응답 전체를 gzip으로 압축해 로컬 PostgreSQL의 `match_collection.raw_matches`에 저장한다. 경기 번호가 기본 키다. 패치 버전과 시즌 ID를 읽을 수 있으면 메타데이터로 남긴다. 원본에 있는 참가자 필드와 닉네임은 압축 파일 안에 들어 있으므로 DB 계정과 백업 파일의 접근 범위를 운영 계정으로 제한한다.

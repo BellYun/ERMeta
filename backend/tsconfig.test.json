@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist/ai-chat-tests",
+    "incremental": false,
+    "declaration": false,
+    "sourceMap": false
+  },
+  "include": ["src/modules/ai-chat/ai-chat.service.spec.ts"],
+  "exclude": ["node_modules", "dist"]
+}
