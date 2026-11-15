@@ -71,6 +71,22 @@ export class PlayerSeasonStatsRepository {
     return row ? { stats: row.stats_payload, fetchedAt: row.fetched_at } : null;
   }
 
+  async findLatestRankedSnapshot(playerId: string): Promise<StoredSeasonStats | null> {
+    const result = await this.database.getPool().query<{
+      stats_payload: OfficialSeasonStats;
+      fetched_at: Date;
+    }>(
+      `SELECT stats_payload, fetched_at
+       FROM player_history.player_season_stats
+       WHERE player_lookup_id = $1 AND matching_mode = 3
+       ORDER BY season_id DESC, fetched_at DESC, matching_team_mode DESC
+       LIMIT 1`,
+      [playerId],
+    );
+    const row = result.rows[0];
+    return row ? { stats: row.stats_payload, fetchedAt: row.fetched_at } : null;
+  }
+
   async saveResult(
     nickname: string,
     nicknameKey: string,

@@ -6,12 +6,18 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AddressInfo } from 'node:net';
 import { AIChatService } from './ai-chat.service';
-import { AIChatModule } from './ai-chat.module';
+import { AIChatController } from './ai-chat.controller';
 import { ORIGINAL_PERSONA_ERI } from './persona.config';
 import { GeminiProvider } from './providers/gemini.provider';
 import { OpenAIProvider } from './providers/openai.provider';
 import { LLMStreamOptions } from './providers/llm-provider.interface';
 import { readSseData } from './providers/sse-stream';
+import { ChatMessage, MemoryService } from './services/memory.service';
+import { ContextBuilderService } from './services/context-builder.service';
+import { SupabaseService } from '../../common/database/supabase.service';
+import { CharacterService } from '../character/character.service';
+import { MetaService } from '../meta/meta.service';
+import { PlayerSeasonStatsResponse, PlayerSeasonStatsService } from '../player-season-stats/player-season-stats.service';
 
 const nativeFetch = globalThis.fetch.bind(globalThis);
 const envNames = ['LLM_PROVIDER', 'GEMINI_API_KEY', 'OPENAI_API_KEY'] as const;
@@ -66,10 +72,27 @@ function sseResponse(text: string, chunkSize = 7): Response {
 const openAIToken = (text: string) => `data: ${JSON.stringify({ choices: [{ delta: { content: text } }] })}\n\n`;
 const geminiToken = (text: string, finishReason?: string) =>
   `data: ${JSON.stringify({ candidates: [{ content: { parts: [{ text }] }, finishReason }] })}\n\n`;
-const service = () => new AIChatService(new GeminiProvider(), new OpenAIProvider());
+function service(
+  gemini: GeminiProvider = new GeminiProvider(),
+  openai: OpenAIProvider = new OpenAIProvider(),
+  memory: Pick<MemoryService, 'getHistory' | 'appendMessages'> = {
+    async getHistory() { return []; }, async appendMessages() {},
+  },
+  context: Pick<ContextBuilderService, 'buildContext'> = { async buildContext() { return ''; } },
+) {
+  return new AIChatService(gemini, openai, memory as MemoryService, context as ContextBuilderService);
+}
 
 async function withApp(run: (url: string, app: INestApplication) => Promise<void>) {
-  const app = await NestFactory.create(AIChatModule, { logger: false });
+  // HTTP tests use the real controller/service while isolating Redis and domain I/O.
+  const app = await NestFactory.create({
+    module: class AIChatTestModule {},
+    controllers: [AIChatController],
+    providers: [AIChatService, GeminiProvider, OpenAIProvider,
+      { provide: MemoryService, useValue: { async getHistory() { return []; }, async appendMessages() {} } },
+      { provide: ContextBuilderService, useValue: { async buildContext() { return ''; } } },
+    ],
+  }, { logger: false });
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true, transform: true, transformOptions: { enableImplicitConversion: true },
   }));
@@ -92,19 +115,19 @@ test('defaults to Gemini and forwards persona settings independently from the en
   const calls: LLMStreamOptions[] = [];
   const gemini: GeminiProvider = { async *stream(request) { calls.push(request); yield '안녕'; yield '!'; } };
   const openai: OpenAIProvider = { async *stream() { throw new Error('unexpected provider'); } };
-  const chat = new AIChatService(gemini, openai);
+  const chat = service(gemini, openai);
   assert.deepEqual(await collect(chat.stream('질문')), ['안녕', '!']);
   assert.equal(calls[0].systemPrompt, ORIGINAL_PERSONA_ERI.systemPrompt);
   assert.equal(calls[0].maxOutputTokens, 600);
   assert.equal(calls[0].temperature, 0.7);
   assert.deepEqual(calls[0].messages, [{ role: 'user', content: '질문' }]);
   assert.equal(calls[0].signal?.aborted, true, 'finished requests release upstream resources');
-  await collect(chat.stream('다른 질문', undefined, { ...ORIGINAL_PERSONA_ERI, systemPrompt: '다른 분석관' }));
+  await collect(chat.stream('다른 질문', undefined, undefined, undefined, undefined, { ...ORIGINAL_PERSONA_ERI, systemPrompt: '다른 분석관' }));
   assert.equal(calls[1].systemPrompt, '다른 분석관');
 });
 
 test('selects the provider per request and rejects unknown providers without a fallback', async () => {
-  const chat = new AIChatService(
+  const chat = service(
     { async *stream() { yield 'gemini'; } },
     { async *stream() { yield 'openai'; } },
   );
@@ -114,6 +137,106 @@ test('selects the provider per request and rejects unknown providers without a f
   assert.deepEqual(await collect(chat.stream('질문')), ['gemini']);
   process.env.LLM_PROVIDER = 'invalid';
   await assert.rejects(collect(chat.stream('질문')), (error: { getStatus(): number }) => error.getStatus() === 503);
+});
+
+test('injects session history and user context, then saves the complete pair without delaying completion', async () => {
+  const history: ChatMessage[] = [{ role: 'user', content: '이전 질문' }, { role: 'assistant', content: '이전 답변' }];
+  const pendingSave = deferred();
+  const getHistory = mock.fn(async (sessionId: string) => {
+    assert.equal(sessionId, 'session-a');
+    return history;
+  });
+  const appendMessages = mock.fn(async (_sessionId: string, _messages: ChatMessage[]) => pendingSave.promise);
+  const buildContext = mock.fn(async (userId?: string, nickname?: string) => {
+    assert.equal(userId, 'user-a');
+    assert.equal(nickname, '테스터');
+    return '선호 실험체 [1]\n메타: 집계 요약';
+  });
+  const chat = service({
+    async *stream(request) {
+      assert.equal(request.systemPrompt, `${ORIGINAL_PERSONA_ERI.systemPrompt}\n\n선호 실험체 [1]\n메타: 집계 요약`);
+      assert.deepEqual(request.messages, [...history, { role: 'user', content: '후속 질문' }]);
+      assert.equal(appendMessages.mock.callCount(), 0);
+      yield '완성';
+      yield ' 답변';
+    },
+  }, new OpenAIProvider(), { getHistory, appendMessages }, { buildContext });
+  try {
+    assert.deepEqual(await collect(chat.stream('후속 질문', 'session-a', 'user-a', '테스터')), ['완성', ' 답변']);
+    assert.equal(getHistory.mock.callCount(), 1);
+    assert.deepEqual(appendMessages.mock.calls[0].arguments, ['session-a', [
+      { role: 'user', content: '후속 질문' }, { role: 'assistant', content: '완성 답변' },
+    ]]);
+    assert.deepEqual(history, [{ role: 'user', content: '이전 질문' }, { role: 'assistant', content: '이전 답변' }]);
+  } finally {
+    pendingSave.resolve();
+  }
+});
+
+test('nickname season data reaches the LLM and unknown nicknames still stream with public meta', async () => {
+  const player: PlayerSeasonStatsResponse = {
+    nickname: '테스터', seasonId: 41, matchingMode: 3, source: 'bser_official',
+    fetchedAt: '2026-11-14T00:00:00.000Z', isStale: false,
+    stats: {
+      seasonId: 41, matchingMode: 3, matchingTeamMode: 3,
+      totalGames: 10, totalWins: 2, winRate: 20, averageRank: 3,
+      mmr: 3200, rank: null, rankSize: null, rankPercent: null,
+      top3Rate: null, averageKills: null, averageAssistants: null,
+      characterStats: [{ characterCode: 1, totalGames: 5, wins: 1, top3Rate: 0.6, averageRank: 3 }],
+    },
+  };
+  const getStats = mock.fn(async (nickname: string) => {
+    if (nickname === '없는닉네임') throw new Error('PLAYER_STATS_NOT_FOUND');
+    return player;
+  });
+  const memoryQuery = {
+    select: () => memoryQuery, eq: () => memoryQuery,
+    async maybeSingle() { return { data: null, error: null }; },
+  };
+  const context = new ContextBuilderService(
+    { getClient: () => ({ from: () => memoryQuery }) } as unknown as SupabaseService,
+    { async getHoneyPicks() { return { patchVersion: '12.7', tier: 'DIAMOND', picks: [] }; } } as unknown as MetaService,
+    {} as CharacterService,
+    { getStats } as unknown as PlayerSeasonStatsService,
+  );
+  const prompts: string[] = [];
+  const chat = service({ async *stream(request) { prompts.push(request.systemPrompt); yield '분석'; } },
+    new OpenAIProvider(), undefined, context);
+  assert.deepEqual(await collect(chat.stream('내 전적은?', undefined, undefined, '테스터')), ['분석']);
+  assert.match(prompts[0], /MMR 3200, 10판, 승률 20\.0%/);
+  assert.match(prompts[0], /모스트 실험체 1 5판\/승률 20\.0%/);
+  assert.deepEqual(await collect(chat.stream('내 전적은?', undefined, undefined, '없는닉네임')), ['분석']);
+  assert.equal(prompts[1], `${ORIGINAL_PERSONA_ERI.systemPrompt}\n\n메타(12.7, DIAMOND): 꿀픽 집계 데이터 없음.`);
+  assert.deepEqual(getStats.mock.calls.map((call) => call.arguments), [['테스터'], ['없는닉네임']]);
+});
+
+test('failed, empty and cancelled streams never save a partial conversation', async () => {
+  const appendMessages = mock.fn(async () => {});
+  const memory = { async getHistory() { return []; }, appendMessages };
+  const failed = service({ async *stream() { yield '부분'; throw new Error('upstream failed'); } }, new OpenAIProvider(), memory);
+  await assert.rejects(collect(failed.stream('질문', 'session-a')));
+  const empty = service({ async *stream() {} }, new OpenAIProvider(), memory);
+  assert.deepEqual(await collect(empty.stream('질문', 'session-a')), []);
+
+  const abort = new AbortController();
+  const cancelled = service({ async *stream() { yield '부분'; yield '나머지'; } }, new OpenAIProvider(), memory);
+  const iterator = cancelled.stream('질문', 'session-a', undefined, undefined, abort.signal);
+  assert.deepEqual(await iterator.next(), { done: false, value: '부분' });
+  abort.abort();
+  await assert.rejects(iterator.next());
+  const stopped = cancelled.stream('질문', 'session-a');
+  await stopped.next();
+  await stopped.return(undefined);
+  assert.equal(appendMessages.mock.callCount(), 0);
+});
+
+test('a failed asynchronous memory write does not turn a completed answer into an error', async () => {
+  const appendMessages = mock.fn(async () => { throw new Error('Redis unavailable'); });
+  const chat = service({ async *stream() { yield '정상'; } }, new OpenAIProvider(), {
+    async getHistory() { return []; }, appendMessages,
+  });
+  assert.deepEqual(await collect(chat.stream('질문', 'session-a')), ['정상']);
+  assert.equal(appendMessages.mock.callCount(), 1);
 });
 
 test('SSE parser preserves split UTF-8, CRLF, multiline data and ignores metadata/comments', async () => {
@@ -224,28 +347,28 @@ test('cancelled requests abort upstream fetch and already-cancelled requests do 
       yield 'unreachable';
     },
   };
-  const chat = new AIChatService(provider, new OpenAIProvider());
-  const pending = collect(chat.stream('질문', abort.signal));
+  const chat = service(provider);
+  const pending = collect(chat.stream('질문', undefined, undefined, undefined, abort.signal));
   await started.promise;
   abort.abort();
   await assert.rejects(pending);
   assert.equal(upstreamSignal?.aborted, true);
   const fetchMock = mock.method(globalThis, 'fetch');
-  await assert.rejects(collect(service().stream('질문', abort.signal)));
+  await assert.rejects(collect(service().stream('질문', undefined, undefined, undefined, abort.signal)));
   assert.equal(fetchMock.mock.callCount(), 0);
 });
 
 test('upstream timeout aborts generation and becomes HTTP 504', async (context) => {
   context.mock.timers.enable({ apis: ['setTimeout'] });
   const started = deferred();
-  const chat = new AIChatService({
+  const chat = service({
     async *stream(request) {
       started.resolve();
       await once(request.signal!, 'abort');
       request.signal!.throwIfAborted();
       yield 'unreachable';
     },
-  }, new OpenAIProvider());
+  });
   const pending = collect(chat.stream('질문'));
   await started.promise;
   context.mock.timers.tick(30_000);
@@ -256,14 +379,20 @@ test('POST validates strict string input and the 500-character limit before call
   const fetchMock = mock.method(globalThis, 'fetch', async () => sseResponse(geminiToken('정상', 'STOP')));
   await withApp(async (url) => {
     for (const body of [{}, { message: '' }, { message: '   ' }, { message: 123 },
-      { message: true }, { message: null }, { message: {} }, { message: [] }, { message: '가'.repeat(501) }]) {
+      { message: true }, { message: null }, { message: {} }, { message: [] }, { message: '가'.repeat(501) },
+      { message: '질문', sessionId: 'not-a-uuid' }, { message: '질문', sessionId: 123 },
+      { message: '질문', userId: 123 }, { message: '질문', userId: true },
+      { message: '질문', userId: '' }, { message: '질문', userId: 'a'.repeat(65) },
+      { message: '질문', nickname: 123 }, { message: '질문', nickname: true },
+      { message: '질문', nickname: {} }, { message: '질문', nickname: [] },
+      { message: '질문', nickname: '가'.repeat(33) }]) {
       const response = await post(url, body);
       assert.equal(response.status, 400, JSON.stringify(body));
       assert.match(response.headers.get('content-type')!, /application\/json/);
       await response.text();
     }
     assert.equal(fetchMock.mock.callCount(), 0);
-    const valid = await post(url, { message: '가'.repeat(500) });
+    const valid = await post(url, { message: '가'.repeat(500), nickname: '가'.repeat(32) });
     assert.equal(valid.status, 200);
     await valid.text();
     assert.equal(fetchMock.mock.callCount(), 1);
@@ -300,7 +429,13 @@ test('POST streams tokens before completion with SSE headers and a single done e
       assert.equal(response.headers.get('cache-control'), 'no-cache, no-transform');
       assert.equal(response.headers.get('x-accel-buffering'), 'no');
       const reader = response.body!.getReader();
-      const first = new TextDecoder().decode((await reader.read()).value);
+      let first = '';
+      while (!first.includes('event: token')) {
+        const chunk = await reader.read();
+        assert.equal(chunk.done, false);
+        first += new TextDecoder().decode(chunk.value);
+      }
+      assert.match(first, /^event: session\ndata: \{"sessionId":"[0-9a-f-]{36}"\}\n\n/);
       assert.match(first, /event: token/);
       assert.ok(!first.includes('event: done'));
       assert.match(first, /data: \{"text":"첫 토큰\\n😀"\}/);
@@ -316,6 +451,44 @@ test('POST streams tokens before completion with SSE headers and a single done e
   } finally {
     finish.resolve();
   }
+});
+
+test('POST issues a UUID session and reuses supplied session/user IDs when building the prompt', async () => {
+  const requests: Array<{ systemPrompt: string; messages: unknown[] }> = [];
+  mock.method(globalThis, 'fetch', async (_url: string, init: RequestInit) => {
+    const body = JSON.parse(init.body as string);
+    requests.push({ systemPrompt: body.systemInstruction.parts[0].text, messages: body.contents });
+    return sseResponse(geminiToken('정상', 'STOP'));
+  });
+  await withApp(async (url, app) => {
+    const history: ChatMessage[] = [{ role: 'user', content: '이전' }, { role: 'assistant', content: '답변' }];
+    const getHistory = mock.method(app.get(MemoryService), 'getHistory', async () => history);
+    const buildContext = mock.method(app.get(ContextBuilderService), 'buildContext', async () => '유저 맥락');
+    const issued = await post(url, { message: '질문' });
+    const issuedText = await issued.text();
+    const sessionData = /^event: session\ndata: (.*)\n\n/.exec(issuedText);
+    assert.ok(sessionData);
+    const { sessionId } = JSON.parse(sessionData[1]);
+    assert.match(sessionId, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+    assert.equal(getHistory.mock.calls[0].arguments[0], sessionId);
+    assert.deepEqual(buildContext.mock.calls[0].arguments, [undefined, undefined]);
+    const reused = await post(url, { message: '후속', sessionId, userId: 'user-a', nickname: '  테스터  ' });
+    const reusedText = await reused.text();
+    assert.ok(reusedText.startsWith(`event: session\ndata: ${JSON.stringify({ sessionId })}\n\n`));
+    assert.equal((reusedText.match(/event: session/g) ?? []).length, 1);
+    assert.equal(getHistory.mock.calls[1].arguments[0], sessionId);
+    assert.deepEqual(buildContext.mock.calls[1].arguments, ['user-a', '테스터']);
+    assert.ok(requests[1].systemPrompt.endsWith('\n\n유저 맥락'));
+    assert.deepEqual(requests[1].messages, [
+      { role: 'user', parts: [{ text: '이전' }] },
+      { role: 'model', parts: [{ text: '답변' }] },
+      { role: 'user', parts: [{ text: '후속' }] },
+    ]);
+    const nicknameOnly = await post(url, { message: '전적', nickname: '테스터' });
+    assert.equal(nicknameOnly.status, 200);
+    await nicknameOnly.text();
+    assert.deepEqual(buildContext.mock.calls[2].arguments, [undefined, '테스터']);
+  });
 });
 
 test('initial upstream/configuration errors remain HTTP errors and midstream errors use SSE', async () => {
