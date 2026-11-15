@@ -14,6 +14,10 @@ import { LLMStreamOptions } from './providers/llm-provider.interface';
 import { readSseData } from './providers/sse-stream';
 import { ChatMessage, MemoryService } from './services/memory.service';
 import { ContextBuilderService } from './services/context-builder.service';
+import { SupabaseService } from '../../common/database/supabase.service';
+import { CharacterService } from '../character/character.service';
+import { MetaService } from '../meta/meta.service';
+import { PlayerSeasonStatsResponse, PlayerSeasonStatsService } from '../player-season-stats/player-season-stats.service';
 
 const nativeFetch = globalThis.fetch.bind(globalThis);
 const envNames = ['LLM_PROVIDER', 'GEMINI_API_KEY', 'OPENAI_API_KEY'] as const;
@@ -118,7 +122,7 @@ test('defaults to Gemini and forwards persona settings independently from the en
   assert.equal(calls[0].temperature, 0.7);
   assert.deepEqual(calls[0].messages, [{ role: 'user', content: '질문' }]);
   assert.equal(calls[0].signal?.aborted, true, 'finished requests release upstream resources');
-  await collect(chat.stream('다른 질문', undefined, undefined, undefined, { ...ORIGINAL_PERSONA_ERI, systemPrompt: '다른 분석관' }));
+  await collect(chat.stream('다른 질문', undefined, undefined, undefined, undefined, { ...ORIGINAL_PERSONA_ERI, systemPrompt: '다른 분석관' }));
   assert.equal(calls[1].systemPrompt, '다른 분석관');
 });
 
@@ -143,8 +147,9 @@ test('injects session history and user context, then saves the complete pair wit
     return history;
   });
   const appendMessages = mock.fn(async (_sessionId: string, _messages: ChatMessage[]) => pendingSave.promise);
-  const buildContext = mock.fn(async (userId?: string) => {
+  const buildContext = mock.fn(async (userId?: string, nickname?: string) => {
     assert.equal(userId, 'user-a');
+    assert.equal(nickname, '테스터');
     return '선호 실험체 [1]\n메타: 집계 요약';
   });
   const chat = service({
@@ -157,7 +162,7 @@ test('injects session history and user context, then saves the complete pair wit
     },
   }, new OpenAIProvider(), { getHistory, appendMessages }, { buildContext });
   try {
-    assert.deepEqual(await collect(chat.stream('후속 질문', 'session-a', 'user-a')), ['완성', ' 답변']);
+    assert.deepEqual(await collect(chat.stream('후속 질문', 'session-a', 'user-a', '테스터')), ['완성', ' 답변']);
     assert.equal(getHistory.mock.callCount(), 1);
     assert.deepEqual(appendMessages.mock.calls[0].arguments, ['session-a', [
       { role: 'user', content: '후속 질문' }, { role: 'assistant', content: '완성 답변' },
@@ -166,6 +171,43 @@ test('injects session history and user context, then saves the complete pair wit
   } finally {
     pendingSave.resolve();
   }
+});
+
+test('nickname season data reaches the LLM and unknown nicknames still stream with public meta', async () => {
+  const player: PlayerSeasonStatsResponse = {
+    nickname: '테스터', seasonId: 41, matchingMode: 3, source: 'bser_official',
+    fetchedAt: '2026-11-14T00:00:00.000Z', isStale: false,
+    stats: {
+      seasonId: 41, matchingMode: 3, matchingTeamMode: 3,
+      totalGames: 10, totalWins: 2, winRate: 20, averageRank: 3,
+      mmr: 3200, rank: null, rankSize: null, rankPercent: null,
+      top3Rate: null, averageKills: null, averageAssistants: null,
+      characterStats: [{ characterCode: 1, totalGames: 5, wins: 1, top3Rate: 0.6, averageRank: 3 }],
+    },
+  };
+  const getStats = mock.fn(async (nickname: string) => {
+    if (nickname === '없는닉네임') throw new Error('PLAYER_STATS_NOT_FOUND');
+    return player;
+  });
+  const memoryQuery = {
+    select: () => memoryQuery, eq: () => memoryQuery,
+    async maybeSingle() { return { data: null, error: null }; },
+  };
+  const context = new ContextBuilderService(
+    { getClient: () => ({ from: () => memoryQuery }) } as unknown as SupabaseService,
+    { async getHoneyPicks() { return { patchVersion: '12.7', tier: 'DIAMOND', picks: [] }; } } as unknown as MetaService,
+    {} as CharacterService,
+    { getStats } as unknown as PlayerSeasonStatsService,
+  );
+  const prompts: string[] = [];
+  const chat = service({ async *stream(request) { prompts.push(request.systemPrompt); yield '분석'; } },
+    new OpenAIProvider(), undefined, context);
+  assert.deepEqual(await collect(chat.stream('내 전적은?', undefined, undefined, '테스터')), ['분석']);
+  assert.match(prompts[0], /MMR 3200, 10판, 승률 20\.0%/);
+  assert.match(prompts[0], /모스트 실험체 1 5판\/승률 20\.0%/);
+  assert.deepEqual(await collect(chat.stream('내 전적은?', undefined, undefined, '없는닉네임')), ['분석']);
+  assert.equal(prompts[1], `${ORIGINAL_PERSONA_ERI.systemPrompt}\n\n메타(12.7, DIAMOND): 꿀픽 집계 데이터 없음.`);
+  assert.deepEqual(getStats.mock.calls.map((call) => call.arguments), [['테스터'], ['없는닉네임']]);
 });
 
 test('failed, empty and cancelled streams never save a partial conversation', async () => {
@@ -178,7 +220,7 @@ test('failed, empty and cancelled streams never save a partial conversation', as
 
   const abort = new AbortController();
   const cancelled = service({ async *stream() { yield '부분'; yield '나머지'; } }, new OpenAIProvider(), memory);
-  const iterator = cancelled.stream('질문', 'session-a', undefined, abort.signal);
+  const iterator = cancelled.stream('질문', 'session-a', undefined, undefined, abort.signal);
   assert.deepEqual(await iterator.next(), { done: false, value: '부분' });
   abort.abort();
   await assert.rejects(iterator.next());
@@ -306,13 +348,13 @@ test('cancelled requests abort upstream fetch and already-cancelled requests do 
     },
   };
   const chat = service(provider);
-  const pending = collect(chat.stream('질문', undefined, undefined, abort.signal));
+  const pending = collect(chat.stream('질문', undefined, undefined, undefined, abort.signal));
   await started.promise;
   abort.abort();
   await assert.rejects(pending);
   assert.equal(upstreamSignal?.aborted, true);
   const fetchMock = mock.method(globalThis, 'fetch');
-  await assert.rejects(collect(service().stream('질문', undefined, undefined, abort.signal)));
+  await assert.rejects(collect(service().stream('질문', undefined, undefined, undefined, abort.signal)));
   assert.equal(fetchMock.mock.callCount(), 0);
 });
 
@@ -340,14 +382,17 @@ test('POST validates strict string input and the 500-character limit before call
       { message: true }, { message: null }, { message: {} }, { message: [] }, { message: '가'.repeat(501) },
       { message: '질문', sessionId: 'not-a-uuid' }, { message: '질문', sessionId: 123 },
       { message: '질문', userId: 123 }, { message: '질문', userId: true },
-      { message: '질문', userId: '' }, { message: '질문', userId: 'a'.repeat(65) }]) {
+      { message: '질문', userId: '' }, { message: '질문', userId: 'a'.repeat(65) },
+      { message: '질문', nickname: 123 }, { message: '질문', nickname: true },
+      { message: '질문', nickname: {} }, { message: '질문', nickname: [] },
+      { message: '질문', nickname: '가'.repeat(33) }]) {
       const response = await post(url, body);
       assert.equal(response.status, 400, JSON.stringify(body));
       assert.match(response.headers.get('content-type')!, /application\/json/);
       await response.text();
     }
     assert.equal(fetchMock.mock.callCount(), 0);
-    const valid = await post(url, { message: '가'.repeat(500) });
+    const valid = await post(url, { message: '가'.repeat(500), nickname: '가'.repeat(32) });
     assert.equal(valid.status, 200);
     await valid.text();
     assert.equal(fetchMock.mock.callCount(), 1);
@@ -426,19 +471,23 @@ test('POST issues a UUID session and reuses supplied session/user IDs when build
     const { sessionId } = JSON.parse(sessionData[1]);
     assert.match(sessionId, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
     assert.equal(getHistory.mock.calls[0].arguments[0], sessionId);
-    assert.equal(buildContext.mock.calls[0].arguments[0], undefined);
-    const reused = await post(url, { message: '후속', sessionId, userId: 'user-a' });
+    assert.deepEqual(buildContext.mock.calls[0].arguments, [undefined, undefined]);
+    const reused = await post(url, { message: '후속', sessionId, userId: 'user-a', nickname: '  테스터  ' });
     const reusedText = await reused.text();
     assert.ok(reusedText.startsWith(`event: session\ndata: ${JSON.stringify({ sessionId })}\n\n`));
     assert.equal((reusedText.match(/event: session/g) ?? []).length, 1);
     assert.equal(getHistory.mock.calls[1].arguments[0], sessionId);
-    assert.equal(buildContext.mock.calls[1].arguments[0], 'user-a');
+    assert.deepEqual(buildContext.mock.calls[1].arguments, ['user-a', '테스터']);
     assert.ok(requests[1].systemPrompt.endsWith('\n\n유저 맥락'));
     assert.deepEqual(requests[1].messages, [
       { role: 'user', parts: [{ text: '이전' }] },
       { role: 'model', parts: [{ text: '답변' }] },
       { role: 'user', parts: [{ text: '후속' }] },
     ]);
+    const nicknameOnly = await post(url, { message: '전적', nickname: '테스터' });
+    assert.equal(nicknameOnly.status, 200);
+    await nicknameOnly.text();
+    assert.deepEqual(buildContext.mock.calls[2].arguments, [undefined, '테스터']);
   });
 });
 

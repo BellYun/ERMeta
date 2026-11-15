@@ -9,9 +9,10 @@ import { SupabaseModule } from '../../common/database/supabase.module';
 import { RedisModule } from '../../common/redis/redis.module';
 import { MemoryService } from './services/memory.service';
 import { ContextBuilderService } from './services/context-builder.service';
+import { PlayerSeasonStatsModule } from '../player-season-stats/player-season-stats.module';
 
 @Module({
-  imports: [MetaModule, CharacterModule, SupabaseModule, RedisModule],
+  imports: [MetaModule, CharacterModule, SupabaseModule, RedisModule, PlayerSeasonStatsModule],
   controllers: [AIChatController],
   providers: [AIChatService, GeminiProvider, OpenAIProvider, MemoryService, ContextBuilderService],
   exports: [AIChatService, MemoryService, ContextBuilderService],

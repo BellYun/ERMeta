@@ -29,6 +29,15 @@ export class AIChatStreamDto {
   @IsNotEmpty()
   @MaxLength(64)
   userId?: string;
+
+  @Transform(({ obj }: { obj: Record<string, unknown> }) => {
+    const nickname = obj.nickname;
+    return typeof nickname === 'string' ? nickname.trim() : nickname;
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(32)
+  nickname?: string;
 }
 
 @Controller('api/ai-chat')
@@ -45,7 +54,7 @@ export class AIChatController {
     const abort = () => controller.abort();
     response.once('close', abort);
     const sessionId = body.sessionId ?? randomUUID();
-    const iterator = this.service.stream(body.message, sessionId, body.userId, controller.signal);
+    const iterator = this.service.stream(body.message, sessionId, body.userId, body.nickname, controller.signal);
 
     const write = async (event: string, data: unknown): Promise<void> => {
       controller.signal.throwIfAborted();

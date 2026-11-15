@@ -28,6 +28,7 @@ export class AIChatService {
     message: string,
     sessionId?: string,
     userId?: string,
+    nickname?: string,
     signal?: AbortSignal,
     persona: PersonaDefinition = ORIGINAL_PERSONA_ERI,
   ): AsyncGenerator<string> {
@@ -47,7 +48,7 @@ export class AIChatService {
     try {
       const [history, context] = await Promise.all([
         sessionId ? this.memory.getHistory(sessionId) : [],
-        this.contextBuilder.buildContext(userId),
+        this.contextBuilder.buildContext(userId, nickname),
       ]);
       controller.signal.throwIfAborted();
       let answer = '';

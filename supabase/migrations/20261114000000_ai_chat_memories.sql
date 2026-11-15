@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS public.ai_chat_sessions (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+ALTER TABLE public.ai_chat_sessions ADD COLUMN IF NOT EXISTS nickname VARCHAR(64);
+
 CREATE TABLE IF NOT EXISTS public.ai_user_memories (
   user_id VARCHAR(64) PRIMARY KEY,
   favorite_characters JSONB DEFAULT '[]'::jsonb,

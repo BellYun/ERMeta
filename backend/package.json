@@ -20,7 +20,8 @@
     "test:player-match-stats": "npm run build && node --test test/player-match-stats.test.js test/player-match-stats.db.test.js",
     "test:player-compare": "npm run build && node --test test/player-compare.test.js",
     "test:player-api": "npm run build && node --test test/player-api.test.js",
-    "test:player-refresh": "npm run build && node --test test/player-refresh.test.js"
+    "test:player-refresh": "npm run build && node --test test/player-refresh.test.js",
+    "analytics:v12": "node --env-file-if-exists=.env ../tools/analytics/process-from-db.mjs"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
