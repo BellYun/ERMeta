@@ -7,6 +7,6 @@
     "declaration": false,
     "sourceMap": false
   },
-  "include": ["src/modules/ai-chat/ai-chat.service.spec.ts"],
+  "include": ["src/modules/ai-chat/**/*.spec.ts"],
   "exclude": ["node_modules", "dist"]
 }

@@ -22,6 +22,7 @@ function fixture(initialSnapshot = null) {
   const repository = {
     findByNicknameKey: async () => lookup,
     findSnapshot: async () => snapshot,
+    findLatestRankedSnapshot: async () => snapshot,
     saveResult: async (nickname, _key, _season, _mode, stats, fetchedAt) => {
       saveCount += 1;
       lookup = { id: '1', nickname };
@@ -41,7 +42,7 @@ function fixture(initialSnapshot = null) {
   const config = { get: () => undefined };
   return {
     service: new PlayerSeasonStatsService(repository, bser, config),
-    bser,
+    bser, repository,
     get saveCount() { return saveCount; },
     get userCalls() { return userCalls; },
     get statsCalls() { return statsCalls; },
@@ -61,6 +62,48 @@ test('official season stats are normalized, saved, and reused while fresh', asyn
   assert.deepEqual(second, first);
   assert.equal(f.saveCount, 1);
   assert.equal(f.statsCalls, 1);
+});
+
+test('nickname-only context reads fresh or stale ranked snapshots without any BSER calls', async () => {
+  for (const isStale of [false, true]) {
+    const cached = {
+      stats: { ...sampleStats(), winRate: 20 },
+      fetchedAt: new Date(Date.now() - (isStale ? 700_000 : 1000)),
+    };
+    const f = fixture(cached);
+    f.repository.findByNicknameKey = async (key) => {
+      assert.equal(key, 'tester');
+      return { id: '1', nickname: 'Tester' };
+    };
+    f.repository.findLatestRankedSnapshot = async (playerId) => {
+      assert.equal(playerId, '1');
+      return cached;
+    };
+    const result = await f.service.getStats('  TESTER  ');
+    assert.equal(result.nickname, 'Tester');
+    assert.equal(result.seasonId, 39);
+    assert.equal(result.matchingMode, 3);
+    assert.equal(result.isStale, isStale);
+    assert.equal(result.fetchedAt, cached.fetchedAt.toISOString());
+    assert.deepEqual(result.stats, cached.stats);
+    assert.equal(f.userCalls, 0);
+    assert.equal(f.statsCalls, 0);
+    assert.equal(f.saveCount, 0);
+  }
+});
+
+test('nickname-only cache misses never trigger a refresh and partial filters stay invalid', async () => {
+  for (const hasLookup of [false, true]) {
+    const f = fixture();
+    if (hasLookup) f.repository.findByNicknameKey = async () => ({ id: '1', nickname: '테스터' });
+    await assert.rejects(f.service.getStats('테스터'), (error) => error.status === 404);
+    assert.equal(f.userCalls, 0);
+    assert.equal(f.statsCalls, 0);
+    assert.equal(f.saveCount, 0);
+  }
+  const f = fixture();
+  await assert.rejects(f.service.getStats('테스터', '39'), (error) => error.status === 400);
+  await assert.rejects(f.service.getStats('테스터', undefined, '3'), (error) => error.status === 400);
 });
 
 test('concurrent identical requests share the upstream refresh', async () => {
