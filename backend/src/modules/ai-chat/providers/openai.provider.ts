@@ -1,6 +1,9 @@
 import { BadGatewayException, Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { LLMProvider, LLMStreamOptions } from './llm-provider.interface';
 import { readSseData } from './sse-stream';
+import { LLMModerationException } from './llm-moderation.exception';
+
+export const OPENAI_MODEL = 'gpt-4o-mini';
 
 interface OpenAIChunk {
   error?: unknown;
@@ -21,7 +24,7 @@ export class OpenAIProvider implements LLMProvider {
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
       signal: options.signal,
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: OPENAI_MODEL,
         stream: true,
         messages: [{ role: 'system', content: options.systemPrompt }, ...options.messages],
         temperature: options.temperature,
@@ -37,6 +40,7 @@ export class OpenAIProvider implements LLMProvider {
       if (data === '[DONE]') return;
       const chunk = JSON.parse(data) as OpenAIChunk;
       const choice = chunk.choices?.[0];
+      if (choice?.finish_reason === 'content_filter') throw new LLMModerationException();
       if (chunk.error || (choice?.finish_reason && !['stop', 'length'].includes(choice.finish_reason))) {
         throw new BadGatewayException('OpenAI 응답이 중단되었습니다.');
       }

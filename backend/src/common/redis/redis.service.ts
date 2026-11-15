@@ -108,6 +108,35 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
+  /** 상한 검사·증가·만료를 한 번의 Lua 호출로 처리합니다. 장애 시 null을 반환합니다. */
+  async consumeQuota(key: string, limit: number, ttlSeconds: number): Promise<boolean | null> {
+    if (!this.isConnected()) return null;
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+    try {
+      const result = await Promise.race([
+        this.client.eval(`
+          local count = tonumber(redis.call('GET', KEYS[1]) or '0')
+          if count >= tonumber(ARGV[1]) then return 0 end
+          redis.call('INCR', KEYS[1])
+          if redis.call('TTL', KEYS[1]) < 0 then
+            redis.call('EXPIRE', KEYS[1], ARGV[2])
+          end
+          return 1
+        `, 1, key, limit, ttlSeconds),
+        new Promise<never>((_, reject) => {
+          timeout = setTimeout(() => reject(new Error('Quota timeout')), 1000);
+          timeout.unref();
+        }),
+      ]);
+      return result === 1 ? true : result === 0 ? false : null;
+    } catch {
+      this.logger.warn('Redis 쿼터 확인 실패');
+      return null;
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
   /** 대화 기록 등 Redis List 조회. 연결/조회 실패 시 빈 목록으로 폴백합니다. */
   async getList(key: string, start: number, stop: number): Promise<string[]> {
     if (!this.isConnected()) return [];
