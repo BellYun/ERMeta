@@ -1296,5 +1296,35 @@
     "noData": "No records",
     "previous": "Previous",
     "next": "Next"
+  },
+  "aiCoach": {
+    "title": "ERi - AI Tactical Coach",
+    "launcher": "AI Coach",
+    "open": "Open AI coach",
+    "close": "Close AI coach",
+    "newChat": "New conversation",
+    "nickname": "In-game nickname (optional)",
+    "nicknamePlaceholder": "Enter or edit your nickname",
+    "greeting": "Hi, I’m ERi, your tactical analyst. Ask me about characters, team compositions, or patches.",
+    "suggestions": {
+      "patch": "🔥 Who’s strong this patch?",
+      "record": "🎯 Review my match history",
+      "composition": "Recommend a team composition"
+    },
+    "conversation": "AI coach conversation",
+    "you": "You",
+    "eri": "ERi",
+    "thinking": "Preparing a response",
+    "noResponse": "Response stopped.",
+    "message": "Message to your coach",
+    "messagePlaceholder": "Ask ERi (up to 500 characters)",
+    "send": "Send",
+    "stop": "Stop",
+    "errors": {
+      "invalidMessage": "Enter a question between 1 and 500 characters.",
+      "requestFailed": "Could not connect to the coach. Please try again shortly.",
+      "rateLimited": "The request limit has been reached. Please try again later.",
+      "streamInterrupted": "The response was interrupted. Please ask again shortly."
+    }
   }
 }

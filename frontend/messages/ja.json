@@ -1287,5 +1287,35 @@
     "noData": "記録なし",
     "previous": "前へ",
     "next": "次へ"
+  },
+  "aiCoach": {
+    "title": "イリ (ERi) - AI戦術コーチ",
+    "launcher": "AIコーチ",
+    "open": "AIコーチを開く",
+    "close": "AIコーチを閉じる",
+    "newChat": "新しい会話",
+    "nickname": "ゲーム内ニックネーム（任意）",
+    "nicknamePlaceholder": "ニックネームを入力・変更",
+    "greeting": "こんにちは！戦術分析官のイリだよ。実験体、チーム構成、パッチについて聞いてね。",
+    "suggestions": {
+      "patch": "🔥 今のパッチで強い実験体は？",
+      "record": "🎯 戦績をチェックして",
+      "composition": "おすすめのチーム構成は？"
+    },
+    "conversation": "AIコーチとの会話",
+    "you": "あなた",
+    "eri": "イリ",
+    "thinking": "回答を準備しています",
+    "noResponse": "応答が停止しました。",
+    "message": "コーチへのメッセージ",
+    "messagePlaceholder": "イリに質問する（最大500文字）",
+    "send": "送信",
+    "stop": "停止",
+    "errors": {
+      "invalidMessage": "質問は1〜500文字で入力してください。",
+      "requestFailed": "コーチに接続できませんでした。しばらくしてからお試しください。",
+      "rateLimited": "リクエストの上限に達しました。しばらくしてからお試しください。",
+      "streamInterrupted": "応答が中断されました。しばらくしてから再度質問してください。"
+    }
   }
 }

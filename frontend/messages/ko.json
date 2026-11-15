@@ -1290,5 +1290,35 @@
     "noData": "기록 없음",
     "previous": "이전",
     "next": "다음"
+  },
+  "aiCoach": {
+    "title": "이리 (ERi) - AI 전술 코치",
+    "launcher": "AI 코치",
+    "open": "AI 코치 열기",
+    "close": "AI 코치 닫기",
+    "newChat": "새 대화",
+    "nickname": "인게임 닉네임 (선택)",
+    "nicknamePlaceholder": "닉네임을 입력하거나 수정하세요",
+    "greeting": "안녕! 전술 분석관 이리야. 실험체, 조합, 패치에 대해 궁금한 걸 물어봐.",
+    "suggestions": {
+      "patch": "🔥 이번 패치 꿀픽 누구야?",
+      "record": "🎯 내 전적 점검해 줘",
+      "composition": "우리 팀 조합 추천해 줘"
+    },
+    "conversation": "AI 코치 대화",
+    "you": "나",
+    "eri": "이리",
+    "thinking": "답변을 준비하고 있어요",
+    "noResponse": "응답이 중단되었어요.",
+    "message": "코치에게 보낼 메시지",
+    "messagePlaceholder": "이리에게 질문하세요 (최대 500자)",
+    "send": "전송",
+    "stop": "중단",
+    "errors": {
+      "invalidMessage": "질문은 1~500자로 입력해 주세요.",
+      "requestFailed": "코치에 연결하지 못했어요. 잠시 후 다시 시도해 주세요.",
+      "rateLimited": "요청 한도에 도달했어요. 잠시 후 다시 시도해 주세요.",
+      "streamInterrupted": "응답이 중단되었어요. 잠시 후 다시 질문해 주세요."
+    }
   }
 }

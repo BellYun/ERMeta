@@ -4,6 +4,7 @@ import { setRequestLocale } from "next-intl/server";
 import "../../globals.css";
 import type { ReactNode } from "react";
 import { AppFrame } from "@/components/AppFrame";
+import AICoachWidget from "@/components/features/ai-coach/AICoachWidget";
 import FeedbackWidget from "@/components/features/FeedbackWidget";
 import { FontStylesheetLinks } from "@/components/FontStylesheetLinks";
 import { L10nProvider } from "@/components/L10nProvider";
@@ -75,6 +76,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
             {children}
           </AppFrame>
           <FeedbackWidget />
+          <AICoachWidget />
         </L10nProvider>
         <RootDocumentExtras />
         <script
