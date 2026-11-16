@@ -108,6 +108,31 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
+  /** 대화 기록 등 Redis List 조회. 연결/조회 실패 시 빈 목록으로 폴백합니다. */
+  async getList(key: string, start: number, stop: number): Promise<string[]> {
+    if (!this.isConnected()) return [];
+    try {
+      return await this.client.lrange(key, start, stop);
+    } catch {
+      return [];
+    }
+  }
+
+  /** 추가·슬라이딩 윈도우·TTL 갱신을 한 트랜잭션으로 처리합니다. */
+  async appendToList(key: string, values: string[], maxLength: number, ttl: number): Promise<void> {
+    if (!this.isConnected() || values.length === 0) return;
+    try {
+      const result = await this.client.multi()
+        .rpush(key, ...values)
+        .ltrim(key, -maxLength, -1)
+        .expire(key, ttl)
+        .exec();
+      if (!result || result.some(([error]) => error)) throw new Error('Redis list transaction failed');
+    } catch {
+      this.logger.warn('Redis List 저장 실패 — 대화 기록 없이 동작합니다');
+    }
+  }
+
   /** 패턴으로 캐시 삭제 (SCAN 기반, KEYS 안 씀) */
   async invalidatePattern(pattern: string): Promise<number> {
     if (!this.isConnected()) return 0;

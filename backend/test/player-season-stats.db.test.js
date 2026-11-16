@@ -69,6 +69,16 @@ test('PostgreSQL upserts stats, rolls back invalid data, and preserves matches',
       await repository.saveResult(nickname, nicknameKey, 39, 3, null, new Date());
       assert.equal(await repository.findSnapshot(playerId, 39, 3), null);
       assert.equal((await matches.listMatches(playerId, 10, null)).matches.length, 1);
+      assert.equal(await repository.findLatestRankedSnapshot(playerId), null);
+
+      // 최신 일반 시즌/조회 시각보다 가장 높은 랭크 시즌을 우선합니다.
+      await repository.saveResult(nickname, nicknameKey, 42, 3, { ...stats(), seasonId: 42 }, firstAt);
+      await repository.saveResult(nickname, nicknameKey, 41, 3, { ...stats(), seasonId: 41 }, secondAt);
+      await repository.saveResult(nickname, nicknameKey, 43, 2, { ...stats(), seasonId: 43, matchingMode: 2 }, secondAt);
+      const latestRanked = await repository.findLatestRankedSnapshot(playerId);
+      assert.equal(latestRanked.stats.seasonId, 42);
+      assert.equal(latestRanked.stats.matchingMode, 3);
+      assert.equal(latestRanked.fetchedAt.toISOString(), firstAt.toISOString());
     } finally {
       if (playerId) {
         await database.getPool().query('DELETE FROM player_history.player_match_records WHERE player_lookup_id = $1', [playerId]);

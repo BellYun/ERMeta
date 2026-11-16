@@ -48,6 +48,16 @@ export class PlayerSeasonStatsService {
   async getStats(nicknameParam: string, seasonParam?: string, modeParam?: string): Promise<PlayerSeasonStatsResponse> {
     const nickname = parseNickname(nicknameParam);
     const nicknameKey = nickname.toLocaleLowerCase('ko-KR');
+    // 닉네임만 받는 AI 컨텍스트는 캐시만 읽고 BSER API 갱신을 유발하지 않습니다.
+    if (seasonParam === undefined && modeParam === undefined) {
+      const lookup = await this.repository.findByNicknameKey(nicknameKey);
+      const snapshot = lookup ? await this.repository.findLatestRankedSnapshot(lookup.id) : null;
+      if (!snapshot) {
+        throw new NotFoundException({ code: 'PLAYER_STATS_NOT_FOUND', message: '저장된 랭크 전적이 없습니다.' });
+      }
+      return response(lookup!.nickname, snapshot.stats.seasonId, snapshot.stats.matchingMode, snapshot,
+        Date.now() - snapshot.fetchedAt.getTime() >= this.ttlMs);
+    }
     const seasonId = parseSeasonId(seasonParam);
     const matchingMode = parseMatchingMode(modeParam);
     const lookup = await this.repository.findByNicknameKey(nicknameKey);
