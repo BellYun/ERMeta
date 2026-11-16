@@ -1,6 +1,9 @@
 import { BadGatewayException, Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { LLMProvider, LLMStreamOptions } from './llm-provider.interface';
 import { readSseData } from './sse-stream';
+import { LLMModerationException } from './llm-moderation.exception';
+
+export const GEMINI_MODEL = 'gemini-2.0-flash';
 
 interface GeminiChunk {
   error?: unknown;
@@ -18,7 +21,7 @@ export class GeminiProvider implements LLMProvider {
     if (!apiKey) throw new ServiceUnavailableException('GEMINI_API_KEY가 설정되지 않았습니다.');
 
     const response = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?alt=sse',
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:streamGenerateContent?alt=sse`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
@@ -52,7 +55,10 @@ export class GeminiProvider implements LLMProvider {
     for await (const data of readSseData(response.body)) {
       const chunk = JSON.parse(data) as GeminiChunk;
       const candidate = chunk.candidates?.[0];
-      if (chunk.error || chunk.promptFeedback?.blockReason ||
+      if (chunk.promptFeedback?.blockReason || candidate?.finishReason === 'SAFETY') {
+        throw new LLMModerationException();
+      }
+      if (chunk.error ||
         (candidate?.finishReason && !['STOP', 'MAX_TOKENS'].includes(candidate.finishReason))) {
         throw new BadGatewayException('Gemini 응답이 중단되었습니다.');
       }

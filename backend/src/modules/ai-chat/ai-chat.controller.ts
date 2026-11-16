@@ -1,9 +1,9 @@
-import { Body, Controller, Post, Res, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, HttpException, Post, Req, Res, ValidationPipe } from '@nestjs/common';
 import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
 import { randomUUID } from 'node:crypto';
 import { once } from 'node:events';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { RateLimit } from '../../common/guards/rate-limit.guard';
 import { AIChatService } from './ai-chat.service';
 
@@ -48,13 +48,15 @@ export class AIChatController {
   @RateLimit(5, 60)
   async stream(
     @Body(new ValidationPipe({ transform: true, whitelist: true })) body: AIChatStreamDto,
+    @Req() request: Request,
     @Res() response: Response,
   ): Promise<void> {
     const controller = new AbortController();
     const abort = () => controller.abort();
     response.once('close', abort);
     const sessionId = body.sessionId ?? randomUUID();
-    const iterator = this.service.stream(body.message, sessionId, body.userId, body.nickname, controller.signal);
+    const iterator = this.service.stream(body.message, sessionId, body.userId, body.nickname,
+      controller.signal, undefined, request.ip ?? request.socket.remoteAddress);
 
     const write = async (event: string, data: unknown): Promise<void> => {
       controller.signal.throwIfAborted();
@@ -83,7 +85,15 @@ export class AIChatController {
       await write('done', {});
     } catch (error) {
       if (!controller.signal.aborted) {
-        if (!response.headersSent) throw error;
+        if (!response.headersSent) {
+          if (error instanceof HttpException && error.getStatus() === 429) {
+            const body = error.getResponse();
+            if (typeof body === 'object' && 'retryAfter' in body && typeof body.retryAfter === 'number') {
+              response.setHeader('Retry-After', body.retryAfter);
+            }
+          }
+          throw error;
+        }
         await write('error', { message: 'AI 응답이 중단되었습니다. 잠시 후 다시 시도해 주세요.' })
           .catch(() => undefined);
       }
