@@ -3,6 +3,39 @@ const test = require('node:test');
 const { PlayerHistoryDatabaseService } = require('../dist/common/database/player-history-database.service');
 const { PlayerMatchesRepository } = require('../dist/modules/player-matches/player-matches.repository');
 
+test('a replaced refresh lease cannot save a snapshot or release the new owner',
+  { skip: !process.env.TEST_DATABASE_URL }, async (t) => {
+    const config = { get: (key) => key === 'DATABASE_URL' ? process.env.TEST_DATABASE_URL : undefined };
+    const databases = [new PlayerHistoryDatabaseService(config), new PlayerHistoryDatabaseService(config)];
+    const [first, second] = databases.map((database) => new PlayerMatchesRepository(database));
+    const pool = databases[0].getPool();
+    const nickname = `Lease-${Date.now()}`;
+    const nicknameKey = nickname.toLowerCase();
+    t.after(async () => {
+      await pool.query('DELETE FROM player_history.match_refresh_leases WHERE nickname_key = $1', [nicknameKey]);
+      await pool.query('DELETE FROM player_history.player_lookups WHERE nickname_key = $1', [nicknameKey]);
+      await Promise.all(databases.map((database) => database.onModuleDestroy()));
+    });
+
+    const old = await first.claimRefresh(nicknameKey);
+    assert.ok(old);
+    assert.equal(await second.claimRefresh(nicknameKey), null);
+    await pool.query(`UPDATE player_history.match_refresh_leases SET lease_until = clock_timestamp()
+                      WHERE nickname_key = $1`, [nicknameKey]);
+    const current = await second.claimRefresh(nicknameKey);
+    assert.ok(current);
+    assert.notEqual(current, old);
+
+    await first.releaseRefresh(nicknameKey, old);
+    assert.equal(await first.claimRefresh(nicknameKey), null);
+    await assert.rejects(first.saveSnapshot(nickname, nicknameKey, [], new Date(), old), /lease lost/);
+    assert.equal(await first.findByNicknameKey(nicknameKey), null);
+
+    const saved = await second.saveSnapshot(nickname, nicknameKey, [], new Date(), current);
+    assert.ok(saved.matchesSyncedAt);
+    assert.ok(await first.claimRefresh(nicknameKey));
+  });
+
 test('PostgreSQL prevents duplicates, pages deterministically and rolls back a failed snapshot',
   { skip: !process.env.TEST_DATABASE_URL }, async () => {
     const database = new PlayerHistoryDatabaseService({
