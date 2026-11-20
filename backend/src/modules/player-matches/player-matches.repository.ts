@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
 import { PlayerHistoryDatabaseService } from '../../common/database/player-history-database.service';
+
+// Allows both BSER calls to use the existing queue and retry timeouts before a lease expires.
+const MATCH_REFRESH_LEASE_SECONDS = 60;
 
 export interface PlayerLookup {
   id: string;
@@ -86,6 +90,12 @@ interface MatchRow {
   assists: number;
 }
 
+export class MatchRefreshLeaseLostError extends Error {
+  constructor() {
+    super('Match refresh lease lost');
+  }
+}
+
 @Injectable()
 export class PlayerMatchesRepository {
   constructor(private readonly database: PlayerHistoryDatabaseService) {}
@@ -99,16 +109,49 @@ export class PlayerMatchesRepository {
     return result.rows[0] ? mapLookup(result.rows[0]) : null;
   }
 
+  async claimRefresh(nicknameKey: string): Promise<string | null> {
+    const lease = randomUUID();
+    const result = await this.database.getPool().query(
+      `INSERT INTO player_history.match_refresh_leases AS held (nickname_key, lease_token, lease_until)
+       VALUES ($1, $2, clock_timestamp() + $3 * interval '1 second')
+       ON CONFLICT (nickname_key) DO UPDATE SET
+         lease_token = EXCLUDED.lease_token,
+         lease_until = clock_timestamp() + $3 * interval '1 second'
+       WHERE held.lease_until <= clock_timestamp()
+       RETURNING lease_token`,
+      [nicknameKey, lease, MATCH_REFRESH_LEASE_SECONDS],
+    );
+    return result.rowCount === 1 ? lease : null;
+  }
+
+  async releaseRefresh(nicknameKey: string, lease: string): Promise<void> {
+    await this.database.getPool().query(
+      `DELETE FROM player_history.match_refresh_leases
+       WHERE nickname_key = $1 AND lease_token = $2`,
+      [nicknameKey, lease],
+    );
+  }
+
   async saveSnapshot(
     nickname: string,
     nicknameKey: string,
     games: MatchSnapshot[],
     syncedAt: Date,
+    lease?: string,
   ): Promise<PlayerLookup> {
     const client = await this.database.getPool().connect();
     try {
       await client.query('BEGIN');
       await client.query('SELECT pg_advisory_xact_lock(hashtext($1)::bigint)', [nicknameKey]);
+      if (lease) {
+        const result = await client.query(
+          `SELECT nickname_key FROM player_history.match_refresh_leases
+           WHERE nickname_key = $1 AND lease_token = $2 AND lease_until > clock_timestamp()
+           FOR UPDATE`,
+          [nicknameKey, lease],
+        );
+        if (result.rowCount !== 1) throw new MatchRefreshLeaseLostError();
+      }
       const lookup = await client.query<LookupRow>(
         `INSERT INTO player_history.player_lookups
            (nickname, nickname_key, resolved_at)
@@ -162,6 +205,14 @@ export class PlayerMatchesRepository {
          WHERE id = $1 RETURNING id, nickname, matches_synced_at`,
         [playerId, syncedAt],
       );
+      if (lease) {
+        const result = await client.query(
+          `DELETE FROM player_history.match_refresh_leases
+           WHERE nickname_key = $1 AND lease_token = $2 AND lease_until > clock_timestamp()`,
+          [nicknameKey, lease],
+        );
+        if (result.rowCount !== 1) throw new MatchRefreshLeaseLostError();
+      }
       await client.query('COMMIT');
       return mapLookup(updated.rows[0]);
     } catch (error) {
