@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from '../../common/redis/redis.service';
@@ -27,7 +28,7 @@ type StatsCache =
   | { status: 'found'; stats: BSERUserSeasonStats }
   | { status: 'not_found' };
 
-type MatchesCache = { status: 'found'; matches: RecentMatchSummary[] };
+type MatchesCache = { matches: RecentMatchSummary[]; next?: number };
 
 export interface RecentMatchSummary {
   gameId: number;
@@ -55,6 +56,7 @@ export interface RecentMatchesResponse {
   status: 'ok' | 'not_found' | 'no_matches' | 'error';
   nickname?: string;
   matches: RecentMatchSummary[];
+  nextCursor: string | null;
   reason?: MultiSearchFailureReason;
 }
 
@@ -166,8 +168,10 @@ export class MultiSearchService {
   async searchRecentMatches(
     nickname: string,
     limit = 10,
+    cursorParam?: string,
   ): Promise<RecentMatchesResponse> {
     const input = nickname.trim();
+    const cursor = parseRecentMatchesCursor(cursorParam);
 
     try {
       const user = await this.findUser(input);
@@ -176,32 +180,60 @@ export class MultiSearchService {
           input,
           status: 'not_found',
           matches: [],
+          nextCursor: null,
           reason: 'nickname_not_found',
         };
       }
 
-      const cacheKey = `bser:user-matches:${this.cacheKeyPart(user.userId)}`;
+      const userKey = createHash('sha256').update(user.userId).digest('base64url');
+      if (cursor && cursor.userKey !== userKey) {
+        throw new BadRequestException({ code: 'INVALID_CURSOR', message: '다른 플레이어의 커서입니다.' });
+      }
+
+      const page = cursor?.page || undefined;
+      const cacheKey = `bser:user-matches:v2:${userKey}:${page ?? 'first'}`;
       const cached = await this.redis.getOrSet<MatchesCache>(
         cacheKey,
         RECENT_MATCHES_CACHE_TTL_SEC,
         async () =>
           toMatchesCache(
-            await this.bserApi.fetchUserMatchesDetailed(user.userId),
+            await this.bserApi.fetchUserMatchesDetailed(user.userId, page),
           ),
       );
-      const matches = cached.matches.slice(0, limit);
+
+      let start = 0;
+      if (cursor?.after) {
+        const previous = cached.matches.findIndex((match) => match.gameId === cursor.after);
+        if (previous < 0) {
+          throw new BadRequestException({ code: 'INVALID_CURSOR', message: '전적을 처음부터 다시 조회해 주세요.' });
+        }
+        start = previous + 1;
+      }
+
+      const end = start + limit;
+      const matches = cached.matches.slice(start, end);
+      const last = matches.at(-1);
+      let nextCursor: string | null = null;
+      if (last && end < cached.matches.length) {
+        nextCursor = `${userKey}.${page ?? 0}.${last.gameId}`;
+      } else if (cached.next !== undefined) {
+        nextCursor = `${userKey}.${cached.next}.0`;
+      }
 
       return {
         input,
         status: matches.length ? 'ok' : 'no_matches',
         nickname: user.nickname,
         matches,
+        nextCursor,
       };
     } catch (error) {
+      if (error instanceof BadRequestException) throw error;
       return {
         input,
         status: 'error',
         matches: [],
+        nextCursor: null,
         reason:
           error instanceof MultiSearchUpstreamError
             ? error.reason
@@ -361,6 +393,22 @@ export class MultiSearchService {
   }
 }
 
+function parseRecentMatchesCursor(value?: string) {
+  if (value === undefined) return undefined;
+
+  // The cursor carries the hashed UID, upstream page, and last returned game ID.
+  const parts = /^([A-Za-z0-9_-]{43})\.(0|[1-9]\d{0,15})\.(0|[1-9]\d{0,15})$/.exec(value);
+  if (parts) {
+    const [, userKey, rawPage, rawAfter] = parts;
+    const page = Number(rawPage);
+    const after = Number(rawAfter);
+    if ((page || after) && Number.isSafeInteger(page) && Number.isSafeInteger(after)) {
+      return { userKey, page, after };
+    }
+  }
+  throw new BadRequestException({ code: 'INVALID_CURSOR', message: '유효하지 않은 전적 커서입니다.' });
+}
+
 function toPercent(numerator: number, denominator: number) {
   if (!denominator) return 0;
   return Math.round((numerator / denominator) * 10000) / 100;
@@ -385,12 +433,17 @@ function toStatsCache(result: BSERUserStatsResult): StatsCache {
 
 function toMatchesCache(result: BSERUserMatchesResult): MatchesCache {
   if (result.status === 'found') {
+    const seen = new Set<number>();
     return {
-      status: 'found',
+      next: result.next,
       matches: result.games
         .filter(isRecentMatch)
-        .sort((a, b) => Date.parse(b.startDtm) - Date.parse(a.startDtm))
-        .slice(0, 20)
+        .sort((a, b) => Date.parse(b.startDtm) - Date.parse(a.startDtm) || b.gameId - a.gameId)
+        .filter(({ gameId }) => {
+          if (seen.has(gameId)) return false;
+          seen.add(gameId);
+          return true;
+        })
         .map((match) => ({
           gameId: match.gameId,
           matchingMode: match.matchingMode,
@@ -413,7 +466,7 @@ function toMatchesCache(result: BSERUserMatchesResult): MatchesCache {
         })),
     };
   }
-  if (result.status === 'not_found') return { status: 'found', matches: [] };
+  if (result.status === 'not_found') return { matches: [] };
   if (result.status === 'not_configured')
     throw new MultiSearchUpstreamError('bser_api_key_missing');
   throw new MultiSearchUpstreamError('bser_api_unavailable');
@@ -421,7 +474,7 @@ function toMatchesCache(result: BSERUserMatchesResult): MatchesCache {
 
 function isRecentMatch(match: BSERPlayerData): match is BSERPlayerData {
   return (
-    Number.isSafeInteger(match?.gameId) &&
+    Number.isSafeInteger(match?.gameId) && match.gameId > 0 &&
     Number.isInteger(match.matchingMode) &&
     Number.isInteger(match.matchingTeamMode) &&
     Number.isInteger(match.seasonId) &&

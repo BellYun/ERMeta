@@ -7,6 +7,9 @@ const {
   RecentMatchesQueryDto,
 } = require('../dist/modules/multi-search/dto/recent-matches-query.dto');
 const {
+  MultiSearchController,
+} = require('../dist/modules/multi-search/multi-search.controller');
+const {
   MultiSearchService,
 } = require('../dist/modules/multi-search/multi-search.service');
 
@@ -95,15 +98,23 @@ test('BSER match pages send the next parameter and ignore invalid continuations'
   }
 });
 
-function createService(matchesResult) {
+function createService(matchesResult, cache = new Map()) {
   const bserApi = {
-    findUserByNicknameDetailed: async () => ({ status: 'found', user }),
-    fetchUserMatchesDetailed: async () => matchesResult,
+    findUserByNicknameDetailed: async (nickname) => ({
+      status: 'found',
+      user: nickname === user.nickname ? user : { nickname, userId: 'other-uid' },
+    }),
+    fetchUserMatchesDetailed: typeof matchesResult === 'function'
+      ? matchesResult
+      : async () => matchesResult,
   };
   const redis = {
     get: async () => null,
     set: async () => {},
-    getOrSet: async (_key, _ttl, factory) => factory(),
+    getOrSet: async (key, _ttl, factory) => {
+      if (!cache.has(key)) cache.set(key, await factory());
+      return cache.get(key);
+    },
   };
   const config = { get: (_key, fallback) => fallback };
   return new MultiSearchService(bserApi, redis, config);
@@ -127,6 +138,77 @@ test('recent matches are sorted, limited, and expose only the response contract'
   );
   assert.equal('equipment' in result.matches[0], false);
   assert.equal(result.input, '테스트');
+});
+
+test('recent match cursors consume the cached page before requesting an older one', async () => {
+  const requestedPages = [];
+  const controller = new MultiSearchController(createService(async (_userId, page) => {
+    requestedPages.push(page);
+    const startDtm = '2026-10-12T12:00:00Z';
+    if (page === 456) {
+      return { status: 'found', games: [match(1, startDtm)] };
+    }
+    return {
+      status: 'found',
+      games: [match(3, startDtm), ...Array.from({ length: 22 }, (_, index) => match(index + 2, startDtm))],
+      next: 456,
+    };
+  }));
+  const request = (limit, cursor) => controller.getRecentMatches(
+    plainToInstance(RecentMatchesQueryDto, { nickname: user.nickname, limit, cursor }),
+  );
+
+  const first = await request('20');
+  const remaining = await request('5', first.nextCursor);
+  assert.equal(first.matches.length, 20);
+  assert.deepEqual(remaining.matches.map(({ gameId }) => gameId), [3, 2]);
+  assert.deepEqual(requestedPages, [undefined]);
+
+  const older = await request('5', remaining.nextCursor);
+  assert.deepEqual(older.matches.map(({ gameId }) => gameId), [1]);
+  assert.equal(older.nextCursor, null);
+  assert.deepEqual(requestedPages, [undefined, 456]);
+  assert.deepEqual(await request('5', remaining.nextCursor), older);
+  assert.deepEqual(requestedPages, [undefined, 456]);
+});
+
+test('recent match cursors reject invalid and other-player tokens before fetching a page', async () => {
+  let fetchCount = 0;
+  const service = createService(async () => {
+    fetchCount += 1;
+    return {
+      status: 'found',
+      games: [match(2, '2026-10-12T12:00:00Z'), match(1, '2026-10-11T12:00:00Z')],
+    };
+  });
+  const invalidCursor = (error) => error.getStatus() === 400
+    && error.getResponse().code === 'INVALID_CURSOR';
+
+  await assert.rejects(service.searchRecentMatches(user.nickname, 1, 'invalid'), invalidCursor);
+  assert.equal(fetchCount, 0);
+  const first = await service.searchRecentMatches(user.nickname, 1);
+  await assert.rejects(service.searchRecentMatches('다른플레이어', 1, first.nextCursor), invalidCursor);
+  assert.equal(fetchCount, 1);
+});
+
+test('a refreshed first page resumes after the last returned game', async () => {
+  const cache = new Map();
+  let games = [match(2, '2026-10-12T12:00:00Z'), match(1, '2026-10-11T12:00:00Z')];
+  const service = createService(async () => ({ status: 'found', games }), cache);
+  const first = await service.searchRecentMatches(user.nickname, 1);
+
+  cache.clear();
+  games = [match(3, '2026-10-13T12:00:00Z'), ...games];
+  const next = await service.searchRecentMatches(user.nickname, 1, first.nextCursor);
+  assert.deepEqual(next.matches.map(({ gameId }) => gameId), [1]);
+  assert.equal(next.nextCursor, null);
+
+  cache.clear();
+  games = [games[0]];
+  await assert.rejects(service.searchRecentMatches(user.nickname, 1, first.nextCursor), {
+    response: { code: 'INVALID_CURSOR', message: '전적을 처음부터 다시 조회해 주세요.' },
+    status: 400,
+  });
 });
 
 test('recent matches expose equipment and recorded RP in the nested summary', async () => {
@@ -187,7 +269,7 @@ test('empty matches and unavailable upstream have distinct states', async () => 
   assert.equal(unavailable.reason, 'bser_api_unavailable');
 });
 
-test('recent match query trims nickname and rejects an excessive limit', async () => {
+test('recent match query trims nickname and rejects an excessive limit or cursor', async () => {
   const valid = plainToInstance(RecentMatchesQueryDto, {
     nickname: ' 테스트 ',
     limit: '10',
@@ -199,8 +281,9 @@ test('recent match query trims nickname and rejects an excessive limit', async (
   const invalid = plainToInstance(RecentMatchesQueryDto, {
     nickname: ' ',
     limit: '21',
+    cursor: 'a'.repeat(78),
   });
-  assert.equal((await validate(invalid)).length, 2);
+  assert.deepEqual((await validate(invalid)).map(({ property }) => property), ['nickname', 'limit', 'cursor']);
 });
 
 test('multi-search uses the current season by default and still accepts a historical season', async () => {
