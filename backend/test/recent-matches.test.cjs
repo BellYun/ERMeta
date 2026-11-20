@@ -72,6 +72,29 @@ test('recent matches use the UID endpoint and reject malformed upstream success'
   );
 });
 
+test('BSER match pages send the next parameter and ignore invalid continuations', async () => {
+  const api = new BserApiService({
+    get: (name, fallback) => (name === 'BSER_API_KEY' ? 'test-key' : fallback),
+  });
+  let next = 456;
+  api.fetchWithRetry = async (url) => {
+    assert.equal(new URL(url).searchParams.get('next'), '123');
+    return {
+      response: new Response(null, { status: 200 }),
+      body: { code: 200, userGames: [], next },
+    };
+  };
+
+  assert.deepEqual(await api.fetchUserMatchesDetailed(user.userId, 123), {
+    status: 'found', games: [], next: 456,
+  });
+  for (next of [undefined, null, 0, 123, 1.5, '456', Number.MAX_SAFE_INTEGER + 1]) {
+    assert.deepEqual(await api.fetchUserMatchesDetailed(user.userId, 123), {
+      status: 'found', games: [],
+    });
+  }
+});
+
 function createService(matchesResult) {
   const bserApi = {
     findUserByNicknameDetailed: async () => ({ status: 'found', user }),
