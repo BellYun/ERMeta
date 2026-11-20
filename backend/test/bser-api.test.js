@@ -83,6 +83,30 @@ test('a complete body within the timeout still normalizes the official UID', asy
   });
 });
 
+test('season stats separate confirmed absence from invalid responses and throttling', async () => {
+  let status = 200;
+  let body;
+  await withServer((_request, response) => {
+    response.writeHead(status, { 'content-type': 'application/json', 'retry-after': '7' });
+    response.end(JSON.stringify(body));
+  }, {}, async (api) => {
+    const fetchStats = () => api.fetchUserStatsDetailed('uid', 41, 3);
+    for (const absent of [{ code: 404 }, { code: 200, userStats: [] }]) {
+      body = absent;
+      assert.deepEqual(await fetchStats(), { status: 'not_found' });
+    }
+    for (const invalid of [null, { code: 503 }, { code: 200 }, { code: 200, userStats: [null] }]) {
+      body = invalid;
+      assert.equal((await fetchStats()).status, 'unavailable');
+    }
+    body = { code: 429 };
+    assert.deepEqual(await fetchStats(), { status: 'unavailable', statusCode: 429, retryAfter: 7 });
+    status = 404;
+    body = { message: 'Not Found' };
+    assert.deepEqual(await fetchStats(), { status: 'not_found' });
+  });
+});
+
 test('retrying a 5xx cancels its unread body before the next attempt', async () => {
   let requests = 0;
   let firstBodyClosed = false;
