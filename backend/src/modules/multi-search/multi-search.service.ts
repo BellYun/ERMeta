@@ -39,6 +39,15 @@ export interface RecentMatchSummary {
   playerKill: number;
   playerAssistant: number;
   startDtm: string;
+  summary?: {
+    equipment: Record<string, number>;
+    damageToPlayer?: number;
+    mmrBefore?: number;
+    mmrAfter?: number;
+    mmrGain?: number;
+    duration?: number;
+    routeIdOfStart?: number;
+  };
 }
 
 export interface RecentMatchesResponse {
@@ -392,6 +401,15 @@ function toMatchesCache(result: BSERUserMatchesResult): MatchesCache {
           playerKill: match.playerKill,
           playerAssistant: match.playerAssistant,
           startDtm: new Date(match.startDtm).toISOString(),
+          summary: {
+            equipment: match.equipment ?? {},
+            damageToPlayer: match.damageToPlayer,
+            mmrBefore: match.mmrBefore,
+            mmrAfter: match.mmrAfter,
+            mmrGain: match.mmrGain,
+            duration: match.duration,
+            routeIdOfStart: match.routeIdOfStart,
+          },
         })),
     };
   }
