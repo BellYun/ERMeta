@@ -104,7 +104,7 @@ export interface BSERPlayerData {
 }
 
 export type BSERUserMatchesResult =
-  | { status: 'found'; games: BSERPlayerData[] }
+  | { status: 'found'; games: BSERPlayerData[]; next?: number }
   | { status: 'not_found' }
   | { status: 'not_configured' }
   | { status: 'unavailable'; statusCode?: number; message?: string; retryAfter?: number };
@@ -271,12 +271,17 @@ export class BserApiService implements OnModuleDestroy {
     }
   }
 
-  async fetchUserMatchesDetailed(userId: string): Promise<BSERUserMatchesResult> {
+  async fetchUserMatchesDetailed(
+    userId: string,
+    page?: number,
+  ): Promise<BSERUserMatchesResult> {
     if (!this.apiKey) return { status: 'not_configured' };
 
     try {
+      const url = new URL(`${this.baseUrl}/v1/user/games/uid/${encodeURIComponent(userId)}`);
+      if (page !== undefined) url.searchParams.set('next', String(page));
       const { response: res, body } = await this.fetchWithRetry(
-        `${this.baseUrl}/v1/user/games/uid/${encodeURIComponent(userId)}`,
+        url.toString(),
         { headers: { 'x-api-key': this.apiKey } },
       );
       if (res.status === 404) return { status: 'not_found' };
@@ -288,10 +293,14 @@ export class BserApiService implements OnModuleDestroy {
           retryAfter: res.status === 429 ? parseRetryAfter(res) : undefined,
         };
       }
-      const json = body as { code?: number; userGames?: BSERPlayerData[] };
+      const json = body as { code?: number; userGames?: BSERPlayerData[]; next?: unknown };
       if (json.code === 404) return { status: 'not_found' };
       if (json.code !== 200 || !Array.isArray(json.userGames)) {
         return { status: 'unavailable', message: 'Invalid user games response' };
+      }
+      const next = json.next;
+      if (typeof next === 'number' && Number.isSafeInteger(next) && next > 0 && next !== page) {
+        return { status: 'found', games: json.userGames, next };
       }
       return { status: 'found', games: json.userGames };
     } catch (err) {
