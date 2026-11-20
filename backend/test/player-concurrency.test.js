@@ -42,6 +42,8 @@ test('recent matches and season stats share a simultaneous nickname lookup', asy
   let matchLookup = null;
   let statsLookup = null;
   const matches = new PlayerMatchesService({
+    claimRefresh: async () => 'test-lease',
+    releaseRefresh: async () => {},
     findByNicknameKey: async () => matchLookup,
     saveSnapshot: async (nickname, _key, _games, matchesSyncedAt) => {
       matchLookup = { id: '1', nickname, matchesSyncedAt };

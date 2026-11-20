@@ -20,6 +20,8 @@ test('explicit match refresh bypasses a fresh TTL and fails instead of serving s
     fetchUserMatchesDetailed: async () => ({ status: 'found', games: [] }),
   };
   const service = new PlayerMatchesService({
+    claimRefresh: async () => 'test-lease',
+    releaseRefresh: async () => {},
     findByNicknameKey: async () => lookup,
     listMatches: async () => ({ matches: [], hasMore: false }),
     saveSnapshot: async (nickname, _key, _games, syncedAt) => {
@@ -106,6 +108,8 @@ test('simultaneous explicit refreshes share each service upstream request', asyn
   let lookup = null;
   const user = { status: 'found', user: { nickname: '테스터', userId: 'uid' } };
   const matches = new PlayerMatchesService({
+    claimRefresh: async () => 'test-lease',
+    releaseRefresh: async () => {},
     findByNicknameKey: async () => lookup,
     saveSnapshot: async (nickname, _key, _games, syncedAt) => {
       lookup = { id: '1', nickname, matchesSyncedAt: syncedAt };
