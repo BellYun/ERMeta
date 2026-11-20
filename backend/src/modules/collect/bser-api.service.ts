@@ -114,6 +114,11 @@ interface RateLimitWaiter {
   timer: ReturnType<typeof setTimeout>;
 }
 
+interface BserJsonResponse {
+  response: Response;
+  body: unknown;
+}
+
 @Injectable()
 export class BserApiService implements OnModuleDestroy {
   private readonly logger = new Logger(BserApiService.name);
@@ -159,7 +164,7 @@ export class BserApiService implements OnModuleDestroy {
     }
 
     try {
-      const res = await this.fetchWithRetry(
+      const { response: res, body } = await this.fetchWithRetry(
         `${this.baseUrl}/v1/games/${gameId}`,
         {
           headers: { 'x-api-key': this.apiKey },
@@ -172,7 +177,7 @@ export class BserApiService implements OnModuleDestroy {
         return null;
       }
 
-      return (await res.json()) as BSERGameResponse;
+      return body as BSERGameResponse;
     } catch (err) {
       this.logger.error(`BSER API 호출 실패: ${(err as Error).message}`);
       return null;
@@ -186,13 +191,13 @@ export class BserApiService implements OnModuleDestroy {
     if (!this.apiKey) return null;
 
     try {
-      const res = await this.fetchWithRetry(
+      const { response: res, body } = await this.fetchWithRetry(
         `${this.baseUrl}/v1/rank/top/${seasonId}/${matchingTeamMode}`,
         { headers: { 'x-api-key': this.apiKey } },
       );
       if (!res.ok) return null;
 
-      const json = (await res.json()) as { topRanks?: { mmr: number }[] };
+      const json = body as { topRanks?: { mmr: number }[] };
       const ranks = json.topRanks ?? [];
       return ranks.length >= 1000 ? ranks[999].mmr : null;
     } catch {
@@ -228,7 +233,7 @@ export class BserApiService implements OnModuleDestroy {
     try {
       const url = new URL(`${this.baseUrl}/v1/user/nickname`);
       url.searchParams.set('query', nickname);
-      const res = await this.fetchWithRetry(url, {
+      const { response: res, body } = await this.fetchWithRetry(url, {
         headers: { 'x-api-key': this.apiKey },
       });
 
@@ -242,7 +247,7 @@ export class BserApiService implements OnModuleDestroy {
         };
       }
 
-      const json = (await res.json()) as {
+      const json = body as {
         code?: number;
         user?: { uid?: string; userId?: string; nickname?: string };
       };
@@ -269,7 +274,7 @@ export class BserApiService implements OnModuleDestroy {
     if (!this.apiKey) return { status: 'not_configured' };
 
     try {
-      const res = await this.fetchWithRetry(
+      const { response: res, body } = await this.fetchWithRetry(
         `${this.baseUrl}/v1/user/games/uid/${encodeURIComponent(userId)}`,
         { headers: { 'x-api-key': this.apiKey } },
       );
@@ -282,7 +287,7 @@ export class BserApiService implements OnModuleDestroy {
           retryAfter: res.status === 429 ? parseRetryAfter(res) : undefined,
         };
       }
-      const json = (await res.json()) as { code?: number; userGames?: BSERPlayerData[] };
+      const json = body as { code?: number; userGames?: BSERPlayerData[] };
       if (json.code === 404) return { status: 'not_found' };
       if (json.code !== 200 || !Array.isArray(json.userGames)) {
         return { status: 'unavailable', message: 'Invalid user games response' };
@@ -320,7 +325,7 @@ export class BserApiService implements OnModuleDestroy {
     if (!this.apiKey) return { status: 'not_configured' };
 
     try {
-      const res = await this.fetchWithRetry(
+      const { response: res, body } = await this.fetchWithRetry(
         `${this.baseUrl}/v2/user/stats/uid/${encodeURIComponent(userId)}/${seasonId}/${matchingMode}`,
         { headers: { 'x-api-key': this.apiKey } },
       );
@@ -335,7 +340,7 @@ export class BserApiService implements OnModuleDestroy {
         };
       }
 
-      const json = (await res.json()) as BSERUserStatsResponse;
+      const json = body as BSERUserStatsResponse;
       if (json.code !== 200) return { status: 'not_found' };
       const stats = json.userStats?.[0];
       return stats ? { status: 'found', stats } : { status: 'not_found' };
@@ -353,36 +358,42 @@ export class BserApiService implements OnModuleDestroy {
   private async fetchWithTimeout(
     input: Parameters<typeof fetch>[0],
     init: Parameters<typeof fetch>[1],
-  ): Promise<Response> {
+  ): Promise<BserJsonResponse> {
     await this.waitForRateLimitToken();
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
+    let response: Response | undefined;
 
     try {
-      return await fetch(input, { ...init, signal: controller.signal });
+      response = await fetch(input, { ...init, signal: controller.signal });
+      const body: unknown = response.ok ? await response.json() : undefined;
+      return { response, body };
     } finally {
       clearTimeout(timeout);
+      if (response?.body && !response.bodyUsed) {
+        void response.body.cancel().catch(() => undefined);
+      }
     }
   }
 
   private async fetchWithRetry(
     input: Parameters<typeof fetch>[0],
     init: Parameters<typeof fetch>[1],
-  ): Promise<Response> {
+  ): Promise<BserJsonResponse> {
     let lastError: unknown;
 
     for (let attempt = 0; attempt <= this.maxRetries; attempt += 1) {
       try {
-        const response = await this.fetchWithTimeout(input, init);
-        if (attempt < this.maxRetries && isRetryableStatus(response.status)) {
+        const result = await this.fetchWithTimeout(input, init);
+        if (attempt < this.maxRetries && isRetryableStatus(result.response.status)) {
           await sleep(150 * (attempt + 1));
           continue;
         }
-        return response;
+        return result;
       } catch (err) {
         lastError = err;
-        if (err instanceof BserRateLimitQueueError) break;
+        if (err instanceof BserRateLimitQueueError || err instanceof SyntaxError) break;
         if (attempt >= this.maxRetries) break;
         await sleep(150 * (attempt + 1));
       }
