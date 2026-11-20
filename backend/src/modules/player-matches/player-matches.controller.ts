@@ -1,6 +1,11 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { RateLimit } from '../../common/guards/rate-limit.guard';
-import { PlayerMatchesResponse, PlayerMatchStatsResponse, PlayerMatchesService } from './player-matches.service';
+import {
+  PlayerMatchDetailResponse,
+  PlayerMatchesResponse,
+  PlayerMatchStatsResponse,
+  PlayerMatchesService,
+} from './player-matches.service';
 
 @Controller('v1/players')
 export class PlayerMatchesController {
@@ -14,6 +19,15 @@ export class PlayerMatchesController {
     @Query('cursor') cursor?: string,
   ): Promise<PlayerMatchesResponse> {
     return this.service.getMatches(nickname, limit, cursor);
+  }
+
+  @Get(':nickname/matches/:gameId')
+  @RateLimit(30, 60)
+  getMatchDetail(
+    @Param('nickname') nickname: string,
+    @Param('gameId') gameId: string,
+  ): Promise<PlayerMatchDetailResponse> {
+    return this.service.getMatchDetail(nickname, gameId);
   }
 
   @Get(':nickname/match-stats')

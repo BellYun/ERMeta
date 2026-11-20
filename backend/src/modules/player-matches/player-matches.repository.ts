@@ -50,6 +50,12 @@ export interface StoredMatch {
   assists: number;
 }
 
+interface StoredMatchDetail {
+  nickname: string;
+  match: StoredMatch;
+  details: StoredMatchDetails | null;
+}
+
 export interface StoredMatchAggregate {
   sampleSize: number;
   wins: number;
@@ -65,6 +71,19 @@ interface LookupRow {
   id: string;
   nickname: string;
   matches_synced_at: Date | null;
+}
+
+interface MatchRow {
+  game_id: string;
+  season_id: number;
+  matching_mode: number;
+  matching_team_mode: number;
+  started_at: Date;
+  character_code: number;
+  weapon_code: number;
+  rank: number;
+  kills: number;
+  assists: number;
 }
 
 @Injectable()
@@ -158,18 +177,7 @@ export class PlayerMatchesRepository {
     limit: number,
     cursor: MatchCursor | null,
   ): Promise<{ matches: StoredMatch[]; hasMore: boolean }> {
-    const result = await this.database.getPool().query<{
-      game_id: string;
-      season_id: number;
-      matching_mode: number;
-      matching_team_mode: number;
-      started_at: Date;
-      character_code: number;
-      weapon_code: number;
-      rank: number;
-      kills: number;
-      assists: number;
-    }>(
+    const result = await this.database.getPool().query<MatchRow>(
       `SELECT m.game_id, m.season_id, m.matching_mode, m.matching_team_mode,
               m.started_at, r.character_code, r.weapon_code, r.rank, r.kills, r.assists
        FROM player_history.player_match_records r
@@ -181,20 +189,28 @@ export class PlayerMatchesRepository {
       [playerId, cursor?.startedAt ?? null, cursor?.gameId ?? null, limit + 1],
     );
     return {
-      matches: result.rows.slice(0, limit).map((row) => ({
-        gameId: row.game_id,
-        seasonId: row.season_id,
-        matchingMode: row.matching_mode,
-        matchingTeamMode: row.matching_team_mode,
-        startedAt: row.started_at,
-        characterCode: row.character_code,
-        weaponCode: row.weapon_code,
-        rank: row.rank,
-        kills: row.kills,
-        assists: row.assists,
-      })),
+      matches: result.rows.slice(0, limit).map(mapMatch),
       hasMore: result.rows.length > limit,
     };
+  }
+
+  async findMatchByNicknameKey(nicknameKey: string, gameId: string): Promise<StoredMatchDetail | null> {
+    const { rows } = await this.database.getPool().query<MatchRow & {
+      nickname: string;
+      details: StoredMatchDetails | null;
+    }>(
+      `SELECT m.game_id, m.season_id, m.matching_mode, m.matching_team_mode,
+              m.started_at, r.character_code, r.weapon_code, r.rank, r.kills, r.assists,
+              p.nickname, r.details
+       FROM player_history.player_lookups p
+       JOIN player_history.player_match_records r ON r.player_lookup_id = p.id
+       JOIN player_history.matches m ON m.game_id = r.game_id
+       WHERE p.nickname_key = $1 AND r.game_id = $2`,
+      [nicknameKey, gameId],
+    );
+    const row = rows[0];
+    if (!row) return null;
+    return { nickname: row.nickname, match: mapMatch(row), details: row.details };
   }
 
   async aggregateMatches(playerId: string, seasonId: number, matchingMode: number): Promise<StoredMatchAggregate> {
@@ -240,6 +256,21 @@ function mapLookup(row: LookupRow): PlayerLookup {
     id: row.id,
     nickname: row.nickname,
     matchesSyncedAt: row.matches_synced_at,
+  };
+}
+
+function mapMatch(row: MatchRow): StoredMatch {
+  return {
+    gameId: row.game_id,
+    seasonId: row.season_id,
+    matchingMode: row.matching_mode,
+    matchingTeamMode: row.matching_team_mode,
+    startedAt: row.started_at,
+    characterCode: row.character_code,
+    weaponCode: row.weapon_code,
+    rank: row.rank,
+    kills: row.kills,
+    assists: row.assists,
   };
 }
 

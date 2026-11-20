@@ -7,13 +7,22 @@ const MATCH_DETAIL_FIELDS = [
   'characterLevel', 'damageToPlayer', 'duration',
   'mmrBefore', 'mmrAfter', 'mmrGain', 'routeIdOfStart',
 ] as const;
+const MAX_GAME_ID = 9223372036854775807n;
+
+type PlayerMatchSummary = Omit<StoredMatch, 'startedAt'> & { startedAt: string };
 
 export interface PlayerMatchesResponse {
   nickname: string;
-  matches: Array<Omit<StoredMatch, 'startedAt'> & { startedAt: string }>;
+  matches: PlayerMatchSummary[];
   nextCursor: string | null;
   lastSyncedAt: string;
   isStale: boolean;
+}
+
+export interface PlayerMatchDetailResponse {
+  nickname: string;
+  match: PlayerMatchSummary;
+  details: StoredMatchDetails | null;
 }
 
 export interface PlayerMatchesRefreshResult {
@@ -81,11 +90,24 @@ export class PlayerMatchesService {
     const last = page.matches.at(-1);
     return {
       nickname: lookup.nickname,
-      matches: page.matches.map((match) => ({ ...match, startedAt: match.startedAt.toISOString() })),
+      matches: page.matches.map(serializeMatch),
       nextCursor: page.hasMore && last ? this.encodeCursor(lookup.id, last) : null,
       lastSyncedAt: lookup.matchesSyncedAt.toISOString(),
       isStale,
     };
+  }
+
+  async getMatchDetail(nicknameParam: string, gameId: string): Promise<PlayerMatchDetailResponse> {
+    const nickname = this.parseNickname(nicknameParam);
+    if (typeof gameId !== 'string' || !/^[1-9]\d{0,18}$/.test(gameId) || BigInt(gameId) > MAX_GAME_ID) {
+      throw new BadRequestException({ code: 'INVALID_GAME_ID', message: '경기 ID는 유효한 양의 정수여야 합니다.' });
+    }
+
+    const record = await this.repository.findMatchByNicknameKey(nickname.toLocaleLowerCase('ko-KR'), gameId);
+    if (!record) {
+      throw new NotFoundException({ code: 'MATCH_NOT_FOUND', message: '저장된 경기 기록을 찾을 수 없습니다.' });
+    }
+    return { nickname: record.nickname, match: serializeMatch(record.match), details: record.details };
   }
 
   async getMatchStats(nicknameParam: string, seasonParam?: string, modeParam?: string): Promise<PlayerMatchStatsResponse> {
@@ -341,4 +363,8 @@ export class PlayerMatchesService {
       startedAt: match.startedAt.toISOString(),
     })).toString('base64url');
   }
+}
+
+function serializeMatch(match: StoredMatch): PlayerMatchSummary {
+  return { ...match, startedAt: match.startedAt.toISOString() };
 }
