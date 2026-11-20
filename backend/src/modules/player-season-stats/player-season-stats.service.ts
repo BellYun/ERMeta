@@ -1,7 +1,11 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { setTimeout as delay } from 'node:timers/promises';
 import { BserApiService, BSERUserSeasonStats } from '../collect/bser-api.service';
-import { OfficialSeasonStats, PlayerSeasonStatsRepository, StoredSeasonResult } from './player-season-stats.repository';
+import {
+  OfficialSeasonStats, PlayerSeasonStatsRepository, SeasonStatsRefreshLeaseLostError,
+  SeasonStatsScope, StoredSeasonResult,
+} from './player-season-stats.repository';
 
 export interface PlayerSeasonStatsResponse {
   nickname: string;
@@ -19,10 +23,9 @@ export interface PlayerSeasonStatsRefreshResult {
   fetchedAt: string | null;
 }
 
-interface RefreshResult {
+interface RefreshResult extends StoredSeasonResult {
   nickname: string;
-  stats: OfficialSeasonStats | null;
-  fetchedAt: Date | null;
+  reused: boolean;
 }
 
 class UpstreamFailure extends Error {
@@ -31,8 +34,18 @@ class UpstreamFailure extends Error {
   }
 }
 
+class SeasonStatsRefreshBusyError extends HttpException {
+  constructor() {
+    super({
+      code: 'RATE_LIMITED', reason: 'refresh_busy',
+      message: '다른 요청에서 시즌 통계를 갱신 중입니다.', retryAfter: 1,
+    }, HttpStatus.TOO_MANY_REQUESTS);
+  }
+}
+
 @Injectable()
 export class PlayerSeasonStatsService {
+  private readonly logger = new Logger(PlayerSeasonStatsService.name);
   private readonly inFlight = new Map<string, Promise<RefreshResult>>();
   private readonly ttlMs: number;
 
@@ -68,20 +81,12 @@ export class PlayerSeasonStatsService {
     }
 
     try {
-      const refreshed = await this.refreshShared(nickname, nicknameKey, seasonId, matchingMode);
-      return {
-        nickname: refreshed.nickname,
-        seasonId,
-        matchingMode,
-        source: 'bser_official',
-        stats: refreshed.stats,
-        fetchedAt: refreshed.fetchedAt?.toISOString() ?? null,
-        isStale: false,
-      };
+      const refreshed = await this.refreshShared(nickname, { nicknameKey, seasonId, matchingMode }, snapshot);
+      return response(refreshed.nickname, seasonId, matchingMode, refreshed, false);
     } catch (error) {
-      if (!(error instanceof UpstreamFailure)) throw error;
+      if (!(error instanceof UpstreamFailure || error instanceof SeasonStatsRefreshBusyError)) throw error;
       if (snapshot?.stats) return response(lookup!.nickname, seasonId, matchingMode, snapshot, true);
-      throw this.upstreamException(error);
+      throw error instanceof UpstreamFailure ? this.upstreamException(error) : error;
     }
   }
 
@@ -91,11 +96,11 @@ export class PlayerSeasonStatsService {
     const seasonId = parseSeasonId(seasonParam);
     const matchingMode = parseMatchingMode(modeParam);
     try {
-      const refreshed = await this.refreshShared(nickname, nicknameKey, seasonId, matchingMode);
+      const refreshed = await this.refreshShared(nickname, { nicknameKey, seasonId, matchingMode });
       return {
         nickname: refreshed.nickname,
         status: refreshed.stats === null ? 'no_stats' : 'updated',
-        fetchedAt: refreshed.fetchedAt?.toISOString() ?? null,
+        fetchedAt: refreshed.stats ? refreshed.fetchedAt.toISOString() : null,
       };
     } catch (error) {
       if (error instanceof UpstreamFailure) throw this.upstreamException(error);
@@ -114,28 +119,83 @@ export class PlayerSeasonStatsService {
 
   private async refreshShared(
     nickname: string,
-    nicknameKey: string,
-    seasonId: number,
-    matchingMode: number,
+    scope: SeasonStatsScope,
+    previous?: StoredSeasonResult | null,
   ): Promise<RefreshResult> {
-    const key = `${nicknameKey}:${seasonId}:${matchingMode}`;
-    const existing = this.inFlight.get(key);
-    if (existing) return existing;
-    const pending = this.refresh(nickname, nicknameKey, seasonId, matchingMode);
-    this.inFlight.set(key, pending);
+    const key = `${scope.nicknameKey}:${scope.seasonId}:${scope.matchingMode}`;
+    let pending = this.inFlight.get(key);
+    if (!pending) {
+      pending = this.refreshWithLease(nickname, scope, previous).finally(() => this.inFlight.delete(key));
+      this.inFlight.set(key, pending);
+    }
+    const result = await pending;
+    if (previous === undefined && result.reused) throw new SeasonStatsRefreshBusyError();
+    return result;
+  }
+
+  private async refreshWithLease(
+    nickname: string,
+    scope: SeasonStatsScope,
+    previous?: StoredSeasonResult | null,
+  ): Promise<RefreshResult> {
+    const claim = await this.repository.claimRefresh(scope);
+    if (claim.status === 'backoff') {
+      throw new UpstreamFailure(claim.failure === 'rate_limited' ? 429 : 502, claim.retryAfter);
+    }
+    if (claim.status === 'busy') {
+      if (previous !== undefined && !previous?.stats) {
+        for (let attempt = 0; attempt < 3; attempt += 1) {
+          await delay(200);
+          const result = await this.readNewerSnapshot(scope, previous);
+          if (result) return result;
+        }
+      }
+      throw new SeasonStatsRefreshBusyError();
+    }
+
+    let finished = false;
     try {
-      return await pending;
+      // A different instance may have committed a result before this claim succeeded.
+      if (previous !== undefined) {
+        const result = await this.readNewerSnapshot(scope, previous);
+        if (result) return result;
+      }
+      const result = await this.refresh(nickname, scope, claim.token);
+      finished = true;
+      return result;
+    } catch (error) {
+      if (error instanceof SeasonStatsRefreshLeaseLostError) throw new SeasonStatsRefreshBusyError();
+      if (error instanceof UpstreamFailure) {
+        const limited = error.statusCode === 429;
+        const retryAfter = await this.repository.recordRefreshFailure(
+          scope, claim.token, limited ? 'rate_limited' : 'unavailable', error.retryAfter,
+        ).catch(() => {
+          this.logger.warn('시즌 통계 갱신 실패 대기 저장 실패');
+          return null;
+        });
+        finished = retryAfter !== null;
+        if (limited && retryAfter !== null) throw new UpstreamFailure(429, retryAfter);
+      }
+      throw error;
     } finally {
-      this.inFlight.delete(key);
+      if (!finished) {
+        await this.repository.releaseRefresh(scope, claim.token).catch(() => {
+          this.logger.warn('시즌 통계 갱신 실행권 해제 실패');
+        });
+      }
     }
   }
 
-  private async refresh(
-    nickname: string,
-    nicknameKey: string,
-    seasonId: number,
-    matchingMode: number,
-  ): Promise<RefreshResult> {
+  private async readNewerSnapshot(scope: SeasonStatsScope, previous: StoredSeasonResult | null): Promise<RefreshResult | null> {
+    const lookup = await this.repository.findByNicknameKey(scope.nicknameKey);
+    if (!lookup) return null;
+    const snapshot = await this.repository.findSnapshot(lookup.id, scope.seasonId, scope.matchingMode);
+    if (!snapshot || (previous && snapshot.fetchedAt <= previous.fetchedAt)) return null;
+    return { nickname: lookup.nickname, ...snapshot, reused: true };
+  }
+
+  private async refresh(nickname: string, scope: SeasonStatsScope, lease: string): Promise<RefreshResult> {
+    const { nicknameKey, seasonId, matchingMode } = scope;
     const userResult = await this.bserApi.findUserByNicknameDetailed(nickname);
     if (userResult.status === 'not_found') {
       throw new NotFoundException({ code: 'PLAYER_NOT_FOUND', message: '플레이어를 찾을 수 없습니다.' });
@@ -165,8 +225,9 @@ export class PlayerSeasonStatsService {
       matchingMode,
       stats,
       fetchedAt,
+      lease,
     );
-    return { nickname: userResult.user.nickname, stats, fetchedAt: stats ? fetchedAt : null };
+    return { nickname: userResult.user.nickname, stats, fetchedAt, reused: false };
   }
 }
 

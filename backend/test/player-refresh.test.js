@@ -4,6 +4,7 @@ const { HttpException, NotFoundException } = require('@nestjs/common');
 const { PlayerMatchesService } = require('../dist/modules/player-matches/player-matches.service');
 const { PlayerSeasonStatsService } = require('../dist/modules/player-season-stats/player-season-stats.service');
 const { PlayerRefreshService } = require('../dist/modules/player-refresh/player-refresh.service');
+const refreshLease = require('./helpers/season-stats-refresh.cjs');
 
 const body = { seasonId: 39, matchingMode: 3 };
 
@@ -65,6 +66,7 @@ test('explicit season refresh bypasses a fresh TTL and preserves an old snapshot
     },
   };
   const service = new PlayerSeasonStatsService({
+    ...refreshLease,
     findByNicknameKey: async () => ({ id: '1', nickname: '테스터' }),
     findSnapshot: async () => snapshot,
     saveResult: async (_nickname, _key, _season, _mode, stats, fetchedAt) => {
@@ -93,7 +95,7 @@ test('explicit season refresh bypasses a fresh TTL and preserves an old snapshot
 });
 
 test('explicit season refresh treats confirmed empty stats as success', async () => {
-  const service = new PlayerSeasonStatsService({ saveResult: async () => {} }, {
+  const service = new PlayerSeasonStatsService({ ...refreshLease, saveResult: async () => {} }, {
     findUserByNicknameDetailed: async () => ({ status: 'found', user: { nickname: '테스터', userId: 'uid' } }),
     fetchUserStatsDetailed: async () => ({ status: 'not_found' }),
   }, { get: () => undefined });
@@ -122,7 +124,7 @@ test('simultaneous explicit refreshes share each service upstream request', asyn
     },
     fetchUserMatchesDetailed: async () => ({ status: 'found', games: [] }),
   }, { get: () => undefined });
-  const stats = new PlayerSeasonStatsService({ saveResult: async () => {} }, {
+  const stats = new PlayerSeasonStatsService({ ...refreshLease, saveResult: async () => {} }, {
     findUserByNicknameDetailed: async () => user,
     fetchUserStatsDetailed: async () => {
       statsCalls += 1;

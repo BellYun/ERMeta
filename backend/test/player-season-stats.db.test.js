@@ -64,6 +64,79 @@ test('season stats leases fence expired writes and retain provider backoff',
     assert.equal((await repository.claimRefresh(scope)).status, 'acquired');
   });
 
+test('separate instances reuse a committed season result and share failure backoff',
+  { skip: !process.env.TEST_DATABASE_URL, timeout: 5000 }, async (t) => {
+    const config = { get: (key) => key === 'DATABASE_URL' ? process.env.TEST_DATABASE_URL : undefined };
+    const databases = [new PlayerHistoryDatabaseService(config), new PlayerHistoryDatabaseService(config)];
+    const repositories = databases.map((database) => new PlayerSeasonStatsRepository(database));
+    const pool = databases[0].getPool();
+    const nickname = `StatsShared-${Date.now()}`;
+    const nicknameKey = nickname.toLowerCase();
+    const started = Promise.withResolvers();
+    const continueRefresh = Promise.withResolvers();
+    let activeResult = { status: 'found', stats: stats() };
+    let upstreamCalls = 0;
+    const bser = {
+      findUserByNicknameDetailed: async () => ({ status: 'found', user: { nickname, userId: 'fixture-uid' } }),
+      async fetchUserStatsDetailed() {
+        upstreamCalls += 1;
+        started.resolve();
+        await continueRefresh.promise;
+        return activeResult;
+      },
+    };
+    const [first, second] = repositories.map((repo) => new PlayerSeasonStatsService(repo, bser, config));
+    t.after(async () => {
+      continueRefresh.resolve();
+      await pool.query('DELETE FROM player_history.season_stats_refresh_states WHERE nickname_key = $1', [nicknameKey]);
+      await pool.query('DELETE FROM player_history.player_lookups WHERE nickname_key = $1', [nicknameKey]);
+      await Promise.all(databases.map((database) => database.onModuleDestroy()));
+    });
+
+    const leader = first.getStats(nickname, '39', '3');
+    await started.promise;
+    await assert.rejects(second.refreshStats(nickname, '39', '3'), (error) =>
+      error.getStatus() === 429 && error.getResponse().reason === 'refresh_busy');
+    const followerClaim = Promise.withResolvers();
+    const claim = repositories[1].claimRefresh.bind(repositories[1]);
+    t.mock.method(repositories[1], 'claimRefresh', async (scope) => {
+      const result = await claim(scope);
+      followerClaim.resolve(result.status);
+      return result;
+    });
+    const follower = second.getStats(nickname.toUpperCase(), '39', '3');
+    const claimStatus = await followerClaim.promise;
+    continueRefresh.resolve();
+    const [firstResult, secondResult] = await Promise.all([leader, follower]);
+    assert.equal(claimStatus, 'busy');
+    assert.deepEqual(secondResult, firstResult);
+    assert.equal(upstreamCalls, 1);
+
+    const player = await repositories[0].findByNicknameKey(nicknameKey);
+    await pool.query(`UPDATE player_history.player_season_stats SET fetched_at = clock_timestamp() - interval '1 hour'
+                      WHERE player_lookup_id = $1`, [player.id]);
+    activeResult = { status: 'unavailable', statusCode: 429, retryAfter: 12 };
+    assert.equal((await first.getStats(nickname, '39', '3')).isStale, true);
+    assert.equal((await second.getStats(nickname, '39', '3')).isStale, true);
+    await assert.rejects(second.refreshStats(nickname, '39', '3'), (error) => {
+      const response = error.getResponse();
+      return error.getStatus() === 429 && response.code === 'BSER_RATE_LIMITED' && response.retryAfter >= 11;
+    });
+    assert.equal(upstreamCalls, 2);
+
+    await pool.query(`UPDATE player_history.season_stats_refresh_states SET retry_at = clock_timestamp()
+                      WHERE nickname_key = $1`, [nicknameKey]);
+    activeResult = { status: 'not_found' };
+    assert.equal((await second.refreshStats(nickname, '39', '3')).status, 'no_stats');
+    activeResult = { status: 'unavailable', statusCode: 503 };
+    await assert.rejects(first.refreshStats(nickname, '39', '3'), { status: 502 });
+    const empty = await second.getStats(nickname, '39', '3');
+    assert.equal(empty.stats, null);
+    assert.equal(empty.fetchedAt, null);
+    assert.equal(empty.isStale, false);
+    assert.equal(upstreamCalls, 4);
+  });
+
 test('PostgreSQL upserts stats, rolls back invalid data, and preserves matches',
   { skip: !process.env.TEST_DATABASE_URL }, async () => {
     const database = new PlayerHistoryDatabaseService({

@@ -132,7 +132,9 @@ GET /v1/players/{URL-encoded nickname}/stats?seasonId=41&matchingMode=3
 
 `seasonId`는 1~9999 정수이며 `matchingMode`는 공식 API가 지원하는 2(일반) 또는 3(랭크)이다. 둘 다 필수다. 응답의 `source`는 `bser_official`이고, `stats.totalGames`는 **공식 시즌 전체 경기 수**다. 저장된 최근 경기 일부에서 계산한 수치가 아니다. `stats`에는 승리·승률·평균 순위·랭크 정보·실험체별 기록이 포함된다. 공식 API에 해당 시즌 통계가 없으면 `stats: null`, `fetchedAt: null`을 반환한다.
 
-저장된 통계와 공식 API에서 확인한 빈 결과는 닉네임·시즌·모드별로 기본 600초(`PLAYER_STATS_TTL_SECONDS`) 동안 재사용한다. 수동 갱신은 캐시 유효기간과 관계없이 공식 API에 다시 확인한다. 갱신 실패 시 저장된 통계가 있으면 `isStale: true`로 반환하며, 없으면 502(공식 API 장애) 또는 429(요청 제한)를 반환한다. 새 백엔드를 배포하기 전에 `npm run db:migrate:player-history`로 `005_season_stats_absences.sql`을 적용한다.
+저장된 통계와 공식 API에서 확인한 빈 결과는 닉네임·시즌·모드별로 기본 600초(`PLAYER_STATS_TTL_SECONDS`) 동안 재사용한다. 동일 조합의 갱신은 PostgreSQL 리스를 획득한 인스턴스에서 진행한다. 자동 조회에 사용할 통계가 있으면 갱신 중이거나 일시적인 장애가 발생했을 때 `isStale: true`로 반환한다. 첫 조회는 진행 중인 갱신을 짧게 기다린다.
+
+수동 갱신은 캐시 유효기간과 관계없이 갱신을 요청한다. 일시적인 BSER 오류가 연속되면 다음 호출을 늦추고, BSER의 `Retry-After`를 반영한다. 저장된 통계가 없는 자동 조회나 수동 갱신은 502(공식 API 장애) 또는 429(갱신 중·요청 제한)를 반환한다. 새 백엔드를 배포하기 전에 `npm run db:migrate:player-history`로 `007_season_stats_refresh_states.sql`까지 적용한다.
 
 DB는 대소문자를 정규화한 닉네임을 조회 키로 사용한다. BSER UID는 각 외부 요청에서만 사용하며 저장하지 않는다. 같은 닉네임을 다시 조회했을 때 UID가 달라도 기존 전적·통계를 삭제하지 않는다. 닉네임 변경 전후의 기록은 연결하지 않으며, 다른 계정이 과거 닉네임을 재사용하는 경우는 현재 API만으로 확실히 구별할 수 없어 별도 정책이 필요하다.
 
