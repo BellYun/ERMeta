@@ -350,10 +350,20 @@ export class BserApiService implements OnModuleDestroy {
         };
       }
 
-      const json = body as BSERUserStatsResponse;
-      if (json.code !== 200) return { status: 'not_found' };
-      const stats = json.userStats?.[0];
-      return stats ? { status: 'found', stats } : { status: 'not_found' };
+      const json = body as BSERUserStatsResponse | null;
+      if (json?.code === 404) return { status: 'not_found' };
+      if (json?.code === 429) {
+        return { status: 'unavailable', statusCode: 429, retryAfter: parseRetryAfter(res) };
+      }
+      if (json?.code !== 200 || !Array.isArray(json.userStats)) {
+        return { status: 'unavailable', message: 'Invalid user stats response' };
+      }
+      if (json.userStats.length === 0) return { status: 'not_found' };
+      const [stats] = json.userStats;
+      if (!stats || typeof stats !== 'object' || Array.isArray(stats)) {
+        return { status: 'unavailable', message: 'Invalid user stats response' };
+      }
+      return { status: 'found', stats };
     } catch (err) {
       this.logger.warn(`BSER user stats 조회 실패: ${(err as Error).message}`);
       return {
