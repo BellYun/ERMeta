@@ -32,9 +32,13 @@ export interface PlayerLookup {
   nickname: string;
 }
 
-export interface StoredSeasonStats {
-  stats: OfficialSeasonStats;
+export interface StoredSeasonResult {
+  stats: OfficialSeasonStats | null;
   fetchedAt: Date;
+}
+
+interface StoredSeasonStats extends StoredSeasonResult {
+  stats: OfficialSeasonStats;
 }
 
 interface LookupRow {
@@ -55,14 +59,21 @@ export class PlayerSeasonStatsRepository {
     return result.rows[0] ? mapLookup(result.rows[0]) : null;
   }
 
-  async findSnapshot(playerId: string, seasonId: number, matchingMode: number): Promise<StoredSeasonStats | null> {
+  async findSnapshot(playerId: string, seasonId: number, matchingMode: number): Promise<StoredSeasonResult | null> {
     const result = await this.database.getPool().query<{
-      stats_payload: OfficialSeasonStats;
+      stats_payload: OfficialSeasonStats | null;
       fetched_at: Date;
     }>(
       `SELECT stats_payload, fetched_at
-       FROM player_history.player_season_stats
-       WHERE player_lookup_id = $1 AND season_id = $2 AND matching_mode = $3
+       FROM (
+         SELECT stats_payload, fetched_at, matching_team_mode
+         FROM player_history.player_season_stats
+         WHERE player_lookup_id = $1 AND season_id = $2 AND matching_mode = $3
+         UNION ALL
+         SELECT NULL::jsonb AS stats_payload, fetched_at, 0 AS matching_team_mode
+         FROM player_history.player_season_stats_absences
+         WHERE player_lookup_id = $1 AND season_id = $2 AND matching_mode = $3
+       ) AS result
        ORDER BY fetched_at DESC, matching_team_mode DESC
        LIMIT 1`,
       [playerId, seasonId, matchingMode],
@@ -104,18 +115,35 @@ export class PlayerSeasonStatsRepository {
            (nickname, nickname_key, resolved_at)
          VALUES ($1, $2, $3)
          ON CONFLICT (nickname_key) DO UPDATE SET
-           nickname = EXCLUDED.nickname,
-           resolved_at = EXCLUDED.resolved_at
+           nickname = CASE WHEN EXCLUDED.resolved_at >= player_lookups.resolved_at
+             THEN EXCLUDED.nickname ELSE player_lookups.nickname END,
+           resolved_at = GREATEST(EXCLUDED.resolved_at, player_lookups.resolved_at)
          RETURNING id, nickname`,
         [nickname, nicknameKey, fetchedAt],
       );
       const playerId = lookup.rows[0].id;
+      const key = [playerId, seasonId, matchingMode];
+      // The advisory lock serializes writers. Compare timestamps before replacing either result.
+      const { rows: [state] } = await client.query<{ has_newer: boolean }>(
+        `SELECT EXISTS (
+           SELECT 1 FROM player_history.player_season_stats
+           WHERE player_lookup_id = $1 AND season_id = $2 AND matching_mode = $3 AND fetched_at > $4
+           UNION ALL
+           SELECT 1 FROM player_history.player_season_stats_absences
+           WHERE player_lookup_id = $1 AND season_id = $2 AND matching_mode = $3 AND fetched_at > $4
+         ) AS has_newer`,
+        [...key, fetchedAt],
+      );
+      if (state.has_newer) {
+        await client.query('COMMIT');
+        return mapLookup(lookup.rows[0]);
+      }
 
       await client.query(
         `DELETE FROM player_history.player_season_stats
          WHERE player_lookup_id = $1 AND season_id = $2 AND matching_mode = $3
            AND ($4::integer IS NULL OR matching_team_mode <> $4)`,
-        [playerId, seasonId, matchingMode, stats?.matchingTeamMode ?? null],
+        [...key, stats?.matchingTeamMode ?? null],
       );
       if (stats) {
         await client.query(
@@ -130,8 +158,22 @@ export class PlayerSeasonStatsRepository {
              average_rank = EXCLUDED.average_rank,
              stats_payload = EXCLUDED.stats_payload,
              fetched_at = EXCLUDED.fetched_at`,
-          [playerId, seasonId, matchingMode, stats.matchingTeamMode,
+          [...key, stats.matchingTeamMode,
             stats.totalGames, stats.totalWins, stats.averageRank, JSON.stringify(stats), fetchedAt],
+        );
+        await client.query(
+          `DELETE FROM player_history.player_season_stats_absences
+           WHERE player_lookup_id = $1 AND season_id = $2 AND matching_mode = $3`,
+          key,
+        );
+      } else {
+        await client.query(
+          `INSERT INTO player_history.player_season_stats_absences
+             (player_lookup_id, season_id, matching_mode, fetched_at)
+           VALUES ($1, $2, $3, $4)
+           ON CONFLICT (player_lookup_id, season_id, matching_mode)
+           DO UPDATE SET fetched_at = EXCLUDED.fetched_at`,
+          [...key, fetchedAt],
         );
       }
       await client.query('COMMIT');

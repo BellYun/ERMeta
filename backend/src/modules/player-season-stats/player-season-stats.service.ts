@@ -1,7 +1,7 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BserApiService, BSERUserSeasonStats } from '../collect/bser-api.service';
-import { OfficialSeasonStats, PlayerSeasonStatsRepository, StoredSeasonStats } from './player-season-stats.repository';
+import { OfficialSeasonStats, PlayerSeasonStatsRepository, StoredSeasonResult } from './player-season-stats.repository';
 
 export interface PlayerSeasonStatsResponse {
   nickname: string;
@@ -80,7 +80,7 @@ export class PlayerSeasonStatsService {
       };
     } catch (error) {
       if (!(error instanceof UpstreamFailure)) throw error;
-      if (snapshot) return response(lookup!.nickname, seasonId, matchingMode, snapshot, true);
+      if (snapshot?.stats) return response(lookup!.nickname, seasonId, matchingMode, snapshot, true);
       throw this.upstreamException(error);
     }
   }
@@ -174,12 +174,12 @@ function response(
   nickname: string,
   seasonId: number,
   matchingMode: number,
-  snapshot: StoredSeasonStats,
+  snapshot: StoredSeasonResult,
   isStale: boolean,
 ): PlayerSeasonStatsResponse {
   return {
     nickname, seasonId, matchingMode, source: 'bser_official',
-    stats: snapshot.stats, fetchedAt: snapshot.fetchedAt.toISOString(), isStale,
+    stats: snapshot.stats, fetchedAt: snapshot.stats ? snapshot.fetchedAt.toISOString() : null, isStale,
   };
 }
 
