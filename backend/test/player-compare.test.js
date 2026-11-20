@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 const { BadRequestException, HttpException, NotFoundException } = require('@nestjs/common');
 const { PlayerCompareService } = require('../dist/modules/player-compare/player-compare.service');
+const refreshLease = require('./helpers/season-stats-refresh.cjs');
 
 const request = (nicknames) => ({ nicknames, seasonId: 39, matchingMode: 3 });
 const stats = (nickname, value = { totalGames: 10 }) => ({
@@ -83,6 +84,7 @@ test('simultaneous comparisons reuse the single-player service upstream refresh'
   let lookup = null;
   let snapshot = null;
   const single = new PlayerSeasonStatsService({
+    ...refreshLease,
     findByNicknameKey: async () => lookup,
     findSnapshot: async () => snapshot,
     saveResult: async (nickname, _key, _season, _mode, result, fetchedAt) => {
@@ -119,6 +121,7 @@ test('three uncached players make at most one lookup and one stats call each', a
   const lookups = [];
   const statsCalls = [];
   const single = new PlayerSeasonStatsService({
+    ...refreshLease,
     findByNicknameKey: async () => null,
     findSnapshot: async () => null,
     saveResult: async () => {},

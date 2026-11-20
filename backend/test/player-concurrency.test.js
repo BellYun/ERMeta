@@ -4,6 +4,7 @@ const { BserApiService } = require('../dist/modules/collect/bser-api.service');
 const { PlayerMatchesService } = require('../dist/modules/player-matches/player-matches.service');
 const { PlayerSeasonStatsService } = require('../dist/modules/player-season-stats/player-season-stats.service');
 const { PlayerCompareService } = require('../dist/modules/player-compare/player-compare.service');
+const refreshLease = require('./helpers/season-stats-refresh.cjs');
 
 function config(overrides = {}) {
   return {
@@ -51,6 +52,7 @@ test('recent matches and season stats share a simultaneous nickname lookup', asy
     listMatches: async () => ({ matches: [], hasMore: false }),
   }, bser, config());
   const seasonStats = new PlayerSeasonStatsService({
+    ...refreshLease,
     findByNicknameKey: async () => statsLookup,
     findSnapshot: async () => null,
     saveResult: async (nickname) => { statsLookup = { id: '1', nickname }; },
@@ -117,6 +119,7 @@ test('season stats report queue timeout as 429 with retry guidance', async () =>
     BSER_API_RETRIES: 0,
   }));
   const seasonStats = new PlayerSeasonStatsService({
+    ...refreshLease,
     findByNicknameKey: async () => null,
     findSnapshot: async () => null,
     saveResult: async () => { throw new Error('unexpected save'); },
@@ -178,6 +181,7 @@ test('concurrent cold comparisons keep order and surface bounded-queue failures 
     BSER_API_RETRIES: 0,
   }));
   const seasonStats = new PlayerSeasonStatsService({
+    ...refreshLease,
     findByNicknameKey: async () => null,
     findSnapshot: async () => null,
     saveResult: async () => {},

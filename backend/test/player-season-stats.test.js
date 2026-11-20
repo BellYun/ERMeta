@@ -1,6 +1,7 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
 const { PlayerSeasonStatsService } = require('../dist/modules/player-season-stats/player-season-stats.service');
+const refreshLease = require('./helpers/season-stats-refresh.cjs');
 
 function sampleStats(overrides = {}) {
   return {
@@ -20,6 +21,7 @@ function fixture(initialSnapshot = null) {
   let userCalls = 0;
   let statsCalls = 0;
   const repository = {
+    ...refreshLease,
     findByNicknameKey: async () => lookup,
     findSnapshot: async () => snapshot,
     findLatestRankedSnapshot: async () => snapshot?.stats ? snapshot : null,
