@@ -106,6 +106,39 @@ test('recent matches are sorted, limited, and expose only the response contract'
   assert.equal(result.input, '테스트');
 });
 
+test('recent matches expose equipment and recorded RP in the nested summary', async () => {
+  const service = createService({
+    status: 'found',
+    games: [
+      {
+        ...match(8, '2026-10-12T12:00:00Z'),
+        damageToPlayer: 9140,
+        mmrBefore: 6_100,
+        mmrAfter: 6_065,
+        mmrGain: -35,
+        duration: 1032,
+        routeIdOfStart: 417,
+        privateField: 'ignored',
+      },
+      { ...match(7, '2026-10-11T12:00:00Z'), equipment: undefined },
+    ],
+  });
+  const result = await service.searchRecentMatches('테스트');
+  assert.deepEqual(result.matches[0].summary, {
+    equipment: { 0: 12345 },
+    damageToPlayer: 9140,
+    mmrBefore: 6_100,
+    mmrAfter: 6_065,
+    mmrGain: -35,
+    duration: 1032,
+    routeIdOfStart: 417,
+  });
+  assert.equal('privateField' in result.matches[0], false);
+  assert.deepEqual(JSON.parse(JSON.stringify(result.matches[1].summary)), {
+    equipment: {},
+  });
+});
+
 test('recent match dates with the live BSER +0900 offset are normalized', async () => {
   const service = createService({
     status: 'found',

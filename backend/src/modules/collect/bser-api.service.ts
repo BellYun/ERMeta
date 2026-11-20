@@ -79,6 +79,7 @@ export interface BSERPlayerData {
   playerKill: number;
   playerAssistant: number;
   characterLevel: number;
+  damageToPlayer?: number;
   equipment: Record<string, number>;
   equipmentGrade: Record<string, number>;
   traitFirstCore: number;
