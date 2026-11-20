@@ -17,6 +17,53 @@ function stats(totalGames = 10, totalWins = 2) {
   };
 }
 
+test('season stats leases fence expired writes and retain provider backoff',
+  { skip: !process.env.TEST_DATABASE_URL }, async (t) => {
+    const config = { get: (key) => key === 'DATABASE_URL' ? process.env.TEST_DATABASE_URL : undefined };
+    const database = new PlayerHistoryDatabaseService(config);
+    const repository = new PlayerSeasonStatsRepository(database);
+    const nickname = `StatsLease-${Date.now()}`;
+    const scope = { nicknameKey: nickname.toLowerCase(), seasonId: 39, matchingMode: 3 };
+    const pool = database.getPool();
+    const expire = (column) => pool.query(
+      `UPDATE player_history.season_stats_refresh_states SET ${column} = clock_timestamp()
+       WHERE nickname_key = $1 AND season_id = $2 AND matching_mode = $3`,
+      [scope.nicknameKey, scope.seasonId, scope.matchingMode],
+    );
+    t.after(async () => {
+      await pool.query('DELETE FROM player_history.season_stats_refresh_states WHERE nickname_key = $1', [scope.nicknameKey]);
+      await pool.query('DELETE FROM player_history.player_lookups WHERE nickname_key = $1', [scope.nicknameKey]);
+      await database.onModuleDestroy();
+    });
+
+    const old = await repository.claimRefresh(scope);
+    assert.equal(old.status, 'acquired');
+    assert.equal((await repository.claimRefresh(scope)).status, 'busy');
+    assert.equal((await repository.claimRefresh({ ...scope, matchingMode: 2 })).status, 'acquired');
+    await expire('lease_until');
+    const current = await repository.claimRefresh(scope);
+    assert.equal(current.status, 'acquired');
+    await assert.rejects(repository.saveResult(nickname, scope.nicknameKey, 39, 3, stats(), new Date(), old.token), /lease lost/);
+    assert.equal(await repository.findByNicknameKey(scope.nicknameKey), null);
+    assert.equal(await repository.recordRefreshFailure(scope, old.token, 'unavailable'), null);
+    assert.equal(await repository.recordRefreshFailure(scope, current.token, 'rate_limited', 12), 12);
+    const paused = await repository.claimRefresh(scope);
+    assert.equal(paused.status, 'backoff');
+    assert.equal(paused.failure, 'rate_limited');
+    assert.ok(paused.retryAfter >= 11);
+
+    await expire('retry_at');
+    const retry = await repository.claimRefresh(scope);
+    assert.equal(retry.status, 'acquired');
+    assert.equal(await repository.recordRefreshFailure(scope, retry.token, 'unavailable'), 2);
+    await expire('retry_at');
+    const recovery = await repository.claimRefresh(scope);
+    assert.equal(recovery.status, 'acquired');
+    const player = await repository.saveResult(nickname, scope.nicknameKey, 39, 3, stats(), new Date(), recovery.token);
+    assert.equal((await repository.findSnapshot(player.id, 39, 3)).stats.totalGames, 10);
+    assert.equal((await repository.claimRefresh(scope)).status, 'acquired');
+  });
+
 test('PostgreSQL upserts stats, rolls back invalid data, and preserves matches',
   { skip: !process.env.TEST_DATABASE_URL }, async () => {
     const database = new PlayerHistoryDatabaseService({
