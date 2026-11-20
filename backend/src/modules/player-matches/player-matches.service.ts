@@ -1,7 +1,8 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { setTimeout as delay } from 'node:timers/promises';
 import { BserApiService, BSERPlayerData, BSERUserMatchesResult } from '../collect/bser-api.service';
-import { MatchCursor, MatchSnapshot, PlayerLookup, PlayerMatchesRepository, StoredMatch, StoredMatchDetails } from './player-matches.repository';
+import { MatchCursor, MatchRefreshLeaseLostError, MatchSnapshot, PlayerLookup, PlayerMatchesRepository, StoredMatch, StoredMatchDetails } from './player-matches.repository';
 
 const MATCH_DETAIL_FIELDS = [
   'characterLevel', 'damageToPlayer', 'duration',
@@ -57,11 +58,21 @@ class UpstreamFailure extends Error {
   }
 }
 
+class MatchRefreshBusyError extends HttpException {
+  constructor() {
+    super({
+      code: 'RATE_LIMITED', reason: 'refresh_busy',
+      message: '다른 요청에서 전적을 갱신 중입니다.', retryAfter: 1,
+    }, HttpStatus.TOO_MANY_REQUESTS);
+  }
+}
+
 type SyncedPlayerLookup = PlayerLookup & { matchesSyncedAt: Date };
 
 @Injectable()
 export class PlayerMatchesService {
-  private readonly inFlight = new Map<string, Promise<void>>();
+  private readonly logger = new Logger(PlayerMatchesService.name);
+  private readonly inFlight = new Map<string, Promise<boolean>>();
   private readonly ttlMs: number;
   private readonly timeOffset: string;
 
@@ -165,12 +176,12 @@ export class PlayerMatchesService {
 
     if (!lookup?.matchesSyncedAt || Date.now() - lookup.matchesSyncedAt.getTime() >= this.ttlMs) {
       try {
-        await this.refreshShared(nickname, nicknameKey);
+        await this.refreshShared(nickname, nicknameKey, lookup?.matchesSyncedAt ?? null);
         lookup = await this.repository.findByNicknameKey(nicknameKey);
       } catch (error) {
-        if (!(error instanceof UpstreamFailure)) throw error;
+        if (!(error instanceof UpstreamFailure || error instanceof MatchRefreshBusyError)) throw error;
         if (!lookup?.matchesSyncedAt) {
-          throw this.upstreamException(error);
+          throw error instanceof UpstreamFailure ? this.upstreamException(error) : error;
         }
         isStale = true;
       }
@@ -191,19 +202,59 @@ export class PlayerMatchesService {
     }, limited ? HttpStatus.TOO_MANY_REQUESTS : HttpStatus.BAD_GATEWAY);
   }
 
-  private async refreshShared(nickname: string, nicknameKey: string): Promise<void> {
-    const existing = this.inFlight.get(nicknameKey);
-    if (existing) return existing;
-    const pending = this.refresh(nickname, nicknameKey);
-    this.inFlight.set(nicknameKey, pending);
+  private async waitForCommittedSnapshot(nicknameKey: string): Promise<boolean> {
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      await delay(200);
+      const lookup = await this.repository.findByNicknameKey(nicknameKey);
+      if (lookup?.matchesSyncedAt) return true;
+    }
+    return false;
+  }
+
+  private async refreshShared(nickname: string, nicknameKey: string, previousSync?: Date | null): Promise<void> {
+    let pending = this.inFlight.get(nicknameKey);
+    if (!pending) {
+      pending = this.refreshWithLease(nickname, nicknameKey, previousSync)
+        .finally(() => this.inFlight.delete(nicknameKey));
+      this.inFlight.set(nicknameKey, pending);
+    }
+    const updated = await pending;
+    if (previousSync === undefined && !updated) throw new MatchRefreshBusyError();
+  }
+
+  private async refreshWithLease(nickname: string, nicknameKey: string, previousSync?: Date | null): Promise<boolean> {
+    const lease = await this.repository.claimRefresh(nicknameKey);
+    if (!lease) {
+      if (previousSync === null && await this.waitForCommittedSnapshot(nicknameKey)) return false;
+      throw new MatchRefreshBusyError();
+    }
+
+    let committed = false;
     try {
-      await pending;
+      // A different instance may have saved its snapshot before this claim succeeded.
+      if (previousSync !== undefined) {
+        const current = await this.repository.findByNicknameKey(nicknameKey);
+        const refreshedAt = current?.matchesSyncedAt?.getTime();
+        if (refreshedAt !== undefined && (previousSync === null || refreshedAt > previousSync.getTime())) {
+          return false;
+        }
+      }
+      await this.refresh(nickname, nicknameKey, lease);
+      committed = true;
+      return true;
+    } catch (error) {
+      if (error instanceof MatchRefreshLeaseLostError) throw new MatchRefreshBusyError();
+      throw error;
     } finally {
-      this.inFlight.delete(nicknameKey);
+      if (!committed) {
+        await this.repository.releaseRefresh(nicknameKey, lease).catch(() => {
+          this.logger.warn('전적 갱신 실행권 해제 실패');
+        });
+      }
     }
   }
 
-  private async refresh(nickname: string, nicknameKey: string): Promise<void> {
+  private async refresh(nickname: string, nicknameKey: string, lease: string): Promise<void> {
     const userResult = await this.bserApi.findUserByNicknameDetailed(nickname);
     if (userResult.status === 'not_found') {
       throw new NotFoundException({ code: 'PLAYER_NOT_FOUND', message: '플레이어를 찾을 수 없습니다.' });
@@ -242,6 +293,7 @@ export class PlayerMatchesService {
       nicknameKey,
       games,
       new Date(),
+      lease,
     );
   }
 

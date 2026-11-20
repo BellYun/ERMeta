@@ -18,6 +18,8 @@ function fixture(initialLookup = null, games = [sampleGame()]) {
   let saveCount = 0;
   let externalCalls = 0;
   const repository = {
+    claimRefresh: async () => 'test-lease',
+    releaseRefresh: async () => {},
     findByNicknameKey: async () => lookup,
     saveSnapshot: async (nickname, _key, matches, syncedAt) => {
       saveCount += 1;

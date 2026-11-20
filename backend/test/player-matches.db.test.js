@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 const { PlayerHistoryDatabaseService } = require('../dist/common/database/player-history-database.service');
 const { PlayerMatchesRepository } = require('../dist/modules/player-matches/player-matches.repository');
+const { PlayerMatchesService } = require('../dist/modules/player-matches/player-matches.service');
 
 test('a replaced refresh lease cannot save a snapshot or release the new owner',
   { skip: !process.env.TEST_DATABASE_URL }, async (t) => {
@@ -34,6 +35,70 @@ test('a replaced refresh lease cannot save a snapshot or release the new owner',
     const saved = await second.saveSnapshot(nickname, nicknameKey, [], new Date(), current);
     assert.ok(saved.matchesSyncedAt);
     assert.ok(await first.claimRefresh(nicknameKey));
+  });
+
+test('independent instances share a cold match refresh and can retry after a failure',
+  { skip: !process.env.TEST_DATABASE_URL, timeout: 5000 }, async (t) => {
+    const config = { get: (key) => key === 'DATABASE_URL' ? process.env.TEST_DATABASE_URL : undefined };
+    const databases = [new PlayerHistoryDatabaseService(config), new PlayerHistoryDatabaseService(config)];
+    const repositories = databases.map((database) => new PlayerMatchesRepository(database));
+    const pool = databases[0].getPool();
+    const nickname = `SharedRefresh-${Date.now()}`;
+    const nicknameKey = nickname.toLowerCase();
+    const started = Promise.withResolvers();
+    const continueRefresh = Promise.withResolvers();
+    let lookups = 0;
+    let fetches = 0;
+    let fail = false;
+    const bser = {
+      async findUserByNicknameDetailed() {
+        lookups += 1;
+        started.resolve();
+        await continueRefresh.promise;
+        return fail ? { status: 'unavailable', statusCode: 503 }
+          : { status: 'found', user: { nickname, userId: 'fixture-uid' } };
+      },
+      async fetchUserMatchesDetailed() {
+        fetches += 1;
+        return { status: 'found', games: [] };
+      },
+    };
+    const [first, second] = repositories.map((repo) => new PlayerMatchesService(repo, bser, config));
+    t.after(async () => {
+      continueRefresh.resolve();
+      await pool.query('DELETE FROM player_history.match_refresh_leases WHERE nickname_key = $1', [nicknameKey]);
+      await pool.query('DELETE FROM player_history.player_lookups WHERE nickname_key = $1', [nicknameKey]);
+      await Promise.all(databases.map((database) => database.onModuleDestroy()));
+    });
+
+    const leader = first.getMatches(nickname);
+    await started.promise;
+    await assert.rejects(second.refreshMatches(nickname), (error) => {
+      return error.getStatus() === 429 && error.getResponse().reason === 'refresh_busy';
+    });
+    const claimFinished = Promise.withResolvers();
+    const claim = repositories[1].claimRefresh.bind(repositories[1]);
+    t.mock.method(repositories[1], 'claimRefresh', async (key) => {
+      const token = await claim(key);
+      claimFinished.resolve(token);
+      return token;
+    });
+    const follower = second.getMatches(nickname.toUpperCase());
+    const token = await claimFinished.promise;
+    continueRefresh.resolve();
+    const [firstResult, secondResult] = await Promise.all([leader, follower]);
+    assert.equal(token, null);
+    assert.deepEqual(secondResult, firstResult);
+    assert.equal(lookups, 1);
+    assert.equal(fetches, 1);
+
+    fail = true;
+    await assert.rejects(first.refreshMatches(nickname), { status: 502 });
+    fail = false;
+    const retried = await second.refreshMatches(nickname);
+    assert.ok(retried.lastSyncedAt);
+    assert.equal(lookups, 3);
+    assert.equal(fetches, 2);
   });
 
 test('PostgreSQL prevents duplicates, pages deterministically and rolls back a failed snapshot',

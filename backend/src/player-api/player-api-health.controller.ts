@@ -29,6 +29,7 @@ export class PlayerApiHealthController {
         records: string | null;
         stats: string | null;
         stats_absences: string | null;
+        match_refresh_leases: string | null;
         match_details: boolean;
       }>(`SELECT
           to_regclass('player_history.player_lookups')::text AS lookups,
@@ -36,13 +37,15 @@ export class PlayerApiHealthController {
           to_regclass('player_history.player_match_records')::text AS records,
           to_regclass('player_history.player_season_stats')::text AS stats,
           to_regclass('player_history.player_season_stats_absences')::text AS stats_absences,
+          to_regclass('player_history.match_refresh_leases')::text AS match_refresh_leases,
           EXISTS (
             SELECT 1 FROM pg_attribute
             WHERE attrelid = to_regclass('player_history.player_match_records')
               AND attname = 'details' AND NOT attisdropped
           ) AS match_details`);
       const schema = result.rows[0];
-      if (schema?.lookups && schema.matches && schema.records && schema.stats && schema.stats_absences && schema.match_details) {
+      if (schema?.lookups && schema.matches && schema.records && schema.stats && schema.stats_absences &&
+          schema.match_details && schema.match_refresh_leases) {
         return { status: 'ok' };
       }
     } catch {
