@@ -31,13 +31,10 @@ test('official nickname UID is normalized for both season stats and recent match
   api.fetchWithRetry = async (url, options) => {
     assert.equal(new URL(url).searchParams.get('query'), '테스트');
     assert.equal(options.headers['x-api-key'], 'test-key');
-    return new Response(
-      JSON.stringify({
-        code: 200,
-        user: { uid: user.userId, nickname: user.nickname },
-      }),
-      { status: 200 },
-    );
+    return {
+      response: new Response(null, { status: 200 }),
+      body: { code: 200, user: { uid: user.userId, nickname: user.nickname } },
+    };
   };
 
   assert.deepEqual(await api.findUserByNicknameDetailed('테스트'), {
@@ -55,19 +52,20 @@ test('recent matches use the UID endpoint and reject malformed upstream success'
       url,
       'https://open-api.bser.io/v1/user/games/uid/temporary-uid',
     );
-    return new Response(
-      JSON.stringify({
+    return {
+      response: new Response(null, { status: 200 }),
+      body: {
         code: 200,
         userGames: [match(2, '2026-10-12T12:00:00Z')],
-      }),
-    );
+      },
+    };
   };
   assert.equal(
     (await api.fetchUserMatchesDetailed(user.userId)).status,
     'found',
   );
 
-  api.fetchWithRetry = async () => new Response(JSON.stringify({ code: 200 }));
+  api.fetchWithRetry = async () => ({ response: new Response(null), body: { code: 200 } });
   assert.equal(
     (await api.fetchUserMatchesDetailed(user.userId)).status,
     'unavailable',
