@@ -20,9 +20,20 @@ test('PostgreSQL prevents duplicates, pages deterministically and rolls back a f
     const syncedAt = new Date('2026-10-13T00:00:00.000Z');
     try {
       const player = await repository.saveSnapshot(nickname, nickname,
-        [makeGame(firstId), makeGame(firstId + 1)], syncedAt);
+        [{ ...makeGame(firstId), details: { equipment: { 0: 12345 }, mmrGain: -20 } },
+          makeGame(firstId + 1)], syncedAt);
       await repository.saveSnapshot(nickname, nickname,
         [makeGame(firstId), makeGame(firstId + 1)], syncedAt);
+      await repository.saveSnapshot(nickname, nickname,
+        [{ ...makeGame(firstId), details: { mmrAfter: 5200 } }], syncedAt);
+      const stored = await database.getPool().query(
+        `SELECT details FROM player_history.player_match_records
+         WHERE player_lookup_id = $1 ORDER BY game_id`, [player.id],
+      );
+      assert.deepEqual(stored.rows, [
+        { details: { equipment: { 0: 12345 }, mmrAfter: 5200, mmrGain: -20 } },
+        { details: null },
+      ]);
       const page = await repository.listMatches(player.id, 1, null);
       assert.equal(page.matches[0].gameId, String(firstId + 1));
       assert.equal(page.hasMore, true);

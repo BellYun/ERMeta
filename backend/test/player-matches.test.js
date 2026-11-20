@@ -63,6 +63,38 @@ test('recent games are validated, sorted, paged, and reused while fresh', async 
   assert.equal(f.externalCalls, 1);
 });
 
+test('match refresh saves only supported detail fields and preserves signed RP', async () => {
+  const f = fixture(null, [
+    {
+      ...sampleGame(11),
+      characterLevel: 18,
+      damageToPlayer: 0,
+      equipment: { 0: 12345, 2: 0, 4: 23456, 8: 45678 },
+      mmrAfter: 6200,
+      mmrGain: -30,
+      routeIdOfStart: 'invalid',
+      userId: 'temporary-uid',
+    },
+    sampleGame(10),
+  ]);
+  const saveSnapshot = f.repository.saveSnapshot;
+  let saved;
+  f.repository.saveSnapshot = async (nickname, key, matches, syncedAt) => {
+    saved = matches;
+    await saveSnapshot(nickname, key, matches, syncedAt);
+  };
+
+  await f.service.refreshMatches('테스터');
+  assert.deepEqual(saved[0].details, {
+    characterLevel: 18,
+    damageToPlayer: 0,
+    equipment: { 0: 12345, 4: 23456 },
+    mmrAfter: 6200,
+    mmrGain: -30,
+  });
+  assert.equal(saved[1].details, null);
+});
+
 test('upstream outage returns stale saved data and fails without it', async () => {
   const old = new Date(Date.now() - 600_000);
   const f = fixture({ id: '1', nickname: '테스터', matchesSyncedAt: old });

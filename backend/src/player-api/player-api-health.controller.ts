@@ -28,12 +28,19 @@ export class PlayerApiHealthController {
         matches: string | null;
         records: string | null;
         stats: string | null;
+        match_details: boolean;
       }>(`SELECT
           to_regclass('player_history.player_lookups')::text AS lookups,
           to_regclass('player_history.matches')::text AS matches,
           to_regclass('player_history.player_match_records')::text AS records,
-          to_regclass('player_history.player_season_stats')::text AS stats`);
-      if (result.rows[0]?.lookups && result.rows[0]?.matches && result.rows[0]?.records && result.rows[0]?.stats) {
+          to_regclass('player_history.player_season_stats')::text AS stats,
+          EXISTS (
+            SELECT 1 FROM pg_attribute
+            WHERE attrelid = to_regclass('player_history.player_match_records')
+              AND attname = 'details' AND NOT attisdropped
+          ) AS match_details`);
+      const schema = result.rows[0];
+      if (schema?.lookups && schema.matches && schema.records && schema.stats && schema.match_details) {
         return { status: 'ok' };
       }
     } catch {

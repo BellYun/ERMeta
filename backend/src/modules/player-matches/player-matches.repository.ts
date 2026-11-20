@@ -18,6 +18,18 @@ export interface MatchSnapshot {
   rank: number;
   kills: number;
   assists: number;
+  details?: StoredMatchDetails | null;
+}
+
+export interface StoredMatchDetails {
+  equipment?: Record<string, number>;
+  characterLevel?: number;
+  damageToPlayer?: number;
+  duration?: number;
+  mmrBefore?: number;
+  mmrAfter?: number;
+  mmrGain?: number;
+  routeIdOfStart?: number;
 }
 
 export interface MatchCursor {
@@ -109,18 +121,19 @@ export class PlayerMatchesRepository {
 
         const recordValues = chunk.flatMap((game) => [
           playerId, game.gameId, game.characterCode, game.weaponCode,
-          game.rank, game.kills, game.assists,
+          game.rank, game.kills, game.assists, game.details ?? null,
         ]);
         await client.query(
-          `INSERT INTO player_history.player_match_records
-             (player_lookup_id, game_id, character_code, weapon_code, rank, kills, assists)
-           VALUES ${placeholders(chunk.length, 7)}
+          `INSERT INTO player_history.player_match_records AS existing
+             (player_lookup_id, game_id, character_code, weapon_code, rank, kills, assists, details)
+           VALUES ${placeholders(chunk.length, 8)}
            ON CONFLICT (player_lookup_id, game_id) DO UPDATE SET
              character_code = EXCLUDED.character_code,
              weapon_code = EXCLUDED.weapon_code,
              rank = EXCLUDED.rank,
              kills = EXCLUDED.kills,
-             assists = EXCLUDED.assists`,
+             assists = EXCLUDED.assists,
+             details = COALESCE(existing.details || EXCLUDED.details, EXCLUDED.details, existing.details)`,
           recordValues,
         );
       }
