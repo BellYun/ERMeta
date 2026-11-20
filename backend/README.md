@@ -109,6 +109,14 @@ GET /v1/players/{URL-encoded nickname}/matches?limit=20&cursor=...
 
 `limit`은 1~50, 기본값은 20이다. `cursor`는 이전 응답의 `nextCursor`를 그대로 사용한다. `matches[].gameId`는 문자열이고 `startedAt`과 `lastSyncedAt`은 UTC ISO 8601이다. `isStale=true`는 공식 API 갱신 실패 후 저장 데이터로 응답했다는 뜻이다. 저장은 최근 경기 최대 300건이며, 공식 API에서 제공하는 기간은 최근 90일이다.
 
+```text
+GET /v1/players/{URL-encoded nickname}/matches/{gameId}
+```
+
+전적 목록의 `gameId`로 해당 플레이어의 저장된 경기 한 건을 읽는다. `match`는 목록과 같은 형식이고 `details`에는 저장된 장비, 레벨, 피해량, 경기 시간, 경기 전후 RP 및 변동량과 시작 루트 ID가 포함된다. 값이 없는 필드는 생략하며, 상세가 아직 저장되지 않은 기록은 `details: null`이다. 저장된 경기가 없으면 `404 MATCH_NOT_FOUND`를 반환한다.
+
+새 백엔드 버전을 배포하기 전에 `npm run db:migrate:player-history`로 `004_match_details.sql`을 적용한다. 기존 기록의 상세 필드는 이후 해당 전적을 갱신할 때 채워진다.
+
 ```sh
 npm run test:player-matches
 TEST_DATABASE_URL='postgres://user:password@localhost:5432/ermeta_test' npm run test:player-matches
