@@ -66,8 +66,11 @@ test('PostgreSQL upserts stats, rolls back invalid data, and preserves matches',
       ]);
       assert.equal((await matches.listMatches(playerId, 10, null)).matches.length, 1);
       assert.equal((await repository.findSnapshot(playerId, 39, 3)).stats.totalGames, 12);
-      await repository.saveResult(nickname, nicknameKey, 39, 3, null, new Date());
-      assert.equal(await repository.findSnapshot(playerId, 39, 3), null);
+      const absentAt = new Date(Date.now() + 1_000);
+      await repository.saveResult(nickname, nicknameKey, 39, 3, null, absentAt);
+      await repository.saveResult(nickname, nicknameKey, 39, 3, stats(), secondAt);
+      assert.deepEqual(await repository.findSnapshot(playerId, 39, 3), { stats: null, fetchedAt: absentAt });
+      assert.equal(await repository.findSnapshot(playerId, 39, 2), null);
       assert.equal((await matches.listMatches(playerId, 10, null)).matches.length, 1);
       assert.equal(await repository.findLatestRankedSnapshot(playerId), null);
 
@@ -79,6 +82,15 @@ test('PostgreSQL upserts stats, rolls back invalid data, and preserves matches',
       assert.equal(latestRanked.stats.seasonId, 42);
       assert.equal(latestRanked.stats.matchingMode, 3);
       assert.equal(latestRanked.fetchedAt.toISOString(), firstAt.toISOString());
+
+      const recoveredAt = new Date(absentAt.getTime() + 1_000);
+      await repository.saveResult(nickname, nicknameKey, 39, 3, stats(), recoveredAt);
+      await repository.saveResult(nickname, nicknameKey, 39, 3, null, absentAt);
+      assert.deepEqual(await repository.findSnapshot(playerId, 39, 3), { stats: stats(), fetchedAt: recoveredAt });
+      const absences = await database.getPool().query(
+        'SELECT 1 FROM player_history.player_season_stats_absences WHERE player_lookup_id = $1', [playerId],
+      );
+      assert.equal(absences.rowCount, 0);
     } finally {
       if (playerId) {
         await database.getPool().query('DELETE FROM player_history.player_match_records WHERE player_lookup_id = $1', [playerId]);

@@ -22,11 +22,11 @@ function fixture(initialSnapshot = null) {
   const repository = {
     findByNicknameKey: async () => lookup,
     findSnapshot: async () => snapshot,
-    findLatestRankedSnapshot: async () => snapshot,
+    findLatestRankedSnapshot: async () => snapshot?.stats ? snapshot : null,
     saveResult: async (nickname, _key, _season, _mode, stats, fetchedAt) => {
       saveCount += 1;
       lookup = { id: '1', nickname };
-      snapshot = stats ? { stats, fetchedAt } : null;
+      snapshot = { stats, fetchedAt };
     },
   };
   const bser = {
@@ -137,6 +137,38 @@ test('empty stats, unknown player, and invalid filters have distinct results', a
   const missing = fixture();
   missing.bser.findUserByNicknameDetailed = async () => ({ status: 'not_found' });
   await assert.rejects(missing.service.getStats('없는유저', '39', '3'), (error) => error.status === 404);
+});
+
+test('confirmed empty stats are reused until an explicit refresh finds new stats', async () => {
+  const f = fixture();
+  const fetchStats = f.bser.fetchUserStatsDetailed;
+  f.bser.fetchUserStatsDetailed = async () => ({ status: 'not_found' });
+  const first = await f.service.getStats('테스터', '39', '3');
+  assert.equal(first.stats, null);
+  assert.equal(first.fetchedAt, null);
+  assert.deepEqual(await f.service.getStats('테스터', '39', '3'), first);
+  assert.equal(f.userCalls, 1);
+  assert.equal(f.saveCount, 1);
+
+  f.bser.fetchUserStatsDetailed = fetchStats;
+  const refresh = await f.service.refreshStats('테스터', '39', '3');
+  assert.equal(refresh.status, 'updated');
+  assert.equal((await f.service.getStats('테스터', '39', '3')).stats.totalGames, 10);
+  assert.equal(f.userCalls, 2);
+  assert.equal(f.statsCalls, 1);
+});
+
+test('expired empty stats are refreshed and cannot mask an upstream error', async () => {
+  const f = fixture({ stats: null, fetchedAt: new Date(Date.now() - 700_000) });
+  const fetchStats = f.bser.fetchUserStatsDetailed;
+  f.bser.fetchUserStatsDetailed = async () => ({ status: 'unavailable', statusCode: 503 });
+  await assert.rejects(f.service.getStats('테스터', '39', '3'), { status: 502 });
+  assert.equal(f.saveCount, 0);
+
+  f.bser.fetchUserStatsDetailed = fetchStats;
+  const refreshed = await f.service.getStats('테스터', '39', '3');
+  assert.equal(refreshed.stats.totalGames, 10);
+  assert.equal(f.saveCount, 1);
 });
 
 test('upstream failure serves an old snapshot and fails when none exists', async () => {
