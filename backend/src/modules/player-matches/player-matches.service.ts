@@ -1,7 +1,12 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BserApiService, BSERPlayerData, BSERUserMatchesResult } from '../collect/bser-api.service';
-import { MatchCursor, MatchSnapshot, PlayerLookup, PlayerMatchesRepository, StoredMatch } from './player-matches.repository';
+import { MatchCursor, MatchSnapshot, PlayerLookup, PlayerMatchesRepository, StoredMatch, StoredMatchDetails } from './player-matches.repository';
+
+const MATCH_DETAIL_FIELDS = [
+  'characterLevel', 'damageToPlayer', 'duration',
+  'mmrBefore', 'mmrAfter', 'mmrGain', 'routeIdOfStart',
+] as const;
 
 export interface PlayerMatchesResponse {
   nickname: string;
@@ -243,7 +248,29 @@ export class PlayerMatchesService {
       rank: integer(game.gameRank, 1),
       kills: integer(game.playerKill, 0),
       assists: integer(game.playerAssistant, 0),
+      details: this.parseDetails(game),
     };
+  }
+
+  private parseDetails(game: BSERPlayerData): StoredMatchDetails | null {
+    const details: StoredMatchDetails = {};
+    for (const field of MATCH_DETAIL_FIELDS) {
+      const value = game[field];
+      if (typeof value === 'number' && Number.isSafeInteger(value)) {
+        details[field] = value;
+      }
+    }
+
+    const equipment: Record<string, number> = {};
+    for (const slot of ['0', '1', '2', '3', '4']) {
+      const itemCode = game.equipment?.[slot];
+      if (typeof itemCode === 'number' && Number.isSafeInteger(itemCode) && itemCode > 0) {
+        equipment[slot] = itemCode;
+      }
+    }
+    if (Object.keys(equipment).length > 0) details.equipment = equipment;
+
+    return Object.keys(details).length > 0 ? details : null;
   }
 
   private parseNickname(value: unknown): string {
