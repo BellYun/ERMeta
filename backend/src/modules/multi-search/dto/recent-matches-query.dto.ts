@@ -22,4 +22,9 @@ export class RecentMatchesQueryDto {
   @Min(1)
   @Max(20)
   limit?: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(77)
+  cursor?: string;
 }

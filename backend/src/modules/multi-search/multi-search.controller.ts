@@ -20,6 +20,7 @@ export class MultiSearchController {
     return this.multiSearchService.searchRecentMatches(
       query.nickname,
       query.limit,
+      query.cursor,
     );
   }
 
