@@ -196,7 +196,7 @@ export class PlayerSeasonStatsService {
   private async refresh(nickname: string, scope: SeasonStatsScope, lease: string): Promise<RefreshResult> {
     checkPlayerWork();
     const { nicknameKey, seasonId, matchingMode } = scope;
-    const userResult = await this.bserApi.findUserByNicknameDetailed(nickname);
+    const userResult = await this.bserApi.findUserByNicknameDetailed(nickname, { cacheMissing: true });
     if (userResult.status === 'not_found') {
       throw new NotFoundException({ code: 'PLAYER_NOT_FOUND', message: '플레이어를 찾을 수 없습니다.' });
     }

@@ -138,7 +138,9 @@ GET /v1/players/{URL-encoded nickname}/stats?seasonId=41&matchingMode=3
 
 DB는 대소문자를 정규화한 닉네임을 조회 키로 사용한다. BSER UID는 각 외부 요청에서만 사용하며 저장하지 않는다. 같은 닉네임을 다시 조회했을 때 UID가 달라도 기존 전적·통계를 삭제하지 않는다. 닉네임 변경 전후의 기록은 연결하지 않으며, 다른 계정이 과거 닉네임을 재사용하는 경우는 현재 API만으로 확실히 구별할 수 없어 별도 정책이 필요하다.
 
-동시에 같은 닉네임의 전적·공식 통계를 갱신하면 진행 중인 닉네임 확인 호출을 공유한다. 완료된 확인 결과는 별도로 캐시하지 않는다. BSER 호출은 프로세스당 기본 초당 4회, 초기 버스트 4회, 대기 50개까지 허용하며, 각 대기 요청은 최대 10초(`BSER_API_RATE_LIMIT_MAX_WAIT_MS`)를 기다린다. 큐가 꽉 차거나 대기 시간이 끝나면 저장 데이터가 없는 단건 조회는 `429 BSER_RATE_LIMITED`와 `Retry-After` 헤더·응답 본문의 `retryAfter`(초)를 반환한다. 저장 데이터가 있으면 기존처럼 `isStale=true`로 응답한다. 이 제한은 단일 프로세스 기준이므로 여러 인스턴스에서 전역 호출량을 보장하지 않는다.
+BSER가 닉네임을 찾을 수 없다고 응답하면 정규화한 닉네임의 해시를 5분 동안 저장한다. 경기 전적과 시즌 통계의 닉네임 확인에서 캐시를 공유하고, 해당 기간에는 `404 PLAYER_NOT_FOUND`를 반환한다. 만료 후에는 BSER에 다시 확인한다. 새 백엔드 배포 전에 `npm run db:migrate:player-history`로 `008_player_nickname_absences.sql`을 적용한다.
+
+동시에 같은 닉네임의 전적·공식 통계를 갱신하면 진행 중인 닉네임 확인 호출을 공유한다. BSER 호출은 프로세스당 기본 초당 4회, 초기 버스트 4회, 대기 50개까지 허용하며, 각 대기 요청은 최대 10초(`BSER_API_RATE_LIMIT_MAX_WAIT_MS`)를 기다린다. 큐가 꽉 차거나 대기 시간이 끝나면 저장 데이터가 없는 단건 조회는 `429 BSER_RATE_LIMITED`와 `Retry-After` 헤더·응답 본문의 `retryAfter`(초)를 반환한다. 저장 데이터가 있으면 기존처럼 `isStale=true`로 응답한다. 이 제한은 단일 프로세스 기준이므로 여러 인스턴스에서 전역 호출량을 보장하지 않는다.
 
 같은 닉네임의 전적 갱신은 PostgreSQL 리스로 한 API 인스턴스에서 실행한다. 갱신이 겹치면 일반 조회는 기존 전적을 `isStale: true`로 반환하거나, 첫 조회의 경우 저장 완료를 짧게 기다린다. 기다리는 동안 결과가 없거나 수동 갱신이 다른 인스턴스의 갱신과 겹치면 `429 RATE_LIMITED`와 `Retry-After`를 반환한다. 새 백엔드 배포 전에 `npm run db:migrate:player-history`로 `006_match_refresh_leases.sql`을 적용한다.
 

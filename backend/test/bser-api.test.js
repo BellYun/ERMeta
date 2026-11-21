@@ -84,6 +84,28 @@ test('a complete body within the timeout still normalizes the official UID', asy
   });
 });
 
+test('legacy and player lookups still share an overlapping upstream request', async () => {
+  const started = Promise.withResolvers();
+  const resume = Promise.withResolvers();
+  let requests = 0;
+  const api = new BserApiService({ get: (key, fallback) => key === 'BSER_API_KEY' ? 'test-key' : fallback }, {
+    isMissing: async () => false,
+  });
+  api.fetchWithRetry = async () => {
+    requests += 1;
+    started.resolve();
+    await resume.promise;
+    return { response: new Response(), body: { code: 200, user: { uid: 'uid', nickname: 'Alpha' } } };
+  };
+  const legacy = api.findUserByNicknameDetailed('Alpha');
+  await started.promise;
+  const player = api.findUserByNicknameDetailed('ALPHA', { cacheMissing: true });
+  await new Promise(setImmediate);
+  resume.resolve();
+  assert.deepEqual(await legacy, await player);
+  assert.equal(requests, 1);
+});
+
 test('season stats separate confirmed absence from invalid responses and throttling', async () => {
   let status = 200;
   let body;

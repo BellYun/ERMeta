@@ -257,7 +257,7 @@ export class PlayerMatchesService {
 
   private async refresh(nickname: string, nicknameKey: string, lease: string): Promise<void> {
     checkPlayerWork();
-    const userResult = await this.bserApi.findUserByNicknameDetailed(nickname);
+    const userResult = await this.bserApi.findUserByNicknameDetailed(nickname, { cacheMissing: true });
     if (userResult.status === 'not_found') {
       throw new NotFoundException({ code: 'PLAYER_NOT_FOUND', message: '플레이어를 찾을 수 없습니다.' });
     }
