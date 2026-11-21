@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
 const { createServer } = require('node:http');
 const test = require('node:test');
 const { BserApiService } = require('../dist/modules/collect/bser-api.service');
+const { playerWork } = require('../dist/common/player-work/player-work');
 
 const REQUEST_TIMEOUT_MS = 500;
 const SLOW_BODY_MS = REQUEST_TIMEOUT_MS * 3;
@@ -159,6 +160,48 @@ test('invalid JSON is not retried as a network failure', async () => {
     response.end('{invalid');
   }, { BSER_API_RETRIES: 1 }, async (api) => {
     assert.equal((await api.findUserByNicknameDetailed('Alpha')).status, 'unavailable');
+    assert.equal(requests, 1);
+  });
+});
+
+test('cancelling player work aborts a pending BSER body without retrying', { timeout: 3000 }, async () => {
+  const headersSent = Promise.withResolvers();
+  const bodyClosed = Promise.withResolvers();
+  let requests = 0;
+  await withServer((_request, response) => {
+    requests += 1;
+    response.writeHead(200, { 'content-type': 'application/json' });
+    response.write('{"code":200,');
+    response.once('close', bodyClosed.resolve);
+    headersSent.resolve();
+  }, { BSER_API_RETRIES: 1 }, async (api) => {
+    const controller = new AbortController();
+    const pending = playerWork.run({ signal: controller.signal, deadline: Infinity },
+      () => api.fetchUserMatchesDetailed('uid'));
+    const rejected = assert.rejects(pending, { status: 504 });
+    await headersSent.promise;
+    controller.abort();
+    await rejected;
+    await bodyClosed.promise;
+    assert.equal(requests, 1);
+  });
+});
+
+test('cancelling queued BSER work immediately frees its rate-limit slot', async () => {
+  let requests = 0;
+  await withServer((_request, response) => {
+    requests += 1;
+    response.end(JSON.stringify({ code: 200, userGames: [] }));
+  }, { BSER_API_RATE_LIMIT_RPS: 1, BSER_API_RATE_LIMIT_BURST: 1 }, async (api) => {
+    assert.equal((await api.fetchUserMatchesDetailed('first')).status, 'found');
+    const controller = new AbortController();
+    const pending = playerWork.run({ signal: controller.signal, deadline: Infinity },
+      () => api.fetchUserMatchesDetailed('queued'));
+    assert.equal(api.rateLimitQueue.length, 1);
+    controller.abort();
+    await assert.rejects(pending, { status: 504 });
+    assert.equal(api.rateLimitQueue.length, 0);
+    assert.equal(api.rateLimitTimer, null);
     assert.equal(requests, 1);
   });
 });
