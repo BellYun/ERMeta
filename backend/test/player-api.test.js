@@ -4,6 +4,36 @@ require('reflect-metadata');
 
 const { playerHistoryPoolOptions } = require('../dist/common/database/player-history-pool-options');
 
+test('PostgreSQL misses expire and are pruned on later writes',
+  { skip: !process.env.TEST_DATABASE_URL }, async (t) => {
+    const { createHash } = require('node:crypto');
+    const { PlayerHistoryDatabaseService } = require('../dist/common/database/player-history-database.service');
+    const { PlayerNicknameAbsencesRepository } = require('../dist/modules/collect/player-nickname-absences.repository');
+    const database = new PlayerHistoryDatabaseService({
+      get: (key) => key === 'DATABASE_URL' ? process.env.TEST_DATABASE_URL : undefined,
+    });
+    const first = `missing-first-${Date.now()}`;
+    const second = `missing-second-${Date.now()}`;
+    const hashes = [first, second].map((name) => createHash('sha256').update(name).digest());
+    const pool = database.getPool();
+    t.after(async () => {
+      await pool.query('DELETE FROM player_history.player_nickname_absences WHERE nickname_hash IN ($1, $2)', hashes);
+      await database.onModuleDestroy();
+    });
+    const repository = new PlayerNicknameAbsencesRepository(database);
+    assert.equal(await repository.isMissing(first), false);
+    await repository.rememberMissing(first);
+    assert.equal(await repository.isMissing(first), true);
+    assert.equal(await repository.isMissing(second), false);
+    await pool.query('UPDATE player_history.player_nickname_absences SET expires_at = statement_timestamp() WHERE nickname_hash = $1',
+      [hashes[0]]);
+    assert.equal(await repository.isMissing(first), false);
+    await repository.rememberMissing(second);
+    assert.equal(await repository.isMissing(second), true);
+    assert.equal((await pool.query('SELECT 1 FROM player_history.player_nickname_absences WHERE nickname_hash = $1',
+      [hashes[0]])).rowCount, 0);
+  });
+
 test('local URL and Cloud SQL socket select the expected PostgreSQL connection', () => {
   const local = playerHistoryPoolOptions((name) => ({ DATABASE_URL: 'postgres://user:pass@localhost:5432/ermeta' })[name]);
   assert.equal(local.connectionString, 'postgres://user:pass@localhost:5432/ermeta');
