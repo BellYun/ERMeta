@@ -1,5 +1,6 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { checkPlayerWork, playerDelay, PlayerRequestTimeoutError, playerWork, SharedPlayerWork } from '../../common/player-work/player-work';
 
 export interface BSERGameResponse {
   code: number;
@@ -111,8 +112,8 @@ export type BSERUserMatchesResult =
 
 interface RateLimitWaiter {
   resolve: () => void;
-  reject: (error: BserRateLimitQueueError) => void;
-  timer: ReturnType<typeof setTimeout>;
+  reject: (error: Error) => void;
+  cleanup: () => void;
 }
 
 interface BserJsonResponse {
@@ -132,7 +133,7 @@ export class BserApiService implements OnModuleDestroy {
   private readonly rateLimitQueueMax: number;
   private readonly rateLimitMaxWaitMs: number;
   private readonly rateLimitQueue: RateLimitWaiter[] = [];
-  private readonly inFlightNicknameLookups = new Map<string, Promise<BSERLookupResult>>();
+  private readonly inFlightNicknameLookups = new SharedPlayerWork<BSERLookupResult>();
   private rateLimitTokens: number;
   private rateLimitRefilledAt = Date.now();
   private rateLimitTimer: ReturnType<typeof setTimeout> | null = null;
@@ -219,15 +220,7 @@ export class BserApiService implements OnModuleDestroy {
     if (!this.apiKey) return { status: 'not_configured' };
 
     const nicknameKey = nickname.trim().toLocaleLowerCase('ko-KR');
-    const existing = this.inFlightNicknameLookups.get(nicknameKey);
-    if (existing) return existing;
-    const pending = this.lookupUserByNickname(nickname);
-    this.inFlightNicknameLookups.set(nicknameKey, pending);
-    try {
-      return await pending;
-    } finally {
-      this.inFlightNicknameLookups.delete(nicknameKey);
-    }
+    return this.inFlightNicknameLookups.run(nicknameKey, () => this.lookupUserByNickname(nickname));
   }
 
   private async lookupUserByNickname(nickname: string): Promise<BSERLookupResult> {
@@ -261,6 +254,7 @@ export class BserApiService implements OnModuleDestroy {
       }
       return { status: 'found', user: { nickname: json.user.nickname, userId } };
     } catch (err) {
+      if (err instanceof PlayerRequestTimeoutError) throw err;
       this.logger.warn(`BSER nickname 조회 실패: ${(err as Error).message}`);
       return {
         status: 'unavailable',
@@ -304,6 +298,7 @@ export class BserApiService implements OnModuleDestroy {
       }
       return { status: 'found', games: json.userGames };
     } catch (err) {
+      if (err instanceof PlayerRequestTimeoutError) throw err;
       this.logger.warn(`BSER 최근 경기 조회 실패: ${(err as Error).message}`);
       return {
         status: 'unavailable',
@@ -365,6 +360,7 @@ export class BserApiService implements OnModuleDestroy {
       }
       return { status: 'found', stats };
     } catch (err) {
+      if (err instanceof PlayerRequestTimeoutError) throw err;
       this.logger.warn(`BSER user stats 조회 실패: ${(err as Error).message}`);
       return {
         status: 'unavailable',
@@ -379,15 +375,19 @@ export class BserApiService implements OnModuleDestroy {
     input: Parameters<typeof fetch>[0],
     init: Parameters<typeof fetch>[1],
   ): Promise<BserJsonResponse> {
-    await this.waitForRateLimitToken();
+    const workSignal = playerWork.getStore()?.signal;
+    await this.waitForRateLimitToken(workSignal);
+    checkPlayerWork();
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
     let response: Response | undefined;
 
     try {
-      response = await fetch(input, { ...init, signal: controller.signal });
+      const signal = workSignal ? AbortSignal.any([controller.signal, workSignal]) : controller.signal;
+      response = await fetch(input, { ...init, signal });
       const body: unknown = response.ok ? await response.json() : undefined;
+      checkPlayerWork();
       return { response, body };
     } finally {
       clearTimeout(timeout);
@@ -404,41 +404,58 @@ export class BserApiService implements OnModuleDestroy {
     let lastError: unknown;
 
     for (let attempt = 0; attempt <= this.maxRetries; attempt += 1) {
+      checkPlayerWork();
       try {
         const result = await this.fetchWithTimeout(input, init);
         if (attempt < this.maxRetries && isRetryableStatus(result.response.status)) {
-          await sleep(150 * (attempt + 1));
+          await playerDelay(150 * (attempt + 1));
           continue;
         }
         return result;
       } catch (err) {
+        checkPlayerWork();
+        if (err instanceof PlayerRequestTimeoutError) throw err;
         lastError = err;
         if (err instanceof BserRateLimitQueueError || err instanceof SyntaxError) break;
         if (attempt >= this.maxRetries) break;
-        await sleep(150 * (attempt + 1));
+        await playerDelay(150 * (attempt + 1));
       }
     }
 
     throw lastError;
   }
 
-  private waitForRateLimitToken(): Promise<void> {
+  private waitForRateLimitToken(signal?: AbortSignal): Promise<void> {
+    checkPlayerWork();
     if (this.rateLimitRps <= 0) return Promise.resolve();
     if (this.rateLimitQueue.length >= this.rateLimitQueueMax) {
       throw new BserRateLimitQueueError('full', this.retryAfterSeconds());
     }
 
     return new Promise((resolve, reject) => {
+      const remove = (error: Error) => {
+        const index = this.rateLimitQueue.indexOf(waiter);
+        if (index < 0) return;
+        this.rateLimitQueue.splice(index, 1);
+        waiter.cleanup();
+        if (this.rateLimitQueue.length === 0 && this.rateLimitTimer) {
+          clearTimeout(this.rateLimitTimer);
+          this.rateLimitTimer = null;
+        }
+        reject(error);
+      };
+      const abort = () => remove(new PlayerRequestTimeoutError());
+      const timer = setTimeout(() => remove(new BserRateLimitQueueError('timeout', this.retryAfterSeconds())),
+        this.rateLimitMaxWaitMs);
       const waiter: RateLimitWaiter = {
         resolve,
         reject,
-        timer: setTimeout(() => {
-          const index = this.rateLimitQueue.indexOf(waiter);
-          if (index < 0) return;
-          this.rateLimitQueue.splice(index, 1);
-          reject(new BserRateLimitQueueError('timeout', this.retryAfterSeconds()));
-        }, this.rateLimitMaxWaitMs),
+        cleanup: () => {
+          clearTimeout(timer);
+          signal?.removeEventListener('abort', abort);
+        },
       };
+      signal?.addEventListener('abort', abort, { once: true });
       this.rateLimitQueue.push(waiter);
       this.drainRateLimitQueue();
     });
@@ -457,7 +474,7 @@ export class BserApiService implements OnModuleDestroy {
       this.rateLimitTokens -= 1;
       const waiter = this.rateLimitQueue.shift();
       if (waiter) {
-        clearTimeout(waiter.timer);
+        waiter.cleanup();
         waiter.resolve();
       }
     }
@@ -496,7 +513,7 @@ export class BserApiService implements OnModuleDestroy {
       this.rateLimitTimer = null;
     }
     for (const waiter of this.rateLimitQueue.splice(0)) {
-      clearTimeout(waiter.timer);
+      waiter.cleanup();
       waiter.reject(new BserRateLimitQueueError('shutdown', 1));
     }
   }
@@ -520,8 +537,4 @@ function parseRetryAfter(response: Response): number | undefined {
   const timestamp = Date.parse(value);
   if (Number.isFinite(timestamp)) return Math.max(1, Math.ceil((timestamp - Date.now()) / 1000));
   return undefined;
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
