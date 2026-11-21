@@ -1,6 +1,6 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { setTimeout as delay } from 'node:timers/promises';
+import { checkPlayerWork, playerDelay, SharedPlayerWork } from '../../common/player-work/player-work';
 import { BserApiService, BSERPlayerData, BSERUserMatchesResult } from '../collect/bser-api.service';
 import { MatchCursor, MatchRefreshLeaseLostError, MatchSnapshot, PlayerLookup, PlayerMatchesRepository, StoredMatch, StoredMatchDetails } from './player-matches.repository';
 
@@ -72,7 +72,7 @@ type SyncedPlayerLookup = PlayerLookup & { matchesSyncedAt: Date };
 @Injectable()
 export class PlayerMatchesService {
   private readonly logger = new Logger(PlayerMatchesService.name);
-  private readonly inFlight = new Map<string, Promise<boolean>>();
+  private readonly inFlight = new SharedPlayerWork<boolean>();
   private readonly ttlMs: number;
   private readonly timeOffset: string;
 
@@ -94,6 +94,7 @@ export class PlayerMatchesService {
     const limit = this.parseLimit(limitParam);
     const cursor = this.parseCursor(cursorParam);
     const { lookup, isStale } = await this.ensureFreshMatches(nickname);
+    checkPlayerWork();
     if (cursor && cursor.playerId !== lookup.id) {
       throw new BadRequestException({ code: 'INVALID_CURSOR', message: '다른 플레이어의 커서입니다.' });
     }
@@ -114,6 +115,7 @@ export class PlayerMatchesService {
       throw new BadRequestException({ code: 'INVALID_GAME_ID', message: '경기 ID는 유효한 양의 정수여야 합니다.' });
     }
 
+    checkPlayerWork();
     const record = await this.repository.findMatchByNicknameKey(nickname.toLocaleLowerCase('ko-KR'), gameId);
     if (!record) {
       throw new NotFoundException({ code: 'MATCH_NOT_FOUND', message: '저장된 경기 기록을 찾을 수 없습니다.' });
@@ -126,6 +128,7 @@ export class PlayerMatchesService {
     const seasonId = this.parseSeasonId(seasonParam);
     const matchingMode = this.parseMatchingMode(modeParam);
     const { lookup, isStale } = await this.ensureFreshMatches(nickname);
+    checkPlayerWork();
     const aggregate = await this.repository.aggregateMatches(lookup.id, seasonId, matchingMode);
     const { sampleSize, wins, top3 } = aggregate;
     const round = (value: number | null): number | null => value === null ? null : Math.round(value * 100) / 100;
@@ -162,6 +165,7 @@ export class PlayerMatchesService {
       if (error instanceof UpstreamFailure) throw this.upstreamException(error);
       throw error;
     }
+    checkPlayerWork();
     const lookup = await this.repository.findByNicknameKey(nicknameKey);
     if (!lookup?.matchesSyncedAt) {
       throw new HttpException({ code: 'MATCHES_NOT_READY', message: '전적을 아직 조회할 수 없습니다.' }, HttpStatus.BAD_GATEWAY);
@@ -170,6 +174,7 @@ export class PlayerMatchesService {
   }
 
   private async ensureFreshMatches(nickname: string): Promise<{ lookup: SyncedPlayerLookup; isStale: boolean }> {
+    checkPlayerWork();
     const nicknameKey = nickname.toLocaleLowerCase('ko-KR');
     let lookup = await this.repository.findByNicknameKey(nicknameKey);
     let isStale = false;
@@ -177,6 +182,7 @@ export class PlayerMatchesService {
     if (!lookup?.matchesSyncedAt || Date.now() - lookup.matchesSyncedAt.getTime() >= this.ttlMs) {
       try {
         await this.refreshShared(nickname, nicknameKey, lookup?.matchesSyncedAt ?? null);
+        checkPlayerWork();
         lookup = await this.repository.findByNicknameKey(nicknameKey);
       } catch (error) {
         if (!(error instanceof UpstreamFailure || error instanceof MatchRefreshBusyError)) throw error;
@@ -204,7 +210,7 @@ export class PlayerMatchesService {
 
   private async waitForCommittedSnapshot(nicknameKey: string): Promise<boolean> {
     for (let attempt = 0; attempt < 3; attempt += 1) {
-      await delay(200);
+      await playerDelay(200);
       const lookup = await this.repository.findByNicknameKey(nicknameKey);
       if (lookup?.matchesSyncedAt) return true;
     }
@@ -212,13 +218,7 @@ export class PlayerMatchesService {
   }
 
   private async refreshShared(nickname: string, nicknameKey: string, previousSync?: Date | null): Promise<void> {
-    let pending = this.inFlight.get(nicknameKey);
-    if (!pending) {
-      pending = this.refreshWithLease(nickname, nicknameKey, previousSync)
-        .finally(() => this.inFlight.delete(nicknameKey));
-      this.inFlight.set(nicknameKey, pending);
-    }
-    const updated = await pending;
+    const updated = await this.inFlight.run(nicknameKey, () => this.refreshWithLease(nickname, nicknameKey, previousSync));
     if (previousSync === undefined && !updated) throw new MatchRefreshBusyError();
   }
 
@@ -231,6 +231,7 @@ export class PlayerMatchesService {
 
     let committed = false;
     try {
+      checkPlayerWork();
       // A different instance may have saved its snapshot before this claim succeeded.
       if (previousSync !== undefined) {
         const current = await this.repository.findByNicknameKey(nicknameKey);
@@ -255,6 +256,7 @@ export class PlayerMatchesService {
   }
 
   private async refresh(nickname: string, nicknameKey: string, lease: string): Promise<void> {
+    checkPlayerWork();
     const userResult = await this.bserApi.findUserByNicknameDetailed(nickname);
     if (userResult.status === 'not_found') {
       throw new NotFoundException({ code: 'PLAYER_NOT_FOUND', message: '플레이어를 찾을 수 없습니다.' });
@@ -266,6 +268,7 @@ export class PlayerMatchesService {
       );
     }
 
+    checkPlayerWork();
     const matchResult: BSERUserMatchesResult = await this.bserApi.fetchUserMatchesDetailed(userResult.user.userId);
     if (matchResult.status === 'unavailable' || matchResult.status === 'not_configured') {
       throw new UpstreamFailure(
@@ -288,6 +291,7 @@ export class PlayerMatchesService {
     } catch {
       throw new UpstreamFailure();
     }
+    checkPlayerWork();
     await this.repository.saveSnapshot(
       userResult.user.nickname,
       nicknameKey,

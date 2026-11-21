@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { PlayerHistoryDatabaseService } from '../../common/database/player-history-database.service';
+import { checkPlayerWork } from '../../common/player-work/player-work';
 
 // Allows both BSER calls to use the existing queue and retry timeouts before a lease expires.
 const MATCH_REFRESH_LEASE_SECONDS = 60;
@@ -139,9 +140,11 @@ export class PlayerMatchesRepository {
     syncedAt: Date,
     lease?: string,
   ): Promise<PlayerLookup> {
+    checkPlayerWork();
     const client = await this.database.getPool().connect();
     try {
       await client.query('BEGIN');
+      checkPlayerWork();
       await client.query('SELECT pg_advisory_xact_lock(hashtext($1)::bigint)', [nicknameKey]);
       if (lease) {
         const result = await client.query(
@@ -152,6 +155,7 @@ export class PlayerMatchesRepository {
         );
         if (result.rowCount !== 1) throw new MatchRefreshLeaseLostError();
       }
+      checkPlayerWork();
       const lookup = await client.query<LookupRow>(
         `INSERT INTO player_history.player_lookups
            (nickname, nickname_key, resolved_at)
@@ -165,6 +169,7 @@ export class PlayerMatchesRepository {
       const playerId = lookup.rows[0].id;
 
       for (const chunk of chunks(games, 100)) {
+        checkPlayerWork();
         const matchValues = chunk.flatMap((game) => [
           game.gameId, game.seasonId, game.matchingMode,
           game.matchingTeamMode, game.startedAt,
@@ -200,6 +205,7 @@ export class PlayerMatchesRepository {
         );
       }
 
+      checkPlayerWork();
       const updated = await client.query<LookupRow>(
         `UPDATE player_history.player_lookups SET matches_synced_at = $2
          WHERE id = $1 RETURNING id, nickname, matches_synced_at`,
@@ -213,6 +219,7 @@ export class PlayerMatchesRepository {
         );
         if (result.rowCount !== 1) throw new MatchRefreshLeaseLostError();
       }
+      checkPlayerWork();
       await client.query('COMMIT');
       return mapLookup(updated.rows[0]);
     } catch (error) {

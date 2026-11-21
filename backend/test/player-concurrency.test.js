@@ -5,6 +5,31 @@ const { PlayerMatchesService } = require('../dist/modules/player-matches/player-
 const { PlayerSeasonStatsService } = require('../dist/modules/player-season-stats/player-season-stats.service');
 const { PlayerCompareService } = require('../dist/modules/player-compare/player-compare.service');
 const refreshLease = require('./helpers/season-stats-refresh.cjs');
+const { playerWork, SharedPlayerWork } = require('../dist/common/player-work/player-work');
+
+test('cancelling one waiter keeps the shared operation for the other waiter', async () => {
+  const shared = new SharedPlayerWork();
+  const firstClient = new AbortController();
+  const secondClient = new AbortController();
+  const gate = Promise.withResolvers();
+  let calls = 0;
+  const task = async () => {
+    calls += 1;
+    await gate.promise;
+    assert.equal(playerWork.getStore().signal.aborted, false);
+    return 'updated';
+  };
+  const run = (controller) => playerWork.run({ signal: controller.signal, deadline: Infinity },
+    () => shared.run('same', task));
+  const first = run(firstClient);
+  const second = run(secondClient);
+  const cancelled = assert.rejects(first, { status: 504 });
+  firstClient.abort();
+  await cancelled;
+  gate.resolve();
+  assert.equal(await second, 'updated');
+  assert.equal(calls, 1);
+});
 
 function config(overrides = {}) {
   return {

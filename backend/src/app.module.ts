@@ -24,6 +24,7 @@ import { PlayerSeasonStatsModule } from './modules/player-season-stats/player-se
 import { PlayerCompareModule } from './modules/player-compare/player-compare.module';
 import { PlayerRefreshModule } from './modules/player-refresh/player-refresh.module';
 import { PlayerRetryAfterInterceptor } from './player-api/player-retry-after.interceptor';
+import { PlayerRequestInterceptor } from './player-api/player-request.interceptor';
 import { AIChatModule } from './modules/ai-chat/ai-chat.module';
 
 @Module({
@@ -56,6 +57,7 @@ import { AIChatModule } from './modules/ai-chat/ai-chat.module';
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
+    { provide: APP_INTERCEPTOR, useClass: PlayerRequestInterceptor },
     { provide: APP_INTERCEPTOR, useClass: PlayerRetryAfterInterceptor },
     { provide: APP_GUARD, useClass: RateLimitGuard },
   ],

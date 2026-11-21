@@ -147,3 +147,48 @@ test('player-only app enforces route rate limits without Redis', async () => {
     await app.close();
   }
 });
+
+test('player routes return 504 at the deadline and abort on a closed client connection', { timeout: 5000 }, async () => {
+  const { NestFactory } = require('@nestjs/core');
+  const { PlayerApiModule } = require('../dist/player-api/player-api.module');
+  const { PlayerMatchesService } = require('../dist/modules/player-matches/player-matches.service');
+  const { playerDelay, playerWork } = require('../dist/common/player-work/player-work');
+  const previous = process.env.PLAYER_REQUEST_TIMEOUT_MS;
+  process.env.PLAYER_REQUEST_TIMEOUT_MS = '250';
+  const app = await NestFactory.create(PlayerApiModule, { logger: false });
+  try {
+    const requests = Array.from({ length: 2 }, () => ({
+      started: Promise.withResolvers(), stopped: Promise.withResolvers(),
+    }));
+    let index = 0;
+    app.get(PlayerMatchesService).getMatchDetail = async () => {
+      const { started, stopped } = requests[index++];
+      const work = playerWork.getStore();
+      started.resolve();
+      try {
+        await playerDelay(10_000);
+      } finally {
+        stopped.resolve(work?.signal.aborted);
+      }
+    };
+    await app.listen(0, '127.0.0.1');
+    const { port } = app.getHttpServer().address();
+    const url = `http://127.0.0.1:${port}/v1/players/test/matches/1`;
+    const response = await fetch(url);
+    assert.equal(response.status, 504);
+    assert.equal((await response.json()).code, 'PLAYER_REQUEST_TIMEOUT');
+    assert.equal(await requests[0].stopped.promise, true);
+
+    const client = new AbortController();
+    const pending = fetch(url, { signal: client.signal });
+    const rejected = assert.rejects(pending, { name: 'AbortError' });
+    await requests[1].started.promise;
+    client.abort();
+    await rejected;
+    assert.equal(await requests[1].stopped.promise, true);
+  } finally {
+    await app.close();
+    if (previous === undefined) delete process.env.PLAYER_REQUEST_TIMEOUT_MS;
+    else process.env.PLAYER_REQUEST_TIMEOUT_MS = previous;
+  }
+});
