@@ -30,6 +30,7 @@ export class PlayerApiHealthController {
         stats: string | null;
         stats_absences: string | null;
         stats_refresh_states: string | null;
+        nickname_absences: string | null;
         match_refresh_leases: string | null;
         match_details: boolean;
       }>(`SELECT
@@ -39,6 +40,7 @@ export class PlayerApiHealthController {
           to_regclass('player_history.player_season_stats')::text AS stats,
           to_regclass('player_history.player_season_stats_absences')::text AS stats_absences,
           to_regclass('player_history.season_stats_refresh_states')::text AS stats_refresh_states,
+          to_regclass('player_history.player_nickname_absences')::text AS nickname_absences,
           to_regclass('player_history.match_refresh_leases')::text AS match_refresh_leases,
           EXISTS (
             SELECT 1 FROM pg_attribute
@@ -47,7 +49,7 @@ export class PlayerApiHealthController {
           ) AS match_details`);
       const schema = result.rows[0];
       if (schema?.lookups && schema.matches && schema.records && schema.stats && schema.stats_absences &&
-          schema.stats_refresh_states && schema.match_details && schema.match_refresh_leases) {
+          schema.stats_refresh_states && schema.nickname_absences && schema.match_details && schema.match_refresh_leases) {
         return { status: 'ok' };
       }
     } catch {

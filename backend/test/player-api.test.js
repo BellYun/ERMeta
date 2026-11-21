@@ -34,6 +34,67 @@ test('PostgreSQL misses expire and are pruned on later writes',
       [hashes[0]])).rowCount, 0);
   });
 
+test('player API instances share confirmed missing nicknames across matches and season stats',
+  { skip: !process.env.TEST_DATABASE_URL }, async (t) => {
+    const { createHash } = require('node:crypto');
+    const { PlayerHistoryDatabaseService } = require('../dist/common/database/player-history-database.service');
+    const { BserApiService } = require('../dist/modules/collect/bser-api.service');
+    const { PlayerNicknameAbsencesRepository } = require('../dist/modules/collect/player-nickname-absences.repository');
+    const { PlayerMatchesRepository } = require('../dist/modules/player-matches/player-matches.repository');
+    const { PlayerMatchesService } = require('../dist/modules/player-matches/player-matches.service');
+    const { PlayerSeasonStatsRepository } = require('../dist/modules/player-season-stats/player-season-stats.repository');
+    const { PlayerSeasonStatsService } = require('../dist/modules/player-season-stats/player-season-stats.service');
+    const settings = { DATABASE_URL: process.env.TEST_DATABASE_URL, BSER_API_KEY: 'test-key' };
+    const config = { get: (name, fallback) => settings[name] ?? fallback };
+    const databases = [new PlayerHistoryDatabaseService(config), new PlayerHistoryDatabaseService(config)];
+    const caches = databases.map((database) => new PlayerNicknameAbsencesRepository(database));
+    const clients = caches.map((cache) => new BserApiService(config, cache));
+    const nickname = `Unknown-${Date.now()}`;
+    const nicknameKey = nickname.toLowerCase();
+    const failedKey = `fail-${nicknameKey}`;
+    const hashes = [nicknameKey, failedKey].map((key) => createHash('sha256').update(key).digest());
+    const pool = databases[0].getPool();
+    t.after(async () => {
+      await pool.query('DELETE FROM player_history.player_nickname_absences WHERE nickname_hash IN ($1, $2)', hashes);
+      await pool.query('DELETE FROM player_history.player_lookups WHERE nickname_key IN ($1, $2)', [nicknameKey, failedKey]);
+      await Promise.all(databases.map((database) => database.onModuleDestroy()));
+      clients.forEach((client) => client.onModuleDestroy());
+    });
+    let nicknameCalls = 0;
+    let nicknameStatus = 404;
+    for (const client of clients) {
+      client.fetchWithRetry = async (input) => {
+        const url = new URL(input);
+        if (url.pathname === '/v1/user/nickname') {
+          nicknameCalls += 1;
+          const body = { code: nicknameStatus, user: { uid: 'fixture', nickname: url.searchParams.get('query') } };
+          return { response: new Response(null, { status: nicknameStatus }), body };
+        }
+        assert.match(url.pathname, /^\/v1\/user\/games\/uid\//);
+        return { response: new Response(), body: { code: 200, userGames: [] } };
+      };
+    }
+    const matches = new PlayerMatchesService(new PlayerMatchesRepository(databases[0]), clients[0], config);
+    const stats = new PlayerSeasonStatsService(new PlayerSeasonStatsRepository(databases[1]), clients[1], config);
+    const notFound = (error) => error.getStatus() === 404 && error.getResponse().code === 'PLAYER_NOT_FOUND';
+
+    await assert.rejects(matches.getMatches(nickname), notFound);
+    await assert.rejects(stats.getStats(nickname.toUpperCase(), '39', '3'), notFound);
+    await assert.rejects(stats.refreshStats(nickname, '39', '3'), notFound);
+    assert.equal(nicknameCalls, 1);
+
+    nicknameStatus = 503;
+    await assert.rejects(matches.getMatches(failedKey), { status: 502 });
+    assert.equal(await caches[1].isMissing(failedKey), false);
+    nicknameStatus = 200;
+    assert.equal((await matches.getMatches(failedKey)).nickname, failedKey);
+
+    await pool.query('UPDATE player_history.player_nickname_absences SET expires_at = statement_timestamp() WHERE nickname_hash = $1',
+      [hashes[0]]);
+    assert.equal((await matches.getMatches(nickname)).nickname, nickname);
+    assert.equal(nicknameCalls, 4);
+  });
+
 test('local URL and Cloud SQL socket select the expected PostgreSQL connection', () => {
   const local = playerHistoryPoolOptions((name) => ({ DATABASE_URL: 'postgres://user:pass@localhost:5432/ermeta' })[name]);
   assert.equal(local.connectionString, 'postgres://user:pass@localhost:5432/ermeta');

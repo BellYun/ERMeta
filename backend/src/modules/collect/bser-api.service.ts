@@ -1,6 +1,7 @@
-import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { checkPlayerWork, playerDelay, PlayerRequestTimeoutError, playerWork, SharedPlayerWork } from '../../common/player-work/player-work';
+import { PlayerNicknameAbsencesRepository } from './player-nickname-absences.repository';
 
 export interface BSERGameResponse {
   code: number;
@@ -134,11 +135,15 @@ export class BserApiService implements OnModuleDestroy {
   private readonly rateLimitMaxWaitMs: number;
   private readonly rateLimitQueue: RateLimitWaiter[] = [];
   private readonly inFlightNicknameLookups = new SharedPlayerWork<BSERLookupResult>();
+  private readonly inFlightCachedNicknameLookups = new SharedPlayerWork<BSERLookupResult>();
   private rateLimitTokens: number;
   private rateLimitRefilledAt = Date.now();
   private rateLimitTimer: ReturnType<typeof setTimeout> | null = null;
 
-  constructor(private config: ConfigService) {
+  constructor(
+    private config: ConfigService,
+    @Optional() private readonly nicknameAbsences?: PlayerNicknameAbsencesRepository,
+  ) {
     this.apiKey = this.config.get<string>('BSER_API_KEY', '');
     this.timeoutMs = this.config.get<number>('BSER_API_TIMEOUT_MS', 4_000);
     this.maxRetries = this.config.get<number>('BSER_API_RETRIES', 1);
@@ -216,11 +221,29 @@ export class BserApiService implements OnModuleDestroy {
 
   async findUserByNicknameDetailed(
     nickname: string,
+    options: { cacheMissing?: boolean } = {},
   ): Promise<BSERLookupResult> {
     if (!this.apiKey) return { status: 'not_configured' };
 
     const nicknameKey = nickname.trim().toLocaleLowerCase('ko-KR');
-    return this.inFlightNicknameLookups.run(nicknameKey, () => this.lookupUserByNickname(nickname));
+    const lookup = () => this.inFlightNicknameLookups.run(nicknameKey, () => this.lookupUserByNickname(nickname));
+    const cache = options.cacheMissing ? this.nicknameAbsences : undefined;
+    if (!cache) return lookup();
+    return this.inFlightCachedNicknameLookups.run(nicknameKey, async () => {
+      const missing = await cache.isMissing(nicknameKey).catch(() => {
+        this.logger.warn('닉네임 부재 캐시 조회 실패');
+        return false;
+      });
+      checkPlayerWork();
+      if (missing) return { status: 'not_found' };
+
+      const result = await lookup();
+      if (result.status === 'not_found') {
+        checkPlayerWork();
+        await cache.rememberMissing(nicknameKey).catch(() => this.logger.warn('닉네임 부재 캐시 저장 실패'));
+      }
+      return result;
+    });
   }
 
   private async lookupUserByNickname(nickname: string): Promise<BSERLookupResult> {
