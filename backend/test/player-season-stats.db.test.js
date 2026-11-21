@@ -6,6 +6,7 @@ const { PlayerSeasonStatsRepository } = require('../dist/modules/player-season-s
 const { PlayerMatchesService } = require('../dist/modules/player-matches/player-matches.service');
 const { PlayerSeasonStatsService } = require('../dist/modules/player-season-stats/player-season-stats.service');
 const { PlayerRefreshService } = require('../dist/modules/player-refresh/player-refresh.service');
+const { playerDelay, playerWork } = require('../dist/common/player-work/player-work');
 
 function stats(totalGames = 10, totalWins = 2) {
   return {
@@ -16,6 +17,39 @@ function stats(totalGames = 10, totalWins = 2) {
     characterStats: [{ characterCode: 1, totalGames: 5, wins: 1, top3Rate: 0.6, averageRank: 2.2 }],
   };
 }
+
+test('a cancelled season refresh releases its lease without recording provider backoff',
+  { skip: !process.env.TEST_DATABASE_URL, timeout: 5000 }, async (t) => {
+    const config = { get: (key) => key === 'DATABASE_URL' ? process.env.TEST_DATABASE_URL : undefined };
+    const database = new PlayerHistoryDatabaseService(config);
+    const repository = new PlayerSeasonStatsRepository(database);
+    const nickname = `CancelledStats-${Date.now()}`;
+    const scope = { nicknameKey: nickname.toLowerCase(), seasonId: 39, matchingMode: 3 };
+    t.after(async () => {
+      await database.getPool().query('DELETE FROM player_history.season_stats_refresh_states WHERE nickname_key = $1', [scope.nicknameKey]);
+      await database.onModuleDestroy();
+    });
+
+    const started = Promise.withResolvers();
+    const bser = {
+      findUserByNicknameDetailed: async () => ({ status: 'found', user: { nickname, userId: 'fixture-uid' } }),
+      async fetchUserStatsDetailed() {
+        started.resolve();
+        await playerDelay(60_000);
+        throw new Error('The stats fetch should be cancelled');
+      },
+    };
+    const service = new PlayerSeasonStatsService(repository, bser, config);
+    const client = new AbortController();
+    const pending = playerWork.run({ signal: client.signal, deadline: Infinity },
+      () => service.refreshStats(nickname, '39', '3'));
+    const rejected = assert.rejects(pending, { status: 504 });
+    await started.promise;
+    client.abort();
+    await rejected;
+    assert.equal(await repository.findByNicknameKey(scope.nicknameKey), null);
+    assert.equal((await repository.claimRefresh(scope)).status, 'acquired');
+  });
 
 test('season stats leases fence expired writes and retain provider backoff',
   { skip: !process.env.TEST_DATABASE_URL }, async (t) => {

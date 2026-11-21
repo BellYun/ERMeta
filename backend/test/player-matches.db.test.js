@@ -3,6 +3,37 @@ const test = require('node:test');
 const { PlayerHistoryDatabaseService } = require('../dist/common/database/player-history-database.service');
 const { PlayerMatchesRepository } = require('../dist/modules/player-matches/player-matches.repository');
 const { PlayerMatchesService } = require('../dist/modules/player-matches/player-matches.service');
+const { playerDelay, playerWork } = require('../dist/common/player-work/player-work');
+
+test('cancelling the last match refresh waiter drains the work and releases the DB lease',
+  { skip: !process.env.TEST_DATABASE_URL, timeout: 5000 }, async (t) => {
+    const config = { get: (key) => key === 'DATABASE_URL' ? process.env.TEST_DATABASE_URL : undefined };
+    const database = new PlayerHistoryDatabaseService(config);
+    const repository = new PlayerMatchesRepository(database);
+    const nickname = `Cancelled-${Date.now()}`;
+    const nicknameKey = nickname.toLowerCase();
+    t.after(async () => {
+      await database.getPool().query('DELETE FROM player_history.match_refresh_leases WHERE nickname_key = $1', [nicknameKey]);
+      await database.onModuleDestroy();
+    });
+    const started = Promise.withResolvers();
+    const bser = {
+      async findUserByNicknameDetailed() {
+        started.resolve();
+        await playerDelay(60_000);
+        throw new Error('The lookup should be cancelled');
+      },
+    };
+    const service = new PlayerMatchesService(repository, bser, config);
+    const client = new AbortController();
+    const pending = playerWork.run({ signal: client.signal, deadline: Infinity }, () => service.getMatches(nickname));
+    const rejected = assert.rejects(pending, { status: 504 });
+    await started.promise;
+    client.abort();
+    await rejected;
+    assert.equal(await repository.findByNicknameKey(nicknameKey), null);
+    assert.ok(await repository.claimRefresh(nicknameKey));
+  });
 
 test('a replaced refresh lease cannot save a snapshot or release the new owner',
   { skip: !process.env.TEST_DATABASE_URL }, async (t) => {

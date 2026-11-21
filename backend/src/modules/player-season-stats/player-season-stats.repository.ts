@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { PoolClient } from 'pg';
 import { PlayerHistoryDatabaseService } from '../../common/database/player-history-database.service';
+import { checkPlayerWork } from '../../common/player-work/player-work';
 
 // Allow the two BSER operations to use the existing queue and request timeouts.
 const REFRESH_LEASE_SECONDS = 60;
@@ -186,9 +187,11 @@ export class PlayerSeasonStatsRepository {
     leaseToken?: string,
   ): Promise<PlayerLookup> {
     const scope = { nicknameKey, seasonId, matchingMode };
+    checkPlayerWork();
     const client = await this.database.getPool().connect();
     try {
       await client.query('BEGIN');
+      checkPlayerWork();
       await client.query('SELECT pg_advisory_xact_lock(hashtext($1)::bigint)', [nicknameKey]);
       if (leaseToken) {
         const held = await client.query(
@@ -200,6 +203,7 @@ export class PlayerSeasonStatsRepository {
         );
         if (held.rowCount !== 1) throw new SeasonStatsRefreshLeaseLostError();
       }
+      checkPlayerWork();
       const lookup = await client.query<LookupRow>(
         `INSERT INTO player_history.player_lookups
            (nickname, nickname_key, resolved_at)
@@ -226,10 +230,12 @@ export class PlayerSeasonStatsRepository {
       );
       if (state.has_newer) {
         if (leaseToken) await this.finishRefresh(client, scope, leaseToken);
+        checkPlayerWork();
         await client.query('COMMIT');
         return mapLookup(lookup.rows[0]);
       }
 
+      checkPlayerWork();
       await client.query(
         `DELETE FROM player_history.player_season_stats
          WHERE player_lookup_id = $1 AND season_id = $2 AND matching_mode = $3
@@ -268,6 +274,7 @@ export class PlayerSeasonStatsRepository {
         );
       }
       if (leaseToken) await this.finishRefresh(client, scope, leaseToken);
+      checkPlayerWork();
       await client.query('COMMIT');
       return mapLookup(lookup.rows[0]);
     } catch (error) {

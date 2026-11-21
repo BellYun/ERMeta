@@ -205,3 +205,19 @@ test('cancelling queued BSER work immediately frees its rate-limit slot', async 
     assert.equal(requests, 1);
   });
 });
+
+test('cancelling during BSER retry backoff skips the next attempt', { timeout: 3000 }, async () => {
+  const controller = new AbortController();
+  let attempts = 0;
+  await withServer((_request, response) => {
+    attempts += 1;
+    response.writeHead(503);
+    response.end();
+    setTimeout(() => controller.abort(), 30);
+  }, { BSER_API_RETRIES: 1 }, async (api) => {
+    const pending = playerWork.run({ signal: controller.signal, deadline: Infinity },
+      () => api.fetchUserStatsDetailed('uid', 41, 3));
+    await assert.rejects(pending, { status: 504 });
+    assert.equal(attempts, 1);
+  });
+});

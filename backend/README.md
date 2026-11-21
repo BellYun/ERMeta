@@ -201,6 +201,8 @@ Content-Type: application/json
 
 `seasonId`와 `matchingMode`는 비교 API와 같은 숫자 범위를 사용한다. 이 요청은 전적 300초·공식 통계 600초 TTL을 무시하고 두 영역을 갱신한다. 저장 경기 기준 `/match-stats`는 갱신된 전적을 다음 조회에서 집계한다. 같은 프로세스에서 같은 닉네임·시즌·모드 갱신이 겹치면 각 영역의 외부 요청을 공유한다.
 
+`/v1/players/*`는 핸들러 전체에 기본 10초(`PLAYER_REQUEST_TIMEOUT_MS`)를 적용한다. 제한 시간이 지나면 `504 PLAYER_REQUEST_TIMEOUT`을 반환한다. 연결이 끊기거나 제한 시간이 지나면 대기 중인 BSER 호출과 재시도가 취소된다. 같은 작업의 다른 요청이 남아 있으면 그 요청을 위해 갱신을 계속한다.
+
 두 영역이 성공하면 HTTP 200과 `refreshStatus=updated`를 반환한다. 공식 시즌 기록이 없어 `seasonStats.status=no_stats`인 경우도 확인 완료로 처리한다. 하나라도 실패하면 HTTP 오류와 `refreshStatus=partial` 또는 `failed`, 각 영역의 `status`와 실패 `code`를 반환한다. 성공한 영역은 이미 DB에 반영될 수 있으므로 부분 실패 후 재요청할 수 있다. 저장된 데이터가 있더라도 이번 명시적 갱신 실패를 성공이나 `isStale=true`로 바꾸지 않는다. 양쪽 모두 플레이어 없음이면 404, 공식 API 요청 제한이면 429, 일반 외부 장애면 502, 내부 오류면 500이다.
 
 ```json

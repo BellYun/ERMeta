@@ -8,6 +8,7 @@ import { PlayerRefreshModule } from '../modules/player-refresh/player-refresh.mo
 import { PlayerSeasonStatsModule } from '../modules/player-season-stats/player-season-stats.module';
 import { PlayerApiHealthController } from './player-api-health.controller';
 import { PlayerRateLimitGuard } from './player-rate-limit.guard';
+import { PlayerRequestInterceptor } from './player-request.interceptor';
 import { PlayerRetryAfterInterceptor } from './player-retry-after.interceptor';
 
 @Module({
@@ -22,6 +23,7 @@ import { PlayerRetryAfterInterceptor } from './player-retry-after.interceptor';
   controllers: [PlayerApiHealthController],
   providers: [
     { provide: APP_GUARD, useClass: PlayerRateLimitGuard },
+    { provide: APP_INTERCEPTOR, useClass: PlayerRequestInterceptor },
     { provide: APP_INTERCEPTOR, useClass: PlayerRetryAfterInterceptor },
   ],
 })

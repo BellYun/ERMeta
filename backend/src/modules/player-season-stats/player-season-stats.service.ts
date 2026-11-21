@@ -1,6 +1,6 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { setTimeout as delay } from 'node:timers/promises';
+import { checkPlayerWork, playerDelay, SharedPlayerWork } from '../../common/player-work/player-work';
 import { BserApiService, BSERUserSeasonStats } from '../collect/bser-api.service';
 import {
   OfficialSeasonStats, PlayerSeasonStatsRepository, SeasonStatsRefreshLeaseLostError,
@@ -46,7 +46,7 @@ class SeasonStatsRefreshBusyError extends HttpException {
 @Injectable()
 export class PlayerSeasonStatsService {
   private readonly logger = new Logger(PlayerSeasonStatsService.name);
-  private readonly inFlight = new Map<string, Promise<RefreshResult>>();
+  private readonly inFlight = new SharedPlayerWork<RefreshResult>();
   private readonly ttlMs: number;
 
   constructor(
@@ -59,6 +59,7 @@ export class PlayerSeasonStatsService {
   }
 
   async getStats(nicknameParam: string, seasonParam?: string, modeParam?: string): Promise<PlayerSeasonStatsResponse> {
+    checkPlayerWork();
     const nickname = parseNickname(nicknameParam);
     const nicknameKey = nickname.toLocaleLowerCase('ko-KR');
     // 닉네임만 받는 AI 컨텍스트는 캐시만 읽고 BSER API 갱신을 유발하지 않습니다.
@@ -74,6 +75,7 @@ export class PlayerSeasonStatsService {
     const seasonId = parseSeasonId(seasonParam);
     const matchingMode = parseMatchingMode(modeParam);
     const lookup = await this.repository.findByNicknameKey(nicknameKey);
+    checkPlayerWork();
     const snapshot = lookup ? await this.repository.findSnapshot(lookup.id, seasonId, matchingMode) : null;
 
     if (snapshot && Date.now() - snapshot.fetchedAt.getTime() < this.ttlMs) {
@@ -123,12 +125,7 @@ export class PlayerSeasonStatsService {
     previous?: StoredSeasonResult | null,
   ): Promise<RefreshResult> {
     const key = `${scope.nicknameKey}:${scope.seasonId}:${scope.matchingMode}`;
-    let pending = this.inFlight.get(key);
-    if (!pending) {
-      pending = this.refreshWithLease(nickname, scope, previous).finally(() => this.inFlight.delete(key));
-      this.inFlight.set(key, pending);
-    }
-    const result = await pending;
+    const result = await this.inFlight.run(key, () => this.refreshWithLease(nickname, scope, previous));
     if (previous === undefined && result.reused) throw new SeasonStatsRefreshBusyError();
     return result;
   }
@@ -145,7 +142,7 @@ export class PlayerSeasonStatsService {
     if (claim.status === 'busy') {
       if (previous !== undefined && !previous?.stats) {
         for (let attempt = 0; attempt < 3; attempt += 1) {
-          await delay(200);
+          await playerDelay(200);
           const result = await this.readNewerSnapshot(scope, previous);
           if (result) return result;
         }
@@ -155,6 +152,7 @@ export class PlayerSeasonStatsService {
 
     let finished = false;
     try {
+      checkPlayerWork();
       // A different instance may have committed a result before this claim succeeded.
       if (previous !== undefined) {
         const result = await this.readNewerSnapshot(scope, previous);
@@ -188,6 +186,7 @@ export class PlayerSeasonStatsService {
 
   private async readNewerSnapshot(scope: SeasonStatsScope, previous: StoredSeasonResult | null): Promise<RefreshResult | null> {
     const lookup = await this.repository.findByNicknameKey(scope.nicknameKey);
+    checkPlayerWork();
     if (!lookup) return null;
     const snapshot = await this.repository.findSnapshot(lookup.id, scope.seasonId, scope.matchingMode);
     if (!snapshot || (previous && snapshot.fetchedAt <= previous.fetchedAt)) return null;
@@ -195,6 +194,7 @@ export class PlayerSeasonStatsService {
   }
 
   private async refresh(nickname: string, scope: SeasonStatsScope, lease: string): Promise<RefreshResult> {
+    checkPlayerWork();
     const { nicknameKey, seasonId, matchingMode } = scope;
     const userResult = await this.bserApi.findUserByNicknameDetailed(nickname);
     if (userResult.status === 'not_found') {
@@ -207,6 +207,7 @@ export class PlayerSeasonStatsService {
       );
     }
 
+    checkPlayerWork();
     const statsResult = await this.bserApi.fetchUserStatsDetailed(userResult.user.userId, seasonId, matchingMode);
     if (statsResult.status === 'unavailable' || statsResult.status === 'not_configured') {
       throw new UpstreamFailure(
@@ -218,6 +219,7 @@ export class PlayerSeasonStatsService {
       ? normalizeStats(statsResult.stats, seasonId, matchingMode)
       : null;
     const fetchedAt = new Date();
+    checkPlayerWork();
     await this.repository.saveResult(
       userResult.user.nickname,
       nicknameKey,

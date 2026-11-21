@@ -86,6 +86,7 @@ function retryAfterFromError(error: unknown): number {
 function failureHttpStatus(errors: unknown[], allFailed: boolean): number {
   const statuses = errors.map((error) => error instanceof HttpException ? error.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR);
   if (allFailed && statuses.every((status) => status === HttpStatus.NOT_FOUND)) return HttpStatus.NOT_FOUND;
+  if (statuses.includes(HttpStatus.GATEWAY_TIMEOUT)) return HttpStatus.GATEWAY_TIMEOUT;
   if (statuses.includes(HttpStatus.TOO_MANY_REQUESTS)) return HttpStatus.TOO_MANY_REQUESTS;
   if (statuses.includes(HttpStatus.INTERNAL_SERVER_ERROR)) return HttpStatus.INTERNAL_SERVER_ERROR;
   if (statuses.includes(HttpStatus.SERVICE_UNAVAILABLE)) return HttpStatus.SERVICE_UNAVAILABLE;

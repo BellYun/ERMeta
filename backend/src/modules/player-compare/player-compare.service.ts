@@ -1,4 +1,5 @@
 import { BadRequestException, HttpException, Injectable, Logger } from '@nestjs/common';
+import { PlayerRequestTimeoutError } from '../../common/player-work/player-work';
 import { PlayerSeasonStatsResponse, PlayerSeasonStatsService } from '../player-season-stats/player-season-stats.service';
 
 type FailureCode = 'PLAYER_NOT_FOUND' | 'BSER_RATE_LIMITED' | 'BSER_UNAVAILABLE' | 'SERVICE_UNAVAILABLE' | 'INTERNAL_ERROR';
@@ -37,6 +38,7 @@ export class PlayerCompareService {
       const result = await this.seasonStats.getStats(input, String(seasonId), String(matchingMode));
       return { input, status: result.stats === null ? 'no_stats' : 'ok', ...result };
     } catch (error) {
+      if (error instanceof PlayerRequestTimeoutError) throw error;
       if (error instanceof HttpException) {
         const code = errorCode(error);
         const response = error.getResponse();
