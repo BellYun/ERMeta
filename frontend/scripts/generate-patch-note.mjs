@@ -165,8 +165,7 @@ async function callGemini(prompt) {
 
         const data = await response.json();
         const notes = parsePatchNotes(data?.candidates?.[0]);
-        console.log(`✅ Parsed ${notes.length} character patch notes with ${model}`);
-        return notes;
+        return { model, notes };
       } catch (err) {
         console.warn(`⚠️ Model ${model} failed:`, err.message);
         lastError = err;
@@ -227,7 +226,7 @@ ${rawContent.slice(0, 70000)}
 `;
 
   console.log("🤖 Asking Gemini to parse patch changes as JSON...");
-  const notes = await callGemini(prompt);
+  const { model, notes } = await callGemini(prompt);
   const cleanCode = `import type { CharacterPatchNote } from "./10.1";\n\nexport const PATCH_NOTES: CharacterPatchNote[] = ${JSON.stringify(notes, null, 2)};\n`;
 
   if (isDryRun) {
@@ -277,7 +276,7 @@ ${rawContent.slice(0, 70000)}
     console.log(`ℹ️ ${varName} already imported in patch-notes.ts`);
   }
 
-  console.log(`\n🎉 Successfully generated patch data for v${version}!`);
+  console.log(`\n🎉 Generated patch data for v${version} with ${model} (${notes.length} characters).`);
 }
 
 main().catch((err) => {
