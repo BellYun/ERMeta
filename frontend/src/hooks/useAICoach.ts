@@ -68,7 +68,7 @@ export function useAICoach() {
     const handleVisibility = () => {
       if (document.hidden && streamStatus !== "idle") {
         timer = setTimeout(() => {
-          if (document.hidden && streamStatus !== "idle") {
+          if (document.hidden) {
             controllerRef.current?.abort();
           }
         }, 15_000);
