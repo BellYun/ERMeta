@@ -1,0 +1,52 @@
+{
+  "ko": {
+    "title": "AI 코치",
+    "clear": "대화 초기화",
+    "close": "닫기",
+    "nickname": "게임 닉네임",
+    "save": "저장",
+    "waiting": "분석 중...",
+    "aborted": "[답변 중단됨]",
+    "retry": "[🔄 다시 시도]",
+    "question": "질문을 입력하세요...",
+    "stop": "중단 ⏹️",
+    "send": "전송",
+    "quickQuestions": ["시즌 13 피오라 공략", "근딜 추천해줘", "3인 조합 추천"]
+  },
+  "en": {
+    "title": "AI Coach",
+    "clear": "Clear chat",
+    "close": "Close",
+    "nickname": "In-game nickname",
+    "save": "Save",
+    "waiting": "Analyzing...",
+    "aborted": "[Answer stopped]",
+    "retry": "[🔄 Retry]",
+    "question": "Ask a question...",
+    "stop": "Stop ⏹️",
+    "send": "Send",
+    "quickQuestions": [
+      "Season 13 Fiora guide",
+      "Recommend melee carries",
+      "Recommend trio compositions"
+    ]
+  },
+  "ja": {
+    "title": "AIコーチ",
+    "clear": "会話をリセット",
+    "close": "閉じる",
+    "nickname": "ゲーム内のニックネーム",
+    "save": "保存",
+    "waiting": "分析中...",
+    "aborted": "[回答を中断しました]",
+    "retry": "[🔄 再試行]",
+    "question": "質問を入力してください...",
+    "stop": "中断 ⏹️",
+    "send": "送信",
+    "quickQuestions": [
+      "シーズン13のフィオラ攻略",
+      "近接アタッカーをおすすめして",
+      "3人編成をおすすめして"
+    ]
+  }
+}
