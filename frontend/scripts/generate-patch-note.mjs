@@ -212,6 +212,7 @@ ${weaponMapCode.slice(0, 3000)}
 2. Ignore cobalt-only changes (코발트 프로토콜 제외).
 3. Group changes for each character into one entry:
    - Identify their characterCode from the Character Code Reference.
+   - Create one change object per distinct adjustment listed in the source. Give separate stats (such as range and duration) their own objects even when they share a skill and change type.
    - For each change, determine:
      - \`target\`: e.g. "스냅샷(Q) · 스킬 증폭 계수", "기본 체력", "방망이 숙련도 · 레벨당 스킬 증폭"
      - \`changeType\`: "buff" | "nerf" | "rework"
