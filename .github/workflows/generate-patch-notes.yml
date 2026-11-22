@@ -17,49 +17,67 @@ on:
         type: string
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   generate:
-    name: Generate Patch Data & PR
+    name: Generate and Test Patch Data
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
+      - name: Check PR Credential
+        env:
+          HAS_PATCH_PR_TOKEN: ${{ secrets.PATCH_PR_TOKEN != '' }}
+        run: |
+          if [ "$HAS_PATCH_PR_TOKEN" != true ]; then
+            echo "::error::Pull requests 쓰기 권한이 있는 토큰을 PATCH_PR_TOKEN Actions 시크릿으로 등록하세요."
+            exit 1
+          fi
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: "npm"
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            frontend/package-lock.json
+
+      - name: Install shared test dependencies
+        run: npm ci
 
       - name: Install frontend dependencies
         working-directory: frontend
         run: npm ci
 
-      - name: Prepare raw text file if provided
-        if: ${{ inputs.raw_text != '' }}
-        run: |
-          cat << 'EOF' > /tmp/patch_raw.txt
-          ${{ inputs.raw_text }}
-          EOF
-
       - name: Run Patch Note Generator
+        working-directory: frontend
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PATCH_VERSION: ${{ inputs.version }}
+          PATCH_URL: ${{ inputs.url }}
+          PATCH_RAW_TEXT: ${{ inputs.raw_text }}
         run: |
-          if [ -n "${{ inputs.url }}" ]; then
-            node frontend/scripts/generate-patch-note.mjs --version "${{ inputs.version }}" --url "${{ inputs.url }}"
-          elif [ -f /tmp/patch_raw.txt ]; then
-            node frontend/scripts/generate-patch-note.mjs --version "${{ inputs.version }}" --file /tmp/patch_raw.txt
+          if [[ ! "$PATCH_VERSION" =~ ^[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::패치 버전은 13.1과 같은 형식이어야 합니다."
+            exit 1
+          fi
+
+          if [ -n "$PATCH_URL" ]; then
+            node scripts/generate-patch-note.mjs --version "$PATCH_VERSION" --url "$PATCH_URL"
+          elif [ -n "$PATCH_RAW_TEXT" ]; then
+            patch_text_file=$(mktemp)
+            trap 'rm -f "$patch_text_file"' EXIT
+            printf '%s\n' "$PATCH_RAW_TEXT" > "$patch_text_file"
+            node scripts/generate-patch-note.mjs --version "$PATCH_VERSION" --file "$patch_text_file"
           else
-            echo "❌ Error: Either URL or raw_text must be provided."
+            echo "::error::공식 공지 URL이나 원문 텍스트를 입력하세요."
             exit 1
           fi
 
@@ -67,28 +85,64 @@ jobs:
         working-directory: frontend
         run: npm test
 
+      - name: Upload Generated Patch Data
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-patch-data
+          path: |
+            frontend/src/data/${{ inputs.version }}.ts
+            frontend/src/data/patch-notes.ts
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 1
+
+  publish:
+    name: Create Patch Data PR
+    needs: generate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Generated Patch Data
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-patch-data
+          path: frontend/src/data
+
       - name: Commit and Create Pull Request
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION: ${{ inputs.version }}
+          GH_TOKEN: ${{ secrets.PATCH_PR_TOKEN }}
+          PATCH_VERSION: ${{ inputs.version }}
         run: |
-          BRANCH_NAME="feat/patch-${VERSION}"
+          patch_file="frontend/src/data/${PATCH_VERSION}.ts"
+          git add -- "$patch_file" frontend/src/data/patch-notes.ts
+          if git diff --cached --quiet; then
+            echo "패치 데이터 변경 사항이 없습니다."
+            exit 0
+          fi
+
+          branch_name="feat/patch-${PATCH_VERSION}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          title="feat: 패치 ${PATCH_VERSION} 밸런스 데이터 자동 등록"
+          body_file="$RUNNER_TEMP/patch-pr.md"
+          cat > "$body_file" <<EOF
+          ## 변경 사항
+          - 님블뉴런 공식 패치 노트를 기반으로 \`$patch_file\` 데이터를 자동 생성했습니다.
+          - \`frontend/src/data/patch-notes.ts\` 인덱스에 패치 버전을 등록했습니다.
+
+          ## 테스트 결과 (테스트를 했으면)
+          - \`npm test\` 통과
+          EOF
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          git checkout -b "$BRANCH_NAME"
-          git add frontend/src/data/
-          git commit -m "feat: 패치 ${VERSION} 밸런스 데이터 자동 등록"
-          git push -u origin "$BRANCH_NAME"
+          git switch -c "$branch_name"
+          git commit -m "$title"
+          git push -u origin "$branch_name"
 
-          gh pr create \
-            --base main \
-            --head "$BRANCH_NAME" \
-            --title "feat: 패치 ${VERSION} 밸런스 데이터 자동 등록" \
-            --body "## 변경 사항
-- 님블뉴런 공식 패치 노트를 기반으로 \`frontend/src/data/${VERSION}.ts\` 데이터를 자동 생성했습니다.
-- \`frontend/src/data/patch-notes.ts\` 인덱스에 패치 버전을 등록했습니다.
-
-## 테스트 결과
-- \`npm test\` 통과 완료
-- Gemini PR Architecture Auditor 검토 대기"
+          gh pr create --base "$GITHUB_REF_NAME" --head "$branch_name" \
+            --title "$title" --body-file "$body_file"
