@@ -17,6 +17,16 @@ interface GeminiChunk {
 @Injectable()
 export class GeminiProvider implements LLMProvider {
   async *stream(options: LLMStreamOptions): AsyncGenerator<string> {
+    if (process.env.MOCK_AI === 'true') {
+      const mockText = `안녕하세요, 실험체님! 이리 전술 코치입니다. 현재 시즌 13 루미아 섬 메타에서는 초반 빠른 합류 템포가 핵심입니다. 특히 2일차 밤 전장 오브젝트 싸움에서 팀원의 주요 궁극기 쿨다운을 먼저 체크하고 진입하는 운영이 높은 승률을 기록하고 있습니다. 추가로 궁금하신 3인 조합이나 특정 실험체 상대법이 있으신가요?`;
+      for (const word of mockText.split(' ')) {
+        options.signal?.throwIfAborted();
+        await new Promise((resolve) => setTimeout(resolve, 70));
+        yield word + ' ';
+      }
+      return;
+    }
+
     const apiKey = process.env.GEMINI_API_KEY?.trim();
     if (!apiKey) throw new ServiceUnavailableException('GEMINI_API_KEY가 설정되지 않았습니다.');
 
