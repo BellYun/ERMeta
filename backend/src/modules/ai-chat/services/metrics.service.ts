@@ -8,6 +8,8 @@ export interface ChatMetrics {
   model: string;
   promptTokens: number;
   completionTokens: number;
+  status?: 'completed' | 'client_aborted' | 'error' | 'timeout';
+  defendedTokens?: number;
   ttftMs: number | null;
   totalDurationMs: number;
   flaggedModeration: boolean;
@@ -45,6 +47,8 @@ export class MetricsService {
       model: metrics.model,
       prompt_tokens: metrics.promptTokens,
       completion_tokens: metrics.completionTokens,
+      status: metrics.status ?? 'completed',
+      defended_tokens: metrics.defendedTokens ?? 0,
       ttft_ms: metrics.ttftMs,
       total_duration_ms: metrics.totalDurationMs,
       flagged_moderation: metrics.flaggedModeration,

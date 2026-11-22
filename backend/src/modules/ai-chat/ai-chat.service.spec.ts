@@ -351,6 +351,7 @@ test('cancelled requests abort upstream fetch and already-cancelled requests do 
   const abort = new AbortController();
   let upstreamSignal: AbortSignal | undefined;
   const started = deferred();
+  const record = mock.fn((_metrics: ChatMetrics) => {});
   const provider: GeminiProvider = {
     async *stream(request) {
       upstreamSignal = request.signal;
@@ -360,12 +361,19 @@ test('cancelled requests abort upstream fetch and already-cancelled requests do 
       yield 'unreachable';
     },
   };
-  const chat = service(provider);
+  const chat = service(provider, undefined, undefined, undefined, undefined, {
+    record, estimateTokens: MetricsService.prototype.estimateTokens,
+  });
   const pending = collect(chat.stream('질문', undefined, undefined, undefined, abort.signal));
   await started.promise;
   abort.abort();
   await assert.rejects(pending);
   assert.equal(upstreamSignal?.aborted, true);
+  assert.equal(record.mock.callCount(), 1);
+  const [metrics] = record.mock.calls[0].arguments;
+  assert.equal(metrics.status, 'client_aborted');
+  assert.equal(metrics.completionTokens, 0);
+  assert.equal(metrics.defendedTokens, 450);
   const fetchMock = mock.method(globalThis, 'fetch');
   await assert.rejects(collect(service().stream('질문', undefined, undefined, undefined, abort.signal)));
   assert.equal(fetchMock.mock.callCount(), 0);
@@ -374,6 +382,7 @@ test('cancelled requests abort upstream fetch and already-cancelled requests do 
 test('upstream timeout aborts generation and becomes HTTP 504', async (context) => {
   context.mock.timers.enable({ apis: ['setTimeout'] });
   const started = deferred();
+  const record = mock.fn((_metrics: ChatMetrics) => {});
   const chat = service({
     async *stream(request) {
       started.resolve();
@@ -381,11 +390,17 @@ test('upstream timeout aborts generation and becomes HTTP 504', async (context) 
       request.signal!.throwIfAborted();
       yield 'unreachable';
     },
+  }, undefined, undefined, undefined, undefined, {
+    record, estimateTokens: MetricsService.prototype.estimateTokens,
   });
   const pending = collect(chat.stream('질문'));
   await started.promise;
   context.mock.timers.tick(30_000);
   await assert.rejects(pending, (error: { getStatus(): number }) => error.getStatus() === 504);
+  assert.equal(record.mock.callCount(), 1);
+  const [metrics] = record.mock.calls[0].arguments;
+  assert.equal(metrics.status, 'timeout');
+  assert.equal(metrics.defendedTokens, 0);
 });
 
 test('POST validates strict string input and the 500-character limit before calling providers', async () => {
@@ -601,6 +616,7 @@ test('TTFT includes preflight/context time, measures only the first nonempty tok
     sessionId: 'session-a', nickname: '테스터', provider: 'gemini', model: 'gemini-2.0-flash',
     promptTokens: metrics.estimateTokens(`${ORIGINAL_PERSONA_ERI.systemPrompt}\n\n메타 컨텍스트\n이전 답변\n질문`),
     completionTokens: metrics.estimateTokens('분석 완료😀'), ttftMs: 42, totalDurationMs: 120, flaggedModeration: false,
+    status: 'completed', defendedTokens: 0,
   }]);
 });
 
@@ -617,11 +633,35 @@ test('metrics record partial, empty and cancelled streams exactly once without i
   await stopped.next();
   await stopped.return(undefined);
   assert.equal(calls.length, 3);
+  assert.equal(calls[0].status, 'error');
+  assert.equal(calls[0].defendedTokens, 0);
   assert.equal(calls[0].completionTokens, metrics.estimateTokens('부분'));
   assert.ok(calls[0].ttftMs !== null);
+  assert.equal(calls[1].status, 'completed');
+  assert.equal(calls[1].defendedTokens, 0);
   assert.equal(calls[1].ttftMs, null);
   assert.equal(calls[1].completionTokens, 0);
+  assert.equal(calls[2].status, 'client_aborted');
   assert.equal(calls[2].completionTokens, metrics.estimateTokens('부분'));
+  assert.equal(calls[2].defendedTokens, 448);
+});
+
+test('cancelling after the completion token baseline records zero defended tokens', async () => {
+  const abort = new AbortController();
+  const record = mock.fn((_metrics: ChatMetrics) => {});
+  const chat = service({ async *stream() { yield 'x'.repeat(1804); } },
+    undefined, undefined, undefined, undefined, {
+      record, estimateTokens: MetricsService.prototype.estimateTokens,
+    });
+  const iterator = chat.stream('질문', undefined, undefined, undefined, abort.signal);
+  await iterator.next();
+  abort.abort();
+  await iterator.return(undefined);
+  assert.equal(record.mock.callCount(), 1);
+  const [metrics] = record.mock.calls[0].arguments;
+  assert.equal(metrics.status, 'client_aborted');
+  assert.equal(metrics.completionTokens, 451);
+  assert.equal(metrics.defendedTokens, 0);
 });
 
 test('provider safety refusals set the moderation metric for Gemini and OpenAI', async () => {
