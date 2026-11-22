@@ -50,7 +50,38 @@ export function useAICoach() {
   const controllerRef = useRef<AbortController | null>(null);
   const readerRef = useRef<ReadableStreamDefaultReader<Uint8Array> | null>(null);
 
-  useEffect(() => () => controllerRef.current?.abort(), []);
+  // 1. 컴포넌트 언마운트 및 브라우저 이탈(pagehide) 시 즉시 Abort
+  useEffect(() => {
+    const handlePageHide = () => {
+      controllerRef.current?.abort();
+    };
+    window.addEventListener("pagehide", handlePageHide);
+    return () => {
+      window.removeEventListener("pagehide", handlePageHide);
+      controllerRef.current?.abort();
+    };
+  }, []);
+
+  // 2. 탭 전환/알트탭 방치(visibilitychange) 감지: 15초 이상 백그라운드 지속 시 자동 Abort (고아 토큰 차단)
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const handleVisibility = () => {
+      if (document.hidden && streamStatus !== "idle") {
+        timer = setTimeout(() => {
+          if (document.hidden && streamStatus !== "idle") {
+            controllerRef.current?.abort();
+          }
+        }, 15_000);
+      } else if (!document.hidden) {
+        clearTimeout(timer);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [streamStatus]);
 
   function setNickname(name: string) {
     const value = name.trim().slice(0, AI_COACH_NICKNAME_MAX_LENGTH);

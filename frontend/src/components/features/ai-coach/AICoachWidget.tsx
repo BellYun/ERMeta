@@ -13,6 +13,7 @@ export function AICoachWidget() {
   const locale = useLocale() as keyof typeof copyByLocale;
   const copy = copyByLocale[locale] ?? copyByLocale.ko;
   const [isOpen, setIsOpen] = useState(false);
+  const [lastReadMessageId, setLastReadMessageId] = useState<string | null>(null);
   const [input, setInput] = useState("");
   const [nicknameDraft, setNicknameDraft] = useState<string | null>(null);
   const { messages, streamStatus, nickname, setNickname, sendMessage, stop, clear, retry } =
@@ -20,6 +21,14 @@ export function AICoachWidget() {
   const messageListRef = useRef<HTMLDivElement>(null);
   const isAtBottomRef = useRef(true);
   const isBusy = streamStatus !== "idle";
+
+  // 창이 닫혀 있을 때 백그라운드 스트리밍이 완료된 새 답변이 있으면 빨간 점(새 알림) 계산
+  const lastMessage = messages[messages.length - 1];
+  const hasUnread =
+    !isOpen &&
+    lastMessage?.role === "assistant" &&
+    lastMessage.status === "completed" &&
+    lastMessage.id !== lastReadMessageId;
 
   function handleScroll() {
     const list = messageListRef.current;
@@ -56,11 +65,43 @@ export function AICoachWidget() {
           type="button"
           onClick={() => {
             isAtBottomRef.current = true;
+            setLastReadMessageId(lastMessage?.id ?? null);
             setIsOpen(true);
           }}
-          className="rounded-full bg-cyan-700 px-4 py-3 font-medium text-white shadow-lg transition hover:bg-cyan-600"
+          className="relative rounded-full bg-cyan-700 px-4 py-3 font-medium text-white shadow-lg transition hover:bg-cyan-600"
         >
           <span aria-hidden="true">💬</span> {copy.title}
+          {isBusy ? (
+            <span
+              aria-label="답변 생성 중"
+              className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full border-2 border-zinc-900 bg-cyan-500 shadow"
+            >
+              <svg
+                className="h-2.5 w-2.5 animate-spin text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+              </svg>
+            </span>
+          ) : hasUnread ? (
+            <span
+              aria-label="새로운 답변 도착"
+              className="absolute -right-1 -top-1 flex h-3.5 w-3.5"
+            >
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
+              <span className="relative inline-flex h-3.5 w-3.5 rounded-full border-2 border-zinc-900 bg-red-500" />
+            </span>
+          ) : null}
         </button>
       ) : (
         <section
@@ -72,7 +113,10 @@ export function AICoachWidget() {
             <div className="flex items-center gap-3 text-xs text-zinc-400">
               <button
                 type="button"
-                onClick={clear}
+                onClick={() => {
+                  clear();
+                  setLastReadMessageId(null);
+                }}
                 disabled={messages.length === 0}
                 className="hover:text-white disabled:opacity-50"
               >
