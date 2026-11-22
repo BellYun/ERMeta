@@ -9,6 +9,31 @@ const ROOT_DIR = path.resolve(__dirname, "../..");
 const FRONTEND_DIR = path.resolve(ROOT_DIR, "frontend");
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const CHANGE_TYPES = ["buff", "nerf", "rework"];
+const PATCH_NOTE_SCHEMA = {
+  type: "array",
+  items: {
+    type: "object",
+    properties: {
+      characterCode: { type: "integer", minimum: 1 },
+      changes: {
+        type: "array",
+        minItems: 1,
+        items: {
+          type: "object",
+          properties: {
+            target: { type: "string" },
+            changeType: { type: "string", enum: CHANGE_TYPES },
+            valueSummary: { type: "string" },
+            weaponMasteryCode: { type: "integer", minimum: 1 },
+          },
+          required: ["target", "changeType", "valueSummary"],
+        },
+      },
+    },
+    required: ["characterCode", "changes"],
+  },
+};
 
 // Parse CLI flags
 const args = process.argv.slice(2);
@@ -21,7 +46,7 @@ const filePath = getArg("--file");
 const version = getArg("--version");
 const isDryRun = args.includes("--dry-run");
 
-if (!version) {
+if (!/^\d+\.\d+$/.test(version ?? "")) {
   console.error("❌ Error: --version <e.g. 12.8> is required.");
   process.exit(1);
 }
@@ -67,6 +92,40 @@ async function fetchHtmlText(targetUrl) {
   return cleanText;
 }
 
+function parsePatchNotes(candidate) {
+  if (candidate?.finishReason !== "STOP") {
+    throw new Error(`Incomplete patch data response (${candidate?.finishReason ?? "no candidate"})`);
+  }
+
+  const text = candidate.content?.parts
+    ?.filter((part) => !part.thought)
+    .map((part) => part.text)
+    .join("");
+  const notes = JSON.parse(text ?? "");
+  if (!Array.isArray(notes)) throw new Error("Expected an array of patch notes");
+
+  const characterCodes = new Set();
+  return notes.map((note) => {
+    if (!Number.isSafeInteger(note?.characterCode) || note.characterCode < 1 ||
+        characterCodes.has(note.characterCode) || !Array.isArray(note.changes) || !note.changes.length) {
+      throw new Error("Invalid or duplicate character patch note");
+    }
+    characterCodes.add(note.characterCode);
+
+    const changes = note.changes.map((change) => {
+      const { target, changeType, valueSummary, weaponMasteryCode } = change ?? {};
+      if (typeof target !== "string" || !target.trim() || !CHANGE_TYPES.includes(changeType) ||
+          typeof valueSummary !== "string" || !valueSummary.trim() ||
+          (weaponMasteryCode !== undefined && (!Number.isSafeInteger(weaponMasteryCode) || weaponMasteryCode < 1))) {
+        throw new Error(`Invalid balance change for character ${note.characterCode}`);
+      }
+      return { target, changeType, description: [], valueSummary, weaponMasteryCode };
+    });
+
+    return { characterCode: note.characterCode, patch: version, changes };
+  });
+}
+
 async function callGemini(prompt) {
   const models = [
     process.env.GEMINI_MODEL,
@@ -86,7 +145,9 @@ async function callGemini(prompt) {
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: {
-              temperature: 0.1,
+              responseMimeType: "application/json",
+              responseJsonSchema: PATCH_NOTE_SCHEMA,
+              maxOutputTokens: 8192,
             },
           }),
         });
@@ -103,16 +164,10 @@ async function callGemini(prompt) {
         }
 
         const data = await response.json();
-        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (!text) throw new Error(`Empty response from model ${model}`);
-        return text.trim();
+        const notes = parsePatchNotes(data?.candidates?.[0]);
+        console.log(`✅ Parsed ${notes.length} character patch notes with ${model}`);
+        return notes;
       } catch (err) {
-        if (attempt < 3 && (err.message.includes("503") || err.message.includes("429"))) {
-          const waitMs = attempt * 2000;
-          console.warn(`⏳ [${model}] Temporary error. Retrying in ${waitMs / 1000}s...`);
-          await new Promise((r) => setTimeout(r, waitMs));
-          continue;
-        }
         console.warn(`⚠️ Model ${model} failed:`, err.message);
         lastError = err;
         break;
@@ -139,20 +194,11 @@ async function main() {
   const weaponMapPath = path.resolve(FRONTEND_DIR, "src/lib/weaponMap.ts");
   const weaponMapCode = fs.readFileSync(weaponMapPath, "utf-8");
 
-  // Read reference file (12.7.ts or latest available)
-  const refPath = path.resolve(FRONTEND_DIR, "src/data/12.7.ts");
-  const sample12_7 = fs.existsSync(refPath) ? fs.readFileSync(refPath, "utf-8") : "";
-
   const prompt = `
-You are an expert compiler that transforms official Eternal Return (이터널리턴) balance patch notes into exact TypeScript code for the ERMeta service.
+Extract character balance changes from the official Eternal Return (이터널리턴) patch notes as JSON data for ERMeta.
 
 ### Target Patch Version:
 "${version}"
-
-### Reference File Format (Example from v12.7):
-\`\`\`typescript
-${sample12_7}
-\`\`\`
 
 ### Character Code Mapping Reference:
 ${charMapCode.slice(0, 4000)}
@@ -165,16 +211,14 @@ ${weaponMapCode.slice(0, 3000)}
 ### Instructions:
 1. Parse the character balance changes from the raw patch notes below.
 2. Ignore cobalt-only changes (코발트 프로토콜 제외).
-3. For each character:
+3. Group changes for each character into one entry:
    - Identify their characterCode from the Character Code Reference.
    - For each change, determine:
      - \`target\`: e.g. "스냅샷(Q) · 스킬 증폭 계수", "기본 체력", "방망이 숙련도 · 레벨당 스킬 증폭"
      - \`changeType\`: "buff" | "nerf" | "rework"
      - \`valueSummary\`: e.g. "80% → 85%", "930 → 900", "12/14/16/18/20% → 7/9/11/13/15%"
      - \`weaponMasteryCode\`: Include if the change is weapon-mastery or weapon-specific (e.g. 18 for 쌍검, 3 for 방망이, etc. from Weapon Code Reference). Otherwise omit.
-4. Keep the helper functions \`change\` and \`note\` identical to the reference.
-5. Add character name comment at the end of each note line (e.g. \`// 나타폰\`).
-6. Output ONLY the valid TypeScript code. Do not wrap in markdown quotes if possible, or use standard \`\`\`typescript fence.
+4. Preserve the exact before and after values from the source.
 
 ---
 
@@ -182,12 +226,9 @@ ${weaponMapCode.slice(0, 3000)}
 ${rawContent.slice(0, 70000)}
 `;
 
-  console.log("🤖 Asking Gemini to parse patch changes and synthesize TypeScript code...");
-  const rawCode = await callGemini(prompt);
-
-  // Extract clean code
-  const codeMatch = rawCode.match(/```(?:typescript|ts)?([\s\S]*?)```/);
-  const cleanCode = (codeMatch ? codeMatch[1] : rawCode).trim() + "\n";
+  console.log("🤖 Asking Gemini to parse patch changes as JSON...");
+  const notes = await callGemini(prompt);
+  const cleanCode = `import type { CharacterPatchNote } from "./10.1";\n\nexport const PATCH_NOTES: CharacterPatchNote[] = ${JSON.stringify(notes, null, 2)};\n`;
 
   if (isDryRun) {
     console.log("\n--- [DRY RUN OUTPUT] ---\n");
