@@ -71,7 +71,7 @@ async function callGemini(prompt) {
   const models = [
     process.env.GEMINI_MODEL,
     "gemini-3.8-flash",
-    "gemini-3.8-pro",
+    "gemini-3.5-flash-lite",
   ].filter(Boolean);
 
   let lastError = null;
