@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface ChatMessage {
   id: string;
@@ -49,18 +49,41 @@ export function useAICoach() {
   const [nickname, setSavedNickname] = useState(readNickname);
   const controllerRef = useRef<AbortController | null>(null);
   const readerRef = useRef<ReadableStreamDefaultReader<Uint8Array> | null>(null);
+  const pendingTextRef = useRef<{ assistantId: string; text: string } | null>(null);
+  const rafIdRef = useRef<number | null>(null);
+
+  const flushPendingText = useCallback(() => {
+    if (rafIdRef.current !== null) {
+      window.cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = null;
+    }
+
+    const pending = pendingTextRef.current;
+    if (pending === null) return;
+
+    pendingTextRef.current = null;
+    setMessages((previous) =>
+      previous.map((entry) =>
+        entry.id === pending.assistantId
+          ? { ...entry, content: entry.content + pending.text }
+          : entry
+      )
+    );
+  }, []);
+
+  const stop = useCallback(() => {
+    flushPendingText();
+    controllerRef.current?.abort();
+  }, [flushPendingText]);
 
   // 1. 컴포넌트 언마운트 및 브라우저 이탈(pagehide) 시 즉시 Abort
   useEffect(() => {
-    const handlePageHide = () => {
-      controllerRef.current?.abort();
-    };
-    window.addEventListener("pagehide", handlePageHide);
+    window.addEventListener("pagehide", stop);
     return () => {
-      window.removeEventListener("pagehide", handlePageHide);
-      controllerRef.current?.abort();
+      window.removeEventListener("pagehide", stop);
+      stop();
     };
-  }, []);
+  }, [stop]);
 
   // 2. 탭 전환/알트탭 방치(visibilitychange) 감지: 15초 이상 백그라운드 지속 시 자동 Abort (고아 토큰 차단)
   useEffect(() => {
@@ -69,7 +92,7 @@ export function useAICoach() {
       if (document.hidden && streamStatus !== "idle") {
         timer = setTimeout(() => {
           if (document.hidden) {
-            controllerRef.current?.abort();
+            stop();
           }
         }, 15_000);
       } else if (!document.hidden) {
@@ -81,7 +104,7 @@ export function useAICoach() {
       clearTimeout(timer);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, [streamStatus]);
+  }, [streamStatus, stop]);
 
   function setNickname(name: string) {
     const value = name.trim().slice(0, AI_COACH_NICKNAME_MAX_LENGTH);
@@ -177,12 +200,26 @@ export function useAICoach() {
             setSessionId(payload.sessionId);
           }
           if (event === "token" && typeof payload?.text === "string" && payload.text.length > 0) {
-            const { text } = payload;
             if (!hasToken) {
               hasToken = true;
               setStreamStatus("streaming");
             }
-            updateAssistant((entry) => ({ ...entry, content: entry.content + text }));
+
+            pendingTextRef.current ??= { assistantId, text: "" };
+            pendingTextRef.current.text += payload.text;
+            if (
+              typeof window !== "undefined" &&
+              typeof window.requestAnimationFrame === "function"
+            ) {
+              if (rafIdRef.current === null) {
+                rafIdRef.current = window.requestAnimationFrame(() => {
+                  rafIdRef.current = null;
+                  flushPendingText();
+                });
+              }
+            } else {
+              flushPendingText();
+            }
           }
         }
 
@@ -201,6 +238,7 @@ export function useAICoach() {
         fail(NETWORK_ERROR);
       }
     } finally {
+      flushPendingText();
       const reader = readerRef.current;
       if (reader) {
         void reader.cancel().catch(() => {});
@@ -210,10 +248,6 @@ export function useAICoach() {
       controllerRef.current = null;
       setStreamStatus("idle");
     }
-  }
-
-  function stop() {
-    controllerRef.current?.abort();
   }
 
   function clear() {
