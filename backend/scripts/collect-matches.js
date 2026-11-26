@@ -201,7 +201,8 @@ async function main() {
 
     const key = process.env.BSER_API_KEY?.trim();
     if (!key) throw new Error('BSER_API_KEY is required');
-    const intervalMs = readInteger(process.env.MATCH_COLLECTION_REQUEST_INTERVAL_MS ?? '1000', 'MATCH_COLLECTION_REQUEST_INTERVAL_MS', 1, 60_000);
+    // BSER Open API Personal 등급 10 RPS 상향 반영 (기본 105ms, ~9.5 req/s 안전 마진)
+    const intervalMs = readInteger(process.env.MATCH_COLLECTION_REQUEST_INTERVAL_MS ?? '105', 'MATCH_COLLECTION_REQUEST_INTERVAL_MS', 1, 60_000);
     const settleSeconds = readInteger(process.env.MATCH_COLLECTION_SETTLE_SECONDS ?? '3600', 'MATCH_COLLECTION_SETTLE_SECONDS', 0, 86_400);
     const seasonSetting = process.env.MATCH_COLLECTION_SEASON_ID?.trim();
     const targetSeasonId = seasonSetting

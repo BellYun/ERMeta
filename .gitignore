@@ -42,3 +42,7 @@ lh-csr
 lh-isr
 lighthouse-character-*
 inp-ci-result.json
+
+# Local laptop collector runtime data & env
+/tools/collector/data/
+/tools/collector/.env
