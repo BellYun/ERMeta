@@ -39,8 +39,19 @@ test('persists the FK parent without a read, then inserts exactly one metrics ro
     ['ai_chat_metrics', 'insert', {
       session_id: input.sessionId, nickname: '테스터', provider: 'gemini', model: 'gemini-2.0-flash',
       prompt_tokens: 150, completion_tokens: 20, ttft_ms: 80, total_duration_ms: 300, flagged_moderation: false,
+      status: 'completed', defended_tokens: 0,
     }],
   ]);
+});
+
+test('inserts the client abort status and defended token count', async () => {
+  const { metrics, queries } = createMetrics();
+  metrics.record({ ...input, sessionId: undefined, status: 'client_aborted', defendedTokens: 430 });
+  await flush();
+  assert.equal(queries.length, 1);
+  const row = queries[0][2] as Record<string, unknown>;
+  assert.equal(row.status, 'client_aborted');
+  assert.equal(row.defended_tokens, 430);
 });
 
 test('record returns while the database is unresolved, then safely catches a late rejection', async () => {
