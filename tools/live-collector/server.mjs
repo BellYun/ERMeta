@@ -210,20 +210,23 @@ class StatsAccumulator {
 
       // 4. 스킬 순서 통계 (v2_CharacterSkillOrder)
       let skillList = [];
-      if (player.skillLevelInfo && typeof player.skillLevelInfo === "object") {
-        skillList = Object.keys(player.skillLevelInfo).map(Number).sort((a, b) => (player.skillLevelInfo[b] || 0) - (player.skillLevelInfo[a] || 0));
+      if (player.skillOrderInfo && typeof player.skillOrderInfo === "object") {
+        const sortedKeys = Object.keys(player.skillOrderInfo).map(Number).sort((a, b) => a - b);
+        skillList = sortedKeys.map((k) => Number(player.skillOrderInfo[k])).filter((c) => Number.isInteger(c) && c > 0);
       }
       if (skillList.length > 0) {
-        const skillKey = `${charNum}|${weapon}|${mainCore}|${skillList.slice(0, 5).join(",")}|${tier}|${TARGET_PATCH}`;
+        const skillOrder17 = skillList.slice(0, 17);
+        const skillKey = `${charNum}|${weapon}|${mainCore}|${skillOrder17.join(",")}|${tier}|${TARGET_PATCH}`;
         let so = this.skillOrders.get(skillKey);
         if (!so) {
           so = {
             character_num: charNum,
             best_weapon: weapon,
             main_core: mainCore,
-            skill_order: skillList.slice(0, 5),
+            skill_order: skillOrder17,
             total_games: 0,
             total_wins: 0,
+            total_rp: 0,
             tier,
             patch_version: TARGET_PATCH,
           };
@@ -231,6 +234,7 @@ class StatsAccumulator {
         }
         so.total_games += 1;
         so.total_wins += isWin;
+        so.total_rp += rp;
       }
 
       // 5. 시작 루트 통계 (v2_CharacterStartRoute)
@@ -248,6 +252,7 @@ class StatsAccumulator {
             total_games: 0,
             total_wins: 0,
             rank_sum: 0,
+            total_rp: 0,
             tier,
             patch_version: TARGET_PATCH,
           };
@@ -256,6 +261,7 @@ class StatsAccumulator {
         sr.total_games += 1;
         sr.total_wins += isWin;
         sr.rank_sum += rank;
+        sr.total_rp += rp;
       }
 
       // 6. 전술 스킬 통계 (v2_CharacterTacticalStats)
@@ -270,7 +276,8 @@ class StatsAccumulator {
             tactical_skill_group: tac,
             total_games: 0,
             total_wins: 0,
-            rank_sum: 0,
+            total_rank_sum: 0,
+            total_rp: 0,
             tier,
             patch_version: TARGET_PATCH,
           };
@@ -278,7 +285,8 @@ class StatsAccumulator {
         }
         ts.total_games += 1;
         ts.total_wins += isWin;
-        ts.rank_sum += rank;
+        ts.total_rank_sum += rank;
+        ts.total_rp += rp;
       }
     }
   }
@@ -597,6 +605,17 @@ async function execute6hUpload() {
         "v2_CharacterStartRoute",
         routes,
         "character_num,best_weapon,route_id,tier,patch_version",
+        500
+      );
+    }
+
+    // 5. 전술 스킬
+    const tacticals = accumulator.getCompiledTacticalStats(DETAIL_MIN_GAMES);
+    if (tacticals.length > 0) {
+      results.tactical = await chunkedUpsert(
+        "v2_CharacterTacticalStats",
+        tacticals,
+        "character_num,best_weapon,tier,patch_version,tactical_skill_group",
         500
       );
     }
