@@ -36,6 +36,7 @@ const AUTO_START = process.env.AUTO_START === "1" || process.argv.includes("--au
 const UPLOAD_1H_INTERVAL_MS = Number(process.env.UPLOAD_1H_INTERVAL_MS || 3600_000);
 const UPLOAD_6H_INTERVAL_MS = Number(process.env.UPLOAD_6H_INTERVAL_MS || 21600_000);
 const DETAIL_MIN_GAMES = Number(process.env.DETAIL_MIN_GAMES || 3);
+const SETTLE_SECONDS = Number(process.env.SETTLE_SECONDS || 3600); // 경기 시작 후 1시간(3600초) 지난 확정 매치만 수집
 
 const BASE_URL = "https://open-api.bser.io/v1";
 
@@ -643,18 +644,34 @@ async function runCollectorLoop() {
           continue;
         }
       } else {
+        const first = data.userGames?.[0];
+        const startedAt = first?.startDtm ? Date.parse(first.startDtm) : NaN;
+        const elapsedSinceStart = Date.now() - startedAt;
+
+        // 시작한 지 1시간(SETTLE_SECONDS, 기본 3600초)이 지나지 않은 게임은 확정 대기
+        if (SETTLE_SECONDS > 0 && Number.isFinite(startedAt) && elapsedSinceStart < SETTLE_SECONDS * 1000) {
+          const waitMs = (SETTLE_SECONDS * 1000) - elapsedSinceStart;
+          const waitMin = Math.ceil(waitMs / 60000);
+          lastError = `gameId=${gid} 시작된 지 ${Math.floor(elapsedSinceStart / 60000)}분 경과. 1시간 확정 대기 중 (약 ${waitMin}분 후 수집 재개)`;
+          saveState();
+          await sleep(Math.min(30000, Math.max(5000, waitMs)));
+          continue; // gid를 전진시키지 않고 루프 재실행!
+        }
+
         state.stats.consecutive404 = 0;
         state.stats.fetched += 1;
         lastError = null;
 
-        // 1타 2피: 원본 저장 + 단일 캐릭터 로컬 누적
-        persistRawGame(gid, data);
-        accumulator.recordMatch(data);
-        gamesSinceCheckpoint += 1;
+        // 랭크 매치(matchingMode === 3)만 저장 & 누적
+        if (first?.matchingMode === 3) {
+          persistRawGame(gid, data);
+          accumulator.recordMatch(data);
+          gamesSinceCheckpoint += 1;
 
-        if (gamesSinceCheckpoint >= 50) {
-          accumulator.saveCheckpoint();
-          gamesSinceCheckpoint = 0;
+          if (gamesSinceCheckpoint >= 50) {
+            accumulator.saveCheckpoint();
+            gamesSinceCheckpoint = 0;
+          }
         }
       }
 

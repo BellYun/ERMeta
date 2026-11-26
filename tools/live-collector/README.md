@@ -34,6 +34,7 @@ START_GAME_ID=68500000 AUTO_START=1 node tools/live-collector/server.mjs
 | `HOST` | `127.0.0.1` | 바인드 주소 |
 | `TARGET_PATCH` | `13.2` | 수집 및 집계 대상 패치 버전 |
 | `START_GAME_ID` | `68500000` | 최초 실행 시 시작할 게임 번호 (`state.json` 존재 시 기존 커서 우선) |
+| `SETTLE_SECONDS` | `3600` | 경기 시작 후 확정 대기 시간 (초, 기본 `3600`초 — 시작한 지 1시간 지난 경기만 수집) |
 | `INTERVAL_MS` | `1000` | 요청 간격 (1 RPS = 1000ms) |
 | `CHUNK_SIZE` | `500` | 원본 회전 압축할 경기 수 (`raw/13.2/games_*.ndjson.gz`) |
 | `UPLOAD_1H_INTERVAL_MS` | `3600000` | 기본 통계(`v2_CharacterStats`) 업로드 주기 (기본 1시간) |
